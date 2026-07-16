@@ -4,16 +4,23 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = [
     "typeSelector",
-    "simpleLocation", 
-    "addressLocation",
-    "buildingLocation",
-    "addressTypeField",
-    "buildingTypeField",
-    "locationSelect",
-    "buildingSelect",
+    "simpleLocation",
+    "structuredLocation",
+    "locationTypeField",
+    "locationIdSelect",
     "newAddress",
-    "newBuilding"
+    "newBuilding",
+    "newAddressButton",
+    "newBuildingButton"
   ]
+
+  static values = {
+    // Populated from the server (BetterTogether::Geography::Placeable.included_in_models)
+    // rather than hardcoded here, so the radio-value -> class-name mapping can't drift
+    // from the Ruby-side allow-list.
+    locationTypeMap: Object,
+    availableLocationsUrl: String
+  }
 
   connect() {
     // Initialize form state based on existing data
@@ -23,17 +30,11 @@ export default class extends Controller {
   toggleLocationType(event) {
     const selectedType = event.target.value
     this.hideAllLocationTypes()
-    
-    switch(selectedType) {
-      case 'simple':
-        this.showSimpleLocation()
-        break
-      case 'address':
-        this.showAddressLocation()
-        break
-      case 'building':
-        this.showBuildingLocation()
-        break
+
+    if (selectedType === 'simple') {
+      this.showSimpleLocation()
+    } else {
+      this.showStructuredLocation(selectedType)
     }
   }
 
@@ -41,16 +42,32 @@ export default class extends Controller {
     if (this.hasSimpleLocationTarget) {
       this.simpleLocationTarget.style.display = 'none'
     }
-    if (this.hasAddressLocationTarget) {
-      this.addressLocationTarget.style.display = 'none'
-    }
-    if (this.hasBuildingLocationTarget) {
-      this.buildingLocationTarget.style.display = 'none'
+    if (this.hasStructuredLocationTarget) {
+      this.structuredLocationTarget.style.display = 'none'
     }
 
-    // hide inline new blocks as well
+    // hide inline new blocks and their trigger buttons as well
     if (this.hasNewAddressTarget) this.newAddressTarget.style.display = 'none'
     if (this.hasNewBuildingTarget) this.newBuildingTarget.style.display = 'none'
+    if (this.hasNewAddressButtonTarget) this.newAddressButtonTarget.style.display = 'none'
+    if (this.hasNewBuildingButtonTarget) this.newBuildingButtonTarget.style.display = 'none'
+
+    // The "+New" address/building blocks both nest fields_for :location for the
+    // SAME location association. A hidden block's fields still POST (display:none
+    // doesn't stop form submission) and collide with whichever type is actually
+    // selected — e.g. Building's translatable name_en field getting submitted
+    // alongside an Address, raising ActiveModel::UnknownAttributeError. Disabled
+    // fields are excluded from form submission, so keep both disabled whenever
+    // neither is the active, opened type.
+    this.toggleFieldsDisabled(this.hasNewAddressTarget ? this.newAddressTarget : null, true)
+    this.toggleFieldsDisabled(this.hasNewBuildingTarget ? this.newBuildingTarget : null, true)
+  }
+
+  toggleFieldsDisabled(target, disabled) {
+    if (!target) return
+    target.querySelectorAll('input, select, textarea').forEach((field) => {
+      field.disabled = disabled
+    })
   }
 
   showSimpleLocation() {
@@ -61,33 +78,62 @@ export default class extends Controller {
     this.clearStructuredLocationFields()
   }
 
-  showAddressLocation() {
-    if (this.hasAddressLocationTarget) {
-      this.addressLocationTarget.style.display = 'block'
+  // Shows the single unified location_id select and points its SlimSelect
+  // AJAX source at #available_locations for the selected radio's mapped class.
+  showStructuredLocation(selectedType) {
+    if (this.hasStructuredLocationTarget) {
+      this.structuredLocationTarget.style.display = 'block'
     }
     // Clear simple name field
     this.clearSimpleLocationFields()
+
+    const locationType = this.hasLocationTypeMapValue ? this.locationTypeMapValue[selectedType] : null
+    if (!locationType) return
+
+    if (this.hasLocationTypeFieldTarget) {
+      this.locationTypeFieldTarget.value = locationType
+    }
+
+    this.updateLocationSelectSource(locationType)
+
+    // Only address/building support inline "+New" creation; settlement/region
+    // are curated reference data, lookup-only by design. The trigger buttons
+    // are server-gated by Pundit (rendered only when policy(...).create? is
+    // true) but hidden/shown here based on the currently selected radio,
+    // since the server only knows the type at initial render, not after the
+    // user switches radios client-side.
+    if (this.hasNewAddressButtonTarget) {
+      this.newAddressButtonTarget.style.display = selectedType === 'address' ? 'inline-block' : 'none'
+    }
+    if (this.hasNewBuildingButtonTarget) {
+      this.newBuildingButtonTarget.style.display = selectedType === 'building' ? 'inline-block' : 'none'
+    }
+    if (selectedType !== 'address' && this.hasNewAddressTarget) {
+      this.newAddressTarget.style.display = 'none'
+      this.toggleFieldsDisabled(this.newAddressTarget, true)
+    }
+    if (selectedType !== 'building' && this.hasNewBuildingTarget) {
+      this.newBuildingTarget.style.display = 'none'
+      this.toggleFieldsDisabled(this.newBuildingTarget, true)
+    }
   }
 
-  showBuildingLocation() {
-    if (this.hasBuildingLocationTarget) {
-      this.buildingLocationTarget.style.display = 'block'
-    }
-    // Clear simple name field
-    this.clearSimpleLocationFields()
-  }
+  // Rewrites the location_id select's slim-select options data attribute with
+  // a fresh ajax.url for the given location_type — this DOM mutation is what
+  // slim_select_controller's optionsValueChanged callback reacts to, tearing
+  // down and reinitializing SlimSelect against the new AJAX source. The
+  // attribute name must match slim_select_controller's own canonical Values
+  // API name for its `options` value (data-<controller-identifier>-options-value,
+  // using the identifier exactly as declared in data-controller — underscore,
+  // not hyphen) or Stimulus never observes the mutation and this silently no-ops.
+  updateLocationSelectSource(locationType) {
+    if (!this.hasLocationIdSelectTarget || !this.hasAvailableLocationsUrlValue) return
 
-  updateAddressType(event) {
-    if (event && event.target && event.target.value && this.hasAddressTypeFieldTarget) {
-      // keep hidden type field in sync if needed
-      // nothing to do currently, but method preserved for future use
-    }
-  }
+    const url = new URL(this.availableLocationsUrlValue, window.location.origin)
+    url.searchParams.set('location_type', locationType)
 
-  updateBuildingType(event) {
-    if (event && event.target && event.target.value && this.hasBuildingTypeFieldTarget) {
-      // keep hidden type field in sync if needed
-    }
+    const optionsValue = JSON.stringify({ ajax: { url: url.pathname + url.search } })
+    this.locationIdSelectTarget.setAttribute('data-better_together--slim-select-options-value', optionsValue)
   }
 
   updateVisibility() {
@@ -114,25 +160,33 @@ export default class extends Controller {
   }
 
   clearStructuredLocationFields() {
-    // Clear location_id and location_type for structured locations
-    const locationIdFields = this.element.querySelectorAll('select[name*="[location_id]"]')
-    locationIdFields.forEach(field => {
-      field.selectedIndex = 0
-    })
+    // Clear location_id and location_type for the unified structured location fields
+    if (this.hasLocationIdSelectTarget) {
+      this.locationIdSelectTarget.selectedIndex = 0
+    }
+    if (this.hasLocationTypeFieldTarget) {
+      this.locationTypeFieldTarget.value = ''
+    }
 
     // hide inline new blocks when switching
     if (this.hasNewAddressTarget) this.newAddressTarget.style.display = 'none'
     if (this.hasNewBuildingTarget) this.newBuildingTarget.style.display = 'none'
+    this.toggleFieldsDisabled(this.hasNewAddressTarget ? this.newAddressTarget : null, true)
+    this.toggleFieldsDisabled(this.hasNewBuildingTarget ? this.newBuildingTarget : null, true)
   }
 
   // Show inline new address fields
   showNewAddress(event) {
     event.preventDefault()
     if (this.hasNewAddressTarget) {
-      this.newAddressTarget.style.display = this.newAddressTarget.style.display === 'none' ? 'block' : 'none'
+      const opening = this.newAddressTarget.style.display === 'none'
+      this.newAddressTarget.style.display = opening ? 'block' : 'none'
+      this.toggleFieldsDisabled(this.newAddressTarget, !opening)
       // focus first input inside the new address block for accessibility
-      const focusable = this.newAddressTarget.querySelector('input, select, textarea')
-      if (focusable) focusable.focus()
+      if (opening) {
+        const focusable = this.newAddressTarget.querySelector('input, select, textarea')
+        if (focusable) focusable.focus()
+      }
     }
   }
 
@@ -140,9 +194,13 @@ export default class extends Controller {
   showNewBuilding(event) {
     event.preventDefault()
     if (this.hasNewBuildingTarget) {
-      this.newBuildingTarget.style.display = this.newBuildingTarget.style.display === 'none' ? 'block' : 'none'
-      const focusable = this.newBuildingTarget.querySelector('input, select, textarea')
-      if (focusable) focusable.focus()
+      const opening = this.newBuildingTarget.style.display === 'none'
+      this.newBuildingTarget.style.display = opening ? 'block' : 'none'
+      this.toggleFieldsDisabled(this.newBuildingTarget, !opening)
+      if (opening) {
+        const focusable = this.newBuildingTarget.querySelector('input, select, textarea')
+        if (focusable) focusable.focus()
+      }
     }
   }
 }

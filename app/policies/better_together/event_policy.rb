@@ -40,6 +40,18 @@ module BetterTogether
       user.present? && (platform_manager? || agent.valid_event_host_ids.any?)
     end
 
+    def available_locations?
+      # Mirrors #available_hosts?'s gate, not #create?'s: #create?'s
+      # community_event_manager?/self_service_event_creator? paths call
+      # record.event_hosts, which is safe for an Event *instance* but this action
+      # authorizes against the Event *class* (no instance exists yet on the
+      # new/create form) — record.event_hosts has no meaning there. Confirmed by
+      # a real NoMethodError when exercised: "undefined method 'event_hosts' for
+      # class BetterTogether::Event". #available_hosts? already avoids this by
+      # using the same class-safe gate reused here.
+      user.present? && (platform_manager? || agent.valid_event_host_ids.any?)
+    end
+
     def destroy?
       creator_or_platform_steward || event_host_member?
     end

@@ -360,6 +360,66 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Settlement location' do # rubocop:todo RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        settlement = create(:geography_settlement)
+
+        params = {
+          event: {
+            name: 'Settlement Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_id: settlement.id,
+              location_type: 'BetterTogether::Geography::Settlement'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Geography::Settlement')
+        expect(event.location.settlement).to eq(settlement)
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Region location' do # rubocop:todo RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        region = create(:geography_region)
+
+        params = {
+          event: {
+            name: 'Region Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_id: region.id,
+              location_type: 'BetterTogether::Geography::Region'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Geography::Region')
+        expect(event.location.region).to eq(region)
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
       it 'creates a draft event with no location assigned' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         params = {

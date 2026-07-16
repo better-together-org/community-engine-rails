@@ -7,7 +7,15 @@ module BetterTogether
       include Creatable
 
       belongs_to :locatable, polymorphic: true
-      belongs_to :location, polymorphic: true, optional: true
+      # autosave: true is required for the "+New Address/Building" inline-create
+      # path — Address/Building#locatable_location_build builds an unsaved record
+      # via .new(attrs), and plain belongs_to never persists a newly-built target on
+      # its own. Without this, the association silently held an unsaved, phantom
+      # location: the parent event saved successfully (location.present? satisfied
+      # #at_least_one_location_source) while the Address/Building itself never hit
+      # the database. No-op for the "pick an existing record" path, since an
+      # already-persisted, unchanged association has nothing to autosave.
+      belongs_to :location, polymorphic: true, optional: true, autosave: true
 
       # Handle nested attributes for polymorphic `location` manually because
       # ActiveRecord doesn't support building polymorphic belongs_to via

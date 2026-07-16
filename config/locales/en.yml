@@ -1585,8 +1585,7 @@ en:
         location: Where attendees will meet for this event
         location_name: Name of the venue or meeting place
         name: A clear, descriptive title for your event
-        select_address: Select address
-        select_building: Select building
+        select_location: Select location
         slug: URL-friendly identifier for this event
         starts_at: When the event begins. All times are in the timezone selected above.
         status: Draft events are visible only to you, your co-hosts, and platform
@@ -1637,8 +1636,7 @@ en:
         location_name: Location name
         location_type: Location type
         privacy: Privacy
-        select_address: Select address
-        select_building: Select building
+        select_location: Select location
         starts_at: Starts at
         status: Status
         timezone: Event Timezone
@@ -1667,6 +1665,8 @@ en:
       location_types:
         address: Address
         building: Building
+        region: Region
+        settlement: Settlement
         simple: Simple
       login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
@@ -1686,8 +1686,7 @@ en:
         location_name: Location name
       present: must be blank
       prompts:
-        select_address: Select address
-        select_building: Select building
+        select_location: Select location
       recurrence:
         end_types:
           after_count: After occurrences
