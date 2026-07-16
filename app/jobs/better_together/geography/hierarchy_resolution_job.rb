@@ -18,6 +18,36 @@ module BetterTogether
 
       LEVELS = %i[settlement region state country continent].freeze
 
+      # Orchestrates a full backfill run for `better_together:geography:backfill_placements`
+      # — iterates Locatable::Many.included_in_models dynamically (not a hardcoded
+      # [Address, Building, Event] list), so a new model opts in with just one `include`
+      # line. Enqueues async (perform_later) rather than running inline: unlike
+      # BoundaryImportJob, containment queries are cheap local DB reads, not
+      # rate-limited external calls, so it's safe to fan out across the whole queue.
+      #
+      # "Already resolved" is approximated as "has at least one resolved LocatableLocation
+      # row" — a record whose geocoded point matches nothing at any level (no boundary
+      # anywhere, no usable country_code) would have zero rows and re-enqueue on every
+      # backfill run. That's accepted: re-running containment queries is cheap, and this
+      # keeps the skip-check simple rather than needing a separate "attempted but empty"
+      # marker on each locatable.
+      def self.backfill_all_missing
+        enqueued = 0
+
+        BetterTogether::Geography::Locatable::Many.included_in_models.each do |klass|
+          next unless klass.reflect_on_association(:space)
+
+          klass.joins(:space).merge(BetterTogether::Geography::Space.geocoded).find_each do |record|
+            next if record.locatable_locations.where.not(resolved_at: nil).exists?
+
+            perform_later(record)
+            enqueued += 1
+          end
+        end
+
+        { enqueued: }
+      end
+
       def perform(locatable)
         return unless locatable.respond_to?(:space)
 

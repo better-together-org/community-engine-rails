@@ -126,4 +126,32 @@ RSpec.describe BetterTogether::Geography::HierarchyResolutionJob do
       end
     end
   end
+
+  describe '.backfill_all_missing' do
+    it 'enqueues geocoded, unresolved records and skips already-resolved ones' do
+      geocoded_unresolved = create(:better_together_address)
+      geocoded_unresolved.space.latitude = corner_brook_lat
+      geocoded_unresolved.space.longitude = corner_brook_lng
+      geocoded_unresolved.save!
+
+      ungeocoded = create(:better_together_address)
+
+      already_resolved = create(:better_together_address)
+      already_resolved.space.latitude = corner_brook_lat
+      already_resolved.space.longitude = corner_brook_lng
+      already_resolved.save!
+      BetterTogether::Geography::LocatableLocation.create!(
+        locatable: already_resolved, location_type: 'BetterTogether::Geography::Country',
+        location: create(:geography_country), resolution_method: 'iso_code', resolved_at: Time.current
+      )
+
+      summary = nil
+      expect do
+        summary = described_class.backfill_all_missing
+      end.to have_enqueued_job(described_class).exactly(1).times.with(geocoded_unresolved)
+
+      expect(summary).to eq(enqueued: 1)
+      expect(ungeocoded.persisted?).to be true # exists but is never enqueued (not geocoded)
+    end
+  end
 end
