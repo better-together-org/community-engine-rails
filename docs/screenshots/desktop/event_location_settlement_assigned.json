@@ -1,0 +1,11 @@
+{
+  "name": "event_location_settlement_assigned",
+  "device": "desktop",
+  "url": "/en/events/4f21e55d-1122-46eb-a070-281297325f9a/edit",
+  "title": "Edit Community Meetup | Events | Community Engine",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_location_picker",
+  "flow": "event_location_settlement_assigned",
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb"
+}

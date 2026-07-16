@@ -1,0 +1,20 @@
+---
+title: Event Form — Location Type Selector
+audience:
+- event_organizer
+- community_organizer
+- developer
+journey_step: As an event organizer, I choose how precisely to describe where my event
+  takes place — a plain name, or a real address/building/settlement/region already
+  known to the platform.
+callouts:
+- :id: type_selector
+  :title: Location type radio group
+  :description: 'New in this PR: Settlement and Region join the existing Address and
+    Building options. The allow-list is read from BetterTogether::Geography::Placeable.included_in_models
+    on the server, so a future fifth location type appears here automatically with
+    no view change.'
+accessibility_notes: Each radio has an associated <label for=""> and the group is
+  a role="group" button toolbar; screen readers announce the currently selected type.
+slug: event_location_type_selector
+device: desktop

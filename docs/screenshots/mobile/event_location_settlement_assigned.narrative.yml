@@ -1,0 +1,20 @@
+---
+title: Event Form — Settlement Already Assigned
+audience:
+- event_organizer
+- community_organizer
+- platform_organizer
+- developer
+journey_step: As an event organizer editing an existing event, I see which settlement
+  is currently assigned and can search for a different one without leaving the form.
+callouts:
+- :id: location_select
+  :title: AJAX-backed location search
+  :description: 'Genuinely new capability in this PR: this single field works for
+    all four structured types. Selecting the radio above rewrites this field''s search
+    source — Address and Building searches are scoped to records the organizer is
+    allowed to use; Settlement and Region search the full curated reference list.'
+accessibility_notes: The search combobox is keyboard-operable (type-ahead, arrow keys,
+  Enter to select) and exposes role="combobox" to assistive technology.
+slug: event_location_settlement_assigned
+device: mobile

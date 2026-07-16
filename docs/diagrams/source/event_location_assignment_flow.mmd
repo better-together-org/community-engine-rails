@@ -1,0 +1,28 @@
+%% render.orientation: portrait
+flowchart TD
+  A[Organizer opens the event form] --> B{Location type radio}
+  B -->|Simple| C[Free-text location name field]
+  B -->|Address / Building / Settlement / Region| D["location_selector_controller.js\npoints the search field at the chosen type"]
+
+  D --> E["GET /events/available_locations?location_type=X"]
+  E --> F["EventsController#available_locations"]
+  F --> G{Which type?}
+  G -->|Address or Building| H["Policy-scoped:\norganizer's own + public records"]
+  G -->|Settlement or Region| I["Unscoped:\nfull curated reference list"]
+  H --> J[SlimSelect shows matching results]
+  I --> J
+
+  J --> K{Organizer's choice}
+  K -->|Picks an existing record| L["location_id + location_type submitted"]
+  K -->|"Clicks + New\n(Address/Building only)"| M["Inline new-record fields submitted alongside"]
+
+  L --> N["LocatableLocation#location_attributes="]
+  M --> N
+  N --> O{location_id present?}
+  O -->|Yes| P["assign_location_by_id:\nlook up the existing record"]
+  O -->|No| Q["assign_location_by_type:\ndispatch via Placeable.included_in_models"]
+  Q --> R["Address/Building#locatable_location_build:\nbuild a new record"]
+
+  P --> S["belongs_to :location, autosave: true"]
+  R --> S
+  S --> T[Event + location saved together in one submit]
