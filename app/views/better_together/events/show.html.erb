@@ -99,6 +99,11 @@
                     <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
                   </div>
                 <% end %>
+                <% if @event.spaces.any? %>
+                  <section class="event-map my-3">
+                    <%= render partial: 'better_together/shared/map', locals: { map: @event.map } %>
+                  </section>
+                <% end %>
                 <% if @event.starts_at.present? %>
                   <div class="event-datetime card-text text-muted mt-2">
                     <i class="fas fa-calendar-alt me-2"></i> 

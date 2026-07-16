@@ -185,6 +185,30 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(response.body).not_to include('Event agenda')
       end
     end
+
+    context 'with a geocoded structured location' do
+      let(:event) { create(:better_together_event, :with_address_location, creator: manager_user.person) }
+
+      before do
+        create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
+      end
+
+      it 'renders a Leaflet map for the event location' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('data-controller="better_together--map"')
+      end
+    end
+
+    context 'without a geocoded location' do
+      it 'does not render a Leaflet map' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('data-controller="better_together--map"')
+      end
+    end
   end
 
   describe 'RSVP actions' do
@@ -664,6 +688,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       expect(response).to have_http_status(:ok)
       expect(assigns(:events).current_page).to eq(1)
       expect(assigns(:events).limit_value).to eq(10)
+    end
+
+    it 'renders a Leaflet map when at least one event has a geocoded location' do # rubocop:todo RSpec/MultipleExpectations
+      event = create(:event, :with_address_location)
+      create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
+
+      get better_together.events_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('data-controller="better_together--map"')
     end
   end
 end

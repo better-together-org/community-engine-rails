@@ -387,6 +387,53 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#leaflet_points' do
+        it 'returns an empty array when there is no location' do
+          event = build(:event)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns an empty array for a simple free-text location' do
+          event = build(:event, :with_simple_location)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns an empty array when the structured location has no geocoded space' do
+          event = create(:event, :with_address_location)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns a single leaflet point for a geocoded structured location' do
+          event = create(:event, :with_address_location)
+          address = event.location.location
+          create(:geography_geospatial_space, geospatial: address, space: create(:geography_space))
+          address.reload
+
+          points = event.leaflet_points
+
+          expect(points.size).to eq(1)
+          expect(points.first).to include(lat: 47.5615, lng: -52.7126)
+          expect(points.first[:popup_html]).to include(event.location.display_name)
+        end
+      end
+
+      describe '#spaces' do
+        it 'returns an empty array when there is no location' do
+          event = build(:event)
+          expect(event.spaces).to eq([])
+        end
+
+        it 'returns the geocoded space for a structured location' do
+          event = create(:event, :with_address_location)
+          address = event.location.location
+          space = create(:geography_space)
+          create(:geography_geospatial_space, geospatial: address, space: space)
+          address.reload
+
+          expect(event.spaces).to eq([space])
+        end
+      end
+
       describe '#requires_reminder_scheduling?' do
         let(:event_with_attendees) { create(:event, :upcoming, :with_attendees) }
 

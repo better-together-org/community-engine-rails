@@ -1,0 +1,49 @@
+{
+  "name": "event_map_show",
+  "device": "desktop",
+  "url": "/en/events/458ba200-d3e5-4b06-82c6-9abb397ae7a4",
+  "title": "Community Meetup | Events | Community Engine",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_map",
+  "flow": "event_map_show",
+  "source_spec": "./spec/docs_screenshots/better_together/event_map_spec.rb",
+  "callouts": [
+    {
+      "selector": ".event-map",
+      "title": "Location map",
+      "bullets": [
+        "Renders automatically once the event has a geocoded Address, Building, Settlement, or Region.",
+        "Powered by the reusable Locatable::One#leaflet_points mechanism — no per-event configuration."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 806.0,
+        "width": 1262.0,
+        "height": 500.0,
+        "right": 1343.5,
+        "bottom": 1306.0,
+        "center_x": 712.5,
+        "center_y": 1056.0
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 806.0,
+        "width": 1262.0,
+        "height": 500.0,
+        "right": 1343.5,
+        "bottom": 1306.0,
+        "center_x": 712.5,
+        "center_y": 1056.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 498.0,
+        "width": 380,
+        "height": 288,
+        "score": 806.0
+      }
+    }
+  ]
+}
