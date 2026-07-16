@@ -16,9 +16,24 @@ class AddPlatformIdToPhase10ExtendedIsolation < ActiveRecord::Migration[7.2]
                     index: true
     end
 
-    # Make inbound_email_messages.platform_id required (already exists as nullable)
+    # Make inbound_email_messages.platform_id required (already exists as nullable).
+    # Its own backfill (20260616004001) runs AFTER this migration, so enforcing
+    # NOT NULL unconditionally here would hard-fail on any row that still has a
+    # NULL platform_id at this point in a staged/partial deploy. Warn and skip
+    # instead — matching 20260321000004's established house style — rather than
+    # failing the whole migration run.
     if column_exists?(:better_together_inbound_email_messages, :platform_id)
-      change_column_null :better_together_inbound_email_messages, :platform_id, false
+      null_count = execute(
+        'SELECT COUNT(*) FROM better_together_inbound_email_messages WHERE platform_id IS NULL'
+      ).first['count'].to_i
+
+      if null_count.positive?
+        say "WARNING: #{null_count} row(s) in better_together_inbound_email_messages " \
+            'still have NULL platform_id. Skipping NOT NULL constraint until ' \
+            '20260616004001 backfills them — re-run after that migration completes.'
+      else
+        change_column_null :better_together_inbound_email_messages, :platform_id, false
+      end
     else
       add_reference :better_together_inbound_email_messages, :platform,
                     type: :uuid, null: false,
