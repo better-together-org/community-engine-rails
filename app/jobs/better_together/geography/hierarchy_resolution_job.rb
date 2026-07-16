@@ -79,20 +79,23 @@ module BetterTogether
       # at all (ST_Contains is geometry-only); ST_Covers is the geography-aware,
       # GiST-index-usable equivalent. It includes boundary-edge points (unlike strict
       # ST_Contains), which is the accepted approximation for coastal/border settlements.
-      # ST_GeogFromText(?) is required (not a bare `?` bind of the RGeo point object): raw
-      # SQL interpolation gives the bound parameter an untyped SQL type, so the point's WKT
-      # text must be explicitly cast to `geography`. PostGIS spatial operators have no
-      # Arel/ActiveRecord DSL equivalent, so this fragment is an accepted, deliberately-scoped
-      # exception to the no-raw-SQL convention.
+      #
+      # Built via rgeo-activerecord's Arel spatial-expression DSL (arel_table[:col].st_*),
+      # not a raw SQL string: st_contains/st_within/etc. don't include st_covers as a named
+      # convenience method, but st_function(name, *args, flags) is the documented escape
+      # hatch for any PostGIS function — it still produces a proper SpatialNamedFunction
+      # Arel node. The [false, true, true] flags (result/lhs/rhs "is spatial") match the
+      # gem's own st_contains/st_within definitions; marking the point argument as spatial is
+      # what makes the visitor wrap it in `ST_GeomFromText(wkt, srid)` (auto-cast to
+      # `geography` for the ST_Covers(geography, geography) overload) instead of raising
+      # PG::UndefinedFunction on an untyped bind parameter, which a bare `?` in a raw SQL
+      # string does not do.
       def containing_record(klass, point)
         space_table = BetterTogether::Geography::Space.arel_table
 
         klass.joins(:space)
              .where(space_table[:boundary].not_eq(nil))
-             .where( # rubocop:disable BetterTogether/NoRawSqlInQueries
-               Arel.sql('ST_Covers(better_together_geography_spaces.boundary, ST_GeogFromText(?))'),
-               point.as_text
-             )
+             .where(space_table[:boundary].st_function('ST_Covers', point, [false, true, true]))
              .first
       end
 
