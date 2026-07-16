@@ -74,7 +74,9 @@ RSpec.describe BetterTogether::Geography::HierarchyResolutionJob do
         address = create(:better_together_address)
         address.space.latitude = corner_brook_lat
         address.space.longitude = corner_brook_lng
-        address.space.metadata = { 'geocode' => { 'country_code' => 'ca' } }
+        # Real Nominatim shape: country_code nests under 'address', matching
+        # Geocoder::Result::Nominatim#country_code's @data['address']['country_code'].
+        address.space.metadata = { 'geocode' => { 'address' => { 'country_code' => 'ca' } } }
         address.save!
 
         job.perform(address)
@@ -94,7 +96,7 @@ RSpec.describe BetterTogether::Geography::HierarchyResolutionJob do
         address = create(:better_together_address)
         address.space.latitude = corner_brook_lat
         address.space.longitude = corner_brook_lng
-        address.space.metadata = { 'geocode' => { 'country_code' => 'us' } }
+        address.space.metadata = { 'geocode' => { 'address' => { 'country_code' => 'us' } } }
         address.save!
 
         job.perform(address)
@@ -102,6 +104,89 @@ RSpec.describe BetterTogether::Geography::HierarchyResolutionJob do
         placement = address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::Country')
         expect(placement.location).to eq(country)
         expect(placement.location).not_to eq(other_country)
+        expect(placement.resolution_method).to eq('polygon')
+      end
+    end
+
+    context 'when no polygon matches for State but geocode metadata has a state name' do
+      it 'resolves state via pg_trgm name similarity, scoped to the resolved country' do
+        country = create(:geography_country, iso_code: 'CA')
+        state = create(:geography_state, country:, name: 'Newfoundland and Labrador')
+
+        address = create(:better_together_address)
+        address.space.latitude = corner_brook_lat
+        address.space.longitude = corner_brook_lng
+        address.space.metadata = {
+          'geocode' => { 'address' => { 'country_code' => 'ca', 'state' => 'Newfoundland & Labrador' } }
+        }
+        address.save!
+
+        job.perform(address)
+
+        placement = address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::State')
+        expect(placement.location).to eq(state)
+        expect(placement.resolution_method).to eq('name_similarity')
+      end
+
+      it 'does not match a similarly-named state in a different country' do
+        wrong_country = create(:geography_country, iso_code: 'US')
+        create(:geography_state, country: wrong_country, name: 'Newfoundland and Labrador')
+        right_country = create(:geography_country, iso_code: 'CA')
+        right_state = create(:geography_state, country: right_country, name: 'Newfoundland and Labrador')
+
+        address = create(:better_together_address)
+        address.space.latitude = corner_brook_lat
+        address.space.longitude = corner_brook_lng
+        address.space.metadata = {
+          'geocode' => { 'address' => { 'country_code' => 'ca', 'state' => 'Newfoundland and Labrador' } }
+        }
+        address.save!
+
+        job.perform(address)
+
+        placement = address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::State')
+        expect(placement.location).to eq(right_state)
+      end
+
+      it 'does not match below the similarity threshold' do
+        country = create(:geography_country, iso_code: 'CA')
+        create(:geography_state, country:, name: 'Newfoundland and Labrador')
+
+        address = create(:better_together_address)
+        address.space.latitude = corner_brook_lat
+        address.space.longitude = corner_brook_lng
+        address.space.metadata = {
+          'geocode' => { 'address' => { 'country_code' => 'ca', 'state' => 'Completely Different Name' } }
+        }
+        address.save!
+
+        job.perform(address)
+
+        expect(
+          address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::State')
+        ).to be_nil
+      end
+
+      it 'does not override a placement already resolved via polygon containment' do
+        country = create(:geography_country, iso_code: 'CA')
+        state = create(:geography_state, country:, name: 'Newfoundland and Labrador')
+        state.space.boundary = square_boundary(center_lng: corner_brook_lng, center_lat: corner_brook_lat)
+        state.save!
+        other_state = create(:geography_state, country:, name: 'Nova Scotia')
+
+        address = create(:better_together_address)
+        address.space.latitude = corner_brook_lat
+        address.space.longitude = corner_brook_lng
+        address.space.metadata = {
+          'geocode' => { 'address' => { 'country_code' => 'ca', 'state' => 'Nova Scotia' } }
+        }
+        address.save!
+
+        job.perform(address)
+
+        placement = address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::State')
+        expect(placement.location).to eq(state)
+        expect(placement.location).not_to eq(other_state)
         expect(placement.resolution_method).to eq('polygon')
       end
     end

@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_15_120100) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_15_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
   enable_extension "pgcrypto"
   enable_extension "postgis"
 
@@ -2637,6 +2638,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_15_120100) do
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_string_translations_on_translatable_attribute"
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_string_translations_on_keys", unique: true
     t.index ["translatable_type", "key", "value", "locale"], name: "index_mobility_string_translations_on_query_keys"
+    t.index ["value"], name: "index_mobility_string_translations_on_value_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "mobility_text_translations", force: :cascade do |t|

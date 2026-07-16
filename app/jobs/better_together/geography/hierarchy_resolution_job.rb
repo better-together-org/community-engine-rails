@@ -18,6 +18,11 @@ module BetterTogether
 
       LEVELS = %i[settlement region state country continent].freeze
 
+      # pg_trgm similarity() returns 0.0-1.0; 0.4 is a conservative-but-usable threshold
+      # (Postgres's own pg_trgm.similarity_threshold GUC defaults to 0.3) chosen to favor
+      # avoiding false positives over catching every minor spelling variant.
+      STATE_NAME_SIMILARITY_THRESHOLD = 0.4
+
       # Orchestrates a full backfill run for `better_together:geography:backfill_placements`
       # — iterates Locatable::Many.included_in_models dynamically (not a hardcoded
       # [Address, Building, Event] list), so a new model opts in with just one `include`
@@ -54,12 +59,17 @@ module BetterTogether
         point = locatable.space&.to_rgeo_point
         return if point.nil?
 
-        resolved_levels = resolve_by_polygon(locatable, point)
-        resolve_by_iso_code_fallback(locatable, resolved_levels)
+        resolved = resolve_by_polygon(locatable, point)
+        resolve_country_by_iso_code(locatable, resolved)
+        resolve_state_by_name_similarity(locatable, resolved)
       end
 
       private
 
+      # Returns { level_symbol => matched_record }, only for levels with an actual match —
+      # used both to skip already-resolved levels and to give the fallbacks below access to
+      # the actual resolved Country/State records (not just a boolean), since the state
+      # name-similarity fallback needs to scope its search to the resolved country.
       def resolve_by_polygon(locatable, point)
         resolved = {}
 
@@ -69,7 +79,7 @@ module BetterTogether
           next unless match
 
           upsert_placement(locatable, level, match, 'polygon')
-          resolved[level] = true
+          resolved[level] = match
         end
 
         resolved
@@ -101,22 +111,72 @@ module BetterTogether
 
       # Cross-check/fallback for Country only: Geocoder's raw result (persisted onto
       # space.metadata['geocode'] by GeocodingJob) carries a real ISO 3166-1 alpha-2
-      # country_code, and every Country is already seeded and keyed by a globally-unique
-      # iso_code, so this is safe even when no boundary polygon exists yet for that level.
-      #
-      # NOTE: Nominatim's "state_code" is NOT a real ISO 3166-2 subdivision code — the
-      # geocoder gem simply aliases it to the full state *name* (e.g. "Newfoundland and
-      # Labrador", not "NL"). There is no reliable code-based State fallback available from
-      # geocoding data; State resolution relies on polygon containment only, once boundary
-      # data has been imported for it.
-      def resolve_by_iso_code_fallback(locatable, resolved_levels)
-        return if resolved_levels[:country]
+      # country_code nested under the 'address' sub-hash (matching Nominatim's actual
+      # response shape — Geocoder::Result::Nominatim#country_code reads
+      # @data['address']['country_code'], not a top-level key). Every Country is already
+      # seeded and keyed by a globally-unique iso_code, so this is safe even when no
+      # boundary polygon exists yet for that level.
+      def resolve_country_by_iso_code(locatable, resolved)
+        return if resolved[:country]
 
-        country_code = locatable.space&.metadata&.dig('geocode', 'country_code')
+        country_code = locatable.space&.metadata&.dig('geocode', 'address', 'country_code')
         return if country_code.blank?
 
         country = BetterTogether::Geography::Country.find_by(iso_code: country_code.upcase)
-        upsert_placement(locatable, :country, country, 'iso_code') if country
+        return unless country
+
+        upsert_placement(locatable, :country, country, 'iso_code')
+        resolved[:country] = country
+      end
+
+      # Fallback for State only, when no boundary polygon matched: Nominatim's "state" field
+      # (aliased as state_code by the geocoder gem, but it is NOT a real ISO 3166-2
+      # subdivision code — just the full state name, e.g. "Newfoundland and Labrador") is
+      # fuzzy-matched via pg_trgm similarity() against every locale's translated State#name
+      # (joined directly against mobility_string_translations, deliberately NOT scoped via
+      # Mobility's `.i18n` query scope — `.i18n` scopes to Mobility.locale/I18n.locale *at
+      # query time*, which for a background job is whatever the app's default locale is, not
+      # the language Nominatim happened to respond in; matching across every locale's
+      # translation and letting similarity() ranking pick the best one is more robust here).
+      # Scoped to the already-resolved country (via polygon or iso_code) to avoid matching a
+      # same/similar-named state in a different country.
+      def resolve_state_by_name_similarity(locatable, resolved)
+        return if resolved[:state] || resolved[:country].nil?
+
+        state_name = locatable.space&.metadata&.dig('geocode', 'address', 'state')
+        return if state_name.blank?
+
+        match = state_name_similarity_scope(resolved[:country], state_name).first
+        return unless match
+
+        upsert_placement(locatable, :state, match, 'name_similarity')
+        resolved[:state] = match
+      end
+
+      def state_name_similarity_scope(country, state_name)
+        similarity = name_similarity_function(state_name)
+
+        BetterTogether::Geography::State
+          .where(country:)
+          .joins(state_name_translations_join)
+          .where(similarity.gt(STATE_NAME_SIMILARITY_THRESHOLD))
+          .order(similarity.desc)
+      end
+
+      def name_similarity_function(name)
+        translations = Arel::Table.new(:mobility_string_translations)
+        Arel::Nodes::NamedFunction.new('similarity', [translations[:value], Arel::Nodes.build_quoted(name)])
+      end
+
+      def state_name_translations_join
+        states = BetterTogether::Geography::State.arel_table
+        translations = Arel::Table.new(:mobility_string_translations)
+
+        states.join(translations)
+              .on(translations[:translatable_type].eq('BetterTogether::Geography::State')
+                    .and(translations[:translatable_id].eq(states[:id]))
+                    .and(translations[:key].eq('name')))
+              .join_sources
       end
 
       def upsert_placement(locatable, level, geography_record, method)
