@@ -3,6 +3,27 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Address do
+  describe 'Labelable (select_label/text_label mass-assignment)' do
+    # Forms submit select_label before text_label (matching field order in
+    # _address_fields.html.erb). text_label is always present in the submitted
+    # params (even when the "Other" field was never shown/touched), so its
+    # writer must not clobber a label already set by select_label=.
+    it 'keeps the selected label when text_label is submitted blank alongside it' do
+      address = described_class.new(select_label: 'main', text_label: '')
+      expect(address.label).to eq('main')
+    end
+
+    it 'sets a custom label from text_label when select_label is "other"' do
+      address = described_class.new(select_label: 'other', text_label: 'Cottage')
+      expect(address.label).to eq('Cottage')
+    end
+
+    it 'leaves label untouched when both are submitted blank' do
+      address = described_class.new(select_label: '', text_label: '')
+      expect(address.label).to be_blank
+    end
+  end
+
   describe 'factory' do
     it 'creates a valid address' do
       person = create(:person)
