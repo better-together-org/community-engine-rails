@@ -1,28 +1,20 @@
 # frozen_string_literal: true
 
+# This migration originally forced requires_invitation=TRUE and
+# allow_membership_requests=FALSE onto every existing community regardless
+# of any value an admin had already explicitly configured — a real incident
+# on communityengine.app: the host community had allow_membership_requests
+# silently reset to false by this migration and required a manual admin fix
+# afterward. Adding the requires_invitation column already seeds every row
+# with its TRUE default via add_column; nothing further should force an
+# existing explicit value (true or false) on either column.
 class RequireInvitationsForExistingCommunities < ActiveRecord::Migration[7.2]
   def up
     return unless table_exists?(:better_together_communities)
 
-    unless column_exists?(:better_together_communities, :requires_invitation)
-      add_column :better_together_communities, :requires_invitation, :boolean, default: true, null: false
-    end
+    return if column_exists?(:better_together_communities, :requires_invitation)
 
-    if column_exists?(:better_together_communities, :requires_invitation)
-      execute <<~SQL.squish
-        UPDATE better_together_communities
-        SET requires_invitation = TRUE
-        WHERE requires_invitation IS DISTINCT FROM TRUE
-      SQL
-    end
-
-    return unless column_exists?(:better_together_communities, :allow_membership_requests)
-
-    execute <<~SQL.squish
-      UPDATE better_together_communities
-      SET allow_membership_requests = FALSE
-      WHERE allow_membership_requests IS DISTINCT FROM FALSE
-    SQL
+    add_column :better_together_communities, :requires_invitation, :boolean, default: true, null: false
   end
 
   def down
