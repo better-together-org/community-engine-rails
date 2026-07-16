@@ -242,6 +242,40 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe 'community assignment (CommunityAssignable)' do
+        let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+        let(:remote_platform) { create(:better_together_platform, :external) }
+
+        it "assigns the platform's own community when community is nil, not the host community" do
+          federated_page = build(:better_together_page, platform: remote_platform, community: nil)
+
+          federated_page.valid?
+
+          expect(federated_page.community).to eq(remote_platform.community)
+          expect(federated_page.community).not_to eq(local_platform.community)
+        end
+
+        it 'falls back to the host community when the platform has no community of its own' do
+          allow(remote_platform).to receive(:community).and_return(nil)
+          page_without_platform_community = build(:better_together_page, platform: remote_platform, community: nil)
+
+          page_without_platform_community.valid?
+
+          expect(page_without_platform_community.community).to eq(BetterTogether::Community.host_community)
+        end
+
+        it 'leaves an explicitly-assigned community untouched' do
+          explicit_community = create(:better_together_community)
+          page_with_explicit_community = build(
+            :better_together_page, platform: remote_platform, community: explicit_community
+          )
+
+          page_with_explicit_community.valid?
+
+          expect(page_with_explicit_community.community).to eq(explicit_community)
+        end
+      end
+
       describe 'evidence selector options' do
         it 'includes media-specific selectors from page content blocks' do
           page = create(:better_together_page)
