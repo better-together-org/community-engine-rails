@@ -90,38 +90,44 @@ module BetterTogether
         !simple_location?
       end
 
-      # Convenience methods for specific location types
+      # Convenience methods for specific location types. Check the loaded `location`
+      # object's actual class via `is_a?`, not the raw `location_type` string column —
+      # `Infrastructure::Building` has STI (`type` column), and a string-equality check
+      # against the base class name would go false for any future subtype even though
+      # `is_a?` correctly still matches it.
       def address
-        location if location_type == 'BetterTogether::Address'
+        location if address?
       end
 
       def building
-        location if location_type == 'BetterTogether::Infrastructure::Building'
+        location if building?
       end
 
       def settlement
-        location if location_type == 'BetterTogether::Geography::Settlement'
+        location if settlement?
       end
 
       def region
-        location if location_type == 'BetterTogether::Geography::Region'
+        location if region?
       end
 
       # Check if location is of a specific type
       def address?
-        location_type == 'BetterTogether::Address'
+        location.is_a?(BetterTogether::Address)
       end
 
       def building?
-        location_type == 'BetterTogether::Infrastructure::Building'
+        location.is_a?(BetterTogether::Infrastructure::Building)
       end
 
+      # Settlement/Region checks reference Locatable::Many::LEVELS (the single canonical
+      # hierarchy level => class mapping) rather than a second hardcoded class reference.
       def settlement?
-        location_type == 'BetterTogether::Geography::Settlement'
+        location.is_a?(BetterTogether::Geography::Locatable::Many::LEVELS[:settlement])
       end
 
       def region?
-        location_type == 'BetterTogether::Geography::Region'
+        location.is_a?(BetterTogether::Geography::Locatable::Many::LEVELS[:region])
       end
 
       # Helper method for forms - get available addresses for the user/context

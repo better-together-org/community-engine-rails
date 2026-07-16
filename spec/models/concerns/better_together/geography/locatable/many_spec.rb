@@ -7,12 +7,31 @@ RSpec.describe BetterTogether::Geography::Locatable::Many do
     it 'returns exactly the models that include this concern' do
       models = described_class.included_in_models
 
-      expect(models).to include(
-        BetterTogether::Address,
-        BetterTogether::Infrastructure::Building,
-        BetterTogether::Event
-      )
+      expect(models).to include(BetterTogether::Address, BetterTogether::Infrastructure::Building)
       expect(models).not_to include(BetterTogether::Geography::Settlement)
+    end
+
+    it 'does not include Event' do
+      # Event's own geocoded_by is commented out (dead code) — nothing ever populates its
+      # Space, so hierarchy resolution would always no-op. Event's geography placement is
+      # reached through its Locatable::One location instead, not its own Space.
+      expect(described_class.included_in_models).not_to include(BetterTogether::Event)
+    end
+  end
+
+  describe 'LEVELS' do
+    it 'maps every hierarchy level symbol to its class' do
+      expect(described_class::LEVELS).to eq(
+        settlement: BetterTogether::Geography::Settlement,
+        region: BetterTogether::Geography::Region,
+        state: BetterTogether::Geography::State,
+        country: BetterTogether::Geography::Country,
+        continent: BetterTogether::Geography::Continent
+      )
+    end
+
+    it 'is frozen' do
+      expect(described_class::LEVELS).to be_frozen
     end
   end
 

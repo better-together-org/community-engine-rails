@@ -8,8 +8,29 @@ module BetterTogether
       # one per hierarchy level, resolved automatically by HierarchyResolutionJob based on
       # PostGIS polygon containment. Distinct from Locatable::One, which gives a locatable a
       # single primary location (e.g. an Event's address/building/settlement pick).
+      #
+      # Only include this in models that actually get their OWN Space geocoded (Address,
+      # Building — both have an active `geocoded_by`). Event does NOT belong here: its own
+      # `geocoded_by` is commented out and nothing ever populates its Space, so resolution
+      # would always no-op. An Event's geography placement is reached through its
+      # Locatable::One location instead (e.g. `event.location.location.settlement` when that
+      # location is an Address).
       module Many
         extend ActiveSupport::Concern
+
+        # Canonical hierarchy level => class mapping. Single source of truth for which
+        # levels HierarchyResolutionJob resolves and how the reader methods below look up
+        # their placement — avoids three independent `level.to_s.camelize.constantize`
+        # call sites (previously duplicated across this concern, HierarchyResolutionJob's
+        # polygon/iso_code/name-similarity resolvers, and its upsert helper) silently
+        # drifting out of sync.
+        LEVELS = {
+          settlement: BetterTogether::Geography::Settlement,
+          region: BetterTogether::Geography::Region,
+          state: BetterTogether::Geography::State,
+          country: BetterTogether::Geography::Country,
+          continent: BetterTogether::Geography::Continent
+        }.freeze
 
         included do
           has_many :locatable_locations,
@@ -27,10 +48,8 @@ module BetterTogether
           ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
         end
 
-        %i[settlement region state country continent].each do |level|
-          define_method(level) do
-            locatable_locations.find_by(location_type: "BetterTogether::Geography::#{level.to_s.camelize}")&.location
-          end
+        LEVELS.each do |level, klass|
+          define_method(level) { locatable_locations.find_by(location_type: klass.name)&.location }
         end
 
         def resolve_geographic_hierarchy!(async: true)

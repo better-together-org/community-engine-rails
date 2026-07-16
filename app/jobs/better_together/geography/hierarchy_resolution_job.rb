@@ -2,9 +2,10 @@
 
 module BetterTogether
   module Geography
-    # Resolves a geocoded locatable (Address/Building/Event, or any model that includes
-    # Geography::Locatable::Many) to its best-match containing geography hierarchy entities
-    # (Settlement/Region/State/Country/Continent) via PostGIS polygon containment.
+    # Resolves a geocoded locatable (Address/Building, or any model that includes
+    # Geography::Locatable::Many and gets its own Space actually geocoded) to its
+    # best-match containing geography hierarchy entities (Settlement/Region/State/
+    # Country/Continent) via PostGIS polygon containment.
     #
     # Each level is resolved independently against its own Space#boundary — there is no
     # assumption that a settlement's polygon nests inside its region's polygon. Given the
@@ -15,8 +16,6 @@ module BetterTogether
       queue_as :geocoding
       retry_on StandardError, wait: :polynomially_longer, attempts: 5
       discard_on ActiveJob::DeserializationError
-
-      LEVELS = %i[settlement region state country continent].freeze
 
       # pg_trgm similarity() returns 0.0-1.0; 0.4 is a conservative-but-usable threshold
       # (Postgres's own pg_trgm.similarity_threshold GUC defaults to 0.3) chosen to favor
@@ -73,8 +72,7 @@ module BetterTogether
       def resolve_by_polygon(locatable, point)
         resolved = {}
 
-        LEVELS.each do |level|
-          klass = "BetterTogether::Geography::#{level.to_s.camelize}".constantize
+        BetterTogether::Geography::Locatable::Many::LEVELS.each do |level, klass|
           match = containing_record(klass, point)
           next unless match
 
@@ -180,7 +178,7 @@ module BetterTogether
       end
 
       def upsert_placement(locatable, level, geography_record, method)
-        location_type = "BetterTogether::Geography::#{level.to_s.camelize}"
+        location_type = BetterTogether::Geography::Locatable::Many::LEVELS.fetch(level).name
         placement = BetterTogether::Geography::LocatableLocation.find_or_initialize_by(
           locatable:, location_type:
         )

@@ -13,7 +13,6 @@ module BetterTogether
     include Identifier
     include Geography::Geospatial::One
     include Geography::Locatable::One
-    include Geography::Locatable::Many
     include Invitable
     include Metrics::Shareable
     include Metrics::Viewable
