@@ -4,6 +4,7 @@ module BetterTogether
   class Address < PlatformRecord # rubocop:todo Style/Documentation
     include Geography::Geospatial::One
     include Geography::Locatable::Many
+    include Geography::Placeable
     include PrimaryFlag
     include Privacy
 
@@ -40,6 +41,12 @@ module BetterTogether
         physical postal line1 line2 city_name state_province_name
         postal_code country_name primary_flag
       ]
+    end
+
+    # Placeable: build a new Address from nested locatable_location attrs (unlike
+    # Settlement/Region, which rely on Placeable's lookup-only default).
+    def self.locatable_location_build(attrs)
+      new(attrs.except('id', '_destroy', 'location_type'))
     end
 
     def geocoding_string
