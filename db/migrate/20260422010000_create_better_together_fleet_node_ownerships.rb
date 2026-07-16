@@ -52,7 +52,10 @@ class CreateBetterTogetherFleetNodeOwnerships < ActiveRecord::Migration[7.2]
     return unless column_exists?(:better_together_fleet_nodes, :owner_type) &&
                   column_exists?(:better_together_fleet_nodes, :owner_id)
 
-    FleetNode.where.not(owner_type: nil, owner_id: nil).find_each do |node|
+    # .where.not(a: nil, b: nil) negates the combined AND, not each column —
+    # chain separate .where.not calls so a row with only one of the two set
+    # isn't silently skipped.
+    FleetNode.where.not(owner_type: nil).where.not(owner_id: nil).find_each do |node|
       FleetNodeOwnership.find_or_create_by!(node_id: node.id) do |ownership|
         ownership.owner_type = node.owner_type
         ownership.owner_id = node.owner_id
@@ -63,15 +66,26 @@ class CreateBetterTogetherFleetNodeOwnerships < ActiveRecord::Migration[7.2]
   def backfill_person_node_mappings
     return unless column_exists?(:better_together_people, :borgberry_node_id)
 
+    unresolved = []
+
     Person.where.not(borgberry_node_id: [nil, '']).find_each do |person|
       node = FleetNode.find_by(node_id: person.borgberry_node_id)
-      next unless node
+      unless node
+        unresolved << person.id
+        next
+      end
 
       FleetNodeOwnership.find_or_create_by!(node_id: node.id) do |ownership|
         ownership.owner_type = 'BetterTogether::Person'
         ownership.owner_id = person.id
       end
     end
+
+    return if unresolved.empty?
+
+    say "WARNING: #{unresolved.size} person(s) had a borgberry_node_id that did not " \
+        "match any existing fleet node — that mapping is being dropped and cannot " \
+        "be recovered after this migration: #{unresolved.join(', ')}"
   end
 
   def remove_legacy_node_owner_columns
