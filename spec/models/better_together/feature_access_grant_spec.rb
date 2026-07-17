@@ -57,6 +57,26 @@ RSpec.describe BetterTogether::FeatureAccessGrant do
     end
   end
 
+  describe 'platform scoping (PlatformScoped)' do
+    it 'falls back to the host platform when no platform is explicitly set' do
+      host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+      grant = build(:better_together_feature_access_grant, platform: nil)
+
+      grant.valid?
+
+      expect(grant.platform).to eq(host_platform)
+    end
+
+    it 'does not override an explicitly-set platform' do
+      federated_platform = create(:better_together_platform, :public, host: false)
+      grant = build(:better_together_feature_access_grant, platform: federated_platform)
+
+      grant.valid?
+
+      expect(grant.platform).to eq(federated_platform)
+    end
+  end
+
   describe 'lifecycle helpers' do
     it 'treats revoked grants as inactive' do
       grant = create(:better_together_feature_access_grant)

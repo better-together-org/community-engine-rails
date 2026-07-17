@@ -26,6 +26,10 @@ module BetterTogether
       enum :contribution_type, CONTRIBUTION_TYPES
 
       belongs_to :earner, polymorphic: true
+      # Deliberately not platform/community-scoped like most tenant content — this is
+      # a network-wide ledger by design, matching C3::Balance. community is set
+      # explicitly per call site, not defaulted via Current.platform/host. Do not add
+      # PlatformScoped/CommunityAssignable here.
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
       # origin_platform_id is nil for tokens minted locally; set for tokens received via federation
       belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true

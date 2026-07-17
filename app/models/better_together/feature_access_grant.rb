@@ -2,21 +2,17 @@
 
 module BetterTogether
   # Explicit per-person override for access to gated engine features.
-  class FeatureAccessGrant < ApplicationRecord
+  class FeatureAccessGrant < PlatformRecord
     ACCESS_LEVELS = {
       beta: 'beta',
       alpha: 'alpha'
     }.freeze
 
-    belongs_to :platform, class_name: '::BetterTogether::Platform'
     belongs_to :person, class_name: '::BetterTogether::Person'
     belongs_to :granted_by_person, class_name: '::BetterTogether::Person', optional: true
 
     enum :access_level, ACCESS_LEVELS, validate: true
 
-    scope :for_platform, ->(platform) { where(platform:) }
-
-    before_validation :assign_current_platform_if_available
     before_validation :revoke_self_if_expired
     before_validation :revoke_expired_conflicts
 
@@ -95,13 +91,6 @@ module BetterTogether
 
     def expired_grants_predicate
       self.class.arel_table[:expires_at].lteq(Time.current)
-    end
-
-    def assign_current_platform_if_available
-      return if platform_id.present?
-
-      resolved = BetterTogether::Current.platform || BetterTogether::Platform.find_by(host: true)
-      self.platform = resolved if resolved
     end
   end
 end
