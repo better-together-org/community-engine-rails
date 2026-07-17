@@ -1327,18 +1327,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.index ["source_type", "source_id"], name: "bt_joatu_response_links_by_source"
   end
 
-  create_table "better_together_joatu_service_credit_balances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "agreement_id", null: false
-    t.string "unit_type", null: false
-    t.decimal "purchased_units", precision: 10, scale: 2, default: "0.0", null: false
-    t.decimal "consumed_units", precision: 10, scale: 2, default: "0.0", null: false
-    t.boolean "active", default: true, null: false
-    t.index ["agreement_id"], name: "bt_joatu_service_credit_balances_by_agreement", unique: true
-  end
-
   create_table "better_together_joatu_settlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2358,9 +2346,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.string "privacy", default: "private", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "platform_id"
     t.index ["completed_at"], name: "index_better_together_seed_plantings_on_completed_at"
     t.index ["creator_id"], name: "by_better_together_seed_plantings_creator"
     t.index ["planting_type"], name: "index_better_together_seed_plantings_on_planting_type"
+    t.index ["platform_id"], name: "index_better_together_seed_plantings_on_platform_id"
     t.index ["privacy"], name: "by_better_together_seed_plantings_privacy"
     t.index ["seed_id"], name: "index_better_together_seed_plantings_on_seed_id"
     t.index ["started_at"], name: "index_better_together_seed_plantings_on_started_at"
@@ -2986,6 +2976,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
   add_foreign_key "better_together_safety_notes", "better_together_people", column: "author_id"
   add_foreign_key "better_together_safety_notes", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_safety_notes", "better_together_safety_cases", column: "safety_case_id"
+  add_foreign_key "better_together_seed_plantings", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_short_links", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_sitemaps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
