@@ -114,6 +114,26 @@ RSpec.describe BetterTogether::WebhookDelivery do
     end
   end
 
+  describe 'platform_id derivation from endpoint' do
+    let(:platform_a) { create(:better_together_platform, host: false) }
+    let(:endpoint_a) { create(:webhook_endpoint, platform: platform_a) }
+
+    it 'derives platform_id from the endpoint when created via the association without an explicit value' do
+      delivery = endpoint_a.webhook_deliveries.create!(event: 'community.created', payload: {}, status: 'pending')
+
+      expect(delivery.platform_id).to eq(platform_a.id)
+    end
+
+    it 'leaves platform_id nil when the endpoint itself has none' do
+      endpoint_a.update_column(:platform_id, nil)
+      delivery = endpoint_a.webhook_deliveries.build(event: 'community.created', payload: {}, status: 'pending')
+
+      delivery.valid?
+
+      expect(delivery.platform_id).to be_nil
+    end
+  end
+
   describe 'platform integrity' do
     let(:platform_a) { create(:better_together_platform, host: false) }
     let(:platform_b) { create(:better_together_platform, host: false) }
