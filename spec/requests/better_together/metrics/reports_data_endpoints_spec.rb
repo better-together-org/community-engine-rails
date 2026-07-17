@@ -152,8 +152,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /shares_by_platform_data' do
-    let!(:old_share) { create(:metrics_share, platform: 'facebook', shared_at: 60.days.ago) }
-    let!(:recent_share) { create(:metrics_share, platform: 'linkedin', shared_at: 5.days.ago) }
+    let!(:old_share) { create(:metrics_share, platform_name: 'facebook', shared_at: 60.days.ago) }
+    let!(:recent_share) { create(:metrics_share, platform_name: 'linkedin', shared_at: 5.days.ago) }
 
     it 'returns filtered shares by platform with datasets structure' do
       get "#{base_path}/shares_by_platform_data", headers: { 'Accept' => 'application/json' }
@@ -173,8 +173,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /shares_by_url_and_platform_data' do
-    let!(:facebook_share) { create(:metrics_share, url: 'https://example.com/article', platform: 'facebook', shared_at: 5.days.ago) }
-    let!(:linkedin_share) { create(:metrics_share, url: 'https://example.com/article', platform: 'linkedin', shared_at: 3.days.ago) }
+    let!(:facebook_share) { create(:metrics_share, url: 'https://example.com/article', platform_name: 'facebook', shared_at: 5.days.ago) }
+    let!(:linkedin_share) { create(:metrics_share, url: 'https://example.com/article', platform_name: 'linkedin', shared_at: 3.days.ago) }
 
     it 'returns shares grouped by URL and platform with datasets' do
       get "#{base_path}/shares_by_url_and_platform_data", headers: { 'Accept' => 'application/json' }

@@ -367,7 +367,7 @@ module BetterTogether
       end
 
       def shares_by_platform_payload(scope)
-        data = scope.group(:platform).count
+        data = scope.group(:platform_name).count
 
         {
           labels: data.keys,
@@ -382,7 +382,7 @@ module BetterTogether
       end
 
       def shares_by_url_and_platform_payload(scope)
-        grouped_counts = scope.group(:url, :platform).count
+        grouped_counts = scope.group(:url, :platform_name).count
         platforms = grouped_counts.keys.map(&:last).uniq
         urls = grouped_counts.keys.map(&:first).uniq
 
