@@ -34,7 +34,7 @@ module BetterTogether
       end
 
       def polymorphic_platform_parent
-        %i[pageable downloadable shareable].each do |association_name|
+        %i[pageable downloadable sharable rich_text_record].each do |association_name|
           return public_send(association_name) if respond_to?(association_name) && public_send(association_name).present?
         end
 
