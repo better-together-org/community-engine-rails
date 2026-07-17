@@ -3,7 +3,6 @@
 module BetterTogether
   # Explicit per-person override for access to gated engine features.
   class FeatureAccessGrant < PlatformRecord
-
     ACCESS_LEVELS = {
       beta: 'beta',
       alpha: 'alpha'
