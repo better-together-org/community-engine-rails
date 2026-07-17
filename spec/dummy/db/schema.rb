@@ -1915,8 +1915,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_120200) do
     t.datetime "updated_at", null: false
     t.uuid "grantor_id", null: false
     t.uuid "grantee_id", null: false
+    t.uuid "platform_id", null: false
     t.index ["grantee_id"], name: "idx_bt_messaging_grants_grantee"
-    t.index ["grantor_id", "grantee_id"], name: "idx_bt_messaging_grants_grantor_grantee", unique: true
+    t.index ["grantor_id", "grantee_id", "platform_id"], name: "idx_bt_messaging_grants_grantor_grantee_platform", unique: true
   end
 
   create_table "better_together_person_platform_integrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1977,8 +1978,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_120200) do
     t.datetime "failed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "platform_id"
     t.index ["person_deletion_request_id"], name: "idx_on_person_deletion_request_id_7f6f7a45bb"
     t.index ["person_id"], name: "index_better_together_person_purge_audits_on_person_id"
+    t.index ["platform_id"], name: "index_better_together_person_purge_audits_on_platform_id"
     t.index ["requested_at"], name: "index_better_together_person_purge_audits_on_requested_at"
     t.index ["reviewed_by_id"], name: "index_better_together_person_purge_audits_on_reviewed_by_id"
     t.index ["status"], name: "index_better_together_person_purge_audits_on_status"
@@ -2507,7 +2510,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_120200) do
     t.datetime "delivered_at"
     t.integer "attempts", default: 0, null: false
     t.string "status", default: "pending", null: false
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.index ["delivered_at"], name: "index_better_together_webhook_deliveries_on_delivered_at"
     t.index ["event"], name: "index_better_together_webhook_deliveries_on_event"
     t.index ["platform_id"], name: "index_better_together_webhook_deliveries_on_platform_id"
@@ -2931,6 +2934,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_120200) do
   add_foreign_key "better_together_person_links", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantee_id", on_delete: :cascade
   add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantor_id", on_delete: :cascade
+  add_foreign_key "better_together_person_messaging_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"
@@ -2940,6 +2944,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_120200) do
   add_foreign_key "better_together_person_purge_audits", "better_together_people", column: "person_id"
   add_foreign_key "better_together_person_purge_audits", "better_together_people", column: "reviewed_by_id"
   add_foreign_key "better_together_person_purge_audits", "better_together_person_deletion_requests", column: "person_deletion_request_id"
+  add_foreign_key "better_together_person_purge_audits", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_phone_numbers", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_phone_numbers", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_places", "better_together_communities", column: "community_id"
