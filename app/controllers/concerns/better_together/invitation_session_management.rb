@@ -109,7 +109,8 @@ module BetterTogether
 
       BetterTogether::PersonMessagingGrant.find_or_create_by!(
         grantor: user.person,
-        grantee: inviter_person
+        grantee: inviter_person,
+        platform: resolve_invitation_platform(invitation)
       )
     rescue ActiveRecord::RecordNotUnique
       nil
@@ -120,6 +121,22 @@ module BetterTogether
       when BetterTogether::Person then inviter
       when BetterTogether::User   then inviter.person
       end
+    end
+
+    # Resolves the platform an invitation belongs to regardless of invitation type.
+    # Derives from invitable directly rather than trusting the invitation's own
+    # platform_id column — that column is independently populated via the generic
+    # Current.platform/host fallback and can drift from the invitable's real
+    # platform (e.g. an EventInvitation created outside the event's own platform
+    # context). invitable is the unambiguous source of truth: for a
+    # CommunityInvitation/EventInvitation it's the community/event itself; for a
+    # PlatformInvitation it IS the Platform.
+    def resolve_invitation_platform(invitation)
+      invitable = invitation.invitable
+      return invitable if invitable.is_a?(BetterTogether::Platform)
+      return invitable.platform if invitable.respond_to?(:platform)
+
+      invitation.platform if invitation.respond_to?(:platform)
     end
 
     # Platform-specific invitation acceptance.

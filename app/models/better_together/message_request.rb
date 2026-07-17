@@ -33,7 +33,7 @@ module BetterTogether
     def accept!
       transaction do
         update!(status: 'accepted', responded_at: Time.current)
-        PersonMessagingGrant.find_or_create_by!(grantor: recipient, grantee: sender)
+        PersonMessagingGrant.find_or_create_by!(grantor: recipient, grantee: sender, platform: platform)
         create_opening_conversation
       end
     end

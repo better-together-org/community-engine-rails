@@ -38,7 +38,9 @@ module BetterTogether
         opts = {
           from_date: params.dig(:metrics_link_checker_report, :filters, :from_date),
           to_date: params.dig(:metrics_link_checker_report, :filters, :to_date),
-          file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv'
+          file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv',
+          creator: helpers.current_person,
+          platform: metrics_platform
         }
 
         @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.create_and_generate!(**opts)

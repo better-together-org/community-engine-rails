@@ -6,6 +6,7 @@ module BetterTogether
     # associates them with the original Link record and owning rich text.
     class RichTextLink < ApplicationRecord
       include Positioned
+      include BetterTogether::Metrics::PlatformScoped
 
       belongs_to :link, class_name: 'BetterTogether::Content::Link'
       belongs_to :rich_text, class_name: 'ActionText::RichText'

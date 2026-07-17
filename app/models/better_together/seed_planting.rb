@@ -28,6 +28,7 @@ module BetterTogether
     alias planted_by= creator=
 
     belongs_to :seed, class_name: 'BetterTogether::Seed', optional: true
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
     enum :planting_type, PLANTING_TYPES, default: :seed, validate: true

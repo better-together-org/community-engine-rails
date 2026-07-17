@@ -31,6 +31,7 @@ module BetterTogether
     }
 
     validates :status, presence: true
+    before_validation :assign_platform_from_endpoint
     validate :platform_matches_endpoint
 
     scope :recent, -> { order(created_at: :desc) }
@@ -70,6 +71,10 @@ module BetterTogether
     end
 
     private
+
+    def assign_platform_from_endpoint
+      self.platform_id ||= webhook_endpoint&.platform_id
+    end
 
     def platform_matches_endpoint
       return unless webhook_endpoint&.platform_id.present? && platform_id.present?

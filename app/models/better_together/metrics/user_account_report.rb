@@ -5,7 +5,7 @@ module BetterTogether
     # Generates aggregate reports on user account creation and confirmation
     # Queries existing User data directly - no event tracking needed
     # rubocop:disable Metrics/ClassLength
-    class UserAccountReport < ApplicationRecord
+    class UserAccountReport < PlatformRecord
       # Associations
       belongs_to :creator, class_name: 'BetterTogether::Person', foreign_key: 'creator_id', inverse_of: :user_account_reports, optional: true
 
@@ -20,11 +20,12 @@ module BetterTogether
       default_scope { order(created_at: :desc) }
 
       # Class method to create and generate a report
-      def self.create_and_generate!(creator:, from_date: nil, to_date: nil, file_format: 'csv')
+      def self.create_and_generate!(creator:, platform: nil, from_date: nil, to_date: nil, file_format: 'csv')
         report = create!(
           filters: { from_date: from_date, to_date: to_date }.compact,
           file_format: file_format,
-          creator: creator
+          creator: creator,
+          platform: platform
         )
         report.generate!
         report
