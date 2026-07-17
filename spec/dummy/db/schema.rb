@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_16_120200) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_17_120200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1432,7 +1432,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_16_120200) do
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
     t.uuid "creator_id"
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.index ["creator_id"], name: "idx_on_creator_id_3aa0e6962a"
     t.index ["filters"], name: "index_better_together_metrics_link_checker_reports_on_filters", using: :gin
     t.index ["platform_id"], name: "idx_on_platform_id_0b6da11eec"
@@ -1508,7 +1508,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_16_120200) do
     t.uuid "rich_text_record_id"
     t.integer "position", null: false
     t.string "locale", limit: 5, default: "en", null: false
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.index ["link_id"], name: "index_better_together_metrics_rich_text_links_on_link_id"
     t.index ["locale"], name: "by_better_together_metrics_rich_text_links_locale"
     t.index ["platform_id"], name: "index_better_together_metrics_rich_text_links_on_platform_id"
@@ -1573,7 +1573,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_16_120200) do
     t.string "file_format", default: "csv", null: false
     t.jsonb "report_data", default: {}, null: false
     t.uuid "creator_id"
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
     t.index ["creator_id"], name: "idx_on_creator_id_008b4bf925"
     t.index ["filters"], name: "index_better_together_metrics_user_account_reports_on_filters", using: :gin
     t.index ["platform_id"], name: "idx_on_platform_id_119e41a660"
