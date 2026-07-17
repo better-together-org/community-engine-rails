@@ -14,6 +14,12 @@ module BetterTogether
       MILLITOKEN_SCALE = BetterTogether::C3::Token::MILLITOKEN_SCALE
 
       belongs_to :holder, polymorphic: true
+      # Deliberately not platform/community-scoped like most tenant content — this is
+      # a network-wide ledger by design. origin_platform_id already answers "which
+      # platform" for federation purposes (nil = earned locally, per the local/
+      # federated scopes below); community is set explicitly per call site, not
+      # defaulted via Current.platform/host. Do not add PlatformScoped/
+      # CommunityAssignable here.
       belongs_to :community, class_name: 'BetterTogether::Community', optional: true
       belongs_to :origin_platform, class_name: 'BetterTogether::Platform', optional: true
 
