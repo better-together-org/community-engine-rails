@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1536,7 +1536,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "locale", limit: 5, default: "en", null: false
-    t.string "platform", null: false
+    t.string "platform_name", null: false
     t.string "url", null: false
     t.datetime "shared_at", null: false
     t.string "shareable_type"
@@ -1544,8 +1544,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.uuid "platform_id", null: false
     t.boolean "logged_in", default: false, null: false
     t.index ["locale"], name: "by_better_together_metrics_shares_locale"
-    t.index ["platform", "url"], name: "index_better_together_metrics_shares_on_platform_and_url"
     t.index ["platform_id"], name: "index_better_together_metrics_shares_on_platform_id"
+    t.index ["platform_name", "url"], name: "index_better_together_metrics_shares_on_platform_name_and_url"
     t.index ["shareable_type", "shareable_id"], name: "index_better_together_metrics_shares_on_shareable"
   end
 
@@ -2137,7 +2137,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.uuid "community_id"
     t.index ["community_id"], name: "by_better_together_posts_community"
     t.index ["creator_id"], name: "by_better_together_posts_creator"
-    t.index ["identifier"], name: "index_better_together_posts_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_posts_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_posts_on_platform_id"
     t.index ["privacy"], name: "by_better_together_posts_privacy"
