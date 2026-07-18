@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_18_100200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -815,8 +815,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
     t.string "status", default: "draft", null: false
+    t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
+    t.index ["federation_visibility"], name: "by_better_together_events_federation_visibility"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
     t.index ["platform_id", "source_id"], name: "index_bt_events_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
@@ -1704,8 +1706,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
+    t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.index ["community_id"], name: "by_better_together_pages_community"
     t.index ["creator_id"], name: "index_better_together_pages_on_creator_id"
+    t.index ["federation_visibility"], name: "by_better_together_pages_federation_visibility"
     t.index ["identifier", "platform_id"], name: "idx_bt_pages_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_pages_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_pages_on_platform_id"
@@ -2126,8 +2130,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.datetime "last_synced_at"
     t.jsonb "display_settings", default: {}, null: false
     t.uuid "community_id"
+    t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.index ["community_id"], name: "by_better_together_posts_community"
     t.index ["creator_id"], name: "by_better_together_posts_creator"
+    t.index ["federation_visibility"], name: "by_better_together_posts_federation_visibility"
     t.index ["identifier", "platform_id"], name: "idx_bt_posts_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_posts_on_platform_id"

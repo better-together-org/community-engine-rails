@@ -73,5 +73,61 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
 
       expect(result.seeds).to be_empty
     end
+
+    describe 'per-item federation_visibility tri-state' do
+      it 'includes platform_default content when the creator opted in (regression guard, unchanged behavior)' do
+        creator = create(:better_together_person, federate_content: true)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'platform_default')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(post.id)
+      end
+
+      it 'excludes platform_default content when the creator opted out (regression guard, unchanged behavior)' do
+        creator = create(:better_together_person, federate_content: false)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'platform_default')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).not_to include(post.id)
+      end
+
+      it 'includes federate content even when the creator has not opted into federation' do
+        creator = create(:better_together_person, federate_content: false)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'federate')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(post.id)
+      end
+
+      it 'excludes no_federate content even when the creator opted in and the connection allows the type' do
+        creator = create(:better_together_person, federate_content: true)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'no_federate')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).not_to include(post.id)
+      end
+
+      it 'excludes no_federate content with no creator (system-owned content)' do
+        page = create(:better_together_page, creator: nil, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'no_federate')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).not_to include(page.id)
+      end
+
+      it 'applies the same tri-state logic to events' do
+        creator = create(:better_together_person, federate_content: false)
+        event = create(:event, creator:, platform: source_platform, privacy: 'public',
+                               starts_at: 2.days.from_now, ends_at: 2.days.from_now + 1.hour,
+                               federation_visibility: 'federate')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(event.id)
+      end
+    end
   end
 end

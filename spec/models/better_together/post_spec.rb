@@ -154,6 +154,23 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe 'federation_visibility (Federatable)' do
+    it 'defaults to platform_default' do
+      expect(create(:better_together_post).federation_visibility).to eq('platform_default')
+    end
+
+    it 'accepts the federate and no_federate overrides' do
+      expect(create(:better_together_post, federation_visibility: 'federate')).to be_federation_visibility_federate
+      expect(create(:better_together_post, federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+    end
+
+    it 'reports an override only for federate/no_federate' do
+      expect(create(:better_together_post, federation_visibility: 'platform_default').federation_visibility_override?).to be false
+      expect(create(:better_together_post, federation_visibility: 'federate').federation_visibility_override?).to be true
+      expect(create(:better_together_post, federation_visibility: 'no_federate').federation_visibility_override?).to be true
+    end
+  end
+
   describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
     let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
     let(:community_platform) { create(:better_together_platform, privacy: 'community') }

@@ -65,7 +65,7 @@ module BetterTogether
 
       def exportable_posts
         apply_cursor(
-          consent_scoped(
+          federation_consent_scoped(
             ::BetterTogether::Post
               .with_translations
               .where(platform: connection.source_platform, privacy: 'public')
@@ -78,7 +78,7 @@ module BetterTogether
 
       def exportable_pages
         apply_cursor(
-          consent_scoped(
+          federation_consent_scoped(
             ::BetterTogether::Page
               .with_translations
               .where(platform: connection.source_platform, privacy: 'public')
@@ -91,7 +91,7 @@ module BetterTogether
 
       def exportable_events
         apply_cursor(
-          consent_scoped(
+          federation_consent_scoped(
             ::BetterTogether::Event
               .with_translations
               .where(platform: connection.source_platform, privacy: 'public')
@@ -101,14 +101,25 @@ module BetterTogether
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
-      def consent_scoped(query)
-        return query unless query.klass.column_names.include?('creator_id')
+      # Layers the per-item federation_visibility tri-state on top of the
+      # creator's global federate_content preference:
+      #   no_federate       -- hard exclude, always wins regardless of creator
+      #                        preference or connection content-type settings
+      #   federate          -- explicit opt-in override, bypasses the
+      #                        creator's global federate_content preference
+      #   platform_default  -- falls through to the pre-existing creator
+      #                        preference check (current behavior, unchanged)
+      def federation_consent_scoped(query)
+        model_table = query.klass.quoted_table_name
+        scoped = query.where.not(federation_visibility: 'no_federate')
+
+        return scoped unless query.klass.column_names.include?('creator_id')
 
         creator_table = ::BetterTogether::Person.quoted_table_name
-        model_table = query.klass.quoted_table_name
-        # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator requires a left join predicate
-        query.left_joins(:creator).where(
+        # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator, OR'd with an explicit per-item opt-in override, requires a raw predicate
+        scoped.left_joins(:creator).where(
           Arel.sql(
+            "#{model_table}.federation_visibility = 'federate' OR " \
             "#{model_table}.creator_id IS NULL OR " \
             "(#{creator_table}.preferences @> '{\"federate_content\": true}')"
           )

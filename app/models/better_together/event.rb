@@ -9,6 +9,7 @@ module BetterTogether
     include Citable
     include Claimable
     include Creatable
+    include Federatable
     include FriendlySlug
     include Identifier
     include Geography::Geospatial::One
