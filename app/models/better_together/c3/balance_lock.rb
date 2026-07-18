@@ -19,6 +19,10 @@ module BetterTogether
       DEFAULT_TTL     = 24.hours
 
       belongs_to :balance, class_name: 'BetterTogether::C3::Balance'
+      # Deliberately not platform-scoped, mirroring C3::Balance#origin_platform and
+      # C3::Token — nil means the lock originated on this platform; a value means a
+      # peer platform requested the lock ahead of a cross-platform settlement. Do
+      # not add PlatformScoped/CommunityAssignable here.
       belongs_to :source_platform, class_name: 'BetterTogether::Platform', optional: true
 
       before_validation :generate_lock_ref, on: :create

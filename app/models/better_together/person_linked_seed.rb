@@ -5,6 +5,11 @@ module BetterTogether
   class PersonLinkedSeed < ApplicationRecord
     belongs_to :person_access_grant, class_name: '::BetterTogether::PersonAccessGrant'
     belongs_to :recipient_person, class_name: '::BetterTogether::Person'
+    # Deliberately not PlatformScoped: PlatformScoped#assign_current_platform_if_available
+    # defaults platform_id to Current.platform, which would silently overwrite the one
+    # thing this column exists to record — which remote platform this seed was
+    # federated FROM. Mirrors the established pattern on PersonLink/PersonAccessGrant,
+    # which also record cross-platform relationships without a generic platform_id.
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
 
     encrypts :payload
