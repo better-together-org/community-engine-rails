@@ -1481,6 +1481,7 @@ uk:
           running: Виконується
           succeeded: Успішно
     errors:
+      only_one_primary: можна встановити лише для одного запису%{scope_suffix}
       privacy:
         exceeds_context_bounds: не може бути відкритішим за '%{max}' — налаштування
           платформи або спільноти забороняють цей рівень видимості
