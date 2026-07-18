@@ -715,6 +715,10 @@ en:
       noticed/event: event
       noticed/notification: notification
   attributes:
+    federation_visibility_list:
+      federate: Always federate
+      no_federate: Never federate
+      platform_default: Use platform default
     privacy_list:
       community: Community
       private: Private
@@ -1803,6 +1807,13 @@ en:
         person: Person
         status: Status
       updated: Feature access grant updated.
+    federatable:
+      hints:
+        federation_visibility: Override this platform's federation settings for this
+          specific item. "Use platform default" follows your account-wide federation
+          preference and each connection's content-sharing settings.
+      labels:
+        federation_visibility: Federation visibility
     federation:
       backfill:
         messages:

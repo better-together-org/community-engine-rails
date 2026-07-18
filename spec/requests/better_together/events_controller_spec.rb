@@ -415,6 +415,33 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.reload.name).to eq('Updated Coverage Event')
       end
 
+      it 'renders the federation_visibility field on edit', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('event[federation_visibility]')
+      end
+
+      it 'persists an explicit federation_visibility override on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Coverage Event')
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_visibility: 'no_federate'
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload).to be_federation_visibility_no_federate
+      end
+
       it 'destroys an unprotected event', :aggregate_failures do
         event = create(:better_together_event,
                        creator: manager_user.person,

@@ -705,6 +705,10 @@ es:
       noticed/event: Evento
       noticed/notification: Notificación
   attributes:
+    federation_visibility_list:
+      federate: Federar siempre
+      no_federate: No federar nunca
+      platform_default: Usar el valor predeterminado de la plataforma
     privacy_list:
       community: Comunidad
       private: Privado
@@ -1817,6 +1821,14 @@ es:
         person: Persona
         status: Estado
       updated: Acceso a funciones actualizado.
+    federatable:
+      hints:
+        federation_visibility: Anula la configuración de federación de esta plataforma
+          para este elemento en concreto. «Usar el valor predeterminado de la plataforma»
+          sigue tu preferencia de federación de cuenta y la configuración de uso compartido
+          de contenido de cada conexión.
+      labels:
+        federation_visibility: Visibilidad de la federación
     federation:
       backfill:
         messages:

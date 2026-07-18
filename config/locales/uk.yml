@@ -693,6 +693,10 @@ uk:
       noticed/event: Подія
       noticed/notification: сповіщення
   attributes:
+    federation_visibility_list:
+      federate: Завжди федерувати
+      no_federate: Ніколи не федерувати
+      platform_default: Типово для платформи
     privacy_list:
       community: Спільнота
       private: Приватний
@@ -1818,6 +1822,13 @@ uk:
         person: Людина
         status: Статус
       updated: Доступ до функцій оновлено.
+    federatable:
+      hints:
+        federation_visibility: Перевизначає налаштування федерації цієї платформи
+          для цього окремого елемента. «Типово для платформи» відповідає вашому обліковому
+          налаштуванню федерації та налаштуванням обміну вмістом кожного з'єднання.
+      labels:
+        federation_visibility: Видимість федерації
     federation:
       backfill:
         messages:

@@ -705,6 +705,10 @@ fr:
       noticed/event: Événement
       noticed/notification: Notification
   attributes:
+    federation_visibility_list:
+      federate: Toujours fédérer
+      no_federate: Ne jamais fédérer
+      platform_default: Utiliser le paramètre par défaut de la plateforme
     privacy_list:
       community: Communauté
       private: Privé
@@ -1825,6 +1829,14 @@ fr:
         person: Personne
         status: Statut
       updated: Accès aux fonctionnalités mis à jour.
+    federatable:
+      hints:
+        federation_visibility: Remplace les paramètres de fédération de cette plateforme
+          pour cet élément en particulier. « Utiliser le paramètre par défaut de la
+          plateforme » suit votre préférence de fédération de compte et les paramètres
+          de partage de contenu de chaque connexion.
+      labels:
+        federation_visibility: Visibilité de la fédération
     federation:
       backfill:
         messages:

@@ -42,6 +42,8 @@
     <% end %>
   </div>
 
+  <%= federation_visibility_field(form:) %>
+
   <div class="mb-3">
     <%= required_label form, :categories %>
     <%= form.select :category_ids,

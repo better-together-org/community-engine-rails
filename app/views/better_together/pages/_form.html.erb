@@ -65,6 +65,10 @@
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
+      <%= federation_visibility_field(form:) %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :show_title %>
       <%= render partial: 'better_together/shared/fields/toggle_switch', locals: { form: form, attr: :show_title } %>
       <small class="form-text text-muted mt-2">Display the page title when there is no hero block.</small>

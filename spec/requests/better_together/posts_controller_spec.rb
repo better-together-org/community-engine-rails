@@ -236,6 +236,13 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     expect(response.body).to include('post[contributors_display_visibility]')
   end
 
+  it 'renders the federation_visibility field on edit' do
+    get better_together.edit_post_path(post_record, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include('post[federation_visibility]')
+  end
+
   describe 'manager CRUD flows' do
     it 'creates a post' do
       expect do
@@ -281,6 +288,20 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       expect(response).to be_redirect
       expect(post_record.reload.title).to eq('Updated Coverage Post')
       expect(post_record.reload.content.to_plain_text).to include('Updated coverage body')
+    end
+
+    it 'persists an explicit federation_visibility override on update' do
+      patch better_together.post_path(post_record, locale:), params: {
+        post: {
+          title_en: post_record.title,
+          content_en: post_record.content.to_plain_text,
+          privacy: 'public',
+          federation_visibility: 'no_federate'
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(post_record.reload).to be_federation_visibility_no_federate
     end
 
     it 'renders edit when update params are invalid', :aggregate_failures do

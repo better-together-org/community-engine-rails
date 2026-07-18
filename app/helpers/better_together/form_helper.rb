@@ -171,6 +171,32 @@ module BetterTogether
       opts.merge(html_options.except(:class))
     end
 
+    def build_federation_visibility_html_options(html_options, field_id)
+      opts = { class: 'form-select', id: field_id }
+      return opts.merge(html_options.except(:class, :id)) unless html_options[:class].present?
+
+      opts[:class] = "#{opts[:class]} #{html_options[:class]}".strip
+      opts.merge(html_options.except(:class, :id))
+    end
+
+    def federation_visibility_label
+      t('better_together.federatable.labels.federation_visibility', default: 'Federation visibility')
+    end
+
+    def federation_visibility_hint
+      t('better_together.federatable.hints.federation_visibility',
+        default: "Override this platform's federation settings for this specific item. " \
+                 '"Use platform default" follows your account-wide federation preference ' \
+                 "and each connection's content-sharing settings.")
+    end
+
+    def federation_visibility_select_options(record)
+      options_for_select(
+        record.class.translated_federation_visibilities.map { |label, key, _value| [label, key] },
+        record.federation_visibility
+      )
+    end
+
     public
 
     def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
@@ -190,6 +216,23 @@ module BetterTogether
           options
         )
         concat content_tag(:small, hint, class: 'form-text text-muted mt-2')
+      end
+    end
+
+    def federation_visibility_field(form:, html_options: {})
+      # `form_with` does not auto-generate id/for pairs in this app, so build an explicit,
+      # stable id to keep the <select> an accessible, labelled form control (WCAG select-name).
+      field_id = html_options[:id] || "#{dom_id(form.object)}_federation_visibility"
+
+      content_tag(:div, class: 'mb-3') do
+        concat form.label(:federation_visibility, federation_visibility_label, for: field_id, class: 'form-label')
+        concat form.select(
+          :federation_visibility,
+          federation_visibility_select_options(form.object),
+          {},
+          build_federation_visibility_html_options(html_options, field_id)
+        )
+        concat content_tag(:small, federation_visibility_hint, class: 'form-text text-muted mt-1')
       end
     end
 
