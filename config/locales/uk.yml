@@ -377,6 +377,11 @@ uk:
         text_translations: Переклади тексту
         time_zone: Часовий пояс
         url: URL-адреса
+      better_together/platform_domain:
+        active: Активний
+        hostname: Ім'я хоста
+        primary_flag: Основний домен
+        share_domain: Домен для поширення
       better_together/platform_invitation:
         accepted_at: Прийнято
         community_role: :activerecord.models.community_role
@@ -3162,6 +3167,55 @@ uk:
           призупинені.
         sync_cursor: Курсор синхронізації
         sync_status: Статус синхронізації
+    platform_domains:
+      cancel: Скасувати
+      cannot_destroy_primary: Неможливо видалити основний домен. Спочатку встановіть
+        інший домен як основний.
+      created: Домен успішно додано.
+      destroyed: Домен успішно видалено.
+      edit:
+        subtitle: Домен для %{platform_name}
+        title: Редагувати %{hostname}
+      form:
+        active_field_label: Активний
+        custom_domain_hint_html: Власний домен потребує DNS-запису (CNAME або A),
+          який вказує на граничний сервер цієї платформи, а також власного TLS-сертифіката.
+          Точні кроки щодо DNS/TLS дивіться в посібнику з розгортання мультиплатформи.
+        hostname_hint: Ім'я хоста, яке відвідувачі використовуватимуть для доступу
+          до цієї платформи. Без схеми (без https://) і без завершального символу
+          "/".
+        hostname_placeholder: напр. tenant-a.example.com або app.clientdomain.example
+        kind_custom_label: Використати власний домен
+        kind_subdomain_label: Використати субдомен %{host_apex}
+        primary_flag_label: Основний домен
+        share_domain_label: Домен для поширення (використовується у створених посиланнях
+          для поширення)
+        subdomain_hint: Лише частина перед .%{host_apex} — повне ім'я хоста заповнюється
+          автоматично.
+        subdomain_label_field: Субдомен
+      index:
+        active_label: Активний
+        back_to_platform: Повернутися до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей домен?
+        edit_btn: Редагувати
+        header_actions: Дії
+        header_hostname: Ім'я хоста
+        header_primary: Основний
+        header_share: Поширення
+        header_status: Статус
+        inactive_label: Неактивний
+        new_btn: Додати домен
+        no_domains: Домени ще не налаштовано.
+        primary_badge: Основний
+        share_badge: Домен для поширення
+        subtitle: Імена хостів і псевдоніми для %{platform_name}
+        table_aria: Домени платформи
+        title: Домени
+      new:
+        subtitle: Додати домен для %{platform_name}
+        title: Новий домен
+      updated: Домен успішно оновлено.
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.
@@ -5067,6 +5121,7 @@ uk:
           знати точну URL-адресу.
         feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
+        platform_domains: Домени
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
