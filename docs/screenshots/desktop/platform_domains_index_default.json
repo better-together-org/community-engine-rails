@@ -1,0 +1,154 @@
+{
+  "name": "platform_domains_index_default",
+  "device": "desktop",
+  "url": "/en/host/platforms/fredricka_keebler/platform_domains",
+  "title": "Domains | Becker, Wisozk and Padberg",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_domains",
+  "flow": "platform_domains_index",
+  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-platform-domain-btn",
+      "title": "Add Domain",
+      "bullets": [
+        "Opens the form to attach a new subdomain or custom domain to this platform."
+      ],
+      "target": {
+        "x": 1224.765625,
+        "y": 141.0,
+        "width": 143.234375,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 179.0,
+        "center_x": 1296.3828125,
+        "center_y": 160.0
+      },
+      "avoid": {
+        "x": 1224.765625,
+        "y": 141.0,
+        "width": 143.234375,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 179.0,
+        "center_x": 1296.3828125,
+        "center_y": 160.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 199.0,
+        "width": 380,
+        "height": 158,
+        "score": 1282.0
+      }
+    },
+    {
+      "selector": ".platform-domain-primary-badge",
+      "title": "Primary badge",
+      "bullets": [
+        "Marks the canonical domain used in links and redirects.",
+        "Auto-created from the platform's host URL — cannot be deleted directly."
+      ],
+      "target": {
+        "x": 519.734375,
+        "y": 267.8125,
+        "width": 68.765625,
+        "height": 20.375,
+        "right": 588.5,
+        "bottom": 288.1875,
+        "center_x": 554.1171875,
+        "center_y": 278.0
+      },
+      "avoid": {
+        "x": 519.734375,
+        "y": 267.8125,
+        "width": 68.765625,
+        "height": 20.375,
+        "right": 588.5,
+        "bottom": 288.1875,
+        "center_x": 554.1171875,
+        "center_y": 278.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 364.12,
+        "y": 308.19,
+        "width": 380,
+        "height": 210,
+        "score": 1172.8125
+      }
+    },
+    {
+      "selector": ".platform-domain-share-badge",
+      "title": "Share badge",
+      "bullets": [
+        "Marks which domain is used in generated share links."
+      ],
+      "target": {
+        "x": 695.28125,
+        "y": 267.8125,
+        "width": 109.203125,
+        "height": 20.375,
+        "right": 804.484375,
+        "bottom": 288.1875,
+        "center_x": 749.8828125,
+        "center_y": 278.0
+      },
+      "avoid": {
+        "x": 695.28125,
+        "y": 267.8125,
+        "width": 109.203125,
+        "height": 20.375,
+        "right": 804.484375,
+        "bottom": 288.1875,
+        "center_x": 749.8828125,
+        "center_y": 278.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 559.88,
+        "y": 115.81,
+        "width": 380,
+        "height": 132,
+        "score": 267.8125
+      }
+    },
+    {
+      "selector": "#platform-domains-table thead th:nth-child(4)",
+      "title": "Status column",
+      "bullets": [
+        "Active domains resolve requests; inactive domains are kept but do not route traffic."
+      ],
+      "target": {
+        "x": 940.234375,
+        "y": 216.0,
+        "width": 174.921875,
+        "height": 40.5,
+        "right": 1115.15625,
+        "bottom": 256.5,
+        "center_x": 1027.6953125,
+        "center_y": 236.25
+      },
+      "avoid": {
+        "x": 940.234375,
+        "y": 216.0,
+        "width": 174.921875,
+        "height": 40.5,
+        "right": 1115.15625,
+        "bottom": 256.5,
+        "center_x": 1027.6953125,
+        "center_y": 236.25
+      },
+      "placement": {
+        "side": "above",
+        "x": 24,
+        "y": 24,
+        "width": 380,
+        "height": 184,
+        "score": 0
+      }
+    }
+  ]
+}
