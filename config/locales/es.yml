@@ -1491,6 +1491,7 @@ es:
           running: En ejecución
           succeeded: Completado
     errors:
+      only_one_primary: solo se puede establecer en un registro%{scope_suffix}
       privacy:
         exceeds_context_bounds: no puede ser más abierta que '%{max}' — la configuración
           de la plataforma o comunidad impide este nivel de visibilidad

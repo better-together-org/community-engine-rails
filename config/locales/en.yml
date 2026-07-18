@@ -1485,6 +1485,7 @@ en:
           running: Running
           succeeded: Succeeded
     errors:
+      only_one_primary: can only be set for one record%{scope_suffix}
       privacy:
         exceeds_context_bounds: cannot be more open than '%{max}' — the platform or
           community settings prevent this level of visibility
