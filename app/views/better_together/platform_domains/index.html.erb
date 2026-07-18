@@ -1,0 +1,83 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1><%= t('.title') %></h1>
+      <p class="text-muted mb-0"><%= t('.subtitle', platform_name: @platform.name) %></p>
+    </div>
+    <% if policy(@platform.platform_domains.build).create? %>
+      <%= link_to new_platform_platform_domain_path(@platform), class: 'btn btn-primary' do %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @platform_domains.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover" aria-label="<%= t('.table_aria') %>">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('.header_hostname') %></th>
+            <th scope="col"><%= t('.header_primary') %></th>
+            <th scope="col"><%= t('.header_share') %></th>
+            <th scope="col"><%= t('.header_status') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('.header_actions') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @platform_domains.each do |domain| %>
+            <tr class="<%= domain.primary_flag? ? 'table-success' : '' %>">
+              <td>
+                <code><%= domain.hostname %></code>
+              </td>
+              <td>
+                <% if domain.primary_flag? %>
+                  <span class="badge bg-success"><%= t('.primary_badge') %></span>
+                <% end %>
+              </td>
+              <td>
+                <% if domain.share_domain? %>
+                  <span class="badge bg-info text-dark"><%= t('.share_badge') %></span>
+                <% end %>
+              </td>
+              <td>
+                <% if domain.active? %>
+                  <span class="text-success"><i class="fas fa-check-circle" aria-hidden="true"></i> <%= t('.active_label') %></span>
+                <% else %>
+                  <span class="text-muted"><%= t('.inactive_label') %></span>
+                <% end %>
+              </td>
+              <td class="text-end">
+                <div class="btn-group btn-group-sm" role="group">
+                  <%= link_to t('.edit_btn'),
+                              edit_platform_platform_domain_path(@platform, domain),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                  <% unless domain.primary_flag? %>
+                    <%= button_to t('.delete_btn'),
+                                  platform_platform_domain_path(@platform, domain),
+                                  method: :delete,
+                                  class: 'btn btn-outline-danger btn-sm',
+                                  data: { turbo_confirm: t('.delete_confirm') } %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      <%= t('.no_domains') %>
+    </div>
+  <% end %>
+
+  <div class="mt-3">
+    <%= link_to t('.back_to_platform'),
+                platform_path(@platform),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+</div>
