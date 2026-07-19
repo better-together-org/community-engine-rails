@@ -1837,6 +1837,32 @@ en:
           post: post
         errors:
           not_authorized: "%{content_type} mirroring not authorized: %{reason}"
+    federation_hub:
+      connection_health_card:
+        active_badge:
+          one: 1 active connection
+          other: "%{count} active connections"
+        failed_badge:
+          one: 1 connection with failed sync
+          other: "%{count} connections with failed sync"
+        pending_badge:
+          one: 1 pending connection
+          other: "%{count} pending connections"
+        review_link: Review connections
+        title: Connected platforms
+        total_badge:
+          one: 1 total connection
+          other: "%{count} total connections"
+        view_all_connections: View all connections
+      index:
+        page_title: Federation Hub
+      my_content_panel:
+        edit_preference: Change this
+        federate_content_off: Federation disabled for your content
+        federate_content_on: Federation enabled for your content
+        no_recent_items: You haven't created any federatable content yet.
+        recent_items: Recently updated
+        title: My content federation status
     feedback_routing:
       audience:
         community_stewards: responsible community stewards
@@ -4868,6 +4894,7 @@ en:
       community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
+      federation_hub: Federation Hub
       posts: Posts
   navigation_item:
     form_hints:

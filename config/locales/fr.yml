@@ -1862,6 +1862,32 @@ fr:
         errors:
           not_authorized: 'la mise en miroir de %{content_type} n''est pas autorisée
             : %{reason}'
+    federation_hub:
+      connection_health_card:
+        active_badge:
+          one: 1 connexion active
+          other: "%{count} connexions actives"
+        failed_badge:
+          one: 1 connexion en échec de synchronisation
+          other: "%{count} connexions en échec de synchronisation"
+        pending_badge:
+          one: 1 connexion en attente
+          other: "%{count} connexions en attente"
+        review_link: Examiner les connexions
+        title: Plateformes connectées
+        total_badge:
+          one: 1 connexion au total
+          other: "%{count} connexions au total"
+        view_all_connections: Voir toutes les connexions
+      index:
+        page_title: Centre de fédération
+      my_content_panel:
+        edit_preference: Modifier ce réglage
+        federate_content_off: La fédération est désactivée pour votre contenu
+        federate_content_on: La fédération est activée pour votre contenu
+        no_recent_items: Vous n'avez pas encore créé de contenu fédérable.
+        recent_items: Mis à jour récemment
+        title: Statut de fédération de votre contenu
     feedback_routing:
       audience:
         community_stewards: responsables du contenu de la communauté
@@ -4981,6 +5007,7 @@ fr:
       community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
+      federation_hub: Centre de fédération
       posts: Articles
   navigation_item:
     form_hints:

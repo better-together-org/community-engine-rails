@@ -1,0 +1,43 @@
+<%#
+  Federation Hub admin section — connection health summary. Visible only to
+  people with manage_network_connections/approve_network_connections
+  (gated by the controller before this partial is ever rendered).
+  Summarizes and LINKS OUT to the existing platform connections review
+  surfaces rather than duplicating their tables.
+  Locals:
+    summary (Hash, required) — BetterTogether::FederationHub::ConnectionHealthSummaryService
+      result: { total_count:, pending_count:, active_count:, healthy_count:, failed_count: }
+-%>
+<% summary ||= {} %>
+
+<section class="bt-federation-hub-connection-health card mb-4"
+         aria-label="<%= t('.title', default: 'Connected platforms') %>">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+      <h2 class="card-title h5 mb-0"><%= t('.title', default: 'Connected platforms') %></h2>
+      <%= link_to t('.review_link', default: 'Review connections'),
+                  host_dashboard_platform_connection_review_path,
+                  class: 'btn btn-outline-primary btn-sm' %>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2 mb-3" id="federation-hub-connection-badges">
+      <span class="badge rounded-pill text-bg-secondary fs-6" id="federation-hub-total-badge">
+        <%= t('.total_badge', count: summary[:total_count].to_i, default: '%{count} total') %>
+      </span>
+      <span class="badge rounded-pill text-bg-warning fs-6" id="federation-hub-pending-badge">
+        <%= t('.pending_badge', count: summary[:pending_count].to_i, default: '%{count} pending') %>
+      </span>
+      <span class="badge rounded-pill text-bg-success fs-6" id="federation-hub-active-badge">
+        <%= t('.active_badge', count: summary[:active_count].to_i, default: '%{count} active') %>
+      </span>
+      <% if summary[:failed_count].to_i.positive? %>
+        <span class="badge rounded-pill text-bg-danger fs-6" id="federation-hub-failed-badge">
+          <%= t('.failed_badge', count: summary[:failed_count].to_i, default: '%{count} sync failed') %>
+        </span>
+      <% end %>
+    </div>
+
+    <%= link_to t('.view_all_connections', default: 'View all connections'), platform_connections_path,
+                class: 'small' %>
+  </div>
+</section>

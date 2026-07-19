@@ -1853,6 +1853,32 @@ es:
           post: publicación
         errors:
           not_authorized: 'la replicación de %{content_type} no está autorizada: %{reason}'
+    federation_hub:
+      connection_health_card:
+        active_badge:
+          one: 1 conexión activa
+          other: "%{count} conexiones activas"
+        failed_badge:
+          one: 1 conexión con sincronización fallida
+          other: "%{count} conexiones con sincronización fallida"
+        pending_badge:
+          one: 1 conexión pendiente
+          other: "%{count} conexiones pendientes"
+        review_link: Revisar conexiones
+        title: Plataformas conectadas
+        total_badge:
+          one: 1 conexión en total
+          other: "%{count} conexiones en total"
+        view_all_connections: Ver todas las conexiones
+      index:
+        page_title: Centro de Federación
+      my_content_panel:
+        edit_preference: Cambiar esto
+        federate_content_off: La federación está deshabilitada para tu contenido
+        federate_content_on: La federación está habilitada para tu contenido
+        no_recent_items: Aún no has creado ningún contenido federable.
+        recent_items: Actualizado recientemente
+        title: Estado de federación de mi contenido
     feedback_routing:
       audience:
         community_stewards: responsables de contenido de la comunidad
@@ -4947,6 +4973,7 @@ es:
       community_hub: Community Hub
       events: Eventos
       exchange_hub: Centro de intercambio
+      federation_hub: Centro de Federación
       posts: Publicaciones
   navigation_item:
     form_hints:

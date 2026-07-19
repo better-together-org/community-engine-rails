@@ -1,0 +1,19 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'Federation Hub') %>
+<% end %>
+
+<div class="container my-3" id="federation-hub-index">
+  <h1 class="mb-4"><%= t('.page_title', default: 'Federation Hub') %></h1>
+
+  <div class="row">
+    <div class="col-md-6">
+      <%= render 'better_together/federation_hub/my_content_panel', summary: @my_federation_summary %>
+    </div>
+
+    <div class="col-md-6">
+      <% if @show_connection_health_section %>
+        <%= render 'better_together/federation_hub/connection_health_card', summary: @connection_health_summary %>
+      <% end %>
+    </div>
+  </div>
+</div>
