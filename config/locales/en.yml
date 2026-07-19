@@ -2729,6 +2729,9 @@ en:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: '"%{title}" is now set to %{current_visibility}'
+        title: 'Federation setting updated: %{current_visibility}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications

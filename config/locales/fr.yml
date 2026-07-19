@@ -2779,6 +2779,9 @@ fr:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: "« %{title} » est désormais réglé sur %{current_visibility}"
+        title: 'Paramètre de fédération mis à jour : %{current_visibility}'
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications

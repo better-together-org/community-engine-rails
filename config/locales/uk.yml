@@ -2764,6 +2764,9 @@ uk:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: "«%{title}» тепер має значення %{current_visibility}"
+        title: 'Налаштування федерації оновлено: %{current_visibility}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications

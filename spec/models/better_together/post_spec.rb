@@ -169,6 +169,25 @@ RSpec.describe BetterTogether::Post do
       expect(create(:better_together_post, federation_visibility: 'federate').federation_visibility_override?).to be true
       expect(create(:better_together_post, federation_visibility: 'no_federate').federation_visibility_override?).to be true
     end
+
+    it 'notifies the creator when federation_visibility changes' do
+      creator = create(:better_together_person)
+      post = create(:better_together_post, creator:, federation_visibility: 'platform_default')
+
+      expect(BetterTogether::FederationVisibilityStatusNotifier).to receive(:with).with(
+        hash_including(federatable: post, previous_visibility: 'platform_default', current_visibility: 'federate')
+      ).and_call_original
+
+      post.update!(federation_visibility: 'federate')
+    end
+
+    it 'does not notify when the creator is nil (system-owned content)' do
+      post = create(:better_together_post, creator: nil, federation_visibility: 'platform_default')
+
+      expect(BetterTogether::FederationVisibilityStatusNotifier).not_to receive(:with)
+
+      post.update!(federation_visibility: 'federate')
+    end
   end
 
   describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do

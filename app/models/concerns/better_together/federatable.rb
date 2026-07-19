@@ -26,6 +26,9 @@ module BetterTogether
       scope :federation_visibility_default, -> { where(federation_visibility: 'platform_default') }
       scope :federation_opted_in, -> { where(federation_visibility: 'federate') }
       scope :federation_opted_out, -> { where(federation_visibility: 'no_federate') }
+
+      after_commit :notify_creator_of_federation_visibility_change, on: :update,
+                                                                    if: :saved_change_to_federation_visibility?
     end
 
     class_methods do
@@ -44,6 +47,20 @@ module BetterTogether
     # behavior in either direction (explicit opt-in or hard opt-out).
     def federation_visibility_override?
       federation_visibility_federate? || federation_visibility_no_federate?
+    end
+
+    private
+
+    def notify_creator_of_federation_visibility_change
+      return unless respond_to?(:creator) && creator.present?
+
+      previous_visibility, current_visibility = saved_change_to_federation_visibility
+      ::BetterTogether::FederationVisibilityStatusNotifier.with(
+        record: self,
+        federatable: self,
+        previous_visibility:,
+        current_visibility:
+      ).deliver_later(creator)
     end
   end
 end
