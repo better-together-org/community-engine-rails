@@ -1,0 +1,26 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef record fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+  classDef risk fill:#fbeaea,stroke:#8a3a3a,color:#4a1414,stroke-width:1px;
+
+  Steward["Community steward<br/>viewing a community's billing page"]:::record
+  AllVisible["Every community visible under<br/>CommunityPolicy::Scope<br/>(public/member communities, plus every<br/>private community if the viewer is a<br/>platform manager)"]:::risk
+  Stewarded["Only communities where<br/>policy(candidate).update?<br/>(the steward actually manages that community)"]:::outcome
+  Buttons["'Pay via ___ instead' buttons<br/>and the checkout billable_owner resolver"]:::record
+
+  subgraph Before["Before this fix"]
+    direction LR
+    Steward -->|"@sponsoring_communities ="| AllVisible
+    AllVisible -->|renders as candidates in| Buttons
+  end
+
+  subgraph After["After this fix"]
+    direction LR
+    Steward -->|"stewarded_sponsoring_communities ="| Stewarded
+    Stewarded -->|renders as candidates in| Buttons
+  end
+
+  subgraph PlainLanguage["How to read this"]
+    Note["This reuses the same policy(owner).update? gate that<br/>portal_billable_owner already applied to billing-portal access,<br/>extending it to the sponsor-candidate list and the checkout<br/>billable_owner resolver. A person can no longer see or select<br/>a community they don't steward as a billing payer just<br/>because it happened to be policy-visible to them."]:::outcome
+  end

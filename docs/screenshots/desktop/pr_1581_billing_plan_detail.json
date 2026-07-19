@@ -1,14 +1,14 @@
 {
   "name": "pr_1581_billing_plan_detail",
   "device": "desktop",
-  "url": "/en/host/billing/plans/b87fbce5-9808-4e20-af92-04bcf6955681",
+  "url": "/en/host/billing/plans/99c0b3d4-78a2-4e7d-ab6b-41ae934d9630",
   "title": "Community Stewardship | Billing Plans | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#summary_card_billing_plan_b87fbce5-9808-4e20-af92-04bcf6955681",
+      "selector": "#summary_card_billing_plan_99c0b3d4-78a2-4e7d-ab6b-41ae934d9630",
       "title": "Plan summary",
       "bullets": [
         "Shows the immutable Stripe-linked pricing identifiers.",
@@ -44,75 +44,40 @@
       }
     },
     {
-      "selector": "#metadata_card_billing_plan_b87fbce5-9808-4e20-af92-04bcf6955681",
+      "selector": "#metadata_card_billing_plan_99c0b3d4-78a2-4e7d-ab6b-41ae934d9630",
       "title": "Plan metadata",
       "bullets": [
         "Explains the plain-language copy shown to subscribers.",
-        "Defines hosted access level, support tier, and eligibility."
+        "Defines hosted access level, support tier, and eligibility.",
+        "Session follow-up: now also includes pricing tier and solidarity description (see pr_1581_billing_plan_solidarity_detail for a plan where these are non-default)."
       ],
       "target": {
         "x": 732.0,
         "y": 187.0,
         "width": 636.0,
-        "height": 371.1875,
+        "height": 435.1875,
         "right": 1368.0,
-        "bottom": 558.1875,
+        "bottom": 622.1875,
         "center_x": 1050.0,
-        "center_y": 372.59375
+        "center_y": 404.59375
       },
       "avoid": {
         "x": 732.0,
         "y": 187.0,
         "width": 636.0,
-        "height": 371.1875,
+        "height": 435.1875,
         "right": 1368.0,
-        "bottom": 558.1875,
+        "bottom": 622.1875,
         "center_x": 1050.0,
-        "center_y": 372.59375
+        "center_y": 404.59375
       },
       "placement": {
         "side": "below",
         "x": 860.0,
-        "y": 578.19,
+        "y": 642.19,
         "width": 380,
-        "height": 210,
-        "score": 902.8125
-      }
-    },
-    {
-      "selector": "#recent_subscribers_card_billing_plan_b87fbce5-9808-4e20-af92-04bcf6955681",
-      "title": "Recent subscribers",
-      "bullets": [
-        "Shows who is currently using the plan.",
-        "Helps reviewers connect plan configuration to real stakeholders."
-      ],
-      "target": {
-        "x": 72.0,
-        "y": 738.1875,
-        "width": 1296.0,
-        "height": 124.0,
-        "right": 1368.0,
-        "bottom": 862.1875,
-        "center_x": 720.0,
-        "center_y": 800.1875
-      },
-      "avoid": {
-        "x": 72.0,
-        "y": 738.1875,
-        "width": 1296.0,
-        "height": 124.0,
-        "right": 1368.0,
-        "bottom": 862.1875,
-        "center_x": 720.0,
-        "center_y": 800.1875
-      },
-      "placement": {
-        "side": "below",
-        "x": 530.0,
-        "y": 882.19,
-        "width": 380,
-        "height": 210,
-        "score": 598.8125
+        "height": 366,
+        "score": 838.8125
       }
     }
   ]

@@ -50,6 +50,21 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       }
     )
   end
+  let!(:solidarity_plan) do
+    create(
+      :better_together_billing_plan,
+      identifier: 'harbour-solidarity',
+      name: 'Harbour Solidarity',
+      amount_cents: 2_500,
+      metadata: {
+        'participant_summary' => 'A reduced-contribution option for smaller co-ops and community groups.',
+        'participant_benefits' => ['Hosted community access', 'Steward support'],
+        'beneficiary_label' => 'Community access',
+        'pricing_tier' => 'solidarity_small',
+        'solidarity_description' => 'For co-ops and community groups with fewer than 20 active members.'
+      }
+    )
+  end
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
@@ -77,21 +92,24 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
           { title: 'Hosted plan status',
             description: 'This card translates billing into plain operational terms: whether the hosted community is active, what support tier it has, and whether platform provisioning is allowed.' },
           { title: 'Current subscription',
-            description: 'This section makes sponsorship visible. If another person or community is paying, the page offers explicit takeover actions instead of assuming billing ownership.' },
+            description: 'This section makes sponsorship visible. If another person or community is paying, the page offers plain-language takeover actions instead of assuming billing ownership. Session follow-up: the takeover copy no longer references internal terms like "Phase 1" or "replacement checkout" ("Have this community pay for itself", "Let Collective Budget pay instead"), and the candidate list is now limited to communities the viewer actually stewards.' },
           { title: 'Merchant account',
             description: 'Hosted billing and payout onboarding are intentionally separate. A community can have hosted access without yet being ready to receive payouts.' },
           { title: 'Billing activity alerts',
             description: 'This gives operators a plain dashboard for recent webhook trouble, including failures that may require replay or reconciliation.' },
           { title: 'Available hosted plans',
-            description: 'The plan table explains what each recurring plan supports and which checkout path will charge the selected payer.' }
+            description: 'The plan table explains what each recurring plan supports and which checkout path will charge the selected payer.' },
+          { title: 'Solidarity pricing tier',
+            description: 'Session follow-up: plans with a non-standard pricing_tier now show a badge and the plan\'s own solidarity_description directly on this table, surfacing a value that previously only existed in the admin plan editor. It sorts to the top row of "Available hosted plans" (lowest amount_cents first) but falls below the fixed screenshot viewport on this page, so it has no callout box here — see pr_1581_billing_plan_solidarity_detail for the dedicated, annotated view of these fields.' }
         ],
-        accessibility_notes: 'All annotated targets use stable IDs or semantic classes. The page uses native headings, buttons, and table semantics so non-technical reviewers can cross-reference the screenshot with the live UI.'
+        accessibility_notes: 'All annotated targets use stable IDs or semantic classes. The page uses native headings, buttons, and table semantics so non-technical reviewers can cross-reference the screenshot with the live UI. Session follow-up: the billing activity alert banners now carry role="alert" so assistive technology announces dead-letter/repeated-failure/unresolved-drift states.'
       }
     ) do
       capybara_login_as_platform_manager
       visit better_together.community_billing_path(community, locale: I18n.default_locale)
       expect(page).to have_css('#community-billing-plans-table')
       expect(page).to have_text('Collective Budget')
+      expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
     end
   end
 
@@ -141,11 +159,13 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
         journey_step: 'A person reviews their own billing to see personal access, sponsorship commitments, and any payout onboarding status.',
         callouts: [
           { title: 'Personal subscription',
-            description: 'This card is the person-facing equivalent of the community subscription card. It focuses on the individual payer and their current hosted support plan.' },
+            description: 'This card is the person-facing equivalent of the community subscription card. It focuses on the individual payer and their current hosted support plan. Session follow-up: the subscription status and merchant account status badges on this page were rendering the raw Stripe/Pay enum value (e.g. "active") instead of the translated label used everywhere else; both now go through the same t() lookup as the community billing page.' },
           { title: 'Sponsored communities',
             description: 'This is the key new accountability surface for sponsorship. A person can now see which communities their payment is supporting and jump directly to those community billing records.' },
           { title: 'Personal plans',
-            description: 'Personal recurring plans are separated from community plans so the review packet makes clear who each plan is designed to support.' }
+            description: 'Personal recurring plans are separated from community plans so the review packet makes clear who each plan is designed to support.' },
+          { title: 'Solidarity pricing tier',
+            description: 'Session follow-up: same as the community billing page — a plan\'s pricing_tier and solidarity_description are now visible here instead of only in the admin plan editor. As on the community billing page, it falls below the fixed screenshot viewport here; see pr_1581_billing_plan_solidarity_detail for the annotated view.' }
         ],
         accessibility_notes: 'The sponsored communities list and plan table both use stable identifiers and native list/table semantics for deterministic review coverage.'
       }
@@ -154,6 +174,7 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       visit better_together.person_billing_path(platform_manager.person, locale: I18n.default_locale)
       expect(page).to have_css('#person-billing-plans-table')
       expect(page).to have_text('Neighbourhood Pantry')
+      expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
     end
   end
 
@@ -193,8 +214,7 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
         { selector: "##{ActionView::RecordIdentifier.dom_id(current_plan, :summary_card)}", title: 'Plan summary',
           bullets: ['Shows the immutable Stripe-linked pricing identifiers.', 'Confirms whether the plan is active.'] },
         { selector: "##{ActionView::RecordIdentifier.dom_id(current_plan, :metadata_card)}", title: 'Plan metadata',
-          bullets: ['Explains the plain-language copy shown to subscribers.', 'Defines hosted access level, support tier, and eligibility.'] },
-        { selector: "##{ActionView::RecordIdentifier.dom_id(current_plan, :recent_subscribers_card)}", title: 'Recent subscribers', bullets: ['Shows who is currently using the plan.', 'Helps reviewers connect plan configuration to real stakeholders.'] }
+          bullets: ['Explains the plain-language copy shown to subscribers.', 'Defines hosted access level, support tier, and eligibility.', 'Session follow-up: now also includes pricing tier and solidarity description (see pr_1581_billing_plan_solidarity_detail for a plan where these are non-default).'] }
       ],
       narrative: {
         title: 'Billing plan detail',
@@ -206,7 +226,7 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
           { title: 'Plan metadata',
             description: 'These fields are what community members actually feel. They define the support promise, hosted access language, and who is allowed to be the payer.' },
           { title: 'Recent subscribers',
-            description: 'Reviewers can see that subscriptions may belong to people or communities, which is central to the multi-owner billing foundation introduced in this PR.' }
+            description: 'Reviewers can see that subscriptions may belong to people or communities, which is central to the multi-owner billing foundation introduced in this PR. Session follow-up: the two new metadata rows push this card below the fixed screenshot viewport on this particular plan, so it no longer has its own callout box here — the card and its content are unchanged, just further down the page than this capture shows.' }
         ],
         accessibility_notes: 'The detail page uses definition lists with stable field IDs so reviewers can reliably map screenshot annotations back to individual data points.'
       }
@@ -215,6 +235,35 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       visit better_together.billing_plan_path(current_plan, locale: I18n.default_locale)
       expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(current_plan, :metadata_card)}")
       expect(page).to have_text('Hosted community access')
+    end
+  end
+
+  it 'captures the billing plan detail page for a solidarity-tier plan' do
+    capture_docs_screenshot(
+      'pr_1581_billing_plan_solidarity_detail',
+      callouts: [
+        { selector: "##{ActionView::RecordIdentifier.dom_id(solidarity_plan, :pricing_tier)}", title: 'Pricing tier',
+          bullets: ['Session follow-up: this field existed on every plan already, but the admin plan show page never rendered it — added alongside solidarity description below.'] },
+        { selector: "##{ActionView::RecordIdentifier.dom_id(solidarity_plan, :solidarity_description)}", title: 'Solidarity description',
+          bullets: ['The admin form\'s own hint text said this is "shown to potential subscribers", but nothing actually rendered it anywhere until this session\'s follow-up.', 'Now shown here for the host operator, and on the subscriber-facing plan card (see the community and personal billing overview screenshots).'] }
+      ],
+      narrative: {
+        title: 'Billing plan detail — solidarity tier',
+        audience: %w[operator board_member],
+        journey_step: 'A host steward reviews a solidarity-tier plan to confirm the reduced-contribution framing a subscriber will see.',
+        callouts: [
+          { title: 'Pricing tier',
+            description: 'Distinguishes this plan from the standard tier so operators can see at a glance which plans offer reduced-contribution access.' },
+          { title: 'Solidarity description',
+            description: 'Free-text field explaining who the reduced tier is for. Previously editable in the admin form but invisible everywhere else — this screenshot documents it finally being rendered.' }
+        ],
+        accessibility_notes: 'Both fields use the same stable dom_id + definition-list pattern as the rest of the metadata card.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.billing_plan_path(solidarity_plan, locale: I18n.default_locale)
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(solidarity_plan, :pricing_tier)}", text: 'Solidarity — Small')
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(solidarity_plan, :solidarity_description)}", text: 'fewer than 20 active members')
     end
   end
 

@@ -13,9 +13,12 @@ callouts:
     the hosted community is active, what support tier it has, and whether platform
     provisioning is allowed.'
 - :title: Current subscription
-  :description: This section makes sponsorship visible. If another person or community
-    is paying, the page offers explicit takeover actions instead of assuming billing
-    ownership.
+  :description: 'This section makes sponsorship visible. If another person or community
+    is paying, the page offers plain-language takeover actions instead of assuming
+    billing ownership. Session follow-up: the takeover copy no longer references internal
+    terms like "Phase 1" or "replacement checkout" ("Have this community pay for itself",
+    "Let Collective Budget pay instead"), and the candidate list is now limited to
+    communities the viewer actually stewards.'
 - :title: Merchant account
   :description: Hosted billing and payout onboarding are intentionally separate. A
     community can have hosted access without yet being ready to receive payouts.
@@ -25,8 +28,18 @@ callouts:
 - :title: Available hosted plans
   :description: The plan table explains what each recurring plan supports and which
     checkout path will charge the selected payer.
-accessibility_notes: All annotated targets use stable IDs or semantic classes. The
+- :title: Solidarity pricing tier
+  :description: 'Session follow-up: plans with a non-standard pricing_tier now show
+    a badge and the plan''s own solidarity_description directly on this table, surfacing
+    a value that previously only existed in the admin plan editor. It sorts to the
+    top row of "Available hosted plans" (lowest amount_cents first) but falls below
+    the fixed screenshot viewport on this page, so it has no callout box here — see
+    pr_1581_billing_plan_solidarity_detail for the dedicated, annotated view of these
+    fields.'
+accessibility_notes: 'All annotated targets use stable IDs or semantic classes. The
   page uses native headings, buttons, and table semantics so non-technical reviewers
-  can cross-reference the screenshot with the live UI.
+  can cross-reference the screenshot with the live UI. Session follow-up: the billing
+  activity alert banners now carry role="alert" so assistive technology announces
+  dead-letter/repeated-failure/unresolved-drift states.'
 slug: pr_1581_community_billing_overview
 device: desktop
