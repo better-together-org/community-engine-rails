@@ -1858,6 +1858,22 @@ uk:
         errors:
           not_authorized: 'дзеркалювання %{content_type} не дозволено: %{reason}'
     federation_hub:
+      activity:
+        back_to_hub: Повернутися до Центру федерації
+        filters:
+          any_content_type: Будь-який тип контенту
+          any_direction: Будь-який напрямок
+          apply: Застосувати фільтр
+          content_type: Тип контенту
+          direction: Напрямок
+          incoming: Вхідний
+          outgoing: Вихідний
+        keys:
+          platform_connection_sync_failed: Синхронізація не вдалася
+          platform_connection_sync_started: Синхронізацію розпочато
+          platform_connection_sync_succeeded: Синхронізація успішна
+        no_activity: Ще немає активності федерації.
+        page_title: Активність федерації
       connection_health_card:
         active_badge:
           few: "%{count} активні з'єднання"
@@ -1884,6 +1900,7 @@ uk:
         view_all_connections: Переглянути всі з'єднання
       index:
         page_title: Центр федерації
+        view_activity: Переглянути активність
       my_content_panel:
         edit_preference: Змінити це
         federate_content_off: Федерацію вимкнено для вашого контенту

@@ -144,6 +144,24 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.last_sync_error_at_time).to be_present
       expect(connection.last_synced_at_time).to be_present
     end
+
+    it 'records an Activity for each sync lifecycle transition' do
+      connection = create(:better_together_platform_connection)
+      own_activities = -> { BetterTogether::Activity.where(trackable: connection) }
+
+      connection.mark_sync_started!(cursor: 'cursor-1')
+      expect(own_activities.call.pluck(:key)).to contain_exactly('platform_connection.sync_started')
+
+      connection.mark_sync_succeeded!(cursor: 'cursor-2', item_count: 3)
+      succeeded = own_activities.call.find_by(key: 'platform_connection.sync_succeeded')
+      expect(succeeded.parameters).to eq('item_count' => 3)
+
+      connection.mark_sync_failed!(message: 'Remote timeout', cursor: 'cursor-3')
+      failed = own_activities.call.find_by(key: 'platform_connection.sync_failed')
+      expect(failed.parameters).to eq('message' => 'Remote timeout')
+
+      expect(own_activities.call.count).to eq(3)
+    end
   end
 
   describe 'oauth credentials encryption' do

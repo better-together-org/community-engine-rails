@@ -1863,6 +1863,22 @@ fr:
           not_authorized: 'la mise en miroir de %{content_type} n''est pas autorisée
             : %{reason}'
     federation_hub:
+      activity:
+        back_to_hub: Retour au centre de fédération
+        filters:
+          any_content_type: Tout type de contenu
+          any_direction: Toute direction
+          apply: Filtrer
+          content_type: Type de contenu
+          direction: Direction
+          incoming: Entrant
+          outgoing: Sortant
+        keys:
+          platform_connection_sync_failed: Synchronisation échouée
+          platform_connection_sync_started: Synchronisation démarrée
+          platform_connection_sync_succeeded: Synchronisation réussie
+        no_activity: Aucune activité de fédération pour le moment.
+        page_title: Activité de fédération
       connection_health_card:
         active_badge:
           one: 1 connexion active
@@ -1881,6 +1897,7 @@ fr:
         view_all_connections: Voir toutes les connexions
       index:
         page_title: Centre de fédération
+        view_activity: Voir l'activité
       my_content_panel:
         edit_preference: Modifier ce réglage
         federate_content_off: La fédération est désactivée pour votre contenu

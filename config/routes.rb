@@ -207,6 +207,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         scope path: 'federation-hub' do
           get '/', to: 'federation_hub#index', as: :federation_hub
+          get 'activity', to: 'federation_hub#activity', as: :federation_hub_activity
         end
 
         resources :notifications, only: %i[index] do

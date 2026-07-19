@@ -15,7 +15,23 @@ module BetterTogether
       @connection_health_summary = build_connection_health_summary if @show_connection_health_section
     end
 
+    def activity
+      authorize [:federation_hub], :activity?, policy_class: FederationHubPolicy
+
+      @show_connection_health_section = show_connection_health_section?
+      @activities = FederationHub::ActivityFeedService.call(
+        person: helpers.current_person,
+        include_admin_feed: @show_connection_health_section,
+        filters: activity_filter_params,
+        page: params[:page]
+      )
+    end
+
     private
+
+    def activity_filter_params
+      params.permit(:platform_id, :direction, :content_type).to_h.symbolize_keys
+    end
 
     def show_connection_health_section?
       FederationHubPolicy.new(pundit_user, :federation_hub).manage_connections_section?

@@ -1838,6 +1838,22 @@ en:
         errors:
           not_authorized: "%{content_type} mirroring not authorized: %{reason}"
     federation_hub:
+      activity:
+        back_to_hub: Back to Federation Hub
+        filters:
+          any_content_type: Any content type
+          any_direction: Any direction
+          apply: Filter
+          content_type: Content type
+          direction: Direction
+          incoming: Incoming
+          outgoing: Outgoing
+        keys:
+          platform_connection_sync_failed: Sync failed
+          platform_connection_sync_started: Sync started
+          platform_connection_sync_succeeded: Sync succeeded
+        no_activity: No federation activity yet.
+        page_title: Federation Activity
       connection_health_card:
         active_badge:
           one: 1 active connection
@@ -1856,6 +1872,7 @@ en:
         view_all_connections: View all connections
       index:
         page_title: Federation Hub
+        view_activity: View activity
       my_content_panel:
         edit_preference: Change this
         federate_content_off: Federation disabled for your content

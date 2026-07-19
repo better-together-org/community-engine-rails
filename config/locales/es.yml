@@ -1854,6 +1854,22 @@ es:
         errors:
           not_authorized: 'la replicación de %{content_type} no está autorizada: %{reason}'
     federation_hub:
+      activity:
+        back_to_hub: Volver al Centro de Federación
+        filters:
+          any_content_type: Cualquier tipo de contenido
+          any_direction: Cualquier dirección
+          apply: Filtrar
+          content_type: Tipo de contenido
+          direction: Dirección
+          incoming: Entrante
+          outgoing: Saliente
+        keys:
+          platform_connection_sync_failed: Sincronización fallida
+          platform_connection_sync_started: Sincronización iniciada
+          platform_connection_sync_succeeded: Sincronización exitosa
+        no_activity: Aún no hay actividad de federación.
+        page_title: Actividad de Federación
       connection_health_card:
         active_badge:
           one: 1 conexión activa
@@ -1872,6 +1888,7 @@ es:
         view_all_connections: Ver todas las conexiones
       index:
         page_title: Centro de Federación
+        view_activity: Ver actividad
       my_content_panel:
         edit_preference: Cambiar esto
         federate_content_off: La federación está deshabilitada para tu contenido
