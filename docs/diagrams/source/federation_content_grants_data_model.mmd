@@ -1,0 +1,30 @@
+erDiagram
+  EXT_POST ||--o{ FEDERATION_CONTENT_GRANTS : "federatable / federatable_id, federatable_type"
+  EXT_PAGE ||--o{ FEDERATION_CONTENT_GRANTS : "federatable / federatable_id, federatable_type"
+  EXT_EVENT ||--o{ FEDERATION_CONTENT_GRANTS : "federatable / federatable_id, federatable_type"
+  EXT_PLATFORM_CONNECTION ||--o{ FEDERATION_CONTENT_GRANTS : "platform_connection / platform_connection_id"
+
+  FEDERATION_CONTENT_GRANTS {
+    federatable_id uuid
+    federatable_type string
+    platform_connection_id uuid
+    status string "allowed default, or denied"
+  }
+
+  EXT_POST {
+    federation_visibility string "platform_default / federate / no_federate"
+  }
+
+  EXT_PAGE {
+    federation_visibility string "platform_default / federate / no_federate"
+  }
+
+  EXT_EVENT {
+    federation_visibility string "platform_default / federate / no_federate"
+  }
+
+  EXT_PLATFORM_CONNECTION {
+    share_posts boolean
+    share_pages boolean
+    share_events boolean
+  }

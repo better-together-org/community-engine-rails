@@ -415,6 +415,62 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.reload.name).to eq('Updated Coverage Event')
       end
 
+      it 'renders the federation_visibility field on edit', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('event[federation_visibility]')
+      end
+
+      it 'renders a per-connection grant row for each active connection allowing events', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+        connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_events: true)
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("event[federation_content_grants_by_connection][#{connection.id}]")
+      end
+
+      it 'persists an explicit federation_visibility override on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Coverage Event')
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_visibility: 'no_federate'
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload).to be_federation_visibility_no_federate
+      end
+
+      it 'persists a per-connection federation grant on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Grant Coverage Event')
+        connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_events: true)
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_content_grants_by_connection: { connection.id => 'denied' }
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload.federation_grant_status_for(connection)).to eq('denied')
+      end
+
       it 'destroys an unprotected event', :aggregate_failures do
         event = create(:better_together_event,
                        creator: manager_user.person,

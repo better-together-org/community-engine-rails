@@ -705,6 +705,10 @@ es:
       noticed/event: Evento
       noticed/notification: Notificación
   attributes:
+    federation_visibility_list:
+      federate: Federar siempre
+      no_federate: No federar nunca
+      platform_default: Usar el valor predeterminado de la plataforma
     privacy_list:
       community: Comunidad
       private: Privado
@@ -1817,6 +1821,21 @@ es:
         person: Persona
         status: Estado
       updated: Acceso a funciones actualizado.
+    federatable:
+      grant_statuses:
+        allowed: Federar siempre
+        denied: No federar nunca
+        platform_default: Usar el valor predeterminado de la plataforma
+      hints:
+        federation_content_grants: Anula la federación de este elemento para una conexión
+          específica, sin cambiar la visibilidad de federación general indicada arriba.
+        federation_visibility: Anula la configuración de federación de esta plataforma
+          para este elemento en concreto. «Usar el valor predeterminado de la plataforma»
+          sigue tu preferencia de federación de cuenta y la configuración de uso compartido
+          de contenido de cada conexión.
+      labels:
+        federation_content_grants: Federación por conexión
+        federation_visibility: Visibilidad de la federación
     federation:
       backfill:
         messages:
@@ -1841,6 +1860,49 @@ es:
           post: publicación
         errors:
           not_authorized: 'la replicación de %{content_type} no está autorizada: %{reason}'
+    federation_hub:
+      activity:
+        back_to_hub: Volver al Centro de Federación
+        filters:
+          any_content_type: Cualquier tipo de contenido
+          any_direction: Cualquier dirección
+          apply: Filtrar
+          content_type: Tipo de contenido
+          direction: Dirección
+          incoming: Entrante
+          outgoing: Saliente
+        keys:
+          platform_connection_sync_failed: Sincronización fallida
+          platform_connection_sync_started: Sincronización iniciada
+          platform_connection_sync_succeeded: Sincronización exitosa
+        no_activity: Aún no hay actividad de federación.
+        page_title: Actividad de Federación
+      connection_health_card:
+        active_badge:
+          one: 1 conexión activa
+          other: "%{count} conexiones activas"
+        failed_badge:
+          one: 1 conexión con sincronización fallida
+          other: "%{count} conexiones con sincronización fallida"
+        pending_badge:
+          one: 1 conexión pendiente
+          other: "%{count} conexiones pendientes"
+        review_link: Revisar conexiones
+        title: Plataformas conectadas
+        total_badge:
+          one: 1 conexión en total
+          other: "%{count} conexiones en total"
+        view_all_connections: Ver todas las conexiones
+      index:
+        page_title: Centro de Federación
+        view_activity: Ver actividad
+      my_content_panel:
+        edit_preference: Cambiar esto
+        federate_content_off: La federación está deshabilitada para tu contenido
+        federate_content_on: La federación está habilitada para tu contenido
+        no_recent_items: Aún no has creado ningún contenido federable.
+        recent_items: Actualizado recientemente
+        title: Estado de federación de mi contenido
     feedback_routing:
       audience:
         community_stewards: responsables de contenido de la comunidad
@@ -2708,6 +2770,9 @@ es:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: '"%{title}" ahora está configurado en %{current_visibility}'
+        title: 'Configuración de federación actualizada: %{current_visibility}'
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
@@ -4935,6 +5000,7 @@ es:
       community_hub: Community Hub
       events: Eventos
       exchange_hub: Centro de intercambio
+      federation_hub: Centro de Federación
       posts: Publicaciones
   navigation_item:
     form_hints:

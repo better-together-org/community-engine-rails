@@ -705,6 +705,10 @@ fr:
       noticed/event: Événement
       noticed/notification: Notification
   attributes:
+    federation_visibility_list:
+      federate: Toujours fédérer
+      no_federate: Ne jamais fédérer
+      platform_default: Utiliser le paramètre par défaut de la plateforme
     privacy_list:
       community: Communauté
       private: Privé
@@ -1825,6 +1829,22 @@ fr:
         person: Personne
         status: Statut
       updated: Accès aux fonctionnalités mis à jour.
+    federatable:
+      grant_statuses:
+        allowed: Toujours fédérer
+        denied: Ne jamais fédérer
+        platform_default: Utiliser le paramètre par défaut de la plateforme
+      hints:
+        federation_content_grants: Remplace la fédération de cet élément pour une
+          connexion spécifique, sans modifier la visibilité de fédération générale
+          indiquée ci-dessus.
+        federation_visibility: Remplace les paramètres de fédération de cette plateforme
+          pour cet élément en particulier. « Utiliser le paramètre par défaut de la
+          plateforme » suit votre préférence de fédération de compte et les paramètres
+          de partage de contenu de chaque connexion.
+      labels:
+        federation_content_grants: Fédération par connexion
+        federation_visibility: Visibilité de la fédération
     federation:
       backfill:
         messages:
@@ -1850,6 +1870,49 @@ fr:
         errors:
           not_authorized: 'la mise en miroir de %{content_type} n''est pas autorisée
             : %{reason}'
+    federation_hub:
+      activity:
+        back_to_hub: Retour au centre de fédération
+        filters:
+          any_content_type: Tout type de contenu
+          any_direction: Toute direction
+          apply: Filtrer
+          content_type: Type de contenu
+          direction: Direction
+          incoming: Entrant
+          outgoing: Sortant
+        keys:
+          platform_connection_sync_failed: Synchronisation échouée
+          platform_connection_sync_started: Synchronisation démarrée
+          platform_connection_sync_succeeded: Synchronisation réussie
+        no_activity: Aucune activité de fédération pour le moment.
+        page_title: Activité de fédération
+      connection_health_card:
+        active_badge:
+          one: 1 connexion active
+          other: "%{count} connexions actives"
+        failed_badge:
+          one: 1 connexion en échec de synchronisation
+          other: "%{count} connexions en échec de synchronisation"
+        pending_badge:
+          one: 1 connexion en attente
+          other: "%{count} connexions en attente"
+        review_link: Examiner les connexions
+        title: Plateformes connectées
+        total_badge:
+          one: 1 connexion au total
+          other: "%{count} connexions au total"
+        view_all_connections: Voir toutes les connexions
+      index:
+        page_title: Centre de fédération
+        view_activity: Voir l'activité
+      my_content_panel:
+        edit_preference: Modifier ce réglage
+        federate_content_off: La fédération est désactivée pour votre contenu
+        federate_content_on: La fédération est activée pour votre contenu
+        no_recent_items: Vous n'avez pas encore créé de contenu fédérable.
+        recent_items: Mis à jour récemment
+        title: Statut de fédération de votre contenu
     feedback_routing:
       audience:
         community_stewards: responsables du contenu de la communauté
@@ -2724,6 +2787,9 @@ fr:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: "« %{title} » est désormais réglé sur %{current_visibility}"
+        title: 'Paramètre de fédération mis à jour : %{current_visibility}'
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
@@ -4969,6 +5035,7 @@ fr:
       community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
+      federation_hub: Centre de fédération
       posts: Articles
   navigation_item:
     form_hints:

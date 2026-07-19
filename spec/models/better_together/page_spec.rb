@@ -242,6 +242,26 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe 'federation_visibility (Federatable)' do
+        it 'defaults to platform_default' do
+          expect(create(:better_together_page).federation_visibility).to eq('platform_default')
+        end
+
+        it 'accepts the federate and no_federate overrides' do
+          expect(create(:better_together_page, federation_visibility: 'federate')).to be_federation_visibility_federate
+          expect(create(:better_together_page,
+                        federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+        end
+
+        it 'reports an override only for federate/no_federate' do
+          expect(create(:better_together_page,
+                        federation_visibility: 'platform_default').federation_visibility_override?).to be false
+          expect(create(:better_together_page, federation_visibility: 'federate').federation_visibility_override?).to be true
+          expect(create(:better_together_page,
+                        federation_visibility: 'no_federate').federation_visibility_override?).to be true
+        end
+      end
+
       describe 'community assignment (CommunityAssignable)' do
         let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
         let(:remote_platform) { create(:better_together_platform, :external) }

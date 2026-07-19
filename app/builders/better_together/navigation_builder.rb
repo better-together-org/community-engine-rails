@@ -408,6 +408,18 @@ module BetterTogether
                 navigation_area: area,
                 privacy: 'private',
                 visibility_strategy: 'authenticated'
+              },
+              {
+                identifier: 'federation-hub',
+                title_en: I18n.t('navigation.header.federation_hub', default: 'Federation Hub'),
+                slug_en: 'federation-hub',
+                position: 4,
+                item_type: 'link',
+                route_name: 'federation_hub_url',
+                visible: true,
+                navigation_area: area,
+                privacy: 'private',
+                visibility_strategy: 'authenticated'
               }
             ]
 
