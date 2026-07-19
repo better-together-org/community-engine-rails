@@ -2640,6 +2640,15 @@ en:
     new_message_notifier:
       from_html: 'From: %{sender}'
       new_message: New Message
+    new_platform_setup_steps:
+      already_completed: This platform has already been set up.
+      create_platform_identity:
+        flash:
+          please_address_errors: Please address the errors below.
+      create_steward_account:
+        flash:
+          please_address_errors: Please address the errors below.
+      success_message: Your new platform has been provisioned successfully.
     not_found:
       description: The page you are looking for might have been removed, had its name
         changed, or is temporarily unavailable.
@@ -4143,6 +4152,106 @@ en:
             have a home base where everyone can gather and collaborate.
           progress:
             step: Step 1 of 2
+      new_platform_setup:
+        errors:
+          header_plural: "%{count} errors prevented this from being saved:"
+        platform_identity:
+          buttons:
+            next: Next Step
+          fields:
+            description:
+              help: This helps visitors understand what this platform is all about.
+              label: How would you describe this platform?
+              placeholder: A place where neighbors and friends support each other.
+            host_url:
+              help: This will be the platform's web address — its front door on the
+                internet. You can add subdomain aliases or a custom domain later.
+              label: Where can people find this platform online?
+              placeholder: https://tenant.example.com
+            name:
+              help: This name will appear at the top of the platform and welcome everyone
+                who arrives.
+              label: What should we call this platform?
+              placeholder: 'Example: The Community Hall'
+            privacy:
+              help: Choose whether this space is open to the public or invitation-only.
+              label: Who can visit this space?
+            time_zone:
+              help: This helps keep events and notifications in sync for everyone
+                on this platform.
+              label: Which time zone should this platform use?
+          hero:
+            subtitle: Let's create a welcoming home for this community to connect,
+              share, and thrive.
+            title: Platform Identity
+          intro: A strong platform starts with a solid foundation. Let's begin by
+            filling in a few details.
+          progress:
+            step_name: Platform identity
+        progress:
+          nav_label: New platform setup steps
+          step: Step %{current} of %{total}
+        steward_account:
+          buttons:
+            submit: Create Steward Account
+          fields:
+            description:
+              help: Introduce yourself to the community. Why are you starting this
+                platform? What's your vision?
+              label: Short Bio
+            email:
+              help: This will be the steward's primary login and how the platform
+                contacts them.
+              label: Email Address
+            identifier:
+              help: A unique handle (no spaces). This will appear in the steward's
+                profile URL and mentions.
+              label: Username
+            name:
+              help: The steward's real name or the name they want the community to
+                recognize them by.
+              label: Full Name
+            password:
+              help: The password must be at least %{min_length} characters long. Use
+                a mix of upper and lowercase letters, numbers, and symbols for extra
+                security.
+              label: Password
+            password_confirmation:
+              label: Confirm Password
+          hero:
+            subtitle: This is the first account on the new platform and gives full
+              control to manage settings, content, and members.
+            title: Create the Steward Account
+          intro: Let's set up the platform's steward account. This will be their personal
+            login and public profile as the platform's first steward.
+          profile_section:
+            help: These details will be visible to other members of the platform.
+              They can be edited later.
+            title: Steward Profile
+          progress:
+            step_name: Steward account
+        welcome:
+          buttons:
+            next: Next Step
+          fields:
+            locale:
+              help: Choose the language for the rest of this wizard.
+              label: Language
+          hero:
+            subtitle: This wizard provisions a brand-new tenant platform in a few
+              short steps.
+            title: Let's Set Up a New Platform
+          intro: Here's what's about to happen.
+          progress:
+            step_name: Welcome
+          what_happens_next:
+            domain: A domain is registered from the host URL you provide — subdomain
+              aliases or a custom domain can be added afterward from the platform's
+              Domains page.
+            identity: A new platform record is created with the name, description,
+              privacy, and time zone you choose.
+            steward: A steward account is created with full management access to the
+              new platform.
   community:
     create_failed: Create failed
     created: Created

@@ -1,0 +1,32 @@
+<%
+  # Phase 1 covers 3 steps; later phases (domain, invite_members,
+  # review_and_launch) extend this list — see the implementation plan's
+  # sequencing. Keep this identifier order in sync with
+  # NewPlatformSetupWizardBuilder's step_number order.
+  new_platform_setup_step_identifiers = %w[welcome platform_identity steward_account]
+  current_index = new_platform_setup_step_identifiers.index(current_step_identifier) || 0
+  total_steps = new_platform_setup_step_identifiers.size
+  percent = ((current_index + 1) / total_steps.to_f * 100).round
+%>
+<nav aria-label="<%= t('better_together.wizard_step_definitions.new_platform_setup.progress.nav_label') %>" class="mb-4">
+  <ol class="list-unstyled d-flex justify-content-between small mb-2">
+    <% new_platform_setup_step_identifiers.each_with_index do |identifier, index| %>
+      <li class="<%= 'fw-bold text-primary' if index == current_index %>"
+          <%= 'aria-current="step"'.html_safe if index == current_index %>>
+        <%= t("better_together.wizard_step_definitions.new_platform_setup.#{identifier}.progress.step_name") %>
+      </li>
+    <% end %>
+  </ol>
+  <div class="progress">
+    <div
+      class="progress-bar"
+      role="progressbar"
+      style="width: <%= percent %>%;"
+      aria-valuenow="<%= percent %>"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <%= t('.step', current: current_index + 1, total: total_steps) %>
+    </div>
+  </div>
+</nav>

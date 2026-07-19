@@ -2688,6 +2688,15 @@ fr:
     new_message_notifier:
       from_html: 'De : %{sender}'
       new_message: Nouveau message
+    new_platform_setup_steps:
+      already_completed: Cette plateforme a déjà été configurée.
+      create_platform_identity:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+      create_steward_account:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
+      success_message: Votre nouvelle plateforme a été provisionnée avec succès.
     not_found:
       description: The page you are looking for might have been removed, had its name
         changed, or is temporarily unavailable.
@@ -4241,6 +4250,111 @@ fr:
             vous aurez une base où tout le monde pourra se rassembler et collaborer.
           progress:
             step: Étape 1 sur 2
+      new_platform_setup:
+        errors:
+          header_plural: "%{count} erreurs ont empêché l'enregistrement :"
+        platform_identity:
+          buttons:
+            next: Étape suivante
+          fields:
+            description:
+              help: Cela aide les visiteurs à comprendre de quoi il s'agit dans cette
+                plateforme.
+              label: Comment décririez-vous cette plateforme ?
+              placeholder: Un endroit où les voisins et les amis se soutiennent mutuellement.
+            host_url:
+              help: Ce sera l'adresse web de la plateforme — sa porte d'entrée sur
+                internet. Vous pourrez ajouter des alias de sous-domaine ou un domaine
+                personnalisé plus tard.
+              label: Où peut-on trouver cette plateforme en ligne ?
+              placeholder: https://tenant.example.com
+            name:
+              help: Ce nom apparaîtra en haut de la plateforme et accueillera tous
+                ceux qui arrivent.
+              label: Comment devrions-nous appeler cette plateforme ?
+              placeholder: 'Exemple : La salle communautaire'
+            privacy:
+              help: Choisissez si cet espace est ouvert au public ou sur invitation
+                uniquement.
+              label: Qui peut visiter cet espace ?
+            time_zone:
+              help: Cela aide à maintenir les événements et les notifications synchronisés
+                pour tout le monde sur cette plateforme.
+              label: Quel fuseau horaire cette plateforme devrait-elle utiliser ?
+          hero:
+            subtitle: Créons un lieu accueillant pour que cette communauté se connecte,
+              partage et prospère.
+            title: Identité de la plateforme
+          intro: Une plateforme solide commence par une base solide. Commençons par
+            remplir quelques détails.
+          progress:
+            step_name: Identité de la plateforme
+        progress:
+          nav_label: Étapes de configuration de la nouvelle plateforme
+          step: Étape %{current} sur %{total}
+        steward_account:
+          buttons:
+            submit: Créer le compte du responsable
+          fields:
+            description:
+              help: Présentez-vous à la communauté. Pourquoi lancez-vous cette plateforme
+                ? Quelle est votre vision ?
+              label: Biographie courte
+            email:
+              help: Ce sera l'identifiant principal du responsable et la façon dont
+                la plateforme le contactera.
+              label: Adresse e-mail
+            identifier:
+              help: Un identifiant unique (sans espaces). Cela apparaîtra dans l'URL
+                du profil du responsable et les mentions.
+              label: Nom d'utilisateur
+            name:
+              help: Le vrai nom du responsable ou le nom qu'il souhaite que la communauté
+                reconnaisse.
+              label: Nom complet
+            password:
+              help: Le mot de passe doit contenir au moins %{min_length} caractères.
+                Utilisez un mélange de lettres majuscules et minuscules, de chiffres
+                et de symboles pour plus de sécurité.
+              label: Mot de passe
+            password_confirmation:
+              label: Confirmer le mot de passe
+          hero:
+            subtitle: Il s'agit du premier compte sur la nouvelle plateforme et il
+              donne un contrôle total pour gérer les paramètres, le contenu et les
+              membres.
+            title: Créez le compte du responsable
+          intro: Configurons le compte du responsable de la plateforme. Ce sera son
+            identifiant personnel et son profil public en tant que premier responsable
+            de la plateforme.
+          profile_section:
+            help: Ces détails seront visibles par les autres membres de la plateforme.
+              Ils pourront être modifiés plus tard.
+            title: Profil du responsable
+          progress:
+            step_name: Compte du responsable
+        welcome:
+          buttons:
+            next: Étape suivante
+          fields:
+            locale:
+              help: Choisissez la langue pour le reste de cet assistant.
+              label: Langue
+          hero:
+            subtitle: Cet assistant provisionne une toute nouvelle plateforme locataire
+              en quelques étapes rapides.
+            title: Configurons une nouvelle plateforme
+          intro: Voici ce qui va se passer.
+          progress:
+            step_name: Bienvenue
+          what_happens_next:
+            domain: Un domaine est enregistré à partir de l'URL fournie — des alias
+              de sous-domaine ou un domaine personnalisé pourront être ajoutés par
+              la suite depuis la page Domaines de la plateforme.
+            identity: Un nouvel enregistrement de plateforme est créé avec le nom,
+              la description, la confidentialité et le fuseau horaire que vous choisissez.
+            steward: Un compte de responsable est créé avec un accès de gestion complet
+              à la nouvelle plateforme.
   community:
     create_failed: Échec de la création
     created: Créé

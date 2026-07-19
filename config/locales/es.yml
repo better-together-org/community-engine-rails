@@ -2673,6 +2673,15 @@ es:
     new_message_notifier:
       from_html: 'De: %{sender}'
       new_message: Nuevo mensaje
+    new_platform_setup_steps:
+      already_completed: Esta plataforma ya ha sido configurada.
+      create_platform_identity:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+      create_steward_account:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+      success_message: Tu nueva plataforma se ha aprovisionado correctamente.
     not_found:
       description: La página que buscas pudo haber sido eliminada, cambiada o está
         temporalmente no disponible.
@@ -4209,6 +4218,108 @@ es:
             una base donde todos puedan reunirse y colaborar.
           progress:
             step: Paso 1 de 2
+      new_platform_setup:
+        errors:
+          header_plural: "%{count} errores impidieron que esto se guardara:"
+        platform_identity:
+          buttons:
+            next: Siguiente paso
+          fields:
+            description:
+              help: Esto ayuda a los visitantes a entender de qué se trata esta plataforma.
+              label: "¿Cómo describirías esta plataforma?"
+              placeholder: Un lugar donde vecinos y amigos se apoyan mutuamente.
+            host_url:
+              help: Esta será la dirección web de la plataforma, su puerta de entrada
+                en internet. Puedes añadir alias de subdominio o un dominio personalizado
+                más tarde.
+              label: "¿Dónde pueden encontrar esta plataforma en línea?"
+              placeholder: https://tenant.example.com
+            name:
+              help: Este nombre aparecerá en la parte superior de la plataforma y
+                dará la bienvenida a todos los que lleguen.
+              label: "¿Cómo deberíamos llamar a esta plataforma?"
+              placeholder: 'Ejemplo: El salón comunitario'
+            privacy:
+              help: Elige si este espacio está abierto al público o solo por invitación.
+              label: "¿Quién puede visitar este espacio?"
+            time_zone:
+              help: Esto ayuda a mantener los eventos y notificaciones sincronizados
+                para todos en esta plataforma.
+              label: "¿Qué zona horaria debería usar esta plataforma?"
+          hero:
+            subtitle: Creemos un hogar acogedor para que esta comunidad se conecte,
+              comparta y prospere.
+            title: Identidad de la plataforma
+          intro: Una plataforma sólida comienza con una base sólida. Comencemos completando
+            algunos detalles.
+          progress:
+            step_name: Identidad de la plataforma
+        progress:
+          nav_label: Pasos de configuración de la nueva plataforma
+          step: Paso %{current} de %{total}
+        steward_account:
+          buttons:
+            submit: Crear cuenta de responsable
+          fields:
+            description:
+              help: Preséntate a la comunidad. ¿Por qué estás iniciando esta plataforma?
+                ¿Cuál es tu visión?
+              label: Biografía corta
+            email:
+              help: Este será el inicio de sesión principal del responsable y la forma
+                en que la plataforma se comunicará con él.
+              label: Dirección de correo electrónico
+            identifier:
+              help: Un identificador único (sin espacios). Esto aparecerá en la URL
+                del perfil del responsable y en las menciones.
+              label: Nombre de usuario
+            name:
+              help: El nombre real del responsable o el nombre con el que quiere que
+                la comunidad lo reconozca.
+              label: Nombre completo
+            password:
+              help: La contraseña debe tener al menos %{min_length} caracteres. Usa
+                una combinación de letras mayúsculas y minúsculas, números y símbolos
+                para mayor seguridad.
+              label: Contraseña
+            password_confirmation:
+              label: Confirmar contraseña
+          hero:
+            subtitle: Esta es la primera cuenta en la nueva plataforma y otorga control
+              total para gestionar configuraciones, contenido y miembros.
+            title: Crea la cuenta de responsable
+          intro: Configuremos la cuenta de responsable de la plataforma. Este será
+            su inicio de sesión personal y perfil público como primer responsable
+            de la plataforma.
+          profile_section:
+            help: Estos detalles serán visibles para otros miembros de la plataforma.
+              Se pueden editar más tarde.
+            title: Perfil del responsable
+          progress:
+            step_name: Cuenta de responsable
+        welcome:
+          buttons:
+            next: Siguiente paso
+          fields:
+            locale:
+              help: Elige el idioma para el resto de este asistente.
+              label: Idioma
+          hero:
+            subtitle: Este asistente aprovisiona una plataforma de inquilino completamente
+              nueva en pocos pasos.
+            title: Configuremos una nueva plataforma
+          intro: Esto es lo que está por suceder.
+          progress:
+            step_name: Bienvenida
+          what_happens_next:
+            domain: Se registra un dominio a partir de la URL que proporciones — se
+              pueden añadir alias de subdominio o un dominio personalizado después
+              desde la página de Dominios de la plataforma.
+            identity: Se crea un nuevo registro de plataforma con el nombre, la descripción,
+              la privacidad y la zona horaria que elijas.
+            steward: Se crea una cuenta de responsable con acceso total de gestión
+              a la nueva plataforma.
   community:
     create_failed: Creación fallida
     created: Creado

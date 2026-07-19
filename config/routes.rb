@@ -587,7 +587,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         patch ':wizard_step_definition_id', to: 'wizard_steps#update'
       end
 
-      scope path: :w do
+      scope path: :w do # rubocop:todo Metrics/BlockLength
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
           get 'platform_details', to: 'setup_wizard_steps#platform_details',
@@ -610,6 +610,35 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               to: 'setup_wizard_steps#redirect',
               as: 'setup_wizard_step',
               constraints: { step: /platform_details|admin_creation/ }
+        end
+
+        # New tenant-platform provisioning wizard (Phase 1: welcome,
+        # platform_identity, steward_account). Unlike setup_wizard (a
+        # singleton scoped to the host platform), each run gets its own
+        # platform-scoped Wizard row, so every step route carries
+        # :platform_id (the draft Platform's slug/id) — see
+        # NewPlatformSetupStepsController#wizard/#target_platform.
+        get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
+
+        scope path: 'new_platform_setup/:platform_id' do
+          get 'welcome', to: 'new_platform_setup_steps#welcome',
+                         defaults: { wizard_step_definition_id: :welcome },
+                         as: :new_platform_setup_step_welcome
+          post 'welcome', to: 'new_platform_setup_steps#update_welcome',
+                          defaults: { wizard_step_definition_id: :welcome },
+                          as: :new_platform_setup_step_update_welcome
+          get 'platform_identity', to: 'new_platform_setup_steps#platform_identity',
+                                   defaults: { wizard_step_definition_id: :platform_identity },
+                                   as: :new_platform_setup_step_platform_identity
+          post 'platform_identity', to: 'new_platform_setup_steps#create_platform_identity',
+                                    defaults: { wizard_step_definition_id: :platform_identity },
+                                    as: :new_platform_setup_step_create_platform_identity
+          get 'steward_account', to: 'new_platform_setup_steps#steward_account',
+                                 defaults: { wizard_step_definition_id: :steward_account },
+                                 as: :new_platform_setup_step_steward_account
+          post 'steward_account', to: 'new_platform_setup_steps#create_steward_account',
+                                  defaults: { wizard_step_definition_id: :steward_account },
+                                  as: :new_platform_setup_step_create_steward_account
         end
       end
     end

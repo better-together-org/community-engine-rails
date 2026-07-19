@@ -1,0 +1,112 @@
+<% content_for :page_title do %>
+  <%= t('.hero.title') %>
+<% end %>
+
+<% min_password_length = Devise.password_length.min %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/progress', current_step_identifier: 'steward_account' %>
+
+      <h1 class="h3 mb-2"><%= t('.hero.title') %></h1>
+      <p class="text-muted mb-4"><%= t('.hero.subtitle') %></p>
+
+      <p class="mb-3"><%= t('.intro') %></p>
+
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/errors', form_object: @form %>
+
+      <%= form_for @form, url: new_platform_setup_step_create_steward_account_path(platform_id: params[:platform_id]),
+                  method: :post, class: 'needs-validation form', id: 'new-platform-steward-form',
+                  data: { controller: 'better_together--form-validation' } do |f| %>
+        <div class="mb-3">
+          <%= f.label :email, t('.fields.email.label'), for: 'new_platform_steward_email', class: 'form-label' %>
+          <%= f.email_field :email, autofocus: true, required: true, id: 'new_platform_steward_email',
+                            class: "form-control#{' is-invalid' if @form.errors[:email].any?}",
+                            'aria-describedby': 'new_platform_steward_email_help',
+                            data: { action: 'blur->better_together--form-validation#checkValidity' } %>
+          <small id="new_platform_steward_email_help" class="form-text text-muted"><%= t('.fields.email.help') %></small>
+        </div>
+
+        <div class="mb-3" data-controller="better_together--password-toggle">
+          <%= f.label :password, t('.fields.password.label'), for: 'new_platform_steward_password', class: 'form-label' %>
+          <div class="input-group">
+            <%= f.password_field :password, required: true, minlength: min_password_length,
+                  id: 'new_platform_steward_password',
+                  class: "form-control#{' is-invalid' if @form.errors[:password].any?}",
+                  'aria-describedby': 'new_platform_steward_password_help',
+                  data: { action: 'blur->better_together--form-validation#checkValidity',
+                          'better_together--form-validation-min-length-value': min_password_length,
+                          target: 'better_together--password-toggle.field' } %>
+            <button type="button" data-action="click->better_together--password-toggle#password"
+                    class="btn btn-outline-secondary" data-bs-toggle="tooltip"
+                    title="<%= t('devise.sessions.new.password.toggle') %>"
+                    aria-label="<%= t('devise.sessions.new.password.toggle') %>">
+              <i class="password-field-icon-1 far fa-eye-slash" aria-hidden="true" data-target="better_together--password-toggle.icon"></i>
+            </button>
+          </div>
+          <small id="new_platform_steward_password_help" class="form-text text-muted">
+            <%= t('.fields.password.help', min_length: min_password_length) %>
+          </small>
+        </div>
+
+        <div class="mb-3" data-controller="better_together--password-toggle">
+          <%= f.label :password_confirmation, t('.fields.password_confirmation.label'), for: 'new_platform_steward_password_confirmation', class: 'form-label' %>
+          <div class="input-group">
+            <%= f.password_field :password_confirmation, required: true, minlength: min_password_length,
+                  id: 'new_platform_steward_password_confirmation',
+                  class: "form-control#{' is-invalid' if @form.errors[:password_confirmation].any?}",
+                  data: { action: 'blur->better_together--form-validation#checkValidity',
+                          'better_together--form-validation-min-length-value': min_password_length,
+                          target: 'better_together--password-toggle.field' } %>
+            <button type="button" data-action="click->better_together--password-toggle#password"
+                    class="btn btn-outline-secondary" data-bs-toggle="tooltip"
+                    title="<%= t('devise.sessions.new.password.toggle') %>"
+                    aria-label="<%= t('devise.sessions.new.password.toggle') %>">
+              <i class="password-field-icon-1 far fa-eye-slash" aria-hidden="true" data-target="better_together--password-toggle.icon"></i>
+            </button>
+          </div>
+        </div>
+
+        <h2 class="h5 mt-4 mb-3"><%= t('.profile_section.title') %></h2>
+        <p class="small text-muted"><%= t('.profile_section.help') %></p>
+
+        <%= f.fields_for :person do |person_form| %>
+          <div class="mb-3">
+            <%= person_form.label :name, t('.fields.name.label'), for: 'new_platform_steward_person_name', class: 'form-label' %>
+            <%= person_form.text_field :name, required: true, id: 'new_platform_steward_person_name',
+                  class: "form-control#{' is-invalid' if @form.errors[:name].any?}",
+                  'aria-describedby': 'new_platform_steward_person_name_help',
+                  data: { action: 'blur->better_together--form-validation#checkValidity' } %>
+            <small id="new_platform_steward_person_name_help" class="form-text text-muted"><%= t('.fields.name.help') %></small>
+          </div>
+
+          <div class="mb-3">
+            <%= person_form.label :identifier, t('.fields.identifier.label'), for: 'new_platform_steward_person_identifier', class: 'form-label' %>
+            <%= person_form.text_field :identifier, required: true, id: 'new_platform_steward_person_identifier',
+                  class: "form-control#{' is-invalid' if @form.errors[:identifier].any?}",
+                  'aria-describedby': 'new_platform_steward_person_identifier_help' %>
+            <small id="new_platform_steward_person_identifier_help" class="form-text text-muted">
+              <%= t('.fields.identifier.help') %>
+            </small>
+          </div>
+
+          <div class="mb-3">
+            <%= person_form.label :description, t('.fields.description.label'), for: 'new_platform_steward_person_description', class: 'form-label' %>
+            <%= person_form.text_area :description, required: true, rows: 3, id: 'new_platform_steward_person_description',
+                  class: "form-control#{' is-invalid' if @form.errors[:description].any?}",
+                  'aria-describedby': 'new_platform_steward_person_description_help',
+                  data: { action: 'blur->better_together--form-validation#checkValidity' } %>
+            <small id="new_platform_steward_person_description_help" class="form-text text-muted">
+              <%= t('.fields.description.help') %>
+            </small>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= f.submit t('.buttons.submit'), class: 'btn btn-primary w-100' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
