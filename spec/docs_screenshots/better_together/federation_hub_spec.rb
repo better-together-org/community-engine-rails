@@ -41,6 +41,11 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
     expect(ENV.fetch('RUN_DOCS_SCREENSHOTS', nil)).to eq('1')
   end
 
+  it 'captures the per-connection federation grants matrix on the post edit form' do
+    capture_post_federation_content_grants_field
+    expect(ENV.fetch('RUN_DOCS_SCREENSHOTS', nil)).to eq('1')
+  end
+
   private
 
   def capture_docs_screenshot(slug, feature_set:, callouts: [], narrative: nil, &)
@@ -117,6 +122,20 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
     )
   end
 
+  def second_peer_platform
+    @second_peer_platform ||= create(
+      :better_together_platform, name: 'Riverside Neighbours Collective', external: true, privacy: 'private'
+    )
+  end
+
+  def second_connection
+    @second_connection ||= create(
+      :better_together_platform_connection, :active,
+      source_platform: host_platform, target_platform: second_peer_platform,
+      share_posts: true, content_sharing_policy: 'mirror_network_feed'
+    )
+  end
+
   # rubocop:disable Metrics/AbcSize
   def seed_federation_hub_state!
     BetterTogether::AccessControlBuilder.seed_data
@@ -126,6 +145,12 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
     BetterTogether::Activity.create!(trackable: federated_post, key: 'post.create', owner: member.person)
     excluded_page
     connection.mark_sync_succeeded!(item_count: 12)
+    second_connection
+
+    # Seed one explicit per-connection override so the matrix screenshot shows a
+    # real "denied" row alongside a "platform_default" row, not two identical selects.
+    federated_post.federation_content_grants_by_connection = { connection.id => 'denied' }
+    federated_post.save!
   end
   # rubocop:enable Metrics/AbcSize
 
@@ -293,9 +318,66 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
     end
   end
 
+  def capture_post_federation_content_grants_field
+    capture_docs_screenshot(
+      'post_federation_content_grants_field',
+      feature_set: 'federation_item_consent',
+      callouts: [
+        {
+          id: 'denied_row',
+          selector: "#federation-content-grant-#{connection.id}",
+          title: 'Per-connection override in effect',
+          bullets: [
+            'This connection is explicitly set to "Never federate," overriding the tri-state above ' \
+            'for this one connection only.'
+          ]
+        },
+        {
+          id: 'grants_section',
+          selector: '[id$="_federation_content_grants"]',
+          title: 'Per-connection selection matrix',
+          bullets: [
+            'One row per active connection that allows posts -- independent of the federation_visibility ' \
+            'tri-state above.',
+            'Lets a member say "federate everywhere except this one connection" (or the reverse).'
+          ]
+        }
+      ],
+      narrative: {
+        title: 'Post Editor -- Per-Connection Federation Grants',
+        audience: %w[member developer],
+        journey_step: 'As a member, I want this post to federate everywhere except Neighbourhood Commons, ' \
+                      'so I set that one connection to "Never federate" without changing my overall ' \
+                      'federation setting.',
+        callouts: [
+          { id: 'grants_section', title: 'Per-connection selection matrix',
+            description: 'A row per eligible connection, each an independent allowed/denied/platform_default ' \
+                         'select tied to a FederationContentGrant record.' },
+          { id: 'denied_row', title: 'Per-connection override in effect',
+            description: 'FederationContentGrant#status == "denied" for this connection wins over the ' \
+                         'item\'s tri-state and the creator\'s global preference.' }
+        ],
+        accessibility_notes: 'Each select is paired with an explicit <label for=...>; the section has a ' \
+                             'visible heading and hint text below it.'
+      }
+    ) do
+      login_as_member
+      visit better_together.edit_post_path(federated_post, locale:)
+
+      expect(page).to have_select("post[federation_content_grants_by_connection][#{connection.id}]")
+      expect(page).to have_select("post[federation_content_grants_by_connection][#{second_connection.id}]")
+      scroll_to_federation_content_grants_field
+    end
+  end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
   def scroll_to_federation_field
     field = find('[id$="_federation_visibility"]', wait: 10)
+    page.execute_script('arguments[0].scrollIntoView({block: "center", behavior: "instant"})', field.native)
+  end
+
+  def scroll_to_federation_content_grants_field
+    field = find('[id$="_federation_content_grants"]', wait: 10)
     page.execute_script('arguments[0].scrollIntoView({block: "center", behavior: "instant"})', field.native)
   end
 end
