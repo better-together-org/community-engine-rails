@@ -613,10 +613,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # New tenant-platform provisioning wizard (Phase 1: welcome,
-        # platform_identity, steward_account). Unlike setup_wizard (a
-        # singleton scoped to the host platform), each run gets its own
-        # platform-scoped Wizard row, so every step route carries
-        # :platform_id (the draft Platform's slug/id) — see
+        # platform_identity, steward_account; Phase 2 adds domain). Unlike
+        # setup_wizard (a singleton scoped to the host platform), each run
+        # gets its own platform-scoped Wizard row, so every step route
+        # carries :platform_id (the draft Platform's slug/id) — see
         # NewPlatformSetupStepsController#wizard/#target_platform.
         get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
@@ -633,6 +633,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'platform_identity', to: 'new_platform_setup_steps#create_platform_identity',
                                     defaults: { wizard_step_definition_id: :platform_identity },
                                     as: :new_platform_setup_step_create_platform_identity
+          get 'domain', to: 'new_platform_setup_steps#domain',
+                        defaults: { wizard_step_definition_id: :domain },
+                        as: :new_platform_setup_step_domain
+          post 'domain', to: 'new_platform_setup_steps#create_domain',
+                         defaults: { wizard_step_definition_id: :domain },
+                         as: :new_platform_setup_step_create_domain
           get 'steward_account', to: 'new_platform_setup_steps#steward_account',
                                  defaults: { wizard_step_definition_id: :steward_account },
                                  as: :new_platform_setup_step_steward_account

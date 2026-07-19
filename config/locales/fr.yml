@@ -2690,6 +2690,9 @@ fr:
       new_message: Nouveau message
     new_platform_setup_steps:
       already_completed: Cette plateforme a déjà été configurée.
+      create_domain:
+        flash:
+          please_address_errors: Veuillez corriger les erreurs ci-dessous.
       create_platform_identity:
         flash:
           please_address_errors: Veuillez corriger les erreurs ci-dessous.
@@ -4251,6 +4254,37 @@ fr:
           progress:
             step: Étape 1 sur 2
       new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Ajouter le domaine et continuer
+            skip: Ignorer pour l'instant
+          current_domain_html: Votre plateforme est déjà accessible à l'adresse <strong>%{hostname}</strong>.
+            Ajouter un domaine supplémentaire ci-dessous est facultatif.
+          custom_domain_hint_html: Un domaine personnalisé nécessite un enregistrement
+            DNS (CNAME ou A) pointant vers le serveur de périphérie de cette plateforme,
+            ainsi que son propre certificat TLS. Consultez le guide de déploiement
+            multiplateforme pour connaître les étapes exactes de DNS/TLS.
+          fields:
+            hostname:
+              help: Le nom d'hôte que les visiteurs utiliseront pour accéder à ce
+                domaine. Aucun schéma (pas de https://) et aucune barre oblique finale.
+              label: Nom d'hôte
+              placeholder: par exemple, tenant-a.example.com
+            share_domain:
+              label: Domaine de partage (utilisé dans les liens de partage générés)
+          hero:
+            subtitle: Donnez à cette plateforme une adresse facile à retenir, ou pointez
+              votre propre domaine vers elle.
+            title: Ajouter un domaine (facultatif)
+          intro: Cette étape est facultative — vous pourrez toujours ajouter ou modifier
+            des domaines plus tard depuis les paramètres d'administration de la plateforme.
+          kind_custom_label: Utiliser mon propre domaine
+          kind_subdomain_label: Utiliser un sous-domaine de %{host_apex}
+          progress:
+            step_name: Domaine
+          subdomain_hint: Seulement la partie avant .%{host_apex} — le nom d'hôte
+            complet est rempli automatiquement.
+          subdomain_label_field: Sous-domaine
         errors:
           header_plural: "%{count} erreurs ont empêché l'enregistrement :"
         platform_identity:

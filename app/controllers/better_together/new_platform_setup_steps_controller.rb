@@ -15,7 +15,7 @@ module BetterTogether
     # WizardStepsController#form/#update path is not exercised here either.
 
     skip_before_action :determine_wizard_outcome, only: %i[
-      update_welcome create_platform_identity create_steward_account
+      update_welcome create_platform_identity create_domain create_steward_account
     ]
     before_action :authorize_target_platform
     before_action :ensure_wizard_incomplete
@@ -71,7 +71,44 @@ module BetterTogether
       render wizard_step_definition.template, status: :unprocessable_entity
     end
 
-    # --- Step 3: steward_account -------------------------------------------
+    # --- Step 3: domain (optional — reuses PlatformDomain from PR #1677) ---
+
+    def domain
+      find_or_create_wizard_step
+      @platform = target_platform
+      @host_apex = host_apex_hostname
+      @platform_domain = @platform.platform_domains.build
+      render wizard_step_definition.template
+    end
+
+    def create_domain # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      @platform = target_platform
+
+      # An explicit "Skip" click, or a blank hostname, both mean the steward
+      # is skipping this optional step — the platform already has a primary
+      # domain synced from its host_url (Platform#sync_primary_platform_domain!);
+      # an extra domain is opt-in.
+      if params[:skip_step].present? || domain_params[:hostname].blank?
+        mark_current_step_as_completed
+        wizard.reload
+        determine_wizard_outcome
+        return
+      end
+
+      @platform_domain = @platform.platform_domains.build(domain_params)
+
+      if @platform_domain.save
+        mark_current_step_as_completed
+        wizard.reload
+        determine_wizard_outcome
+      else
+        @host_apex = host_apex_hostname
+        flash.now[:alert] = t('.flash.please_address_errors')
+        render wizard_step_definition.template, status: :unprocessable_entity
+      end
+    end
+
+    # --- Step 4: steward_account -------------------------------------------
 
     def steward_account
       find_or_create_wizard_step
@@ -141,6 +178,18 @@ module BetterTogether
 
     def platform_identity_params
       params.require(:platform).permit(:name, :description, :host_url, :time_zone, :privacy)
+    end
+
+    # primary_flag is deliberately not permitted here — the platform's primary
+    # domain is already synced from host_url (Platform#sync_primary_platform_domain!);
+    # this step only ever adds a non-primary alias. active isn't exposed either —
+    # it defaults true at the DB level, which is correct for a newly-added alias.
+    def domain_params
+      params.fetch(:platform_domain, {}).permit(:hostname, :share_domain)
+    end
+
+    def host_apex_hostname
+      ::BetterTogether::Platform.find_by(host: true)&.primary_platform_domain&.hostname
     end
 
     def steward_params

@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 # Specs for the new_platform_setup wizard (Phase 1: welcome, platform_identity,
-# steward_account) — see docs/plans/richer_platform_setup_wizard_implementation_plan.md.
+# steward_account; Phase 2 adds domain) — see
+# docs/plans/richer_platform_setup_wizard_implementation_plan.md.
 # Kickoff and step-continuation both reuse PlatformPolicy#create?/#update?, whose
 # can_manage_platform_settings? has a global manage_platform fallback — so the
 # :as_platform_manager host-platform steward is authorized for every action here
@@ -95,7 +96,7 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
       )
     end
 
-    it 'saves platform identity and advances to steward_account' do
+    it 'saves platform identity and advances to the domain step' do
       post better_together.new_platform_setup_step_update_welcome_path(platform_id: draft.to_param, locale:),
            params: { locale: locale.to_s }
       post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
@@ -104,6 +105,41 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
       draft.reload
       expect(draft.name).to eq(valid_identity_params[:name])
       expect(draft.host_url).to eq(valid_identity_params[:host_url])
+      expect(response).to redirect_to(
+        better_together.new_platform_setup_step_domain_path(platform_id: draft.to_param, locale:)
+      )
+    end
+
+    it 'skips the domain step without creating an extra domain and advances to steward_account' do
+      post better_together.new_platform_setup_step_update_welcome_path(platform_id: draft.to_param, locale:),
+           params: { locale: locale.to_s }
+      post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
+           params: { platform: valid_identity_params }
+
+      expect do
+        post better_together.new_platform_setup_step_create_domain_path(platform_id: draft.to_param, locale:),
+             params: { skip_step: '1' }
+      end.not_to change(BetterTogether::PlatformDomain, :count)
+
+      expect(response).to redirect_to(
+        better_together.new_platform_setup_step_steward_account_path(platform_id: draft.to_param, locale:)
+      )
+    end
+
+    it 'adds an extra domain when a hostname is submitted and advances to steward_account' do
+      post better_together.new_platform_setup_step_update_welcome_path(platform_id: draft.to_param, locale:),
+           params: { locale: locale.to_s }
+      post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
+           params: { platform: valid_identity_params }
+
+      expect do
+        post better_together.new_platform_setup_step_create_domain_path(platform_id: draft.to_param, locale:),
+             params: { platform_domain: { hostname: "alias-#{platform_suffix}.example.com" } }
+      end.to change(BetterTogether::PlatformDomain, :count).by(1)
+
+      extra_domain = draft.platform_domains.find_by(hostname: "alias-#{platform_suffix}.example.com")
+      expect(extra_domain).to be_present
+      expect(extra_domain.primary_flag).to be false
       expect(response).to redirect_to(
         better_together.new_platform_setup_step_steward_account_path(platform_id: draft.to_param, locale:)
       )
@@ -114,6 +150,8 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
            params: { locale: locale.to_s }
       post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
            params: { platform: valid_identity_params }
+      post better_together.new_platform_setup_step_create_domain_path(platform_id: draft.to_param, locale:),
+           params: { skip_step: '1' }
 
       expect do
         post better_together.new_platform_setup_step_create_steward_account_path(platform_id: draft.to_param, locale:),
@@ -185,6 +223,42 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
 
       it 'sets flash alert' do
         expect(flash.now[:alert]).to be_present
+      end
+    end
+
+    context 'domain with invalid parameters' do
+      let(:valid_identity_params) do
+        {
+          name: "Tenant Platform #{SecureRandom.hex(6)}",
+          description: 'A place where neighbors and friends support each other.',
+          host_url: "https://tenant-#{SecureRandom.hex(6)}.example.com",
+          time_zone: 'UTC',
+          privacy: 'private'
+        }
+      end
+
+      before do
+        post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
+             params: { platform: valid_identity_params }
+      end
+
+      it 'does not create a duplicate domain' do
+        draft.reload
+        duplicate_hostname = draft.primary_platform_domain.hostname
+
+        expect do
+          post better_together.new_platform_setup_step_create_domain_path(platform_id: draft.to_param, locale:),
+               params: { platform_domain: { hostname: duplicate_hostname } }
+        end.not_to change(BetterTogether::PlatformDomain, :count)
+      end
+
+      it 'renders the domain template with an error status' do
+        draft.reload
+        duplicate_hostname = draft.primary_platform_domain.hostname
+
+        post better_together.new_platform_setup_step_create_domain_path(platform_id: draft.to_param, locale:),
+             params: { platform_domain: { hostname: duplicate_hostname } }
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

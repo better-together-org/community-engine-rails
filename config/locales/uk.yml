@@ -2670,6 +2670,9 @@ uk:
       new_message: New Message
     new_platform_setup_steps:
       already_completed: Цю платформу вже налаштовано.
+      create_domain:
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
       create_platform_identity:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
@@ -4195,6 +4198,38 @@ uk:
           progress:
             step: Крок 1 з 2
       new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Додати домен і продовжити
+            skip: Пропустити поки що
+          current_domain_html: Ваша платформа вже доступна за адресою <strong>%{hostname}</strong>.
+            Додавання додаткового домену нижче є необов'язковим.
+          custom_domain_hint_html: Власний домен потребує DNS-запису (CNAME або A),
+            який вказує на граничний сервер цієї платформи, а також власного TLS-сертифіката.
+            Точні кроки щодо DNS/TLS дивіться в посібнику з розгортання мультиплатформи.
+          fields:
+            hostname:
+              help: Ім'я хоста, яке відвідувачі використовуватимуть для доступу до
+                цього домену. Без схеми (без https://) і без завершального символу
+                "/".
+              label: Ім'я хоста
+              placeholder: напр. tenant-a.example.com
+            share_domain:
+              label: Домен для поширення (використовується у створених посиланнях
+                для поширення)
+          hero:
+            subtitle: Дайте цій платформі легку для запам'ятовування адресу або спрямуйте
+              на неї власний домен.
+            title: Додати домен (необов'язково)
+          intro: Цей крок необов'язковий — ви завжди можете додати або змінити домени
+            пізніше в налаштуваннях адміністрування платформи.
+          kind_custom_label: Використати власний домен
+          kind_subdomain_label: Використати субдомен %{host_apex}
+          progress:
+            step_name: Домен
+          subdomain_hint: Лише частина перед .%{host_apex} — повне ім'я хоста заповнюється
+            автоматично.
+          subdomain_label_field: Субдомен
         errors:
           header_plural: "%{count} помилки завадили це зберегти:"
         platform_identity:

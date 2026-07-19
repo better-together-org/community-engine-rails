@@ -7,11 +7,12 @@ module BetterTogether
   # builder is called once per run, at the moment a draft Platform is created —
   # see NewPlatformSetupController#start.
   #
-  # Phase 1 covers 3 steps (welcome, platform_identity, steward_account).
-  # Later phases (domain, invite_members, review_and_launch) insert additional
-  # WizardStepDefinition rows with higher step_numbers — safe to do without a
-  # migration, since each run mints its own Wizard/WizardStepDefinition rows
-  # fresh rather than reusing seeded ones.
+  # Phase 1 covered 3 steps (welcome, platform_identity, steward_account).
+  # Phase 2 inserts the domain step between platform_identity and
+  # steward_account. Later phases (invite_members, review_and_launch) insert
+  # additional WizardStepDefinition rows with higher step_numbers — safe to do
+  # without a migration, since each run mints its own Wizard/WizardStepDefinition
+  # rows fresh rather than reusing seeded ones.
   class NewPlatformSetupWizardBuilder
     IDENTIFIER = 'new_platform_setup'
 
@@ -32,12 +33,19 @@ module BetterTogether
         message: 'Please configure the new platform\'s details below.'
       },
       {
+        name: 'Domain',
+        description: 'Optionally add a subdomain alias or custom domain for the new platform.',
+        identifier: 'domain',
+        step_number: 3,
+        message: 'Platform details saved! You can add an extra domain now, or skip this step.'
+      },
+      {
         name: 'Steward Account',
         description: 'Create the first steward account for the new platform.',
         identifier: 'steward_account',
-        step_number: 3,
+        step_number: 4,
         form_class: '::BetterTogether::NewPlatformStewardForm',
-        message: 'Platform details saved! Next, create the steward account for this platform.'
+        message: 'Next, create the steward account for this platform.'
       }
     ].freeze
 

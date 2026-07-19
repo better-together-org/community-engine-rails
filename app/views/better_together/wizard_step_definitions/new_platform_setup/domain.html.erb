@@ -1,0 +1,97 @@
+<% content_for :page_title do %>
+  <%= t('.hero.title') %>
+<% end %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/progress', current_step_identifier: 'domain' %>
+
+      <h1 class="h3 mb-2"><%= t('.hero.title') %></h1>
+      <p class="text-muted mb-4"><%= t('.hero.subtitle') %></p>
+
+      <p class="mb-3"><%= t('.intro') %></p>
+
+      <% if @platform.primary_platform_domain.present? %>
+        <div class="alert alert-secondary small mb-4">
+          <%= t('.current_domain_html', hostname: @platform.primary_platform_domain.hostname) %>
+        </div>
+      <% end %>
+
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/errors', form_object: @platform_domain %>
+
+      <%= form_with model: @platform_domain, scope: :platform_domain,
+                    url: new_platform_setup_step_create_domain_path(platform_id: @platform.to_param),
+                    method: :post, class: 'needs-validation',
+                    data: {
+                      controller: 'better-together--platform-domain-form',
+                      'better-together--platform-domain-form-host-apex-value' => @host_apex.to_s
+                    } do |f| %>
+        <% if @host_apex.present? %>
+          <div class="mb-3">
+            <div class="form-check">
+              <%= radio_button_tag :platform_domain_kind, 'subdomain', true,
+                                    class: 'form-check-input',
+                                    data: { action: 'change->better-together--platform-domain-form#toggleKind',
+                                            'better-together--platform-domain-form-target': 'subdomainRadio' } %>
+              <%= label_tag 'platform_domain_kind_subdomain',
+                            t('.kind_subdomain_label', host_apex: @host_apex), class: 'form-check-label' %>
+            </div>
+            <div class="form-check">
+              <%= radio_button_tag :platform_domain_kind, 'custom', false,
+                                    class: 'form-check-input',
+                                    data: { action: 'change->better-together--platform-domain-form#toggleKind',
+                                            'better-together--platform-domain-form-target': 'customRadio' } %>
+              <%= label_tag 'platform_domain_kind_custom', t('.kind_custom_label'), class: 'form-check-label' %>
+            </div>
+          </div>
+
+          <div class="mb-3" data-better-together--platform-domain-form-target="subdomainFields">
+            <%= label_tag :platform_domain_subdomain_label, t('.subdomain_label_field'), class: 'form-label' %>
+            <div class="input-group">
+              <%= text_field_tag :platform_domain_subdomain_label, nil,
+                                  class: 'form-control',
+                                  data: { action: 'input->better-together--platform-domain-form#updateSubdomainPreview',
+                                          'better-together--platform-domain-form-target': 'subdomainLabelInput' },
+                                  placeholder: 'tenant-a', 'aria-describedby': 'new_platform_domain_subdomain_help' %>
+              <span class="input-group-text">.<%= @host_apex %></span>
+            </div>
+            <small id="new_platform_domain_subdomain_help" class="form-text text-muted">
+              <%= t('.subdomain_hint', host_apex: @host_apex) %>
+            </small>
+          </div>
+
+          <div class="mb-3 d-none" data-better-together--platform-domain-form-target="customFields">
+            <div class="alert alert-secondary small mb-2">
+              <%= t('.custom_domain_hint_html') %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="mb-3">
+          <%= f.label :hostname, t('.fields.hostname.label'), for: 'new_platform_domain_hostname', class: 'form-label' %>
+          <%= f.text_field :hostname,
+                           id: 'new_platform_domain_hostname',
+                           class: "form-control#{' is-invalid' if @platform_domain.errors[:hostname].any?}",
+                           data: { 'better-together--platform-domain-form-target': 'hostnameField' },
+                           placeholder: t('.fields.hostname.placeholder'),
+                           'aria-describedby': 'new_platform_domain_hostname_help' %>
+          <small id="new_platform_domain_hostname_help" class="form-text text-muted">
+            <%= t('.fields.hostname.help') %>
+          </small>
+        </div>
+
+        <div class="form-check mb-3">
+          <%= f.check_box :share_domain, id: 'new_platform_domain_share_domain', class: 'form-check-input' %>
+          <%= f.label :share_domain, t('.fields.share_domain.label'), for: 'new_platform_domain_share_domain', class: 'form-check-label' %>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <%= f.submit t('.buttons.add_and_continue'), class: 'btn btn-primary' %>
+          <%= button_tag t('.buttons.skip'), type: 'submit', name: 'skip_step', value: '1',
+                         class: 'btn btn-outline-secondary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

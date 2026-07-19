@@ -2642,6 +2642,9 @@ en:
       new_message: New Message
     new_platform_setup_steps:
       already_completed: This platform has already been set up.
+      create_domain:
+        flash:
+          please_address_errors: Please address the errors below.
       create_platform_identity:
         flash:
           please_address_errors: Please address the errors below.
@@ -4153,6 +4156,36 @@ en:
           progress:
             step: Step 1 of 2
       new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Add Domain & Continue
+            skip: Skip For Now
+          current_domain_html: Your platform is currently reachable at <strong>%{hostname}</strong>.
+            Adding an extra domain below is optional.
+          custom_domain_hint_html: A custom domain needs a DNS record (CNAME or A)
+            pointed at this platform's edge server, and its own TLS certificate. See
+            the multi-platform deployment guide for the exact DNS/TLS steps.
+          fields:
+            hostname:
+              help: The hostname visitors will use to reach this domain. No scheme
+                (no https://) and no trailing slash.
+              label: Hostname
+              placeholder: e.g. tenant-a.example.com
+            share_domain:
+              label: Share domain (used in generated share links)
+          hero:
+            subtitle: Give this platform an easy-to-remember address, or point your
+              own domain at it.
+            title: Add a Domain (Optional)
+          intro: This step is optional — you can always add or change domains later
+            from the platform's admin settings.
+          kind_custom_label: Use my own domain
+          kind_subdomain_label: Use a subdomain of %{host_apex}
+          progress:
+            step_name: Domain
+          subdomain_hint: Only the part before .%{host_apex} — the full hostname is
+            filled in automatically.
+          subdomain_label_field: Subdomain
         errors:
           header_plural: "%{count} errors prevented this from being saved:"
         platform_identity:
