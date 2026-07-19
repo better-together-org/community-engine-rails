@@ -9,10 +9,11 @@ module BetterTogether
   #
   # Phase 1 covered 3 steps (welcome, platform_identity, steward_account).
   # Phase 2 inserts the domain step between platform_identity and
-  # steward_account. Later phases (invite_members, review_and_launch) insert
-  # additional WizardStepDefinition rows with higher step_numbers — safe to do
-  # without a migration, since each run mints its own Wizard/WizardStepDefinition
-  # rows fresh rather than reusing seeded ones.
+  # steward_account. Phase 3 adds the optional invite_members step after
+  # steward_account. Later phases (review_and_launch) insert additional
+  # WizardStepDefinition rows with higher step_numbers — safe to do without a
+  # migration, since each run mints its own Wizard/WizardStepDefinition rows
+  # fresh rather than reusing seeded ones.
   class NewPlatformSetupWizardBuilder
     IDENTIFIER = 'new_platform_setup'
 
@@ -46,6 +47,13 @@ module BetterTogether
         step_number: 4,
         form_class: '::BetterTogether::NewPlatformStewardForm',
         message: 'Next, create the steward account for this platform.'
+      },
+      {
+        name: 'Invite Members',
+        description: 'Optionally invite the first members to join the new platform.',
+        identifier: 'invite_members',
+        step_number: 5,
+        message: 'Steward account created! You can invite the first members now, or skip this step.'
       }
     ].freeze
 

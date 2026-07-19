@@ -2645,6 +2645,10 @@ en:
       create_domain:
         flash:
           please_address_errors: Please address the errors below.
+      create_invite_members:
+        flash:
+          invitation_sent: Invitation sent to %{email}.
+          please_address_errors: Please address the errors below.
       create_platform_identity:
         flash:
           please_address_errors: Please address the errors below.
@@ -4188,6 +4192,29 @@ en:
           subdomain_label_field: Subdomain
         errors:
           header_plural: "%{count} errors prevented this from being saved:"
+        invite_members:
+          buttons:
+            continue: Continue
+            send_invite: Send Invite
+          fields:
+            invitee_email:
+              help: They'll receive an email invitation to join this platform as a
+                member.
+              label: Email address
+              placeholder: friend@example.com
+          hero:
+            subtitle: Invite the first people to join this community. You can always
+              invite more later.
+            title: Invite Members (Optional)
+          intro: This step is optional — you can invite one or more people now, or
+            skip it and invite members later from the platform's admin settings.
+          progress:
+            step_name: Invite members
+          sent_invitations:
+            heading: Invitations sent so far
+            status:
+              accepted: Accepted
+              pending: Pending
         platform_identity:
           buttons:
             next: Next Step

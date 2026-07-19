@@ -2673,6 +2673,10 @@ uk:
       create_domain:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
+      create_invite_members:
+        flash:
+          invitation_sent: Запрошення надіслано на %{email}.
+          please_address_errors: Будь ласка, виправте помилки нижче.
       create_platform_identity:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
@@ -4232,6 +4236,30 @@ uk:
           subdomain_label_field: Субдомен
         errors:
           header_plural: "%{count} помилки завадили це зберегти:"
+        invite_members:
+          buttons:
+            continue: Продовжити
+            send_invite: Надіслати запрошення
+          fields:
+            invitee_email:
+              help: Вони отримають запрошення електронною поштою приєднатися до цієї
+                платформи як учасник.
+              label: Адреса електронної пошти
+              placeholder: friend@example.com
+          hero:
+            subtitle: Запросіть перших людей приєднатися до цієї спільноти. Ви завжди
+              зможете запросити більше пізніше.
+            title: Запросити учасників (необов'язково)
+          intro: Цей крок необов'язковий — ви можете запросити одну або кілька осіб
+            зараз, або пропустити його та запросити учасників пізніше в налаштуваннях
+            адміністрування платформи.
+          progress:
+            step_name: Запросити учасників
+          sent_invitations:
+            heading: Надіслані запрошення
+            status:
+              accepted: Прийнято
+              pending: Очікує
         platform_identity:
           buttons:
             next: Наступний крок
