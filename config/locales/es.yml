@@ -377,6 +377,11 @@ es:
         text_translations: Traducciones de texto
         time_zone: Huso horario
         url: URL
+      better_together/platform_domain:
+        active: Activo
+        hostname: Nombre de host
+        primary_flag: Dominio principal
+        share_domain: Dominio de compartición
       better_together/platform_invitation:
         accepted_at: Aceptado en
         community_role: :activerecord.models.community_role
@@ -1491,6 +1496,7 @@ es:
           running: En ejecución
           succeeded: Completado
     errors:
+      only_one_primary: solo se puede establecer en un registro%{scope_suffix}
       privacy:
         exceeds_context_bounds: no puede ser más abierta que '%{max}' — la configuración
           de la plataforma o comunidad impide este nivel de visibilidad
@@ -3168,6 +3174,55 @@ es:
           se pausarán."
         sync_cursor: Cursor de sincronización
         sync_status: Estado de sincronización
+    platform_domains:
+      cancel: Cancelar
+      cannot_destroy_primary: No se puede eliminar el dominio principal. Establezca
+        primero otro dominio como principal.
+      created: El dominio se agregó correctamente.
+      destroyed: El dominio se eliminó correctamente.
+      edit:
+        subtitle: Dominio de %{platform_name}
+        title: Editar %{hostname}
+      form:
+        active_field_label: Activo
+        custom_domain_hint_html: Un dominio personalizado necesita un registro DNS
+          (CNAME o A) que apunte al servidor de borde de esta plataforma, y su propio
+          certificado TLS. Consulte la guía de implementación multiplataforma para
+          conocer los pasos exactos de DNS/TLS.
+        hostname_hint: El nombre de host que usarán los visitantes para acceder a
+          esta plataforma. Sin esquema (sin https://) y sin barra diagonal final.
+        hostname_placeholder: p. ej. tenant-a.example.com o app.clientdomain.example
+        kind_custom_label: Usar mi propio dominio
+        kind_subdomain_label: Usar un subdominio de %{host_apex}
+        primary_flag_label: Dominio principal
+        share_domain_label: Dominio de compartición (usado en los enlaces de compartir
+          generados)
+        subdomain_hint: Solo la parte antes de .%{host_apex} — el nombre de host completo
+          se completa automáticamente.
+        subdomain_label_field: Subdominio
+      index:
+        active_label: Activo
+        back_to_platform: Volver a la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este dominio?"
+        edit_btn: Editar
+        header_actions: Acciones
+        header_hostname: Nombre de host
+        header_primary: Principal
+        header_share: Compartir
+        header_status: Estado
+        inactive_label: Inactivo
+        new_btn: Agregar dominio
+        no_domains: Aún no hay dominios configurados.
+        primary_badge: Principal
+        share_badge: Dominio de compartición
+        subtitle: Nombres de host y alias para %{platform_name}
+        table_aria: Dominios de la plataforma
+        title: Dominios
+      new:
+        subtitle: Agregar un dominio para %{platform_name}
+        title: Nuevo dominio
+      updated: El dominio se actualizó correctamente.
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.
@@ -5045,6 +5100,7 @@ es:
           sin depender solo del conocimiento de la URL.
         feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
+        platform_domains: Dominios
         robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento
         title: Operaciones de la plataforma

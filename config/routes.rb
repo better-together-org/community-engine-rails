@@ -491,6 +491,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   put :activate
                 end
               end
+              resources :platform_domains, except: %i[show]
             end
 
             resources :users

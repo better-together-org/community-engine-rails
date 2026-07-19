@@ -1,0 +1,30 @@
+---
+title: Platform Domains — Index
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I open Platform Domains to see every hostname
+  that resolves to my platform — the auto-created primary subdomain and any custom
+  domains I've attached.
+callouts:
+- :id: new_button
+  :title: Add Domain
+  :description: Opens the new-domain form with the subdomain-vs-custom-domain picker.
+- :id: primary_badge
+  :title: Primary badge
+  :description: The canonical domain for this platform — set automatically from host_url
+    at provisioning time, cannot be removed without first making another domain primary.
+- :id: share_badge
+  :title: Share badge
+  :description: Which domain generated share links use — independent of which domain
+    is primary.
+- :id: status_column
+  :title: Status
+  :description: Active/Inactive — inactive domains are retained (e.g. deprecated aliases)
+    but do not resolve traffic via PlatformContextMiddleware.
+accessibility_notes: Table has an aria-label; the Actions header is visually hidden
+  but present for screen readers; delete buttons use a turbo_confirm dialog before
+  submitting.
+slug: platform_domains_index_default
+device: mobile
