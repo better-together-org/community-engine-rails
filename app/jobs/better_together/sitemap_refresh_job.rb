@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rake'
 require 'sidekiq/api'
 
 module BetterTogether
@@ -45,9 +44,10 @@ module BetterTogether
     end
 
     def perform
-      Rails.application.load_tasks unless Rake::Task.task_defined?('sitemap:refresh')
-      Rake::Task['sitemap:refresh'].invoke
-      Rake::Task['sitemap:refresh'].reenable
+      require 'sitemap_generator'
+      SitemapGenerator::Interpreter.run(
+        config_file: Rails.root.join('config/sitemap.rb').to_s
+      )
     end
   end
 end

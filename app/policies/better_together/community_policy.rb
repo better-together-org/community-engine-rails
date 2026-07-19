@@ -41,6 +41,15 @@ module BetterTogether
       update?
     end
 
+    def manage_merchant_account?
+      user.present? &&
+        (
+          permitted_to?('manage_community_settings', record) ||
+          permitted_to?('manage_platform_settings') ||
+          permitted_to?('manage_platform')
+        )
+    end
+
     def create_events?
       return false unless user.present? && agent.present?
 

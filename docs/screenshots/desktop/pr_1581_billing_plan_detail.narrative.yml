@@ -1,0 +1,25 @@
+---
+title: Billing plan detail
+audience:
+- operator
+- board_member
+journey_step: A host steward reviews a single plan to confirm subscriber-facing copy,
+  pricing linkage, and current usage.
+callouts:
+- :title: Plan summary
+  :description: This section ties the human-friendly plan name back to the Stripe
+    price identifier and the recurring interval that must remain stable after launch.
+- :title: Plan metadata
+  :description: These fields are what community members actually feel. They define
+    the support promise, hosted access language, and who is allowed to be the payer.
+- :title: Recent subscribers
+  :description: 'Reviewers can see that subscriptions may belong to people or communities,
+    which is central to the multi-owner billing foundation introduced in this PR.
+    Session follow-up: the two new metadata rows push this card below the fixed screenshot
+    viewport on this particular plan, so it no longer has its own callout box here
+    — the card and its content are unchanged, just further down the page than this
+    capture shows.'
+accessibility_notes: The detail page uses definition lists with stable field IDs so
+  reviewers can reliably map screenshot annotations back to individual data points.
+slug: pr_1581_billing_plan_detail
+device: desktop

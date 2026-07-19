@@ -1,0 +1,46 @@
+{
+  "name": "pr_1581_community_show_billing_entry_point",
+  "device": "desktop",
+  "url": "/en/c/harbour-voices-38978728",
+  "title": "Harbour Voices | Communities | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#community-show-manage-billing-btn",
+      "title": "Manage billing",
+      "bullets": [
+        "Gives stewards with update permission a direct path to billing from the public community page toolbar."
+      ],
+      "target": {
+        "x": 1239.734375,
+        "y": 509.0,
+        "width": 120.265625,
+        "height": 31.0,
+        "right": 1360.0,
+        "bottom": 540.0,
+        "center_x": 1299.8671875,
+        "center_y": 524.5
+      },
+      "avoid": {
+        "x": 1239.734375,
+        "y": 509.0,
+        "width": 120.265625,
+        "height": 31.0,
+        "right": 1360.0,
+        "bottom": 540.0,
+        "center_x": 1299.8671875,
+        "center_y": 524.5
+      },
+      "placement": {
+        "side": "left",
+        "x": 839.73,
+        "y": 432.5,
+        "width": 380,
+        "height": 184,
+        "score": 1239.734375
+      }
+    }
+  ]
+}

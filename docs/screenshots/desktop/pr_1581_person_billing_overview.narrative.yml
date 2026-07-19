@@ -1,0 +1,33 @@
+---
+title: Personal billing overview
+audience:
+- board_member
+- sponsor
+- operator
+journey_step: A person reviews their own billing to see personal access, sponsorship
+  commitments, and any payout onboarding status.
+callouts:
+- :title: Personal subscription
+  :description: 'This card is the person-facing equivalent of the community subscription
+    card. It focuses on the individual payer and their current hosted support plan.
+    Session follow-up: the subscription status and merchant account status badges
+    on this page were rendering the raw Stripe/Pay enum value (e.g. "active") instead
+    of the translated label used everywhere else; both now go through the same t()
+    lookup as the community billing page.'
+- :title: Sponsored communities
+  :description: This is the key new accountability surface for sponsorship. A person
+    can now see which communities their payment is supporting and jump directly to
+    those community billing records.
+- :title: Personal plans
+  :description: Personal recurring plans are separated from community plans so the
+    review packet makes clear who each plan is designed to support.
+- :title: Solidarity pricing tier
+  :description: 'Session follow-up: same as the community billing page — a plan''s
+    pricing_tier and solidarity_description are now visible here instead of only in
+    the admin plan editor. As on the community billing page, it falls below the fixed
+    screenshot viewport here; see pr_1581_billing_plan_solidarity_detail for the annotated
+    view.'
+accessibility_notes: The sponsored communities list and plan table both use stable
+  identifiers and native list/table semantics for deterministic review coverage.
+slug: pr_1581_person_billing_overview
+device: desktop

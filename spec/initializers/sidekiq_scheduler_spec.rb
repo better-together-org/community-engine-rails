@@ -27,7 +27,11 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       expect(schedule).to be_a(Hash)
       expect(schedule.keys).to include(
         'better_together:metrics:link_checker_weekly',
-        'better_together:event_reminder_scan_hourly'
+        'better_together:event_reminder_scan_hourly',
+        'better_together:billing:stripe_billable_owner_reconciliation_scan',
+        'better_together:billing:stripe_merchant_account_reconciliation_scan',
+        'better_together:billing:redact_expired_event_payloads_daily',
+        'better_together:billing:dead_letter_stale_events_hourly'
       )
     end
 
@@ -66,6 +70,90 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
 
       it 'uses notifications queue' do
         expect(job['queue']).to eq('notifications')
+      end
+
+      it 'has a description' do
+        expect(job['description']).to be_present
+      end
+    end
+
+    describe 'billable-owner reconciliation scan configuration' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+      let(:job) { schedule['better_together:billing:stripe_billable_owner_reconciliation_scan'] }
+
+      it 'has correct cron schedule' do
+        expect(job['cron']).to eq('10 */6 * * *')
+      end
+
+      it 'has correct job class' do
+        expect(job['class']).to eq('BetterTogether::Billing::ReconcileStripeBillableOwnerBillingScanJob')
+      end
+
+      it 'uses maintenance queue' do
+        expect(job['queue']).to eq('maintenance')
+      end
+
+      it 'has a description' do
+        expect(job['description']).to be_present
+      end
+    end
+
+    describe 'merchant-account reconciliation scan configuration' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+      let(:job) { schedule['better_together:billing:stripe_merchant_account_reconciliation_scan'] }
+
+      it 'has correct cron schedule' do
+        expect(job['cron']).to eq('40 */6 * * *')
+      end
+
+      it 'has correct job class' do
+        expect(job['class']).to eq('BetterTogether::Billing::ReconcileStripeMerchantAccountScanJob')
+      end
+
+      it 'uses maintenance queue' do
+        expect(job['queue']).to eq('maintenance')
+      end
+
+      it 'has a description' do
+        expect(job['description']).to be_present
+      end
+    end
+
+    describe 'billing payload redaction scan configuration' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+      let(:job) { schedule['better_together:billing:redact_expired_event_payloads_daily'] }
+
+      it 'has correct cron schedule' do
+        expect(job['cron']).to eq('20 4 * * *')
+      end
+
+      it 'has correct job class' do
+        expect(job['class']).to eq('BetterTogether::Billing::RedactExpiredEventPayloadsJob')
+      end
+
+      it 'uses maintenance queue' do
+        expect(job['queue']).to eq('maintenance')
+      end
+
+      it 'has a description' do
+        expect(job['description']).to be_present
+      end
+    end
+
+    describe 'billing dead-letter scan configuration' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+      let(:job) { schedule['better_together:billing:dead_letter_stale_events_hourly'] }
+
+      it 'has correct cron schedule' do
+        expect(job['cron']).to eq('15 * * * *')
+      end
+
+      it 'has correct job class' do
+        expect(job['class']).to eq('BetterTogether::Billing::DeadLetterStaleBillingEventsJob')
+      end
+
+      it 'uses maintenance queue' do
+        expect(job['queue']).to eq('maintenance')
       end
 
       it 'has a description' do
@@ -258,6 +346,11 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
 
       it 'event reminder job class is defined' do
         expect(defined?(BetterTogether::EventReminderScanJob)).to be_truthy
+      end
+
+      it 'billing reconciliation scan job classes are defined' do
+        expect(defined?(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingScanJob)).to be_truthy
+        expect(defined?(BetterTogether::Billing::ReconcileStripeMerchantAccountScanJob)).to be_truthy
       end
     end
   end

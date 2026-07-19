@@ -394,6 +394,31 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('community[contributors_display_visibility]')
     end
+
+    it 'shows hosted entitlement status on the edit page when billing is active' do
+      billing_plan = create(
+        :better_together_billing_plan,
+        metadata: {
+          'hosted_access_level' => 'Partner',
+          'support_tier' => 'Priority'
+        }
+      )
+      create(
+        :better_together_billing_subscription,
+        billable_owner: community,
+        beneficiary: community,
+        billing_plan:,
+        status: 'active'
+      )
+
+      get better_together.edit_community_path(locale:, id: community.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Hosted plan status')
+      expect(response.body).to include('Hosted plan active')
+      expect(response.body).to include('Partner')
+      expect(response.body).to include('Priority')
+    end
   end
 
   describe 'PATCH /:locale/c/:slug', :as_platform_manager do

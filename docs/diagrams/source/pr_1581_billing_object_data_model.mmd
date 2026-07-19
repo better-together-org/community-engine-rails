@@ -1,0 +1,33 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef record fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef external fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+
+  Person["Person<br/>An individual community member or sponsor"]:::record
+  Community["Community<br/>A group that may receive hosted service"]:::record
+  Plan["Billing Plan<br/>Defines price, interval, and plain-language benefits"]:::record
+  Subscription["Billing Subscription<br/>Local record linking a plan, payer, and beneficiary"]:::record
+  Merchant["Merchant Account<br/>Optional payout onboarding for future commerce"]:::record
+  Event["Billing Event<br/>Recorded Stripe webhook activity and replay state"]:::record
+  Report["Subscription Summary Report<br/>Point-in-time CSV export of subscription/MRR/event health"]:::record
+  Hosted["Hosted Entitlement<br/>Calculated answer: is hosted access active?"]:::outcome
+  Stripe["Stripe<br/>External billing and payout provider"]:::external
+
+  Person -->|can pay for| Subscription
+  Community -->|can pay for or receive| Subscription
+  Plan -->|chosen by| Subscription
+  Subscription -->|produces| Hosted
+  Subscription -->|generates sync records in| Event
+  Stripe -->|sends webhook updates to| Event
+  Community -->|may connect| Merchant
+  Person -->|may connect| Merchant
+  Merchant -->|syncs with| Stripe
+  Event -->|helps repair| Subscription
+  Person -->|requests, as creator| Report
+  Subscription -->|aggregated into| Report
+  Event -->|aggregated into| Report
+
+  subgraph PlainLanguage["How to read this model"]
+    DirectionNote["A payer is who gets charged.<br/>A beneficiary is who receives the hosted service.<br/>They can be the same record or different records."]:::outcome
+  end

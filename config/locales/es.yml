@@ -896,6 +896,293 @@ es:
         subject_removed_by: "%{actor_name} eliminó tu autoría de %{page}"
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
+    billing:
+      activity_alerts: Alertas de actividad de facturacion
+      activity_alerts_explainer: Se registraron problemas recientes de webhooks de
+        Stripe para este registro de facturacion. Revisa abajo los eventos mas recientes
+        y ejecuta una conciliacion si el estado local parece desactualizado.
+      activity_alerts_technical_summary: Detalles tecnicos (registro de actividad
+        de webhook de Stripe)
+      available_plans: Planes disponibles
+      billed_to: 'Facturado a:'
+      breadcrumb_label: Facturacion
+      cancel_at_period_end: 'Cancelar al final del periodo:'
+      checkout_session_invalid: 'La sesion de Stripe no pudo sincronizarse: %<message>s'
+      checkout_sync_complete: El pago de Stripe se sincronizo correctamente.
+      checkout_sync_pending: Se recibio el pago de Stripe, pero todavia no pudo sincronizarse
+        el estado de la suscripcion.
+      checkout_sync_wrong_beneficiary: Esta sesion de Stripe Checkout no pertenece
+        a esta pagina de facturacion.
+      community_capacity_tier: 'Nivel de capacidad de la comunidad:'
+      community_sponsor_checkout: Pagar a traves de %{community}
+      current_period_ends: 'El periodo actual termina:'
+      current_subscription: Suscripcion actual
+      dead_letter_alert_body: Algunos eventos de facturacion de Stripe no pudieron
+        repararse con reintentos normales o conciliacion. Revisalos abajo y reprocesa
+        los eventos compatibles cuando corresponda.
+      dead_letter_alert_heading: Eventos de facturacion en dead letter
+      dead_letter_reason_unknown: Motivo de dead letter desconocido
+      details: Detalles
+      event_type: Evento
+      failed_without_message: El procesador informo un fallo sin mensaje de error.
+      heading: Facturacion de la comunidad
+      hosted_access_level: 'Nivel de acceso alojado:'
+      hosted_access_level_default: Estandar
+      hosted_entitlement_active_explainer: Esta comunidad tiene actualmente un plan
+        alojado activo y sigue en buen estado para las operaciones alojadas.
+      hosted_entitlement_attention_explainer: Esta comunidad todavia tiene acceso
+        alojado, pero la facturacion necesita atencion antes de que el plan alojado
+        vuelva a considerarse saludable.
+      hosted_entitlement_heading: Estado del plan alojado
+      hosted_entitlement_inactive_explainer: Actualmente no hay un plan alojado activo
+        sincronizado para esta comunidad.
+      hosted_entitlement_plan: 'Plan alojado actual:'
+      hosted_plan_scope_body: La ruta actual de lanzamiento admite planes recurrentes
+        alojados para comunidades y patrocinadores. Los planes de pago unico siguen
+        fuera de alcance hasta que se implemente su flujo de cumplimiento.
+      hosted_plan_scope_heading: Alcance de lanzamiento de la facturacion alojada
+      hosted_status_active: Plan alojado activo
+      hosted_status_attention: Atencion de facturacion requerida
+      hosted_status_inactive: Sin plan alojado activo
+      ignored_event_explainer: El evento se registro, pero no se pudo mapear a una
+        actualizacion local de facturacion.
+      interval: Intervalo
+      last_attempt: Ultimo intento
+      last_synced_at: 'Ultima sincronizacion:'
+      last_webhook_event: 'Ultimo evento de webhook:'
+      manage_billing: Gestionar facturacion
+      manage_link: Gestionar facturacion
+      manage_person_link: Gestionar facturacion personal
+      merchant_account: Cuenta comercial
+      merchant_account_status:
+        active: Activo
+        disabled: Deshabilitado
+        enabled: Habilitado
+        errored: Error
+        pending: Pendiente
+        rejected: Rechazado
+        restricted: Restringido
+        restricted_soon: Restringido pronto
+      merchant_charges_enabled: 'Cobros habilitados:'
+      merchant_connect_explainer_community: Conecta Stripe para que esta comunidad
+        pueda completar la incorporacion y recibir pagos en futuros flujos comerciales.
+      merchant_connect_explainer_person: Conecta Stripe si quieres que esta persona
+        pueda recibir pagos en futuros flujos comerciales.
+      merchant_disconnected_at: 'Desconectada en:'
+      merchant_disconnected_body: Stripe desconecto esta cuenta comercial. Vuelve
+        a completar la incorporacion antes de depender de pagos o futuros flujos comerciales.
+      merchant_disconnected_heading: Cuenta comercial desconectada
+      merchant_not_connected: Todavia no hay una cuenta comercial conectada.
+      merchant_onboarding_admin_only_community: La incorporacion de pagos para futuros
+        flujos comerciales la gestiona un administrador de configuracion de la comunidad
+        o un responsable de la plataforma, no el acceso general de gestion comunitaria.
+      merchant_onboarding_admin_only_person: La incorporacion de pagos para futuros
+        flujos comerciales aun no esta disponible para miembros individuales. Contacta
+        a un administrador de la plataforma si esto cambia.
+      merchant_onboarding_confirm: Esto creara una cuenta comercial gestionada por
+        Stripe vinculada a esta comunidad. Se aplican las practicas de datos de Stripe.
+        Continuar?
+      merchant_onboarding_unavailable: 'La incorporacion comercial todavia no esta
+        disponible: %<message>s'
+      merchant_payouts_enabled: 'Pagos habilitados:'
+      merchant_provider: 'Proveedor:'
+      merchant_refresh_complete: El estado de la cuenta comercial se actualizo correctamente.
+      merchant_refresh_failed: 'La actualizacion de la cuenta comercial fallo: %<message>s'
+      merchant_required_action_body: Stripe todavia requiere mas incorporacion o revision
+        antes de que esta cuenta comercial quede lista para pagos.
+      merchant_required_action_heading: Accion requerida en la cuenta comercial
+      merchant_status_guidance: Usa la incorporacion para completar la configuracion
+        de Stripe Connect y luego actualiza esta tarjeta despues de que Stripe revise
+        la cuenta.
+      merchant_support_attention_body: Esta cuenta comercial no esta lista para pagos
+        en este momento. Revisa el estado en Stripe y actualiza esta pagina despues
+        de cualquier accion correctiva.
+      merchant_support_attention_heading: Atencion operativa para la cuenta comercial
+      no_activity_alerts: No hay eventos fallidos ni ignorados de webhooks de facturacion
+        registrados actualmente para este registro de facturacion.
+      no_billing_events: Todavia no se ha registrado actividad de webhooks de facturacion
+        de Stripe para este registro de facturacion.
+      no_plans: Todavia no hay planes de facturacion activos configurados.
+      no_subscription: Todavia no hay una suscripcion sincronizada registrada para
+        esta comunidad.
+      oldest_unresolved_at: 'No resuelto mas antiguo en:'
+      open_merchant_onboarding: Abrir incorporacion comercial
+      open_portal: Abrir portal de facturacion
+      page_title: Facturacion de la comunidad
+      person_heading: Facturacion personal
+      person_no_subscription: Todavia no hay una suscripcion sincronizada registrada
+        para esta persona.
+      person_page_title: Facturacion personal
+      person_subheading: Gestiona el pago de Stripe, el estado de la suscripcion y
+        el acceso al portal de facturacion para esta persona.
+      personal_plan_scope_body: La facturacion personal actualmente admite planes
+        recurrentes alojados y flujos de patrocinio. Los planes de pago unico siguen
+        fuera del lanzamiento hasta que se complete su flujo de cumplimiento.
+      plan_beneficiary_label: 'Beneficios para:'
+      plan_benefits: Beneficios incluidos
+      plan_defaults:
+        community_beneficiary_label: Acceso comunitario
+        hosted_beneficiary_label: Acceso alojado
+        one_time_participant_summary: Contribucion unica al alojamiento
+        personal_beneficiary_label: Acceso personal
+        recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
+      plan_not_found: Ese plan de facturacion no esta disponible.
+      plan_value: Valor del plan
+      plans:
+        create_submit: Crear plan
+        created: Plan de facturacion creado exitosamente.
+        deactivate_confirm: "¿Desactivar este plan? Los suscriptores existentes no
+          se veran afectados."
+        edit_title: Editar plan de facturacion
+        field_active: Activo (visible para suscriptores)
+        field_amount_cents: Monto (centavos)
+        field_amount_cents_hint: ej. 4500 = $45.00
+        field_beneficiary_label: Etiqueta de beneficiario
+        field_billing_interval: Intervalo de facturacion
+        field_community_capacity_tier: Nivel de capacidad
+        field_currency: Moneda
+        field_description: Descripcion
+        field_eligible_owner_types: Elegible para
+        field_hosted_access_level: Nivel de acceso alojado
+        field_identifier: Identificador
+        field_identifier_hint: Clave unica de maquina. No se puede cambiar despues
+          de la creacion.
+        field_name: Nombre
+        field_participant_benefits: Beneficios
+        field_participant_benefits_hint: Un beneficio por linea.
+        field_participant_summary: Resumen para participantes
+        field_pricing_tier: Nivel de precio
+        field_pricing_tier_hint: Los niveles solidarios permiten que las cooperativas
+          mas pequenas accedan a la plataforma a un costo reducido.
+        field_solidarity_description: Descripcion de solidaridad
+        field_solidarity_description_hint: Se muestra a los posibles suscriptores
+          para explicar a quien va dirigido este nivel.
+        field_stripe_price_id: ID de precio de Stripe
+        field_stripe_price_id_hint: Desde el panel de Stripe. No se puede cambiar
+          despues de la creacion.
+        field_stripe_product_id: ID de producto de Stripe
+        field_stripe_product_id_hint: Se rellena automáticamente cuando el plan se
+          sincroniza con Stripe.
+        field_support_tier: Nivel de soporte
+        index_title: Planes de facturacion
+        interval_month: Mensual
+        interval_one_time: Unico
+        interval_year: Anual
+        metadata_section_hint: Mostrado en paginas de facturacion y tarjetas de derechos
+        metadata_section_title: Metadatos del plan
+        new_plan: Nuevo plan
+        new_title: Nuevo plan de facturacion
+        no_plans: Aun no se han creado planes de facturacion.
+        owner_type_community: Comunidad
+        owner_type_person: Persona
+        pricing_tier_solidarity_medium: Solidaridad — Mediana
+        pricing_tier_solidarity_premium: Prima de solidaridad
+        pricing_tier_solidarity_small: Solidaridad — Pequena
+        pricing_tier_standard: Estandar
+        recent_subscribers_title: Suscriptores activos
+        show_title: Plan de facturacion
+        status_active: Activo
+        status_inactive: Inactivo
+        subscribers_count_label: Suscriptores activos
+        subscription_health_title: Estado de suscripciones
+        toggle_activate: Activar
+        toggle_deactivate: Desactivar
+        update_submit: Actualizar plan
+        updated: Plan de facturacion actualizado exitosamente.
+      platform_provisioned: Plataforma provisionada exitosamente.
+      platform_provisioned_success: Plataforma provisionada
+      platform_provisioned_visit: Visitar la nueva plataforma
+      portal_access_attention: El acceso al portal de facturacion necesita atencion
+      portal_access_attention_fallback: El ultimo intento de abrir el portal de facturacion
+        fallo. Revisa la disponibilidad de Stripe e intentalo de nuevo cuando corresponda.
+      portal_access_last_failed_at: 'Ultimo fallo de acceso al portal:'
+      portal_owner_unavailable: Esta suscripcion de la comunidad se factura a otro
+        titular.
+      portal_requires_sponsor: Esta suscripcion de la comunidad esta facturada a otra
+        persona o comunidad. Pide al patrocinador actual que abra el portal de facturacion
+        o inicia abajo un pago de reemplazo si la facturacion debe pasar a otra persona
+        o comunidad.
+      portal_unavailable: 'El portal de facturacion todavia no esta disponible: %<message>s'
+      price: Precio
+      provision_platform_cta: Provisionar plataforma alojada
+      provision_platform_cta_explainer: Tu plan da derecho a esta comunidad a una
+        plataforma alojada. Provisiona una ahora para activar los servicios.
+      provision_platform_form_heading: Detalles de la plataforma
+      provision_platform_heading: Provisionar plataforma alojada
+      provision_platform_host_url: URL del host
+      provision_platform_host_url_hint: La URL completa donde se alojara esta plataforma.
+        Debe ser unica.
+      provision_platform_name: Nombre de la plataforma
+      provision_platform_name_hint: El nombre publico de esta plataforma alojada.
+      provision_platform_name_placeholder: p.ej. Mi Espacio Comunitario
+      provision_platform_page_title: Provisionar plataforma alojada
+      provision_platform_privacy: Visibilidad
+      provision_platform_privacy_community: Comunidad — accesible para miembros
+      provision_platform_privacy_hint: Controla quien puede descubrir y acceder a
+        esta plataforma. Puedes cambiarlo despues de provisionar.
+      provision_platform_privacy_private: Privado — accesible solo por invitacion
+      provision_platform_privacy_public: Publico — abierto a todos
+      provision_platform_step_community: Una comunidad primaria se adjunta automaticamente
+        a la plataforma.
+      provision_platform_step_domain: El dominio del host se registra y vincula a
+        la plataforma.
+      provision_platform_step_platform: Se crea un nuevo registro de plataforma en
+        la URL del host que proporciones.
+      provision_platform_step_steward: El acceso de administracion de la plataforma
+        puede configurarse despues del provisionamiento.
+      provision_platform_subheading: Completa los detalles para provisionar una nueva
+        plataforma para esta comunidad.
+      provision_platform_submit: Provisionar plataforma
+      provision_platform_time_zone: Zona horaria
+      provision_platform_what_happens: Que sucede a continuacion
+      provision_requires_active_plan: Se requiere un plan alojado activo para provisionar
+        una plataforma. Suscribete primero a un plan alojado.
+      reconcile_now: Reconciliar ahora
+      reconciliation_enqueued: Se puso en cola un trabajo de conciliacion de Stripe
+        para esta comunidad.
+      refresh_merchant_account: Actualizar estado comercial
+      repeated_failure_alert_body: Algunos eventos de facturacion de Stripe han fallado
+        repetidamente. Revisa abajo los eventos fallidos y reconciliarlos o reprocesalos
+        antes de que aumente la desviacion.
+      repeated_failure_alert_heading: Fallos repetidos de eventos de facturacion
+      replay_event: Reprocesar evento
+      replay_event_enqueued: Evento de facturacion %<event_type>s puesto en cola para
+        reprocesamiento.
+      replay_event_not_found: No se encontro ese evento de facturacion para reprocesarlo.
+      replay_event_payload_unavailable: El payload de ese evento de facturacion ya
+        no esta disponible para reprocesarlo.
+      replay_event_unsupported: Ese evento de facturacion no puede reprocesarse de
+        forma segura.
+      replay_unavailable: Reproceso no disponible
+      retry_count: "%<count>d intentos"
+      sponsor_checkout: Pagar personalmente por esta comunidad
+      sponsored_communities: Comunidades patrocinadas
+      sponsored_subscription_notice: "%{owner} esta cubriendo actualmente el plan
+        de esta comunidad. Para cambiar quien paga, inicia un nuevo pago abajo."
+      start_checkout: Iniciar pago
+      status: Estado
+      subheading: Gestiona el pago de Stripe, el estado de la suscripcion y el acceso
+        al portal de facturacion para esta comunidad.
+      subscription_status:
+        active: Activo
+        canceled: Cancelado
+        incomplete: Incompleto
+        incomplete_expired: Vencido
+        past_due: Vencido con pago pendiente
+        paused: Pausado
+        trialing: En prueba
+        unpaid: Sin pagar
+      support_tier: 'Nivel de soporte:'
+      support_tier_default: Comunidad
+      sync_source: 'Fuente de sincronizacion:'
+      takeover_as_community: Que esta comunidad pague por si misma
+      takeover_as_other_community: Que %{community} pague en su lugar
+      takeover_as_person: Pagar esto personalmente en su lugar
+      unknown_sync_source: Desconocida
+      unresolved_alert_body: La desviacion de facturacion de Stripe ha permanecido
+        sin resolverse el tiempo suficiente como para requerir revision operativa.
+        Reconcilia ahora e inspecciona los eventos no resueltos mas antiguos.
+      unresolved_alert_heading: Desviacion de facturacion no resuelta
     bot_defense:
       errors:
         expired_challenge: La verificación de seguridad venció. Recarga el formulario
@@ -1032,6 +1319,7 @@ es:
       section_heading: Comentarios
       sign_in_to_comment: Inicia sesión para participar en la conversación.
     communities:
+      edit_heading: Editando comunidad
       form:
         allow_membership_requests: Permitir solicitudes de membresía
         allow_membership_requests_hint: Muestra un formulario público de solicitud
@@ -1059,6 +1347,7 @@ es:
         actions:
           destroy_aria: Eliminar la comunidad
           edit_aria: Editar la comunidad
+          manage_billing: Gestionar facturacion
         create_event: Crear un evento
         events:
           create_event: Crear un evento
@@ -2937,6 +3226,7 @@ es:
         microphone: Micrófono
         notifications: Notificaciones
         permissions_group_label: Permissions group label
+      edit_heading: Editar perfil
       federate_content: Permitir que esta plataforma incluya tus publicaciones, páginas
         y eventos públicos en fuentes de federación aprobadas.
       index:
@@ -4618,6 +4908,8 @@ es:
       expired: ha expirado, por favor solicita una nueva
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
+      immutable_after_stripe_link: no se puede cambiar después de vincular un precio
+        de Stripe
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
@@ -4728,6 +5020,7 @@ es:
     create: Crear
     declined: Rechazado
     delete: Eliminar
+    description: Descripción
     destroy: Destruir
     draft: Borrador
     edit: Editar
@@ -4740,6 +5033,7 @@ es:
     loading: Cargando...
     locale: Idioma
     message: Mensaje
+    name: Nombre
     new: Nuevo
     'no': 'No'
     no_description: Sin descripción

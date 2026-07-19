@@ -276,6 +276,70 @@ RSpec.describe BetterTogether::CommunityPolicy do
     end
   end
 
+  describe '#manage_merchant_account?' do
+    context 'when user can update the community but has no settings-tier permission' do
+      let(:user) { create(:better_together_user) }
+      let(:facilitator_role) { BetterTogether::Role.find_by(identifier: 'community_facilitator') }
+
+      before do
+        # This worktree's test database can carry a stale community_facilitator
+        # permission set from an earlier seed run that AccessControlBuilder's
+        # own reseed guard (`unless Role.exists?`) never refreshes once roles
+        # already exist. Assign explicitly so this test reflects the role
+        # definition actually in source, not whatever happens to be persisted.
+        facilitator_role.assign_resource_permissions(
+          %w[read_community list_community create_community update_community delete_community
+             invite_community_members],
+          sync: true
+        )
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community,
+          member: user.person,
+          role: facilitator_role,
+          status: 'active'
+        )
+      end
+
+      it 'allows managing the community' do
+        expect(policy.update?).to be true
+      end
+
+      it 'denies payout-onboarding management' do
+        expect(policy.manage_merchant_account?).to be false
+      end
+    end
+
+    context 'when user is a platform steward' do
+      let(:user) { BetterTogether::User.find_by(email: 'merchant-steward@example.test') }
+
+      before do
+        configure_host_platform
+        platform = BetterTogether::Platform.first
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+               BetterTogether::Role.find_by(identifier: 'platform_manager')
+        manager = find_or_create_test_user('merchant-steward@example.test', 'SecureTest123!@#', :platform_steward)
+
+        next unless platform && role && manager.person
+
+        membership = BetterTogether::PersonPlatformMembership.find_or_initialize_by(
+          member: manager.person,
+          joinable: platform,
+          role: role
+        )
+        membership.status = 'active'
+        membership.save!
+      end
+
+      it 'allows payout-onboarding management' do
+        expect(policy.manage_merchant_account?).to be true
+      end
+    end
+
+    it 'denies unauthenticated users' do
+      expect(described_class.new(nil, community).manage_merchant_account?).to be false
+    end
+  end
+
   describe 'Scope' do
     let!(:public_community) { create(:better_together_community, privacy: 'public') }
     let!(:community_scoped_community) { create(:better_together_community, privacy: 'community') }

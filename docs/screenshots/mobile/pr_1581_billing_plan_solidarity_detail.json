@@ -1,0 +1,82 @@
+{
+  "name": "pr_1581_billing_plan_solidarity_detail",
+  "device": "mobile",
+  "url": "/en/host/billing/plans/65f69531-33c6-41ab-8084-a90727aeab01",
+  "title": "Harbour Solidarity | Billing Plans | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#pricing_tier_billing_plan_65f69531-33c6-41ab-8084-a90727aeab01",
+      "title": "Pricing tier",
+      "bullets": [
+        "Session follow-up: this field existed on every plan already, but the admin plan show page never rendered it — added alongside solidarity description below."
+      ],
+      "target": {
+        "x": 17.0,
+        "y": 1074.1875,
+        "width": 451.0,
+        "height": 24.0,
+        "right": 468.0,
+        "bottom": 1098.1875,
+        "center_x": 242.5,
+        "center_y": 1086.1875
+      },
+      "avoid": {
+        "x": 17.0,
+        "y": 1074.1875,
+        "width": 451.0,
+        "height": 24.0,
+        "right": 468.0,
+        "bottom": 1098.1875,
+        "center_x": 242.5,
+        "center_y": 1086.1875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 740.19,
+        "width": 270.0,
+        "height": 314,
+        "score": 1074.1875
+      }
+    },
+    {
+      "selector": "#solidarity_description_billing_plan_65f69531-33c6-41ab-8084-a90727aeab01",
+      "title": "Solidarity description",
+      "bullets": [
+        "The admin form's own hint text said this is \"shown to potential subscribers\", but nothing actually rendered it anywhere until this session's follow-up.",
+        "Now shown here for the host operator, and on the subscriber-facing plan card (see the community and personal billing overview screenshots)."
+      ],
+      "target": {
+        "x": 17.0,
+        "y": 1130.1875,
+        "width": 451.0,
+        "height": 48.0,
+        "right": 468.0,
+        "bottom": 1178.1875,
+        "center_x": 242.5,
+        "center_y": 1154.1875
+      },
+      "avoid": {
+        "x": 17.0,
+        "y": 1130.1875,
+        "width": 451.0,
+        "height": 48.0,
+        "right": 468.0,
+        "bottom": 1178.1875,
+        "center_x": 242.5,
+        "center_y": 1154.1875
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 580,
+        "score": 0
+      }
+    }
+  ]
+}

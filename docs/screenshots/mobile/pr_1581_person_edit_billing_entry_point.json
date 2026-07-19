@@ -1,0 +1,47 @@
+{
+  "name": "pr_1581_person_edit_billing_entry_point",
+  "device": "mobile",
+  "url": "/en/p/manager-example-test/edit",
+  "title": "Platform Steward | People | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#person-manage-billing-btn",
+      "title": "Manage billing",
+      "bullets": [
+        "Jumps from personal profile settings directly to the person billing page.",
+        "Only shown once the person record is persisted."
+      ],
+      "target": {
+        "x": 133.96875,
+        "y": 165.390625,
+        "width": 217.0625,
+        "height": 38.0,
+        "right": 351.03125,
+        "bottom": 203.390625,
+        "center_x": 242.5,
+        "center_y": 184.390625
+      },
+      "avoid": {
+        "x": 133.96875,
+        "y": 165.390625,
+        "width": 217.0625,
+        "height": 38.0,
+        "right": 351.03125,
+        "bottom": 203.390625,
+        "center_x": 242.5,
+        "center_y": 184.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 223.39,
+        "width": 270.0,
+        "height": 288,
+        "score": 1057.609375
+      }
+    }
+  ]
+}

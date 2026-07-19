@@ -1,0 +1,259 @@
+<%= form_with(
+      model: billing_plan,
+      url: billing_plan.persisted? ? billing_plan_path(billing_plan) : billing_plans_path,
+      class: 'needs-validation',
+      id: 'billing-plan-form'
+    ) do |form| %>
+  <% if billing_plan.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <ul class="mb-0">
+        <% billing_plan.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div id="billing-plan-core-fields" class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= form.label :identifier,
+                       t('better_together.billing.plans.field_identifier', default: 'Identifier'),
+                       class: 'form-label' %>
+        <%= form.text_field :identifier,
+                            class: 'form-control',
+                            required: true,
+                            readonly: billing_plan.persisted?,
+                            placeholder: 'e.g. hosted_stewardship_monthly' %>
+        <div class="form-text"><%= t('better_together.billing.plans.field_identifier_hint', default: 'Unique machine-readable key. Cannot be changed after creation.') %></div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        <%= form.label :name,
+                       t('better_together.billing.plans.field_name', default: 'Name'),
+                       class: 'form-label' %>
+        <%= form.text_field :name, class: 'form-control', required: true %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description,
+                   t('better_together.billing.plans.field_description', default: 'Description'),
+                   class: 'form-label' %>
+    <%= form.text_area :description, class: 'form-control', rows: 2 %>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= form.label :billing_interval,
+                       t('better_together.billing.plans.field_billing_interval', default: 'Billing interval'),
+                       class: 'form-label' %>
+        <%= form.select :billing_interval,
+                        BetterTogether::Billing::Plan::BILLING_INTERVALS.map { |i|
+                          [t("better_together.billing.plans.interval_#{i}", default: i.humanize), i]
+                        },
+                        {},
+                        class: 'form-select',
+                        required: true %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= form.label :amount_cents,
+                       t('better_together.billing.plans.field_amount_cents', default: 'Amount (cents)'),
+                       class: 'form-label' %>
+        <%= form.number_field :amount_cents, class: 'form-control', min: 0, required: true %>
+        <div class="form-text"><%= t('better_together.billing.plans.field_amount_cents_hint', default: 'e.g. 4500 = $45.00') %></div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="mb-3">
+        <%= form.label :currency,
+                       t('better_together.billing.plans.field_currency', default: 'Currency'),
+                       class: 'form-label' %>
+        <%= form.text_field :currency,
+                            class: 'form-control',
+                            maxlength: 3,
+                            placeholder: 'CAD',
+                            required: true %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :stripe_price_id,
+                   t('better_together.billing.plans.field_stripe_price_id', default: 'Stripe Price ID'),
+                   class: 'form-label' %>
+    <%= form.text_field :stripe_price_id,
+                        class: 'form-control',
+                        required: true,
+                        readonly: billing_plan.persisted?,
+                        placeholder: 'price_...' %>
+    <div class="form-text"><%= t('better_together.billing.plans.field_stripe_price_id_hint', default: 'From the Stripe Dashboard. Cannot be changed after creation.') %></div>
+  </div>
+
+  <div class="mb-4">
+    <div class="form-check">
+      <%= form.check_box :active, class: 'form-check-input' %>
+      <%= form.label :active,
+                     t('better_together.billing.plans.field_active', default: 'Active (visible to subscribers)'),
+                     class: 'form-check-label' %>
+    </div>
+  </div>
+
+  <div id="billing-plan-metadata-card" class="card mb-4">
+    <div class="card-header">
+      <strong><%= t('better_together.billing.plans.metadata_section_title', default: 'Plan metadata') %></strong>
+      <span class="text-muted small ms-2"><%= t('better_together.billing.plans.metadata_section_hint', default: 'Shown on billing pages and entitlement cards') %></span>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <%= form.label 'metadata[participant_summary]',
+                       t('better_together.billing.plans.field_participant_summary', default: 'Participant summary'),
+                       class: 'form-label' %>
+        <%= form.text_area 'metadata[participant_summary]',
+                           value: billing_plan.metadata.to_h['participant_summary'],
+                           class: 'form-control',
+                           rows: 2 %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label 'metadata[participant_benefits]',
+                       t('better_together.billing.plans.field_participant_benefits', default: 'Benefits'),
+                       class: 'form-label' %>
+        <%= form.text_area 'metadata[participant_benefits][]',
+                           value: Array(billing_plan.metadata.to_h['participant_benefits']).join("\n"),
+                           class: 'form-control',
+                           rows: 3,
+                           placeholder: "Hosted community access\nOngoing stewardship support" %>
+        <div class="form-text"><%= t('better_together.billing.plans.field_participant_benefits_hint', default: 'One benefit per line.') %></div>
+      </div>
+
+      <div id="billing-plan-metadata-fields" class="row g-3">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[beneficiary_label]',
+                           t('better_together.billing.plans.field_beneficiary_label', default: 'Beneficiary label'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[beneficiary_label]',
+                                value: billing_plan.metadata.to_h['beneficiary_label'],
+                                class: 'form-control',
+                                placeholder: 'Hosted access' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[hosted_access_level]',
+                           t('better_together.billing.plans.field_hosted_access_level', default: 'Hosted access level'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[hosted_access_level]',
+                                value: billing_plan.metadata.to_h['hosted_access_level'],
+                                class: 'form-control',
+                                placeholder: 'Standard' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[support_tier]',
+                           t('better_together.billing.plans.field_support_tier', default: 'Support tier'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[support_tier]',
+                                value: billing_plan.metadata.to_h['support_tier'],
+                                class: 'form-control',
+                                placeholder: 'Community' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[community_capacity_tier]',
+                           t('better_together.billing.plans.field_community_capacity_tier', default: 'Community capacity tier'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[community_capacity_tier]',
+                                value: billing_plan.metadata.to_h['community_capacity_tier'],
+                                class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[pricing_tier]',
+                           t('better_together.billing.plans.field_pricing_tier', default: 'Pricing tier'),
+                           class: 'form-label' %>
+            <%= form.select 'metadata[pricing_tier]',
+                            BetterTogether::Billing::Plan::PLAN_PRICING_TIERS.map { |tier|
+                              [t("better_together.billing.plans.pricing_tier_#{tier}",
+                                 default: tier.humanize), tier]
+                            },
+                            { selected: billing_plan.metadata.to_h['pricing_tier'].presence || 'standard' },
+                            class: 'form-select' %>
+            <div class="form-text">
+              <%= t('better_together.billing.plans.field_pricing_tier_hint',
+                    default: 'Solidarity tiers let smaller co-ops access the platform at a reduced contribution.') %>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[solidarity_description]',
+                           t('better_together.billing.plans.field_solidarity_description',
+                             default: 'Solidarity description'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[solidarity_description]',
+                                value: billing_plan.metadata.to_h['solidarity_description'],
+                                class: 'form-control',
+                                placeholder: 'e.g. For co-ops under $100k annual revenue' %>
+            <div class="form-text">
+              <%= t('better_together.billing.plans.field_solidarity_description_hint',
+                    default: 'Shown to potential subscribers to explain who this tier is for.') %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="billing-plan-eligibility-fields" class="mb-0">
+        <label class="form-label">
+          <%= t('better_together.billing.plans.field_eligible_owner_types', default: 'Eligible for') %>
+        </label>
+        <% current_types = Array(billing_plan.metadata.to_h['eligible_billable_owner_types']).presence ||
+                           BetterTogether::Billing::Plan::DEFAULT_ELIGIBLE_OWNER_TYPES %>
+        <div class="d-flex gap-3">
+          <div class="form-check">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="billing_plan[metadata][eligible_billable_owner_types][]"
+                   value="BetterTogether::Community"
+                   id="owner_type_community"
+                   <%= 'checked' if current_types.include?('BetterTogether::Community') %>>
+            <label class="form-check-label" for="owner_type_community">
+              <%= t('better_together.billing.plans.owner_type_community', default: 'Community') %>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="billing_plan[metadata][eligible_billable_owner_types][]"
+                   value="BetterTogether::Person"
+                   id="owner_type_person"
+                   <%= 'checked' if current_types.include?('BetterTogether::Person') %>>
+            <label class="form-check-label" for="owner_type_person">
+              <%= t('better_together.billing.plans.owner_type_person', default: 'Person') %>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit billing_plan.persisted? ? t('better_together.billing.plans.update_submit', default: 'Update plan') : t('better_together.billing.plans.create_submit', default: 'Create plan'),
+                    class: 'btn btn-primary' %>
+    <%= link_to t('globals.cancel', default: 'Cancel'),
+                billing_plan.persisted? ? billing_plan_path(billing_plan, locale: I18n.locale) : billing_plans_path(locale: I18n.locale),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

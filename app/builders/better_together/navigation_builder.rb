@@ -609,6 +609,17 @@ module BetterTogether
                 privacy: 'private',
                 visibility_strategy: 'permission',
                 permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-plans',
+                title_en: 'Billing Plans',
+                slug_en: 'billing-plans',
+                position: 12,
+                item_type: 'link',
+                route_name: 'billing_plans_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
               }
             ]
 
