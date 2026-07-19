@@ -87,6 +87,17 @@
                 </span>
               <% end %>
             </dd>
+
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_pricing_tier', default: 'Pricing tier') %></dt>
+            <dd id="<%= dom_id(@plan, :pricing_tier) %>" class="col-sm-7">
+              <span class="badge <%= @plan.solidarity_tier? ? 'bg-info text-dark' : 'bg-secondary' %>">
+                <%= t("better_together.billing.plans.pricing_tier_#{@plan.pricing_tier}",
+                      default: @plan.pricing_tier.humanize) %>
+              </span>
+            </dd>
+
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_solidarity_description', default: 'Solidarity description') %></dt>
+            <dd id="<%= dom_id(@plan, :solidarity_description) %>" class="col-sm-7"><%= @plan.solidarity_description.presence || '—' %></dd>
           </dl>
         </div>
       </div>

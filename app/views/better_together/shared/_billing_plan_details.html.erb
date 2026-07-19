@@ -2,6 +2,21 @@
   <%= billing_plan.participant_summary %>
 </div>
 
+<% if billing_plan.solidarity_tier? %>
+  <p class="mb-2">
+    <span class="badge bg-info text-dark billing-plan-solidarity-badge">
+      <%= t("better_together.billing.plans.pricing_tier_#{billing_plan.pricing_tier}",
+            default: billing_plan.pricing_tier.humanize) %>
+    </span>
+    <span class="small text-muted ms-1">
+      <%= billing_plan.solidarity_description.presence || t(
+            'better_together.billing.plans.field_pricing_tier_hint',
+            default: 'Solidarity tiers let smaller co-ops access the platform at a reduced contribution.'
+          ) %>
+    </span>
+  </p>
+<% end %>
+
 <p class="mb-2 small">
   <strong><%= t('better_together.billing.plan_beneficiary_label', default: 'What this supports:') %></strong>
   <%= billing_plan.beneficiary_label %>

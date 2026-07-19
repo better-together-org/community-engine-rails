@@ -25,6 +25,22 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     )
   end
 
+  let!(:solidarity_plan) do
+    create(
+      :better_together_billing_plan,
+      identifier: 'harbour-solidarity',
+      name: 'Harbour Solidarity',
+      amount_cents: 2_500,
+      stripe_price_id: 'price_test_harbour_solidarity',
+      metadata: {
+        'participant_summary' => 'A reduced-contribution option for smaller co-ops.',
+        'beneficiary_label' => 'Community access',
+        'pricing_tier' => 'solidarity_small',
+        'solidarity_description' => 'For co-ops with fewer than 20 members.'
+      }
+    )
+  end
+
   before do
     Current.platform = host_platform
   end
@@ -44,6 +60,7 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :current_subscription_card)}")
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :merchant_account_card)}")
     expect(page).to have_css('#community-billing-plans-table')
+    expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
   end
 
   it 'person billing page exposes stable review anchors' do
@@ -57,6 +74,7 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(platform_manager.person, :current_subscription_card)}")
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(platform_manager.person, :merchant_account_card)}")
     expect(page).to have_css('#person-billing-plans-table')
+    expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
   end
 
   it 'plan index exposes stable review anchors' do
@@ -78,6 +96,18 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(plan, :show_page)}")
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(plan, :summary_details)}")
     expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(plan, :metadata_details)}")
+  end
+
+  it 'solidarity-tier plan show exposes pricing tier and solidarity description anchors' do
+    capybara_login_as_platform_manager
+
+    visit better_together.billing_plan_path(solidarity_plan, locale: I18n.default_locale)
+
+    expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(solidarity_plan, :pricing_tier)}", text: 'Solidarity — Small')
+    expect(page).to have_css(
+      "##{ActionView::RecordIdentifier.dom_id(solidarity_plan, :solidarity_description)}",
+      text: 'For co-ops with fewer than 20 members.'
+    )
   end
 
   it 'provision view exposes stable review anchors' do
