@@ -1,0 +1,48 @@
+{
+  "name": "post_federation_visibility_field",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-1/edit",
+  "title": "Edit Post | Test Host Community",
+  "locale": "en",
+  "feature_set": "federation_item_consent",
+  "flow": "post_federation_visibility_field",
+  "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "[id$=\"_federation_visibility\"]",
+      "title": "Per-item federation override",
+      "bullets": [
+        "\"Use platform default\" follows the member's global federation preference.",
+        "\"Never federate\" always wins, even if the connection and global preference allow it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 611.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 649.390625,
+        "center_x": 242.5,
+        "center_y": 630.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 611.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 649.390625,
+        "center_x": 242.5,
+        "center_y": 630.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 669.39,
+        "width": 270.0,
+        "height": 404,
+        "score": 611.609375
+      }
+    }
+  ]
+}

@@ -44,6 +44,16 @@ RSpec.describe BetterTogether::PlatformConnection do
     end
   end
 
+  describe '#to_s' do
+    it 'includes both platform names, not the default Object#to_s' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.to_s).to include(connection.source_platform.name)
+      expect(connection.to_s).to include(connection.target_platform.name)
+      expect(connection.to_s).not_to include('#<BetterTogether::PlatformConnection')
+    end
+  end
+
   describe '.for_platform' do
     it 'returns incoming and outgoing connections for a platform' do
       platform = create(:better_together_platform)

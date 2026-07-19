@@ -17,7 +17,7 @@
       <h2 class="card-title h5 mb-0"><%= t('.title', default: 'Connected platforms') %></h2>
       <%= link_to t('.review_link', default: 'Review connections'),
                   host_dashboard_platform_connection_review_path,
-                  class: 'btn btn-outline-primary btn-sm' %>
+                  class: 'btn btn-outline-primary btn-sm', id: 'federation-hub-review-connections-link' %>
     </div>
 
     <div class="d-flex flex-wrap gap-2 mb-3" id="federation-hub-connection-badges">
