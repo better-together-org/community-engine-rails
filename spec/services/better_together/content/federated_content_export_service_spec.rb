@@ -129,5 +129,57 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
         expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(event.id)
       end
     end
+
+    describe 'per-connection FederationContentGrant' do
+      it 'excludes federate content when this connection has an explicit denied grant' do
+        creator = create(:better_together_person, federate_content: true)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'federate')
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: connection,
+                                                          status: 'denied')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).not_to include(post.id)
+      end
+
+      it 'includes platform_default content when this connection has an explicit allowed grant, ' \
+         'even though the creator opted out globally' do
+        creator = create(:better_together_person, federate_content: false)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'platform_default')
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: connection,
+                                                          status: 'allowed')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(post.id)
+      end
+
+      it 'still excludes no_federate content even with an explicit allowed grant for this connection' do
+        creator = create(:better_together_person, federate_content: true)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'no_federate')
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: connection,
+                                                          status: 'allowed')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).not_to include(post.id)
+      end
+
+      it 'ignores a grant scoped to a different connection' do
+        other_connection = create(
+          :better_together_platform_connection, :active,
+          source_platform: create(:better_together_platform), target_platform: create(:better_together_platform),
+          share_posts: true
+        )
+        creator = create(:better_together_person, federate_content: false)
+        post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                             published_at: 1.day.ago, federation_visibility: 'platform_default')
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: other_connection,
+                                                          status: 'allowed')
+
+        result = described_class.call(connection:, limit: 10)
+        expect(result.seeds.map { |seed| seed['better_together'][:payload][:id] }).not_to include(post.id)
+      end
+    end
   end
 end

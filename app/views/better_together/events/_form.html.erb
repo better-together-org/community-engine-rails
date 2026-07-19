@@ -87,6 +87,7 @@
           <!-- Federation Visibility Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= federation_visibility_field(form:) %>
+            <%= federation_content_grants_field(form:, record: event, connections: federation_connections_for(event)) %>
           </div>
 
           <!-- Status Field -->

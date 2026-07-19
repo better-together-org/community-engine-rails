@@ -1808,11 +1808,18 @@ en:
         status: Status
       updated: Feature access grant updated.
     federatable:
+      grant_statuses:
+        allowed: Always federate
+        denied: Never federate
+        platform_default: Use platform default
       hints:
+        federation_content_grants: Override federation for this item on one specific
+          connection, without changing the general federation visibility above.
         federation_visibility: Override this platform's federation settings for this
           specific item. "Use platform default" follows your account-wide federation
           preference and each connection's content-sharing settings.
       labels:
+        federation_content_grants: Federation per connection
         federation_visibility: Federation visibility
     federation:
       backfill:

@@ -225,6 +225,15 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('page[federation_visibility]')
     end
+
+    it 'renders a per-connection grant row for each active connection allowing pages' do
+      connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_pages: true)
+
+      get better_together.edit_page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("page[federation_content_grants_by_connection][#{connection.id}]")
+    end
   end
 
   describe 'manager CRUD flows' do
@@ -294,6 +303,21 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       expect(response).to be_redirect
       expect(page.reload).to be_federation_visibility_federate
+    end
+
+    it 'persists a per-connection federation grant on update' do
+      connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_pages: true)
+
+      patch better_together.page_path(page, locale:), params: {
+        page: {
+          title_en: page.title,
+          content_en: page.content.to_plain_text,
+          federation_content_grants_by_connection: { connection.id => 'denied' }
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(page.reload.federation_grant_status_for(connection)).to eq('denied')
     end
 
     it 'renders edit when update params are invalid' do

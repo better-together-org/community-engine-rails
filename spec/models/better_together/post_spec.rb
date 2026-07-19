@@ -188,6 +188,41 @@ RSpec.describe BetterTogether::Post do
 
       post.update!(federation_visibility: 'federate')
     end
+
+    describe 'federation_content_type_key' do
+      it "returns 'posts'" do
+        expect(create(:better_together_post).federation_content_type_key).to eq('posts')
+      end
+    end
+
+    describe 'per-connection grants' do
+      it 'returns nil when no grant exists for the connection' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+
+        expect(post.federation_grant_status_for(connection)).to be_nil
+      end
+
+      it 'creates a grant when assigned a non-default status' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+
+        post.federation_content_grants_by_connection = { connection.id => 'denied' }
+
+        expect(post.federation_grant_status_for(connection)).to eq('denied')
+      end
+
+      it 'removes an existing grant when reassigned to platform_default' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: connection,
+                                                          status: 'denied')
+
+        post.federation_content_grants_by_connection = { connection.id => 'platform_default' }
+
+        expect(post.federation_grant_status_for(connection)).to be_nil
+      end
+    end
   end
 
   describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do

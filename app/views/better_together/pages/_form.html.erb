@@ -66,6 +66,7 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= federation_visibility_field(form:) %>
+      <%= federation_content_grants_field(form:, record: page, connections: federation_connections_for(page)) %>
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">

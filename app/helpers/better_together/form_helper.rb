@@ -197,6 +197,45 @@ module BetterTogether
       )
     end
 
+    def federation_content_grants_label
+      t('better_together.federatable.labels.federation_content_grants', default: 'Federation per connection')
+    end
+
+    def federation_content_grants_hint
+      t('better_together.federatable.hints.federation_content_grants',
+        default: 'Override federation for this item on one specific connection, without changing ' \
+                 'the general federation visibility above.')
+    end
+
+    def federation_content_grant_status_options(record, connection)
+      keys = %w[platform_default allowed denied]
+      labels = {
+        'platform_default' => t('better_together.federatable.grant_statuses.platform_default',
+                                default: 'Use platform default'),
+        'allowed' => t('better_together.federatable.grant_statuses.allowed', default: 'Always federate'),
+        'denied' => t('better_together.federatable.grant_statuses.denied', default: 'Never federate')
+      }
+      current = record.federation_grant_status_for(connection) || 'platform_default'
+      options_for_select(keys.map { |key| [labels[key], key] }, current)
+    end
+
+    def federation_content_grant_row(form:, record:, connection:)
+      field_id = "#{dom_id(record)}_federation_content_grant_#{connection.id}"
+      field_name = "#{form.object_name}[federation_content_grants_by_connection][#{connection.id}]"
+
+      content_tag(:div, class: 'row g-2 align-items-center mb-1',
+                        id: "federation-content-grant-#{connection.id}") do
+        concat content_tag(:label, connection.to_s, for: field_id, class: 'col-6 col-md-4 small mb-0')
+        concat(content_tag(:div, class: 'col-6 col-md-4') do
+          select_tag(
+            field_name,
+            federation_content_grant_status_options(record, connection),
+            id: field_id, class: 'form-select form-select-sm'
+          )
+        end)
+      end
+    end
+
     public
 
     def contributor_display_visibility_field(form:, include_inherit:, label:, hint:, html_options: {})
@@ -233,6 +272,32 @@ module BetterTogether
           build_federation_visibility_html_options(html_options, field_id)
         )
         concat content_tag(:small, federation_visibility_hint, class: 'form-text text-muted mt-1')
+      end
+    end
+
+    # Per-connection federation override -- one row per active connection that
+    # already allows this record's content type (connection-level content-type
+    # gating stays authoritative; this can only narrow or widen federation for
+    # a specific connection, never bypass it). `connections` must be
+    # pre-computed by the caller (see _balance_card.html.erb convention) to
+    # avoid an N+1 query per rendered item.
+    def federation_content_grants_field(form:, record:, connections:)
+      return if connections.blank?
+
+      content_tag(:div, class: 'mb-3', id: "#{dom_id(record)}_federation_content_grants") do
+        concat content_tag(:span, federation_content_grants_label, class: 'form-label d-block')
+        concat content_tag(:small, federation_content_grants_hint, class: 'form-text text-muted d-block mb-2')
+        connections.each { |connection| concat federation_content_grant_row(form:, record:, connection:) }
+      end
+    end
+
+    # Active connections eligible for a per-connection grant on this record --
+    # the connection-level content-type toggle (allows_content_type?) already
+    # gates eligibility one layer up, so only connections that allow this
+    # record's content type are worth offering a per-connection override for.
+    def federation_connections_for(record)
+      ::BetterTogether::PlatformConnection.active.select do |connection|
+        connection.allows_content_type?(record.federation_content_type_key)
       end
     end
 

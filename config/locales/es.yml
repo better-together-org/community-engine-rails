@@ -1822,12 +1822,19 @@ es:
         status: Estado
       updated: Acceso a funciones actualizado.
     federatable:
+      grant_statuses:
+        allowed: Federar siempre
+        denied: No federar nunca
+        platform_default: Usar el valor predeterminado de la plataforma
       hints:
+        federation_content_grants: Anula la federación de este elemento para una conexión
+          específica, sin cambiar la visibilidad de federación general indicada arriba.
         federation_visibility: Anula la configuración de federación de esta plataforma
           para este elemento en concreto. «Usar el valor predeterminado de la plataforma»
           sigue tu preferencia de federación de cuenta y la configuración de uso compartido
           de contenido de cada conexión.
       labels:
+        federation_content_grants: Federación por conexión
         federation_visibility: Visibilidad de la federación
     federation:
       backfill:

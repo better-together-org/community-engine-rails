@@ -1830,12 +1830,20 @@ fr:
         status: Statut
       updated: Accès aux fonctionnalités mis à jour.
     federatable:
+      grant_statuses:
+        allowed: Toujours fédérer
+        denied: Ne jamais fédérer
+        platform_default: Utiliser le paramètre par défaut de la plateforme
       hints:
+        federation_content_grants: Remplace la fédération de cet élément pour une
+          connexion spécifique, sans modifier la visibilité de fédération générale
+          indiquée ci-dessus.
         federation_visibility: Remplace les paramètres de fédération de cette plateforme
           pour cet élément en particulier. « Utiliser le paramètre par défaut de la
           plateforme » suit votre préférence de fédération de compte et les paramètres
           de partage de contenu de chaque connexion.
       labels:
+        federation_content_grants: Fédération par connexion
         federation_visibility: Visibilité de la fédération
     federation:
       backfill:

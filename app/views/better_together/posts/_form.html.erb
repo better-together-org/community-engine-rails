@@ -43,6 +43,7 @@
   </div>
 
   <%= federation_visibility_field(form:) %>
+  <%= federation_content_grants_field(form:, record: post, connections: federation_connections_for(post)) %>
 
   <div class="mb-3">
     <%= required_label form, :categories %>

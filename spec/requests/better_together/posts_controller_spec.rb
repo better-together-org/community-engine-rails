@@ -73,6 +73,9 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
 
       before do
         configure_host_platform
+        # Referencing regular_user before login forces find_or_create_test_user to run
+        # first — login() requires the user to already exist and be confirmed.
+        regular_user
         login('user@example.test', 'SecureTest123!@#')
         # PostPolicy::Scope's scoped_community_privacy_query filters community-privacy
         # posts by post.community_id (not platform membership) — the user must be a
@@ -243,6 +246,15 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     expect(response.body).to include('post[federation_visibility]')
   end
 
+  it 'renders a per-connection grant row for each active connection allowing posts' do
+    connection = create(:better_together_platform_connection, :active, :sharing_enabled)
+
+    get better_together.edit_post_path(post_record, locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("post[federation_content_grants_by_connection][#{connection.id}]")
+  end
+
   describe 'manager CRUD flows' do
     it 'creates a post' do
       expect do
@@ -302,6 +314,22 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
 
       expect(response).to be_redirect
       expect(post_record.reload).to be_federation_visibility_no_federate
+    end
+
+    it 'persists a per-connection federation grant on update' do
+      connection = create(:better_together_platform_connection, :active, :sharing_enabled)
+
+      patch better_together.post_path(post_record, locale:), params: {
+        post: {
+          title_en: post_record.title,
+          content_en: post_record.content.to_plain_text,
+          privacy: 'public',
+          federation_content_grants_by_connection: { connection.id => 'denied' }
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(post_record.reload.federation_grant_status_for(connection)).to eq('denied')
     end
 
     it 'renders edit when update params are invalid', :aggregate_failures do
