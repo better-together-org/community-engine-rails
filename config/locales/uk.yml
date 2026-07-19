@@ -1127,9 +1127,8 @@ uk:
       retry_count: "%<count>d sprob"
       sponsor_checkout: Oplatyty za tsiu spilnotu osobysto
       sponsored_communities: Sponsorovani spilnoty
-      sponsored_subscription_notice: Tsiu spilnotu zaraz sponsoruie %{owner}. Faza
-        1 vykorystovuie zaminnyi checkout zamist okremoho transfernoho potoku. Pochni
-        nyzhche zaminnyi checkout, yakshcho billing maie pereity do inshoho vlasnyka.
+      sponsored_subscription_notice: "%{owner} zaraz pokryvaie platu za tsiu spilnotu.
+        Khochete zminyty platnyka? Oberit novoho platnyka nyzhche."
       start_checkout: Pochaty oplatu
       status: Stan
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
@@ -1146,9 +1145,9 @@ uk:
       support_tier: 'Riven pidtrymky:'
       support_tier_default: Spilnota
       sync_source: 'Dzherelo synchronizatsii:'
-      takeover_as_community: Pochaty zaminnyi checkout dlia tsiiei spilnoty
-      takeover_as_other_community: Pochaty zaminnyi checkout cherez %{community}
-      takeover_as_person: Pochaty zaminnyi checkout osobysto
+      takeover_as_community: Nekhai spilnota platyt sama za sebe
+      takeover_as_other_community: Nekhai %{community} zaplatyt zamist
+      takeover_as_person: Zaplatyty za tse osobysto
       unknown_sync_source: Nevidome
       unresolved_alert_body: Billing-vidkhylennia Stripe zalyshalosia nevyrishenym
         dostatno dovho, shchob vymagaty operatornoho ohliadu. Zapusti reconciliatsiiu

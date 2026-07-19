@@ -1145,9 +1145,8 @@ en:
       retry_count: "%<count>d attempts"
       sponsor_checkout: Pay personally for this community
       sponsored_communities: Sponsored communities
-      sponsored_subscription_notice: This community is currently sponsored by %{owner}.
-        Phase 1 uses replacement checkout instead of a separate transfer workflow.
-        Start a replacement checkout below if billing should move to a different owner.
+      sponsored_subscription_notice: "%{owner} is currently covering this community's
+        plan. Want to move billing to someone else? Choose a new payer below."
       start_checkout: Start checkout
       status: Status
       subheading: Manage Stripe checkout, subscription status, and billing portal
@@ -1164,9 +1163,9 @@ en:
       support_tier: 'Support tier:'
       support_tier_default: Community
       sync_source: 'Sync source:'
-      takeover_as_community: Start replacement checkout for this community
-      takeover_as_other_community: Start replacement checkout via %{community}
-      takeover_as_person: Start replacement checkout personally
+      takeover_as_community: Have this community pay for itself
+      takeover_as_other_community: Let %{community} pay instead
+      takeover_as_person: Pay for this personally instead
       unknown_sync_source: Unknown
       unresolved_alert_body: Stripe billing drift has remained unresolved long enough
         to need operator review. Reconcile now and inspect the oldest unresolved events.

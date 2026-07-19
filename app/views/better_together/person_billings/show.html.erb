@@ -58,7 +58,7 @@
             <% end %>
             <p class="mb-2"><strong><%= @billing_subscription.billing_plan.name %></strong></p>
             <p class="mb-2">
-              <span class="badge text-bg-primary billing-subscription-status-badge"><%= @billing_subscription.status %></span>
+              <span class="badge text-bg-primary billing-subscription-status-badge"><%= t("better_together.billing.subscription_status.#{@billing_subscription.status}", default: @billing_subscription.status.humanize) %></span>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.last_synced_at', default: 'Last synced:') %>
@@ -157,7 +157,7 @@
               </div>
             <% end %>
             <p class="mb-2">
-              <span class="badge text-bg-info billing-merchant-status-badge"><%= @merchant_account.status %></span>
+              <span class="badge text-bg-info billing-merchant-status-badge"><%= t("better_together.billing.merchant_account_status.#{@merchant_account.status}", default: @merchant_account.status.humanize) %></span>
             </p>
             <p class="mb-1">
               <%= t('better_together.billing.merchant_provider', default: 'Provider:') %>

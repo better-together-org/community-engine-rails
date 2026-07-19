@@ -5,7 +5,7 @@
   <div class="card-body">
     <% if billing_alert_events.any? %>
       <% if billing_alert_summary[:dead_lettered_count].positive? %>
-        <div class="alert alert-danger mb-3">
+        <div class="alert alert-danger mb-3" role="alert">
           <strong><%= t('better_together.billing.dead_letter_alert_heading', default: 'Dead-lettered billing events need review.') %></strong>
           <div>
             <%= t(
@@ -18,7 +18,7 @@
       <% end %>
 
       <% if billing_alert_summary[:repeated_failure_count].positive? %>
-        <div class="alert alert-danger mb-3">
+        <div class="alert alert-danger mb-3" role="alert">
           <strong>
             <%= t(
                   'better_together.billing.repeated_failure_alert_heading',
@@ -37,7 +37,7 @@
       <% end %>
 
       <% if billing_alert_summary[:unresolved_count].positive? %>
-        <div class="alert alert-warning mb-3">
+        <div class="alert alert-warning mb-3" role="alert">
           <strong>
             <%= t(
                   'better_together.billing.unresolved_alert_heading',
@@ -69,7 +69,7 @@
               ) %>
         </summary>
 
-        <div class="alert alert-warning mt-3 mb-3">
+        <div class="alert alert-warning mt-3 mb-3" role="alert">
           <%= t(
                 'better_together.billing.activity_alerts_explainer',
                 default: 'Recent Stripe webhook issues were recorded for this billing record. Review the latest events below and run reconciliation if local state looks stale.'

@@ -1148,10 +1148,8 @@ es:
       retry_count: "%<count>d intentos"
       sponsor_checkout: Pagar personalmente por esta comunidad
       sponsored_communities: Comunidades patrocinadas
-      sponsored_subscription_notice: Esta comunidad esta actualmente patrocinada por
-        %{owner}. La Fase 1 usa un pago de reemplazo en lugar de un flujo separado
-        de transferencia. Inicia abajo un pago de reemplazo si la facturacion debe
-        pasar a otro titular.
+      sponsored_subscription_notice: "%{owner} esta cubriendo actualmente el plan
+        de esta comunidad. Para cambiar quien paga, inicia un nuevo pago abajo."
       start_checkout: Iniciar pago
       status: Estado
       subheading: Gestiona el pago de Stripe, el estado de la suscripcion y el acceso
@@ -1168,9 +1166,9 @@ es:
       support_tier: 'Nivel de soporte:'
       support_tier_default: Comunidad
       sync_source: 'Fuente de sincronizacion:'
-      takeover_as_community: Iniciar pago de reemplazo para esta comunidad
-      takeover_as_other_community: Iniciar pago de reemplazo a traves de %{community}
-      takeover_as_person: Iniciar pago de reemplazo personalmente
+      takeover_as_community: Que esta comunidad pague por si misma
+      takeover_as_other_community: Que %{community} pague en su lugar
+      takeover_as_person: Pagar esto personalmente en su lugar
       unknown_sync_source: Desconocida
       unresolved_alert_body: La desviacion de facturacion de Stripe ha permanecido
         sin resolverse el tiempo suficiente como para requerir revision operativa.

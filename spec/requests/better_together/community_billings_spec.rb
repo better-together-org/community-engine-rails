@@ -99,8 +99,8 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       get better_together.community_billing_path(community, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('currently sponsored by')
-      expect(response.body).to include('Start replacement checkout for this community')
+      expect(response.body).to include('is currently covering this community')
+      expect(response.body).to include('Have this community pay for itself')
     end
 
     it 'shows community takeover actions when a community subscription is sponsored by another community' do
@@ -118,9 +118,9 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       get better_together.community_billing_path(community, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Start replacement checkout for this community')
-      expect(response.body).to include('Start replacement checkout personally')
-      expect(response.body).to include('Start replacement checkout via Collective Fund')
+      expect(response.body).to include('Have this community pay for itself')
+      expect(response.body).to include('Pay for this personally instead')
+      expect(response.body).to include('Let Collective Fund pay instead')
     end
 
     it 'shows merchant account status when one exists' do

@@ -1161,10 +1161,8 @@ fr:
       retry_count: "%<count>d tentatives"
       sponsor_checkout: Payer personnellement pour cette communaute
       sponsored_communities: Communautes soutenues
-      sponsored_subscription_notice: Cette communaute est actuellement soutenue par
-        %{owner}. La phase 1 utilise un paiement de remplacement plutot qu'un flux
-        de transfert distinct. Lancez ci-dessous un paiement de remplacement si la
-        facturation doit passer a un autre proprietaire.
+      sponsored_subscription_notice: "%{owner} couvre actuellement le plan de cette
+        communaute. Pour changer qui paie, lancez un nouveau paiement ci-dessous."
       start_checkout: Commencer le paiement
       status: Statut
       subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail
@@ -1181,9 +1179,9 @@ fr:
       support_tier: 'Niveau de support :'
       support_tier_default: Communaute
       sync_source: 'Source de synchronisation :'
-      takeover_as_community: Lancer un paiement de remplacement pour cette communaute
-      takeover_as_other_community: Lancer un paiement de remplacement via %{community}
-      takeover_as_person: Lancer un paiement de remplacement personnel
+      takeover_as_community: Facturer cette communaute elle-meme
+      takeover_as_other_community: Facturer %{community} a la place
+      takeover_as_person: Payer personnellement a la place
       unknown_sync_source: Inconnue
       unresolved_alert_body: L''ecart de facturation Stripe est reste non resolu assez
         longtemps pour exiger une revue operatoire. Lancez une reconciliation maintenant

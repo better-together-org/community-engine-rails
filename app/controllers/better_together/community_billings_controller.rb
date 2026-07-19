@@ -215,7 +215,7 @@ module BetterTogether
       @billing_alert_summary = billing_alert_summary
       @last_billing_event = last_billing_event
       @sponsoring_person = current_user.person
-      @sponsoring_communities = policy_scope(BetterTogether::Community).where.not(id: @community.id).to_a
+      @sponsoring_communities = stewarded_sponsoring_communities
     end
     # rubocop:enable Metrics/AbcSize
 
@@ -346,9 +346,17 @@ module BetterTogether
     end
 
     def sponsoring_communities_by_slug
-      @sponsoring_communities_by_slug ||= policy_scope(BetterTogether::Community)
-                                          .where.not(id: @community.id)
-                                          .index_by(&:slug)
+      @sponsoring_communities_by_slug ||= stewarded_sponsoring_communities.index_by(&:slug)
+    end
+
+    # Communities the current user is authorized to bill as a sponsor for this community's
+    # subscription — mirrors the `policy(owner).update?` gate `portal_billable_owner` already
+    # applies, so a person can't select or checkout as a community they don't steward just
+    # because it happens to be visible to them.
+    def stewarded_sponsoring_communities
+      @stewarded_sponsoring_communities ||= policy_scope(BetterTogether::Community)
+                                            .where.not(id: @community.id)
+                                            .select { |candidate| policy(candidate).update? }
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
