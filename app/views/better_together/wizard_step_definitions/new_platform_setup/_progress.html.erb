@@ -1,9 +1,12 @@
 <%
-  # Phase 1 covered 3 steps; Phase 2 added domain. Later phases
-  # (invite_members, review_and_launch) extend this list further — see the
-  # implementation plan's sequencing. Keep this identifier order in sync with
+  # Phase 1 covered 3 steps; Phase 2 added domain; Phase 4 (this revision)
+  # appends review_and_launch as the final step. Phase 3's invite_members
+  # step is being built in parallel on a sibling branch and is NOT in this
+  # array yet — the orchestrating session reconciles this list (inserting
+  # invite_members between steward_account and review_and_launch) when both
+  # phases merge. Keep this identifier order in sync with
   # NewPlatformSetupWizardBuilder's step_number order.
-  new_platform_setup_step_identifiers = %w[welcome platform_identity domain steward_account]
+  new_platform_setup_step_identifiers = %w[welcome platform_identity domain steward_account review_and_launch]
   current_index = new_platform_setup_step_identifiers.index(current_step_identifier) || 0
   total_steps = new_platform_setup_step_identifiers.size
   percent = ((current_index + 1) / total_steps.to_f * 100).round
@@ -25,6 +28,7 @@
       aria-valuenow="<%= percent %>"
       aria-valuemin="0"
       aria-valuemax="100"
+      aria-label="<%= t('.step', current: current_index + 1, total: total_steps) %>"
     >
       <%= t('.step', current: current_index + 1, total: total_steps) %>
     </div>

@@ -15,7 +15,7 @@ module BetterTogether
     # WizardStepsController#form/#update path is not exercised here either.
 
     skip_before_action :determine_wizard_outcome, only: %i[
-      update_welcome create_platform_identity create_domain create_steward_account
+      update_welcome create_platform_identity create_domain create_steward_account launch_platform
     ]
     before_action :authorize_target_platform
     before_action :ensure_wizard_incomplete
@@ -160,6 +160,42 @@ module BetterTogether
       render wizard_step_definition.template, status: :unprocessable_entity
     end
     # rubocop:enable Metrics/MethodLength
+
+    # --- Step 6: review_and_launch (read-only recap + final confirmation) -
+
+    # A genuinely new pattern (no prior "review and confirm" step exists
+    # elsewhere) — read-only recap of everything collected so far, built by
+    # querying the already-persisted draft target_platform directly rather
+    # than any in-memory hand-off between steps. The "invited members"
+    # section reads target_platform.invitations directly: Phase 3's
+    # invite_members step (a sibling branch, not present here) is the only
+    # thing that would ever populate that association, so it is always empty
+    # on this branch — the view renders a graceful empty state for that case
+    # rather than treating it as an error, which is what makes this step
+    # correct in isolation now AND automatically correct once Phase 3 merges,
+    # without any further code change here.
+    def review_and_launch
+      find_or_create_wizard_step
+      @platform = target_platform
+      @additional_platform_domains = @platform.platform_domains.where(primary_flag: false)
+      @steward = @platform.primary_community&.creator
+      @invitations = @platform.invitations
+      render wizard_step_definition.template
+    end
+
+    # The final action of the wizard. No fields are collected here — it's a
+    # confirmation, not data entry — so this simply completes the step and
+    # lets the inherited determine_wizard_outcome (called manually, same as
+    # every other step's POST action) discover that all step definitions are
+    # now complete and redirect to wizard.success_path with wizard.success_message,
+    # exactly as Wizard#completed?/WizardMethods#determine_wizard_outcome
+    # already implement generically — nothing about that shared path needed
+    # to change for this step to be "the last one."
+    def launch_platform
+      mark_current_step_as_completed
+      wizard.reload
+      determine_wizard_outcome
+    end
 
     private
 

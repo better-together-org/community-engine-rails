@@ -4326,6 +4326,46 @@ fr:
         progress:
           nav_label: Étapes de configuration de la nouvelle plateforme
           step: Étape %{current} sur %{total}
+        review_and_launch:
+          buttons:
+            launch: Lancer la plateforme
+          hero:
+            subtitle: Un dernier coup d'œil avant la mise en ligne de votre nouvelle
+              plateforme.
+            title: Vérifier et lancer
+          intro: Voici un résumé de tout ce que vous avez configuré jusqu'à présent.
+            Vous pouvez revenir en arrière et modifier n'importe quelle section ci-dessous
+            avant de lancer la plateforme.
+          progress:
+            step_name: Vérification et lancement
+          sections:
+            domain:
+              additional_label: 'Domaines supplémentaires :'
+              edit: Modifier le domaine
+              none: Aucun domaine supplémentaire n'a encore été ajouté.
+              primary: Cette plateforme est accessible à l'adresse %{hostname}.
+              title: Domaine
+            invited_members:
+              entry: "%{email} (%{status})"
+              none: Aucun membre supplémentaire n'a encore été invité.
+              status:
+                accepted: Acceptée
+                pending: En attente
+              title: Membres invités
+            platform_identity:
+              edit: Modifier l'identité de la plateforme
+              fields:
+                description: Description
+                host_url: Adresse web
+                name: Nom
+                privacy: Confidentialité
+                time_zone: Fuseau horaire
+              title: Identité de la plateforme
+            steward_account:
+              edit: Modifier le compte du responsable
+              none: Aucun compte de responsable n'a encore été créé.
+              summary: "%{name} (%{email})"
+              title: Compte du responsable
         steward_account:
           buttons:
             submit: Créer le compte du responsable

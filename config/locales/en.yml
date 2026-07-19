@@ -4224,6 +4224,44 @@ en:
         progress:
           nav_label: New platform setup steps
           step: Step %{current} of %{total}
+        review_and_launch:
+          buttons:
+            launch: Launch Platform
+          hero:
+            subtitle: One last look before your new platform goes live.
+            title: Review & Launch
+          intro: Here's a summary of everything you've set up so far. You can go back
+            and edit any section below before launching.
+          progress:
+            step_name: Review & launch
+          sections:
+            domain:
+              additional_label: 'Additional domains:'
+              edit: Edit domain
+              none: No additional domain has been added yet.
+              primary: This platform is reachable at %{hostname}.
+              title: Domain
+            invited_members:
+              entry: "%{email} (%{status})"
+              none: No additional members have been invited yet.
+              status:
+                accepted: Accepted
+                pending: Pending
+              title: Invited Members
+            platform_identity:
+              edit: Edit platform identity
+              fields:
+                description: Description
+                host_url: Web address
+                name: Name
+                privacy: Privacy
+                time_zone: Time zone
+              title: Platform Identity
+            steward_account:
+              edit: Edit steward account
+              none: No steward account has been created yet.
+              summary: "%{name} (%{email})"
+              title: Steward Account
         steward_account:
           buttons:
             submit: Create Steward Account

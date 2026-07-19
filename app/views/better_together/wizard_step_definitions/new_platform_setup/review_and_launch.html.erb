@@ -1,0 +1,114 @@
+<% content_for :page_title do %>
+  <%= t('.hero.title') %>
+<% end %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/progress', current_step_identifier: 'review_and_launch' %>
+
+      <h1 class="h3 mb-2"><%= t('.hero.title') %></h1>
+      <p class="text-muted mb-4"><%= t('.hero.subtitle') %></p>
+
+      <p class="mb-4"><%= t('.intro') %></p>
+
+      <section class="mb-4" aria-labelledby="review-platform-identity-heading">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h2 class="h5 mb-0" id="review-platform-identity-heading"><%= t('.sections.platform_identity.title') %></h2>
+          <%= link_to t('.sections.platform_identity.edit'),
+                      new_platform_setup_step_platform_identity_path(platform_id: @platform.to_param),
+                      class: 'small' %>
+        </div>
+        <dl class="row small mb-0">
+          <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.name') %></dt>
+          <dd class="col-sm-8"><%= @platform.name %></dd>
+
+          <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.description') %></dt>
+          <dd class="col-sm-8"><%= @platform.description %></dd>
+
+          <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.host_url') %></dt>
+          <dd class="col-sm-8"><%= @platform.host_url %></dd>
+
+          <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.privacy') %></dt>
+          <dd class="col-sm-8"><%= @platform.privacy&.humanize %></dd>
+
+          <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.time_zone') %></dt>
+          <dd class="col-sm-8"><%= @platform.time_zone %></dd>
+        </dl>
+      </section>
+
+      <section class="mb-4" aria-labelledby="review-domain-heading">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h2 class="h5 mb-0" id="review-domain-heading"><%= t('.sections.domain.title') %></h2>
+          <%= link_to t('.sections.domain.edit'),
+                      new_platform_setup_step_domain_path(platform_id: @platform.to_param),
+                      class: 'small' %>
+        </div>
+        <% if @platform.primary_platform_domain.present? %>
+          <p class="small mb-1"><%= t('.sections.domain.primary', hostname: @platform.primary_platform_domain.hostname) %></p>
+        <% else %>
+          <p class="small text-muted mb-1"><%= t('.sections.domain.none') %></p>
+        <% end %>
+
+        <% if @additional_platform_domains.any? %>
+          <p class="small mb-1"><%= t('.sections.domain.additional_label') %></p>
+          <ul class="small mb-0">
+            <% @additional_platform_domains.each do |platform_domain| %>
+              <li><%= platform_domain.hostname %></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </section>
+
+      <section class="mb-4" aria-labelledby="review-steward-account-heading">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h2 class="h5 mb-0" id="review-steward-account-heading"><%= t('.sections.steward_account.title') %></h2>
+          <%= link_to t('.sections.steward_account.edit'),
+                      new_platform_setup_step_steward_account_path(platform_id: @platform.to_param),
+                      class: 'small' %>
+        </div>
+        <% if @steward.present? %>
+          <p class="small mb-0">
+            <%= t('.sections.steward_account.summary', name: @steward.name, email: @steward.email) %>
+          </p>
+        <% else %>
+          <p class="small text-muted mb-0"><%= t('.sections.steward_account.none') %></p>
+        <% end %>
+      </section>
+
+      <!--
+        No "Edit invited members" link here on purpose: Phase 3's
+        invite_members step (a sibling branch) isn't merged into this branch,
+        so there is no route to link to yet. target_platform.invitations is
+        queried directly and will simply be empty until Phase 3 merges — this
+        section renders a graceful empty state rather than erroring, and will
+        start showing real invitations automatically once that data exists,
+        with no further changes needed here.
+      -->
+      <section class="mb-4" aria-labelledby="review-invited-members-heading">
+        <h2 class="h5 mb-2" id="review-invited-members-heading"><%= t('.sections.invited_members.title') %></h2>
+        <% if @invitations.any? %>
+          <ul class="small mb-0">
+            <% @invitations.each do |invitation| %>
+              <li>
+                <%= t('.sections.invited_members.entry',
+                      email: invitation.invitee_email,
+                      status: t(".sections.invited_members.status.#{invitation.status}",
+                                 default: invitation.status.humanize)) %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="small text-muted mb-0"><%= t('.sections.invited_members.none') %></p>
+        <% end %>
+      </section>
+
+      <%= form_with url: new_platform_setup_step_launch_platform_path(platform_id: @platform.to_param),
+                    method: :post, class: 'form' do %>
+        <div class="mb-3">
+          <%= submit_tag t('.buttons.launch'), class: 'btn btn-primary w-100' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

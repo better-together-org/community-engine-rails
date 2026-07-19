@@ -8,11 +8,17 @@ module BetterTogether
   # see NewPlatformSetupController#start.
   #
   # Phase 1 covered 3 steps (welcome, platform_identity, steward_account).
-  # Phase 2 inserts the domain step between platform_identity and
-  # steward_account. Later phases (invite_members, review_and_launch) insert
-  # additional WizardStepDefinition rows with higher step_numbers — safe to do
-  # without a migration, since each run mints its own Wizard/WizardStepDefinition
-  # rows fresh rather than reusing seeded ones.
+  # Phase 2 inserted the domain step between platform_identity and
+  # steward_account. Phase 4 (this revision) adds the final review_and_launch
+  # step at step_number 6. Phase 3 (invite_members, step_number 5) is being
+  # built in parallel on a sibling branch and is deliberately NOT present
+  # here — the step_number gap (4 -> 6, skipping 5) is intentional so that
+  # once both branches merge, invite_members sorts correctly between
+  # steward_account and review_and_launch without renumbering anything.
+  # wizard_step_definitions.ordered (scope: order(:step_number)) tolerates
+  # gaps fine, and step_number uniqueness is scoped per-Wizard row, so this
+  # is safe to ship standalone. See the implementation plan's phase
+  # sequencing table for the full picture.
   class NewPlatformSetupWizardBuilder
     IDENTIFIER = 'new_platform_setup'
 
@@ -46,13 +52,30 @@ module BetterTogether
         step_number: 4,
         form_class: '::BetterTogether::NewPlatformStewardForm',
         message: 'Next, create the steward account for this platform.'
+      },
+      {
+        name: 'Review & Launch',
+        description: 'Review everything you\'ve set up, then launch the new platform.',
+        identifier: 'review_and_launch',
+        step_number: 6,
+        message: 'Almost there! Review your new platform\'s details below, then launch it.'
       }
     ].freeze
 
     class << self
       def build(platform:, success_path:, success_message:)
         wizard = build_wizard(platform:, success_path:, success_message:)
-        STEP_DEFINITIONS.each { |attrs| wizard.wizard_step_definitions.create!(attrs) }
+        # platform_id is explicitly set to the draft platform here (not left to
+        # PlatformScoped's before_validation fallback, which would resolve to
+        # Current.platform — the HOST platform during a normal request, not the
+        # draft being provisioned). Every run mints WizardStepDefinition rows
+        # with the same identifiers ("welcome", "platform_identity", etc.), so
+        # without correct per-run platform scoping here, the second-ever
+        # provisioning run would collide with the first's rows under the
+        # platform-scoped unique index — see the accompanying migration
+        # (20260719160000) for the index-side half of this fix and the
+        # production-severity bug it corrects.
+        STEP_DEFINITIONS.each { |attrs| wizard.wizard_step_definitions.create!(attrs.merge(platform_id: platform.id)) }
         wizard
       end
 
