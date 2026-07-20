@@ -1852,6 +1852,10 @@ es:
       settlements:
         index:
           title: Asentamientos
+        toolbar:
+          back_to_geography_settlements: Volver a los asentamientos
+          save_geography_settlement: Guardar liquidación
+          view_geography_settlement: Ver el asentamiento          
     global:
       add: Agregar
     governance:

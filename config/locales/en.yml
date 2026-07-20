@@ -1837,6 +1837,10 @@ en:
       settlements:
         index:
           title: Settlements
+        toolbar:
+          back_to_geography_settlements: Back to Settlements
+          save_geography_settlement: Save Settlement
+          view_geography_settlement: View Settlement
     global:
       add: Add
     governance:

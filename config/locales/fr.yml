@@ -1862,6 +1862,10 @@ fr:
       settlements:
         index:
           title: Titre
+        toolbar:
+          back_to_geography_settlements: Retour aux colonies
+          save_geography_settlement: Sauvegarder le règlement
+          view_geography_settlement: Voir le règlement      
     global:
       add: Ajouter
     governance:
