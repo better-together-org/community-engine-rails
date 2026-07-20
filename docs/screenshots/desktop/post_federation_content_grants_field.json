@@ -1,0 +1,83 @@
+{
+  "name": "post_federation_content_grants_field",
+  "device": "desktop",
+  "url": "/en/posts/sample-post-1/edit",
+  "title": "Edit Post | Test Host Community",
+  "locale": "en",
+  "feature_set": "federation_item_consent",
+  "flow": "post_federation_content_grants_field",
+  "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#federation-content-grant-11bd7b4b-bb28-4fad-8276-8156b074e590",
+      "title": "Per-connection override in effect",
+      "bullets": [
+        "This connection is explicitly set to \"Never federate,\" overriding the tri-state above for this one connection only."
+      ],
+      "target": {
+        "x": 60.5,
+        "y": 720.0,
+        "width": 1304.0,
+        "height": 39.0,
+        "right": 1364.5,
+        "bottom": 759.0,
+        "center_x": 712.5,
+        "center_y": 739.5
+      },
+      "avoid": {
+        "x": 60.5,
+        "y": 720.0,
+        "width": 1304.0,
+        "height": 39.0,
+        "right": 1364.5,
+        "bottom": 759.0,
+        "center_x": 712.5,
+        "center_y": 739.5
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 458.0,
+        "width": 380,
+        "height": 242,
+        "score": 720.0
+      }
+    },
+    {
+      "selector": "[id$=\"_federation_content_grants\"]",
+      "title": "Per-connection selection matrix",
+      "bullets": [
+        "One row per active connection that allows posts -- independent of the federation_visibility tri-state above.",
+        "Lets a member say \"federate everywhere except this one connection\" (or the reverse)."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 667.0,
+        "width": 1296.0,
+        "height": 127.0,
+        "right": 1360.5,
+        "bottom": 794.0,
+        "center_x": 712.5,
+        "center_y": 730.5
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 667.0,
+        "width": 1296.0,
+        "height": 127.0,
+        "right": 1360.5,
+        "bottom": 794.0,
+        "center_x": 712.5,
+        "center_y": 730.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 814.0,
+        "width": 380,
+        "height": 320,
+        "score": 667.0
+      }
+    }
+  ]
+}

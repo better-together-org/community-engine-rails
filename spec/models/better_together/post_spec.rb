@@ -154,6 +154,77 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe 'federation_visibility (Federatable)' do
+    it 'defaults to platform_default' do
+      expect(create(:better_together_post).federation_visibility).to eq('platform_default')
+    end
+
+    it 'accepts the federate and no_federate overrides' do
+      expect(create(:better_together_post, federation_visibility: 'federate')).to be_federation_visibility_federate
+      expect(create(:better_together_post, federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+    end
+
+    it 'reports an override only for federate/no_federate' do
+      expect(create(:better_together_post, federation_visibility: 'platform_default').federation_visibility_override?).to be false
+      expect(create(:better_together_post, federation_visibility: 'federate').federation_visibility_override?).to be true
+      expect(create(:better_together_post, federation_visibility: 'no_federate').federation_visibility_override?).to be true
+    end
+
+    it 'notifies the creator when federation_visibility changes' do
+      creator = create(:better_together_person)
+      post = create(:better_together_post, creator:, federation_visibility: 'platform_default')
+
+      expect(BetterTogether::FederationVisibilityStatusNotifier).to receive(:with).with(
+        hash_including(federatable: post, previous_visibility: 'platform_default', current_visibility: 'federate')
+      ).and_call_original
+
+      post.update!(federation_visibility: 'federate')
+    end
+
+    it 'does not notify when the creator is nil (system-owned content)' do
+      post = create(:better_together_post, creator: nil, federation_visibility: 'platform_default')
+
+      expect(BetterTogether::FederationVisibilityStatusNotifier).not_to receive(:with)
+
+      post.update!(federation_visibility: 'federate')
+    end
+
+    describe 'federation_content_type_key' do
+      it "returns 'posts'" do
+        expect(create(:better_together_post).federation_content_type_key).to eq('posts')
+      end
+    end
+
+    describe 'per-connection grants' do
+      it 'returns nil when no grant exists for the connection' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+
+        expect(post.federation_grant_status_for(connection)).to be_nil
+      end
+
+      it 'creates a grant when assigned a non-default status' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+
+        post.federation_content_grants_by_connection = { connection.id => 'denied' }
+
+        expect(post.federation_grant_status_for(connection)).to eq('denied')
+      end
+
+      it 'removes an existing grant when reassigned to platform_default' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: connection,
+                                                          status: 'denied')
+
+        post.federation_content_grants_by_connection = { connection.id => 'platform_default' }
+
+        expect(post.federation_grant_status_for(connection)).to be_nil
+      end
+    end
+  end
+
   describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
     let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
     let(:community_platform) { create(:better_together_platform, privacy: 'community') }

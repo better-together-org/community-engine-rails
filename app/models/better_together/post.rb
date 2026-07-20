@@ -14,6 +14,7 @@ module BetterTogether
     include Citable
     include Commentable
     include Creatable
+    include Federatable
     include Identifier
     include Metrics::Shareable
     include Metrics::Viewable

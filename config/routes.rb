@@ -205,6 +205,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
         end
 
+        scope path: 'federation-hub' do
+          get '/', to: 'federation_hub#index', as: :federation_hub
+          get 'activity', to: 'federation_hub#activity', as: :federation_hub_activity
+        end
+
         resources :notifications, only: %i[index] do
           member do
             post :mark_as_read
