@@ -1,4 +1,9 @@
-<%= form_with(model: geography_settlement) do |form| %>
+<%= form_with(model: geography_settlement, class: 'form', multipart: true, id: dom_id(geography_settlement), data: { 
+  controller: "better_together--form-validation better_together--tabs"
+
+}) do |form| %>
+
+<%# KEEP WHILE EDITING? BUT GET RID OF LATER?? %>
   <% if geography_settlement.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(geography_settlement.errors.count, "error") %> prohibited this geography_settlement from being saved:</h2>
@@ -10,8 +15,124 @@
       </ul>
     </div>
   <% end %>
+<%#-END OF SECTION TO MAYBE?? REMOVE LATER??---when done put uncomment error section below %>
 
+
+<%# SKIPPED THE CREATOR ID SECTION SINCE SETTLEMENTS DON'T HAVE CREATOR ID IN THE MODEL FILE %>
+
+  <% content_for :resource_toolbar do %>
+      <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
+        <div class="btn-group me-2" role="group">
+          <%= link_to t('better_together.geography.settlements.toolbar.back_to_geography_settlements'), geography_settlement_path, class: 'btn btn-secondary' %>
+        </div>
+        <div class="btn-group me-2" role="group">
+          <%= form.submit t('better_together.geography.settlements.toolbar.save_geography_settlement'), class: 'btn btn-primary' %>
+        </div>
+        <% if geography_settlement.persisted? %>
+          <div class="btn-group me-2" role="group">
+            <%= link_to t('better_together.geography.settlements.toolbar.view_geography_settlement'), geography_settlement, class: 'btn btn-info' %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+  <%= yield :resource_toolbar %>
+
+<%# TODO -- WHEN/IF REMOVING ABOVE ERROR HANDLING - TURN THIS ONE ON 
+  <%= turbo_frame_tag 'form_errors' %>  
+
+
+<div class="row">
+    <!-- Vertical Pills Navigation -->
+    <div class="col-md-3">
+      <div class="nav flex-column nav-pills" id="geography-settlement-form-tabs" role="tablist" aria-orientation="vertical">
+        <button class="nav-link active" id="geography-settlement-details-tab" data-bs-toggle="pill" data-bs-target="#geography-settlement-details" type="button" role="tab" aria-controls="geography-settlement-details" aria-selected="true" data-better_together--tabs-target="tab">
+          <%= t('better_together.geography_settlement.tabs.details') %>
+        </button>
+        <button class="nav-link" id="geography-settlement-images-tab" data-bs-toggle="pill" data-bs-target="#geography-settlement-images" type="button" role="tab" aria-controls="geography-settlement-images" aria-selected="false" data-better_together--tabs-target="tab">
+          <%= t('better_together.geography_settlement.tabs.images') %>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="col-md-9 tab-content" id="geography-settlement-form-tabs-content">
+  
+
+    <!-- geography_settlement Details Tab -->
+    <div class="nav-tab-pane tab-pane fade show active" id="geography-settlement-details" role="tabpanel" aria-labelledby="geography-settlement-details-tab">
+
+
+      <div class="row">
+        <div class="col mb-3 pb-3 border-bottom">
+          <%= render partial: 'better_together/shared/translated_string_field',
+            locals: {
+              model: geography_settlement,
+              form: form,
+              attribute: 'name'
+            } %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pb-3 border-bottom">
+          <%= render partial: 'better_together/shared/translated_rich_text_field',
+            locals: {
+              model: geography_settlement,
+              form: form,
+              attribute: 'description',
+              
+            } %>
+          </div>
+        </div>
+      </div>
+    
+
+      <!-- Geography settlement Images Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="geography-settlement-images" role="tabpanel" aria-labelledby="geography-settlement-images-tab">
+        <div class="mb-3">
+          <div id="geography-settlement-cover-image-fields" class="mb-3" data-controller="better_together--image-preview"
+            data-image-preview-clear-value="<%= t('globals.clear') %>"
+            data-image-preview-undo-clear-value="<%= t('globals.undo_clear') %>">
+            <%= label_tag do %>
+              <%= geography_settlement.class.human_attribute_name(:cover_image) %>
+              <% if geography_settlement.cover_image.attached? %>
+                : <%= geography_settlement.cover_image.filename %>
+              <% end %>
+            <% end %>
+
+            <div class="input-group">
+              <%= form.file_field :cover_image, accept: acceptable_image_file_types, "data-better_together--image-preview-target" => 'input', data: { 'action' => "better_together--image-preview#preview" }, class: "form-control" %>
+              <%= form.hidden_field :remove_cover_image, value: '0', "data-better_together--image-preview-target" => "deleteField" %>
+              <%= button_tag t('globals.clear'), { type: 'button', class: 'btn btn-secondary', "data-better_together--image-preview-target" => "deleteButton", data: { 'action' => "better_together--image-preview#toggleDelete", 'clear-value' => t('globals.clear'), 'undo-clear-value' => t('globals.undo_clear'), 'no-image-value' => t('globals.no_image') } } %>
+            </div>
+
+            <small class="form-text text-muted"><%= t('helpers.hint.geography_settlement.cover_image') %></small>
+
+            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(geography_settlement.cover_image) if geography_settlement.cover_image.attached? %>">
+            </div>
+          </div>
+        </div>
+      </div>  
+
+
+  
+  </div>
+</div>
+
+  <%= yield :resource_toolbar %>
+<% end %>
+
+
+
+
+
+
+
+<%# UNCOMMENT ???
   <div>
     <%= form.submit %>
+<%#  
   </div>
 <% end %>
+

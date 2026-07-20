@@ -20,4 +20,15 @@ RSpec.describe 'BetterTogether::Geography::SettlementsController', :as_platform_
       expect(response).to have_http_status(:ok)
     end
   end
+
+
+  describe 'GET /:locale/.../host/geography/settlements/:id/edit' do
+    let!(:settlement) { create(:settlement) }
+
+    it 'renders edit' do
+      get better_together.edit_geography_settlement_path(locale:, id: settlement.slug)
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
 end
