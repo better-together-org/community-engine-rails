@@ -2642,6 +2642,13 @@ en:
       new_message: New Message
     new_platform_setup_steps:
       already_completed: This platform has already been set up.
+      create_domain:
+        flash:
+          please_address_errors: Please address the errors below.
+      create_invite_members:
+        flash:
+          invitation_sent: Invitation sent to %{email}.
+          please_address_errors: Please address the errors below.
       create_platform_identity:
         flash:
           please_address_errors: Please address the errors below.
@@ -4153,8 +4160,61 @@ en:
           progress:
             step: Step 1 of 2
       new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Add Domain & Continue
+            skip: Skip For Now
+          current_domain_html: Your platform is currently reachable at <strong>%{hostname}</strong>.
+            Adding an extra domain below is optional.
+          custom_domain_hint_html: A custom domain needs a DNS record (CNAME or A)
+            pointed at this platform's edge server, and its own TLS certificate. See
+            the multi-platform deployment guide for the exact DNS/TLS steps.
+          fields:
+            hostname:
+              help: The hostname visitors will use to reach this domain. No scheme
+                (no https://) and no trailing slash.
+              label: Hostname
+              placeholder: e.g. tenant-a.example.com
+            share_domain:
+              label: Share domain (used in generated share links)
+          hero:
+            subtitle: Give this platform an easy-to-remember address, or point your
+              own domain at it.
+            title: Add a Domain (Optional)
+          intro: This step is optional — you can always add or change domains later
+            from the platform's admin settings.
+          kind_custom_label: Use my own domain
+          kind_subdomain_label: Use a subdomain of %{host_apex}
+          progress:
+            step_name: Domain
+          subdomain_hint: Only the part before .%{host_apex} — the full hostname is
+            filled in automatically.
+          subdomain_label_field: Subdomain
         errors:
           header_plural: "%{count} errors prevented this from being saved:"
+        invite_members:
+          buttons:
+            continue: Continue
+            send_invite: Send Invite
+          fields:
+            invitee_email:
+              help: They'll receive an email invitation to join this platform as a
+                member.
+              label: Email address
+              placeholder: friend@example.com
+          hero:
+            subtitle: Invite the first people to join this community. You can always
+              invite more later.
+            title: Invite Members (Optional)
+          intro: This step is optional — you can invite one or more people now, or
+            skip it and invite members later from the platform's admin settings.
+          progress:
+            step_name: Invite members
+          sent_invitations:
+            heading: Invitations sent so far
+            status:
+              accepted: Accepted
+              pending: Pending
         platform_identity:
           buttons:
             next: Next Step
@@ -4191,6 +4251,45 @@ en:
         progress:
           nav_label: New platform setup steps
           step: Step %{current} of %{total}
+        review_and_launch:
+          buttons:
+            launch: Launch Platform
+          hero:
+            subtitle: One last look before your new platform goes live.
+            title: Review & Launch
+          intro: Here's a summary of everything you've set up so far. You can go back
+            and edit any section below before launching.
+          progress:
+            step_name: Review & launch
+          sections:
+            domain:
+              additional_label: 'Additional domains:'
+              edit: Edit domain
+              none: No additional domain has been added yet.
+              primary: This platform is reachable at %{hostname}.
+              title: Domain
+            invited_members:
+              edit: Edit invited members
+              entry: "%{email} (%{status})"
+              none: No additional members have been invited yet.
+              status:
+                accepted: Accepted
+                pending: Pending
+              title: Invited Members
+            platform_identity:
+              edit: Edit platform identity
+              fields:
+                description: Description
+                host_url: Web address
+                name: Name
+                privacy: Privacy
+                time_zone: Time zone
+              title: Platform Identity
+            steward_account:
+              edit: Edit steward account
+              none: No steward account has been created yet.
+              summary: "%{name} (%{email})"
+              title: Steward Account
         steward_account:
           buttons:
             submit: Create Steward Account

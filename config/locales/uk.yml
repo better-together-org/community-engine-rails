@@ -2670,6 +2670,13 @@ uk:
       new_message: New Message
     new_platform_setup_steps:
       already_completed: Цю платформу вже налаштовано.
+      create_domain:
+        flash:
+          please_address_errors: Будь ласка, виправте помилки нижче.
+      create_invite_members:
+        flash:
+          invitation_sent: Запрошення надіслано на %{email}.
+          please_address_errors: Будь ласка, виправте помилки нижче.
       create_platform_identity:
         flash:
           please_address_errors: Будь ласка, виправте помилки нижче.
@@ -4195,8 +4202,64 @@ uk:
           progress:
             step: Крок 1 з 2
       new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Додати домен і продовжити
+            skip: Пропустити поки що
+          current_domain_html: Ваша платформа вже доступна за адресою <strong>%{hostname}</strong>.
+            Додавання додаткового домену нижче є необов'язковим.
+          custom_domain_hint_html: Власний домен потребує DNS-запису (CNAME або A),
+            який вказує на граничний сервер цієї платформи, а також власного TLS-сертифіката.
+            Точні кроки щодо DNS/TLS дивіться в посібнику з розгортання мультиплатформи.
+          fields:
+            hostname:
+              help: Ім'я хоста, яке відвідувачі використовуватимуть для доступу до
+                цього домену. Без схеми (без https://) і без завершального символу
+                "/".
+              label: Ім'я хоста
+              placeholder: напр. tenant-a.example.com
+            share_domain:
+              label: Домен для поширення (використовується у створених посиланнях
+                для поширення)
+          hero:
+            subtitle: Дайте цій платформі легку для запам'ятовування адресу або спрямуйте
+              на неї власний домен.
+            title: Додати домен (необов'язково)
+          intro: Цей крок необов'язковий — ви завжди можете додати або змінити домени
+            пізніше в налаштуваннях адміністрування платформи.
+          kind_custom_label: Використати власний домен
+          kind_subdomain_label: Використати субдомен %{host_apex}
+          progress:
+            step_name: Домен
+          subdomain_hint: Лише частина перед .%{host_apex} — повне ім'я хоста заповнюється
+            автоматично.
+          subdomain_label_field: Субдомен
         errors:
           header_plural: "%{count} помилки завадили це зберегти:"
+        invite_members:
+          buttons:
+            continue: Продовжити
+            send_invite: Надіслати запрошення
+          fields:
+            invitee_email:
+              help: Вони отримають запрошення електронною поштою приєднатися до цієї
+                платформи як учасник.
+              label: Адреса електронної пошти
+              placeholder: friend@example.com
+          hero:
+            subtitle: Запросіть перших людей приєднатися до цієї спільноти. Ви завжди
+              зможете запросити більше пізніше.
+            title: Запросити учасників (необов'язково)
+          intro: Цей крок необов'язковий — ви можете запросити одну або кілька осіб
+            зараз, або пропустити його та запросити учасників пізніше в налаштуваннях
+            адміністрування платформи.
+          progress:
+            step_name: Запросити учасників
+          sent_invitations:
+            heading: Надіслані запрошення
+            status:
+              accepted: Прийнято
+              pending: Очікує
         platform_identity:
           buttons:
             next: Наступний крок
@@ -4233,6 +4296,45 @@ uk:
         progress:
           nav_label: Кроки налаштування нової платформи
           step: Крок %{current} з %{total}
+        review_and_launch:
+          buttons:
+            launch: Запустити платформу
+          hero:
+            subtitle: Останній погляд перед тим, як ваша нова платформа запрацює.
+            title: Перегляд і запуск
+          intro: Ось підсумок усього, що ви налаштували досі. Ви можете повернутися
+            та відредагувати будь-який розділ нижче перед запуском.
+          progress:
+            step_name: Перегляд і запуск
+          sections:
+            domain:
+              additional_label: 'Додаткові домени:'
+              edit: Редагувати домен
+              none: Додаткового домену ще не додано.
+              primary: Ця платформа доступна за адресою %{hostname}.
+              title: Домен
+            invited_members:
+              edit: Редагувати запрошених учасників
+              entry: "%{email} (%{status})"
+              none: Додаткових учасників ще не запрошено.
+              status:
+                accepted: Прийнято
+                pending: Очікує
+              title: Запрошені учасники
+            platform_identity:
+              edit: Редагувати ідентичність платформи
+              fields:
+                description: Опис
+                host_url: Веб-адреса
+                name: Назва
+                privacy: Приватність
+                time_zone: Часовий пояс
+              title: Ідентичність платформи
+            steward_account:
+              edit: Редагувати обліковий запис відповідальної особи
+              none: Обліковий запис відповідальної особи ще не створено.
+              summary: "%{name} (%{email})"
+              title: Обліковий запис відповідальної особи
         steward_account:
           buttons:
             submit: Створити обліковий запис відповідальної особи

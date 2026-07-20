@@ -12,7 +12,11 @@ module BetterTogether
     has_many :wizard_steps,
              class_name: '::BetterTogether::WizardStep'
 
-    slugged :identifier, dependent: :delete_all
+    # slug_uniqueness: false — matches Wizard's own fix. FriendlySlug's default
+    # adds a second, always-global slug uniqueness check on top of the scoped
+    # ones below, which would break any wizard that mints repeated identifiers
+    # across platforms (e.g. new_platform_setup).
+    slugged :identifier, dependent: :delete_all, slug_uniqueness: false
 
     translates :name, type: :string
     translates :description, type: :text

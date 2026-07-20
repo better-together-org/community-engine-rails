@@ -618,7 +618,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # NewPlatformSetupStepsController#wizard/#target_platform.
         get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
-        scope path: 'new_platform_setup/:platform_id' do
+        scope path: 'new_platform_setup/:platform_id' do # rubocop:todo Metrics/BlockLength
           get 'welcome', to: 'new_platform_setup_steps#welcome',
                          defaults: { wizard_step_definition_id: :welcome },
                          as: :new_platform_setup_step_welcome
@@ -631,12 +631,30 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'platform_identity', to: 'new_platform_setup_steps#create_platform_identity',
                                     defaults: { wizard_step_definition_id: :platform_identity },
                                     as: :new_platform_setup_step_create_platform_identity
+          get 'domain', to: 'new_platform_setup_steps#domain',
+                        defaults: { wizard_step_definition_id: :domain },
+                        as: :new_platform_setup_step_domain
+          post 'domain', to: 'new_platform_setup_steps#create_domain',
+                         defaults: { wizard_step_definition_id: :domain },
+                         as: :new_platform_setup_step_create_domain
           get 'steward_account', to: 'new_platform_setup_steps#steward_account',
                                  defaults: { wizard_step_definition_id: :steward_account },
                                  as: :new_platform_setup_step_steward_account
           post 'steward_account', to: 'new_platform_setup_steps#create_steward_account',
                                   defaults: { wizard_step_definition_id: :steward_account },
                                   as: :new_platform_setup_step_create_steward_account
+          get 'invite_members', to: 'new_platform_setup_steps#invite_members',
+                                defaults: { wizard_step_definition_id: :invite_members },
+                                as: :new_platform_setup_step_invite_members
+          post 'invite_members', to: 'new_platform_setup_steps#create_invite_members',
+                                 defaults: { wizard_step_definition_id: :invite_members },
+                                 as: :new_platform_setup_step_create_invite_members
+          get 'review_and_launch', to: 'new_platform_setup_steps#review_and_launch',
+                                   defaults: { wizard_step_definition_id: :review_and_launch },
+                                   as: :new_platform_setup_step_review_and_launch
+          post 'review_and_launch', to: 'new_platform_setup_steps#launch_platform',
+                                    defaults: { wizard_step_definition_id: :review_and_launch },
+                                    as: :new_platform_setup_step_launch_platform
         end
       end
     end

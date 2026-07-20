@@ -2675,6 +2675,13 @@ es:
       new_message: Nuevo mensaje
     new_platform_setup_steps:
       already_completed: Esta plataforma ya ha sido configurada.
+      create_domain:
+        flash:
+          please_address_errors: Por favor, corrija los errores a continuación.
+      create_invite_members:
+        flash:
+          invitation_sent: Invitación enviada a %{email}.
+          please_address_errors: Por favor, corrija los errores a continuación.
       create_platform_identity:
         flash:
           please_address_errors: Por favor, corrija los errores a continuación.
@@ -4219,8 +4226,63 @@ es:
           progress:
             step: Paso 1 de 2
       new_platform_setup:
+        domain:
+          buttons:
+            add_and_continue: Añadir dominio y continuar
+            skip: Omitir por ahora
+          current_domain_html: Tu plataforma ya es accesible en <strong>%{hostname}</strong>.
+            Añadir un dominio adicional a continuación es opcional.
+          custom_domain_hint_html: Un dominio personalizado necesita un registro DNS
+            (CNAME o A) que apunte al servidor de borde de esta plataforma, y su propio
+            certificado TLS. Consulte la guía de implementación multiplataforma para
+            conocer los pasos exactos de DNS/TLS.
+          fields:
+            hostname:
+              help: El nombre de host que usarán los visitantes para acceder a este
+                dominio. Sin esquema (sin https://) y sin barra diagonal final.
+              label: Nombre de host
+              placeholder: p. ej. tenant-a.example.com
+            share_domain:
+              label: Dominio de compartición (usado en los enlaces de compartir generados)
+          hero:
+            subtitle: Dale a esta plataforma una dirección fácil de recordar, o apunta
+              tu propio dominio hacia ella.
+            title: Añadir un dominio (opcional)
+          intro: Este paso es opcional — siempre puedes añadir o cambiar dominios
+            más tarde desde la configuración de administración de la plataforma.
+          kind_custom_label: Usar mi propio dominio
+          kind_subdomain_label: Usar un subdominio de %{host_apex}
+          progress:
+            step_name: Dominio
+          subdomain_hint: Solo la parte antes de .%{host_apex} — el nombre de host
+            completo se completa automáticamente.
+          subdomain_label_field: Subdominio
         errors:
           header_plural: "%{count} errores impidieron que esto se guardara:"
+        invite_members:
+          buttons:
+            continue: Continuar
+            send_invite: Enviar invitación
+          fields:
+            invitee_email:
+              help: Recibirán una invitación por correo electrónico para unirse a
+                esta plataforma como miembros.
+              label: Dirección de correo electrónico
+              placeholder: amigo@example.com
+          hero:
+            subtitle: Invita a las primeras personas a unirse a esta comunidad. Siempre
+              puedes invitar a más adelante.
+            title: Invitar miembros (opcional)
+          intro: Este paso es opcional — puedes invitar a una o varias personas ahora,
+            u omitirlo e invitar a miembros más tarde desde la configuración de administración
+            de la plataforma.
+          progress:
+            step_name: Invitar miembros
+          sent_invitations:
+            heading: Invitaciones enviadas hasta ahora
+            status:
+              accepted: Aceptada
+              pending: Pendiente
         platform_identity:
           buttons:
             next: Siguiente paso
@@ -4258,6 +4320,47 @@ es:
         progress:
           nav_label: Pasos de configuración de la nueva plataforma
           step: Paso %{current} de %{total}
+        review_and_launch:
+          buttons:
+            launch: Lanzar plataforma
+          hero:
+            subtitle: Un último vistazo antes de que tu nueva plataforma entre en
+              funcionamiento.
+            title: Revisar y lanzar
+          intro: Aquí tienes un resumen de todo lo que has configurado hasta ahora.
+            Puedes volver atrás y editar cualquier sección a continuación antes de
+            lanzar la plataforma.
+          progress:
+            step_name: Revisión y lanzamiento
+          sections:
+            domain:
+              additional_label: 'Dominios adicionales:'
+              edit: Editar dominio
+              none: Todavía no se ha añadido ningún dominio adicional.
+              primary: Esta plataforma es accesible en %{hostname}.
+              title: Dominio
+            invited_members:
+              edit: Editar miembros invitados
+              entry: "%{email} (%{status})"
+              none: Todavía no se ha invitado a ningún miembro adicional.
+              status:
+                accepted: Aceptada
+                pending: Pendiente
+              title: Miembros invitados
+            platform_identity:
+              edit: Editar identidad de la plataforma
+              fields:
+                description: Descripción
+                host_url: Dirección web
+                name: Nombre
+                privacy: Privacidad
+                time_zone: Zona horaria
+              title: Identidad de la plataforma
+            steward_account:
+              edit: Editar cuenta de responsable
+              none: Todavía no se ha creado ninguna cuenta de responsable.
+              summary: "%{name} (%{email})"
+              title: Cuenta de responsable
         steward_account:
           buttons:
             submit: Crear cuenta de responsable

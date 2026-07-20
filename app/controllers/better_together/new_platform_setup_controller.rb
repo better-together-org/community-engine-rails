@@ -47,7 +47,15 @@ module BetterTogether
       ::BetterTogether::Platform.new(
         name: "New Platform #{suffix}",
         host_url: "https://draft-#{suffix}.pending.invalid",
-        time_zone: 'UTC',
+        # Rails' timezone select (ApplicationHelper#iana_time_zone_select /
+        # COMMON_TIMEZONES) uses the IANA identifier "Etc/UTC", not the bare
+        # string "UTC" — that string matches no <option> in the
+        # platform_identity step's time_zone field, so nothing gets
+        # pre-selected and the field can never be submitted (confirmed via a
+        # real browser: this silently blocked every real, non-transactional
+        # provisioning run before this fix — request specs never caught it
+        # since they don't exercise client-side select/JS behavior).
+        time_zone: 'Etc/UTC',
         privacy: 'private',
         external: false,
         host: false

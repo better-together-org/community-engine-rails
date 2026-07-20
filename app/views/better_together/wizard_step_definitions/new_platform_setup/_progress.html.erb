@@ -1,9 +1,9 @@
 <%
-  # Phase 1 covers 3 steps; later phases (domain, invite_members,
-  # review_and_launch) extend this list — see the implementation plan's
-  # sequencing. Keep this identifier order in sync with
+  # Keep this identifier order in sync with
   # NewPlatformSetupWizardBuilder's step_number order.
-  new_platform_setup_step_identifiers = %w[welcome platform_identity steward_account]
+  new_platform_setup_step_identifiers = %w[
+    welcome platform_identity domain steward_account invite_members review_and_launch
+  ]
   current_index = new_platform_setup_step_identifiers.index(current_step_identifier) || 0
   total_steps = new_platform_setup_step_identifiers.size
   percent = ((current_index + 1) / total_steps.to_f * 100).round
@@ -25,6 +25,7 @@
       aria-valuenow="<%= percent %>"
       aria-valuemin="0"
       aria-valuemax="100"
+      aria-label="<%= t('.step', current: current_index + 1, total: total_steps) %>"
     >
       <%= t('.step', current: current_index + 1, total: total_steps) %>
     </div>
