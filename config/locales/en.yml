@@ -377,6 +377,11 @@ en:
         text_translations: Text translations
         time_zone: Time zone
         url: Url
+      better_together/platform_domain:
+        active: Active
+        hostname: Hostname
+        primary_flag: Primary domain
+        share_domain: Share domain
       better_together/platform_invitation:
         accepted_at: Accepted at
         community_role: :activerecord.models.community_role
@@ -710,6 +715,10 @@ en:
       noticed/event: event
       noticed/notification: notification
   attributes:
+    federation_visibility_list:
+      federate: Always federate
+      no_federate: Never federate
+      platform_default: Use platform default
     privacy_list:
       community: Community
       private: Private
@@ -1485,6 +1494,7 @@ en:
           running: Running
           succeeded: Succeeded
     errors:
+      only_one_primary: can only be set for one record%{scope_suffix}
       privacy:
         exceeds_context_bounds: cannot be more open than '%{max}' — the platform or
           community settings prevent this level of visibility
@@ -1796,6 +1806,20 @@ en:
         person: Person
         status: Status
       updated: Feature access grant updated.
+    federatable:
+      grant_statuses:
+        allowed: Always federate
+        denied: Never federate
+        platform_default: Use platform default
+      hints:
+        federation_content_grants: Override federation for this item on one specific
+          connection, without changing the general federation visibility above.
+        federation_visibility: Override this platform's federation settings for this
+          specific item. "Use platform default" follows your account-wide federation
+          preference and each connection's content-sharing settings.
+      labels:
+        federation_content_grants: Federation per connection
+        federation_visibility: Federation visibility
     federation:
       backfill:
         messages:
@@ -1819,6 +1843,49 @@ en:
           post: post
         errors:
           not_authorized: "%{content_type} mirroring not authorized: %{reason}"
+    federation_hub:
+      activity:
+        back_to_hub: Back to Federation Hub
+        filters:
+          any_content_type: Any content type
+          any_direction: Any direction
+          apply: Filter
+          content_type: Content type
+          direction: Direction
+          incoming: Incoming
+          outgoing: Outgoing
+        keys:
+          platform_connection_sync_failed: Sync failed
+          platform_connection_sync_started: Sync started
+          platform_connection_sync_succeeded: Sync succeeded
+        no_activity: No federation activity yet.
+        page_title: Federation Activity
+      connection_health_card:
+        active_badge:
+          one: 1 active connection
+          other: "%{count} active connections"
+        failed_badge:
+          one: 1 connection with failed sync
+          other: "%{count} connections with failed sync"
+        pending_badge:
+          one: 1 pending connection
+          other: "%{count} pending connections"
+        review_link: Review connections
+        title: Connected platforms
+        total_badge:
+          one: 1 total connection
+          other: "%{count} total connections"
+        view_all_connections: View all connections
+      index:
+        page_title: Federation Hub
+        view_activity: View activity
+      my_content_panel:
+        edit_preference: Change this
+        federate_content_off: Federation disabled for your content
+        federate_content_on: Federation enabled for your content
+        no_recent_items: You haven't created any federatable content yet.
+        recent_items: Recently updated
+        title: My content federation status
     feedback_routing:
       audience:
         community_stewards: responsible community stewards
@@ -2668,6 +2735,9 @@ en:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: '"%{title}" is now set to %{current_visibility}'
+        title: 'Federation setting updated: %{current_visibility}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -3121,6 +3191,53 @@ en:
         suspend_confirm: Suspend this connection? Federation and sync will pause.
         sync_cursor: Sync Cursor
         sync_status: Sync Status
+    platform_domains:
+      cancel: Cancel
+      cannot_destroy_primary: Cannot delete the primary domain. Set another domain
+        as primary first.
+      created: Domain was successfully added.
+      destroyed: Domain was successfully removed.
+      edit:
+        subtitle: Domain for %{platform_name}
+        title: Edit %{hostname}
+      form:
+        active_field_label: Active
+        custom_domain_hint_html: A custom domain needs a DNS record (CNAME or A) pointed
+          at this platform's edge server, and its own TLS certificate. See the multi-platform
+          deployment guide for the exact DNS/TLS steps.
+        hostname_hint: The hostname visitors will use to reach this platform. No scheme
+          (no https://) and no trailing slash.
+        hostname_placeholder: e.g. tenant-a.example.com or app.clientdomain.example
+        kind_custom_label: Use my own domain
+        kind_subdomain_label: Use a subdomain of %{host_apex}
+        primary_flag_label: Primary domain
+        share_domain_label: Share domain (used in generated share links)
+        subdomain_hint: Only the part before .%{host_apex} — the full hostname is
+          filled in automatically.
+        subdomain_label_field: Subdomain
+      index:
+        active_label: Active
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this domain?
+        edit_btn: Edit
+        header_actions: Actions
+        header_hostname: Hostname
+        header_primary: Primary
+        header_share: Share
+        header_status: Status
+        inactive_label: Inactive
+        new_btn: Add Domain
+        no_domains: No domains configured yet.
+        primary_badge: Primary
+        share_badge: Share domain
+        subtitle: Hostnames and aliases for %{platform_name}
+        table_aria: Platform domains
+        title: Domains
+      new:
+        subtitle: Add a domain for %{platform_name}
+        title: New Domain
+      updated: Domain was successfully updated.
     platform_invitation:
       acceptance_html: By registering for a user account below, you are accepting
         this invitation to join <strong>%{platform}</strong>.
@@ -4803,6 +4920,7 @@ en:
       community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
+      federation_hub: Federation Hub
       posts: Posts
   navigation_item:
     form_hints:
@@ -4963,6 +5081,7 @@ en:
           on route knowledge alone.
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
+        platform_domains: Domains
         robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations

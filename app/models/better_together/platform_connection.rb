@@ -144,6 +144,13 @@ module BetterTogether
       nil
     end
 
+    # Without this, generic trackable-rendering helpers (e.g. the Federation
+    # Hub activity feed's link_to_trackable) fall back to Ruby's default
+    # Object#to_s ("#<BetterTogether::PlatformConnection:0x...>") as link text.
+    def to_s
+      "#{source_platform&.name} → #{target_platform&.name}"
+    end
+
     private
 
     def source_and_target_must_differ

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_19_020000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -816,8 +816,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
     t.string "status", default: "draft", null: false
+    t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
+    t.index ["federation_visibility"], name: "by_better_together_events_federation_visibility"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
     t.index ["platform_id", "source_id"], name: "index_bt_events_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
@@ -883,6 +885,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.index ["platform_connection_id"], name: "index_bt_federation_access_tokens_on_platform_connection_id"
     t.index ["revoked_at"], name: "index_bt_federation_access_tokens_on_revoked_at"
     t.index ["token_digest"], name: "index_bt_federation_access_tokens_on_token_digest", unique: true
+  end
+
+  create_table "better_together_federation_content_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "federatable_type"
+    t.uuid "federatable_id"
+    t.uuid "platform_connection_id"
+    t.string "status", default: "allowed", null: false
+    t.index ["federatable_type", "federatable_id", "platform_connection_id"], name: "bt_federation_content_grants_unique_pair", unique: true
+    t.index ["federatable_type", "federatable_id"], name: "bt_federation_content_grants_by_federatable"
+    t.index ["platform_connection_id"], name: "bt_federation_content_grants_by_connection"
   end
 
   create_table "better_together_fleet_node_ownerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1710,8 +1725,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.string "source_id"
     t.datetime "source_updated_at"
     t.datetime "last_synced_at"
+    t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.index ["community_id"], name: "by_better_together_pages_community"
     t.index ["creator_id"], name: "index_better_together_pages_on_creator_id"
+    t.index ["federation_visibility"], name: "by_better_together_pages_federation_visibility"
     t.index ["identifier", "platform_id"], name: "idx_bt_pages_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_pages_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_pages_on_platform_id"
@@ -2132,8 +2149,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.datetime "last_synced_at"
     t.jsonb "display_settings", default: {}, null: false
     t.uuid "community_id"
+    t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.index ["community_id"], name: "by_better_together_posts_community"
     t.index ["creator_id"], name: "by_better_together_posts_creator"
+    t.index ["federation_visibility"], name: "by_better_together_posts_federation_visibility"
     t.index ["identifier", "platform_id"], name: "idx_bt_posts_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id", "source_id"], name: "index_bt_posts_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_posts_on_platform_id"
@@ -2807,6 +2826,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
   add_foreign_key "better_together_feature_access_grants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_feature_access_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_federation_access_tokens", "better_together_platform_connections", column: "platform_connection_id"
+  add_foreign_key "better_together_federation_content_grants", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_fleet_node_ownerships", "better_together_fleet_nodes", column: "node_id", on_delete: :cascade
   add_foreign_key "better_together_fleet_nodes", "better_together_platforms", column: "platform_id", on_delete: :nullify
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"

@@ -377,6 +377,11 @@ fr:
         text_translations: Traductions de texte
         time_zone: Fuseau horaire
         url: URL
+      better_together/platform_domain:
+        active: Actif
+        hostname: Nom d'hôte
+        primary_flag: Domaine principal
+        share_domain: Domaine de partage
       better_together/platform_invitation:
         accepted_at: Accepté à
         community_role: :activerecord.models.community_role
@@ -700,6 +705,10 @@ fr:
       noticed/event: Événement
       noticed/notification: Notification
   attributes:
+    federation_visibility_list:
+      federate: Toujours fédérer
+      no_federate: Ne jamais fédérer
+      platform_default: Utiliser le paramètre par défaut de la plateforme
     privacy_list:
       community: Communauté
       private: Privé
@@ -1498,6 +1507,7 @@ fr:
           running: En cours
           succeeded: Réussi
     errors:
+      only_one_primary: ne peut être défini que sur un seul enregistrement%{scope_suffix}
       privacy:
         exceeds_context_bounds: ne peut pas être plus ouvert que '%{max}' — les paramètres
           de la plateforme ou de la communauté empêchent ce niveau de visibilité
@@ -1818,6 +1828,22 @@ fr:
         person: Personne
         status: Statut
       updated: Accès aux fonctionnalités mis à jour.
+    federatable:
+      grant_statuses:
+        allowed: Toujours fédérer
+        denied: Ne jamais fédérer
+        platform_default: Utiliser le paramètre par défaut de la plateforme
+      hints:
+        federation_content_grants: Remplace la fédération de cet élément pour une
+          connexion spécifique, sans modifier la visibilité de fédération générale
+          indiquée ci-dessus.
+        federation_visibility: Remplace les paramètres de fédération de cette plateforme
+          pour cet élément en particulier. « Utiliser le paramètre par défaut de la
+          plateforme » suit votre préférence de fédération de compte et les paramètres
+          de partage de contenu de chaque connexion.
+      labels:
+        federation_content_grants: Fédération par connexion
+        federation_visibility: Visibilité de la fédération
     federation:
       backfill:
         messages:
@@ -1843,6 +1869,49 @@ fr:
         errors:
           not_authorized: 'la mise en miroir de %{content_type} n''est pas autorisée
             : %{reason}'
+    federation_hub:
+      activity:
+        back_to_hub: Retour au centre de fédération
+        filters:
+          any_content_type: Tout type de contenu
+          any_direction: Toute direction
+          apply: Filtrer
+          content_type: Type de contenu
+          direction: Direction
+          incoming: Entrant
+          outgoing: Sortant
+        keys:
+          platform_connection_sync_failed: Synchronisation échouée
+          platform_connection_sync_started: Synchronisation démarrée
+          platform_connection_sync_succeeded: Synchronisation réussie
+        no_activity: Aucune activité de fédération pour le moment.
+        page_title: Activité de fédération
+      connection_health_card:
+        active_badge:
+          one: 1 connexion active
+          other: "%{count} connexions actives"
+        failed_badge:
+          one: 1 connexion en échec de synchronisation
+          other: "%{count} connexions en échec de synchronisation"
+        pending_badge:
+          one: 1 connexion en attente
+          other: "%{count} connexions en attente"
+        review_link: Examiner les connexions
+        title: Plateformes connectées
+        total_badge:
+          one: 1 connexion au total
+          other: "%{count} connexions au total"
+        view_all_connections: Voir toutes les connexions
+      index:
+        page_title: Centre de fédération
+        view_activity: Voir l'activité
+      my_content_panel:
+        edit_preference: Modifier ce réglage
+        federate_content_off: La fédération est désactivée pour votre contenu
+        federate_content_on: La fédération est activée pour votre contenu
+        no_recent_items: Vous n'avez pas encore créé de contenu fédérable.
+        recent_items: Mis à jour récemment
+        title: Statut de fédération de votre contenu
     feedback_routing:
       audience:
         community_stewards: responsables du contenu de la communauté
@@ -2717,6 +2786,9 @@ fr:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: "« %{title} » est désormais réglé sur %{current_visibility}"
+        title: 'Paramètre de fédération mis à jour : %{current_visibility}'
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
@@ -3186,6 +3258,56 @@ fr:
           seront mises en pause.
         sync_cursor: Curseur de synchronisation
         sync_status: État de synchronisation
+    platform_domains:
+      cancel: Annuler
+      cannot_destroy_primary: Impossible de supprimer le domaine principal. Définissez
+        d'abord un autre domaine comme principal.
+      created: Le domaine a été ajouté avec succès.
+      destroyed: Le domaine a été supprimé avec succès.
+      edit:
+        subtitle: Domaine pour %{platform_name}
+        title: Modifier %{hostname}
+      form:
+        active_field_label: Actif
+        custom_domain_hint_html: Un domaine personnalisé nécessite un enregistrement
+          DNS (CNAME ou A) pointant vers le serveur de périphérie de cette plateforme,
+          ainsi que son propre certificat TLS. Consultez le guide de déploiement multiplateforme
+          pour connaître les étapes exactes de DNS/TLS.
+        hostname_hint: Le nom d'hôte que les visiteurs utiliseront pour accéder à
+          cette plateforme. Aucun schéma (pas de https://) et aucune barre oblique
+          finale.
+        hostname_placeholder: par exemple, tenant-a.example.com ou app.clientdomain.example
+        kind_custom_label: Utiliser mon propre domaine
+        kind_subdomain_label: Utiliser un sous-domaine de %{host_apex}
+        primary_flag_label: Domaine principal
+        share_domain_label: Domaine de partage (utilisé dans les liens de partage
+          générés)
+        subdomain_hint: Seulement la partie avant .%{host_apex} — le nom d'hôte complet
+          est rempli automatiquement.
+        subdomain_label_field: Sous-domaine
+      index:
+        active_label: Actif
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce domaine ?
+        edit_btn: Modifier
+        header_actions: Actions
+        header_hostname: Nom d'hôte
+        header_primary: Principal
+        header_share: Partage
+        header_status: Statut
+        inactive_label: Inactif
+        new_btn: Ajouter un domaine
+        no_domains: Aucun domaine configuré pour le moment.
+        primary_badge: Principal
+        share_badge: Domaine de partage
+        subtitle: Noms d'hôte et alias pour %{platform_name}
+        table_aria: Domaines de la plateforme
+        title: Domaines
+      new:
+        subtitle: Ajouter un domaine pour %{platform_name}
+        title: Nouveau domaine
+      updated: Le domaine a été mis à jour avec succès.
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -4912,6 +5034,7 @@ fr:
       community_hub: Community Hub
       events: Events
       exchange_hub: Exchange Hub
+      federation_hub: Centre de fédération
       posts: Articles
   navigation_item:
     form_hints:
@@ -5075,6 +5198,7 @@ fr:
           dépendre uniquement d'une URL directe.
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
+        platform_domains: Domaines
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage
         title: Opérations de la plateforme

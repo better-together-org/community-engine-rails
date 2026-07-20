@@ -377,6 +377,11 @@ uk:
         text_translations: Переклади тексту
         time_zone: Часовий пояс
         url: URL-адреса
+      better_together/platform_domain:
+        active: Активний
+        hostname: Ім'я хоста
+        primary_flag: Основний домен
+        share_domain: Домен для поширення
       better_together/platform_invitation:
         accepted_at: Прийнято
         community_role: :activerecord.models.community_role
@@ -688,6 +693,10 @@ uk:
       noticed/event: Подія
       noticed/notification: сповіщення
   attributes:
+    federation_visibility_list:
+      federate: Завжди федерувати
+      no_federate: Ніколи не федерувати
+      platform_default: Типово для платформи
     privacy_list:
       community: Спільнота
       private: Приватний
@@ -1481,6 +1490,7 @@ uk:
           running: Виконується
           succeeded: Успішно
     errors:
+      only_one_primary: можна встановити лише для одного запису%{scope_suffix}
       privacy:
         exceeds_context_bounds: не може бути відкритішим за '%{max}' — налаштування
           платформи або спільноти забороняють цей рівень видимості
@@ -1811,6 +1821,21 @@ uk:
         person: Людина
         status: Статус
       updated: Доступ до функцій оновлено.
+    federatable:
+      grant_statuses:
+        allowed: Завжди федерувати
+        denied: Ніколи не федерувати
+        platform_default: Типово для платформи
+      hints:
+        federation_content_grants: Перевизначає федерацію цього елемента для одного
+          конкретного з'єднання, не змінюючи загальну видимість федерації, вказану
+          вище.
+        federation_visibility: Перевизначає налаштування федерації цієї платформи
+          для цього окремого елемента. «Типово для платформи» відповідає вашому обліковому
+          налаштуванню федерації та налаштуванням обміну вмістом кожного з'єднання.
+      labels:
+        federation_content_grants: Федерація за з'єднанням
+        federation_visibility: Видимість федерації
     federation:
       backfill:
         messages:
@@ -1839,6 +1864,57 @@ uk:
           post: допису
         errors:
           not_authorized: 'дзеркалювання %{content_type} не дозволено: %{reason}'
+    federation_hub:
+      activity:
+        back_to_hub: Повернутися до Центру федерації
+        filters:
+          any_content_type: Будь-який тип контенту
+          any_direction: Будь-який напрямок
+          apply: Застосувати фільтр
+          content_type: Тип контенту
+          direction: Напрямок
+          incoming: Вхідний
+          outgoing: Вихідний
+        keys:
+          platform_connection_sync_failed: Синхронізація не вдалася
+          platform_connection_sync_started: Синхронізацію розпочато
+          platform_connection_sync_succeeded: Синхронізація успішна
+        no_activity: Ще немає активності федерації.
+        page_title: Активність федерації
+      connection_health_card:
+        active_badge:
+          few: "%{count} активні з'єднання"
+          many: "%{count} активних з'єднань"
+          one: 1 активне з'єднання
+          other: "%{count} активних з'єднань"
+        failed_badge:
+          few: "%{count} з'єднання з помилкою синхронізації"
+          many: "%{count} з'єднань з помилкою синхронізації"
+          one: 1 з'єднання з помилкою синхронізації
+          other: "%{count} з'єднань з помилкою синхронізації"
+        pending_badge:
+          few: "%{count} очікувані з'єднання"
+          many: "%{count} очікуваних з'єднань"
+          one: 1 очікуване з'єднання
+          other: "%{count} очікуваних з'єднань"
+        review_link: Переглянути з'єднання
+        title: Підключені платформи
+        total_badge:
+          few: "%{count} з'єднання загалом"
+          many: "%{count} з'єднань загалом"
+          one: 1 з'єднання загалом
+          other: "%{count} з'єднань загалом"
+        view_all_connections: Переглянути всі з'єднання
+      index:
+        page_title: Центр федерації
+        view_activity: Переглянути активність
+      my_content_panel:
+        edit_preference: Змінити це
+        federate_content_off: Федерацію вимкнено для вашого контенту
+        federate_content_on: Федерацію увімкнено для вашого контенту
+        no_recent_items: Ви ще не створили жодного контенту, придатного для федерації.
+        recent_items: Нещодавно оновлено
+        title: Статус федерації вашого контенту
     feedback_routing:
       audience:
         community_stewards: відповідальні за вміст спільноти
@@ -2695,6 +2771,9 @@ uk:
       event_update:
         body: "%{event_name} has been updated: %{changes}"
         title: 'Event updated: %{event_name}'
+      federation_visibility_status:
+        body: "«%{title}» тепер має значення %{current_visibility}"
+        title: 'Налаштування федерації оновлено: %{current_visibility}'
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -3160,6 +3239,55 @@ uk:
           призупинені.
         sync_cursor: Курсор синхронізації
         sync_status: Статус синхронізації
+    platform_domains:
+      cancel: Скасувати
+      cannot_destroy_primary: Неможливо видалити основний домен. Спочатку встановіть
+        інший домен як основний.
+      created: Домен успішно додано.
+      destroyed: Домен успішно видалено.
+      edit:
+        subtitle: Домен для %{platform_name}
+        title: Редагувати %{hostname}
+      form:
+        active_field_label: Активний
+        custom_domain_hint_html: Власний домен потребує DNS-запису (CNAME або A),
+          який вказує на граничний сервер цієї платформи, а також власного TLS-сертифіката.
+          Точні кроки щодо DNS/TLS дивіться в посібнику з розгортання мультиплатформи.
+        hostname_hint: Ім'я хоста, яке відвідувачі використовуватимуть для доступу
+          до цієї платформи. Без схеми (без https://) і без завершального символу
+          "/".
+        hostname_placeholder: напр. tenant-a.example.com або app.clientdomain.example
+        kind_custom_label: Використати власний домен
+        kind_subdomain_label: Використати субдомен %{host_apex}
+        primary_flag_label: Основний домен
+        share_domain_label: Домен для поширення (використовується у створених посиланнях
+          для поширення)
+        subdomain_hint: Лише частина перед .%{host_apex} — повне ім'я хоста заповнюється
+          автоматично.
+        subdomain_label_field: Субдомен
+      index:
+        active_label: Активний
+        back_to_platform: Повернутися до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей домен?
+        edit_btn: Редагувати
+        header_actions: Дії
+        header_hostname: Ім'я хоста
+        header_primary: Основний
+        header_share: Поширення
+        header_status: Статус
+        inactive_label: Неактивний
+        new_btn: Додати домен
+        no_domains: Домени ще не налаштовано.
+        primary_badge: Основний
+        share_badge: Домен для поширення
+        subtitle: Імена хостів і псевдоніми для %{platform_name}
+        table_aria: Домени платформи
+        title: Домени
+      new:
+        subtitle: Додати домен для %{platform_name}
+        title: Новий домен
+      updated: Домен успішно оновлено.
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.
@@ -4903,6 +5031,7 @@ uk:
       community_hub: Community Hub
       events: Події
       exchange_hub: Центр обміну
+      federation_hub: Центр федерації
       posts: Публікації
   navigation_item:
     form_hints:
@@ -5065,6 +5194,7 @@ uk:
           знати точну URL-адресу.
         feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
+        platform_domains: Домени
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи
