@@ -12,7 +12,8 @@ module BetterTogether
     # SetupWizardStepsController's precedent.
 
     skip_before_action :determine_wizard_outcome, only: %i[
-      update_welcome create_platform_identity create_domain create_steward_account create_invite_members
+      update_welcome create_platform_identity create_domain create_steward_account
+      create_invite_members launch_platform
     ]
     before_action :authorize_target_platform
     before_action :ensure_wizard_incomplete
@@ -204,6 +205,29 @@ module BetterTogether
         flash.now[:alert] = t('.flash.please_address_errors')
         render wizard_step_definition.template, status: :unprocessable_entity
       end
+    end
+
+    # --- Step 6: review_and_launch (read-only recap + final confirmation) -
+
+    # A genuinely new pattern (no prior "review and confirm" step exists
+    # elsewhere) — read-only recap of everything collected so far, built by
+    # querying the already-persisted draft target_platform directly rather
+    # than any in-memory hand-off between steps.
+    def review_and_launch
+      find_or_create_wizard_step
+      @platform = target_platform
+      @additional_platform_domains = @platform.platform_domains.where(primary_flag: false)
+      @steward = @platform.primary_community&.creator
+      @invitations = @platform.invitations
+      render wizard_step_definition.template
+    end
+
+    # No fields to collect — just a confirmation. Completing this step lets
+    # determine_wizard_outcome discover the wizard is now fully complete.
+    def launch_platform
+      mark_current_step_as_completed
+      wizard.reload
+      determine_wizard_outcome
     end
 
     private

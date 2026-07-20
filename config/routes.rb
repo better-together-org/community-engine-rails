@@ -649,6 +649,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'invite_members', to: 'new_platform_setup_steps#create_invite_members',
                                  defaults: { wizard_step_definition_id: :invite_members },
                                  as: :new_platform_setup_step_create_invite_members
+          get 'review_and_launch', to: 'new_platform_setup_steps#review_and_launch',
+                                   defaults: { wizard_step_definition_id: :review_and_launch },
+                                   as: :new_platform_setup_step_review_and_launch
+          post 'review_and_launch', to: 'new_platform_setup_steps#launch_platform',
+                                    defaults: { wizard_step_definition_id: :review_and_launch },
+                                    as: :new_platform_setup_step_launch_platform
         end
       end
     end

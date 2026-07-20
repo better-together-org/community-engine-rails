@@ -4320,6 +4320,47 @@ es:
         progress:
           nav_label: Pasos de configuración de la nueva plataforma
           step: Paso %{current} de %{total}
+        review_and_launch:
+          buttons:
+            launch: Lanzar plataforma
+          hero:
+            subtitle: Un último vistazo antes de que tu nueva plataforma entre en
+              funcionamiento.
+            title: Revisar y lanzar
+          intro: Aquí tienes un resumen de todo lo que has configurado hasta ahora.
+            Puedes volver atrás y editar cualquier sección a continuación antes de
+            lanzar la plataforma.
+          progress:
+            step_name: Revisión y lanzamiento
+          sections:
+            domain:
+              additional_label: 'Dominios adicionales:'
+              edit: Editar dominio
+              none: Todavía no se ha añadido ningún dominio adicional.
+              primary: Esta plataforma es accesible en %{hostname}.
+              title: Dominio
+            invited_members:
+              edit: Editar miembros invitados
+              entry: "%{email} (%{status})"
+              none: Todavía no se ha invitado a ningún miembro adicional.
+              status:
+                accepted: Aceptada
+                pending: Pendiente
+              title: Miembros invitados
+            platform_identity:
+              edit: Editar identidad de la plataforma
+              fields:
+                description: Descripción
+                host_url: Dirección web
+                name: Nombre
+                privacy: Privacidad
+                time_zone: Zona horaria
+              title: Identidad de la plataforma
+            steward_account:
+              edit: Editar cuenta de responsable
+              none: Todavía no se ha creado ninguna cuenta de responsable.
+              summary: "%{name} (%{email})"
+              title: Cuenta de responsable
         steward_account:
           buttons:
             submit: Crear cuenta de responsable

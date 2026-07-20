@@ -4296,6 +4296,45 @@ uk:
         progress:
           nav_label: Кроки налаштування нової платформи
           step: Крок %{current} з %{total}
+        review_and_launch:
+          buttons:
+            launch: Запустити платформу
+          hero:
+            subtitle: Останній погляд перед тим, як ваша нова платформа запрацює.
+            title: Перегляд і запуск
+          intro: Ось підсумок усього, що ви налаштували досі. Ви можете повернутися
+            та відредагувати будь-який розділ нижче перед запуском.
+          progress:
+            step_name: Перегляд і запуск
+          sections:
+            domain:
+              additional_label: 'Додаткові домени:'
+              edit: Редагувати домен
+              none: Додаткового домену ще не додано.
+              primary: Ця платформа доступна за адресою %{hostname}.
+              title: Домен
+            invited_members:
+              edit: Редагувати запрошених учасників
+              entry: "%{email} (%{status})"
+              none: Додаткових учасників ще не запрошено.
+              status:
+                accepted: Прийнято
+                pending: Очікує
+              title: Запрошені учасники
+            platform_identity:
+              edit: Редагувати ідентичність платформи
+              fields:
+                description: Опис
+                host_url: Веб-адреса
+                name: Назва
+                privacy: Приватність
+                time_zone: Часовий пояс
+              title: Ідентичність платформи
+            steward_account:
+              edit: Редагувати обліковий запис відповідальної особи
+              none: Обліковий запис відповідальної особи ще не створено.
+              summary: "%{name} (%{email})"
+              title: Обліковий запис відповідальної особи
         steward_account:
           buttons:
             submit: Створити обліковий запис відповідальної особи

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_19_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -2556,7 +2556,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_17_140200) do
     t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.uuid "platform_id"
-    t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_wizard_step_defs_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_wizard_step_definitions_on_platform_id"
     t.index ["wizard_id", "step_number"], name: "index_wizard_step_definitions_on_wizard_id_and_step_number", unique: true
     t.index ["wizard_id"], name: "by_step_definition_wizard"
