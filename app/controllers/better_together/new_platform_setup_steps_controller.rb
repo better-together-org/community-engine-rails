@@ -2,17 +2,14 @@
 
 module BetterTogether
   # Handles the new_platform_setup wizard steps for a single provisioning run,
-  # identified by params[:platform_id] (the draft Platform created by
-  # NewPlatformSetupController#start). Mirrors SetupWizardStepsController's
-  # hand-written per-step pattern — WizardStepsController#update is an
-  # unimplemented stub in the generic framework, so each step needs its own
-  # actions here, same as the existing host_setup wizard.
+  # identified by params[:platform_id] (the draft Platform from
+  # NewPlatformSetupController#start). WizardStepsController#update is an
+  # unimplemented stub, so each step is hand-written here, mirroring
+  # SetupWizardStepsController.
   class NewPlatformSetupStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
-    # NOTE: form classes are hardcoded per action below (NewPlatformIdentityForm,
-    # NewPlatformStewardForm) rather than resolved dynamically via
-    # WizardStepDefinition#form_class + SafeClassResolver — mirrors
-    # SetupWizardStepsController's exact precedent; the generic
-    # WizardStepsController#form/#update path is not exercised here either.
+    # Form classes are hardcoded per action rather than resolved dynamically
+    # via WizardStepDefinition#form_class + SafeClassResolver, matching
+    # SetupWizardStepsController's precedent.
 
     skip_before_action :determine_wizard_outcome, only: %i[
       update_welcome create_platform_identity create_steward_account
