@@ -1,0 +1,51 @@
+<% content_for :page_title do %>
+  <%= t('.hero.title') %>
+<% end %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/progress', current_step_identifier: 'invite_members' %>
+
+      <h1 class="h3 mb-2"><%= t('.hero.title') %></h1>
+      <p class="text-muted mb-4"><%= t('.hero.subtitle') %></p>
+
+      <p class="mb-3"><%= t('.intro') %></p>
+
+      <% if @sent_invitations.present? %>
+        <ul class="list-group mb-4" aria-label="<%= t('.sent_invitations.heading') %>">
+          <% @sent_invitations.each do |invitation| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <%= invitation.invitee_email %>
+              <span class="badge bg-secondary"><%= t(".sent_invitations.status.#{invitation.status}", default: invitation.status) %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/errors', form_object: @invitation %>
+
+      <%= form_with model: @invitation, scope: :platform_invitation,
+                    url: new_platform_setup_step_create_invite_members_path(platform_id: @platform.to_param),
+                    method: :post, class: 'needs-validation' do |f| %>
+        <div class="mb-3">
+          <%= f.label :invitee_email, t('.fields.invitee_email.label'), for: 'new_platform_invitation_invitee_email', class: 'form-label' %>
+          <%= f.email_field :invitee_email,
+                            id: 'new_platform_invitation_invitee_email',
+                            class: "form-control#{' is-invalid' if @invitation.errors[:invitee_email].any?}",
+                            placeholder: t('.fields.invitee_email.placeholder'),
+                            'aria-describedby': 'new_platform_invitation_invitee_email_help' %>
+          <small id="new_platform_invitation_invitee_email_help" class="form-text text-muted">
+            <%= t('.fields.invitee_email.help') %>
+          </small>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+          <%= f.submit t('.buttons.send_invite'), class: 'btn btn-primary' %>
+          <%= button_tag t('.buttons.continue'), type: 'submit', name: 'skip_step', value: '1',
+                         class: 'btn btn-outline-secondary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

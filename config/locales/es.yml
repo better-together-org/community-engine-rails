@@ -2678,6 +2678,10 @@ es:
       create_domain:
         flash:
           please_address_errors: Por favor, corrija los errores a continuación.
+      create_invite_members:
+        flash:
+          invitation_sent: Invitación enviada a %{email}.
+          please_address_errors: Por favor, corrija los errores a continuación.
       create_platform_identity:
         flash:
           please_address_errors: Por favor, corrija los errores a continuación.
@@ -4255,6 +4259,30 @@ es:
           subdomain_label_field: Subdominio
         errors:
           header_plural: "%{count} errores impidieron que esto se guardara:"
+        invite_members:
+          buttons:
+            continue: Continuar
+            send_invite: Enviar invitación
+          fields:
+            invitee_email:
+              help: Recibirán una invitación por correo electrónico para unirse a
+                esta plataforma como miembros.
+              label: Dirección de correo electrónico
+              placeholder: amigo@example.com
+          hero:
+            subtitle: Invita a las primeras personas a unirse a esta comunidad. Siempre
+              puedes invitar a más adelante.
+            title: Invitar miembros (opcional)
+          intro: Este paso es opcional — puedes invitar a una o varias personas ahora,
+            u omitirlo e invitar a miembros más tarde desde la configuración de administración
+            de la plataforma.
+          progress:
+            step_name: Invitar miembros
+          sent_invitations:
+            heading: Invitaciones enviadas hasta ahora
+            status:
+              accepted: Aceptada
+              pending: Pendiente
         platform_identity:
           buttons:
             next: Siguiente paso
