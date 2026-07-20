@@ -7,13 +7,11 @@ require 'rails_helper'
 # spec/features/better_together/reports_accessibility_spec.rb (the standard's
 # canonical reference implementation).
 #
-# Covers Phase 1/2's steps (welcome, platform_identity, domain,
-# steward_account) plus Phase 4's new review_and_launch step, across every
-# supported locale. Phase 3's invite_members step (step 5) is being built in
-# parallel on a sibling branch and is NOT present here, so this spec never
-# visits it — review_and_launch's "Invited Members" section is exercised only
-# in its empty-state form, matching how the step itself was decoupled from
-# Phase 3 in the controller/view (see NewPlatformSetupStepsController#review_and_launch).
+# Covers the full wizard sequence: welcome, platform_identity, domain,
+# steward_account (Phases 1/2), invite_members (Phase 3), and review_and_launch
+# (Phase 4), across every supported locale. The primary flow test skips
+# invite_members (no invitation sent), so review_and_launch's "Invited
+# Members" section is exercised only in its empty-state form here.
 #
 # authorize_target_platform (PlatformPolicy#update?/#create?) requires
 # manage_platform_settings/manage_platform, hence :as_platform_manager.
@@ -74,7 +72,7 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
      '(never a bare "Edit")' do
     drive_to_review_and_launch(I18n.default_locale)
 
-    expected_edit_texts = %w[platform_identity domain steward_account].map do |section|
+    expected_edit_texts = %w[platform_identity domain steward_account invited_members].map do |section|
       I18n.t("#{base_i18n_key}.review_and_launch.sections.#{section}.edit", locale: I18n.default_locale)
     end
 
@@ -127,8 +125,13 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
     # selector unique to the NEXT page) exists on the CURRENT steward_account
     # page too — have_css('main') was satisfied instantly by the page we're
     # leaving, so it added no real synchronization and the next statement
-    # could race ahead of the redirect to review_and_launch. Wait on the
-    # actual URL instead.
+    # could race ahead of the redirect to invite_members. Wait on the actual
+    # URL instead.
+    expect(page).to have_current_path(%r{/invite_members\z}, wait: 10)
+  end
+
+  def skip_invite_members_step
+    find('button[name="skip_step"]').click
     expect(page).to have_current_path(%r{/review_and_launch\z}, wait: 10)
   end
 
@@ -138,6 +141,7 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
     fill_in_platform_identity_and_submit(suffix:)
     skip_domain_step
     fill_in_steward_account_and_submit(suffix:)
+    skip_invite_members_step
   end
 
   # Runs axe against every step's rendered page and confirms the progress
@@ -159,6 +163,9 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
 
     check_step_accessibility('steward_account', locale)
     fill_in_steward_account_and_submit(suffix:)
+
+    check_step_accessibility('invite_members', locale)
+    skip_invite_members_step
 
     check_step_accessibility('review_and_launch', locale)
     click_submit

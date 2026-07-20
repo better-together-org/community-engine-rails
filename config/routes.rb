@@ -613,11 +613,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         # New tenant-platform provisioning wizard (Phase 1: welcome,
-        # platform_identity, steward_account; Phase 2 adds domain; Phase 4
-        # adds the final review_and_launch step). Unlike setup_wizard (a
-        # singleton scoped to the host platform), each run gets its own
-        # platform-scoped Wizard row, so every step route carries
-        # :platform_id (the draft Platform's slug/id) — see
+        # platform_identity, steward_account; Phase 2 adds domain; Phase 3
+        # adds invite_members; Phase 4 adds the final review_and_launch step).
+        # Unlike setup_wizard (a singleton scoped to the host platform), each
+        # run gets its own platform-scoped Wizard row, so every step route
+        # carries :platform_id (the draft Platform's slug/id) — see
         # NewPlatformSetupStepsController#wizard/#target_platform.
         get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
@@ -646,9 +646,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'steward_account', to: 'new_platform_setup_steps#create_steward_account',
                                   defaults: { wizard_step_definition_id: :steward_account },
                                   as: :new_platform_setup_step_create_steward_account
-          # Phase 4's final step. Note step_number 6 (not 5) is intentional —
-          # see NewPlatformSetupWizardBuilder's comment on the reserved gap for
-          # Phase 3's invite_members step, which isn't present on this branch.
+          get 'invite_members', to: 'new_platform_setup_steps#invite_members',
+                                defaults: { wizard_step_definition_id: :invite_members },
+                                as: :new_platform_setup_step_invite_members
+          post 'invite_members', to: 'new_platform_setup_steps#create_invite_members',
+                                 defaults: { wizard_step_definition_id: :invite_members },
+                                 as: :new_platform_setup_step_create_invite_members
           get 'review_and_launch', to: 'new_platform_setup_steps#review_and_launch',
                                    defaults: { wizard_step_definition_id: :review_and_launch },
                                    as: :new_platform_setup_step_review_and_launch

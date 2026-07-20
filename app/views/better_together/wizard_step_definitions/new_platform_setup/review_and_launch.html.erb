@@ -76,17 +76,13 @@
         <% end %>
       </section>
 
-      <!--
-        No "Edit invited members" link here on purpose: Phase 3's
-        invite_members step (a sibling branch) isn't merged into this branch,
-        so there is no route to link to yet. target_platform.invitations is
-        queried directly and will simply be empty until Phase 3 merges — this
-        section renders a graceful empty state rather than erroring, and will
-        start showing real invitations automatically once that data exists,
-        with no further changes needed here.
-      -->
       <section class="mb-4" aria-labelledby="review-invited-members-heading">
-        <h2 class="h5 mb-2" id="review-invited-members-heading"><%= t('.sections.invited_members.title') %></h2>
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h2 class="h5 mb-0" id="review-invited-members-heading"><%= t('.sections.invited_members.title') %></h2>
+          <%= link_to t('.sections.invited_members.edit'),
+                      new_platform_setup_step_invite_members_path(platform_id: @platform.to_param),
+                      class: 'small' %>
+        </div>
         <% if @invitations.any? %>
           <ul class="small mb-0">
             <% @invitations.each do |invitation| %>

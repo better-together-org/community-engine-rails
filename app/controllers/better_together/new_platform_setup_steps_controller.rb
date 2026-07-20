@@ -15,7 +15,8 @@ module BetterTogether
     # WizardStepsController#form/#update path is not exercised here either.
 
     skip_before_action :determine_wizard_outcome, only: %i[
-      update_welcome create_platform_identity create_domain create_steward_account launch_platform
+      update_welcome create_platform_identity create_domain create_steward_account
+      create_invite_members launch_platform
     ]
     before_action :authorize_target_platform
     before_action :ensure_wizard_incomplete
@@ -161,19 +162,68 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
+    # --- Step 5: invite_members (optional — reuses PlatformInvitation) ----
+
+    def invite_members
+      find_or_create_wizard_step
+      @platform = target_platform
+      @invitation = @platform.invitations.new
+      @sent_invitations = @platform.invitations.order(:created_at)
+      render wizard_step_definition.template
+    end
+
+    # Authorization note: PlatformInvitationPolicy#can_manage_platform_members?
+    # gates on a manage_platform_members/manage_platform_roles
+    # RoleResourcePermission grant reachable through a PersonPlatformMembership
+    # (see PlatformInvitationPolicy#can_manage_platform_members?). For a
+    # brand-new draft platform's just-created steward (the person created a
+    # step ago, in create_steward_account above), that grant is not guaranteed
+    # to exist yet — unlike PlatformPolicy#update?'s can_manage_platform_settings?,
+    # which has a global manage_platform fallback. This mirrors create_domain's
+    # exact reasoning above: reuse authorize_target_platform (already run as a
+    # before_action for every action in this controller, PlatformPolicy#update?)
+    # instead of a second Pundit check tied to a different policy class, and
+    # build/save PlatformInvitation records directly.
+    def create_invite_members # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      @platform = target_platform
+
+      # An explicit "Skip"/"Continue" click, or a blank invitee_email, both
+      # mean the steward is done inviting members for now — mirrors
+      # create_domain's identical skip_step/blank-field pattern.
+      if params[:skip_step].present? || invite_member_params[:invitee_email].blank?
+        mark_current_step_as_completed
+        wizard.reload
+        determine_wizard_outcome
+        return
+      end
+
+      @invitation = @platform.invitations.new(invite_member_params) do |invitation|
+        invitation.invitable = @platform
+        invitation.inviter = invitation_inviter
+        invitation.status = 'pending'
+        invitation.valid_from = Time.zone.now
+        invitation.locale = I18n.locale
+        invitation.community_role_id ||= default_community_role&.id
+      end
+
+      if @invitation.save
+        # Redisplay the same step (rather than advancing) so the steward can
+        # send additional invitations, or click "Continue" (skip_step) once done.
+        redirect_to new_platform_setup_step_invite_members_path(platform_id: @platform.to_param),
+                    notice: t('.flash.invitation_sent', email: @invitation.invitee_email)
+      else
+        @sent_invitations = @platform.invitations.order(:created_at)
+        flash.now[:alert] = t('.flash.please_address_errors')
+        render wizard_step_definition.template, status: :unprocessable_entity
+      end
+    end
+
     # --- Step 6: review_and_launch (read-only recap + final confirmation) -
 
     # A genuinely new pattern (no prior "review and confirm" step exists
     # elsewhere) — read-only recap of everything collected so far, built by
     # querying the already-persisted draft target_platform directly rather
-    # than any in-memory hand-off between steps. The "invited members"
-    # section reads target_platform.invitations directly: Phase 3's
-    # invite_members step (a sibling branch, not present here) is the only
-    # thing that would ever populate that association, so it is always empty
-    # on this branch — the view renders a graceful empty state for that case
-    # rather than treating it as an error, which is what makes this step
-    # correct in isolation now AND automatically correct once Phase 3 merges,
-    # without any further code change here.
+    # than any in-memory hand-off between steps.
     def review_and_launch
       find_or_create_wizard_step
       @platform = target_platform
@@ -233,6 +283,24 @@ module BetterTogether
         :email, :password, :password_confirmation,
         person_attributes: %i[identifier name description]
       )
+    end
+
+    def invite_member_params
+      params.fetch(:platform_invitation, {}).permit(:invitee_email)
+    end
+
+    # Prefer the steward's Person created a step ago in create_steward_account
+    # (Platform#primary_community's creator is set there) so invitations sent
+    # from this step are attributed to whoever will actually manage this new
+    # platform day-to-day. Falls back to the acting host-platform manager
+    # driving this wizard run (current_person) in case steward_account was
+    # ever reachable without a completed creator assignment.
+    def invitation_inviter
+      target_platform.primary_community.creator || helpers.current_person
+    end
+
+    def default_community_role
+      ::BetterTogether::Role.find_by(identifier: 'community_member')
     end
 
     # Same authorization as the platform's own manage_platform_settings/

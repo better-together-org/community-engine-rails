@@ -3,12 +3,15 @@
 require 'rails_helper'
 
 # Specs for the new_platform_setup wizard (Phase 1: welcome, platform_identity,
-# steward_account; Phase 2 adds domain) — see
+# steward_account; Phase 2 adds domain; Phase 3 adds invite_members; Phase 4
+# adds the final review_and_launch step) — see
 # docs/plans/richer_platform_setup_wizard_implementation_plan.md.
 # Kickoff and step-continuation both reuse PlatformPolicy#create?/#update?, whose
 # can_manage_platform_settings? has a global manage_platform fallback — so the
 # :as_platform_manager host-platform steward is authorized for every action here
-# without any extra per-draft-platform membership grant.
+# without any extra per-draft-platform membership grant. invite_members and
+# review_and_launch follow the same reasoning rather than PlatformInvitationPolicy
+# — see NewPlatformSetupStepsController#create_invite_members's inline comment.
 RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
   let(:locale) { I18n.default_locale }
 
@@ -21,6 +24,12 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
   let!(:governance_role) do
     BetterTogether::Role.find_or_create_by(identifier: 'community_governance_council') do |role|
       role.name = 'Community Governance Council'
+      role.resource_type = 'BetterTogether::Community'
+    end
+  end
+  let!(:community_member_role) do
+    BetterTogether::Role.find_or_create_by(identifier: 'community_member') do |role|
+      role.name = 'Community Member'
       role.resource_type = 'BetterTogether::Community'
     end
   end
@@ -173,15 +182,132 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
       expect(community_membership.role).to eq(governance_role)
       expect(primary_community.creator).to eq(steward_user.person)
 
-      # The wizard is not yet complete — review_and_launch (step 6) is still
-      # outstanding, so the redirect lands on the recap step, not on
-      # wizard.success_path yet.
+      # steward_account is no longer the last step — Phase 3 inserts
+      # invite_members after it, so the wizard isn't complete yet.
+      expect(response).to redirect_to(
+        better_together.new_platform_setup_step_invite_members_path(platform_id: draft.to_param, locale:)
+      )
+
+      post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+           params: { skip_step: '1' }
+
+      # invite_members isn't the last step either — Phase 4 adds
+      # review_and_launch after it, so the wizard still isn't complete.
       wizard = BetterTogether::Wizard.for_platform(draft)
                                      .find_by(identifier: BetterTogether::NewPlatformSetupWizardBuilder::IDENTIFIER)
       expect(wizard.completed?).to be false
       expect(response).to redirect_to(
         better_together.new_platform_setup_step_review_and_launch_path(platform_id: draft.to_param, locale:)
       )
+    end
+  end
+
+  describe 'invite_members step' do
+    let(:draft) { start_wizard }
+    let(:platform_suffix) { SecureRandom.hex(6) }
+    let(:valid_identity_params) do
+      {
+        name: "Tenant Platform #{platform_suffix}",
+        description: 'A place where neighbors and friends support each other.',
+        host_url: "https://tenant-#{platform_suffix}.example.com",
+        time_zone: 'UTC',
+        privacy: 'private'
+      }
+    end
+    let(:valid_steward_params) do
+      {
+        email: "steward-#{platform_suffix}@example.com",
+        password: '!StrongPass12345?',
+        password_confirmation: '!StrongPass12345?',
+        person_attributes: {
+          identifier: "steward-#{platform_suffix}",
+          name: 'New Platform Steward',
+          description: 'First steward of this new platform.'
+        }
+      }
+    end
+    let(:steward_person) { BetterTogether::User.find_by(email: valid_steward_params[:email]).person }
+
+    before do
+      draft
+      post better_together.new_platform_setup_step_update_welcome_path(platform_id: draft.to_param, locale:),
+           params: { locale: locale.to_s }
+      post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
+           params: { platform: valid_identity_params }
+      post better_together.new_platform_setup_step_create_domain_path(platform_id: draft.to_param, locale:),
+           params: { skip_step: '1' }
+      post better_together.new_platform_setup_step_create_steward_account_path(platform_id: draft.to_param, locale:),
+           params: { user: valid_steward_params }
+    end
+
+    it 'skips invite_members without creating an invitation and advances to review_and_launch' do
+      expect do
+        post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+             params: { skip_step: '1' }
+      end.not_to change(BetterTogether::PlatformInvitation, :count)
+
+      expect(response).to redirect_to(
+        better_together.new_platform_setup_step_review_and_launch_path(platform_id: draft.to_param, locale:)
+      )
+    end
+
+    it 'also treats a blank invitee_email as a skip and advances to review_and_launch' do
+      expect do
+        post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+             params: { platform_invitation: { invitee_email: '' } }
+      end.not_to change(BetterTogether::PlatformInvitation, :count)
+
+      expect(response).to redirect_to(
+        better_together.new_platform_setup_step_review_and_launch_path(platform_id: draft.to_param, locale:)
+      )
+    end
+
+    it 'creates a pending invitation attributed to the new steward and redisplays the step' do
+      invitee_email = "member-#{platform_suffix}@example.com"
+
+      expect do
+        post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+             params: { platform_invitation: { invitee_email: } }
+      end.to change(BetterTogether::PlatformInvitation, :count).by(1)
+
+      invitation = draft.invitations.find_by(invitee_email:)
+      expect(invitation).to be_present
+      expect(invitation.invitable).to eq(draft)
+      expect(invitation.inviter).to eq(steward_person)
+      expect(invitation.status_pending?).to be true
+      expect(invitation.community_role).to eq(community_member_role)
+
+      # Redisplays the same step (rather than advancing) so more invitations
+      # can be sent before the steward chooses to continue.
+      expect(response).to redirect_to(
+        better_together.new_platform_setup_step_invite_members_path(platform_id: draft.to_param, locale:)
+      )
+
+      wizard = BetterTogether::Wizard.for_platform(draft)
+                                     .find_by(identifier: BetterTogether::NewPlatformSetupWizardBuilder::IDENTIFIER)
+      expect(wizard.completed?).to be false
+    end
+
+    it 'does not create an invitation with an invalid email and re-renders the step' do
+      expect do
+        post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+             params: { platform_invitation: { invitee_email: 'not-an-email' } }
+      end.not_to change(BetterTogether::PlatformInvitation, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'does not allow a duplicate invitee_email for the same platform' do
+      invitee_email = "member-#{platform_suffix}@example.com"
+      post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+           params: { platform_invitation: { invitee_email: } }
+
+      expect do
+        post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+             params: { platform_invitation: { invitee_email: } }
+      end.not_to change(BetterTogether::PlatformInvitation, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -211,6 +337,7 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
     end
 
     before do
+      draft
       post better_together.new_platform_setup_step_update_welcome_path(platform_id: draft.to_param, locale:),
            params: { locale: locale.to_s }
       post better_together.new_platform_setup_step_create_platform_identity_path(platform_id: draft.to_param, locale:),
@@ -219,6 +346,8 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
            params: { skip_step: '1' }
       post better_together.new_platform_setup_step_create_steward_account_path(platform_id: draft.to_param, locale:),
            params: { user: valid_steward_params }
+      post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
+           params: { skip_step: '1' }
     end
 
     describe 'GET #review_and_launch' do
@@ -232,7 +361,7 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
         expect(response.body).to include(valid_steward_params[:email])
       end
 
-      it 'renders gracefully when there are no invitations yet (Phase 3 not merged into this branch)' do
+      it 'renders gracefully when there are no invitations' do
         get better_together.new_platform_setup_step_review_and_launch_path(platform_id: draft.to_param, locale:)
 
         expect(draft.invitations).to be_empty
