@@ -2,9 +2,6 @@
 
 require 'rails_helper'
 
-# Specs for the new_platform_setup wizard (Phase 1: welcome, platform_identity,
-# steward_account; Phase 2 adds domain) — see
-# docs/plans/richer_platform_setup_wizard_implementation_plan.md.
 # Kickoff and step-continuation both reuse PlatformPolicy#create?/#update?, whose
 # can_manage_platform_settings? has a global manage_platform fallback — so the
 # :as_platform_manager host-platform steward is authorized for every action here

@@ -1,7 +1,5 @@
 <%
-  # Phase 1 covered 3 steps; Phase 2 added domain. Later phases
-  # (invite_members, review_and_launch) extend this list further — see the
-  # implementation plan's sequencing. Keep this identifier order in sync with
+  # Keep this identifier order in sync with
   # NewPlatformSetupWizardBuilder's step_number order.
   new_platform_setup_step_identifiers = %w[welcome platform_identity domain steward_account]
   current_index = new_platform_setup_step_identifiers.index(current_step_identifier) || 0

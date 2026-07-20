@@ -2,17 +2,10 @@
 
 module BetterTogether
   # Mints a fresh, platform-scoped Wizard + WizardStepDefinitions for a single
-  # new-platform provisioning run. Unlike SetupWizardBuilder (which seeds one
-  # global singleton Wizard row at db:seed time for the host platform), this
-  # builder is called once per run, at the moment a draft Platform is created —
-  # see NewPlatformSetupController#start.
-  #
-  # Phase 1 covered 3 steps (welcome, platform_identity, steward_account).
-  # Phase 2 inserts the domain step between platform_identity and
-  # steward_account. Later phases (invite_members, review_and_launch) insert
-  # additional WizardStepDefinition rows with higher step_numbers — safe to do
-  # without a migration, since each run mints its own Wizard/WizardStepDefinition
-  # rows fresh rather than reusing seeded ones.
+  # new-platform provisioning run. Unlike SetupWizardBuilder (a global
+  # singleton seeded once for the host platform), this runs once per
+  # provisioning attempt, at draft Platform creation time — see
+  # NewPlatformSetupController#start.
   class NewPlatformSetupWizardBuilder
     IDENTIFIER = 'new_platform_setup'
 

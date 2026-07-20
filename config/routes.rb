@@ -612,11 +612,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               constraints: { step: /platform_details|admin_creation/ }
         end
 
-        # New tenant-platform provisioning wizard (Phase 1: welcome,
-        # platform_identity, steward_account; Phase 2 adds domain). Unlike
-        # setup_wizard (a singleton scoped to the host platform), each run
-        # gets its own platform-scoped Wizard row, so every step route
-        # carries :platform_id (the draft Platform's slug/id) — see
+        # Unlike setup_wizard (a singleton scoped to the host platform), each
+        # run gets its own platform-scoped Wizard row, so every step route
+        # carries :platform_id — see
         # NewPlatformSetupStepsController#wizard/#target_platform.
         get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
