@@ -39,6 +39,13 @@ module BetterTogether
         step_number: 4,
         form_class: '::BetterTogether::NewPlatformStewardForm',
         message: 'Next, create the steward account for this platform.'
+      },
+      {
+        name: 'Invite Members',
+        description: 'Optionally invite the first members to join the new platform.',
+        identifier: 'invite_members',
+        step_number: 5,
+        message: 'Steward account created! You can invite the first members now, or skip this step.'
       }
     ].freeze
 

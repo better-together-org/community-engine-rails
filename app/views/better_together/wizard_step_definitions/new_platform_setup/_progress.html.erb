@@ -1,7 +1,7 @@
 <%
   # Keep this identifier order in sync with
   # NewPlatformSetupWizardBuilder's step_number order.
-  new_platform_setup_step_identifiers = %w[welcome platform_identity domain steward_account]
+  new_platform_setup_step_identifiers = %w[welcome platform_identity domain steward_account invite_members]
   current_index = new_platform_setup_step_identifiers.index(current_step_identifier) || 0
   total_steps = new_platform_setup_step_identifiers.size
   percent = ((current_index + 1) / total_steps.to_f * 100).round

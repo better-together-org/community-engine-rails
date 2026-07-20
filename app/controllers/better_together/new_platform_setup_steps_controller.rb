@@ -12,7 +12,7 @@ module BetterTogether
     # SetupWizardStepsController's precedent.
 
     skip_before_action :determine_wizard_outcome, only: %i[
-      update_welcome create_platform_identity create_domain create_steward_account
+      update_welcome create_platform_identity create_domain create_steward_account create_invite_members
     ]
     before_action :authorize_target_platform
     before_action :ensure_wizard_incomplete
@@ -158,6 +158,54 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
+    # --- Step 5: invite_members (optional — reuses PlatformInvitation) ----
+
+    def invite_members
+      find_or_create_wizard_step
+      @platform = target_platform
+      @invitation = @platform.invitations.new
+      @sent_invitations = @platform.invitations.order(:created_at)
+      render wizard_step_definition.template
+    end
+
+    # Not authorized via PlatformInvitationPolicy: its permission grant isn't
+    # guaranteed to exist yet for a just-created steward. Reuses
+    # authorize_target_platform (PlatformPolicy#update?) instead, same as
+    # create_domain.
+    def create_invite_members # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      @platform = target_platform
+
+      # An explicit "Skip"/"Continue" click, or a blank invitee_email, both
+      # mean the steward is done inviting members for now — mirrors
+      # create_domain's identical skip_step/blank-field pattern.
+      if params[:skip_step].present? || invite_member_params[:invitee_email].blank?
+        mark_current_step_as_completed
+        wizard.reload
+        determine_wizard_outcome
+        return
+      end
+
+      @invitation = @platform.invitations.new(invite_member_params) do |invitation|
+        invitation.invitable = @platform
+        invitation.inviter = invitation_inviter
+        invitation.status = 'pending'
+        invitation.valid_from = Time.zone.now
+        invitation.locale = I18n.locale
+        invitation.community_role_id ||= default_community_role&.id
+      end
+
+      if @invitation.save
+        # Redisplay the same step (rather than advancing) so the steward can
+        # send additional invitations, or click "Continue" (skip_step) once done.
+        redirect_to new_platform_setup_step_invite_members_path(platform_id: @platform.to_param),
+                    notice: t('.flash.invitation_sent', email: @invitation.invitee_email)
+      else
+        @sent_invitations = @platform.invitations.order(:created_at)
+        flash.now[:alert] = t('.flash.please_address_errors')
+        render wizard_step_definition.template, status: :unprocessable_entity
+      end
+    end
+
     private
 
     def target_platform
@@ -194,6 +242,20 @@ module BetterTogether
         :email, :password, :password_confirmation,
         person_attributes: %i[identifier name description]
       )
+    end
+
+    def invite_member_params
+      params.fetch(:platform_invitation, {}).permit(:invitee_email)
+    end
+
+    # Attribute invitations to the new steward (primary_community's creator),
+    # falling back to the acting manager if that's ever unset.
+    def invitation_inviter
+      target_platform.primary_community.creator || helpers.current_person
+    end
+
+    def default_community_role
+      ::BetterTogether::Role.find_by(identifier: 'community_member')
     end
 
     # Same authorization as the platform's own manage_platform_settings/

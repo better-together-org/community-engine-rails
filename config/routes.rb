@@ -618,7 +618,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # NewPlatformSetupStepsController#wizard/#target_platform.
         get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
-        scope path: 'new_platform_setup/:platform_id' do
+        scope path: 'new_platform_setup/:platform_id' do # rubocop:todo Metrics/BlockLength
           get 'welcome', to: 'new_platform_setup_steps#welcome',
                          defaults: { wizard_step_definition_id: :welcome },
                          as: :new_platform_setup_step_welcome
@@ -643,6 +643,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post 'steward_account', to: 'new_platform_setup_steps#create_steward_account',
                                   defaults: { wizard_step_definition_id: :steward_account },
                                   as: :new_platform_setup_step_create_steward_account
+          get 'invite_members', to: 'new_platform_setup_steps#invite_members',
+                                defaults: { wizard_step_definition_id: :invite_members },
+                                as: :new_platform_setup_step_invite_members
+          post 'invite_members', to: 'new_platform_setup_steps#create_invite_members',
+                                 defaults: { wizard_step_definition_id: :invite_members },
+                                 as: :new_platform_setup_step_create_invite_members
         end
       end
     end
