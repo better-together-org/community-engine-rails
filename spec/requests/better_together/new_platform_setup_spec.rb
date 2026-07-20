@@ -2,16 +2,10 @@
 
 require 'rails_helper'
 
-# Specs for the new_platform_setup wizard (Phase 1: welcome, platform_identity,
-# steward_account; Phase 2 adds domain; Phase 3 adds invite_members; Phase 4
-# adds the final review_and_launch step) — see
-# docs/plans/richer_platform_setup_wizard_implementation_plan.md.
 # Kickoff and step-continuation both reuse PlatformPolicy#create?/#update?, whose
 # can_manage_platform_settings? has a global manage_platform fallback — so the
 # :as_platform_manager host-platform steward is authorized for every action here
-# without any extra per-draft-platform membership grant. invite_members and
-# review_and_launch follow the same reasoning rather than PlatformInvitationPolicy
-# — see NewPlatformSetupStepsController#create_invite_members's inline comment.
+# without any extra per-draft-platform membership grant.
 RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
   let(:locale) { I18n.default_locale }
 
@@ -182,8 +176,7 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
       expect(community_membership.role).to eq(governance_role)
       expect(primary_community.creator).to eq(steward_user.person)
 
-      # steward_account is no longer the last step — Phase 3 inserts
-      # invite_members after it, so the wizard isn't complete yet.
+      # steward_account isn't the last step, so the wizard isn't complete yet.
       expect(response).to redirect_to(
         better_together.new_platform_setup_step_invite_members_path(platform_id: draft.to_param, locale:)
       )
@@ -191,8 +184,7 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
       post better_together.new_platform_setup_step_create_invite_members_path(platform_id: draft.to_param, locale:),
            params: { skip_step: '1' }
 
-      # invite_members isn't the last step either — Phase 4 adds
-      # review_and_launch after it, so the wizard still isn't complete.
+      # invite_members isn't the last step, so the wizard still isn't complete.
       wizard = BetterTogether::Wizard.for_platform(draft)
                                      .find_by(identifier: BetterTogether::NewPlatformSetupWizardBuilder::IDENTIFIER)
       expect(wizard.completed?).to be false

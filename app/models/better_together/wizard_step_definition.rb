@@ -12,21 +12,10 @@ module BetterTogether
     has_many :wizard_steps,
              class_name: '::BetterTogether::WizardStep'
 
-    # slug_uniqueness: false — matches Wizard's own identical fix (see that
-    # model's comment). Without this, FriendlySlug#slugged's default
-    # `slug_uniqueness: true` adds a SECOND, always-GLOBAL
-    # `validates :slug, uniqueness: true` on top of the Identifier concern's
-    # own (correctly platform_id-scoped, but here skipped — see
-    # skip_validate_identifier? below) uniqueness check, and on top of this
-    # model's own explicit `validates :identifier, uniqueness: { scope:
-    # :wizard_id }` a few lines down. Every new_platform_setup provisioning
-    # run mints a fresh Wizard + a full set of WizardStepDefinition rows with
-    # the SAME identifiers ("welcome", "platform_identity", etc.) by design —
-    # without this flag, only the very first platform ever provisioned could
-    # succeed; every later run's create! would raise "Slug has already been
-    # taken" regardless of platform_id/wizard_id scoping, since the redundant
-    # global slug check doesn't scope by anything. See the accompanying
-    # migration (20260719160000) for the matching DB-index half of this fix.
+    # slug_uniqueness: false — matches Wizard's own fix. FriendlySlug's default
+    # adds a second, always-global slug uniqueness check on top of the scoped
+    # ones below, which would break any wizard that mints repeated identifiers
+    # across platforms (e.g. new_platform_setup).
     slugged :identifier, dependent: :delete_all, slug_uniqueness: false
 
     translates :name, type: :string

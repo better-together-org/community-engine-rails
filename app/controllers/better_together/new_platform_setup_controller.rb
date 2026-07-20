@@ -4,11 +4,9 @@ module BetterTogether
   # Kicks off a new_platform_setup wizard run: creates a draft Platform and its
   # paired, platform-scoped Wizard row, then redirects into step 1.
   #
-  # Authorization mirrors PlatformsController#new/#create exactly (same
-  # PlatformPolicy#create? check — manage_platform_settings/manage_platform,
-  # or manage_network_connections) since this supersedes that bare CRUD form
-  # as the primary "add a platform" surface for internally-hosted tenant
-  # platforms. See docs/plans/richer_platform_setup_wizard_implementation_plan.md.
+  # Authorization mirrors PlatformsController#new/#create (PlatformPolicy#create?)
+  # since this supersedes that bare CRUD form as the primary "add a platform"
+  # surface for internally-hosted tenant platforms.
   class NewPlatformSetupController < ApplicationController
     skip_before_action :check_platform_setup
     skip_before_action :check_platform_privacy

@@ -204,15 +204,10 @@ export default class extends Controller {
     // Store multiSelectJson flag for later use in event handlers
     this.isMultiSelectJson = optionsData.multiSelectJson === true;
 
-    // Capture the server-rendered pre-selected value(s) BEFORE constructing
-    // SlimSelect. Its constructor takes over rendering of the native
-    // <select> and can clear .selectedOptions as part of that takeover —
-    // reading selectedOptions AFTER construction (as this used to do) could
-    // read back an already-cleared empty selection. For a `required` field,
-    // that silently leaves it blank and unsubmittable: the submit listener
-    // below (addFormValidationListener) calls event.preventDefault() when
-    // this.element.value is empty, so the form appears to do nothing when
-    // submitted — no error, no redirect, just stuck on the same page.
+    // Capture the pre-selected value(s) BEFORE constructing SlimSelect — its
+    // constructor can clear the native <select>'s .selectedOptions, which
+    // would otherwise silently leave a `required` field blank and
+    // unsubmittable.
     const preSelectedValues = this.isMultiSelectJson
       ? null
       : Array.from(this.element.selectedOptions).map(o => o.value);

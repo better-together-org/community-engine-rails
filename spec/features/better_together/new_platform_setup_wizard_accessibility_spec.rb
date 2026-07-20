@@ -3,25 +3,10 @@
 require 'rails_helper'
 
 # Accessibility coverage for the new_platform_setup wizard, per
-# docs/development/accessibility_testing.md — modeled directly on
-# spec/features/better_together/reports_accessibility_spec.rb (the standard's
-# canonical reference implementation).
-#
-# Covers the full wizard sequence: welcome, platform_identity, domain,
-# steward_account (Phases 1/2), invite_members (Phase 3), and review_and_launch
-# (Phase 4), across every supported locale. The primary flow test skips
-# invite_members (no invitation sent), so review_and_launch's "Invited
-# Members" section is exercised only in its empty-state form here.
-#
-# authorize_target_platform (PlatformPolicy#update?/#create?) requires
-# manage_platform_settings/manage_platform, hence :as_platform_manager.
-# NOTE: both setup_authentication_if_needed AND setup_host_platform_if_needed
-# skip their automatic setup for any feature spec whose description matches
-# /setup wizard/ (a heuristic meant to avoid clobbering flows that must start
-# logged out, e.g. registration — see spec/support/automatic_test_configuration.rb).
-# This spec's description deliberately matches that heuristic, so both the
-# host platform and the login are performed explicitly below instead of
-# relying on the tag/auto-setup.
+# docs/development/accessibility_testing.md — modeled on reports_accessibility_spec.rb.
+# This description matches /setup wizard/, which makes
+# automatic_test_configuration.rb skip its usual auto-login/auto-host-setup,
+# so both are done explicitly below instead.
 RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_platform_manager, :js, retry: 0 do
   let(:supported_locales) { I18n.available_locales }
   let(:base_i18n_key) { 'better_together.wizard_step_definitions.new_platform_setup' }
@@ -121,12 +106,8 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
     fill_in 'new_platform_steward_person_identifier', with: "steward-#{suffix}"
     fill_in 'new_platform_steward_person_description', with: 'First steward of this new platform.'
     click_submit
-    # 'main' (unlike every other step's post-submit check, which waits on a
-    # selector unique to the NEXT page) exists on the CURRENT steward_account
-    # page too — have_css('main') was satisfied instantly by the page we're
-    # leaving, so it added no real synchronization and the next statement
-    # could race ahead of the redirect to invite_members. Wait on the actual
-    # URL instead.
+    # 'main' exists on this page too, so waiting for it doesn't confirm
+    # navigation happened — wait on the actual URL instead.
     expect(page).to have_current_path(%r{/invite_members\z}, wait: 10)
   end
 

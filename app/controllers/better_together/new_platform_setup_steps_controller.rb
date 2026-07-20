@@ -2,17 +2,14 @@
 
 module BetterTogether
   # Handles the new_platform_setup wizard steps for a single provisioning run,
-  # identified by params[:platform_id] (the draft Platform created by
-  # NewPlatformSetupController#start). Mirrors SetupWizardStepsController's
-  # hand-written per-step pattern — WizardStepsController#update is an
-  # unimplemented stub in the generic framework, so each step needs its own
-  # actions here, same as the existing host_setup wizard.
+  # identified by params[:platform_id] (the draft Platform from
+  # NewPlatformSetupController#start). WizardStepsController#update is an
+  # unimplemented stub, so each step is hand-written here, mirroring
+  # SetupWizardStepsController.
   class NewPlatformSetupStepsController < WizardStepsController # rubocop:todo Metrics/ClassLength
-    # NOTE: form classes are hardcoded per action below (NewPlatformIdentityForm,
-    # NewPlatformStewardForm) rather than resolved dynamically via
-    # WizardStepDefinition#form_class + SafeClassResolver — mirrors
-    # SetupWizardStepsController's exact precedent; the generic
-    # WizardStepsController#form/#update path is not exercised here either.
+    # Form classes are hardcoded per action rather than resolved dynamically
+    # via WizardStepDefinition#form_class + SafeClassResolver, matching
+    # SetupWizardStepsController's precedent.
 
     skip_before_action :determine_wizard_outcome, only: %i[
       update_welcome create_platform_identity create_domain create_steward_account
@@ -172,18 +169,10 @@ module BetterTogether
       render wizard_step_definition.template
     end
 
-    # Authorization note: PlatformInvitationPolicy#can_manage_platform_members?
-    # gates on a manage_platform_members/manage_platform_roles
-    # RoleResourcePermission grant reachable through a PersonPlatformMembership
-    # (see PlatformInvitationPolicy#can_manage_platform_members?). For a
-    # brand-new draft platform's just-created steward (the person created a
-    # step ago, in create_steward_account above), that grant is not guaranteed
-    # to exist yet — unlike PlatformPolicy#update?'s can_manage_platform_settings?,
-    # which has a global manage_platform fallback. This mirrors create_domain's
-    # exact reasoning above: reuse authorize_target_platform (already run as a
-    # before_action for every action in this controller, PlatformPolicy#update?)
-    # instead of a second Pundit check tied to a different policy class, and
-    # build/save PlatformInvitation records directly.
+    # Not authorized via PlatformInvitationPolicy: its permission grant isn't
+    # guaranteed to exist yet for a just-created steward. Reuses
+    # authorize_target_platform (PlatformPolicy#update?) instead, same as
+    # create_domain.
     def create_invite_members # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @platform = target_platform
 
@@ -233,14 +222,8 @@ module BetterTogether
       render wizard_step_definition.template
     end
 
-    # The final action of the wizard. No fields are collected here — it's a
-    # confirmation, not data entry — so this simply completes the step and
-    # lets the inherited determine_wizard_outcome (called manually, same as
-    # every other step's POST action) discover that all step definitions are
-    # now complete and redirect to wizard.success_path with wizard.success_message,
-    # exactly as Wizard#completed?/WizardMethods#determine_wizard_outcome
-    # already implement generically — nothing about that shared path needed
-    # to change for this step to be "the last one."
+    # No fields to collect — just a confirmation. Completing this step lets
+    # determine_wizard_outcome discover the wizard is now fully complete.
     def launch_platform
       mark_current_step_as_completed
       wizard.reload
@@ -289,12 +272,8 @@ module BetterTogether
       params.fetch(:platform_invitation, {}).permit(:invitee_email)
     end
 
-    # Prefer the steward's Person created a step ago in create_steward_account
-    # (Platform#primary_community's creator is set there) so invitations sent
-    # from this step are attributed to whoever will actually manage this new
-    # platform day-to-day. Falls back to the acting host-platform manager
-    # driving this wizard run (current_person) in case steward_account was
-    # ever reachable without a completed creator assignment.
+    # Attribute invitations to the new steward (primary_community's creator),
+    # falling back to the acting manager if that's ever unset.
     def invitation_inviter
       target_platform.primary_community.creator || helpers.current_person
     end
