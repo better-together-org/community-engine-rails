@@ -3315,6 +3315,8 @@ en:
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+      index:
+        provision_new_platform: Provision New Platform
       new:
         back: Back
         host_url_hint: The root URL of the external platform instance.

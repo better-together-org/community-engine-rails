@@ -3390,6 +3390,8 @@ fr:
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
+      index:
+        provision_new_platform: Provisionner une nouvelle plateforme
       new:
         back: Retour
         host_url_hint: L'URL racine de l'instance de plateforme externe.

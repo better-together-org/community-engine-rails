@@ -3367,6 +3367,8 @@ es:
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
+      index:
+        provision_new_platform: Aprovisionar nueva plataforma
       new:
         back: Atrás
         host_url_hint: La URL raíz de la instancia de plataforma externa.

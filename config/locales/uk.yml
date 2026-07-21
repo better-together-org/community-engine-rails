@@ -3364,6 +3364,8 @@ uk:
         host_url_hint: Канонічна публічна URL-адреса цієї платформи (наприклад, https://example.com).
           Використовується для її ідентифікації у федерації та генерації URL-адрес
           OAuth-ендпоінту. Для production має бути HTTPS.
+      index:
+        provision_new_platform: Налаштувати нову платформу
       new:
         back: Назад
         host_url_hint: Кореневий URL зовнішньої платформи.

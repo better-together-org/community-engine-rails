@@ -48,6 +48,12 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'links to the new_platform_setup wizard for authorized managers' do
+      get better_together.platforms_path(locale:)
+
+      expect(response.body).to include(better_together.new_platform_setup_path(locale:))
+    end
+
     it 'renders platform rows in the host table view' do
       platform = create(:better_together_platform, identifier: "row-platform-#{SecureRandom.hex(4)}")
 
