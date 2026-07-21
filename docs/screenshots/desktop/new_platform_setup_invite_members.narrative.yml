@@ -1,0 +1,19 @@
+---
+title: New Platform Setup — Invite Members (optional)
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I optionally send initial member invitations
+  one at a time, seeing the running list of sent invitations below the form.
+callouts:
+- :id: invitee_email_field
+  :title: Invitee email
+  :description: Reuses the PlatformInvitation model.
+- :id: skip_btn
+  :title: Continue
+  :description: Same "advance without creating" pattern as domain.
+accessibility_notes: The sent-invitations list has an aria-label matching the section
+  heading.
+slug: new_platform_setup_invite_members
+device: desktop

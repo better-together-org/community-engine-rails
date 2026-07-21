@@ -1,0 +1,41 @@
+<% content_for :page_title do %>
+  <%= t('.hero.title') %>
+<% end %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <%= render 'better_together/wizard_step_definitions/new_platform_setup/progress', current_step_identifier: 'welcome' %>
+
+      <h1 class="h3 mb-2"><%= t('.hero.title') %></h1>
+      <p class="text-muted mb-4"><%= t('.hero.subtitle') %></p>
+
+      <p class="mb-3"><%= t('.intro') %></p>
+
+      <ul class="mb-4">
+        <li><%= t('.what_happens_next.identity') %></li>
+        <li><%= t('.what_happens_next.domain') %></li>
+        <li><%= t('.what_happens_next.steward') %></li>
+      </ul>
+
+      <%= form_with url: new_platform_setup_step_update_welcome_path(platform_id: params[:platform_id]),
+                    method: :post, class: 'form' do |f| %>
+        <div class="mb-3">
+          <%= f.label :locale, t('.fields.locale.label'), for: 'new_platform_setup_locale', class: 'form-label' %>
+          <%= f.select :locale,
+                       I18n.available_locales.map { |locale| [I18n.t("locales.#{locale}", locale:), locale] },
+                       { selected: I18n.locale },
+                       { id: 'new_platform_setup_locale', class: 'form-select',
+                         'aria-describedby': 'new_platform_setup_locale_help' } %>
+          <small id="new_platform_setup_locale_help" class="form-text text-muted">
+            <%= t('.fields.locale.help') %>
+          </small>
+        </div>
+
+        <div class="mb-3">
+          <%= f.submit t('.buttons.next'), id: 'new-platform-setup-welcome-submit-btn', class: 'btn btn-primary w-100' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

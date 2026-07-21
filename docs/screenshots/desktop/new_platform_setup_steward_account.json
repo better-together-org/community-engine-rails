@@ -1,0 +1,118 @@
+{
+  "name": "new_platform_setup_steward_account",
+  "device": "desktop",
+  "url": "/en/w/new_platform_setup/new-platform-d64eebd8eb24/steward_account",
+  "title": "Create the Steward Account | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "new_platform_setup_steward_account",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new_platform_steward_email",
+      "title": "Steward email",
+      "bullets": [
+        "Creates the first User for the new platform."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 430.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 468.59375,
+        "center_x": 720.0,
+        "center_y": 449.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 430.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 468.59375,
+        "center_x": 720.0,
+        "center_y": 449.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 488.59,
+        "width": 380,
+        "height": 132,
+        "score": 992.40625
+      }
+    },
+    {
+      "selector": "#new_platform_steward_password",
+      "title": "Password",
+      "bullets": [
+        "Show/hide toggle via better_together--password-toggle Stimulus controller."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 540.59375,
+        "width": 591.0,
+        "height": 38.0,
+        "right": 993.0,
+        "bottom": 578.59375,
+        "center_x": 697.5,
+        "center_y": 559.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 540.59375,
+        "width": 591.0,
+        "height": 38.0,
+        "right": 993.0,
+        "bottom": 578.59375,
+        "center_x": 697.5,
+        "center_y": 559.59375
+      },
+      "placement": {
+        "side": "right",
+        "x": 1013.0,
+        "y": 480.59,
+        "width": 380,
+        "height": 158,
+        "score": 447.0
+      }
+    },
+    {
+      "selector": "#new_platform_steward_person_name",
+      "title": "Person name",
+      "bullets": [
+        "Creates the paired Person profile for the steward."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 845.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 883.59375,
+        "center_x": 720.0,
+        "center_y": 864.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 845.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 883.59375,
+        "center_x": 720.0,
+        "center_y": 864.59375
+      },
+      "placement": {
+        "side": "above",
+        "x": 530.0,
+        "y": 693.59,
+        "width": 380,
+        "height": 132,
+        "score": 845.59375
+      }
+    }
+  ]
+}
