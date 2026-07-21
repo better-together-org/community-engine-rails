@@ -41,8 +41,9 @@
         </div>
 
         <div class="d-flex gap-2 mt-3">
-          <%= f.submit t('.buttons.send_invite'), class: 'btn btn-primary' %>
+          <%= f.submit t('.buttons.send_invite'), id: 'new-platform-setup-invite-members-submit-btn', class: 'btn btn-primary' %>
           <%= button_tag t('.buttons.continue'), type: 'submit', name: 'skip_step', value: '1',
+                         id: 'new-platform-setup-invite-members-skip-btn',
                          class: 'btn btn-outline-secondary' %>
         </div>
       <% end %>

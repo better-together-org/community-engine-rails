@@ -87,8 +87,9 @@
         </div>
 
         <div class="d-flex gap-2 mt-3">
-          <%= f.submit t('.buttons.add_and_continue'), class: 'btn btn-primary' %>
+          <%= f.submit t('.buttons.add_and_continue'), id: 'new-platform-setup-domain-submit-btn', class: 'btn btn-primary' %>
           <%= button_tag t('.buttons.skip'), type: 'submit', name: 'skip_step', value: '1',
+                         id: 'new-platform-setup-domain-skip-btn',
                          class: 'btn btn-outline-secondary' %>
         </div>
       <% end %>

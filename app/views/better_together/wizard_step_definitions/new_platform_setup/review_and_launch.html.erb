@@ -102,7 +102,7 @@
       <%= form_with url: new_platform_setup_step_launch_platform_path(platform_id: @platform.to_param),
                     method: :post, class: 'form' do %>
         <div class="mb-3">
-          <%= submit_tag t('.buttons.launch'), class: 'btn btn-primary w-100' %>
+          <%= submit_tag t('.buttons.launch'), id: 'new-platform-setup-launch-btn', class: 'btn btn-primary w-100' %>
         </div>
       <% end %>
     </div>

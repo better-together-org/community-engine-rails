@@ -1,0 +1,18 @@
+---
+title: Platforms Index — Provision New Platform entry point
+audience:
+- platform_manager
+- developer
+journey_step: As a platform manager, I open Platforms and see a "Provision New Platform"
+  button that starts the guided wizard, instead of the bare external-registration
+  form.
+callouts:
+- :id: provision_button
+  :title: Provision New Platform
+  :description: Routes to new_platform_setup_path, which creates a draft Platform
+    + Wizard and redirects into step 1 (welcome). Gated on policy(Platform.new).create?
+    — an instance, not the bare class, since PlatformPolicy#create? touches record.class.
+accessibility_notes: Rendered as a standard Bootstrap btn-primary link in the page
+  header.
+slug: new_platform_setup_entry_point
+device: desktop

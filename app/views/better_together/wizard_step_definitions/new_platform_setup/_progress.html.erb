@@ -8,7 +8,7 @@
   total_steps = new_platform_setup_step_identifiers.size
   percent = ((current_index + 1) / total_steps.to_f * 100).round
 %>
-<nav aria-label="<%= t('better_together.wizard_step_definitions.new_platform_setup.progress.nav_label') %>" class="mb-4">
+<nav id="new-platform-setup-progress" aria-label="<%= t('better_together.wizard_step_definitions.new_platform_setup.progress.nav_label') %>" class="mb-4">
   <ol class="list-unstyled d-flex justify-content-between small mb-2">
     <% new_platform_setup_step_identifiers.each_with_index do |identifier, index| %>
       <li class="<%= 'fw-bold text-primary' if index == current_index %>"

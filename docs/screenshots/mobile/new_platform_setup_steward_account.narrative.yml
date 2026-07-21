@@ -1,0 +1,23 @@
+---
+title: New Platform Setup — Steward Account
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I create the first steward's login and profile,
+  who will be granted platform_steward and community_governance_council roles on the
+  new platform.
+callouts:
+- :id: email_field
+  :title: Steward email
+  :description: Devise User#email; validated for uniqueness.
+- :id: password_field
+  :title: Password
+  :description: Devise password + confirmation, with a visibility toggle.
+- :id: person_name_field
+  :title: Person name
+  :description: Start of the fields_for :person block.
+accessibility_notes: Password toggle button has aria-label + tooltip; all fields have
+  aria-describedby.
+slug: new_platform_setup_steward_account
+device: mobile
