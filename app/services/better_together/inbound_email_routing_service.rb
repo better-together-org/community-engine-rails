@@ -10,8 +10,8 @@ module BetterTogether
     end
 
     def route!
-      resolution = resolve_recipient
       sender = primary_sender
+      resolution = resolve_recipient(sender)
       body_plain = extract_body_plain
 
       Current.set(platform: resolution.platform) do
@@ -66,8 +66,8 @@ module BetterTogether
       }
     end
 
-    def resolve_recipient
-      BetterTogether::InboundEmailResolutionService.new(primary_recipient).resolve
+    def resolve_recipient(sender)
+      BetterTogether::InboundEmailResolutionService.new(primary_recipient, sender:).resolve
     end
 
     def initial_status_for(resolution) = resolution.route_kind == 'unresolved' ? 'rejected' : 'received'
