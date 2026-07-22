@@ -8,8 +8,13 @@ module BetterTogether
     ROUTE_PATTERNS = {
       'community' => /\Acommunity\+(.+)\z/,
       'agent' => /\Aagent\+(.+)\z/,
-      'membership_request' => /\Arequests\+(.+)\z/
+      'membership_request' => /\Arequests\+(.+)\z/,
+      'reply' => /\Areply\+(.+)\z/
     }.freeze
+
+    # Reply tokens are opaque has_secure_token values (case-sensitive), unlike the other
+    # route kinds' slugs/identifiers (case-insensitive by convention) — see #identifier_for.
+    REPLY_TOKEN_ORIGINAL_CASE_PATTERN = /\Areply\+(.+)\z/i
 
     # @param sender [Mail::Address, nil] the parsed From: address. Required for agent+
     #   resolution to verify the sender is actually the person being addressed — without it,
@@ -42,17 +47,37 @@ module BetterTogether
       ROUTE_PATTERNS.each do |route_kind, pattern|
         next unless (match = @address.local.downcase.match(pattern))
 
-        return [route_kind, target_for(route_kind, match[1], platform)]
+        return [route_kind, target_for(route_kind, identifier_for(route_kind, match), platform)]
       end
 
       ['unresolved', nil]
     end
 
+    # Re-matches the ORIGINAL (non-downcased) local part for reply+ so the captured token
+    # keeps its real case; other route kinds use the already-downcased match as before.
+    def identifier_for(route_kind, downcased_match)
+      return downcased_match[1] unless route_kind == 'reply'
+
+      @address.local.match(REPLY_TOKEN_ORIGINAL_CASE_PATTERN)&.[](1) || downcased_match[1]
+    end
+
     def target_for(route_kind, identifier, platform)
       return membership_request_target(identifier, platform) if route_kind == 'membership_request'
       return community_by_slug(identifier, platform) if route_kind == 'community'
+      return reply_token_target(identifier, platform) if route_kind == 'reply'
 
       route_kind == 'agent' ? agent_by_identifier(identifier, platform) : nil
+    end
+
+    # reply+<token>@ resolution does NOT trust the From: header the way agent+ does — the
+    # token itself (opaque, unique, single-use, DB-looked-up) is the authorization. The
+    # sender check here is defense in depth (a leaked token alone shouldn't be enough), not
+    # the primary security boundary the way it is for agent+.
+    def reply_token_target(token_value, platform)
+      token = BetterTogether::InboundEmailReplyToken.active.find_by(token: token_value)
+      return nil unless token && token.platform_id == platform.id && sender_matches_person?(token.recipient)
+
+      token
     end
 
     # requests+ additionally requires the target community to have membership requests

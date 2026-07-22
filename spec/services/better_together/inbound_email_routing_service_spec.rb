@@ -282,4 +282,54 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     expect(message).to be_screening_state_held
     expect(message.content_security_records).not_to be_empty
   end
+
+  it 'routes reply+ aliases into a new comment and consumes the token' do
+    community = create(:better_together_community, name: 'Reply Routing Tenant')
+    platform = create_tenant(community:, domain: 'tenant-reply-route.example.test')
+    person = create(:better_together_person)
+    post = create(:better_together_post)
+    token = BetterTogether::InboundEmailReplyToken.issue!(
+      recipient: person, repliable: post, notification_type: 'comment_added', platform:
+    )
+    inbound_email = build_inbound_email(
+      raw_mail(to: token.reply_address('tenant-reply-route.example.test'), from: person.email, body: 'Thanks, replying by email!')
+    )
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    expect do
+      described_class.new(inbound_email, scanner_runner:).route!
+    end.to change(BetterTogether::Comment, :count).by(1)
+
+    comment = BetterTogether::Comment.last
+    message = BetterTogether::InboundEmailMessage.last
+    expect(comment.commentable).to eq(post)
+    expect(comment.creator).to eq(person)
+    expect(comment.content).to eq('Thanks, replying by email!')
+    expect(message).to be_route_kind_reply
+    expect(message).to be_status_routed
+    expect(message.routed_record).to eq(comment)
+    expect(token.reload).to be_consumed
+  end
+
+  it 'does not create a comment when a reply+ token is reused' do
+    community = create(:better_together_community, name: 'Reply Routing Reuse Guard')
+    platform = create_tenant(community:, domain: 'tenant-reply-reuse.example.test')
+    person = create(:better_together_person)
+    post = create(:better_together_post)
+    token = BetterTogether::InboundEmailReplyToken.issue!(
+      recipient: person, repliable: post, notification_type: 'comment_added', platform:
+    )
+    token.consume!
+    inbound_email = build_inbound_email(
+      raw_mail(to: token.reply_address('tenant-reply-reuse.example.test'), from: person.email)
+    )
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    expect do
+      described_class.new(inbound_email, scanner_runner:).route!
+    end.not_to change(BetterTogether::Comment, :count)
+
+    message = BetterTogether::InboundEmailMessage.last
+    expect(message).to be_route_kind_unresolved
+  end
 end

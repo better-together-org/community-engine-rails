@@ -22,6 +22,7 @@ module BetterTogether
       community: 'community',
       agent: 'agent',
       membership_request: 'membership_request',
+      reply: 'reply',
       unresolved: 'unresolved'
     }.freeze
 
