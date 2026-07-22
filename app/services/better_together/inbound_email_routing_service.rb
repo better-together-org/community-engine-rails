@@ -67,7 +67,7 @@ module BetterTogether
     end
 
     def resolve_recipient(sender)
-      BetterTogether::InboundEmailResolutionService.new(primary_recipient, sender:).resolve
+      BetterTogether::InboundEmailResolutionService.new(primary_recipient, sender:, mail: @mail).resolve
     end
 
     def initial_status_for(resolution) = resolution.route_kind == 'unresolved' ? 'rejected' : 'received'

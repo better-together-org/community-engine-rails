@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Resolves an inbound recipient address into a tenant-scoped CE routing target.
-  class InboundEmailResolutionService
+  class InboundEmailResolutionService # rubocop:todo Metrics/ClassLength
     Resolution = Struct.new(:route_kind, :target, :platform, :recipient_address, :recipient_local_part, :recipient_domain)
 
     ROUTE_PATTERNS = {
@@ -19,9 +19,14 @@ module BetterTogether
     # @param sender [Mail::Address, nil] the parsed From: address. Required for agent+
     #   resolution to verify the sender is actually the person being addressed — without it,
     #   agent+<identifier>@ resolution always fails closed (see #sender_matches_person?).
-    def initialize(address, sender: nil)
+    # @param mail [Mail::Message, nil] the raw inbound message, used to read the SPF/DKIM/DMARC
+    #   results the mail-receiver's Postfix milters already stamp onto it (see
+    #   InboundMailAuthentication). Optional and fail-safe: without it, sender_matches_person?
+    #   behaves exactly as it did before this signal existed.
+    def initialize(address, sender: nil, mail: nil)
       @address = address
       @sender = sender
+      @mail = mail
     end
 
     def resolve
@@ -105,11 +110,10 @@ module BetterTogether
     end
 
     # Person resolution is intentionally sender-verified: the local-part identifier alone
-    # is often guessable/public, and nothing else in the inbound-mail pipeline authenticates
-    # the From: header (no SPF/DKIM/DMARC checking exists upstream). Without this check,
-    # anyone could cause a message to be attributed to (routed as if sent by) an arbitrary
-    # real person just by guessing their identifier. Robots have no equivalent sender concept
-    # to verify against, so tenant_robot resolution above is unaffected.
+    # is often guessable/public. Without this check, anyone could cause a message to be
+    # attributed to (routed as if sent by) an arbitrary real person just by guessing their
+    # identifier. Robots have no equivalent sender concept to verify against, so tenant_robot
+    # resolution above is unaffected.
     def verified_tenant_person(identifier, platform)
       person = BetterTogether::Person
                .joins(:person_platform_memberships)
@@ -120,11 +124,27 @@ module BetterTogether
       person
     end
 
+    # Two independent checks, both required: the From: address must match the target person's
+    # real email (string comparison -- this alone is spoofable, since nothing about SMTP
+    # requires a From: header to be genuine), AND none of SPF/DKIM/DMARC may have explicitly
+    # failed (a cryptographic/protocol-level signal a forged From: usually can't produce, since
+    # the attacker doesn't control the impersonated domain's DKIM keys). Either check alone is
+    # insufficient; together they cover both "right address, unverified" and "verified,
+    # wrong/no address" — see InboundMailAuthentication for why a merely absent SPF/DKIM/DMARC
+    # result (most domains don't publish them) does NOT count as a failure here.
     def sender_matches_person?(person)
+      address_matches_person?(person) && !authentication.hard_fail?
+    end
+
+    def address_matches_person?(person)
       sender_email = @sender&.address.to_s.downcase
       person_email = person.email.to_s.downcase
 
       sender_email.present? && person_email.present? && sender_email == person_email
+    end
+
+    def authentication
+      @authentication ||= BetterTogether::InboundMailAuthentication.new(@mail)
     end
 
     def build_resolution(route_kind, target, platform)
