@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_19_020000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -1142,6 +1142,23 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_19_020000) do
     t.index ["screening_state"], name: "idx_on_screening_state_36bc8dcb50"
     t.index ["screening_verdict"], name: "idx_on_screening_verdict_62fce624ab"
     t.index ["target_type", "target_id"], name: "index_better_together_inbound_email_messages_on_target"
+  end
+
+  create_table "better_together_inbound_email_reply_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "token", null: false
+    t.uuid "recipient_id", null: false
+    t.string "repliable_type", null: false
+    t.uuid "repliable_id", null: false
+    t.uuid "platform_id"
+    t.string "notification_type", null: false
+    t.datetime "expires_at"
+    t.datetime "consumed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["platform_id"], name: "idx_on_platform_id_8dc3b40c76"
+    t.index ["recipient_id"], name: "idx_on_recipient_id_12218a66ab"
+    t.index ["repliable_type", "repliable_id"], name: "index_better_together_inbound_email_reply_tokens_on_repliable"
+    t.index ["token"], name: "index_better_together_inbound_email_reply_tokens_on_token", unique: true
   end
 
   create_table "better_together_infrastructure_building_connections", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2843,6 +2860,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_19_020000) do
   add_foreign_key "better_together_identifications", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_inbound_email_messages", "action_mailbox_inbound_emails", column: "inbound_email_id"
   add_foreign_key "better_together_inbound_email_messages", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_inbound_email_reply_tokens", "better_together_people", column: "recipient_id"
+  add_foreign_key "better_together_inbound_email_reply_tokens", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_infrastructure_building_connections", "better_together_infrastructure_buildings", column: "building_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_addresses", column: "address_id"
   add_foreign_key "better_together_infrastructure_buildings", "better_together_communities", column: "community_id"
