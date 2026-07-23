@@ -22,7 +22,7 @@
       <%= link_to "Edit this geography-settlement", edit_geography_settlement_path(@geography_settlement), class: "btn btn-primary me-2" %>
     <% end %>
     
-    <%= link_to "See all geography-settlement", geography_settlement_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
+    <%= link_to "See all geography-settlement", geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
     
     <% if policy(@geography_settlement).destroy? %>
       <%= button_to "Destroy this settlement", [@geography_settlement], method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
@@ -38,14 +38,14 @@
         <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
               
 
-        <%# VICKI ATTEMPTING TO ADD TABS %>
-        <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'posts', selected: 'false' }, tabindex: '0' %>
-        <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'events', selected: 'false' }, tabindex: '0' %>
-        <%= link_to t('globals.tabs.weather'), '#weather', class: 'nav-link', id: 'weather-tab', data: { bs_toggle: 'tab', bs_target: '#weather', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'weather', selected: 'false' }, tabindex: '0' %>
-        <%= link_to t('globals.tabs.live_cam_views'), '#live_cam_views', class: 'nav-link', id: 'live_cam_views-tab', data: { bs_toggle: 'tab', bs_target: '#live_cam_views', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'live_cam_views', selected: 'false' }, tabindex: '0' %>
-        <%= link_to t('globals.tabs.mutural_aid_hub'), '#mutural_aid_hub', class: 'nav-link', id: 'mutural_aid_hub-tab', data: { bs_toggle: 'tab', bs_target: '#mutural_aid_hub', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'mutural_aid_hub', selected: 'false' }, tabindex: '0' %>        
-        <%= link_to t('globals.tabs.alerts'), '#alerts', class: 'nav-link', id: 'alerts-tab', data: { bs_toggle: 'tab', bs_target: '#alerts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'alerts', selected: 'false' }, tabindex: '0' %>        
-            
+        <%# COMMENTED OUT UNTIL NEEDED  --------------
+        <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'posts', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'events', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.weather'), '#weather', class: 'nav-link', id: 'weather-tab', data: { bs_toggle: 'tab', bs_target: '#weather', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'weather', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.live_cam_views'), '#live_cam_views', class: 'nav-link', id: 'live_cam_views-tab', data: { bs_toggle: 'tab', bs_target: '#live_cam_views', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'live_cam_views', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.mutual_aid_hub'), '#mutual_aid_hub', class: 'nav-link', id: 'mutual_aid_hub-tab', data: { bs_toggle: 'tab', bs_target: '#mutual_aid_hub', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'mutual_aid_hub', selected: 'false' }, tabindex: '0'        
+        <%= link_to t('globals.tabs.alerts'), '#alerts', class: 'nav-link', id: 'alerts-tab', data: { bs_toggle: 'tab', bs_target: '#alerts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'alerts', selected: 'false' }, tabindex: '0'      
+        ------------------------------------------------ADD CLOSING TO EACH LINE WHEN UNCOMMENTING %>    
       
       
       <% end %>
@@ -85,7 +85,7 @@
         </div>
 
  
-        <!-- VICKIS TESTING TABS  -->
+        <%# COMMENTED OUT UNTIL NEEDED  --------------
         <div id="posts" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="posts-tab">
           <div class="row">
             <div class="col-md-12">
@@ -119,7 +119,7 @@
           </div>
             </div>   
 
-        <div id="mutural_aid_hub" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="mutural_aid_hub-tab">
+        <div id="mutual_aid_hub" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="mutual_aid_hub-tab">
           <div class="row">
             <div class="col-md-12">
               <p>This is a test tab for mutual aid hub section</p>
@@ -133,11 +133,11 @@
               <p>This is a test tab for alerts section</p>
 
               <!-- <div class="geography-settlement-datetime card-text text-muted mt-2">
-                <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@geography_settlement) %> -->
+                <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@geography_settlement) 
             </div>
           </div>
-        </div>
-
+        </div> 
+------------------------------------------------------------------ADD CLOSING TO LAST LINE (PRIVACY_DISPLAY_VALUE(@geography_settlement) WHEN UNCOMMENTING %>
       </div>
     </div>
   </section>
