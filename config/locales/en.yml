@@ -4537,6 +4537,9 @@ en:
         profile_image: Profile image
       event:
         cover_image: Cover image
+      geography:
+        settlement:
+          cover_image: Cover image
       images:
         cover_image: Cover image
       person:

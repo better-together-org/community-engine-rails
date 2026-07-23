@@ -4633,15 +4633,18 @@ fr:
       prohibited: Interdit
     hint:
       call_for_interest:
-        cover_image: Cover image
+        cover_image: Image de couverture
       community:
         cover_image: Image de couverture
         logo: Logo
         profile_image: Image de profil
       event:
-        cover_image: Cover image
+        cover_image: Image de couverture
+      geography:
+        settlement:
+          cover_image: Image de couverture        
       images:
-        cover_image: Cover image
+        cover_image: Image de couverture
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.

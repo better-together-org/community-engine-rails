@@ -4603,11 +4603,14 @@ es:
       call_for_interest:
         cover_image: Imagen de portada
       community:
-        cover_image: Cover image
+        cover_image: Imagen de portada
         logo: Logo
-        profile_image: Profile image
+        profile_image: Imagen de perfil
       event:
         cover_image: Imagen de portada
+      geography:
+        settlement:
+          cover_image: Imagen de portada
       images:
         cover_image: Imagen de portada
       person:

@@ -4614,6 +4614,9 @@ uk:
         profile_image: Зображення профілю
       event:
         cover_image: Зображення обкладинки
+      geography:
+        settlement:
+          cover_image: Зображення обкладинки
       images:
         cover_image: Зображення обкладинки
       person:
