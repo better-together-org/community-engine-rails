@@ -37,8 +37,6 @@ module BetterTogether
 
       delegate :geocoding_string, to: :address, allow_nil: true
 
-      geocoded_by :geocoding_string
-
       after_create :ensure_floor
 
       after_create :schedule_address_geocoding

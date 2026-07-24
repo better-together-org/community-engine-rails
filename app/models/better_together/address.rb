@@ -18,15 +18,11 @@ module BetterTogether
                optional: true
     has_many :buildings, class_name: 'BetterTogether::Infrastructure::Building'
 
-    geocoded_by :geocoding_string
-
     # Validations
     validates :physical, :postal, inclusion: { in: [true, false] }
     validate :at_least_one_address_type
 
     after_update :update_buildings
-    after_create :schedule_geocoding
-    after_update :schedule_geocoding
 
     def self.address_formats
       {
@@ -51,20 +47,6 @@ module BetterTogether
 
     def geocoding_string
       to_formatted_s(excluded: %i[display_label line2])
-    end
-
-    def schedule_geocoding
-      return unless should_geocode?
-
-      BetterTogether::Geography::GeocodingJob.perform_later(self)
-    end
-
-    def should_geocode?
-      return false if geocoding_string.blank?
-
-      # space.reload # in case it has been geocoded since last load
-
-      (changed? or !geocoded?)
     end
 
     def to_formatted_s(
