@@ -42,11 +42,6 @@ module BetterTogether
 
     has_many :event_hosts, dependent: :destroy
 
-    # belongs_to :address, -> { where(physical: true, primary_flag: true) }
-    # accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
-    # delegate :geocoding_string, to: :address, allow_nil: true
-    # geocoded_by :geocoding_string
-
     translates :name, type: :string
     translates :description, backend: :action_text
 
@@ -212,20 +207,6 @@ module BetterTogether
       return if event_hosts.any?
 
       event_hosts.build(host: creator)
-    end
-
-    def schedule_address_geocoding
-      return unless should_geocode?
-
-      BetterTogether::Geography::GeocodingJob.perform_later(self)
-    end
-
-    def should_geocode?
-      return false if geocoding_string.blank?
-
-      # space.reload # in case it has been geocoded since last load
-
-      (address_changed? or !geocoded?)
     end
 
     def to_s

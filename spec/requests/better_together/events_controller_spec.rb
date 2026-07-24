@@ -185,6 +185,30 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(response.body).not_to include('Event agenda')
       end
     end
+
+    context 'with a geocoded structured location' do
+      let(:event) { create(:better_together_event, :with_address_location, creator: manager_user.person) }
+
+      before do
+        create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
+      end
+
+      it 'renders a Leaflet map for the event location' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('data-controller="better_together--map"')
+      end
+    end
+
+    context 'without a geocoded location' do
+      it 'does not render a Leaflet map' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('data-controller="better_together--map"')
+      end
+    end
   end
 
   describe 'RSVP actions' do
@@ -357,6 +381,66 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.location.location_type).to eq('BetterTogether::Infrastructure::Building')
         expect(event.location.building).to be_present
         expect(event.location.building.id).to eq(building.id)
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Settlement location' do # rubocop:todo RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        settlement = create(:geography_settlement)
+
+        params = {
+          event: {
+            name: 'Settlement Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_id: settlement.id,
+              location_type: 'BetterTogether::Geography::Settlement'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Geography::Settlement')
+        expect(event.location.settlement).to eq(settlement)
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Region location' do # rubocop:todo RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        region = create(:geography_region)
+
+        params = {
+          event: {
+            name: 'Region Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_id: region.id,
+              location_type: 'BetterTogether::Geography::Region'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Geography::Region')
+        expect(event.location.region).to eq(region)
       end
 
       # rubocop:todo RSpec/MultipleExpectations
@@ -660,6 +744,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       expect(response).to have_http_status(:ok)
       expect(assigns(:events).current_page).to eq(1)
       expect(assigns(:events).limit_value).to eq(10)
+    end
+
+    it 'renders a Leaflet map when at least one event has a geocoded location' do # rubocop:todo RSpec/MultipleExpectations
+      event = create(:event, :with_address_location)
+      create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
+
+      get better_together.events_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('data-controller="better_together--map"')
     end
   end
 end

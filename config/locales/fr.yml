@@ -1610,8 +1610,7 @@ fr:
         location: Où les participants se rencontreront pour cet événement
         location_name: Nom du lieu ou point de rencontre
         name: Un titre clair et descriptif pour votre événement
-        select_address: Sélectionner une adresse
-        select_building: Sélectionner un bâtiment
+        select_location: Sélectionner un emplacement
         slug: Identifiant convivial pour l'URL de cet événement
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
@@ -1666,8 +1665,7 @@ fr:
         location_name: Nom du lieu
         location_type: Type de lieu
         privacy: Confidentialité
-        select_address: Sélectionner une adresse
-        select_building: Sélectionner un bâtiment
+        select_location: Sélectionner un emplacement
         starts_at: Débute à
         status: Statut
         timezone: Fuseau Horaire de l'Événement
@@ -1696,6 +1694,8 @@ fr:
       location_types:
         address: Adresse
         building: Bâtiment
+        region: Région
+        settlement: Habitat
         simple: Simple
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
@@ -1716,8 +1716,7 @@ fr:
         location_name: Nom du lieu
       present: doit être vide
       prompts:
-        select_address: Sélectionner une adresse
-        select_building: Sélectionner un bâtiment
+        select_location: Sélectionner un emplacement
       recurrence:
         end_types:
           after_count: Après occurrences

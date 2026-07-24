@@ -46,6 +46,14 @@ module BetterTogether
           elevation: elevation
         }
       end
+
+      # An RGeo point built from latitude/longitude, for use in PostGIS containment
+      # queries (ST_Contains) against other Space records' `boundary` polygons.
+      def to_rgeo_point
+        return nil unless geocoded?
+
+        RGeo::Geographic.spherical_factory(srid: 4326).point(longitude, latitude)
+      end
     end
   end
 end

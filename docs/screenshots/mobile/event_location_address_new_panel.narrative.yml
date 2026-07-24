@@ -1,0 +1,24 @@
+---
+title: Event Form — Create a New Address Inline
+audience:
+- event_organizer
+- community_organizer
+- developer
+journey_step: As an event organizer, if the venue address isn't in the system yet,
+  I add it right here instead of being sent to a separate address-management screen
+  first.
+callouts:
+- :id: new_address_button
+  :title: '"+ New" trigger'
+  :description: Only shown when the organizer has permission to create addresses (Pundit-gated).
+    Settlement and Region have no equivalent button — they are curated reference data,
+    chosen from the existing list only, never created here.
+- :id: new_address_panel
+  :title: Inline creation fields
+  :description: 'Bug fixed in this PR: the "Label" dropdown (Main/Work/Other) previously
+    failed to save correctly and silently blocked every submission with a "Label can''t
+    be blank" error. That is now fixed and covered by model specs.'
+accessibility_notes: The "+ New" control is a real link with visible focus state;
+  the revealed panel receives programmatic focus on its first field when opened.
+slug: event_location_address_new_panel
+device: mobile

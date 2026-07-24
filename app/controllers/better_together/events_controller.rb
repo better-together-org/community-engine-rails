@@ -104,6 +104,29 @@ module BetterTogether
       render json: options
     end
 
+    # Returns available locations for a given location type (Address, Building,
+    # Settlement, Region). Used by the event location form to populate the
+    # SlimSelect options for whichever type the location-type radio selects.
+    def available_locations
+      authorize BetterTogether::Event, :available_locations?
+
+      klass = BetterTogether::Geography::Placeable.included_in_models.find do |allowed_klass|
+        allowed_klass.name == params[:location_type]
+      end
+
+      unless klass
+        render json: { error: 'Invalid location type' }, status: :unprocessable_entity
+        return
+      end
+
+      options = location_scope_for(klass).map do |record|
+        text = record.respond_to?(:to_formatted_s) ? record.to_formatted_s : record.to_s
+        { value: record.id, text: text }
+      end
+
+      render json: options
+    end
+
     # RSVP actions
     def rsvp_interested
       rsvp_update('interested')
@@ -226,6 +249,22 @@ module BetterTogether
       # array (?status[]=draft&status[]=confirmed) for union filtering.
       params.permit(:q, :order_by, :per_page, :page, :past, :status,
                     category_ids: [], status: [])
+    end
+
+    # Dispatches to the existing, already-scoped LocatableLocation lookup methods —
+    # Address/Building are Pundit-policy-scoped to current_person; Settlement/Region
+    # are unscoped curated reference data (see LocatableLocation.available_*_for).
+    def location_scope_for(klass)
+      case klass.name
+      when 'BetterTogether::Address'
+        BetterTogether::Geography::LocatableLocation.available_addresses_for(helpers.current_person)
+      when 'BetterTogether::Infrastructure::Building'
+        BetterTogether::Geography::LocatableLocation.available_buildings_for(helpers.current_person)
+      when 'BetterTogether::Geography::Settlement'
+        BetterTogether::Geography::LocatableLocation.available_settlements_for(helpers.current_person)
+      when 'BetterTogether::Geography::Region'
+        BetterTogether::Geography::LocatableLocation.available_regions_for(helpers.current_person)
+      end
     end
 
     # index skips the :resource_collection before_action (see

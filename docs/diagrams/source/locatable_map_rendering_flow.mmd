@@ -1,0 +1,28 @@
+%% render.orientation: portrait
+flowchart TD
+  subgraph Mechanism["Reusable mechanism (Locatable::One concern)"]
+    direction TB
+    A["Model includes\nGeography::Locatable::One\n(e.g. Event)"] --> B["Locatable::One auto-includes\nGeography::Mappable\n(has_one :map, as: :mappable)"]
+    A --> C["has_one :location\n(a LocatableLocation)"]
+    C --> D["location.location\n(Address / Building / Settlement / Region)"]
+    D --> E["Geospatial::One#to_leaflet_point\n(nil unless geocoded)"]
+    E --> F["Locatable::One#leaflet_points\n(builds label + popup_html,\nreturns [] when ungeocoded)"]
+  end
+
+  subgraph Single["Single-instance map (event show page)"]
+    direction TB
+    B --> G["model.map\n(auto-provisioned base Map record)"]
+    F --> H["Map#leaflet_points\n(delegates to mappable)"]
+    G --> H
+    H --> I["shared _map.html.erb partial"]
+  end
+
+  subgraph Collection["Collection map (events index page)"]
+    direction TB
+    J["EventCollectionMap < LocatableMap\n(mappable_class = Event)"] --> K["records:\nEvent.joins(:location)\n.includes(location: :location)"]
+    K --> L["records.flat_map(&:leaflet_points)"]
+    F -.->|"per-event leaflet_points"| L
+    L --> I
+  end
+
+  I --> M["better_together--map Stimulus controller\n(Leaflet: markers, popups, auto center/zoom)"]

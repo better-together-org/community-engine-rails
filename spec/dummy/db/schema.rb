@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.0].define(version: 2026_07_22_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
   enable_extension "pgcrypto"
   enable_extension "postgis"
 
@@ -992,8 +993,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_010000) do
     t.string "locatable_type", null: false
     t.uuid "locatable_id", null: false
     t.string "name"
+    t.string "resolution_method"
+    t.datetime "resolved_at"
     t.index ["creator_id"], name: "by_better_together_geography_locatable_locations_creator"
     t.index ["locatable_id", "locatable_type", "location_id", "location_type"], name: "locatable_locations"
+    t.index ["locatable_type", "locatable_id", "location_type"], name: "index_locatable_locations_on_locatable_and_location_type", unique: true
     t.index ["locatable_type", "locatable_id"], name: "locatable_location_by_locatable"
     t.index ["location_type", "location_id"], name: "locatable_location_by_location"
     t.index ["name"], name: "locatable_location_by_name"
@@ -1075,6 +1079,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_010000) do
     t.float "longitude"
     t.jsonb "properties", default: {}
     t.jsonb "metadata", default: {}
+    t.geography "boundary", limit: {srid: 4326, type: "multi_polygon", geographic: true}
+    t.index ["boundary"], name: "index_better_together_geography_spaces_on_boundary", using: :gist
     t.index ["creator_id"], name: "by_better_together_geography_spaces_creator"
     t.index ["identifier"], name: "index_better_together_geography_spaces_on_identifier", unique: true
   end
@@ -2662,6 +2668,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_22_010000) do
     t.index ["translatable_id", "translatable_type", "key"], name: "index_mobility_string_translations_on_translatable_attribute"
     t.index ["translatable_id", "translatable_type", "locale", "key"], name: "index_mobility_string_translations_on_keys", unique: true
     t.index ["translatable_type", "key", "value", "locale"], name: "index_mobility_string_translations_on_query_keys"
+    t.index ["value"], name: "index_mobility_string_translations_on_value_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "mobility_text_translations", force: :cascade do |t|

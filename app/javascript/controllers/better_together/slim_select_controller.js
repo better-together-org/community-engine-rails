@@ -11,18 +11,18 @@ export default class extends Controller {
   connect() {
     // Store whether this was originally required for our custom validation
     this.wasRequired = this.element.hasAttribute('required');
-    
+
     // Remove the required attribute from the original select to prevent browser validation conflicts
     if (this.wasRequired) {
       this.element.removeAttribute('required');
     }
-    
+
     // Add form submission listener to validate SlimSelect before submit
     this.addFormValidationListener();
-    
+
     // Add form reset listener to properly reset SlimSelect
     this.addFormResetListener();
-    
+
     // Try to get options from data attribute directly if Stimulus value fails
     let optionsData = {};
     if (this.hasOptionsValue) {
@@ -33,7 +33,7 @@ export default class extends Controller {
                          this.element.dataset.betterTogetherSlimSelectOptionsValue ||
                          this.element.getAttribute('data-better-together--slim-select-options-value') ||
                          this.element.getAttribute('data-better_together--slim-select-options-value');
-      
+
       if (optionsAttr) {
         try {
           optionsData = JSON.parse(optionsAttr);
@@ -42,7 +42,26 @@ export default class extends Controller {
         }
       }
     }
-    
+
+    // this.initializeSlimSelect(optionsData);
+  }
+
+  // Reinitializes SlimSelect when the options value changes after the initial
+  // connect (e.g. a sibling radio-driven controller swaps the AJAX source URL
+  // for a new polymorphic type). Existing callers never mutate their options
+  // value post-connect, so this callback never fires for them — additive only.
+  optionsValueChanged(value, previousValue) {
+    if (previousValue === undefined) return // initial connect already handled it
+
+    if (this.slimSelect) {
+      this.slimSelect.destroy();
+      this.slimSelect = null;
+    }
+
+    this.initializeSlimSelect(value || {});
+  }
+
+  initializeSlimSelect(optionsData) {
     const defaultOptions = {
       settings: {
         allowDeselect: true,
@@ -245,7 +264,7 @@ export default class extends Controller {
     const fullUrl = new URL(url, window.location.origin);
     // Add timestamp to prevent caching
     fullUrl.searchParams.append('_', Date.now().toString());
-    
+
     return fetch(fullUrl.toString(), {
       method: 'GET',
       headers: {

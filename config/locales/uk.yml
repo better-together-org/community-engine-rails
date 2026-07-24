@@ -1596,8 +1596,7 @@ uk:
         location: Де учасники зустрінуться для цієї події
         location_name: Назва місця проведення або місця зустрічі
         name: Чіткий, описовий заголовок для вашої події
-        select_address: Вибрати адресу
-        select_building: Вибрати будівлю
+        select_location: Вибрати місцезнаходження
         slug: Дружній до URL ідентифікатор для цієї події
         starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
           вище.
@@ -1654,8 +1653,7 @@ uk:
         location_name: Назва місця
         location_type: Тип місця
         privacy: Конфіденційність
-        select_address: Вибрати адресу
-        select_building: Вибрати будівлю
+        select_location: Вибрати місцезнаходження
         starts_at: Починається о
         status: Статус
         timezone: Часовий Пояс Події
@@ -1684,6 +1682,8 @@ uk:
       location_types:
         address: Адреса
         building: Будівля
+        region: Регіон
+        settlement: Поселення
         simple: Простий
       login_required: Будь ласка, увійдіть для управління RSVP.
       model_invalid: 'Помилка валідації: %{errors}'
@@ -1705,8 +1705,7 @@ uk:
         location_name: Назва місця
       present: має бути порожнім
       prompts:
-        select_address: Вибрати адресу
-        select_building: Вибрати будівлю
+        select_location: Вибрати місцезнаходження
       recurrence:
         end_types:
           after_count: Після повторень

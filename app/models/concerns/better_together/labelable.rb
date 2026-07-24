@@ -56,7 +56,12 @@ module BetterTogether
     end
 
     def text_label=(arg)
-      return if arg.present? && self.class::LABELS.include?(arg.to_sym)
+      # Forms submit both fields together, select_label first: when a real
+      # LABELS entry is chosen, select_label= already sets label correctly and
+      # the "Other" text field is submitted blank — return here rather than
+      # clobbering that assignment with an empty string.
+      return if arg.blank?
+      return if self.class::LABELS.include?(arg.to_sym)
 
       self.label = arg
     end

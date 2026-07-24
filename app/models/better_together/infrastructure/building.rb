@@ -9,6 +9,8 @@ module BetterTogether
       include Identifier
       include FriendlySlug
       include Geography::Geospatial::One
+      include Geography::Locatable::Many
+      include Geography::Placeable
       include Privacy
       include PrimaryCommunity
 
@@ -35,8 +37,6 @@ module BetterTogether
 
       delegate :geocoding_string, to: :address, allow_nil: true
 
-      geocoded_by :geocoding_string
-
       after_create :ensure_floor
 
       after_create :schedule_address_geocoding
@@ -53,6 +53,25 @@ module BetterTogether
             address_attributes: Address.permitted_attributes(id: true)
           }
         ] + super
+      end
+
+      # Placeable: build a new Building from nested locatable_location attrs. Building may
+      # include nested address attributes; hoist any top-level address attribute keys into
+      # address_attributes so Building.new receives them nested as it expects.
+      def self.locatable_location_build(attrs) # rubocop:todo Metrics/MethodLength
+        attrs = attrs.dup
+        address_keys = BetterTogether::Address.permitted_attributes(id: true, destroy: true).map(&:to_s)
+
+        attrs['address_attributes'] ||= {}
+        address_keys.each do |akey|
+          next unless attrs.key?(akey)
+
+          attrs['address_attributes'][akey] = attrs.delete(akey)
+        end
+
+        attrs.except!('id', '_destroy', 'location_type', 'name', 'locatable_id', 'locatable_type', 'location_id')
+
+        new(attrs)
       end
 
       def address?

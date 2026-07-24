@@ -1604,8 +1604,7 @@ es:
         location: Dónde se reunirán los asistentes para este evento
         location_name: Nombre del lugar o punto de encuentro
         name: Un título claro y descriptivo para su evento
-        select_address: Seleccionar dirección
-        select_building: Seleccionar edificio
+        select_location: Seleccionar ubicación
         slug: Identificador amigable para URL de este evento
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
@@ -1659,8 +1658,7 @@ es:
         location_name: Nombre de la ubicación
         location_type: Tipo de ubicación
         privacy: Privacidad
-        select_address: Seleccionar dirección
-        select_building: Seleccionar edificio
+        select_location: Seleccionar ubicación
         starts_at: Comienza en
         status: Estado
         timezone: Zona Horaria del Evento
@@ -1689,6 +1687,8 @@ es:
       location_types:
         address: Dirección
         building: Edificio
+        region: Región
+        settlement: Asentamiento
         simple: Simple
       login_required: Por favor, inicia sesión para gestionar las confirmaciones de
         asistencia.
@@ -1709,8 +1709,7 @@ es:
         location_name: Nombre de la ubicación
       present: debe estar en blanco
       prompts:
-        select_address: Seleccionar dirección
-        select_building: Seleccionar edificio
+        select_location: Seleccionar ubicación
       recurrence:
         end_types:
           after_count: Después de ocurrencias

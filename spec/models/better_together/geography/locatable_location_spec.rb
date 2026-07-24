@@ -200,6 +200,105 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
         expect(simple_location.building?).to be false
       end
     end
+
+    describe '#settlement' do
+      it 'returns the location when location_type is Settlement' do
+        settlement_location = build(:locatable_location, :with_settlement)
+        expect(settlement_location.settlement).to eq(settlement_location.location)
+      end
+
+      it 'returns nil when location_type is not Settlement' do
+        address_location = build(:locatable_location, :with_address)
+        expect(address_location.settlement).to be_nil
+      end
+    end
+
+    describe '#region' do
+      it 'returns the location when location_type is Region' do
+        region_location = build(:locatable_location, :with_region)
+        expect(region_location.region).to eq(region_location.location)
+      end
+
+      it 'returns nil when location_type is not Region' do
+        address_location = build(:locatable_location, :with_address)
+        expect(address_location.region).to be_nil
+      end
+    end
+
+    describe '#settlement?/#region?' do
+      it 'returns true only for the matching type' do
+        settlement_location = build(:locatable_location, :with_settlement)
+        region_location = build(:locatable_location, :with_region)
+
+        expect(settlement_location.settlement?).to be true
+        expect(settlement_location.region?).to be false
+        expect(region_location.region?).to be true
+        expect(region_location.settlement?).to be false
+      end
+    end
+  end
+
+  describe 'settlement/region as structured locations' do
+    context 'when settlement location' do
+      subject(:settlement_location) { build(:locatable_location, :with_settlement) }
+
+      it { is_expected.to be_valid }
+
+      it 'does not require name' do
+        settlement_location.name = nil
+        expect(settlement_location).to be_valid
+      end
+    end
+
+    context 'when region location' do
+      subject(:region_location) { build(:locatable_location, :with_region) }
+
+      it { is_expected.to be_valid }
+
+      it 'does not require name' do
+        region_location.name = nil
+        expect(region_location).to be_valid
+      end
+    end
+  end
+
+  describe '#location_attributes=' do
+    it 'assigns an existing Settlement (lookup-only, never builds a new one)' do
+      settlement = create(:geography_settlement)
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Geography::Settlement',
+                                                 location_id: settlement.id }
+
+      expect(locatable_location.location).to eq(settlement)
+    end
+
+    it 'assigns an existing Region (lookup-only)' do
+      region = create(:geography_region)
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Geography::Region',
+                                                 location_id: region.id }
+
+      expect(locatable_location.location).to eq(region)
+    end
+
+    it 'falls back to the simple name when location_type is not a Placeable model' do
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Person', name: 'Somewhere' }
+
+      expect(locatable_location.location).to be_nil
+      expect(locatable_location.name).to eq('Somewhere')
+    end
+
+    it 'builds a new Address when location_type is Address' do
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Address', line1: '1 Main St' }
+
+      expect(locatable_location.location).to be_a(BetterTogether::Address)
+      expect(locatable_location.location.line1).to eq('1 Main St')
+    end
+
+    it 'looks up an existing record by id across allowed types when only id is given' do
+      settlement = create(:geography_settlement)
+      locatable_location.location_attributes = { id: settlement.id }
+
+      expect(locatable_location.location).to eq(settlement)
+    end
   end
 
   describe 'class methods' do
@@ -344,10 +443,40 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
       end
     end
 
+    describe '.available_settlements_for' do
+      let!(:settlement_a) { create(:geography_settlement, name: 'Zeta Settlement') }
+      let!(:settlement_b) { create(:geography_settlement, name: 'Alpha Settlement') }
+
+      it 'returns all settlements ordered by name, ignoring context' do
+        result = described_class.available_settlements_for(nil)
+
+        expect(result.to_a).to eq([settlement_b, settlement_a])
+      end
+    end
+
+    describe '.available_regions_for' do
+      let!(:region_a) { create(:geography_region, name: 'Zeta Region') }
+      let!(:region_b) { create(:geography_region, name: 'Alpha Region') }
+
+      it 'returns all regions ordered by name, ignoring context' do
+        result = described_class.available_regions_for(nil)
+
+        expect(result.to_a).to eq([region_b, region_a])
+      end
+    end
+
     describe '.permitted_attributes' do
       it 'includes location-specific attributes' do
         expected_attrs = %i[name locatable_id locatable_type location_id location_type]
         expect(described_class.permitted_attributes).to include(*expected_attrs)
+      end
+
+      it 'merges nested attributes dynamically across every Placeable model' do
+        nested = described_class.permitted_attributes.find { |a| a.is_a?(Hash) && a.key?(:location_attributes) }
+        location_attrs = nested[:location_attributes]
+
+        expect(location_attrs).to include(:line1) # bare Address attribute
+        expect(location_attrs.any? { |a| a.is_a?(Hash) && a.key?(:address_attributes) }).to be(true) # nested under Building
       end
     end
   end

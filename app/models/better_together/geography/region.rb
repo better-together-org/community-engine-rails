@@ -5,6 +5,7 @@ module BetterTogether
     class Region < ApplicationRecord # rubocop:todo Style/Documentation
       include Geospatial::One
       include Identifier
+      include Placeable
       include Protected
       include PrimaryCommunity
 

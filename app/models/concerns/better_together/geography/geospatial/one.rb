@@ -16,6 +16,11 @@ module BetterTogether
           delegate :latitude, :longitude, :elevation, :geocoded, to: :space, allow_nil: true
           delegate :latitude=, :longitude=, :elevation=, to: :space
           delegate :latitude_changed?, :longitude_changed?, :elevation_changed?, to: :space, allow_nil: true
+
+          geocoded_by :geocoding_string
+
+          after_create :schedule_geocoding
+          after_update :schedule_geocoding
         end
 
         class_methods do
@@ -27,6 +32,24 @@ module BetterTogether
               space_attributes: BetterTogether::Geography::Space.permitted_attributes(id: true, destroy: true)
             }]
           end
+        end
+
+        def geocoding_string
+          to_s
+        end
+
+        def schedule_geocoding
+          return unless should_geocode?
+
+          BetterTogether::Geography::GeocodingJob.perform_later(self)
+        end
+
+        def should_geocode?
+          return false if geocoding_string.blank?
+
+          # space.reload # in case it has been geocoded since last load
+
+          (changed? or !geocoded?)
         end
 
         def geospatial_space

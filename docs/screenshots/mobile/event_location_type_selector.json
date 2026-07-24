@@ -1,0 +1,49 @@
+{
+  "name": "event_location_type_selector",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Community Engine",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_location_picker",
+  "flow": "event_location_type_selector",
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
+  "callouts": [
+    {
+      "selector": "[data-better_together--location-selector-target=\"typeSelector\"]",
+      "title": "Location type",
+      "bullets": [
+        "Simple: free-text name only (original behavior, still the default).",
+        "Address / Building / Settlement / Region: attach a real, existing record."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1039.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1077.390625,
+        "center_x": 242.5,
+        "center_y": 1058.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1039.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1077.390625,
+        "center_x": 242.5,
+        "center_y": 1058.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 705.39,
+        "width": 270.0,
+        "height": 314,
+        "score": 1039.390625
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "event_map_index",
+  "device": "desktop",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "community_organizer",
+  "feature_set": "event_map",
+  "flow": "event_map_index",
+  "source_spec": "./spec/docs_screenshots/better_together/event_map_spec.rb",
+  "callouts": [
+    {
+      "selector": ".events-map",
+      "title": "All events with a location",
+      "bullets": [
+        "Aggregates every event with a geocoded location onto one map (BetterTogether::Geography::EventCollectionMap).",
+        "Mirrors the existing communities index map — same shared _map.html.erb partial and Stimulus controller."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 305.0,
+        "width": 1296.0,
+        "height": 500.0,
+        "right": 1360.5,
+        "bottom": 805.0,
+        "center_x": 712.5,
+        "center_y": 555.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 305.0,
+        "width": 1296.0,
+        "height": 500.0,
+        "right": 1360.5,
+        "bottom": 805.0,
+        "center_x": 712.5,
+        "center_y": 555.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 825.0,
+        "width": 380,
+        "height": 320,
+        "score": 656.0
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :geography_geospatial_space, class: 'Geography::GeospatialSpace' do # rubocop:todo Lint/EmptyBlock
+  factory :geography_geospatial_space, class: 'BetterTogether::Geography::GeospatialSpace' do # rubocop:todo Lint/EmptyBlock
   end
 end

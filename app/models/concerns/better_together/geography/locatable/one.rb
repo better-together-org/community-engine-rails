@@ -8,6 +8,11 @@ module BetterTogether
         extend ActiveSupport::Concern
 
         included do
+          # Any Locatable::One includer is also mappable — its single assigned
+          # `location` is rendered via `leaflet_points`/`spaces` below, delegated
+          # to by BetterTogether::Geography::Map#leaflet_points.
+          include ::BetterTogether::Geography::Mappable
+
           has_one :location,
                   class_name: 'BetterTogether::Geography::LocatableLocation',
                   as: :locatable
@@ -36,6 +41,30 @@ module BetterTogether
                                                                                   destroy: true)
             }]
           end
+        end
+
+        # A single leaflet point for the assigned structured location, or an empty
+        # array when there's no location, a free-text/simple location (no
+        # coordinates), or the location's space isn't geocoded yet.
+        def leaflet_points
+          point = location&.location&.to_leaflet_point
+          return [] unless point
+
+          place_link = "<a href='#{locatable_map_url}' class='text-decoration-none'><strong>#{self}</strong></a>"
+
+          [point.merge(label: place_link, popup_html: "#{place_link}<br>#{location.display_name}")]
+        end
+
+        def spaces
+          [location&.location&.space].compact
+        end
+
+        private
+
+        def locatable_map_url
+          BetterTogether::Engine.routes.url_helpers.polymorphic_path(self, locale: I18n.locale)
+        rescue NoMethodError
+          Rails.application.routes.url_helpers.polymorphic_path(self, locale: I18n.locale)
         end
       end
     end
