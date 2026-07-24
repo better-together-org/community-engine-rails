@@ -1,39 +1,145 @@
 <div class="container">
-  <div class="card">
-    <div class="card-body">
-      <h3 class="card-title mb-3"><%= @geography_settlement.name %></h3>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Identifier:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.identifier %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Name:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.name %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Description:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.description %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Slug:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.slug %></div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-3"><strong>Protected:</strong></div>
-        <div class="col-md-9"><%= @geography_settlement.protected ? 'Yes' : 'No' %></div>
-      </div>
+
+  <div class="geography-settlement-header position-relative">
+    <!-- Cover Image Section -->
+    <div class="cover-image-container">
+      <%= cover_image_tag(@geography_settlement) %>
+
     </div>
   </div>
 
+  <div class="geography-settlement-info-container container">
+    <div class="row align-items-end">
+      <div class="col">
+        <h1 class="geography-settlement-name mt-3"><%= @geography_settlement.name %></h1>
+      </div>  
+    </div>
+  </div>
+
+
   <div class="mt-3">
     <% if policy(@geography_settlement).edit? %>
-      <%= link_to "Edit this settlement", edit_geography_settlement_path(@geography_settlement), class: "btn btn-primary me-2" %>
+      <%= link_to "Edit this geography-settlement", edit_geography_settlement_path(@geography_settlement), class: "btn btn-primary me-2" %>
     <% end %>
     
-    <%= link_to "See all settlements", geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
+    <%= link_to "See all geography-settlement", geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
     
     <% if policy(@geography_settlement).destroy? %>
       <%= button_to "Destroy this settlement", [@geography_settlement], method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
     <% end %>
   </div>
+
+  <!-- geography_settlement tabbed section with members -->
+  <section class="card tabbed-section" data-controller="better_together--tabs">
+    <div class="card-header">
+      <!-- Navigation tabs -->
+      <%# Initialize the active tab state with accessible attributes %>
+      <%= content_tag :div, id: 'geography-settlement', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'geography-settlement Sections' do %>
+        <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
+              
+
+        <%# COMMENTED OUT UNTIL NEEDED  --------------
+        <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'posts', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'events', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.weather'), '#weather', class: 'nav-link', id: 'weather-tab', data: { bs_toggle: 'tab', bs_target: '#weather', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'weather', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.live_cam_views'), '#live_cam_views', class: 'nav-link', id: 'live_cam_views-tab', data: { bs_toggle: 'tab', bs_target: '#live_cam_views', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'live_cam_views', selected: 'false' }, tabindex: '0' 
+        <%= link_to t('globals.tabs.mutual_aid_hub'), '#mutual_aid_hub', class: 'nav-link', id: 'mutual_aid_hub-tab', data: { bs_toggle: 'tab', bs_target: '#mutual_aid_hub', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'mutual_aid_hub', selected: 'false' }, tabindex: '0'        
+        <%= link_to t('globals.tabs.alerts'), '#alerts', class: 'nav-link', id: 'alerts-tab', data: { bs_toggle: 'tab', bs_target: '#alerts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'alerts', selected: 'false' }, tabindex: '0'      
+        ------------------------------------------------ADD CLOSING TO EACH LINE WHEN UNCOMMENTING %>    
+      
+      
+      <% end %>
+    </div>
+
+    <%# Tabbed content using Bootstrap tab panes so nav links activate panes correctly %>
+    <div class="card-body" id="geography-settlementSections" role="tabpanel">
+      <div class="tab-content">
+        <!-- Person About Tab Pane -->
+        <div id="about" class="nav-tab-pane tab-pane fade show active" role="tabpanel" aria-labelledby="about-tab">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Identifier:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.identifier %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Name:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.name %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Description:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.description %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Slug:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.slug %></div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-3"><strong>Protected:</strong></div>
+                <div class="col-md-9"><%= @geography_settlement.protected ? 'Yes' : 'No' %></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+ 
+        <%# COMMENTED OUT UNTIL NEEDED  --------------
+        <div id="posts" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="posts-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab for posts section</p>
+
+        </div>
+          </div>
+            </div>      
+
+        <div id="events" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="events-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab for events section</p>
+        </div>
+          </div>
+            </div>   
+
+        <div id="weather" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="weather-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab for weather section</p>
+        </div>
+          </div>
+            </div>   
+
+        <div id="live_cam_views" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="live_cam_views-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab for live cam views section</p>
+        </div>
+          </div>
+            </div>   
+
+        <div id="mutual_aid_hub" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="mutual_aid_hub-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab for mutual aid hub section</p>
+        </div>
+          </div>
+            </div>   
+
+        <div id="alerts" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="alerts-tab">
+          <div class="row">
+            <div class="col-md-12">
+              <p>This is a test tab for alerts section</p>
+
+              <!-- <div class="geography-settlement-datetime card-text text-muted mt-2">
+                <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@geography_settlement) 
+            </div>
+          </div>
+        </div> 
+------------------------------------------------------------------ADD CLOSING TO LAST LINE (PRIVACY_DISPLAY_VALUE(@geography_settlement) WHEN UNCOMMENTING %>
+      </div>
+    </div>
+  </section>
+
 </div>

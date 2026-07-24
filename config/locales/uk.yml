@@ -2003,7 +2003,11 @@ uk:
           title: Regions
       settlements:
         index:
-          title: Settlements
+          title: Поселення
+        toolbar:
+          back_to_geography_settlements: Назад до Поселень
+          save_geography_settlement: Зберегти поселення
+          view_geography_settlement: Переглянути поселення          
     global:
       add: Add
     governance:
@@ -4815,6 +4819,9 @@ uk:
         profile_image: Зображення профілю
       event:
         cover_image: Зображення обкладинки
+      geography:
+        settlement:
+          cover_image: Зображення обкладинки
       images:
         cover_image: Зображення обкладинки
       person:

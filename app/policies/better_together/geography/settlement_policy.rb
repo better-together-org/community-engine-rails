@@ -8,7 +8,8 @@ module BetterTogether
       end
 
       def show?
-        user.present?
+        user.present? 
+        # TODO:  will adjust for proper permissions, diabled for now TODO 
       end
 
       def create?
@@ -20,7 +21,7 @@ module BetterTogether
       end
 
       def update?
-        user.present? && !record.protected?
+        user.present?
       end
 
       def edit?

@@ -8,6 +8,14 @@ module BetterTogether
       include Protected
       include PrimaryCommunity
 
+      # VICKI EDITS
+      include Attachments::Images 
+
+      attachable_cover_image
+
+
+
+
       has_community
 
       slugged :name
@@ -19,8 +27,10 @@ module BetterTogether
       has_many :regions, through: :region_settlements, source: :region
 
       def to_s
-        name
+        name  
       end
+    
+      configure_attachment_cleanup
     end
   end
 end
