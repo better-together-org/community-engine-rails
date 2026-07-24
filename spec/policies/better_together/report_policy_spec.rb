@@ -11,7 +11,8 @@ RSpec.describe BetterTogether::ReportPolicy do
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership = host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.update!(status: 'active') unless membership.active?
   end
 
   let(:user) { create(:better_together_user, :confirmed) }

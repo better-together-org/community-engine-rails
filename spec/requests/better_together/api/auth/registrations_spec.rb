@@ -71,15 +71,16 @@ RSpec.describe 'BetterTogether::Api::Auth::Registrations', :no_auth do
       end
 
       it 'sends a confirmation email' do
-        expect do
-          perform_enqueued_jobs do
-            post url, params: valid_params, as: :json
-          end
-        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        # Sign-up also creates an active host-community membership, which fires its own
+        # welcome notification email — so total deliveries include more than just the
+        # confirmation instructions. Assert on the confirmation email specifically.
+        perform_enqueued_jobs do
+          post url, params: valid_params, as: :json
+        end
 
-        email = ActionMailer::Base.deliveries.last
+        email = ActionMailer::Base.deliveries.find { |d| d.subject.include?('Confirmation') }
+        expect(email).to be_present
         expect(email.to).to include('newuser@example.com')
-        expect(email.subject).to include('Confirmation')
       end
     end
 

@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
-    class AgreementsController < JoatuController
+    class AgreementsController < JoatuController # rubocop:todo Metrics/ClassLength
       # POST /joatu/requests/:request_id/agreements
       def create # rubocop:todo Metrics/MethodLength
         resource_instance(resource_params)
@@ -68,6 +68,9 @@ module BetterTogether
           @joatu_agreement.accept!
           redirect_to joatu_agreement_path(@joatu_agreement),
                       notice: t('flash.joatu.agreement.accepted')
+        rescue BetterTogether::C3::Balance::InsufficientBalance
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: insufficient_c3_alert(@joatu_agreement)
         rescue ActiveRecord::RecordInvalid => e
           redirect_to joatu_agreement_path(@joatu_agreement),
                       alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to accept agreement'
@@ -83,7 +86,45 @@ module BetterTogether
                     notice: t('flash.joatu.agreement.rejected')
       end
 
+      # POST /joatu/agreements/:id/fulfill
+      def fulfill
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        begin
+          @joatu_agreement.fulfill!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.fulfilled',
+                                default: 'Agreement fulfilled — C3 transferred to offer creator.')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to fulfill agreement'
+        rescue BetterTogether::C3::Balance::InsufficientBalance => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.message
+        end
+      end
+
+      # POST /joatu/agreements/:id/cancel
+      def cancel
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        begin
+          @joatu_agreement.cancel!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.cancelled',
+                                default: 'Agreement cancelled — any reserved Tree Seeds have been returned.')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to cancel agreement'
+        end
+      end
+
       private
+
+      # Build a plain-language flash message when a payer has insufficient C3 balance.
+      def insufficient_c3_alert(agreement)
+        BetterTogether::Joatu::InsufficientC3AlertBuilder.call(agreement, self)
+      end
 
       def resource_class
         BetterTogether::Joatu::Agreement

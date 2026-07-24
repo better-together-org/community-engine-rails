@@ -11,6 +11,8 @@ RSpec.describe BetterTogether::PostPolicy do
   let(:scoped_community) { create(:better_together_community, privacy: 'public') }
   let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
   let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
 
   let(:public_published_post) do
     create(
@@ -38,8 +40,7 @@ RSpec.describe BetterTogether::PostPolicy do
       creator: creator_user.person,
       author: creator_user.person,
       privacy: 'community',
-      published_at: 1.minute.ago,
-      platform: scoped_platform
+      published_at: 1.minute.ago
     )
   end
 
@@ -54,11 +55,12 @@ RSpec.describe BetterTogether::PostPolicy do
   end
 
   before do
-    BetterTogether::PersonCommunityMembership.find_or_create_by!(
-      joinable: scoped_community,
+    membership = BetterTogether::PersonCommunityMembership.find_or_create_by!(
+      joinable: host_community,
       member: community_member_user.person,
       role: community_member_role
     )
+    membership.update!(status: 'active') unless membership.active?
   end
 
   describe '#index?' do
@@ -140,6 +142,26 @@ RSpec.describe BetterTogether::PostPolicy do
 
     it 'denies unauthenticated users' do
       expect(described_class.new(nil, BetterTogether::Post)).not_to be_create
+    end
+
+    it 'allows an active community member who has accepted the content publishing agreement' do
+      grant_content_publishing_agreement(community_member_user.person)
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(community_member_user, new_post).create?).to be true
+    end
+
+    it 'denies an active community member who has not accepted the content publishing agreement' do
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(community_member_user, new_post).create?).to be false
+    end
+
+    it 'denies a non-member even with the content publishing agreement accepted' do
+      grant_content_publishing_agreement(regular_user.person)
+      new_post = BetterTogether::Post.new(community_id: host_community.id)
+
+      expect(described_class.new(regular_user, new_post).create?).to be false
     end
   end
 

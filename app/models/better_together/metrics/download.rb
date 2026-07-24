@@ -4,7 +4,12 @@
 module BetterTogether
   module Metrics
     class Download < ApplicationRecord # rubocop:todo Style/Documentation
-      include PlatformScoped
+      # Explicit, fully-qualified include rather than inheriting from PlatformRecord —
+      # bare `include PlatformScoped` here would resolve to the generic top-level
+      # concern (Current.platform/host only) instead of this module's
+      # parent-aware derivation, because PlatformRecord's own lexical nesting
+      # doesn't include BetterTogether::Metrics.
+      include BetterTogether::Metrics::PlatformScoped
 
       belongs_to :downloadable, polymorphic: true
 

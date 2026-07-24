@@ -26,13 +26,11 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <%= label_tag "#{scope}[heading]", BetterTogether::Content::Block.human_attribute_name('heading', default: 'Heading (optional)'), class: 'form-label' %>
-    <%= text_field_tag "#{scope}[heading]", block.heading, class: 'form-control' %>
-  </div>
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'heading',
+                       help_text: 'Optional heading for the alert' } %>
 
-  <div class="mb-3">
-    <%= label_tag "#{scope}[body_text]", BetterTogether::Content::Block.human_attribute_name('body_text', default: 'Message'), class: 'form-label' %>
-    <%= text_area_tag "#{scope}[body_text]", block.body_text, class: 'form-control', rows: 3 %>
-  </div>
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'body_text',
+                       help_text: 'The alert message content', rows: 3 } %>
 </div>

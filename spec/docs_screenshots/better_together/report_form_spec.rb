@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Documentation screenshots for report form', :as_user, :docs_screenshot, :js, retry: 0, type: :feature do
-  let!(:target_person) { create(:better_together_person, name: 'Documentation Target') }
+  let(:target_person) { create(:better_together_person, name: 'Documentation Target') }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'

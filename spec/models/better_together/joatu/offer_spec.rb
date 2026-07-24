@@ -5,8 +5,6 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Joatu::Offer do
   subject(:offer) { build(:better_together_joatu_offer) }
 
-  it_behaves_like 'an indexed searchable model', :better_together_joatu_offer
-
   describe 'Factory' do
     it 'has a valid factory' do
       expect(offer).to be_valid
@@ -112,4 +110,6 @@ RSpec.describe BetterTogether::Joatu::Offer do
     expect(offer_record.claims).to contain_exactly(claim)
     expect(claim.citations).to contain_exactly(citation)
   end
+
+  it_behaves_like 'platform scoped', factory: :joatu_offer
 end

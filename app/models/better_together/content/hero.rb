@@ -6,7 +6,7 @@ module BetterTogether
     class Hero < Block
       include Translatable
 
-      translates :heading, :cta_text, type: :string
+      translates :heading, :cta_text, :cta_url, type: :string
       translates :content, backend: :action_text
 
       AVAILABLE_BTN_CLASSES = {
@@ -27,10 +27,6 @@ module BetterTogether
         dark: 'btn-dark',
         dark_outline: 'btn-outline-dark'
       }.freeze
-
-      store_attributes :content_data do
-        cta_url String, default: ''
-      end
 
       store_attributes :css_settings do
         css_classes String, default: 'text-white'

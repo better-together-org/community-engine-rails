@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_llm_robot_management_form",
+  "device": "desktop",
+  "url": "/en/host/platforms/marvin_kutch/robots/cf1b316b-418d-45b3-8f71-30ee936ec817/edit",
+  "title": "Edit Platform Translation Override for Monahan-Stiedemann | Monahan-Stiedemann",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_llm_robot_management",
+  "flow": "robot_form",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_llm_robot_management_spec.rb"
+}

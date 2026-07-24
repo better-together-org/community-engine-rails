@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Post do
   it_behaves_like 'an authorable model'
-  it_behaves_like 'an indexed searchable model', :better_together_post
 
   it 'has a valid factory' do
     expect(build(:better_together_post)).to be_valid
@@ -17,19 +16,32 @@ RSpec.describe BetterTogether::Post do
     expect(post.errors[:content]).to include("can't be blank")
   end
 
+  describe 'Commentable comment_permission/comment_visibility (lazy accessors)' do
+    let(:post) { create(:better_together_post) }
+
+    it 'reads inherit for both without a CommentConfig row existing' do
+      expect(post.comment_config).to be_nil
+      expect(post.comment_permission).to eq('inherit')
+      expect(post.comment_visibility).to eq('inherit')
+    end
+
+    it 'lazily builds a CommentConfig row on write' do
+      expect { post.comment_permission = 'disabled' }.to change { post.comment_config.present? }.from(false).to(true)
+      expect(post.comment_permission).to eq('disabled')
+    end
+
+    it 'persists the built config alongside the post' do
+      post.comment_visibility = 'community'
+      post.save!
+
+      expect(post.reload.comment_visibility).to eq('community')
+    end
+  end
+
   describe '#to_s' do
     it 'returns the title' do
       post = build(:better_together_post, title: 'Example')
       expect(post.to_s).to eq 'Example'
-    end
-  end
-
-  describe '#as_indexed_json' do
-    it 'includes localized search fields as string keys' do
-      post = create(:better_together_post, title_en: 'English Title', title_fr: 'Titre Francais')
-      indexed_json = post.as_indexed_json
-
-      expect(indexed_json).to include('title_en', 'title_fr')
     end
   end
 
@@ -100,6 +112,24 @@ RSpec.describe BetterTogether::Post do
     end
   end
 
+  describe '#resolved_contributors_display_visibility' do
+    it 'inherits the platform default for posts' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:)
+
+      expect(post.resolved_contributors_display_visibility).to eq('off')
+      expect(post).not_to be_contributors_display_visible
+    end
+
+    it 'lets the post override the platform default' do
+      platform = create(:better_together_platform, contributors_display_visibility: 'off')
+      post = create(:better_together_post, platform:, contributors_display_visibility: 'on')
+
+      expect(post.resolved_contributors_display_visibility).to eq('on')
+      expect(post).to be_contributors_display_visible
+    end
+  end
+
   describe 'federation provenance' do
     it 'assigns Current.platform when available' do
       platform = create(:better_together_platform)
@@ -121,6 +151,175 @@ RSpec.describe BetterTogether::Post do
       expect(post.remote_to_platform?(local_platform)).to be true
       expect(post.local_to_platform?(remote_platform)).to be true
       expect(post.source_identifier).to eq('remote-123')
+    end
+  end
+
+  describe 'federation_visibility (Federatable)' do
+    it 'defaults to platform_default' do
+      expect(create(:better_together_post).federation_visibility).to eq('platform_default')
+    end
+
+    it 'accepts the federate and no_federate overrides' do
+      expect(create(:better_together_post, federation_visibility: 'federate')).to be_federation_visibility_federate
+      expect(create(:better_together_post, federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+    end
+
+    it 'reports an override only for federate/no_federate' do
+      expect(create(:better_together_post, federation_visibility: 'platform_default').federation_visibility_override?).to be false
+      expect(create(:better_together_post, federation_visibility: 'federate').federation_visibility_override?).to be true
+      expect(create(:better_together_post, federation_visibility: 'no_federate').federation_visibility_override?).to be true
+    end
+
+    it 'notifies the creator when federation_visibility changes' do
+      creator = create(:better_together_person)
+      post = create(:better_together_post, creator:, federation_visibility: 'platform_default')
+
+      expect(BetterTogether::FederationVisibilityStatusNotifier).to receive(:with).with(
+        hash_including(federatable: post, previous_visibility: 'platform_default', current_visibility: 'federate')
+      ).and_call_original
+
+      post.update!(federation_visibility: 'federate')
+    end
+
+    it 'does not notify when the creator is nil (system-owned content)' do
+      post = create(:better_together_post, creator: nil, federation_visibility: 'platform_default')
+
+      expect(BetterTogether::FederationVisibilityStatusNotifier).not_to receive(:with)
+
+      post.update!(federation_visibility: 'federate')
+    end
+
+    describe 'federation_content_type_key' do
+      it "returns 'posts'" do
+        expect(create(:better_together_post).federation_content_type_key).to eq('posts')
+      end
+    end
+
+    describe 'per-connection grants' do
+      it 'returns nil when no grant exists for the connection' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+
+        expect(post.federation_grant_status_for(connection)).to be_nil
+      end
+
+      it 'creates a grant when assigned a non-default status' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+
+        post.federation_content_grants_by_connection = { connection.id => 'denied' }
+
+        expect(post.federation_grant_status_for(connection)).to eq('denied')
+      end
+
+      it 'removes an existing grant when reassigned to platform_default' do
+        post = create(:better_together_post)
+        connection = create(:better_together_platform_connection)
+        create(:better_together_federation_content_grant, federatable: post, platform_connection: connection,
+                                                          status: 'denied')
+
+        post.federation_content_grants_by_connection = { connection.id => 'platform_default' }
+
+        expect(post.federation_grant_status_for(connection)).to be_nil
+      end
+    end
+  end
+
+  describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+    let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
+    let(:community_platform) { create(:better_together_platform, privacy: 'community') }
+    let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
+    let(:public_community)   { create(:better_together_community, privacy: 'public') }
+    let(:community_community) { create(:better_together_community, privacy: 'community') }
+    let(:private_community) { create(:better_together_community, privacy: 'private') }
+
+    let(:post_for) do
+      lambda { |platform:, community: nil, privacy: 'public'|
+        build(:better_together_post, platform: platform, community: community, privacy: privacy)
+      }
+    end
+
+    context 'public platform + public community' do
+      it 'allows public privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'public')).to be_valid
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: public_platform, community: public_community, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'public platform + community-privacy community' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: public_platform, community: community_community, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: public_platform, community: community_community, privacy: 'community')).to be_valid
+      end
+    end
+
+    context 'public platform + private community' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: public_platform, community: private_community, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy (members can still share within the community)' do
+        expect(post_for.call(platform: public_platform, community: private_community, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: public_platform, community: private_community, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'community-privacy platform' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: community_platform, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        expect(post_for.call(platform: community_platform, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: community_platform, privacy: 'private')).to be_valid
+      end
+    end
+
+    context 'private platform' do
+      it 'rejects public privacy' do
+        post = post_for.call(platform: private_platform, privacy: 'public')
+        expect(post).not_to be_valid
+        expect(post.errors[:privacy].join).to include('community')
+      end
+
+      it 'allows community privacy' do
+        # A private/non-public platform's ceiling floors at 'community', not
+        # 'private' — members of a locked-down platform can still write
+        # community-scoped content (see PrivacyCeilingValidatable).
+        expect(post_for.call(platform: private_platform, privacy: 'community')).to be_valid
+      end
+
+      it 'allows private privacy' do
+        expect(post_for.call(platform: private_platform, privacy: 'private')).to be_valid
+      end
+    end
+
+    it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+      post = create(:better_together_post, platform: public_platform, community: public_community, privacy: 'public')
+      post.title = 'Updated title'
+      expect(post).to be_valid
     end
   end
 end

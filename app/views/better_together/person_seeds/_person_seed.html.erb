@@ -22,7 +22,7 @@
           <i class="fas fa-eye" aria-hidden="true"></i>
         <% end %>
         <% if seed.yaml_file.attached? %>
-          <%= link_to rails_blob_path(seed.yaml_file, disposition: 'attachment'),
+          <%= link_to storage_proxy_url_for(seed.yaml_file, disposition: 'attachment'),
                       class: 'btn btn-outline-secondary btn-sm',
                       'aria-label' => t('seeds.show.download_yaml') do %>
             <i class="fas fa-download" aria-hidden="true"></i>

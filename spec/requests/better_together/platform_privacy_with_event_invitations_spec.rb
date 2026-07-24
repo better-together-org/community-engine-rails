@@ -19,16 +19,21 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
   let!(:private_event) do
     create(:better_together_event,
            name: 'Private Platform Event',
-           starts_at: Time.zone.parse('2026-02-22 10:00:00'),  # Explicit time
+           starts_at: Time.zone.parse('2026-02-22 10:00:00'), # Explicit time
            privacy: 'private',
            creator: manager_user.person)
   end
 
+  # privacy: 'community' — created while `platform` is still private, so this
+  # is the most open privacy the ceiling allows at creation time (see
+  # PrivacyCeilingValidatable). The 'when platform is public' context below
+  # promotes this to genuinely 'public' once the platform itself is public,
+  # which is the only point at which that's actually a valid privacy value.
   let!(:public_event) do
     create(:better_together_event,
            name: 'Public Event',
-           starts_at: Time.zone.parse('2026-02-22 10:00:00'),  # Explicit time
-           privacy: 'public',
+           starts_at: Time.zone.parse('2026-02-22 10:00:00'), # Explicit time
+           privacy: 'community',
            creator: manager_user.person)
   end
 
@@ -95,6 +100,20 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
     end
 
     context 'when platform is private and user is authenticated', :as_user do
+      before do
+        # public_event's privacy is 'community' while the platform is private
+        # (see the public_event definition above) — the authenticated user
+        # needs community membership to view it.
+        community_member_role = BetterTogether::Role.find_by(identifier: 'community_member')
+        BetterTogether::PersonCommunityMembership.find_or_create_by!(
+          joinable: platform.primary_community,
+          member: regular_user.person
+        ) do |membership|
+          membership.role = community_member_role
+          membership.status = 'active'
+        end
+      end
+
       it 'allows authenticated users to access events normally' do
         get better_together.event_path(public_event.slug, locale: locale)
         expect(response).to have_http_status(:ok)
@@ -110,6 +129,11 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
     context 'when platform is public' do
       before do
         platform.update!(privacy: 'public')
+        # Now valid: the ceiling only allowed 'community' while the platform
+        # was private (see the public_event definition above). Reload first —
+        # public_event's cached `platform` association still holds the
+        # pre-update privacy value.
+        public_event.reload.update!(privacy: 'public')
       end
 
       it 'allows unauthenticated access to public events regardless of invitation tokens' do
@@ -173,7 +197,7 @@ RSpec.describe 'Platform Privacy with Event Invitations' do
         privacy_policy_agreement: '1',
         terms_of_service_agreement: '1',
         code_of_conduct_agreement: '1'
-      }
+      }.merge(bot_defense_payload('registration'))
 
       expect(response).to have_http_status(:ok)
 

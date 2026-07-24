@@ -23,16 +23,7 @@
 
   <%= turbo_frame_tag 'form_errors' %>
 
-  <% if page.errors.any? %>
-    <div class="alert alert-danger">
-      <h4><%= t('views.labels.please_correct') %></h4>
-      <ul>
-        <% page.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: page if page.errors.any? %>
 
   <% if page.protected %>
     <div class="row">
@@ -57,7 +48,15 @@
 
     <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :privacy %>
-      <%= privacy_field(form:, klass: resource_class) %>
+      <% _page_platform = page.platform || Current.platform %>
+      <% _page_community = page.community %>
+      <% _max_privacy = max_allowed_privacy(platform: _page_platform, community: _page_community) %>
+      <%= privacy_field(form:, klass: resource_class, max_privacy: _max_privacy) %>
+      <% if (hint = privacy_constraint_hint(platform: _page_platform, community: _page_community)) %>
+        <small class="form-text text-muted mt-1" id="<%= dom_id(page, :privacy_hint) %>">
+          <%= hint %>
+        </small>
+      <% end %>
       <% if page.errors[:privacy].any? %>
         <div class="invalid-feedback">
           <%= page.errors[:privacy].join(", ") %>
@@ -66,9 +65,23 @@
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
+      <%= federation_visibility_field(form:) %>
+      <%= federation_content_grants_field(form:, record: page, connections: federation_connections_for(page)) %>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
       <%= form.label :show_title %>
       <%= render partial: 'better_together/shared/fields/toggle_switch', locals: { form: form, attr: :show_title } %>
       <small class="form-text text-muted mt-2">Display the page title when there is no hero block.</small>
+    </div>
+
+    <div class="col mb-3 pb-3 border-bottom">
+      <%= contributor_display_visibility_field(
+            form:,
+            include_inherit: true,
+            label: t('better_together.authorable_contributor_visibility.labels.record', default: 'Contributor display'),
+            hint: t('better_together.authorable_contributor_visibility.hints.page', default: 'Choose whether this page shows contributor bylines on public-facing views, or inherits the community/platform setting.')
+          ) %>
     </div>
 
     <div class="col mb-3 pb-3 border-bottom">
@@ -131,16 +144,12 @@
         </div>
       <% end %>
     </div>
+  </div>
 
-    <% BetterTogether::Authorable::CONTRIBUTION_ROLE_CONFIG.each_key do |role_name| %>
-      <%= render partial: 'better_together/shared/governed_contribution_role_fields',
-                 locals: {
-                    form:,
-                    record: page,
-                    role_name:,
-                    role_label: page.contribution_role_label(role_name)
-                  } %>
-    <% end %>
+  <div class="row my-3">
+    <div class="col-12 mb-3 pb-3 border-bottom">
+      <%= governed_contributions_fieldset(form:, record: page) %>
+    </div>
   </div>
 
   <!-- Host app can extend the page form via this partial -->
@@ -168,7 +177,7 @@
               <div id="available-block-types" class="accordion-collapse collapse" aria-labelledby="add-block-heading" data-bs-parent="#new-page-block-choices">
                 <div class="accordion-body">
                   <div class="row row-cols-4">
-                    <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants.select(&:content_addable?), locals: { page: } %>
+                    <%= render partial: 'better_together/content/page_blocks/block_types/block_type', collection: BetterTogether::Content::Block.descendants.select { |block_type| block_type.content_addable?(actor: current_person || current_robot) }, locals: { page: } %>
                   </div>
                 </div>
               </div>

@@ -3,7 +3,7 @@
 
 <%= cache event.cache_key_with_version do %>
 	<% if policy(event).show? %>
-		<%= render 'better_together/shared/card', entity: event do %>
+		<%= render 'better_together/shared/card', entity: event, card_classes: 'hover-effect event-card' do %>
 			<%= event_hosts_display(event) %>
 			<% if event.location&.name&.present? %>
 				<div class="event-location card-text text-muted mt-2">
@@ -21,11 +21,10 @@
 				<%= categories_badge(event) %>
 			</div>
 			<div class="mt-2">
-				<%= render 'better_together/shared/record_evidence_summary', record: event %>
 			</div>
-			<% if event.starts_at.nil? %>
+			<% unless event.status_confirmed? %>
 				<div class="mt-2">
-					DRAFT
+					<span class="badge bg-secondary event-status-badge"><%= t("better_together.events.statuses.#{event.status}") %></span>
 				</div>
 			<% end %>
 		<% end %>

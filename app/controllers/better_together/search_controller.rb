@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Handles dispatching search queries to elasticsearch and displaying the results
+  # Handles dispatching search queries to the active backend and displaying the results
   class SearchController < ApplicationController
     include Metrics::PlatformContext
 
@@ -73,10 +73,17 @@ module BetterTogether
     end
 
     def visible_records_for(model_class, records)
-      visible_ids = policy_scope(model_class).where(id: records.map(&:id)).pluck(:id)
+      visible_ids = stripped_policy_scope(model_class).where(id: records.map(&:id)).pluck(:id)
       records.select { |record| visible_ids.include?(record.id) }
-    rescue Pundit::Error, NoMethodError
+    rescue ActiveRecord::EagerLoadPolymorphicError, Pundit::Error, NoMethodError
       records.select { |record| search_record_visible?(record) }
+    end
+
+    def stripped_policy_scope(model_class)
+      scoped_records = policy_scope(model_class)
+      return scoped_records.except(:includes, :preload, :eager_load) if scoped_records.respond_to?(:except)
+
+      scoped_records
     end
 
     def public_search_record?(record)

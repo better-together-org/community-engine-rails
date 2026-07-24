@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ChecklistPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ChecklistPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def show?
       # Checklists do not currently resolve a scoped community, so community privacy
       # does not broaden visibility beyond creator/manager access.
@@ -29,9 +29,9 @@ module BetterTogether
       update?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
-        result = scope.with_translations.order(created_at: :desc)
+        result = platform_scoped(scope.with_translations.order(created_at: :desc))
 
         table = scope.arel_table
 
@@ -39,7 +39,13 @@ module BetterTogether
           query = visible_privacy_query(table)
 
           if platform_checklist_manager?
-            query = query.or(table[:privacy].eq('private'))
+            # Managers have unrestricted show/update/destroy authority over checklists
+            # (see #show?, #update?, #destroy? above) regardless of privacy tier, so the
+            # scope must surface 'private' and 'community' checklists to them too, not
+            # just 'private' — otherwise a manager-owned 'community' checklist is
+            # invisible to policy_scope-backed lookups (e.g. FriendlyResourceController)
+            # even though #show?/#update? would authorize it.
+            query = query.or(table[:privacy].in(%w[private community]))
           elsif agent
             if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?
               membership_table = scope.membership_class.arel_table

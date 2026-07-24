@@ -44,4 +44,19 @@ RSpec.describe BetterTogether::PlatformConnectionPolicy do
       expect(policy.update?).to be false
     end
   end
+
+  describe 'when the rollout is disabled for the platform' do
+    let(:user) { create(:better_together_user, :network_admin) }
+
+    before do
+      host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+      host_platform.update!(feature_gate_rollouts: { 'platform_federation_tools' => 'off' })
+    end
+
+    it 'denies access even to otherwise authorized operators' do
+      expect(policy.index?).to be false
+      expect(policy.show?).to be false
+      expect(policy.update?).to be false
+    end
+  end
 end

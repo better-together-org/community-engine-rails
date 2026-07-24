@@ -5,6 +5,12 @@ module BetterTogether
   class EventsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     include InvitationTokenAuthorization
     include NotificationReadable
+    include ChecksRequiredAgreements
+
+    # Prepended so this runs before the inherited :authorize_resource
+    # before_action — otherwise Pundit's denial (via #authorize_resource,
+    # overridden below) wins first and this friendlier redirect never fires.
+    prepend_before_action :check_content_publishing_agreement, only: %i[new create]
 
     # Prepend resource instance setting for privacy check
     # rubocop:todo Metrics/PerceivedComplexity
@@ -23,17 +29,20 @@ module BetterTogether
       Rails.application.eager_load!
     end
 
-    before_action :build_event_hosts, only: :new
+    # build_event_hosts is invoked explicitly from #authorize_resource below
+    # (not as a separate before_action) — the inherited :authorize_resource
+    # before_action runs before any subclass-registered before_action, so a
+    # bare `before_action :build_event_hosts, only: :new` would authorize an
+    # empty event_hosts collection, making self-service host authorization
+    # (EventPolicy#event_host_member?) always fail on GET .../events/new.
     before_action :process_recurrence_attributes, only: %i[create update]
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
 
-    def index
-      @events = @events.includes(:categories, cover_image_attachment: :blob)
+    skip_before_action :resource_collection, only: :index
 
-      @draft_events = paginated_events(@events.draft, params[:draft_page])
-      @upcoming_events = paginated_events(@events.upcoming, params[:upcoming_page])
-      @ongoing_events = @events.ongoing
-      @past_events = paginated_events(@events.past, params[:past_page])
+    def index
+      load_events
+      load_categories
     end
 
     def show
@@ -140,10 +149,6 @@ module BetterTogether
                 disposition: 'attachment'
     end
 
-    def paginated_events(scope, page)
-      scope.page(page).per(params[:per])
-    end
-
     def load_invitations
       @current_invitation = find_invitation_by_token
       @invitation = @current_invitation || BetterTogether::EventInvitation.new(invitable: @event, inviter: helpers.current_person)
@@ -186,15 +191,17 @@ module BetterTogether
     end
 
     def resource_collection
-      # Set invitation token for policy scope
-      invitation_token = params[:invitation_token] || session[:event_invitation_token]
-      self.current_invitation_token = invitation_token
-
+      restore_invitation_token_context
       super.includes(:categories)
     end
 
     # Override the parent's authorize_resource method to include invitation token context
     def authorize_resource
+      # Build event_hosts before authorizing so EventPolicy#create?/new? (via
+      # event_host_member?) sees the actual submitted/defaulted hosts, not an
+      # empty collection.
+      build_event_hosts if action_name == 'new'
+
       # Set invitation token for authorization
       invitation_token = params[:invitation_token] || session[:event_invitation_token]
       self.current_invitation_token = invitation_token
@@ -213,6 +220,46 @@ module BetterTogether
     end
 
     private
+
+    def filter_params
+      # :status is permitted both as a scalar (?status=draft) and as an
+      # array (?status[]=draft&status[]=confirmed) for union filtering.
+      params.permit(:q, :order_by, :per_page, :page, :past, :status,
+                    category_ids: [], status: [])
+    end
+
+    # index skips the :resource_collection before_action (see
+    # skip_before_action above) because that callback's includes(:categories)
+    # is sized for a single unfiltered show/edit-style collection, not the
+    # search-filtered, paginated one this action needs — but it still shares
+    # resource_collection's invitation-token side effect, restored here via
+    # the same method resource_collection calls, so the two never drift.
+    # Authorization itself doesn't need resource_collection at all:
+    # ResourceController's authorize_resource_class before_action (only:
+    # :index) runs independently, and verify_authorized excludes :index.
+    def load_events
+      restore_invitation_token_context
+
+      @events = EventsSearchFilter.call(
+        relation: policy_scoped_resources,
+        params: filter_params
+      ).with_translations.includes(:categories, cover_image_attachment: :blob)
+    end
+
+    def load_categories
+      @categories = ::BetterTogether::Category.used_by(policy_scoped_resources)
+    end
+
+    # Memoized so load_categories reuses load_events' policy_scope(resource_class)
+    # call instead of re-running EventPolicy::Scope's host/attendance/invitation
+    # OR-branch subqueries a second time on every index request.
+    def policy_scoped_resources
+      @policy_scoped_resources ||= policy_scope(resource_class)
+    end
+
+    def restore_invitation_token_context
+      self.current_invitation_token = params[:invitation_token] || session[:event_invitation_token]
+    end
 
     # Template method implementations for InvitationTokenAuthorization
     def invitation_resource_name
@@ -295,6 +342,29 @@ module BetterTogether
       @event = @resource if @resource.is_a?(BetterTogether::Event)
     end
 
+    # A private Event that's excluded from the policy-scoped resource_collection
+    # (no valid invitation token, not a host/creator/steward) still exists on this
+    # platform — for an unauthenticated visitor that reads as "please sign in",
+    # not a blanket 404 (which would also incorrectly apply to genuinely missing
+    # events / events on another platform).
+    def handle_resource_not_found
+      return super if current_user.present? || current_robot.present?
+
+      event = platform_scoped_event_ignoring_privacy
+      return super unless event
+
+      redirect_to new_user_session_path(locale: I18n.locale)
+    end
+
+    def platform_scoped_event_ignoring_privacy
+      platform = Current.platform || Current.host_platform
+      return nil unless platform
+
+      resource_class.where(platform_id: platform.id).friendly.find(id_param)
+    rescue ActiveRecord::RecordNotFound, StandardError
+      nil
+    end
+
     # rubocop:todo Metrics/MethodLength
     def rsvp_update(status) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       set_resource_instance
@@ -311,10 +381,14 @@ module BetterTogether
         return
       end
 
-      # Ensure current_person exists before creating attendance
+      # Ensure current_person exists before creating attendance. Redirect to
+      # sign-in (not back to @event) — for a private event the visitor may
+      # only have been able to view it via a one-time invitation token, and
+      # bouncing back to that same URL without the token would just 404/loop.
       current_person = helpers.current_person
       unless current_person
-        redirect_to @event, alert: t('better_together.events.login_required', default: 'Please log in to RSVP.')
+        redirect_to new_user_session_path(locale: I18n.locale),
+                    alert: t('better_together.events.login_required', default: 'Please log in to RSVP.')
         return
       end
 
@@ -356,6 +430,7 @@ module BetterTogether
       @event.event_attendances.includes(:person).load
 
       # Preload current person's attendance for RSVP buttons
+      current_person = helpers.current_person
       if current_person
         @current_attendance = @event.event_attendances.find do |a|
           a.person_id == current_person.id
@@ -366,7 +441,7 @@ module BetterTogether
       @event.string_translations.load
 
       # Preload cover image attachment to avoid attachment queries
-      @event.cover_image_attachment&.blob&.load if @event.cover_image.attached?
+      @event.cover_image_attachment&.blob if @event.cover_image.attached?
 
       # Preload location if present
       @event.location&.reload

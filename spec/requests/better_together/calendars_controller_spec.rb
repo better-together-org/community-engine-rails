@@ -5,32 +5,30 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   let(:locale) { I18n.default_locale }
 
-  it 'renders index with evidence summaries when present' do
+  it 'keeps evidence summaries out of the public index when present' do
     calendar = create('better_together/calendar', privacy: 'public')
     create(:claim, claimable: calendar, statement: 'Calendars can expose evidence on listing surfaces.')
     create(:citation, citeable: calendar, reference_key: 'calendar_index_summary', title: 'Calendar Index Summary')
 
     get better_together.calendars_path(locale:)
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include('Evidence:')
-    expect(response.body).to include('Governance Bundle')
+    expect(response.body).not_to include('Evidence:')
+    expect(response.body).not_to include('Governance Bundle')
   end
 
   context 'when viewing calendar show page' do
     let(:calendar) { create('better_together/calendar', privacy: 'public') }
     let(:upcoming_event) do
-      BetterTogether::Event.create!(
-        name: 'Upcoming',
-        starts_at: 2.days.from_now,
-        identifier: SecureRandom.uuid
-      )
+      create(:better_together_event,
+             name: 'Upcoming',
+             starts_at: 2.days.from_now,
+             identifier: SecureRandom.uuid)
     end
     let(:past_event) do
-      BetterTogether::Event.create!(
-        name: 'Past',
-        starts_at: 3.days.ago,
-        identifier: SecureRandom.uuid
-      )
+      create(:better_together_event,
+             name: 'Past',
+             starts_at: 3.days.ago,
+             identifier: SecureRandom.uuid)
     end
 
     before do
@@ -42,18 +40,18 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
       create(:evidence_link, claim:, citation:, relation_type: 'supports')
     end
 
-    it 'renders successfully with evidence sections' do
+    it 'renders successfully without evidence sections' do
       get better_together.calendar_path(calendar, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Claims and Supporting Evidence')
-      expect(response.body).to include('Evidence and Citations')
-      expect(response.body).to include('Calendar charter')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('Calendar charter')
     end
   end
 
   describe 'GET /calendars/:id/feed' do
-    let(:community) { create(:community) }
+    let(:community) { create(:community, privacy: 'public') }
     let(:calendar) { create('better_together/calendar', community:, privacy: 'private') }
     let(:first_event) do
       create(:event,

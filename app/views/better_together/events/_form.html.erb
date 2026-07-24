@@ -69,10 +69,41 @@
           <!-- Privacy Field -->
           <div class="col mb-3 pb-3 border-bottom">
             <%= form.label :privacy, t('better_together.events.labels.privacy') %>
-            <%= privacy_field(form:, klass: event.class) %>
+            <% _event_platform = event.platform || Current.platform %>
+            <% _max_privacy = max_allowed_privacy(platform: _event_platform, community: nil) %>
+            <%= privacy_field(form:, klass: event.class, max_privacy: _max_privacy) %>
+            <% if (hint = privacy_constraint_hint(platform: _event_platform, community: nil)) %>
+              <small class="form-text text-muted mt-1" id="<%= dom_id(event, :privacy_hint) %>">
+                <%= hint %>
+              </small>
+            <% end %>
             <% if event.errors[:privacy].any? %>
               <div class="invalid-feedback">
                 <%= event.errors[:privacy].join(", ") %>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Federation Visibility Field -->
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= federation_visibility_field(form:) %>
+            <%= federation_content_grants_field(form:, record: event, connections: federation_connections_for(event)) %>
+          </div>
+
+          <!-- Status Field -->
+          <div class="col mb-3 pb-3 border-bottom" id="event-status-field">
+            <%= form.label :status, t('better_together.events.labels.status'), class: 'form-label' %>
+            <%= form.select :status,
+              options_for_select(
+                resource_class.statuses.values.map { |value| [t("better_together.events.statuses.#{value}"), value] },
+                event.status
+              ),
+              {},
+              class: 'form-select', data: { controller: 'better_together--slim_select' } %>
+            <small class="form-text text-muted" id="<%= dom_id(event, :status_hint) %>"><%= t('better_together.events.hints.status') %></small>
+            <% if event.errors[:status].any? %>
+              <div class="invalid-feedback">
+                <%= event.errors[:status].join(", ") %>
               </div>
             <% end %>
           </div>
@@ -321,7 +352,7 @@
 
             <small class="form-text text-muted"><%= t('helpers.hint.event.cover_image') %></small>
 
-            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= event.cover_image.url if event.cover_image.attached? %>">
+            <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(event.cover_image) if event.cover_image.attached? %>">
             </div>
           </div>
         </div>

@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Documentation screenshots for safety flows', :as_user, :docs_screenshot, :js, retry: 0, type: :feature do
-  let!(:report_target) { create(:better_together_person, name: 'Safety Docs Target') }
-  let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
-  let!(:report_record) do
+  let(:report_target) { create(:better_together_person, name: 'Safety Docs Target') }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+  let(:report_record) do
     create(
       :report,
       reporter: user.person,
@@ -17,7 +17,7 @@ RSpec.describe 'Documentation screenshots for safety flows', :as_user, :docs_scr
       private_details: 'The contact continued after I asked for space.'
     )
   end
-  let!(:person_block) { create(:person_block, blocker: user.person, blocked: report_target) }
+  let(:person_block) { create(:person_block, blocker: user.person, blocked: report_target) }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'

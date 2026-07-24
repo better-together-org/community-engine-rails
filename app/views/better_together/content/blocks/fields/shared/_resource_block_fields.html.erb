@@ -1,5 +1,5 @@
 <%# Shared form fields for resource collection blocks.
-    locals: (block:, scope:, temp_id:) -%>
+    locals: (block:, scope:, temp_id:, resource_class:) -%>
 <%- available_communities = policy_scope(BetterTogether::Community).includes(:string_translations)
                                                                .sort_by { |community| community.name.to_s.downcase } %>
 
@@ -35,12 +35,34 @@
   </div>
 
   <div class="mb-3">
-    <%= label_tag "#{scope}[resource_ids]", BetterTogether::Content::Block.human_attribute_name('resource_ids', default: 'Specific Record IDs (optional, comma-separated or JSON array)'), class: 'form-label' %>
-    <%= text_field_tag "#{scope}[resource_ids]", block.resource_ids, class: 'form-control',
-                       placeholder: t('better_together.content.blocks.resource_block.resource_ids_placeholder',
-                                      default: 'Leave blank to show latest records') %>
-    <div class="form-text"><%= t('better_together.content.blocks.resource_block.resource_ids_help',
-                                 default: 'If set, only these records will be displayed, ignoring the community scope and ordering.') %></div>
+    <label class="form-label"><%= BetterTogether::Content::Block.human_attribute_name('resource_ids', default: 'Specific Records (optional)') %></label>
+
+    <%# Hidden field carries the JSON string that the model reads %>
+    <input type="hidden"
+           id="<%= "#{scope}_resource_ids_json" %>"
+           name="<%= scope %>[resource_ids]"
+           value="<%= h(block.resource_ids) %>">
+
+    <%# Multi-select is display-only — SlimSelect JS writes selected values to the hidden field %>
+    <select class="form-select"
+            data-controller="better_together--slim-select"
+            data-slim-select-json-field-id="<%= "#{scope}_resource_ids_json" %>"
+            data-better_together--slim-select-options-value='<%= {
+              multiSelectJson: true,
+              ajax: { url: resource_search_content_blocks_path(resource_class: resource_class.name, locale: I18n.locale) }
+            }.to_json %>'>
+      <%# Server-render currently saved records as pre-selected options so SlimSelect can set them on connect %>
+      <% block.parsed_resource_ids.each do |id| %>
+        <% record = resource_class.find_by(id:) %>
+        <% next unless record %>
+        <option value="<%= id %>" selected><%= record.to_s %></option>
+      <% end %>
+    </select>
+
+    <div class="form-text">
+      <%= t('better_together.content.blocks.resource_block.resource_ids_help',
+             default: 'If set, only these records will be displayed, ignoring the community scope and ordering.') %>
+    </div>
   </div>
 
   <div class="row row-cols-1 row-cols-sm-2 mb-3">
@@ -55,9 +77,9 @@
     </div>
 
     <div class="col mb-3">
-      <%= label_tag "#{scope}[view_more_url]", BetterTogether::Content::Block.human_attribute_name('view_more_url', default: '"View all" URL'), class: 'form-label' %>
-      <%= url_field_tag "#{scope}[view_more_url]", block.view_more_url, class: 'form-control',
-                        placeholder: 'https://...' %>
+      <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+                 locals: { model: block, scope: scope, temp_id: temp_id || SecureRandom.uuid, attribute: 'view_more_url',
+                           help_text: '"View all" link destination (https://...)' } %>
     </div>
   </div>
 </div>

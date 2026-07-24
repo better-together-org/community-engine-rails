@@ -45,17 +45,19 @@ module BetterTogether
         last_sync_error_at: '',
         last_sync_error_message: ''
       )
+      record_sync_activity('platform_connection.sync_started')
     end
 
-    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current)
+    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current, message: nil)
       update!(
         sync_cursor: normalized_cursor(cursor),
         last_sync_status: 'succeeded',
         last_synced_at: synced_at.iso8601,
         last_sync_error_at: '',
-        last_sync_error_message: '',
+        last_sync_error_message: message.to_s.truncate(500),
         last_sync_item_count: item_count.to_i
       )
+      record_sync_activity('platform_connection.sync_succeeded', parameters: { item_count: item_count.to_i })
     end
 
     def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current)
@@ -65,9 +67,20 @@ module BetterTogether
         last_sync_error_at: failed_at.iso8601,
         last_sync_error_message: message.to_s.truncate(500)
       )
+      record_sync_activity('platform_connection.sync_failed', parameters: { message: message.to_s.truncate(500) })
     end
 
     private
+
+    # PlatformConnection deliberately does not include TrackedActivity/PublicActivity::Model
+    # (it has no privacy column, and connection audit activity must never leak into the
+    # public ActivityPolicy::Scope-filtered feed) — so activities are recorded directly
+    # rather than through the trackable.create_activity convenience method. Consumers
+    # (FederationHub::ActivityFeedService) query BetterTogether::Activity for these records
+    # directly, gating visibility via controller-level permission checks instead.
+    def record_sync_activity(key, parameters: {})
+      ::BetterTogether::Activity.create!(trackable: self, key:, parameters:)
+    end
 
     def normalized_cursor(value)
       value.to_s

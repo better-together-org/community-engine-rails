@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::FeedbackRoutingResolver do
     end
 
     it 'routes improvement suggestions for community-scoped pages to community stewards' do
-      community = create(:better_together_community, name: 'Routing Community')
+      community = create(:better_together_community, name: 'Routing Community', privacy: 'public')
       page_record = create(:better_together_page, title: 'Community page', community:)
 
       result = described_class.call(page_record, action_kind: :suggest_improvement)
@@ -39,7 +39,7 @@ RSpec.describe BetterTogether::FeedbackRoutingResolver do
     end
 
     it 'uses the parent page community for block stewardship routing' do
-      community = create(:better_together_community, name: 'Section Reviewers')
+      community = create(:better_together_community, name: 'Section Reviewers', privacy: 'public')
       page_record = create(:better_together_page, title: 'Block page', community:)
       block = create(:better_together_content_rich_text, content_html: '<p>Block</p>')
       create(:better_together_content_page_block, page: page_record, block:)

@@ -8,8 +8,6 @@ module BetterTogether # :nodoc:
   RSpec.describe Page do
     subject(:page) { build(:better_together_page) }
 
-    it_behaves_like 'an indexed searchable model', :better_together_page
-
     describe 'Factory' do
       it 'has a valid factory' do
         expect(page).to be_valid
@@ -63,6 +61,49 @@ module BetterTogether # :nodoc:
     end
 
     describe 'Methods' do
+      describe 'publishing agreement gate' do
+        let!(:publishing_agreement) do
+          BetterTogether::Agreement.find_or_create_by!(
+            identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER
+          ) do |agreement|
+            agreement.title = 'Content Publishing Agreement'
+            agreement.privacy = 'public'
+            agreement.protected = true
+          end
+        end
+
+        let(:publisher) { create(:better_together_person) }
+
+        after do
+          Current.reset
+        end
+
+        it 'blocks publishing community-visible pages without agreement acceptance' do
+          community_page = create(:better_together_page, privacy: 'community', published_at: nil)
+          Current.governed_agent = publisher
+
+          community_page.published_at = Time.current
+
+          expect(community_page).not_to be_valid
+          expect(community_page.errors[:base]).to include(
+            BetterTogether::PublicVisibilityGate.error_message_for(:missing_publishing_agreement)
+          )
+        end
+
+        it 'allows publishing community-visible pages after agreement acceptance' do
+          create(:better_together_agreement_participant,
+                 agreement: publishing_agreement,
+                 participant: publisher,
+                 accepted_at: Time.current)
+          community_page = create(:better_together_page, privacy: 'community', published_at: nil)
+          Current.governed_agent = publisher
+
+          community_page.published_at = Time.current
+
+          expect(community_page).to be_valid
+        end
+      end
+
       describe '#published?' do
         it 'returns true if the page is published' do
           page.published_at = Time.now - 2.days
@@ -93,6 +134,32 @@ module BetterTogether # :nodoc:
           expect(page.governed_authors).to eq([person, robot])
           expect(page.authors).to eq([person])
           expect(page.robot_authors).to eq([robot])
+        end
+      end
+
+      describe '#resolved_contributors_display_visibility' do
+        it 'uses the community override before the platform default' do
+          platform = create(:better_together_platform, :public)
+          community = create(:better_together_community, privacy: 'public')
+          page = create(:better_together_page, platform:, community:)
+
+          platform.update!(contributors_display_visibility: 'on')
+          community.update!(contributors_display_visibility: 'off')
+
+          expect(page.resolved_contributors_display_visibility).to eq('off')
+          expect(page).not_to be_contributors_display_visible
+        end
+
+        it 'uses the record override before the community setting' do
+          platform = create(:better_together_platform, :public)
+          community = create(:better_together_community, privacy: 'public')
+          page = create(:better_together_page, platform:, community:, contributors_display_visibility: 'on')
+
+          platform.update!(contributors_display_visibility: 'on')
+          community.update!(contributors_display_visibility: 'off')
+
+          expect(page.resolved_contributors_display_visibility).to eq('on')
+          expect(page).to be_contributors_display_visible
         end
       end
 
@@ -175,6 +242,60 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe 'federation_visibility (Federatable)' do
+        it 'defaults to platform_default' do
+          expect(create(:better_together_page).federation_visibility).to eq('platform_default')
+        end
+
+        it 'accepts the federate and no_federate overrides' do
+          expect(create(:better_together_page, federation_visibility: 'federate')).to be_federation_visibility_federate
+          expect(create(:better_together_page,
+                        federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+        end
+
+        it 'reports an override only for federate/no_federate' do
+          expect(create(:better_together_page,
+                        federation_visibility: 'platform_default').federation_visibility_override?).to be false
+          expect(create(:better_together_page, federation_visibility: 'federate').federation_visibility_override?).to be true
+          expect(create(:better_together_page,
+                        federation_visibility: 'no_federate').federation_visibility_override?).to be true
+        end
+      end
+
+      describe 'community assignment (CommunityAssignable)' do
+        let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+        let(:remote_platform) { create(:better_together_platform, :external) }
+
+        it "assigns the platform's own community when community is nil, not the host community" do
+          federated_page = build(:better_together_page, platform: remote_platform, community: nil)
+
+          federated_page.valid?
+
+          expect(federated_page.community).to eq(remote_platform.community)
+          expect(federated_page.community).not_to eq(local_platform.community)
+        end
+
+        it 'falls back to the host community when the platform has no community of its own' do
+          allow(remote_platform).to receive(:community).and_return(nil)
+          page_without_platform_community = build(:better_together_page, platform: remote_platform, community: nil)
+
+          page_without_platform_community.valid?
+
+          expect(page_without_platform_community.community).to eq(BetterTogether::Community.host_community)
+        end
+
+        it 'leaves an explicitly-assigned community untouched' do
+          explicit_community = create(:better_together_community)
+          page_with_explicit_community = build(
+            :better_together_page, platform: remote_platform, community: explicit_community
+          )
+
+          page_with_explicit_community.valid?
+
+          expect(page_with_explicit_community.community).to eq(explicit_community)
+        end
+      end
+
       describe 'evidence selector options' do
         it 'includes media-specific selectors from page content blocks' do
           page = create(:better_together_page)
@@ -251,262 +372,103 @@ module BetterTogether # :nodoc:
           )
         end
       end
+    end
 
-      describe '#as_indexed_json' do
-        context 'with template blocks' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Template Block Page',
-                   slug: 'template-block-page',
-                   privacy: 'public',
-                   page_blocks_attributes: [
-                     {
-                       block_attributes: {
-                         type: 'BetterTogether::Content::Template',
-                         template_path: 'better_together/static_pages/privacy'
-                       }
-                     }
-                   ])
-          end
+    describe 'privacy ceiling validation (PrivacyCeilingValidatable)' do
+      let(:public_platform)    { create(:better_together_platform, privacy: 'public') }
+      let(:community_platform) { create(:better_together_platform, privacy: 'community') }
+      let(:private_platform)   { create(:better_together_platform, privacy: 'private') }
+      let(:public_community)   { create(:better_together_community, privacy: 'public') }
+      let(:community_community) { create(:better_together_community, privacy: 'community') }
+      let(:private_community) { create(:better_together_community, privacy: 'private') }
 
-          it 'includes template_blocks in indexed data' do
-            result = page.as_indexed_json
+      let(:page_for) do
+        lambda { |platform:, community: nil, privacy: 'public'|
+          build(:better_together_page, platform: platform, community: community, privacy: privacy)
+        }
+      end
 
-            expect(result['template_blocks']).to be_present
-            expect(result['template_blocks']).to be_an(Array)
-          end
-
-          it 'includes indexed_localized_content for each template block' do
-            result = page.as_indexed_json
-
-            template_block = result['template_blocks'].first
-            expect(template_block['indexed_localized_content']).to be_present
-            expect(template_block['indexed_localized_content']).to be_a(Hash)
-          end
-
-          it 'includes content for all locales in template blocks' do
-            result = page.as_indexed_json
-
-            content = result['template_blocks'].first['indexed_localized_content']
-            expect(content.keys.map(&:to_sym)).to match_array(I18n.available_locales)
-          end
-
-          it 'includes template block id' do
-            result = page.as_indexed_json
-
-            template_block = result['template_blocks'].first
-            expect(template_block['id']).to be_present
-          end
+      context 'public platform + public community' do
+        it 'allows public privacy' do
+          expect(page_for.call(platform: public_platform, community: public_community, privacy: 'public')).to be_valid
         end
 
-        context 'with template attribute' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Template Attribute Page',
-                   slug: 'template-attribute-page',
-                   privacy: 'public',
-                   template: 'better_together/static_pages/privacy')
-          end
-
-          it 'includes template_content in indexed data' do
-            result = page.as_indexed_json
-
-            expect(result['template_content']).to be_present
-            expect(result['template_content']).to be_a(Hash)
-          end
-
-          it 'renders template content for all locales' do
-            result = page.as_indexed_json
-
-            content = result['template_content']
-            expect(content.keys.map(&:to_sym)).to match_array(I18n.available_locales)
-          end
-
-          it 'includes plain text content without HTML' do
-            result = page.as_indexed_json
-
-            I18n.available_locales.each do |locale|
-              expect(result['template_content'][locale.to_s]).not_to match(/<[^>]+>/)
-            end
-          end
-
-          it 'uses TemplateRendererService for rendering' do
-            expect(BetterTogether::TemplateRendererService).to receive(:new)
-              .with(page.template)
-              .and_call_original
-
-            page.as_indexed_json
-          end
+        it 'allows community privacy' do
+          expect(page_for.call(platform: public_platform, community: public_community, privacy: 'community')).to be_valid
         end
 
-        context 'with rich text blocks' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Rich Text Page',
-                   slug: 'rich-text-page',
-                   privacy: 'public',
-                   page_blocks_attributes: [
-                     {
-                       block_attributes: {
-                         type: 'BetterTogether::Content::RichText',
-                         content: 'Test content'
-                       }
-                     }
-                   ])
-          end
+        it 'allows private privacy' do
+          expect(page_for.call(platform: public_platform, community: public_community, privacy: 'private')).to be_valid
+        end
+      end
 
-          it 'includes rich_text_blocks in indexed data' do
-            result = page.as_indexed_json
-
-            expect(result['rich_text_blocks']).to be_present
-            expect(result['rich_text_blocks']).to be_an(Array)
-          end
+      context 'public platform + community-privacy community' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: public_platform, community: community_community, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
         end
 
-        context 'with markdown blocks' do
-          let(:page) do
-            create(
-              :better_together_page,
-              title: 'Markdown Index Page',
-              slug: 'markdown-index-page',
-              privacy: 'public',
-              page_blocks_attributes: [
-                {
-                  block_attributes: {
-                    type: 'BetterTogether::Content::Markdown',
-                    markdown_source: "# Heading\n\nSearchable paragraph with **formatting**."
-                  }
-                }
-              ]
-            )
-          end
+        it 'allows community privacy' do
+          expect(page_for.call(platform: public_platform, community: community_community, privacy: 'community')).to be_valid
+        end
+      end
 
-          it 'indexes plain text from inline markdown content' do
-            result = page.as_indexed_json
-            markdown_block = result['markdown_blocks'].first['as_indexed_json']
-            localized_content = markdown_block[:localized_content] || markdown_block['localized_content']
-            localized_value = localized_content[I18n.default_locale] || localized_content[I18n.default_locale.to_s]
-
-            expect(localized_value).to include('Heading')
-            expect(localized_value).to include('Searchable paragraph with formatting.')
-            expect(localized_value).not_to include('#')
-            expect(localized_value).not_to include('<strong>')
-          end
+      context 'public platform + private community' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: public_platform, community: private_community, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
         end
 
-        context 'with file-based markdown blocks' do
-          let(:markdown_file_path) { Rails.root.join('spec/fixtures/files/page_markdown_index.md') }
-          let(:page) do
-            FileUtils.mkdir_p(markdown_file_path.dirname)
-            File.write(markdown_file_path, "# File Search\n\nFile body content that should be indexed.")
-
-            create(
-              :better_together_page,
-              title: 'Markdown File Index Page',
-              slug: 'markdown-file-index-page',
-              privacy: 'public',
-              page_blocks_attributes: [
-                {
-                  block_attributes: {
-                    type: 'BetterTogether::Content::Markdown',
-                    markdown_source: nil,
-                    markdown_file_path: markdown_file_path.to_s
-                  }
-                }
-              ]
-            )
-          end
-
-          after do
-            FileUtils.rm_f(markdown_file_path)
-          end
-
-          it 'indexes plain text extracted from markdown files' do
-            result = page.as_indexed_json
-            markdown_block = result['markdown_blocks'].first['as_indexed_json']
-            localized_content = markdown_block[:localized_content] || markdown_block['localized_content']
-            localized_value = localized_content[I18n.default_locale] || localized_content[I18n.default_locale.to_s]
-
-            expect(localized_value).to include('File Search')
-            expect(localized_value).to include('File body content that should be indexed.')
-            expect(localized_value).not_to include('#')
-          end
+        it 'allows community privacy (members can still share within the community)' do
+          expect(page_for.call(platform: public_platform, community: private_community, privacy: 'community')).to be_valid
         end
 
-        context 'with translated page content' do
-          let(:token) { 'pagecontentsignal1006' }
-          let(:page) do
-            create(
-              :better_together_page,
-              title: 'Contentful Page',
-              slug: 'contentful-page',
-              privacy: 'public',
-              content: "<p>#{token}</p>"
-            )
-          end
+        it 'allows private privacy' do
+          expect(page_for.call(platform: public_platform, community: private_community, privacy: 'private')).to be_valid
+        end
+      end
 
-          it 'includes localized page content for Elasticsearch indexing' do
-            result = page.as_indexed_json
-
-            expect(result.values.flatten.compact.join(' ')).to include(token)
-          end
+      context 'community-privacy platform' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: community_platform, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
         end
 
-        context 'without template blocks or attribute' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Simple Page',
-                   slug: 'simple-page',
-                   privacy: 'public')
-          end
-
-          it 'does not include template_content' do
-            result = page.as_indexed_json
-
-            expect(result['template_content']).to be_nil
-          end
-
-          it 'includes basic page attributes' do
-            result = page.as_indexed_json
-
-            expect(result['id']).to eq(page.id)
-            expect(result['title']).to eq(page.title)
-            expect(result['slug']).to eq(page.slug)
-          end
+        it 'allows community privacy' do
+          expect(page_for.call(platform: community_platform, privacy: 'community')).to be_valid
         end
 
-        context 'with both template blocks and template attribute' do
-          let(:page) do
-            create(:better_together_page,
-                   title: 'Mixed Template Page',
-                   slug: 'mixed-template-page',
-                   privacy: 'public',
-                   template: 'better_together/static_pages/terms_of_service',
-                   page_blocks_attributes: [
-                     {
-                       block_attributes: {
-                         type: 'BetterTogether::Content::Template',
-                         template_path: 'better_together/static_pages/privacy'
-                       }
-                     }
-                   ])
-          end
-
-          it 'includes both template_blocks and template_content' do
-            result = page.as_indexed_json
-
-            expect(result['template_blocks']).to be_present
-            expect(result['template_content']).to be_present
-          end
-
-          it 'renders different content for each' do
-            result = page.as_indexed_json
-
-            # Both should be present (either as Hash with string keys or symbolized)
-            expect(result['template_blocks'] || result[:template_blocks]).to be_present
-            expect(result['template_content'] || result[:template_content]).to be_present
-          end
+        it 'allows private privacy' do
+          expect(page_for.call(platform: community_platform, privacy: 'private')).to be_valid
         end
+      end
+
+      context 'private platform' do
+        it 'rejects public privacy' do
+          page = page_for.call(platform: private_platform, privacy: 'public')
+          expect(page).not_to be_valid
+          expect(page.errors[:privacy].join).to include('community')
+        end
+
+        it 'allows community privacy' do
+          # A private/non-public platform's ceiling floors at 'community', not
+          # 'private' — members of a locked-down platform can still write
+          # community-scoped content (see PrivacyCeilingValidatable).
+          expect(page_for.call(platform: private_platform, privacy: 'community')).to be_valid
+        end
+
+        it 'allows private privacy' do
+          expect(page_for.call(platform: private_platform, privacy: 'private')).to be_valid
+        end
+      end
+
+      it 'only validates when privacy changes (skips on unrelated attribute updates)' do
+        page = create(:better_together_page, platform: public_platform, community: public_community, privacy: 'public')
+        page.title = 'Updated title'
+        expect(page).to be_valid
       end
     end
   end

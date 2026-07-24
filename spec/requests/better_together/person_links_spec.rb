@@ -5,7 +5,14 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let(:person_link) { create(:better_together_person_link) }
+  # PersonLinkPolicy::Scope filters by `for_platform(current_platform)`, so the
+  # platform_connection must involve the host platform the request runs against,
+  # not an arbitrary unrelated platform pair.
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:person_link) do
+    create(:better_together_person_link,
+           platform_connection: create(:better_together_platform_connection, :active, source_platform: host_platform))
+  end
   let(:source_person) { person_link.source_person }
   let(:target_person) { person_link.target_person }
   let(:source_user) { create(:better_together_user, :confirmed, person: source_person, password:) }
@@ -14,6 +21,12 @@ RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   let!(:linked_grant) { create(:better_together_person_access_grant, person_link:) }
 
   describe 'GET /person-links' do
+    it 'returns 404 for unauthenticated users' do
+      get better_together.person_links_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'allows the source person to list their links' do
       login(source_user.email, password)
 
@@ -34,6 +47,12 @@ RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   end
 
   describe 'GET /person-links/:id' do
+    it 'returns 404 for unauthenticated users' do
+      get better_together.person_link_path(person_link, locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'allows the target person to view link metadata' do
       login(target_user.email, password)
 
@@ -54,6 +73,12 @@ RSpec.describe 'BetterTogether::PersonLinks', :no_auth do
   end
 
   describe 'POST /person-links/:id/revoke' do
+    it 'raises a routing error when unauthenticated because the route is constrained' do
+      expect do
+        post better_together.revoke_person_link_path(person_link, locale:)
+      end.to raise_error(ActionController::RoutingError)
+    end
+
     it 'allows the source person to revoke the link and cascades grant revocation' do
       login(source_user.email, password)
 

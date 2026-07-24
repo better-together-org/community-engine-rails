@@ -3,18 +3,21 @@
 module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
-    class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
+    class Agreement < PlatformRecord # rubocop:todo Metrics/ClassLength
       include BetterTogether::Authorable
       include BetterTogether::Citable
       include BetterTogether::Claimable
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable
+      include BetterTogether::Reportable
 
       STATUS_VALUES = {
         pending: 'pending',
         accepted: 'accepted',
-        rejected: 'rejected'
+        cancelled: 'cancelled',
+        rejected: 'rejected',
+        fulfilled: 'fulfilled'
       }.freeze
 
       # Use UUID id to generate a stable, unique slug without touching
@@ -23,6 +26,8 @@ module BetterTogether
 
       belongs_to :offer, class_name: 'BetterTogether::Joatu::Offer'
       belongs_to :request, class_name: 'BetterTogether::Joatu::Request'
+      has_one :settlement, class_name: 'BetterTogether::Joatu::Settlement',
+                           dependent: :destroy
 
       validates :offer, :request, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
@@ -56,7 +61,54 @@ module BetterTogether
         super + %i[offer_id request_id terms value status privacy]
       end
 
-      def accept!
+      def agreement_family
+        'transactional_agreement'
+      end
+
+      def agreement_type
+        return 'network_connection_agreement' if connection_request?
+        return 'person_link_agreement' if request.is_a?(BetterTogether::Joatu::PersonLinkRequest)
+        return 'person_access_grant_agreement' if request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest)
+
+        agreement_family
+      end
+
+      def participant_people
+        [offer&.creator, request&.creator].compact.uniq
+      end
+
+      def participant_ids
+        participant_people.map(&:id)
+      end
+
+      def participant_for?(person_or_user)
+        person = if person_or_user.is_a?(BetterTogether::User)
+                   person_or_user.person
+                 else
+                   person_or_user
+                 end
+
+        participant_ids.include?(person&.id)
+      end
+
+      def participant_roles
+        {
+          offer_creator: offer&.creator,
+          request_creator: request&.creator
+        }.compact
+      end
+
+      def participant_names
+        participant_people.map { |participant| participant.name.presence || participant.to_s }
+      end
+
+      def decision_made_at
+        return unless status_accepted? || status_rejected? || status_cancelled?
+
+        updated_at
+      end
+
+      def accept! # rubocop:todo Metrics/MethodLength
         ensure_accept_allowed!
 
         transaction do
@@ -64,12 +116,45 @@ module BetterTogether
           offer.status_closed!
           request.status_closed!
           request.after_agreement_acceptance!(offer:)
+          create_settlement_if_c3_priced!
+        end
+      end
+
+      # Mark the agreement fulfilled and complete the C3 settlement transfer.
+      # Requires an accepted agreement with a pending settlement.
+      def fulfill! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        unless status_accepted?
+          errors.add(:base, 'Agreement must be accepted before it can be fulfilled')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        transaction do
+          if settlement&.status == 'pending' && settlement.c3_millitokens.positive?
+            payer_balance = BetterTogether::C3::Balance.find_by!(holder: settlement.payer)
+            recipient_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: settlement.recipient)
+            settlement.complete!(payer_balance:, recipient_balance:)
+          end
+          update!(status: :fulfilled)
         end
       end
 
       def reject!
         ensure_reject_allowed!
         update!(status: :rejected)
+      end
+
+      def cancel! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        ensure_cancel_allowed!
+
+        transaction do
+          if settlement&.status == 'pending'
+            payer_balance = BetterTogether::C3::Balance.find_by!(holder: settlement.payer)
+            settlement.cancel!(payer_balance: payer_balance)
+          end
+
+          update!(status: :cancelled)
+          reopen_associated_exchanges!
+        end
       end
 
       def to_s
@@ -91,16 +176,21 @@ module BetterTogether
 
       private
 
-      def ensure_accept_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # Raise if the agreement is already in a terminal or non-pending state.
+      # Shared guard for accept! and reject! — both require the agreement to still be pending.
+      def ensure_not_terminal!
         if status_accepted?
           errors.add(:base, 'Agreement already accepted')
           raise ActiveRecord::RecordInvalid, self
         end
+        return unless status_rejected?
 
-        if status_rejected?
-          errors.add(:base, 'Agreement already rejected')
-          raise ActiveRecord::RecordInvalid, self
-        end
+        errors.add(:base, 'Agreement already rejected')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def ensure_accept_allowed!
+        ensure_not_terminal!
 
         if offer.respond_to?(:status_closed?) && offer.status_closed?
           errors.add(:offer, 'is already closed')
@@ -113,25 +203,17 @@ module BetterTogether
         raise ActiveRecord::RecordInvalid, self
       end
 
-      def ensure_reject_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        if status_accepted?
-          errors.add(:base, 'Agreement already accepted')
-          raise ActiveRecord::RecordInvalid, self
-        end
+      # Reject only requires the agreement to be non-terminal — the underlying offer/request
+      # may already be closed (e.g. another agreement on the same offer was accepted) and
+      # we still need to be able to reject the now-stale pending agreement.
+      def ensure_reject_allowed!
+        ensure_not_terminal!
+      end
 
-        if status_rejected?
-          errors.add(:base, 'Agreement already rejected')
-          raise ActiveRecord::RecordInvalid, self
-        end
+      def ensure_cancel_allowed!
+        return if status_accepted?
 
-        if offer.respond_to?(:status_closed?) && offer.status_closed?
-          errors.add(:offer, 'is already closed')
-          raise ActiveRecord::RecordInvalid, self
-        end
-
-        return unless request.respond_to?(:status_closed?) && request.status_closed?
-
-        errors.add(:request, 'is already closed')
+        errors.add(:base, 'Agreement must be accepted before it can be cancelled')
         raise ActiveRecord::RecordInvalid, self
       end
 
@@ -160,8 +242,13 @@ module BetterTogether
             errors.add(:offer, 'is already closed') if offer.respond_to?(:status_closed?) && offer.status_closed?
             errors.add(:request, 'is already closed') if request.respond_to?(:status_closed?) && request.status_closed?
           end
-        when STATUS_VALUES[:accepted], STATUS_VALUES[:rejected]
-          errors.add(:status, 'cannot change once accepted or rejected')
+        when STATUS_VALUES[:accepted]
+          # Accepted can only move forward to fulfilled or cancelled
+          unless [STATUS_VALUES[:fulfilled], STATUS_VALUES[:cancelled]].include?(to)
+            errors.add(:status, 'can only move from accepted to fulfilled or cancelled')
+          end
+        when STATUS_VALUES[:rejected], STATUS_VALUES[:fulfilled], STATUS_VALUES[:cancelled]
+          errors.add(:status, 'cannot change once rejected, cancelled, or fulfilled')
         else
           errors.add(:status, 'has an invalid transition')
         end
@@ -230,6 +317,58 @@ module BetterTogether
             contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
           )
         end
+      end
+
+      # Create a pending Settlement and lock C3 from the payer (request creator)
+      # when the offer carries a C3 price. No-op if the offer has no C3 price.
+      #
+      # The lock_ref returned by Balance#lock_millitokens! is stored on the Settlement so that
+      # Settlement#complete! and Settlement#cancel! can finalise the BalanceLock record
+      # (marking it settled or released) rather than leaving it pending until expiry.
+      def create_settlement_if_c3_priced! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        price_millitokens = offer.try(:c3_price_millitokens).to_i
+        return unless price_millitokens.positive?
+
+        payer = request.creator
+        return unless payer
+
+        payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer)
+        # Use lock_millitokens! to avoid float conversion round-trip
+        # (price_millitokens is already an integer from the database)
+        captured_lock_ref = payer_balance.lock_millitokens!(
+          price_millitokens,
+          agreement_ref: id
+        )
+
+        new_settlement = create_settlement!(
+          payer: payer,
+          recipient: offer.creator,
+          c3_millitokens: price_millitokens,
+          lock_ref: captured_lock_ref,
+          status: 'pending'
+        )
+
+        BetterTogether::C3::SettlementNotifier
+          .with(settlement: new_settlement, event_type: :c3_locked)
+          .deliver_later([payer, offer.creator].compact.uniq)
+      end
+
+      def reopen_associated_exchanges!
+        reopen_exchange!(offer)
+        reopen_exchange!(request)
+      end
+
+      def reopen_exchange!(record)
+        return unless record.respond_to?(:status) && record.status_closed?
+
+        next_status =
+          if record.agreements.where.not(id: id).where(status: STATUS_VALUES[:pending]).exists?
+            :matched
+          else
+            :open
+          end
+
+        record.public_send(:"status_#{next_status}!")
       end
     end
   end

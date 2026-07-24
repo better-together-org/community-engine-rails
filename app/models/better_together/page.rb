@@ -4,7 +4,7 @@ require 'storext'
 
 module BetterTogether
   # An informational document used to display custom content to the user
-  class Page < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
     include Authorable
     include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
@@ -12,23 +12,25 @@ module BetterTogether
     # to stamp newly-created authorships with the acting person.
     include Categorizable
     include Citable
+    include CommunityAssignable
     include Creatable
+    include Federatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Protected
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
     include Seedable
+    include Shortlinkable
     include TrackedActivity
     include ::Storext.model
 
-    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     before_validation :sync_name_and_title
-    before_validation :assign_current_platform_if_available
-    before_validation :assign_host_community
 
     categorizable
 
@@ -40,6 +42,7 @@ module BetterTogether
 
     store_attributes :display_settings do
       show_title Boolean, default: true
+      contributors_display_visibility String, default: 'inherit'
     end
 
     has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
@@ -71,9 +74,7 @@ module BetterTogether
 
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
-    slugged :title, min_length: 1
+    slugged :title, min_length: 1, slug_uniqueness: false
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
 
@@ -84,6 +85,8 @@ module BetterTogether
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
     # Automatically grant the page creator an authorship record only when no
     # explicit human or robot authors were selected during creation.
@@ -111,39 +114,22 @@ module BetterTogether
       @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
     end
 
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
-      json = as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_names_for_search.select do |attribute|
-          attribute.start_with?('title', 'slug', 'content')
-        end],
-        include: {
-          markdown_blocks: {
-            only: %i[id],
-            methods: [:as_indexed_json]
-          },
-          rich_text_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          },
-          template_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          }
-        }
-      )
-
-      # Include rendered template content if page has template attribute
-      if template.present?
-        json['template_content'] = BetterTogether::TemplateRendererService.new(template).render_for_all_locales
-      end
-
-      json
-    end
-
     def primary_image
       hero_block&.background_image_file
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    # Includes block content so full-text search can match text that only lives
+    # inside a block (e.g. markdown source) rather than a direct Page column.
+    def as_indexed_json
+      {
+        title: title,
+        meta_description: meta_description,
+        keywords: keywords,
+        content: content&.to_plain_text,
+        blocks: content_blocks.filter_map { |block| indexed_block_text(block) },
+        template_blocks: template_blocks.map { |block| indexed_template_block(block) }
+      }.with_indifferent_access
     end
 
     def published?
@@ -187,40 +173,31 @@ module BetterTogether
 
     private
 
+    def indexed_block_text(block)
+      return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
+      return block.content if block.respond_to?(:content) && block.content.is_a?(String)
+
+      nil
+    end
+
+    # Template blocks render their content from a file rather than storing it directly,
+    # so their rendered text (per locale) has to be indexed separately from indexed_block_text.
+    def indexed_template_block(block)
+      {
+        template_path: block.template_path,
+        indexed_localized_content: block.indexed_localized_content
+      }
+    end
+
     def refresh_sitemap
       return if Rails.env.test?
 
-      SitemapRefreshJob.perform_later
+      SitemapRefreshJob.enqueue_unless_pending
     end
 
     def sync_name_and_title
       self.name = title if respond_to?(:name) && name.blank? && title.present?
       self.title = name if title.blank? && name.present?
-    end
-
-    def assign_current_platform_if_available
-      return unless has_attribute?(:platform_id)
-      return if platform_id.present?
-
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
-    end
-
-    def assign_host_community
-      return unless has_attribute?(:community_id)
-      return if community.present?
-
-      self.community ||= BetterTogether::Community.find_by(host: true)
-      self.community ||= host_platform_community
-    end
-
-    def host_platform_community
-      host_platform_community_id = BetterTogether::Platform.where(host: true).limit(1).pluck(:community_id).first
-      return unless host_platform_community_id
-
-      BetterTogether::Community.find_by(id: host_platform_community_id)
     end
 
     # Touch navigation areas for all navigation items that link to this page

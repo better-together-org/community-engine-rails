@@ -1,14 +1,5 @@
 <div id="form_errors">
-  <% if community.errors.any? %>
-    <div class="alert alert-danger mt-3" role="alert">
-      <h2><%= pluralize(community.errors.count, "error") %> prohibited this community from being saved:</h2>
-      <ul>
-        <% community.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render 'layouts/better_together/errors', object: community if community.errors.any? %>
 </div>
 
 <div class="row">
@@ -60,18 +51,44 @@
         </legend>
         <p class="form-text text-muted mt-0 mb-2">
           <%= t('better_together.access_modes.form.community_help',
-                default: 'Choose whether people join right away or ask to join first.') %>
+                default: 'Choose whether this community is invitation-only or may allow membership requests.') %>
         </p>
+        <div class="form-check">
+          <%= form.check_box :requires_invitation,
+                             class: "form-check-input",
+                             checked: community.requires_invitation? %>
+          <%= form.label :requires_invitation,
+                         t('better_together.access_modes.form.community_invitation_only',
+                           default: 'Require an invitation before someone can join this community'),
+                         class: "form-check-label" %>
+          <div class="form-text text-muted">
+            <%= t('better_together.access_modes.form.community_invitation_help',
+                  default: 'Communities default to invitation-only. Turn this off only when you intentionally want self-service joins or membership requests.') %>
+          </div>
+        </div>
         <div class="form-check">
           <%= form.check_box :allow_membership_requests,
                              class: "form-check-input",
                              checked: community.allow_membership_requests? %>
           <%= form.label :allow_membership_requests,
-                         t('better_together.access_modes.form.community_requests',
-                           default: 'Require people to request access before becoming members'),
-                         class: "form-check-label" %>
+                           t('better_together.access_modes.form.community_requests',
+                             default: 'Require people to request access before becoming members'),
+                           class: "form-check-label" %>
+          <div class="form-text text-muted">
+            <%= t('better_together.access_modes.form.community_requests_hint',
+                  default: 'Community membership requests stay closed unless both this community and the platform allow requests, and invitation-only access is turned off.') %>
+          </div>
         </div>
       </fieldset>
+
+      <div class="mb-3">
+        <%= contributor_display_visibility_field(
+              form:,
+              include_inherit: true,
+              label: t('better_together.authorable_contributor_visibility.labels.community', default: 'Community contributor display'),
+              hint: t('better_together.authorable_contributor_visibility.hints.community', default: 'Override the platform default for pages in this community, or inherit the platform setting.')
+            ) %>
+      </div>
     </div>
 
     <!-- Images Tab -->
@@ -94,7 +111,7 @@
 
         <small class="form-text text-muted"><%= t('helpers.hint.community.profile_image') %></small>
 
-        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= community.profile_image.url if community.profile_image.attached? %>">
+        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= storage_proxy_url_for(community.profile_image) if community.profile_image.attached? %>">
         </div>
       </div>
 
@@ -116,7 +133,7 @@
 
         <small class="form-text text-muted"><%= t('helpers.hint.community.cover_image') %></small>
 
-        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= community.cover_image.url if community.cover_image.attached? %>">
+        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="cover-image" data-url="<%= storage_proxy_url_for(community.cover_image) if community.cover_image.attached? %>">
         </div>
       </div>
 
@@ -141,7 +158,7 @@
         <small class="form-text text-muted"><%= t('helpers.hint.community.logo') %></small>
 
         <!-- Image preview container -->
-        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= community.logo.url if community.logo.attached? %>">
+        <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="profile-image" data-url="<%= storage_proxy_url_for(community.logo) if community.logo.attached? %>">
           <!-- The image preview will be dynamically inserted here -->
         </div>
       </div>

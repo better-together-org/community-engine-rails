@@ -23,6 +23,14 @@ RSpec.describe 'BetterTogether::PersonLinkedSeeds' do
   end
 
   describe 'GET /linked-seeds' do
+    it 'returns 404 for unauthenticated users' do
+      logout
+
+      get better_together.person_linked_seeds_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'shows only linked seeds visible to the current recipient' do
       get better_together.person_linked_seeds_path(locale:)
 
@@ -33,6 +41,14 @@ RSpec.describe 'BetterTogether::PersonLinkedSeeds' do
   end
 
   describe 'GET /linked-seeds/:id' do
+    it 'returns 404 for unauthenticated users' do
+      logout
+
+      get better_together.person_linked_seed_path(locale:, id: visible_seed)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'shows a recipient-visible linked seed' do
       get better_together.person_linked_seed_path(locale:, id: visible_seed)
 

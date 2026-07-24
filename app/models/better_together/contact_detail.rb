@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ContactDetail < ApplicationRecord # rubocop:todo Style/Documentation
+  class ContactDetail < PlatformRecord # rubocop:todo Style/Documentation
     # belongs_to :contactable, polymorphic: true, touch: true
     # Use a manual safe touch to avoid raising ActiveRecord::StaleObjectError in tests when lock_version is out of date
     belongs_to :contactable, polymorphic: true, touch: false
@@ -25,7 +25,7 @@ module BetterTogether
         {
           phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
           email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
-          social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy,
+          social_media_accounts_attributes: [:id, :platform_name, :handle, :url, :_destroy,
                                              *SocialMediaAccount.extra_permitted_attributes],
           addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name,
                                  :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes],

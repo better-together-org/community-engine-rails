@@ -10,9 +10,9 @@ RSpec.describe 'Documentation screenshots for access mode panels',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
-  let!(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
-  let!(:host_platform) do
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+  let(:manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'public', requires_invitation: false, allow_membership_requests: false)
       platform.primary_community&.update!(allow_membership_requests: false)

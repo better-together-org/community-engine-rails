@@ -82,4 +82,32 @@ RSpec.describe BetterTogether::TranslatableFieldsHelper do
       expect(options[:class]).to include('is-invalid')
     end
   end
+
+  describe '#translation_tab_button' do
+    let(:page) { build(:page, title_en: 'Hello') }
+
+    before do
+      Current.platform = build_stubbed(:platform)
+    end
+
+    after do
+      Current.platform = nil
+    end
+
+    it 'shows the AI translation dropdown when translation is available for the current platform' do
+      allow(BetterTogether).to receive(:translation_available?).with(platform: Current.platform).and_return(true)
+
+      markup = helper.translation_tab_button(attribute: 'title', locale: :en, temp_id: 'abc123', model: page)
+
+      expect(markup).to include('AI Translate from')
+    end
+
+    it 'omits the AI translation dropdown when translation is unavailable for the current platform' do
+      allow(BetterTogether).to receive(:translation_available?).with(platform: Current.platform).and_return(false)
+
+      markup = helper.translation_tab_button(attribute: 'title', locale: :en, temp_id: 'abc123', model: page)
+
+      expect(markup).not_to include('AI Translate from')
+    end
+  end
 end

@@ -73,7 +73,12 @@ RSpec.describe 'Event Timezone Selector' do
           identifier: 'tdd-event-timezone',
           timezone: 'America/New_York',
           starts_at: starts_at.iso8601,
-          privacy: 'public'
+          privacy: 'public',
+          # Mirrors the hidden creator_id field submitted by the real event form
+          # (app/views/better_together/events/_form.html.erb) — Event#set_host builds
+          # the default EventHost from `creator`, so a direct request-spec POST
+          # (bypassing form rendering) must supply it explicitly.
+          creator_id: manager_person.id
         }
       }
     end
@@ -146,6 +151,19 @@ RSpec.describe 'Event Timezone Selector' do
 
       expect(response).to have_http_status(:success)
       expect(response_text).to include('London')
+    end
+
+    it 'uses proxied attachment URLs in the edit form' do
+      event.cover_image.attach(
+        io: StringIO.new('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"></svg>'),
+        filename: 'event-cover.svg',
+        content_type: 'image/svg+xml'
+      )
+
+      get edit_event_path(event, locale: I18n.default_locale)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include(Rails.application.routes.url_helpers.rails_storage_proxy_path(event.cover_image, only_path: true))
     end
   end
 

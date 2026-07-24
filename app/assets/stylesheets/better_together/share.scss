@@ -1,5 +1,9 @@
 @use 'theme' as *;
 
+.bt-short-links-target-col {
+  max-width: 240px;
+}
+
 .social-share-buttons {
   margin-top: 40px;
   margin-bottom: 40px;
@@ -82,4 +86,34 @@ a {
     //   font-size: 16px;
     // }
   }
+}
+
+// <button> share buttons — full reset so Bootstrap .btn classes are not needed
+button {
+  &.share-button {
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    line-height: 1;
+    font-size: 0.6em;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, transform 0.3s;
+
+    &:focus { outline: 2px solid #000; outline-offset: 2px; }
+  }
+
+  &.share-button i.icon { color: white; }
+  &.share-button i.bg { color: var(--bs-secondary); }
+
+  &.share-button:hover,
+  &.share-button:focus {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+
+  &.share-short-link:hover i.bg,
+  &.share-short-link:focus i.bg { color: var(--bs-primary); }
 }

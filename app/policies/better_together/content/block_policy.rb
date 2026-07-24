@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Content
-    class BlockPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+    class BlockPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
       def index?
         platform_content_manager?
       end
@@ -35,11 +35,15 @@ module BetterTogether
         user.present?
       end
 
+      def resource_search?
+        platform_content_manager?
+      end
+
       class Scope < Scope # rubocop:todo Style/Documentation
         def resolve
-          scope.includes(:pages).order(
+          platform_scoped.includes(:pages).order(
             BetterTogether::Content::Block.arel_table[:created_at].desc
-          ).all
+          )
         end
       end
 

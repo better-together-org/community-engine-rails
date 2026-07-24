@@ -2,14 +2,16 @@
 
 module BetterTogether
   # Access control for posts
-  class PostPolicy < ApplicationPolicy
+  class PostPolicy < PlatformRecordPolicy
+    include SelfServicePublishablePolicy
+
     def index?
       true
     end
 
     def show?
       # Always allow the creator and platform stewards
-      return true if creator_or_platform_steward?
+      return true if creator_or_platform_steward? || community_content_manager?
 
       # Deny if author is blocked
       return false if blocked_author?
@@ -19,26 +21,28 @@ module BetterTogether
     end
 
     def create?
-      platform_content_manager?
+      return false unless user.present?
+
+      platform_manager? || community_content_manager? || self_service_content_creator?
     end
     alias new? create?
 
     def update?
-      creator_platform_steward_or_editor?
+      creator_platform_steward_or_editor? || community_content_manager?
     end
     alias edit? update?
 
     def destroy?
-      creator_or_platform_steward?
+      creator_or_platform_steward? || community_content_manager?
     end
 
     # Scope for resolving visible posts
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        return scope.latest_first if platform_content_manager?
+        return platform_scoped.latest_first if platform_content_manager?
 
-        base = scope.published.latest_first
+        base = platform_scoped.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
         visible_posts = visible_privacy_query(posts_table)
         return base.where(visible_posts) unless agent
@@ -61,12 +65,19 @@ module BetterTogether
 
     private
 
-    def platform_content_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+    def community_content_manager?
+      target_community = if record.is_a?(Class)
+                           Current.platform&.community
+                         else
+                           record.community || record.platform&.community
+                         end
+      return false unless target_community
+
+      permitted_to?('manage_community_content', target_community)
     end
 
     def creator_or_platform_steward?
-      record.creator == agent || platform_content_manager?
+      creator_of?(record) || platform_manager?
     end
 
     def creator_platform_steward_or_editor?

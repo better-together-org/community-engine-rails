@@ -72,6 +72,12 @@ module Rack
       req.ip if req.path.start_with?('/mcp')
     end
 
+    # Challenge issuance is lightweight but public. Keep it available while preventing
+    # challenge-spam from becoming a cache amplification path.
+    throttle('bot_defense/challenges/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.path.include?('/bot-defense/challenges/') && req.get?
+    end
+
     # Throttle MCP tool call POSTs more aggressively (30 per minute)
     throttle('mcp/tool-calls/ip', limit: 30, period: 1.minute) do |req|
       req.ip if req.path == '/mcp/messages' && req.post?
@@ -134,6 +140,23 @@ module Rack
     # federation client from exhausting the token endpoint even across multiple IPs.
     throttle('oauth/token/client_id', limit: 10, period: 1.minute) do |req|
       req.params['client_id'].presence if req.path.include?('/oauth/token') && req.post?
+    end
+
+    ### Federation Content Feed Throttling ###
+
+    # Throttle the federation content feed by Bearer token prefix (120 req/min per client).
+    # Legitimate pull jobs fetch at most a few pages per minute; this stops a
+    # misconfigured or hostile peer from hammering the export endpoint.
+    throttle('federation/feed/token', limit: 120, period: 1.minute) do |req|
+      if req.path.include?('/federation/content_feed')
+        req.env['HTTP_AUTHORIZATION']&.sub(/^Bearer\s+/i, '')&.first(32)
+      end
+    end
+
+    # Secondary IP-based guard for the federation feed (60 req/min per IP).
+    # Catches unauthenticated probes and peers rotating tokens rapidly.
+    throttle('federation/feed/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.path.include?('/federation/content_feed')
     end
 
     # Throttle POST requests to /users/sign-in by email param

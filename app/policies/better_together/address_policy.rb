@@ -12,7 +12,7 @@ module BetterTogether
       SQL
 
       def resolve
-        base_scope = scope.includes(:contact_detail)
+        base_scope = platform_scoped(scope.includes(:contact_detail))
         component_scope = base_scope.where(COMPONENT_CONDITION)
 
         return component_scope if platform_manager?
@@ -42,7 +42,7 @@ module BetterTogether
       end
 
       def community_address_ids(component_scope)
-        community_ids = agent.person_community_memberships.pluck(:joinable_id)
+        community_ids = agent.person_community_memberships.active.pluck(:joinable_id)
         return [] if community_ids.empty?
 
         community_cd_ids = BetterTogether::ContactDetail

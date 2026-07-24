@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::PersonHardDeletionInventory do
     create(:better_together_calendar, creator: person, community: owned_community, protected: true)
     create(:better_together_person_community_membership, member: person, joinable: owned_community)
 
-    platform = create(:better_together_platform)
+    platform = create(:better_together_platform, :public)
     create(:better_together_person_platform_membership, member: person, joinable: platform)
     page = create(:better_together_page, creator: person, platform:)
     BetterTogether::Authorship.create!(author: person, authorable: page)

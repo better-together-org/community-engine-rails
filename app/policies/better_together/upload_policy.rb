@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for files
-  class UploadPolicy < ApplicationPolicy
+  class UploadPolicy < PlatformRecordPolicy
     def index?
       user.present?
     end
@@ -20,13 +20,14 @@ module BetterTogether
     end
 
     def download?
-      (record.privacy_public? || record.creator == agent) && record.attached? && record.file_content_security_downloadable?
+      (record.privacy_public? || record.creator == agent) &&
+        record.attached?
     end
 
     # Filtering and sorting for files according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
-        scope.with_creator(agent).order(created_at: :desc)
+        platform_scoped.with_creator(agent).order(created_at: :desc)
       end
     end
   end

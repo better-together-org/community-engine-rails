@@ -3,6 +3,7 @@
 This guide helps elected platform organizers manage platform-wide operations while supporting community autonomy and democratic decision-making.
 
 ## Platform Management
+- [Bot Safety Operations](bot_safety_operations.md) - Built-in intake protection, robot scopes, and when to add Turnstile
 - [End-to-End Encryption Rollout](e2e_encryption_rollout.md) - Operational model, rollout boundaries, and support checklist for encrypted conversations
 - [Host Management Guide](host_management.md) - Technical platform management
 - [Host Dashboard Extensions](host_dashboard_extensions.md) - Advanced management features

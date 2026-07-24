@@ -44,6 +44,37 @@ RSpec.describe BetterTogether::Robot do
     end
   end
 
+  describe 'bot access token support' do
+    let(:robot) do
+      create(
+        :robot,
+        identifier: 'reader-bot',
+        settings: {
+          bot_access_enabled: true,
+          bot_access_scopes: %w[read_public_content read_private_content],
+          bot_access_token_digest: described_class.bot_access_token_digest('secret-token')
+        }
+      )
+    end
+
+    it 'treats private-content scope as including public-content reads' do
+      expect(robot.allows_bot_scope?('read_public_content')).to be(true)
+      expect(robot.allows_content_privacy?('private')).to be(true)
+    end
+
+    it 'authenticates a platform robot from an identifier.secret token' do
+      authenticated = described_class.authenticate_access_token('reader-bot.secret-token', platform: robot.platform)
+
+      expect(authenticated).to eq(robot)
+    end
+
+    it 'rejects invalid secrets' do
+      authenticated = described_class.authenticate_access_token('reader-bot.wrong-token', platform: robot.platform)
+
+      expect(authenticated).to be_nil
+    end
+  end
+
   describe '.available_for_platform' do
     let(:platform) { create(:platform) }
     let!(:global_robot) { create(:robot, :global, name: 'Global Robot') }

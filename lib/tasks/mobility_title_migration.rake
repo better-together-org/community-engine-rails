@@ -15,7 +15,7 @@
 # Performance Optimizations:
 # - Uses bulk operations (insert_all, delete_all) instead of individual record operations
 # - Reduces database round trips from N operations to 2 operations
-# - Bypasses ActiveRecord callbacks (especially Elasticsearch indexing)
+# - Bypasses ActiveRecord callbacks (especially external search indexing)
 # - Provides timing information for performance monitoring
 #
 # Usage:

@@ -1,12 +1,20 @@
 <figure class="attachment attachment--<%= blob.representable? ? "preview" : "file" %> attachment--<%= blob.filename.extension %>">
   <% if blob.representable? %>
     <% representation = blob.representation(resize_to_limit: local_assigns[:in_gallery] ? [800, 600] : [1024, 768]) %>
-    <% image_src = BetterTogether::Engine.routes.url_helpers.content_security_blob_representation_proxy_path(
-      representation.blob.signed_id(expires_in: ActiveStorage.urls_expire_in),
-      representation.variation.key,
-      representation.blob.filename
-    ) %>
-    <%= image_tag image_src %>
+    <% image_src = if BetterTogether::ContentSecurity::Subject.for_blob(blob).exists?
+                     BetterTogether::Engine.routes.url_helpers.content_security_blob_representation_proxy_path(
+                       representation.blob.signed_id, representation.variation.key, filename: representation.blob.filename
+                     )
+                   else
+                     BetterTogether::MediaUrlBuilder.proxy_path_for(representation)
+                   end %>
+    <%# image_src is always a same-origin, root-relative path (the content-security
+        scan-gated proxy route, or MediaUrlBuilder's same-origin proxy path) — never
+        run it through image_tag, which unconditionally rewrites root-relative srcs
+        through config.action_controller.asset_host. Neither of these dynamic Rails
+        routes exists as an object in the CDN's S3 origin, so an asset-host-rewritten
+        src 404s/403s there instead of hitting the app. %>
+    <%= tag.img src: image_src %>
   <% end %>
 
   <figcaption class="attachment__caption">

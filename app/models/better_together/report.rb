@@ -2,21 +2,7 @@
 
 module BetterTogether
   # Record of a person reporting inappropriate content or users
-  class Report < ApplicationRecord
-    ALLOWED_REPORTABLES = [
-      'BetterTogether::Person',
-      'BetterTogether::Post',
-      'BetterTogether::Event',
-      'BetterTogether::Page',
-      'BetterTogether::Community',
-      'BetterTogether::Message',
-      'BetterTogether::Upload',
-      'BetterTogether::Content::Block',
-      'BetterTogether::Joatu::Offer',
-      'BetterTogether::Joatu::Request',
-      'BetterTogether::Joatu::Agreement'
-    ].freeze
-
+  class Report < PlatformRecord
     # Intake fields should be chosen by the reporter, not silently filled from DB defaults.
     attribute :category, :string
     attribute :harm_level, :string
@@ -27,6 +13,8 @@ module BetterTogether
       hate_speech: 'hate_speech',
       discrimination: 'discrimination',
       spam_or_scam: 'spam_or_scam',
+      malware_detected: 'malware_detected',
+      scan_failure: 'scan_failure',
       privacy_violation: 'privacy_violation',
       misinformation: 'misinformation',
       boundary_violation: 'boundary_violation',
@@ -51,7 +39,7 @@ module BetterTogether
       other: 'other'
     }, prefix: true
 
-    belongs_to :reporter, class_name: 'BetterTogether::Person', inverse_of: :reports_made
+    belongs_to :reporter, class_name: 'BetterTogether::Person'
     belongs_to :reportable, polymorphic: true
     has_one :safety_case, class_name: 'BetterTogether::Safety::Case', dependent: :destroy, inverse_of: :report
 
@@ -59,13 +47,19 @@ module BetterTogether
     validates :category, presence: true
     validates :harm_level, presence: true
     validates :requested_outcome, presence: true
-    validates :reportable_type, inclusion: { in: ALLOWED_REPORTABLES }
+    # Dynamic extension point, not a gem-owned allow-list: a host app opts a model into
+    # the safety/Report pipeline by including BetterTogether::Reportable, nothing else. See
+    # docs/developers/architecture/polymorphic_allowlist_extension_audit.md
+    validates :reportable_type, inclusion: {
+      in: ->(_record) { BetterTogether::Reportable.included_in_models.map(&:name) }
+    }
     validates :reportable_id, uniqueness: {
       scope: %i[reporter_id reportable_type],
       message: ->(_report, _data) { I18n.t('better_together.reports.errors.already_reported_by_you') }
     }
 
     after_create_commit :ensure_safety_case!
+    after_create_commit :notify_safety_reviewers
 
     def case_status
       safety_case&.status || 'submitted'
@@ -84,6 +78,10 @@ module BetterTogether
         consent_to_contact: consent_to_contact.nil? || consent_to_contact,
         consent_to_restorative_process: consent_to_restorative_process || false
       )
+    end
+
+    def notify_safety_reviewers
+      ::BetterTogether::SafetyReportNotificationService.new(self).notify_submission
     end
   end
 end

@@ -14,7 +14,13 @@ RSpec.describe 'Checklist item creation appends to bottom', :js do
 
   it 'creates a new checklist item and it appears at the bottom after refresh' do
     # rubocop:enable RSpec/MultipleExpectations
-    checklist = create(:better_together_checklist, title: 'Append Test Checklist')
+    # Must be scoped to the host platform: PlatformRecordPolicy::Scope filters
+    # to Current.platform/Current.host_platform, and the factory's default
+    # `platform` association builds an unrelated, non-host platform, which
+    # makes the checklist invisible to the policy scope the show action's
+    # friendly_id lookup relies on (404, not an auth failure).
+    checklist = create(:better_together_checklist, title: 'Append Test Checklist',
+                                                   platform: BetterTogether::Platform.find_by(host: true))
 
     # Create five existing items with positions 0..4
     items = 5.times.map do |i|

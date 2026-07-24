@@ -9,6 +9,19 @@ RSpec.describe BetterTogether::Joatu::Agreement do
   let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
   describe 'status transitions' do
+    it 'exposes explicit participant and agreement metadata helpers' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect(agreement.agreement_family).to eq('transactional_agreement')
+      expect(agreement.agreement_type).to eq('transactional_agreement')
+      expect(agreement.participant_people).to contain_exactly(creator_a, creator_b)
+      expect(agreement.participant_ids).to contain_exactly(creator_a.id, creator_b.id)
+      expect(agreement.participant_names).to contain_exactly(creator_a.name, creator_b.name)
+      expect(agreement.participant_for?(creator_a)).to be(true)
+      expect(agreement.participant_for?(create(:better_together_person))).to be(false)
+      expect(agreement.decision_made_at).to be_nil
+    end
+
     it 'records both creators as exchange participants' do
       agreement = create(:better_together_joatu_agreement, offer:, request:)
 
@@ -48,10 +61,16 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect { agreement.accept! }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
-    it 'prevents rejecting when either side is already closed' do
+    it 'allows rejecting a stale pending agreement even when either side is already closed' do
+      # Rejection only requires the agreement itself to still be pending — the underlying
+      # offer/request may already be closed (e.g. another agreement on the same offer was
+      # accepted first) and we still need to be able to reject the now-stale agreement.
+      # See ensure_reject_allowed! in app/models/better_together/joatu/agreement.rb.
       agreement = create(:better_together_joatu_agreement, offer:, request:)
       request.status_closed!
-      expect { agreement.reject! }.to raise_error(ActiveRecord::RecordInvalid)
+
+      expect { agreement.reject! }.not_to raise_error
+      expect(agreement.reload.status).to eq('rejected')
     end
 
     it 'prevents rejecting after accepted or already rejected' do
@@ -99,6 +118,8 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       connection = BetterTogether::PlatformConnection.find_by(source_platform:, target_platform:)
       expect(connection).to be_present
       expect(connection).to be_active
+      expect(agreement.agreement_type).to eq('network_connection_agreement')
+      expect(agreement.decision_made_at).to be_present
     end
 
     it 'creates a person link when accepting a person link request agreement' do
@@ -138,5 +159,36 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect(grant.allow_profile_read).to be(true)
       expect(grant.allow_private_posts).to be(false)
     end
+
+    it 'cancels an accepted C3-priced agreement, releases the lock, and reopens both sides' do
+      priced_offer = create(:better_together_joatu_offer, creator: creator_a, c3_price_millitokens: 20_000)
+      agreement = create(:better_together_joatu_agreement, offer: priced_offer, request:)
+      payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: creator_b)
+      # credit! takes Tree Seeds (not millitokens); must cover the 20_000-millitoken
+      # (20 Tree Seed) offer price, so credit comfortably above that amount.
+      payer_balance.credit!(25.0)
+
+      agreement.accept!
+
+      settlement = agreement.reload.settlement
+      lock = BetterTogether::C3::BalanceLock.find_by!(lock_ref: settlement.lock_ref)
+
+      agreement.cancel!
+
+      expect(agreement.reload.status).to eq('cancelled')
+      expect(settlement.reload.status).to eq('cancelled')
+      expect(lock.reload.status).to eq('released')
+      expect(priced_offer.reload.status).to eq('open')
+      expect(request.reload.status).to eq('open')
+      expect(agreement.decision_made_at).to be_present
+    end
+
+    it 'prevents cancelling an agreement before it is accepted' do
+      agreement = create(:better_together_joatu_agreement, offer:, request:)
+
+      expect { agreement.cancel! }.to raise_error(ActiveRecord::RecordInvalid)
+    end
   end
+
+  it_behaves_like 'platform scoped', factory: :'better_together/joatu/agreement'
 end

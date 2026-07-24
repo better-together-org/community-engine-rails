@@ -1,0 +1,50 @@
+{
+  "name": "comment_permission_controls_notification",
+  "device": "mobile",
+  "url": "/en/notifications",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "comment_permission_controls",
+  "flow": "comment_added_notification",
+  "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
+  "callouts": [
+    {
+      "selector": "#comment_added_notifier_notification_f9dbe8b6-6721-4ff7-a407-92a4f50dc8dd",
+      "title": "In-app notification for a new comment",
+      "bullets": [
+        "Delivered to the post's credited author(s) via governed_authors, not just its DB-row creator.",
+        "Only sent if the recipient has not turned off \"notify_on_comments\" in their preferences — the same check gates the email below.",
+        "Links straight to the comment via its dom_id anchor on the post."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 195.390625,
+        "width": 476.0,
+        "height": 211.375,
+        "right": 488.0,
+        "bottom": 406.765625,
+        "center_x": 250.0,
+        "center_y": 301.078125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 195.390625,
+        "width": 476.0,
+        "height": 211.375,
+        "right": 488.0,
+        "bottom": 406.765625,
+        "center_x": 250.0,
+        "center_y": 301.078125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 426.77,
+        "width": 270.0,
+        "height": 612,
+        "score": 854.234375
+      }
+    }
+  ]
+}

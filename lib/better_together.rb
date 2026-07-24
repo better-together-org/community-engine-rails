@@ -2,6 +2,7 @@
 
 require 'better_together/version'
 require 'better_together/adapter_registry'
+require 'better_together/profiling'
 require 'better_together/engine'
 require 'better_together/sitemap_helper'
 require 'better_together/mcp'
@@ -31,7 +32,12 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
+  mattr_accessor :head_tag_providers
+  mattr_accessor :registered_content_security_policy_sources
+  mattr_accessor :content_security
   self.swagger_additional_endpoints = []
+  self.head_tag_providers = {}
+  self.registered_content_security_policy_sources = Hash.new { |hash, key| hash[key] = [] }
   self.adapter_registry = BetterTogether::AdapterRegistry.new
 
   ADAPTER_GROUPS = %i[
@@ -120,10 +126,29 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
     end
 
     def llm_available?(identifier: nil, platform: Current.platform)
-      return true if adapters_for(:llm).any?
-
       robot = resolve_llm_robot(identifier:, platform:)
-      llm_provider_available?(robot)
+      llm_provider_available?(robot:)
+    end
+
+    def llm_provider_available?(robot: nil, provider: nil)
+      normalized_provider = provider.presence || robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
+
+      case normalized_provider.to_s
+      when 'openai'
+        openai_credentials_present?
+      when 'ollama'
+        true
+      else
+        adapter_for(:llm, normalized_provider).present?
+      end
+    end
+
+    def openai_credentials_present?
+      ENV.fetch('OPENAI_API_KEY', nil).present? || ENV.fetch('OPENAI_ACCESS_TOKEN', nil).present?
+    end
+
+    def translation_available?(platform: Current.platform)
+      llm_available?(identifier: 'translation', platform:)
     end
 
     def e2ee_messaging_enabled?
@@ -179,6 +204,21 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       base_url + user_confirmation_path
     end
 
+    def register_head_tag_provider(key, callable = nil, &block)
+      provider = callable || block
+      raise ArgumentError, 'provider must respond to call' unless provider.respond_to?(:call)
+
+      head_tag_providers[key.to_sym] = provider
+    end
+
+    def register_content_security_policy_sources(directive, *sources)
+      directive_sources = registered_content_security_policy_sources[directive.to_sym]
+
+      sources.flatten.compact.each do |source|
+        directive_sources << source unless directive_sources.include?(source)
+      end
+    end
+
     private
 
     def default_error_reporter(exception, context: {})
@@ -191,18 +231,6 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       return unless identifier.present? && defined?(BetterTogether::Robot)
 
       BetterTogether::Robot.resolve(identifier:, platform:)
-    end
-
-    def llm_provider_available?(robot)
-      provider = robot&.llm_provider || ENV.fetch('BETTER_TOGETHER_LLM_PROVIDER', 'openai')
-      return openai_llm_available? if provider == 'openai'
-      return true if provider == 'ollama'
-
-      robot.present?
-    end
-
-    def openai_llm_available?
-      ENV.fetch('OPENAI_API_KEY', nil).present? || ENV.fetch('OPENAI_ACCESS_TOKEN', nil).present?
     end
   end
 end

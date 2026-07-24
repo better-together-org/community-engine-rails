@@ -1,0 +1,15 @@
+---
+title: Post Editor -- Federation Visibility Field
+audience:
+- member
+- developer
+journey_step: As a member, I open one of my posts and set it to never federate, overriding
+  my own account-wide federation preference for just this item.
+callouts:
+- :id: federation_field
+  :title: Per-item federation override
+  :description: A three-way select next to the existing privacy control.
+accessibility_notes: The select has an explicit <label for=...> pair and a visible
+  hint below it.
+slug: post_federation_visibility_field
+device: desktop

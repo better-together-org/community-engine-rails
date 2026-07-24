@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Restorative agreement tracked as part of a safety case.
-    class Agreement < ApplicationRecord
+    class Agreement < PlatformRecord
       self.table_name = 'better_together_safety_agreements'
 
       enum :status, {

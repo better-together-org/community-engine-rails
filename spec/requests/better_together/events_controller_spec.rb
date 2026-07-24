@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::EventsController', :as_user do
   let(:locale) { I18n.default_locale }
   let!(:publishing_agreement) do
@@ -14,13 +15,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
   describe 'GET /events/:id.ics' do
     let(:test_event) do
-      BetterTogether::Event.create!(
-        name: 'Community Gathering',
-        starts_at: 2.days.from_now,
-        ends_at: 3.days.from_now,
-        identifier: SecureRandom.uuid,
-        privacy: 'public'
-      )
+      create(:better_together_event,
+             name: 'Community Gathering',
+             starts_at: 2.days.from_now,
+             ends_at: 3.days.from_now,
+             identifier: SecureRandom.uuid,
+             privacy: 'public')
     end
 
     context 'with a published event (starts_at present)' do
@@ -59,13 +59,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
     context 'with a draft event (starts_at nil)' do
       let(:draft_event) do
-        BetterTogether::Event.create!(
-          name: 'Draft Event',
-          starts_at: nil,
-          ends_at: nil,
-          identifier: SecureRandom.uuid,
-          privacy: 'public'
-        )
+        create(:better_together_event,
+               name: 'Draft Event',
+               starts_at: nil,
+               ends_at: nil,
+               identifier: SecureRandom.uuid,
+               privacy: 'public')
       end
 
       it 'denies access to .ics format' do
@@ -82,14 +81,13 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       let(:draft_event) do
-        BetterTogether::Event.create!(
-          name: 'Draft Event by Manager',
-          starts_at: nil,
-          ends_at: nil,
-          identifier: SecureRandom.uuid,
-          privacy: 'public',
-          creator: manager_user.person
-        )
+        create(:better_together_event,
+               name: 'Draft Event by Manager',
+               starts_at: nil,
+               ends_at: nil,
+               identifier: SecureRandom.uuid,
+               privacy: 'public',
+               creator: manager_user.person)
       end
 
       it 'denies access to .ics format even for creator' do
@@ -103,13 +101,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
   describe 'GET /events/:id/ics (standalone ics action)' do
     context 'with a published event (starts_at present)' do
       let(:test_event) do
-        BetterTogether::Event.create!(
-          name: 'Community Gathering',
-          starts_at: 2.days.from_now,
-          ends_at: 3.days.from_now,
-          identifier: SecureRandom.uuid,
-          privacy: 'public'
-        )
+        create(:better_together_event,
+               name: 'Community Gathering',
+               starts_at: 2.days.from_now,
+               ends_at: 3.days.from_now,
+               identifier: SecureRandom.uuid,
+               privacy: 'public')
       end
 
       it 'returns successful response' do
@@ -121,13 +118,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
     context 'with a draft event (starts_at nil)' do
       let(:draft_event) do
-        BetterTogether::Event.create!(
-          name: 'Draft Event',
-          starts_at: nil,
-          ends_at: nil,
-          identifier: SecureRandom.uuid,
-          privacy: 'public'
-        )
+        create(:better_together_event,
+               name: 'Draft Event',
+               starts_at: nil,
+               ends_at: nil,
+               identifier: SecureRandom.uuid,
+               privacy: 'public')
       end
 
       it 'denies access to standalone ics action' do
@@ -145,13 +141,12 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     end
 
     let(:event) do
-      BetterTogether::Event.create!(
-        name: 'Neighborhood Clean-up',
-        starts_at: 1.day.from_now,
-        identifier: SecureRandom.uuid,
-        privacy: 'public',
-        creator: manager_user.person
-      )
+      create(:better_together_event,
+             name: 'Neighborhood Clean-up',
+             starts_at: 1.day.from_now,
+             identifier: SecureRandom.uuid,
+             privacy: 'public',
+             creator: manager_user.person)
     end
 
     context 'as platform manager', :as_platform_manager do
@@ -180,14 +175,14 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         create(:evidence_link, claim:, citation:, relation_type: 'supports')
       end
 
-      it 'renders claims and bibliography on the show page' do
+      it 'keeps claims and bibliography out of the public show page' do
         get better_together.event_path(event, locale:)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('Claims and Supporting Evidence')
-        expect(response.body).to include('Evidence and Citations')
-        expect(response.body).to include('This event is community-led.')
-        expect(response.body).to include('Event agenda')
+        expect(response.body).not_to include('Claims and Supporting Evidence')
+        expect(response.body).not_to include('Evidence and Citations')
+        expect(response.body).not_to include('This event is community-led.')
+        expect(response.body).not_to include('Event agenda')
       end
     end
   end
@@ -196,16 +191,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     let(:user_email) { 'manager@example.test' }
     let(:password) { 'SecureTest123!@#' }
     let(:event) do
-      BetterTogether::Event.create!(name: 'RSVP Test', starts_at: 1.day.from_now, identifier: SecureRandom.uuid)
+      create(:better_together_event, name: 'RSVP Test', starts_at: 1.day.from_now, identifier: SecureRandom.uuid)
     end
 
-    it 'requires login' do
+    it 'requires login', :no_auth do
       post better_together.rsvp_going_event_path(event, locale:)
 
       expect(response).to have_http_status(:found)
     end
 
-    it 'prevents RSVP creation without login' do
+    it 'prevents RSVP creation without login', :no_auth do
       post better_together.rsvp_going_event_path(event, locale:)
 
       expect(BetterTogether::EventAttendance.where(event:).count).to eq(0)
@@ -236,7 +231,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
       context 'with draft events' do # rubocop:todo RSpec/NestedGroups
         let(:draft_event) do
-          BetterTogether::Event.create!(name: 'Draft RSVP Test', identifier: SecureRandom.uuid)
+          create(:better_together_event, name: 'Draft RSVP Test', identifier: SecureRandom.uuid, starts_at: nil)
         end
 
         it 'prevents RSVP for draft events' do # rubocop:todo RSpec/MultipleExpectations
@@ -284,6 +279,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: 1.day.from_now.iso8601,
             identifier: SecureRandom.uuid,
             privacy: 'public',
+            creator_id: manager_user.person.id,
             location_attributes: {
               name: 'Community Hall'
             }
@@ -312,6 +308,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: 1.day.from_now.iso8601,
             identifier: SecureRandom.uuid,
             privacy: 'public',
+            creator_id: manager_user.person.id,
             location_attributes: {
               location_id: address.id,
               location_type: 'BetterTogether::Address'
@@ -342,6 +339,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: 1.day.from_now.iso8601,
             identifier: SecureRandom.uuid,
             privacy: 'public',
+            creator_id: manager_user.person.id,
             location_attributes: {
               location_id: building.id,
               location_type: 'BetterTogether::Infrastructure::Building'
@@ -368,7 +366,8 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
           event: {
             name: 'Draft Event Without Location',
             identifier: SecureRandom.uuid,
-            privacy: 'public'
+            privacy: 'public',
+            creator_id: manager_user.person.id
             # intentionally omit starts_at to keep it a draft and omit location_attributes
           },
           locale: locale
@@ -382,6 +381,106 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(event.starts_at).to be_nil
         expect(event).to be_draft
         expect(event.location).to be_nil
+      end
+
+      it 'renders new when create params are invalid', :aggregate_failures do
+        expect do
+          post better_together.events_path(locale: locale), params: {
+            event: {
+              name: '',
+              starts_at: 1.day.from_now.iso8601,
+              identifier: SecureRandom.uuid,
+              privacy: 'private'
+            }
+          }
+        end.not_to change(BetterTogether::Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'updates an existing event', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Coverage Event')
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: 'Updated Coverage Event',
+            privacy: 'private'
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload.name).to eq('Updated Coverage Event')
+      end
+
+      it 'renders the federation_visibility field on edit', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('event[federation_visibility]')
+      end
+
+      it 'renders a per-connection grant row for each active connection allowing events', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+        connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_events: true)
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("event[federation_content_grants_by_connection][#{connection.id}]")
+      end
+
+      it 'persists an explicit federation_visibility override on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Coverage Event')
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_visibility: 'no_federate'
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload).to be_federation_visibility_no_federate
+      end
+
+      it 'persists a per-connection federation grant on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Grant Coverage Event')
+        connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_events: true)
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_content_grants_by_connection: { connection.id => 'denied' }
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload.federation_grant_status_for(connection)).to eq('denied')
+      end
+
+      it 'destroys an unprotected event', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Destroy Coverage Event')
+
+        delete better_together.event_path(event, locale: locale)
+
+        expect(response).to be_redirect
+        expect(BetterTogether::Event.exists?(event.id)).to be(false)
       end
     end
   end
@@ -416,7 +515,8 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
             starts_at: '2026-03-15T14:00',  # 2:00 PM in local time
             ends_at: '2026-03-15T16:00',    # 4:00 PM in local time
             identifier: SecureRandom.uuid,
-            privacy: 'public'
+            privacy: 'public',
+            creator_id: BetterTogether::User.find_by(email: 'manager@example.test').person.id
           },
           locale: locale
         }
@@ -552,17 +652,63 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'paginates draft, upcoming, and past event groups independently' do # rubocop:todo RSpec/MultipleExpectations
-      create_list(:event, 3, :draft)
-      create_list(:event, 3, starts_at: 2.days.from_now)
-      create_list(:event, 3, starts_at: 2.days.ago)
+    it 'paginates the unified events collection' do # rubocop:todo RSpec/MultipleExpectations
+      create_list(:event, 3, starts_at: 2.days.from_now, ends_at: 2.days.from_now + 2.hours)
 
-      get better_together.events_path(locale:, draft_page: 2, upcoming_page: 2, past_page: 2, per: 2)
+      get better_together.events_path(locale:, page: 1, per_page: 10)
 
       expect(response).to have_http_status(:ok)
-      expect(assigns(:draft_events).current_page).to eq(2)
-      expect(assigns(:upcoming_events).current_page).to eq(2)
-      expect(assigns(:past_events).current_page).to eq(2)
+      expect(assigns(:events).current_page).to eq(1)
+      expect(assigns(:events).limit_value).to eq(10)
     end
   end
 end
+
+RSpec.describe 'BetterTogether::EventsController self-service publishing agreement gate' do
+  let(:locale) { I18n.default_locale }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
+  let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+  let(:member_user) { create(:better_together_user, :confirmed) }
+
+  before do
+    BetterTogether::PersonCommunityMembership.create!(
+      joinable: host_community, member: member_user.person, role: member_role, status: 'active'
+    )
+    login(member_user.email, 'SecureTest123!@#')
+  end
+
+  it 'redirects GET new to the publishing agreement page when the member has not accepted it' do
+    get better_together.new_event_path(locale:)
+
+    expect(response).to redirect_to(%r{/agreements/})
+  end
+
+  it 'allows the member to self-host an event once the agreement is accepted' do
+    grant_content_publishing_agreement(member_user.person)
+
+    expect do
+      post better_together.events_path(locale:), params: {
+        event: {
+          name: 'Member Hosted Event',
+          starts_at: 1.week.from_now,
+          ends_at: 1.week.from_now + 2.hours,
+          identifier: SecureRandom.uuid,
+          privacy: 'private',
+          event_hosts_attributes: [{ host_type: 'BetterTogether::Community', host_id: host_community.id }]
+        }
+      }
+    end.to change(BetterTogether::Event, :count).by(1)
+  end
+end
+
+RSpec.describe 'BetterTogether::EventsController self-service gate platform manager bypass', :as_platform_manager do
+  let(:locale) { I18n.default_locale }
+
+  it 'GET new succeeds for a platform manager without any agreement acceptance' do
+    get better_together.new_event_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+  end
+end
+# rubocop:enable RSpec/MultipleDescribes

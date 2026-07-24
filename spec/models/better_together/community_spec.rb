@@ -5,8 +5,6 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Community, :skip_host_setup do
   subject(:community) { build(:better_together_community) }
 
-  it_behaves_like 'an indexed searchable model', :better_together_community
-
   describe 'Factory' do
     it 'has a valid factory' do
       expect(community).to be_valid
@@ -96,6 +94,48 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
     end
   end
 
+  describe '#optimized_cover_image' do
+    let(:community) { build(:better_together_community) }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:cover_image) { double('cover_image', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      allow(community).to receive(:cover_image).and_return(cover_image)
+    end
+
+    context 'when the cover image is a PNG' do
+      let(:content_type) { 'image/png' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(cover_image).to receive(:variant).with(:optimized_png).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(community.optimized_cover_image).to eq(attachment_variant)
+      end
+    end
+  end
+
+  describe '#optimized_logo' do
+    let(:community) { build(:better_together_community) }
+    let(:attachment_variant) { double('attachment_variant') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:logo) { double('logo', content_type: content_type) } # rubocop:todo RSpec/VerifiedDoubles
+
+    before do
+      allow(community).to receive(:logo).and_return(logo)
+    end
+
+    context 'when the logo is a JPEG' do
+      let(:content_type) { 'image/jpeg' }
+
+      it 'returns the named variant without forcing request-time processing' do
+        allow(logo).to receive(:variant).with(:optimized_jpeg).and_return(attachment_variant)
+        expect(attachment_variant).not_to receive(:processed)
+
+        expect(community.optimized_logo).to eq(attachment_variant)
+      end
+    end
+  end
+
   describe 'callbacks' do
     describe '#create_default_calendar' do
       it 'creates uniquely slugged default calendars for different communities' do
@@ -125,10 +165,37 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
       it 'adds an error if host is set and another host community exists' do
         relation = double('ActiveRecord::Relation', exists?: true) # rubocop:todo RSpec/VerifiedDoubles
         allow(described_class).to receive(:where).and_return(relation)
-        allow(relation).to receive(:not).and_return(relation)
+        allow(relation).to receive_messages(not: relation, where: relation)
         community.host = true
         community.valid?
         expect(community.errors[:host]).to include(I18n.t('errors.models.host_single'))
+      end
+    end
+
+    describe '#membership_requests_enabled?' do
+      let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+      let(:non_host_community) { create(:better_together_community, allow_membership_requests: true) }
+
+      context 'when the community has a primary_platform' do
+        it 'uses the primary_platform setting' do
+          host_platform.update!(allow_membership_requests: true)
+          host_community = described_class.find_by(host: true)
+          host_community.update!(allow_membership_requests: true)
+          expect(host_community.membership_requests_enabled?).to be true
+        end
+      end
+
+      context 'when the community has no primary_platform (non-host community)' do
+        it 'falls back to the host Platform setting when host platform allows requests' do
+          host_platform.update!(allow_membership_requests: true)
+          expect(non_host_community.primary_platform).to be_nil
+          expect(non_host_community.membership_requests_enabled?).to be true
+        end
+
+        it 'returns false when the host Platform disallows requests' do
+          host_platform.update!(allow_membership_requests: false)
+          expect(non_host_community.membership_requests_enabled?).to be false
+        end
       end
     end
   end

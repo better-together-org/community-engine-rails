@@ -7,6 +7,7 @@ require 'rails_helper'
 # All actions require manage_platform permission (enforced via route constraint + Pundit).
 RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:platform) do
     create(:better_together_platform,
            identifier: "platform-#{SecureRandom.hex(6)}",
@@ -57,6 +58,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       get index_path
       expect(response.body).not_to include(other_config.name)
     end
+
+    it 'redirects signed-in non-managers away from index' do
+      sign_in regular_user
+
+      get index_path
+
+      expect(response).to have_http_status(:not_found)
+    end
   end
 
   # ---------------------------------------------------------------------------
@@ -76,6 +85,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
     it 'includes the service_type field' do
       get new_path
       expect(response.body).to include('storage_configuration[service_type]')
+    end
+
+    it 'redirects signed-in non-managers away from new' do
+      sign_in regular_user
+
+      get new_path
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -277,8 +294,14 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       # I18n value contains single quotes which Rails HTML-escapes to &#39;
       # in the rendered flash partial; use expect_html_content so Nokogiri
       # decodes entities before the string comparison.
+      #
+      # The controller's activate action sets the notice from the
+      # `activated_with_restart` key (it also touches restart.txt and rebinds
+      # the active storage service so other app processes pick up the
+      # change) - not the older, simpler `activated` key this spec was still
+      # asserting against.
       expect_html_content(
-        I18n.t('better_together.storage_configurations.activated', name: config.name)
+        I18n.t('better_together.storage_configurations.activated_with_restart', name: config.name)
       )
     end
   end
