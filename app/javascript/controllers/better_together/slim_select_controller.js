@@ -43,7 +43,7 @@ export default class extends Controller {
       }
     }
 
-    this.initializeSlimSelect(optionsData);
+    // this.initializeSlimSelect(optionsData);
   }
 
   // Reinitializes SlimSelect when the options value changes after the initial
@@ -264,7 +264,7 @@ export default class extends Controller {
     const fullUrl = new URL(url, window.location.origin);
     // Add timestamp to prevent caching
     fullUrl.searchParams.append('_', Date.now().toString());
-    
+
     return fetch(fullUrl.toString(), {
       method: 'GET',
       headers: {
