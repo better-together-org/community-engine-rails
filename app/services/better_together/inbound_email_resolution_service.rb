@@ -11,8 +11,12 @@ module BetterTogether
       'membership_request' => /\Arequests\+(.+)\z/
     }.freeze
 
-    def initialize(address)
+    # @param sender [Mail::Address, nil] the parsed From: address. Required for agent+
+    #   resolution to verify the sender is actually the person being addressed — without it,
+    #   agent+<identifier>@ resolution always fails closed (see #sender_matches_person?).
+    def initialize(address, sender: nil)
       @address = address
+      @sender = sender
     end
 
     def resolve
@@ -27,8 +31,9 @@ module BetterTogether
 
     def platform_for
       hostname = BetterTogether::PlatformDomain.normalize_hostname(@address.domain.to_s.downcase)
+      platform = BetterTogether::PlatformDomain.resolve(hostname)&.platform || platform_from_host_url(hostname)
 
-      BetterTogether::PlatformDomain.resolve(hostname)&.platform || platform_from_host_url(hostname)
+      platform if platform&.allow_inbound_mail?
     end
 
     def route_target_for(platform)
@@ -44,9 +49,20 @@ module BetterTogether
     end
 
     def target_for(route_kind, identifier, platform)
-      return community_by_slug(identifier, platform) if %w[community membership_request].include?(route_kind)
+      return membership_request_target(identifier, platform) if route_kind == 'membership_request'
+      return community_by_slug(identifier, platform) if route_kind == 'community'
 
       route_kind == 'agent' ? agent_by_identifier(identifier, platform) : nil
+    end
+
+    # requests+ additionally requires the target community to have membership requests
+    # enabled — community_by_slug alone only proves the alias points at the platform's own
+    # community, not that the community/platform actually opted in to accepting them.
+    def membership_request_target(slug, platform)
+      community = community_by_slug(slug, platform)
+      return nil unless community&.membership_requests_enabled?(platform:)
+
+      community
     end
 
     def community_by_slug(slug, platform)
@@ -60,11 +76,30 @@ module BetterTogether
     end
 
     def agent_by_identifier(identifier, platform)
-      tenant_robot(identifier, platform) ||
-        BetterTogether::Person
-          .joins(:person_platform_memberships)
-          .merge(BetterTogether::PersonPlatformMembership.active.where(joinable: platform))
-          .find_by(identifier:)
+      tenant_robot(identifier, platform) || verified_tenant_person(identifier, platform)
+    end
+
+    # Person resolution is intentionally sender-verified: the local-part identifier alone
+    # is often guessable/public, and nothing else in the inbound-mail pipeline authenticates
+    # the From: header (no SPF/DKIM/DMARC checking exists upstream). Without this check,
+    # anyone could cause a message to be attributed to (routed as if sent by) an arbitrary
+    # real person just by guessing their identifier. Robots have no equivalent sender concept
+    # to verify against, so tenant_robot resolution above is unaffected.
+    def verified_tenant_person(identifier, platform)
+      person = BetterTogether::Person
+               .joins(:person_platform_memberships)
+               .merge(BetterTogether::PersonPlatformMembership.active.where(joinable: platform))
+               .find_by(identifier:)
+      return nil unless person && sender_matches_person?(person)
+
+      person
+    end
+
+    def sender_matches_person?(person)
+      sender_email = @sender&.address.to_s.downcase
+      person_email = person.email.to_s.downcase
+
+      sender_email.present? && person_email.present? && sender_email == person_email
     end
 
     def build_resolution(route_kind, target, platform)

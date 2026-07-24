@@ -49,6 +49,11 @@ module BetterTogether
     store_attributes :settings do
       requires_invitation Boolean, default: true
       allow_membership_requests Boolean, default: false
+      # Master gate for the whole inbound-mail alias surface (community+/agent+/requests+).
+      # Defaults true to preserve existing behavior for platforms already relying on it;
+      # requests+ is additionally gated by allow_membership_requests via
+      # Community#membership_requests_enabled?.
+      allow_inbound_mail Boolean, default: true
       contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
