@@ -43,15 +43,26 @@ export default class extends Controller {
       }
     }
 
-    // this.initializeSlimSelect(optionsData);
+    this.initializeSlimSelect(optionsData);
+
+    // Marks connect()'s own init as done so optionsValueChanged (below) can tell
+    // its pre-connect invocation apart from a genuine post-connect mutation.
+    this.hasInitialized = true;
   }
 
   // Reinitializes SlimSelect when the options value changes after the initial
   // connect (e.g. a sibling radio-driven controller swaps the AJAX source URL
   // for a new polymorphic type). Existing callers never mutate their options
-  // value post-connect, so this callback never fires for them — additive only.
+  // value post-connect, so this callback never fires a reinit for them.
+  //
+  // Stimulus invokes this callback once during setup, before connect() runs,
+  // with previousValue set to the Value type's default (e.g. `{}` for an
+  // Object value) rather than `undefined` — so `previousValue === undefined`
+  // never actually holds and can't be used to detect "this is the initial
+  // call". Guard on our own hasInitialized flag instead, set at the end of
+  // connect() once its own initializeSlimSelect call has run.
   optionsValueChanged(value, previousValue) {
-    if (previousValue === undefined) return // initial connect already handled it
+    if (!this.hasInitialized) return // connect() hasn't run its own init yet
 
     if (this.slimSelect) {
       this.slimSelect.destroy();

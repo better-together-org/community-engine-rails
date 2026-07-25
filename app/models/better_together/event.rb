@@ -313,6 +313,13 @@ module BetterTogether
     delegate :display_name, to: :location, prefix: true, allow_nil: true
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
 
+    # Overrides Geospatial::One's default `geocoding_string` (which falls back to
+    # `to_s`, i.e. the event's name) so the shared geocoded_by/schedule_geocoding
+    # hooks geocode the event's actual structured location, not its title text.
+    def geocoding_string
+      location_geocoding_string
+    end
+
     # Public URL to this event for use in ICS export
     def url
       BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
