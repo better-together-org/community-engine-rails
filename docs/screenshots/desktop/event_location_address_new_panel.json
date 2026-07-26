@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 394.5,
-        "y": 719.0,
+        "y": 795.0,
         "width": 966.0,
         "height": 403.0,
         "right": 1360.5,
-        "bottom": 1122.0,
+        "bottom": 1198.0,
         "center_x": 877.5,
-        "center_y": 920.5
+        "center_y": 996.5
       },
       "avoid": {
         "x": 394.5,
-        "y": 719.0,
+        "y": 795.0,
         "width": 966.0,
         "height": 403.0,
         "right": 1360.5,
-        "bottom": 1122.0,
+        "bottom": 1198.0,
         "center_x": 877.5,
-        "center_y": 920.5
+        "center_y": 996.5
       },
       "placement": {
         "side": "above",
         "x": 687.5,
-        "y": 463.0,
+        "y": 539.0,
         "width": 380,
         "height": 236,
-        "score": 719.0
+        "score": 795.0
       }
     }
   ]

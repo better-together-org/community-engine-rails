@@ -19,7 +19,7 @@ flowchart TD
 
   subgraph Collection["Collection map (events index page)"]
     direction TB
-    J["EventCollectionMap < LocatableMap\n(mappable_class = Event)"] --> K["records:\nEvent.joins(:location)\n.includes(location: :location)"]
+    J["EventCollectionMap < LocatableMap\n(mappable_class = Event)"] --> K["records:\nEvent.joins(:location)\n.includes(location: { location: :space })"]
     K --> L["records.flat_map(&:leaflet_points)"]
     F -.->|"per-event leaflet_points"| L
     L --> I

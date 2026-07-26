@@ -18,10 +18,10 @@ flowchart TD
 
   L --> N["LocatableLocation#location_attributes="]
   M --> N
-  N --> O{location_id present?}
-  O -->|Yes| P["assign_location_by_id:\nlook up the existing record"]
-  O -->|No| Q["assign_location_by_type:\ndispatch via Placeable.included_in_models"]
-  Q --> R["Address/Building#locatable_location_build:\nbuild a new record"]
+  N --> O{"id" present?}
+  O -->|Yes| P["assign_location_by_id:\nlook up the existing record\nacross every allowed type"]
+  O -->|"No\n(picker submits location_id, not id)"| Q["assign_location_by_type:\ndispatch via Placeable.included_in_models"]
+  Q --> R["klass.locatable_location_build(attrs):\nlooks up by id/location_id first,\nonly builds a new record if not found"]
 
   P --> S["belongs_to :location, autosave: true"]
   R --> S
