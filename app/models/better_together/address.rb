@@ -39,10 +39,22 @@ module BetterTogether
       ]
     end
 
-    # Placeable: build a new Address from nested locatable_location attrs (unlike
-    # Settlement/Region, which rely on Placeable's lookup-only default).
+    # Placeable: reuse an existing Address when the picker selected one (matching
+    # Placeable's own default lookup), otherwise build a new Address from nested
+    # locatable_location attrs (unlike Settlement/Region, which rely on Placeable's
+    # lookup-only default for every case).
+    #
+    # attrs may carry keys that only make sense on LocatableLocation itself (name,
+    # location_id, location_type, ...) — slice down to Address's own permitted
+    # attributes instead of blacklisting individual foreign keys, so passing an
+    # unrelated key here raises a clear "not permitted" error at the controller
+    # layer rather than an ActiveModel::UnknownAttributeError from .new.
     def self.locatable_location_build(attrs)
-      new(attrs.except('id', '_destroy', 'location_type'))
+      existing = find_by(id: attrs['id'] || attrs['location_id'])
+      return existing if existing
+
+      allowed_keys = permitted_attributes(id: true).grep(Symbol).map(&:to_s)
+      new(attrs.slice(*allowed_keys))
     end
 
     def geocoding_string

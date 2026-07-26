@@ -208,7 +208,7 @@
 
                     <% location_type_map.each_key do |key| %>
                       <input type="radio" class="btn-check" name="location_type_selector" id="<%= key %>_location" value="<%= key %>"
-                              <%= 'checked' if event.location&.public_send("#{key}?") %>
+                              <%= 'checked' if event.location&.location_type_matches?(key) %>
                               data-action="change->better_together--location-selector#toggleLocationType">
                       <label class="btn btn-outline-primary" for="<%= key %>_location">
                         <%= t("better_together.events.location_types.#{key}") %>
@@ -227,7 +227,7 @@
                 </div>
 
                 <!-- Structured Location (Address / Building / Settlement / Region) -->
-                <% current_location_key = location_type_map.each_key.find { |key| event.location&.public_send("#{key}?") } %>
+                <% current_location_key = location_type_map.each_key.find { |key| event.location&.location_type_matches?(key) } %>
                 <div class="mb-3" data-better_together--location-selector-target="structuredLocation"
                       style="<%= 'display: none;' unless current_location_key %>">
                   <%= location_form.label :location_id, t('better_together.events.labels.select_location'), class: 'form-label' %>

@@ -63,12 +63,17 @@ module BetterTogether
         ] + super
       end
 
-      # Placeable: build a new Building from nested locatable_location attrs. Building may
-      # include nested address attributes; hoist any top-level address attribute keys into
-      # address_attributes so Building.new receives them nested as it expects.
-      def self.locatable_location_build(attrs) # rubocop:todo Metrics/MethodLength
+      # Placeable: reuse an existing Building when the picker selected one (matching
+      # Placeable's own default lookup), otherwise build a new Building from nested
+      # locatable_location attrs. Building may include nested address attributes; hoist
+      # any top-level address attribute keys into address_attributes so Building.new
+      # receives them nested as it expects.
+      def self.locatable_location_build(attrs) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        existing = find_by(id: attrs['id'] || attrs['location_id'])
+        return existing if existing
+
         attrs = attrs.dup
-        address_keys = BetterTogether::Address.permitted_attributes(id: true, destroy: true).map(&:to_s)
+        address_keys = BetterTogether::Address.permitted_attributes(id: true, destroy: true).grep(Symbol).map(&:to_s)
 
         attrs['address_attributes'] ||= {}
         address_keys.each do |akey|

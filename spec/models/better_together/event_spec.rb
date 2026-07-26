@@ -415,6 +415,19 @@ module BetterTogether # :nodoc:
           expect(points.first).to include(lat: 47.5615, lng: -52.7126)
           expect(points.first[:popup_html]).to include(event.location.display_name)
         end
+
+        it 'HTML-escapes the event name in the popup so it cannot inject markup/script content' do
+          malicious_name = "<img src=x onerror=alert('xss')>"
+          event = create(:event, :with_address_location, name: malicious_name)
+          address = event.location.location
+          create(:geography_geospatial_space, geospatial: address, space: create(:geography_space))
+          address.reload
+
+          popup_html = event.leaflet_points.first[:popup_html]
+
+          expect(popup_html).not_to include(malicious_name)
+          expect(popup_html).to include(ERB::Util.html_escape(malicious_name))
+        end
       end
 
       describe '#spaces' do

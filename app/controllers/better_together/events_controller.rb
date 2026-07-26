@@ -107,7 +107,7 @@ module BetterTogether
     # Returns available locations for a given location type (Address, Building,
     # Settlement, Region). Used by the event location form to populate the
     # SlimSelect options for whichever type the location-type radio selects.
-    def available_locations
+    def available_locations # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       authorize BetterTogether::Event, :available_locations?
 
       klass = BetterTogether::Geography::Placeable.included_in_models.find do |allowed_klass|
@@ -119,7 +119,14 @@ module BetterTogether
         return
       end
 
-      options = location_scope_for(klass).map do |record|
+      scope = location_scope_for(klass)
+
+      unless scope
+        render json: { error: 'Invalid location type' }, status: :unprocessable_entity
+        return
+      end
+
+      options = scope.map do |record|
         text = record.respond_to?(:to_formatted_s) ? record.to_formatted_s : record.to_s
         { value: record.id, text: text }
       end
@@ -254,17 +261,18 @@ module BetterTogether
     # Dispatches to the existing, already-scoped LocatableLocation lookup methods —
     # Address/Building are Pundit-policy-scoped to current_person; Settlement/Region
     # are unscoped curated reference data (see LocatableLocation.available_*_for).
+    #
+    # Derives the method name from klass itself (matching the same
+    # klass.name.demodulize.underscore convention the view's location_type_map already
+    # uses) instead of a hardcoded case/when, so a future Geography::Placeable includer
+    # only needs a matching LocatableLocation.available_<type>_for method defined —
+    # no controller change required. Returns nil (handled by the caller) rather than
+    # raising when that scope method doesn't exist yet.
     def location_scope_for(klass)
-      case klass.name
-      when 'BetterTogether::Address'
-        BetterTogether::Geography::LocatableLocation.available_addresses_for(helpers.current_person)
-      when 'BetterTogether::Infrastructure::Building'
-        BetterTogether::Geography::LocatableLocation.available_buildings_for(helpers.current_person)
-      when 'BetterTogether::Geography::Settlement'
-        BetterTogether::Geography::LocatableLocation.available_settlements_for(helpers.current_person)
-      when 'BetterTogether::Geography::Region'
-        BetterTogether::Geography::LocatableLocation.available_regions_for(helpers.current_person)
-      end
+      method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
+      return unless BetterTogether::Geography::LocatableLocation.respond_to?(method_name)
+
+      BetterTogether::Geography::LocatableLocation.public_send(method_name, helpers.current_person)
     end
 
     # index skips the :resource_collection before_action (see

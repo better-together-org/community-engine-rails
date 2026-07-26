@@ -20,8 +20,16 @@ module BetterTogether
         ::BetterTogether::Event
       end
 
+      # Preloads through `location: :space` (a 3rd level beyond the join used for
+      # filtering) so #leaflet_points/#spaces below — which read
+      # location.location.space via Locatable::One — don't N+1 per event. `space` is a
+      # has_one :through :geospatial_space (from Geospatial::One, included by every
+      # Placeable target: Address/Building/Settlement/Region), so Rails preloads the
+      # intermediate geospatial_space transparently.
       def self.records
-        mappable_class.joins(:location).includes(location: :location).order(created_at: :desc)
+        mappable_class.joins(:location)
+                      .includes(location: { location: :space })
+                      .order(created_at: :desc)
       end
 
       def records

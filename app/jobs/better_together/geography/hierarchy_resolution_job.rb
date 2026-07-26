@@ -117,7 +117,7 @@ module BetterTogether
       def resolve_country_by_iso_code(locatable, resolved)
         return if resolved[:country]
 
-        country_code = locatable.space&.metadata&.dig('geocode', 'address', 'country_code')
+        country_code = geocode_metadata_field(locatable, 'country_code')
         return if country_code.blank?
 
         country = BetterTogether::Geography::Country.find_by(iso_code: country_code.upcase)
@@ -141,7 +141,7 @@ module BetterTogether
       def resolve_state_by_name_similarity(locatable, resolved)
         return if resolved[:state] || resolved[:country].nil?
 
-        state_name = locatable.space&.metadata&.dig('geocode', 'address', 'state')
+        state_name = geocode_metadata_field(locatable, 'state')
         return if state_name.blank?
 
         match = state_name_similarity_scope(resolved[:country], state_name).first
@@ -149,6 +149,20 @@ module BetterTogether
 
         upsert_placement(locatable, :state, match, 'name_similarity')
         resolved[:state] = match
+      end
+
+      # Reads a geocode metadata field, checking Nominatim's real nested `address`
+      # sub-hash first, then falling back to a flat top-level key. GeocodingJob stores
+      # whatever the active Geocoder lookup returns verbatim — real Nominatim (production)
+      # nests fields under 'address', but Geocoder's non-production `:test` lookup (used
+      # everywhere outside production per config/initializers/geocoder.rb) stores a flat
+      # stub hash with no 'address' key, so relying on the nested read alone silently
+      # no-ops these fallbacks in every dev/test/CI environment.
+      def geocode_metadata_field(locatable, key)
+        geocode = locatable.space&.metadata&.dig('geocode')
+        return nil unless geocode
+
+        geocode.dig('address', key) || geocode[key]
       end
 
       def state_name_similarity_scope(country, state_name)

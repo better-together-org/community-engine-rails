@@ -106,6 +106,23 @@ RSpec.describe BetterTogether::Geography::HierarchyResolutionJob do
         expect(placement.location).not_to eq(other_country)
         expect(placement.resolution_method).to eq('polygon')
       end
+
+      it 'also resolves from a flat (non-nested) country_code — the shape GeocodingJob actually ' \
+         'stores via Geocoder\'s non-production :test lookup' do
+        country = create(:geography_country, iso_code: 'CA')
+
+        address = create(:better_together_address)
+        address.space.latitude = corner_brook_lat
+        address.space.longitude = corner_brook_lng
+        address.space.metadata = { 'geocode' => { 'country_code' => 'ca' } }
+        address.save!
+
+        job.perform(address)
+
+        placement = address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::Country')
+        expect(placement.location).to eq(country)
+        expect(placement.resolution_method).to eq('iso_code')
+      end
     end
 
     context 'when no polygon matches for State but geocode metadata has a state name' do

@@ -299,6 +299,29 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
 
       expect(locatable_location.location).to eq(settlement)
     end
+
+    # The event location picker submits an existing pick as location_id (not the
+    # top-level id), alongside other LocatableLocation-only keys like name — these
+    # must not reach Address.new/Building.new and must not build a duplicate record.
+    it 'reuses an existing Address selected via location_id instead of building a duplicate' do
+      existing_address = create(:better_together_address)
+      locatable_location.location_attributes = {
+        location_type: 'BetterTogether::Address', location_id: existing_address.id, name: ''
+      }
+
+      expect(locatable_location.location).to eq(existing_address)
+      expect(BetterTogether::Address.count).to eq(1)
+    end
+
+    it 'reuses an existing Building selected via location_id instead of building a duplicate' do
+      existing_building = create(:better_together_infrastructure_building)
+      locatable_location.location_attributes = {
+        location_type: 'BetterTogether::Infrastructure::Building', location_id: existing_building.id, name: ''
+      }
+
+      expect(locatable_location.location).to eq(existing_building)
+      expect(BetterTogether::Infrastructure::Building.count).to eq(1)
+    end
   end
 
   describe 'class methods' do

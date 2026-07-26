@@ -14,8 +14,9 @@ module BetterTogether
     # have a boundary unless force_refresh is true.
     class BoundaryImportJob < ApplicationJob
       queue_as :low_priority
-      retry_on StandardError, wait: :polynomially_longer, attempts: 3
       discard_on ActiveJob::DeserializationError
+
+      MAX_ATTEMPTS = 3
 
       HIERARCHY_LEVELS = [
         BetterTogether::Geography::Continent,
@@ -28,10 +29,15 @@ module BetterTogether
       # Orchestrates a full run across every hierarchy level for
       # `better_together:geography:import_boundaries` — perform_now in a straight serial
       # loop, deliberately NOT perform_later, so only one Nominatim polygon_geojson request
-      # is ever in flight regardless of Sidekiq concurrency.
-      def self.import_all_missing
+      # is ever in flight regardless of Sidekiq concurrency. Retries happen in-process
+      # (perform_with_retries below), never via ActiveJob's queue-based retry_on — that
+      # would enqueue a real background-worker retry regardless of this loop's own
+      # perform_now calls, letting a retried record's request run concurrently with this
+      # loop's next one and breaking the "only one in flight" guarantee.
+      def self.import_all_missing # rubocop:todo Metrics/MethodLength
         imported = 0
         skipped = 0
+        failed = 0
 
         HIERARCHY_LEVELS.each do |klass|
           klass.find_each do |record|
@@ -40,13 +46,39 @@ module BetterTogether
               next
             end
 
-            perform_now(record)
-            imported += 1
+            if perform_with_retries(record)
+              imported += 1
+            else
+              failed += 1
+            end
             sleep 1.1 if Rails.env.production?
           end
         end
 
-        { imported:, skipped: }
+        { imported:, skipped:, failed: }
+      end
+
+      # Retries a transient failure (network timeout, 5xx, parse error) up to
+      # MAX_ATTEMPTS times in-process with exponential backoff, then logs and gives up
+      # rather than raising — one bad record shouldn't abort the rest of the batch.
+      def self.perform_with_retries(record, attempts: MAX_ATTEMPTS) # rubocop:todo Metrics/MethodLength
+        attempt = 0
+        begin
+          attempt += 1
+          perform_now(record)
+          true
+        rescue StandardError => e
+          if attempt < attempts
+            sleep(2**attempt)
+            retry
+          end
+
+          Rails.logger.warn(
+            "BoundaryImportJob: giving up on #{record.class.name}##{record.id} " \
+            "after #{attempts} attempts: #{e.message}"
+          )
+          false
+        end
       end
 
       def perform(geographic_record, force_refresh: false)

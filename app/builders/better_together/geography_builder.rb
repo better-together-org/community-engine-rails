@@ -14,14 +14,20 @@ module BetterTogether
         seed_region_settlements
       end
 
+      # Settlement/Region/State/Country/Continent each auto-create an associated
+      # Community via PrimaryCommunity#has_community (dependent: :destroy). delete_all
+      # skips instance callbacks entirely, so it would orphan those Community rows
+      # instead of cleaning them up — leaving them to accumulate as duplicates on
+      # every re-seed. destroy_all runs each record's own #destroy so the community
+      # dependent-destroy callback actually fires.
       def clear_existing
-        ::BetterTogether::Geography::RegionSettlement.delete_all
-        ::BetterTogether::Geography::Settlement.delete_all
-        ::BetterTogether::Geography::Region.delete_all
-        ::BetterTogether::Geography::CountryContinent.delete_all
-        ::BetterTogether::Geography::State.delete_all
-        ::BetterTogether::Geography::Country.delete_all
-        ::BetterTogether::Geography::Continent.delete_all
+        ::BetterTogether::Geography::RegionSettlement.destroy_all
+        ::BetterTogether::Geography::Settlement.destroy_all
+        ::BetterTogether::Geography::Region.destroy_all
+        ::BetterTogether::Geography::CountryContinent.destroy_all
+        ::BetterTogether::Geography::State.destroy_all
+        ::BetterTogether::Geography::Country.destroy_all
+        ::BetterTogether::Geography::Continent.destroy_all
       end
 
       def seed_continents

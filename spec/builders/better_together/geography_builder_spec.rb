@@ -16,6 +16,20 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
       described_class.clear_existing
       expect(BetterTogether::Geography::Continent.count).to eq(0)
     end
+
+    it 'also destroys the auto-created Community for each geography record (not just the row itself)' do
+      # Continent/Country/State/Region/Settlement each auto-create a Community via
+      # PrimaryCommunity#has_community (dependent: :destroy). clear_existing must use
+      # destroy_all (not delete_all, which skips this callback) or re-seeding orphans
+      # these Community rows and duplicates them on every run.
+      continent = BetterTogether::Geography::Continent.find_by(identifier: 'foo')
+      community_id = continent.community_id
+      expect(community_id).to be_present
+
+      described_class.clear_existing
+
+      expect(BetterTogether::Community.exists?(community_id)).to be false
+    end
   end
 
   describe '.seed_continents' do

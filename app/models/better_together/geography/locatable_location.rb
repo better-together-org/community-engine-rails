@@ -119,23 +119,37 @@ module BetterTogether
         location if region?
       end
 
+      # Generalizes address?/building?/settlement?/region? below to any current or
+      # future Geography::Placeable includer, keyed the same way the event form's
+      # location_type_map is (klass.name.demodulize.underscore) — a future Placeable
+      # model needs zero changes here, unlike checking one hardcoded class per type.
+      # Callers that only know the key (not a class constant), like the event form's
+      # radio/current-selection logic, should call this directly instead of
+      # `public_send("#{key}?")`, which raises NoMethodError for any key beyond the
+      # 4 explicitly-defined predicates below.
+      def location_type_matches?(key)
+        return false if location.blank?
+
+        BetterTogether::Geography::Placeable.included_in_models.any? do |klass|
+          klass.name.demodulize.underscore == key.to_s && location.is_a?(klass)
+        end
+      end
+
       # Check if location is of a specific type
       def address?
-        location.is_a?(BetterTogether::Address)
+        location_type_matches?('address')
       end
 
       def building?
-        location.is_a?(BetterTogether::Infrastructure::Building)
+        location_type_matches?('building')
       end
 
-      # Settlement/Region checks reference Locatable::Many::LEVELS (the single canonical
-      # hierarchy level => class mapping) rather than a second hardcoded class reference.
       def settlement?
-        location.is_a?(BetterTogether::Geography::Locatable::Many::LEVELS[:settlement])
+        location_type_matches?('settlement')
       end
 
       def region?
-        location.is_a?(BetterTogether::Geography::Locatable::Many::LEVELS[:region])
+        location_type_matches?('region')
       end
 
       # Helper method for forms - get available addresses for the user/context

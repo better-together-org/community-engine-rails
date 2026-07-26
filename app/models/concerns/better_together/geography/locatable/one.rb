@@ -50,9 +50,11 @@ module BetterTogether
           point = location&.location&.to_leaflet_point
           return [] unless point
 
-          place_link = "<a href='#{locatable_map_url}' class='text-decoration-none'><strong>#{self}</strong></a>"
+          escaped_self = ERB::Util.html_escape(to_s)
+          place_link = "<a href='#{locatable_map_url}' class='text-decoration-none'><strong>#{escaped_self}</strong></a>"
+          escaped_display_name = ERB::Util.html_escape(location.display_name)
 
-          [point.merge(label: place_link, popup_html: "#{place_link}<br>#{location.display_name}")]
+          [point.merge(label: place_link, popup_html: "#{place_link}<br>#{escaped_display_name}")]
         end
 
         def spaces
