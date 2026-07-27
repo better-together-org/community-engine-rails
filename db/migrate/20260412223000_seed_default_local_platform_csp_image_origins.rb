@@ -5,8 +5,13 @@ class SeedDefaultLocalPlatformCspImageOrigins < ActiveRecord::Migration[7.1]
     self.table_name = 'better_together_platforms'
   end
 
+  # Mirrors ContentSecurityPolicySources::DEFAULT_MAP_TILE_IMG_SOURCES. Kept as a
+  # migration-local literal (not a reference to app/lib code) so this backfill stays
+  # stable regardless of future runtime changes to that constant.
   DEFAULT_CSP_IMG_SOURCES = [
-    'https://*.tile.openstreetmap.org'
+    'https://*.tile.openstreetmap.org',
+    'https://tile.openstreetmap.org',
+    'https://server.arcgisonline.com'
   ].freeze
 
   def up

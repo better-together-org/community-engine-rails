@@ -326,7 +326,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
       expect(csp).to include('frame-ancestors https://bebettertogether.ca')
       expect(csp).to include("frame-src 'self' https://forms.btsdev.ca")
-      expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org https://images.example.com")
+      expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org " \
+                             'https://tile.openstreetmap.org https://server.arcgisonline.com ' \
+                             'https://images.example.com')
       expected_script_src = [
         "script-src 'self' blob:",
         'https://scripts.example.com'
