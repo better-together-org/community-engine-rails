@@ -1,4 +1,5 @@
-<div class="recurrence-fields" data-controller="better-together--recurrence">
+<div class="recurrence-fields" data-controller="better-together--recurrence"
+     data-better-together--recurrence-preview-url-value="<%= recurrence_preview_events_path %>">
   <%= form.fields_for :recurrence, (event.recurrence || event.build_recurrence) do |recurrence_form| %>
     <%= recurrence_form.hidden_field :id if event.recurrence&.persisted? %>
     
@@ -36,7 +37,7 @@
     <div class="mb-3" data-better-together--recurrence-target="weekdaysField" aria-hidden="true" style="display: none;">
       <%= recurrence_form.label :weekdays, t('better_together.events.recurrence.labels.weekdays'), class: 'form-label' %>
       <div class="weekday-checkboxes">
-        <%= weekday_checkboxes(recurrence_form, selected_days: event.recurrence&.weekdays || []) %>
+        <%= weekday_checkboxes(recurrence_form, selected_days: BetterTogether::RecurrenceScheduleBuilder.weekday_indices_for(event.recurrence)) %>
       </div>
       <small id="weekdays-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.weekdays') %></small>
     </div>

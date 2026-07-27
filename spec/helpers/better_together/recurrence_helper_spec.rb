@@ -47,6 +47,29 @@ RSpec.describe BetterTogether::RecurrenceHelper do
       result = helper.weekday_checkboxes(form, selected_days: [1, 3]) # Monday and Wednesday
       expect(result).to include('checked')
     end
+
+    it 'checks the correct boxes for the real Symbol output of Recurrence#weekdays' do
+      # Regression test: Recurrence#weekdays returns Symbols (e.g. :monday),
+      # not the Integer indices weekday_checkboxes compares against directly.
+      # Round-tripping through RecurrenceScheduleBuilder.weekday_indices_for
+      # (as the real view call site does) is what must produce matching
+      # checkboxes — passing recurrence.weekdays straight through used to
+      # silently check nothing at all.
+      schedule = IceCube::Schedule.new(Time.zone.parse('2026-01-05 10:00')) # a Monday
+      schedule.add_recurrence_rule(IceCube::Rule.weekly(1).day(:monday, :wednesday))
+      # #weekdays only returns anything when frequency == 'weekly', and
+      # frequency is normally extracted from the rule by a before_validation
+      # callback — build_stubbed skips callbacks, so set it explicitly here.
+      recurrence = build_stubbed(:recurrence, rule: schedule.to_yaml, frequency: 'weekly')
+
+      indices = BetterTogether::RecurrenceScheduleBuilder.weekday_indices_for(recurrence)
+      result = helper.weekday_checkboxes(form, selected_days: indices)
+      fragment = Nokogiri::HTML::DocumentFragment.parse(result)
+      checked_values = fragment.css('input[type="checkbox"][checked]').map { |node| node['value'] }
+
+      expect(indices).to contain_exactly(1, 3) # Monday, Wednesday
+      expect(checked_values).to contain_exactly('1', '3')
+    end
   end
 
   describe '#format_recurrence_rule' do

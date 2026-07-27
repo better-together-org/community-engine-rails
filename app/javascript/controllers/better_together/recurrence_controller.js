@@ -12,6 +12,10 @@ export default class extends Controller {
     "preview"
   ]
 
+  static values = {
+    previewUrl: String
+  }
+
   connect() {
     this.updateVisibility()
   }
@@ -44,10 +48,10 @@ export default class extends Controller {
 
   // Update preview of upcoming occurrences
   updatePreview() {
-    if (!this.hasPreviewTarget) return
+    if (!this.hasPreviewTarget || !this.hasPreviewUrlValue) return
 
     const params = this.buildPreviewParams()
-    const url = `/events/recurrence_preview?${params}`
+    const url = `${this.previewUrlValue}?${params}`
 
     fetch(url, {
       headers: {
@@ -87,7 +91,10 @@ export default class extends Controller {
     }
 
     if (this.hasUntilDateFieldTarget && this.untilDateFieldTarget.value) {
-      params.append('until_date', this.untilDateFieldTarget.value)
+      // Server-side param name matches the Recurrence model's own `ends_on`
+      // attribute (not `until_date`) so it flows straight into
+      // RecurrenceScheduleBuilder without a second name for the same field.
+      params.append('ends_on', this.untilDateFieldTarget.value)
     }
 
     if (this.hasCountFieldTarget && this.countFieldTarget.value) {

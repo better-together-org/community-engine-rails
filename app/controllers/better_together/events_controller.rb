@@ -35,8 +35,15 @@ module BetterTogether
     # bare `before_action :build_event_hosts, only: :new` would authorize an
     # empty event_hosts collection, making self-service host authorization
     # (EventPolicy#event_host_member?) always fail on GET .../events/new.
-    before_action :process_recurrence_attributes, only: %i[create update]
+    # convert_datetime_params_to_event_timezone must run BEFORE
+    # process_recurrence_attributes: the recurrence schedule's anchor time is
+    # built from params[:event][:starts_at], and that value must already be
+    # converted into the event's own timezone (a Time object) rather than a
+    # raw string parsed in the ambient Time.zone — otherwise recurring
+    # occurrences anchor to the wrong wall-clock time for any event whose
+    # timezone differs from the app default.
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
+    before_action :process_recurrence_attributes, only: %i[create update]
 
     skip_before_action :resource_collection, only: :index
 
@@ -102,6 +109,19 @@ module BetterTogether
       end
 
       render json: options
+    end
+
+    # Renders a preview of the next few occurrences for the recurrence fields
+    # currently filled into the event form, before the event is saved. Called
+    # by the recurrence Stimulus controller on every field change.
+    def recurrence_preview
+      authorize BetterTogether::Event, :recurrence_preview?
+
+      attrs = params.permit(:frequency, :interval, :end_type, :ends_on, :count, weekdays: []).to_h.symbolize_keys
+      occurrences, errors = recurrence_preview_occurrences(attrs)
+
+      render partial: 'better_together/events/recurrence_preview',
+             locals: { occurrences: occurrences, errors: errors }
     end
 
     # RSVP actions
@@ -468,14 +488,24 @@ module BetterTogether
         return
       end
 
-      # Build IceCube schedule from form parameters
-      schedule = build_schedule_from_params(recurrence_attrs)
+      result = BetterTogether::RecurrenceScheduleBuilder.new(
+        start_time: recurrence_start_time, attrs: recurrence_attrs
+      ).build
 
-      # Convert schedule to YAML and update params
-      params[:event][:recurrence_attributes][:rule] = schedule.to_yaml
-
-      # Log the generated rule in test environment
-      Rails.logger.debug "[RECURRENCE] Generated rule YAML: #{schedule.to_yaml}" if Rails.env.test?
+      if result.valid?
+        params[:event][:recurrence_attributes][:rule] = result.schedule.to_yaml
+        Rails.logger.debug { "[RECURRENCE] Generated rule YAML: #{result.schedule.to_yaml}" } if Rails.env.test?
+      else
+        # Leave :rule unset so Recurrence's own presence validation also
+        # blocks the save (defense in depth), and set the transient error at
+        # both levels: on the nested recurrence (for anything building a
+        # Recurrence directly) and on the top-level event params (so the
+        # message reliably surfaces via @resource.errors.full_messages,
+        # which the shared errors partial reads — nested association errors
+        # don't automatically bubble up to the parent's own error messages).
+        params[:event][:recurrence_attributes][:end_condition_error] = result.errors.first
+        params[:event][:end_condition_error] = result.errors.first
+      end
 
       # Process exception_dates from comma-separated string to array
       if recurrence_attrs[:exception_dates].present?
@@ -497,6 +527,28 @@ module BetterTogether
       %i[frequency interval end_type count weekdays].each do |key|
         params[:event][:recurrence_attributes].delete(key)
       end
+    end
+
+    # The recurrence schedule's anchor time must reflect what was actually
+    # submitted in this request (already converted to the event's timezone by
+    # convert_datetime_params_to_event_timezone, which runs first) — not the
+    # stale, pre-update value on @resource. Falling back to @resource is only
+    # for the (normally unreachable) case where starts_at wasn't submitted.
+    def recurrence_start_time
+      submitted = params.dig(:event, :starts_at)
+      return submitted.is_a?(String) ? Time.zone.parse(submitted) : submitted if submitted.present?
+      return @resource.starts_at if @resource&.starts_at
+
+      Time.current
+    end
+
+    def recurrence_preview_occurrences(attrs)
+      return [[], []] if attrs[:frequency].blank?
+
+      result = BetterTogether::RecurrenceScheduleBuilder.new(start_time: Time.current, attrs: attrs).build
+      return [[], result.errors] unless result.valid?
+
+      [result.schedule.occurrences_between(Time.current, 1.year.from_now).first(5), []]
     end
 
     # Convert datetime parameters from event timezone to UTC for storage

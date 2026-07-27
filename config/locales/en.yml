@@ -938,7 +938,10 @@ en:
       tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
+      no_events: No events scheduled
+      past_events: Past events
       personal_calendar_name: "%{name}'s Personal Calendar"
+      upcoming_events: Upcoming events
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -1585,6 +1588,7 @@ en:
       attendees: Attendees
       back_to_events: View Events
       date_and_time: Date & Time
+      form_errors_heading: 'The following errors occurred:'
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
@@ -1724,6 +1728,10 @@ en:
           weekdays: Repeat on
         placeholders:
           exception_dates: 2025-01-15, 2025-02-20
+        preview:
+          error: Unable to preview this recurrence — check the end date or occurrence
+            count
+          no_occurrences: No upcoming occurrences in the next year
         prompts:
           select_frequency: Does not repeat
       register: Register

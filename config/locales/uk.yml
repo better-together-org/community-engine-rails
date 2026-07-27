@@ -920,7 +920,10 @@ uk:
       tree_seed_emoji: " 🌱"
     calendars:
       default_description: Календар за замовчуванням для %<community_name>s
+      no_events: Немає запланованих подій
+      past_events: Минулі події
       personal_calendar_name: Особистий календар %{name}
+      upcoming_events: Майбутні події
     calls_for_interest:
       back_to_calls_for_interest: Повернутися до закликів до зацікавленості
       hints:
@@ -1585,6 +1588,7 @@ uk:
       attendees: Attendees
       back_to_events: View Events
       date_and_time: Дата та Час
+      form_errors_heading: 'Виникли такі помилки:'
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
@@ -1734,6 +1738,10 @@ uk:
           weekdays: Повторювати в
         placeholders:
           exception_dates: 2025-01-15, 2025-02-20
+        preview:
+          error: Неможливо попередньо переглянути це повторення — перевірте дату закінчення
+            або кількість повторень
+          no_occurrences: Немає майбутніх повторень протягом наступного року
         prompts:
           select_frequency: Не повторюється
       register: Зареєструватися

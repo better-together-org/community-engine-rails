@@ -936,7 +936,10 @@ fr:
       tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
+      no_events: Aucun événement prévu
+      past_events: Événements passés
       personal_calendar_name: Calendrier Personnel de %{name}
+      upcoming_events: Événements à venir
     calls_for_interest:
       back_to_calls_for_interest: Retour aux appels à intérêt
       hints:
@@ -1598,6 +1601,7 @@ fr:
       attendees: Participants
       back_to_events: Voir les événements
       date_and_time: Date et Heure
+      form_errors_heading: 'Les erreurs suivantes se sont produites :'
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
         create_permission_denied: Permission de création refusée
@@ -1745,6 +1749,10 @@ fr:
           weekdays: Répéter le
         placeholders:
           exception_dates: 2025-01-15, 2025-02-20
+        preview:
+          error: Impossible de prévisualiser cette récurrence — vérifiez la date de
+            fin ou le nombre d'occurrences
+          no_occurrences: Aucune occurrence à venir dans la prochaine année
         prompts:
           select_frequency: Ne se répète pas
       register: S'inscrire
