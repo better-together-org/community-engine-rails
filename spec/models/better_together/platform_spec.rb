@@ -97,10 +97,12 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       expect(platform).to be_valid
       expect(platform.csp_frame_ancestors).to eq(['https://bebettertogether.ca', 'https://forms.btsdev.ca'])
       expect(platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
-      # csp_img_src merges the explicit value with the seeded local Leaflet tile origin
+      # csp_img_src merges the explicit value with the seeded local Leaflet/map tile origins
       # (this platform is non-external, so seed_default_local_csp_settings applies).
       expect(platform.csp_img_src).to contain_exactly('https://images.example.com',
-                                                      'https://*.tile.openstreetmap.org')
+                                                      'https://*.tile.openstreetmap.org',
+                                                      'https://tile.openstreetmap.org',
+                                                      'https://server.arcgisonline.com')
       expect(platform.csp_script_src).to eq(['https://scripts.example.com'])
       expect(platform.csp_connect_src).to eq(['https://collector.example.com'])
     end
@@ -150,7 +152,9 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
     it 'seeds local platform CSP image origins for bundled Leaflet assets' do
       platform = create(:better_together_platform)
 
-      expect(platform.csp_img_src).to include('https://*.tile.openstreetmap.org')
+      expect(platform.csp_img_src).to include('https://*.tile.openstreetmap.org',
+                                              'https://tile.openstreetmap.org',
+                                              'https://server.arcgisonline.com')
       expect(platform.csp_img_src).not_to include('https://unpkg.com')
     end
 
