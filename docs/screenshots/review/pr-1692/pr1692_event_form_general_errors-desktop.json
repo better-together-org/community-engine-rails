@@ -1,0 +1,48 @@
+{
+  "name": "pr1692_event_form_general_errors",
+  "device": "desktop",
+  "url": "/en/events/new",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "recurrence_calendar_ux",
+  "flow": "event_form_errors",
+  "source_spec": "./spec/docs_screenshots/better_together/recurrence_calendar_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event-form-errors",
+      "title": "General form errors block",
+      "bullets": [
+        "Previously, any error other than privacy/status/location rendered with no visible feedback anywhere — turbo_frame_tag 'form_errors' only populates via turbo_stream, but this form submits with local: true."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 452.796875,
+        "width": 1296.0,
+        "height": 142.796875,
+        "right": 1368.0,
+        "bottom": 595.59375,
+        "center_x": 720.0,
+        "center_y": 524.1953125
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 452.796875,
+        "width": 1296.0,
+        "height": 142.796875,
+        "right": 1368.0,
+        "bottom": 595.59375,
+        "center_x": 720.0,
+        "center_y": 524.1953125
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 615.59,
+        "width": 380,
+        "height": 320,
+        "score": 865.40625
+      }
+    }
+  ]
+}

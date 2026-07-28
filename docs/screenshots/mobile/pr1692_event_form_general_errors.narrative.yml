@@ -1,0 +1,17 @@
+---
+title: Event form — general validation errors are now visible
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer, if I select "On date" but leave the date blank, I now
+  see exactly why my save failed instead of a silent no-op.
+callouts:
+- :id: form_errors
+  :title: General form errors block
+  :description: Reads event.errors excluding the three fields (privacy/status/location)
+    that already had their own inline treatment.
+accessibility_notes: The errors block is a standard Bootstrap alert-danger with a
+  heading; no color-only signal.
+slug: pr1692_event_form_general_errors
+device: mobile
