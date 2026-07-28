@@ -1,0 +1,52 @@
+es:
+  activerecord:
+    errors:
+      models:
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: ya tiene un registro de liquidación
+  better_together:
+    c3:
+      balance_card:
+        available: Disponible
+        explainer: Tree Seeds son créditos de contribución comunitaria que ganas compartiendo
+          tu tiempo, habilidades y recursos. Pueden ser intercambiados por servicios
+          ofrecidos por otros miembros de la comunidad.
+        lifetime: Ganado de por vida
+        network_available: Red disponible
+        network_description: Tree Seeds ganados o recibidos en todas las plataformas
+          conectadas.
+        network_lifetime: Red ganada de por vida
+        reserved: Reservado para acuerdos
+        show_network_total: Mostrar mi total de Tree Seeds entre plataformas
+        title: Tus Tree Seeds
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
+    joatu:
+      settlement:
+        cancelled_html: La reserva de %{amount} fue devuelta a tu saldo.
+        completed_html: "%{amount} fueron intercambiados el %{date}."
+        pending_html: "%{amount} están reservados, esperando a que se complete el
+          intercambio."
+        status_label: Estado de Tree Seeds del acuerdo
+    notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Semillas de árbol han sido reservadas para tu acuerdo.
+              Se liberarán si el acuerdo se cancela."
+            title: Semillas de árbol reservadas
+          mailer:
+            activity_header: "%{amount} Semillas de árbol tienen actividad en tu acuerdo."
+            view_agreement: Ver acuerdo
+          released:
+            body: "%{amount} Semillas de árbol han sido devueltas a tu saldo."
+            title: Reserva de Semillas de árbol liberada
+          settled:
+            body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha
+              sido actualizado."
+            title: Semillas de árbol intercambiadas

@@ -577,10 +577,6 @@ es:
                 activa
             target:
               must_be_person: debe ser una persona
-        better_together/joatu/settlement:
-          attributes:
-            agreement_id:
-              already_settled: ya tiene un registro de liquidación
         better_together/navigation_item:
           attributes:
             permission_identifier:
@@ -911,25 +907,6 @@ es:
     buildings:
       add: Agregar
       title: Edificios
-    c3:
-      balance_card:
-        available: Disponible
-        explainer: Tree Seeds son créditos de contribución comunitaria que ganas compartiendo
-          tu tiempo, habilidades y recursos. Pueden ser intercambiados por servicios
-          ofrecidos por otros miembros de la comunidad.
-        lifetime: Ganado de por vida
-        network_available: Red disponible
-        network_description: Tree Seeds ganados o recibidos en todas las plataformas
-          conectadas.
-        network_lifetime: Red ganada de por vida
-        reserved: Reservado para acuerdos
-        show_network_total: Mostrar mi total de Tree Seeds entre plataformas
-        title: Tus Tree Seeds
-      tree_seed:
-        one: Tree Seed
-        other: Tree Seeds
-      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
-      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Calendario predeterminado para %<community_name>s
       personal_calendar_name: Calendario Personal de %{name}
@@ -2098,7 +2075,7 @@ es:
       agreements:
         accept: Aceptar
         cancel: Cancelar acuerdo
-        cancel_confirm: "¿Cancelar este acuerdo? Se devolverán las Semillas reservadas."
+        cancel_confirm: "¿Cancelar este acuerdo?"
         create:
           success: Éxito
         fulfill: Marcar como cumplido
@@ -2230,12 +2207,6 @@ es:
         placeholders:
           search: Buscar por título o descripción
         title: Buscar
-      settlement:
-        cancelled_html: La reserva de %{amount} fue devuelta a tu saldo.
-        completed_html: "%{amount} fueron intercambiados el %{date}."
-        pending_html: "%{amount} están reservados, esperando a que se complete el
-          intercambio."
-        status_label: Estado de Tree Seeds del acuerdo
       status:
         any: Cualquiera
         closed: Cerrado
@@ -2740,22 +2711,6 @@ es:
         temporalmente no disponible.
       title: 404 - Página no encontrada
     notifications:
-      c3:
-        settlement:
-          locked:
-            body: "%{amount} Semillas de árbol han sido reservadas para tu acuerdo.
-              Se liberarán si el acuerdo se cancela."
-            title: Semillas de árbol reservadas
-          mailer:
-            activity_header: "%{amount} Semillas de árbol tienen actividad en tu acuerdo."
-            view_agreement: Ver acuerdo
-          released:
-            body: "%{amount} Semillas de árbol han sido devueltas a tu saldo."
-            title: Reserva de Semillas de árbol liberada
-          settled:
-            body: "%{amount} Semillas de árbol han sido intercambiadas. Tu saldo ha
-              sido actualizado."
-            title: Semillas de árbol intercambiadas
       comment_added:
         body: "%{content}"
         title: "%{commenter_name} comentó en tu contenido"
@@ -3150,15 +3105,7 @@ es:
           de la plataforma remota.
         suspended: Conexión suspendida.
       form:
-        allow_c3_exchange: Permitir el intercambio de Semillas de árbol con esta plataforma
         back: Volver
-        c3_exchange_hint: Cuando está habilitado, los participantes de esta plataforma
-          pueden enviar y recibir Semillas de árbol con %{platform}. Ambas plataformas
-          deben habilitarlo para que el intercambio funcione.
-        c3_exchange_legend: Intercambio de Semillas de árbol
-        c3_exchange_rate_hint: "¿Cuántas Semillas de árbol aquí equivalen a 1 Semilla
-          de árbol en %{platform}? Deja en 1.0 para valor igual."
-        c3_exchange_rate_label: Tasa de intercambio
         connection_kind_hint: 'Miembro: esta plataforma aloja miembros de la otra.
           Par: asociación igualitaria entre plataformas independientes.'
         content_sharing_policy_hint: Controla cómo se sincroniza el contenido público.
