@@ -1703,6 +1703,10 @@ en:
         select_address: Select address
         select_building: Select building
       recurrence:
+        actions:
+          clear: Clear
+          select_all: Select all
+          select_weekdays: Weekdays (Mon–Fri)
         end_types:
           after_count: After occurrences
           never: Never
@@ -1737,6 +1741,13 @@ en:
           no_occurrences: No upcoming occurrences in the next year
         prompts:
           select_frequency: Does not repeat
+        summary:
+          every: Every %{count} %{unit}
+          for_count:
+            one: for %{count} occurrence
+            other: for %{count} occurrences
+          on_days: on %{days}
+          until: until %{date}
         units:
           daily: day(s)
           monthly: month(s)

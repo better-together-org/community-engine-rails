@@ -1716,6 +1716,10 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
       recurrence:
+        actions:
+          clear: Borrar
+          select_all: Seleccionar todo
+          select_weekdays: Días laborables (lun-vie)
         end_types:
           after_count: Después de ocurrencias
           never: Nunca
@@ -1751,6 +1755,13 @@ es:
           no_occurrences: No hay próximas ocurrencias en el próximo año
         prompts:
           select_frequency: No se repite
+        summary:
+          every: Cada %{count} %{unit}
+          for_count:
+            one: durante %{count} ocurrencia
+            other: durante %{count} ocurrencias
+          on_days: el %{days}
+          until: hasta %{date}
         units:
           daily: día(s)
           monthly: mes(es)

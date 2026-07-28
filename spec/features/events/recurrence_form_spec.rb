@@ -99,6 +99,64 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
     expect(page).to have_css('#recurrence-preview-error', wait: 5)
   end
 
+  scenario 'pre-checks the event start-date weekday the first time weekly is selected' do
+    visit_recurrence_tab
+
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+
+    # No start date has been entered in this flow, so the view falls back to
+    # today's weekday — matches the same fallback the app itself uses.
+    expected_index = Time.zone.now.wday
+    expect(page).to have_css(
+      "input[type=\"checkbox\"][value=\"#{expected_index}\"]:checked", visible: :all, wait: 5
+    )
+  end
+
+  scenario 'does not fight the user who deliberately clears every weekday afterwards' do
+    visit_recurrence_tab
+
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+    expect(page).to have_css('.weekday-checkboxes input[type="checkbox"]:checked', minimum: 1, wait: 5)
+
+    click_button 'Clear'
+    expect(page).to have_css('.weekday-checkboxes input[type="checkbox"]:checked', count: 0, wait: 5)
+
+    # Switching away and back to weekly must not silently re-apply the default
+    select 'Daily', from: 'event[recurrence_attributes][frequency]'
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+    expect(page).to have_css('.weekday-checkboxes input[type="checkbox"]:checked', count: 0, wait: 5)
+  end
+
+  scenario 'weekday shortcut buttons set the expected checkboxes' do
+    visit_recurrence_tab
+
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+
+    click_button 'Select all'
+    expect(page).to have_css('.weekday-checkboxes input[type="checkbox"]:checked', count: 7, wait: 5)
+
+    click_button 'Clear'
+    expect(page).to have_css('.weekday-checkboxes input[type="checkbox"]:checked', count: 0, wait: 5)
+
+    click_button 'Weekdays (Mon–Fri)'
+    expect(page).to have_css('.weekday-checkboxes input[type="checkbox"]:checked', count: 5, wait: 5)
+    checked_values = page.all('.weekday-checkboxes input[type="checkbox"]:checked', wait: 5).map(&:value)
+    expect(checked_values.sort).to eq(%w[1 2 3 4 5])
+  end
+
+  scenario 'the preview includes a plain-English summary of the whole rule' do
+    visit_recurrence_tab
+
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+    select 'After occurrences', from: 'event[recurrence_attributes][end_type]'
+    fill_in 'event[recurrence_attributes][count]', with: '3'
+
+    expect(page).to have_css('#recurrence-preview-summary', wait: 5)
+    summary_text = find('#recurrence-preview-summary').text
+    expect(summary_text).to include('Every')
+    expect(summary_text).to include('occurrences')
+  end
+
   scenario 'passes WCAG 2.1 AA accessibility checks with the recurrence tab open' do
     visit_recurrence_tab
     select 'Weekly', from: 'event[recurrence_attributes][frequency]'

@@ -3,7 +3,8 @@
      data-better-together--recurrence-day-unit-label-value="<%= t('better_together.events.recurrence.units.daily') %>"
      data-better-together--recurrence-week-unit-label-value="<%= t('better_together.events.recurrence.units.weekly') %>"
      data-better-together--recurrence-month-unit-label-value="<%= t('better_together.events.recurrence.units.monthly') %>"
-     data-better-together--recurrence-year-unit-label-value="<%= t('better_together.events.recurrence.units.yearly') %>">
+     data-better-together--recurrence-year-unit-label-value="<%= t('better_together.events.recurrence.units.yearly') %>"
+     data-better-together--recurrence-start-weekday-value="<%= (event.starts_at || Time.current).wday %>">
   <%= form.fields_for :recurrence, (event.recurrence || event.build_recurrence) do |recurrence_form| %>
     <%= recurrence_form.hidden_field :id if event.recurrence&.persisted? %>
 
@@ -54,6 +55,17 @@
     <!-- Weekday Selection (for weekly recurrence) -->
     <div class="mb-3" data-better-together--recurrence-target="weekdaysField" aria-hidden="true" style="display: none;">
       <%= recurrence_form.label :weekdays, t('better_together.events.recurrence.labels.weekdays'), class: 'form-label' %>
+      <div class="weekday-shortcuts mb-2" id="recurrence-weekday-shortcuts">
+        <%= button_tag t('better_together.events.recurrence.actions.select_weekdays'), type: 'button',
+            class: 'btn btn-sm btn-outline-secondary me-1',
+            data: { action: 'better-together--recurrence#selectWeekdaysMonToFri' } %>
+        <%= button_tag t('better_together.events.recurrence.actions.select_all'), type: 'button',
+            class: 'btn btn-sm btn-outline-secondary me-1',
+            data: { action: 'better-together--recurrence#selectAllWeekdays' } %>
+        <%= button_tag t('better_together.events.recurrence.actions.clear'), type: 'button',
+            class: 'btn btn-sm btn-outline-secondary',
+            data: { action: 'better-together--recurrence#clearWeekdays' } %>
+      </div>
       <div class="weekday-checkboxes">
         <%= weekday_checkboxes(recurrence_form, selected_days: BetterTogether::RecurrenceScheduleBuilder.weekday_indices_for(event.recurrence)) %>
       </div>

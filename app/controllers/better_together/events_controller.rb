@@ -121,7 +121,7 @@ module BetterTogether
       occurrences, errors = recurrence_preview_occurrences(attrs)
 
       render partial: 'better_together/events/recurrence_preview',
-             locals: { occurrences: occurrences, errors: errors }
+             locals: { occurrences: occurrences, errors: errors, summary: helpers.recurrence_attrs_summary(attrs) }
     end
 
     # RSVP actions

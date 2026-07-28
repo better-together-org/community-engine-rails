@@ -1,11 +1,16 @@
 <% if errors.present? %>
   <p class="text-danger mb-0" id="recurrence-preview-error"><%= t('better_together.events.recurrence.preview.error') %></p>
-<% elsif occurrences.blank? %>
-  <p class="text-muted mb-0" id="recurrence-preview-empty"><%= t('better_together.events.recurrence.preview.no_occurrences') %></p>
 <% else %>
-  <ul class="list-unstyled mb-0" id="recurrence-preview-occurrences">
-    <% occurrences.each do |occurrence| %>
-      <li><%= l(occurrence, format: :long) %></li>
-    <% end %>
-  </ul>
+  <% if summary.present? %>
+    <p class="fw-semibold mb-2" id="recurrence-preview-summary"><%= summary %></p>
+  <% end %>
+  <% if occurrences.blank? %>
+    <p class="text-muted mb-0" id="recurrence-preview-empty"><%= t('better_together.events.recurrence.preview.no_occurrences') %></p>
+  <% else %>
+    <ul class="list-unstyled mb-0" id="recurrence-preview-occurrences">
+      <% occurrences.each do |occurrence| %>
+        <li><%= l(occurrence, format: :long) %></li>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>

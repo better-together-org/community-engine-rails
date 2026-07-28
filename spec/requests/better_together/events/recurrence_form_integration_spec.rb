@@ -445,6 +445,25 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
       expect_element_count('#recurrence-preview-empty', 1)
     end
 
+    it 'includes a plain-English summary of the whole rule alongside the occurrence dates' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'weekly', interval: 2, weekdays: %w[1 3], end_type: 'count', count: 3
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-summary', 1)
+      expect_html_contents('Every 2 week(s) on Monday, Wednesday', '3 occurrences')
+    end
+
+    it 'omits the summary when the config is invalid rather than showing a misleading partial one' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'weekly', interval: 1, end_type: 'count', count: ''
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-summary', 0)
+    end
+
     # Authentication/authorization denial for this endpoint is covered at the
     # policy layer (EventPolicy#recurrence_preview? spec) rather than here —
     # this file's own top-level `before` block always logs in, and the

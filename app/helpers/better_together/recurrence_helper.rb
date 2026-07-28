@@ -79,6 +79,38 @@ module BetterTogether
       summary
     end
 
+    # Build a plain-English sentence describing a recurrence from the same
+    # flat attrs hash EventsController/RecurrenceScheduleBuilder work from
+    # (frequency/interval/weekdays/end_type/ends_on/count) — used by the
+    # recurrence_preview endpoint so users can confirm the whole
+    # configuration at a glance instead of parsing five separate fields.
+    # @param attrs [Hash] frequency/interval/weekdays/end_type/ends_on/count
+    # @return [String, nil] nil when no frequency is set at all
+    def recurrence_attrs_summary(attrs) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+      return nil if attrs[:frequency].blank?
+
+      interval = attrs[:interval].to_i
+      interval = 1 unless interval.positive?
+      unit = t("better_together.events.recurrence.units.#{attrs[:frequency]}", default: attrs[:frequency].to_s)
+
+      parts = [t('better_together.events.recurrence.summary.every', count: interval, unit: unit)]
+
+      if attrs[:frequency].to_s == 'weekly'
+        day_names = Array(attrs[:weekdays]).filter_map { |i| Date::DAYNAMES[i.to_i] }
+        parts << t('better_together.events.recurrence.summary.on_days', days: day_names.join(', ')) if day_names.any?
+      end
+
+      case attrs[:end_type].to_s
+      when 'until'
+        parsed = recurrence_summary_parse_date(attrs[:ends_on])
+        parts << t('better_together.events.recurrence.summary.until', date: l(parsed, format: :long)) if parsed
+      when 'count'
+        parts << t('better_together.events.recurrence.summary.for_count', count: attrs[:count].to_i) if attrs[:count].present?
+      end
+
+      parts.join(' ')
+    end
+
     # Display next N occurrences
     # @param schedulable [Object] Object with RecurringSchedulable concern
     # @param count [Integer] Number of occurrences to show
@@ -95,6 +127,16 @@ module BetterTogether
           end
         end.join.html_safe
       end
+    end
+
+    private
+
+    def recurrence_summary_parse_date(value)
+      return nil if value.blank?
+
+      Date.parse(value.to_s)
+    rescue ArgumentError, TypeError
+      nil
     end
   end
 end

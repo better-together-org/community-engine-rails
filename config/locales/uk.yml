@@ -1712,6 +1712,10 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
       recurrence:
+        actions:
+          clear: Очистити
+          select_all: Вибрати все
+          select_weekdays: Будні дні (пн-пт)
         end_types:
           after_count: Після повторень
           never: Ніколи
@@ -1747,6 +1751,15 @@ uk:
           no_occurrences: Немає майбутніх повторень протягом наступного року
         prompts:
           select_frequency: Не повторюється
+        summary:
+          every: Кожні %{count} %{unit}
+          for_count:
+            few: протягом %{count} повторення
+            many: протягом %{count} повторень
+            one: протягом %{count} повторення
+            other: протягом %{count} повторення
+          on_days: у %{days}
+          until: до %{date}
         units:
           daily: день(-і)
           monthly: місяць(-і)

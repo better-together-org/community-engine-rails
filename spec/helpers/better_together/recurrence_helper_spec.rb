@@ -97,6 +97,53 @@ RSpec.describe BetterTogether::RecurrenceHelper do
     end
   end
 
+  describe '#recurrence_attrs_summary' do
+    it 'returns nil when no frequency is set' do
+      expect(helper.recurrence_attrs_summary(frequency: '')).to be_nil
+    end
+
+    it 'describes a simple daily recurrence' do
+      result = helper.recurrence_attrs_summary(frequency: 'daily', interval: '1')
+      expect(result).to eq('Every 1 day(s)')
+    end
+
+    it 'defaults a blank/zero interval to 1 rather than "Every 0"' do
+      result = helper.recurrence_attrs_summary(frequency: 'monthly', interval: '')
+      expect(result).to eq('Every 1 month(s)')
+    end
+
+    it 'includes weekday names for weekly recurrence' do
+      result = helper.recurrence_attrs_summary(frequency: 'weekly', interval: '2', weekdays: %w[1 3])
+      expect(result).to eq('Every 2 week(s) on Monday, Wednesday')
+    end
+
+    it 'omits weekday names for non-weekly frequency even if weekdays is present' do
+      result = helper.recurrence_attrs_summary(frequency: 'daily', interval: '1', weekdays: %w[1])
+      expect(result).not_to include('on ')
+    end
+
+    it 'appends the end date for end_type "until"' do
+      result = helper.recurrence_attrs_summary(frequency: 'weekly', interval: '1', end_type: 'until', ends_on: '2027-03-15')
+      expect(result).to include('until')
+      expect(result).to include('2027')
+    end
+
+    it 'does not append anything for an invalid ends_on date rather than raising' do
+      result = helper.recurrence_attrs_summary(frequency: 'weekly', interval: '1', end_type: 'until', ends_on: 'not-a-date')
+      expect(result).not_to include('until')
+    end
+
+    it 'appends the occurrence count for end_type "count"' do
+      result = helper.recurrence_attrs_summary(frequency: 'daily', interval: '1', end_type: 'count', count: '3')
+      expect(result).to include('3 occurrences')
+    end
+
+    it 'omits any end-condition clause for end_type "never"' do
+      result = helper.recurrence_attrs_summary(frequency: 'daily', interval: '1', end_type: 'never')
+      expect(result).to eq('Every 1 day(s)')
+    end
+  end
+
   describe '#next_occurrences_list' do
     let(:event) { create(:event, starts_at: 1.week.from_now) }
 

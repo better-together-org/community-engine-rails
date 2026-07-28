@@ -24,12 +24,17 @@ export default class extends Controller {
     dayUnitLabel: String,
     weekUnitLabel: String,
     monthUnitLabel: String,
-    yearUnitLabel: String
+    yearUnitLabel: String,
+    startWeekday: Number
   }
 
   connect() {
     this.updateVisibility()
     this.updateIntervalUnitLabel()
+
+    // Once a weekday has been explicitly set (by the user or by a persisted
+    // recurrence loaded on edit), never overwrite it with the default again.
+    this.weekdayDefaultApplied = this.checkedWeekdayBoxes().length > 0
 
     // Editing an event that already has a recurrence configured should show
     // the preview immediately, not wait for the user to touch a field first.
@@ -192,6 +197,53 @@ export default class extends Controller {
   // Handle frequency change
   frequencyChanged() {
     this.updateVisibility()
+    this.applyDefaultWeekdayIfNeeded()
+    this.updatePreview()
+  }
+
+  // The first time a user switches to "weekly" with nothing already
+  // selected, pre-check the event's own start-date weekday — that's the
+  // day IceCube already recurs on by default with no restriction, so this
+  // just makes the real default visible instead of leaving every box
+  // unchecked. Only ever applied once — it must never fight a user who
+  // deliberately unchecks every box afterwards.
+  applyDefaultWeekdayIfNeeded() {
+    if (this.weekdayDefaultApplied) return
+    if (!this.hasFrequencyFieldTarget || this.frequencyFieldTarget.value !== 'weekly') return
+    if (!this.hasWeekdaysFieldTarget || !this.hasStartWeekdayValue) return
+    if (this.checkedWeekdayBoxes().length > 0) return
+
+    const box = this.weekdaysFieldTarget.querySelector(`input[type="checkbox"][value="${this.startWeekdayValue}"]`)
+    if (box) box.checked = true
+    this.weekdayDefaultApplied = true
+  }
+
+  checkedWeekdayBoxes() {
+    if (!this.hasWeekdaysFieldTarget) return []
+
+    return Array.from(this.weekdaysFieldTarget.querySelectorAll('input[type="checkbox"]:checked'))
+  }
+
+  // Weekday shortcut buttons
+  selectAllWeekdays() {
+    this.setWeekdays([0, 1, 2, 3, 4, 5, 6])
+  }
+
+  selectWeekdaysMonToFri() {
+    this.setWeekdays([1, 2, 3, 4, 5])
+  }
+
+  clearWeekdays() {
+    this.setWeekdays([])
+  }
+
+  setWeekdays(values) {
+    if (!this.hasWeekdaysFieldTarget) return
+
+    this.weekdaysFieldTarget.querySelectorAll('input[type="checkbox"]').forEach(box => {
+      box.checked = values.includes(Number(box.value))
+    })
+    this.weekdayDefaultApplied = true
     this.updatePreview()
   }
 

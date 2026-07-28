@@ -1723,6 +1723,10 @@ fr:
         select_address: Sélectionner une adresse
         select_building: Sélectionner un bâtiment
       recurrence:
+        actions:
+          clear: Effacer
+          select_all: Tout sélectionner
+          select_weekdays: Jours de semaine (lun-ven)
         end_types:
           after_count: Après occurrences
           never: Jamais
@@ -1758,6 +1762,13 @@ fr:
           no_occurrences: Aucune occurrence à venir dans la prochaine année
         prompts:
           select_frequency: Ne se répète pas
+        summary:
+          every: Tous les %{count} %{unit}
+          for_count:
+            one: pendant %{count} occurrence
+            other: pendant %{count} occurrences
+          on_days: le %{days}
+          until: jusqu'au %{date}
         units:
           daily: jour(s)
           monthly: mois
