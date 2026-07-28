@@ -117,7 +117,8 @@ module BetterTogether
     def recurrence_preview
       authorize BetterTogether::Event, :recurrence_preview?
 
-      attrs = params.permit(:frequency, :interval, :end_type, :ends_on, :count, weekdays: []).to_h.symbolize_keys
+      attrs = params.permit(:frequency, :interval, :end_type, :ends_on, :count, :month_option,
+                            weekdays: []).to_h.symbolize_keys
       occurrences, errors = recurrence_preview_occurrences(attrs)
 
       render partial: 'better_together/events/recurrence_preview',
@@ -527,7 +528,7 @@ module BetterTogether
       end
 
       # Clean up form-specific params that aren't database columns
-      %i[frequency interval end_type count weekdays].each do |key|
+      %i[frequency interval end_type count weekdays month_option].each do |key|
         params[:event][:recurrence_attributes].delete(key)
       end
     end

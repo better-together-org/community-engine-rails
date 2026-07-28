@@ -72,6 +72,26 @@
       <small id="weekdays-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.weekdays') %></small>
     </div>
 
+    <!-- Month/Year Option (for monthly/yearly recurrence) -->
+    <div class="mb-3" data-better-together--recurrence-target="monthOptionField" aria-hidden="true" style="display: none;">
+      <span class="form-label d-block"><%= t('better_together.events.recurrence.labels.month_option') %></span>
+      <div class="form-check">
+        <%= recurrence_form.radio_button :month_option, 'day_of_month', checked: event.recurrence&.month_option != 'day_of_week',
+            class: 'form-check-input', id: 'recurrence_month_option_day_of_month',
+            data: { action: 'change->better-together--recurrence#fieldChanged' } %>
+        <%= recurrence_form.label :month_option, t('better_together.events.recurrence.month_options.day_of_month'),
+            value: 'day_of_month', class: 'form-check-label', for: 'recurrence_month_option_day_of_month' %>
+      </div>
+      <div class="form-check">
+        <%= recurrence_form.radio_button :month_option, 'day_of_week', checked: event.recurrence&.month_option == 'day_of_week',
+            class: 'form-check-input', id: 'recurrence_month_option_day_of_week',
+            data: { action: 'change->better-together--recurrence#fieldChanged' } %>
+        <%= recurrence_form.label :month_option, t('better_together.events.recurrence.month_options.day_of_week'),
+            value: 'day_of_week', class: 'form-check-label', for: 'recurrence_month_option_day_of_week' %>
+      </div>
+      <small id="month-option-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.month_option') %></small>
+    </div>
+
     <!-- End Type Selection -->
     <div class="mb-3">
       <%= recurrence_form.label :end_type, t('better_together.events.recurrence.labels.end_type'), class: 'form-label' %>

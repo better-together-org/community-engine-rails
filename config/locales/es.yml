@@ -1733,6 +1733,8 @@ es:
           exception_dates: Fechas en las que este evento NO debe ocurrir
           frequency: Con qué frecuencia se repite este evento
           interval: Repetir cada N períodos (por ejemplo, cada 2 semanas)
+          month_option: Elija si esto se repite en la misma fecha cada mes/año, o
+            en la misma posición de día de la semana (como el 3.º martes)
           preview_placeholder: Seleccione opciones de recurrencia para ver las próximas
             fechas
           weekdays: Días de la semana en que ocurre este evento
@@ -1744,8 +1746,12 @@ es:
           exception_dates: Fechas de excepción
           frequency: Se repite
           interval: Repetir cada
+          month_option: Repetir por
           preview: Próximas ocurrencias
           weekdays: Repetir en
+        month_options:
+          day_of_month: Mismo día del mes
+          day_of_week: Misma posición de día de la semana (p. ej. 3.º martes)
         notes:
           applies_to_series: Los cambios aquí se aplican a toda la serie recurrente,
             no a una sola ocurrencia.
@@ -1762,6 +1768,7 @@ es:
             one: durante %{count} ocurrencia
             other: durante %{count} ocurrencias
           on_days: el %{days}
+          on_weekday_position: en la misma posición de día de la semana cada mes
           until: hasta %{date}
         units:
           daily: día(s)

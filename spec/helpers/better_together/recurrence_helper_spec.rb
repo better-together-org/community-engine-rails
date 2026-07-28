@@ -122,6 +122,21 @@ RSpec.describe BetterTogether::RecurrenceHelper do
       expect(result).not_to include('on ')
     end
 
+    it 'notes the same-weekday-position choice for monthly recurrence' do
+      result = helper.recurrence_attrs_summary(frequency: 'monthly', interval: '1', month_option: 'day_of_week')
+      expect(result).to eq('Every 1 month(s) on the same weekday each month')
+    end
+
+    it 'says nothing extra for the default day-of-month monthly option' do
+      result = helper.recurrence_attrs_summary(frequency: 'monthly', interval: '1', month_option: 'day_of_month')
+      expect(result).to eq('Every 1 month(s)')
+    end
+
+    it 'notes the same-weekday-position choice for yearly recurrence too' do
+      result = helper.recurrence_attrs_summary(frequency: 'yearly', interval: '1', month_option: 'day_of_week')
+      expect(result).to include('same weekday')
+    end
+
     it 'appends the end date for end_type "until"' do
       result = helper.recurrence_attrs_summary(frequency: 'weekly', interval: '1', end_type: 'until', ends_on: '2027-03-15')
       expect(result).to include('until')

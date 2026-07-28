@@ -98,6 +98,8 @@ module BetterTogether
       if attrs[:frequency].to_s == 'weekly'
         day_names = Array(attrs[:weekdays]).filter_map { |i| Date::DAYNAMES[i.to_i] }
         parts << t('better_together.events.recurrence.summary.on_days', days: day_names.join(', ')) if day_names.any?
+      elsif %w[monthly yearly].include?(attrs[:frequency].to_s) && attrs[:month_option].to_s == 'day_of_week'
+        parts << t('better_together.events.recurrence.summary.on_weekday_position')
       end
 
       case attrs[:end_type].to_s

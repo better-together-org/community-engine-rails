@@ -14,6 +14,7 @@ export default class extends Controller {
     "countField",
     "countInput",
     "weekdaysField",
+    "monthOptionField",
     "neverEndsWarning",
     "seriesNote",
     "preview"
@@ -57,6 +58,13 @@ export default class extends Controller {
       const isVisible = frequency === 'weekly'
       this.weekdaysFieldTarget.style.display = isVisible ? 'block' : 'none'
       this.weekdaysFieldTarget.setAttribute('aria-hidden', !isVisible)
+    }
+
+    // Show/hide the monthly/yearly "same day" vs "same weekday position" choice
+    if (this.hasMonthOptionFieldTarget) {
+      const isVisible = frequency === 'monthly' || frequency === 'yearly'
+      this.monthOptionFieldTarget.style.display = isVisible ? 'block' : 'none'
+      this.monthOptionFieldTarget.setAttribute('aria-hidden', !isVisible)
     }
 
     // Show/hide end type fields
@@ -189,6 +197,11 @@ export default class extends Controller {
       checkedBoxes.forEach(checkbox => {
         params.append('weekdays[]', checkbox.value)
       })
+    }
+
+    if (this.hasMonthOptionFieldTarget) {
+      const checkedRadio = this.monthOptionFieldTarget.querySelector('input[type="radio"]:checked')
+      if (checkedRadio) params.append('month_option', checkedRadio.value)
     }
 
     return params

@@ -53,8 +53,8 @@ module BetterTogether
       rule = case @attrs[:frequency]
              when 'daily' then IceCube::Rule.daily(interval)
              when 'weekly' then build_weekly_rule
-             when 'monthly' then IceCube::Rule.monthly(interval)
-             when 'yearly' then IceCube::Rule.yearly(interval)
+             when 'monthly' then apply_month_option(IceCube::Rule.monthly(interval))
+             when 'yearly' then apply_month_option(IceCube::Rule.yearly(interval))
              else
                @errors << :frequency_invalid
                nil
@@ -80,6 +80,33 @@ module BetterTogether
       end
 
       rule
+    end
+
+    # For monthly/yearly frequency, "day_of_month" (the IceCube default —
+    # recur on the same day-of-month/year as the start date) is left alone.
+    # "day_of_week" instead recurs on the same *weekday position* within the
+    # month as the start date (e.g. start on the 3rd Tuesday of the month ->
+    # recur on the 3rd Tuesday of every month), mirroring the "Monthly on
+    # day N" vs "Monthly on the Nth weekday" choice familiar from other
+    # calendar apps. The ordinal/weekday are derived from @start_time, not a
+    # separately user-picked value, to keep the form to a single radio
+    # choice instead of a second set of pickers.
+    def apply_month_option(rule)
+      return rule unless @attrs[:month_option].to_s == 'day_of_week'
+
+      weekday = DAY_SYMBOLS[@start_time.wday]
+      rule.day_of_week(weekday => [week_of_month_position(@start_time)])
+    end
+
+    # @return [Integer] 1-4 for the Nth occurrence of this weekday in the
+    #   month, or -1 if it's the last occurrence (handles months where a
+    #   weekday occurs 4 times some months and 5 times others).
+    def week_of_month_position(time)
+      ordinal = ((time.day - 1) / 7) + 1
+      last_day_of_month = Date.new(time.year, time.month, -1).day
+      return -1 if time.day + 7 > last_day_of_month
+
+      ordinal
     end
 
     # Selecting an end type without its paired value used to be silently

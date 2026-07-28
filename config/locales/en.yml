@@ -1720,6 +1720,8 @@ en:
           exception_dates: Dates when this event should NOT occur
           frequency: How often this event repeats
           interval: Repeat every N periods (e.g., every 2 weeks)
+          month_option: Choose whether this repeats on the same date each month/year,
+            or the same weekday position (like the 3rd Tuesday)
           preview_placeholder: Select recurrence options to see upcoming dates
           weekdays: Days of the week when this event occurs
         labels:
@@ -1730,8 +1732,12 @@ en:
           exception_dates: Exception dates
           frequency: Repeats
           interval: Repeat every
+          month_option: Repeat by
           preview: Upcoming occurrences
           weekdays: Repeat on
+        month_options:
+          day_of_month: Same day of the month
+          day_of_week: Same weekday position (e.g. 3rd Tuesday)
         notes:
           applies_to_series: Changes here apply to the entire recurring series, not
             a single occurrence.
@@ -1748,6 +1754,7 @@ en:
             one: for %{count} occurrence
             other: for %{count} occurrences
           on_days: on %{days}
+          on_weekday_position: on the same weekday each month
           until: until %{date}
         units:
           daily: day(s)

@@ -48,6 +48,38 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
     )
   end
 
+  scenario 'the month/year option only shows for monthly or yearly frequency, defaulting to "same day"' do
+    visit_recurrence_tab
+
+    month_option_wrapper = '[data-better-together--recurrence-target="monthOptionField"]'
+    expect(page).not_to have_css("#{month_option_wrapper}[style*=\"display: block\"]")
+
+    select 'Monthly', from: 'event[recurrence_attributes][frequency]'
+    expect(page).to have_css("#{month_option_wrapper}[style*=\"display: block\"]", wait: 5)
+    expect(find_field('recurrence_month_option_day_of_month')).to be_checked
+    expect(find_field('recurrence_month_option_day_of_week')).not_to be_checked
+
+    select 'Yearly', from: 'event[recurrence_attributes][frequency]'
+    expect(page).to have_css("#{month_option_wrapper}[style*=\"display: block\"]", wait: 5)
+
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+    expect(page).to have_css(
+      "#{month_option_wrapper}[style*=\"display: none\"]", visible: :all, wait: 5
+    )
+  end
+
+  scenario 'choosing the same-weekday-position option updates the live preview summary' do
+    visit_recurrence_tab
+
+    select 'Monthly', from: 'event[recurrence_attributes][frequency]'
+    select 'After occurrences', from: 'event[recurrence_attributes][end_type]'
+    fill_in 'event[recurrence_attributes][count]', with: '2'
+    choose 'recurrence_month_option_day_of_week'
+
+    expect(page).to have_css('#recurrence-preview-summary', wait: 5)
+    expect(find('#recurrence-preview-summary').text).to include('same weekday')
+  end
+
   scenario 'end-type fields toggle correctly and the never-ends warning appears for the default selection' do
     visit_recurrence_tab
 

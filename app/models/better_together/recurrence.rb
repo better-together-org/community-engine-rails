@@ -139,6 +139,19 @@ module BetterTogether
       schedule.rrules.first.occurrence_count
     end
 
+    # Extract which monthly/yearly option was chosen: 'day_of_month' (the
+    # IceCube default — same day-of-month/year as the start date) or
+    # 'day_of_week' (same weekday position within the month, e.g. "3rd
+    # Tuesday"), so the edit form can pre-select the radio that was
+    # actually used to build the persisted rule.
+    # @return [String, nil] nil unless frequency is monthly or yearly
+    def month_option
+      return nil unless %w[monthly yearly].include?(frequency)
+      return nil unless schedule&.rrules&.first
+
+      schedule.rrules.first.validations[:day_of_week].present? ? 'day_of_week' : 'day_of_month'
+    end
+
     private
 
     # Validate that the rule is valid ice_cube YAML

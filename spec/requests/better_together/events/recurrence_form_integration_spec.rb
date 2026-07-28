@@ -110,6 +110,31 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
       end
     end
 
+    context 'when creating a monthly event with the same-weekday-position option' do
+      it 'creates a recurrence that repeats on the same weekday position, not the same day-of-month', :aggregate_failures do
+        post better_together.events_path(locale:), params: {
+          event: event_params.merge(
+            recurrence_attributes: {
+              frequency: 'monthly',
+              interval: 1,
+              month_option: 'day_of_week',
+              end_type: 'count',
+              count: 3
+            }
+          )
+        }
+
+        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+
+        event = BetterTogether::Event.last
+        expect(event.recurrence).to be_present
+        expect(event.recurrence.month_option).to eq('day_of_week')
+
+        occurrences = event.recurrence.occurrences_between(starts_at, 1.year.from_now)
+        expect(occurrences).to all(have_attributes(wday: starts_at.wday))
+      end
+    end
+
     context 'when creating an event without recurrence' do
       it 'creates event without recurrence' do
         post better_together.events_path(locale:), params: {
@@ -469,6 +494,15 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
 
       expect(response).to have_http_status(:success)
       expect_element_count('#recurrence-preview-occurrences li', 3)
+    end
+
+    it 'reflects the same-weekday-position choice in the summary for monthly recurrence' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'monthly', interval: 1, month_option: 'day_of_week', end_type: 'count', count: 2
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_html_content('same weekday each month')
     end
 
     it 'reports an error instead of a false-empty result when end_type is selected without its paired value' do
