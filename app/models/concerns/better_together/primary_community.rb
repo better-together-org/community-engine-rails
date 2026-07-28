@@ -46,17 +46,21 @@ module BetterTogether
     end
 
     # The very first Platform ever created has no existing platform for its own
-    # primary Community to resolve via PlatformScoped#assign_current_platform_if_available
-    # (Community#bootstrapping_host_community? lets it save with a blank platform in
-    # exactly that one case — see app/models/better_together/community.rb). Backfill
-    # that platform reference now that this record has a persisted id. No-ops for
-    # every other has_community includer (Person, subsequent Platforms), whose
-    # community already resolved its own platform normally when it was created above.
+    # primary Community — or that Community's ContactDetail, built by
+    # Contactable#build_default_contact_details as part of the same save — to
+    # resolve via PlatformScoped#assign_current_platform_if_available.
+    # Community#bootstrapping_host_community? and
+    # ContactDetail#bootstrapping_host_community_contact_detail? let both save
+    # with a blank platform in exactly that one case. Backfill both platform
+    # references now that this record has a persisted id. No-ops for every
+    # other has_community includer (Person, subsequent Platforms), whose
+    # community (and its contact_detail) already resolved their own platform
+    # normally when created above.
     def backfill_primary_community_platform
-      return unless is_a?(BetterTogether::Platform)
-      return if community.blank? || community.platform_id.present?
+      return unless is_a?(BetterTogether::Platform) && community.present?
 
-      community.update_column(:platform_id, id)
+      backfill_bootstrap_platform_id(community)
+      backfill_bootstrap_platform_id(community.contact_detail)
     end
 
     def primary_community_extra_attrs
@@ -79,6 +83,14 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def backfill_bootstrap_platform_id(record)
+      return if record.blank? || record.platform_id.present?
+
+      record.update_column(:platform_id, id)
     end
   end
 end
