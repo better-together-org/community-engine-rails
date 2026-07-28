@@ -31,8 +31,16 @@ module BetterTogether
     # @param selected_days [Array<Integer>] Array of selected day indices (0=Sunday, 6=Saturday)
     # @return [ActiveSupport::SafeBuffer] HTML safe string of checkboxes
     def weekday_checkboxes(form, selected_days: []) # rubocop:disable Metrics/MethodLength
+      # form.object_name (e.g. "event[recurrence_attributes]") contains `[`/`]`
+      # — technically legal in an id, but it broke label/for association for
+      # axe-core and assistive tech, so checkboxes never had an accessible
+      # name. Strip to a plain alphanumeric id base instead.
+      id_base = "#{form.object_name.gsub(/\W+/, '_')}_weekdays"
+
       Date::DAYNAMES.map.with_index do |day, index|
         checked = selected_days.include?(index)
+        checkbox_id = "#{id_base}_#{index}"
+
         content_tag(:div, class: 'form-check form-check-inline') do
           concat(
             check_box_tag(
@@ -40,12 +48,13 @@ module BetterTogether
               index,
               checked,
               class: 'form-check-input',
-              id: "#{form.object_name}_weekdays_#{index}"
+              id: checkbox_id,
+              data: { action: 'change->better-together--recurrence#fieldChanged' }
             )
           )
           concat(
             label_tag(
-              "#{form.object_name}_weekdays_#{index}",
+              checkbox_id,
               day,
               class: 'form-check-label'
             )

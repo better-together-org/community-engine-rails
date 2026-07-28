@@ -1736,6 +1736,9 @@ uk:
           interval: Повторювати кожні
           preview: Майбутні повторення
           weekdays: Повторювати в
+        notes:
+          applies_to_series: Зміни тут застосовуються до всієї серії повторень, а
+            не лише до одного випадку.
         placeholders:
           exception_dates: 2025-01-15, 2025-02-20
         preview:
@@ -1744,6 +1747,13 @@ uk:
           no_occurrences: Немає майбутніх повторень протягом наступного року
         prompts:
           select_frequency: Не повторюється
+        units:
+          daily: день(-і)
+          monthly: місяць(-і)
+          weekly: тиждень(-і)
+          yearly: рік(-и)
+        warnings:
+          never_ends: Ця подія повторюватиметься нескінченно, без дати закінчення.
       register: Зареєструватися
       relationship:
         calendar: Подія календаря

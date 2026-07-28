@@ -1,8 +1,19 @@
 <div class="recurrence-fields" data-controller="better-together--recurrence"
-     data-better-together--recurrence-preview-url-value="<%= recurrence_preview_events_path %>">
+     data-better-together--recurrence-preview-url-value="<%= recurrence_preview_events_path %>"
+     data-better-together--recurrence-day-unit-label-value="<%= t('better_together.events.recurrence.units.daily') %>"
+     data-better-together--recurrence-week-unit-label-value="<%= t('better_together.events.recurrence.units.weekly') %>"
+     data-better-together--recurrence-month-unit-label-value="<%= t('better_together.events.recurrence.units.monthly') %>"
+     data-better-together--recurrence-year-unit-label-value="<%= t('better_together.events.recurrence.units.yearly') %>">
   <%= form.fields_for :recurrence, (event.recurrence || event.build_recurrence) do |recurrence_form| %>
     <%= recurrence_form.hidden_field :id if event.recurrence&.persisted? %>
-    
+
+    <!-- Series-wide note (visible whenever a frequency is selected) -->
+    <div class="mb-3" data-better-together--recurrence-target="seriesNote" aria-hidden="true" style="display: none;">
+      <p class="text-muted small mb-0" id="recurrence-series-note">
+        <%= t('better_together.events.recurrence.notes.applies_to_series') %>
+      </p>
+    </div>
+
     <!-- Frequency Selection -->
     <div class="mb-3">
       <%= recurrence_form.label :frequency, t('better_together.events.recurrence.labels.frequency'), class: 'form-label' %>
@@ -14,7 +25,7 @@
             'aria-describedby': 'frequency-help',
             data: {
               better_together__recurrence_target: 'frequencyField',
-              action: 'change->better-together--recurrence#updateVisibility'
+              action: 'change->better-together--recurrence#frequencyChanged'
             }
           } %>
       <small id="frequency-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.frequency') %></small>
@@ -23,13 +34,20 @@
     <!-- Interval Selection -->
     <div class="mb-3">
       <%= recurrence_form.label :interval, t('better_together.events.recurrence.labels.interval'), class: 'form-label' %>
-      <%= recurrence_form.number_field :interval,
-          value: event.recurrence&.interval || 1,
-          min: 1,
-          max: 365,
-          class: 'form-control',
-          'aria-describedby': 'interval-help',
-          data: { better_together__recurrence_target: 'intervalField' } %>
+      <div class="d-flex align-items-center gap-2">
+        <%= recurrence_form.number_field :interval,
+            value: event.recurrence&.interval || 1,
+            min: 1,
+            max: 365,
+            class: 'form-control',
+            style: 'max-width: 6rem;',
+            'aria-describedby': 'interval-help',
+            data: {
+              better_together__recurrence_target: 'intervalField',
+              action: 'input->better-together--recurrence#fieldChanged'
+            } %>
+        <span data-better-together--recurrence-target="intervalUnitLabel" id="interval-unit-label" class="text-muted"></span>
+      </div>
       <small id="interval-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.interval') %></small>
     </div>
 
@@ -53,10 +71,17 @@
             'aria-describedby': 'end-type-help',
             data: {
               better_together__recurrence_target: 'endTypeField',
-              action: 'change->better-together--recurrence#updateVisibility'
+              action: 'change->better-together--recurrence#endTypeChanged'
             }
           } %>
       <small id="end-type-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.end_type') %></small>
+    </div>
+
+    <!-- Never-ends warning (visible when end_type is 'never') -->
+    <div class="mb-3" data-better-together--recurrence-target="neverEndsWarning" aria-hidden="true" style="display: none;">
+      <div class="alert alert-warning mb-0 py-2" id="recurrence-never-ends-warning" role="alert">
+        <%= t('better_together.events.recurrence.warnings.never_ends') %>
+      </div>
     </div>
 
     <!-- Until Date (shown when end_type is 'until') -->
@@ -65,7 +90,11 @@
       <%= recurrence_form.date_field :ends_on,
           class: 'form-control',
           'aria-describedby': 'ends-on-help',
-          min: Date.current.to_s %>
+          min: Date.current.to_s,
+          data: {
+            better_together__recurrence_target: 'endsOnInput',
+            action: 'change->better-together--recurrence#fieldChanged'
+          } %>
       <small id="ends-on-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.ends_on') %></small>
     </div>
 
@@ -76,7 +105,11 @@
           min: 1,
           max: 999,
           class: 'form-control',
-          'aria-describedby': 'count-help' %>
+          'aria-describedby': 'count-help',
+          data: {
+            better_together__recurrence_target: 'countInput',
+            action: 'input->better-together--recurrence#fieldChanged'
+          } %>
       <small id="count-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.count') %></small>
     </div>
 

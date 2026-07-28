@@ -1726,6 +1726,9 @@ en:
           interval: Repeat every
           preview: Upcoming occurrences
           weekdays: Repeat on
+        notes:
+          applies_to_series: Changes here apply to the entire recurring series, not
+            a single occurrence.
         placeholders:
           exception_dates: 2025-01-15, 2025-02-20
         preview:
@@ -1734,6 +1737,13 @@ en:
           no_occurrences: No upcoming occurrences in the next year
         prompts:
           select_frequency: Does not repeat
+        units:
+          daily: day(s)
+          monthly: month(s)
+          weekly: week(s)
+          yearly: year(s)
+        warnings:
+          never_ends: This event will repeat indefinitely, with no end date.
       register: Register
       relationship:
         calendar: Calendar event

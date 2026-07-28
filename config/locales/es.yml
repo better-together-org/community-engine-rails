@@ -1740,6 +1740,9 @@ es:
           interval: Repetir cada
           preview: Próximas ocurrencias
           weekdays: Repetir en
+        notes:
+          applies_to_series: Los cambios aquí se aplican a toda la serie recurrente,
+            no a una sola ocurrencia.
         placeholders:
           exception_dates: 2025-01-15, 2025-02-20
         preview:
@@ -1748,6 +1751,13 @@ es:
           no_occurrences: No hay próximas ocurrencias en el próximo año
         prompts:
           select_frequency: No se repite
+        units:
+          daily: día(s)
+          monthly: mes(es)
+          weekly: semana(s)
+          yearly: año(s)
+        warnings:
+          never_ends: Este evento se repetirá indefinidamente, sin fecha de finalización.
       register: Register
       relationship:
         calendar: Evento de calendario
