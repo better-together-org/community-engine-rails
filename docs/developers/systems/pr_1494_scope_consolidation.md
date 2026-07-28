@@ -115,7 +115,6 @@ The next work on top of `#1494` should be one focused consolidation slice:
 After that, the next feature PR should focus on one of:
 
 - robot-authored page/post publishing as the canonical governed publishing workflow
-- a true release-package workflow on top of the governed publishing substrate
 - first-class governance and documentation contribution import/reporting beyond content records
 
 ## Practical Rule For Continuing

@@ -55,7 +55,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
 - [Public Publishing Agreement Gate System](developers/systems/public_publishing_agreement_gate_system.md) - Enforced agreement acceptance before governed public visibility
 - [PR 1494 Scope Consolidation](developers/systems/pr_1494_scope_consolidation.md) - Cut line for governed publishing, contribution, and evidence scope in PR 1494
-- [Release Package Publishing System](developers/systems/release_package_publishing_system.md) - Proposed CE-native workflow for governed release packages
 - [Robot Author Identity System](developers/systems/robot_author_identity_system.md) - Proposed model for truthful robot authorship on governed content
 - [Community Social System](developers/systems/community_social_system.md) - Social features
 - [Content Management](developers/systems/content_management.md) - Content creation and management
