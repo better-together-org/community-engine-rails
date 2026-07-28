@@ -149,6 +149,49 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
         expect(event.recurrence.exception_dates.size).to eq(2)
       end
     end
+
+    context 'when creating a daily event with exception dates submitted as an array (current form UI)' do
+      it 'creates event with exception dates', :aggregate_failures do
+        post better_together.events_path(locale:), params: {
+          event: event_params.merge(
+            recurrence_attributes: {
+              frequency: 'daily',
+              interval: 1,
+              end_type: 'count',
+              count: 30,
+              exception_dates: %w[2026-02-22 2026-03-01]
+            }
+          )
+        }
+
+        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+
+        event = BetterTogether::Event.last
+        expect(event.recurrence).to be_present
+        expect(event.recurrence.exception_dates).to contain_exactly(Date.parse('2026-02-22'), Date.parse('2026-03-01'))
+      end
+    end
+
+    context 'when an exception date cannot be parsed' do
+      it 'does not silently drop it — it blocks the save with a validation error' do
+        expect do
+          post better_together.events_path(locale:), params: {
+            event: event_params.merge(
+              recurrence_attributes: {
+                frequency: 'daily',
+                interval: 1,
+                end_type: 'count',
+                count: 30,
+                exception_dates: %w[2026-02-22 not-a-real-date]
+              }
+            )
+          }
+        end.not_to change(BetterTogether::Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect_html_content('could not be understood')
+      end
+    end
   end
 
   describe 'PATCH /events/:id with recurrence_attributes' do

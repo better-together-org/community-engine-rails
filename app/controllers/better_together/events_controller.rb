@@ -507,20 +507,23 @@ module BetterTogether
         params[:event][:end_condition_error] = result.errors.first
       end
 
-      # Process exception_dates from comma-separated string to array
-      if recurrence_attrs[:exception_dates].present?
-        dates = recurrence_attrs[:exception_dates]
-                .split(',')
-                .map(&:strip)
-                .reject(&:blank?)
-                .map do |d|
-                  Date.parse(d)
-                rescue StandardError
-                  nil
-                end
-                .compact
+      # Process exception_dates: the form submits an Array (one native date
+      # input per exception row) — a comma-separated String is also accepted
+      # for any client still on the legacy single-textarea format. Unlike
+      # the old textarea, an unparseable entry now blocks the save with a
+      # real error instead of being silently dropped.
+      if recurrence_attrs.key?(:exception_dates)
+        raw_values = recurrence_attrs[:exception_dates]
+        raw_values = raw_values.split(',') if raw_values.is_a?(String)
+        raw_values = Array(raw_values).map(&:to_s).map(&:strip).reject(&:blank?)
+        parsed_dates = raw_values.map { |value| safe_parse_date(value) }
 
-        params[:event][:recurrence_attributes][:exception_dates] = dates
+        if parsed_dates.include?(nil)
+          params[:event][:recurrence_attributes][:exception_dates_error] = true
+          params[:event][:exception_dates_error] = true
+        else
+          params[:event][:recurrence_attributes][:exception_dates] = parsed_dates
+        end
       end
 
       # Clean up form-specific params that aren't database columns
@@ -540,6 +543,12 @@ module BetterTogether
       return @resource.starts_at if @resource&.starts_at
 
       Time.current
+    end
+
+    def safe_parse_date(value)
+      Date.parse(value)
+    rescue ArgumentError, TypeError
+      nil
     end
 
     def recurrence_preview_occurrences(attrs)

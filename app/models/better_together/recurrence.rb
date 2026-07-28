@@ -12,10 +12,16 @@ module BetterTogether
     # silently saving the recurrence as "never ends".
     attr_accessor :end_condition_error
 
+    # Transient, not persisted. Set when one or more submitted exception
+    # dates could not be parsed, so the save is blocked with a real error
+    # instead of the old behavior of silently dropping the bad entry.
+    attr_accessor :exception_dates_error
+
     validates :rule, presence: true
     validates :frequency, inclusion: { in: %w[daily weekly monthly yearly], allow_nil: true }
     validate :validate_rule_format
     validate :validate_end_condition_present
+    validate :validate_exception_dates_present
 
     before_validation :extract_frequency_from_rule
 
@@ -156,6 +162,12 @@ module BetterTogether
       end
     end
 
+    def validate_exception_dates_present
+      return unless exception_dates_error
+
+      errors.add(:exception_dates, :invalid, message: 'contains one or more dates that could not be understood')
+    end
+
     # Extract frequency from the ice_cube rule for quick queries
     # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
     def extract_frequency_from_rule
@@ -188,7 +200,7 @@ module BetterTogether
     # @param destroy [Boolean] Whether to include :_destroy
     # @return [Array<Symbol>] Array of permitted attribute names
     def self.permitted_attributes(id: false, destroy: false) # rubocop:disable Lint/IneffectiveAccessModifier
-      attrs = %i[rule ends_on end_condition_error]
+      attrs = %i[rule ends_on end_condition_error exception_dates_error]
       attrs << { exception_dates: [] } # Permit array of exception dates
       attrs << :id if id
       attrs << :_destroy if destroy

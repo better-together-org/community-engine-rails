@@ -157,9 +157,69 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
     expect(summary_text).to include('occurrences')
   end
 
-  scenario 'passes WCAG 2.1 AA accessibility checks with the recurrence tab open' do
+  scenario 'adding an exception date row appends a new native date input' do
+    visit_recurrence_tab
+
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 0)
+
+    click_button 'Add exception date'
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 1, wait: 5)
+
+    click_button 'Add exception date'
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 2, wait: 5)
+  end
+
+  scenario 'removing an exception date row removes it from the DOM' do
+    visit_recurrence_tab
+
+    click_button 'Add exception date'
+    click_button 'Add exception date'
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 2, wait: 5)
+
+    within all('.exception-date-row').first do
+      click_button '×'
+    end
+
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 1, wait: 5)
+  end
+
+  scenario 'submitting the form with an added exception date persists it on the event' do
+    visit_recurrence_tab
+
+    select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+    select 'After occurrences', from: 'event[recurrence_attributes][end_type]'
+    fill_in 'event[recurrence_attributes][count]', with: '3'
+
+    click_button 'Add exception date'
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 1, wait: 5)
+
+    # Setting a native <input type="date">'s value directly via JS (rather
+    # than Capybara's .set, which is unreliable for date inputs across
+    # drivers) mirrors the established pattern already used in
+    # timezone_datetime_form_spec.rb for the same input type.
+    page.execute_script(<<~JS)
+      const input = document.querySelector('#exception-dates-container .exception-date-row input[type="date"]');
+      input.value = '2026-04-01';
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    JS
+
+    # Event#name is a Mobility-translated attribute, not a real column, so
+    # find_by(name:) isn't usable here — assert via a count change instead.
+    expect do
+      page.execute_script("document.querySelector('form[id^=form_event]').requestSubmit()")
+      sleep 2
+    end.to change(BetterTogether::Event, :count).by(1)
+
+    event = BetterTogether::Event.order(:created_at).last
+    expect(event.recurrence).to be_present
+    expect(event.recurrence.exception_dates).to include(Date.parse('2026-04-01'))
+  end
+
+  scenario 'passes WCAG 2.1 AA accessibility checks with the recurrence tab open, including a dynamically added exception date row' do
     visit_recurrence_tab
     select 'Weekly', from: 'event[recurrence_attributes][frequency]'
+    click_button 'Add exception date'
+    expect(page).to have_css('#exception-dates-container .exception-date-row', count: 1, wait: 5)
 
     expect(page).to be_axe_clean
       .within('#event-recurrence')

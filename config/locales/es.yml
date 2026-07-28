@@ -1717,7 +1717,9 @@ es:
         select_building: Seleccionar edificio
       recurrence:
         actions:
+          add_exception_date: Añadir fecha de excepción
           clear: Borrar
+          remove_exception_date: Eliminar esta fecha de excepción
           select_all: Seleccionar todo
           select_weekdays: Días laborables (lun-vie)
         end_types:
@@ -1728,8 +1730,7 @@ es:
           count: Número de veces que este evento debe repetirse
           end_type: Cómo debe terminar la recurrencia
           ends_on: La última fecha en que ocurrirá este evento
-          exception_dates: Fechas en las que este evento NO debe ocurrir (separadas
-            por comas, formato AAAA-MM-DD)
+          exception_dates: Fechas en las que este evento NO debe ocurrir
           frequency: Con qué frecuencia se repite este evento
           interval: Repetir cada N períodos (por ejemplo, cada 2 semanas)
           preview_placeholder: Seleccione opciones de recurrencia para ver las próximas
@@ -1739,6 +1740,7 @@ es:
           count: Número de ocurrencias
           end_type: Termina
           ends_on: Fecha de finalización
+          exception_date_single: Fecha de excepción
           exception_dates: Fechas de excepción
           frequency: Se repite
           interval: Repetir cada
@@ -1747,8 +1749,7 @@ es:
         notes:
           applies_to_series: Los cambios aquí se aplican a toda la serie recurrente,
             no a una sola ocurrencia.
-        placeholders:
-          exception_dates: 2025-01-15, 2025-02-20
+          exception_date_removed: Fecha de excepción eliminada
         preview:
           error: No se puede previsualizar esta recurrencia — revise la fecha de fin
             o el número de ocurrencias

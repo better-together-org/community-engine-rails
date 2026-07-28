@@ -83,6 +83,7 @@ module BetterTogether
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
     validate :validate_recurrence_end_condition_present
+    validate :validate_recurrence_exception_dates_present
 
     # Transient, not persisted. Set by EventsController#process_recurrence_attributes
     # when the submitted recurrence end_type ('until'/'count') is missing its
@@ -91,6 +92,11 @@ module BetterTogether
     # appears in the shared errors partial, which only reads @resource's own
     # errors.full_messages.
     attr_accessor :end_condition_error
+
+    # Transient, not persisted. Set when one or more submitted recurrence
+    # exception dates could not be parsed. Same rationale as
+    # end_condition_error above.
+    attr_accessor :exception_dates_error
 
     before_validation :set_host
     before_validation :set_default_duration
@@ -210,6 +216,7 @@ module BetterTogether
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
         starts_at ends_at duration_minutes registration_url timezone status end_condition_error
+        exception_dates_error
       ] + [
         {
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
@@ -473,6 +480,12 @@ module BetterTogether
       when :ends_on_invalid
         errors.add(:base, 'Recurrence end date is not a valid date')
       end
+    end
+
+    def validate_recurrence_exception_dates_present
+      return unless exception_dates_error
+
+      errors.add(:base, 'One or more recurrence exception dates could not be understood')
     end
   end
   # rubocop:enable Metrics/ClassLength

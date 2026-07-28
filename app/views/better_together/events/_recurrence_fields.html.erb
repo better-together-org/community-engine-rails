@@ -126,15 +126,30 @@
     </div>
 
     <!-- Exception Dates -->
-    <div class="mb-3">
-      <%= recurrence_form.label :exception_dates, t('better_together.events.recurrence.labels.exception_dates'), class: 'form-label' %>
-      <%= recurrence_form.text_area :exception_dates,
-          value: event.recurrence&.exception_dates&.join(', '),
-          class: 'form-control',
-          rows: 2,
-          'aria-describedby': 'exception-dates-help',
-          placeholder: t('better_together.events.recurrence.placeholders.exception_dates') %>
-      <small id="exception-dates-help" class="form-text text-muted"><%= t('better_together.events.recurrence.hints.exception_dates') %></small>
+    <div class="mb-3" data-controller="better-together--exception-dates"
+         data-exception-date-removed-text="<%= t('better_together.events.recurrence.notes.exception_date_removed') %>">
+      <span class="form-label d-block"><%= t('better_together.events.recurrence.labels.exception_dates') %></span>
+      <small id="exception-dates-help" class="form-text text-muted d-block mb-2">
+        <%= t('better_together.events.recurrence.hints.exception_dates') %>
+      </small>
+
+      <div id="exception-dates-container" data-better-together--exception-dates-target="container">
+        <% (event.recurrence&.exception_dates || []).each.with_index do |date, index| %>
+          <%= render 'exception_date_row', value: date, id_suffix: index %>
+        <% end %>
+      </div>
+
+      <template data-better-together--exception-dates-target="template">
+        <%= render 'exception_date_row', value: nil, id_suffix: 'EXCEPTION_INDEX' %>
+      </template>
+
+      <button type="button" class="btn btn-outline-secondary btn-sm" id="add-exception-date-btn"
+              data-action="click->better-together--exception-dates#add">
+        <%= t('better_together.events.recurrence.actions.add_exception_date') %>
+      </button>
+
+      <div class="visually-hidden" role="status" aria-live="polite"
+           data-better-together--exception-dates-target="announcement"></div>
     </div>
 
     <!-- Preview Section -->
