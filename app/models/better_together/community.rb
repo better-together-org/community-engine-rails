@@ -32,16 +32,18 @@ module BetterTogether
             inverse_of: :community,
             dependent: :nullify
 
-    # Overrides PlatformScoped's required belongs_to :platform (inherited via
-    # PlatformRecord). The very first Platform ever created has no platform yet
-    # for its own host community to reference — PrimaryCommunity#create_primary_community
-    # creates this community first (better_together_communities.platform_id is
-    # nullable), then Platform saves referencing it (community_id is NOT NULL, so
-    # Platform must reference an already-persisted community), then
-    # backfill_primary_community_platform sets this platform_id once the platform
-    # itself has a persisted id. Every other case still requires a platform.
-    belongs_to :platform, optional: true
-    validates :platform, presence: true, unless: :bootstrapping_host_community?
+    # The very first Platform ever created has no platform yet for its own host
+    # community to reference — PrimaryCommunity#create_primary_community creates
+    # this community first (better_together_communities.platform_id is
+    # nullable), then Platform saves referencing it (community_id is NOT NULL,
+    # so Platform must reference an already-persisted community), then
+    # backfill_primary_community_platform sets this platform_id once the
+    # platform itself has a persisted id. Overrides
+    # PlatformScoped#platform_presence_optional? — see that concern for why
+    # this is a hook method rather than a redeclared belongs_to.
+    def platform_presence_optional?
+      bootstrapping_host_community?
+    end
 
     def bootstrapping_host_community?
       host? && !BetterTogether::Platform.exists?(host: true)

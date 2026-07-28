@@ -6,15 +6,17 @@ module BetterTogether
     # Use a manual safe touch to avoid raising ActiveRecord::StaleObjectError in tests when lock_version is out of date
     belongs_to :contactable, polymorphic: true, touch: false
 
-    # Overrides PlatformScoped's required belongs_to :platform (inherited via
-    # PlatformRecord) for the one case that can't resolve a platform yet: the
-    # very first Platform's own host Community builds its contact_detail
+    # The one case that can't resolve a platform yet: the very first Platform's
+    # own host Community builds its contact_detail
     # (Contactable#build_default_contact_details) before that platform exists.
     # See Community#bootstrapping_host_community? and
     # PrimaryCommunity#backfill_primary_community_platform, which backfills
     # this contact_detail's platform_id once the platform is persisted.
-    belongs_to :platform, optional: true
-    validates :platform, presence: true, unless: :bootstrapping_host_community_contact_detail?
+    # Overrides PlatformScoped#platform_presence_optional? — see that concern
+    # for why this is a hook method rather than a redeclared belongs_to.
+    def platform_presence_optional?
+      bootstrapping_host_community_contact_detail?
+    end
 
     after_commit :safe_touch_contactable, on: %i[create update destroy]
 
