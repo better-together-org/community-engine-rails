@@ -21,6 +21,7 @@ module BetterTogether
       content_blocks: 'content_blocks_url',
       communities: 'communities_url',
       events: 'events_url',
+      federation_hub: 'federation_hub_url',
       geography_continents: 'geography_continents_url',
       geography_countries: 'geography_countries_url',
       geography_maps: 'geography_maps_url',
