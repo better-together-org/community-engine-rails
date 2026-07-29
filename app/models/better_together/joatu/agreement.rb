@@ -5,8 +5,6 @@ module BetterTogether
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < PlatformRecord # rubocop:todo Metrics/ClassLength
       include BetterTogether::Authorable
-      include BetterTogether::Citable
-      include BetterTogether::Claimable
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable
@@ -311,7 +309,7 @@ module BetterTogether
 
       def add_participant_contributions
         [offer&.creator, request&.creator].compact.uniq.each do |participant|
-          add_governed_contributor(
+          add_contributor(
             participant,
             role: BetterTogether::Authorship::EXCHANGE_PARTICIPANT_ROLE,
             contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION

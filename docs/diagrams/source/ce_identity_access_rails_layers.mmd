@@ -99,39 +99,39 @@ classDiagram
     class BetterTogether__Identification["Identification"] {
       <<Model>>
       table: better_together_identifications
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: identity, target: agent, owner: seeds
     }
     class BetterTogether__Invitation["Invitation"] {
       <<Model>>
       table: better_together_invitations
-      concerns: BetterTogetherId, Creatable, Seedable
+      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
       weak refs: target: invitable, target: inviter, target: invitee, owner: seeds
     }
     class BetterTogether__OauthAccessGrant["OauthAccessGrant"] {
       <<Model>>
       table: better_together_oauth_access_grants
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__OauthAccessToken["OauthAccessToken"] {
       <<Model>>
       table: better_together_oauth_access_tokens
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__OauthApplication["OauthApplication"] {
       <<Model>>
       table: better_together_oauth_applications
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Person["Person"] {
       <<Model>>
       table: better_together_people
       translates: description, description_html, name, slug
-      concerns: Author, BetterTogetherId, Communicator, Contactable +17
-      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: page_contributions +25
+      concerns: Agentic, Author, BetterTogetherId, Communicator +20
+      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: page_contributions +26
     }
     class BetterTogether__PersonAccessGrant["PersonAccessGrant"] {
       <<Model>>
@@ -142,31 +142,31 @@ classDiagram
     class BetterTogether__PersonBlock["PersonBlock"] {
       <<Model>>
       table: better_together_person_blocks
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__PersonChecklistItem["PersonChecklistItem"] {
       <<Model>>
       table: better_together_person_checklist_items
-      concerns: BetterTogetherId, Creatable, Seedable
+      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__PersonCommunityMembership["PersonCommunityMembership"] {
       <<Model>>
       table: better_together_person_community_memberships
-      concerns: BetterTogetherId, Membership, Seedable
+      concerns: BetterTogetherId, Membership, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__PersonDataExport["PersonDataExport"] {
       <<Model>>
       table: better_together_person_data_exports
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds, owner: export_file_attachment
     }
     class BetterTogether__PersonDeletionRequest["PersonDeletionRequest"] {
       <<Model>>
       table: better_together_person_deletion_requests
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__PersonLink["PersonLink"] {
@@ -203,20 +203,20 @@ classDiagram
       <<Model>>
       table: better_together_resource_permissions
       translates: slug
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Positioned +4
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +5
       weak refs: owner: seeds, owner: slugs, owner: string_translations
     }
     class BetterTogether__Role["Role"] {
       <<Model>>
       table: better_together_roles
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Positioned +4
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +5
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations
     }
     class BetterTogether__RoleResourcePermission["RoleResourcePermission"] {
       <<Model>>
       table: better_together_role_resource_permissions
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__User["User\n(shared table family)"] {
@@ -224,7 +224,7 @@ classDiagram
       table: better_together_users
       variants: OauthUser
       translates: slug
-      concerns: BetterTogetherId, DeviseUser, FriendlySlug, Seedable +1
+      concerns: BetterTogetherId, DeviseUser, FriendlySlug, PlatformScoped +2
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: person_identification
     }
   }
@@ -267,26 +267,37 @@ classDiagram
   BetterTogether__GuestAccess --> BetterTogether__Platform : invitable
   BetterTogether__GuestAccess --> BetterTogether__Role : community_role
   BetterTogether__GuestAccess --> BetterTogether__Role : platform_role
+  BetterTogether__Identification --> BetterTogether__Platform : platform
+  BetterTogether__Invitation --> BetterTogether__Platform : platform
   BetterTogether__Invitation --> BetterTogether__Person : creator
   BetterTogether__Invitation --> BetterTogether__Role : role
+  BetterTogether__OauthAccessGrant --> BetterTogether__Platform : platform
   BetterTogether__OauthAccessGrant --> BetterTogether__OauthApplication : application
+  BetterTogether__OauthAccessToken --> BetterTogether__Platform : platform
   BetterTogether__OauthAccessToken --> BetterTogether__OauthApplication : application
   BetterTogether__OauthApplication --> BetterTogether__Person : owner
+  BetterTogether__OauthApplication --> BetterTogether__Platform : platform
+  BetterTogether__Person --> BetterTogether__Platform : platform
   BetterTogether__Person --> BetterTogether__Community : community
   BetterTogether__PersonAccessGrant --> BetterTogether__PersonLink : person_link
   BetterTogether__PersonAccessGrant --> BetterTogether__Person : grantor_person
   BetterTogether__PersonAccessGrant --> BetterTogether__Person : grantee_person
+  BetterTogether__PersonBlock --> BetterTogether__Platform : platform
   BetterTogether__PersonBlock --> BetterTogether__Person : blocker
   BetterTogether__PersonBlock --> BetterTogether__Person : blocked
+  BetterTogether__PersonChecklistItem --> BetterTogether__Platform : platform
   BetterTogether__PersonChecklistItem --> BetterTogether__Person : creator
   BetterTogether__PersonChecklistItem --> BetterTogether__Person : person
   BetterTogether__PersonChecklistItem --> BetterTogether__Checklist : checklist
   BetterTogether__PersonChecklistItem --> BetterTogether__ChecklistItem : checklist_item
+  BetterTogether__PersonCommunityMembership --> BetterTogether__Platform : platform
   BetterTogether__PersonCommunityMembership --> BetterTogether__Community : joinable
   BetterTogether__PersonCommunityMembership --> BetterTogether__Person : member
   BetterTogether__PersonCommunityMembership --> BetterTogether__Role : role
   BetterTogether__PersonDataExport --> BetterTogether__Person : person
+  BetterTogether__PersonDataExport --> BetterTogether__Platform : platform
   BetterTogether__PersonDeletionRequest --> BetterTogether__Person : person
+  BetterTogether__PersonDeletionRequest --> BetterTogether__Platform : platform
   BetterTogether__PersonDeletionRequest --> BetterTogether__Person : reviewed_by
   BetterTogether__PersonLink --> BetterTogether__PlatformConnection : platform_connection
   BetterTogether__PersonLink --> BetterTogether__Person : source_person
@@ -303,5 +314,10 @@ classDiagram
   BetterTogether__PersonPurgeAudit --> BetterTogether__Person : person
   BetterTogether__PersonPurgeAudit --> BetterTogether__PersonDeletionRequest : person_deletion_request
   BetterTogether__PersonPurgeAudit --> BetterTogether__Person : reviewed_by
+  BetterTogether__PersonPurgeAudit --> BetterTogether__Platform : platform
+  BetterTogether__ResourcePermission --> BetterTogether__Platform : platform
+  BetterTogether__Role --> BetterTogether__Platform : platform
+  BetterTogether__RoleResourcePermission --> BetterTogether__Platform : platform
   BetterTogether__RoleResourcePermission --> BetterTogether__Role : role
   BetterTogether__RoleResourcePermission --> BetterTogether__ResourcePermission : resource_permission
+  BetterTogether__User --> BetterTogether__Platform : platform

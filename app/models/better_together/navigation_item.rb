@@ -21,6 +21,7 @@ module BetterTogether
       content_blocks: 'content_blocks_url',
       communities: 'communities_url',
       events: 'events_url',
+      federation_hub: 'federation_hub_url',
       geography_continents: 'geography_continents_url',
       geography_countries: 'geography_countries_url',
       geography_maps: 'geography_maps_url',
@@ -105,7 +106,6 @@ module BetterTogether
     validate :permission_identifier_requires_non_public_privacy
 
     before_validation :set_default_visibility_strategy
-    before_validation :set_default_privacy
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
@@ -214,16 +214,6 @@ module BetterTogether
 
     def set_default_visibility_strategy
       self.visibility_strategy ||= 'authenticated'
-    end
-
-    # Defaults to the most open privacy level allowed by the platform's own
-    # ceiling (see PrivacyCeilingValidatable, mixed in via Privacy), falling
-    # back to 'public' only if no ceiling can be resolved (e.g. platform not
-    # yet set). Previously hardcoded to 'public' unconditionally, which broke
-    # the moment PrivacyCeilingValidatable became active on every Privacy
-    # model — a private/community platform would reject its own default.
-    def set_default_privacy
-      self.privacy ||= privacy_ceiling || 'public'
     end
 
     def title(options = {})

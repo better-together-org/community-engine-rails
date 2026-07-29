@@ -28,7 +28,7 @@ classDiagram
     class BetterTogether__WebhookEndpoint["WebhookEndpoint"] {
       <<Model>>
       table: better_together_webhook_endpoints
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
   }
@@ -38,6 +38,7 @@ classDiagram
   BetterTogether__WebhookEndpointsController ..> BetterTogether__WebhookEndpoint : manages
   BetterTogether__WebhookEndpointsController --|> BetterTogether__ResourceController
   BetterTogether__WebhookDelivery --> BetterTogether__WebhookEndpoint : webhook_endpoint
+  BetterTogether__WebhookEndpoint --> BetterTogether__Platform : platform
   BetterTogether__WebhookEndpoint --> BetterTogether__Person : person
   BetterTogether__WebhookEndpoint --> BetterTogether__Community : community
   BetterTogether__WebhookEndpoint --> BetterTogether__OauthApplication : oauth_application

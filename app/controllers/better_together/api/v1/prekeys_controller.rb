@@ -24,6 +24,7 @@ module BetterTogether
         skip_after_action :verify_policy_scoped, raise: false
         skip_after_action :enforce_policy_use,   raise: false
 
+        before_action :ensure_e2ee_messaging_enabled!
         before_action :set_person
         before_action :authorize_own_person!, only: %i[register_prekeys key_backup save_key_backup]
         # V4 fix: rate-limit prekey_bundle to prevent OTK exhaustion DoS.
@@ -199,6 +200,17 @@ module BetterTogether
           return if current_user&.person == @person
 
           render json: { error: 'Forbidden' }, status: :forbidden
+        end
+
+        # E2EE is gated by BETTER_TOGETHER_E2EE_MESSAGING_ENABLED and/or the e2ee_messaging
+        # feature gate. The web UI already hides its mount points behind this check, but
+        # without an equivalent server-side check here a direct API client could register
+        # Signal prekeys and read/write key-backup material regardless of the gate.
+        def ensure_e2ee_messaging_enabled!
+          return if BetterTogether.e2ee_messaging_enabled? ||
+                    BetterTogether::FeatureGate.enabled?('e2ee_messaging', actor: current_user)
+
+          render json: { error: 'E2EE messaging is not enabled' }, status: :forbidden
         end
 
         def consume_one_time_prekey

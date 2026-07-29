@@ -94,11 +94,11 @@ RSpec.describe BetterTogether::Post do
 
       expect(post.robot_authors).to contain_exactly(robot)
       expect(post.authors).to be_empty
-      expect(post.governed_authors).to contain_exactly(robot)
+      expect(post.agent_authors).to contain_exactly(robot)
     end
   end
 
-  describe '#governed_authors' do
+  describe '#agent_authors' do
     it 'includes robot authors alongside people authors' do
       post = create(:better_together_post)
       person = create(:better_together_person)
@@ -107,7 +107,7 @@ RSpec.describe BetterTogether::Post do
       post.authorships.create!(author: person, position: 1)
       post.authorships.create!(author: robot, position: 2)
 
-      expect(post.governed_authors).to eq([post.authorships.first.author, person, robot].uniq)
+      expect(post.agent_authors).to eq([post.authorships.first.author, person, robot].uniq)
       expect(post.robot_authors).to include(robot)
     end
   end

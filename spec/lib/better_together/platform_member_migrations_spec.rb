@@ -118,6 +118,10 @@ RSpec.describe 'Platform member security migrations' do # rubocop:disable RSpec/
 
     expect(membership).to be_present
     expect(membership.status).to eq('active')
-    expect(membership.role.identifier).to eq(platform_manager_role.identifier)
+    # BackfillHostPlatformMemberships intentionally prefers platform_member (the
+    # access-preserving, non-admin role) over platform_steward/platform_manager —
+    # see the migration's own comment block: this backfill must never silently
+    # promote pre-existing people to an admin-tier role.
+    expect(membership.role.identifier).to eq(platform_member_role.identifier)
   end
 end

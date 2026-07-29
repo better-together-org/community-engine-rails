@@ -250,7 +250,7 @@ module BetterTogether
 
       BetterTogether::PublicVisibilityGate.allow!(
         record: self,
-        actor: Current.governed_agent,
+        actor: Current.agent,
         target_network_visibility: network_visibility
       )
     end

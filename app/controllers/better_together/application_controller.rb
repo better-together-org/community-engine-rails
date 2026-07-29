@@ -171,7 +171,7 @@ module BetterTogether
       Current.platform = Current.platform_domain&.platform || host_platform
       Current.person = current_user&.person
       Current.robot = current_robot
-      Current.governed_agent = current_robot || Current.person
+      Current.agent = current_robot || Current.person
       ActiveStorage::Current.url_options = resolved_url_options
     end
 

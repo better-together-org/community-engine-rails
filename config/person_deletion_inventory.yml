@@ -438,6 +438,14 @@ entries:
     action: destroy
     reverse_association: received_message_requests
 
+  - key: BetterTogether::InboundEmailReplyToken#recipient
+    kind: model_reference
+    owner: person
+    model: BetterTogether::InboundEmailReplyToken
+    association: recipient
+    foreign_key: recipient_id
+    action: destroy
+
   - key: BetterTogether::Creatable#creator
     kind: creatable_creator_reference
     owner: person
