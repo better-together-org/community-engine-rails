@@ -13,7 +13,7 @@ RSpec.describe BetterTogether::Authorship do
       expect(authorship.author).to eq(robot)
       expect(authorship.author_type).to eq('BetterTogether::Robot')
       expect(page.robot_authors).to include(robot)
-      expect(page.governed_authors).to include(robot)
+      expect(page.agent_authors).to include(robot)
     end
 
     it 'defaults new contribution records to author/content' do

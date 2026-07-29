@@ -103,11 +103,11 @@ module BetterTogether
       end
     end
 
-    def governed_authors
+    def agent_authors
       contributors_for(BetterTogether::Authorship::AUTHOR_ROLE)
     end
 
-    def governed_contributors
+    def agent_contributors
       contributions.includes(:author).sort_by(&:position).map(&:author).compact
     end
 

@@ -4,7 +4,7 @@ module BetterTogether
   # Shared identity helpers for people and robots participating in the
   # community action network. This is a lightweight foundation for future
   # actor-safe authorship and agreement participation work.
-  module Agentable
+  module Agentic
     extend ActiveSupport::Concern
 
     class_methods do

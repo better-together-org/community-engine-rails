@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29T06:07:48Z",
+  "generated_at": "2026-07-29T13:41:18Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -1009,7 +1009,7 @@
             "slug"
           ],
           "concerns": [
-            "BetterTogether::Agentable",
+            "BetterTogether::Agentic",
             "BetterTogether::Author",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Communicator",
@@ -2690,9 +2690,9 @@
       ],
       "concerns_inventory": [
         {
-          "name": "BetterTogether::Agentable",
-          "label": "Agentable",
-          "capability": "Agentable",
+          "name": "BetterTogether::Agentic",
+          "label": "Agentic",
+          "capability": "Agentic",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Person"
@@ -5081,7 +5081,7 @@
           ],
           "translated_attributes": [],
           "concerns": [
-            "BetterTogether::Agentable",
+            "BetterTogether::Agentic",
             "BetterTogether::Author",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Seedable"
@@ -5749,9 +5749,9 @@
       ],
       "concerns_inventory": [
         {
-          "name": "BetterTogether::Agentable",
-          "label": "Agentable",
-          "capability": "Agentable",
+          "name": "BetterTogether::Agentic",
+          "label": "Agentic",
+          "capability": "Agentic",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Robot"

@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     # Generic agreement-acceptance check, delegating to the already-generic
-    # Agentable#accepted_agreement?.
+    # Agentic#accepted_agreement?.
     def accepted_agreement?(identifier)
       agent.present? && agent.accepted_agreement?(identifier)
     end

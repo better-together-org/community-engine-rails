@@ -4,7 +4,7 @@ module BetterTogether
   # Persists platform-aware robot configuration for LLM-driven tasks.
   class Robot < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include Author
-    include Agentable
+    include Agentic
 
     self.table_name = 'better_together_robots'
 

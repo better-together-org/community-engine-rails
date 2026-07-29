@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'better_together/shared/_governed_authors' do
+RSpec.describe 'better_together/shared/_agent_authors' do
   it 'renders both person and robot mentions truthfully' do
     person = create(:person, name: 'Person Author', identifier: 'person-author')
     robot = create(:robot, name: 'Release Bot', identifier: 'release-bot')
@@ -15,7 +15,7 @@ RSpec.describe 'better_together/shared/_governed_authors' do
     allow(view).to receive(:policy).with(person).and_return(double(show?: true))
     allow(view).to receive(:person_path).with(person).and_return("/people/#{person.to_param}")
 
-    render partial: 'better_together/shared/governed_authors',
+    render partial: 'better_together/shared/agent_authors',
            locals: { authors: [person, robot], flex_layout: 'flex-row', flex_align_items: 'center' }
 
     page = Capybara.string(rendered)

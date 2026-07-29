@@ -9,7 +9,7 @@ This assessment is generated from the current live class set and the concern cap
 | Concern | Capability | Included by live classes | Drawbacks / risks |
 | --- | --- | --- | --- |
 | `ActiveStorageSecurity` | Activestoragesecurity | `ContentSecurity::ActiveStorage::Representations::ProxyController`, `ContentSecurity::ActiveStorage::Blobs::ProxyController` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Agentable` | Agentable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Agentic` | Agentic | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::Auth::RegistrationHelpers` | Registrationhelpers | `Api::Auth::RegistrationsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::OauthAuthorization` | Oauthauthorization | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Attachments::Images` | Images | `Category`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
