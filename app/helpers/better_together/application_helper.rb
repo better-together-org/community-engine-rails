@@ -5,7 +5,6 @@ module BetterTogether
   # These methods facilitate access to common resources like the current user,
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
-    include C3Helper
     include MetricsHelper
     include StructuredDataHelper
 

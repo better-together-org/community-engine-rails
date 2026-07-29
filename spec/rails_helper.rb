@@ -73,16 +73,6 @@ ESSENTIAL_TABLES = %w[
 # rubocop:enable Lint/CopDirectiveSyntax
 # rubocop:enable Metrics/PerceivedComplexity
 
-# Extension gems ship their own factories under their own spec/factories/ tree
-# (not autoloaded by factory_bot_rails' default spec/factories/**/*.rb glob,
-# which is relative to this app's root, not a bundled gem's root). Require
-# them directly rather than going through FactoryBot.definition_file_paths +
-# FactoryBot.reload — reload does a full reset and re-derives its file list,
-# which raced with factory_bot_rails' own default-path registration and wiped
-# out the host app's own factories (e.g. :better_together_person) here.
-borgberry_factories_path = File.expand_path('../gems/better_together-borgberry/spec/factories', __dir__)
-Dir[File.join(borgberry_factories_path, '**', '*.rb')].each { |f| require f } if Dir.exist?(borgberry_factories_path)
-
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include ActiveSupport::Testing::TimeHelpers
