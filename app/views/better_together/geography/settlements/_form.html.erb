@@ -3,27 +3,10 @@
 
 }) do |form| %>
 
-<%# KEEP WHILE EDITING? BUT GET RID OF LATER?? %>
-  <% if geography_settlement.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(geography_settlement.errors.count, "error") %> prohibited this geography_settlement from being saved:</h2>
-
-      <ul>
-        <% geography_settlement.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-<%#-END OF SECTION TO MAYBE?? REMOVE LATER??---when done put uncomment error section below %>
-
-
-<%# SKIPPED THE CREATOR ID SECTION SINCE SETTLEMENTS DON'T HAVE CREATOR ID IN THE MODEL FILE %>
-
   <% content_for :resource_toolbar do %>
       <div class="btn-toolbar mb-3" role="toolbar" aria-label="<%= t('helpers.toolbar.aria_label') %>">
         <div class="btn-group me-2" role="group">
-          <%= link_to t('better_together.geography.settlements.toolbar.back_to_geography_settlements'), geography_settlement_path, class: 'btn btn-secondary' %>
+          <%= link_to t('better_together.geography.settlements.toolbar.back_to_geography_settlements'), geography_settlements_path, class: 'btn btn-secondary' %>
         </div>
         <div class="btn-group me-2" role="group">
           <%= form.submit t('better_together.geography.settlements.toolbar.save_geography_settlement'), class: 'btn btn-primary' %>
@@ -38,19 +21,17 @@
 
   <%= yield :resource_toolbar %>
 
-<%# TODO -- WHEN/IF REMOVING ABOVE ERROR HANDLING - TURN THIS ONE ON 
   <%= turbo_frame_tag 'form_errors' %>  
-
 
 <div class="row">
     <!-- Vertical Pills Navigation -->
     <div class="col-md-3">
       <div class="nav flex-column nav-pills" id="geography-settlement-form-tabs" role="tablist" aria-orientation="vertical">
         <button class="nav-link active" id="geography-settlement-details-tab" data-bs-toggle="pill" data-bs-target="#geography-settlement-details" type="button" role="tab" aria-controls="geography-settlement-details" aria-selected="true" data-better_together--tabs-target="tab">
-          <%= t('better_together.geography_settlement.tabs.details') %>
+          <%= t('better_together.globals.tabs.details') %>
         </button>
         <button class="nav-link" id="geography-settlement-images-tab" data-bs-toggle="pill" data-bs-target="#geography-settlement-images" type="button" role="tab" aria-controls="geography-settlement-images" aria-selected="false" data-better_together--tabs-target="tab">
-          <%= t('better_together.geography_settlement.tabs.images') %>
+          <%= t('better_together.globals.tabs.images') %>
         </button>
       </div>
     </div>
@@ -114,25 +95,9 @@
           </div>
         </div>
       </div>  
-
-
   
   </div>
 </div>
 
   <%= yield :resource_toolbar %>
 <% end %>
-
-
-
-
-
-
-
-<%# UNCOMMENT ???
-  <div>
-    <%= form.submit %>
-<%#  
-  </div>
-<% end %>
-

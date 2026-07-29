@@ -1845,19 +1845,27 @@ es:
     geography:
       locatable_location:
         errors:
-          no_location_source: Must specify either a name or location
+          no_location_source: Debes especificar un nombre o una ubicación
       regions:
         index:
           title: Regiones
       settlements:
         index:
           title: Asentamientos
+        show:
+          destroy: Destruir asentamiento        
+          edit-settlement: Editar acuerdo
+          view-all-settlements: Ver todos los ajustes          
         toolbar:
           back_to_geography_settlements: Volver a los asentamientos
           save_geography_settlement: Guardar liquidación
           view_geography_settlement: Ver el asentamiento          
     global:
       add: Agregar
+    globals:
+      tabs:
+        details: Detalles
+        images: Imágenes        
     governance:
       robot_author: Autor robótico
     host_nav:

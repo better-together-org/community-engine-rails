@@ -9,16 +9,15 @@ module BetterTogether
       include PrimaryCommunity
 
       # VICKI EDITS
-      include Attachments::Images 
+      include Attachments::Images
 
       attachable_cover_image
-
-
-
 
       has_community
 
       slugged :name
+
+      translates :description, backend: :action_text
 
       belongs_to :country, class_name: 'BetterTogether::Geography::Country', optional: true
       belongs_to :state, class_name: 'BetterTogether::Geography::State', optional: true
@@ -26,10 +25,11 @@ module BetterTogether
       has_many :region_settlements, class_name: 'BetterTogether::Geography::RegionSettlement'
       has_many :regions, through: :region_settlements, source: :region
 
+
       def to_s
-        name  
+        name
       end
-    
+
       configure_attachment_cleanup
     end
   end

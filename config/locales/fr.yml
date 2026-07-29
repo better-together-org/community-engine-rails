@@ -1855,19 +1855,27 @@ fr:
     geography:
       locatable_location:
         errors:
-          no_location_source: Must specify either a name or location
+          no_location_source: Vous devez préciser soit un nom, soit un emplacement
       regions:
         index:
-          title: Titre
+          title: Régions
       settlements:
         index:
-          title: Titre
+          title: Colonies
+        show:
+          destroy: Détruire le campement        
+          edit-settlement: modifier le règlement
+          view-all-settlements: Voir tous les règlements          
         toolbar:
           back_to_geography_settlements: Retour aux colonies
           save_geography_settlement: Sauvegarder le règlement
           view_geography_settlement: Voir le règlement      
     global:
       add: Ajouter
+    globals:  
+      tabs:
+        details: Détails
+        images: Images      
     governance:
       robot_author: Auteur robot
     host_nav:
