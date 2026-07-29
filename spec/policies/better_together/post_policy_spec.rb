@@ -171,7 +171,7 @@ RSpec.describe BetterTogether::PostPolicy do
     end
 
     it 'allows editors' do
-      public_published_post.add_governed_contributor(editor_user.person, role: 'editor')
+      public_published_post.add_contributor(editor_user.person, role: 'editor')
 
       expect(described_class.new(editor_user, public_published_post).update?).to be true
     end

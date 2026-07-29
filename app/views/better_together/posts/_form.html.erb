@@ -58,7 +58,7 @@
   </div>
 
   <div class="mb-3">
-    <%= governed_contributions_fieldset(form:, record: post) %>
+    <%= contributions_fieldset(form:, record: post) %>
   </div>
 
   <div class="mb-3">
@@ -87,8 +87,7 @@
                locals: {
                  model: post,
                  form: form,
-                 attribute: 'content',
-                 citation_options: post.citation_reference_options
+                 attribute: 'content'
                } %>
   </div>
 

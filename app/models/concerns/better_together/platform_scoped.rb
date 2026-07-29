@@ -23,11 +23,13 @@ module BetterTogether
     end
 
     # Hook for the rare includer that must be able to save without a platform
-    # in some narrow, well-defined case. False (platform required, matching
-    # the pre-existing required-by-default behavior) for every includer that
-    # doesn't override this.
+    # in some narrow, well-defined case. Defaults to allowing a missing
+    # platform only when no platform exists yet at all (the bootstrap/seed
+    # window before the host platform is created) — every includer needing
+    # platform-required validation once a platform exists gets it for free,
+    # without each bootstrap-time seed record needing its own override.
     def platform_presence_optional?
-      false
+      !BetterTogether::Platform.exists?
     end
 
     private

@@ -192,10 +192,11 @@ Implemented portions include:
 - a broader governed contribution/authorship substrate
 - public publishing agreement gating
 - JOATU privacy hardening
-- structured citation, claim, and evidence foundations
 
 What remains incomplete is the full constitutional and workflow layer:
 
 - complete robot-native authorship and publishing UX
 - full review-state and challenge-path product surfaces
 - broader resource-governance visibility beyond the currently implemented governed records
+- structured citation, claim, and evidence foundations — scoped out of this release; preserved on
+  `feature/claims-evidence-citation-governance-01100notes` for future work

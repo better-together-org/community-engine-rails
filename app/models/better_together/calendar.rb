@@ -3,8 +3,6 @@
 module BetterTogether
   # Calendar management and display
   class Calendar < PlatformRecord
-    include Citable
-    include Claimable
     include Creatable
     include FriendlySlug
     include Identifier

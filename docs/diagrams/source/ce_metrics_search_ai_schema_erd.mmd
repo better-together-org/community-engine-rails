@@ -2,22 +2,28 @@
 erDiagram
   EXT_PERSON o|--o{ AI_LOG_TRANSLATIONS : "initiator / initiator_id"
   EXT_PLATFORM ||--o{ DOWNLOADS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ LINK_CHECKER_REPORTS : "platform / platform_id"
   EXT_PERSON o|--o{ LINK_CHECKER_REPORTS : "creator / creator_id"
-  EXT_PLATFORM ||--o{ LINK_CLICKS : "platform / platform_id"
-  EXT_PLATFORM ||--o{ LINK_CLICK_REPORTS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ LINK_CLICKS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ LINK_CLICK_REPORTS : "platform / platform_id"
   EXT_PERSON o|--o{ LINK_CLICK_REPORTS : "creator / creator_id"
   EXT_PLATFORM ||--o{ PAGE_VIEWS : "platform / platform_id"
-  EXT_PLATFORM ||--o{ PAGE_VIEW_REPORTS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ PAGE_VIEW_REPORTS : "platform / platform_id"
   EXT_PERSON o|--o{ PAGE_VIEW_REPORTS : "creator / creator_id"
+  EXT_PLATFORM ||--o{ RICH_TEXT_LINKS : "platform / platform_id"
   EXT_CONTENT_LINK ||--o{ RICH_TEXT_LINKS : "link / link_id"
   EXT_ACTION_TEXT_RICH_TEXT ||--o{ RICH_TEXT_LINKS : "rich_text / rich_text_id"
-  EXT_PLATFORM ||--o{ SEARCH_QUERIES : "platform / platform_id"
-  EXT_PLATFORM ||--o{ SHARES : "tenant_platform / platform_id"
+  EXT_PLATFORM o|--o{ SEARCH_QUERIES : "platform / platform_id"
+  EXT_PLATFORM ||--o{ SHARES : "platform / platform_id"
+  EXT_PLATFORM o|--o{ SHORT_LINK_VISITS : "platform / platform_id"
+  EXT_SHORT_LINK ||--o{ SHORT_LINK_VISITS : "short_link / short_link_id"
+  EXT_PLATFORM o|--o{ USER_ACCOUNT_REPORTS : "platform / platform_id"
   EXT_PERSON o|--o{ USER_ACCOUNT_REPORTS : "creator / creator_id"
   EXT_PERSON ||--o{ ONE_TIME_PREKEYS : "person / person_id"
 
   AI_LOG_TRANSLATIONS {
     initiator_id uuid
+    platform_id uuid
     model string
     source_locale string
     status string
@@ -26,7 +32,6 @@ erDiagram
     response text
     completion_tokens integer
     prompt_tokens integer
-    tokens_used integer
   }
 
   DOWNLOADS {
@@ -43,6 +48,7 @@ erDiagram
 
   LINK_CHECKER_REPORTS {
     creator_id uuid
+    platform_id uuid
     file_format string
     filters jsonb
     report_data jsonb
@@ -88,15 +94,12 @@ erDiagram
 
   RICH_TEXT_LINKS {
     link_id uuid
+    platform_id uuid
     rich_text_id uuid
     rich_text_record_id uuid
-    host string
-    link_type string
     locale string
     rich_text_record_type string
-    url string
-    error_message text
-    external boolean
+    position integer
   }
 
   SEARCH_QUERIES {
@@ -112,15 +115,27 @@ erDiagram
     platform_id uuid
     shareable_id uuid
     locale string
-    platform string
+    platform_name string
     shareable_type string
     url string
     logged_in boolean
     shared_at datetime
   }
 
+  SHORT_LINK_VISITS {
+    platform_id uuid
+    short_link_id uuid
+    referrer string
+    remote_addr string
+    user_agent_string string
+    logged_in boolean
+    potential_bot boolean
+    visited_at datetime
+  }
+
   USER_ACCOUNT_REPORTS {
     creator_id uuid
+    platform_id uuid
     file_format string
     filters jsonb
     report_data jsonb
@@ -142,6 +157,10 @@ erDiagram
   }
 
   EXT_CONTENT_LINK {
+    string export_ref
+  }
+
+  EXT_SHORT_LINK {
     string export_ref
   }
 
