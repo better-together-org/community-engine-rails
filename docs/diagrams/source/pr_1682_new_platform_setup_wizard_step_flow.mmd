@@ -1,0 +1,24 @@
+flowchart TD
+  A[Manager clicks Provision New Platform] --> B[NewPlatformSetupController#start]
+  B --> C[Step 1 — welcome]
+  C -->|Next| D[Step 2 — platform_identity]
+  D -->|Invalid: re-render with errors| D
+  D -->|Valid — name, description, host_url, privacy, time_zone saved| E[Step 3 — domain — optional]
+  E -->|Add and continue — PlatformDomain created| F[Step 4 — steward_account]
+  E -->|Skip| F
+  F -->|Invalid: re-render with errors| F
+  F -->|Valid — User + Person created, platform_steward + governance_council granted| G[Step 5 — invite_members — optional]
+  G -->|Send invite — loops back to same step, running list grows| G
+  G -->|Continue| H[Step 6 — review_and_launch]
+  H -->|Edit any section| D
+  H -->|Edit domain| E
+  H -->|Edit steward account| F
+  H -->|Edit invited members| G
+  H -->|Launch Platform| I[Wizard marked complete — redirect to platform_path]
+
+  classDef optional fill:#fff8e1,stroke:#8a6d00,color:#5f4b00;
+  classDef required fill:#e8f0fe,stroke:#1a56db,color:#1e3a8a;
+  classDef terminal fill:#e6f4ea,stroke:#137333,color:#0d652d;
+  class E,G optional;
+  class C,D,F,H required;
+  class B,I terminal;

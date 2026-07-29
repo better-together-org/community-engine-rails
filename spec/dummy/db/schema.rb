@@ -2527,7 +2527,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
     t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.uuid "platform_id"
-    t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_wizard_step_defs_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_wizard_step_definitions_on_platform_id"
     t.index ["wizard_id", "step_number"], name: "index_wizard_step_definitions_on_wizard_id_and_step_number", unique: true
     t.index ["wizard_id"], name: "by_step_definition_wizard"
