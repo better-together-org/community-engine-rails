@@ -10,6 +10,7 @@ module BetterTogether
     module ModelRegistry
       DEFAULT_MODEL_DECORATIONS = {
         'BetterTogether::Person' => 'BetterTogether::Borgberry::Decorations::Person',
+        'BetterTogether::Community' => 'BetterTogether::Borgberry::Decorations::Community',
         'BetterTogether::PlatformConnection' => 'BetterTogether::Borgberry::Decorations::PlatformConnection',
         'BetterTogether::Joatu::Agreement' => 'BetterTogether::Borgberry::Decorations::JoatuAgreement'
       }.freeze
