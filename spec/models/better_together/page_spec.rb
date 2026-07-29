@@ -471,5 +471,29 @@ module BetterTogether # :nodoc:
         expect(page).to be_valid
       end
     end
+
+    describe 'privacy default' do
+      # The DB column (better_together_pages.privacy) carries the default —
+      # not a model-level callback. It is static: 'private' regardless of the
+      # platform's own privacy. PrivacyCeilingValidatable only bounds the
+      # *maximum* privacy a caller may explicitly choose; it does not inform
+      # what an unset privacy defaults to. The platform operator (or a
+      # caller passing privacy: explicitly) is the only way to open it up.
+      it "defaults to 'private' when omitted, even on a fully public platform" do
+        platform = create(:better_together_platform, privacy: 'public')
+
+        page = described_class.new(title: 'Untitled', platform: platform)
+
+        expect(page.privacy).to eq('private')
+      end
+
+      it 'respects an explicitly-assigned privacy value instead of the default' do
+        platform = create(:better_together_platform, privacy: 'public')
+
+        page = described_class.new(title: 'Untitled', platform: platform, privacy: 'community')
+
+        expect(page.privacy).to eq('community')
+      end
+    end
   end
 end

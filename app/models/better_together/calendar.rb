@@ -14,6 +14,17 @@ module BetterTogether
 
     belongs_to :community, class_name: '::BetterTogether::Community'
 
+    # The one case that can't resolve a platform yet: the very first Platform's
+    # own host Community builds its default calendar (see
+    # Community#create_default_calendar, an after_create callback) before that
+    # platform exists — same bootstrapping window as
+    # ContactDetail#platform_presence_optional?. Overrides
+    # PlatformScoped#platform_presence_optional?; backfilled once the platform
+    # is persisted by PrimaryCommunity#backfill_primary_community_platform.
+    def platform_presence_optional?
+      community&.bootstrapping_host_community? || false
+    end
+
     has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
     has_many :events, through: :calendar_entries
 
@@ -30,17 +41,6 @@ module BetterTogether
 
     def to_s
       name
-    end
-
-    # The bootstrapping host community creates its own default calendar via
-    # Community's after_create :create_default_calendar callback, which fires
-    # before PrimaryCommunity#backfill_primary_community_platform has a
-    # platform to backfill (the platform itself doesn't exist yet — see
-    # Community#bootstrapping_host_community?). Overrides
-    # PlatformScoped#platform_presence_optional? the same way Community and
-    # ContactDetail do for the same underlying bootstrap ordering problem.
-    def platform_presence_optional?
-      community&.bootstrapping_host_community? || false
     end
   end
 end

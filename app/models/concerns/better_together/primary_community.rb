@@ -47,20 +47,24 @@ module BetterTogether
 
     # The very first Platform ever created has no existing platform for its own
     # primary Community — or that Community's ContactDetail, built by
-    # Contactable#build_default_contact_details as part of the same save — to
-    # resolve via PlatformScoped#assign_current_platform_if_available.
-    # Community#bootstrapping_host_community? and
-    # ContactDetail#bootstrapping_host_community_contact_detail? let both save
-    # with a blank platform in exactly that one case. Backfill both platform
+    # Contactable#build_default_contact_details as part of the same save, or
+    # its default Calendar, built by Community#create_default_calendar as
+    # another after_create callback on the same save — to resolve via
+    # PlatformScoped#assign_current_platform_if_available.
+    # Community#bootstrapping_host_community?,
+    # ContactDetail#bootstrapping_host_community_contact_detail?, and
+    # Calendar#platform_presence_optional? let all three save with a blank
+    # platform in exactly that one case. Backfill all three platform
     # references now that this record has a persisted id. No-ops for every
     # other has_community includer (Person, subsequent Platforms), whose
-    # community (and its contact_detail) already resolved their own platform
-    # normally when created above.
+    # community (and its contact_detail/calendars) already resolved their own
+    # platform normally when created above.
     def backfill_primary_community_platform
       return unless is_a?(BetterTogether::Platform) && community.present?
 
       backfill_bootstrap_platform_id(community)
       backfill_bootstrap_platform_id(community.contact_detail)
+      community.calendars.each { |calendar| backfill_bootstrap_platform_id(calendar) }
     end
 
     def primary_community_extra_attrs
