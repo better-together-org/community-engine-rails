@@ -920,7 +920,10 @@ uk:
       tree_seed_emoji: " 🌱"
     calendars:
       default_description: Календар за замовчуванням для %<community_name>s
+      no_events: Немає запланованих подій
+      past_events: Минулі події
       personal_calendar_name: Особистий календар %{name}
+      upcoming_events: Майбутні події
     calls_for_interest:
       back_to_calls_for_interest: Повернутися до закликів до зацікавленості
       hints:
@@ -1585,6 +1588,7 @@ uk:
       attendees: Attendees
       back_to_events: View Events
       date_and_time: Дата та Час
+      form_errors_heading: 'Виникли такі помилки:'
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
@@ -1708,6 +1712,12 @@ uk:
         select_address: Вибрати адресу
         select_building: Вибрати будівлю
       recurrence:
+        actions:
+          add_exception_date: Додати виняткову дату
+          clear: Очистити
+          remove_exception_date: Видалити цю виняткову дату
+          select_all: Вибрати все
+          select_weekdays: Будні дні (пн-пт)
         end_types:
           after_count: Після повторень
           never: Ніколи
@@ -1716,10 +1726,11 @@ uk:
           count: Кількість разів, коли ця подія має повторюватися
           end_type: Як має закінчитися повторення
           ends_on: Остання дата, коли відбудеться ця подія
-          exception_dates: Дати, коли ця подія НЕ повинна відбуватися (через кому,
-            формат РРРР-ММ-ДД)
+          exception_dates: Дати, коли ця подія НЕ повинна відбуватися
           frequency: Як часто повторюється ця подія
           interval: Повторювати кожні N періодів (наприклад, кожні 2 тижні)
+          month_option: Виберіть, чи повторюється це в ту саму дату щомісяця/щороку,
+            чи в ту саму позицію дня тижня (наприклад, 3-й вівторок)
           preview_placeholder: Виберіть параметри повторення, щоб побачити майбутні
             дати
           weekdays: Дні тижня, коли відбувається ця подія
@@ -1727,15 +1738,43 @@ uk:
           count: Кількість повторень
           end_type: Закінчується
           ends_on: Дата закінчення
+          exception_date_single: Виняткова дата
           exception_dates: Винятки
           frequency: Повторюється
           interval: Повторювати кожні
+          month_option: Повторювати за
           preview: Майбутні повторення
           weekdays: Повторювати в
-        placeholders:
-          exception_dates: 2025-01-15, 2025-02-20
+        month_options:
+          day_of_month: Той самий день місяця
+          day_of_week: Та сама позиція дня тижня (напр., 3-й вівторок)
+        notes:
+          applies_to_series: Зміни тут застосовуються до всієї серії повторень, а
+            не лише до одного випадку.
+          exception_date_removed: Виняткову дату видалено
+        preview:
+          error: Неможливо попередньо переглянути це повторення — перевірте дату закінчення
+            або кількість повторень
+          no_occurrences: Немає майбутніх повторень протягом наступного року
         prompts:
           select_frequency: Не повторюється
+        summary:
+          every: Кожні %{count} %{unit}
+          for_count:
+            few: протягом %{count} повторення
+            many: протягом %{count} повторень
+            one: протягом %{count} повторення
+            other: протягом %{count} повторення
+          on_days: у %{days}
+          on_weekday_position: у ту саму позицію дня тижня щомісяця
+          until: до %{date}
+        units:
+          daily: день(-і)
+          monthly: місяць(-і)
+          weekly: тиждень(-і)
+          yearly: рік(-и)
+        warnings:
+          never_ends: Ця подія повторюватиметься нескінченно, без дати закінчення.
       register: Зареєструватися
       relationship:
         calendar: Подія календаря

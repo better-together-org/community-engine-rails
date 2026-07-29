@@ -17,6 +17,11 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
       create(:better_together_event,
              name: 'Past',
              starts_at: 3.days.ago,
+             # The factory's ends_at default (1.week.from_now + 2.hours) is
+             # independent of starts_at, so it must be overridden here too —
+             # otherwise this "past" event's ends_at stays in the future and
+             # Event.past never actually matches it.
+             ends_at: 3.days.ago + 1.hour,
              identifier: SecureRandom.uuid)
     end
 
@@ -29,6 +34,25 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
       get better_together.calendar_path(calendar, locale:)
 
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'renders the upcoming event inside its actual month-grid day cell, not just as a bare grid' do
+      # Regression test: the month/week/day calendar tabs used to render an
+      # empty grid — passed blocks never received or displayed day_events,
+      # so no event ever appeared no matter what was on the calendar.
+      get better_together.calendar_path(calendar, locale:)
+
+      expect(response).to have_http_status(:ok)
+      day_cell_id = "calendar-day-#{upcoming_event.starts_at.to_date.iso8601}-events"
+      expect_element_content("##{day_cell_id}", upcoming_event.name)
+    end
+
+    it 'surfaces upcoming and past events as visible lists on the page' do
+      get better_together.calendar_path(calendar, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect_element_content('#calendar-upcoming-events-list', upcoming_event.name)
+      expect_element_content('#calendar-past-events-list', past_event.name)
     end
   end
 

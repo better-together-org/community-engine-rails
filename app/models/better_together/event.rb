@@ -80,6 +80,21 @@ module BetterTogether
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
+    validate :validate_recurrence_end_condition_present
+    validate :validate_recurrence_exception_dates_present
+
+    # Transient, not persisted. Set by EventsController#process_recurrence_attributes
+    # when the submitted recurrence end_type ('until'/'count') is missing its
+    # paired ends_on/count value. Surfaced here (rather than relying on the
+    # nested Recurrence's own errors to bubble up) so the message reliably
+    # appears in the shared errors partial, which only reads @resource's own
+    # errors.full_messages.
+    attr_accessor :end_condition_error
+
+    # Transient, not persisted. Set when one or more submitted recurrence
+    # exception dates could not be parsed. Same rationale as
+    # end_condition_error above.
+    attr_accessor :exception_dates_error
 
     before_validation :set_host
     before_validation :set_default_duration
@@ -162,7 +177,9 @@ module BetterTogether
       calculated_end_in_future = ends.eq(nil)
                                      .and(duration.not_eq(nil))
                                      .and(
-                                       Arel.sql("starts_at + (duration_minutes * interval '1 minute')").gteq(now)
+                                       Arel.sql(
+                                         "#{table_name}.starts_at + (#{table_name}.duration_minutes * interval '1 minute')"
+                                       ).gteq(now)
                                      )
 
       where(started).where(has_explicit_end.or(calculated_end_in_future))
@@ -186,7 +203,9 @@ module BetterTogether
       calculated_end_passed = ends.eq(nil)
                                   .and(duration.not_eq(nil))
                                   .and(
-                                    Arel.sql("starts_at + (duration_minutes * interval '1 minute')").lt(now)
+                                    Arel.sql(
+                                      "#{table_name}.starts_at + (#{table_name}.duration_minutes * interval '1 minute')"
+                                    ).lt(now)
                                   )
 
       where(explicit_end_passed.or(no_end_no_duration).or(calculated_end_passed))
@@ -194,7 +213,8 @@ module BetterTogether
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at duration_minutes registration_url timezone status
+        starts_at ends_at duration_minutes registration_url timezone status end_condition_error
+        exception_dates_error
       ] + [
         {
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
@@ -447,6 +467,23 @@ module BetterTogether
       return if ends_at > starts_at
 
       errors.add(:ends_at, I18n.t('errors.models.ends_at_before_starts_at'))
+    end
+
+    def validate_recurrence_end_condition_present
+      case end_condition_error
+      when :ends_on_blank
+        errors.add(:base, 'Recurrence end date must be set when "On date" is selected as the end type')
+      when :count_blank
+        errors.add(:base, 'Recurrence occurrence count must be set when "After occurrences" is selected as the end type')
+      when :ends_on_invalid
+        errors.add(:base, 'Recurrence end date is not a valid date')
+      end
+    end
+
+    def validate_recurrence_exception_dates_present
+      return unless exception_dates_error
+
+      errors.add(:base, 'One or more recurrence exception dates could not be understood')
     end
   end
   # rubocop:enable Metrics/ClassLength

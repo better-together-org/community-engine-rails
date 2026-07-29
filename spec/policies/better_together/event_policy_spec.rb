@@ -91,6 +91,28 @@ RSpec.describe BetterTogether::EventPolicy do
     end
   end
 
+  describe '#recurrence_preview?' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let(:host_community) { host_platform.community }
+    let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+    it 'allows a user eligible to create/edit events' do
+      user = create(:better_together_user)
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: host_community,
+        member: user.person,
+        role: community_member_role,
+        status: 'active'
+      )
+
+      expect(described_class.new(user, BetterTogether::Event).recurrence_preview?).to be true
+    end
+
+    it 'denies unauthenticated users' do
+      expect(described_class.new(nil, BetterTogether::Event).recurrence_preview?).to be false
+    end
+  end
+
   describe 'Scope' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
     let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
