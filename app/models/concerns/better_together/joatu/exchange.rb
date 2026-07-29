@@ -78,7 +78,7 @@ module BetterTogether
       private
 
       def add_creator_as_exchange_contributor
-        add_governed_contributor(
+        add_contributor(
           creator,
           role: BetterTogether::Authorship::EXCHANGE_INITIATOR_ROLE,
           contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION

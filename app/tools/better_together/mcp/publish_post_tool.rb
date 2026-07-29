@@ -18,7 +18,7 @@ module BetterTogether
       def call(post_id:, publish:)
         return auth_required_response unless current_user
 
-        with_current_governed_agent do
+        with_current_agent do
           with_timezone_scope do
             post = BetterTogether::Post.find_by(id: post_id)
             return not_found_response unless post

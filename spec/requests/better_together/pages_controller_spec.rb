@@ -124,7 +124,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
                            published_at: nil,
                            title: 'Editor Hidden Coverage Page',
                            content: 'Editor hidden coverage body')
-      hidden_page.add_governed_contributor(editor_user.person, role: 'editor')
+      hidden_page.add_contributor(editor_user.person, role: 'editor')
 
       sign_in editor_user
 
@@ -157,7 +157,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
     end
 
     it 'renders the unified governed contributions form section' do
-      page.add_governed_contributor(create(:better_together_person, name: 'Page Editor'), role: 'editor')
+      page.add_contributor(create(:better_together_person, name: 'Page Editor'), role: 'editor')
 
       get better_together.edit_page_path(page.slug, locale:)
 

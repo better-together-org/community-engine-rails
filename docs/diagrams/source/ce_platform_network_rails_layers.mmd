@@ -6,7 +6,7 @@ classDiagram
     class BetterTogether__CommunitiesController["CommunitiesController"] {
       <<Controller>>
       models: Community
-      concerns: InvitationSessionManagement, InvitationTokenAuthorization, InvitationTokenSession, InvitationUserSetup +1
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenAuthorization, InvitationTokenSession +2
     }
     class BetterTogether__CommunityWebhookEndpointsController["CommunityWebhookEndpointsController"] {
       <<Controller>>
@@ -22,7 +22,7 @@ classDiagram
     }
     class BetterTogether__MembershipRequestsController["MembershipRequestsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: BotProtectedSubmissions, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__NavigationAreasController["NavigationAreasController"] {
       <<Controller>>
@@ -88,13 +88,13 @@ classDiagram
       <<Model>>
       table: better_together_communities
       translates: description, description_html, name, slug
-      concerns: BetterTogetherId, Contactable, FriendlySlug, Geography::Mappable +15
-      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts +16
+      concerns: BetterTogetherId, Contactable, FriendlySlug, Geography::Mappable +20
+      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts +19
     }
     class BetterTogether__CommunityInvitation["CommunityInvitation"] {
       <<Model>>
       table: better_together_invitations
-      concerns: BetterTogetherId, Creatable, Seedable
+      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
       weak refs: target: invitable, target: inviter, target: invitee, owner: seeds
     }
     class BetterTogether__FederationAccessToken["FederationAccessToken"] {
@@ -107,21 +107,21 @@ classDiagram
       <<Model>>
       table: better_together_navigation_areas
       translates: name, slug
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Protected +3
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +4
       weak refs: target: navigable, owner: seeds, owner: slugs, owner: string_translations
     }
     class BetterTogether__NavigationItem["NavigationItem"] {
       <<Model>>
       table: better_together_navigation_items
       translates: slug, title
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Positioned +4
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +6
       weak refs: target: linkable, owner: seeds, owner: slugs, owner: string_translations
     }
     class BetterTogether__Platform["Platform"] {
       <<Model>>
       table: better_together_platforms
       translates: description, name, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +15
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +18
       weak refs: owner: seeds, owner: slugs, owner: views, owner: text_translations +3
     }
     class BetterTogether__PlatformConnection["PlatformConnection"] {
@@ -133,7 +133,7 @@ classDiagram
     class BetterTogether__PlatformDomain["PlatformDomain"] {
       <<Model>>
       table: better_together_platform_domains
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PrimaryFlag, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__PlatformInvitation["PlatformInvitation"] {
@@ -145,7 +145,7 @@ classDiagram
     class BetterTogether__Robot["Robot"] {
       <<Model>>
       table: better_together_robots
-      concerns: Author, BetterTogetherId, GovernedAgent, Seedable
+      concerns: Agentable, Author, BetterTogetherId, Seedable
       weak refs: owner: seeds, owner: contributions, owner: page_contributions, owner: post_contributions +4
     }
     class BetterTogether__Sitemap["Sitemap"] {
@@ -164,20 +164,20 @@ classDiagram
       <<Model>>
       table: better_together_wizards
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Protected +2
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +3
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations
     }
     class BetterTogether__WizardStep["WizardStep"] {
       <<Model>>
       table: better_together_wizard_steps
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__WizardStepDefinition["WizardStepDefinition"] {
       <<Model>>
       table: better_together_wizard_step_definitions
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Protected +2
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +3
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations
     }
   }
@@ -209,10 +209,14 @@ classDiagram
   BetterTogether__WizardStepsController --|> BetterTogether__ApplicationController
   BetterTogether__WizardsController ..> BetterTogether__Wizard : manages
   BetterTogether__WizardsController --|> BetterTogether__ApplicationController
+  BetterTogether__Community --> BetterTogether__Platform : platform
   BetterTogether__Community --> BetterTogether__Person : creator
+  BetterTogether__CommunityInvitation --> BetterTogether__Platform : platform
   BetterTogether__CommunityInvitation --> BetterTogether__Person : creator
   BetterTogether__CommunityInvitation --> BetterTogether__Role : role
   BetterTogether__FederationAccessToken --> BetterTogether__PlatformConnection : platform_connection
+  BetterTogether__NavigationArea --> BetterTogether__Platform : platform
+  BetterTogether__NavigationItem --> BetterTogether__Platform : platform
   BetterTogether__NavigationItem --> BetterTogether__NavigationArea : navigation_area
   BetterTogether__NavigationItem --> BetterTogether__NavigationItem : parent
   BetterTogether__Platform --> BetterTogether__Person : creator
@@ -229,7 +233,10 @@ classDiagram
   BetterTogether__Robot --> BetterTogether__Platform : platform
   BetterTogether__Sitemap --> BetterTogether__Platform : platform
   BetterTogether__StorageConfiguration --> BetterTogether__Platform : platform
+  BetterTogether__Wizard --> BetterTogether__Platform : platform
+  BetterTogether__WizardStep --> BetterTogether__Platform : platform
   BetterTogether__WizardStep --> BetterTogether__Wizard : wizard
   BetterTogether__WizardStep --> BetterTogether__WizardStepDefinition : wizard_step_definition
   BetterTogether__WizardStep --> BetterTogether__Person : creator
+  BetterTogether__WizardStepDefinition --> BetterTogether__Platform : platform
   BetterTogether__WizardStepDefinition --> BetterTogether__Wizard : wizard

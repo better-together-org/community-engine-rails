@@ -235,7 +235,7 @@ This branch is the **fleet infrastructure layer** that the governed-agent and ro
 ```mermaid
 graph TD
     subgraph "release/0.11.0-notes — branches merged this session"
-        R[copilot/pr-1494<br/>Robot + GovernedAgent<br/>identity helpers]
+        R[copilot/pr-1494<br/>Robot + Agentable<br/>identity helpers]
         M[feat/membership-requests<br/>Platform membership request<br/>API + admin routes]
         Q[codex/pr-1244-fixes<br/>PolicySpec + CI quality<br/>gates + test credentials]
         B[feat/borgberry-c3-ce-integration<br/>THIS BRANCH<br/>Fleet + C3 infrastructure]
@@ -243,7 +243,7 @@ graph TD
 
     subgraph "CE Models"
         Person["Person\n+ borgberry_did\n+ borgberry_did_raw accessor"]
-        Robot["Robot\n.resolve / .authenticate_access_token\n.available_for_platform\n#governed_agent_key"]
+        Robot["Robot\n.resolve / .authenticate_access_token\n.available_for_platform\n#agent_key"]
         FleetNode["Fleet::Node\nnode registry\nheartbeat + capabilities"]
         FleetNodeOwnership["Fleet::NodeOwnership\nsingle current polymorphic owner"]
         C3Token["C3::Token\nearned contribution event"]
@@ -282,7 +282,7 @@ graph TD
 ### Key design decisions
 
 **Why C3 is NOT governance weight**
-`C3::Token` and `C3::Balance` are intentionally isolated from the `GovernedAgent` / `GovernanceParticipant` models. C3 rewards compute contribution — it does not buy voting power. Governance remains one-member one-vote (co-op principle).
+`C3::Token` and `C3::Balance` are intentionally isolated from the `Agentable` / `GovernanceParticipant` models. C3 rewards compute contribution — it does not buy voting power. Governance remains one-member one-vote (co-op principle).
 
 **Why millitokens**
 Storing `bigint` millitokens (1 C3 = 10,000 millitokens) avoids floating-point rounding in balance arithmetic. All credit/debit operations use integer increments.

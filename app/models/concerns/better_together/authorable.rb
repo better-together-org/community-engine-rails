@@ -168,8 +168,8 @@ module BetterTogether
       contribution_records.sort_by { |contribution| [contribution.position || Float::INFINITY, contribution.id.to_s] }
     end
 
-    def add_governed_contributor(actor, role: BetterTogether::Authorship::AUTHOR_ROLE,
-                                 contribution_type: BetterTogether::Authorship::CONTENT_CONTRIBUTION)
+    def add_contributor(actor, role: BetterTogether::Authorship::AUTHOR_ROLE,
+                        contribution_type: BetterTogether::Authorship::CONTENT_CONTRIBUTION)
       return unless actor
 
       contributions.find_or_create_by!(
@@ -183,7 +183,7 @@ module BetterTogether
       return unless respond_to?(:creator_id) && creator_id.present?
       return if contributions.exists?
 
-      add_governed_contributor(
+      add_contributor(
         creator,
         role: BetterTogether::Authorship::AUTHOR_ROLE,
         contribution_type: BetterTogether::Authorship::CONTENT_CONTRIBUTION

@@ -1,8 +1,8 @@
-<% selected_author_type = form.object.author_type.presence_in([BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE,
-                                                               BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE]) ||
-                          BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE %>
+<% selected_author_type = form.object.author_type.presence_in([BetterTogether::ContributionsHelper::PERSON_AUTHOR_TYPE,
+                                                               BetterTogether::ContributionsHelper::ROBOT_AUTHOR_TYPE]) ||
+                          BetterTogether::ContributionsHelper::PERSON_AUTHOR_TYPE %>
 <% selected_author_id = form.object.author_id&.to_s %>
-<% contributor_options = selected_author_type == BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE ? robot_options : person_options %>
+<% contributor_options = selected_author_type == BetterTogether::ContributionsHelper::ROBOT_AUTHOR_TYPE ? robot_options : person_options %>
 <% input_id_prefix = form.object_name.to_s.gsub(/[^a-zA-Z0-9]+/, '_').gsub(/_+\z/, '') %>
 
 <div class="col-12 col-lg-6 nested-fields"
@@ -48,8 +48,8 @@
                    class="form-check-input"
                    name="<%= "#{form.object_name}[author_type_selector]" %>"
                    id="<%= "#{input_id_prefix}_author_type_person" %>"
-                   value="<%= BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE %>"
-                   <%= 'checked="checked"' if selected_author_type == BetterTogether::GovernedContributionsHelper::PERSON_AUTHOR_TYPE %>
+                   value="<%= BetterTogether::ContributionsHelper::PERSON_AUTHOR_TYPE %>"
+                   <%= 'checked="checked"' if selected_author_type == BetterTogether::ContributionsHelper::PERSON_AUTHOR_TYPE %>
                    data-action="change->better_together--contribution-assignments#contributorTypeChanged"
                    data-better_together--contribution-assignments-target="contributorTypeRadio">
             <label class="form-check-label" for="<%= "#{input_id_prefix}_author_type_person" %>">
@@ -62,8 +62,8 @@
                    class="form-check-input"
                    name="<%= "#{form.object_name}[author_type_selector]" %>"
                    id="<%= "#{input_id_prefix}_author_type_robot" %>"
-                   value="<%= BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE %>"
-                   <%= 'checked="checked"' if selected_author_type == BetterTogether::GovernedContributionsHelper::ROBOT_AUTHOR_TYPE %>
+                   value="<%= BetterTogether::ContributionsHelper::ROBOT_AUTHOR_TYPE %>"
+                   <%= 'checked="checked"' if selected_author_type == BetterTogether::ContributionsHelper::ROBOT_AUTHOR_TYPE %>
                    data-action="change->better_together--contribution-assignments#contributorTypeChanged"
                    data-better_together--contribution-assignments-target="contributorTypeRadio">
             <label class="form-check-label" for="<%= "#{input_id_prefix}_author_type_robot" %>">

@@ -33,7 +33,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       filename: 'cover.svg',
       content_type: 'image/svg+xml'
     )
-    post_record.add_governed_contributor(platform_manager.person, role: 'editor')
+    post_record.add_contributor(platform_manager.person, role: 'editor')
   end
 
   describe 'community scoping' do

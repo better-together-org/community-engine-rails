@@ -80,7 +80,7 @@ module BetterTogether # :nodoc:
 
         it 'blocks publishing community-visible pages without agreement acceptance' do
           community_page = create(:better_together_page, privacy: 'community', published_at: nil)
-          Current.governed_agent = publisher
+          Current.agent = publisher
 
           community_page.published_at = Time.current
 
@@ -96,7 +96,7 @@ module BetterTogether # :nodoc:
                  participant: publisher,
                  accepted_at: Time.current)
           community_page = create(:better_together_page, privacy: 'community', published_at: nil)
-          Current.governed_agent = publisher
+          Current.agent = publisher
 
           community_page.published_at = Time.current
 

@@ -338,6 +338,6 @@ graph TD
 These are architectural constraints, not gaps:
 
 - **C3 ≠ fiat currency** — no Money gem, no exchange rate to dollars, no payment processor
-- **C3 ≠ governance weight** — `C3::Token` and `C3::Balance` are structurally isolated from `GovernedAgent` / `GovernanceParticipant`. One member one vote (co-op doctrine).
+- **C3 ≠ governance weight** — `C3::Token` and `C3::Balance` are structurally isolated from `Agentable` / `GovernanceParticipant`. One member one vote (co-op doctrine).
 - **C3 ≠ access control** — C3 balance does not gate any Pundit policy. Permissions come from roles.
 - **No `CapsGenerator` pattern** — C3 cannot be minted from thin air. Every token requires a `source_ref` pointing to real work evidence. The system cannot create C3 without a matching job, agreement, or qualifying activity record.

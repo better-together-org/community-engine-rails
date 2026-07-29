@@ -15,7 +15,7 @@ module BetterTogether
     include CreatedRecords
     include FriendlySlug
     include GovernanceParticipant
-    include GovernedAgent
+    include Agentable
     include HostsEvents
     include Identifier
     include Identity
