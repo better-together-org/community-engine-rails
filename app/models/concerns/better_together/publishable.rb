@@ -54,7 +54,7 @@ module BetterTogether
 
       BetterTogether::PublicVisibilityGate.allow!(
         record: self,
-        actor: Current.governed_agent,
+        actor: Current.agent,
         target_published_at: published_at
       )
     end

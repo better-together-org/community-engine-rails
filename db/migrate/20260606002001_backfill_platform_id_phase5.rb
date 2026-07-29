@@ -101,7 +101,7 @@ class BackfillPlatformIdPhase5 < ActiveRecord::Migration[7.2] # rubocop:disable 
     return unless table_exists?(table) && column_exists?(table, :platform_id)
 
     CALL_FOR_INTEREST_INTERESTABLE_TYPES.each do |type, owner_table|
-      next unless table_exists?(owner_table)
+      next unless table_exists?(owner_table) && column_exists?(owner_table, :platform_id)
 
       execute <<~SQL
         UPDATE #{table} cfi

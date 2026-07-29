@@ -209,10 +209,11 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
 
       # PrimaryFlag#only_one_primary_flag enforces this via a validation, not
       # an auto-demote — attempting a second primary for the same platform
-      # is rejected outright.
+      # is rejected outright. PlatformDomain humanizes :primary_flag as
+      # "Primary domain" (config/locales/en.yml), not the default "Primary flag".
       expect do
         create(:better_together_platform_domain, :primary, platform:, hostname: 'second.example.test')
-      end.to raise_error(ActiveRecord::RecordInvalid, /Primary flag/)
+      end.to raise_error(ActiveRecord::RecordInvalid, /Primary domain/)
 
       # The original primary domain remains the only one.
       platform.reload

@@ -167,24 +167,6 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(response.body).not_to include('id="attendees-tab"')
       end
     end
-
-    context 'with evidence records', :as_user do
-      before do
-        citation = create(:citation, citeable: event, title: 'Event agenda', reference_key: 'agenda-1')
-        claim = create(:claim, claimable: event, statement: 'This event is community-led.')
-        create(:evidence_link, claim:, citation:, relation_type: 'supports')
-      end
-
-      it 'keeps claims and bibliography out of the public show page' do
-        get better_together.event_path(event, locale:)
-
-        expect(response).to have_http_status(:ok)
-        expect(response.body).not_to include('Claims and Supporting Evidence')
-        expect(response.body).not_to include('Evidence and Citations')
-        expect(response.body).not_to include('This event is community-led.')
-        expect(response.body).not_to include('Event agenda')
-      end
-    end
   end
 
   describe 'RSVP actions' do

@@ -932,7 +932,10 @@ es:
       tree_seed_emoji: " 🌱"
     calendars:
       default_description: Calendario predeterminado para %<community_name>s
+      no_events: No hay eventos programados
+      past_events: Eventos pasados
       personal_calendar_name: Calendario Personal de %{name}
+      upcoming_events: Próximos eventos
     calls_for_interest:
       back_to_calls_for_interest: Volver a convocatorias de interés
       hints:
@@ -1592,6 +1595,7 @@ es:
       attendees: Asistentes
       back_to_events: Volver a eventos
       date_and_time: Fecha y Hora
+      form_errors_heading: 'Se produjeron los siguientes errores:'
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
         create_permission_denied: Permiso de creación denegado
@@ -1712,6 +1716,12 @@ es:
         select_address: Seleccionar dirección
         select_building: Seleccionar edificio
       recurrence:
+        actions:
+          add_exception_date: Añadir fecha de excepción
+          clear: Borrar
+          remove_exception_date: Eliminar esta fecha de excepción
+          select_all: Seleccionar todo
+          select_weekdays: Días laborables (lun-vie)
         end_types:
           after_count: Después de ocurrencias
           never: Nunca
@@ -1720,10 +1730,11 @@ es:
           count: Número de veces que este evento debe repetirse
           end_type: Cómo debe terminar la recurrencia
           ends_on: La última fecha en que ocurrirá este evento
-          exception_dates: Fechas en las que este evento NO debe ocurrir (separadas
-            por comas, formato AAAA-MM-DD)
+          exception_dates: Fechas en las que este evento NO debe ocurrir
           frequency: Con qué frecuencia se repite este evento
           interval: Repetir cada N períodos (por ejemplo, cada 2 semanas)
+          month_option: Elija si esto se repite en la misma fecha cada mes/año, o
+            en la misma posición de día de la semana (como el 3.º martes)
           preview_placeholder: Seleccione opciones de recurrencia para ver las próximas
             fechas
           weekdays: Días de la semana en que ocurre este evento
@@ -1731,15 +1742,41 @@ es:
           count: Número de ocurrencias
           end_type: Termina
           ends_on: Fecha de finalización
+          exception_date_single: Fecha de excepción
           exception_dates: Fechas de excepción
           frequency: Se repite
           interval: Repetir cada
+          month_option: Repetir por
           preview: Próximas ocurrencias
           weekdays: Repetir en
-        placeholders:
-          exception_dates: 2025-01-15, 2025-02-20
+        month_options:
+          day_of_month: Mismo día del mes
+          day_of_week: Misma posición de día de la semana (p. ej. 3.º martes)
+        notes:
+          applies_to_series: Los cambios aquí se aplican a toda la serie recurrente,
+            no a una sola ocurrencia.
+          exception_date_removed: Fecha de excepción eliminada
+        preview:
+          error: No se puede previsualizar esta recurrencia — revise la fecha de fin
+            o el número de ocurrencias
+          no_occurrences: No hay próximas ocurrencias en el próximo año
         prompts:
           select_frequency: No se repite
+        summary:
+          every: Cada %{count} %{unit}
+          for_count:
+            one: durante %{count} ocurrencia
+            other: durante %{count} ocurrencias
+          on_days: el %{days}
+          on_weekday_position: en la misma posición de día de la semana cada mes
+          until: hasta %{date}
+        units:
+          daily: día(s)
+          monthly: mes(es)
+          weekly: semana(s)
+          yearly: año(s)
+        warnings:
+          never_ends: Este evento se repetirá indefinidamente, sin fecha de finalización.
       register: Register
       relationship:
         calendar: Evento de calendario

@@ -28,6 +28,7 @@ module BetterTogether
         accepts_nested_attributes_for :community, reject_if: :blank
 
         before_validation :create_primary_community
+        after_create :backfill_primary_community_platform
         after_create_commit :after_record_created
       end
     end
@@ -42,6 +43,28 @@ module BetterTogether
         privacy: primary_community_privacy,
         **primary_community_extra_attrs
       )
+    end
+
+    # The very first Platform ever created has no existing platform for its own
+    # primary Community — or that Community's ContactDetail, built by
+    # Contactable#build_default_contact_details as part of the same save, or
+    # its default Calendar, built by Community#create_default_calendar as
+    # another after_create callback on the same save — to resolve via
+    # PlatformScoped#assign_current_platform_if_available.
+    # Community#bootstrapping_host_community?,
+    # ContactDetail#bootstrapping_host_community_contact_detail?, and
+    # Calendar#platform_presence_optional? let all three save with a blank
+    # platform in exactly that one case. Backfill all three platform
+    # references now that this record has a persisted id. No-ops for every
+    # other has_community includer (Person, subsequent Platforms), whose
+    # community (and its contact_detail/calendars) already resolved their own
+    # platform normally when created above.
+    def backfill_primary_community_platform
+      return unless is_a?(BetterTogether::Platform) && community.present?
+
+      backfill_bootstrap_platform_id(community)
+      backfill_bootstrap_platform_id(community.contact_detail)
+      community.calendars.each { |calendar| backfill_bootstrap_platform_id(calendar) }
     end
 
     def primary_community_extra_attrs
@@ -64,6 +87,14 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    private
+
+    def backfill_bootstrap_platform_id(record)
+      return if record.blank? || record.platform_id.present?
+
+      record.update_column(:platform_id, id)
     end
   end
 end

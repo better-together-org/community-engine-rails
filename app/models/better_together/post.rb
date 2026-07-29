@@ -8,10 +8,8 @@ module BetterTogether
     include Attachments::Images
     include Authorable
     include BlockFilterable
-    include Claimable
     include FriendlySlug
     include Categorizable
-    include Citable
     include Commentable
     include Creatable
     include Federatable

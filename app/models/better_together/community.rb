@@ -32,6 +32,23 @@ module BetterTogether
             inverse_of: :community,
             dependent: :nullify
 
+    # The very first Platform ever created has no platform yet for its own host
+    # community to reference — PrimaryCommunity#create_primary_community creates
+    # this community first (better_together_communities.platform_id is
+    # nullable), then Platform saves referencing it (community_id is NOT NULL,
+    # so Platform must reference an already-persisted community), then
+    # backfill_primary_community_platform sets this platform_id once the
+    # platform itself has a persisted id. Overrides
+    # PlatformScoped#platform_presence_optional? — see that concern for why
+    # this is a hook method rather than a redeclared belongs_to.
+    def platform_presence_optional?
+      bootstrapping_host_community?
+    end
+
+    def bootstrapping_host_community?
+      host? && !BetterTogether::Platform.exists?(host: true)
+    end
+
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify

@@ -33,7 +33,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       filename: 'cover.svg',
       content_type: 'image/svg+xml'
     )
-    post_record.add_governed_contributor(platform_manager.person, role: 'editor')
+    post_record.add_contributor(platform_manager.person, role: 'editor')
   end
 
   describe 'community scoping' do
@@ -185,24 +185,11 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     end
   end
 
-  it 'keeps contribution and evidence references out of the public show page' do
-    citation = create(:citation, citeable: post_record, title: 'Post review notes', reference_key: 'post-review-notes')
-    claim = create(:claim, claimable: post_record, statement: 'This post was reviewed against the release checklist.')
-    create(:evidence_link, claim:, citation:, relation_type: 'supports')
-    post_record.contributions.first.update!(details: {
-                                              'github_handle' => 'post-maintainer',
-                                              'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
-                                            })
-
+  it 'renders the public show page with the contributor byline' do
     get better_together.post_path(post_record, locale:)
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(platform_manager.person.name)
-    expect(response.body).not_to include('Contributors:')
-    expect(response.body).not_to include('GitHub-linked')
-    expect(response.body).not_to include('Claims and Supporting Evidence')
-    expect(response.body).not_to include('Evidence and Citations')
-    expect(response.body).not_to include('Post review notes')
   end
 
   it 'hides post contributor bylines on public views when the platform default is off' do

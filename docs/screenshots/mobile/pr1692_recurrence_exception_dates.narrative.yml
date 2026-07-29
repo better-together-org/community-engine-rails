@@ -1,0 +1,17 @@
+---
+title: Recurrence form — exception dates
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer, I exclude specific dates (e.g. a holiday) from a recurring
+  series using a real date picker instead of typing "YYYY-MM-DD" by hand.
+callouts:
+- :id: exception_rows
+  :title: Repeatable native date-picker rows
+  :description: An unparseable entry now blocks the save with a real validation error
+    instead of being silently dropped.
+accessibility_notes: Each date input has an aria-label; the remove button has an aria-label
+  naming the action, not just an "x" glyph.
+slug: pr1692_recurrence_exception_dates
+device: mobile

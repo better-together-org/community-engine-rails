@@ -1,0 +1,21 @@
+---
+title: Recurrence form — monthly option and never-ends warning
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer scheduling a monthly meeting on "the 3rd Tuesday", I
+  can now express that directly instead of only "the 15th of every month".
+callouts:
+- :id: month_option
+  :title: '"Same weekday position" option'
+  :description: RecurrenceScheduleBuilder#apply_month_option builds an IceCube day_of_week
+    rule, correctly falling back to "last" when the month has no 5th occurrence.
+- :id: never_warning
+  :title: '"Never ends" warning'
+  :description: Toggled by RecurrenceController#updateVisibility based on the end_type
+    select.
+accessibility_notes: Both radio options have explicit <label for> associations; the
+  warning uses role="alert".
+slug: pr1692_recurrence_monthly_option_and_warning
+device: desktop

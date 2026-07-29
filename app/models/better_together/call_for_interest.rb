@@ -5,8 +5,6 @@ module BetterTogether
   class CallForInterest < PlatformRecord
     self.table_name = :better_together_calls_for_interest
 
-    include Citable
-    include Claimable
     include Creatable
     include Identifier
     include Privacy
