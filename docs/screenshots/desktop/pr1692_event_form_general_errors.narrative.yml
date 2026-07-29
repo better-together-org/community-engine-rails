@@ -10,7 +10,9 @@ callouts:
 - :id: form_errors
   :title: General form errors block
   :description: Reads event.errors excluding the three fields (privacy/status/location)
-    that already had their own inline treatment.
+    that already had their own inline treatment; rendered inside the shared turbo_frame_tag
+    'form_errors' rather than a separate sibling element, so the controller's turbo_stream.update
+    replaces it in place instead of stacking alongside it.
 accessibility_notes: The errors block is a standard Bootstrap alert-danger with a
   heading; no color-only signal.
 slug: pr1692_event_form_general_errors

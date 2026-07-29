@@ -286,12 +286,13 @@ RSpec.describe 'Documentation screenshots for the calendar grid and recurrence f
       callouts: [
         {
           id: 'form_errors',
-          selector: '#event-form-errors',
+          selector: '#form_errors',
           title: 'General form errors block',
           bullets: [
-            'Previously, any error other than privacy/status/location rendered with no visible ' \
-            'feedback anywhere — turbo_frame_tag \'form_errors\' only populates via turbo_stream, ' \
-            'but this form submits with local: true.'
+            'Rendered inline inside turbo_frame_tag \'form_errors\' so the plain format.html ' \
+            'fallback (Turbo disabled / no JS) is never silently blank. When Turbo Drive is ' \
+            'active, the controller\'s own turbo_stream.update overwrites this frame with the ' \
+            'shared errors partial — same frame, one final element, never both at once.'
           ]
         }
       ],
@@ -303,7 +304,10 @@ RSpec.describe 'Documentation screenshots for the calendar grid and recurrence f
         callouts: [
           { id: 'form_errors', title: 'General form errors block',
             description: 'Reads event.errors excluding the three fields (privacy/status/location) ' \
-                         'that already had their own inline treatment.' }
+                         'that already had their own inline treatment; rendered inside the shared ' \
+                         'turbo_frame_tag \'form_errors\' rather than a separate sibling element, so ' \
+                         'the controller\'s turbo_stream.update replaces it in place instead of ' \
+                         'stacking alongside it.' }
         ],
         accessibility_notes: 'The errors block is a standard Bootstrap alert-danger with a heading; ' \
                              'no color-only signal.'
@@ -315,7 +319,8 @@ RSpec.describe 'Documentation screenshots for the calendar grid and recurrence f
       # Deliberately leave ends_on blank, then submit
       page.execute_script("document.querySelector('form[id^=form_event]').requestSubmit()")
 
-      expect(page).to have_css('#event-form-errors', wait: 10)
+      expect(page).to have_css('#form_errors .alert-danger', wait: 10)
+      expect(page).to have_css('#event-form-errors', count: 0)
     end
   end
 

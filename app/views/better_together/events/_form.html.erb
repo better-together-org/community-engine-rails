@@ -27,27 +27,30 @@
 
   <%= yield :resource_toolbar %>
 
-  <%= turbo_frame_tag 'form_errors' %>
-
   <%
-    # turbo_frame_tag 'form_errors' above only ever gets content via a
-    # turbo_stream response — this form uses local: true (plain full-page
-    # submits), so that frame is always empty. Without this block, any
-    # validation error other than privacy/status/location (which get their
-    # own inline treatment below) was rendered with literally no visible
-    # feedback anywhere on the page.
+    # turbo_frame_tag 'form_errors' below is nested content, not empty:
+    # Turbo Drive intercepts this form's submit despite local: true, and the
+    # controller's turbo_stream failure response (ResourceController#create/
+    # #update) issues turbo_stream.update('form_errors', ...) which overwrites
+    # whatever is inside this frame with the shared errors partial — so in
+    # that path our own content here is replaced, not duplicated. This inline
+    # render only actually shows for the plain format.html fallback (Turbo
+    # disabled / no JS), where that turbo_stream update never runs and the
+    # frame would otherwise stay empty with no visible feedback at all.
     inline_handled_attributes = %i[privacy status location]
     general_errors = event.errors.reject { |error| inline_handled_attributes.include?(error.attribute) }.map(&:full_message)
   %>
-  <% if general_errors.any? %>
-    <div class="alert alert-danger" role="alert" id="event-form-errors">
-      <h4 class="alert-heading"><%= t('better_together.events.form_errors_heading', default: 'The following errors occurred:') %></h4>
-      <ul class="mb-0">
-        <% general_errors.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
+  <%= turbo_frame_tag 'form_errors' do %>
+    <% if general_errors.any? %>
+      <div class="alert alert-danger" role="alert" id="event-form-errors">
+        <h4 class="alert-heading"><%= t('better_together.events.form_errors_heading', default: 'The following errors occurred:') %></h4>
+        <ul class="mb-0">
+          <% general_errors.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   <% end %>
 
   <div class="row">
