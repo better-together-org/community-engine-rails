@@ -32,4 +32,47 @@ RSpec.describe BetterTogether::EventAttendance do
 
     expect(duplicate.errors[:event_id]).to include('has already been taken')
   end
+
+  # RED-phase acceptance criteria for per-occurrence attendance (Part 0/1 of
+  # docs/implementation/current_plans/event_occurrences_acceptance_criteria.md).
+  # `event_occurrence_id` does not exist yet — every example here is expected
+  # to fail until it's added, and `pending` will flag loudly if one starts
+  # passing before its implementation actually lands.
+  describe 'per-occurrence attendance (AC-1.1, AC-1.2, AC-1.3)' do
+    let(:recurrence) { create(:recurrence, :weekly, schedulable: event) }
+    let(:occurrence_date) { recurrence.occurrences_between(Time.current, 1.year.from_now).first.to_date }
+    let(:occurrence) { BetterTogether::EventOccurrence.create!(event:, occurrence_date:) }
+    let(:other_occurrence_date) { recurrence.occurrences_between(2.weeks.from_now, 2.years.from_now).first.to_date }
+    let(:other_occurrence) { BetterTogether::EventOccurrence.create!(event:, occurrence_date: other_occurrence_date) }
+
+    it 'allows one series-wide attendance and one independent per-session attendance for the same person' do
+      pending 'AC-1.1: event_occurrence_id column not yet added to event_attendances'
+
+      series_wide = described_class.create!(event:, person:, status: 'interested')
+      per_session = described_class.new(event:, event_occurrence: occurrence, person:, status: 'going')
+
+      expect(per_session).to be_valid
+      expect(series_wide).to be_persisted
+    end
+
+    it 'does not let marking one session "going" change another session\'s attendance status' do
+      pending 'AC-1.2: per-occurrence attendance isolation not yet implemented'
+
+      described_class.create!(event:, event_occurrence: occurrence, person:, status: 'going')
+      other_session_attendance = described_class.find_by(event:, event_occurrence: other_occurrence, person:)
+
+      expect(other_session_attendance).to be_nil
+    end
+
+    it 'cancelling a per-session RSVP removes only that session\'s attendance record' do
+      pending 'AC-1.3: per-occurrence cancellation not yet implemented'
+
+      this_session = described_class.create!(event:, event_occurrence: occurrence, person:, status: 'going')
+      series_wide = described_class.create!(event:, person:, status: 'interested')
+
+      this_session.destroy!
+
+      expect(described_class.exists?(series_wide.id)).to be true
+    end
+  end
 end
