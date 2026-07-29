@@ -529,9 +529,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resource :content_feed, only: :show, controller: :content_feed
         resources :linked_seeds, only: :index, controller: :linked_seeds
 
-        # C3 cross-platform settlement endpoints (authenticated via FederationAccessToken scope: c3.exchange)
-        post 'c3/token_seeds',   to: 'c3_token_seeds#create',   as: :c3_token_seed
-        post 'c3/lock_requests', to: 'c3_lock_requests#create', as: :c3_lock_request
+        # Host app / extension gem hook — see BetterTogether.federation_routes_extension.
+        instance_exec(&BetterTogether.federation_routes_extension) if BetterTogether.federation_routes_extension
       end
 
       resources :agreements, only: :show

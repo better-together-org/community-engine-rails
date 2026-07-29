@@ -97,7 +97,7 @@ RSpec.describe BetterTogether::C3::ExchangeRate do
     end
 
     it 'has positive rates for all defaults' do
-      expect(described_class::DEFAULT_RATES).to all(satisfy { |r| r[:rate] > 0 })
+      expect(described_class::DEFAULT_RATES).to all(satisfy { |r| r[:rate].positive? })
     end
   end
 end

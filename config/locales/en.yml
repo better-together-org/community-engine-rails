@@ -581,10 +581,6 @@ en:
                 person, target person, and active platform connection
             target:
               must_be_person: must be a person
-        better_together/joatu/settlement:
-          attributes:
-            agreement_id:
-              already_settled: already has a settlement record
         better_together/message_request:
           attributes:
             recipient_id:
@@ -918,24 +914,6 @@ en:
     buildings:
       add: Add
       title: Buildings
-    c3:
-      balance_card:
-        available: Available
-        explainer: Tree Seeds are community contribution credits you earn by sharing
-          your time, skills, and resources. They can be exchanged for services offered
-          by other community members.
-        lifetime: Lifetime earned
-        network_available: Network available
-        network_description: Tree Seeds earned or received across all connected platforms.
-        network_lifetime: Network lifetime earned
-        reserved: Reserved for agreements
-        show_network_total: Show my cross-platform Tree Seeds total
-        title: Your Tree Seeds
-      tree_seed:
-        one: Tree Seed
-        other: Tree Seeds
-      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
-      tree_seed_emoji: " 🌱"
     calendars:
       default_description: Default calendar for %<community_name>s
       no_events: No events scheduled
@@ -2117,7 +2095,7 @@ en:
       agreements:
         accept: Accept
         cancel: Cancel Agreement
-        cancel_confirm: Cancel this agreement? Any reserved Tree Seeds will be returned.
+        cancel_confirm: Cancel this agreement?
         create:
           success: Success
         fulfill: Mark Fulfilled
@@ -2250,11 +2228,6 @@ en:
         placeholders:
           search: Search by title or description
         title: Search
-      settlement:
-        cancelled_html: The %{amount} reservation was released back to your balance.
-        completed_html: "%{amount} were exchanged on %{date}."
-        pending_html: "%{amount} are reserved, waiting for the exchange to complete."
-        status_label: Agreement Tree Seeds status
       status:
         any: Any
         closed: Closed
@@ -2743,22 +2716,6 @@ en:
         changed, or is temporarily unavailable.
       title: 404 - Page Not Found
     notifications:
-      c3:
-        settlement:
-          locked:
-            body: "%{amount} Tree Seeds have been reserved for your agreement. They
-              will be released if the agreement is cancelled."
-            title: Tree Seeds reserved
-          mailer:
-            activity_header: "%{amount} Tree Seeds have activity on your agreement."
-            view_agreement: View agreement
-          released:
-            body: "%{amount} Tree Seeds have been returned to your balance."
-            title: Tree Seeds reservation released
-          settled:
-            body: "%{amount} Tree Seeds have been exchanged. Your balance has been
-              updated."
-            title: Tree Seeds exchanged
       comment_added:
         body: "%{content}"
         title: "%{commenter_name} commented on your content"
@@ -3141,15 +3098,7 @@ en:
         secret_rotated: OAuth client secret rotated. Update the remote platform configuration.
         suspended: Connection suspended.
       form:
-        allow_c3_exchange: Allow Tree Seeds exchange with this platform
         back: Back
-        c3_exchange_hint: When enabled, participants on this platform can send and
-          receive Tree Seeds with %{platform}. Both platforms must opt in for exchange
-          to work.
-        c3_exchange_legend: Tree Seeds exchange
-        c3_exchange_rate_hint: How many Tree Seeds here equal 1 Tree Seed on %{platform}?
-          Leave at 1.0 for equal value.
-        c3_exchange_rate_label: Exchange rate
         connection_kind_hint: 'Member: this platform hosts members of the other. Peer:
           equal partnership between independent platforms.'
         content_sharing_policy_hint: Controls how public content is mirrored. "Mirror
@@ -4660,8 +4609,8 @@ en:
     joatu:
       agreement:
         accepted: Agreement accepted
-        cancelled: Agreement cancelled — any reserved Tree Seeds have been returned.
-        fulfilled: Agreement fulfilled — C3 transferred to offer creator.
+        cancelled: Agreement cancelled.
+        fulfilled: Agreement fulfilled.
         rejected: Agreement rejected
       response_links:
         offer_created: Offer created in response to request.

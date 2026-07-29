@@ -1,0 +1,53 @@
+fr:
+  activerecord:
+    errors:
+      models:
+        better_together/joatu/settlement:
+          attributes:
+            agreement_id:
+              already_settled: a déjà un enregistrement de règlement
+  better_together:
+    c3:
+      balance_card:
+        available: Disponible
+        explainer: Tree Seeds sont des crédits de contribution communautaire que vous
+          gagnez en partageant votre temps, vos compétences et vos ressources. Ils
+          peuvent être échangés contre des services offerts par d'autres membres de
+          la communauté.
+        lifetime: Guadagné dans la vie
+        network_available: Réseau disponible
+        network_description: Tree Seeds gagnés ou reçus sur toutes les plates-formes
+          connectées.
+        network_lifetime: Réseau gagné dans la vie
+        reserved: Réservé pour les accords
+        show_network_total: Afficher mon total de Tree Seeds entre plates-formes
+        title: Vos Tree Seeds
+      tree_seed:
+        one: Tree Seed
+        other: Tree Seeds
+      tree_seed_display: "%<amount>s %<unit>s%<emoji>s"
+      tree_seed_emoji: " 🌱"
+    joatu:
+      settlement:
+        cancelled_html: La réservation de %{amount} a été restituée à votre solde.
+        completed_html: "%{amount} ont été échangés le %{date}."
+        pending_html: "%{amount} sont réservés, en attente de l'échange."
+        status_label: Statut des Tree Seeds de l'accord
+    notifications:
+      c3:
+        settlement:
+          locked:
+            body: "%{amount} Graines d'arbre ont été réservées pour votre accord.
+              Elles seront libérées si l'accord est annulé."
+            title: Graines d'arbre réservées
+          mailer:
+            activity_header: "%{amount} Graines d'arbre ont de l'activité sur votre
+              accord."
+            view_agreement: Voir l'accord
+          released:
+            body: "%{amount} Graines d'arbre ont été restituées à votre solde."
+            title: Réservation de Graines d'arbre libérée
+          settled:
+            body: "%{amount} Graines d'arbre ont été échangées. Votre solde a été
+              mis à jour."
+            title: Graines d'arbre échangées
