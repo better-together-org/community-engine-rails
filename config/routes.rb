@@ -178,6 +178,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts
+            get :recurrence_preview
           end
           resources :invitations, only: %i[create destroy] do
             collection do
@@ -534,12 +535,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
-      get 'citations/export/:citeable_key/:id', to: 'citation_exports#show', as: :citation_export
-      get 'citations/import/github', to: 'github_citation_imports#index', as: :github_citation_imports
-      post 'citations/import/github/:citeable_key/:id', to: 'github_citation_imports#create', as: :import_github_citation
-      post 'contributions/import/github/:contributable_key/:id',
-           to: 'github_contribution_imports#create',
-           as: :github_contribution_imports
       # Public access: allow viewing public checklists
       resources :checklists, only: %i[index show]
 

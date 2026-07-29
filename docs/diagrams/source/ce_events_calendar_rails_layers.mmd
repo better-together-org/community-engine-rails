@@ -11,7 +11,7 @@ classDiagram
     class BetterTogether__EventsController["EventsController"] {
       <<Controller>>
       models: Event
-      concerns: InvitationSessionManagement, InvitationTokenAuthorization, InvitationTokenSession, InvitationUserSetup +1
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenAuthorization, InvitationTokenSession +2
     }
   }
 
@@ -20,45 +20,45 @@ classDiagram
       <<Model>>
       table: better_together_calendars
       translates: description, name, slug
-      concerns: BetterTogetherId, Citable, Claimable, Creatable +7
-      weak refs: owner: seeds, owner: citations, owner: claims, owner: slugs +8
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +7
+      weak refs: owner: seeds, owner: slugs, owner: views, owner: string_translations +6
     }
     class BetterTogether__CalendarEntry["CalendarEntry"] {
       <<Model>>
       table: better_together_calendar_entries
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Event["Event"] {
       <<Model>>
       table: better_together_events
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, Categorizable, Citable +17
-      weak refs: owner: seeds, owner: citations, owner: claims, owner: slugs +14
+      concerns: Attachments::Images, BetterTogetherId, Categorizable, Creatable +21
+      weak refs: owner: seeds, owner: federation_content_grants, owner: slugs, owner: geospatial_space +15
     }
     class BetterTogether__EventAttendance["EventAttendance"] {
       <<Model>>
       table: better_together_event_attendances
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__EventCategory["EventCategory"] {
       <<Model>>
       table: better_together_categories
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +7
+      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +8
       weak refs: owner: seeds, owner: slugs, owner: views, owner: cover_image_attachment +7
     }
     class BetterTogether__EventHost["EventHost"] {
       <<Model>>
       table: better_together_event_hosts
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: host, owner: seeds
     }
     class BetterTogether__EventInvitation["EventInvitation"] {
       <<Model>>
       table: better_together_invitations
-      concerns: BetterTogetherId, Creatable, Seedable
+      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
       weak refs: target: invitable, target: inviter, target: invitee, owner: seeds
     }
     class BetterTogether__Recurrence["Recurrence"] {
@@ -73,14 +73,20 @@ classDiagram
   BetterTogether__CalendarsController --|> BetterTogether__FriendlyResourceController
   BetterTogether__EventsController ..> BetterTogether__Event : manages
   BetterTogether__EventsController --|> BetterTogether__FriendlyResourceController
+  BetterTogether__Calendar --> BetterTogether__Platform : platform
   BetterTogether__Calendar --> BetterTogether__Person : creator
   BetterTogether__Calendar --> BetterTogether__Community : community
+  BetterTogether__CalendarEntry --> BetterTogether__Platform : platform
   BetterTogether__CalendarEntry --> BetterTogether__Calendar : calendar
   BetterTogether__CalendarEntry --> BetterTogether__Event : event
-  BetterTogether__Event --> BetterTogether__Person : creator
   BetterTogether__Event --> BetterTogether__Platform : platform
+  BetterTogether__Event --> BetterTogether__Person : creator
+  BetterTogether__EventAttendance --> BetterTogether__Platform : platform
   BetterTogether__EventAttendance --> BetterTogether__Event : event
   BetterTogether__EventAttendance --> BetterTogether__Person : person
+  BetterTogether__EventCategory --> BetterTogether__Platform : platform
+  BetterTogether__EventHost --> BetterTogether__Platform : platform
   BetterTogether__EventHost --> BetterTogether__Event : event
+  BetterTogether__EventInvitation --> BetterTogether__Platform : platform
   BetterTogether__EventInvitation --> BetterTogether__Person : creator
   BetterTogether__EventInvitation --> BetterTogether__Role : role

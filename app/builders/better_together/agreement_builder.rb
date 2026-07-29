@@ -258,7 +258,6 @@ module BetterTogether
           title:,
           slug:,
           published_at: Time.zone.now,
-          privacy: 'public',
           protected: true,
           show_title: false
         )

@@ -195,6 +195,29 @@ module BetterTogether # :nodoc:
         expect(recurrence.frequency).to eq('yearly')
       end
     end
+
+    describe '#month_option' do
+      it 'returns nil for non-monthly/yearly frequencies' do
+        recurrence = create(:recurrence, schedulable: event, rule: rule) # default :weekly rule from top-level let
+        expect(recurrence.month_option).to be_nil
+      end
+
+      it 'returns "day_of_month" for a plain interval-based monthly rule' do
+        monthly_schedule = ::IceCube::Schedule.new(event.starts_at)
+        monthly_schedule.add_recurrence_rule(::IceCube::Rule.monthly(1))
+        recurrence = create(:recurrence, schedulable: event, rule: monthly_schedule.to_yaml)
+
+        expect(recurrence.month_option).to eq('day_of_month')
+      end
+
+      it 'returns "day_of_week" for a day_of_week-based monthly rule' do
+        monthly_schedule = ::IceCube::Schedule.new(event.starts_at)
+        monthly_schedule.add_recurrence_rule(::IceCube::Rule.monthly(1).day_of_week(sunday: [3]))
+        recurrence = create(:recurrence, schedulable: event, rule: monthly_schedule.to_yaml)
+
+        expect(recurrence.month_option).to eq('day_of_week')
+      end
+    end
   end
 end
 # rubocop:enable Metrics/ModuleLength

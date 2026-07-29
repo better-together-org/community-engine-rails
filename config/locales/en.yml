@@ -916,7 +916,10 @@ en:
       title: Buildings
     calendars:
       default_description: Default calendar for %<community_name>s
+      no_events: No events scheduled
+      past_events: Past events
       personal_calendar_name: "%{name}'s Personal Calendar"
+      upcoming_events: Upcoming events
     calls_for_interest:
       back_to_calls_for_interest: Back to calls for interest
       hints:
@@ -1563,6 +1566,7 @@ en:
       attendees: Attendees
       back_to_events: View Events
       date_and_time: Date & Time
+      form_errors_heading: 'The following errors occurred:'
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
         create_permission_denied: Create permission denied
@@ -1677,6 +1681,12 @@ en:
         select_address: Select address
         select_building: Select building
       recurrence:
+        actions:
+          add_exception_date: Add exception date
+          clear: Clear
+          remove_exception_date: Remove this exception date
+          select_all: Select all
+          select_weekdays: Weekdays (Mon–Fri)
         end_types:
           after_count: After occurrences
           never: Never
@@ -1685,25 +1695,52 @@ en:
           count: Number of times this event should repeat
           end_type: How the recurrence should end
           ends_on: The last date this event will occur
-          exception_dates: Dates when this event should NOT occur (comma-separated,
-            YYYY-MM-DD format)
+          exception_dates: Dates when this event should NOT occur
           frequency: How often this event repeats
           interval: Repeat every N periods (e.g., every 2 weeks)
+          month_option: Choose whether this repeats on the same date each month/year,
+            or the same weekday position (like the 3rd Tuesday)
           preview_placeholder: Select recurrence options to see upcoming dates
           weekdays: Days of the week when this event occurs
         labels:
           count: Number of occurrences
           end_type: Ends
           ends_on: End date
+          exception_date_single: Exception date
           exception_dates: Exception dates
           frequency: Repeats
           interval: Repeat every
+          month_option: Repeat by
           preview: Upcoming occurrences
           weekdays: Repeat on
-        placeholders:
-          exception_dates: 2025-01-15, 2025-02-20
+        month_options:
+          day_of_month: Same day of the month
+          day_of_week: Same weekday position (e.g. 3rd Tuesday)
+        notes:
+          applies_to_series: Changes here apply to the entire recurring series, not
+            a single occurrence.
+          exception_date_removed: Exception date removed
+        preview:
+          error: Unable to preview this recurrence — check the end date or occurrence
+            count
+          no_occurrences: No upcoming occurrences in the next year
         prompts:
           select_frequency: Does not repeat
+        summary:
+          every: Every %{count} %{unit}
+          for_count:
+            one: for %{count} occurrence
+            other: for %{count} occurrences
+          on_days: on %{days}
+          on_weekday_position: on the same weekday each month
+          until: until %{date}
+        units:
+          daily: day(s)
+          monthly: month(s)
+          weekly: week(s)
+          yearly: year(s)
+        warnings:
+          never_ends: This event will repeat indefinitely, with no end date.
       register: Register
       relationship:
         calendar: Calendar event

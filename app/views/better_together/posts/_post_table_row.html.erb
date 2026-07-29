@@ -10,9 +10,9 @@
     <%= categories_badge(post) %>
   </td>
   <td>
-    <% if contributor_display_visible_for?(post) && post.governed_authors.any? %>
-      <%= render 'better_together/shared/governed_authors',
-                 authors: post.governed_authors,
+    <% if contributor_display_visible_for?(post) && post.agent_authors.any? %>
+      <%= render 'better_together/shared/agent_authors',
+                 authors: post.agent_authors,
                  flex_layout: 'flex-row',
                  flex_align_items: 'center' %>
     <% else %>

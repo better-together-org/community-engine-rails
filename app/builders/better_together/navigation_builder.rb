@@ -42,7 +42,6 @@ module BetterTogether
                   title_en: 'What is Better Together?',
                   slug_en: 'better-together',
                   published_at: Time.zone.now,
-                  privacy: 'public',
                   protected: true,
                   show_title: false,
                   page_blocks_attributes: [
@@ -59,7 +58,6 @@ module BetterTogether
                   title_en: 'About the Community Engine',
                   slug_en: 'better-together/community-engine',
                   published_at: Time.zone.now,
-                  privacy: 'public',
                   protected: true,
                   show_title: false,
                   layout: 'layouts/better_together/full_width_page',
@@ -95,8 +93,7 @@ module BetterTogether
               visible: true,
               protected: true,
               item_type: 'dropdown',
-              url: '#',
-              privacy: 'public'
+              url: '#'
             )
 
             # Add children to Better Together Navigation Item
@@ -122,7 +119,6 @@ module BetterTogether
                 title_en: 'FAQ',
                 slug_en: 'faq',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 show_title: false,
                 page_blocks_attributes: [
@@ -139,7 +135,6 @@ module BetterTogether
                 title_en: 'Privacy Policy',
                 slug_en: 'privacy-policy',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 show_title: false,
                 page_blocks_attributes: [
@@ -156,7 +151,6 @@ module BetterTogether
                 title_en: 'Terms of Service',
                 slug_en: 'terms-of-service',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 show_title: false,
                 page_blocks_attributes: [
@@ -173,7 +167,6 @@ module BetterTogether
                 title_en: 'Code of Conduct',
                 slug_en: 'code-of-conduct',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 show_title: false,
                 page_blocks_attributes: [
@@ -190,7 +183,6 @@ module BetterTogether
                 title_en: 'Accessibility',
                 slug_en: 'accessibility',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 show_title: false,
                 page_blocks_attributes: [
@@ -207,7 +199,6 @@ module BetterTogether
                 title_en: 'Cookie Policy',
                 slug_en: 'cookie-policy',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 show_title: false,
                 page_blocks_attributes: [
@@ -224,7 +215,6 @@ module BetterTogether
                 title_en: 'Contact Us',
                 slug_en: 'contact',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 page_blocks_attributes: [
                   {
@@ -332,7 +322,6 @@ module BetterTogether
                   title_en: 'About',
                   slug_en: 'about',
                   published_at: Time.zone.now,
-                  privacy: 'public',
                   protected: true,
                   page_blocks_attributes: [
                     {
@@ -371,7 +360,6 @@ module BetterTogether
                 item_type: 'link',
                 route_name: 'posts_url',
                 visible: true,
-                privacy: 'public',
                 navigation_area: area
               },
               {
@@ -382,8 +370,7 @@ module BetterTogether
                 item_type: 'link',
                 route_name: 'events_url',
                 visible: true,
-                navigation_area: area,
-                privacy: 'public'
+                navigation_area: area
               },
               {
                 identifier: 'community-hub',
@@ -737,7 +724,6 @@ module BetterTogether
                 title_en: 'Home',
                 slug_en: 'home',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 layout: 'layouts/better_together/full_width_page',
                 show_title: false,
@@ -755,7 +741,6 @@ module BetterTogether
                 title_en: 'Subprocessors',
                 slug_en: 'subprocessors',
                 published_at: Time.zone.now,
-                privacy: 'public',
                 protected: true,
                 page_blocks_attributes: [
                   {
@@ -783,7 +768,6 @@ module BetterTogether
           title_en: title,
           slug_en: slug,
           published_at: Time.zone.now,
-          privacy: 'public',
           protected: true,
           show_title: false
         )
