@@ -50,7 +50,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
 - [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
-- [Citation and Evidence Chain System](developers/systems/citation_evidence_chain_system.md) - Structured citations, claims, and evidence linking
 - [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
 - [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
 - [Public Publishing Agreement Gate System](developers/systems/public_publishing_agreement_gate_system.md) - Enforced agreement acceptance before governed public visibility
