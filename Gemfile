@@ -7,10 +7,6 @@ ruby '3.4.4'
 
 gemspec
 
-# Optional extension: C3 Tree Seeds + Borgberry fleet integration. Bundled here
-# (nested gems/ dir) for in-repo development/testing; not required for core CE.
-gem 'better_together-borgberry', path: 'gems/better_together-borgberry'
-
 gem 'asset_sync'
 gem 'aws-sdk-s3', require: false
 

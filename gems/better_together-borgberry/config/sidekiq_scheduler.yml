@@ -1,5 +1,0 @@
-"better_together:c3:expire_balance_locks":
-  cron: "*/15 * * * *" # every 15 minutes
-  class: "BetterTogether::C3::ExpireBalanceLocksJob"
-  queue: "default"
-  description: "Release C3 balance locks that have passed their 24-hour expiry — returns reserved Tree Seeds to the payer"

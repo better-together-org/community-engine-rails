@@ -81,12 +81,6 @@ PATH
       translate_enum
       turbo-rails (~> 2.0)
 
-PATH
-  remote: gems/better_together-borgberry
-  specs:
-    better_together-borgberry (0.10.1)
-      better_together (= 0.10.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -972,7 +966,6 @@ DEPENDENCIES
   bcrypt (~> 3.1.22)
   better_errors
   better_together!
-  better_together-borgberry!
   binding_of_caller
   bootsnap (>= 1.7.0)
   brakeman
