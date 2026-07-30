@@ -1853,19 +1853,19 @@ es:
         index:
           title: Asentamientos
         show:
-          destroy: Destruir asentamiento        
+          destroy: Destruir asentamiento
           edit-settlement: Editar acuerdo
-          view-all-settlements: Ver todos los ajustes          
+          view-all-settlements: Ver todos los ajustes
         toolbar:
           back_to_geography_settlements: Volver a los asentamientos
           save_geography_settlement: Guardar liquidación
-          view_geography_settlement: Ver el asentamiento          
+          view_geography_settlement: Ver el asentamiento
     global:
       add: Agregar
     globals:
       tabs:
         details: Detalles
-        images: Imágenes        
+        images: Imágenes
     governance:
       robot_author: Autor robótico
     host_nav:

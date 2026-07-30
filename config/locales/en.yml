@@ -1838,7 +1838,7 @@ en:
         index:
           title: Settlements
         show:
-          destroy: Destroy Settlement        
+          destroy: Destroy Settlement
           edit-settlement: Edit Settlement
           view-all-settlements: View All Settlements
         toolbar:
@@ -1847,7 +1847,7 @@ en:
           view_geography_settlement: View Settlement
     global:
       add: Add
-    globals:  
+    globals:
       tabs:
         details: Details
         images: Images

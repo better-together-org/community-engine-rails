@@ -4,11 +4,8 @@
 
 <tr id="<%= dom_id(settlement) %>" class="<%= dom_class(settlement) %>">
   <td><%= link_to settlement %></td>
-  <td><%= settlement.description %></td>
-  <td><%= settlement.slug %></td>
   <td><%= settlement.state %></td>
   <td><%= settlement.country %></td>
-  <td><%= settlement.protected ? t('globals.yes') : t('globals.no') %></td>
   <td>
     <% if policy(settlement).show? %>
       <%= link_to t('globals.view'), settlement, class: 'btn btn-info' %>

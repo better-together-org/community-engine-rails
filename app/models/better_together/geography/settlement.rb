@@ -7,8 +7,6 @@ module BetterTogether
       include Identifier
       include Protected
       include PrimaryCommunity
-
-      # VICKI EDITS
       include Attachments::Images
 
       attachable_cover_image
@@ -24,7 +22,6 @@ module BetterTogether
 
       has_many :region_settlements, class_name: 'BetterTogether::Geography::RegionSettlement'
       has_many :regions, through: :region_settlements, source: :region
-
 
       def to_s
         name

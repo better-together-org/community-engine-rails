@@ -1856,19 +1856,19 @@ uk:
         index:
           title: Поселення
         show:
-          destroy: Зруйнувати поселення        
+          destroy: Зруйнувати поселення
           edit-settlement: Редагувати поселення
-          view-all-settlements: Переглянути всі поселення            
+          view-all-settlements: Переглянути всі поселення
         toolbar:
           back_to_geography_settlements: Назад до Поселень
           save_geography_settlement: Зберегти поселення
-          view_geography_settlement: Переглянути поселення          
+          view_geography_settlement: Переглянути поселення
     global:
-      add: Додати  
-    globals:  
+      add: Додати
+    globals:
       tabs:
         details: Деталі
-        images: Зображення  
+        images: Зображення
     governance:
       robot_author: Автор-робот
     host_nav:
@@ -3711,15 +3711,18 @@ uk:
     shared:
       community_creation_agreement_notice:
         accept_link: Переглянь і прийми угоду про створення спільноти
-        message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення спільноти.
+        message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення
+          спільноти.
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
       publishing_agreement_notice:
         accept_link: Перегляньте та прийміть угоду про публікацію
-        message: Щоб публікувати події чи пости, видимі для учасників або всім, спершу потрібно прийняти угоду про публікацію контенту.
+        message: Щоб публікувати події чи пости, видимі для учасників або всім, спершу
+          потрібно прийняти угоду про публікацію контенту.
       translated_field_hints:
         description: Короткий опис (повинна бути заповнена хоча б одна мова)
-        description_html: Опис у форматі з багатим текстом (підтримує форматування; має бути заповнена щонайменше одна локаль)
+        description_html: Опис у форматі з багатим текстом (підтримує форматування;
+          має бути заповнена щонайменше одна локаль)
         name: Введіть ім'я (потрібно заповнити принаймні одну мову)
         slug: URL‑friendly identifier (unique across locales)
       unpublished: Неопублікований

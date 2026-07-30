@@ -1863,19 +1863,19 @@ fr:
         index:
           title: Colonies
         show:
-          destroy: Détruire le campement        
+          destroy: Détruire le campement
           edit-settlement: modifier le règlement
-          view-all-settlements: Voir tous les règlements          
+          view-all-settlements: Voir tous les règlements
         toolbar:
           back_to_geography_settlements: Retour aux colonies
           save_geography_settlement: Sauvegarder le règlement
-          view_geography_settlement: Voir le règlement      
+          view_geography_settlement: Voir le règlement
     global:
       add: Ajouter
-    globals:  
+    globals:
       tabs:
         details: Détails
-        images: Images      
+        images: Images
     governance:
       robot_author: Auteur robot
     host_nav:
@@ -4650,7 +4650,7 @@ fr:
         cover_image: Image de couverture
       geography:
         settlement:
-          cover_image: Image de couverture        
+          cover_image: Image de couverture
       images:
         cover_image: Image de couverture
       person:
