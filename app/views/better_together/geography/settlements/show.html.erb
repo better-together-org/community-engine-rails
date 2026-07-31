@@ -21,12 +21,8 @@
     <% if policy(@geography_settlement).edit? %>
       <%= link_to t('.edit-settlement'), edit_geography_settlement_path(@geography_settlement), class: "btn btn-primary me-2" %>
     <% end %>
-    
+
     <%= link_to t('.view-all-settlements'), geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
-    
-    <% if policy(@geography_settlement).destroy? %>
-      <%= button_to t('.destroy'), [@geography_settlement], method: :delete, data: { confirm: t('globals.confirm') }, class: "btn btn-danger" %>
-    <% end %>
   </div>
 
   <!-- geography_settlement tabbed section with members -->
