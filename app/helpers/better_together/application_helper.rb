@@ -133,11 +133,8 @@ module BetterTogether
 
     def contributor_display_visible_for?(record)
       return false unless record.respond_to?(:contributors_display_visible?)
-      return true if record.contributors_display_visible?
 
-      policy(record).edit?
-    rescue Pundit::NotDefinedError, NoMethodError
-      false
+      record.contributors_display_visible?
     end
 
     def help_banner_hidden?(banner_id)

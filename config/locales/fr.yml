@@ -1313,6 +1313,10 @@ fr:
         heading: Contributeurs
         new_entry: Nouveau contributeur
         person: Personne
+        preview_heading: Aperçu de l'attribution des contributeurs
+        preview_hint: Voici comment la mention des contributeurs apparaîtra lorsque
+          leur affichage est activé. Cela reflète votre dernier enregistrement, pas
+          les modifications non enregistrées.
         remove: Retirer le contributeur
         robot: Robot
         role: Rôle

@@ -1309,6 +1309,9 @@ es:
         heading: Colaboradores
         new_entry: Nuevo colaborador
         person: Persona
+        preview_heading: Vista previa de la atribución de colaboradores
+        preview_hint: Así es como aparecerá la atribución de colaboradores cuando
+          esté activada. Refleja tu último guardado, no los cambios sin guardar.
         remove: Quitar colaborador
         robot: Robot
         role: Rol

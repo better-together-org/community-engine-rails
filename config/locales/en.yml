@@ -1305,6 +1305,9 @@ en:
         heading: Contributors
         new_entry: New contributor
         person: Person
+        preview_heading: Preview contributor attribution
+        preview_hint: This is how the contributor byline will appear when contributor
+          display is on. It reflects your last save, not unsaved changes below.
         remove: Remove contributor
         robot: Robot
         role: Role
