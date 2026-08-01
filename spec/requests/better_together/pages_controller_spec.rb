@@ -283,6 +283,54 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(page.reload.federation_grant_status_for(connection)).to eq('denied')
     end
 
+    it 'adds a governed contributor via contributions_attributes on update' do
+      contributor = create(:better_together_person, name: 'New Contributor')
+
+      expect do
+        patch better_together.page_path(page, locale:), params: {
+          page: {
+            title_en: page.title,
+            content_en: page.content.to_plain_text,
+            contributions_attributes: {
+              '0' => {
+                author_type: 'BetterTogether::Person',
+                author_id: contributor.id,
+                role: 'author',
+                contribution_type: 'content'
+              }
+            }
+          }
+        }
+      end.to change { page.reload.contributions.count }.by(1)
+
+      expect(response).to be_redirect
+      expect(page.reload.agent_authors).to include(contributor)
+    end
+
+    it 'destroys a governed contribution via contributions_attributes[_destroy] on update' do
+      contribution = page.add_contributor(create(:better_together_person, name: 'Departing Contributor'),
+                                          role: 'author')
+
+      expect do
+        patch better_together.page_path(page, locale:), params: {
+          page: {
+            title_en: page.title,
+            content_en: page.content.to_plain_text,
+            contributions_attributes: {
+              '0' => {
+                id: contribution.id,
+                _destroy: '1'
+              }
+            }
+          }
+        }
+      end.to change(BetterTogether::Authorship, :count).by(-1)
+
+      expect(response).to be_redirect
+      expect(BetterTogether::Authorship.exists?(contribution.id)).to be(false)
+      expect(page.reload.contributions).not_to include(contribution)
+    end
+
     it 'renders edit when update params are invalid' do
       patch better_together.page_path(page, locale:), params: {
         page: {
