@@ -168,8 +168,8 @@ fr:
         identifier: Identifiant
         lock_version: Version de verrouillage
         protected: Protégé
-        region_settlements: Implantations régionales
-        settlements: Implantations
+        region_settlements: Établissements régionaux
+        settlements: Établissements
         slug: Identifiant URL
         slugs: Identifiants URL
         state: :activerecord.models.state
@@ -186,7 +186,7 @@ fr:
         identifier: Identifiant
         lock_version: Version de verrouillage
         protected: Protégé
-        region_settlements: Implantations régionales
+        region_settlements: Établissements régionaux
         regions: Régions
         slug: Identifiant URL
         slugs: Identifiants URL
@@ -201,7 +201,7 @@ fr:
         lock_version: Version de verrouillage
         protected: Protégé
         regions: Régions
-        settlements: Implantations
+        settlements: Établissements
         slug: Identifiant URL
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
@@ -653,8 +653,8 @@ fr:
       better_together/geography/country: Pays
       better_together/geography/country_continent: Pays Continent
       better_together/geography/region: Région
-      better_together/geography/region_settlement: Implantation Régionale
-      better_together/geography/settlement: Habitat
+      better_together/geography/region_settlement: Établissement Régional
+      better_together/geography/settlement: Établissement
       better_together/geography/state: État
       better_together/guest_access: Accès Invité
       better_together/identification: Identification
@@ -2014,15 +2014,27 @@ fr:
     geography:
       locatable_location:
         errors:
-          no_location_source: Must specify either a name or location
+          no_location_source: Vous devez préciser soit un nom, soit un emplacement
       regions:
         index:
-          title: Titre
+          title: Régions
       settlements:
         index:
-          title: Titre
+          title: Établissements
+        show:
+          destroy: Détruire l'établissement
+          edit-settlement: Modifier l'établissement
+          view-all-settlements: Voir tous les établissements
+        toolbar:
+          back_to_geography_settlements: Retour aux établissements
+          save_geography_settlement: Sauvegarder l'établissement
+          view_geography_settlement: Voir l'établissement
     global:
       add: Ajouter
+    globals:
+      tabs:
+        details: Détails
+        images: Images
     governance:
       robot_author: Auteur robot
     host_nav:
@@ -2738,7 +2750,7 @@ fr:
         geography_countries: Pays
         geography_maps: Cartes
         geography_regions: Régions
-        geography_settlements: Implantations
+        geography_settlements: Établissements
         geography_states: États
         host_dashboard: Tableau de bord de l'hôte
         host_dashboard_membership_review: Revue des adhésions
@@ -5034,15 +5046,18 @@ fr:
       prohibited: Interdit
     hint:
       call_for_interest:
-        cover_image: Cover image
+        cover_image: Image de couverture
       community:
         cover_image: Image de couverture
         logo: Logo
         profile_image: Image de profil
       event:
-        cover_image: Cover image
+        cover_image: Image de couverture
+      geography:
+        settlement:
+          cover_image: Image de couverture
       images:
-        cover_image: Cover image
+        cover_image: Image de couverture
       person:
         allow_messages_from_members: Choisir de recevoir des messages provenant de
         cover_image: Téléchargez une image de couverture à afficher en haut du profil.
@@ -5458,12 +5473,12 @@ fr:
     platform: Plateforme
     profile: Profil
     region: Région
-    region_settlement: Region settlement
+    region_settlement: Établissement Régional
     report: Rapport
     resource_permission: Permission de ressource
     role: Rôle
     seed: Seed
-    settlement: Agglomération
+    settlement: Établissement
     state: État
     user: Utilisateur
   roles:

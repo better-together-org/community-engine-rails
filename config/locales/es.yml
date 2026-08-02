@@ -2002,15 +2002,27 @@ es:
     geography:
       locatable_location:
         errors:
-          no_location_source: Must specify either a name or location
+          no_location_source: Debes especificar un nombre o una ubicación
       regions:
         index:
           title: Regiones
       settlements:
         index:
           title: Asentamientos
+        show:
+          destroy: Destruir asentamiento
+          edit-settlement: Editar asentamiento
+          view-all-settlements: Ver todos los asentamientos
+        toolbar:
+          back_to_geography_settlements: Volver a los asentamientos
+          save_geography_settlement: Guardar asentamiento
+          view_geography_settlement: Ver el asentamiento
     global:
       add: Agregar
+    globals:
+      tabs:
+        details: Detalles
+        images: Imágenes
     governance:
       robot_author: Autor robótico
     host_nav:
@@ -4998,11 +5010,14 @@ es:
       call_for_interest:
         cover_image: Imagen de portada
       community:
-        cover_image: Cover image
+        cover_image: Imagen de portada
         logo: Logo
-        profile_image: Profile image
+        profile_image: Imagen de perfil
       event:
         cover_image: Imagen de portada
+      geography:
+        settlement:
+          cover_image: Imagen de portada
       images:
         cover_image: Imagen de portada
       person:
@@ -5422,7 +5437,7 @@ es:
     platform: Plataforma
     profile: Perfil
     region: Región
-    region_settlement: Region settlement
+    region_settlement: Asentamiento Regional
     report: Informe
     resource_permission: Permiso de recurso
     role: Rol

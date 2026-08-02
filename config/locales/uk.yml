@@ -2015,15 +2015,27 @@ uk:
     geography:
       locatable_location:
         errors:
-          no_location_source: Must specify either a name or location
+          no_location_source: Потрібно вказати або ім'я, або місцезнаходження
       regions:
         index:
           title: Regions
       settlements:
         index:
-          title: Settlements
+          title: Поселення
+        show:
+          destroy: Зруйнувати поселення
+          edit-settlement: Редагувати поселення
+          view-all-settlements: Переглянути всі поселення
+        toolbar:
+          back_to_geography_settlements: Назад до Поселень
+          save_geography_settlement: Зберегти поселення
+          view_geography_settlement: Переглянути поселення
     global:
-      add: Add
+      add: Додати
+    globals:
+      tabs:
+        details: Деталі
+        images: Зображення
     governance:
       robot_author: Автор-робот
     host_nav:
@@ -3911,22 +3923,22 @@ uk:
       whatsapp: Share on WhatsApp
     shared:
       community_creation_agreement_notice:
-        accept_link: Review and accept the community creation agreement
-        message: To create a community, you need to accept the community creation
-          agreement first.
+        accept_link: Перегляньте і прийміть угоду про створення спільноти
+        message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення
+          спільноти.
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
       publishing_agreement_notice:
-        accept_link: Review and accept the publishing agreement
-        message: To publish events or posts visible to members or the public, you
-          need to accept the content publishing agreement first.
+        accept_link: Перегляньте та прийміть угоду про публікацію
+        message: Щоб публікувати події чи пости, видимі для учасників або всім, спершу
+          потрібно прийняти угоду про публікацію контенту.
       translated_field_hints:
-        description: Short description (at least one locale must be filled)
-        description_html: Rich-text description (supports formatting; at least one
-          locale must be filled)
-        name: Enter a name (at least one locale must be filled)
+        description: Короткий опис (повинна бути заповнена хоча б одна локаль)
+        description_html: Опис у форматі з багатим текстом (підтримує форматування;
+          має бути заповнена щонайменше одна локаль)
+        name: Введіть ім'я (потрібно заповнити принаймні одну локаль)
         slug: URL‑friendly identifier (unique across locales)
-      unpublished: Unpublished
+      unpublished: Неопублікований
     short_links:
       edit:
         page_title: Редагувати коротке посилання
@@ -5018,6 +5030,9 @@ uk:
         profile_image: Зображення профілю
       event:
         cover_image: Зображення обкладинки
+      geography:
+        settlement:
+          cover_image: Зображення обкладинки
       images:
         cover_image: Зображення обкладинки
       person:

@@ -126,6 +126,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :requests, only: %i[index show]
       end
 
+      namespace :geography, path: :g do
+        resources :settlements, only: %i[index show]
+
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do
+          resources :settlements, except: %i[index show]
+        end
+      end
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :short_links
@@ -516,7 +524,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :countries
               resources :regions
               resources :region_settlements
-              resources :settlements
               resources :states
             end
           end

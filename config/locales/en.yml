@@ -1993,8 +1993,20 @@ en:
       settlements:
         index:
           title: Settlements
+        show:
+          destroy: Destroy Settlement
+          edit-settlement: Edit Settlement
+          view-all-settlements: View All Settlements
+        toolbar:
+          back_to_geography_settlements: Back to Settlements
+          save_geography_settlement: Save Settlement
+          view_geography_settlement: View Settlement
     global:
       add: Add
+    globals:
+      tabs:
+        details: Details
+        images: Images
     governance:
       robot_author: Robot author
     host_nav:
@@ -4924,6 +4936,9 @@ en:
         profile_image: Profile image
       event:
         cover_image: Cover image
+      geography:
+        settlement:
+          cover_image: Cover image
       images:
         cover_image: Cover image
       person:
