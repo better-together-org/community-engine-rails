@@ -1,0 +1,49 @@
+{
+  "name": "pr1692_recurrence_exception_dates",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Kilback, Bailey and Mitchell",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "recurrence_calendar_ux",
+  "flow": "event_recurrence_exception_dates",
+  "source_spec": "./spec/docs_screenshots/better_together/recurrence_calendar_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#exception-dates-container",
+      "title": "Repeatable native date-picker rows",
+      "bullets": [
+        "Replaces a single comma-separated textarea that silently dropped unparseable entries.",
+        "Add/remove mirrors the existing event_hosts_controller.js template-clone pattern."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 858.390625,
+        "width": 461.0,
+        "height": 84.0,
+        "right": 473.0,
+        "bottom": 942.390625,
+        "center_x": 242.5,
+        "center_y": 900.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 858.390625,
+        "width": 461.0,
+        "height": 84.0,
+        "right": 473.0,
+        "bottom": 942.390625,
+        "center_x": 242.5,
+        "center_y": 900.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 466.39,
+        "width": 270.0,
+        "height": 372,
+        "score": 858.390625
+      }
+    }
+  ]
+}

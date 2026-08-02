@@ -1,0 +1,49 @@
+{
+  "name": "new_platform_setup_entry_point",
+  "device": "mobile",
+  "url": "/en/platforms",
+  "title": "Platforms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "entry_point",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "a[href='/en/w/new_platform_setup']",
+      "title": "Provision New Platform",
+      "bullets": [
+        "New entry point that starts the new_platform_setup wizard.",
+        "Only rendered when PlatformPolicy#create? passes for the signed-in user."
+      ],
+      "target": {
+        "x": 250.4375,
+        "y": 164.6875,
+        "width": 210.5625,
+        "height": 38.0,
+        "right": 461.0,
+        "bottom": 202.6875,
+        "center_x": 355.71875,
+        "center_y": 183.6875
+      },
+      "avoid": {
+        "x": 250.4375,
+        "y": 164.6875,
+        "width": 210.5625,
+        "height": 38.0,
+        "right": 461.0,
+        "bottom": 202.6875,
+        "center_x": 355.71875,
+        "center_y": 183.6875
+      },
+      "placement": {
+        "side": "below",
+        "x": 206.0,
+        "y": 222.69,
+        "width": 270.0,
+        "height": 320,
+        "score": 1058.3125
+      }
+    }
+  ]
+}

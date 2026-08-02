@@ -1,0 +1,85 @@
+{
+  "name": "pr1692_calendar_grid_with_events",
+  "device": "mobile",
+  "url": "/en/calendars/104fbb7d-313e-4e56-9ffc-0109bbacbaf7",
+  "title": "Kilback, Bailey and Mitchell",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "recurrence_calendar_ux",
+  "flow": "calendar_show",
+  "source_spec": "./spec/docs_screenshots/better_together/recurrence_calendar_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": ".calendar-event-link",
+      "title": "Event now visible in its day cell",
+      "bullets": [
+        "The month/week/day grid previously rendered zero events, ever.",
+        "Each day cell now links directly to the event on the date it actually occurs."
+      ],
+      "target": {
+        "x": 329.390625,
+        "y": 931.046875,
+        "width": 67.171875,
+        "height": 58.0,
+        "right": 396.5625,
+        "bottom": 989.046875,
+        "center_x": 362.9765625,
+        "center_y": 960.046875
+      },
+      "avoid": {
+        "x": 329.390625,
+        "y": 931.046875,
+        "width": 67.171875,
+        "height": 58.0,
+        "right": 396.5625,
+        "bottom": 989.046875,
+        "center_x": 362.9765625,
+        "center_y": 960.046875
+      },
+      "placement": {
+        "side": "above",
+        "x": 206.0,
+        "y": 565.05,
+        "width": 270.0,
+        "height": 346,
+        "score": 931.046875
+      }
+    },
+    {
+      "selector": "#calendar-upcoming-events-list",
+      "title": "Upcoming events list",
+      "bullets": [
+        "Computed by the controller since before this PR, but never rendered anywhere.",
+        "Now surfaced as a plain list alongside the grid."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1155.046875,
+        "width": 461.0,
+        "height": 24.0,
+        "right": 473.0,
+        "bottom": 1179.046875,
+        "center_x": 242.5,
+        "center_y": 1167.046875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1155.046875,
+        "width": 461.0,
+        "height": 24.0,
+        "right": 473.0,
+        "bottom": 1179.046875,
+        "center_x": 242.5,
+        "center_y": 1167.046875
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 320,
+        "score": 0
+      }
+    }
+  ]
+}

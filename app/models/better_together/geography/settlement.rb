@@ -8,10 +8,15 @@ module BetterTogether
       include Placeable
       include Protected
       include PrimaryCommunity
+      include Attachments::Images
+
+      attachable_cover_image
 
       has_community
 
       slugged :name
+
+      translates :description, backend: :action_text
 
       belongs_to :country, class_name: 'BetterTogether::Geography::Country', optional: true
       belongs_to :state, class_name: 'BetterTogether::Geography::State', optional: true
@@ -22,6 +27,8 @@ module BetterTogether
       def to_s
         name
       end
+
+      configure_attachment_cleanup
     end
   end
 end

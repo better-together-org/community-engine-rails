@@ -240,7 +240,7 @@ module BetterTogether
 
     def page_params
       params.require(:page).permit(
-        basic_page_attributes + page_blocks_permitted_attributes
+        basic_page_attributes + page_blocks_permitted_attributes + contributions_permitted_attributes
       ).tap do |attrs|
         apply_create_defaults(attrs) if action_name == 'create'
       end
@@ -282,6 +282,12 @@ module BetterTogether
             { block_attributes: block_permitted_attributes }
           ]
         }
+      ]
+    end
+
+    def contributions_permitted_attributes
+      [
+        { contributions_attributes: BetterTogether::Authorship.permitted_attributes(id: true, destroy: true) }
       ]
     end
 

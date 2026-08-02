@@ -9,6 +9,9 @@ module BetterTogether
       authorize @calendar
       @upcoming_events = @calendar.events.upcoming.order(:starts_at)
       @past_events = @calendar.events.past.order(starts_at: :desc)
+      # Grid views (month/week/day) need every event in range, not just upcoming,
+      # since navigating to a past month/week/day must still show its events.
+      @calendar_events = @calendar.events.includes(cover_image_attachment: :blob)
     end
 
     # GET /better_together/calendars/:id/feed.ics

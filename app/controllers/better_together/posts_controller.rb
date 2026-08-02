@@ -102,13 +102,22 @@ module BetterTogether
                  .order(:name)
     end
 
+    # NOTE: intentionally NOT built on resource_class.permitted_attributes —
+    # Post's own extra_permitted_attributes override (post.rb) silently
+    # replaces the bare singleton method Translatable injects for
+    # localized_attribute_list, so that chain never includes title_en/
+    # content_en. Keep the explicit *resource_class.localized_attribute_list
+    # call below as the workaround; only contributions_attributes (missing
+    # entirely before this fix — same bug as pages_controller.rb) is added
+    # directly here rather than pulled in through the broken chain.
     def permitted_attributes
       attrs = [
         :privacy,
         :published_at,
         :contributors_display_visibility,
         *resource_class.localized_attribute_list,
-        *resource_class.extra_permitted_attributes
+        *resource_class.extra_permitted_attributes,
+        { contributions_attributes: BetterTogether::Authorship.permitted_attributes(id: true, destroy: true) }
       ]
       attrs.unshift(:community_id) if action_name == 'create'
       attrs

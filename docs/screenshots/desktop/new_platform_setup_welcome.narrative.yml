@@ -1,0 +1,22 @@
+---
+title: New Platform Setup — Welcome
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager kicking off provisioning, I choose a locale and
+  read what the wizard is about to walk me through.
+callouts:
+- :id: progress_nav
+  :title: Step progress
+  :description: Six named steps; the active one is bold and carries aria-current="step".
+- :id: locale_select
+  :title: Locale
+  :description: Applies to the wizard UI and the new platform.
+- :id: next_button
+  :title: Next
+  :description: Advances to platform_identity.
+accessibility_notes: Locale select has an aria-describedby help text; progress bar
+  has an aria-label.
+slug: new_platform_setup_welcome
+device: desktop

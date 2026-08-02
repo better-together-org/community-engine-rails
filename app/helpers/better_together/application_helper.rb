@@ -5,7 +5,6 @@ module BetterTogether
   # These methods facilitate access to common resources like the current user,
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
-    include C3Helper
     include MetricsHelper
     include StructuredDataHelper
 
@@ -134,11 +133,8 @@ module BetterTogether
 
     def contributor_display_visible_for?(record)
       return false unless record.respond_to?(:contributors_display_visible?)
-      return true if record.contributors_display_visible?
 
-      policy(record).edit?
-    rescue Pundit::NotDefinedError, NoMethodError
-      false
+      record.contributors_display_visible?
     end
 
     def help_banner_hidden?(banner_id)

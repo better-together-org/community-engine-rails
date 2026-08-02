@@ -1,0 +1,26 @@
+---
+title: New Platform Setup — Platform Identity
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I replace the draft platform's placeholder name/host_url
+  with the real values and set its description, privacy, and time zone.
+callouts:
+- :id: name_field
+  :title: Name
+  :description: Required; validated for presence.
+- :id: host_url_field
+  :title: Host URL
+  :description: Required, format- and uniqueness-validated at the model level via
+    NewPlatformIdentityForm.
+- :id: privacy_field
+  :title: Privacy
+  :description: Maps to Platform#privacy enum.
+- :id: time_zone_field
+  :title: Time zone
+  :description: Uses the shared iana_time_zone_select helper (slim_select_controller.js).
+accessibility_notes: Every field has an aria-describedby pointing at its help text;
+  invalid fields get is-invalid plus the shared wizard error summary (role="alert").
+slug: new_platform_setup_platform_identity
+device: mobile

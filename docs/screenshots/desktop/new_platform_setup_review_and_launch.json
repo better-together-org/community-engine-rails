@@ -1,0 +1,118 @@
+{
+  "name": "new_platform_setup_review_and_launch",
+  "device": "desktop",
+  "url": "/en/w/new_platform_setup/new-platform-227c566e11ca/review_and_launch",
+  "title": "Review &amp; Launch | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "new_platform_setup_review_and_launch",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "#review-platform-identity-heading",
+      "title": "Platform Identity recap",
+      "bullets": [
+        "Each section has its own distinct \"Edit <section>\" link — never a bare \"Edit\"."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 382.59375,
+        "width": 167.359375,
+        "height": 24.0,
+        "right": 569.359375,
+        "bottom": 406.59375,
+        "center_x": 485.6796875,
+        "center_y": 394.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 382.59375,
+        "width": 167.359375,
+        "height": 24.0,
+        "right": 569.359375,
+        "bottom": 406.59375,
+        "center_x": 485.6796875,
+        "center_y": 394.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 295.68,
+        "y": 426.59,
+        "width": 380,
+        "height": 190,
+        "score": 1054.40625
+      }
+    },
+    {
+      "selector": "#review-steward-account-heading",
+      "title": "Steward Account recap",
+      "bullets": [
+        "Shows the steward's name and email."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 660.59375,
+        "width": 169.140625,
+        "height": 24.0,
+        "right": 571.140625,
+        "bottom": 684.59375,
+        "center_x": 486.5703125,
+        "center_y": 672.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 660.59375,
+        "width": 169.140625,
+        "height": 24.0,
+        "right": 571.140625,
+        "bottom": 684.59375,
+        "center_x": 486.5703125,
+        "center_y": 672.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 296.57,
+        "y": 704.59,
+        "width": 380,
+        "height": 132,
+        "score": 776.40625
+      }
+    },
+    {
+      "selector": "#new-platform-setup-launch-btn",
+      "title": "Launch",
+      "bullets": [
+        "Final confirmation — marks the wizard/platform as launched."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 814.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 852.59375,
+        "center_x": 720.0,
+        "center_y": 833.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 814.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 852.59375,
+        "center_x": 720.0,
+        "center_y": 833.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 872.59,
+        "width": 380,
+        "height": 158,
+        "score": 608.40625
+      }
+    }
+  ]
+}

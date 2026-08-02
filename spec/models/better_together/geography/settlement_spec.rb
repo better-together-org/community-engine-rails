@@ -21,6 +21,10 @@ RSpec.describe BetterTogether::Geography::Settlement do
     it 'includes PrimaryCommunity' do
       expect(described_class.ancestors).to include(BetterTogether::PrimaryCommunity)
     end
+
+    it 'includes Attachments::Images' do
+      expect(described_class.ancestors).to include(BetterTogether::Attachments::Images)
+    end
   end
 
   describe 'database' do

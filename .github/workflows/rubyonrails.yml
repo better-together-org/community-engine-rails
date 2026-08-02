@@ -14,7 +14,7 @@ on:
       - compat/rails-8.1
   pull_request:
     # Run on PRs targeting any branch so feature/fix/salvage branches get CI.
-    # The prepare job defaults to the primary Rails lane (8.0.4.1) for any
+    # The prepare job defaults to the primary Rails lane (8.0.5.1) for any
     # non-compat target branch, so only one Rails version runs for these PRs.
     branches:
       - "**"
@@ -47,10 +47,10 @@ jobs:
               rails_version="8.1.2"
               ;;
             main|dev|compat/rails-8.0)
-              rails_version="8.0.4.1"
+              rails_version="8.0.5.1"
               ;;
             *)
-              rails_version="8.0.4.1"
+              rails_version="8.0.5.1"
               ;;
           esac
 

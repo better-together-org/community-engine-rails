@@ -52,6 +52,13 @@ module BetterTogether
       user.present? && (platform_manager? || agent.valid_event_host_ids.any?)
     end
 
+    def recurrence_preview?
+      # Same eligibility as viewing available hosts: anyone who could
+      # plausibly create/edit an event can preview a recurrence rule
+      # while filling out the form.
+      available_hosts?
+    end
+
     def destroy?
       creator_or_platform_steward || event_host_member?
     end

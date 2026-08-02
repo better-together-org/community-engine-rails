@@ -319,6 +319,57 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       expect(post_record.reload.federation_grant_status_for(connection)).to eq('denied')
     end
 
+    it 'adds a governed contributor via contributions_attributes on update' do
+      contributor = create(:better_together_person, name: 'New Post Contributor')
+
+      expect do
+        patch better_together.post_path(post_record, locale:), params: {
+          post: {
+            title_en: post_record.title,
+            content_en: post_record.content.to_plain_text,
+            privacy: 'public',
+            contributions_attributes: {
+              '0' => {
+                author_type: 'BetterTogether::Person',
+                author_id: contributor.id,
+                role: 'author',
+                contribution_type: 'content'
+              }
+            }
+          }
+        }
+      end.to change { post_record.reload.contributions.count }.by(1)
+
+      expect(response).to be_redirect
+      expect(post_record.reload.agent_authors).to include(contributor)
+    end
+
+    it 'destroys a governed contribution via contributions_attributes[_destroy] on update' do
+      contribution = post_record.add_contributor(
+        create(:better_together_person, name: 'Departing Post Contributor'), role: 'author'
+      )
+
+      expect do
+        patch better_together.post_path(post_record, locale:), params: {
+          post: {
+            title_en: post_record.title,
+            content_en: post_record.content.to_plain_text,
+            privacy: 'public',
+            contributions_attributes: {
+              '0' => {
+                id: contribution.id,
+                _destroy: '1'
+              }
+            }
+          }
+        }
+      end.to change(BetterTogether::Authorship, :count).by(-1)
+
+      expect(response).to be_redirect
+      expect(BetterTogether::Authorship.exists?(contribution.id)).to be(false)
+      expect(post_record.reload.contributions).not_to include(contribution)
+    end
+
     it 'renders edit when update params are invalid', :aggregate_failures do
       patch better_together.post_path(post_record, locale:), params: {
         post: {

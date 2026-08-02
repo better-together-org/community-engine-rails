@@ -1,0 +1,118 @@
+{
+  "name": "new_platform_setup_domain",
+  "device": "mobile",
+  "url": "/en/w/new_platform_setup/new-platform-7b36e8f18c3a/domain",
+  "title": "Add a Domain (Optional) | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "new_platform_setup_domain",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-platform-setup-domain-submit-btn",
+      "title": "Add and continue",
+      "bullets": [
+        "Creates a PlatformDomain for the new platform and advances."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 871.546875,
+        "width": 218.75,
+        "height": 38.0,
+        "right": 230.75,
+        "bottom": 909.546875,
+        "center_x": 121.375,
+        "center_y": 890.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 871.546875,
+        "width": 218.75,
+        "height": 38.0,
+        "right": 230.75,
+        "bottom": 909.546875,
+        "center_x": 121.375,
+        "center_y": 890.546875
+      },
+      "placement": {
+        "side": "above",
+        "x": 24,
+        "y": 667.55,
+        "width": 270.0,
+        "height": 184,
+        "score": 871.546875
+      }
+    },
+    {
+      "selector": "#new-platform-setup-domain-skip-btn",
+      "title": "Skip",
+      "bullets": [
+        "Advances without creating a domain — the platform keeps its placeholder host_url only."
+      ],
+      "target": {
+        "x": 238.75,
+        "y": 871.546875,
+        "width": 130.046875,
+        "height": 38.0,
+        "right": 368.796875,
+        "bottom": 909.546875,
+        "center_x": 303.7734375,
+        "center_y": 890.546875
+      },
+      "avoid": {
+        "x": 238.75,
+        "y": 871.546875,
+        "width": 130.046875,
+        "height": 38.0,
+        "right": 368.796875,
+        "bottom": 909.546875,
+        "center_x": 303.7734375,
+        "center_y": 890.546875
+      },
+      "placement": {
+        "side": "below",
+        "x": 168.77,
+        "y": 929.55,
+        "width": 270.0,
+        "height": 210,
+        "score": 351.453125
+      }
+    },
+    {
+      "selector": "#new_platform_domain_hostname",
+      "title": "Hostname",
+      "bullets": [
+        "Subdomain-of-host-domain or a fully custom domain — same underlying field either way."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 729.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 767.546875,
+        "center_x": 250.0,
+        "center_y": 748.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 729.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 767.546875,
+        "center_x": 250.0,
+        "center_y": 748.546875
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 236,
+        "score": 0
+      }
+    }
+  ]
+}
