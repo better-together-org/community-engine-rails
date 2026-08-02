@@ -1854,11 +1854,11 @@ es:
           title: Asentamientos
         show:
           destroy: Destruir asentamiento
-          edit-settlement: Editar acuerdo
-          view-all-settlements: Ver todos los ajustes
+          edit-settlement: Editar asentamiento
+          view-all-settlements: Ver todos los asentamientos
         toolbar:
           back_to_geography_settlements: Volver a los asentamientos
-          save_geography_settlement: Guardar liquidación
+          save_geography_settlement: Guardar asentamiento
           view_geography_settlement: Ver el asentamiento
     global:
       add: Agregar
@@ -5034,7 +5034,7 @@ es:
     platform: Plataforma
     profile: Perfil
     region: Región
-    region_settlement: Region settlement
+    region_settlement: Asentamiento Regional
     report: Informe
     resource_permission: Permiso de recurso
     role: Rol
