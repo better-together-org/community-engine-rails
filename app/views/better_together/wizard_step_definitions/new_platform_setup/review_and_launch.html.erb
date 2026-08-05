@@ -24,7 +24,7 @@
           <dd class="col-sm-8"><%= @platform.name %></dd>
 
           <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.description') %></dt>
-          <dd class="col-sm-8"><%= @platform.description %></dd>
+          <dd class="col-sm-8"><%= @platform.description.to_plain_text %></dd>
 
           <dt class="col-sm-4"><%= t('.sections.platform_identity.fields.host_url') %></dt>
           <dd class="col-sm-8"><%= @platform.host_url %></dd>
