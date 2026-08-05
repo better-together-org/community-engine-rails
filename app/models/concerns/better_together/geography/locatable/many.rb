@@ -10,11 +10,11 @@ module BetterTogether
       # single primary location (e.g. an Event's address/building/settlement pick).
       #
       # Only include this in models that actually get their OWN Space geocoded (Address,
-      # Building — both have an active `geocoded_by`). Event does NOT belong here: its own
-      # `geocoded_by` is commented out and nothing ever populates its Space, so resolution
-      # would always no-op. An Event's geography placement is reached through its
-      # Locatable::One location instead (e.g. `event.location.location.settlement` when that
-      # location is an Address).
+      # Building — both have an active `geocoded_by`). Event does NOT belong here even
+      # though it also self-geocodes (see Geospatial::One.geocodes_self) — its geography
+      # placement is reached through its Locatable::One location instead (e.g.
+      # `event.location.location.settlement` when that location is an Address), not by
+      # resolving its own Space against these hierarchy polygons.
       module Many
         extend ActiveSupport::Concern
 
@@ -48,8 +48,12 @@ module BetterTogether
           ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
         end
 
+        # .to_a (rather than .find_by) loads and memoizes locatable_locations on first
+        # call, so calling multiple level accessors on one record costs at most one
+        # query instead of one per accessor — and callers that preload the association
+        # (e.g. .includes(:locatable_locations)) get the full benefit for free.
         LEVELS.each do |level, klass|
-          define_method(level) { locatable_locations.find_by(location_type: klass.name)&.location }
+          define_method(level) { locatable_locations.to_a.find { |ll| ll.location_type == klass.name }&.location }
         end
 
         def resolve_geographic_hierarchy!(async: true)

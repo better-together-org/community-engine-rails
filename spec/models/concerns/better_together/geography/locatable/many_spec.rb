@@ -12,9 +12,9 @@ RSpec.describe BetterTogether::Geography::Locatable::Many do
     end
 
     it 'does not include Event' do
-      # Event's own geocoded_by is commented out (dead code) — nothing ever populates its
-      # Space, so hierarchy resolution would always no-op. Event's geography placement is
-      # reached through its Locatable::One location instead, not its own Space.
+      # Event also self-geocodes (Geospatial::One.geocodes_self), but its geography
+      # placement is reached through its Locatable::One location instead — not by
+      # resolving its own Space against these hierarchy polygons.
       expect(described_class.included_in_models).not_to include(BetterTogether::Event)
     end
   end
@@ -53,6 +53,29 @@ RSpec.describe BetterTogether::Geography::Locatable::Many do
       )
 
       expect(address.settlement).to eq(settlement)
+    end
+
+    it 'issues at most one query for locatable_locations across all five level accessors' do
+      settlement = create(:geography_settlement)
+      BetterTogether::Geography::LocatableLocation.create!(
+        locatable: address, location: settlement, resolution_method: 'polygon', resolved_at: Time.current
+      )
+      address.reload
+
+      query_count = 0
+      callback = lambda do |*, payload|
+        query_count += 1 if payload[:sql].match?(/locatable_locations/i)
+      end
+
+      ActiveSupport::Notifications.subscribed(callback, 'sql.active_record') do
+        address.settlement
+        address.region
+        address.state
+        address.country
+        address.continent
+      end
+
+      expect(query_count).to eq(1)
     end
   end
 

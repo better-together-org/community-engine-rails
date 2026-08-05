@@ -21,6 +21,16 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
     )
   end
 
+  describe 'HIERARCHY_LEVELS' do
+    it 'matches Locatable::Many::LEVELS reversed to broadest-to-narrowest order' do
+      expect(described_class::HIERARCHY_LEVELS).to eq(
+        [BetterTogether::Geography::Continent, BetterTogether::Geography::Country,
+         BetterTogether::Geography::State, BetterTogether::Geography::Region,
+         BetterTogether::Geography::Settlement]
+      )
+    end
+  end
+
   describe '#perform' do
     context 'when the record has no boundary yet' do
       it 'fetches, coerces to MultiPolygon, and stores provenance' do

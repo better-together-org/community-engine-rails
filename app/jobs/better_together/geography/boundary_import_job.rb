@@ -18,13 +18,12 @@ module BetterTogether
 
       MAX_ATTEMPTS = 3
 
-      HIERARCHY_LEVELS = [
-        BetterTogether::Geography::Continent,
-        BetterTogether::Geography::Country,
-        BetterTogether::Geography::State,
-        BetterTogether::Geography::Region,
-        BetterTogether::Geography::Settlement
-      ].freeze
+      # Broadest-to-narrowest — the reverse of Locatable::Many::LEVELS (which is keyed
+      # narrowest-to-broadest for its resolution-order use there). Derived rather than
+      # hand-duplicated so the two can't silently drift apart on a future hierarchy
+      # level addition; order isn't load-bearing here (each level imports fully
+      # independently) but broadest-first is a sensible human-facing progression.
+      HIERARCHY_LEVELS = BetterTogether::Geography::Locatable::Many::LEVELS.values.reverse.freeze
 
       # Orchestrates a full run across every hierarchy level for
       # `better_together:geography:import_boundaries` — perform_now in a straight serial
@@ -61,6 +60,12 @@ module BetterTogether
       # Retries a transient failure (network timeout, 5xx, parse error) up to
       # MAX_ATTEMPTS times in-process with exponential backoff, then logs and gives up
       # rather than raising — one bad record shouldn't abort the rest of the batch.
+      #
+      # Deliberately NOT ActiveJob's retry_on: that re-enqueues asynchronously
+      # regardless of whether the original call was perform_now/perform_later, which
+      # would let a retried record's request run concurrently with
+      # .import_all_missing's next serial call, breaking the "only one Nominatim
+      # request in flight" guarantee documented on that method above.
       def self.perform_with_retries(record, attempts: MAX_ATTEMPTS) # rubocop:todo Metrics/MethodLength
         attempt = 0
         begin
