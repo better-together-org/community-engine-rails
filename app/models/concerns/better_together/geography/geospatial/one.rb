@@ -17,10 +17,10 @@ module BetterTogether
           delegate :latitude=, :longitude=, :elevation=, to: :space
           delegate :latitude_changed?, :longitude_changed?, :elevation_changed?, to: :space, allow_nil: true
 
+          # Provides #geocoded? (via the geocoder gem) for every includer — cheap,
+          # makes no network calls on its own. Stays unconditional; only the
+          # auto-scheduling callbacks below are opt-in via .geocodes_self.
           geocoded_by :geocoding_string
-
-          after_create :schedule_geocoding
-          after_update :schedule_geocoding
         end
 
         class_methods do
@@ -31,6 +31,17 @@ module BetterTogether
                                                                                 destroy: true),
               space_attributes: BetterTogether::Geography::Space.permitted_attributes(id: true, destroy: true)
             }]
+          end
+
+          # Opt-in: registers automatic self-geocoding (schedule_geocoding after
+          # create/update) off this model's own #geocoding_string. Call explicitly in
+          # includers that should be geocoded from their own attributes. Models that
+          # geocode via an associated record (Infrastructure::Building via its
+          # `address`) or delegate geospatial data entirely to another record
+          # (Infrastructure::Floor/Room via their `building`) must NOT call this.
+          def geocodes_self
+            after_create :schedule_geocoding
+            after_update :schedule_geocoding
           end
         end
 

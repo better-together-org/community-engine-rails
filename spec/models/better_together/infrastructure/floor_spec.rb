@@ -68,5 +68,16 @@ RSpec.describe BetterTogether::Infrastructure::Floor do
         expect(floor.rooms.first).to eq(existing_room)
       end
     end
+
+    describe 'self-geocoding' do
+      it 'does not enqueue GeocodingJob for the floor itself (Floor has no independent space)' do
+        allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
+
+        create(:better_together_infrastructure_floor)
+
+        expect(BetterTogether::Geography::GeocodingJob).not_to have_received(:perform_later)
+          .with(instance_of(described_class))
+      end
+    end
   end
 end

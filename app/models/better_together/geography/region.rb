@@ -4,6 +4,8 @@ module BetterTogether
   module Geography
     class Region < ApplicationRecord # rubocop:todo Style/Documentation
       include Geospatial::One
+
+      geocodes_self
       include Identifier
       include Placeable
       include Protected

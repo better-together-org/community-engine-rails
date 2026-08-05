@@ -11,6 +11,8 @@ module BetterTogether
     include FriendlySlug
     include Identifier
     include Geography::Geospatial::One
+
+    geocodes_self
     include Geography::Locatable::One
     include Invitable
     include Metrics::Shareable

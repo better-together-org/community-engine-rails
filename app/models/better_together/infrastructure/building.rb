@@ -38,12 +38,9 @@ module BetterTogether
       delegate :geocoding_string, to: :address, allow_nil: true
 
       # Building geocodes its address (schedule_address_geocoding below, driven off
-      # address_changed?), not itself, so skip the generic self-geocoding hooks
-      # Geospatial::One registers under after_create/after_update :schedule_geocoding —
-      # otherwise GeocodingJob.perform_later gets enqueued twice per create/update, once
-      # from each callback.
-      skip_callback :create, :after, :schedule_geocoding
-      skip_callback :update, :after, :schedule_geocoding
+      # address_changed?), not itself, so it never calls Geospatial::One.geocodes_self
+      # — otherwise GeocodingJob.perform_later would get enqueued twice per
+      # create/update, once from each callback.
 
       after_create :ensure_floor
 
