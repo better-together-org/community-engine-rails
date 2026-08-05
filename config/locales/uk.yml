@@ -1560,9 +1560,8 @@ uk:
         when: When
     events:
       actions:
-        create_new_address: Create new address
-        create_new_building: Create new building
-        create_new_short: New
+        create_new: Створити новий %{model}
+        create_new_short: Новий
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events

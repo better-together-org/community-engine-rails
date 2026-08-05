@@ -59,6 +59,10 @@ module BetterTogether
       new(attrs.slice(*allowed_keys))
     end
 
+    def self.inline_create_fields_partial
+      'better_together/addresses/address_fields'
+    end
+
     def geocoding_string
       to_formatted_s(excluded: %i[display_label line2])
     end

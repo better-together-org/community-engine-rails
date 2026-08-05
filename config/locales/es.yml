@@ -1568,8 +1568,7 @@ es:
         when: Cuándo
     events:
       actions:
-        create_new_address: Crear nueva dirección
-        create_new_building: Crear nuevo edificio
+        create_new: Crear nuevo %{model}
         create_new_short: Nuevo
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes

@@ -159,7 +159,7 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       callouts: [
         {
           id: 'new_address_panel',
-          selector: '[data-better_together--location-selector-target="newAddress"]',
+          selector: '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]',
           title: 'Inline address fields',
           bullets: [
             'Revealed by the "+ New" link next to the search field.',
@@ -204,7 +204,10 @@ RSpec.describe 'Documentation screenshots for the event location picker',
                       match: :first).click
       end
 
-      panel = find('[data-better_together--location-selector-target="newAddress"]', visible: true)
+      panel = find(
+        '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]',
+        visible: true
+      )
       # The revealed panel's own fields (label, privacy, physical/postal,
       # line1..country) push it below the fold — scroll it into view or its
       # bounding rect falls outside the captured image and the callout is

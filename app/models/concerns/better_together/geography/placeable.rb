@@ -23,6 +23,18 @@ module BetterTogether
         def locatable_location_build(attrs)
           find_by(id: attrs['id'] || attrs['location_id'])
         end
+
+        # Path to the partial rendering this model's inline "+New" nested-attributes
+        # fields in the event location picker, or nil if lookup-only (the default —
+        # matches locatable_location_build's default "never build" behavior).
+        # Address/Building override this to opt into inline creation.
+        def inline_create_fields_partial
+          nil
+        end
+
+        def inline_creatable?
+          inline_create_fields_partial.present?
+        end
       end
     end
   end

@@ -41,7 +41,10 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
                     match: :first).click
     end
 
-    expect(page).to have_selector('[data-better_together--location-selector-target="newAddress"]', visible: true)
+    expect(page).to have_selector(
+      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]',
+      visible: true
+    )
 
     # Switch to Building location type by clicking its label
     find('label[for="building_location"]', visible: :all).click
@@ -52,7 +55,10 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
                     match: :first).click
     end
 
-    expect(page).to have_selector('[data-better_together--location-selector-target="newBuilding"]', visible: true)
+    expect(page).to have_selector(
+      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="building"]',
+      visible: true
+    )
   end
 
   # rubocop:todo RSpec/ExampleLength
@@ -89,7 +95,9 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
                     match: :first).click
     end
 
-    within('[data-better_together--location-selector-target="newAddress"]') do
+    within(
+      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]'
+    ) do
       # Label and Privacy are real HTML `required` selects that default to a
       # blank option — while the panel is hidden the browser skips constraint
       # validation, but once it's visible (as it is by this point) submitting
@@ -140,7 +148,9 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
                     match: :first).click
     end
 
-    within('[data-better_together--location-selector-target="newBuilding"]') do
+    within(
+      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="building"]'
+    ) do
       # Same required, defaults-to-blank Label/Privacy selects as the nested
       # address in the standalone address scenario above — Building nests the
       # same address_fields partial for its own address.

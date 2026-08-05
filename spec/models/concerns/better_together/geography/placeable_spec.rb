@@ -57,4 +57,28 @@ RSpec.describe BetterTogether::Geography::Placeable do
       expect(result.address.line1).to eq('1 Main St')
     end
   end
+
+  describe '.inline_creatable?' do
+    it 'is false by default (lookup-only types)' do
+      expect(BetterTogether::Geography::Settlement.inline_creatable?).to be(false)
+      expect(BetterTogether::Geography::Region.inline_creatable?).to be(false)
+    end
+
+    it 'is true for types that override inline_create_fields_partial' do
+      expect(BetterTogether::Address.inline_creatable?).to be(true)
+      expect(BetterTogether::Infrastructure::Building.inline_creatable?).to be(true)
+    end
+  end
+
+  describe '.inline_create_fields_partial' do
+    it 'is nil by default' do
+      expect(BetterTogether::Geography::Settlement.inline_create_fields_partial).to be_nil
+    end
+
+    it 'points at each inline-creatable type\'s own fields partial' do
+      expect(BetterTogether::Address.inline_create_fields_partial).to eq('better_together/addresses/address_fields')
+      expect(BetterTogether::Infrastructure::Building.inline_create_fields_partial)
+        .to eq('better_together/infrastructure/buildings/fields')
+    end
+  end
 end

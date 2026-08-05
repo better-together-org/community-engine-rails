@@ -1574,8 +1574,7 @@ fr:
         when: Quand
     events:
       actions:
-        create_new_address: Créer une nouvelle adresse
-        create_new_building: Créer un nouveau bâtiment
+        create_new: Créer un(e) nouveau/nouvelle %{model}
         create_new_short: Nouveau
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants

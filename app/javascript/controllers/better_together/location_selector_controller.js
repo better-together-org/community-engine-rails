@@ -8,10 +8,8 @@ export default class extends Controller {
     "structuredLocation",
     "locationTypeField",
     "locationIdSelect",
-    "newAddress",
-    "newBuilding",
-    "newAddressButton",
-    "newBuildingButton"
+    "newRecordBlock",
+    "newRecordButton"
   ]
 
   static values = {
@@ -46,21 +44,18 @@ export default class extends Controller {
       this.structuredLocationTarget.style.display = 'none'
     }
 
-    // hide inline new blocks and their trigger buttons as well
-    if (this.hasNewAddressTarget) this.newAddressTarget.style.display = 'none'
-    if (this.hasNewBuildingTarget) this.newBuildingTarget.style.display = 'none'
-    if (this.hasNewAddressButtonTarget) this.newAddressButtonTarget.style.display = 'none'
-    if (this.hasNewBuildingButtonTarget) this.newBuildingButtonTarget.style.display = 'none'
+    // hide every inline "+New" block and its trigger button
+    this.newRecordButtonTargets.forEach((el) => { el.style.display = 'none' })
+    this.newRecordBlockTargets.forEach((el) => { el.style.display = 'none' })
 
-    // The "+New" address/building blocks both nest fields_for :location for the
-    // SAME location association. A hidden block's fields still POST (display:none
-    // doesn't stop form submission) and collide with whichever type is actually
-    // selected — e.g. Building's translatable name_en field getting submitted
-    // alongside an Address, raising ActiveModel::UnknownAttributeError. Disabled
-    // fields are excluded from form submission, so keep both disabled whenever
-    // neither is the active, opened type.
-    this.toggleFieldsDisabled(this.hasNewAddressTarget ? this.newAddressTarget : null, true)
-    this.toggleFieldsDisabled(this.hasNewBuildingTarget ? this.newBuildingTarget : null, true)
+    // Every "+New" block nests fields_for :location for the SAME location
+    // association. A hidden block's fields still POST (display:none doesn't stop
+    // form submission) and collide with whichever type is actually selected — e.g.
+    // Building's translatable name_en field getting submitted alongside an
+    // Address, raising ActiveModel::UnknownAttributeError. Disabled fields are
+    // excluded from form submission, so keep every block disabled whenever it
+    // isn't the active, opened type.
+    this.newRecordBlockTargets.forEach((el) => this.toggleFieldsDisabled(el, true))
   }
 
   toggleFieldsDisabled(target, disabled) {
@@ -96,26 +91,21 @@ export default class extends Controller {
 
     this.updateLocationSelectSource(locationType)
 
-    // Only address/building support inline "+New" creation; settlement/region
-    // are curated reference data, lookup-only by design. The trigger buttons
-    // are server-gated by Pundit (rendered only when policy(...).create? is
-    // true) but hidden/shown here based on the currently selected radio,
-    // since the server only knows the type at initial render, not after the
-    // user switches radios client-side.
-    if (this.hasNewAddressButtonTarget) {
-      this.newAddressButtonTarget.style.display = selectedType === 'address' ? 'inline-block' : 'none'
-    }
-    if (this.hasNewBuildingButtonTarget) {
-      this.newBuildingButtonTarget.style.display = selectedType === 'building' ? 'inline-block' : 'none'
-    }
-    if (selectedType !== 'address' && this.hasNewAddressTarget) {
-      this.newAddressTarget.style.display = 'none'
-      this.toggleFieldsDisabled(this.newAddressTarget, true)
-    }
-    if (selectedType !== 'building' && this.hasNewBuildingTarget) {
-      this.newBuildingTarget.style.display = 'none'
-      this.toggleFieldsDisabled(this.newBuildingTarget, true)
-    }
+    // Only inline-creatable Placeable types (Address/Building) render trigger
+    // buttons/blocks at all — server-gated by Pundit (rendered only when
+    // policy(...).create? is true) and by Placeable#inline_creatable? (lookup-only
+    // types like Settlement/Region never render one). Shown/hidden here based on
+    // the currently selected radio, since the server only knows the type at
+    // initial render, not after the user switches radios client-side.
+    this.newRecordButtonTargets.forEach((el) => {
+      el.style.display = el.dataset.locationType === selectedType ? 'inline-block' : 'none'
+    })
+    this.newRecordBlockTargets.forEach((el) => {
+      if (el.dataset.locationType !== selectedType) {
+        el.style.display = 'none'
+        this.toggleFieldsDisabled(el, true)
+      }
+    })
   }
 
   // Rewrites the location_id select's slim-select options data attribute with
@@ -169,38 +159,25 @@ export default class extends Controller {
     }
 
     // hide inline new blocks when switching
-    if (this.hasNewAddressTarget) this.newAddressTarget.style.display = 'none'
-    if (this.hasNewBuildingTarget) this.newBuildingTarget.style.display = 'none'
-    this.toggleFieldsDisabled(this.hasNewAddressTarget ? this.newAddressTarget : null, true)
-    this.toggleFieldsDisabled(this.hasNewBuildingTarget ? this.newBuildingTarget : null, true)
+    this.newRecordBlockTargets.forEach((el) => { el.style.display = 'none' })
+    this.newRecordBlockTargets.forEach((el) => this.toggleFieldsDisabled(el, true))
   }
 
-  // Show inline new address fields
-  showNewAddress(event) {
+  // Shows/hides the inline "+New" fields block for the clicked button's
+  // location type, matched via the shared data-location-type attribute.
+  showNewRecord(event) {
     event.preventDefault()
-    if (this.hasNewAddressTarget) {
-      const opening = this.newAddressTarget.style.display === 'none'
-      this.newAddressTarget.style.display = opening ? 'block' : 'none'
-      this.toggleFieldsDisabled(this.newAddressTarget, !opening)
-      // focus first input inside the new address block for accessibility
-      if (opening) {
-        const focusable = this.newAddressTarget.querySelector('input, select, textarea')
-        if (focusable) focusable.focus()
-      }
-    }
-  }
+    const type = event.currentTarget.dataset.locationType
+    const block = this.newRecordBlockTargets.find((el) => el.dataset.locationType === type)
+    if (!block) return
 
-  // Show inline new building fields
-  showNewBuilding(event) {
-    event.preventDefault()
-    if (this.hasNewBuildingTarget) {
-      const opening = this.newBuildingTarget.style.display === 'none'
-      this.newBuildingTarget.style.display = opening ? 'block' : 'none'
-      this.toggleFieldsDisabled(this.newBuildingTarget, !opening)
-      if (opening) {
-        const focusable = this.newBuildingTarget.querySelector('input, select, textarea')
-        if (focusable) focusable.focus()
-      }
+    const opening = block.style.display === 'none'
+    block.style.display = opening ? 'block' : 'none'
+    this.toggleFieldsDisabled(block, !opening)
+    // focus first input inside the new record block for accessibility
+    if (opening) {
+      const focusable = block.querySelector('input, select, textarea')
+      if (focusable) focusable.focus()
     }
   }
 }

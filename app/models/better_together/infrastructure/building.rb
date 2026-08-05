@@ -84,6 +84,10 @@ module BetterTogether
         new(attrs)
       end
 
+      def self.inline_create_fields_partial
+        'better_together/infrastructure/buildings/fields'
+      end
+
       def address?
         address_id.present?
       end

@@ -264,26 +264,18 @@
                           'data-better_together--location-selector-target': 'locationIdSelect',
                           'data-better_together--slim-select-options-value': (current_location_key ? { ajax: { url: "#{available_locations_events_path}?location_type=#{location_type_map[current_location_key]}" } } : {}).to_json } %>
 
-                    <% if policy(BetterTogether::Address).create? %>
-                      <!-- Button to create a new address inline -->
+                    <% inline_creatable_klasses = location_type_map.values.map(&:constantize).select(&:inline_creatable?) %>
+                    <% inline_creatable_klasses.each do |klass| %>
+                      <% key = klass.name.demodulize.underscore %>
+                      <% next unless policy(klass).create? %>
+                      <!-- Button to create a new <%= key %> inline -->
                       <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
-                          'data-action': 'click->better_together--location-selector#showNewAddress',
-                          'data-better_together--location-selector-target': 'newAddressButton',
-                          style: ('display: none;' unless current_location_key == 'address') do %>
+                          'data-action': 'click->better_together--location-selector#showNewRecord',
+                          'data-location-type': key,
+                          'data-better_together--location-selector-target': 'newRecordButton',
+                          style: ('display: none;' unless current_location_key == key) do %>
                         <i class="fa-solid fa-plus"></i>
-                        <span class="visually-hidden"><%= t('better_together.events.actions.create_new_address') %></span>
-                        <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
-                      <% end %>
-                    <% end %>
-
-                    <% if policy(BetterTogether::Infrastructure::Building).create? %>
-                      <!-- Button to create a new building inline -->
-                      <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
-                          'data-action': 'click->better_together--location-selector#showNewBuilding',
-                          'data-better_together--location-selector-target': 'newBuildingButton',
-                          style: ('display: none;' unless current_location_key == 'building') do %>
-                        <i class="fa-solid fa-plus"></i>
-                        <span class="visually-hidden"><%= t('better_together.events.actions.create_new_building') %></span>
+                        <span class="visually-hidden"><%= t('better_together.events.actions.create_new', model: klass.model_name.human) %></span>
                         <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
                       <% end %>
                     <% end %>
@@ -293,20 +285,16 @@
 
                   <small class="form-text text-muted"><%= t('better_together.events.hints.select_location') %></small>
 
-                  <!-- Inline new address fields (hidden until user clicks 'New') -->
-                  <div data-better_together--location-selector-target="newAddress" style="display: none; margin-top: 0.75rem;">
-                    <%# Build nested attributes for a new Address under the locatable location %>
-                    <%= location_form.fields_for :location, BetterTogether::Address.new do |new_addr_form| %>
-                      <%= render 'better_together/addresses/address_fields', form: new_addr_form %>
-                    <% end %>
-                  </div>
-
-                  <!-- Inline new building fields (hidden until user clicks 'New') -->
-                  <div data-better_together--location-selector-target="newBuilding" style="display: none; margin-top: 0.75rem;">
-                    <%= location_form.fields_for :location, BetterTogether::Infrastructure::Building.new do |new_bld_form| %>
-                      <%= render 'better_together/infrastructure/buildings/fields', form: new_bld_form %>
-                    <% end %>
-                  </div>
+                  <!-- Inline new-record fields per inline-creatable Placeable type (hidden until user clicks 'New') -->
+                  <% inline_creatable_klasses.each do |klass| %>
+                    <% key = klass.name.demodulize.underscore %>
+                    <div data-better_together--location-selector-target="newRecordBlock" data-location-type="<%= key %>"
+                         style="display: none; margin-top: 0.75rem;">
+                      <%= location_form.fields_for :location, klass.new do |new_form| %>
+                        <%= render klass.inline_create_fields_partial, form: new_form %>
+                      <% end %>
+                    </div>
+                  <% end %>
                 </div>
               <% end %>
             </div>
