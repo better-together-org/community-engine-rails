@@ -14,7 +14,7 @@ module BetterTogether
       class_attribute :community_class_name, default: '::BetterTogether::Community'
 
       translates :name, type: :string
-      translates :description, type: :text
+      translates :description, backend: :action_text
 
       validates :name, presence: true
     end
@@ -38,11 +38,21 @@ module BetterTogether
 
       create_community(
         name:,
-        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
+        description: primary_community_description,
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
         privacy: primary_community_privacy,
         **primary_community_extra_attrs
       )
+    end
+
+    # Community#description is a plain-text field, but description here is
+    # rich text (ActionText) — reduce to plain text before handing it off, so
+    # Community doesn't end up storing raw HTML tags in a plain-text column.
+    def primary_community_description
+      return "#{name}'s primary community" unless respond_to?(:description)
+
+      value = description
+      value.respond_to?(:to_plain_text) ? value.to_plain_text : value
     end
 
     # The very first Platform ever created has no existing platform for its own

@@ -74,9 +74,9 @@ RSpec.describe BetterTogether::Geography::Country do
       Mobility.with_locale(:es) do
         country.description = 'Un gran país'
       end
-      expect(country.description).to eq('A large country')
+      expect(country.description.to_plain_text).to eq('A large country')
       Mobility.with_locale(:es) do
-        expect(country.description).to eq('Un gran país')
+        expect(country.description.to_plain_text).to eq('Un gran país')
       end
     end
 
