@@ -32,7 +32,7 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
       first = described_class.send(:continents).first
       record = BetterTogether::Geography::Continent.find_by(identifier: first[:name].parameterize)
       expect(record.name).to eq(first[:name])
-      expect(record.description).to eq(first[:description])
+      expect(record.description.to_plain_text).to eq(first[:description])
     end
   end
 end

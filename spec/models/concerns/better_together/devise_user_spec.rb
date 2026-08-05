@@ -207,7 +207,7 @@ RSpec.describe BetterTogether::DeviseUser do
           )
 
           new_user = user_class.last
-          expect(new_user.person.description).to eq('Software developer from Canada')
+          expect(new_user.person.description.to_plain_text).to eq('Software developer from Canada')
         end
 
         it 'uses existing person from platform invitation' do
@@ -262,7 +262,7 @@ RSpec.describe BetterTogether::DeviseUser do
           )
 
           existing_person.reload
-          expect(existing_person.description).to eq('Developer bio from GitHub')
+          expect(existing_person.description.to_plain_text).to eq('Developer bio from GitHub')
         end
 
         it 'does not override existing person description from invitation' do
@@ -290,7 +290,7 @@ RSpec.describe BetterTogether::DeviseUser do
           )
 
           existing_person.reload
-          expect(existing_person.description).to eq('Original bio from invitation')
+          expect(existing_person.description.to_plain_text).to eq('Original bio from invitation')
         end
 
         it 'handles missing name and handle gracefully' do

@@ -29,10 +29,11 @@
 
         <div class="mb-3">
           <%= f.label :description, t('.fields.description.label'), for: 'new_platform_platform_description', class: 'form-label' %>
-          <%= f.text_area :description, id: 'new_platform_platform_description',
+          <%= f.rich_text_area :description, id: 'new_platform_platform_description',
                           placeholder: t('.fields.description.placeholder'),
                           class: "form-control#{' is-invalid' if @form.errors[:description].any?}",
-                          rows: 3, required: true, 'aria-describedby': 'new_platform_platform_description_help' %>
+                          required: true, 'aria-describedby': 'new_platform_platform_description_help',
+                          'aria-label': t('.fields.description.label') %>
           <small id="new_platform_platform_description_help" class="form-text text-muted">
             <%= t('.fields.description.help') %>
           </small>

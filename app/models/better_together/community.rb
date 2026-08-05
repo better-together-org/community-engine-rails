@@ -70,8 +70,7 @@ module BetterTogether
     slugged :name
 
     translates :name, type: :string
-    translates :description, type: :text
-    translates :description_html, backend: :action_text
+    translates :description, backend: :action_text
 
     searchable pg_search: {
       against: [:identifier],

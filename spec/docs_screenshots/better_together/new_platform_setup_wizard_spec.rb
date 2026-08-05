@@ -55,7 +55,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
 
   def fill_in_platform_identity_and_submit(suffix:)
     fill_in 'new_platform_platform_name', with: "Tenant Platform #{suffix}"
-    fill_in 'new_platform_platform_description', with: 'A place where neighbors and friends support each other.'
+    fill_in_trix_field 'new_platform_platform_description', with: 'A place where neighbors and friends support each other.'
     fill_in 'new_platform_platform_host_url', with: "https://tenant-#{suffix}.example.com"
     find('#new-platform-setup-platform-identity-submit-btn').click
     expect(page).to have_css('#new_platform_domain_hostname', wait: 10, visible: :all)
@@ -72,7 +72,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
     fill_in 'new_platform_steward_password_confirmation', with: '!StrongPass12345?'
     fill_in 'new_platform_steward_person_name', with: 'New Platform Steward'
     fill_in 'new_platform_steward_person_identifier', with: "steward-#{suffix}"
-    fill_in 'new_platform_steward_person_description', with: 'First steward of this new platform.'
+    fill_in_trix_field 'new_platform_steward_person_description', with: 'First steward of this new platform.'
     find('#new-platform-setup-steward-account-submit-btn').click
     expect(page).to have_current_path(%r{/invite_members\z}, wait: 10)
   end
