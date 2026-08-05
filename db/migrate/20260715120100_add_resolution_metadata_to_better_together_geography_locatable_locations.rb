@@ -18,6 +18,26 @@ class AddResolutionMetadataToBetterTogetherGeographyLocatableLocations < ActiveR
                             %i[locatable_type locatable_id location_type],
                             name: 'index_locatable_locations_on_locatable_and_location_type')
 
+    # Dedup before adding the unique index below — nothing enforced uniqueness on
+    # (locatable_type, locatable_id, location_type) prior to this migration, so any
+    # environment could have pre-existing duplicate rows. Keep the most-recently-created
+    # row per group (the newest is the most likely to reflect the current/authoritative
+    # placement); delete the rest.
+    execute <<~SQL
+      DELETE FROM better_together_geography_locatable_locations
+      WHERE id IN (
+        SELECT id FROM (
+          SELECT id,
+                 ROW_NUMBER() OVER (
+                   PARTITION BY locatable_type, locatable_id, location_type
+                   ORDER BY created_at DESC, id DESC
+                 ) AS rn
+          FROM better_together_geography_locatable_locations
+        ) ranked
+        WHERE rn > 1
+      )
+    SQL
+
     add_index :better_together_geography_locatable_locations,
               %i[locatable_type locatable_id location_type],
               unique: true,
