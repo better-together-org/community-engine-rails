@@ -35,6 +35,15 @@ module BetterTogether
         }
         filter :creator_id
 
+        # ActionText returns an ActionText::RichText object; serialize as plain text for JSON consumers.
+        def description
+          @model.description&.to_plain_text.to_s
+        end
+
+        def description=(value)
+          @model.description = value
+        end
+
         # Custom attribute methods
         def profile_image_url
           attachment_url(:profile_image)
