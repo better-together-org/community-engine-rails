@@ -139,7 +139,6 @@ module BetterTogether
       end
 
       render json: options
-      
     end
 
     # Renders a preview of the next few occurrences for the recurrence fields

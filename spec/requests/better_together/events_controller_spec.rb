@@ -167,6 +167,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(response.body).not_to include('id="attendees-tab"')
       end
     end
+
     context 'with a geocoded structured location' do
       let(:event) { create(:better_together_event, :with_address_location, creator: manager_user.person) }
 
