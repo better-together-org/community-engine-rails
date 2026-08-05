@@ -105,11 +105,18 @@ module BetterTogether
         # (see class docstring) — when more than one covers the point, prefer the
         # smaller (more specific) polygon, with id as a stable tie-break, so the
         # result is deterministic across runs instead of depending on unordered
-        # Postgres row order.
+        # Postgres row order. Cast to geometry for the area comparison rather than
+        # using st_area directly on the geography column: geography ST_Area's
+        # spheroid calculation requires a spatial_ref_sys lookup for the column's
+        # SRID, which some environments' minimal PostGIS seed data lack — geometry
+        # ST_Area is a plain planar calculation needing no such lookup, and since
+        # this is only ever used for *relative* ordering (smaller vs. larger, never
+        # an absolute real-world unit), the planar approximation is sufficient.
         klass.joins(:space)
              .where(space_table[:boundary].not_eq(nil))
              .where(space_table[:boundary].st_function('ST_Covers', point, [false, true, true]))
-             .order(space_table[:boundary].st_area.asc, klass.arel_table[:id].asc)
+             .order(Arel.sql("ST_Area(#{BetterTogether::Geography::Space.table_name}.boundary::geometry) ASC"),
+                    klass.arel_table[:id].asc)
              .first
       end
 
