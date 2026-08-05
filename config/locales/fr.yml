@@ -1678,7 +1678,9 @@ fr:
       location_types:
         address: Adresse
         building: Bâtiment
+        floor: Étage
         region: Région
+        room: Pièce
         settlement: Habitat
         simple: Simple
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.

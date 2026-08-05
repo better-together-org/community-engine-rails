@@ -61,6 +61,34 @@ RSpec.describe 'GET /events/available_locations' do
       json = JSON.parse(response.body)
       expect(json.map { |r| r['value'] }).to include(region.id)
     end
+
+    it 'returns floors of policy-scoped buildings' do
+      building = create(:better_together_infrastructure_building, privacy: 'public')
+      floor = building.floors.first
+
+      get better_together.available_locations_events_path(
+        location_type: 'BetterTogether::Infrastructure::Floor',
+        locale: I18n.default_locale
+      )
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json.map { |r| r['value'] }).to include(floor.id)
+    end
+
+    it 'returns rooms of policy-scoped buildings' do
+      building = create(:better_together_infrastructure_building, privacy: 'public')
+      room = building.rooms.first
+
+      get better_together.available_locations_events_path(
+        location_type: 'BetterTogether::Infrastructure::Room',
+        locale: I18n.default_locale
+      )
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json.map { |r| r['value'] }).to include(room.id)
+    end
   end
 
   context 'with an invalid location_type', :as_platform_manager do

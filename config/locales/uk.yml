@@ -1665,7 +1665,9 @@ uk:
       location_types:
         address: Адреса
         building: Будівля
+        floor: Поверх
         region: Регіон
+        room: Кімната
         settlement: Поселення
         simple: Простий
       login_required: Будь ласка, увійдіть для управління RSVP.

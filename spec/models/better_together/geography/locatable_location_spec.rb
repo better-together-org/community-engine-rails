@@ -466,6 +466,40 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
       end
     end
 
+    describe '.available_floors_for' do
+      let(:community) { create(:better_together_community) }
+      let!(:public_building) { create(:better_together_infrastructure_building, privacy: 'public') }
+      let!(:private_building) { create(:better_together_infrastructure_building, privacy: 'private') }
+
+      it 'composes on available_buildings_for, scoping floors to available buildings' do
+        result = described_class.available_floors_for(community)
+
+        expect(result).to include(*public_building.floors)
+        expect(result).not_to include(*private_building.floors)
+      end
+
+      it 'returns an empty scope when context is nil, matching available_buildings_for' do
+        expect(described_class.available_floors_for(nil)).to be_empty
+      end
+    end
+
+    describe '.available_rooms_for' do
+      let(:community) { create(:better_together_community) }
+      let!(:public_building) { create(:better_together_infrastructure_building, privacy: 'public') }
+      let!(:private_building) { create(:better_together_infrastructure_building, privacy: 'private') }
+
+      it 'composes on available_floors_for, scoping rooms to available floors' do
+        result = described_class.available_rooms_for(community)
+
+        expect(result).to include(*public_building.rooms)
+        expect(result).not_to include(*private_building.rooms)
+      end
+
+      it 'returns an empty scope when context is nil, matching available_buildings_for' do
+        expect(described_class.available_rooms_for(nil)).to be_empty
+      end
+    end
+
     describe '.available_settlements_for' do
       let!(:settlement_a) { create(:geography_settlement, name: 'Zeta Settlement') }
       let!(:settlement_b) { create(:geography_settlement, name: 'Alpha Settlement') }

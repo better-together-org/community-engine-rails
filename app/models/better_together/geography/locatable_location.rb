@@ -226,6 +226,18 @@ module BetterTogether
         BetterTogether::Geography::Region.i18n.order(:name)
       end
 
+      # Floors/Rooms have no independent privacy or visibility scoping of their
+      # own — availability is entirely inherited from their building, so these
+      # compose on top of .available_buildings_for rather than duplicating its
+      # policy/context logic.
+      def self.available_floors_for(context = nil)
+        BetterTogether::Infrastructure::Floor.where(building: available_buildings_for(context))
+      end
+
+      def self.available_rooms_for(context = nil)
+        BetterTogether::Infrastructure::Room.where(floor: available_floors_for(context))
+      end
+
       private
 
       # If an id is provided, prefer reusing the existing record — look it up across every

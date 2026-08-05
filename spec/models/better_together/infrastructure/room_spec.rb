@@ -59,5 +59,42 @@ RSpec.describe BetterTogether::Infrastructure::Room do
           .with(instance_of(described_class))
       end
     end
+
+    describe 'geospatial delegation to building' do
+      it 'delegates space/latitude/longitude/geocoded? to the building' do
+        room = create(:better_together_infrastructure_room)
+        room.building.space.update!(latitude: 47.5615, longitude: -52.7126)
+
+        expect(room.space).to eq(room.building.space)
+        expect(room.latitude).to eq(47.5615)
+        expect(room.longitude).to eq(-52.7126)
+        expect(room.geocoded?).to be(true)
+      end
+
+      it 'is not geocoded when the building has no coordinates yet' do
+        room = create(:better_together_infrastructure_room)
+
+        expect(room.geocoded?).to be(false)
+      end
+    end
+
+    describe '#to_leaflet_point' do
+      it 'returns nil when the building is not geocoded' do
+        room = create(:better_together_infrastructure_room)
+
+        expect(room.to_leaflet_point).to be_nil
+      end
+
+      it "uses the building's coordinates but the room's own name as label" do
+        room = create(:better_together_infrastructure_room)
+        room.building.space.update!(latitude: 47.5615, longitude: -52.7126)
+
+        point = room.to_leaflet_point
+
+        expect(point[:lat]).to eq(47.5615)
+        expect(point[:lng]).to eq(-52.7126)
+        expect(point[:label]).to eq(room.name)
+      end
+    end
   end
 end

@@ -79,5 +79,42 @@ RSpec.describe BetterTogether::Infrastructure::Floor do
           .with(instance_of(described_class))
       end
     end
+
+    describe 'geospatial delegation to building' do
+      it 'delegates space/latitude/longitude/geocoded? to the building' do
+        floor = create(:better_together_infrastructure_floor)
+        floor.building.space.update!(latitude: 47.5615, longitude: -52.7126)
+
+        expect(floor.space).to eq(floor.building.space)
+        expect(floor.latitude).to eq(47.5615)
+        expect(floor.longitude).to eq(-52.7126)
+        expect(floor.geocoded?).to be(true)
+      end
+
+      it 'is not geocoded when the building has no coordinates yet' do
+        floor = create(:better_together_infrastructure_floor)
+
+        expect(floor.geocoded?).to be(false)
+      end
+    end
+
+    describe '#to_leaflet_point' do
+      it 'returns nil when the building is not geocoded' do
+        floor = create(:better_together_infrastructure_floor)
+
+        expect(floor.to_leaflet_point).to be_nil
+      end
+
+      it "uses the building's coordinates but the floor's own name as label" do
+        floor = create(:better_together_infrastructure_floor)
+        floor.building.space.update!(latitude: 47.5615, longitude: -52.7126)
+
+        point = floor.to_leaflet_point
+
+        expect(point[:lat]).to eq(47.5615)
+        expect(point[:lng]).to eq(-52.7126)
+        expect(point[:label]).to eq(floor.name)
+      end
+    end
   end
 end

@@ -8,7 +8,7 @@ module BetterTogether
       include Creatable
       include Identifier
       include FriendlySlug
-      include Geography::Geospatial::One
+      include Geography::Placeable
       include Privacy
       include PrimaryCommunity
 
@@ -19,6 +19,11 @@ module BetterTogether
 
       delegate :level, to: :floor
 
+      # Rooms have no independent space of their own — every geospatial read
+      # resolves through the building they belong to.
+      delegate :space, :latitude, :longitude, :elevation, :geocoded, :geocoded?,
+               to: :building, allow_nil: true
+
       translates :name, type: :string
       translates :description, backend: :action_text
 
@@ -26,6 +31,19 @@ module BetterTogether
 
       def to_s
         name
+      end
+
+      # Mirrors Geospatial::One#to_leaflet_point, but keeps the room's own name as
+      # the map label while sourcing coordinates from the delegated building.
+      def to_leaflet_point
+        return nil unless geocoded?
+
+        {
+          lat: latitude,
+          lng: longitude,
+          elevation: elevation,
+          label: to_s
+        }
       end
     end
   end

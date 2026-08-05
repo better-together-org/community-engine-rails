@@ -1671,7 +1671,9 @@ es:
       location_types:
         address: Dirección
         building: Edificio
+        floor: Piso
         region: Región
+        room: Habitación
         settlement: Asentamiento
         simple: Simple
       login_required: Por favor, inicia sesión para gestionar las confirmaciones de

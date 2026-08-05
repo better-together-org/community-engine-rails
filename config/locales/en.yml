@@ -1660,7 +1660,9 @@ en:
       location_types:
         address: Address
         building: Building
+        floor: Floor
         region: Region
+        room: Room
         settlement: Settlement
         simple: Simple
       login_required: Please log in to manage RSVPs.
