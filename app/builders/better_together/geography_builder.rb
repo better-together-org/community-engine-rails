@@ -14,6 +14,23 @@ module BetterTogether
         seed_region_settlements
       end
 
+      # Whether geography reference data has already been installed. Used to make
+      # repeatable/admin-triggered call sites (rake tasks, a future seed-catalog UI)
+      # safe to invoke more than once without erroring on duplicate `create!` or
+      # destructively wiping already-resolved hierarchy placements the way
+      # `build(clear: true)` would.
+      def seeded?
+        ::BetterTogether::Geography::Continent.exists?
+      end
+
+      # Safe, idempotent entrypoint for anything other than a deliberate manual reset:
+      # no-ops if geography data already exists, otherwise seeds it (without clearing).
+      def build_if_missing
+        return if seeded?
+
+        build
+      end
+
       # Settlement/Region/State/Country/Continent each auto-create an associated
       # Community via PrimaryCommunity#has_community (dependent: :destroy). delete_all
       # skips instance callbacks entirely, so it would orphan those Community rows

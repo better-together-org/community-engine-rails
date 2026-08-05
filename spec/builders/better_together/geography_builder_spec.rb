@@ -49,4 +49,38 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
       expect(record.description).to eq(first[:description])
     end
   end
+
+  describe '.seeded?' do
+    before { described_class.clear_existing }
+
+    it 'is false when no geography data exists' do
+      expect(described_class.seeded?).to be(false)
+    end
+
+    it 'is true once at least one Continent exists' do
+      BetterTogether::Geography::Continent.create!(
+        identifier: 'foo', name: 'Foo', description: 'desc', slug: 'foo', protected: false
+      )
+
+      expect(described_class.seeded?).to be(true)
+    end
+  end
+
+  describe '.build_if_missing' do
+    before { described_class.clear_existing }
+
+    it 'seeds geography data when none exists yet' do
+      expect do
+        described_class.build_if_missing
+      end.to change(described_class, :seeded?).from(false).to(true)
+    end
+
+    it 'is idempotent — a second call is a no-op and does not raise or duplicate records' do # rubocop:todo RSpec/MultipleExpectations
+      described_class.build_if_missing
+      continent_count = BetterTogether::Geography::Continent.count
+
+      expect { described_class.build_if_missing }.not_to raise_error
+      expect(BetterTogether::Geography::Continent.count).to eq(continent_count)
+    end
+  end
 end

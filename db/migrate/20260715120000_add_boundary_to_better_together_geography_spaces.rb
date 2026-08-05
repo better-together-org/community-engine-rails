@@ -4,7 +4,7 @@ require 'activerecord-postgis-adapter'
 
 # Adds a polygon/multipolygon boundary column to Space so that any geospatial owner
 # (Continent/Country/State/Region/Settlement via GeospatialSpace) can store an area,
-# not just a point. This is what makes PostGIS containment queries (ST_Contains) possible
+# not just a point. This is what makes PostGIS containment queries (ST_Covers) possible
 # for resolving a geocoded Address/Building/Event point into the geography hierarchy.
 class AddBoundaryToBetterTogetherGeographySpaces < ActiveRecord::Migration[7.1]
   def change

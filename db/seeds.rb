@@ -25,4 +25,12 @@ BetterTogether::SetupWizardBuilder.build(clear: true)
 
 BetterTogether::AgreementBuilder.build(clear: true)
 
-BetterTogether::GeographyBuilder.build(clear: true)
+# Geography reference data (Continents/Countries/States/Regions/Settlements) is
+# intentionally NOT auto-seeded here. GeographyBuilder.build(clear: true) bulk-creates
+# ~230+ records, each of which triggers live Nominatim geocoding (see geocodes_self on
+# those five models) — running that automatically on every seed/deploy would fire an
+# unthrottled burst of external HTTP calls violating Nominatim's usage policy. Install
+# it deliberately instead:
+#   bin/rails better_together:geography:seed_reference_data
+#   bin/rails better_together:geography:import_geocodes
+# (a dedicated seed-catalog admin UI for this is planned as a follow-up)

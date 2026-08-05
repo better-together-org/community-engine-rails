@@ -73,4 +73,61 @@ RSpec.describe BetterTogether::Geography::GeocodingJob do
     end
     # rubocop:enable RSpec/VerifiedDoubles
   end
+
+  describe 'SEEDED_LEVELS' do
+    it 'covers all five geography hierarchy classes' do
+      expect(described_class::SEEDED_LEVELS).to contain_exactly(
+        BetterTogether::Geography::Continent, BetterTogether::Geography::Country,
+        BetterTogether::Geography::State, BetterTogether::Geography::Region,
+        BetterTogether::Geography::Settlement
+      )
+    end
+  end
+
+  describe '.import_all_missing' do
+    it 'iterates all 5 hierarchy classes, skipping records that are already geocoded' do
+      geocoded = create(:geography_settlement, :without_country, :without_state)
+      geocoded.space.latitude = 48.95
+      geocoded.space.longitude = -57.95
+      geocoded.save!
+
+      ungeocoded = create(:geography_region, :without_country, :without_state)
+
+      allow(described_class).to receive(:perform_now).and_call_original
+      expect(described_class).to receive(:perform_now).with(ungeocoded)
+      expect(described_class).not_to receive(:perform_now).with(geocoded)
+
+      summary = described_class.import_all_missing
+
+      expect(summary).to eq(imported: 1, skipped: 1, failed: 0)
+    end
+  end
+
+  describe '.perform_with_retries' do
+    let(:settlement) { create(:geography_settlement, :without_country, :without_state) }
+
+    it 'retries in-process on a transient failure and succeeds without touching ActiveJob retry_on' do
+      call_count = 0
+      allow(described_class).to receive(:perform_now) do |_record|
+        call_count += 1
+        raise StandardError, 'transient' if call_count < 2
+      end
+      allow(described_class).to receive(:sleep)
+
+      result = described_class.perform_with_retries(settlement)
+
+      expect(result).to be true
+      expect(call_count).to eq(2)
+    end
+
+    it 'gives up and returns false after exhausting attempts, without raising' do
+      allow(described_class).to receive(:perform_now).and_raise(StandardError, 'persistent')
+      allow(described_class).to receive(:sleep)
+
+      result = nil
+      expect { result = described_class.perform_with_retries(settlement, attempts: 2) }.not_to raise_error
+      expect(result).to be false
+      expect(described_class).to have_received(:perform_now).twice
+    end
+  end
 end

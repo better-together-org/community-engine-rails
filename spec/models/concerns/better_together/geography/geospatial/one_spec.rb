@@ -27,4 +27,37 @@ RSpec.describe BetterTogether::Geography::Geospatial::One do
       expect(BetterTogether::Infrastructure::Floor.new).to respond_to(:geocoded?)
     end
   end
+
+  describe '.without_auto_geocoding' do
+    # class_methods (inside the concern) mix into includers, not into the concern
+    # module itself — call through an actual includer. The underlying flag is a
+    # single thread-local shared across every includer, so any includer works.
+    let(:includer) { BetterTogether::Address }
+
+    it 'suppresses should_geocode? for the duration of the block' do
+      address = build(:better_together_address)
+
+      includer.without_auto_geocoding do
+        expect(includer.auto_geocoding_suppressed?).to be(true)
+        expect(address.should_geocode?).to be(false)
+      end
+    end
+
+    it 'un-suppresses after the block exits, even if it raises' do
+      expect do
+        includer.without_auto_geocoding { raise 'boom' }
+      end.to raise_error('boom')
+
+      expect(includer.auto_geocoding_suppressed?).to be(false)
+    end
+
+    it 'does not affect should_geocode? outside the block' do
+      address = build(:better_together_address)
+
+      includer.without_auto_geocoding { 1 }
+
+      expect(includer.auto_geocoding_suppressed?).to be(false)
+      expect(address.should_geocode?).to be(true)
+    end
+  end
 end
