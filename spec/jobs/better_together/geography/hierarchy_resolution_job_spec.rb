@@ -67,6 +67,30 @@ RSpec.describe BetterTogether::Geography::HierarchyResolutionJob do
       end
     end
 
+    context 'when a point falls inside two overlapping settlement boundaries' do
+      it 'deterministically prefers the smaller-area settlement' do
+        small = create(:geography_settlement)
+        small.space.boundary = square_boundary(center_lng: corner_brook_lng, center_lat: corner_brook_lat,
+                                               radius_degrees: 0.05)
+        small.save!
+
+        large = create(:geography_settlement)
+        large.space.boundary = square_boundary(center_lng: corner_brook_lng, center_lat: corner_brook_lat,
+                                               radius_degrees: 1.0)
+        large.save!
+
+        address = create(:better_together_address)
+        address.space.latitude = corner_brook_lat
+        address.space.longitude = corner_brook_lng
+        address.save!
+
+        job.perform(address)
+
+        placement = address.locatable_locations.find_by(location_type: 'BetterTogether::Geography::Settlement')
+        expect(placement.location).to eq(small)
+      end
+    end
+
     context 'when no polygon matches but geocode metadata has a country_code' do
       it 'resolves country via the iso_code fallback' do
         country = create(:geography_country, iso_code: 'CA')

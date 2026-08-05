@@ -101,9 +101,15 @@ module BetterTogether
       def containing_record(klass, point)
         space_table = BetterTogether::Geography::Space.arel_table
 
+        # Overlapping/non-nesting boundary polygons at the same level are expected
+        # (see class docstring) — when more than one covers the point, prefer the
+        # smaller (more specific) polygon, with id as a stable tie-break, so the
+        # result is deterministic across runs instead of depending on unordered
+        # Postgres row order.
         klass.joins(:space)
              .where(space_table[:boundary].not_eq(nil))
              .where(space_table[:boundary].st_function('ST_Covers', point, [false, true, true]))
+             .order(space_table[:boundary].st_area.asc, klass.arel_table[:id].asc)
              .first
       end
 

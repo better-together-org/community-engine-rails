@@ -22,7 +22,7 @@ module BetterTogether
       end
 
       def self.geocoded
-        where.not(latitude: nil, longitude: nil)
+        where.not(latitude: nil).where.not(longitude: nil)
       end
 
       def geocoded?

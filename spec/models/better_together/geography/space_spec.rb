@@ -101,4 +101,24 @@ RSpec.describe BetterTogether::Geography::Space do
       expect(persisted.boundary).to be_a(RGeo::Feature::MultiPolygon)
     end
   end
+
+  describe '.geocoded' do
+    it 'excludes a record with only latitude set' do
+      lat_only = create(:geography_space, latitude: 48.95, longitude: nil)
+
+      expect(described_class.geocoded).not_to include(lat_only)
+    end
+
+    it 'excludes a record with only longitude set' do
+      lng_only = create(:geography_space, latitude: nil, longitude: -57.95)
+
+      expect(described_class.geocoded).not_to include(lng_only)
+    end
+
+    it 'includes a record with both coordinates set' do
+      both = create(:geography_space, latitude: 48.95, longitude: -57.95)
+
+      expect(described_class.geocoded).to include(both)
+    end
+  end
 end
