@@ -511,6 +511,23 @@ module BetterTogether # :nodoc:
       end
     end
 
+    describe 'federation_visibility (Federatable)' do
+      it 'defaults to platform_default' do
+        expect(create(:event).federation_visibility).to eq('platform_default')
+      end
+
+      it 'accepts the federate and no_federate overrides' do
+        expect(create(:event, federation_visibility: 'federate')).to be_federation_visibility_federate
+        expect(create(:event, federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+      end
+
+      it 'reports an override only for federate/no_federate' do
+        expect(create(:event, federation_visibility: 'platform_default').federation_visibility_override?).to be false
+        expect(create(:event, federation_visibility: 'federate').federation_visibility_override?).to be true
+        expect(create(:event, federation_visibility: 'no_federate').federation_visibility_override?).to be true
+      end
+    end
+
     describe 'delegation' do
       it 'delegates location_geocoding_string to location' do
         expect(event).to respond_to(:location_geocoding_string)

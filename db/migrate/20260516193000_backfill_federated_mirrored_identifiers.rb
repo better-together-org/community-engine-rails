@@ -7,7 +7,7 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
     say_with_time migration_message(:title) do
       backfill(::BetterTogether::Post, content_type: 'post') +
         backfill(::BetterTogether::Page, content_type: 'page') +
-        backfill(::BetterTogether::Event, content_type: 'event')
+        backfill(event_backfill_class, content_type: 'event')
     end
   end
 
@@ -16,6 +16,27 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
   end
 
   private
+
+  # Migration-local stand-in for BetterTogether::Event. The real model
+  # declares `enum :status, ...`, which Rails validates against the schema
+  # at class-load time — but the `status` column isn't added until a later
+  # migration (add_status_to_better_together_events). Loading the real class
+  # here would abort any host upgrade that installs both migrations in one
+  # batch. This stub only needs the table and the `platform` association.
+  def event_backfill_class
+    Class.new(ActiveRecord::Base) do
+      self.table_name = 'better_together_events'
+      # better_together_events.type backs STI on the real model. Without this,
+      # Rails resolves the `type` column against the real BetterTogether::Event
+      # class and rejects this stand-in as an invalid subclass.
+      self.inheritance_column = :_type_disabled_for_backfill
+      belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+
+      def self.name
+        'BetterTogether::Event'
+      end
+    end
+  end
 
   def backfill(model_class, content_type:)
     updated = 0

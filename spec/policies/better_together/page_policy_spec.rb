@@ -33,7 +33,7 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
   before do
     # Grant authorship for the private/unpublished page
     private_unpublished.authorships.create!(author: author_person)
-    private_unpublished.add_governed_contributor(editor_person, role: 'editor')
+    private_unpublished.add_contributor(editor_person, role: 'editor')
     membership = BetterTogether::PersonCommunityMembership.find_or_create_by!(
       joinable: scoped_community,
       member: community_member_user.person,

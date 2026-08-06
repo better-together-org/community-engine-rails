@@ -1,0 +1,82 @@
+{
+  "name": "federation_hub_admin_view",
+  "device": "mobile",
+  "url": "/en/federation-hub",
+  "title": "Federation Hub | Community Engine",
+  "locale": "en",
+  "feature_set": "federation_item_consent",
+  "flow": "federation_hub_admin_view",
+  "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#federation-hub-review-connections-link",
+      "title": "Review connections",
+      "bullets": [
+        "Links out to the existing Host Dashboard federation-review table -- not duplicated here."
+      ],
+      "target": {
+        "x": 314.15625,
+        "y": 518.390625,
+        "width": 156.84375,
+        "height": 31.0,
+        "right": 471.0,
+        "bottom": 549.390625,
+        "center_x": 392.578125,
+        "center_y": 533.890625
+      },
+      "avoid": {
+        "x": 314.15625,
+        "y": 518.390625,
+        "width": 156.84375,
+        "height": 31.0,
+        "right": 471.0,
+        "bottom": 549.390625,
+        "center_x": 392.578125,
+        "center_y": 533.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 206.0,
+        "y": 569.39,
+        "width": 270.0,
+        "height": 236,
+        "score": 711.609375
+      }
+    },
+    {
+      "selector": "#federation-hub-connection-badges",
+      "title": "Connection health at a glance",
+      "bullets": [
+        "Total / pending / active / failed-sync counts for connections touching the host platform."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 565.390625,
+        "width": 442.0,
+        "height": 62.375,
+        "right": 471.0,
+        "bottom": 627.765625,
+        "center_x": 250.0,
+        "center_y": 596.578125
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 565.390625,
+        "width": 442.0,
+        "height": 62.375,
+        "right": 471.0,
+        "bottom": 627.765625,
+        "center_x": 250.0,
+        "center_y": 596.578125
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 242,
+        "score": 0
+      }
+    }
+  ]
+}

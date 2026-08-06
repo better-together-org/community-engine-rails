@@ -1,0 +1,118 @@
+{
+  "name": "platform_domains_new_custom_domain_state",
+  "device": "mobile",
+  "url": "/en/host/platforms/hisako-wunsch/platform_domains/new",
+  "title": "New Domain | Stracke-Dickens",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_domains",
+  "flow": "platform_domains_new",
+  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_domain_kind_custom",
+      "title": "Use my own domain",
+      "bullets": [
+        "For client-owned domains pointed at this platform via a client-controlled DNS record."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 195.390625,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 28.0,
+        "bottom": 211.390625,
+        "center_x": 20.0,
+        "center_y": 203.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 195.390625,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 28.0,
+        "bottom": 211.390625,
+        "center_x": 20.0,
+        "center_y": 203.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 231.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 1049.609375
+      }
+    },
+    {
+      "selector": "#platform-domain-custom-fields",
+      "title": "DNS/TLS guidance panel",
+      "bullets": [
+        "Explains the client needs their own CNAME/A record and their own TLS certificate.",
+        "The Hostname field below is now a plain free-text input (no auto-suffix)."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 231.390625,
+        "width": 476.0,
+        "height": 118.0,
+        "right": 488.0,
+        "bottom": 349.390625,
+        "center_x": 250.0,
+        "center_y": 290.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 231.390625,
+        "width": 476.0,
+        "height": 118.0,
+        "right": 488.0,
+        "bottom": 349.390625,
+        "center_x": 250.0,
+        "center_y": 290.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 543,
+        "width": 270.0,
+        "height": 346,
+        "score": 0
+      }
+    },
+    {
+      "selector": "#platform_domain_hostname",
+      "title": "Hostname (free text for custom domains)",
+      "bullets": [
+        "The steward types the full external hostname directly, e.g. app.clientdomain.example."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 397.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 435.390625,
+        "center_x": 250.0,
+        "center_y": 416.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 397.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 435.390625,
+        "center_x": 250.0,
+        "center_y": 416.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 909,
+        "width": 270.0,
+        "height": 274
+      }
+    }
+  ]
+}

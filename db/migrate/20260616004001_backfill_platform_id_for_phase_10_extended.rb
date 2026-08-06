@@ -54,6 +54,8 @@ class BackfillPlatformIdForPhase10Extended < ActiveRecord::Migration[7.2] # rubo
           WHERE platform_id IS NULL
         SQL
       end
+
+      enforce_inbound_email_platform_id_not_null!
     end
 
     # Step 4: Reports from reportable object's platform (Posts, Pages, Events, etc.)
@@ -260,5 +262,28 @@ class BackfillPlatformIdForPhase10Extended < ActiveRecord::Migration[7.2] # rubo
 
       execute "UPDATE #{table} SET platform_id = NULL"
     end
+  end
+
+  private
+
+  # 20260616003001 (which added this column) skips the NOT NULL constraint
+  # rather than hard-failing if NULLs remain at that point in the sequence —
+  # this is where it actually gets enforced, once this migration's own
+  # backfill (including the host fallback above) has had a chance to run.
+  def enforce_inbound_email_platform_id_not_null!
+    return unless column_exists?(:better_together_inbound_email_messages, :platform_id)
+
+    null_count = execute(
+      'SELECT COUNT(*) FROM better_together_inbound_email_messages WHERE platform_id IS NULL'
+    ).first['count'].to_i
+
+    if null_count.positive?
+      say "WARNING: #{null_count} row(s) in better_together_inbound_email_messages " \
+          'still have NULL platform_id after backfill (no host platform found). ' \
+          'Skipping NOT NULL constraint — re-run after completing platform setup.'
+      return
+    end
+
+    change_column_null :better_together_inbound_email_messages, :platform_id, false
   end
 end

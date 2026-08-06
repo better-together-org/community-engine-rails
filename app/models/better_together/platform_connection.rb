@@ -76,9 +76,6 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
-      # C3 community contribution token exchange (borgberry federation)
-      allow_c3_exchange Boolean, default: false
-      c3_exchange_rate String, default: '1.0' # bilateral rate string, e.g. '1.5' = 1 C3 here = 1.5 C3 there
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -142,6 +139,13 @@ module BetterTogether
       return source_platform if target_platform_id == platform.id
 
       nil
+    end
+
+    # Without this, generic trackable-rendering helpers (e.g. the Federation
+    # Hub activity feed's link_to_trackable) fall back to Ruby's default
+    # Object#to_s ("#<BetterTogether::PlatformConnection:0x...>") as link text.
+    def to_s
+      "#{source_platform&.name} → #{target_platform&.name}"
     end
 
     private

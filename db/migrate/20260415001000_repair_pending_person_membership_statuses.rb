@@ -12,11 +12,22 @@ class RepairPendingPersonMembershipStatuses < ActiveRecord::Migration[7.2]
 
   private
 
+  # Only repair memberships on platforms that don't actually gate joining on an
+  # invitation/request — mirroring backfill_non_request_community_memberships
+  # below. A platform with allow_membership_requests=false (and no invitation
+  # requirement) can't have a genuinely-pending request; any 'pending' row
+  # there is the same missing-status-default artifact this migration exists to
+  # fix. Platforms that DO gate membership must keep their pending rows pending
+  # — flipping those would bypass a real approval step.
   def backfill_platform_memberships
     execute <<~SQL.squish
-      UPDATE better_together_person_platform_memberships
+      UPDATE better_together_person_platform_memberships memberships
       SET status = 'active'
-      WHERE status = 'pending'
+      FROM better_together_platforms platforms
+      WHERE platforms.id = memberships.joinable_id
+        AND memberships.status = 'pending'
+        AND COALESCE((platforms.settings->>'allow_membership_requests')::boolean, FALSE) = FALSE
+        AND COALESCE((platforms.settings->>'requires_invitation')::boolean, TRUE) = FALSE
     SQL
   end
 

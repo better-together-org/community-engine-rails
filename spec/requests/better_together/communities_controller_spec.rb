@@ -745,50 +745,6 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
         expect(response.body).to include('past_events_list')
       end
 
-      it 'shows evidence summary metadata on community event cards' do
-        create(:claim, claimable: upcoming_event, statement: 'Upcoming events need traceable evidence.')
-        create(:citation,
-               citeable: upcoming_event,
-               reference_key: 'community_event_source',
-               title: 'Community Event Source',
-               metadata: {
-                 'imported_from_reference_key' => 'review_notes',
-                 'imported_from_record_label' => 'Consensus Reviewer: Reviewer',
-                 'imported_from_citation_id' => 'source-citation-id'
-               })
-
-        get better_together.community_path(locale:, id: community.slug)
-
-        expect(response.body).not_to include('Evidence:')
-        expect(response.body).not_to include('1 claim')
-        expect(response.body).not_to include('1 citation')
-        expect(response.body).not_to include('1 imported')
-      end
-
-      it 'keeps community page contribution and evidence summaries out of public cards' do
-        page = create(:better_together_page,
-                      community: community,
-                      privacy: 'public',
-                      published_at: 1.day.ago)
-        contributor = create(:better_together_person, name: 'Community Page Maintainer')
-        page.add_governed_contributor(contributor, role: 'editor')
-        page.contributions.first.update!(details: {
-                                           'github_handle' => 'community-maintainer',
-                                           'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
-                                         })
-        create(:claim, claimable: page, statement: 'Community pages should expose evidence summaries.')
-        create(:citation, citeable: page, reference_key: 'community_page_source', title: 'Community Page Source')
-
-        get better_together.community_path(locale:, id: community.slug)
-
-        expect(response.body).to include('pages-tab')
-        expect(response.body).to include(page.title)
-        expect(response.body).not_to include('Contributors:')
-        expect(response.body).not_to include('GitHub-linked')
-        expect(response.body).not_to include('GitHub: @community-maintainer')
-        expect(response.body).not_to include('Evidence:')
-      end
-
       it 'does not show create event button' do
         get better_together.community_path(locale:, id: community.slug)
         expect(response.body).not_to include('Create an Event')

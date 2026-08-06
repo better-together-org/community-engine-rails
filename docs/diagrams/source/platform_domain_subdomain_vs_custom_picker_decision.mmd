@@ -1,0 +1,33 @@
+flowchart TD
+  A[Steward opens New Domain form] --> B{Which kind of domain?}
+
+  B -->|Use a subdomain of the host domain — default| C[Enter just the label, e.g. tenant-a]
+  C --> D[Stimulus controller computes label + . + host apex client-side]
+  D --> E[Hostname field auto-filled: tenant-a.btsdev.ca]
+
+  B -->|Use my own domain| F[DNS/TLS guidance panel shown]
+  F --> G[Steward types the full external hostname directly]
+  G --> H[Hostname field: app.clientdomain.example]
+
+  E --> I[Submit — POST platform_domains]
+  H --> I
+
+  I --> J{PlatformDomain validations: unique hostname, primary/share exclusivity}
+  J -->|Invalid| K[422 — re-render with errors]
+  J -->|Valid| L[PlatformDomain saved]
+
+  L --> M[Operational step — NOT automated by this UI]
+  M --> N[Subdomain path: covered by existing wildcard cert + DNS record on the host domain — usually no extra ops step]
+  M --> O[Custom domain path: client must add their own CNAME/A record; operator must provision a dedicated TLS cert via SNI]
+
+  N --> P[PlatformContextMiddleware resolves this hostname on the next request]
+  O --> P
+
+  classDef decision fill:#fff8e1,stroke:#8a6d00,color:#5f4b00;
+  classDef subdomain fill:#e6f4ea,stroke:#137333,color:#0d652d;
+  classDef custom fill:#e8f0fe,stroke:#1a56db,color:#1e3a8a;
+  classDef ops fill:#fce8e6,stroke:#b3261e,color:#5f2120;
+  class B,J decision;
+  class C,D,E,N subdomain;
+  class F,G,H,O custom;
+  class M ops;

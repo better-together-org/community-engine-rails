@@ -41,6 +41,20 @@ class AddCommunityToBetterTogetherPosts < ActiveRecord::Migration[7.2]
                      host_from_platform(community_class, platform_class)
     return unless host_community
 
+    # Derive from the post's own platform's community first (platform_id was added
+    # to posts back in 20260312213000), so posts belonging to a federated platform
+    # aren't silently reassigned to the host community.
+    if column_exists?(:better_together_posts, :platform_id)
+      execute <<~SQL.squish
+        UPDATE better_together_posts p
+        SET community_id = pl.community_id
+        FROM better_together_platforms pl
+        WHERE p.platform_id = pl.id
+          AND p.community_id IS NULL
+          AND pl.community_id IS NOT NULL
+      SQL
+    end
+
     post_class.where(community_id: nil).update_all(community_id: host_community.id)
   end
 

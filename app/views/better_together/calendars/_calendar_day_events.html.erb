@@ -1,0 +1,9 @@
+<% if day_events.any? %>
+  <ul class="list-unstyled mb-0 calendar-day-events" id="calendar-day-<%= date.iso8601 %>-events">
+    <% day_events.each do |event| %>
+      <li id="<%= dom_id(event, "calendar-day-#{date.iso8601}") %>" class="calendar-day-event small">
+        <%= link_to event.name, better_together.event_path(event), class: 'calendar-event-link' %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

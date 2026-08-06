@@ -40,7 +40,6 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       get better_together.render_page_path(path: page.slug, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('data-evidence-selector="block:markdown:')
     end
 
     it 'renders the legacy block actions menu and the page feedback bar' do
@@ -53,19 +52,6 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).to include('reportable_type=BetterTogether%3A%3AContent%3A%3ABlock')
       expect(response.body).to include('bt-page-feedback-bar')
       expect(response.body).to include("reportable_id=#{page.id}")
-    end
-
-    it 'keeps bibliography out of the public page view' do
-      create(:better_together_citation,
-             citeable: page,
-             title: 'Page Evidence Record',
-             reference_key: 'page_evidence_record')
-
-      get better_together.render_page_path(path: page.slug, locale:)
-
-      expect(response.body).not_to include('Evidence and Citations')
-      expect(response.body).not_to include('Page Evidence Record')
-      expect(response.body).not_to include('citation-page_evidence_record')
     end
 
     it 'keeps the governed page byline visible while broader evidence UI stays hidden' do
@@ -84,29 +70,6 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response.body).to include('Robot')
       expect(response.body).not_to include('Contributors:')
       expect(response.body).not_to include('GitHub-linked')
-    end
-
-    it 'keeps claims and supporting evidence out of the public page view' do
-      citation = create(:better_together_citation,
-                        citeable: page,
-                        title: 'Claim Support Record',
-                        reference_key: 'claim_support_record')
-      claim = create(:better_together_claim,
-                     claimable: page,
-                     claim_key: 'supported_publication_claim',
-                     statement: 'Public claims should stay tied to auditable evidence.')
-      create(:better_together_evidence_link,
-             claim:,
-             citation:,
-             relation_type: 'supports',
-             locator: 'p. 3')
-
-      get better_together.render_page_path(path: page.slug, locale:)
-
-      expect(response.body).not_to include('Claims and Supporting Evidence')
-      expect(response.body).not_to include('Public claims should stay tied to auditable evidence.')
-      expect(response.body).not_to include('Claim Support Record')
-      expect(response.body).not_to include('claim-supported_publication_claim')
     end
 
     context 'when the page contains a Content::Template block (no string_translations association)' do
@@ -161,7 +124,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
                            published_at: nil,
                            title: 'Editor Hidden Coverage Page',
                            content: 'Editor hidden coverage body')
-      hidden_page.add_governed_contributor(editor_user.person, role: 'editor')
+      hidden_page.add_contributor(editor_user.person, role: 'editor')
 
       sign_in editor_user
 
@@ -194,7 +157,7 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
     end
 
     it 'renders the unified governed contributions form section' do
-      page.add_governed_contributor(create(:better_together_person, name: 'Page Editor'), role: 'editor')
+      page.add_contributor(create(:better_together_person, name: 'Page Editor'), role: 'editor')
 
       get better_together.edit_page_path(page.slug, locale:)
 
@@ -217,6 +180,22 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('page[contributors_display_visibility]')
+    end
+
+    it 'renders the federation_visibility field' do
+      get better_together.edit_page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('page[federation_visibility]')
+    end
+
+    it 'renders a per-connection grant row for each active connection allowing pages' do
+      connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_pages: true)
+
+      get better_together.edit_page_path(page.slug, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("page[federation_content_grants_by_connection][#{connection.id}]")
     end
   end
 
@@ -274,6 +253,82 @@ RSpec.describe 'BetterTogether::PagesController', :as_platform_manager do
       expect(response).to be_redirect
       expect(page.reload.title).to eq('Updated Coverage Page')
       expect(page.content.to_plain_text).to include('Updated coverage body')
+    end
+
+    it 'persists an explicit federation_visibility override on update' do
+      patch better_together.page_path(page, locale:), params: {
+        page: {
+          title_en: page.title,
+          content_en: page.content.to_plain_text,
+          federation_visibility: 'federate'
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(page.reload).to be_federation_visibility_federate
+    end
+
+    it 'persists a per-connection federation grant on update' do
+      connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_pages: true)
+
+      patch better_together.page_path(page, locale:), params: {
+        page: {
+          title_en: page.title,
+          content_en: page.content.to_plain_text,
+          federation_content_grants_by_connection: { connection.id => 'denied' }
+        }
+      }
+
+      expect(response).to be_redirect
+      expect(page.reload.federation_grant_status_for(connection)).to eq('denied')
+    end
+
+    it 'adds a governed contributor via contributions_attributes on update' do
+      contributor = create(:better_together_person, name: 'New Contributor')
+
+      expect do
+        patch better_together.page_path(page, locale:), params: {
+          page: {
+            title_en: page.title,
+            content_en: page.content.to_plain_text,
+            contributions_attributes: {
+              '0' => {
+                author_type: 'BetterTogether::Person',
+                author_id: contributor.id,
+                role: 'author',
+                contribution_type: 'content'
+              }
+            }
+          }
+        }
+      end.to change { page.reload.contributions.count }.by(1)
+
+      expect(response).to be_redirect
+      expect(page.reload.agent_authors).to include(contributor)
+    end
+
+    it 'destroys a governed contribution via contributions_attributes[_destroy] on update' do
+      contribution = page.add_contributor(create(:better_together_person, name: 'Departing Contributor'),
+                                          role: 'author')
+
+      expect do
+        patch better_together.page_path(page, locale:), params: {
+          page: {
+            title_en: page.title,
+            content_en: page.content.to_plain_text,
+            contributions_attributes: {
+              '0' => {
+                id: contribution.id,
+                _destroy: '1'
+              }
+            }
+          }
+        }
+      end.to change(BetterTogether::Authorship, :count).by(-1)
+
+      expect(response).to be_redirect
+      expect(BetterTogether::Authorship.exists?(contribution.id)).to be(false)
+      expect(page.reload.contributions).not_to include(contribution)
     end
 
     it 'renders edit when update params are invalid' do

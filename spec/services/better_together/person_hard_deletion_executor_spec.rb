@@ -66,4 +66,35 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
     expect(audit.execution_snapshot.fetch('verification').values).to all(include('completed' => true))
     expect(enqueued_jobs.map { |job| job[:job] }).not_to include(BetterTogether::CleanupNotificationsJob)
   end
+
+  it "captures the deletion request's platform on the audit before both are destroyed" do
+    federated_platform = create(:better_together_platform, :public, host: false)
+    deletion_request.update!(platform: federated_platform)
+    clear_enqueued_jobs
+
+    audit = described_class.call(
+      person:,
+      person_deletion_request: deletion_request,
+      reviewed_by: reviewer,
+      reason: 'platform capture check'
+    )
+
+    expect(audit.platform_id).to eq(federated_platform.id)
+    expect(audit.person_deletion_request_id).to be_nil
+  end
+
+  it "falls back to the person's platform when there is no person_deletion_request" do
+    federated_platform = create(:better_together_platform, :public, host: false)
+    person.update!(platform: federated_platform)
+    clear_enqueued_jobs
+
+    audit = described_class.call(
+      person:,
+      person_deletion_request: nil,
+      reviewed_by: reviewer,
+      reason: 'direct automated deletion'
+    )
+
+    expect(audit.platform_id).to eq(federated_platform.id)
+  end
 end

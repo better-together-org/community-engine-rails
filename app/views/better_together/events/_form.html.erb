@@ -27,7 +27,31 @@
 
   <%= yield :resource_toolbar %>
 
-  <%= turbo_frame_tag 'form_errors' %>
+  <%
+    # turbo_frame_tag 'form_errors' below is nested content, not empty:
+    # Turbo Drive intercepts this form's submit despite local: true, and the
+    # controller's turbo_stream failure response (ResourceController#create/
+    # #update) issues turbo_stream.update('form_errors', ...) which overwrites
+    # whatever is inside this frame with the shared errors partial — so in
+    # that path our own content here is replaced, not duplicated. This inline
+    # render only actually shows for the plain format.html fallback (Turbo
+    # disabled / no JS), where that turbo_stream update never runs and the
+    # frame would otherwise stay empty with no visible feedback at all.
+    inline_handled_attributes = %i[privacy status location]
+    general_errors = event.errors.reject { |error| inline_handled_attributes.include?(error.attribute) }.map(&:full_message)
+  %>
+  <%= turbo_frame_tag 'form_errors' do %>
+    <% if general_errors.any? %>
+      <div class="alert alert-danger" role="alert" id="event-form-errors">
+        <h4 class="alert-heading"><%= t('better_together.events.form_errors_heading', default: 'The following errors occurred:') %></h4>
+        <ul class="mb-0">
+          <% general_errors.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  <% end %>
 
   <div class="row">
     <!-- Vertical Pills Navigation -->
@@ -84,6 +108,12 @@
             <% end %>
           </div>
 
+          <!-- Federation Visibility Field -->
+          <div class="col mb-3 pb-3 border-bottom">
+            <%= federation_visibility_field(form:) %>
+            <%= federation_content_grants_field(form:, record: event, connections: federation_connections_for(event)) %>
+          </div>
+
           <!-- Status Field -->
           <div class="col mb-3 pb-3 border-bottom" id="event-status-field">
             <%= form.label :status, t('better_together.events.labels.status'), class: 'form-label' %>
@@ -127,8 +157,7 @@
                        locals: {
                          model: event,
                          form: form,
-                         attribute: 'description',
-                         citation_options: event.citation_reference_options
+                         attribute: 'description'
                        } %>
           </div>
         </div>

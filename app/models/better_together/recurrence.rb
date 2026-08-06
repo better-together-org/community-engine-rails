@@ -3,12 +3,25 @@
 module BetterTogether
   # Polymorphic recurrence model for schedulable resources
   # Stores ice_cube recurrence rules and manages recurring schedules
-  class Recurrence < ApplicationRecord
+  class Recurrence < ApplicationRecord # rubocop:todo Metrics/ClassLength
     belongs_to :schedulable, polymorphic: true
+
+    # Transient, not persisted. Set by EventsController#process_recurrence_attributes
+    # when the submitted end_type ('until'/'count') is missing its paired
+    # ends_on/count value, so the form can surface a clear error instead of
+    # silently saving the recurrence as "never ends".
+    attr_accessor :end_condition_error
+
+    # Transient, not persisted. Set when one or more submitted exception
+    # dates could not be parsed, so the save is blocked with a real error
+    # instead of the old behavior of silently dropping the bad entry.
+    attr_accessor :exception_dates_error
 
     validates :rule, presence: true
     validates :frequency, inclusion: { in: %w[daily weekly monthly yearly], allow_nil: true }
     validate :validate_rule_format
+    validate :validate_end_condition_present
+    validate :validate_exception_dates_present
 
     before_validation :extract_frequency_from_rule
 
@@ -99,7 +112,11 @@ module BetterTogether
       day_validations = schedule.rrules.first.validations[:day]
       return [] unless day_validations
 
-      day_validations.map { |v| v.day.to_s.downcase.to_sym }
+      # IceCube's DayValidation#day is a plain Integer (0=Sunday..6=Saturday),
+      # not a day-name string — `v.day.to_s.downcase.to_sym` used to turn 1
+      # into :"1" instead of :monday, silently breaking every consumer that
+      # expected real weekday symbols back.
+      day_validations.filter_map { |v| BetterTogether::RecurrenceScheduleBuilder::DAY_SYMBOLS[v.day] }
     end
 
     # Extract end_type from recurrence data
@@ -122,6 +139,19 @@ module BetterTogether
       schedule.rrules.first.occurrence_count
     end
 
+    # Extract which monthly/yearly option was chosen: 'day_of_month' (the
+    # IceCube default — same day-of-month/year as the start date) or
+    # 'day_of_week' (same weekday position within the month, e.g. "3rd
+    # Tuesday"), so the edit form can pre-select the radio that was
+    # actually used to build the persisted rule.
+    # @return [String, nil] nil unless frequency is monthly or yearly
+    def month_option
+      return nil unless %w[monthly yearly].include?(frequency)
+      return nil unless schedule&.rrules&.first
+
+      schedule.rrules.first.validations[:day_of_week].present? ? 'day_of_week' : 'day_of_month'
+    end
+
     private
 
     # Validate that the rule is valid ice_cube YAML
@@ -131,6 +161,24 @@ module BetterTogether
       IceCube::Schedule.from_yaml(rule)
     rescue StandardError => e
       errors.add(:rule, "is invalid: #{e.message}")
+    end
+
+    def validate_end_condition_present
+      case end_condition_error
+      when :ends_on_blank
+        errors.add(:ends_on, :required_for_end_type, message: 'must be set when "On date" is selected as the end type')
+      when :count_blank
+        errors.add(:count, :required_for_end_type,
+                   message: 'must be set when "After occurrences" is selected as the end type')
+      when :ends_on_invalid
+        errors.add(:ends_on, :invalid, message: 'is not a valid date')
+      end
+    end
+
+    def validate_exception_dates_present
+      return unless exception_dates_error
+
+      errors.add(:exception_dates, :invalid, message: 'contains one or more dates that could not be understood')
     end
 
     # Extract frequency from the ice_cube rule for quick queries
@@ -165,7 +213,7 @@ module BetterTogether
     # @param destroy [Boolean] Whether to include :_destroy
     # @return [Array<Symbol>] Array of permitted attribute names
     def self.permitted_attributes(id: false, destroy: false) # rubocop:disable Lint/IneffectiveAccessModifier
-      attrs = %i[rule ends_on]
+      attrs = %i[rule ends_on end_condition_error exception_dates_error]
       attrs << { exception_dates: [] } # Permit array of exception dates
       attrs << :id if id
       attrs << :_destroy if destroy

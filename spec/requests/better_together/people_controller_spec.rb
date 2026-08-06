@@ -95,8 +95,8 @@ RSpec.describe 'BetterTogether::PeopleController', :as_platform_manager do
     it 'shows contribution history and linked github identities when present' do
       page = create(:better_together_page, privacy: 'public')
       post = create(:better_together_post, creator: person, author: person, privacy: 'public')
-      page.add_governed_contributor(person, role: 'editor')
-      post.add_governed_contributor(person, role: 'reviewer')
+      page.add_contributor(person, role: 'editor')
+      post.add_contributor(person, role: 'reviewer')
       page.contributions.first.update!(details: {
                                          'github_handle' => 'octo-person',
                                          'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]

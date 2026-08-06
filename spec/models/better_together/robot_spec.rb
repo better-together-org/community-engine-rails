@@ -94,18 +94,18 @@ RSpec.describe BetterTogether::Robot do
   end
 
   describe 'community action network identity helpers' do
-    it 'exposes governed agent metadata for robots' do
+    it 'exposes agent identity metadata for robots' do
       robot = build(:robot, identifier: 'release-bot', name: 'Release Bot')
 
-      expect(robot.governed_agent?).to be(true)
-      expect(robot.governed_agent_type).to eq('robot')
-      expect(robot.governed_agent_identifier).to eq('release-bot')
-      expect(robot.governed_agent_display_name).to eq('Release Bot')
-      expect(robot.governed_agent_key).to eq('robot:release-bot')
-      expect(robot.governed_agent_label).to eq('Release Bot (robot)')
+      expect(robot.agent?).to be(true)
+      expect(robot.agent_type).to eq('robot')
+      expect(robot.agent_identifier).to eq('release-bot')
+      expect(robot.agent_display_name).to eq('Release Bot')
+      expect(robot.agent_key).to eq('robot:release-bot')
+      expect(robot.agent_label).to eq('Release Bot (robot)')
     end
 
-    it 'can satisfy agreement checks as a governed agent' do
+    it 'can satisfy agreement checks as an agent' do
       robot = create(:robot, identifier: 'release-bot', name: 'Release Bot')
       agreement = BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |record|
         record.title = 'Content Publishing Agreement'

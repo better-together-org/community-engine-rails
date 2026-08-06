@@ -5,8 +5,6 @@ module BetterTogether
     # Agreement connects an offer and request and tracks value exchange
     class Agreement < PlatformRecord # rubocop:todo Metrics/ClassLength
       include BetterTogether::Authorable
-      include BetterTogether::Citable
-      include BetterTogether::Claimable
       include FriendlySlug
       include BetterTogether::Privacy
       include Metrics::Viewable
@@ -26,8 +24,6 @@ module BetterTogether
 
       belongs_to :offer, class_name: 'BetterTogether::Joatu::Offer'
       belongs_to :request, class_name: 'BetterTogether::Joatu::Request'
-      has_one :settlement, class_name: 'BetterTogether::Joatu::Settlement',
-                           dependent: :destroy
 
       validates :offer, :request, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
@@ -108,7 +104,7 @@ module BetterTogether
         updated_at
       end
 
-      def accept! # rubocop:todo Metrics/MethodLength
+      def accept!
         ensure_accept_allowed!
 
         transaction do
@@ -116,24 +112,19 @@ module BetterTogether
           offer.status_closed!
           request.status_closed!
           request.after_agreement_acceptance!(offer:)
-          create_settlement_if_c3_priced!
+          after_accept_side_effects
         end
       end
 
-      # Mark the agreement fulfilled and complete the C3 settlement transfer.
-      # Requires an accepted agreement with a pending settlement.
-      def fulfill! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # Mark the agreement fulfilled. Requires an accepted agreement.
+      def fulfill!
         unless status_accepted?
           errors.add(:base, 'Agreement must be accepted before it can be fulfilled')
           raise ActiveRecord::RecordInvalid, self
         end
 
         transaction do
-          if settlement&.status == 'pending' && settlement.c3_millitokens.positive?
-            payer_balance = BetterTogether::C3::Balance.find_by!(holder: settlement.payer)
-            recipient_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: settlement.recipient)
-            settlement.complete!(payer_balance:, recipient_balance:)
-          end
+          complete_pending_settlement!
           update!(status: :fulfilled)
         end
       end
@@ -143,15 +134,11 @@ module BetterTogether
         update!(status: :rejected)
       end
 
-      def cancel! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def cancel!
         ensure_cancel_allowed!
 
         transaction do
-          if settlement&.status == 'pending'
-            payer_balance = BetterTogether::C3::Balance.find_by!(holder: settlement.payer)
-            settlement.cancel!(payer_balance: payer_balance)
-          end
-
+          cancel_pending_settlement!
           update!(status: :cancelled)
           reopen_associated_exchanges!
         end
@@ -311,7 +298,7 @@ module BetterTogether
 
       def add_participant_contributions
         [offer&.creator, request&.creator].compact.uniq.each do |participant|
-          add_governed_contributor(
+          add_contributor(
             participant,
             role: BetterTogether::Authorship::EXCHANGE_PARTICIPANT_ROLE,
             contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
@@ -319,39 +306,18 @@ module BetterTogether
         end
       end
 
-      # Create a pending Settlement and lock C3 from the payer (request creator)
-      # when the offer carries a C3 price. No-op if the offer has no C3 price.
-      #
-      # The lock_ref returned by Balance#lock_millitokens! is stored on the Settlement so that
-      # Settlement#complete! and Settlement#cancel! can finalise the BalanceLock record
-      # (marking it settled or released) rather than leaving it pending until expiry.
-      def create_settlement_if_c3_priced! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        price_millitokens = offer.try(:c3_price_millitokens).to_i
-        return unless price_millitokens.positive?
+      # Extension point called inside accept!'s transaction, after the agreement is
+      # marked accepted. No-op by default — the Borgberry extension prepends a
+      # module that creates a pending C3 settlement here when the offer is priced.
+      def after_accept_side_effects; end
 
-        payer = request.creator
-        return unless payer
+      # Extension point called inside fulfill!'s transaction, before the agreement
+      # is marked fulfilled. No-op by default — see after_accept_side_effects.
+      def complete_pending_settlement!; end
 
-        payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: payer)
-        # Use lock_millitokens! to avoid float conversion round-trip
-        # (price_millitokens is already an integer from the database)
-        captured_lock_ref = payer_balance.lock_millitokens!(
-          price_millitokens,
-          agreement_ref: id
-        )
-
-        new_settlement = create_settlement!(
-          payer: payer,
-          recipient: offer.creator,
-          c3_millitokens: price_millitokens,
-          lock_ref: captured_lock_ref,
-          status: 'pending'
-        )
-
-        BetterTogether::C3::SettlementNotifier
-          .with(settlement: new_settlement, event_type: :c3_locked)
-          .deliver_later([payer, offer.creator].compact.uniq)
-      end
+      # Extension point called inside cancel!'s transaction, before the agreement
+      # is marked cancelled. No-op by default — see after_accept_side_effects.
+      def cancel_pending_settlement!; end
 
       def reopen_associated_exchanges!
         reopen_exchange!(offer)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddPlatformAndLoggedInToMetrics < ActiveRecord::Migration[7.2]
+class AddPlatformAndLoggedInToMetrics < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   class Platform < ActiveRecord::Base
     self.table_name = 'better_together_platforms'
   end
@@ -17,6 +17,20 @@ class AddPlatformAndLoggedInToMetrics < ActiveRecord::Migration[7.2]
     better_together_metrics_page_view_reports
     better_together_metrics_link_click_reports
   ].freeze
+
+  # Tables with a polymorphic content reference: derive platform_id from the
+  # viewed/shared/downloaded record itself before falling back to host.
+  CONTENT_REFERENCED_TABLES = {
+    better_together_metrics_page_views: %w[pageable_type pageable_id],
+    better_together_metrics_shares: %w[shareable_type shareable_id],
+    better_together_metrics_downloads: %w[downloadable_type downloadable_id]
+  }.freeze
+
+  CONTENT_TYPES = {
+    'BetterTogether::Post' => 'better_together_posts',
+    'BetterTogether::Page' => 'better_together_pages',
+    'BetterTogether::Event' => 'better_together_events'
+  }.freeze
 
   def up
     RAW_METRIC_TABLES.each do |table|
@@ -72,13 +86,53 @@ class AddPlatformAndLoggedInToMetrics < ActiveRecord::Migration[7.2]
       raise ActiveRecord::MigrationError, 'Cannot backfill metrics platform_id without a host platform'
     end
 
-    (RAW_METRIC_TABLES + REPORT_TABLES).each do |table|
+    CONTENT_REFERENCED_TABLES.each_key { |table| backfill_from_content_reference(table, host_platform_id) }
+    # link_clicks and search_queries carry no content reference (URL strings only,
+    # by design — metrics are anonymous and not tied to a resolvable record), so
+    # they have no derivable owner and are correctly host-assigned directly.
+    backfill_host_only(:better_together_metrics_link_clicks, host_platform_id)
+    backfill_host_only(:better_together_metrics_search_queries, host_platform_id)
+    REPORT_TABLES.each { |table| backfill_from_creator(table, host_platform_id) }
+  end
+
+  def backfill_from_content_reference(table, host_platform_id)
+    type_col, id_col = CONTENT_REFERENCED_TABLES.fetch(table)
+
+    CONTENT_TYPES.each do |type, owner_table|
       execute <<~SQL.squish
-        UPDATE #{quote_table_name(table)}
-        SET platform_id = #{quote(host_platform_id)}
-        WHERE platform_id IS NULL
+        UPDATE #{quote_table_name(table)} m
+        SET platform_id = owner.platform_id
+        FROM #{owner_table} owner
+        WHERE m.#{type_col} = #{quote(type)}
+          AND m.#{id_col} = owner.id
+          AND m.platform_id IS NULL
+          AND owner.platform_id IS NOT NULL
       SQL
     end
+
+    backfill_host_only(table, host_platform_id)
+  end
+
+  def backfill_from_creator(table, host_platform_id)
+    execute <<~SQL.squish
+      UPDATE #{quote_table_name(table)} rec
+      SET platform_id = ppm.joinable_id
+      FROM better_together_people p
+      JOIN better_together_person_platform_memberships ppm ON p.id = ppm.member_id
+      WHERE rec.creator_id = p.id
+        AND rec.platform_id IS NULL
+        AND ppm.joinable_id IS NOT NULL
+    SQL
+
+    backfill_host_only(table, host_platform_id)
+  end
+
+  def backfill_host_only(table, host_platform_id)
+    execute <<~SQL.squish
+      UPDATE #{quote_table_name(table)}
+      SET platform_id = #{quote(host_platform_id)}
+      WHERE platform_id IS NULL
+    SQL
   end
 
   def metric_or_report_rows_exist?

@@ -6,13 +6,13 @@ module BetterTogether
   # An informational document used to display custom content to the user
   class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
     include Authorable
-    include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
-    include Citable
+    include CommunityAssignable
     include Creatable
+    include Federatable
     include Identifier
     include Metrics::Shareable
     include Metrics::Viewable
@@ -29,7 +29,6 @@ module BetterTogether
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     before_validation :sync_name_and_title
-    before_validation :assign_host_community
 
     categorizable
 
@@ -197,21 +196,6 @@ module BetterTogether
     def sync_name_and_title
       self.name = title if respond_to?(:name) && name.blank? && title.present?
       self.title = name if title.blank? && name.present?
-    end
-
-    def assign_host_community
-      return unless has_attribute?(:community_id)
-      return if community.present?
-
-      self.community ||= BetterTogether::Community.find_by(host: true)
-      self.community ||= host_platform_community
-    end
-
-    def host_platform_community
-      host_platform_community_id = BetterTogether::Platform.where(host: true).limit(1).pluck(:community_id).first
-      return unless host_platform_community_id
-
-      BetterTogether::Community.find_by(id: host_platform_community_id)
     end
 
     # Touch navigation areas for all navigation items that link to this page

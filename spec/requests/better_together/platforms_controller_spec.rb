@@ -48,6 +48,12 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response).to have_http_status(:ok)
     end
 
+    it 'links to the new_platform_setup wizard for authorized managers' do
+      get better_together.platforms_path(locale:)
+
+      expect(response.body).to include(better_together.new_platform_setup_path(locale:))
+    end
+
     it 'renders platform rows in the host table view' do
       platform = create(:better_together_platform, identifier: "row-platform-#{SecureRandom.hex(4)}")
 
@@ -326,7 +332,9 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
 
       expect(csp).to include('frame-ancestors https://bebettertogether.ca')
       expect(csp).to include("frame-src 'self' https://forms.btsdev.ca")
-      expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org https://images.example.com")
+      expect(csp).to include("img-src 'self' data: blob: https://*.tile.openstreetmap.org " \
+                             'https://tile.openstreetmap.org https://server.arcgisonline.com ' \
+                             'https://images.example.com')
       expected_script_src = [
         "script-src 'self' blob:",
         'https://scripts.example.com'

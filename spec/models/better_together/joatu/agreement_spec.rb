@@ -30,17 +30,6 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       expect(agreement.contributors_for(:exchange_participant)).to contain_exactly(creator_a, creator_b)
     end
 
-    it 'supports citations and claims on the agreement record' do
-      agreement = create(:better_together_joatu_agreement, offer:, request:)
-      citation = create(:better_together_citation, citeable: agreement, reference_key: 'agreement_source')
-      claim = create(:better_together_claim, claimable: agreement, claim_key: 'agreement_claim')
-      create(:better_together_evidence_link, claim:, citation:)
-
-      expect(agreement.citations).to contain_exactly(citation)
-      expect(agreement.claims).to contain_exactly(claim)
-      expect(claim.citations).to contain_exactly(citation)
-    end
-
     it 'starts pending' do
       agreement = described_class.new(offer:, request:)
       expect(agreement).to be_valid
@@ -158,29 +147,6 @@ RSpec.describe BetterTogether::Joatu::Agreement do
       grant = BetterTogether::PersonAccessGrant.order(:created_at).last
       expect(grant.allow_profile_read).to be(true)
       expect(grant.allow_private_posts).to be(false)
-    end
-
-    it 'cancels an accepted C3-priced agreement, releases the lock, and reopens both sides' do
-      priced_offer = create(:better_together_joatu_offer, creator: creator_a, c3_price_millitokens: 20_000)
-      agreement = create(:better_together_joatu_agreement, offer: priced_offer, request:)
-      payer_balance = BetterTogether::C3::Balance.find_or_create_by!(holder: creator_b)
-      # credit! takes Tree Seeds (not millitokens); must cover the 20_000-millitoken
-      # (20 Tree Seed) offer price, so credit comfortably above that amount.
-      payer_balance.credit!(25.0)
-
-      agreement.accept!
-
-      settlement = agreement.reload.settlement
-      lock = BetterTogether::C3::BalanceLock.find_by!(lock_ref: settlement.lock_ref)
-
-      agreement.cancel!
-
-      expect(agreement.reload.status).to eq('cancelled')
-      expect(settlement.reload.status).to eq('cancelled')
-      expect(lock.reload.status).to eq('released')
-      expect(priced_offer.reload.status).to eq('open')
-      expect(request.reload.status).to eq('open')
-      expect(agreement.decision_made_at).to be_present
     end
 
     it 'prevents cancelling an agreement before it is accepted' do

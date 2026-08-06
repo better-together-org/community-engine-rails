@@ -8,7 +8,13 @@
                    else
                      BetterTogether::MediaUrlBuilder.proxy_path_for(representation)
                    end %>
-    <%= image_tag image_src %>
+    <%# image_src is always a same-origin, root-relative path (the content-security
+        scan-gated proxy route, or MediaUrlBuilder's same-origin proxy path) — never
+        run it through image_tag, which unconditionally rewrites root-relative srcs
+        through config.action_controller.asset_host. Neither of these dynamic Rails
+        routes exists as an object in the CDN's S3 origin, so an asset-host-rewritten
+        src 404s/403s there instead of hitting the app. %>
+    <%= tag.img src: image_src %>
   <% end %>
 
   <figcaption class="attachment__caption">

@@ -1,0 +1,82 @@
+{
+  "name": "federation_hub_activity_feed",
+  "device": "desktop",
+  "url": "/en/federation-hub/activity",
+  "title": "Federation Activity | Community Engine",
+  "locale": "en",
+  "feature_set": "federation_item_consent",
+  "flow": "federation_hub_activity_feed",
+  "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#federation-hub-activity-list",
+      "title": "Federation activity feed",
+      "bullets": [
+        "Combines the admin's own content activity with connection sync activity, paginated."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 247.0,
+        "width": 1296.0,
+        "height": 63.0,
+        "right": 1368.0,
+        "bottom": 310.0,
+        "center_x": 720.0,
+        "center_y": 278.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 247.0,
+        "width": 1296.0,
+        "height": 63.0,
+        "right": 1368.0,
+        "bottom": 310.0,
+        "center_x": 720.0,
+        "center_y": 278.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 330.0,
+        "width": 380,
+        "height": 216,
+        "score": 1151.0
+      }
+    },
+    {
+      "selector": "#federation-hub-activity-filters",
+      "title": "Content type and direction filters",
+      "bullets": [
+        "Direction filter (incoming/outgoing) only appears for admins reviewing connection activity."
+      ],
+      "target": {
+        "x": 68.0,
+        "y": 184.0,
+        "width": 1304.0,
+        "height": 39.0,
+        "right": 1372.0,
+        "bottom": 223.0,
+        "center_x": 720.0,
+        "center_y": 203.5
+      },
+      "avoid": {
+        "x": 68.0,
+        "y": 184.0,
+        "width": 1304.0,
+        "height": 39.0,
+        "right": 1372.0,
+        "bottom": 223.0,
+        "center_x": 720.0,
+        "center_y": 203.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 348,
+        "width": 380,
+        "height": 216,
+        "score": 0
+      }
+    }
+  ]
+}

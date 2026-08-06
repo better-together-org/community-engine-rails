@@ -84,8 +84,9 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
   end
 
   it 'routes membership request aliases into membership requests' do
-    community = create(:better_together_community, name: 'Email Routed Community')
+    community = create(:better_together_community, name: 'Email Routed Community', allow_membership_requests: true)
     platform = create_tenant(community:, domain: 'tenant-a.example.test')
+    platform.update!(allow_membership_requests: true)
     inbound_email = build_inbound_email(raw_mail(to: "requests+#{community.slug}@tenant-a.example.test", body: 'Please let me join'))
     scanner_runner = build_scanner_runner([scanner_result])
 
@@ -140,12 +141,12 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     expect(message.target).to eq(robot)
   end
 
-  it 'routes agent aliases to people only when they belong to the tenant platform' do
+  it 'routes agent aliases to people only when they belong to the tenant platform and the sender is that person' do
     tenant_community = create(:better_together_community, name: 'Tenant Member Agents')
     platform = create_tenant(community: tenant_community, domain: 'tenant-d.example.test')
     person = create(:better_together_person, identifier: 'member-agent')
     create(:better_together_person_platform_membership, member: person, joinable: platform, status: 'active')
-    inbound_email = build_inbound_email(raw_mail(to: 'agent+member-agent@tenant-d.example.test'))
+    inbound_email = build_inbound_email(raw_mail(to: 'agent+member-agent@tenant-d.example.test', from: person.email))
     scanner_runner = build_scanner_runner([scanner_result])
 
     described_class.new(inbound_email, scanner_runner:).route!
@@ -154,6 +155,52 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     expect(message).to be_route_kind_agent
     expect(message.platform).to eq(platform)
     expect(message.target).to eq(person)
+  end
+
+  it 'rejects agent aliases when the sender does not match the resolved person (impersonation guard)' do
+    tenant_community = create(:better_together_community, name: 'Tenant Member Agents Guard')
+    platform = create_tenant(community: tenant_community, domain: 'tenant-e.example.test')
+    person = create(:better_together_person, identifier: 'member-agent-guard')
+    create(:better_together_person_platform_membership, member: person, joinable: platform, status: 'active')
+    inbound_email = build_inbound_email(
+      raw_mail(to: 'agent+member-agent-guard@tenant-e.example.test', from: 'someone-else@example.test')
+    )
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    described_class.new(inbound_email, scanner_runner:).route!
+
+    message = BetterTogether::InboundEmailMessage.last
+    expect(message).to be_route_kind_unresolved
+    expect(message.target).to be_nil
+  end
+
+  it 'rejects requests+ aliases when the community has not enabled membership requests' do
+    community = create(:better_together_community, name: 'Requests Disabled', allow_membership_requests: false)
+    create_tenant(community:, domain: 'tenant-requests-disabled.example.test')
+    inbound_email = build_inbound_email(raw_mail(to: "requests+#{community.slug}@tenant-requests-disabled.example.test"))
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    expect do
+      described_class.new(inbound_email, scanner_runner:).route!
+    end.not_to change(BetterTogether::Joatu::MembershipRequest, :count)
+
+    message = BetterTogether::InboundEmailMessage.last
+    expect(message).to be_route_kind_unresolved
+    expect(message.target).to be_nil
+  end
+
+  it 'rejects all inbound-mail alias kinds when the platform has disabled inbound mail' do
+    community = create(:better_together_community, name: 'Inbound Mail Disabled')
+    platform = create_tenant(community:, domain: 'tenant-mail-disabled.example.test')
+    platform.update!(allow_inbound_mail: false)
+    inbound_email = build_inbound_email(raw_mail(to: "community+#{community.slug}@tenant-mail-disabled.example.test"))
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    described_class.new(inbound_email, scanner_runner:).route!
+
+    message = BetterTogether::InboundEmailMessage.last
+    expect(message).to be_route_kind_unresolved
+    expect(message.target).to be_nil
   end
 
   it 'rejects aliases for unmapped recipient domains' do
@@ -193,8 +240,9 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
   end
 
   it 'holds membership requests before downstream creation when screening requires review' do
-    community = create(:better_together_community, name: 'Held Membership Requests')
-    create_tenant(community:, domain: 'tenant-hold.example.test')
+    community = create(:better_together_community, name: 'Held Membership Requests', allow_membership_requests: true)
+    platform = create_tenant(community:, domain: 'tenant-hold.example.test')
+    platform.update!(allow_membership_requests: true)
     inbound_email = build_inbound_email(raw_mail(to: "requests+#{community.slug}@tenant-hold.example.test"))
     scanner_runner = build_scanner_runner(
       [scanner_result(verdict: 'review_required', finding_summary: 'High-risk attachment detected')]
@@ -233,5 +281,55 @@ RSpec.describe BetterTogether::InboundEmailRoutingService do
     message = BetterTogether::InboundEmailMessage.last
     expect(message).to be_screening_state_held
     expect(message.content_security_records).not_to be_empty
+  end
+
+  it 'routes reply+ aliases into a new comment and consumes the token' do
+    community = create(:better_together_community, name: 'Reply Routing Tenant')
+    platform = create_tenant(community:, domain: 'tenant-reply-route.example.test')
+    person = create(:better_together_person)
+    post = create(:better_together_post)
+    token = BetterTogether::InboundEmailReplyToken.issue!(
+      recipient: person, repliable: post, notification_type: 'comment_added', platform:
+    )
+    inbound_email = build_inbound_email(
+      raw_mail(to: token.reply_address('tenant-reply-route.example.test'), from: person.email, body: 'Thanks, replying by email!')
+    )
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    expect do
+      described_class.new(inbound_email, scanner_runner:).route!
+    end.to change(BetterTogether::Comment, :count).by(1)
+
+    comment = BetterTogether::Comment.last
+    message = BetterTogether::InboundEmailMessage.last
+    expect(comment.commentable).to eq(post)
+    expect(comment.creator).to eq(person)
+    expect(comment.content).to eq('Thanks, replying by email!')
+    expect(message).to be_route_kind_reply
+    expect(message).to be_status_routed
+    expect(message.routed_record).to eq(comment)
+    expect(token.reload).to be_consumed
+  end
+
+  it 'does not create a comment when a reply+ token is reused' do
+    community = create(:better_together_community, name: 'Reply Routing Reuse Guard')
+    platform = create_tenant(community:, domain: 'tenant-reply-reuse.example.test')
+    person = create(:better_together_person)
+    post = create(:better_together_post)
+    token = BetterTogether::InboundEmailReplyToken.issue!(
+      recipient: person, repliable: post, notification_type: 'comment_added', platform:
+    )
+    token.consume!
+    inbound_email = build_inbound_email(
+      raw_mail(to: token.reply_address('tenant-reply-reuse.example.test'), from: person.email)
+    )
+    scanner_runner = build_scanner_runner([scanner_result])
+
+    expect do
+      described_class.new(inbound_email, scanner_runner:).route!
+    end.not_to change(BetterTogether::Comment, :count)
+
+    message = BetterTogether::InboundEmailMessage.last
+    expect(message).to be_route_kind_unresolved
   end
 end

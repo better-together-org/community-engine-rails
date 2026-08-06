@@ -72,4 +72,22 @@ RSpec.describe BetterTogether::Metrics::TrackDownloadJob do
       expect(described_class.new.queue_name).to eq('metrics')
     end
   end
+
+  describe 'cross-platform viewer context' do
+    let(:federated_platform) { create(:better_together_platform, :public, host: false) }
+    let(:federated_page) { create(:better_together_page, platform: federated_platform) }
+    let(:viewer_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+    let(:file_name) { 'document.pdf' }
+    let(:file_type) { 'application/pdf' }
+    let(:file_size) { 1024 }
+    let(:locale) { 'en' }
+
+    it "derives platform from the downloadable's own platform, not the viewer's current platform context" do
+      described_class.new.perform(federated_page, file_name, file_type, file_size, locale, viewer_platform.id, false)
+
+      download = BetterTogether::Metrics::Download.last
+      expect(download.platform).to eq(federated_platform)
+      expect(download.platform).not_to eq(viewer_platform)
+    end
+  end
 end

@@ -80,7 +80,7 @@ module BetterTogether # :nodoc:
 
         it 'blocks publishing community-visible pages without agreement acceptance' do
           community_page = create(:better_together_page, privacy: 'community', published_at: nil)
-          Current.governed_agent = publisher
+          Current.agent = publisher
 
           community_page.published_at = Time.current
 
@@ -96,7 +96,7 @@ module BetterTogether # :nodoc:
                  participant: publisher,
                  accepted_at: Time.current)
           community_page = create(:better_together_page, privacy: 'community', published_at: nil)
-          Current.governed_agent = publisher
+          Current.agent = publisher
 
           community_page.published_at = Time.current
 
@@ -122,7 +122,7 @@ module BetterTogether # :nodoc:
         end
       end
 
-      describe '#governed_authors' do
+      describe '#agent_authors' do
         it 'includes both person and robot authors in authorship order' do
           page = create(:better_together_page)
           person = create(:better_together_person)
@@ -131,7 +131,7 @@ module BetterTogether # :nodoc:
           page.authorships.create!(author: person, position: 1)
           page.authorships.create!(author: robot, position: 2)
 
-          expect(page.governed_authors).to eq([person, robot])
+          expect(page.agent_authors).to eq([person, robot])
           expect(page.authors).to eq([person])
           expect(page.robot_authors).to eq([robot])
         end
@@ -182,7 +182,7 @@ module BetterTogether # :nodoc:
 
           expect(page.robot_authors).to contain_exactly(robot)
           expect(page.authors).to be_empty
-          expect(page.governed_authors).to contain_exactly(robot)
+          expect(page.agent_authors).to contain_exactly(robot)
         end
       end
 
@@ -242,80 +242,57 @@ module BetterTogether # :nodoc:
         end
       end
 
-      describe 'evidence selector options' do
-        it 'includes media-specific selectors from page content blocks' do
-          page = create(:better_together_page)
-          image_block = create(:better_together_content_image, identifier: 'launch-image')
-          video_block = create(:content_video_block, identifier: 'launch-video')
-          page.page_blocks.create!(block: image_block, position: 0)
-          page.page_blocks.create!(block: video_block, position: 1)
-
-          expect(page.evidence_selector_options).to include(
-            include(value: 'block:image:launch-image:media'),
-            include(value: 'block:image:launch-image:region:*'),
-            include(value: 'block:video_block:launch-video:timestamp:*')
-          )
+      describe 'federation_visibility (Federatable)' do
+        it 'defaults to platform_default' do
+          expect(create(:better_together_page).federation_visibility).to eq('platform_default')
         end
 
-        it 'includes linked contribution citations in grouped evidence source options' do
-          page = create(:better_together_page)
-          local_citation = create(:citation, citeable: page, reference_key: 'local_record', title: 'Local Record Citation')
-          contributor = create(:person, name: 'Evidence Keeper')
-          contribution = BetterTogether::Authorship.create!(
-            authorable: page,
-            author: contributor,
-            role: 'reviewer'
-          )
-          linked_citation = create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
-
-          groups = page.available_evidence_citation_option_groups
-
-          expect(groups['Current record']).to include(["#{local_citation.reference_key}: #{local_citation.title}", local_citation.id])
-          expect(groups['Evidence Keeper: Reviewer']).to include(["#{linked_citation.reference_key}: #{linked_citation.title}",
-                                                                  linked_citation.id])
+        it 'accepts the federate and no_federate overrides' do
+          expect(create(:better_together_page, federation_visibility: 'federate')).to be_federation_visibility_federate
+          expect(create(:better_together_page,
+                        federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
         end
 
-        it 'builds evidence browser groups with preview metadata' do
-          page = create(:better_together_page)
-          create(:citation,
-                 citeable: page,
-                 reference_key: 'local_record',
-                 title: 'Local Record Citation',
-                 locator: 'p. 10',
-                 excerpt: 'Shared reality requires traceable evidence.')
+        it 'reports an override only for federate/no_federate' do
+          expect(create(:better_together_page,
+                        federation_visibility: 'platform_default').federation_visibility_override?).to be false
+          expect(create(:better_together_page, federation_visibility: 'federate').federation_visibility_override?).to be true
+          expect(create(:better_together_page,
+                        federation_visibility: 'no_federate').federation_visibility_override?).to be true
+        end
+      end
 
-          browser_groups = page.available_evidence_citation_browser_groups
+      describe 'community assignment (CommunityAssignable)' do
+        let(:local_platform) { Platform.find_by(host: true) || create(:better_together_platform, host: true) }
+        let(:remote_platform) { create(:better_together_platform, :external) }
 
-          expect(browser_groups.first[:label]).to eq('Current record')
-          expect(browser_groups.first[:citations].first).to include(
-            reference_key: 'local_record',
-            title: 'Local Record Citation',
-            locator: 'p. 10',
-            excerpt: 'Shared reality requires traceable evidence.'
-          )
-          expect(browser_groups.first[:origin]).to eq('current_record')
-          expect(browser_groups.first[:record_type]).to eq('Page')
+        it "assigns the platform's own community when community is nil, not the host community" do
+          federated_page = build(:better_together_page, platform: remote_platform, community: nil)
+
+          federated_page.valid?
+
+          expect(federated_page.community).to eq(remote_platform.community)
+          expect(federated_page.community).not_to eq(local_platform.community)
         end
 
-        it 'includes contribution metadata in linked evidence browser groups' do
-          page = create(:better_together_page)
-          contributor = create(:person, name: 'Doc Reviewer')
-          contribution = BetterTogether::Authorship.create!(
-            authorable: page,
-            author: contributor,
-            role: 'reviewer',
-            contribution_type: 'documentation'
-          )
-          create(:citation, citeable: contribution, reference_key: 'review_notes', title: 'Review Notes')
+        it 'falls back to the host community when the platform has no community of its own' do
+          allow(remote_platform).to receive(:community).and_return(nil)
+          page_without_platform_community = build(:better_together_page, platform: remote_platform, community: nil)
 
-          contribution_group = page.available_evidence_citation_browser_groups.find { |group| group[:origin] == 'contribution' }
+          page_without_platform_community.valid?
 
-          expect(contribution_group).to include(
-            origin: 'contribution',
-            record_type: 'Authorship',
-            contribution_role: 'reviewer',
-            contribution_type: 'documentation'
+          expect(page_without_platform_community.community).to eq(BetterTogether::Community.host_community)
+        end
+
+        it 'leaves an explicitly-assigned community untouched' do
+          explicit_community = create(:better_together_community)
+          page_with_explicit_community = build(
+            :better_together_page, platform: remote_platform, community: explicit_community
           )
+
+          page_with_explicit_community.valid?
+
+          expect(page_with_explicit_community.community).to eq(explicit_community)
         end
       end
     end
@@ -415,6 +392,30 @@ module BetterTogether # :nodoc:
         page = create(:better_together_page, platform: public_platform, community: public_community, privacy: 'public')
         page.title = 'Updated title'
         expect(page).to be_valid
+      end
+    end
+
+    describe 'privacy default' do
+      # The DB column (better_together_pages.privacy) carries the default —
+      # not a model-level callback. It is static: 'private' regardless of the
+      # platform's own privacy. PrivacyCeilingValidatable only bounds the
+      # *maximum* privacy a caller may explicitly choose; it does not inform
+      # what an unset privacy defaults to. The platform operator (or a
+      # caller passing privacy: explicitly) is the only way to open it up.
+      it "defaults to 'private' when omitted, even on a fully public platform" do
+        platform = create(:better_together_platform, privacy: 'public')
+
+        page = described_class.new(title: 'Untitled', platform: platform)
+
+        expect(page.privacy).to eq('private')
+      end
+
+      it 'respects an explicitly-assigned privacy value instead of the default' do
+        platform = create(:better_together_platform, privacy: 'public')
+
+        page = described_class.new(title: 'Untitled', platform: platform, privacy: 'community')
+
+        expect(page.privacy).to eq('community')
       end
     end
   end

@@ -77,6 +77,8 @@ RSpec.describe 'BetterTogether::Api::V1::Messages', :no_auth do
   # ── E2E encrypted message fields ──────────────────────────────────────────
 
   describe 'E2E encrypted message fields' do
+    before { allow(BetterTogether).to receive(:e2ee_messaging_enabled?).and_return(true) }
+
     let!(:e2e_message) do
       create(:better_together_message,
              conversation: conversation,

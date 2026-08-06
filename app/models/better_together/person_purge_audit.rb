@@ -23,6 +23,9 @@ module BetterTogether
                class_name: 'BetterTogether::Person',
                optional: true,
                inverse_of: :reviewed_person_purge_audits
+    belongs_to :platform,
+               class_name: 'BetterTogether::Platform',
+               optional: true
 
     enum :status, STATUS_VALUES, validate: true
 

@@ -29,9 +29,20 @@ class RequireEventHostAssociations < ActiveRecord::Migration[7.2]
 
     return if null_checks.empty?
 
+    where_clause = null_checks.join(' OR ')
+    unrepairable_count = select_value(<<~SQL.squish).to_i
+      SELECT COUNT(*) FROM #{quoted_table} WHERE #{where_clause}
+    SQL
+
+    if unrepairable_count.positive?
+      say "Removing #{unrepairable_count} #{TABLE} row(s) with a missing required " \
+          "column (#{REQUIRED_COLUMNS.join(', ')}) — these predate the association " \
+          'being required and cannot be repaired automatically.'
+    end
+
     execute <<~SQL.squish
       DELETE FROM #{quoted_table}
-      WHERE #{null_checks.join(' OR ')}
+      WHERE #{where_clause}
     SQL
   end
 

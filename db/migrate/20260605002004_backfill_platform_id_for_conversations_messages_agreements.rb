@@ -2,11 +2,11 @@
 
 # Phase 2 — Backfill platform_id for conversations, messages, and agreements.
 #
-# Conversations and agreements are assigned to the host platform (the only
-# platform that existed before this migration series). Messages inherit from
-# their parent conversation. This is a conservative safe default — all existing
-# data is single-platform. New records will pick up Current.platform via the
-# PlatformScoped concern's before_validation callback.
+# Conversations and agreements are derived from their creator's platform
+# membership first, falling back to the host platform only when no membership
+# can be found. Messages inherit from their parent conversation. New records
+# will pick up Current.platform via the PlatformScoped concern's
+# before_validation callback.
 class BackfillPlatformIdForConversationsMessagesAgreements < ActiveRecord::Migration[7.2]
   def up
     host_platform_id = execute(
@@ -15,11 +15,7 @@ class BackfillPlatformIdForConversationsMessagesAgreements < ActiveRecord::Migra
 
     return unless host_platform_id
 
-    execute <<~SQL
-      UPDATE better_together_conversations
-      SET    platform_id = #{quote(host_platform_id)}
-      WHERE  platform_id IS NULL
-    SQL
+    backfill_from_creator('better_together_conversations', host_platform_id)
 
     execute <<~SQL
       UPDATE better_together_messages m
@@ -29,16 +25,33 @@ class BackfillPlatformIdForConversationsMessagesAgreements < ActiveRecord::Migra
         AND  m.platform_id IS NULL
     SQL
 
-    execute <<~SQL
-      UPDATE better_together_agreements
-      SET    platform_id = #{quote(host_platform_id)}
-      WHERE  platform_id IS NULL
-    SQL
+    backfill_from_creator('better_together_agreements', host_platform_id)
   end
 
   def down
     execute "UPDATE better_together_conversations SET platform_id = NULL"
     execute "UPDATE better_together_messages       SET platform_id = NULL"
     execute "UPDATE better_together_agreements     SET platform_id = NULL"
+  end
+
+  private
+
+  def backfill_from_creator(table, host_platform_id)
+    execute <<~SQL
+      UPDATE #{table} rec
+      SET    platform_id = ppm.joinable_id
+      FROM   better_together_people p
+      JOIN   better_together_person_platform_memberships ppm
+        ON   p.id = ppm.member_id
+      WHERE  rec.creator_id = p.id
+        AND  rec.platform_id IS NULL
+        AND  ppm.joinable_id IS NOT NULL
+    SQL
+
+    execute <<~SQL
+      UPDATE #{table}
+      SET    platform_id = #{quote(host_platform_id)}
+      WHERE  platform_id IS NULL
+    SQL
   end
 end

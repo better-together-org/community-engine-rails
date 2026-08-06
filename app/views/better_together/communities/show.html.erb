@@ -94,7 +94,7 @@
 
             <!-- Description Section -->
             <p class="card-text text-muted">
-              <%= @resource.description_html.presence || @resource.description.presence || t('better_together.communities.show.about.no_description') %>
+              <%= @resource.description.presence || t('better_together.communities.show.about.no_description') %>
             </p>
 
             <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>

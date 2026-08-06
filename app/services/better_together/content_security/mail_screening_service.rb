@@ -44,6 +44,7 @@ module BetterTogether
           content_screening_summary: summary_for(results, verdict),
           content_security_records: results.flat_map { |result| Array(result['records']) }
         )
+        sync_subject!(message)
 
         Result.new(screening_state == 'passed', screening_state, verdict)
       end
@@ -60,8 +61,13 @@ module BetterTogether
           content_screening_summary: error.message,
           content_security_records: []
         )
+        sync_subject!(message)
 
         Result.new(false, 'error', 'review_required')
+      end
+
+      def sync_subject!(message)
+        BetterTogether::ContentSecurity::MailSubjectSync.new(message:).call
       end
 
       def aggregate_verdict(results)

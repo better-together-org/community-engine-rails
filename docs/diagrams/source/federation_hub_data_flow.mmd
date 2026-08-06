@@ -1,0 +1,21 @@
+flowchart TD
+  A[Signed-in person visits /federation-hub] --> B[FederationHubPolicy#show? -- true for anyone signed in]
+  B --> C[PersonalContentSummaryService]
+  C --> D[Federatable.included_in_models -- Post, Page, Event]
+  D --> E[Counts by federation_visibility + 5 most recent items]
+  E --> F[_my_content_panel.html.erb -- always rendered]
+
+  B --> G{FederationHubPolicy#manage_connections_section?}
+  G -->|manage_network_connections or approve_network_connections| H[ConnectionHealthSummaryService]
+  G -->|neither| K[Admin section hidden]
+  H --> I[PlatformConnectionSyncTracking predicates + status counts]
+  I --> J[_connection_health_card.html.erb -- links out to Host Dashboard review]
+
+  F --> L[/federation-hub/activity link/]
+  J --> L
+  L --> M[FederationHub::ActivityFeedService]
+  M --> N[Person's own content Activity rows]
+  M --> O{include_admin_feed?}
+  O -->|Yes| P[+ PlatformConnection sync Activity rows]
+  N --> Q[Kaminari-paginated, filterable feed]
+  P --> Q

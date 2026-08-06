@@ -8,11 +8,14 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
 
   describe 'Inactive domain handling' do
     let(:active_domain) do
-      create(:better_together_platform_domain,
-             :primary,
-             platform: host_platform,
-             hostname: 'active.example.test',
-             active: true)
+      # Platform#sync_primary_platform_domain! already created a primary domain
+      # for host_platform — update it to the desired test hostname rather than
+      # creating a second primary domain for the same platform (which would
+      # violate PrimaryFlag's only_one_primary validation).
+      domain = BetterTogether::PlatformDomain.find_by(platform: host_platform, primary_flag: true) ||
+               create(:better_together_platform_domain, :primary, platform: host_platform)
+      domain.update!(hostname: 'active.example.test', active: true)
+      domain
     end
 
     let(:inactive_domain) do
@@ -45,10 +48,11 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
 
   describe 'Cache invalidation on hostname change' do
     it 'invalidates cache when domain hostname is updated' do
-      domain = create(:better_together_platform_domain,
-                      :primary,
-                      platform: host_platform,
-                      hostname: 'original.example.test')
+      # Same reasoning as 'Inactive domain handling' above — reuse the
+      # auto-created primary domain instead of creating a second one.
+      domain = BetterTogether::PlatformDomain.find_by(platform: host_platform, primary_flag: true) ||
+               create(:better_together_platform_domain, :primary, platform: host_platform)
+      domain.update!(hostname: 'original.example.test')
 
       # First request populates cache
       host! 'original.example.test'
@@ -205,10 +209,11 @@ RSpec.describe 'Platform domain resolution', :skip_host_setup do
 
       # PrimaryFlag#only_one_primary_flag enforces this via a validation, not
       # an auto-demote — attempting a second primary for the same platform
-      # is rejected outright.
+      # is rejected outright. PlatformDomain humanizes :primary_flag as
+      # "Primary domain" (config/locales/en.yml), not the default "Primary flag".
       expect do
         create(:better_together_platform_domain, :primary, platform:, hostname: 'second.example.test')
-      end.to raise_error(ActiveRecord::RecordInvalid, /Primary flag/)
+      end.to raise_error(ActiveRecord::RecordInvalid, /Primary domain/)
 
       # The original primary domain remains the only one.
       platform.reload

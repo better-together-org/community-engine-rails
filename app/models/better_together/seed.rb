@@ -294,6 +294,10 @@ module BetterTogether
       }
 
       planting_attrs[:planted_by] = person if person
+      # Opportunistically capture the current platform when a request context set
+      # one (e.g. an admin-triggered import). Automated/federated tending jobs with
+      # no request context correctly leave this NULL rather than mislabeling it.
+      planting_attrs[:platform] = Current.platform if Current.platform.present?
 
       SeedPlanting.create!(planting_attrs)
     rescue StandardError => e

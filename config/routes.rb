@@ -128,6 +128,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :requests, only: %i[index show]
       end
 
+      namespace :geography, path: :g do
+        resources :settlements, only: %i[index show]
+
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do
+          resources :settlements, except: %i[index show]
+        end
+      end
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
         resources :short_links
@@ -195,6 +203,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts
+            get :recurrence_preview
           end
           resources :invitations, only: %i[create destroy] do
             collection do
@@ -220,6 +229,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
           get 'recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
           get 'suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
+        end
+
+        scope path: 'federation-hub' do
+          get '/', to: 'federation_hub#index', as: :federation_hub
+          get 'activity', to: 'federation_hub#activity', as: :federation_hub_activity
         end
 
         resources :notifications, only: %i[index] do
@@ -519,6 +533,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   put :activate
                 end
               end
+              resources :platform_domains, except: %i[show]
             end
 
             resources :users
@@ -542,7 +557,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :countries
               resources :regions
               resources :region_settlements
-              resources :settlements
               resources :states
             end
           end
@@ -555,19 +569,12 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resource :content_feed, only: :show, controller: :content_feed
         resources :linked_seeds, only: :index, controller: :linked_seeds
 
-        # C3 cross-platform settlement endpoints (authenticated via FederationAccessToken scope: c3.exchange)
-        post 'c3/token_seeds',   to: 'c3_token_seeds#create',   as: :c3_token_seed
-        post 'c3/lock_requests', to: 'c3_lock_requests#create', as: :c3_lock_request
+        # Host app / extension gem hook — see BetterTogether.federation_routes_extension.
+        instance_exec(&BetterTogether.federation_routes_extension) if BetterTogether.federation_routes_extension
       end
 
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
-      get 'citations/export/:citeable_key/:id', to: 'citation_exports#show', as: :citation_export
-      get 'citations/import/github', to: 'github_citation_imports#index', as: :github_citation_imports
-      post 'citations/import/github/:citeable_key/:id', to: 'github_citation_imports#create', as: :import_github_citation
-      post 'contributions/import/github/:contributable_key/:id',
-           to: 'github_contribution_imports#create',
-           as: :github_contribution_imports
       # Public access: allow viewing public checklists
       resources :checklists, only: %i[index show]
 
@@ -619,7 +626,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         patch ':wizard_step_definition_id', to: 'wizard_steps#update'
       end
 
-      scope path: :w do
+      scope path: :w do # rubocop:todo Metrics/BlockLength
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
           get 'platform_details', to: 'setup_wizard_steps#platform_details',
@@ -642,6 +649,51 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               to: 'setup_wizard_steps#redirect',
               as: 'setup_wizard_step',
               constraints: { step: /platform_details|admin_creation/ }
+        end
+
+        # Unlike setup_wizard (a singleton scoped to the host platform), each
+        # run gets its own platform-scoped Wizard row, so every step route
+        # carries :platform_id — see
+        # NewPlatformSetupStepsController#wizard/#target_platform.
+        get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
+
+        scope path: 'new_platform_setup/:platform_id' do # rubocop:todo Metrics/BlockLength
+          get 'welcome', to: 'new_platform_setup_steps#welcome',
+                         defaults: { wizard_step_definition_id: :welcome },
+                         as: :new_platform_setup_step_welcome
+          post 'welcome', to: 'new_platform_setup_steps#update_welcome',
+                          defaults: { wizard_step_definition_id: :welcome },
+                          as: :new_platform_setup_step_update_welcome
+          get 'platform_identity', to: 'new_platform_setup_steps#platform_identity',
+                                   defaults: { wizard_step_definition_id: :platform_identity },
+                                   as: :new_platform_setup_step_platform_identity
+          post 'platform_identity', to: 'new_platform_setup_steps#create_platform_identity',
+                                    defaults: { wizard_step_definition_id: :platform_identity },
+                                    as: :new_platform_setup_step_create_platform_identity
+          get 'domain', to: 'new_platform_setup_steps#domain',
+                        defaults: { wizard_step_definition_id: :domain },
+                        as: :new_platform_setup_step_domain
+          post 'domain', to: 'new_platform_setup_steps#create_domain',
+                         defaults: { wizard_step_definition_id: :domain },
+                         as: :new_platform_setup_step_create_domain
+          get 'steward_account', to: 'new_platform_setup_steps#steward_account',
+                                 defaults: { wizard_step_definition_id: :steward_account },
+                                 as: :new_platform_setup_step_steward_account
+          post 'steward_account', to: 'new_platform_setup_steps#create_steward_account',
+                                  defaults: { wizard_step_definition_id: :steward_account },
+                                  as: :new_platform_setup_step_create_steward_account
+          get 'invite_members', to: 'new_platform_setup_steps#invite_members',
+                                defaults: { wizard_step_definition_id: :invite_members },
+                                as: :new_platform_setup_step_invite_members
+          post 'invite_members', to: 'new_platform_setup_steps#create_invite_members',
+                                 defaults: { wizard_step_definition_id: :invite_members },
+                                 as: :new_platform_setup_step_create_invite_members
+          get 'review_and_launch', to: 'new_platform_setup_steps#review_and_launch',
+                                   defaults: { wizard_step_definition_id: :review_and_launch },
+                                   as: :new_platform_setup_step_review_and_launch
+          post 'review_and_launch', to: 'new_platform_setup_steps#launch_platform',
+                                    defaults: { wizard_step_definition_id: :review_and_launch },
+                                    as: :new_platform_setup_step_launch_platform
         end
       end
     end
