@@ -4,11 +4,11 @@ module BetterTogether
   module Geography
     class SettlementPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
       def index?
-        true
+        user.present?
       end
 
       def show?
-        true
+        user.present?
       end
 
       def create?
@@ -20,7 +20,7 @@ module BetterTogether
       end
 
       def update?
-        user.present? && permitted_to?('manage_platform')
+        user.present? && !record.protected?
       end
 
       def edit?
@@ -28,7 +28,7 @@ module BetterTogether
       end
 
       def destroy?
-        user.present? && !record.protected? && permitted_to?('manage_platform')
+        user.present? && !record.protected?
       end
 
       class Scope < Scope # rubocop:todo Style/Documentation
