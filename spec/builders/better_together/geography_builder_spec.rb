@@ -83,4 +83,30 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
       expect(BetterTogether::Geography::Continent.count).to eq(continent_count)
     end
   end
+
+  describe 'seed coordinate packet consumption' do
+    before do
+      described_class.clear_existing
+      described_class.instance_variable_set(:@seed_coordinates_packet, nil)
+    end
+
+    after { described_class.instance_variable_set(:@seed_coordinates_packet, nil) }
+
+    it 'geocodes continents straight from the committed seed_coordinates.yml packet' do # rubocop:todo RSpec/MultipleExpectations
+      described_class.seed_continents
+
+      africa = BetterTogether::Geography::Continent.find_by(identifier: 'africa')
+      expect(africa.geocoded?).to be(true)
+      expect(africa.latitude).to be_present
+      expect(africa.longitude).to be_present
+    end
+
+    it 'creates records ungeocoded, without error, when the packet has no entry for them' do # rubocop:todo RSpec/MultipleExpectations
+      allow(described_class).to receive(:load_seed_coordinates_packet).and_return({})
+
+      expect { described_class.seed_continents }.not_to raise_error
+      africa = BetterTogether::Geography::Continent.find_by(identifier: 'africa')
+      expect(africa.geocoded?).to be(false)
+    end
+  end
 end

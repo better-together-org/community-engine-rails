@@ -1,0 +1,684 @@
+---
+continents:
+  africa:
+    latitude: 11.5024338
+    longitude: 17.7578122
+  antarctica:
+    latitude: -72.8438691
+    longitude: 0.0
+  asia:
+    latitude: 51.2086975
+    longitude: 89.2343748
+  europe:
+    latitude: 51.0
+    longitude: 10.0
+  north-america:
+    latitude: 51.0000002
+    longitude: -109.0
+  oceania:
+    latitude: -12.7725835
+    longitude: 173.7741688
+  south-america:
+    latitude: -21.0002179
+    longitude: -61.0006565
+countries:
+  algeria:
+    latitude: 28.0000272
+    longitude: 2.9999825
+  angola:
+    latitude: -11.8775768
+    longitude: 17.5691241
+  benin:
+    latitude: 9.5293472
+    longitude: 2.2584408
+  botswana:
+    latitude: -23.1681782
+    longitude: 24.5928742
+  burkina-faso:
+    latitude: 12.0753083
+    longitude: -1.6880314
+  burundi:
+    latitude: -3.426449
+    longitude: 29.9324519
+  cape-verde:
+    latitude: 16.0000552
+    longitude: -24.0083947
+  cameroon:
+    latitude: 4.6125522
+    longitude: 13.1535811
+  central-african-republic:
+    latitude: 7.0323598
+    longitude: 19.9981227
+  chad:
+    latitude: 15.6134137
+    longitude: 19.0156172
+  comoros:
+    latitude: -12.2045176
+    longitude: 44.2832964
+  congo:
+    latitude: -0.7264327
+    longitude: 15.6419155
+  democratic-republic-of-the-congo:
+    latitude: -2.9814344
+    longitude: 23.8222636
+  djibouti:
+    latitude: 11.8145966
+    longitude: 42.8453061
+  egypt:
+    latitude: 26.2540493
+    longitude: 29.2675469
+  equatorial-guinea:
+    latitude: 1.613172
+    longitude: 10.5170357
+  eritrea:
+    latitude: 15.9500319
+    longitude: 37.9999668
+  eswatini:
+    latitude: -26.5624806
+    longitude: 31.3991317
+  ethiopia:
+    latitude: 10.2116702
+    longitude: 38.6521203
+  gabon:
+    latitude: -0.8999695
+    longitude: 11.6899699
+  gambia:
+    latitude: 13.470062
+    longitude: -15.4900464
+  ghana:
+    latitude: 8.0300284
+    longitude: -1.0800271
+  guinea:
+    latitude: 10.7226226
+    longitude: -10.7083587
+  guinea-bissau:
+    latitude: 11.815215
+    longitude: -15.2351044
+  ivory-coast:
+    latitude: 7.9897371
+    longitude: -5.5679458
+  kenya:
+    latitude: 1.4419683
+    longitude: 38.4313975
+  lesotho:
+    latitude: -29.6039267
+    longitude: 28.3350193
+  liberia:
+    latitude: 5.7499721
+    longitude: -9.3658524
+  libya:
+    latitude: 26.8234472
+    longitude: 18.1236723
+  madagascar:
+    latitude: -18.9249604
+    longitude: 46.4416422
+  malawi:
+    latitude: -13.2687204
+    longitude: 33.9301963
+  mali:
+    latitude: 16.3700359
+    longitude: -2.2900239
+  mauritania:
+    latitude: 20.2540382
+    longitude: -9.2399263
+  mauritius:
+    latitude: -20.2759451
+    longitude: 57.5703566
+  morocco:
+    latitude: 28.3347722
+    longitude: -10.3713379
+  mozambique:
+    latitude: -19.302233
+    longitude: 34.9144977
+  namibia:
+    latitude: -23.2335499
+    longitude: 17.3231107
+  niger:
+    latitude: 17.7356214
+    longitude: 9.3238432
+  nigeria:
+    latitude: 9.6000359
+    longitude: 7.9999721
+  rwanda:
+    latitude: -2.0002051
+    longitude: 30.0003963
+  sao-tome-and-principe:
+    latitude: 0.9713095
+    longitude: 7.02255
+  senegal:
+    latitude: 14.4750607
+    longitude: -14.4529612
+  seychelles:
+    latitude: -4.6574977
+    longitude: 55.4540146
+  sierra-leone:
+    latitude: 8.6400349
+    longitude: -11.8400269
+  somalia:
+    latitude: 8.3676771
+    longitude: 49.083416
+  south-africa:
+    latitude: -28.8166236
+    longitude: 24.991639
+  south-sudan:
+    latitude: 7.8699431
+    longitude: 29.6667897
+  sudan:
+    latitude: 14.5844444
+    longitude: 29.4917691
+  tanzania:
+    latitude: -6.5247123
+    longitude: 35.7878438
+  togo:
+    latitude: 8.7800265
+    longitude: 1.0199765
+  tunisia:
+    latitude: 33.8439408
+    longitude: 9.400138
+  uganda:
+    latitude: 1.5333554
+    longitude: 32.2166578
+  zambia:
+    latitude: -14.5189121
+    longitude: 27.5589884
+  zimbabwe:
+    latitude: -18.4554963
+    longitude: 29.7468414
+  afghanistan:
+    latitude: 33.7680065
+    longitude: 66.2385139
+  armenia:
+    latitude: 40.7696272
+    longitude: 44.6736646
+  azerbaijan:
+    latitude: 40.3936294
+    longitude: 47.7872508
+  bahrain:
+    latitude: 26.1551249
+    longitude: 50.5344606
+  bangladesh:
+    latitude: 24.4769288
+    longitude: 90.2934413
+  bhutan:
+    latitude: 27.549511
+    longitude: 90.5119273
+  brunei:
+    latitude: 4.4137155
+    longitude: 114.5653908
+  cambodia:
+    latitude: 12.5433216
+    longitude: 104.8144914
+  china:
+    latitude: 34.5412252
+    longitude: 108.9237067
+  cyprus:
+    latitude: 34.9823018
+    longitude: 33.1451285
+  georgia:
+    latitude: 41.6808672
+    longitude: 44.0287806
+  india:
+    latitude: 22.3511148
+    longitude: 78.6677428
+  indonesia:
+    latitude: -2.4833826
+    longitude: 117.8902853
+  iran:
+    latitude: 32.6475314
+    longitude: 54.5643516
+  iraq:
+    latitude: 33.0955793
+    longitude: 44.1749775
+  israel:
+    latitude: 30.8124247
+    longitude: 34.8594762
+  japan:
+    latitude: 36.5748441
+    longitude: 139.2394179
+  jordan:
+    latitude: 31.1667049
+    longitude: 36.941628
+  kazakhstan:
+    latitude: 48.1012954
+    longitude: 66.7780818
+  kuwait:
+    latitude: 29.2733964
+    longitude: 47.4979476
+  kyrgyzstan:
+    latitude: 41.5089324
+    longitude: 74.724091
+  laos:
+    latitude: 20.0171109
+    longitude: 103.378253
+  lebanon:
+    latitude: 33.8750629
+    longitude: 35.843409
+  malaysia:
+    latitude: 4.5693754
+    longitude: 102.2656823
+  maldives:
+    latitude: 3.7203503
+    longitude: 73.2244152
+  mongolia:
+    latitude: 46.8250388
+    longitude: 103.8499736
+  myanmar:
+    latitude: 17.1750495
+    longitude: 95.9999652
+  nepal:
+    latitude: 28.3780464
+    longitude: 83.9999901
+  north-korea:
+    latitude: 40.3736611
+    longitude: 127.0870417
+  oman:
+    latitude: 21.0000287
+    longitude: 57.0036901
+  pakistan:
+    latitude: 30.3308401
+    longitude: 71.247499
+  palestine:
+    latitude: 32.2591449
+    longitude: 35.3015948
+  philippines:
+    latitude: 12.7503486
+    longitude: 122.7312101
+  qatar:
+    latitude: 25.3336984
+    longitude: 51.2295295
+  saudi-arabia:
+    latitude: 25.6242618
+    longitude: 42.3528328
+  singapore:
+    latitude: 1.357107
+    longitude: 103.8194992
+  south-korea:
+    latitude: 36.638392
+    longitude: 127.6961188
+  sri-lanka:
+    latitude: 7.5554942
+    longitude: 80.7137847
+  syria:
+    latitude: 34.6401861
+    longitude: 39.0494106
+  tajikistan:
+    latitude: 38.6281733
+    longitude: 70.8156541
+  thailand:
+    latitude: 14.8971921
+    longitude: 100.83273
+  timor-leste:
+    latitude: -8.7443169
+    longitude: 126.063482
+  turkey:
+    latitude: 39.294076
+    longitude: 35.2316631
+  turkmenistan:
+    latitude: 39.3763807
+    longitude: 59.3924609
+  united-arab-emirates:
+    latitude: 24.0002488
+    longitude: 53.9994829
+  uzbekistan:
+    latitude: 41.32373
+    longitude: 63.9528098
+  vietnam:
+    latitude: 15.9266657
+    longitude: 107.9650855
+  yemen:
+    latitude: 16.3471243
+    longitude: 47.8915271
+  albania:
+    latitude: 41.000028
+    longitude: 19.9999619
+  andorra:
+    latitude: 42.5407167
+    longitude: 1.5732033
+  austria:
+    latitude: 47.59397
+    longitude: 14.12456
+  belarus:
+    latitude: 53.4250605
+    longitude: 27.6971358
+  belgium:
+    latitude: 50.6402809
+    longitude: 4.6667145
+  bosnia-and-herzegovina:
+    latitude: 44.3053476
+    longitude: 17.5961467
+  bulgaria:
+    latitude: 42.6073975
+    longitude: 25.4856617
+  croatia:
+    latitude: 45.3658443
+    longitude: 15.6575209
+  czech-republic:
+    latitude: 49.7439047
+    longitude: 15.3381061
+  denmark:
+    latitude: 55.670249
+    longitude: 10.3333283
+  estonia:
+    latitude: 58.7523778
+    longitude: 25.3319078
+  finland:
+    latitude: 63.2467777
+    longitude: 25.9209164
+  france:
+    latitude: 46.603354
+    longitude: 1.8883335
+  germany:
+    latitude: 51.1638175
+    longitude: 10.4478313
+  greece:
+    latitude: 38.9953683
+    longitude: 21.9877132
+  hungary:
+    latitude: 47.1817585
+    longitude: 19.5060937
+  iceland:
+    latitude: 64.9841821
+    longitude: -18.1059013
+  ireland:
+    latitude: 52.865196
+    longitude: -7.9794599
+  italy:
+    latitude: 42.6384261
+    longitude: 12.674297
+  kosovo:
+    latitude: 42.5869578
+    longitude: 20.9021231
+  latvia:
+    latitude: 56.8406494
+    longitude: 24.7537645
+  liechtenstein:
+    latitude: 47.1416307
+    longitude: 9.5531527
+  lithuania:
+    latitude: 55.3500003
+    longitude: 23.7499997
+  luxembourg:
+    latitude: 49.8158683
+    longitude: 6.1296751
+  malta:
+    latitude: 35.9311442
+    longitude: 14.3951627
+  moldova:
+    latitude: 47.2879608
+    longitude: 28.5670941
+  monaco:
+    latitude: 43.7323492
+    longitude: 7.4276832
+  montenegro:
+    latitude: 42.7755624
+    longitude: 19.2022423
+  netherlands:
+    latitude: 52.2434979
+    longitude: 5.6343227
+  north-macedonia:
+    latitude: 41.6171214
+    longitude: 21.7168387
+  norway:
+    latitude: 61.1529386
+    longitude: 8.7876653
+  poland:
+    latitude: 52.215933
+    longitude: 19.134422
+  portugal:
+    latitude: 39.6621648
+    longitude: -8.1353519
+  romania:
+    latitude: 45.9852129
+    longitude: 24.6859225
+  russia:
+    latitude: 64.6863136
+    longitude: 97.7453061
+  san-marino:
+    latitude: 43.9458623
+    longitude: 12.458306
+  serbia:
+    latitude: 44.0243229
+    longitude: 21.0765743
+  slovakia:
+    latitude: 48.7411522
+    longitude: 19.4528646
+  slovenia:
+    latitude: 46.1199444
+    longitude: 14.8153333
+  spain:
+    latitude: 39.3260685
+    longitude: -4.8379791
+  sweden:
+    latitude: 59.6749712
+    longitude: 14.5208584
+  switzerland:
+    latitude: 46.7985624
+    longitude: 8.2319736
+  ukraine:
+    latitude: 49.4871968
+    longitude: 31.2718321
+  united-kingdom:
+    latitude: 54.7023545
+    longitude: -3.2765753
+  vatican-city:
+    latitude: 41.903411
+    longitude: 12.4528527
+  antigua-and-barbuda:
+    latitude: 17.2234721
+    longitude: -61.9554608
+  bahamas:
+    latitude: 24.7736546
+    longitude: -78.0000547
+  barbados:
+    latitude: 13.1500331
+    longitude: -59.5250305
+  belize:
+    latitude: 17.1204943
+    longitude: -88.6859028
+  canada:
+    latitude: 61.0666922
+    longitude: -107.991707
+  costa-rica:
+    latitude: 10.2735633
+    longitude: -84.0739102
+  cuba:
+    latitude: 23.0131338
+    longitude: -80.8328748
+  dominica:
+    latitude: 15.4113138
+    longitude: -61.3653618
+  dominican-republic:
+    latitude: 19.0974031
+    longitude: -70.3028026
+  el-salvador:
+    latitude: 13.8000382
+    longitude: -88.9140683
+  grenada:
+    latitude: 12.1360374
+    longitude: -61.6904045
+  guatemala:
+    latitude: 15.5855545
+    longitude: -90.345759
+  haiti:
+    latitude: 19.1399952
+    longitude: -72.3570972
+  honduras:
+    latitude: 15.2572432
+    longitude: -86.0755145
+  jamaica:
+    latitude: 18.1850507
+    longitude: -77.3947693
+  mexico:
+    latitude: 23.6585116
+    longitude: -102.0077097
+  nicaragua:
+    latitude: 12.3506436
+    longitude: -85.7841006
+  panama:
+    latitude: 8.559559
+    longitude: -81.1308434
+  saint-kitts-and-nevis:
+    latitude: 17.250512
+    longitude: -62.6725973
+  saint-lucia:
+    latitude: 13.8250489
+    longitude: -60.975036
+  saint-vincent-and-the-grenadines:
+    latitude: 12.90447
+    longitude: -61.2765569
+  trinidad-and-tobago:
+    latitude: 10.7466905
+    longitude: -61.0840075
+  united-states:
+    latitude: 39.7837304
+    longitude: -100.445882
+  australia:
+    latitude: -24.7761086
+    longitude: 134.755
+  fiji:
+    latitude: -18.1239696
+    longitude: 179.0122737
+  kiribati:
+    latitude: 0.3448612
+    longitude: 173.6641773
+  marshall-islands:
+    latitude: 8.230817
+    longitude: 167.7953224
+  micronesia:
+    latitude: 8.6062347
+    longitude: 151.8327443
+  nauru:
+    latitude: -0.5252306
+    longitude: 166.9324426
+  new-zealand:
+    latitude: -41.5000831
+    longitude: 172.8344077
+  palau:
+    latitude: 5.3783537
+    longitude: 132.9102573
+  papua-new-guinea:
+    latitude: -5.6816069
+    longitude: 144.2489081
+  samoa:
+    latitude: -13.7693895
+    longitude: -172.12005
+  solomon-islands:
+    latitude: -8.7053941
+    longitude: 159.1070694
+  tonga:
+    latitude: -19.9160819
+    longitude: -175.202642
+  tuvalu:
+    latitude: -8.6405212
+    longitude: 179.1582918
+  vanuatu:
+    latitude: -16.5255069
+    longitude: 168.1069154
+  argentina:
+    latitude: -34.9964963
+    longitude: -64.9672817
+  bolivia:
+    latitude: -17.0568696
+    longitude: -64.9912286
+  brazil:
+    latitude: -10.3333333
+    longitude: -53.2
+  chile:
+    latitude: -31.7613365
+    longitude: -71.3187697
+  colombia:
+    latitude: 4.099917
+    longitude: -72.9088133
+  ecuador:
+    latitude: -1.3397668
+    longitude: -79.3666965
+  guyana:
+    latitude: 4.8417097
+    longitude: -58.6416891
+  paraguay:
+    latitude: -23.3165935
+    longitude: -58.1693445
+  peru:
+    latitude: -6.8699697
+    longitude: -75.0458515
+  suriname:
+    latitude: 4.1413025
+    longitude: -56.0771187
+  uruguay:
+    latitude: -32.8755548
+    longitude: -56.0201525
+  venezuela:
+    latitude: 8.0018709
+    longitude: -66.1109318
+provinces:
+  alberta:
+    latitude: 55.001251
+    longitude: -115.002136
+  british-columbia:
+    latitude: 55.001251
+    longitude: -125.002441
+  manitoba:
+    latitude: 55.001251
+    longitude: -97.001038
+  new-brunswick:
+    latitude: 46.500283
+    longitude: -66.750183
+  newfoundland-and-labrador:
+    latitude: 53.8217327
+    longitude: -61.2295532
+  nova-scotia:
+    latitude: 45.1960403
+    longitude: -63.1653789
+  ontario:
+    latitude: 50.000678
+    longitude: -86.000977
+  prince-edward-island:
+    latitude: 46.3355508
+    longitude: -63.1466676
+  quebec:
+    latitude: 52.4760892
+    longitude: -71.8258668
+  saskatchewan:
+    latitude: 55.5321257
+    longitude: -106.141224
+  northwest-territories:
+    latitude: 65.0000004
+    longitude: -118.0
+  nunavut:
+    latitude: 65.0377727
+    longitude: -92.5540791
+  yukon:
+    latitude: 63.000147
+    longitude: -136.002502
+regions:
+  avalon-peninsula:
+    latitude: 47.392337
+    longitude: -53.5253983
+  eastern-newfoundland:
+    latitude: 47.5193149
+    longitude: -57.3429095
+  central-newfoundland:
+    latitude: 48.9340011
+    longitude: -55.6445567
+  western-newfoundland:
+    latitude: 47.8853983
+    longitude: -53.0896778
+  northern-newfoundland:
+    latitude: 49.1819007
+    longitude: -57.3343755
+  labrador-west:
+    latitude: 48.3696194
+    longitude: -53.3601033
+  central-labrador:
+    latitude: 56.6506567
+    longitude: -61.3258855
+  coastal-labrador-north:
+    latitude: 48.5378713
+    longitude: -53.0461878
+settlements:
+  st-john-s:
+    latitude: 47.5646794
+    longitude: -52.7066964
+  corner-brook:
+    latitude: 48.95317
+    longitude: -57.947388

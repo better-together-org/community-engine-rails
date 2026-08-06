@@ -5362,6 +5362,24 @@ en:
   search:
     button: Search
     placeholder: Search...
+  seed_catalog:
+    index:
+      actions: Actions
+      category: Category
+      description: Install curated reference data on demand, one category at a time
+        or all at once.
+      not_planted: Not planted
+      plant: Plant
+      plant_all: Plant All
+      plant_category: Plant %{category}
+      planted: Planted
+      status: Status
+      title: Seed Catalog
+    plant:
+      success: "%{category} planted."
+      unknown_category: Unknown category.
+    plant_all:
+      success: "%{catalog} fully planted."
   seeds:
     actions:
       destroy: Destroy seed
