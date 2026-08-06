@@ -111,11 +111,11 @@ module BetterTogether
       end
 
       def community
-        billable_owner if billable_owner.is_a?(BetterTogether::Community)
+        owner_or_beneficiary_of_type(BetterTogether::Community)
       end
 
       def person
-        billable_owner if billable_owner.is_a?(BetterTogether::Person)
+        owner_or_beneficiary_of_type(BetterTogether::Person)
       end
 
       def redact_payload!
@@ -183,6 +183,13 @@ module BetterTogether
       end
 
       private
+
+      def owner_or_beneficiary_of_type(klass)
+        return beneficiary if beneficiary.is_a?(klass)
+        return billable_owner if billable_owner.is_a?(klass)
+
+        nil
+      end
 
       def billable_owner_type_supported
         return if billable_owner_type.blank? || billable_owner_type.in?(SUPPORTED_OWNER_TYPES)
