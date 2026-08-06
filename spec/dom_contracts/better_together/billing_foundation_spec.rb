@@ -110,15 +110,15 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     )
   end
 
-  it 'provision view exposes stable review anchors' do
+  it 'provision entry point redirects into the new_platform_setup wizard, linked to the community' do
     create(:better_together_billing_subscription, billing_plan: plan, billable_owner: community, beneficiary: community)
     capybara_login_as_platform_manager
 
     visit better_together.provision_platform_community_billing_path(community, locale: I18n.default_locale)
 
-    expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :provision_platform_page)}")
-    expect(page).to have_css('#community-platform-provision-form')
-    expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :provision_platform_next_steps)}")
+    expect(page).to have_css('#new-platform-setup-progress')
+    draft = BetterTogether::Platform.order(:created_at).last
+    expect(draft.provisioning_community).to eq(community)
   end
 
   it 'community edit exposes a stable billing entry point anchor' do
