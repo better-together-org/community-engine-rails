@@ -3,6 +3,8 @@
 module BetterTogether
   # Community steward billing entry points for Stripe checkout and portal access.
   class CommunityBillingsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include NewPlatformSetupKickoff
+
     before_action :authenticate_user!
     before_action :set_community
     before_action :authorize_community
@@ -11,7 +13,6 @@ module BetterTogether
 
     def show
       @checkout_sync_result = sync_checkout_session if valid_checkout_session_id?
-      @provision_result_platform = BetterTogether::Platform.find_by(id: flash[:provision_platform_id])
       load_billing_overview
     end
 
@@ -80,16 +81,23 @@ module BetterTogether
       redirect_to_billing_with_alert(replay_event_not_found_message)
     end
 
+    # Entitlement pre-check + kickoff redirect into the new_platform_setup wizard
+    # (docs/plans/richer_platform_setup_wizard_implementation_plan.md, "Phase 5:
+    # Billing entry-point wiring"). Does not authorize via PlatformPolicy#create?
+    # like the wizard's own staff-facing entry point (NewPlatformSetupController#
+    # start) — a paying community steward legitimately won't hold platform-admin
+    # permissions. authorize_community's existing CommunityPolicy#update? check
+    # (before_action, all actions) plus the entitlement check below are the gate
+    # for this path; verify_authorized is satisfied by that before_action.
     def provision_platform
-      @hosted_entitlement = hosted_entitlement_resolver.call(community: @community)
-      redirect_to_billing_with_alert(provision_requires_plan_message) unless @hosted_entitlement.active?
-    end
-
-    def create_platform_provision
       @hosted_entitlement = hosted_entitlement_resolver.call(community: @community)
       return redirect_to_billing_with_alert(provision_requires_plan_message) unless @hosted_entitlement.active?
 
-      handle_provision_result(::BetterTogether::TenantPlatformProvisioningService.call(**platform_provision_params_hash))
+      draft = build_new_platform_setup_draft(provisioning_community: @community)
+      provision_new_platform_setup_draft(draft)
+      redirect_to new_platform_setup_step_welcome_path(platform_id: draft.to_param)
+    rescue ActiveRecord::RecordInvalid => e
+      redirect_to_billing_with_alert(e.record.errors.full_messages.to_sentence)
     end
 
     private
@@ -423,35 +431,9 @@ module BetterTogether
       )
     end
 
-    def handle_provision_result(result)
-      if result.success?
-        flash[:provision_platform_id] = result.platform.id
-        redirect_to community_billing_path(@community, locale: I18n.locale),
-                    notice: t('better_together.billing.platform_provisioned',
-                              default: 'Platform provisioned successfully.'),
-                    status: :see_other
-      else
-        flash.now[:alert] = result.errors.to_sentence
-        render :provision_platform, status: :unprocessable_content
-      end
-    end
-
     def provision_requires_plan_message
       t('better_together.billing.provision_requires_active_plan',
         default: 'An active hosted plan is required to provision a platform. Subscribe to a hosted plan first.')
-    end
-
-    def platform_provision_params_hash
-      {
-        name: platform_provision_form_params[:name],
-        host_url: platform_provision_form_params[:host_url],
-        time_zone: platform_provision_form_params[:time_zone].presence || 'America/St_Johns',
-        privacy: platform_provision_form_params[:privacy].presence || 'private'
-      }
-    end
-
-    def platform_provision_form_params
-      params.require(:platform_provision).permit(:name, :host_url, :time_zone, :privacy)
     end
   end
 end

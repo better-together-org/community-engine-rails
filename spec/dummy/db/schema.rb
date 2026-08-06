@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_05_120001) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_06_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -2016,12 +2016,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_05_120001) do
     t.boolean "external", default: false, null: false
     t.uuid "creator_id"
     t.uuid "storage_configuration_id"
+    t.uuid "provisioning_community_id"
     t.index ["community_id"], name: "by_platform_community"
     t.index ["creator_id"], name: "by_better_together_platforms_creator"
     t.index ["external"], name: "index_better_together_platforms_on_external"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"
+    t.index ["provisioning_community_id"], name: "idx_bt_platforms_provisioning_community"
     t.index ["storage_configuration_id"], name: "index_better_together_platforms_on_storage_configuration_id"
     t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
   end
@@ -2906,6 +2908,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_05_120001) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_platforms", "better_together_communities", column: "provisioning_community_id", on_delete: :nullify
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_platforms", "better_together_storage_configurations", column: "storage_configuration_id", deferrable: :deferred
   add_foreign_key "better_together_posts", "better_together_communities", column: "community_id"

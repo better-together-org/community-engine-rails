@@ -148,6 +148,14 @@ module BetterTogether
                foreign_key: :storage_configuration_id,
                optional: true
 
+    # Set only when this platform's new_platform_setup wizard run was kicked off
+    # via the billing-gated entry point (CommunityBillingsController#provision_platform)
+    # — traces the platform back to the community whose paid plan funded it. Nil for
+    # platforms provisioned through the staff-facing NewPlatformSetupController path.
+    belongs_to :provisioning_community,
+               class_name: 'BetterTogether::Community',
+               optional: true
+
     def cache_key
       "#{super}/#{css_block&.updated_at&.to_i}"
     end
