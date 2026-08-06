@@ -1,22 +1,30 @@
 ---
-title: Provision hosted platform
+title: Provision hosted platform — now via the setup wizard
 audience:
 - board_member
 - community_steward
 - operator
 journey_step: A steward provisions a hosted platform only after the community has
-  an active hosted plan.
+  an active hosted plan; clicking "Provision hosted platform" checks that entitlement
+  server-side, then hands off straight into the shared platform setup wizard.
 callouts:
-- :title: Provision form
-  :description: This is the operational handoff from billing into platform creation.
-    It turns entitlement into a concrete hosted space with a URL and visibility policy.
-- :title: Eligibility checkpoint
-  :description: The entitlement card stays visible here so the reviewer can verify
-    that platform creation is tied to an active hosted subscription.
-- :title: What happens next
-  :description: 'The checklist translates internal provisioning work into community-facing
-    outcomes: a platform record, a linked community, a domain, and stewardship setup.'
-accessibility_notes: The form uses labeled fields, a native select for visibility,
-  and a stable form ID so screenshots and future accessibility checks remain deterministic.
+- :title: Setup wizard
+  :description: 'Session follow-up ("Phase 5: Billing entry-point wiring", previously
+    scoped but never built): the standalone provisioning form this screenshot used
+    to show has been removed. CommunityBillingsController#provision_platform is now
+    purely an entitlement pre-check + kickoff redirect — it builds a draft Platform
+    linked to the paying community via a new provisioning_community_id column, then
+    redirects here. Name, host URL, time zone, and visibility are now collected by
+    the wizard''s own platform_identity step instead of a duplicate billing-side form,
+    and the wizard''s steward_account step (which the old form never had at all) collects
+    steward info that used to require a separate manual step after provisioning.'
+- :title: Locale
+  :description: Unchanged from the staff-facing wizard entry point — see new_platform_setup_welcome
+    for the full wizard walkthrough.
+- :title: Next
+  :description: The entitlement check already happened once, at this kickoff point,
+    before the redirect — the wizard itself does not re-check billing status per step.
+accessibility_notes: 'Same wizard UI as new_platform_setup_welcome: progress nav uses
+  aria-current="step", locale select has an aria-describedby help text.'
 slug: pr_1581_provision_hosted_platform
 device: mobile

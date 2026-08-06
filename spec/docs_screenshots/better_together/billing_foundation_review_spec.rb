@@ -113,35 +113,35 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
     end
   end
 
-  it 'captures the provision hosted platform form' do
+  it 'captures the provision hosted platform entry point redirecting into the setup wizard' do
     capture_docs_screenshot(
       'pr_1581_provision_hosted_platform',
       callouts: [
-        { selector: '#community-platform-provision-form', title: 'Provision form',
-          bullets: ['Collects the name, host URL, time zone, and visibility for the new hosted platform.', 'Only appears when the community has an active hosted entitlement.'] },
-        { selector: '#hosted-entitlement-card', title: 'Eligibility checkpoint',
-          bullets: ['Reminds reviewers why this community can provision a platform now.', 'Links platform creation back to the subscribed hosted plan.'] },
-        { selector: "##{ActionView::RecordIdentifier.dom_id(community, :provision_platform_next_steps)}", title: 'What happens next', bullets: ['Explains the plain-language outcome of provisioning.', 'Helps non-technical reviewers understand the workflow without reading service code.'] }
+        { selector: '#new-platform-setup-progress', title: 'Setup wizard',
+          bullets: ['This is where the billing entry point now lands, instead of a separate provisioning form.', 'Same six-step wizard used by the staff-facing "Provision New Platform" entry point on the platforms index.'] },
+        { selector: '#new_platform_setup_locale', title: 'Locale', bullets: ['Sets the locale for the rest of the wizard and the new platform itself.'] },
+        { selector: '#new-platform-setup-welcome-submit-btn', title: 'Next', bullets: ['Advances to platform_identity, where the real name/host URL/visibility are collected.'] }
       ],
       narrative: {
-        title: 'Provision hosted platform',
+        title: 'Provision hosted platform — now via the setup wizard',
         audience: %w[board_member community_steward operator],
-        journey_step: 'A steward provisions a hosted platform only after the community has an active hosted plan.',
+        journey_step: 'A steward provisions a hosted platform only after the community has an active hosted plan; clicking "Provision hosted platform" checks that entitlement server-side, then hands off straight into the shared platform setup wizard.',
         callouts: [
-          { title: 'Provision form',
-            description: 'This is the operational handoff from billing into platform creation. It turns entitlement into a concrete hosted space with a URL and visibility policy.' },
-          { title: 'Eligibility checkpoint',
-            description: 'The entitlement card stays visible here so the reviewer can verify that platform creation is tied to an active hosted subscription.' },
-          { title: 'What happens next',
-            description: 'The checklist translates internal provisioning work into community-facing outcomes: a platform record, a linked community, a domain, and stewardship setup.' }
+          { title: 'Setup wizard',
+            description: 'Session follow-up ("Phase 5: Billing entry-point wiring", previously scoped but never built): the standalone provisioning form this screenshot used to show has been removed. CommunityBillingsController#provision_platform is now purely an entitlement pre-check + kickoff redirect — it builds a draft Platform linked to the paying community via a new provisioning_community_id column, then redirects here. Name, host URL, time zone, and visibility are now collected by the wizard\'s own platform_identity step instead of a duplicate billing-side form, and the wizard\'s steward_account step (which the old form never had at all) collects steward info that used to require a separate manual step after provisioning.' },
+          { title: 'Locale',
+            description: 'Unchanged from the staff-facing wizard entry point — see new_platform_setup_welcome for the full wizard walkthrough.' },
+          { title: 'Next',
+            description: 'The entitlement check already happened once, at this kickoff point, before the redirect — the wizard itself does not re-check billing status per step.' }
         ],
-        accessibility_notes: 'The form uses labeled fields, a native select for visibility, and a stable form ID so screenshots and future accessibility checks remain deterministic.'
+        accessibility_notes: 'Same wizard UI as new_platform_setup_welcome: progress nav uses aria-current="step", locale select has an aria-describedby help text.'
       }
     ) do
       capybara_login_as_platform_manager
       visit better_together.provision_platform_community_billing_path(community, locale: I18n.default_locale)
-      expect(page).to have_css('#community-platform-provision-form')
-      expect(page).to have_text('What happens next')
+      expect(page).to have_css('#new-platform-setup-progress')
+      draft = BetterTogether::Platform.order(:created_at).last
+      expect(draft.provisioning_community).to eq(community)
     end
   end
 

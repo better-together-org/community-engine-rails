@@ -1,116 +1,116 @@
 {
   "name": "pr_1581_provision_hosted_platform",
   "device": "mobile",
-  "url": "/en/c/harbour-voices-9feece8c/billing/provision_platform",
-  "title": "Provision Hosted Platform | Harbour Voices | Test Host Community",
+  "url": "/en/w/new_platform_setup/new-platform-37a2d98a04fe/welcome",
+  "title": "Let&#39;s Set Up a New Platform | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#community-platform-provision-form",
-      "title": "Provision form",
+      "selector": "#new-platform-setup-progress",
+      "title": "Setup wizard",
       "bullets": [
-        "Collects the name, host URL, time zone, and visibility for the new hosted platform.",
-        "Only appears when the community has an active hosted entitlement."
+        "This is where the billing entry point now lands, instead of a separate provisioning form.",
+        "Same six-step wizard used by the staff-facing \"Provision New Platform\" entry point on the platforms index."
       ],
       "target": {
-        "x": 29.0,
-        "y": 331.390625,
-        "width": 427.0,
-        "height": 507.0,
-        "right": 456.0,
-        "bottom": 838.390625,
-        "center_x": 242.5,
-        "center_y": 584.890625
+        "x": 12.0,
+        "y": 114.0,
+        "width": 476.0,
+        "height": 66.0,
+        "right": 488.0,
+        "bottom": 180.0,
+        "center_x": 250.0,
+        "center_y": 147.0
       },
       "avoid": {
-        "x": 29.0,
-        "y": 331.390625,
-        "width": 427.0,
-        "height": 507.0,
-        "right": 456.0,
-        "bottom": 838.390625,
-        "center_x": 242.5,
-        "center_y": 584.890625
+        "x": 12.0,
+        "y": 114.0,
+        "width": 476.0,
+        "height": 66.0,
+        "right": 488.0,
+        "bottom": 180.0,
+        "center_x": 250.0,
+        "center_y": 147.0
       },
       "placement": {
         "side": "below",
-        "x": 107.5,
-        "y": 858.39,
+        "x": 115.0,
+        "y": 200.0,
         "width": 270.0,
-        "height": 314,
-        "score": 422.609375
+        "height": 392,
+        "score": 1081.0
       }
     },
     {
-      "selector": "#hosted-entitlement-card",
-      "title": "Eligibility checkpoint",
+      "selector": "#new_platform_setup_locale",
+      "title": "Locale",
       "bullets": [
-        "Reminds reviewers why this community can provision a platform now.",
-        "Links platform creation back to the subscribed hosted plan."
+        "Sets the locale for the rest of the wizard and the new platform itself."
       ],
       "target": {
         "x": 12.0,
-        "y": 855.390625,
-        "width": 461.0,
-        "height": 253.0,
-        "right": 473.0,
-        "bottom": 1108.390625,
-        "center_x": 242.5,
-        "center_y": 981.890625
+        "y": 576.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 614.546875,
+        "center_x": 250.0,
+        "center_y": 595.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 855.390625,
-        "width": 461.0,
-        "height": 253.0,
-        "right": 473.0,
-        "bottom": 1108.390625,
-        "center_x": 242.5,
-        "center_y": 981.890625
+        "y": 576.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 614.546875,
+        "center_x": 250.0,
+        "center_y": 595.546875
       },
       "placement": {
-        "side": "floating",
-        "x": 24.0,
-        "y": 917,
+        "side": "below",
+        "x": 115.0,
+        "y": 634.55,
         "width": 270.0,
-        "height": 320
+        "height": 184,
+        "score": 646.453125
       }
     },
     {
-      "selector": "#provision_platform_next_steps_community_ab6421d7-95fe-4b95-b702-3fcffb5624ef",
-      "title": "What happens next",
+      "selector": "#new-platform-setup-welcome-submit-btn",
+      "title": "Next",
       "bullets": [
-        "Explains the plain-language outcome of provisioning.",
-        "Helps non-technical reviewers understand the workflow without reading service code."
+        "Advances to platform_identity, where the real name/host URL/visibility are collected."
       ],
       "target": {
         "x": 12.0,
-        "y": 1132.390625,
-        "width": 461.0,
-        "height": 128.609375,
-        "right": 473.0,
-        "bottom": 1261.0,
-        "center_x": 242.5,
-        "center_y": 1196.6953125
+        "y": 654.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 692.546875,
+        "center_x": 250.0,
+        "center_y": 673.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 1132.390625,
-        "width": 461.0,
-        "height": 128.609375,
-        "right": 473.0,
-        "bottom": 1261.0,
-        "center_x": 242.5,
-        "center_y": 1196.6953125
+        "y": 654.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 692.546875,
+        "center_x": 250.0,
+        "center_y": 673.546875
       },
       "placement": {
         "side": "floating",
-        "x": 24.0,
-        "y": 897,
+        "x": 24,
+        "y": 850,
         "width": 270.0,
-        "height": 340
+        "height": 236,
+        "score": 0
       }
     }
   ]
