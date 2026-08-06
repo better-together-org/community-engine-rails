@@ -1,8 +1,38 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+  class CommunityPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation, Metrics/ClassLength
     include SelfServicePublishablePolicy
+
+    # Permission identifiers that satisfy #update? at the record level (mirrors
+    # can_manage_community? + the direct update_community check below). Kept as a
+    # constant so .manageable_community_ids can express the same rule as one SQL
+    # query instead of N per-record permitted_to? calls.
+    UPDATE_PERMISSION_IDENTIFIERS = %w[manage_community_settings manage_community_members update_community].freeze
+
+    class << self
+      # Batched equivalent of calling `policy(community).update?` once per candidate
+      # community — avoids the N+1 query pattern of doing that in a loop. Must be kept
+      # in sync by hand with #update?/#can_manage_community? below; this RBAC system
+      # has no single source of truth that generates both the Ruby and SQL forms.
+      def manageable_community_ids(agent, community_ids)
+        community_ids = Array(community_ids)
+        return [] if agent.blank? || community_ids.empty?
+        return community_ids if platform_manager_agent?(agent)
+
+        BetterTogether::PersonCommunityMembership
+          .active
+          .where(member: agent, joinable_id: community_ids)
+          .joins(role: :resource_permissions)
+          .where(better_together_resource_permissions: { identifier: UPDATE_PERMISSION_IDENTIFIERS })
+          .distinct
+          .pluck(:joinable_id)
+      end
+
+      def platform_manager_agent?(agent)
+        agent.permitted_to?('manage_platform_settings') || agent.permitted_to?('manage_platform')
+      end
+    end
 
     def index?
       true # Allow all users to view community index (scope filters appropriately)

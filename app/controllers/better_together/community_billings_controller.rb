@@ -352,11 +352,17 @@ module BetterTogether
     # Communities the current user is authorized to bill as a sponsor for this community's
     # subscription — mirrors the `policy(owner).update?` gate `portal_billable_owner` already
     # applies, so a person can't select or checkout as a community they don't steward just
-    # because it happens to be visible to them.
+    # because it happens to be visible to them. Uses a single batched query
+    # (CommunityPolicy.manageable_community_ids) instead of running policy(candidate).update?
+    # per candidate, which was an N+1 (each check issues up to 3 permission-scoped queries).
     def stewarded_sponsoring_communities
-      @stewarded_sponsoring_communities ||= policy_scope(BetterTogether::Community)
-                                            .where.not(id: @community.id)
-                                            .select { |candidate| policy(candidate).update? }
+      @stewarded_sponsoring_communities ||= begin
+        candidates = policy_scope(BetterTogether::Community).where.not(id: @community.id)
+        manageable_ids = BetterTogether::CommunityPolicy.manageable_community_ids(
+          current_user&.person, candidates.select(:id)
+        )
+        candidates.where(id: manageable_ids).to_a
+      end
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity

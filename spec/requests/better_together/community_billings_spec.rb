@@ -392,6 +392,60 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         anything
       )
     end
+
+    it 'permits community-sponsored checkout for a non-platform-manager community organizer' do
+      organizer_user = find_or_create_test_user("sponsor-organizer-#{SecureRandom.hex(4)}@example.test",
+                                                'SecureTest123!@#', :user)
+      sponsor_community = create(:better_together_community, name: 'Organizer-Led Sponsor')
+      # Must manage @community (the billing page's own subject) to pass authorize_community,
+      # AND manage sponsor_community to be eligible as a billable owner for it.
+      make_community_organizer(organizer_user, community)
+      make_community_organizer(organizer_user, sponsor_community)
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/organizer-session')
+
+      Pay::Stripe::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_organizer_sponsor_checkout')
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      sign_in organizer_user
+      post better_together.checkout_community_billing_path(community, locale:),
+           params: {
+             billing_plan_id: billing_plan.identifier,
+             checkout_as: 'community',
+             billable_owner_community_id: sponsor_community.slug
+           }
+
+      expect(response).to redirect_to('https://checkout.stripe.test/organizer-session')
+      expect(Stripe::Checkout::Session).to have_received(:create).with(
+        hash_including(client_reference_id: sponsor_community.id),
+        anything
+      )
+    end
+
+    it 'falls back to the beneficiary community when the requester does not steward the requested sponsor' do
+      limited_user = find_or_create_test_user("no-sponsor-access-#{SecureRandom.hex(4)}@example.test",
+                                              'SecureTest123!@#', :user)
+      sponsor_community = create(:better_together_community, name: 'Not My Community')
+      # Manages @community (passes authorize_community) but has no relationship at all to
+      # sponsor_community, so it must not be selectable as billable owner.
+      make_community_organizer(limited_user, community)
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/fallback-session')
+
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_fallback_checkout')
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      sign_in limited_user
+      post better_together.checkout_community_billing_path(community, locale:),
+           params: {
+             billing_plan_id: billing_plan.identifier,
+             checkout_as: 'community',
+             billable_owner_community_id: sponsor_community.slug
+           }
+
+      expect(Stripe::Checkout::Session).to have_received(:create).with(
+        hash_including(client_reference_id: community.id),
+        anything
+      )
+    end
   end
 
   describe 'POST /:locale/c/:community_id/billing/portal' do
