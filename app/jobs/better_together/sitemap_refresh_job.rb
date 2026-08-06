@@ -44,10 +44,9 @@ module BetterTogether
     end
 
     def perform
-      require 'sitemap_generator'
-      SitemapGenerator::Interpreter.run(
-        config_file: Rails.root.join('config/sitemap.rb').to_s
-      )
+      Rails.application.load_tasks unless Rake::Task.task_defined?('sitemap:refresh')
+      Rake::Task['sitemap:refresh'].invoke
+      Rake::Task['sitemap:refresh'].reenable
     end
   end
 end
