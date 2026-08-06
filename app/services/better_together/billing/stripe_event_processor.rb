@@ -234,8 +234,14 @@ module BetterTogether
         )
       end
 
+      # For account.application.deauthorized (the only event type routed through this
+      # method today), event.data.object is the Stripe Application object (id "ca_...")
+      # and event.account is the connected Account id ("acct_..."), which is what
+      # MerchantAccount#external_account_id/Pay::Merchant#processor_id actually store.
+      # event.account must take precedence, or disconnects silently no-op. If a future
+      # event type is routed through here, re-check whether this precedence still holds.
       def merchant_account_id_from(event)
-        event.data.object.try(:id).presence || event.try(:account).presence
+        event.try(:account).presence || event.data.object.try(:id).presence
       end
 
       def merchant_owner_for_event(event)

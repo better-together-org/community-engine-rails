@@ -150,7 +150,13 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       end.new(
         id: 'evt_acct_deauth_123',
         type: 'account.application.deauthorized',
-        data: Struct.new(:object, keyword_init: true).new(object: Struct.new(:id, keyword_init: true).new(id: nil)),
+        # data.object here is the Stripe Application object, not the connected Account —
+        # its id ('ca_...') must NOT be used for the merchant-account lookup. Only
+        # event.account ('acct_...') identifies the disconnected account. A nil
+        # data.object.id fixture would mask a precedence bug by forcing the fallback path.
+        data: Struct.new(:object, keyword_init: true).new(
+          object: Struct.new(:id, keyword_init: true).new(id: 'ca_application_789')
+        ),
         payload: { id: 'evt_acct_deauth_123', type: 'account.application.deauthorized' },
         account: 'acct_connect_456'
       )
