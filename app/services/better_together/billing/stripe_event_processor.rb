@@ -7,8 +7,20 @@ module BetterTogether
     class StripeEventProcessor
       MerchantSyncResult = Struct.new(:merchant_account, keyword_init: true)
 
+      # Stripe does not guarantee webhook delivery order (e.g. checkout.session.completed
+      # can arrive before customer.subscription.created), so a sync can transiently fail
+      # to find the just-created Pay::Subscription. The existing hourly
+      # DeadLetterStaleBillingEventsJob sweep already recovers these eventually (see
+      # Billing::Event.problematic/eligible_for_dead_lettering), but that can take up to
+      # Billing::Event::UNRESOLVED_ALERT_WINDOW (6h). Scheduling one short-delay retry on
+      # the *first* occurrence lets most cases self-heal in seconds instead — the sweep
+      # still owns anything that doesn't resolve after this single fast attempt.
+      FAST_RETRY_DELAY = 30.seconds
+      FAST_RETRY_REASONS = %i[pay_subscription_not_found].freeze
+
       def call(event)
         sync_result = sync_result_for(event)
+        schedule_fast_retry_if_needed(event, sync_result)
         billable_owner = billable_owner_for(sync_result, event)
         persist_success(event, sync_result, billable_owner)
       rescue StandardError => e
@@ -17,6 +29,13 @@ module BetterTogether
       end
 
       private
+
+      def schedule_fast_retry_if_needed(event, sync_result)
+        return unless FAST_RETRY_REASONS.include?(sync_result.try(:reason))
+        return unless billing_event_for(event).attempt_count.to_i.zero?
+
+        BetterTogether::Billing::ProcessStripeEventJob.set(wait: FAST_RETRY_DELAY).perform_later(event.to_hash)
+      end
 
       def sync_result_for(event)
         return sync_subscription_event(event) if subscription_event?(event)

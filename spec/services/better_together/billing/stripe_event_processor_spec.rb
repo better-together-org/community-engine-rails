@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::StripeEventProcessor do
+  include ActiveJob::TestHelper
+
   describe '#call' do
     let(:community) { create(:better_together_community) }
     let!(:billing_plan) do
@@ -289,6 +291,59 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       expect(billing_event.billable_owner).to eq(community)
       expect(billing_subscription.sync_source).to eq('stripe_financial_event')
       expect(billing_subscription.latest_processor_event_id).to eq('evt_invoice_failed_123')
+    end
+
+    context 'webhook-ordering fast retry (pay_subscription_not_found)' do
+      let(:checkout_event) do
+        data = Struct.new(:object, keyword_init: true).new(object: Struct.new(:id, keyword_init: true).new(id: 'cs_test_123'))
+        payload = { id: 'evt_checkout_not_found_123', type: 'checkout.session.completed' }
+
+        Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+          def to_hash
+            payload
+          end
+        end.new(id: 'evt_checkout_not_found_123', type: 'checkout.session.completed', data:, payload:)
+      end
+      let(:sync_reason) { :pay_subscription_not_found }
+
+      before do
+        result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(synced: false, reason: sync_reason)
+        checkout_sync = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync)
+        allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(checkout_sync)
+        allow(checkout_sync).to receive(:call).and_return(result)
+      end
+
+      it 'schedules a short-delay retry on the first occurrence' do
+        described_class.new.call(checkout_event)
+
+        expect(BetterTogether::Billing::ProcessStripeEventJob).to have_been_enqueued
+          .with(checkout_event.to_hash)
+          .at(a_value_within(2.seconds).of(described_class::FAST_RETRY_DELAY.from_now))
+
+        billing_event = BetterTogether::Billing::Event.find_by!(processor: 'stripe', event_id: checkout_event.id)
+        expect(billing_event.processing_status).to eq('ignored')
+      end
+
+      it 'does not schedule a second retry once the event has already been attempted once' do
+        # First call persists attempt_count: 1 and (per the it above) enqueues the retry.
+        described_class.new.call(checkout_event)
+        clear_enqueued_jobs
+
+        # Simulate the enqueued retry job actually running the processor again.
+        described_class.new.call(checkout_event)
+
+        expect(BetterTogether::Billing::ProcessStripeEventJob).not_to have_been_enqueued
+      end
+
+      context 'when the reason is something other than pay_subscription_not_found' do
+        let(:sync_reason) { :billing_plan_not_found }
+
+        it 'does not schedule a retry' do
+          described_class.new.call(checkout_event)
+
+          expect(BetterTogether::Billing::ProcessStripeEventJob).not_to have_been_enqueued
+        end
+      end
     end
   end
 end
