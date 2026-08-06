@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_05_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -251,7 +251,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "community_id"
     t.uuid "billing_subscription_id"
     t.string "processor", default: "stripe", null: false
     t.string "event_type", null: false
@@ -277,7 +276,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
     t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_events_beneficiary"
     t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_events_owner"
     t.index ["billing_subscription_id"], name: "idx_bt_billing_events_subscription"
-    t.index ["community_id"], name: "idx_bt_billing_events_community"
     t.index ["dead_lettered_at"], name: "idx_bt_billing_events_dead_lettered_at"
     t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
     t.index ["last_replay_requested_by_type", "last_replay_requested_by_id"], name: "idx_bt_billing_events_last_replay_requested_by"
@@ -2938,7 +2936,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_11_000000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
-  add_foreign_key "better_together_billing_events", "better_together_communities", column: "community_id", on_delete: :nullify
   add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict
   add_foreign_key "better_together_billing_subscriptions", "pay_subscriptions", on_delete: :cascade
   add_foreign_key "better_together_c3_balance_locks", "better_together_c3_balances", column: "balance_id", on_delete: :cascade
