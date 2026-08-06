@@ -50,7 +50,10 @@ RSpec.describe BetterTogether::Billing::PlansController do
         rows = document.css('tbody tr')
         counts_by_identifier = rows.to_h do |row|
           cells = row.css('td')
-          [cells[0].text.strip, cells[5].text.strip]
+          # Column order: identifier, name, interval, price, active, pricing_tier,
+          # active subscribers, actions — subscribers is cells[6], not cells[5]
+          # (pricing_tier was inserted between active and subscribers by df5227763).
+          [cells[0].text.strip, cells[6].text.strip]
         end
 
         expect(counts_by_identifier[billing_plan.identifier]).to eq('1')
