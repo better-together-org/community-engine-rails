@@ -23,6 +23,8 @@ module BetterTogether
         end
 
         describe '#generate!' do
+          let!(:plan) { create('better_together/billing/plan') }
+
           it 'builds report data and saves the record' do
             expect { report.generate! }.to change(described_class, :count).by(1)
             expect(report.report_data).to be_present
