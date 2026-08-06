@@ -23,12 +23,17 @@
           aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
           data-locale="<%= locale %>"
           data-better_together--translation-target="tabContent">
-        <%= required_label form, locale_attribute, class: 'form-label', locale: locale %>
+        <%= required_label form, locale_attribute, class: 'form-label', locale: locale, for: "#{dom_id(model)}-#{locale_attribute}" %>
         <%=
           form.rich_text_area locale_attribute,
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
             'data-better_together-translation-target' => 'trix',
-            id: "#{dom_id(model)}-#{locale_attribute}"
+            id: "#{dom_id(model)}-#{locale_attribute}",
+            # trix-editor sets an explicit role="textbox", which axe's
+            # aria-input-field-name rule requires an ARIA-based accessible name
+            # for (a <label for> relationship alone isn't honored for elements
+            # with an explicit role overriding native semantics).
+            'aria-label': model.class.human_attribute_name(locale_attribute)
         %>
         <% if model.errors[locale_attribute].any? %>
           <div class="invalid-feedback">

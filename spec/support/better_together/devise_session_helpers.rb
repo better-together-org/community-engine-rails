@@ -140,7 +140,7 @@ module BetterTogether # :nodoc:
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name
       fill_in 'user[person_attributes][identifier]', with: person.identifier
-      fill_in 'user[person_attributes][description]', with: person.description
+      fill_in_trix_field('user_person_attributes_description', with: person.description)
 
       # Check agreement checkboxes. The view renders checkbox ids/names as
       # `terms_of_service_agreement` and `privacy_policy_agreement`. Older

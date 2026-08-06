@@ -120,7 +120,7 @@ RSpec.describe BetterTogether::Geography::Settlement do
       settlement.description = '<b>Coastal</b> city with rich formatting'
       settlement.save!
 
-      expect(settlement.community.description).to eq('Coastal city with rich formatting')
+      expect(settlement.community.description.to_plain_text).to eq('Coastal city with rich formatting')
     end
   end
 end
