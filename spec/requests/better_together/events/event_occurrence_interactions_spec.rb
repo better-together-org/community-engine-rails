@@ -2,11 +2,12 @@
 
 require 'rails_helper'
 
-# RED-phase acceptance criteria for per-occurrence RSVP/override request flows
+# Acceptance criteria for per-occurrence RSVP/comment/override request flows
 # (docs/implementation/current_plans/event_occurrences_acceptance_criteria.md,
-# Phase 1 AC-1.4/AC-1.5 and Phase 2 AC-2.1/AC-2.4-2.6). None of these routes
-# or controller actions exist yet — every example is expected to fail until
-# the corresponding part of the plan lands.
+# Phase 1 AC-1.4/AC-1.5 and Phase 2 AC-2.1/AC-2.4-2.6). Phase 1 (RSVP,
+# comments) is implemented and asserted directly; Phase 2 (organizer
+# overrides) is still `pending` — EventOccurrencesController#update is not
+# yet implemented.
 RSpec.describe 'Per-occurrence event interactions' do
   let(:locale) { I18n.default_locale }
   let(:organizer) { create(:better_together_user, :confirmed) }
@@ -25,13 +26,11 @@ RSpec.describe 'Per-occurrence event interactions' do
     before { login(attendee.email, 'SecureTest123!@#') }
 
     it 'confirms which session date the RSVP applies to, and does not affect other sessions' do
-      pending 'AC-1.2/AC-1.4: per-occurrence RSVP endpoint not yet implemented'
+      post better_together.rsvp_going_event_occurrence_path(event, occurrence_date, locale:)
 
-      post "/events/#{event.to_param}/occurrences/#{occurrence_date.iso8601}/rsvp_going",
-           params: { locale: }
-
-      expect(response).to have_http_status(:success).or have_http_status(:redirect)
-      expect_html_content(occurrence_date.to_s) # confirmation names the specific date, not just the series
+      expect(response).to redirect_to(better_together.event_path(event, locale:))
+      # confirmation names the specific date, not just the series
+      expect(flash[:notice]).to include(I18n.l(occurrence_date, format: :long))
       other_attendance = BetterTogether::EventAttendance.find_by(
         event:, person: attendee.person,
         event_occurrence: BetterTogether::EventOccurrence.find_by(event:, occurrence_date: other_occurrence_date)
@@ -41,13 +40,22 @@ RSpec.describe 'Per-occurrence event interactions' do
   end
 
   describe 'attendee comments on one specific session (AC-1.5)' do
-    before { login(attendee.email, 'SecureTest123!@#') }
+    before do
+      login(attendee.email, 'SecureTest123!@#')
+      # Comments go through the same check_content_publishing_agreement
+      # gate as event creation — without accepting it, the action redirects
+      # before ever reaching the comment logic.
+      agreement = BetterTogether::Agreement.find_or_create_by!(
+        identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER
+      )
+      BetterTogether::AgreementParticipant.find_or_create_by!(participant: attendee.person, agreement:) do |participant|
+        participant.accepted_at = Time.current
+      end
+    end
 
     it 'attaches the comment to that session only, not the parent event or other sessions' do
-      pending 'AC-1.5: per-occurrence comment endpoint not yet implemented'
-
-      post "/events/#{event.to_param}/occurrences/#{occurrence_date.iso8601}/comments",
-           params: { locale:, comment: { content: 'Looking forward to this one!' } }
+      post better_together.comments_event_occurrence_path(event, occurrence_date, locale:),
+           params: { comment: { content: 'Looking forward to this one!' } }
 
       occurrence = BetterTogether::EventOccurrence.find_by(event:, occurrence_date:)
       expect(occurrence.comments.reload).not_to be_empty
@@ -62,8 +70,8 @@ RSpec.describe 'Per-occurrence event interactions' do
       pending 'AC-2.1: organizer per-occurrence override endpoint not yet implemented'
 
       new_time = recurrence.occurrences_between(Time.current, 1.year.from_now).first + 2.hours
-      patch "/events/#{event.to_param}/occurrences/#{occurrence_date.iso8601}",
-            params: { locale:, event_occurrence: { starts_at: new_time } }
+      patch better_together.event_occurrence_path(event, occurrence_date, locale:),
+            params: { event_occurrence: { starts_at: new_time } }
 
       occurrence = BetterTogether::EventOccurrence.find_by(event:, occurrence_date:)
       expect(occurrence.effective_starts_at).to eq(new_time)
@@ -77,8 +85,8 @@ RSpec.describe 'Per-occurrence event interactions' do
     it 'denies the override attempt' do
       pending 'AC-2.3: EventOccurrencePolicy denial not yet wired into the controller'
 
-      patch "/events/#{event.to_param}/occurrences/#{occurrence_date.iso8601}",
-            params: { locale:, event_occurrence: { cancelled: true } }
+      patch better_together.event_occurrence_path(event, occurrence_date, locale:),
+            params: { event_occurrence: { cancelled: true } }
 
       expect(response).to have_http_status(:forbidden).or have_http_status(:redirect)
     end
@@ -95,8 +103,8 @@ RSpec.describe 'Per-occurrence event interactions' do
         event:, event_occurrence: occurrence, person: attendee.person, status: 'going'
       )
 
-      patch "/events/#{event.to_param}/occurrences/#{occurrence_date.iso8601}",
-            params: { locale:, event_occurrence: { cancelled: true } }
+      patch better_together.event_occurrence_path(event, occurrence_date, locale:),
+            params: { event_occurrence: { cancelled: true } }
 
       expect(occurrence.reload).to be_cancelled
       expect(BetterTogether::EventAttendance.exists?(attendee_attendance.id)).to be true

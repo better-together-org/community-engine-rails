@@ -37,5 +37,16 @@ module BetterTogether
     def destroy?
       update?
     end
+
+    # An occurrence's visibility is entirely inherited from its parent
+    # Event's visibility — it has no privacy/status of its own. Overrides
+    # ApplicationPolicy::Scope's default (which assumes the Privacy concern,
+    # not present on EventOccurrence) rather than calling super.
+    class Scope < ApplicationPolicy::Scope
+      def resolve
+        visible_event_ids = Pundit.policy_scope!(user, ::BetterTogether::Event).select(:id)
+        scope.where(event_id: visible_event_ids)
+      end
+    end
   end
 end

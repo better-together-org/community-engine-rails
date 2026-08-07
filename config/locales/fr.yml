@@ -1714,6 +1714,11 @@ fr:
         one: 'Une erreur est survenue lors de l''enregistrement de %{resource} :'
         other: 'Des %{count} erreurs sont survenues lors de l''enregistrement de %{resource}
           :'
+      occurrences:
+        comment_saved: Commentaire enregistré
+        invalid_date: Cette date n'est pas valide.
+        rsvp_cancelled_for_date: RSVP pour le %{date} annulée
+        rsvp_saved_for_date: RSVP pour le %{date} enregistrée
       odd: doit être impair
       other_than: doit être différent de %{count}
       placeholders:

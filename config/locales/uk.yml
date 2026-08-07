@@ -1703,6 +1703,11 @@ uk:
         many: 'Виникло %{count} помилок під час збереження %{resource}:'
         one: 'Виникла помилка під час збереження %{resource}:'
         other: 'Виникло %{count} помилок під час збереження %{resource}:'
+      occurrences:
+        comment_saved: Коментар збережено
+        invalid_date: Ця дата недійсна.
+        rsvp_cancelled_for_date: RSVP на %{date} скасовано
+        rsvp_saved_for_date: RSVP на %{date} збережено
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       placeholders:

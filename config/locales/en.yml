@@ -1694,6 +1694,11 @@ en:
       not_saved:
         one: 'There was an error while saving %{resource}:'
         other: 'There were %{count} errors while saving %{resource}:'
+      occurrences:
+        comment_saved: Comment saved
+        invalid_date: That date isn't valid.
+        rsvp_cancelled_for_date: RSVP for %{date} cancelled
+        rsvp_saved_for_date: RSVP for %{date} saved
       odd: must be odd
       other_than: must be other than %{count}
       placeholders:

@@ -1707,6 +1707,11 @@ es:
       not_saved:
         one: 'Ocurrió un error al tratar de guardar %{resource}:'
         other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
+      occurrences:
+        comment_saved: Comentario guardado
+        invalid_date: Esa fecha no es válida.
+        rsvp_cancelled_for_date: RSVP para el %{date} cancelada
+        rsvp_saved_for_date: RSVP para el %{date} guardada
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       placeholders:
