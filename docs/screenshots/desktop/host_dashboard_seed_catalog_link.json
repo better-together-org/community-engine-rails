@@ -1,0 +1,49 @@
+{
+  "name": "host_dashboard_seed_catalog_link",
+  "device": "desktop",
+  "url": "/en/host",
+  "title": "Host Dashboard | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog",
+  "flow": "host_dashboard_geography",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_spec.rb",
+  "callouts": [
+    {
+      "selector": "#seed-catalog-link",
+      "title": "Seed Catalog link",
+      "bullets": [
+        "New in this PR -- the geography reference-data summary now links to the on-demand seed catalog.",
+        "Previously the only way to install this data was a rake task, with no UI at all."
+      ],
+      "target": {
+        "x": 1237.28125,
+        "y": 1427.828125,
+        "width": 111.21875,
+        "height": 31.0,
+        "right": 1348.5,
+        "bottom": 1458.828125,
+        "center_x": 1292.890625,
+        "center_y": 1443.328125
+      },
+      "avoid": {
+        "x": 1237.28125,
+        "y": 1427.828125,
+        "width": 111.21875,
+        "height": 31.0,
+        "right": 1348.5,
+        "bottom": 1458.828125,
+        "center_x": 1292.890625,
+        "center_y": 1443.328125
+      },
+      "placement": {
+        "side": "above",
+        "x": 1036,
+        "y": 1145.83,
+        "width": 380,
+        "height": 262,
+        "score": 1427.828125
+      }
+    }
+  ]
+}

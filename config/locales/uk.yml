@@ -5479,6 +5479,24 @@ uk:
   search:
     button: Пошук
     placeholder: Пошук...
+  seed_catalog:
+    index:
+      actions: Дії
+      category: Категорія
+      description: Встановлюйте перевірені довідкові дані на вимогу — по одній категорії
+        або всі одразу.
+      not_planted: Не встановлено
+      plant: Встановити
+      plant_all: Встановити все
+      plant_category: Встановити %{category}
+      planted: Встановлено
+      status: Статус
+      title: Каталог початкових даних
+    plant:
+      success: "%{category}: встановлено."
+      unknown_category: Невідома категорія.
+    plant_all:
+      success: "%{catalog}: повністю встановлено."
   seeds:
     actions:
       destroy: Видалити seed

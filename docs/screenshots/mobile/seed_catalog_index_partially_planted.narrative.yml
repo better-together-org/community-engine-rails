@@ -1,0 +1,21 @@
+---
+title: Seed Catalog -- Partially Planted
+audience:
+- platform_manager
+- developer
+journey_step: After planting Continents, I can see exactly which categories are installed
+  and which still need attention, before deciding whether to plant the rest.
+callouts:
+- :id: planted_badge
+  :title: Continents planted
+  :description: GeographyCatalog.plant checks planted? before invoking the builder
+    method, so a raw repeat POST (bypassing the disabled button) cannot hit a duplicate-identifier
+    error.
+- :id: pending_badge
+  :title: Countries not yet planted
+  :description: Each category is planted independently via its own button, or all
+    at once via Plant All.
+accessibility_notes: Status changes are reflected in both badge color and text, not
+  color alone.
+slug: seed_catalog_index_partially_planted
+device: mobile

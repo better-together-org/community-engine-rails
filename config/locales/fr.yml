@@ -5486,6 +5486,24 @@ fr:
   search:
     button: Rechercher
     placeholder: Rechercher...
+  seed_catalog:
+    index:
+      actions: Actions
+      category: Catégorie
+      description: Installez des données de référence organisées à la demande, une
+        catégorie à la fois ou toutes en même temps.
+      not_planted: Non planté
+      plant: Planter
+      plant_all: Tout planter
+      plant_category: Planter %{category}
+      planted: Planté
+      status: Statut
+      title: Catalogue de semences
+    plant:
+      success: "%{category} planté."
+      unknown_category: Catégorie inconnue.
+    plant_all:
+      success: "%{catalog} entièrement planté."
   seeds:
     actions:
       destroy: Supprimer la graine

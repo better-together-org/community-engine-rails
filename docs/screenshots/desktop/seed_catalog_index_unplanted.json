@@ -1,0 +1,121 @@
+{
+  "name": "seed_catalog_index_unplanted",
+  "device": "desktop",
+  "url": "/en/host/seeds/catalog",
+  "title": "Community Engine",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog",
+  "flow": "seed_catalog_index",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plant-all-geography-btn",
+      "title": "Plant All",
+      "bullets": [
+        "Installs every category in one action -- equivalent to GeographyBuilder.build_if_missing.",
+        "Idempotent: safe to click even if some categories are already planted."
+      ],
+      "target": {
+        "x": 1259.765625,
+        "y": 214.0,
+        "width": 91.234375,
+        "height": 38.0,
+        "right": 1351.0,
+        "bottom": 252.0,
+        "center_x": 1305.3828125,
+        "center_y": 233.0
+      },
+      "avoid": {
+        "x": 1259.765625,
+        "y": 214.0,
+        "width": 91.234375,
+        "height": 38.0,
+        "right": 1351.0,
+        "bottom": 252.0,
+        "center_x": 1305.3828125,
+        "center_y": 233.0
+      },
+      "placement": {
+        "side": "left",
+        "x": 859.77,
+        "y": 115.0,
+        "width": 380,
+        "height": 236,
+        "score": 1259.765625
+      }
+    },
+    {
+      "selector": ".continents-status-badge",
+      "title": "Category status",
+      "bullets": [
+        "Grey \"Not planted\" before the category has any records.",
+        "Coarse signal: checks for at least one record, not full seed-source coverage."
+      ],
+      "target": {
+        "x": 751.53125,
+        "y": 317.8125,
+        "width": 95.609375,
+        "height": 20.375,
+        "right": 847.140625,
+        "bottom": 338.1875,
+        "center_x": 799.3359375,
+        "center_y": 328.0
+      },
+      "avoid": {
+        "x": 751.53125,
+        "y": 317.8125,
+        "width": 95.609375,
+        "height": 20.375,
+        "right": 847.140625,
+        "bottom": 338.1875,
+        "center_x": 799.3359375,
+        "center_y": 328.0
+      },
+      "placement": {
+        "side": "left",
+        "x": 351.53,
+        "y": 223.0,
+        "width": 380,
+        "height": 210,
+        "score": 751.53125
+      }
+    },
+    {
+      "selector": "#plant-continents-btn",
+      "title": "Plant one category",
+      "bullets": [
+        "Installs just this category via GeographyBuilder's existing seed_continents/seed_countries/etc.",
+        "Packet-backed (lib/better_together/geography/seed_coordinates.yml): records land already geocoded, with zero live Nominatim calls in the common case."
+      ],
+      "target": {
+        "x": 1305.71875,
+        "y": 315.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 346.0,
+        "center_x": 1332.359375,
+        "center_y": 330.5
+      },
+      "avoid": {
+        "x": 1305.71875,
+        "y": 315.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 346.0,
+        "center_x": 1332.359375,
+        "center_y": 330.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 366.0,
+        "width": 380,
+        "height": 340,
+        "score": 1115.0
+      }
+    }
+  ]
+}

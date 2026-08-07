@@ -5450,6 +5450,24 @@ es:
   search:
     button: Buscar
     placeholder: Buscar...
+  seed_catalog:
+    index:
+      actions: Acciones
+      category: Categoría
+      description: Instale datos de referencia curados a petición, una categoría a
+        la vez o todas a la vez.
+      not_planted: No sembrado
+      plant: Sembrar
+      plant_all: Sembrar todo
+      plant_category: Sembrar %{category}
+      planted: Sembrado
+      status: Estado
+      title: Catálogo de siembra
+    plant:
+      success: "%{category} sembrado."
+      unknown_category: Categoría desconocida.
+    plant_all:
+      success: "%{catalog} sembrado por completo."
   seeds:
     actions:
       destroy: Eliminar semilla
