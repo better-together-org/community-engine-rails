@@ -10,6 +10,7 @@ module BetterTogether
     end
 
     include Author
+    include Billing::Billable
     include Communicator
     include Contactable
     include CreatedRecords
@@ -31,8 +32,6 @@ module BetterTogether
     include ::Storext.model
 
     has_community
-    pay_customer default_payment_processor: :stripe, stripe_attributes: :stripe_customer_attributes
-    pay_merchant
 
     # Set up membership associations for platforms and communities
     member joinable_type: 'platform', member_type: 'person', dependent: :destroy
@@ -104,15 +103,6 @@ module BetterTogether
     has_many :webhook_endpoints,
              class_name: 'BetterTogether::WebhookEndpoint',
              dependent: :destroy
-    has_many :owned_billing_events,
-             as: :billable_owner,
-             class_name: 'BetterTogether::Billing::Event',
-             dependent: :nullify
-    has_many :merchant_accounts,
-             as: :owner,
-             class_name: 'BetterTogether::Billing::MerchantAccount',
-             dependent: :destroy
-
     has_many :oauth_applications,
              class_name: 'BetterTogether::OauthApplication',
              foreign_key: :owner_id,
@@ -272,28 +262,6 @@ module BetterTogether
 
       # Fallback to primary email address from contact details
       email_addresses.find(&:primary_flag)&.email
-    end
-
-    def pay_customer_name
-      name
-    end
-
-    def pay_should_sync_customer?
-      super || saved_change_to_name?
-    end
-
-    def stripe_customer_attributes(pay_customer)
-      {
-        metadata: {
-          bt_billable_owner_type: self.class.name,
-          bt_billable_owner_id: id,
-          bt_beneficiary_type: self.class.name,
-          bt_beneficiary_id: id,
-          bt_person_id: id,
-          bt_person_identifier: identifier,
-          pay_customer_id: pay_customer.id
-        }
-      }
     end
 
     has_one_attached :profile_image
@@ -475,5 +443,11 @@ module BetterTogether
     end
 
     include ::BetterTogether::RemoveableAttachment
+
+    private
+
+    def billing_owner_metadata
+      { bt_person_id: id, bt_person_identifier: identifier }
+    end
   end
 end
