@@ -1,0 +1,31 @@
+%% render.orientation: portrait
+flowchart TD
+  subgraph UI["Seed Catalog index (new)"]
+    direction TB
+    A["Platform manager visits\n/host/seeds/catalog"] --> B["SeedCatalogController#index"]
+    B --> C["Registry.all -> GeographyCatalog"]
+    C --> D["planted? per category\n(Model.exists? -- coarse signal)"]
+  end
+
+  subgraph Plant["Plant one category (new)"]
+    direction TB
+    E["POST catalog/:catalog_key/plant/:category_key"] --> F["SeedCatalogController#plant"]
+    F --> G["GeographyCatalog.plant(category_key)"]
+    G --> H{"planted?(category_key)\nalready true?"}
+    H -- "yes" --> Z["No-op\n(idempotent -- a raw repeat POST\ncan't hit a duplicate-identifier error)"]
+    H -- "no" --> I["without_auto_geocoding { ... }\n(thread-local suppression)"]
+    I --> J["GeographyBuilder.seed_continents /\nseed_countries / seed_provinces /\nseed_regions / seed_settlements"]
+    J --> K["seed_coordinates.yml packet\n(pre-geocoded lat/lng, keyed by identifier)"]
+    K --> L["Records created with coordinates\nalready set -- zero live Nominatim\ncalls in the common case"]
+    L --> M["sync_dependent_joins!\n(country<->continent,\nregion<->settlement)"]
+  end
+
+  subgraph PlantAll["Plant All (new)"]
+    direction TB
+    N["POST catalog/:catalog_key/plant_all"] --> O["SeedCatalogController#plant_all"]
+    O --> P["GeographyCatalog.plant_all"]
+    P --> Q["GeographyBuilder.build_if_missing\n(no-ops if Continent.exists?)"]
+  end
+
+  D --> E
+  D --> N
