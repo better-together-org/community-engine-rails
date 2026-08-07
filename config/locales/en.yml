@@ -1695,8 +1695,10 @@ en:
         one: 'There was an error while saving %{resource}:'
         other: 'There were %{count} errors while saving %{resource}:'
       occurrences:
+        cancelled_badge: Cancelled
         comment_saved: Comment saved
         invalid_date: That date isn't valid.
+        override_saved: Session updated
         rsvp_cancelled_for_date: RSVP for %{date} cancelled
         rsvp_saved_for_date: RSVP for %{date} saved
       odd: must be odd
@@ -4743,6 +4745,7 @@ en:
       posts: Posts
       roles_and_permissions: Roles & Permissions
       safety: Safety
+      sessions: Sessions
     to: To
     'true': true
     undo_clear: Undo Clear

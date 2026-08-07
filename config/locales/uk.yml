@@ -1704,8 +1704,10 @@ uk:
         one: 'Виникла помилка під час збереження %{resource}:'
         other: 'Виникло %{count} помилок під час збереження %{resource}:'
       occurrences:
+        cancelled_badge: Скасовано
         comment_saved: Коментар збережено
         invalid_date: Ця дата недійсна.
+        override_saved: Сесію оновлено
         rsvp_cancelled_for_date: RSVP на %{date} скасовано
         rsvp_saved_for_date: RSVP на %{date} збережено
       odd: має бути непарним
@@ -4835,6 +4837,7 @@ uk:
       posts: Дописи
       roles_and_permissions: Roles & Permissions
       safety: Безпека
+      sessions: Сесії
     to: До
     'true': так
     undo_clear: Скасувати очищення

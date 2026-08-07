@@ -45,6 +45,15 @@ module BetterTogether
       description_override.present? ? description_override : event&.description
     end
 
+    def self.permitted_attributes(id: false, destroy: false)
+      attrs = %i[starts_at ends_at cancelled description_override]
+      attrs << :id if id
+      attrs << :_destroy if destroy
+      attrs + [{
+        location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: true, destroy: true)
+      }]
+    end
+
     private
 
     def computed_starts_at

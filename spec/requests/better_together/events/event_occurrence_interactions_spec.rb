@@ -4,10 +4,8 @@ require 'rails_helper'
 
 # Acceptance criteria for per-occurrence RSVP/comment/override request flows
 # (docs/implementation/current_plans/event_occurrences_acceptance_criteria.md,
-# Phase 1 AC-1.4/AC-1.5 and Phase 2 AC-2.1/AC-2.4-2.6). Phase 1 (RSVP,
-# comments) is implemented and asserted directly; Phase 2 (organizer
-# overrides) is still `pending` — EventOccurrencesController#update is not
-# yet implemented.
+# Phase 1 AC-1.4/AC-1.5 and Phase 2 AC-2.1/AC-2.4-2.6). Both phases are
+# implemented and asserted directly.
 RSpec.describe 'Per-occurrence event interactions' do
   let(:locale) { I18n.default_locale }
   let(:organizer) { create(:better_together_user, :confirmed) }
@@ -67,14 +65,15 @@ RSpec.describe 'Per-occurrence event interactions' do
     before { login(organizer.email, 'SecureTest123!@#') }
 
     it 'updates only that occurrence, leaving the recurrence rule and other sessions untouched' do
-      pending 'AC-2.1: organizer per-occurrence override endpoint not yet implemented'
-
       new_time = recurrence.occurrences_between(Time.current, 1.year.from_now).first + 2.hours
       patch better_together.event_occurrence_path(event, occurrence_date, locale:),
             params: { event_occurrence: { starts_at: new_time } }
 
       occurrence = BetterTogether::EventOccurrence.find_by(event:, occurrence_date:)
-      expect(occurrence.effective_starts_at).to eq(new_time)
+      # be_within, not eq: the request param round-trips new_time through
+      # string encoding (Rack::Test form params), which loses sub-second
+      # precision — a test-encoding artifact, not an app bug.
+      expect(occurrence.effective_starts_at).to be_within(1.second).of(new_time)
       expect(BetterTogether::EventOccurrence.find_by(event:, occurrence_date: other_occurrence_date)).to be_nil
     end
   end
@@ -83,8 +82,6 @@ RSpec.describe 'Per-occurrence event interactions' do
     before { login(attendee.email, 'SecureTest123!@#') }
 
     it 'denies the override attempt' do
-      pending 'AC-2.3: EventOccurrencePolicy denial not yet wired into the controller'
-
       patch better_together.event_occurrence_path(event, occurrence_date, locale:),
             params: { event_occurrence: { cancelled: true } }
 
@@ -96,8 +93,6 @@ RSpec.describe 'Per-occurrence event interactions' do
     before { login(organizer.email, 'SecureTest123!@#') }
 
     it 'does not delete the occurrence row or its associations when cancelled' do
-      pending 'AC-2.4: cancellation preserving history not yet implemented'
-
       occurrence = BetterTogether::EventOccurrence.create!(event:, occurrence_date:)
       attendee_attendance = BetterTogether::EventAttendance.create!(
         event:, event_occurrence: occurrence, person: attendee.person, status: 'going'
@@ -113,8 +108,6 @@ RSpec.describe 'Per-occurrence event interactions' do
 
   describe 'event show page reflects a cancelled/overridden session unambiguously (AC-2.5, AC-2.6)' do
     it 'shows a clear "Cancelled" indicator, not just an absent listing' do
-      pending 'AC-2.6: cancelled-session display not yet implemented'
-
       occurrence = BetterTogether::EventOccurrence.create!(event:, occurrence_date:, cancelled: true)
       get better_together.event_path(event, locale:)
 

@@ -1715,8 +1715,10 @@ fr:
         other: 'Des %{count} erreurs sont survenues lors de l''enregistrement de %{resource}
           :'
       occurrences:
+        cancelled_badge: Annulée
         comment_saved: Commentaire enregistré
         invalid_date: Cette date n'est pas valide.
+        override_saved: Séance mise à jour
         rsvp_cancelled_for_date: RSVP pour le %{date} annulée
         rsvp_saved_for_date: RSVP pour le %{date} enregistrée
       odd: doit être impair
@@ -4853,6 +4855,7 @@ fr:
       posts: Publications
       roles_and_permissions: Roles & Permissions
       safety: Sécurité
+      sessions: Séances
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement

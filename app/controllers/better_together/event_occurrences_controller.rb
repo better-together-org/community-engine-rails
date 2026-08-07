@@ -20,13 +20,20 @@ module BetterTogether
     before_action :check_content_publishing_agreement, only: :comments
 
     # Organizer per-occurrence override (location/time/description/
-    # cancelled) — implemented in Part 2. Placeholder keeps the route
-    # actually dispatching (rather than raising AbstractController::
-    # ActionNotFound) so Part 1's other actions/routes and the Part 2
-    # RED-phase specs fail via ordinary unmet expectations, not a raised
-    # routing exception.
+    # cancelled). Builds (not creates) the occurrence first and authorizes
+    # against that in-memory record before persisting anything — a denied
+    # attempt never creates a row, unlike the RSVP/comment actions where
+    # find_or_create_occurrence_for is correct because those actions are
+    # already gated by an earlier authorize call.
     def update
-      head :not_implemented
+      occurrence = @event.event_occurrences.find_or_initialize_by(occurrence_date: @occurrence_date)
+      authorize occurrence
+
+      if occurrence.update(occurrence_params)
+        redirect_to @event, notice: t('better_together.events.occurrences.override_saved')
+      else
+        redirect_to @event, alert: occurrence.errors.full_messages.to_sentence
+      end
     end
 
     # RSVP actions — mirror EventsController's rsvp_interested/rsvp_going/
@@ -126,6 +133,10 @@ module BetterTogether
 
     def comment_params
       params.require(:comment).permit(:content)
+    end
+
+    def occurrence_params
+      params.require(:event_occurrence).permit(*BetterTogether::EventOccurrence.permitted_attributes)
     end
 
     # Names the specific session date in the confirmation, not just the

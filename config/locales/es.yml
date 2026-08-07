@@ -1708,8 +1708,10 @@ es:
         one: 'Ocurrió un error al tratar de guardar %{resource}:'
         other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
       occurrences:
+        cancelled_badge: Cancelado
         comment_saved: Comentario guardado
         invalid_date: Esa fecha no es válida.
+        override_saved: Sesión actualizada
         rsvp_cancelled_for_date: RSVP para el %{date} cancelada
         rsvp_saved_for_date: RSVP para el %{date} guardada
       odd: debe ser impar
@@ -4818,6 +4820,7 @@ es:
       posts: Publicaciones
       roles_and_permissions: Roles & Permissions
       safety: Seguridad
+      sessions: Sesiones
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
