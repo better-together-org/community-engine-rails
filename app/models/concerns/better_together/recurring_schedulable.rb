@@ -23,26 +23,41 @@ module BetterTogether
       recurrence&.schedule
     end
 
-    # Get occurrences between two dates
+    # Get occurrences between two dates. Override-aware: a date with a
+    # persisted per-occurrence override (EventOccurrence) reflects its
+    # effective values, and a cancelled date is skipped entirely.
     # @param start_date [Date, Time] Start of range
     # @param end_date [Date, Time] End of range
     # @return [Array<Occurrence>] Array of occurrence objects
     def occurrences_between(start_date, end_date)
       return [self] unless recurring?
 
-      recurrence.occurrences_between(start_date, end_date).map do |occurrence_time|
-        Occurrence.new(self, occurrence_time)
+      recurrence.occurrences_between(start_date, end_date).filter_map do |occurrence_time|
+        build_occurrence_for(occurrence_time)
       end
     end
 
-    # Get the next occurrence after a given time
+    # Get the next occurrence after a given time. Skips any date whose
+    # per-occurrence override has been cancelled, and merges in an override's
+    # effective values for the date it does return.
     # @param after [Time] Time to start searching from (defaults to now)
     # @return [Occurrence, nil] Next occurrence or nil
     def next_occurrence(after: Time.current)
       return nil unless recurring?
 
-      occurrence_time = recurrence.next_occurrence(after: after)
-      occurrence_time ? Occurrence.new(self, occurrence_time) : nil
+      current_after = after
+      # Bounded like Recurrence#next_occurrence's own internal guard — a
+      # pathological run of consecutive cancelled dates should not hang.
+      1000.times do
+        occurrence_time = recurrence.next_occurrence(after: current_after)
+        return nil if occurrence_time.nil?
+
+        built = build_occurrence_for(occurrence_time)
+        return built if built
+
+        current_after = occurrence_time + 1.second
+      end
+      nil
     end
 
     # Create a recurrence for this resource
@@ -51,6 +66,24 @@ module BetterTogether
     # @return [Recurrence]
     def create_recurrence!(rule:, ends_on: nil)
       build_recurrence(rule: rule, ends_on: ends_on).tap(&:save!)
+    end
+
+    private
+
+    # @param occurrence_time [Time, IceCube::Occurrence]
+    # @return [Occurrence, nil] nil if this date has been cancelled via an override
+    def build_occurrence_for(occurrence_time)
+      # .to_time: Recurrence#next_occurrence/#occurrences_between return
+      # IceCube::Occurrence — a SimpleDelegator around Time that behaves like
+      # one almost everywhere but isn't a literal ::Time instance (breaks
+      # strict type-checks, e.g. the Postgres adapter when persisting).
+      # Coerce here, the one place these values enter a BetterTogether::Occurrence,
+      # so every consumer of Occurrence#starts_at genuinely holds a real Time.
+      real_time = occurrence_time.to_time
+      existing = respond_to?(:event_occurrences) ? event_occurrences.find_by(occurrence_date: real_time.to_date) : nil
+      return nil if existing&.cancelled?
+
+      Occurrence.new(self, real_time, override: existing)
     end
   end
 end

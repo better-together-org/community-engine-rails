@@ -4,6 +4,7 @@ module BetterTogether
   # Access control for calendars
   class EventPolicy < PlatformRecordPolicy
     include SelfServicePublishablePolicy
+    include EventHostAuthorizable
 
     def index?
       true
@@ -64,18 +65,8 @@ module BetterTogether
       show? && user.present?
     end
 
-    def event_host_member?
-      return false unless user.present?
-
-      can_represent_host = user.present? && record.event_hosts.any? && agent.valid_event_host_ids.any?
-
-      # .map (not .pluck) — pluck always hits the DB directly, which returns
-      # empty for a new/unsaved record's in-memory .build'd event_hosts
-      # (e.g. during authorization on the `new`/`create` actions, before the
-      # event is persisted).
-      has_common_hosts = record.event_hosts.map(&:host_id).intersect?(agent.valid_event_host_ids)
-      can_represent_host && has_common_hosts
-    end
+    # event_host_member?/community_event_manager? are provided by the
+    # EventHostAuthorizable concern (shared with EventOccurrencePolicy).
 
     # Self-serve event creation: any person who could represent one of the
     # submitted event_hosts (via community membership), gated by having
@@ -85,22 +76,6 @@ module BetterTogether
     # correctly resolves host-standing against the submitted event_hosts.
     def self_service_event_creator?
       event_host_member? && accepted_content_publishing_agreement?
-    end
-
-    def community_event_manager?
-      return false unless user.present?
-
-      community_host_ids = record.event_hosts
-                                 .select { |h| h.host_type == 'BetterTogether::Community' }
-                                 .map(&:host_id)
-      return false if community_host_ids.empty?
-
-      community_host_ids.any? do |community_id|
-        community = BetterTogether::Community.find_by(id: community_id)
-        next false unless community
-
-        permitted_to?('manage_community_events', community)
-      end
     end
 
     # Filtering and sorting for calendars according to permissions and context
@@ -192,9 +167,7 @@ module BetterTogether
       end
     end
 
-    def creator_or_platform_steward
-      user.present? && (creator_of?(record) || platform_manager?)
-    end
+    # creator_or_platform_steward is provided by the EventHostAuthorizable concern.
 
     def invitation?
       return false unless agent.present?
