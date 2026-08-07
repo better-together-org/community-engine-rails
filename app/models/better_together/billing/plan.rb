@@ -19,6 +19,11 @@ module BetterTogether
                foreign_key: :billing_plan_id,
                dependent: :restrict_with_exception,
                inverse_of: :billing_plan
+      has_many :one_time_payments,
+               class_name: 'BetterTogether::Billing::OneTimePayment',
+               foreign_key: :billing_plan_id,
+               dependent: :restrict_with_exception,
+               inverse_of: :billing_plan
 
       validates :identifier, :name, :currency, :stripe_price_id, presence: true
       validates :identifier, uniqueness: true

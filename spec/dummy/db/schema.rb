@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_06_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -280,6 +280,26 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_06_090000) do
     t.index ["provider", "external_account_id"], name: "idx_bt_billing_merchant_accounts_external", unique: true, where: "(external_account_id IS NOT NULL)"
     t.index ["provider"], name: "idx_bt_billing_merchant_accounts_provider"
     t.index ["status"], name: "idx_bt_billing_merchant_accounts_status"
+  end
+
+  create_table "better_together_billing_one_time_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.uuid "billing_plan_id", null: false
+    t.string "stripe_checkout_session_id", null: false
+    t.string "stripe_payment_intent_id"
+    t.integer "amount_cents", null: false
+    t.string "currency", null: false
+    t.string "status", default: "succeeded", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "last_synced_at"
+    t.index ["billing_plan_id"], name: "idx_on_billing_plan_id_657f563063"
+    t.index ["owner_type", "owner_id"], name: "idx_bt_billing_one_time_payments_owner"
+    t.index ["stripe_checkout_session_id"], name: "idx_bt_billing_one_time_payments_checkout_session", unique: true
+    t.index ["stripe_payment_intent_id"], name: "idx_bt_billing_one_time_payments_payment_intent"
   end
 
   create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2701,6 +2721,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_06_090000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_one_time_payments", "better_together_billing_plans", column: "billing_plan_id"
   add_foreign_key "better_together_billing_subscription_summary_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict
   add_foreign_key "better_together_billing_subscriptions", "pay_subscriptions", on_delete: :cascade
