@@ -28,6 +28,11 @@ module BetterTogether
                dependent: :restrict_with_error,
                inverse_of: :sponsorship
 
+      has_many :benefit_credits,
+               class_name: 'BetterTogether::Billing::BenefitCredit',
+               dependent: :restrict_with_error,
+               inverse_of: :sponsorship
+
       enum :status, STATUS_VALUES, prefix: :status
 
       validates :sponsor_type, inclusion: { in: -> { BetterTogether::Billing::Billable.included_in_models.map(&:name) } }
