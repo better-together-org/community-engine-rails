@@ -30,17 +30,17 @@ Transforms the approved plan (`feat/event-occurrences-attendance-comments-overri
 #### End User (Event Attendee) Acceptance Criteria
 **As an event attendee, I want to interact with one specific session of a recurring event without affecting any other session, so that my RSVP/comment reflects reality (I can only make some Tuesdays, not all of them).**
 
-- [ ] **AC-0.1**: RSVPing to a specific occurrence date creates exactly one `EventOccurrence` row for that `(event, date)` pair — never one per session up front, only on first interaction.
-- [ ] **AC-0.2**: RSVPing to one occurrence does not create or affect an `EventOccurrence` row for any other date of the same series.
-- [ ] **AC-0.3**: Attempting to interact with a date that isn't a real occurrence of the series' recurrence rule is rejected with a clear error, not silently accepted.
-- [ ] **AC-0.4**: Viewing (not interacting with) an untouched occurrence never creates an `EventOccurrence` row — confirmed by asserting row count is unchanged after a page view.
+- [x] **AC-0.1**: RSVPing to a specific occurrence date creates exactly one `EventOccurrence` row for that `(event, date)` pair — never one per session up front, only on first interaction.
+- [x] **AC-0.2**: RSVPing to one occurrence does not create or affect an `EventOccurrence` row for any other date of the same series.
+- [x] **AC-0.3**: Attempting to interact with a date that isn't a real occurrence of the series' recurrence rule is rejected with a clear error, not silently accepted.
+- [x] **AC-0.4**: Viewing (not interacting with) an untouched occurrence never creates an `EventOccurrence` row — confirmed by asserting row count is unchanged after a page view.
 
 #### Platform Organizer Acceptance Criteria
 **As a platform organizer, I want per-session data to never require duplicating event hosting/ownership records, so that authorization stays correct and cheap to maintain as a series runs for years.**
 
-- [ ] **AC-0.5**: `EventOccurrencePolicy` authorizes create/update/destroy by delegating to the parent `Event`'s `event_hosts`/`creator`, reusing the exact same host-membership logic `EventPolicy` already uses (via a shared concern) — not a duplicated copy.
-- [ ] **AC-0.6**: No `EventHost` row is ever created for an `EventOccurrence` — confirmed by asserting `EventHost.count` is unchanged after creating/overriding several occurrences.
-- [ ] **AC-0.7**: A person who can manage the parent event can manage any of its occurrences; a person who cannot manage the parent event cannot override or cancel any occurrence, with no separate per-occurrence permission grant required.
+- [x] **AC-0.5**: `EventOccurrencePolicy` authorizes create/update/destroy by delegating to the parent `Event`'s `event_hosts`/`creator`, reusing the exact same host-membership logic `EventPolicy` already uses (via a shared concern) — not a duplicated copy.
+- [x] **AC-0.6**: No `EventHost` row is ever created for an `EventOccurrence` — confirmed by asserting `EventHost.count` is unchanged after creating/overriding several occurrences.
+- [x] **AC-0.7**: A person who can manage the parent event can manage any of its occurrences; a person who cannot manage the parent event cannot override or cancel any occurrence, with no separate per-occurrence permission grant required.
 
 ---
 
@@ -51,23 +51,23 @@ Transforms the approved plan (`feat/event-occurrences-attendance-comments-overri
 #### End User (Event Attendee) Acceptance Criteria
 **As an event attendee, I want to RSVP to just the sessions I can attend, so that organizers get an accurate headcount per session instead of an all-or-nothing series RSVP.**
 
-- [ ] **AC-1.1**: A person can hold one series-wide attendance (`event_occurrence_id` nil) and independently one attendance per specific session, without either overwriting the other.
-- [ ] **AC-1.2**: Marking "going" for one session does not change attendance status for any other session or for the series as a whole.
-- [ ] **AC-1.3**: Cancelling a per-session RSVP removes only that session's attendance record.
-- [ ] **AC-1.4**: The attendee sees a clear, immediate confirmation of *which session* their RSVP applies to (date shown, not just the series name) — preventing the confusing case of "I RSVP'd but which week was that for?"
+- [x] **AC-1.1**: A person can hold one series-wide attendance (`event_occurrence_id` nil) and independently one attendance per specific session, without either overwriting the other.
+- [x] **AC-1.2**: Marking "going" for one session does not change attendance status for any other session or for the series as a whole.
+- [x] **AC-1.3**: Cancelling a per-session RSVP removes only that session's attendance record.
+- [x] **AC-1.4**: The attendee sees a clear, immediate confirmation of *which session* their RSVP applies to (date shown, not just the series name) — preventing the confusing case of "I RSVP'd but which week was that for?"
 
 ### 1.2 Session-specific comments
 
 #### End User (Event Attendee) Acceptance Criteria
 **As an event attendee, I want to ask a question or leave a note about one specific session, so that my comment is seen by people looking at that session, not buried under unrelated comments about other weeks.**
 
-- [ ] **AC-1.5**: Comments attach to the specific `EventOccurrence`, not the parent `Event` — a comment on one session's date never appears when viewing a different session's date.
-- [ ] **AC-1.6**: `EventOccurrence` comments reuse the existing `Commentable` moderation/permission infrastructure already built for `Post` — no new moderation code path.
+- [x] **AC-1.5**: Comments attach to the specific `EventOccurrence`, not the parent `Event` — a comment on one session's date never appears when viewing a different session's date.
+- [x] **AC-1.6**: `EventOccurrence` comments reuse the existing `Commentable` moderation/permission infrastructure already built for `Post` — no new moderation code path.
 
 #### Content Moderator Acceptance Criteria
 **As a content moderator, I want per-session event comments to appear in the same moderation queue as other comments, so that I don't need a separate workflow for recurring events.**
 
-- [ ] **AC-1.7**: A reported/flagged comment on an `EventOccurrence` surfaces through the existing content-reporting workflow identically to a comment on a `Post`.
+- [x] **AC-1.7**: A reported/flagged comment on an `EventOccurrence` surfaces through the existing content-reporting workflow identically to a comment on a `Post`.
 
 ---
 
@@ -76,16 +76,16 @@ Transforms the approved plan (`feat/event-occurrences-attendance-comments-overri
 #### Event Organizer Acceptance Criteria
 **As an event organizer, I want to move, retime, re-describe, or cancel one specific session without touching the recurrence rule or any other session, so that a one-off room change or cancellation doesn't require editing (or breaking) the whole series.**
 
-- [ ] **AC-2.1**: An organizer can set a location override, a time override, a description override, or toggle "cancelled" for one occurrence date, independently of every other date.
-- [ ] **AC-2.2**: Overriding one occurrence never modifies the base `Recurrence` rule, `exception_dates`, or any other occurrence's data.
-- [ ] **AC-2.3**: A non-host, non-creator person cannot override or cancel any occurrence of an event they don't manage (enforced by `EventOccurrencePolicy`, AC-0.5).
-- [ ] **AC-2.4**: Cancelling one occurrence still allows attendees who already RSVP'd/commented on it to see their history — cancellation does not delete the `EventOccurrence` row or its associated attendance/comments.
+- [x] **AC-2.1**: An organizer can set a location override, a time override, a description override, or toggle "cancelled" for one occurrence date, independently of every other date.
+- [x] **AC-2.2**: Overriding one occurrence never modifies the base `Recurrence` rule, `exception_dates`, or any other occurrence's data.
+- [x] **AC-2.3**: A non-host, non-creator person cannot override or cancel any occurrence of an event they don't manage (enforced by `EventOccurrencePolicy`, AC-0.5).
+- [x] **AC-2.4**: Cancelling one occurrence still allows attendees who already RSVP'd/commented on it to see their history — cancellation does not delete the `EventOccurrence` row or its associated attendance/comments.
 
 #### End User (Event Attendee) Acceptance Criteria
 **As an event attendee, I want to immediately see when a specific session has been moved or cancelled, wherever I'm looking (calendar or event page), so that I don't show up to the wrong place or an event that isn't happening.**
 
-- [ ] **AC-2.5**: The calendar grid and the event show page both display the overridden (`effective_starts_at`/`effective_location`/`effective_description`) values for a session that has one, not the stale computed default.
-- [ ] **AC-2.6**: A cancelled session is visibly and unambiguously marked "Cancelled" — not merely removed from the calendar, which would look identical to "the event doesn't happen that week for unstated reasons."
+- [x] **AC-2.5**: The calendar grid and the event show page both display the overridden (`effective_starts_at`/`effective_location`/`effective_description`) values for a session that has one, not the stale computed default.
+- [x] **AC-2.6**: A cancelled session is visibly and unambiguously marked "Cancelled" — not merely removed from the calendar, which would look identical to "the event doesn't happen that week for unstated reasons."
 
 ---
 
@@ -94,24 +94,24 @@ Transforms the approved plan (`feat/event-occurrences-attendance-comments-overri
 #### End User (Community Member browsing events) Acceptance Criteria
 **As a community member browsing events, I want a recurring event to keep showing under "Upcoming" for as long as it keeps recurring, so that I don't miss a weekly event just because it happened to be created weeks ago.**
 
-- [ ] **AC-3.1**: A recurring event whose original `starts_at` is in the past still appears under the index's default "Upcoming" view, as long as it has a future occurrence.
-- [ ] **AC-3.2**: The "Past" filter correctly excludes a still-recurring event and correctly includes one whose recurrence has genuinely ended.
-- [ ] **AC-3.3**: Sorting by "soonest" orders recurring events by their true next occurrence date, not their original (possibly long-past) `starts_at`.
-- [ ] **AC-3.4**: If an organizer has overridden the very next occurrence's time (Phase 2), the index reflects that overridden time in both its sort position and its displayed date — never the un-overridden default.
-- [ ] **AC-3.5**: A member can filter the index to "recurring only" or "one-time only" events.
+- [x] **AC-3.1**: A recurring event whose original `starts_at` is in the past still appears under the index's default "Upcoming" view, as long as it has a future occurrence.
+- [x] **AC-3.2**: The "Past" filter correctly excludes a still-recurring event and correctly includes one whose recurrence has genuinely ended.
+- [x] **AC-3.3**: Sorting by "soonest" orders recurring events by their true next occurrence date, not their original (possibly long-past) `starts_at`.
+- [x] **AC-3.4**: If an organizer has overridden the very next occurrence's time (Phase 2), the index reflects that overridden time in both its sort position and its displayed date — never the un-overridden default.
+- [x] **AC-3.5**: A member can filter the index to "recurring only" or "one-time only" events.
 
 #### Platform Organizer Acceptance Criteria
 **As a platform organizer, I want the events index to stay fast and paginated even with many recurring events, so that the page doesn't degrade as the platform grows.**
 
-- [ ] **AC-3.6**: The index query remains a single paginated SQL relation (Kaminari `.page`/`.per`, real `total_count`) — no in-memory array pagination fallback.
-- [ ] **AC-3.7**: A recurring event's `next_occurrence_at` is refreshed automatically (via scheduled job) once its previously-stored value has passed, without requiring anyone to view or edit the event.
+- [x] **AC-3.6**: The index query remains a single paginated SQL relation (Kaminari `.page`/`.per`, real `total_count`) — no in-memory array pagination fallback.
+- [x] **AC-3.7**: A recurring event's `next_occurrence_at` is refreshed automatically (via scheduled job) once its previously-stored value has passed, without requiring anyone to view or edit the event.
 
 #### End User (Event Attendee, accessibility) Acceptance Criteria
 **As a screen reader or low-vision user browsing the index, I want to know an event repeats and roughly on what schedule, not just see a colored badge, so that I have the same information as a sighted user.**
 
-- [ ] **AC-3.8**: The "Repeats" badge conveys its meaning through visible text (e.g. "Repeats weekly"), never color alone.
-- [ ] **AC-3.9**: The badge's fuller explanation (frequency, end condition) is available via `aria-label`/tooltip, matching the existing `privacy_badge` accessibility pattern.
-- [ ] **AC-3.10**: The index page (card + recurring filter control) passes `be_axe_clean` at WCAG 2.1 AA.
+- [x] **AC-3.8**: The "Repeats" badge conveys its meaning through visible text (e.g. "Repeats weekly"), never color alone.
+- [x] **AC-3.9**: The badge's fuller explanation (frequency, end condition) is available via `aria-label`/tooltip, matching the existing `privacy_badge` accessibility pattern.
+- [x] **AC-3.10**: The index page (card + recurring filter control) passes `be_axe_clean` at WCAG 2.1 AA.
 
 ---
 
@@ -120,11 +120,11 @@ Transforms the approved plan (`feat/event-occurrences-attendance-comments-overri
 #### End User (Event Attendee) Acceptance Criteria
 **As someone checking a calendar to plan my month, I want a weekly event to actually show up every week it happens, not just once, so that the calendar is trustworthy for planning around.**
 
-- [ ] **AC-4.1**: A weekly recurring event appears on every occurrence date within the visible month grid, not only its original creation date.
-- [ ] **AC-4.2**: Navigating the calendar to a future month still correctly shows the recurring event's occurrences in that month.
-- [ ] **AC-4.3**: Clicking any occurrence's day-cell link lands on the correct (single, canonical) event show page.
-- [ ] **AC-4.4**: An occurrence with an organizer override (Phase 2) shows its overridden date/location on the calendar, on the correct (possibly moved) date cell.
-- [ ] **AC-4.5**: A cancelled occurrence is shown with a clear "Cancelled" indicator on its calendar date, rather than silently disappearing (which would look like "no event," not "cancelled event").
+- [x] **AC-4.1**: A weekly recurring event appears on every occurrence date within the visible month grid, not only its original creation date.
+- [x] **AC-4.2**: Navigating the calendar to a future month still correctly shows the recurring event's occurrences in that month.
+- [x] **AC-4.3**: Clicking any occurrence's day-cell link lands on the correct (single, canonical) event show page.
+- [x] **AC-4.4**: An occurrence with an organizer override (Phase 2) shows its overridden date/location on the calendar, on the correct (possibly moved) date cell.
+- [x] **AC-4.5**: A cancelled occurrence is shown with a clear "Cancelled" indicator on its calendar date, rather than silently disappearing (which would look like "no event," not "cancelled event").
 
 ---
 
