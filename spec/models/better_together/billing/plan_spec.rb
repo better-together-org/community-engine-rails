@@ -203,6 +203,37 @@ RSpec.describe BetterTogether::Billing::Plan do
     end
   end
 
+  describe '#granted_entitlement_keys' do
+    it 'returns an empty array when grants_entitlements is not set' do
+      plan.metadata = {}
+      expect(plan.granted_entitlement_keys).to eq([])
+    end
+
+    it 'returns the declared keys, dropping blanks' do
+      plan.metadata = { 'grants_entitlements' => ['hosted_access', '', nil] }
+      expect(plan.granted_entitlement_keys).to eq(['hosted_access'])
+    end
+  end
+
+  describe 'entitlement key validation' do
+    it 'accepts a known entitlement key' do
+      plan.metadata = { 'grants_entitlements' => ['hosted_access'] }
+      expect(plan).to be_valid
+    end
+
+    it 'rejects an unregistered entitlement key' do
+      plan.metadata = { 'grants_entitlements' => ['not_a_real_entitlement'] }
+
+      expect(plan).not_to be_valid
+      expect(plan.errors[:base]).to be_present
+    end
+
+    it 'is valid when grants_entitlements is blank' do
+      plan.metadata = {}
+      expect(plan).to be_valid
+    end
+  end
+
   describe 'after_commit :enqueue_stripe_sync!' do
     it 'enqueues SyncPlanToStripeJob when a plan is created' do
       expect do

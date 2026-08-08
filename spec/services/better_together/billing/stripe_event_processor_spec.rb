@@ -85,6 +85,79 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
       expect(billing_subscription.status).to eq('active')
     end
 
+    context 'when the synced plan declares grants_entitlements' do
+      before { billing_plan.update!(metadata: { 'grants_entitlements' => ['hosted_access'] }) }
+
+      it 'grants the declared entitlement to the billable owner' do
+        described_class.new.call(event)
+
+        expect(community.entitled_to?('hosted_access')).to be(true)
+      end
+
+      it 'revokes the entitlement once the subscription cancels and its grace period expires' do
+        described_class.new.call(event)
+        expect(community.entitled_to?('hosted_access')).to be(true)
+
+        pay_subscription.update!(status: 'canceled')
+        canceled_object = subscription_object.dup.tap { |obj| obj.status = 'canceled' }
+        canceled_data = Struct.new(:object, keyword_init: true).new(object: canceled_object)
+        canceled_payload = { id: 'evt_test_canceled_123', type: 'customer.subscription.deleted' }
+        canceled_event = Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+          def to_hash
+            payload
+          end
+        end.new(id: 'evt_test_canceled_123', type: 'customer.subscription.deleted', data: canceled_data, payload: canceled_payload)
+
+        # First sync after cancellation records the lapse (grace period just started) —
+        # access, and the entitlement, correctly stay on during the grace window.
+        described_class.new.call(canceled_event)
+        expect(community.entitled_to?('hosted_access')).to be(true)
+
+        # A later sync, once the grace period has actually elapsed, is what
+        # observes the expiry and revokes — nothing revokes on a timer alone.
+        travel_to(8.days.from_now) { described_class.new.call(canceled_event) }
+
+        expect(community.entitled_to?('hosted_access')).to be(false)
+      end
+    end
+
+    context 'when a checkout.session.completed event syncs a one-time payment for a plan that grants entitlements' do
+      let(:one_time_payment) do
+        create('better_together/billing/one_time_payment', owner: community, billing_plan: billing_plan)
+      end
+      let(:checkout_completed_event) do
+        session_object = Struct.new(:id, :customer, keyword_init: true).new(
+          id: 'cs_test_grant_123', customer: pay_customer.processor_id
+        )
+        data = Struct.new(:object, keyword_init: true).new(object: session_object)
+        payload = { id: 'evt_checkout_grant_123', type: 'checkout.session.completed' }
+
+        Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+          def to_hash
+            payload
+          end
+        end.new(id: 'evt_checkout_grant_123', type: 'checkout.session.completed', data:, payload:)
+      end
+
+      before do
+        billing_plan.update!(metadata: { 'grants_entitlements' => ['hosted_access'] })
+        result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
+          synced: true, one_time_payment:, billing_plan:, billable_owner: community
+        )
+        checkout_sync = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync)
+        allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(checkout_sync)
+        allow(checkout_sync).to receive(:call).and_return(result)
+      end
+
+      it 'grants the declared entitlement, sourced to the one-time payment' do
+        described_class.new.call(checkout_completed_event)
+
+        expect(community.entitled_to?('hosted_access')).to be(true)
+        entitlement = BetterTogether::Billing::Entitlement.for_holder_and_key(community, 'hosted_access').sole
+        expect(entitlement.source).to eq(one_time_payment)
+      end
+    end
+
     it 'syncs merchant account updates into the local merchant account' do
       merchant_account = create(
         'better_together/billing/merchant_account',
