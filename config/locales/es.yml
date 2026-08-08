@@ -900,7 +900,7 @@ es:
         de patrocinio.
       accepts_sponsorship_toggle_label: Permitir que otras comunidades y miembros
         patrocinen esta cuenta
-      accounts_you_sponsor: Cuentas que patrocinas
+      accounts_you_sponsor: Cuentas que patrocina
       activity_alerts: Alertas de actividad de facturacion
       activity_alerts_explainer: Se registraron problemas recientes de webhooks de
         Stripe para este registro de facturacion. Revisa abajo los eventos mas recientes
@@ -910,7 +910,7 @@ es:
       available_plans: Planes disponibles
       beneficiary_community: Comunidad a apoyar
       beneficiary_community_placeholder: Slug de la comunidad
-      beneficiary_identifier: Identificador del beneficiario
+      beneficiary_identifier: Identificador del beneficiario (slug o nombre de usuario)
       beneficiary_type: Tipo de beneficiario
       billed_to: 'Facturado a:'
       breadcrumb_label: Facturacion
@@ -934,7 +934,7 @@ es:
       dead_letter_reason_unknown: Motivo de dead letter desconocido
       decline_sponsorship: Rechazar
       details: Detalles
-      end_sponsorship: Detener esta patrocinio
+      end_sponsorship: Detener este patrocinio
       event_type: Evento
       failed_without_message: El procesador informo un fallo sin mensaje de error.
       heading: Facturacion de la comunidad
@@ -943,7 +943,7 @@ es:
       hosted_access_mailer:
         grace_notice:
           greeting: Hola %{name},
-          message: El acceso al hospedado para %{community_name} se detendrá el %{grace_period_ends_on}
+          message: El acceso hospedado para %{community_name} se detendrá el %{grace_period_ends_on}
             a menos que se resuelva la facturación.
           review_billing: Revisar facturación
           subject: Facturación necesita atención para %{community_name}
@@ -952,7 +952,7 @@ es:
       hosted_entitlement_attention_explainer: Esta comunidad todavia tiene acceso
         alojado, pero la facturacion necesita atencion antes de que el plan alojado
         vuelva a considerarse saludable.
-      hosted_entitlement_grace_explainer: Esta comunidad aún tiene acceso al hospedado,
+      hosted_entitlement_grace_explainer: Esta comunidad aún tiene acceso hospedado,
         pero la facturación ha caducado. El acceso se detendrá el %{grace_period_ends_at}
         a menos que esto se resuelva.
       hosted_entitlement_heading: Estado del plan alojado
@@ -1029,10 +1029,10 @@ es:
       no_sponsors_yet: Aún no hay nadie patrocinando esta cuenta.
       no_sponsorship_plans: No se han configurado aún planes de contribuciones de
         patrocinio.
-      no_sponsorships_given_yet: Aún no estás patrocinando ninguna cuenta.
+      no_sponsorships_given_yet: Aún no está patrocinando ninguna cuenta.
       no_subscription: Todavia no hay una suscripcion sincronizada registrada para
         esta comunidad.
-      offer_sponsorship_heading: Oferta de patrocinio
+      offer_sponsorship_heading: Ofrecer patrocinio a alguien
       oldest_unresolved_at: 'No resuelto mas antiguo en:'
       open_merchant_onboarding: Abrir incorporacion comercial
       open_portal: Abrir portal de facturacion
@@ -1185,7 +1185,7 @@ es:
       retry_count: "%<count>d intentos"
       send_offer: Enviar oferta
       sponsor_a_community: Contribuir a otra comunidad
-      sponsor_a_community_explainer: Fondar el balance de acceso al hospedado de otra
+      sponsor_a_community_explainer: Financiar el saldo de acceso hospedado de otra
         comunidad. Su contribución se acredita directamente a su cuenta — nunca cambia
         quien posee la suscripción.
       sponsor_checkout: Pagar personalmente por esta comunidad
@@ -1194,7 +1194,7 @@ es:
         de esta comunidad. Para cambiar quien paga, inicia un nuevo pago abajo."
       sponsors_supporting_you: Patrocinadores que apoyan esta cuenta
       sponsorship_accepted: La oferta de patrocinio ha sido aceptada.
-      sponsorship_already_accepted: Esta patrocinio ya está activo.
+      sponsorship_already_accepted: Este patrocinio ya está activo.
       sponsorship_already_declined: Esta oferta de patrocinio fue rechazada.
       sponsorship_already_ended: Este patrocinio ya terminó.
       sponsorship_awaiting_beneficiary: Esta oferta está pendiente de respuesta de
@@ -1216,7 +1216,7 @@ es:
           message: "%{beneficiary_name} aceptó su oferta de patrocinio. Ahora puede
             contribuir a su balance."
           subject: "%{beneficiary_name} aceptó su oferta de patrocinio"
-          view_sponsorship: Ver esta patrocinio
+          view_sponsorship: Ver este patrocinio
         declined:
           greeting: Hola %{name},
           message: "%{beneficiary_name} declinó su oferta de patrocinio."
@@ -1228,10 +1228,10 @@ es:
           subject: El patrocinio entre %{sponsor_name} y %{beneficiary_name} ha terminado
         offered:
           greeting: Hola %{name},
-          message: "%{sponsor_name} ha ofrecido patrocinar tu saldo de acceso hospedado."
-          review_offer: Revisa esta oferta
+          message: "%{sponsor_name} ha ofrecido patrocinar su saldo de acceso hospedado."
+          review_offer: Revise esta oferta
           subject: "%{sponsor_name} ha ofrecido patrocinarte"
-      sponsorship_offer_sent: Se envió tu oferta de patrocinio.
+      sponsorship_offer_sent: Se envió su oferta de patrocinio.
       sponsorship_offers_received: Ofertas de patrocinio recibidas
       sponsorship_received_notice: Esta comunidad ha recibido %{amount} en contribuciones
         de patrocinio.
@@ -3168,7 +3168,7 @@ es:
         body: '"%{title}" ahora está configurado en %{current_visibility}'
         title: 'Configuración de federación actualizada: %{current_visibility}'
       hosted_access_grace:
-        body: El acceso al hospedado para %{community_name} se detendrá el %{grace_period_ends_on}
+        body: El acceso hospedado para %{community_name} se detendrá el %{grace_period_ends_on}
           a menos que se resuelva la facturación.
         title: Facturación necesita atención para %{community_name}
       index:
