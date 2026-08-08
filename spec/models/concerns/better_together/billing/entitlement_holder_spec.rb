@@ -16,4 +16,19 @@ RSpec.describe BetterTogether::Billing::EntitlementHolder do
       expect(community.billing_entitlements).to eq([])
     end
   end
+
+  describe '#entitled_to?' do
+    it 'delegates to Billing::EntitlementResolver and reflects a current grant' do
+      community = create(:better_together_community)
+      BetterTogether::Billing::Entitlement.grant!(holder: community, entitlement_key: 'hosted_access')
+
+      expect(community.entitled_to?('hosted_access')).to be(true)
+    end
+
+    it 'returns false when the holder has no matching grant' do
+      community = create(:better_together_community)
+
+      expect(community.entitled_to?('hosted_access')).to be(false)
+    end
+  end
 end
