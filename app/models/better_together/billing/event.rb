@@ -11,8 +11,11 @@ module BetterTogether
       REPEATED_FAILURE_ATTEMPT_THRESHOLD = 3
       UNRESOLVED_ALERT_WINDOW = 6.hours
       PROCESSORS = %w[stripe].freeze
-      SUPPORTED_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
       PROCESSING_STATUSES = %w[pending processed failed ignored dead_lettered replayed].freeze
+
+      def self.supported_owner_types
+        BetterTogether::Billing::Billable.included_in_models.map(&:name)
+      end
 
       belongs_to :billable_owner,
                  polymorphic: true,
@@ -192,7 +195,7 @@ module BetterTogether
       end
 
       def billable_owner_type_supported
-        return if billable_owner_type.blank? || billable_owner_type.in?(SUPPORTED_OWNER_TYPES)
+        return if billable_owner_type.blank? || billable_owner_type.in?(self.class.supported_owner_types)
 
         errors.add(:billable_owner_type, :inclusion)
       end

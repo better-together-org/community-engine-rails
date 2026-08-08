@@ -9,16 +9,27 @@ module BetterTogether
     # sponsored checkouts can be reconstructed after hosted redirects and
     # webhook delivery.
     module OwnershipResolver
-      SUPPORTED_OWNER_TYPES = {
-        'community' => 'BetterTogether::Community',
-        'person' => 'BetterTogether::Person',
-        'BetterTogether::Community' => 'BetterTogether::Community',
-        'BetterTogether::Person' => 'BetterTogether::Person',
-        'Community' => 'BetterTogether::Community',
-        'Person' => 'BetterTogether::Person'
-      }.freeze
-
       module_function
+
+      # Open extension point (docs/developers/architecture/
+      # polymorphic_allowlist_extension_audit.md) — any model that includes
+      # Billing::Billable (payer) or Billing::SponsorshipRecipient
+      # (beneficiary) is resolvable here, instead of a hand-maintained list.
+      # Built fresh per call rather than memoized: this mirrors Sponsorship's
+      # own validation, and avoids stale results if a host app adds a new
+      # includer without a full app restart in dev/test.
+      def owner_type_aliases
+        supported_owner_types.each_with_object({}) do |name, aliases|
+          short_name = name.demodulize
+          aliases[name] = name
+          aliases[short_name] = name
+          aliases[short_name.underscore] = name
+        end
+      end
+
+      def supported_owner_types
+        (Billable.included_in_models + SponsorshipRecipient.included_in_models).map(&:name).uniq
+      end
 
       # Builds Stripe checkout metadata for the billing plan plus any explicit
       # owner / beneficiary split used by sponsored hosted billing flows.
@@ -50,11 +61,11 @@ module BetterTogether
       end
 
       def supported_owner_type?(record)
-        record.present? && SUPPORTED_OWNER_TYPES.value?(record.class.name)
+        record.present? && supported_owner_types.include?(record.class.name)
       end
 
       def supported_owner_type_name(type_name)
-        SUPPORTED_OWNER_TYPES[type_name.to_s]
+        owner_type_aliases[type_name.to_s]
       end
 
       def resolve_record(type_name, id)
