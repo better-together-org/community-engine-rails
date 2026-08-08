@@ -12,6 +12,7 @@ module BetterTogether
         :hosted_access_level,
         :support_tier,
         :community_capacity_tier,
+        :grace_period_ends_at,
         keyword_init: true
       ) do
         def active?
@@ -20,6 +21,10 @@ module BetterTogether
 
         def attention_needed?
           hosted_status == :attention
+        end
+
+        def grace_period?
+          hosted_status == :grace
         end
 
         def inactive?
@@ -32,6 +37,8 @@ module BetterTogether
             I18n.t('better_together.billing.hosted_status_active', default: 'Hosted plan active')
           when :attention
             I18n.t('better_together.billing.hosted_status_attention', default: 'Billing attention needed')
+          when :grace
+            I18n.t('better_together.billing.hosted_status_grace', default: 'Billing lapsed — grace period')
           else
             I18n.t('better_together.billing.hosted_status_inactive', default: 'No active hosted plan')
           end
@@ -43,6 +50,8 @@ module BetterTogether
             'text-bg-success'
           when :attention
             'text-bg-warning'
+          when :grace
+            'text-bg-danger'
           else
             'text-bg-secondary'
           end
@@ -52,15 +61,17 @@ module BetterTogether
       def call(community:, billing_subscription: nil)
         subscription = billing_subscription || current_subscription_for(community)
         plan = subscription&.billing_plan
+        status = hosted_status_for(subscription)
 
         Result.new(
           community: community,
           billing_subscription: subscription,
-          hosted_status: hosted_status_for(subscription),
-          hosted_access_active: subscription.present? && subscription.activeish?,
+          hosted_status: status,
+          hosted_access_active: hosted_access_active?(subscription, status),
           hosted_access_level: plan&.hosted_access_level,
           support_tier: plan&.support_tier,
-          community_capacity_tier: plan&.community_capacity_tier
+          community_capacity_tier: plan&.community_capacity_tier,
+          grace_period_ends_at: subscription&.grace_period_expires_at
         )
       end
 
@@ -70,12 +81,24 @@ module BetterTogether
         BetterTogether::Billing::Subscription.current_for_owner(community)
       end
 
+      # Stripe's own dunning/retry cycle is already covered by :attention
+      # ('past_due', still activeish? — access stays on). :grace is the
+      # BTS-owned second buffer that applies once Stripe's retries are
+      # exhausted and the subscription has genuinely lapsed, per
+      # Subscription#in_grace_period?.
       def hosted_status_for(subscription)
         return :inactive if subscription.blank?
         return :attention if subscription.status == 'past_due'
         return :active if subscription.activeish?
+        return :grace if subscription.in_grace_period?
 
         :inactive
+      end
+
+      def hosted_access_active?(subscription, status)
+        return false if subscription.blank?
+
+        subscription.activeish? || status == :grace
       end
     end
   end

@@ -64,4 +64,36 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
     expect(result).to be_active
     expect(result.hosted_access_level).to eq('Steady')
   end
+
+  describe 'app-owned grace period' do
+    it 'keeps hosted access active and reports :grace for a lapsed subscription within its grace period' do
+      subscription = create_subscription_for(owner: community, billing_plan: create(:better_together_billing_plan), status: 'canceled')
+      subscription.sync_lapse_state!
+
+      result = resolver.call(community:)
+
+      expect(result).to be_grace_period
+      expect(result.hosted_access_active).to be(true)
+      expect(result.grace_period_ends_at).to be_present
+    end
+
+    it 'reports :inactive and cuts hosted access once the grace period has expired' do
+      subscription = create_subscription_for(owner: community, billing_plan: create(:better_together_billing_plan), status: 'canceled')
+      subscription.sync_lapse_state!
+
+      result = travel_to(8.days.from_now) { resolver.call(community:) }
+
+      expect(result).to be_inactive
+      expect(result.hosted_access_active).to be(false)
+    end
+
+    it 'reports :inactive for a canceled subscription that was never lapse-tracked (fails closed, no unbounded grace)' do
+      create_subscription_for(owner: community, billing_plan: create(:better_together_billing_plan), status: 'canceled')
+
+      result = resolver.call(community:)
+
+      expect(result).to be_inactive
+      expect(result.hosted_access_active).to be(false)
+    end
+  end
 end

@@ -33,4 +33,83 @@ RSpec.describe BetterTogether::Billing::Subscription do
     expect(subscription.reload.portal_access_issue?).to be(true)
     expect(subscription.last_portal_error_message).to eq('Stripe portal outage')
   end
+
+  describe 'app-owned grace period' do
+    let(:persisted_subscription) { create('better_together/billing/subscription') }
+
+    around do |example|
+      original = ENV.fetch('BT_BILLING_HOSTED_ACCESS_GRACE_PERIOD_DAYS', nil)
+      ENV['BT_BILLING_HOSTED_ACCESS_GRACE_PERIOD_DAYS'] = '7'
+      example.run
+    ensure
+      ENV['BT_BILLING_HOSTED_ACCESS_GRACE_PERIOD_DAYS'] = original
+    end
+
+    describe '#sync_lapse_state!' do
+      it 'records a lapsed_at timestamp when the subscription is not activeish' do
+        persisted_subscription.pay_subscription.update!(status: 'canceled')
+
+        persisted_subscription.sync_lapse_state!
+
+        expect(persisted_subscription.reload.lapsed_at).to be_present
+        expect(persisted_subscription).to be_in_grace_period
+      end
+
+      it 'does not reset the grace-period clock on repeated syncs while still lapsed' do
+        persisted_subscription.pay_subscription.update!(status: 'canceled')
+        persisted_subscription.sync_lapse_state!
+        first_lapsed_at = persisted_subscription.reload.lapsed_at
+
+        travel_to(1.day.from_now) { persisted_subscription.sync_lapse_state! }
+
+        expect(persisted_subscription.reload.lapsed_at).to eq(first_lapsed_at)
+      end
+
+      it 'clears the lapse marker once the subscription recovers to activeish' do
+        persisted_subscription.pay_subscription.update!(status: 'canceled')
+        persisted_subscription.sync_lapse_state!
+        expect(persisted_subscription.reload.lapsed_at).to be_present
+
+        persisted_subscription.pay_subscription.update!(status: 'active')
+        persisted_subscription.sync_lapse_state!
+
+        expect(persisted_subscription.reload.lapsed_at).to be_nil
+        expect(persisted_subscription).not_to be_in_grace_period
+      end
+
+      it 'clears a previously-sent grace notice marker on recovery' do
+        persisted_subscription.pay_subscription.update!(status: 'canceled')
+        persisted_subscription.sync_lapse_state!
+        persisted_subscription.record_grace_notice_sent!
+
+        persisted_subscription.pay_subscription.update!(status: 'active')
+        persisted_subscription.sync_lapse_state!
+
+        expect(persisted_subscription.reload.grace_notice_sent?).to be(false)
+      end
+    end
+
+    describe '#grace_period_expired?' do
+      it 'is true once the configured grace period has elapsed since the lapse' do
+        persisted_subscription.pay_subscription.update!(status: 'canceled')
+        persisted_subscription.sync_lapse_state!
+
+        travel_to(8.days.from_now) do
+          expect(persisted_subscription).to be_grace_period_expired
+          expect(persisted_subscription).not_to be_in_grace_period
+        end
+      end
+    end
+
+    describe '.possibly_lapsed' do
+      it 'includes only subscriptions that have ever been marked lapsed' do
+        persisted_subscription.pay_subscription.update!(status: 'canceled')
+        persisted_subscription.sync_lapse_state!
+        never_lapsed = create('better_together/billing/subscription')
+
+        expect(described_class.possibly_lapsed).to include(persisted_subscription)
+        expect(described_class.possibly_lapsed).not_to include(never_lapsed)
+      end
+    end
+  end
 end

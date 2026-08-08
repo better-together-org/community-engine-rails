@@ -77,6 +77,26 @@ RSpec.describe BetterTogether::Billing::StripeSubscriptionSync do
       expect(result.billing_subscription.pay_subscription).to eq(pay_subscription)
     end
 
+    it 'records a lapse when the matched Pay::Subscription status is not activeish' do
+      pay_subscription.update!(status: 'canceled')
+
+      result = described_class.new.call(subscription:, source: 'stripe_sync')
+
+      expect(result.billing_subscription.reload.lapsed_at).to be_present
+    end
+
+    it 'clears any prior lapse once the matched Pay::Subscription status recovers to activeish' do
+      pay_subscription.update!(status: 'canceled')
+      billing_subscription = described_class.new.call(subscription:, source: 'stripe_sync').billing_subscription
+      expect(billing_subscription.reload.lapsed_at).to be_present
+
+      pay_subscription.update!(status: 'active')
+
+      result = described_class.new.call(subscription:, source: 'stripe_sync')
+
+      expect(result.billing_subscription.reload.lapsed_at).to be_nil
+    end
+
     it 'persists a person-owned billing subscription' do
       person_plan = create(
         :better_together_billing_plan,
