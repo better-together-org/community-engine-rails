@@ -879,12 +879,12 @@ uk:
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
       accept_sponsorship: Прийняти
-      accepts_sponsorship_disabled: Ця облікозна записка більше не отримуватиме нові
-        внески з покровителів.
-      accepts_sponsorship_enabled: Ця облікова записка може тепер отримати внески
-        від покровителів.
-      accepts_sponsorship_toggle_label: Регулювати, щоб інші спільноти та учасники
-        могли спонсорувати цю облікову записку
+      accepts_sponsorship_disabled: Ця облікова записка більше не отримуватиме нові
+        внески від спонсорів.
+      accepts_sponsorship_enabled: Ця облікова записка тепер може отримувати внески
+        від спонсорів.
+      accepts_sponsorship_toggle_label: Дозволити іншим спільнотам та учасникам спонсорувати
+        цю облікову записку
       accounts_you_sponsor: Облікові записи, які ви спонсоруєте
       activity_alerts: Billing alerty aktyvnosti
       activity_alerts_explainer: Dlia tsoho billing zapysu zafiksovano neshchodavni
@@ -894,9 +894,9 @@ uk:
         Stripe)
       available_plans: Dostupni taryfy
       beneficiary_community: Спільнота для підтримки
-      beneficiary_community_placeholder: Слово сполучення спільноти
-      beneficiary_identifier: Об'єкт допомоги (словосполучення або користувацьке ім'я)
-      beneficiary_type: Тип об'єкта допомоги
+      beneficiary_community_placeholder: Слаг спільноти
+      beneficiary_identifier: Отримувач (слаг або ім'я користувача)
+      beneficiary_type: Тип отримувача
       billed_to: 'Vystavleno dlia:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
@@ -927,11 +927,9 @@ uk:
       hosted_access_level_default: Standard
       hosted_access_mailer:
         grace_notice:
-          greeting: 'Слава вам, %{name},
-
-            '
-          message: Доступ до гостинного доступу для %{community_name} призупиниться
-            на %{grace_period_ends_on}, якщо не буде вирішено питання про оплату.
+          greeting: 'Привіт, %{name},'
+          message: Хостинговий доступ для %{community_name} призупиниться на %{grace_period_ends_on},
+            якщо питання оплати не буде вирішено.
           review_billing: Переглянути рахунок
           subject: Необхідно звернути увагу на рахунок для %{community_name}
       hosted_entitlement_active_explainer: Tsia spilnota zaraz maie aktyvnyi hosted
@@ -939,9 +937,9 @@ uk:
       hosted_entitlement_attention_explainer: Tsia spilnota vse shche maie hosted
         dostup, ale billing potrebuie uvahy, persh nizh plan znovu mozhna vvazhaty
         zdorovym.
-      hosted_entitlement_grace_explainer: Ця спільнота все ще має доступ до гостинного
-        доступу, але оплата закінчилась. Доступ призупиниться на %{grace_period_ends_at},
-        якщо це не буде вирішено.
+      hosted_entitlement_grace_explainer: Ця спільнота все ще має хостинговий доступ,
+        але оплата закінчилась. Доступ призупиниться на %{grace_period_ends_at}, якщо
+        це не буде вирішено.
       hosted_entitlement_heading: Stan hosted planu
       hosted_entitlement_inactive_explainer: Dlia tsiiei spilnoty zaraz nemaie synchronizovanoho
         aktyvnoho hosted planu.
@@ -952,7 +950,7 @@ uk:
       hosted_plan_scope_heading: Mezhi zapusku hosted billingu
       hosted_status_active: Hosted plan aktyvnyy
       hosted_status_attention: Potriben uhlyad za billingom
-      hosted_status_grace: Оплата закінчилась — період помилки
+      hosted_status_grace: Оплата закінчилась — пільговий період
       hosted_status_inactive: Nemaye aktyvnoho hosted planu
       ignored_event_explainer: Podiiu zafiksovano, ale ii ne vdalosia poviazaty z
         lokalnym onovlenniam billingu.
@@ -1011,11 +1009,11 @@ uk:
       no_billing_events: Dlia tsoho billing zapysu shche ne zafiksovano zhodnoi aktyvnosti
         billing webhookiv Stripe.
       no_plans: Aktyvni platezhni taryfy shche ne nalashtovano.
-      no_sponsors_yet: Немає ніхто, хто спонсорує цю облікову записку ще.
-      no_sponsorship_plans: Не налаштовано жодних планів внесків від покровителів.
+      no_sponsors_yet: Ще ніхто не спонсорує цю облікову записку.
+      no_sponsorship_plans: Не налаштовано жодних сум внесків для спонсорства.
       no_sponsorships_given_yet: Ви ще не спонсоруєте ніяких облікових записів.
       no_subscription: Dlia tsiiei spilnoty shche ne zafiksovano sinhronizovanoi pidpysky.
-      offer_sponsorship_heading: Офірнути внести вклад у когось
+      offer_sponsorship_heading: Запропонувати спонсорство
       oldest_unresolved_at: 'Naistarisha nevyrishena o:'
       open_merchant_onboarding: Vidkryty merchant onboarding
       open_portal: Vidkryty billing portal
@@ -1165,25 +1163,25 @@ uk:
       retry_count: "%<count>d sprob"
       send_offer: Надіслати пропозицію
       sponsor_a_community: Внести вклад до іншої спільноти
-      sponsor_a_community_explainer: Фінансувати баланс гостинного доступу іншої спільноти.
-        Ваш внесок зараховується безпосередньо на їх облікову записку — це не змінює,
-        хто є власником їх підписки.
+      sponsor_a_community_explainer: Профінансувати баланс хостингового доступу іншої
+        спільноти. Ваш внесок зараховується безпосередньо на її обліковий запис —
+        це не змінює, хто є власником її підписки.
       sponsor_checkout: Oplatyty za tsiu spilnotu osobysto
       sponsored_communities: Sponsorovani spilnoty
       sponsored_subscription_notice: "%{owner} zaraz pokryvaie platu za tsiu spilnotu.
         Khochete zminyty platnyka? Oberit novoho platnyka nyzhche."
-      sponsors_supporting_you: Покровителі, які спонсорують цю облікову записку
-      sponsorship_accepted: Пропозиція про внесення вклад у когось прийнята.
-      sponsorship_already_accepted: Ця пропозиція про внесення вклад у когось активна.
-      sponsorship_already_declined: Ця пропозиція про внесення вклад у когось відхилена.
-      sponsorship_already_ended: Ця пропозиція про внесення вклад у когось завершена.
+      sponsors_supporting_you: Спонсори, які підтримують цю облікову записку
+      sponsorship_accepted: Пропозицію спонсорства прийнято.
+      sponsorship_already_accepted: Це спонсорство вже активне.
+      sponsorship_already_declined: Цю пропозицію спонсорства відхилено.
+      sponsorship_already_ended: Це спонсорство завершилося.
       sponsorship_awaiting_beneficiary: Ця пропозиція чекає рішення від %{beneficiary}.
-      sponsorship_consent_required: Ця громада не обрала опцію приймати спонсорські
+      sponsorship_consent_required: Ця спільнота не обрала опцію приймати спонсорські
         внески.
       sponsorship_contributed_total: "%{amount} внесено"
       sponsorship_contribution_complete: Ваш внесок до %{beneficiary} зареєстровано.
-      sponsorship_contribution_failed: 'Ваше платіжне переміщення успішне, але запис
-        про внесок не вдалося записати: %{message}'
+      sponsorship_contribution_failed: 'Ваш платіж пройшов успішно, але не вдалося
+        зареєструвати внесок: %{message}'
       sponsorship_declined: Пропозиція спонсорства відхилена.
       sponsorship_ended: Спонсорство завершено.
       sponsorship_from_to: "%{sponsor} пропонує спонсорувати %{beneficiary}."
@@ -1194,27 +1192,28 @@ uk:
           message: "%{beneficiary_name} прийняв(а) вашу пропозицію спонсорства. Ви
             можете тепер внести до їхнього балансу."
           subject: "%{beneficiary_name} прийняв(а) вашу пропозицію спонсорства"
-          view_sponsorship: Переглянути цю спонсорську угоду
+          view_sponsorship: Переглянути це спонсорство
         declined:
           greeting: Привіт, %{name},
           message: "%{beneficiary_name} відхилив(а) вашу пропозицію спонсорства."
           subject: "%{beneficiary_name} відхилив(а) вашу пропозицію спонсорства"
         ended:
           greeting: Привіт, %{name},
-          message: Межувальна угода між %{sponsor_name} і %{beneficiary_name} не діє
-            більше.
-          subject: Межувальна угода між %{sponsor_name} і %{beneficiary_name} завершена
+          message: Спонсорство між %{sponsor_name} і %{beneficiary_name} більше не
+            діє.
+          subject: Спонсорство між %{sponsor_name} і %{beneficiary_name} завершено
         offered:
           greeting: Привіт, %{name},
-          message: "%{sponsor_name} пропонує спонсорувати ваш баланс доступу до громади."
+          message: "%{sponsor_name} пропонує спонсорувати ваш баланс хостингового
+            доступу."
           review_offer: Переглянути цю пропозицію
           subject: "%{sponsor_name} пропонує спонсорувати вас"
       sponsorship_offer_sent: Ваша пропозиція спонсорства відправлена.
-      sponsorship_offers_received: Отримано пропозицій з спонсорства
-      sponsorship_received_notice: Цій громаді було отримано %{amount} внесків у вигляді
-        спонсорських внесків.
+      sponsorship_offers_received: Отримані пропозиції спонсорства
+      sponsorship_received_notice: Ця спільнота отримала %{amount} у вигляді спонсорських
+        внесків.
       sponsorship_review: Переглянути пропозицію спонсорства
-      sponsorship_target_invalid: Така громада або такий внесок не доступні.
+      sponsorship_target_invalid: Ця спільнота або ця сума недоступні.
       start_checkout: Pochaty oplatu
       status: Stan
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing
@@ -3166,8 +3165,8 @@ uk:
         body: "«%{title}» тепер має значення %{current_visibility}"
         title: 'Налаштування федерації оновлено: %{current_visibility}'
       hosted_access_grace:
-        body: Доступ до %{community_name} заморозиться на %{grace_period_ends_on},
-          якщо не буде вирішено питання оплати.
+        body: Хостинговий доступ до %{community_name} призупиниться на %{grace_period_ends_on},
+          якщо питання оплати не буде вирішено.
         title: Потрібна увага до платежів для %{community_name}
       index:
         no_notifications: You have no notifications.
