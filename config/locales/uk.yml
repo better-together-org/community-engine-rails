@@ -1676,6 +1676,10 @@ uk:
         order_soonest: Найближчі
         past_label: Минулі події
         per_page_label: Подій на сторінку
+        recurring_all: Усі
+        recurring_label: Повторення
+        recurring_one_time_only: Лише одноразові
+        recurring_only: Лише повторювані
         search_button: Пошук
         search_label: Пошук
         search_placeholder: Пошук за назвою або описом...
@@ -3958,6 +3962,8 @@ uk:
         accept_link: Review and accept the publishing agreement
         message: To publish events or posts visible to members or the public, you
           need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Повторюється: %{summary}'
+      recurring_badge_label: Повторюється
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one

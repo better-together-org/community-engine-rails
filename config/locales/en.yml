@@ -1669,6 +1669,10 @@ en:
         order_soonest: Soonest
         past_label: Past events
         per_page_label: Events Per Page
+        recurring_all: All
+        recurring_label: Recurring
+        recurring_one_time_only: One-time only
+        recurring_only: Recurring only
         search_button: Search
         search_label: Search
         search_placeholder: Search by name or description...
@@ -3900,6 +3904,8 @@ en:
         accept_link: Review and accept the publishing agreement
         message: To publish events or posts visible to members or the public, you
           need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Repeats: %{summary}'
+      recurring_badge_label: Repeats
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one

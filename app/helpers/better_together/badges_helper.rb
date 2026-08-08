@@ -65,6 +65,25 @@ module BetterTogether
       privacy_style_map[privacy_key] || 'primary'
     end
 
+    # Render a "Repeats" badge for a recurring entity (e.g. Event). Visible
+    # text label, never color-only — the tooltip/aria-label carries the full
+    # human-readable recurrence summary (via RecurrenceHelper#format_recurrence_rule)
+    # so the badge and any displayed next-occurrence date can never contradict
+    # each other silently.
+    def recurring_badge(entity, rounded: true, style: 'info')
+      return unless entity.respond_to?(:recurring?) && entity.recurring?
+
+      summary = format_recurrence_rule(entity.recurrence)
+
+      create_badge(
+        t('better_together.shared.recurring_badge_label'),
+        rounded: rounded,
+        style: style,
+        tooltip: summary,
+        aria_label: t('better_together.shared.recurring_badge_aria_label', summary: summary)
+      )
+    end
+
     private
 
     def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil)

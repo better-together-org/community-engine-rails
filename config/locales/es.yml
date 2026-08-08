@@ -1681,6 +1681,10 @@ es:
         order_soonest: Más próximo
         past_label: Eventos pasados
         per_page_label: Eventos por página
+        recurring_all: Todos
+        recurring_label: Recurrencia
+        recurring_one_time_only: Solo eventos únicos
+        recurring_only: Solo recurrentes
         search_button: Buscar
         search_label: Buscar
         search_placeholder: Buscar por nombre o descripción...
@@ -3963,6 +3967,8 @@ es:
         accept_link: Review and accept the publishing agreement
         message: To publish events or posts visible to members or the public, you
           need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Se repite: %{summary}'
+      recurring_badge_label: Se repite
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un

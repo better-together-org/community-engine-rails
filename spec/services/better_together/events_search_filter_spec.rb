@@ -2,13 +2,9 @@
 
 require 'rails_helper'
 
-# RED-phase acceptance criteria for AC-3.1 through AC-3.5 (docs/implementation/
-# current_plans/event_occurrences_acceptance_criteria.md). The filter's date
-# window/order still key off the static `starts_at` column today — every
-# `pending` example here is written against the planned `next_occurrence_at`
-# behavior and is expected to fail until Part 3 lands. AC-3.6 is a standing
-# regression guard (already true today) and is intentionally NOT pending —
-# it must keep passing throughout the Part 3 implementation.
+# Acceptance criteria for AC-3.1 through AC-3.6 (docs/implementation/
+# current_plans/event_occurrences_acceptance_criteria.md). Part 3 is
+# implemented — the filter's date window/order key off next_occurrence_at.
 RSpec.describe BetterTogether::EventsSearchFilter do
   let(:stale_recurring_event) do
     create(:better_together_event, name: 'Weekly Standup', starts_at: 2.months.ago)
@@ -38,8 +34,6 @@ RSpec.describe BetterTogether::EventsSearchFilter do
 
   describe 'default "upcoming" view (AC-3.1)' do
     it 'includes a recurring event whose original starts_at is in the past, and still excludes a genuinely past one' do
-      pending 'AC-3.1: filter_by_date_range does not yet consult next_occurrence_at'
-
       results = filtered({})
       expect(results).to include(stale_recurring_event)
       expect(results).not_to include(genuinely_past_event)
@@ -48,8 +42,6 @@ RSpec.describe BetterTogether::EventsSearchFilter do
 
   describe '"past" filter (AC-3.2)' do
     it 'excludes a still-recurring event, and still includes a genuinely one-time past event' do
-      pending 'AC-3.2: past filter must also key off next_occurrence_at'
-
       results = filtered({ past: '1' })
       expect(results).not_to include(stale_recurring_event)
       expect(results).to include(genuinely_past_event)
@@ -58,8 +50,6 @@ RSpec.describe BetterTogether::EventsSearchFilter do
 
   describe 'sort order reflects true next occurrence (AC-3.3)' do
     it 'orders a recurring event by its next occurrence date, not its stale original starts_at' do
-      pending 'AC-3.3: default_order_by does not yet use next_occurrence_at'
-
       results = filtered({}).to_a
       expect(results.index(stale_recurring_event)).to be < results.index(one_time_upcoming_event)
     end
@@ -67,8 +57,6 @@ RSpec.describe BetterTogether::EventsSearchFilter do
 
   describe 'override-aware next occurrence (AC-3.4)' do
     it 'reflects an organizer\'s override of the very next occurrence in sort position and displayed date' do
-      pending 'AC-3.4: EventOccurrence override merge into next_occurrence_at not yet implemented'
-
       recurrence = stale_recurring_event.recurrence
       next_date = recurrence.occurrences_between(Time.current, 1.year.from_now).first.to_date
       occurrence = BetterTogether::EventOccurrence.create!(event: stale_recurring_event, occurrence_date: next_date)
@@ -85,8 +73,6 @@ RSpec.describe BetterTogether::EventsSearchFilter do
     # coincidentally time-filtering one of them out — the only thing that should ever
     # distinguish these results is whether the `recurring` param is honored.
     it 'filters to recurring events only' do
-      pending 'AC-3.5: recurring tri-state filter param not yet implemented'
-
       results = filtered({ recurring: 'true' })
 
       expect(results).to include(recurring_upcoming_event)
@@ -94,8 +80,6 @@ RSpec.describe BetterTogether::EventsSearchFilter do
     end
 
     it 'filters to one-time events only' do
-      pending 'AC-3.5: recurring tri-state filter param not yet implemented'
-
       results = filtered({ recurring: 'false' })
 
       expect(results).to include(one_time_upcoming_event)

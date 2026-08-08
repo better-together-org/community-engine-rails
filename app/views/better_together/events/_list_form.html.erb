@@ -57,6 +57,15 @@
       </div>
 
       <div class="mb-3">
+        <%= f.label :recurring, t('.recurring_label'), class: 'form-label' %>
+        <%= f.select :recurring, options_for_select([
+          [t('.recurring_all'), ''],
+          [t('.recurring_only'), 'true'],
+          [t('.recurring_one_time_only'), 'false']
+        ], params[:recurring].presence || ''), { include_blank: false }, class: 'form-select', id: 'events-recurring' %>
+      </div>
+
+      <div class="mb-3">
         <%= f.label :per_page, t('.per_page_label'), class: 'form-label' %>
         <%= f.select :per_page, options_for_select(['10', '20', '50'], params[:per_page] || '20'), { include_blank: false }, class: 'form-select', id: 'events-per-page' %>
       </div>
@@ -67,7 +76,7 @@
       </div>
 
       <div class="clearfix">
-        <% if params[:q].present? || params[:status].present? || params[:order_by].present? || params[:per_page].present? || params[:category_ids].present? || params[:past].present? %>
+        <% if params[:q].present? || params[:status].present? || params[:order_by].present? || params[:per_page].present? || params[:category_ids].present? || params[:past].present? || params[:recurring].present? %>
           <%= link_to t('.clear_filters'), events_path, class: 'btn btn-outline-secondary', id: 'events-clear-filters' %>
         <% end %>
         <%= f.submit t('.search_button'), class: 'btn btn-primary float-end', id: 'events-search-submit' %>
