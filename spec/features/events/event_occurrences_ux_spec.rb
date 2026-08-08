@@ -25,9 +25,13 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     # from start to end date inclusive, so each weekly occurrence would then
     # stack onto every other occurrence's date within that span — the same
     # gotcha already documented in calendars_controller_spec.rb.
+    # change(hour: 14) pins a safe mid-day UTC start — 2.weeks.ago alone
+    # inherits whatever real-world hour the spec happens to run at, and a
+    # start within ~2 hours of UTC midnight would make even this short event
+    # genuinely straddle two calendar dates.
     create(:better_together_event, creator: organizer.person, name: 'Weekly Trivia Night',
-                                   starts_at: 2.weeks.ago,
-                                   ends_at: 2.weeks.ago + 2.hours)
+                                   starts_at: 2.weeks.ago.change(hour: 14, min: 0, sec: 0),
+                                   ends_at: 2.weeks.ago.change(hour: 16, min: 0, sec: 0))
   end
   let(:recurrence) { create(:recurrence, :weekly, schedulable: event) }
 
