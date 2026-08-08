@@ -42,8 +42,8 @@ module BetterTogether
         def call
           raise ArgumentError, 'connection is required' unless connection
 
-          response = http_get(feed_uri)
-          raise "federation feed request failed with #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+          response = fetch_feed_response
+          raise federation_error(response) unless response.is_a?(Net::HTTPSuccess)
 
           payload = JSON.parse(response.body)
 
@@ -57,6 +57,26 @@ module BetterTogether
         private
 
         attr_reader :connection, :cursor, :limit
+
+        # A cached token can be rejected by the remote (revoked/rotated) before its local
+        # TTL expires. On a 401 we invalidate the cache and retry once with a freshly
+        # issued token before giving up.
+        def fetch_feed_response
+          response = http_get(feed_uri)
+          return response unless response.code == '401'
+
+          Rails.cache.delete(token_cache_key)
+          http_get(feed_uri)
+        end
+
+        def federation_error(response)
+          "federation feed request failed with #{response.code} for connection #{connection.id} " \
+            "(#{connection_host})"
+        end
+
+        def connection_host
+          connection.source_platform&.resolved_host_url
+        end
 
         def feed_uri
           base_uri = URI.parse(connection.source_platform.resolved_host_url)
@@ -88,17 +108,22 @@ module BetterTogether
         end
 
         def access_token_for_request
-          oauth_access_token || raise('content feed token request failed')
+          oauth_access_token || raise(
+            "content feed token request failed for connection #{connection.id} (#{connection_host})"
+          )
+        end
+
+        def token_cache_key
+          "bt:fed_token:#{connection.oauth_client_id}"
         end
 
         def oauth_access_token
           return if connection.oauth_client_id.blank? || connection.oauth_client_secret.blank?
 
-          cache_key = "bt:fed_token:#{connection.oauth_client_id}"
-          cached = Rails.cache.read(cache_key)
+          cached = Rails.cache.read(token_cache_key)
           return cached if cached.present?
 
-          fetch_and_cache_oauth_token(cache_key)
+          fetch_and_cache_oauth_token(token_cache_key)
         end
 
         def fetch_and_cache_oauth_token(cache_key)
@@ -110,8 +135,16 @@ module BetterTogether
           ttl   = body.fetch('expires_in', 840).to_i
           Rails.cache.write(cache_key, token, expires_in: ttl.seconds)
           token
-        rescue JSON::ParserError, KeyError
+        rescue JSON::ParserError, KeyError => e
+          log_token_parse_failure(e)
           nil
+        end
+
+        def log_token_parse_failure(error)
+          Rails.logger.warn(
+            "[BetterTogether::Federation] token response for connection #{connection.id} " \
+            "(#{connection_host}) could not be parsed: #{error.class}: #{error.message}"
+          )
         end
 
         def oauth_token_request_params
