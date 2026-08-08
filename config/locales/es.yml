@@ -893,6 +893,14 @@ es:
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
     billing:
+      accept_sponsorship: Aceptar
+      accepts_sponsorship_disabled: Esta cuenta ya no recibirá nuevas contribuciones
+        de patrocinio.
+      accepts_sponsorship_enabled: Esta cuenta puede ahora recibir contribuciones
+        de patrocinio.
+      accepts_sponsorship_toggle_label: Permitir que otras comunidades y miembros
+        patrocinen esta cuenta
+      accounts_you_sponsor: Cuentas que patrocinas
       activity_alerts: Alertas de actividad de facturacion
       activity_alerts_explainer: Se registraron problemas recientes de webhooks de
         Stripe para este registro de facturacion. Revisa abajo los eventos mas recientes
@@ -900,6 +908,10 @@ es:
       activity_alerts_technical_summary: Detalles tecnicos (registro de actividad
         de webhook de Stripe)
       available_plans: Planes disponibles
+      beneficiary_community: Comunidad a apoyar
+      beneficiary_community_placeholder: Slug de la comunidad
+      beneficiary_identifier: Identificador del beneficiario
+      beneficiary_type: Tipo de beneficiario
       billed_to: 'Facturado a:'
       breadcrumb_label: Facturacion
       cancel_at_period_end: 'Cancelar al final del periodo:'
@@ -911,6 +923,8 @@ es:
         a esta pagina de facturacion.
       community_capacity_tier: 'Nivel de capacidad de la comunidad:'
       community_sponsor_checkout: Pagar a traves de %{community}
+      contribute_now: Contribuir ahora
+      contribution_amount: Cantidad
       current_period_ends: 'El periodo actual termina:'
       current_subscription: Suscripcion actual
       dead_letter_alert_body: Algunos eventos de facturacion de Stripe no pudieron
@@ -918,17 +932,29 @@ es:
         los eventos compatibles cuando corresponda.
       dead_letter_alert_heading: Eventos de facturacion en dead letter
       dead_letter_reason_unknown: Motivo de dead letter desconocido
+      decline_sponsorship: Rechazar
       details: Detalles
+      end_sponsorship: Detener esta patrocinio
       event_type: Evento
       failed_without_message: El procesador informo un fallo sin mensaje de error.
       heading: Facturacion de la comunidad
       hosted_access_level: 'Nivel de acceso alojado:'
       hosted_access_level_default: Estandar
+      hosted_access_mailer:
+        grace_notice:
+          greeting: Hola %{name},
+          message: El acceso al hospedado para %{community_name} se detendrá el %{grace_period_ends_on}
+            a menos que se resuelva la facturación.
+          review_billing: Revisar facturación
+          subject: Facturación necesita atención para %{community_name}
       hosted_entitlement_active_explainer: Esta comunidad tiene actualmente un plan
         alojado activo y sigue en buen estado para las operaciones alojadas.
       hosted_entitlement_attention_explainer: Esta comunidad todavia tiene acceso
         alojado, pero la facturacion necesita atencion antes de que el plan alojado
         vuelva a considerarse saludable.
+      hosted_entitlement_grace_explainer: Esta comunidad aún tiene acceso al hospedado,
+        pero la facturación ha caducado. El acceso se detendrá el %{grace_period_ends_at}
+        a menos que esto se resuelva.
       hosted_entitlement_heading: Estado del plan alojado
       hosted_entitlement_inactive_explainer: Actualmente no hay un plan alojado activo
         sincronizado para esta comunidad.
@@ -939,6 +965,7 @@ es:
       hosted_plan_scope_heading: Alcance de lanzamiento de la facturacion alojada
       hosted_status_active: Plan alojado activo
       hosted_status_attention: Atencion de facturacion requerida
+      hosted_status_grace: Facturación caducada — período de gracia
       hosted_status_inactive: Sin plan alojado activo
       ignored_event_explainer: El evento se registro, pero no se pudo mapear a una
         actualizacion local de facturacion.
@@ -999,8 +1026,13 @@ es:
       no_billing_events: Todavia no se ha registrado actividad de webhooks de facturacion
         de Stripe para este registro de facturacion.
       no_plans: Todavia no hay planes de facturacion activos configurados.
+      no_sponsors_yet: Aún no hay nadie patrocinando esta cuenta.
+      no_sponsorship_plans: No se han configurado aún planes de contribuciones de
+        patrocinio.
+      no_sponsorships_given_yet: Aún no estás patrocinando ninguna cuenta.
       no_subscription: Todavia no hay una suscripcion sincronizada registrada para
         esta comunidad.
+      offer_sponsorship_heading: Oferta de patrocinio
       oldest_unresolved_at: 'No resuelto mas antiguo en:'
       open_merchant_onboarding: Abrir incorporacion comercial
       open_portal: Abrir portal de facturacion
@@ -1151,10 +1183,60 @@ es:
         forma segura.
       replay_unavailable: Reproceso no disponible
       retry_count: "%<count>d intentos"
+      send_offer: Enviar oferta
+      sponsor_a_community: Contribuir a otra comunidad
+      sponsor_a_community_explainer: Fondar el balance de acceso al hospedado de otra
+        comunidad. Su contribución se acredita directamente a su cuenta — nunca cambia
+        quien posee la suscripción.
       sponsor_checkout: Pagar personalmente por esta comunidad
       sponsored_communities: Comunidades patrocinadas
       sponsored_subscription_notice: "%{owner} esta cubriendo actualmente el plan
         de esta comunidad. Para cambiar quien paga, inicia un nuevo pago abajo."
+      sponsors_supporting_you: Patrocinadores que apoyan esta cuenta
+      sponsorship_accepted: La oferta de patrocinio ha sido aceptada.
+      sponsorship_already_accepted: Esta patrocinio ya está activo.
+      sponsorship_already_declined: Esta oferta de patrocinio fue rechazada.
+      sponsorship_already_ended: Este patrocinio ya terminó.
+      sponsorship_awaiting_beneficiary: Esta oferta está pendiente de respuesta de
+        %{beneficiary}.
+      sponsorship_consent_required: Esta comunidad no ha optado por recibir contribuciones
+        de patrocinio.
+      sponsorship_contributed_total: "%{amount} contribuido"
+      sponsorship_contribution_complete: Su contribución a %{beneficiary} ha sido
+        registrada.
+      sponsorship_contribution_failed: 'Su pago fue exitoso, pero el registro de la
+        contribución falló: %{message}'
+      sponsorship_declined: La oferta de patrocinio ha sido rechazada.
+      sponsorship_ended: El patrocinio terminó.
+      sponsorship_from_to: "%{sponsor} está ofreciendo patrocinar a %{beneficiary}."
+      sponsorship_heading: Patrocinio
+      sponsorship_mailer:
+        accepted:
+          greeting: Hola %{name},
+          message: "%{beneficiary_name} aceptó su oferta de patrocinio. Ahora puede
+            contribuir a su balance."
+          subject: "%{beneficiary_name} aceptó su oferta de patrocinio"
+          view_sponsorship: Ver esta patrocinio
+        declined:
+          greeting: Hola %{name},
+          message: "%{beneficiary_name} declinó su oferta de patrocinio."
+          subject: "%{beneficiary_name} declinó su oferta de patrocinio"
+        ended:
+          greeting: Hola %{name},
+          message: El patrocinio entre %{sponsor_name} y %{beneficiary_name} ya no
+            está activo.
+          subject: El patrocinio entre %{sponsor_name} y %{beneficiary_name} ha terminado
+        offered:
+          greeting: Hola %{name},
+          message: "%{sponsor_name} ha ofrecido patrocinar tu saldo de acceso hospedado."
+          review_offer: Revisa esta oferta
+          subject: "%{sponsor_name} ha ofrecido patrocinarte"
+      sponsorship_offer_sent: Se envió tu oferta de patrocinio.
+      sponsorship_offers_received: Ofertas de patrocinio recibidas
+      sponsorship_received_notice: Esta comunidad ha recibido %{amount} en contribuciones
+        de patrocinio.
+      sponsorship_review: Revisión de oferta de patrocinio
+      sponsorship_target_invalid: Esa comunidad o cantidad no están disponibles.
       start_checkout: Iniciar pago
       status: Estado
       subheading: Gestiona el pago de Stripe, el estado de la suscripcion y el acceso
@@ -3085,6 +3167,10 @@ es:
       federation_visibility_status:
         body: '"%{title}" ahora está configurado en %{current_visibility}'
         title: 'Configuración de federación actualizada: %{current_visibility}'
+      hosted_access_grace:
+        body: El acceso al hospedado para %{community_name} se detendrá el %{grace_period_ends_on}
+          a menos que se resuelva la facturación.
+        title: Facturación necesita atención para %{community_name}
       index:
         no_notifications: No tienes notificaciones.
         notifications: Notificaciones
@@ -5231,6 +5317,7 @@ es:
     clear: Borrar
     clear_filter: Limpiar filtro
     close: Close
+    community: Comunidad
     confirm_delete: "¿Está seguro de que desea eliminar este registro?"
     create: Crear
     declined: Rechazado
@@ -5262,6 +5349,7 @@ es:
       showing: Mostrando
       to: a
     pending: Pendiente
+    person: Persona
     platform_not_public: La plataforma es actualmente privada. Por favor, inicie sesión
       para acceder.
     published: Publicado
