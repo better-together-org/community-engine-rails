@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_08_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_08_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -241,6 +241,31 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_08_000000) do
     t.index ["related_record_type", "related_record_id"], name: "index_better_together_billing_benefit_credits_on_related_record"
     t.index ["sponsor_type", "sponsor_id"], name: "index_better_together_billing_benefit_credits_on_sponsor"
     t.index ["sponsorship_id"], name: "idx_on_sponsorship_id_5e9aa58dd6"
+  end
+
+  create_table "better_together_billing_entitlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "holder_type", null: false
+    t.uuid "holder_id", null: false
+    t.string "source_type"
+    t.uuid "source_id"
+    t.uuid "billing_plan_id"
+    t.string "granted_by_type"
+    t.uuid "granted_by_id"
+    t.string "entitlement_key", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "granted_at", null: false
+    t.datetime "expires_at"
+    t.datetime "revoked_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["billing_plan_id"], name: "index_better_together_billing_entitlements_on_billing_plan_id"
+    t.index ["granted_by_type", "granted_by_id"], name: "index_better_together_billing_entitlements_on_granted_by"
+    t.index ["holder_type", "holder_id", "entitlement_key", "source_type", "source_id"], name: "idx_bt_billing_entitlements_holder_key_source_uniq", unique: true
+    t.index ["holder_type", "holder_id", "entitlement_key", "status"], name: "idx_bt_billing_entitlements_holder_key_status"
+    t.index ["holder_type", "holder_id"], name: "index_better_together_billing_entitlements_on_holder"
+    t.index ["source_type", "source_id"], name: "index_better_together_billing_entitlements_on_source"
   end
 
   create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2780,6 +2805,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_08_000000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_benefit_credits", "better_together_billing_sponsorships", column: "sponsorship_id"
+  add_foreign_key "better_together_billing_entitlements", "better_together_billing_plans", column: "billing_plan_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
   add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_one_time_payments", column: "one_time_payment_id"
   add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_sponsorships", column: "sponsorship_id"
