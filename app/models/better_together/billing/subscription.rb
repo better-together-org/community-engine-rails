@@ -48,25 +48,10 @@ module BetterTogether
           current_from_scope(for_owner(owner))
         end
 
-        def current_for_beneficiary(record)
-          current_from_scope(for_owner_or_beneficiary(record))
-        end
-
         def for_owner(owner)
           joins(:pay_subscription)
             .where(pay_subscriptions: { customer_id: owner.pay_customers.select(:id) })
         end
-
-        def for_owner_or_beneficiary(record)
-          where(id: for_owner(record).select(:id))
-            .or(for_beneficiary(record))
-        end
-
-        # rubocop:disable BetterTogether/NoRawSqlInQueries
-        def for_beneficiary(record)
-          where('better_together_billing_subscriptions.metadata @> ?', beneficiary_metadata(record).to_json)
-        end
-        # rubocop:enable BetterTogether/NoRawSqlInQueries
 
         private
 
@@ -88,13 +73,6 @@ module BetterTogether
                .first
         end
         # rubocop:enable Metrics/AbcSize
-
-        def beneficiary_metadata(record)
-          {
-            'bt_beneficiary_type' => record.class.name,
-            'bt_beneficiary_id' => record.id
-          }
-        end
       end
 
       def activeish?
@@ -120,17 +98,14 @@ module BetterTogether
         assign_billable_owner_customer(record)
       end
 
-      def beneficiary
-        BetterTogether::Billing::OwnershipResolver.resolve_record(
-          metadata.to_h['bt_beneficiary_type'],
-          metadata.to_h['bt_beneficiary_id']
-        ) || billable_owner
-      end
-
-      def beneficiary=(record)
-        @pending_beneficiary = record
-        merge_beneficiary_metadata(record)
-      end
+      # A subscription's owner is always its own Pay::Customer's owner — under
+      # the sponsorship redesign, sponsoring never swaps who owns a
+      # subscription (that ownership-swap mechanism was the double-billing
+      # bug). Sponsors fund a beneficiary's own Stripe Customer Balance
+      # instead (see Billing::Sponsorship/CreditBeneficiaryBalance). Kept as
+      # an alias, not removed outright, since callers throughout the app
+      # already read #beneficiary to mean "who this subscription is for."
+      alias beneficiary billable_owner
 
       def last_synced_recently?(threshold: 15.minutes.ago)
         last_synced_at.present? && last_synced_at >= threshold
@@ -185,21 +160,8 @@ module BetterTogether
       end
       # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-      def merge_beneficiary_metadata(record)
-        merged_metadata = metadata.to_h
-        if record.present?
-          merged_metadata['bt_beneficiary_type'] = record.class.name
-          merged_metadata['bt_beneficiary_id'] = record.id
-        else
-          merged_metadata.except!('bt_beneficiary_type', 'bt_beneficiary_id')
-        end
-
-        self.metadata = merged_metadata
-      end
-
       def apply_virtual_billing_participants
         assign_billable_owner_customer(@pending_billable_owner) if @pending_billable_owner.present?
-        merge_beneficiary_metadata(@pending_beneficiary) if defined?(@pending_beneficiary)
       end
 
       def timestamp_from_metadata(key)

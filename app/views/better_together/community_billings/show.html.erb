@@ -50,6 +50,16 @@
           <strong><%= t('better_together.billing.current_subscription', default: 'Current subscription') %></strong>
         </div>
         <div class="card-body">
+          <% received_contribution_total = @received_monetary_contributions.sum(&:amount_cents) %>
+          <% if received_contribution_total.positive? %>
+            <div id="<%= dom_id(@community, :sponsorship_received_notice) %>" class="alert alert-info mb-3">
+              <%= t(
+                    'better_together.billing.sponsorship_received_notice',
+                    default: 'This community has received %{amount} in sponsorship contributions.',
+                    amount: number_to_currency(received_contribution_total / 100.0)
+                  ) %>
+            </div>
+          <% end %>
           <% if @billing_subscription.present? %>
             <% if @billing_subscription.portal_access_issue? %>
               <div class="alert alert-warning">
@@ -77,67 +87,6 @@
               <%= t('better_together.billing.current_period_ends', default: 'Current period ends:') %>
               <strong><%= l(@billing_subscription.current_period_end, format: :long) if @billing_subscription.current_period_end %></strong>
             </p>
-            <% billing_payer = @billing_subscription.billable_owner %>
-            <% if billing_payer.present? && billing_payer != @community %>
-              <p class="mb-1">
-                <%= t('better_together.billing.billed_to', default: 'Billed to:') %>
-                <strong><%= billing_payer.name %></strong>
-              </p>
-              <div id="<%= dom_id(@community, :sponsorship_notice) %>" class="alert alert-warning mt-3 mb-0">
-                <p class="mb-2">
-                  <%= t(
-                        'better_together.billing.sponsored_subscription_notice',
-                        default: 'This community is currently sponsored by %{owner}. Start a new checkout below if you want to take over billing with a different owner.',
-                        owner: billing_payer.name
-                      ) %>
-                </p>
-                <% if @current_billing_plan.present? %>
-                  <div id="<%= dom_id(@community, :takeover_actions) %>" class="d-flex flex-wrap gap-2">
-                    <% if @current_billing_plan.eligible_for?(@community) %>
-                      <%= button_to t('better_together.billing.takeover_as_community', default: 'Switch billing to this community'),
-                                    checkout_community_billing_path(@community, billing_plan_id: @current_billing_plan.identifier, locale: I18n.locale),
-                                    method: :post,
-                                    class: 'btn btn-warning btn-sm',
-                                    data: { turbo: false } %>
-                    <% end %>
-                    <% if @sponsoring_person.present? &&
-                          @sponsoring_person != billing_payer &&
-                          @current_billing_plan.eligible_for?(@sponsoring_person) %>
-                      <%= button_to t('better_together.billing.takeover_as_person', default: 'Pay personally instead'),
-                                    checkout_community_billing_path(
-                                      @community,
-                                      billing_plan_id: @current_billing_plan.identifier,
-                                      checkout_as: 'person',
-                                      locale: I18n.locale
-                                    ),
-                                    method: :post,
-                                    class: 'btn btn-outline-warning btn-sm',
-                                    data: { turbo: false } %>
-                    <% end %>
-                    <% @sponsoring_communities.each do |sponsoring_community| %>
-                      <% next if sponsoring_community == billing_payer %>
-                      <% next unless @current_billing_plan.eligible_for?(sponsoring_community) %>
-
-                      <%= button_to t(
-                            'better_together.billing.takeover_as_other_community',
-                            default: 'Pay via %{community} instead',
-                            community: sponsoring_community.name
-                          ),
-                                    checkout_community_billing_path(
-                                      @community,
-                                      billing_plan_id: @current_billing_plan.identifier,
-                                      checkout_as: 'community',
-                                      billable_owner_community_id: sponsoring_community.slug,
-                                      locale: I18n.locale
-                                    ),
-                                    method: :post,
-                                    class: 'btn btn-outline-warning btn-sm',
-                                    data: { turbo: false } %>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
             <p class="mb-0">
               <%= t('better_together.billing.cancel_at_period_end', default: 'Cancel at period end:') %>
               <strong><%= @billing_subscription.cancel_at_period_end? ? t('globals.yes', default: 'Yes') : t('globals.no', default: 'No') %></strong>
@@ -286,37 +235,6 @@
                                         method: :post,
                                         class: 'btn btn-primary btn-sm',
                                         data: { turbo: false } %>
-                          <% if @sponsoring_person.present? && billing_plan.eligible_for?(@sponsoring_person) %>
-                            <%= button_to t('better_together.billing.sponsor_checkout', default: 'Pay personally for this community'),
-                                          checkout_community_billing_path(
-                                            @community,
-                                            billing_plan_id: billing_plan.identifier,
-                                            checkout_as: 'person',
-                                            locale: I18n.locale
-                                          ),
-                                          method: :post,
-                                          class: 'btn btn-outline-primary btn-sm',
-                                          data: { turbo: false } %>
-                          <% end %>
-                          <% @sponsoring_communities.each do |sponsoring_community| %>
-                            <% next unless billing_plan.eligible_for?(sponsoring_community) %>
-
-                            <%= button_to t(
-                                  'better_together.billing.community_sponsor_checkout',
-                                  default: 'Pay via %{community}',
-                                  community: sponsoring_community.name
-                                ),
-                                          checkout_community_billing_path(
-                                            @community,
-                                            billing_plan_id: billing_plan.identifier,
-                                            checkout_as: 'community',
-                                            billable_owner_community_id: sponsoring_community.slug,
-                                            locale: I18n.locale
-                                          ),
-                                          method: :post,
-                                          class: 'btn btn-outline-secondary btn-sm',
-                                          data: { turbo: false } %>
-                          <% end %>
                         </div>
                       </td>
                     </tr>
@@ -327,6 +245,43 @@
           <% else %>
             <p class="mb-0 text-muted">
               <%= t('better_together.billing.no_plans', default: 'No recurring hosted billing plans are configured yet.') %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+
+      <div id="<%= dom_id(@community, :sponsor_contribution_card) %>" class="card mt-4">
+        <div class="card-header">
+          <strong><%= t('better_together.billing.sponsor_a_community', default: 'Contribute to another community') %></strong>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">
+            <%= t(
+                  'better_together.billing.sponsor_a_community_explainer',
+                  default: "Fund another community's hosted-access balance. Your contribution is credited directly to their account — it never changes who owns their subscription."
+                ) %>
+          </p>
+          <% if @sponsorship_contribution_plans.any? %>
+            <%= form_with url: contribute_community_billing_path(@community, locale: I18n.locale), method: :post, data: { turbo: false } do |f| %>
+              <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                  <%= f.label :beneficiary_community_id, t('better_together.billing.beneficiary_community', default: 'Community to support'), class: 'form-label' %>
+                  <%= f.text_field :beneficiary_community_id, class: 'form-control', placeholder: t('better_together.billing.beneficiary_community_placeholder', default: 'Community slug') %>
+                </div>
+                <div class="col-md-4">
+                  <%= f.label :billing_plan_id, t('better_together.billing.contribution_amount', default: 'Amount'), class: 'form-label' %>
+                  <%= f.select :billing_plan_id,
+                               @sponsorship_contribution_plans.map { |plan| [number_to_currency(plan.amount_cents / 100.0), plan.identifier] },
+                               {}, class: 'form-select' %>
+                </div>
+                <div class="col-md-3">
+                  <%= f.submit t('better_together.billing.contribute_now', default: 'Contribute'), class: 'btn btn-primary w-100' %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="mb-0 text-muted">
+              <%= t('better_together.billing.no_sponsorship_plans', default: 'No sponsorship contribution amounts are configured yet.') %>
             </p>
           <% end %>
         </div>

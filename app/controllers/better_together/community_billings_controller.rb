@@ -13,6 +13,7 @@ module BetterTogether
 
     def show
       @checkout_sync_result = sync_checkout_session if valid_checkout_session_id?
+      process_sponsorship_contribution(@checkout_sync_result) if @checkout_sync_result&.one_time_payment.present?
       load_billing_overview
     end
 
@@ -22,6 +23,17 @@ module BetterTogether
       redirect_to community_billing_path(@community, locale: I18n.locale),
                   alert: t('better_together.billing.plan_not_found', default: 'That billing plan is not available.'),
                   status: :see_other
+    end
+
+    # This community, acting as sponsor, contributes to a DIFFERENT
+    # community's Stripe Customer Balance — never touches the beneficiary's
+    # own subscription/ownership. Replaces the old "takeover" mechanism.
+    def contribute
+      beneficiary = find_sponsorship_beneficiary
+      billing_plan = find_sponsorship_contribution_plan
+      redirect_to sponsorship_checkout_session_for(beneficiary, billing_plan).url, allow_other_host: true
+    rescue ActiveRecord::RecordNotFound
+      redirect_to_billing_with_alert(sponsorship_target_invalid_message)
     end
 
     def portal
@@ -120,12 +132,12 @@ module BetterTogether
       end
     end
 
+    # Subscription checkout on this page is always self-pay — a community can
+    # only subscribe as itself. Funding a DIFFERENT community's balance is a
+    # separate action (#contribute) with its own metadata shape; the two are
+    # not layered onto the same checkout entry point anymore.
     def checkout_metadata(billing_plan)
-      BetterTogether::Billing::OwnershipResolver.build_metadata(
-        billing_plan:,
-        billable_owner: selected_billable_owner,
-        beneficiary: @community
-      )
+      BetterTogether::Billing::OwnershipResolver.build_metadata(billing_plan:)
     end
 
     def find_billing_plan
@@ -133,12 +145,11 @@ module BetterTogether
     end
 
     def checkout_session_for(billing_plan)
-      selected_billable_owner.set_payment_processor(:stripe).checkout(**checkout_options(billing_plan))
+      @community.set_payment_processor(:stripe).checkout(**checkout_options(billing_plan))
     end
 
     def checkout_options(billing_plan)
       metadata = checkout_metadata(billing_plan)
-      billable_owner = selected_billable_owner
 
       {
         mode: billing_plan.recurring? ? 'subscription' : 'payment',
@@ -146,7 +157,7 @@ module BetterTogether
         success_url: billing_success_url,
         cancel_url: billing_cancel_url,
         allow_promotion_codes: true,
-        client_reference_id: billable_owner.id,
+        client_reference_id: @community.id,
         metadata:,
         subscription_data: subscription_checkout_data(billing_plan, metadata)
       }
@@ -156,6 +167,102 @@ module BetterTogether
       return unless billing_plan.recurring?
 
       { metadata: }
+    end
+
+    def find_sponsorship_beneficiary
+      BetterTogether::Community.friendly.find(params[:beneficiary_community_id])
+    end
+
+    def find_sponsorship_contribution_plan
+      available_sponsorship_contribution_plans.find { |plan| plan.identifier == params[:billing_plan_id] } ||
+        raise(ActiveRecord::RecordNotFound)
+    end
+
+    def sponsorship_checkout_session_for(beneficiary, billing_plan)
+      @community.set_payment_processor(:stripe).checkout(**sponsorship_checkout_options(beneficiary, billing_plan))
+    end
+
+    def sponsorship_checkout_options(beneficiary, billing_plan)
+      {
+        mode: 'payment',
+        line_items: [{ price: billing_plan.stripe_price_id, quantity: 1 }],
+        success_url: billing_success_url,
+        cancel_url: billing_cancel_url,
+        client_reference_id: @community.id,
+        metadata: sponsorship_checkout_metadata(beneficiary, billing_plan)
+      }
+    end
+
+    def sponsorship_checkout_metadata(beneficiary, billing_plan)
+      BetterTogether::Billing::OwnershipResolver.build_metadata(billing_plan:).merge(
+        bt_sponsorship_beneficiary_type: beneficiary.class.name,
+        bt_sponsorship_beneficiary_id: beneficiary.id
+      )
+    end
+
+    # Guarded by a MonetaryContribution existence check so revisiting the
+    # same checkout_session_id (e.g. a page refresh) never credits the
+    # beneficiary's Stripe balance twice for one payment.
+    def process_sponsorship_contribution(result)
+      one_time_payment = result.one_time_payment
+      return if BetterTogether::Billing::MonetaryContribution.exists?(one_time_payment:)
+
+      beneficiary = resolved_sponsorship_beneficiary(result.checkout_session)
+      return if beneficiary.blank?
+
+      credit_sponsorship_contribution(one_time_payment:, beneficiary:)
+      flash.now[:notice] = sponsorship_contribution_complete_message(beneficiary)
+    rescue ActiveRecord::RecordInvalid, Stripe::StripeError => e
+      flash.now[:alert] = sponsorship_contribution_failed_message(e)
+    end
+
+    def credit_sponsorship_contribution(one_time_payment:, beneficiary:)
+      sponsorship = find_or_create_active_sponsorship(sponsor: one_time_payment.owner, beneficiary:)
+      BetterTogether::Billing::CreditBeneficiaryBalance.new.call(
+        sponsorship:,
+        amount_cents: one_time_payment.amount_cents,
+        currency: one_time_payment.currency,
+        one_time_payment:
+      )
+    end
+
+    def resolved_sponsorship_beneficiary(checkout_session)
+      metadata = checkout_session.metadata.to_h
+      BetterTogether::Billing::OwnershipResolver.resolve_record(
+        metadata['bt_sponsorship_beneficiary_type'],
+        metadata['bt_sponsorship_beneficiary_id']
+      )
+    end
+
+    def find_or_create_active_sponsorship(sponsor:, beneficiary:)
+      BetterTogether::Billing::Sponsorship.status_active
+                                          .for_sponsor(sponsor)
+                                          .for_beneficiary(beneficiary)
+                                          .first ||
+        BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
+    end
+
+    def sponsorship_target_invalid_message
+      t(
+        'better_together.billing.sponsorship_target_invalid',
+        default: 'That community or contribution amount is not available.'
+      )
+    end
+
+    def sponsorship_contribution_complete_message(beneficiary)
+      t(
+        'better_together.billing.sponsorship_contribution_complete',
+        default: 'Your contribution to %<beneficiary>s was recorded.',
+        beneficiary: beneficiary.name
+      )
+    end
+
+    def sponsorship_contribution_failed_message(error)
+      t(
+        'better_together.billing.sponsorship_contribution_failed',
+        default: 'Your payment succeeded, but recording the contribution failed: %<message>s',
+        message: ERB::Util.html_escape(error.message)
+      )
     end
 
     def billing_success_url
@@ -206,7 +313,7 @@ module BetterTogether
     end
 
     def current_billing_subscription
-      @current_billing_subscription ||= BetterTogether::Billing::Subscription.current_for_beneficiary(@community)
+      @current_billing_subscription ||= BetterTogether::Billing::Subscription.current_for_owner(@community)
     end
 
     # rubocop:disable Metrics/AbcSize
@@ -222,8 +329,8 @@ module BetterTogether
       @billing_alert_events = billing_alert_events
       @billing_alert_summary = billing_alert_summary
       @last_billing_event = last_billing_event
-      @sponsoring_person = current_user.person
-      @sponsoring_communities = stewarded_sponsoring_communities
+      @sponsorship_contribution_plans = available_sponsorship_contribution_plans
+      @received_monetary_contributions = received_monetary_contributions
     end
     # rubocop:enable Metrics/AbcSize
 
@@ -288,16 +395,7 @@ module BetterTogether
     end
 
     def reconciliation_targets
-      targets = []
-      current_owner = current_billing_subscription&.billable_owner
-      targets << current_owner if current_owner.present?
-      targets.concat(
-        BetterTogether::Billing::Subscription.for_beneficiary(@community)
-                                            .includes(pay_subscription: :customer)
-                                            .filter_map(&:billable_owner)
-      )
-
-      targets.compact.uniq.presence || [@community]
+      [current_billing_subscription&.billable_owner, @community].compact.uniq.presence || [@community]
     end
 
     def replayable_billing_event
@@ -342,35 +440,13 @@ module BetterTogether
       )
     end
 
-    def selected_billable_owner
-      @selected_billable_owner ||= case params[:checkout_as].to_s
-                                   when 'person'
-                                     current_user.person.presence || @community
-                                   when 'community'
-                                     sponsoring_communities_by_slug.fetch(params[:billable_owner_community_id].to_s, @community)
-                                   else
-                                     @community
-                                   end
+    def available_sponsorship_contribution_plans
+      BetterTogether::Billing::Plan.active.order(:amount_cents).select(&:sponsorship_contribution?)
     end
 
-    def sponsoring_communities_by_slug
-      @sponsoring_communities_by_slug ||= stewarded_sponsoring_communities.index_by(&:slug)
-    end
-
-    # Communities the current user is authorized to bill as a sponsor for this community's
-    # subscription — mirrors the `policy(owner).update?` gate `portal_billable_owner` already
-    # applies, so a person can't select or checkout as a community they don't steward just
-    # because it happens to be visible to them. Uses a single batched query
-    # (CommunityPolicy.manageable_community_ids) instead of running policy(candidate).update?
-    # per candidate, which was an N+1 (each check issues up to 3 permission-scoped queries).
-    def stewarded_sponsoring_communities
-      @stewarded_sponsoring_communities ||= begin
-        candidates = policy_scope(BetterTogether::Community).where.not(id: @community.id)
-        manageable_ids = BetterTogether::CommunityPolicy.manageable_community_ids(
-          current_user&.person, candidates.select(:id)
-        )
-        candidates.where(id: manageable_ids).to_a
-      end
+    def received_monetary_contributions
+      BetterTogether::Billing::MonetaryContribution.joins(:sponsorship)
+                                                   .merge(BetterTogether::Billing::Sponsorship.for_beneficiary(@community))
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity

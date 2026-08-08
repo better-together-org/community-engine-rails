@@ -48,7 +48,7 @@ module BetterTogether
           :active,
           { metadata: [:participant_summary, :beneficiary_label, :hosted_access_level,
                        :support_tier, :community_capacity_tier,
-                       :pricing_tier, :solidarity_description,
+                       :pricing_tier, :solidarity_description, :sponsorship_contribution,
                        { participant_benefits: [], eligible_billable_owner_types: [] }] }
         ]
       end
@@ -120,6 +120,14 @@ module BetterTogether
 
       def solidarity_tier?
         pricing_tier != 'standard'
+      end
+
+      # A plan flagged as a sponsorship-contribution vehicle (a fixed-amount
+      # "top up someone else's balance" purchase) rather than a purchase of
+      # hosted access for the buyer themself. Excluded from the regular
+      # self-purchase plan list.
+      def sponsorship_contribution?
+        ActiveModel::Type::Boolean.new.cast(metadata.to_h['sponsorship_contribution'])
       end
 
       private
