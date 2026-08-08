@@ -1,0 +1,50 @@
+<div id="<%= dom_id(owner, :available_plans_card) %>" class="card">
+  <div class="card-header">
+    <strong><%= t('better_together.billing.available_plans', default: 'Available hosted plans') %></strong>
+  </div>
+  <div class="card-body">
+    <div class="alert alert-info">
+      <strong><%= t('better_together.billing.hosted_plan_scope_heading', default: 'Hosted plans available now') %></strong>
+      <div><%= scope_body_text %></div>
+    </div>
+    <% if billing_plans.any? %>
+      <div class="table-responsive">
+        <table id="<%= table_id %>" class="table align-middle">
+          <thead>
+            <tr>
+              <th><%= t('globals.name', default: 'Name') %></th>
+              <th><%= t('better_together.billing.plan_value', default: 'What this plan supports') %></th>
+              <th><%= t('better_together.billing.interval', default: 'Interval') %></th>
+              <th><%= t('better_together.billing.price', default: 'Price') %></th>
+              <th class="text-end"><%= t('globals.actions', default: 'Actions') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% billing_plans.each do |billing_plan| %>
+              <tr id="<%= dom_id(billing_plan) %>">
+                <td><strong><%= billing_plan.name %></strong></td>
+                <td><%= render 'better_together/shared/billing_plan_details', billing_plan: billing_plan %></td>
+                <td><%= billing_plan.billing_interval %></td>
+                <td>
+                  <%= number_to_currency(billing_plan.amount_cents / 100.0,
+                                          unit: billing_plan.currency.upcase == 'CAD' ? 'CA$' : "#{billing_plan.currency.upcase} ") %>
+                </td>
+                <td class="text-end">
+                  <%= button_to t('better_together.billing.start_checkout', default: 'Start checkout'),
+                                checkout_path_for.call(billing_plan),
+                                method: :post,
+                                class: 'btn btn-primary btn-sm',
+                                data: { turbo: false } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="mb-0 text-muted">
+        <%= t('better_together.billing.no_plans', default: 'No recurring hosted billing plans are configured yet.') %>
+      </p>
+    <% end %>
+  </div>
+</div>
