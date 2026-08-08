@@ -343,7 +343,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         metadata: { 'sponsorship_contribution' => true }
       )
     end
-    let(:beneficiary_community) { create(:better_together_community, name: 'Beneficiary Co-op') }
+    let(:beneficiary_community) { create(:better_together_community, name: 'Beneficiary Co-op', accepts_sponsorship: true) }
 
     it 'redirects to a hosted Stripe checkout session funding the beneficiary community, never the current community itself as owner' do
       checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/contribution-session')
@@ -384,6 +384,20 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
+
+    it 'fails closed before any Stripe redirect when the beneficiary has not opted in to sponsorship' do
+      opted_out_beneficiary = create(:better_together_community, name: 'Opted Out Co-op', accepts_sponsorship: false)
+
+      allow(Stripe::Checkout::Session).to receive(:create)
+
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: opted_out_beneficiary.slug, billing_plan_id: contribution_plan.identifier }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('This community has not opted in to receive sponsorship contributions.')
+      expect(Stripe::Checkout::Session).not_to have_received(:create)
+    end
   end
 
   describe 'GET /:locale/c/:community_id/billing (sponsorship contribution checkout return)' do
@@ -397,7 +411,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         metadata: { 'sponsorship_contribution' => true }
       )
     end
-    let(:beneficiary_community) { create(:better_together_community, name: 'Funded Co-op') }
+    let(:beneficiary_community) { create(:better_together_community, name: 'Funded Co-op', accepts_sponsorship: true) }
     let!(:sponsor_pay_customer) do
       Pay::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_return')
     end

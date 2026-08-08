@@ -162,6 +162,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :refresh_merchant_account
             post 'events/:event_id/replay', action: :replay_event, as: :replay_event
             get  :provision_platform
+            patch :accepts_sponsorship
           end
 
           resources :invitations, only: %i[create destroy] do
@@ -338,6 +339,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :merchant_onboarding
             post :refresh_merchant_account
             post 'events/:event_id/replay', action: :replay_event, as: :replay_event
+            patch :accepts_sponsorship
           end
         end
 
@@ -602,6 +604,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'invitations/:token', to: 'invitations#show', as: :invitation
       post 'invitations/:token/accept', to: 'invitations#accept', as: :accept_invitation
       post 'invitations/:token/decline', to: 'invitations#decline', as: :decline_invitation
+
+      # Sponsorship offer creation (authenticated) + token-based public review/
+      # accept/decline, plus authenticated ending of an active sponsorship.
+      post 'sponsorships', to: 'sponsorships#create', as: :sponsorships
+      get 'sponsorships/:token', to: 'sponsorships#show', as: :sponsorship
+      post 'sponsorships/:token/accept', to: 'sponsorships#accept', as: :accept_sponsorship
+      post 'sponsorships/:token/decline', to: 'sponsorships#decline', as: :decline_sponsorship
+      post 'sponsorships/:id/end', to: 'sponsorships#end', as: :end_sponsorship
       resources :posts, only: %i[index show]
 
       # Configures file list and download paths

@@ -106,6 +106,17 @@
           <% end %>
         </div>
       </div>
+
+      <%= render 'better_together/shared/sponsorship_panels',
+                 owner: @community,
+                 accepts_sponsorship_path: accepts_sponsorship_community_billing_path(@community, locale: I18n.locale),
+                 offer_sponsorship_path: sponsorships_path(locale: I18n.locale),
+                 received_offers: @received_sponsorship_offers,
+                 received_active: @received_active_sponsorships,
+                 given_active: @given_active_sponsorships,
+                 accept_path_for: ->(sponsorship) { accept_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 decline_path_for: ->(sponsorship) { decline_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 end_path_for: ->(sponsorship) { end_sponsorship_path(sponsorship.id, locale: I18n.locale) } %>
     </div>
   </div>
 </div>

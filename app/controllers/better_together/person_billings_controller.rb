@@ -28,6 +28,9 @@ module BetterTogether
 
     def load_billing_overview_extras
       @sponsored_communities = sponsored_communities
+      @received_sponsorship_offers = received_sponsorship_offers
+      @received_active_sponsorships = received_active_sponsorships
+      @given_active_sponsorships = given_active_sponsorships
     end
 
     # Communities this person is currently sponsoring (contributing to their

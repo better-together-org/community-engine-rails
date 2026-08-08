@@ -15,6 +15,8 @@ module BetterTogether
     # own subscription/ownership. Replaces the old "takeover" mechanism.
     def contribute
       beneficiary = find_sponsorship_beneficiary
+      return redirect_to_billing_with_alert(sponsorship_consent_required_message) unless beneficiary_accepts_sponsorship?(beneficiary)
+
       billing_plan = find_sponsorship_contribution_plan
       redirect_to sponsorship_checkout_session_for(beneficiary, billing_plan).url, allow_other_host: true
     rescue ActiveRecord::RecordNotFound
@@ -63,10 +65,23 @@ module BetterTogether
       @sponsorship_contribution_plans = available_sponsorship_contribution_plans
       @received_monetary_contributions = received_monetary_contributions
       process_sponsorship_contribution(@checkout_sync_result) if @checkout_sync_result&.one_time_payment.present?
+      @received_sponsorship_offers = received_sponsorship_offers
+      @received_active_sponsorships = received_active_sponsorships
+      @given_active_sponsorships = given_active_sponsorships
     end
 
     def find_sponsorship_beneficiary
       BetterTogether::Community.friendly.find(params[:beneficiary_community_id])
+    end
+
+    # Fail closed BEFORE any Stripe redirect — the model-level validation on
+    # Sponsorship#create only fires once find_or_create_active_sponsorship
+    # runs, which happens AFTER the sponsor's payment already succeeded. This
+    # check prevents "money moved, tracking lost" for an opted-out beneficiary.
+    def beneficiary_accepts_sponsorship?(beneficiary)
+      return true unless BetterTogether::Billing::Sponsorship.consent_enforced?
+
+      beneficiary.respond_to?(:accepts_sponsorship?) && beneficiary.accepts_sponsorship?
     end
 
     def find_sponsorship_contribution_plan
@@ -130,18 +145,31 @@ module BetterTogether
       )
     end
 
+    # Reuses an existing accepted/active standing relationship for this
+    # sponsor+beneficiary pair rather than spinning up a duplicate row —
+    # activates it on first contribution if it was merely accepted.
     def find_or_create_active_sponsorship(sponsor:, beneficiary:)
-      BetterTogether::Billing::Sponsorship.status_active
-                                          .for_sponsor(sponsor)
-                                          .for_beneficiary(beneficiary)
-                                          .first ||
-        BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
+      sponsorship = BetterTogether::Billing::Sponsorship.where(status: %w[accepted active])
+                                                        .for_sponsor(sponsor)
+                                                        .for_beneficiary(beneficiary)
+                                                        .first
+
+      return sponsorship.tap { |s| s.activate! if s.status_accepted? } if sponsorship
+
+      BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
     end
 
     def sponsorship_target_invalid_message
       t(
         'better_together.billing.sponsorship_target_invalid',
         default: 'That community or contribution amount is not available.'
+      )
+    end
+
+    def sponsorship_consent_required_message
+      t(
+        'better_together.billing.sponsorship_consent_required',
+        default: 'This community has not opted in to receive sponsorship contributions.'
       )
     end
 
