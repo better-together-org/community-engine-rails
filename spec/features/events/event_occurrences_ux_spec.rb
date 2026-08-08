@@ -2,19 +2,32 @@
 
 require 'rails_helper'
 
-# RED-phase acceptance criteria for the recurring badge (AC-3.8-3.10) and true
+# Acceptance criteria for the recurring badge (AC-3.8-3.10) and true
 # calendar occurrence expansion (AC-4.1-4.5). See
 # docs/implementation/current_plans/event_occurrences_acceptance_criteria.md.
-# `recurring_badge`, the calendar's occurrence expansion, and the override/
-# cancelled display do not exist yet — every example is expected to fail
-# until Parts 3 and 4 land.
+# Parts 3 and 4 are implemented.
 RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
   let(:locale) { I18n.default_locale }
   let(:organizer) { create(:better_together_user) }
-  let(:community) { create(:better_together_community) }
-  let(:calendar) { create(:better_together_calendar, community:) }
+  # privacy: 'public' on both — CalendarPolicy#show? requires privacy_public?
+  # (or community membership), and PrivacyCeilingValidatable forbids a
+  # calendar's privacy from exceeding its community's. Both factories
+  # default to 'private', which would either deny the auto-logged-in
+  # generic test user (redirecting to the platform home) or fail calendar
+  # creation outright.
+  let(:community) { create(:better_together_community, privacy: 'public') }
+  let(:calendar) { create(:better_together_calendar, community:, privacy: 'public') }
   let(:event) do
-    create(:better_together_event, creator: organizer.person, name: 'Weekly Trivia Night', starts_at: 2.weeks.ago)
+    # ends_at must be overridden alongside starts_at — the factory's ends_at
+    # default (1.week.from_now + 2.hours) is independent of starts_at, so
+    # leaving it out here would give this event a multi-week duration_minutes.
+    # simple_calendar's group_events_by_date spans an event across every day
+    # from start to end date inclusive, so each weekly occurrence would then
+    # stack onto every other occurrence's date within that span — the same
+    # gotcha already documented in calendars_controller_spec.rb.
+    create(:better_together_event, creator: organizer.person, name: 'Weekly Trivia Night',
+                                   starts_at: 2.weeks.ago,
+                                   ends_at: 2.weeks.ago + 2.hours)
   end
   let(:recurrence) { create(:recurrence, :weekly, schedulable: event) }
 
@@ -26,8 +39,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
 
   describe 'recurring badge on the events index (AC-3.8, AC-3.9, AC-3.10)' do
     it 'shows a "Repeats" badge with visible text, not color alone, and an accessible explanation' do
-      pending 'AC-3.8/AC-3.9: recurring_badge helper not yet implemented'
-
       visit better_together.events_path(locale:)
 
       badge = find('.event-recurring-badge', text: /Repeats/i)
@@ -35,8 +46,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     end
 
     it 'passes WCAG 2.1 AA on the index card and recurring filter control' do
-      pending 'AC-3.10: recurring filter control not yet implemented'
-
       visit better_together.events_path(locale:)
 
       expect(page).to be_axe_clean
@@ -47,8 +56,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
 
   describe 'calendar grid shows every occurrence, not just the original date (AC-4.1, AC-4.2, AC-4.3)' do
     it 'shows the recurring event on multiple future date cells within the visible month' do
-      pending 'AC-4.1: CalendarOccurrenceExpander not yet implemented'
-
       visit better_together.calendar_path(calendar, locale:)
 
       occurrence_dates = recurrence.occurrences_between(Time.current, 3.weeks.from_now).map(&:to_date)
@@ -59,8 +66,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     end
 
     it 'shows the recurring event\'s occurrence when navigating to a future month (AC-4.2)' do
-      pending 'AC-4.2: windowed expansion around params[:start_date] not yet implemented'
-
       future_month_start = 2.months.from_now.beginning_of_month.to_date
       visit better_together.calendar_path(calendar, locale:, start_date: future_month_start.iso8601)
 
@@ -70,8 +75,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     end
 
     it 'links a future occurrence\'s day-cell entry to the correct, single canonical event page (AC-4.3)' do
-      pending 'AC-4.3: Occurrence PORO delegation through dom_id/event_path not yet verified'
-
       visit better_together.calendar_path(calendar, locale:)
       future_date = recurrence.occurrences_between(1.week.from_now, 1.year.from_now).first.to_date
 
@@ -83,8 +86,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
 
   describe 'calendar reflects organizer overrides and cancellations (AC-4.4, AC-4.5)' do
     it 'shows an overridden occurrence on its (possibly moved) effective date, not the stale computed one' do
-      pending 'AC-4.4: override-aware calendar expansion not yet implemented'
-
       occurrence_date = recurrence.occurrences_between(Time.current, 1.year.from_now).first.to_date
       occurrence = BetterTogether::EventOccurrence.create!(event:, occurrence_date:)
       moved_date = occurrence.effective_starts_at + 1.day
@@ -96,8 +97,6 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     end
 
     it 'shows a clear "Cancelled" indicator on a cancelled occurrence\'s date, not a silent absence' do
-      pending 'AC-4.5: cancelled indicator on calendar not yet implemented'
-
       occurrence_date = recurrence.occurrences_between(Time.current, 1.year.from_now).first.to_date
       BetterTogether::EventOccurrence.create!(event:, occurrence_date:, cancelled: true)
 

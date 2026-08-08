@@ -80,22 +80,25 @@ module BetterTogether
         rounded: rounded,
         style: style,
         tooltip: summary,
-        aria_label: t('better_together.shared.recurring_badge_aria_label', summary: summary)
+        aria_label: t('better_together.shared.recurring_badge_aria_label', summary: summary),
+        extra_class: 'event-recurring-badge'
       )
     end
 
     private
 
-    def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil)
+    # rubocop:disable Metrics/ParameterLists
+    def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil, extra_class: nil)
       rounded_class = rounded ? 'rounded-pill' : ''
       style_class = "text-bg-#{style}"
 
-      options = { class: "badge #{rounded_class} #{style_class} icon-above-stretched-link" }
+      options = { class: "badge #{rounded_class} #{style_class} icon-above-stretched-link #{extra_class}".strip }
       options['data-bs-toggle'] = 'tooltip' if tooltip
       options[:title] = tooltip if tooltip
       options['aria-label'] = aria_label if aria_label
 
       content_tag :span, label, options
     end
+    # rubocop:enable Metrics/ParameterLists
   end
 end
