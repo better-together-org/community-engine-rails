@@ -3,16 +3,30 @@
 module BetterTogether
   # Authorizes CE federation OAuth/API scopes against a directed platform connection.
   class FederationScopeAuthorizer
-    SUPPORTED_SCOPE_RULES = {
+    BASE_SCOPE_RULES = {
       'identity.read' => ->(connection) { connection.login_enabled? },
       'person.profile.read' => ->(connection) { connection.allows_federation_scope?('profile_read') },
       'content.read' => ->(connection) { connection.api_read_enabled? },
       'content.feed.read' => ->(connection) { connection.api_read_enabled? && connection.mirrored_content_enabled? },
       'linked_content.read' => ->(connection) { connection.linked_content_read_enabled? },
       'content.mirror.write' => ->(connection) { connection.api_write_enabled? && connection.mirrored_content_enabled? },
-      'content.publish.write' => ->(connection) { connection.publish_back_enabled? },
-      'c3.exchange' => ->(connection) { connection.allows_c3_exchange? }
+      'content.publish.write' => ->(connection) { connection.publish_back_enabled? }
     }.freeze
+
+    class << self
+      # Extension point for optional federation scopes (e.g. the Borgberry
+      # extension's 'c3.exchange') owned by a gem that may not be bundled —
+      # core never references scope names it doesn't itself implement.
+      def register_scope_rule(name, &rule)
+        self.additional_scope_rules = additional_scope_rules.merge(name.to_s => rule)
+      end
+
+      def scope_rules
+        BASE_SCOPE_RULES.merge(additional_scope_rules)
+      end
+    end
+
+    mattr_accessor :additional_scope_rules, default: {}
 
     Result = Struct.new(
       :connection,
@@ -54,7 +68,7 @@ module BetterTogether
       unsupported = []
 
       requested_scopes.each do |scope|
-        rule = SUPPORTED_SCOPE_RULES[scope]
+        rule = self.class.scope_rules[scope]
         if rule.nil?
           unsupported << scope
         elsif rule.call(connection)

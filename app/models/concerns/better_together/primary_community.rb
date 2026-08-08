@@ -14,7 +14,7 @@ module BetterTogether
       class_attribute :community_class_name, default: '::BetterTogether::Community'
 
       translates :name, type: :string
-      translates :description, type: :text
+      translates :description, backend: :action_text
 
       validates :name, presence: true
     end

@@ -1,0 +1,17 @@
+flowchart TD
+  A[Manager visits platforms#index] --> B{policy Platform.new, :create?}
+  B -->|Not authorized| C[No button rendered — table only]
+  B -->|Authorized| D[Provision New Platform button rendered]
+  D --> E[new_platform_setup_path]
+  E --> F[new_platform_setup wizard — 6 steps]
+
+  G[PlatformsController#new / #create] -.->|Unchanged, still exists| H[External/federated platform registration form]
+  H -.-> I[Linked only from platform_connections/new.html.erb — register this platform first]
+  H -.->|external: true default, no link from platforms#index| G
+
+  classDef new fill:#e8f0fe,stroke:#1a56db,color:#1e3a8a;
+  classDef existing fill:#f1f3f4,stroke:#5f6368,color:#3c4043;
+  classDef decision fill:#fff8e1,stroke:#8a6d00,color:#5f4b00;
+  class B decision;
+  class D,E,F new;
+  class G,H,I existing;

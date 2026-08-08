@@ -204,6 +204,14 @@ export default class extends Controller {
     // Store multiSelectJson flag for later use in event handlers
     this.isMultiSelectJson = optionsData.multiSelectJson === true;
 
+    // Capture the pre-selected value(s) BEFORE constructing SlimSelect — its
+    // constructor can clear the native <select>'s .selectedOptions, which
+    // would otherwise silently leave a `required` field blank and
+    // unsubmittable.
+    const preSelectedValues = this.isMultiSelectJson
+      ? null
+      : Array.from(this.element.selectedOptions).map(o => o.value);
+
     this.slimSelect = new SlimSelect({
       select: this.element,
       ...options
@@ -229,9 +237,8 @@ export default class extends Controller {
             }
           }
         } else {
-          // Pass current selected values from the underlying select
-          const selected = Array.from(this.element.selectedOptions).map(o => o.value);
-          this.slimSelect.set(selected);
+          // Restore the values captured before SlimSelect's constructor ran.
+          this.slimSelect.set(preSelectedValues);
         }
       }
     } catch (e) {

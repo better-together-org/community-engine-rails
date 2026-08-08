@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_05_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -107,31 +107,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"
     t.index ["platform_id"], name: "index_better_together_addresses_on_platform_id"
     t.index ["privacy"], name: "by_better_together_addresses_privacy"
-  end
-
-  create_table "better_together_agent_job_results", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "job_id", null: false
-    t.string "job_type", null: false
-    t.string "source_system", default: "borgberry", null: false
-    t.string "node_id"
-    t.uuid "fleet_node_id"
-    t.string "submitter_type"
-    t.uuid "submitter_id"
-    t.jsonb "result_payload", default: {}, null: false
-    t.jsonb "steps", default: [], null: false
-    t.integer "elapsed_ms"
-    t.string "status", default: "pending", null: false
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.text "error_message"
-    t.index ["fleet_node_id"], name: "idx_bt_agent_job_results_fleet_node"
-    t.index ["job_id"], name: "idx_bt_agent_job_results_job_id", unique: true
-    t.index ["node_id"], name: "idx_bt_agent_job_results_node_id"
-    t.index ["status"], name: "idx_bt_agent_job_results_status"
-    t.index ["submitter_type", "submitter_id"], name: "idx_bt_agent_job_results_submitter"
   end
 
   create_table "better_together_agreement_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -245,83 +220,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
     t.index ["platform_id"], name: "index_better_together_authorships_on_platform_id"
     t.index ["role"], name: "by_better_together_authorships_role"
-  end
-
-  create_table "better_together_c3_balance_locks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "balance_id", null: false
-    t.string "lock_ref", null: false
-    t.bigint "millitokens", null: false
-    t.string "agreement_ref"
-    t.uuid "source_platform_id"
-    t.string "status", default: "pending", null: false
-    t.datetime "expires_at", null: false
-    t.datetime "settled_at"
-    t.index ["balance_id"], name: "idx_bt_c3_balance_locks_balance"
-    t.index ["lock_ref"], name: "idx_bt_c3_balance_locks_ref", unique: true
-    t.index ["source_platform_id"], name: "idx_bt_c3_balance_locks_source_platform"
-    t.index ["status", "expires_at"], name: "idx_bt_c3_balance_locks_expiry"
-  end
-
-  create_table "better_together_c3_balances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "holder_type", null: false
-    t.uuid "holder_id", null: false
-    t.uuid "community_id"
-    t.bigint "available_millitokens", default: 0, null: false
-    t.bigint "locked_millitokens", default: 0, null: false
-    t.bigint "lifetime_earned_millitokens", default: 0, null: false
-    t.uuid "origin_platform_id"
-    t.index ["community_id"], name: "idx_bt_c3_balances_community"
-    t.index ["holder_type", "holder_id", "community_id"], name: "idx_bt_c3_balances_holder_community", unique: true
-    t.index ["holder_type", "holder_id"], name: "idx_bt_c3_balances_holder"
-    t.index ["origin_platform_id"], name: "idx_bt_c3_balances_origin_platform", where: "(origin_platform_id IS NOT NULL)"
-  end
-
-  create_table "better_together_c3_exchange_rates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "contribution_type", null: false
-    t.string "contribution_type_name", null: false
-    t.decimal "rate", precision: 18, scale: 6, null: false
-    t.string "unit_name", null: false
-    t.string "unit_label", null: false
-    t.string "source_system", default: "borgberry"
-    t.boolean "active", default: true, null: false
-    t.index ["contribution_type"], name: "idx_bt_c3_exchange_rates_active_type", unique: true, where: "(active = true)"
-  end
-
-  create_table "better_together_c3_tokens", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "earner_type", null: false
-    t.uuid "earner_id", null: false
-    t.uuid "community_id"
-    t.integer "contribution_type", null: false
-    t.string "contribution_type_name", null: false
-    t.bigint "c3_millitokens", default: 0, null: false
-    t.string "source_ref", null: false
-    t.string "source_system", default: "borgberry", null: false
-    t.decimal "units", precision: 18, scale: 6
-    t.decimal "duration_s", precision: 12, scale: 3
-    t.jsonb "metadata", default: {}, null: false
-    t.string "status", default: "pending", null: false
-    t.datetime "emitted_at"
-    t.datetime "confirmed_at"
-    t.uuid "origin_platform_id"
-    t.boolean "federated", default: false, null: false
-    t.index ["community_id"], name: "idx_bt_c3_tokens_community"
-    t.index ["contribution_type"], name: "idx_bt_c3_tokens_contribution_type"
-    t.index ["earner_type", "earner_id"], name: "idx_bt_c3_tokens_earner"
-    t.index ["origin_platform_id"], name: "idx_bt_c3_tokens_origin_platform", where: "(origin_platform_id IS NOT NULL)"
-    t.index ["source_system", "source_ref"], name: "idx_bt_c3_tokens_source_system_ref", unique: true
-    t.index ["status"], name: "idx_bt_c3_tokens_status"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -851,39 +749,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.index ["platform_connection_id"], name: "bt_federation_content_grants_by_connection"
   end
 
-  create_table "better_together_fleet_node_ownerships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "node_id", null: false
-    t.string "owner_type", null: false
-    t.uuid "owner_id", null: false
-    t.index ["node_id"], name: "idx_bt_fleet_node_ownerships_node_id", unique: true
-    t.index ["owner_type", "owner_id"], name: "idx_bt_fleet_node_ownerships_owner"
-  end
-
-  create_table "better_together_fleet_nodes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "node_id", null: false
-    t.string "node_category", default: "cat1", null: false
-    t.string "headscale_ip"
-    t.string "lan_ip"
-    t.integer "borgberry_port", default: 8790
-    t.jsonb "hardware", default: {}, null: false
-    t.jsonb "compute", default: {}, null: false
-    t.jsonb "services", default: {}, null: false
-    t.string "safety_tier", default: "T0"
-    t.boolean "online", default: false, null: false
-    t.datetime "last_seen_at"
-    t.datetime "registered_at"
-    t.uuid "platform_id"
-    t.index ["node_id"], name: "idx_bt_fleet_nodes_node_id", unique: true
-    t.index ["online"], name: "idx_bt_fleet_nodes_online"
-    t.index ["platform_id"], name: "idx_bt_fleet_nodes_platform"
-  end
-
   create_table "better_together_geography_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1257,8 +1122,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.string "urgency", default: "normal", null: false
     t.uuid "address_id"
     t.string "privacy", default: "private", null: false
-    t.bigint "c3_price_millitokens"
-    t.string "c3_price_currency", default: "C3"
     t.uuid "platform_id"
     t.index ["address_id"], name: "index_better_together_joatu_offers_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_offers_creator"
@@ -1282,8 +1145,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.string "requestor_email"
     t.string "referral_source"
     t.string "privacy", default: "private", null: false
-    t.bigint "c3_budget_millitokens"
-    t.string "c3_budget_currency", default: "C3"
     t.uuid "platform_id"
     t.index ["address_id"], name: "index_better_together_joatu_requests_on_address_id"
     t.index ["creator_id"], name: "by_better_together_joatu_requests_creator"
@@ -1309,29 +1170,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.index ["response_type", "response_id"], name: "bt_joatu_response_links_by_response"
     t.index ["source_type", "source_id", "response_type", "response_id"], name: "bt_joatu_response_links_unique_pair", unique: true
     t.index ["source_type", "source_id"], name: "bt_joatu_response_links_by_source"
-  end
-
-  create_table "better_together_joatu_settlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "agreement_id", null: false
-    t.string "payer_type", null: false
-    t.uuid "payer_id", null: false
-    t.string "recipient_type", null: false
-    t.uuid "recipient_id", null: false
-    t.uuid "c3_token_id"
-    t.bigint "c3_millitokens", default: 0, null: false
-    t.string "status", default: "pending", null: false
-    t.datetime "completed_at"
-    t.string "lock_ref"
-    t.uuid "platform_id"
-    t.index ["agreement_id"], name: "idx_bt_joatu_settlements_agreement", unique: true
-    t.index ["c3_token_id"], name: "idx_bt_joatu_settlements_token"
-    t.index ["lock_ref"], name: "idx_bt_joatu_settlements_lock_ref", where: "(lock_ref IS NOT NULL)"
-    t.index ["payer_type", "payer_id"], name: "idx_bt_joatu_settlements_payer"
-    t.index ["platform_id"], name: "index_better_together_joatu_settlements_on_platform_id"
-    t.index ["recipient_type", "recipient_id"], name: "idx_bt_joatu_settlements_recipient"
   end
 
   create_table "better_together_jwt_denylists", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1719,9 +1557,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.datetime "key_backup_updated_at"
     t.datetime "deleted_at"
     t.datetime "anonymized_at"
-    t.string "borgberry_did"
     t.uuid "platform_id"
-    t.index ["borgberry_did"], name: "index_bt_people_on_borgberry_did", unique: true, where: "(borgberry_did IS NOT NULL)"
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["platform_id"], name: "index_better_together_people_on_platform_id"
@@ -2544,7 +2380,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
     t.string "message", default: "Please complete this next step.", null: false
     t.integer "step_number", null: false
     t.uuid "platform_id"
-    t.index ["identifier"], name: "index_better_together_wizard_step_definitions_on_identifier", unique: true
+    t.index ["identifier", "platform_id"], name: "idx_bt_wizard_step_defs_on_identifier_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_wizard_step_definitions_on_platform_id"
     t.index ["wizard_id", "step_number"], name: "index_wizard_step_definitions_on_wizard_id_and_step_number", unique: true
     t.index ["wizard_id"], name: "by_step_definition_wizard"
@@ -2658,7 +2494,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
   add_foreign_key "better_together_activities", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_addresses", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_agent_job_results", "better_together_fleet_nodes", column: "fleet_node_id", on_delete: :nullify
   add_foreign_key "better_together_agreement_participants", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_agreement_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_agreement_participants", "better_together_platforms", column: "platform_id"
@@ -2670,12 +2505,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_c3_balance_locks", "better_together_c3_balances", column: "balance_id", on_delete: :cascade
-  add_foreign_key "better_together_c3_balance_locks", "better_together_platforms", column: "source_platform_id", on_delete: :nullify
-  add_foreign_key "better_together_c3_balances", "better_together_communities", column: "community_id", on_delete: :nullify
-  add_foreign_key "better_together_c3_balances", "better_together_platforms", column: "origin_platform_id", on_delete: :nullify
-  add_foreign_key "better_together_c3_tokens", "better_together_communities", column: "community_id", on_delete: :nullify
-  add_foreign_key "better_together_c3_tokens", "better_together_platforms", column: "origin_platform_id", on_delete: :nullify
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"
@@ -2735,8 +2564,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
   add_foreign_key "better_together_feature_access_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_federation_access_tokens", "better_together_platform_connections", column: "platform_connection_id"
   add_foreign_key "better_together_federation_content_grants", "better_together_platform_connections", column: "platform_connection_id"
-  add_foreign_key "better_together_fleet_node_ownerships", "better_together_fleet_nodes", column: "node_id", on_delete: :cascade
-  add_foreign_key "better_together_fleet_nodes", "better_together_platforms", column: "platform_id", on_delete: :nullify
   add_foreign_key "better_together_geography_continents", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_countries", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_country_continents", "better_together_geography_continents", column: "continent_id"
@@ -2787,9 +2614,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_29_120200) do
   add_foreign_key "better_together_joatu_requests", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_joatu_response_links", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_joatu_response_links", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_joatu_settlements", "better_together_c3_tokens", column: "c3_token_id", on_delete: :nullify
-  add_foreign_key "better_together_joatu_settlements", "better_together_joatu_agreements", column: "agreement_id", on_delete: :restrict
-  add_foreign_key "better_together_joatu_settlements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_jwt_denylists", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_message_requests", "better_together_people", column: "recipient_id", on_delete: :cascade
   add_foreign_key "better_together_message_requests", "better_together_people", column: "sender_id", on_delete: :cascade

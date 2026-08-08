@@ -27,6 +27,8 @@ module BetterTogether
 
     delegate :api_v1_routes_extension=, to: :BetterTogether
 
+    delegate :federation_routes_extension=, to: :BetterTogether
+
     delegate :swagger_additional_endpoints=, to: :BetterTogether
   end
 end

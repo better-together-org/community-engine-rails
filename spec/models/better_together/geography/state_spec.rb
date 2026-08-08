@@ -68,9 +68,9 @@ RSpec.describe BetterTogether::Geography::State do
       Mobility.with_locale(:es) do
         state.description = 'Un estado occidental'
       end
-      expect(state.description).to eq('A western state')
+      expect(state.description.to_plain_text).to eq('A western state')
       Mobility.with_locale(:es) do
-        expect(state.description).to eq('Un estado occidental')
+        expect(state.description.to_plain_text).to eq('Un estado occidental')
       end
     end
 

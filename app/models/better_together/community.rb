@@ -53,14 +53,6 @@ module BetterTogether
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
     has_many :posts, class_name: 'BetterTogether::Post', dependent: :nullify
-    has_many :fleet_node_ownerships,
-             as: :owner,
-             class_name: 'BetterTogether::Fleet::NodeOwnership',
-             dependent: :destroy,
-             inverse_of: :owner
-    has_many :fleet_nodes,
-             through: :fleet_node_ownerships,
-             source: :node
 
     store_attributes :settings do
       contributors_display_visibility String, default: 'inherit'
@@ -78,8 +70,7 @@ module BetterTogether
     slugged :name
 
     translates :name, type: :string
-    translates :description, type: :text
-    translates :description_html, backend: :action_text
+    translates :description, backend: :action_text
 
     searchable pg_search: {
       against: [:identifier],
