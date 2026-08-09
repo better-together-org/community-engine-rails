@@ -1,0 +1,82 @@
+{
+  "name": "sponsorship_review_active",
+  "device": "mobile",
+  "url": "/en/sponsorships/q7CfDWLiTy4m7CPfrN1gango",
+  "title": "Test Host Community",
+  "locale": "en",
+  "feature_set": "sponsorship_panel_states",
+  "source_spec": "./spec/docs_screenshots/better_together/sponsorship_panel_states_spec.rb",
+  "callouts": [
+    {
+      "selector": "#sponsorship-active-alert",
+      "title": "Active sponsorship",
+      "bullets": [
+        "Confirms the sponsorship is live and contributions are being credited."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 172.28125,
+        "width": 476.0,
+        "height": 58.0,
+        "right": 488.0,
+        "bottom": 230.28125,
+        "center_x": 250.0,
+        "center_y": 201.28125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 172.28125,
+        "width": 476.0,
+        "height": 58.0,
+        "right": 488.0,
+        "bottom": 230.28125,
+        "center_x": 250.0,
+        "center_y": 201.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 250.28,
+        "width": 270.0,
+        "height": 184,
+        "score": 1030.71875
+      }
+    },
+    {
+      "selector": "#sponsorship-end-btn",
+      "title": "Stop this sponsorship",
+      "bullets": [
+        "Either party can end an active sponsorship at any time.",
+        "Ending does not retroactively remove contributions already credited."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 246.28125,
+        "width": 197.953125,
+        "height": 38.0,
+        "right": 209.953125,
+        "bottom": 284.28125,
+        "center_x": 110.9765625,
+        "center_y": 265.28125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 246.28125,
+        "width": 197.953125,
+        "height": 38.0,
+        "right": 209.953125,
+        "bottom": 284.28125,
+        "center_x": 110.9765625,
+        "center_y": 265.28125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 504,
+        "width": 270.0,
+        "height": 320,
+        "score": 0
+      }
+    }
+  ]
+}
