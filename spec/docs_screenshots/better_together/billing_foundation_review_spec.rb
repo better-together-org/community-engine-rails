@@ -65,6 +65,16 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       }
     )
   end
+  let!(:sponsorship_contribution_plan) do
+    create(
+      :better_together_billing_plan,
+      :one_time,
+      identifier: 'sponsor-a-community',
+      name: 'Sponsor a Community',
+      amount_cents: 2_000,
+      metadata: { 'sponsorship_contribution' => true }
+    )
+  end
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
@@ -82,19 +92,26 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       'pr_1581_community_billing_overview',
       callouts: [
         { selector: '#hosted-entitlement-card', title: 'Hosted plan status',
-          bullets: ['Shows whether the community currently qualifies for hosted services.', 'Explains what level of hosted service the plan unlocks.'] }
+          bullets: ['Shows whether the community currently qualifies for hosted services.', 'Explains what level of hosted service the plan unlocks.'] },
+        { selector: "##{ActionView::RecordIdentifier.dom_id(community, :sponsorship_received_notice)}",
+          title: 'Sponsorship received',
+          bullets: ['Shown whenever a sponsor\'s contribution has been credited to this community\'s balance.'] }
       ],
       narrative: {
         title: 'Community billing overview',
         audience: %w[board_member community_steward operator],
-        journey_step: 'A steward reviews the community billing page to see who is paying, what the plan unlocks, whether payouts are configured, and whether Stripe events need attention.',
+        journey_step: 'A steward reviews the community billing page to see whether the community\'s own plan is active, whether it is being sponsored by others, what it can contribute to other communities, whether payouts are configured, and whether Stripe events need attention.',
         callouts: [
           { title: 'Hosted plan status',
             description: 'This card translates billing into plain operational terms: whether the hosted community is active, what support tier it has, and whether platform provisioning is allowed.' },
           { title: 'Current subscription',
-            description: 'This community\'s own hosted plan, if it pays for itself. A subscription is always self-funded (billable_owner and beneficiary are the same record) — a third party wanting to fund this community instead does so via the separate Sponsorship panel below, not by taking over this subscription.' },
+            description: 'This community\'s own hosted plan, if it pays for itself — a subscription is always self-funded (billable_owner and beneficiary are the same record now; see Subscription#beneficiary). Replaces the old "takeover" mechanism (billing ownership reassignment) entirely — a third party funding this community\'s access instead does so via the Sponsorship panel below, crediting this community\'s own Stripe balance rather than taking over the subscription record.' },
+          { title: 'Sponsorship received',
+            description: 'A Billing::Sponsorship crediting this community\'s balance via a MonetaryContribution, replacing the removed takeover UI ("Let Collective Budget pay instead"). This banner only shows the total credited so far — see the Sponsorship panel below for who the sponsor is and accept/decline actions.' },
+          { title: 'Contribute to another community',
+            description: 'This community can fund another community\'s hosted-access balance directly, without ever taking over that community\'s subscription ownership.' },
           { title: 'Sponsorship',
-            description: 'Billing::Entitlement redesign: sponsorship replaced the old subscription-ownership "takeover" mechanism entirely. A sponsor\'s contribution is credited to the beneficiary\'s own Stripe Customer Balance; it never reassigns billable_owner on a Subscription record. This panel (below the fixed screenshot viewport on this page, so it has no callout box here — see sponsorship_panel_states for the dedicated, annotated view) shows who currently sponsors this account, who this account sponsors, and lets a steward offer to sponsor another community or person.' },
+            description: 'A sponsor\'s contribution is credited to the beneficiary\'s own Stripe Customer Balance; it never reassigns billable_owner on a Subscription record. This panel (below the fixed screenshot viewport on this page, so it has no callout box here — see sponsorship_panel_states for the dedicated, annotated view) shows who currently sponsors this account, who this account sponsors, and lets a steward offer to sponsor another community or person.' },
           { title: 'Merchant account',
             description: 'Hosted billing and payout onboarding are intentionally separate. A community can have hosted access without yet being ready to receive payouts.' },
           { title: 'Billing activity alerts',
@@ -110,6 +127,9 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       capybara_login_as_platform_manager
       visit better_together.community_billing_path(community, locale: I18n.default_locale)
       expect(page).to have_css('#community-billing-plans-table')
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsorship_received_notice)}",
+                               text: '$50.00')
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsor_contribution_card)}")
       expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsorship_panels)}",
                                text: 'Collective Budget')
       expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
@@ -448,11 +468,16 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       last_synced_at: 1.hour.ago
     )
 
-    create(
+    community_sponsorship = create(
       :better_together_billing_sponsorship,
       sponsor: sponsor_community,
       beneficiary: community,
       status: 'active'
+    )
+    create(
+      :better_together_billing_monetary_contribution,
+      sponsorship: community_sponsorship,
+      amount_cents: 5_000
     )
 
     create(
