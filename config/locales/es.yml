@@ -900,6 +900,8 @@ es:
       activity_alerts_technical_summary: Detalles tecnicos (registro de actividad
         de webhook de Stripe)
       available_plans: Planes disponibles
+      beneficiary_community: Comunidad a apoyar
+      beneficiary_community_placeholder: Slug de la comunidad
       billed_to: 'Facturado a:'
       breadcrumb_label: Facturacion
       cancel_at_period_end: 'Cancelar al final del periodo:'
@@ -911,6 +913,8 @@ es:
         a esta pagina de facturacion.
       community_capacity_tier: 'Nivel de capacidad de la comunidad:'
       community_sponsor_checkout: Pagar a traves de %{community}
+      contribute_now: Contribuir ahora
+      contribution_amount: Cantidad
       current_period_ends: 'El periodo actual termina:'
       current_subscription: Suscripcion actual
       dead_letter_alert_body: Algunos eventos de facturacion de Stripe no pudieron
@@ -999,6 +1003,8 @@ es:
       no_billing_events: Todavia no se ha registrado actividad de webhooks de facturacion
         de Stripe para este registro de facturacion.
       no_plans: Todavia no hay planes de facturacion activos configurados.
+      no_sponsorship_plans: No se han configurado aún planes de contribuciones de
+        patrocinio.
       no_subscription: Todavia no hay una suscripcion sincronizada registrada para
         esta comunidad.
       oldest_unresolved_at: 'No resuelto mas antiguo en:'
@@ -1151,10 +1157,22 @@ es:
         forma segura.
       replay_unavailable: Reproceso no disponible
       retry_count: "%<count>d intentos"
+      sponsor_a_community: Contribuir a otra comunidad
+      sponsor_a_community_explainer: Financiar el saldo de acceso hospedado de otra
+        comunidad. Su contribución se acredita directamente a su cuenta — nunca cambia
+        quien posee la suscripción.
       sponsor_checkout: Pagar personalmente por esta comunidad
       sponsored_communities: Comunidades patrocinadas
       sponsored_subscription_notice: "%{owner} esta cubriendo actualmente el plan
         de esta comunidad. Para cambiar quien paga, inicia un nuevo pago abajo."
+      sponsorship_contributed_total: "%{amount} contribuido"
+      sponsorship_contribution_complete: Su contribución a %{beneficiary} ha sido
+        registrada.
+      sponsorship_contribution_failed: 'Su pago fue exitoso, pero el registro de la
+        contribución falló: %{message}'
+      sponsorship_received_notice: Esta comunidad ha recibido %{amount} en contribuciones
+        de patrocinio.
+      sponsorship_target_invalid: Esa comunidad o cantidad no están disponibles.
       start_checkout: Iniciar pago
       status: Estado
       subheading: Gestiona el pago de Stripe, el estado de la suscripcion y el acceso
