@@ -1,7 +1,7 @@
-<div class="container my-4">
-  <h1 class="h4 mb-3"><%= t('better_together.billing.sponsorship_review', default: 'Sponsorship offer') %></h1>
+<div id="<%= dom_id(@sponsorship, :review_page) %>" class="container my-4">
+  <h1 id="sponsorship-review-heading" class="h4 mb-3"><%= t('better_together.billing.sponsorship_review', default: 'Sponsorship offer') %></h1>
 
-  <p>
+  <p id="sponsorship-from-to-summary">
     <%= t('better_together.billing.sponsorship_from_to',
           default: '%{sponsor} is offering to sponsor %{beneficiary}.',
           sponsor: sponsorship_counterpart_name(@sponsorship.sponsor),
@@ -10,39 +10,42 @@
 
   <% if @sponsorship.status_pending? %>
     <% if policy(@sponsorship).accept? %>
-      <div class="d-flex gap-2">
+      <div id="sponsorship-decision-actions" class="d-flex gap-2">
         <%= button_to t('better_together.billing.accept_sponsorship', default: 'Accept'),
                       accept_sponsorship_path(@sponsorship.token, locale: I18n.locale),
                       method: :post,
+                      id: 'sponsorship-accept-btn',
                       class: 'btn btn-success' %>
         <%= button_to t('better_together.billing.decline_sponsorship', default: 'Decline'),
                       decline_sponsorship_path(@sponsorship.token, locale: I18n.locale),
                       method: :post,
+                      id: 'sponsorship-decline-btn',
                       class: 'btn btn-outline-secondary' %>
       </div>
     <% else %>
-      <div class="alert alert-info">
+      <div id="sponsorship-awaiting-beneficiary-alert" class="alert alert-info">
         <%= t('better_together.billing.sponsorship_awaiting_beneficiary',
               default: 'This offer is awaiting a decision from %{beneficiary}.',
               beneficiary: sponsorship_counterpart_name(@sponsorship.beneficiary)) %>
       </div>
     <% end %>
   <% elsif @sponsorship.status_declined? %>
-    <div class="alert alert-info">
+    <div id="sponsorship-declined-alert" class="alert alert-info">
       <%= t('better_together.billing.sponsorship_already_declined', default: 'This sponsorship offer was declined.') %>
     </div>
   <% elsif %w[accepted active].include?(@sponsorship.status) %>
-    <div class="alert alert-success">
+    <div id="sponsorship-active-alert" class="alert alert-success">
       <%= t('better_together.billing.sponsorship_already_accepted', default: 'This sponsorship is active.') %>
     </div>
     <% if policy(@sponsorship).end? %>
       <%= button_to t('better_together.billing.end_sponsorship', default: 'Stop this sponsorship'),
                     end_sponsorship_path(@sponsorship.id, locale: I18n.locale),
                     method: :post,
+                    id: 'sponsorship-end-btn',
                     class: 'btn btn-outline-danger' %>
     <% end %>
   <% elsif @sponsorship.status_ended? %>
-    <div class="alert alert-secondary">
+    <div id="sponsorship-ended-alert" class="alert alert-secondary">
       <%= t('better_together.billing.sponsorship_already_ended', default: 'This sponsorship has ended.') %>
     </div>
   <% end %>
