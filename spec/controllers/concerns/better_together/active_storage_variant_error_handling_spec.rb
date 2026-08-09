@@ -51,6 +51,18 @@ module BetterTogether
       end
     end
 
+    describe 'rescue_from dispatch (not just the handler method in isolation)' do
+      before { controller.instance_variable_set(:@blob, blob) }
+
+      it 'resolves the string-registered Vips::Error handler against a real raised exception and dispatches to it' do
+        expect(controller).to receive(:head).with(:unprocessable_entity)
+
+        raise exception
+      rescue StandardError => e
+        controller.rescue_with_handler(e)
+      end
+    end
+
     describe 'initializer wires up AS proxy and redirect controllers' do
       it 'includes the concern in ActiveStorage::Blobs::ProxyController' do
         expect(ActiveStorage::Blobs::ProxyController.ancestors).to include(described_class)

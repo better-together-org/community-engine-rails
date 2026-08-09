@@ -11,6 +11,11 @@ Rails.application.config.to_prepare do
     ActiveStorage::Representations::ProxyController,
     ActiveStorage::Representations::RedirectController
   ].each do |controller|
+    # to_prepare re-runs on every class reload in development; skip controllers
+    # that already have the concern so rescue_from doesn't re-register a
+    # duplicate handler entry each time.
+    next if controller.include?(BetterTogether::ActiveStorageVariantErrorHandling)
+
     controller.include(BetterTogether::ActiveStorageVariantErrorHandling)
   end
 end
