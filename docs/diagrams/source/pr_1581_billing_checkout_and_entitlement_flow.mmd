@@ -6,19 +6,27 @@ flowchart LR
   classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
 
   Start["Steward opens a billing page"]:::action
-  Choose["Choose a recurring hosted plan"]:::action
-  Payer["Choose who will pay<br/>community, person, or sponsor community"]:::action
-  Checkout["Stripe Checkout session starts"]:::system
-  Webhook["Stripe sends checkout and subscription webhooks"]:::system
-  Sync["CE syncs the local billing subscription"]:::action
-  Resolve{"Is there an active current subscription<br/>for this beneficiary?"}:::decision
+  Choose["Choose a recurring hosted or personal plan"]:::action
+  Checkout["Stripe Checkout session starts<br/>(always self-funded — billable_owner is the payer)"]:::system
+  Webhook["Stripe sends checkout/subscription webhooks"]:::system
+  Sync["CE syncs the local Billing::Subscription"]:::action
+  Resolve{"Is there an active current subscription<br/>for this billable_owner?"}:::decision
   Entitled["Hosted entitlement is active"]:::outcome
   NotEntitled["Hosted entitlement is inactive or needs attention"]:::outcome
   Provision["Community can open platform provisioning"]:::outcome
   Alerts["If sync fails, billing alerts and replay paths stay visible"]:::outcome
 
-  Start --> Choose --> Payer --> Checkout --> Webhook --> Sync --> Resolve
+  Start --> Choose --> Checkout --> Webhook --> Sync --> Resolve
   Resolve -->|Yes| Entitled --> Provision
   Resolve -->|No| NotEntitled
   Webhook --> Alerts
   Sync --> Alerts
+
+  subgraph SponsorFlow["Separately: funding someone else"]
+    direction LR
+    Sponsor["Another party creates a Sponsorship<br/>(consent required from the beneficiary)"]:::action
+    Contribute["Sponsor's contribution credits the<br/>beneficiary's own Stripe balance"]:::system
+    Sponsor --> Contribute
+  end
+
+  Contribute -.->|never reassigns billable_owner| Checkout
