@@ -1,0 +1,20 @@
+---
+title: Sponsorship — active
+audience:
+- board_member
+- sponsor
+- operator
+journey_step: Either party revisits the sponsorship link to confirm it is active or
+  to end it.
+callouts:
+- :title: Active sponsorship
+  :description: Reachable from both "accepted" and "active" statuses (Sponsorship#status_accepted?
+    transitions to active on first contribution) — the view intentionally treats both
+    as one visual state.
+- :title: Stop this sponsorship
+  :description: SponsorshipPolicy#end? authorizes either the sponsor or the beneficiary,
+    unlike accept?/decline? which are beneficiary-only.
+accessibility_notes: The end button is a standard button_to submit; the status alert
+  uses alert-success semantics.
+slug: sponsorship_review_active
+device: desktop
