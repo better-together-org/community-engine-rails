@@ -1,0 +1,66 @@
+erDiagram
+  EVENT ||--o| RECURRENCE : "has one (as schedulable)"
+  EVENT ||--o{ EVENT_OCCURRENCE : "has many (lazily created)"
+  EVENT ||--o{ EVENT_HOST : "has many"
+  EVENT ||--o{ EVENT_ATTENDANCE : "has many (series-wide)"
+  EVENT_OCCURRENCE ||--o{ EVENT_ATTENDANCE : "has many (per-session)"
+  EVENT_OCCURRENCE ||--o{ COMMENT : "has many (as commentable)"
+  EVENT_OCCURRENCE }o--o| LOCATABLE_LOCATION : "optional override (as locatable)"
+  PERSON ||--o{ EVENT_ATTENDANCE : "attends"
+
+  EVENT {
+    uuid id
+    string name
+    datetime starts_at "template/original occurrence anchor"
+    datetime ends_at
+    datetime next_occurrence_at "denormalized, refreshed hourly"
+    string status
+    uuid creator_id
+  }
+
+  RECURRENCE {
+    uuid id
+    uuid schedulable_id
+    string schedulable_type
+    text rule "IceCube YAML"
+    date exception_dates "array, schedule-level skip"
+    date ends_on
+    string frequency
+  }
+
+  EVENT_OCCURRENCE {
+    uuid id
+    uuid event_id
+    date occurrence_date "unique with event_id"
+    datetime starts_at "override, nullable"
+    datetime ends_at "override, nullable"
+    boolean cancelled "default false"
+  }
+
+  EVENT_ATTENDANCE {
+    uuid id
+    uuid event_id "always set - series context"
+    uuid event_occurrence_id "nullable - null = series-wide"
+    uuid person_id
+    string status "interested / going"
+  }
+
+  EVENT_HOST {
+    uuid id
+    uuid event_id
+    string host_type
+    uuid host_id
+  }
+
+  COMMENT {
+    uuid id
+    uuid commentable_id
+    string commentable_type
+    uuid creator_id
+  }
+
+  LOCATABLE_LOCATION {
+    uuid id
+    string locatable_type
+    uuid locatable_id
+  }

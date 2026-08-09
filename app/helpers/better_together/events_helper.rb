@@ -23,17 +23,22 @@ module BetterTogether
     # rubocop:enable Layout/LineLength
     #
     # @param event [Event] The event object with starts_at and ends_at
+    # @param start_time [Time, nil] Override for event.starts_at — pass a
+    #   recurring event's (override-aware) next_occurrence_at here so cards
+    #   never show the stale original starts_at alongside a "Repeats" badge.
+    # @param end_time [Time, nil] Override for event.ends_at, paired with start_time:
     # @return [String] Formatted time display
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
-    def display_event_time(event) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      return '' unless event&.starts_at
+    def display_event_time(event, start_time: nil, end_time: nil) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      raw_start = start_time || event&.starts_at
+      return '' unless raw_start
 
       # Convert times to event timezone for display
       event_tz = ActiveSupport::TimeZone[event.timezone] || Time.zone
-      start_time = event.starts_at.in_time_zone(event_tz)
-      end_time = event.ends_at&.in_time_zone(event_tz)
+      start_time = raw_start.in_time_zone(event_tz)
+      end_time = (end_time || event.ends_at)&.in_time_zone(event_tz)
       current_year = Time.current.year
 
       # Determine format based on whether year differs from current

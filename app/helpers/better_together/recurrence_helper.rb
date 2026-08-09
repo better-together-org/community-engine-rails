@@ -117,17 +117,28 @@ module BetterTogether
     # @param schedulable [Object] Object with RecurringSchedulable concern
     # @param count [Integer] Number of occurrences to show
     # @return [ActiveSupport::SafeBuffer] HTML safe string
+    # Cancelled sessions are included (not filtered out) — a "Cancelled"
+    # badge is a very different signal from the session simply not
+    # appearing, which would look identical to "this date was never
+    # scheduled." See RecurringSchedulable#occurrences_between.
     def next_occurrences_list(schedulable, count: 5)
       return content_tag(:p, 'Does not repeat', class: 'text-muted') unless schedulable.recurring?
 
       occurrences = schedulable.occurrences_between(Time.current, 1.year.from_now).take(count)
 
-      content_tag(:ul, class: 'list-unstyled') do
-        occurrences.map do |occurrence|
-          content_tag(:li) do
-            l(occurrence.starts_at, format: :long)
-          end
-        end.join.html_safe
+      content_tag(:ul, class: 'list-unstyled', id: 'event-upcoming-sessions') do
+        occurrences.map { |occurrence| occurrence_list_item(occurrence) }.join.html_safe
+      end
+    end
+
+    def occurrence_list_item(occurrence)
+      content_tag(:li, id: "event-session-#{occurrence.date.iso8601}", class: 'event-session-item') do
+        parts = [l(occurrence.starts_at, format: :long)]
+        if occurrence.cancelled?
+          parts << content_tag(:span, t('better_together.events.occurrences.cancelled_badge'),
+                               class: 'badge text-bg-secondary event-session-cancelled-badge ms-2')
+        end
+        safe_join(parts, ' ')
       end
     end
 

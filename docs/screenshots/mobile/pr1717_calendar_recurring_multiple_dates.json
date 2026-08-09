@@ -1,0 +1,83 @@
+{
+  "name": "pr1717_calendar_recurring_multiple_dates",
+  "device": "mobile",
+  "url": "/en/calendars/c3842cf1-68a3-42a6-aed9-1f312ddf33ac",
+  "title": "Community Engine",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_occurrences_ux",
+  "flow": "calendar_recurring_expansion",
+  "source_spec": "./spec/docs_screenshots/better_together/event_occurrences_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#calendar-day-2026-08-01-events",
+      "title": "First occurrence day cell",
+      "bullets": [
+        "CalendarOccurrenceExpander expands the recurrence rule into one Occurrence per date."
+      ],
+      "target": {
+        "x": 319.90625,
+        "y": 649.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 405.53125,
+        "bottom": 712.546875,
+        "center_x": 362.71875,
+        "center_y": 681.046875
+      },
+      "avoid": {
+        "x": 319.90625,
+        "y": 649.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 405.53125,
+        "bottom": 712.546875,
+        "center_x": 362.71875,
+        "center_y": 681.046875
+      },
+      "placement": {
+        "side": "above",
+        "x": 206.0,
+        "y": 361.55,
+        "width": 270.0,
+        "height": 268,
+        "score": 649.546875
+      }
+    },
+    {
+      "selector": "#calendar-day-2026-08-08-events",
+      "title": "Same event, a different day cell",
+      "bullets": [
+        "Before this PR, a recurring event only ever appeared on its original creation date, never on any later occurrence."
+      ],
+      "target": {
+        "x": 319.90625,
+        "y": 749.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 405.53125,
+        "bottom": 812.546875,
+        "center_x": 362.71875,
+        "center_y": 781.046875
+      },
+      "avoid": {
+        "x": 319.90625,
+        "y": 749.546875,
+        "width": 85.625,
+        "height": 63.0,
+        "right": 405.53125,
+        "bottom": 812.546875,
+        "center_x": 362.71875,
+        "center_y": 781.046875
+      },
+      "placement": {
+        "side": "below",
+        "x": 206.0,
+        "y": 832.55,
+        "width": 270.0,
+        "height": 268,
+        "score": 448.453125
+      }
+    }
+  ]
+}
