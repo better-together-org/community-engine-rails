@@ -92,7 +92,9 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
           { title: 'Hosted plan status',
             description: 'This card translates billing into plain operational terms: whether the hosted community is active, what support tier it has, and whether platform provisioning is allowed.' },
           { title: 'Current subscription',
-            description: 'This section makes sponsorship visible. If another person or community is paying, the page offers plain-language takeover actions instead of assuming billing ownership. Session follow-up: the takeover copy no longer references internal terms like "Phase 1" or "replacement checkout" ("Have this community pay for itself", "Let Collective Budget pay instead"), and the candidate list is now limited to communities the viewer actually stewards.' },
+            description: 'This community\'s own hosted plan, if it pays for itself. A subscription is always self-funded (billable_owner and beneficiary are the same record) — a third party wanting to fund this community instead does so via the separate Sponsorship panel below, not by taking over this subscription.' },
+          { title: 'Sponsorship',
+            description: 'Billing::Entitlement redesign: sponsorship replaced the old subscription-ownership "takeover" mechanism entirely. A sponsor\'s contribution is credited to the beneficiary\'s own Stripe Customer Balance; it never reassigns billable_owner on a Subscription record. This panel (below the fixed screenshot viewport on this page, so it has no callout box here — see sponsorship_panel_states for the dedicated, annotated view) shows who currently sponsors this account, who this account sponsors, and lets a steward offer to sponsor another community or person.' },
           { title: 'Merchant account',
             description: 'Hosted billing and payout onboarding are intentionally separate. A community can have hosted access without yet being ready to receive payouts.' },
           { title: 'Billing activity alerts',
@@ -108,7 +110,8 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       capybara_login_as_platform_manager
       visit better_together.community_billing_path(community, locale: I18n.default_locale)
       expect(page).to have_css('#community-billing-plans-table')
-      expect(page).to have_text('Collective Budget')
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsorship_panels)}",
+                               text: 'Collective Budget')
       expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
     end
   end
@@ -422,11 +425,15 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
     create('pay/customer', owner: platform_manager.person, processor_id: 'cus_manager_person')
     create('pay/customer', owner: community, processor_id: 'cus_harbour_voices')
 
+    # Session follow-up: beneficiary is now just an alias for billable_owner
+    # (see Subscription#beneficiary) — a subscription is always self-funded.
+    # Third-party funding is represented by a separate Billing::Sponsorship
+    # crediting the beneficiary's own Stripe balance, not by a mismatched
+    # billable_owner/beneficiary pair on the subscription itself.
     community_subscription = create(
       :better_together_billing_subscription,
       billing_plan: current_plan,
-      billable_owner: sponsor_community,
-      beneficiary: community,
+      billable_owner: community,
       status: 'active',
       sync_source: 'stripe_webhook',
       last_synced_at: 2.hours.ago
@@ -436,20 +443,23 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       :better_together_billing_subscription,
       billing_plan: personal_plan,
       billable_owner: platform_manager.person,
-      beneficiary: platform_manager.person,
       status: 'active',
       sync_source: 'ce_push',
       last_synced_at: 1.hour.ago
     )
 
     create(
-      :better_together_billing_subscription,
-      billing_plan: current_plan,
-      billable_owner: platform_manager.person,
+      :better_together_billing_sponsorship,
+      sponsor: sponsor_community,
+      beneficiary: community,
+      status: 'active'
+    )
+
+    create(
+      :better_together_billing_sponsorship,
+      sponsor: platform_manager.person,
       beneficiary: sponsored_by_person_community,
-      status: 'active',
-      sync_source: 'ce_push',
-      last_synced_at: 3.hours.ago
+      status: 'active'
     )
 
     create(
