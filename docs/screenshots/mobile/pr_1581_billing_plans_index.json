@@ -54,29 +54,29 @@
         "x": 13.0,
         "y": 158.390625,
         "width": 487.0,
-        "height": 219.0,
+        "height": 349.0,
         "right": 500.0,
-        "bottom": 377.390625,
+        "bottom": 507.390625,
         "center_x": 256.5,
-        "center_y": 267.890625
+        "center_y": 332.890625
       },
       "avoid": {
         "x": 13.0,
         "y": 158.390625,
         "width": 487.0,
-        "height": 219.0,
+        "height": 349.0,
         "right": 500.0,
-        "bottom": 377.390625,
+        "bottom": 507.390625,
         "center_x": 256.5,
-        "center_y": 267.890625
+        "center_y": 332.890625
       },
       "placement": {
         "side": "below",
         "x": 121.5,
-        "y": 397.39,
+        "y": 527.39,
         "width": 270.0,
         "height": 314,
-        "score": 883.609375
+        "score": 753.609375
       }
     }
   ]
