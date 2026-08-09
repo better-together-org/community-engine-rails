@@ -1,0 +1,46 @@
+{
+  "name": "hosted_entitlement_grace_period",
+  "device": "mobile",
+  "url": "/en/c/harbour-voices-a9d31475/billing",
+  "title": "Community Billing | Harbour Voices | Test Host Community",
+  "locale": "en",
+  "feature_set": "hosted_entitlement_grace_period",
+  "source_spec": "./spec/docs_screenshots/better_together/hosted_entitlement_grace_period_spec.rb",
+  "callouts": [
+    {
+      "selector": "#hosted-entitlement-card .hosted-entitlement-status-badge",
+      "title": "Grace period badge",
+      "bullets": [
+        "Distinct from both \"active\" (green) and \"billing attention needed\" (yellow) — this is the app-owned second buffer after Stripe's own dunning retries are exhausted."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 380.203125,
+        "width": 213.171875,
+        "height": 20.375,
+        "right": 242.171875,
+        "bottom": 400.578125,
+        "center_x": 135.5859375,
+        "center_y": 390.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 380.203125,
+        "width": 213.171875,
+        "height": 20.375,
+        "right": 242.171875,
+        "bottom": 400.578125,
+        "center_x": 135.5859375,
+        "center_y": 390.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 420.58,
+        "width": 270.0,
+        "height": 340,
+        "score": 860.421875
+      }
+    }
+  ]
+}
