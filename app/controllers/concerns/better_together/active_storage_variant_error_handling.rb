@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'vips'
+
 module BetterTogether
   # Rescues variant/representation processing failures raised by ActiveStorage's own
   # redirect/proxy controllers (e.g. libvips refusing to load a file through an
