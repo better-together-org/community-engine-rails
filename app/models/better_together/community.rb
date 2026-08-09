@@ -5,6 +5,7 @@ require 'storext'
 module BetterTogether
   # A gathering
   class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
+    include Billing::Billable
     include Contactable
     include HostsEvents
     include Identifier
@@ -21,9 +22,6 @@ module BetterTogether
     include Searchable
     include Shortlinkable
     include ::Storext.model
-
-    pay_customer default_payment_processor: :stripe, stripe_attributes: :stripe_customer_attributes
-    pay_merchant
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -54,14 +52,6 @@ module BetterTogether
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
-    has_many :owned_billing_events,
-             as: :billable_owner,
-             class_name: 'BetterTogether::Billing::Event',
-             dependent: :nullify
-    has_many :merchant_accounts,
-             as: :owner,
-             class_name: 'BetterTogether::Billing::MerchantAccount',
-             dependent: :destroy
     has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
     has_many :posts, class_name: 'BetterTogether::Post', dependent: :nullify
 
@@ -177,28 +167,6 @@ module BetterTogether
       primary_email_address&.email || creator_email
     end
 
-    def pay_customer_name
-      name
-    end
-
-    def pay_should_sync_customer?
-      super || saved_change_to_name?
-    end
-
-    def stripe_customer_attributes(pay_customer)
-      {
-        metadata: {
-          bt_billable_owner_type: self.class.name,
-          bt_billable_owner_id: id,
-          bt_beneficiary_type: self.class.name,
-          bt_beneficiary_id: id,
-          bt_community_id: id,
-          bt_community_identifier: identifier,
-          pay_customer_id: pay_customer.id
-        }
-      }
-    end
-
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
       cover_image.variant(resize_to_fill: [width, height])
@@ -261,6 +229,10 @@ module BetterTogether
     end
 
     private
+
+    def billing_owner_metadata
+      { bt_community_id: id, bt_community_identifier: identifier }
+    end
 
     def create_default_calendar
       calendar_identifier = "default-#{identifier}"
