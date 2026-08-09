@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'vips'
-
 module BetterTogether
   # Rescues variant/representation processing failures raised by ActiveStorage's own
   # redirect/proxy controllers (e.g. libvips refusing to load a file through an
@@ -15,7 +13,11 @@ module BetterTogether
     extend ActiveSupport::Concern
 
     included do
-      rescue_from Vips::Error, with: :handle_variant_processing_error
+      # String (not constant): ruby-vips loads lazily on first real use, and libvips
+      # isn't guaranteed present at boot (e.g. some CI runners). rescue_from resolves
+      # string handlers lazily against the raised exception, so this never forces an
+      # eager `require "vips"`.
+      rescue_from 'Vips::Error', with: :handle_variant_processing_error
     end
 
     private

@@ -20,6 +20,10 @@ module BetterTogether
     let(:exception) { Vips::Error.new('matload: operation is blocked') }
 
     before do
+      # Stubbed rather than requiring the real gem: libvips isn't guaranteed to be
+      # installed in every test environment (e.g. some CI runners), and the handler
+      # under test only cares about exception.class/message, not the real Vips::Error.
+      stub_const('Vips::Error', Class.new(StandardError))
       controller.instance_variable_set(:@_response, ActionDispatch::TestResponse.create)
     end
 
