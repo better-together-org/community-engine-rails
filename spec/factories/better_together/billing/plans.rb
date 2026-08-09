@@ -21,5 +21,9 @@ FactoryBot.define do
         'support_tier' => 'Community'
       }
     end
+
+    trait :one_time do
+      billing_interval { 'one_time' }
+    end
   end
 end

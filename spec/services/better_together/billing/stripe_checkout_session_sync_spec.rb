@@ -165,6 +165,64 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
       expect(result.billing_subscription.pay_subscription.customer.owner).to eq(sponsor_community)
     end
 
+    it 'syncs a mode: payment (one-time) checkout session with no subscription' do
+      one_time_plan = create(
+        :better_together_billing_plan,
+        :one_time,
+        identifier: 'one-time-contribution',
+        stripe_price_id: 'price_one_time_contribution'
+      )
+      price = Struct.new(:id, keyword_init: true).new(id: one_time_plan.stripe_price_id)
+      line_item = Struct.new(:price, keyword_init: true).new(price:)
+      line_items = Struct.new(:data, keyword_init: true).new(data: [line_item])
+      payment_intent = Struct.new(:id, keyword_init: true).new(id: 'pi_test_123')
+      one_time_checkout_session = Struct.new(
+        :id, :customer, :subscription, :payment_intent, :amount_total, :currency, :metadata, :line_items,
+        keyword_init: true
+      ).new(
+        id: 'cs_test_one_time_123',
+        customer: pay_customer.processor_id,
+        subscription: nil,
+        payment_intent:,
+        amount_total: 2_500,
+        currency: 'cad',
+        metadata: { 'bt_billing_plan_id' => one_time_plan.id },
+        line_items:
+      )
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(one_time_checkout_session)
+
+      result = described_class.new.call(checkout_session_id: 'cs_test_one_time_123')
+
+      expect(result).to have_attributes(synced: true, billing_plan: one_time_plan)
+      expect(result.one_time_payment).to have_attributes(
+        owner: community,
+        stripe_checkout_session_id: 'cs_test_one_time_123',
+        stripe_payment_intent_id: 'pi_test_123',
+        amount_cents: 2_500
+      )
+      expect(result.billing_subscription).to be_nil
+      expect(BetterTogether::Billing::Subscription.count).to eq(0)
+    end
+
+    it 'reports :no_subscription when a checkout session has neither a subscription nor a payment_intent' do
+      empty_checkout_session = Struct.new(
+        :id, :customer, :subscription, :payment_intent, :metadata, keyword_init: true
+      ).new(
+        id: 'cs_test_empty_123',
+        customer: pay_customer.processor_id,
+        subscription: nil,
+        payment_intent: nil,
+        metadata: {}
+      )
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(empty_checkout_session)
+
+      result = described_class.new.call(checkout_session_id: 'cs_test_empty_123')
+
+      expect(result).to have_attributes(synced: false, reason: :no_subscription)
+    end
+
     it 'refuses to sync a checkout session for the wrong beneficiary page' do
       other_community = create(:better_together_community)
       mismatched_subscription = subscription.dup

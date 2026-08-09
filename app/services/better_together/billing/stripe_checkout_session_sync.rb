@@ -9,6 +9,7 @@ module BetterTogether
       Result = Struct.new(
         :synced,
         :billing_subscription,
+        :one_time_payment,
         :billing_plan,
         :checkout_session,
         :billable_owner,
@@ -22,7 +23,8 @@ module BetterTogether
         checkout_session = fetch_checkout_session(checkout_session_id)
         subscription = fetch_subscription(checkout_session)
 
-        return Result.new(checkout_session:, synced: false, reason: :no_subscription) unless subscription
+        return call_one_time_payment(checkout_session) if subscription.blank?
+
         if ownership_mismatch?(
           subscription:,
           checkout_session:,
@@ -54,9 +56,42 @@ module BetterTogether
         Stripe::Checkout::Session.retrieve(
           {
             id: checkout_session_id,
-            expand: %w[subscription customer line_items.data.price]
+            expand: %w[subscription customer payment_intent line_items.data.price]
           }
         )
+      end
+
+      # A mode: 'payment' Checkout Session has no .subscription — it's a
+      # one-time purchase, synced via StripeOneTimePaymentSync instead of
+      # StripeSubscriptionSync. Falls back to the original :no_subscription
+      # reason when there's genuinely nothing to sync (e.g. an incomplete or
+      # expired session with no payment_intent either).
+      def call_one_time_payment(checkout_session)
+        payment_intent_id = fetch_payment_intent_id(checkout_session)
+        return Result.new(checkout_session:, synced: false, reason: :no_subscription) unless payment_intent_id
+
+        result = one_time_payment_sync.call(checkout_session:, payment_intent_id:)
+        Result.new(
+          synced: result.synced,
+          one_time_payment: result.one_time_payment,
+          billing_plan: result.billing_plan,
+          checkout_session:,
+          billable_owner: result.one_time_payment&.owner,
+          reason: result.reason
+        )
+      end
+
+      def fetch_payment_intent_id(checkout_session)
+        return unless checkout_session.respond_to?(:payment_intent)
+
+        payment_intent = checkout_session.payment_intent
+        return payment_intent if payment_intent.is_a?(String)
+
+        payment_intent.respond_to?(:id) ? payment_intent.id : nil
+      end
+
+      def one_time_payment_sync
+        @one_time_payment_sync ||= BetterTogether::Billing::StripeOneTimePaymentSync.new
       end
 
       def fetch_subscription(checkout_session)
