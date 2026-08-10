@@ -16,20 +16,28 @@ module BetterTogether
           next unless subscription.in_grace_period?
           next if subscription.grace_notice_sent?
 
-          notify(subscription)
-          subscription.record_grace_notice_sent!
+          # Only mark as sent when someone was actually notified — a Person
+          # beneficiary or a community with no manager/administrator would
+          # otherwise be permanently (and silently) skipped, with no way to
+          # ever warn them before hosted access pauses. Leaving the flag
+          # unset lets the next daily scan retry.
+          subscription.record_grace_notice_sent! if notify?(subscription)
         end
       end
 
       private
 
-      def notify(subscription)
+      def notify?(subscription)
         community = subscription.beneficiary
-        return unless community.is_a?(BetterTogether::Community)
+        return false unless community.is_a?(BetterTogether::Community)
 
-        community_managers(community).each do |manager|
+        managers = community_managers(community)
+        return false if managers.empty?
+
+        managers.each do |manager|
           BetterTogether::Billing::HostedAccessGraceNotifier.with(subscription:).deliver_later(manager)
         end
+        true
       end
 
       def community_managers(community)

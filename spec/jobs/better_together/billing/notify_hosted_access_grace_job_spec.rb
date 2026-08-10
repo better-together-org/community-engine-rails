@@ -90,5 +90,21 @@ RSpec.describe BetterTogether::Billing::NotifyHostedAccessGraceJob do
     subscription.sync_lapse_state!
 
     expect { described_class.new.perform }.not_to change(Noticed::Notification, :count)
+    expect(subscription.reload.grace_notice_sent?).to be(false)
+  end
+
+  it 'does not mark the notice sent for a community with no manager/administrator, so a later scan retries' do
+    unmanaged_community = create(:better_together_community)
+    subscription = build_subscription_for(owner: unmanaged_community, status: 'canceled')
+    subscription.sync_lapse_state!
+
+    expect { described_class.new.perform }.not_to change(Noticed::Notification, :count)
+    expect(subscription.reload.grace_notice_sent?).to be(false)
+
+    create(:better_together_person_community_membership, :active,
+           joinable: unmanaged_community, member: create(:better_together_person), role: community_manager_role)
+
+    expect { described_class.new.perform }.to change(Noticed::Notification, :count).by(1)
+    expect(subscription.reload.grace_notice_sent?).to be(true)
   end
 end
