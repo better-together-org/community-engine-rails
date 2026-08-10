@@ -1178,6 +1178,8 @@ fr:
       sponsored_communities: Communautes soutenues
       sponsored_subscription_notice: "%{owner} couvre actuellement le plan de cette
         communaute. Pour changer qui paie, lancez un nouveau paiement ci-dessous."
+      sponsorship_consent_required: Cette communauté n'a pas choisi de recevoir des
+        contributions de parrainage.
       sponsorship_contributed_total: "%{amount} contribué"
       sponsorship_contribution_complete: Votre contribution à %{beneficiary} a été
         enregistrée.

@@ -1143,6 +1143,8 @@ uk:
       sponsored_communities: Sponsorovani spilnoty
       sponsored_subscription_notice: "%{owner} zaraz pokryvaie platu za tsiu spilnotu.
         Khochete zminyty platnyka? Oberit novoho platnyka nyzhche."
+      sponsorship_consent_required: Ця спільнота не обрала опцію отримання внесків
+        спонсорства.
       sponsorship_contributed_total: "%{amount} внесено"
       sponsorship_contribution_complete: Ваш внесок до %{beneficiary} зареєстровано.
       sponsorship_contribution_failed: 'Ваш платіж пройшов успішно, але не вдалося

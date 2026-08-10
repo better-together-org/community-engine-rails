@@ -1161,6 +1161,8 @@ en:
       sponsored_communities: Sponsored communities
       sponsored_subscription_notice: "%{owner} is currently covering this community's
         plan. Want to move billing to someone else? Choose a new payer below."
+      sponsorship_consent_required: This community has not opted in to receive sponsorship
+        contributions.
       sponsorship_contributed_total: "%{amount} contributed"
       sponsorship_contribution_complete: Your contribution to %{beneficiary} was recorded.
       sponsorship_contribution_failed: 'Your payment succeeded, but recording the

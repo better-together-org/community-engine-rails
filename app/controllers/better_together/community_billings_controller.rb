@@ -30,6 +30,8 @@ module BetterTogether
     # own subscription/ownership. Replaces the old "takeover" mechanism.
     def contribute
       beneficiary = find_sponsorship_beneficiary
+      return redirect_to_billing_with_alert(sponsorship_consent_required_message) unless beneficiary_accepts_sponsorship?(beneficiary)
+
       billing_plan = find_sponsorship_contribution_plan
       redirect_to sponsorship_checkout_session_for(beneficiary, billing_plan).url, allow_other_host: true
     rescue ActiveRecord::RecordNotFound
@@ -173,6 +175,16 @@ module BetterTogether
       BetterTogether::Community.friendly.find(params[:beneficiary_community_id])
     end
 
+    # Fail closed BEFORE any Stripe redirect — the model-level validation on
+    # Sponsorship#create only fires once find_or_create_active_sponsorship
+    # runs, which happens AFTER the sponsor's payment already succeeded. This
+    # check prevents "money moved, tracking lost" for an opted-out beneficiary.
+    def beneficiary_accepts_sponsorship?(beneficiary)
+      return true unless BetterTogether::Billing::Sponsorship.consent_enforced?
+
+      beneficiary.respond_to?(:accepts_sponsorship?) && beneficiary.accepts_sponsorship?
+    end
+
     def find_sponsorship_contribution_plan
       available_sponsorship_contribution_plans.find { |plan| plan.identifier == params[:billing_plan_id] } ||
         raise(ActiveRecord::RecordNotFound)
@@ -200,52 +212,38 @@ module BetterTogether
       )
     end
 
-    # Revisiting the same checkout_session_id (e.g. a page refresh) must
-    # never credit the beneficiary's Stripe balance twice for one payment —
-    # CreditBeneficiaryBalance itself locks the one_time_payment row and
-    # no-ops if it's already been credited, so this is safe even under
-    # genuinely concurrent requests, not just sequential revisits.
+    # Best-effort immediate UI feedback on browser return — the webhook leg
+    # (StripeEventProcessor#process_sponsorship_contribution) is the
+    # authoritative trigger and fires even if the payer never lands back
+    # here. Both call the same shared, idempotent service, so whichever
+    # leg runs first actually credits the balance and the other safely
+    # no-ops (result.credit_result.already_credited).
     def process_sponsorship_contribution(result)
-      one_time_payment = result.one_time_payment
-      beneficiary = resolved_sponsorship_beneficiary(result.checkout_session)
-      return if beneficiary.blank?
-
-      credit_result = credit_sponsorship_contribution(one_time_payment:, beneficiary:)
-      flash.now[:notice] = sponsorship_contribution_complete_message(beneficiary) unless credit_result.already_credited
+      service_result = BetterTogether::Billing::ProcessSponsorshipContribution.new.call(
+        one_time_payment: result.one_time_payment, checkout_session: result.checkout_session
+      )
+      flash_sponsorship_contribution_result(service_result)
     rescue ActiveRecord::RecordInvalid, Stripe::StripeError => e
       flash.now[:alert] = sponsorship_contribution_failed_message(e)
     end
 
-    def credit_sponsorship_contribution(one_time_payment:, beneficiary:)
-      sponsorship = find_or_create_active_sponsorship(sponsor: one_time_payment.owner, beneficiary:)
-      BetterTogether::Billing::CreditBeneficiaryBalance.new.call(
-        sponsorship:,
-        amount_cents: one_time_payment.amount_cents,
-        currency: one_time_payment.currency,
-        one_time_payment:
-      )
-    end
+    def flash_sponsorship_contribution_result(service_result)
+      return if service_result.blank? || service_result.credit_result.already_credited
 
-    def resolved_sponsorship_beneficiary(checkout_session)
-      metadata = checkout_session.metadata.to_h
-      BetterTogether::Billing::OwnershipResolver.resolve_record(
-        metadata['bt_sponsorship_beneficiary_type'],
-        metadata['bt_sponsorship_beneficiary_id']
-      )
-    end
-
-    def find_or_create_active_sponsorship(sponsor:, beneficiary:)
-      BetterTogether::Billing::Sponsorship.status_active
-                                          .for_sponsor(sponsor)
-                                          .for_beneficiary(beneficiary)
-                                          .first ||
-        BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
+      flash.now[:notice] = sponsorship_contribution_complete_message(service_result.beneficiary)
     end
 
     def sponsorship_target_invalid_message
       t(
         'better_together.billing.sponsorship_target_invalid',
         default: 'That community or contribution amount is not available.'
+      )
+    end
+
+    def sponsorship_consent_required_message
+      t(
+        'better_together.billing.sponsorship_consent_required',
+        default: 'This community has not opted in to receive sponsorship contributions.'
       )
     end
 

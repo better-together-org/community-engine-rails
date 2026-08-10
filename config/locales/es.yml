@@ -1165,6 +1165,8 @@ es:
       sponsored_communities: Comunidades patrocinadas
       sponsored_subscription_notice: "%{owner} esta cubriendo actualmente el plan
         de esta comunidad. Para cambiar quien paga, inicia un nuevo pago abajo."
+      sponsorship_consent_required: Esta comunidad no ha optado por recibir aportes
+        de patrocinio.
       sponsorship_contributed_total: "%{amount} contribuido"
       sponsorship_contribution_complete: Su contribución a %{beneficiary} ha sido
         registrada.
