@@ -200,18 +200,18 @@ module BetterTogether
       )
     end
 
-    # Guarded by a MonetaryContribution existence check so revisiting the
-    # same checkout_session_id (e.g. a page refresh) never credits the
-    # beneficiary's Stripe balance twice for one payment.
+    # Revisiting the same checkout_session_id (e.g. a page refresh) must
+    # never credit the beneficiary's Stripe balance twice for one payment —
+    # CreditBeneficiaryBalance itself locks the one_time_payment row and
+    # no-ops if it's already been credited, so this is safe even under
+    # genuinely concurrent requests, not just sequential revisits.
     def process_sponsorship_contribution(result)
       one_time_payment = result.one_time_payment
-      return if BetterTogether::Billing::MonetaryContribution.exists?(one_time_payment:)
-
       beneficiary = resolved_sponsorship_beneficiary(result.checkout_session)
       return if beneficiary.blank?
 
-      credit_sponsorship_contribution(one_time_payment:, beneficiary:)
-      flash.now[:notice] = sponsorship_contribution_complete_message(beneficiary)
+      credit_result = credit_sponsorship_contribution(one_time_payment:, beneficiary:)
+      flash.now[:notice] = sponsorship_contribution_complete_message(beneficiary) unless credit_result.already_credited
     rescue ActiveRecord::RecordInvalid, Stripe::StripeError => e
       flash.now[:alert] = sponsorship_contribution_failed_message(e)
     end

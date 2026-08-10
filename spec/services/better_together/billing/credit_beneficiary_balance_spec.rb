@@ -69,5 +69,78 @@ RSpec.describe BetterTogether::Billing::CreditBeneficiaryBalance do
         )
       end
     end
+
+    context 'when called twice for the same one_time_payment' do
+      before do
+        Pay::Customer.create!(
+          owner: beneficiary,
+          processor: 'stripe',
+          processor_id: 'cus_test_beneficiary_repeat',
+          default: true
+        )
+      end
+
+      it 'credits Stripe only once and returns the existing record as already_credited on the repeat call' do
+        one_time_payment = create(
+          :better_together_billing_one_time_payment,
+          owner: sponsor,
+          amount_cents: 5_000
+        )
+        allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
+
+        first_result = described_class.new.call(sponsorship:, amount_cents: 5_000, currency: 'cad', one_time_payment:)
+        second_result = described_class.new.call(sponsorship:, amount_cents: 5_000, currency: 'cad', one_time_payment:)
+
+        expect(first_result.already_credited).to be(false)
+        expect(second_result.already_credited).to be(true)
+        expect(second_result.monetary_contribution).to eq(first_result.monetary_contribution)
+        expect(Stripe::Customer).to have_received(:create_balance_transaction).once
+        expect(BetterTogether::Billing::MonetaryContribution.count).to eq(1)
+      end
+    end
+
+    context 'concurrent calls for the same one_time_payment', :multi_connection do
+      it 'allows exactly one of two simultaneous calls to actually credit the balance' do
+        Pay::Customer.create!(
+          owner: beneficiary,
+          processor: 'stripe',
+          processor_id: 'cus_test_beneficiary_concurrent',
+          default: true
+        )
+        one_time_payment = create(
+          :better_together_billing_one_time_payment,
+          owner: sponsor,
+          amount_cents: 5_000
+        )
+        allow(Stripe::Customer).to receive(:create_balance_transaction) do
+          Struct.new(:id, keyword_init: true).new(id: "txn_test_concurrent_#{SecureRandom.hex(4)}")
+        end
+
+        results = []
+        results_mutex = Mutex.new
+        barrier_mutex = Mutex.new
+        barrier_cv = ConditionVariable.new
+        arrived = 0
+
+        credit_attempt = lambda do
+          ActiveRecord::Base.connection_pool.with_connection do
+            barrier_mutex.synchronize do
+              arrived += 1
+              arrived >= 2 ? barrier_cv.broadcast : barrier_cv.wait(barrier_mutex)
+            end
+
+            result = described_class.new.call(sponsorship:, amount_cents: 5_000, currency: 'cad', one_time_payment:)
+            results_mutex.synchronize { results << result.already_credited }
+          end
+        end
+
+        threads = Array.new(2) { Thread.new(&credit_attempt) }
+        threads.each(&:join)
+
+        expect(results.count(false)).to eq(1)
+        expect(results.count(true)).to eq(1)
+        expect(BetterTogether::Billing::MonetaryContribution.where(one_time_payment:).count).to eq(1)
+      end
+    end
   end
 end
