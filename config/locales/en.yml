@@ -1163,8 +1163,8 @@ en:
         plan. Want to move billing to someone else? Choose a new payer below."
       sponsorship_contributed_total: "%{amount} contributed"
       sponsorship_contribution_complete: Your contribution to %{beneficiary} was recorded.
-      sponsorship_contribution_failed: "Your payment succeeded, but recording the
-        contribution failed: %{message}"
+      sponsorship_contribution_failed: 'Your payment succeeded, but recording the
+        contribution failed: %{message}'
       sponsorship_received_notice: This community has received %{amount} in sponsorship
         contributions.
       sponsorship_target_invalid: That community or contribution amount is not available.
