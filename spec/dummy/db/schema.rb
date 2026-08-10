@@ -264,6 +264,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_08_010000) do
     t.index ["granted_by_type", "granted_by_id"], name: "index_better_together_billing_entitlements_on_granted_by"
     t.index ["holder_type", "holder_id", "entitlement_key", "source_type", "source_id"], name: "idx_bt_billing_entitlements_holder_key_source_uniq", unique: true
     t.index ["holder_type", "holder_id", "entitlement_key", "status"], name: "idx_bt_billing_entitlements_holder_key_status"
+    t.index ["holder_type", "holder_id", "entitlement_key"], name: "idx_bt_billing_entitlements_holder_key_null_source_uniq", unique: true, where: "((source_type IS NULL) AND (source_id IS NULL))"
     t.index ["holder_type", "holder_id"], name: "index_better_together_billing_entitlements_on_holder"
     t.index ["source_type", "source_id"], name: "index_better_together_billing_entitlements_on_source"
   end

@@ -111,6 +111,17 @@ RSpec.describe BetterTogether::Billing::Entitlement do
     end
   end
 
+  describe 'database-level uniqueness for a null source' do
+    it 'rejects a second row for the same holder+key with no source, bypassing the grant! upsert path' do
+      described_class.create!(holder:, entitlement_key: 'hosted_access', status: 'active', granted_at: Time.current)
+
+      duplicate = described_class.new(holder:, entitlement_key: 'hosted_access', status: 'active',
+                                      granted_at: Time.current)
+
+      expect { duplicate.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+  end
+
   describe '.current' do
     it 'includes an active, non-expired entitlement' do
       entitlement = described_class.grant!(holder:, entitlement_key: 'hosted_access')
