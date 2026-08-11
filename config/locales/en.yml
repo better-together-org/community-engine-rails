@@ -899,6 +899,13 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      accept_sponsorship: Accept
+      accepts_sponsorship_disabled: This account will no longer receive new sponsorship
+        contributions.
+      accepts_sponsorship_enabled: This account can now receive sponsorship contributions.
+      accepts_sponsorship_toggle_label: Allow other communities and members to sponsor
+        this account
+      accounts_you_sponsor: Accounts you sponsor
       activity_alerts: Billing activity alerts
       activity_alerts_explainer: Recent Stripe webhook issues were recorded for this
         billing record. Review the latest events below and run reconciliation if local
@@ -908,6 +915,8 @@ en:
       available_plans: Available plans
       beneficiary_community: Community to support
       beneficiary_community_placeholder: Community slug
+      beneficiary_identifier: Beneficiary (slug or username)
+      beneficiary_type: Beneficiary type
       billed_to: 'Billed to:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Cancel at period end:'
@@ -929,17 +938,29 @@ en:
         when appropriate.
       dead_letter_alert_heading: Dead-lettered billing events
       dead_letter_reason_unknown: Unknown dead-letter reason
+      decline_sponsorship: Decline
       details: Details
+      end_sponsorship: Stop this sponsorship
       event_type: Event
       failed_without_message: The processor reported a failure without an error message.
       heading: Community Billing
       hosted_access_level: 'Hosted access level:'
       hosted_access_level_default: Standard
+      hosted_access_mailer:
+        grace_notice:
+          greeting: Hi %{name},
+          message: Hosted access for %{community_name} will pause on %{grace_period_ends_on}
+            unless billing is resolved.
+          review_billing: Review billing
+          subject: Billing needs attention for %{community_name}
       hosted_entitlement_active_explainer: This community currently has an active
         hosted plan and remains in good standing for hosted operations.
       hosted_entitlement_attention_explainer: This community still has hosted access,
         but billing needs attention before the hosted plan can be considered healthy
         again.
+      hosted_entitlement_grace_explainer: This community still has hosted access,
+        but billing has lapsed. Access will pause on %{grace_period_ends_at} unless
+        this is resolved.
       hosted_entitlement_heading: Hosted plan status
       hosted_entitlement_inactive_explainer: No active hosted plan is currently synced
         for this community.
@@ -950,6 +971,7 @@ en:
       hosted_plan_scope_heading: Hosted billing launch scope
       hosted_status_active: Hosted plan active
       hosted_status_attention: Billing attention needed
+      hosted_status_grace: Billing lapsed — grace period
       hosted_status_inactive: No active hosted plan
       ignored_event_explainer: The event was recorded but did not map to a local billing
         update.
@@ -1008,8 +1030,11 @@ en:
       no_billing_events: No Stripe billing webhook activity has been recorded for
         this billing record yet.
       no_plans: No active billing plans are configured yet.
+      no_sponsors_yet: No one is sponsoring this account yet.
       no_sponsorship_plans: No sponsorship contribution amounts are configured yet.
+      no_sponsorships_given_yet: You are not sponsoring any accounts yet.
       no_subscription: No synced subscription is recorded for this community yet.
+      offer_sponsorship_heading: Offer to sponsor someone
       oldest_unresolved_at: 'Oldest unresolved at:'
       open_merchant_onboarding: Open merchant onboarding
       open_portal: Open billing portal
@@ -1153,6 +1178,7 @@ en:
       replay_event_unsupported: This billing event cannot be replayed safely.
       replay_unavailable: Replay unavailable
       retry_count: "%<count>d attempts"
+      send_offer: Send offer
       sponsor_a_community: Contribute to another community
       sponsor_a_community_explainer: Fund another community's hosted-access balance.
         Your contribution is credited directly to their account — it never changes
@@ -1161,14 +1187,49 @@ en:
       sponsored_communities: Sponsored communities
       sponsored_subscription_notice: "%{owner} is currently covering this community's
         plan. Want to move billing to someone else? Choose a new payer below."
+      sponsors_supporting_you: Sponsors supporting this account
+      sponsorship_accepted: Sponsorship offer accepted.
+      sponsorship_already_accepted: This sponsorship is active.
+      sponsorship_already_declined: This sponsorship offer was declined.
+      sponsorship_already_ended: This sponsorship has ended.
+      sponsorship_awaiting_beneficiary: This offer is awaiting a decision from %{beneficiary}.
       sponsorship_consent_required: This community has not opted in to receive sponsorship
         contributions.
       sponsorship_contributed_total: "%{amount} contributed"
       sponsorship_contribution_complete: Your contribution to %{beneficiary} was recorded.
       sponsorship_contribution_failed: 'Your payment succeeded, but recording the
         contribution failed: %{message}'
+      sponsorship_declined: Sponsorship offer declined.
+      sponsorship_ended: Sponsorship ended.
+      sponsorship_from_to: "%{sponsor} is offering to sponsor %{beneficiary}."
+      sponsorship_heading: Sponsorship
+      sponsorship_mailer:
+        accepted:
+          greeting: Hi %{name},
+          message: "%{beneficiary_name} accepted your sponsorship offer. You can now
+            contribute to their balance."
+          subject: "%{beneficiary_name} accepted your sponsorship offer"
+          view_sponsorship: View this sponsorship
+        declined:
+          greeting: Hi %{name},
+          message: "%{beneficiary_name} declined your sponsorship offer."
+          subject: "%{beneficiary_name} declined your sponsorship offer"
+        ended:
+          greeting: Hi %{name},
+          message: The sponsorship between %{sponsor_name} and %{beneficiary_name}
+            is no longer active.
+          subject: The sponsorship between %{sponsor_name} and %{beneficiary_name}
+            has ended
+        offered:
+          greeting: Hi %{name},
+          message: "%{sponsor_name} has offered to sponsor your hosted-access balance."
+          review_offer: Review this offer
+          subject: "%{sponsor_name} has offered to sponsor you"
+      sponsorship_offer_sent: Your sponsorship offer was sent.
+      sponsorship_offers_received: Sponsorship offers received
       sponsorship_received_notice: This community has received %{amount} in sponsorship
         contributions.
+      sponsorship_review: Sponsorship offer
       sponsorship_target_invalid: That community or contribution amount is not available.
       start_checkout: Start checkout
       status: Status
@@ -3061,6 +3122,10 @@ en:
       federation_visibility_status:
         body: '"%{title}" is now set to %{current_visibility}'
         title: 'Federation setting updated: %{current_visibility}'
+      hosted_access_grace:
+        body: Hosted access for %{community_name} will pause on %{grace_period_ends_on}
+          unless billing is resolved.
+        title: Billing needs attention for %{community_name}
       index:
         no_notifications: You have no notifications.
         notifications: Notifications
@@ -5161,6 +5226,7 @@ en:
     clear: Clear
     clear_filter: Clear filter
     close: Close
+    community: Community
     confirm_delete: Are you sure you want to delete this record?
     create: Create
     declined: Declined
@@ -5192,6 +5258,7 @@ en:
       showing: Showing
       to: to
     pending: Pending
+    person: Person
     platform_not_public: The platform is currently private. Please log in to access.
     published: Published
     remove: Remove

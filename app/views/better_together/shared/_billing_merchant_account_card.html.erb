@@ -1,0 +1,84 @@
+<div id="<%= dom_id(owner, :merchant_account_card) %>" class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center gap-2">
+    <strong><%= t('better_together.billing.merchant_account', default: 'Merchant account') %></strong>
+    <% if policy(owner).manage_merchant_account? %>
+      <div class="d-flex gap-2">
+        <% if merchant_account.present? %>
+          <%= button_to t('better_together.billing.refresh_merchant_account', default: 'Refresh merchant status'),
+                        refresh_path,
+                        method: :post,
+                        class: 'btn btn-outline-secondary btn-sm' %>
+        <% end %>
+        <%= button_to t('better_together.billing.open_merchant_onboarding', default: 'Open merchant onboarding'),
+                      onboarding_path,
+                      method: :post,
+                      class: 'btn btn-outline-primary btn-sm',
+                      data: (local_assigns[:onboarding_confirm_text].present? ?
+                               { turbo: false, turbo_confirm: onboarding_confirm_text } :
+                               { turbo: false }) %>
+      </div>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <% if merchant_account.present? %>
+      <% if merchant_account.support_attention_needed? %>
+        <div class="alert <%= merchant_account.support_state == :disconnected ? 'alert-danger' : 'alert-warning' %> mb-3">
+          <% case merchant_account.support_state %>
+          <% when :disconnected %>
+            <strong><%= t('better_together.billing.merchant_disconnected_heading', default: 'Merchant account disconnected.') %></strong>
+            <div>
+              <%= t('better_together.billing.merchant_disconnected_body',
+                    default: 'Stripe deauthorized this merchant connection or CE marked it disconnected. ' \
+                             'Reconnect onboarding before relying on payouts.') %>
+            </div>
+            <% if merchant_account.deauthorized_at %>
+              <div class="small mb-0">
+                <%= t('better_together.billing.merchant_disconnected_at', default: 'Disconnected at:') %>
+                <strong><%= l(merchant_account.deauthorized_at, format: :long) %></strong>
+              </div>
+            <% end %>
+          <% when :required_action %>
+            <strong><%= t('better_together.billing.merchant_required_action_heading', default: 'Merchant onboarding still needs action.') %></strong>
+            <div>
+              <%= t('better_together.billing.merchant_required_action_body',
+                    default: 'Stripe still needs more information or review before this merchant account can receive payouts.') %>
+            </div>
+          <% when :restricted, :disabled, :errored, :capability_gap %>
+            <strong><%= t('better_together.billing.merchant_support_attention_heading', default: 'Merchant account needs support attention.') %></strong>
+            <div>
+              <%= t('better_together.billing.merchant_support_attention_body',
+                    default: 'This merchant account is not currently payout-ready. Review the status below and refresh from Stripe after any corrective action.') %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <p class="mb-2">
+        <span class="badge text-bg-info billing-merchant-status-badge">
+          <%= t("better_together.billing.merchant_account_status.#{merchant_account.status}", default: merchant_account.status.humanize) %>
+        </span>
+      </p>
+      <p class="mb-1">
+        <%= t('better_together.billing.merchant_provider', default: 'Provider:') %>
+        <strong><%= merchant_account.provider %></strong>
+      </p>
+      <p class="mb-1">
+        <%= t('better_together.billing.merchant_charges_enabled', default: 'Charges enabled:') %>
+        <strong><%= merchant_account.charges_enabled? ? t('globals.yes', default: 'Yes') : t('globals.no', default: 'No') %></strong>
+      </p>
+      <p class="mb-1">
+        <%= t('better_together.billing.merchant_payouts_enabled', default: 'Payouts enabled:') %>
+        <strong><%= merchant_account.payouts_enabled? ? t('globals.yes', default: 'Yes') : t('globals.no', default: 'No') %></strong>
+      </p>
+      <p class="mb-0 text-muted"><%= connected_explainer_text %></p>
+    <% else %>
+      <p class="mb-2 text-muted">
+        <%= t('better_together.billing.merchant_not_connected', default: 'No merchant account is connected yet.') %>
+      </p>
+      <% if policy(owner).manage_merchant_account? %>
+        <p class="mb-0 text-muted"><%= connect_explainer_text %></p>
+      <% else %>
+        <p class="mb-0 text-muted"><%= admin_only_text %></p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

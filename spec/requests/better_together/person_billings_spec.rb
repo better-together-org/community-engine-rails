@@ -228,7 +228,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Stripe checkout was synchronized successfully.')
-      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', billable_owner: person, beneficiary: person)
+      expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: person)
     end
   end
 
@@ -239,7 +239,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
       allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
 
-      post better_together.checkout_person_billing_path(person, locale:), params: { billing_plan_id: billing_plan.id }
+      post better_together.checkout_person_billing_path(person, locale:), params: { billing_plan_id: billing_plan.identifier }
 
       expect(response).to redirect_to('https://checkout.stripe.test/session')
       expect(Stripe::Checkout::Session).to have_received(:create).with(

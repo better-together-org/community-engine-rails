@@ -896,6 +896,14 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      accept_sponsorship: Accepter
+      accepts_sponsorship_disabled: Ce compte ne recevra plus de nouvelles contributions
+        de parrainage.
+      accepts_sponsorship_enabled: Ce compte peut maintenant recevoir des contributions
+        de parrainage.
+      accepts_sponsorship_toggle_label: Autoriser les communautés et les membres à
+        parrainer ce compte
+      accounts_you_sponsor: Comptes que vous parrainez
       activity_alerts: Alertes d'activite de facturation
       activity_alerts_explainer: Des problemes recents de webhook Stripe ont ete enregistres
         pour cet enregistrement de facturation. Consultez les derniers evenements
@@ -905,6 +913,8 @@ fr:
       available_plans: Plans disponibles
       beneficiary_community: Communauté à soutenir
       beneficiary_community_placeholder: Slug de la communauté
+      beneficiary_identifier: Bénéficiaire (slug ou nom d'utilisateur)
+      beneficiary_type: Type de bénéficiaire
       billed_to: 'Facture a :'
       breadcrumb_label: Facturation
       cancel_at_period_end: 'Annuler a la fin de la periode :'
@@ -926,17 +936,29 @@ fr:
         ci-dessous et rejouez les evenements compatibles lorsque c''est approprie.
       dead_letter_alert_heading: Evenements de facturation en dead letter
       dead_letter_reason_unknown: Raison du dead letter inconnue
+      decline_sponsorship: Refuser
       details: Details
+      end_sponsorship: Arrêter ce parrainage
       event_type: Evenement
       failed_without_message: Le processeur a signale un echec sans message d'erreur.
       heading: Facturation de la communaute
       hosted_access_level: 'Niveau d''acces heberge :'
       hosted_access_level_default: Standard
+      hosted_access_mailer:
+        grace_notice:
+          greeting: Bonjour %{name},
+          message: L'accès hébergé pour %{community_name} sera mis en pause le %{grace_period_ends_on}
+            si la facturation n'est pas résolue.
+          review_billing: Vérifier la facturation
+          subject: La facturation nécessite votre attention pour %{community_name}
       hosted_entitlement_active_explainer: Cette communaute dispose actuellement d''un
         plan heberge actif et reste en bon etat pour les operations hebergees.
       hosted_entitlement_attention_explainer: Cette communaute conserve un acces heberge,
         mais la facturation demande de l''attention avant que le plan heberge puisse
         de nouveau etre considere comme sain.
+      hosted_entitlement_grace_explainer: Cette communauté a encore un accès hébergé,
+        mais la facturation a expiré. L'accès sera mis en pause le %{grace_period_ends_at}
+        si cette situation n'est pas résolue.
       hosted_entitlement_heading: Statut du plan heberge
       hosted_entitlement_inactive_explainer: Aucun plan heberge actif n''est actuellement
         synchronise pour cette communaute.
@@ -948,6 +970,7 @@ fr:
       hosted_plan_scope_heading: Portee de lancement de la facturation hebergee
       hosted_status_active: Plan heberge actif
       hosted_status_attention: Attention requise pour la facturation
+      hosted_status_grace: Facturation expirée — période de grâce
       hosted_status_inactive: Aucun plan heberge actif
       ignored_event_explainer: L'evenement a ete enregistre, mais n'a pas pu etre
         associe a une mise a jour locale de facturation.
@@ -1011,10 +1034,13 @@ fr:
       no_billing_events: Aucune activite de webhook de facturation Stripe n'a encore
         ete enregistree pour cet enregistrement de facturation.
       no_plans: Aucun plan de facturation actif n'est encore configure.
+      no_sponsors_yet: Personne ne parraine encore ce compte.
       no_sponsorship_plans: Aucun montant de contribution de parrainage n'est configuré
         pour l'instant.
+      no_sponsorships_given_yet: Vous n'avez encore donné de parrainage à aucun compte.
       no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
         communaute.
+      offer_sponsorship_heading: Proposer de parrainer quelqu'un
       oldest_unresolved_at: 'Plus ancien non resolu a :'
       open_merchant_onboarding: Ouvrir l''integration marchand
       open_portal: Ouvrir le portail de facturation
@@ -1170,6 +1196,7 @@ fr:
         sans risque.
       replay_unavailable: Relecture indisponible
       retry_count: "%<count>d tentatives"
+      send_offer: Envoyer l'offre
       sponsor_a_community: Contribuer à une autre communauté
       sponsor_a_community_explainer: Financer le solde d'accès hébergé d'une autre
         communauté. Votre contribution est créditée directement sur son compte — cela
@@ -1178,15 +1205,51 @@ fr:
       sponsored_communities: Communautes soutenues
       sponsored_subscription_notice: "%{owner} couvre actuellement le plan de cette
         communaute. Pour changer qui paie, lancez un nouveau paiement ci-dessous."
-      sponsorship_consent_required: Cette communauté n'a pas choisi de recevoir des
+      sponsors_supporting_you: Parrains soutenant ce compte
+      sponsorship_accepted: Offre de parrainage acceptée.
+      sponsorship_already_accepted: Ce parrainage est déjà actif.
+      sponsorship_already_declined: Cette offre de parrainage a été refusée.
+      sponsorship_already_ended: Ce parrainage est terminé.
+      sponsorship_awaiting_beneficiary: Cette offre est en attente d'une décision
+        de %{beneficiary}.
+      sponsorship_consent_required: Cette communauté n'a pas choisi d'accepter des
         contributions de parrainage.
       sponsorship_contributed_total: "%{amount} contribué"
       sponsorship_contribution_complete: Votre contribution à %{beneficiary} a été
         enregistrée.
       sponsorship_contribution_failed: 'Votre paiement a réussi, mais l''enregistrement
         de la contribution a échoué : %{message}'
+      sponsorship_declined: Offre de parrainage refusée.
+      sponsorship_ended: Le parrainage a pris fin.
+      sponsorship_from_to: "%{sponsor} propose de parrainer %{beneficiary}."
+      sponsorship_heading: Parrainage
+      sponsorship_mailer:
+        accepted:
+          greeting: Bonjour %{name},
+          message: "%{beneficiary_name} a accepté votre offre de parrainage. Vous pouvez
+            maintenant contribuer à son solde."
+          subject: "%{beneficiary_name} a accepté votre offre de parrainage"
+          view_sponsorship: Voir ce parrainage
+        declined:
+          greeting: Bonjour %{name},
+          message: "%{beneficiary_name} a refusé votre offre de parrainage."
+          subject: "%{beneficiary_name} a refusé votre offre de parrainage"
+        ended:
+          greeting: Bonjour %{name},
+          message: Le parrainage entre %{sponsor_name} et %{beneficiary_name} n'est
+            plus actif.
+          subject: Le parrainage entre %{sponsor_name} et %{beneficiary_name} a pris
+            fin
+        offered:
+          greeting: Bonjour %{name},
+          message: "%{sponsor_name} a proposé de parrainer votre solde d'accès hébergé."
+          review_offer: Examiner cette offre
+          subject: "%{sponsor_name} propose de vous parrainer"
+      sponsorship_offer_sent: Votre offre de parrainage a été envoyée.
+      sponsorship_offers_received: Offres de parrainage reçues
       sponsorship_received_notice: Cette communauté a reçu %{amount} en contributions
         de parrainage.
+      sponsorship_review: Examen de l'offre de parrainage
       sponsorship_target_invalid: Cette communauté ou cette somme n'est pas disponible.
       start_checkout: Commencer le paiement
       status: Statut
@@ -3132,6 +3195,10 @@ fr:
       federation_visibility_status:
         body: "« %{title} » est désormais réglé sur %{current_visibility}"
         title: 'Paramètre de fédération mis à jour : %{current_visibility}'
+      hosted_access_grace:
+        body: L'accès hébergé pour %{community_name} sera mis en pause le %{grace_period_ends_on}
+          si la facturation n'est pas résolue.
+        title: La facturation nécessite votre attention pour %{community_name}
       index:
         no_notifications: Vous n'avez aucune notification.
         notifications: Notifications
@@ -5299,6 +5366,7 @@ fr:
     clear: Effacer
     clear_filter: Effacer le filtre
     close: Close
+    community: Communauté
     confirm_delete: Êtes-vous sûr de vouloir supprimer cet enregistrement ?
     create: Créer
     declined: Refusé
@@ -5330,6 +5398,7 @@ fr:
       showing: Affichage
       to: à
     pending: En attente
+    person: Personne
     platform_not_public: La plateforme est actuellement privée. Veuillez vous connecter
       pour accéder.
     published: Publié
