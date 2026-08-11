@@ -348,7 +348,7 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
 
     context 'checkout.session.completed for a sponsorship contribution one-time payment' do
       let(:sponsor) { create(:better_together_community) }
-      let(:beneficiary) { create(:better_together_community) }
+      let(:beneficiary) { create(:better_together_community, accepts_sponsorship: true) }
       let!(:beneficiary_pay_customer) do
         Pay::Customer.create!(owner: beneficiary, processor: 'stripe', processor_id: 'cus_test_webhook_beneficiary',
                               default: true)

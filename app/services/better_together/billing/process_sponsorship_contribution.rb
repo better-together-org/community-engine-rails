@@ -40,12 +40,18 @@ module BetterTogether
         )
       end
 
+      # Reuses an existing accepted/active standing relationship for this
+      # sponsor+beneficiary pair rather than spinning up a duplicate row —
+      # activates it on first contribution if it was merely accepted.
       def find_or_create_active_sponsorship(sponsor:, beneficiary:)
-        BetterTogether::Billing::Sponsorship.status_active
-                                            .for_sponsor(sponsor)
-                                            .for_beneficiary(beneficiary)
-                                            .first ||
-          BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
+        sponsorship = BetterTogether::Billing::Sponsorship.where(status: %w[accepted active])
+                                                          .for_sponsor(sponsor)
+                                                          .for_beneficiary(beneficiary)
+                                                          .first
+
+        return sponsorship.tap { |s| s.activate! if s.status_accepted? } if sponsorship
+
+        BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
       end
     end
   end

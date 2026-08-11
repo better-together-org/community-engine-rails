@@ -75,9 +75,10 @@ module BetterTogether
     end
 
     # Fail closed BEFORE any Stripe redirect — the model-level validation on
-    # Sponsorship#create only fires once find_or_create_active_sponsorship
-    # runs, which happens AFTER the sponsor's payment already succeeded. This
-    # check prevents "money moved, tracking lost" for an opted-out beneficiary.
+    # Sponsorship#create only fires once ProcessSponsorshipContribution's
+    # find_or_create_active_sponsorship runs, which happens AFTER the
+    # sponsor's payment already succeeded. This check prevents "money moved,
+    # tracking lost" for an opted-out beneficiary.
     def beneficiary_accepts_sponsorship?(beneficiary)
       return true unless BetterTogether::Billing::Sponsorship.consent_enforced?
 
@@ -129,18 +130,6 @@ module BetterTogether
     def flash_sponsorship_contribution_result(service_result)
       return if service_result.blank? || service_result.credit_result.already_credited
 
-    # Reuses an existing accepted/active standing relationship for this
-    # sponsor+beneficiary pair rather than spinning up a duplicate row —
-    # activates it on first contribution if it was merely accepted.
-    def find_or_create_active_sponsorship(sponsor:, beneficiary:)
-      sponsorship = BetterTogether::Billing::Sponsorship.where(status: %w[accepted active])
-                                                        .for_sponsor(sponsor)
-                                                        .for_beneficiary(beneficiary)
-                                                        .first
-
-      return sponsorship.tap { |s| s.activate! if s.status_accepted? } if sponsorship
-
-      BetterTogether::Billing::Sponsorship.create!(sponsor:, beneficiary:, status: 'active', accepted_at: Time.current)
       flash.now[:notice] = sponsorship_contribution_complete_message(service_result.beneficiary)
     end
 
