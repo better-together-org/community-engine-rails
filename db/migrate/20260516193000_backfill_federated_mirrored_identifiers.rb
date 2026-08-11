@@ -46,7 +46,13 @@ class BackfillFederatedMirroredIdentifiers < ActiveRecord::Migration[7.2]
         next
       end
 
-      record.update!(identifier: new_identifier)
+      # update_columns bypasses validation deliberately: this migration only
+      # rewrites `identifier` and must not fail records whose other
+      # attributes (e.g. federation_visibility) aren't valid yet because a
+      # later-timestamped migration hasn't added/backfilled that column on
+      # this host database. See EnsureFederatedMirroredIdentifierBackfill,
+      # which repairs this migration's output using the same bypass.
+      record.update_columns(identifier: new_identifier, updated_at: Time.current)
       updated += 1
     end
 
