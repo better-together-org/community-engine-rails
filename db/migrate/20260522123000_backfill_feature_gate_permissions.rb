@@ -56,7 +56,14 @@ class BackfillFeatureGatePermissions < ActiveRecord::Migration[7.2]
     FEATURE_PERMISSION_ATTRIBUTES.each do |attributes|
       permission = BetterTogether::ResourcePermission.find_or_initialize_by(identifier: attributes.fetch(:identifier))
       permission.assign_attributes(attributes)
-      permission.save!
+      # validate: false bypasses ResourcePermission's belongs_to :platform
+      # requirement, added to the live model long after this migration was
+      # written. platform_id doesn't exist on this table yet on a host that
+      # hasn't run add_platform_id_to_phase13_users_auth_rbac_metrics, so the
+      # association can never resolve here regardless of Platform data. The
+      # other attributes are static constants above, and the DB still
+      # enforces the [resource_type, position] unique index either way.
+      permission.save!(validate: false)
     end
   end
 
@@ -64,7 +71,8 @@ class BackfillFeatureGatePermissions < ActiveRecord::Migration[7.2]
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
 
     BetterTogether::Role.where(identifier: role_identifiers).find_each do |role|
-      BetterTogether::RoleResourcePermission.find_or_create_by!(role:, resource_permission: permission)
+      link = BetterTogether::RoleResourcePermission.find_or_initialize_by(role:, resource_permission: permission)
+      link.save!(validate: false) if link.new_record?
     end
   end
 
