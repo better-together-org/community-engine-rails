@@ -927,7 +927,7 @@ uk:
       hosted_access_level_default: Standard
       hosted_access_mailer:
         grace_notice:
-          greeting: 'Привіт, %{name},'
+          greeting: Привіт, %{name},
           message: Хостинговий доступ для %{community_name} призупиниться на %{grace_period_ends_on},
             якщо питання оплати не буде вирішено.
           review_billing: Переглянути рахунок
