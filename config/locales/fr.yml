@@ -1199,8 +1199,8 @@ fr:
       send_offer: Envoyer l'offre
       sponsor_a_community: Contribuer à une autre communauté
       sponsor_a_community_explainer: Financer le solde d'accès hébergé d'une autre
-        communauté. Votre contribution est créditée directement sur son compte —
-        cela ne change jamais le propriétaire de son abonnement.
+        communauté. Votre contribution est créditée directement sur son compte — cela
+        ne change jamais le propriétaire de son abonnement.
       sponsor_checkout: Payer personnellement pour cette communaute
       sponsored_communities: Communautes soutenues
       sponsored_subscription_notice: "%{owner} couvre actuellement le plan de cette

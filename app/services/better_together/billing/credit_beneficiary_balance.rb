@@ -7,9 +7,33 @@ module BetterTogether
     # Never touches the beneficiary's own subscription directly — Stripe
     # applies the balance credit to the beneficiary's own future invoices.
     class CreditBeneficiaryBalance
-      Result = Struct.new(:monetary_contribution, :sponsorship, keyword_init: true)
+      Result = Struct.new(:monetary_contribution, :sponsorship, :already_credited, keyword_init: true)
 
+      # When one_time_payment is given, locks its row for the duration of
+      # the already-credited check + Stripe call + insert, so two genuinely
+      # concurrent calls for the same payment (a retried request, two
+      # browser tabs) can't both pass the check before either has written a
+      # row and both credit the beneficiary's Stripe balance for one
+      # payment. Mirrors Billing::BenefitCredit#redeem!'s beneficiary.lock!
+      # pattern — locked on the payment rather than the beneficiary, since
+      # unrelated payments to the same beneficiary shouldn't serialize
+      # against each other. Without a one_time_payment there's no natural
+      # row to lock or dedupe against, so it always credits (e.g. a manual
+      # admin-granted contribution).
       def call(sponsorship:, amount_cents:, currency:, one_time_payment: nil)
+        return credit(sponsorship:, amount_cents:, currency:, one_time_payment:) if one_time_payment.blank?
+
+        one_time_payment.with_lock do
+          existing = BetterTogether::Billing::MonetaryContribution.find_by(one_time_payment:)
+          next Result.new(monetary_contribution: existing, sponsorship:, already_credited: true) if existing
+
+          credit(sponsorship:, amount_cents:, currency:, one_time_payment:)
+        end
+      end
+
+      private
+
+      def credit(sponsorship:, amount_cents:, currency:, one_time_payment:)
         balance_transaction = create_balance_transaction(sponsorship:, amount_cents:, currency:)
 
         monetary_contribution = BetterTogether::Billing::MonetaryContribution.create!(
@@ -21,10 +45,8 @@ module BetterTogether
           stripe_payment_intent_id: one_time_payment&.stripe_payment_intent_id
         )
 
-        Result.new(monetary_contribution:, sponsorship:)
+        Result.new(monetary_contribution:, sponsorship:, already_credited: false)
       end
-
-      private
 
       def create_balance_transaction(sponsorship:, amount_cents:, currency:)
         Stripe::Customer.create_balance_transaction(
