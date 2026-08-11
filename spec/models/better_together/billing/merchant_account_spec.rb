@@ -58,4 +58,20 @@ RSpec.describe BetterTogether::Billing::MerchantAccount do
     expect(merchant_account.support_attention_needed?).to be(true)
     expect(merchant_account.deauthorized_at).to be_present
   end
+
+  describe '.supported_owner_types' do
+    it 'derives from Billing::Billable.included_in_models rather than a hardcoded list' do
+      expect(described_class.supported_owner_types).to match_array(
+        BetterTogether::Billing::Billable.included_in_models.map(&:name)
+      )
+      expect(described_class.supported_owner_types).to include('BetterTogether::Community', 'BetterTogether::Person')
+    end
+  end
+
+  it 'rejects an owner type that does not include Billing::Billable' do
+    merchant_account.owner = build(:better_together_billing_plan)
+
+    expect(merchant_account).not_to be_valid
+    expect(merchant_account.errors[:owner_type]).to be_present
+  end
 end

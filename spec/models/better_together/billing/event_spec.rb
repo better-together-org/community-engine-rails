@@ -100,4 +100,22 @@ RSpec.describe BetterTogether::Billing::Event do
 
     expect(described_class.eligible_for_dead_lettering).to include(stale_event)
   end
+
+  describe '.supported_owner_types' do
+    it 'derives from Billing::Billable.included_in_models rather than a hardcoded list' do
+      expect(described_class.supported_owner_types).to match_array(
+        BetterTogether::Billing::Billable.included_in_models.map(&:name)
+      )
+      expect(described_class.supported_owner_types).to include('BetterTogether::Community', 'BetterTogether::Person')
+    end
+  end
+
+  describe '#billable_owner_type_supported' do
+    it 'rejects a billable_owner_type that does not include Billing::Billable' do
+      event.billable_owner = build(:better_together_billing_plan)
+
+      expect(event).not_to be_valid
+      expect(event.errors[:billable_owner_type]).to be_present
+    end
+  end
 end

@@ -7,17 +7,20 @@ module BetterTogether
       self.table_name = 'better_together_billing_merchant_accounts'
 
       PROVIDERS = %w[stripe_connect paypal_multiparty].freeze
-      SUPPORTED_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
       STATUSES = %w[pending onboarding required_action active restricted disabled errored disconnected].freeze
 
       belongs_to :owner,
                  polymorphic: true
 
+      def self.supported_owner_types
+        BetterTogether::Billing::Billable.included_in_models.map(&:name)
+      end
+
       validates :owner, presence: true
       validates :provider, inclusion: { in: PROVIDERS }
       validates :provider, uniqueness: { scope: %i[owner_type owner_id] }
       validates :status, inclusion: { in: STATUSES }
-      validates :owner_type, inclusion: { in: SUPPORTED_OWNER_TYPES }
+      validates :owner_type, inclusion: { in: -> { supported_owner_types } }
       validates :external_account_id, uniqueness: { scope: :provider }, allow_blank: true
       validates :charges_enabled, :payouts_enabled, inclusion: { in: [true, false] }
       validates :currency, length: { is: 3 }, allow_blank: true

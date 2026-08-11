@@ -35,7 +35,7 @@ module BetterTogether
       def eligible_owner_rows(owner_limit:)
         Pay::Customer.where(processor: 'stripe')
                      .where.not(processor_id: [nil, ''])
-                     .where(owner_type: BetterTogether::Billing::Event::SUPPORTED_OWNER_TYPES)
+                     .where(owner_type: BetterTogether::Billing::Billable.included_in_models.map(&:name))
                      .distinct
                      .limit(owner_limit)
                      .pluck(:owner_type, :owner_id)
