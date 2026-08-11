@@ -906,6 +906,8 @@ en:
       activity_alerts_technical_summary: Technical details (Stripe webhook activity
         log)
       available_plans: Available plans
+      beneficiary_community: Community to support
+      beneficiary_community_placeholder: Community slug
       billed_to: 'Billed to:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Cancel at period end:'
@@ -918,6 +920,8 @@ en:
         to this billing page.
       community_capacity_tier: 'Community capacity tier:'
       community_sponsor_checkout: Pay via %{community}
+      contribute_now: Contribute
+      contribution_amount: Amount
       current_period_ends: 'Current period ends:'
       current_subscription: Current subscription
       dead_letter_alert_body: Some Stripe billing events could not be repaired by
@@ -1004,6 +1008,7 @@ en:
       no_billing_events: No Stripe billing webhook activity has been recorded for
         this billing record yet.
       no_plans: No active billing plans are configured yet.
+      no_sponsorship_plans: No sponsorship contribution amounts are configured yet.
       no_subscription: No synced subscription is recorded for this community yet.
       oldest_unresolved_at: 'Oldest unresolved at:'
       open_merchant_onboarding: Open merchant onboarding
@@ -1148,10 +1153,23 @@ en:
       replay_event_unsupported: This billing event cannot be replayed safely.
       replay_unavailable: Replay unavailable
       retry_count: "%<count>d attempts"
+      sponsor_a_community: Contribute to another community
+      sponsor_a_community_explainer: Fund another community's hosted-access balance.
+        Your contribution is credited directly to their account — it never changes
+        who owns their subscription.
       sponsor_checkout: Pay personally for this community
       sponsored_communities: Sponsored communities
       sponsored_subscription_notice: "%{owner} is currently covering this community's
         plan. Want to move billing to someone else? Choose a new payer below."
+      sponsorship_consent_required: This community has not opted in to receive sponsorship
+        contributions.
+      sponsorship_contributed_total: "%{amount} contributed"
+      sponsorship_contribution_complete: Your contribution to %{beneficiary} was recorded.
+      sponsorship_contribution_failed: 'Your payment succeeded, but recording the
+        contribution failed: %{message}'
+      sponsorship_received_notice: This community has received %{amount} in sponsorship
+        contributions.
+      sponsorship_target_invalid: That community or contribution amount is not available.
       start_checkout: Start checkout
       status: Status
       subheading: Manage Stripe checkout, subscription status, and billing portal

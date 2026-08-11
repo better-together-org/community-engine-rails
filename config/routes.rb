@@ -155,6 +155,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                    only: :show,
                    controller: 'community_billings' do
             post :checkout
+            post :contribute
             post :portal
             post :reconcile
             post :merchant_onboarding

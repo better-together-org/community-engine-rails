@@ -61,20 +61,17 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response.body).not_to include('One-time donation')
     end
 
-    it 'shows community subscriptions that this person sponsors' do
+    it 'shows communities that this person currently sponsors, with their contribution total' do
       sponsored_community = create(:better_together_community, name: 'Mutual Aid Circle')
-      create(
-        :better_together_billing_subscription,
-        billable_owner: person,
-        beneficiary: sponsored_community,
-        billing_plan:
-      )
+      sponsorship = create(:better_together_billing_sponsorship, sponsor: person, beneficiary: sponsored_community, status: 'active')
+      create(:better_together_billing_monetary_contribution, sponsorship:, amount_cents: 5_000)
 
       get better_together.person_billing_path(person, locale:)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sponsored communities')
       expect(response.body).to include('Mutual Aid Circle')
+      expect(response.body).to include('$50.00 contributed')
       expect(response.body).to include('Manage billing')
     end
 

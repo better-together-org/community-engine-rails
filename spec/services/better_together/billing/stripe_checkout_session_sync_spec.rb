@@ -223,24 +223,34 @@ RSpec.describe BetterTogether::Billing::StripeCheckoutSessionSync do
       expect(result).to have_attributes(synced: false, reason: :no_subscription)
     end
 
-    it 'refuses to sync a checkout session for the wrong beneficiary page' do
+    it 'refuses to sync a checkout session whose real Stripe customer belongs to a different community' do
       other_community = create(:better_together_community)
+      other_pay_customer = Pay::Customer.create!(
+        owner: other_community,
+        processor: 'stripe',
+        processor_id: 'cus_test_other_community'
+      )
       mismatched_subscription = subscription.dup
-      mismatched_subscription.metadata = {
-        'bt_billing_plan_id' => billing_plan.id,
-        'bt_beneficiary_type' => other_community.class.name,
-        'bt_beneficiary_id' => other_community.id
-      }
+      mismatched_subscription.id = 'sub_test_other_community'
+      mismatched_subscription.customer = other_pay_customer.processor_id
+      mismatched_subscription.metadata = { 'bt_billing_plan_id' => billing_plan.id }
+      Pay::Subscription.create!(
+        customer: other_pay_customer,
+        name: 'default',
+        processor_id: 'sub_test_other_community',
+        processor_plan: billing_plan.stripe_price_id,
+        status: 'active',
+        current_period_start: Time.current.beginning_of_day,
+        current_period_end: 1.month.from_now.beginning_of_day
+      )
       mismatched_checkout_session = checkout_session.dup
+      mismatched_checkout_session.customer = other_pay_customer.processor_id
       mismatched_checkout_session.subscription = mismatched_subscription
-      mismatched_checkout_session.metadata = {
-        'bt_beneficiary_type' => other_community.class.name,
-        'bt_beneficiary_id' => other_community.id
-      }
+      mismatched_checkout_session.metadata = {}
 
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(mismatched_checkout_session)
 
-      result = described_class.new.call(checkout_session_id: 'cs_test_123', beneficiary: community)
+      result = described_class.new.call(checkout_session_id: 'cs_test_other_community', beneficiary: community)
 
       expect(result.synced).to be(false)
       expect(result.reason).to eq(:beneficiary_mismatch)

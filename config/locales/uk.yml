@@ -885,6 +885,8 @@ uk:
       activity_alerts_technical_summary: Технічні деталі (журнал активності вебхуків
         Stripe)
       available_plans: Dostupni taryfy
+      beneficiary_community: Спільнота для підтримки
+      beneficiary_community_placeholder: Слаг спільноти
       billed_to: 'Vystavleno dlia:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
@@ -896,6 +898,8 @@ uk:
         storintsi vystavlennia rakhunkiv.
       community_capacity_tier: 'Riven vmistymosti spilnoty:'
       community_sponsor_checkout: Oplatyty cherez %{community}
+      contribute_now: Внести вклад
+      contribution_amount: Сума
       current_period_ends: 'Potochnyi period zakinchuietsia:'
       current_subscription: Potochna pidpyska
       dead_letter_alert_body: Dekiaki billing-podii Stripe ne вдалося vidnovyty zvychainymy
@@ -982,6 +986,7 @@ uk:
       no_billing_events: Dlia tsoho billing zapysu shche ne zafiksovano zhodnoi aktyvnosti
         billing webhookiv Stripe.
       no_plans: Aktyvni platezhni taryfy shche ne nalashtovano.
+      no_sponsorship_plans: Не налаштовано жодних сум внесків для спонсорства.
       no_subscription: Dlia tsiiei spilnoty shche ne zafiksovano sinhronizovanoi pidpysky.
       oldest_unresolved_at: 'Naistarisha nevyrishena o:'
       open_merchant_onboarding: Vidkryty merchant onboarding
@@ -1130,10 +1135,23 @@ uk:
       replay_event_unsupported: Tsiu billing-podiiu ne mozhna bezpechno povtorno obrobyty.
       replay_unavailable: Povtorna obrobka nedostupna
       retry_count: "%<count>d sprob"
+      sponsor_a_community: Внести вклад до іншої спільноти
+      sponsor_a_community_explainer: Профінансувати баланс хостингового доступу іншої
+        спільноти. Ваш внесок зараховується безпосередньо на її обліковий запис —
+        це не змінює, хто є власником її підписки.
       sponsor_checkout: Oplatyty za tsiu spilnotu osobysto
       sponsored_communities: Sponsorovani spilnoty
       sponsored_subscription_notice: "%{owner} zaraz pokryvaie platu za tsiu spilnotu.
         Khochete zminyty platnyka? Oberit novoho platnyka nyzhche."
+      sponsorship_consent_required: Ця спільнота не обрала опцію отримання внесків
+        спонсорства.
+      sponsorship_contributed_total: "%{amount} внесено"
+      sponsorship_contribution_complete: Ваш внесок до %{beneficiary} зареєстровано.
+      sponsorship_contribution_failed: 'Ваш платіж пройшов успішно, але не вдалося
+        зареєструвати внесок: %{message}'
+      sponsorship_received_notice: Ця спільнота отримала %{amount} у вигляді спонсорських
+        внесків.
+      sponsorship_target_invalid: Ця спільнота або ця сума недоступні.
       start_checkout: Pochaty oplatu
       status: Stan
       subheading: Keruie checkoutom Stripe, stanom pidpysky ta dostupom do billing

@@ -67,7 +67,7 @@ module BetterTogether
       private
 
       def current_subscription_for(community)
-        BetterTogether::Billing::Subscription.current_for_beneficiary(community)
+        BetterTogether::Billing::Subscription.current_for_owner(community)
       end
 
       def hosted_status_for(subscription)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_07_220003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -282,6 +282,22 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
     t.index ["status"], name: "idx_bt_billing_merchant_accounts_status"
   end
 
+  create_table "better_together_billing_monetary_contributions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "sponsorship_id", null: false
+    t.uuid "one_time_payment_id"
+    t.integer "amount_cents", null: false
+    t.string "currency", null: false
+    t.string "stripe_balance_transaction_id", null: false
+    t.string "stripe_payment_intent_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["one_time_payment_id"], name: "idx_on_one_time_payment_id_0011f9a2d1"
+    t.index ["sponsorship_id"], name: "idx_on_sponsorship_id_cbd46edfdc"
+    t.index ["stripe_balance_transaction_id"], name: "idx_bt_billing_monetary_contributions_balance_txn", unique: true
+  end
+
   create_table "better_together_billing_one_time_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -323,6 +339,26 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
     t.index ["identifier"], name: "idx_bt_billing_plans_identifier", unique: true
     t.index ["stripe_price_id"], name: "idx_bt_billing_plans_stripe_price_id", unique: true
     t.index ["stripe_product_id"], name: "idx_bt_billing_plans_stripe_product_id", unique: true, where: "(stripe_product_id IS NOT NULL)"
+  end
+
+  create_table "better_together_billing_sponsorships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "token", null: false
+    t.string "sponsor_type", null: false
+    t.uuid "sponsor_id", null: false
+    t.string "beneficiary_type", null: false
+    t.uuid "beneficiary_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
+    t.datetime "ended_at"
+    t.string "cancellation_reason"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_sponsorships_beneficiary"
+    t.index ["sponsor_type", "sponsor_id"], name: "idx_bt_billing_sponsorships_sponsor"
+    t.index ["token"], name: "idx_bt_billing_sponsorships_token", unique: true
   end
 
   create_table "better_together_billing_subscription_summary_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -523,6 +559,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
     t.boolean "requires_invitation", default: true, null: false
     t.jsonb "settings", default: {}, null: false
     t.uuid "platform_id"
+    t.boolean "accepts_sponsorship", default: false, null: false
     t.index ["creator_id"], name: "by_creator"
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
@@ -1672,6 +1709,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
     t.datetime "deleted_at"
     t.datetime "anonymized_at"
     t.uuid "platform_id"
+    t.boolean "accepts_sponsorship", default: false, null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["platform_id"], name: "index_better_together_people_on_platform_id"
@@ -2721,6 +2759,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_210000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_one_time_payments", column: "one_time_payment_id"
+  add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_sponsorships", column: "sponsorship_id"
   add_foreign_key "better_together_billing_one_time_payments", "better_together_billing_plans", column: "billing_plan_id"
   add_foreign_key "better_together_billing_subscription_summary_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict

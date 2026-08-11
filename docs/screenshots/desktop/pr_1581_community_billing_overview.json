@@ -1,7 +1,7 @@
 {
   "name": "pr_1581_community_billing_overview",
   "device": "desktop",
-  "url": "/en/c/harbour-voices-dce43b8a/billing",
+  "url": "/en/c/harbour-voices-e13103ce/billing",
   "title": "Community Billing | Harbour Voices | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
@@ -41,6 +41,41 @@
         "width": 380,
         "height": 236,
         "score": 959.5
+      }
+    },
+    {
+      "selector": "#sponsorship_received_notice_community_4f81e4e7-dab7-4d50-bd2b-dbe52b703805",
+      "title": "Sponsorship received",
+      "bullets": [
+        "Shown whenever a sponsor's contribution has been credited to this community's balance."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 770.0,
+        "width": 382.0,
+        "height": 82.0,
+        "right": 463.5,
+        "bottom": 852.0,
+        "center_x": 272.5,
+        "center_y": 811.0
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 770.0,
+        "width": 382.0,
+        "height": 82.0,
+        "right": 463.5,
+        "bottom": 852.0,
+        "center_x": 272.5,
+        "center_y": 811.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 483.5,
+        "y": 719.0,
+        "width": 380,
+        "height": 184,
+        "score": 976.5
       }
     }
   ]

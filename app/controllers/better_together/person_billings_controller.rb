@@ -237,21 +237,16 @@ module BetterTogether
       BetterTogether::Billing::Event.for_owner_or_beneficiary(@person).distinct
     end
 
-    # rubocop:disable Style/MultilineBlockChain
+    # Communities this person is currently sponsoring (contributing to their
+    # Stripe Customer Balance) — a Sponsorship relationship, not a subscription
+    # this person owns. See Billing::Sponsorship/CreditBeneficiaryBalance.
     def sponsored_communities
-      BetterTogether::Billing::Subscription
-        .for_owner(@person)
-        .includes(:billing_plan, :pay_subscription)
-        .filter_map do |subscription|
-          beneficiary = subscription.beneficiary
-          next unless beneficiary.is_a?(BetterTogether::Community)
-
-          subscription
-        end
-        .sort_by { |subscription| subscription.updated_at || Time.at(0) }
-        .reverse
+      BetterTogether::Billing::Sponsorship.status_active
+                                          .for_sponsor(@person)
+                                          .where(beneficiary_type: 'BetterTogether::Community')
+                                          .includes(:beneficiary, :monetary_contributions)
+                                          .order(created_at: :desc)
     end
-    # rubocop:enable Style/MultilineBlockChain
 
     def replayable_billing_event
       billing_events_scope.dead_lettered.find(params[:event_id])

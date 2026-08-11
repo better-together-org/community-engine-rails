@@ -93,15 +93,18 @@
           </div>
           <div class="card-body">
             <div id="person-sponsored-communities-list" class="list-group list-group-flush">
-              <% @sponsored_communities.each do |subscription| %>
-                <% sponsored_community = subscription.beneficiary %>
+              <% @sponsored_communities.each do |sponsorship| %>
+                <% sponsored_community = sponsorship.beneficiary %>
+                <% contributed_total = sponsorship.monetary_contributions.sum(&:amount_cents) %>
                 <div id="<%= dom_id(sponsored_community, :sponsorship_row) %>" class="list-group-item px-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                   <div>
                     <div class="fw-semibold"><%= sponsored_community.name %></div>
                     <div class="text-muted small">
-                      <%= subscription.billing_plan.name %>
-                      ·
-                      <%= t("better_together.billing.subscription_status.#{subscription.status}", default: subscription.status.humanize) %>
+                      <%= t(
+                            'better_together.billing.sponsorship_contributed_total',
+                            default: '%{amount} contributed',
+                            amount: number_to_currency(contributed_total / 100.0)
+                          ) %>
                     </div>
                   </div>
                   <%= link_to t('better_together.billing.manage_billing', default: 'Manage billing'),

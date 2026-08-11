@@ -86,41 +86,34 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response.body).to include('Growth')
     end
 
-    it 'shows takeover actions when a community subscription is sponsored by a person' do
-      sponsor = platform_manager.person
-      Pay::Customer.create!(owner: sponsor, processor: 'stripe', processor_id: 'cus_person_takeover')
+    it 'shows a card offering to contribute to another community, listing available contribution plans' do
       create(
-        :better_together_billing_subscription,
-        billing_plan:,
-        billable_owner: sponsor,
-        beneficiary: community
+        :better_together_billing_plan,
+        name: 'Solidarity Contribution',
+        identifier: 'solidarity-contribution',
+        billing_interval: 'one_time',
+        amount_cents: 2_500,
+        stripe_price_id: 'price_test_solidarity_contribution',
+        metadata: { 'sponsorship_contribution' => true }
       )
 
       get better_together.community_billing_path(community, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('is currently covering this community')
-      expect(response.body).to include('Have this community pay for itself')
+      expect(response.body).to include('Contribute to another community')
+      expect(response.body).to include('$25.00')
     end
 
-    it 'shows community takeover actions when a community subscription is sponsored by another community' do
-      sponsor_community = create(:better_together_community, name: 'Shared Budget')
-      alternate_sponsor = create(:better_together_community, name: 'Collective Fund')
-      Pay::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_shared_budget')
-      Pay::Customer.create!(owner: alternate_sponsor, processor: 'stripe', processor_id: 'cus_collective_fund')
-      create(
-        :better_together_billing_subscription,
-        billing_plan:,
-        billable_owner: sponsor_community,
-        beneficiary: community
-      )
+    it 'shows received sponsorship contributions when this community has been funded by a sponsor' do
+      sponsor = create(:better_together_person)
+      sponsorship = create(:better_together_billing_sponsorship, sponsor:, beneficiary: community, status: 'active')
+      create(:better_together_billing_monetary_contribution, sponsorship:, amount_cents: 5_000)
 
       get better_together.community_billing_path(community, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Have this community pay for itself')
-      expect(response.body).to include('Pay for this personally instead')
-      expect(response.body).to include('Let Collective Fund pay instead')
+      expect(response.body).to include('This community has received')
+      expect(response.body).to include('$50.00')
     end
 
     it 'shows merchant account status when one exists' do
@@ -336,115 +329,199 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response.body).to include('data-turbo="false"')
     end
+  end
 
-    it 'supports person-sponsored checkout for a community beneficiary' do
-      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/session')
-      sponsor = platform_manager.person
+  describe 'POST /:locale/c/:community_id/billing/contribute' do
+    let!(:contribution_plan) do
+      create(
+        :better_together_billing_plan,
+        name: 'Solidarity Contribution',
+        identifier: 'solidarity-contribution',
+        billing_interval: 'one_time',
+        amount_cents: 2_500,
+        stripe_price_id: 'price_test_solidarity_contribution',
+        metadata: { 'sponsorship_contribution' => true }
+      )
+    end
+    let(:beneficiary_community) { create(:better_together_community, name: 'Beneficiary Co-op') }
 
-      Pay::Stripe::Customer.create!(owner: sponsor, processor: 'stripe', processor_id: 'cus_person_sponsor_checkout')
+    it 'redirects to a hosted Stripe checkout session funding the beneficiary community, never the current community itself as owner' do
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/contribution-session')
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_contribution')
+
       allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
 
-      post better_together.checkout_community_billing_path(community, locale:),
-           params: { billing_plan_id: billing_plan.identifier, checkout_as: 'person' }
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
 
-      expect(response).to redirect_to('https://checkout.stripe.test/session')
+      expect(response).to redirect_to('https://checkout.stripe.test/contribution-session')
       expect(Stripe::Checkout::Session).to have_received(:create).with(
         hash_including(
-          customer: 'cus_person_sponsor_checkout',
-          client_reference_id: sponsor.id,
+          customer: 'cus_sponsor_contribution',
+          mode: 'payment',
+          client_reference_id: community.id,
           metadata: hash_including(
-            bt_billable_owner_type: 'BetterTogether::Person',
-            bt_billable_owner_id: sponsor.id,
-            bt_beneficiary_type: 'BetterTogether::Community',
-            bt_beneficiary_id: community.id
+            bt_sponsorship_beneficiary_type: 'BetterTogether::Community',
+            bt_sponsorship_beneficiary_id: beneficiary_community.id
           )
         ),
         anything
       )
     end
 
-    it 'supports community-sponsored checkout for another community beneficiary' do
-      sponsor_community = create(:better_together_community, name: 'Collective Sponsor')
-      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/community-session')
+    it 'redirects with an alert when the beneficiary community cannot be found' do
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: 'does-not-exist', billing_plan_id: contribution_plan.identifier }
 
-      Pay::Stripe::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_collective_sponsor_checkout')
-      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('That community or contribution amount is not available.')
+    end
 
-      post better_together.checkout_community_billing_path(community, locale:),
-           params: {
-             billing_plan_id: billing_plan.identifier,
-             checkout_as: 'community',
-             billable_owner_community_id: sponsor_community.slug
-           }
+    it 'redirects with an alert when the billing plan is not a sponsorship contribution plan' do
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: billing_plan.identifier }
 
-      expect(response).to redirect_to('https://checkout.stripe.test/community-session')
-      expect(Stripe::Checkout::Session).to have_received(:create).with(
-        hash_including(
-          customer: 'cus_collective_sponsor_checkout',
-          client_reference_id: sponsor_community.id,
-          metadata: hash_including(
-            bt_billable_owner_type: 'BetterTogether::Community',
-            bt_billable_owner_id: sponsor_community.id,
-            bt_beneficiary_type: 'BetterTogether::Community',
-            bt_beneficiary_id: community.id
-          )
-        ),
-        anything
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+    end
+
+    context 'when sponsorship consent is enforced' do
+      around do |example|
+        original = ENV.fetch('BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED', nil)
+        ENV['BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED'] = 'true'
+        example.run
+      ensure
+        ENV['BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED'] = original
+      end
+
+      it 'rejects the contribution before any Stripe checkout session is created when the beneficiary has not opted in' do
+        allow(Stripe::Checkout::Session).to receive(:create)
+
+        post better_together.contribute_community_billing_path(community, locale:),
+             params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
+
+        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+        follow_redirect!
+        expect(response.body).to include('This community has not opted in to receive sponsorship contributions.')
+        expect(Stripe::Checkout::Session).not_to have_received(:create)
+      end
+
+      it 'allows the contribution once the beneficiary has opted in' do
+        beneficiary_community.update!(accepts_sponsorship: true)
+        checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/consenting-session')
+        Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_consenting')
+        allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+        post better_together.contribute_community_billing_path(community, locale:),
+             params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
+
+        expect(response).to redirect_to('https://checkout.stripe.test/consenting-session')
+      end
+    end
+  end
+
+  describe 'GET /:locale/c/:community_id/billing (sponsorship contribution checkout return)' do
+    let!(:contribution_plan) do
+      create(
+        :better_together_billing_plan,
+        identifier: 'solidarity-contribution-return',
+        billing_interval: 'one_time',
+        amount_cents: 2_500,
+        stripe_price_id: 'price_test_solidarity_contribution_return',
+        metadata: { 'sponsorship_contribution' => true }
+      )
+    end
+    let(:beneficiary_community) { create(:better_together_community, name: 'Funded Co-op') }
+    let!(:sponsor_pay_customer) do
+      Pay::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_return')
+    end
+    let!(:beneficiary_pay_customer) do
+      Pay::Customer.create!(owner: beneficiary_community, processor: 'stripe', processor_id: 'cus_beneficiary_return', default: true)
+    end
+
+    let(:build_contribution_checkout_session) do
+      lambda do |id:|
+        price = Struct.new(:id, keyword_init: true).new(id: contribution_plan.stripe_price_id)
+        line_item = Struct.new(:price, keyword_init: true).new(price:)
+        line_items = Struct.new(:data, keyword_init: true).new(data: [line_item])
+        payment_intent = Struct.new(:id, keyword_init: true).new(id: "pi_test_#{id}")
+
+        Struct.new(
+          :id, :customer, :subscription, :payment_intent, :amount_total, :currency, :metadata, :line_items,
+          keyword_init: true
+        ).new(
+          id:,
+          customer: sponsor_pay_customer.processor_id,
+          subscription: nil,
+          payment_intent:,
+          amount_total: 2_500,
+          currency: 'cad',
+          metadata: {
+            'bt_billing_plan_id' => contribution_plan.id,
+            'bt_sponsorship_beneficiary_type' => 'BetterTogether::Community',
+            'bt_sponsorship_beneficiary_id' => beneficiary_community.id
+          },
+          line_items:
+        )
+      end
+    end
+
+    it 'credits the beneficiary balance and records a MonetaryContribution when the checkout completes' do
+      checkout_session = build_contribution_checkout_session.call(id: 'cs_test_contribution_return')
+      balance_transaction = Struct.new(:id, keyword_init: true).new(id: 'txn_test_contribution_return')
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(checkout_session)
+      allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
+
+      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_return')
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Your contribution to Funded Co-op was recorded.')
+      expect(
+        BetterTogether::Billing::Sponsorship.status_active.for_sponsor(community).for_beneficiary(beneficiary_community)
+      ).to exist
+      expect(BetterTogether::Billing::MonetaryContribution.sole).to have_attributes(amount_cents: 2_500, currency: 'cad')
+      expect(Stripe::Customer).to have_received(:create_balance_transaction).with(
+        beneficiary_pay_customer.processor_id,
+        hash_including(amount: -2_500)
       )
     end
 
-    it 'permits community-sponsored checkout for a non-platform-manager community organizer' do
-      organizer_user = find_or_create_test_user("sponsor-organizer-#{SecureRandom.hex(4)}@example.test",
-                                                'SecureTest123!@#', :user)
-      sponsor_community = create(:better_together_community, name: 'Organizer-Led Sponsor')
-      # Must manage @community (the billing page's own subject) to pass authorize_community,
-      # AND manage sponsor_community to be eligible as a billable owner for it.
-      make_community_organizer(organizer_user, community)
-      make_community_organizer(organizer_user, sponsor_community)
-      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/organizer-session')
+    it 'never credits the beneficiary balance twice for the same checkout session, even revisited' do
+      checkout_session = build_contribution_checkout_session.call(id: 'cs_test_contribution_repeat')
+      balance_transaction = Struct.new(:id, keyword_init: true).new(id: 'txn_test_contribution_repeat')
 
-      Pay::Stripe::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_organizer_sponsor_checkout')
-      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(checkout_session)
+      allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
 
-      sign_in organizer_user
-      post better_together.checkout_community_billing_path(community, locale:),
-           params: {
-             billing_plan_id: billing_plan.identifier,
-             checkout_as: 'community',
-             billable_owner_community_id: sponsor_community.slug
-           }
+      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
 
-      expect(response).to redirect_to('https://checkout.stripe.test/organizer-session')
-      expect(Stripe::Checkout::Session).to have_received(:create).with(
-        hash_including(client_reference_id: sponsor_community.id),
-        anything
-      )
+      expect(BetterTogether::Billing::MonetaryContribution.count).to eq(1)
+      expect(Stripe::Customer).to have_received(:create_balance_transaction).once
     end
 
-    it 'falls back to the beneficiary community when the requester does not steward the requested sponsor' do
-      limited_user = find_or_create_test_user("no-sponsor-access-#{SecureRandom.hex(4)}@example.test",
-                                              'SecureTest123!@#', :user)
-      sponsor_community = create(:better_together_community, name: 'Not My Community')
-      # Manages @community (passes authorize_community) but has no relationship at all to
-      # sponsor_community, so it must not be selectable as billable owner.
-      make_community_organizer(limited_user, community)
-      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/fallback-session')
+    it 'allows a second, different sponsor to independently fund the same beneficiary without conflict' do
+      other_sponsor = create(:better_together_community, name: 'Second Sponsor')
+      other_sponsor_pay_customer = Pay::Customer.create!(owner: other_sponsor, processor: 'stripe', processor_id: 'cus_other_sponsor_return')
+      first_session = build_contribution_checkout_session.call(id: 'cs_test_first_sponsor')
+      second_session = build_contribution_checkout_session.call(id: 'cs_test_second_sponsor')
+      second_session.customer = other_sponsor_pay_customer.processor_id
+      first_balance_transaction = Struct.new(:id, keyword_init: true).new(id: 'txn_test_multi_sponsor_1')
+      second_balance_transaction = Struct.new(:id, keyword_init: true).new(id: 'txn_test_multi_sponsor_2')
 
-      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_fallback_checkout')
-      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
-
-      sign_in limited_user
-      post better_together.checkout_community_billing_path(community, locale:),
-           params: {
-             billing_plan_id: billing_plan.identifier,
-             checkout_as: 'community',
-             billable_owner_community_id: sponsor_community.slug
-           }
-
-      expect(Stripe::Checkout::Session).to have_received(:create).with(
-        hash_including(client_reference_id: community.id),
-        anything
+      allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(
+        first_balance_transaction, second_balance_transaction
       )
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(first_session)
+      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_first_sponsor')
+
+      allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(second_session)
+      get better_together.community_billing_path(other_sponsor, locale:, checkout_session_id: 'cs_test_second_sponsor')
+
+      expect(BetterTogether::Billing::Sponsorship.status_active.for_beneficiary(beneficiary_community).count).to eq(2)
+      expect(BetterTogether::Billing::MonetaryContribution.count).to eq(2)
     end
   end
 
@@ -460,70 +537,23 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response).to redirect_to('https://billing.stripe.test/session')
     end
 
-    it 'uses the sponsor billing owner when the current community subscription is person-owned' do
-      sponsor = platform_manager.person
-      portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/sponsored')
-      create(
-        :better_together_billing_subscription,
-        billable_owner: sponsor,
-        beneficiary: community,
-        billing_plan:
-      )
-
-      Pay::Stripe::Customer.create!(owner: sponsor, processor: 'stripe', processor_id: 'cus_person_sponsor_portal')
+    it 'is unaffected by a subscription owned by a different party — no more cross-owner discovery' do
+      other_owner = create(:better_together_person)
+      create(:better_together_billing_subscription, billable_owner: other_owner, billing_plan:)
+      portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/isolated')
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_community_isolated')
       allow(Stripe::BillingPortal::Session).to receive(:create).and_return(portal_session)
 
       post better_together.portal_community_billing_path(community, locale:)
 
-      expect(response).to redirect_to('https://billing.stripe.test/sponsored')
+      expect(response).to redirect_to('https://billing.stripe.test/isolated')
       expect(Stripe::BillingPortal::Session).to have_received(:create).with(
         hash_including(
-          customer: 'cus_person_sponsor_portal',
+          customer: 'cus_community_isolated',
           return_url: better_together.community_billing_url(community, locale:)
         ),
         anything
       )
-    end
-
-    it 'uses the sponsoring community billing owner when the current community subscription is community-owned' do
-      sponsor_community = create(:better_together_community, name: 'Shared Budget')
-      portal_session = instance_double(Stripe::BillingPortal::Session, url: 'https://billing.stripe.test/community-sponsored')
-      create(
-        :better_together_billing_subscription,
-        billable_owner: sponsor_community,
-        beneficiary: community,
-        billing_plan:
-      )
-
-      Pay::Stripe::Customer.create!(owner: sponsor_community, processor: 'stripe', processor_id: 'cus_community_sponsor_portal')
-      allow(Stripe::BillingPortal::Session).to receive(:create).and_return(portal_session)
-
-      post better_together.portal_community_billing_path(community, locale:)
-
-      expect(response).to redirect_to('https://billing.stripe.test/community-sponsored')
-      expect(Stripe::BillingPortal::Session).to have_received(:create).with(
-        hash_including(
-          customer: 'cus_community_sponsor_portal',
-          return_url: better_together.community_billing_url(community, locale:)
-        ),
-        anything
-      )
-    end
-
-    it 'guides non-sponsor admins to take over billing when portal access is blocked' do
-      sponsor = create(:better_together_person)
-      create(
-        :better_together_billing_subscription,
-        billable_owner: sponsor,
-        beneficiary: community,
-        billing_plan:
-      )
-
-      post better_together.portal_community_billing_path(community, locale:)
-
-      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-      follow_redirect!
-      expect(response.body).to include('This community subscription is billed to another owner.')
     end
 
     it 'persists portal failure support state on the billing subscription' do
@@ -563,27 +593,12 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
 
-    it 'queues reconciliation for the sponsored billable owner when present' do
+    it 'only queues reconciliation for the community itself, even when other subscriptions exist elsewhere' do
       friendly_scope = instance_double(ActiveRecord::Relation, find: community)
-      sponsor = platform_manager.person
-      create(:better_together_billing_subscription, billable_owner: sponsor, beneficiary: community)
+      other_owner = create(:better_together_person)
+      create(:better_together_billing_subscription, billable_owner: other_owner, billing_plan:)
 
       allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
-
-      expect do
-        post better_together.reconcile_community_billing_path(community, locale:)
-      end.to have_enqueued_job(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingJob).with(sponsor.class.name, sponsor.id)
-    end
-
-    it 'queues reconciliation for historical sponsor owners when the current subscription is missing' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
-      sponsor = platform_manager.person
-      sponsor_community = create(:better_together_community, name: 'Sponsor Collective')
-      create(:better_together_billing_subscription, billable_owner: sponsor, beneficiary: community)
-      create(:better_together_billing_subscription, billable_owner: sponsor_community, beneficiary: community)
-
-      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
-      allow(BetterTogether::Billing::Subscription).to receive(:current_for_beneficiary).with(community).and_return(nil)
 
       post better_together.reconcile_community_billing_path(community, locale:)
 
@@ -593,8 +608,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         job[:args]
       end
 
-      expect(reconciliation_jobs).to include([sponsor.class.name, sponsor.id])
-      expect(reconciliation_jobs).to include([sponsor_community.class.name, sponsor_community.id])
+      expect(reconciliation_jobs).to eq([[community.class.name, community.id]])
     end
   end
 

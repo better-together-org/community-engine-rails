@@ -903,6 +903,8 @@ fr:
       activity_alerts_technical_summary: Details techniques (journal d'activite de
         webhook de Stripe)
       available_plans: Plans disponibles
+      beneficiary_community: Communauté à soutenir
+      beneficiary_community_placeholder: Slug de la communauté
       billed_to: 'Facture a :'
       breadcrumb_label: Facturation
       cancel_at_period_end: 'Annuler a la fin de la periode :'
@@ -915,6 +917,8 @@ fr:
         pas a cette page de facturation.
       community_capacity_tier: 'Niveau de capacite de la communaute :'
       community_sponsor_checkout: Payer via %{community}
+      contribute_now: Contribuer maintenant
+      contribution_amount: Montant
       current_period_ends: 'Fin de la periode courante :'
       current_subscription: Abonnement actuel
       dead_letter_alert_body: Certains evenements de facturation Stripe n''ont pas
@@ -1007,6 +1011,8 @@ fr:
       no_billing_events: Aucune activite de webhook de facturation Stripe n'a encore
         ete enregistree pour cet enregistrement de facturation.
       no_plans: Aucun plan de facturation actif n'est encore configure.
+      no_sponsorship_plans: Aucun montant de contribution de parrainage n'est configuré
+        pour l'instant.
       no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
         communaute.
       oldest_unresolved_at: 'Plus ancien non resolu a :'
@@ -1164,10 +1170,24 @@ fr:
         sans risque.
       replay_unavailable: Relecture indisponible
       retry_count: "%<count>d tentatives"
+      sponsor_a_community: Contribuer à une autre communauté
+      sponsor_a_community_explainer: Financer le solde d'accès hébergé d'une autre
+        communauté. Votre contribution est créditée directement sur son compte — cela
+        ne change jamais le propriétaire de son abonnement.
       sponsor_checkout: Payer personnellement pour cette communaute
       sponsored_communities: Communautes soutenues
       sponsored_subscription_notice: "%{owner} couvre actuellement le plan de cette
         communaute. Pour changer qui paie, lancez un nouveau paiement ci-dessous."
+      sponsorship_consent_required: Cette communauté n'a pas choisi de recevoir des
+        contributions de parrainage.
+      sponsorship_contributed_total: "%{amount} contribué"
+      sponsorship_contribution_complete: Votre contribution à %{beneficiary} a été
+        enregistrée.
+      sponsorship_contribution_failed: 'Votre paiement a réussi, mais l''enregistrement
+        de la contribution a échoué : %{message}'
+      sponsorship_received_notice: Cette communauté a reçu %{amount} en contributions
+        de parrainage.
+      sponsorship_target_invalid: Cette communauté ou cette somme n'est pas disponible.
       start_checkout: Commencer le paiement
       status: Statut
       subheading: Gere le paiement Stripe, l'etat de l'abonnement et l'acces au portail

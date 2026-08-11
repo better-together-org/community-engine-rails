@@ -39,9 +39,18 @@ FactoryBot.define do
     association :billing_plan, factory: 'better_together/billing/plan'
     metadata { {} }
 
+    # Kept transient (not a real, assignable attribute) for backward
+    # compatibility with specs still passing beneficiary: — Subscription no
+    # longer supports a beneficiary that diverges from its own owner (that
+    # divergence mechanism was the double-billing bug); #beneficiary is now a
+    # plain alias for #billable_owner, so this is accepted and silently
+    # ignored rather than raising on every pre-existing call site.
+    transient do
+      beneficiary { nil }
+    end
+
     after(:build) do |subscription, evaluator|
       subscription.billable_owner = evaluator.billable_owner if evaluator.respond_to?(:billable_owner) && evaluator.billable_owner.present?
-      subscription.beneficiary = evaluator.beneficiary if evaluator.respond_to?(:beneficiary) && evaluator.beneficiary.present?
     end
 
     trait :person_owned do

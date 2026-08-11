@@ -23,7 +23,13 @@ module BetterTogether
         checkout_session = fetch_checkout_session(checkout_session_id)
         subscription = fetch_subscription(checkout_session)
 
-        return call_one_time_payment(checkout_session) if subscription.blank?
+        if subscription.blank?
+          return call_one_time_payment(
+            checkout_session,
+            expected_billable_owner: billable_owner,
+            expected_beneficiary: beneficiary
+          )
+        end
 
         if ownership_mismatch?(
           subscription:,
@@ -65,20 +71,51 @@ module BetterTogether
       # one-time purchase, synced via StripeOneTimePaymentSync instead of
       # StripeSubscriptionSync. Falls back to the original :no_subscription
       # reason when there's genuinely nothing to sync (e.g. an incomplete or
-      # expired session with no payment_intent either).
-      def call_one_time_payment(checkout_session)
+      # expired session with no payment_intent either). Checked for ownership
+      # mismatch same as the subscription path — otherwise a page could sync
+      # (and act on) a one-time payment session that isn't its own.
+      def call_one_time_payment(checkout_session, expected_billable_owner:, expected_beneficiary:)
         payment_intent_id = fetch_payment_intent_id(checkout_session)
         return Result.new(checkout_session:, synced: false, reason: :no_subscription) unless payment_intent_id
 
         result = one_time_payment_sync.call(checkout_session:, payment_intent_id:)
+        owner = result.one_time_payment&.owner
+        if one_time_payment_mismatch?(owner:, expected_billable_owner:, expected_beneficiary:)
+          return one_time_payment_mismatch_result(checkout_session, owner, expected_billable_owner:, expected_beneficiary:)
+        end
+
+        build_one_time_payment_result(result, checkout_session, owner)
+      end
+
+      def build_one_time_payment_result(result, checkout_session, owner)
         Result.new(
           synced: result.synced,
           one_time_payment: result.one_time_payment,
           billing_plan: result.billing_plan,
           checkout_session:,
-          billable_owner: result.one_time_payment&.owner,
+          billable_owner: owner,
           reason: result.reason
         )
+      end
+
+      def one_time_payment_mismatch?(owner:, expected_billable_owner:, expected_beneficiary:)
+        return false if expected_billable_owner.blank? && expected_beneficiary.blank?
+        return false if owner.blank?
+
+        (expected_billable_owner.present? && owner != expected_billable_owner) ||
+          (expected_beneficiary.present? && owner != expected_beneficiary)
+      end
+
+      def one_time_payment_mismatch_result(checkout_session, owner, expected_billable_owner:, expected_beneficiary:)
+        reason = if expected_beneficiary.present? && owner != expected_beneficiary
+                   :beneficiary_mismatch
+                 elsif expected_billable_owner.present? && owner != expected_billable_owner
+                   :billable_owner_mismatch
+                 else
+                   :ownership_mismatch
+                 end
+
+        Result.new(synced: false, checkout_session:, billable_owner: owner, beneficiary: owner, reason:)
       end
 
       def fetch_payment_intent_id(checkout_session)
@@ -157,16 +194,11 @@ module BetterTogether
         BetterTogether::Billing::OwnershipResolver.resolve_billable_owner(metadata:, fallback_owner:)
       end
 
+      # A subscription's beneficiary is always its own billable owner now —
+      # sponsoring no longer swaps subscription ownership (see
+      # Billing::Subscription#beneficiary and the sponsorship redesign).
       def resolved_beneficiary(subscription:, checkout_session:)
-        metadata = merged_metadata(subscription:, checkout_session:)
-
-        BetterTogether::Billing::OwnershipResolver.resolve_record(
-          metadata['bt_beneficiary_type'],
-          metadata['bt_beneficiary_id']
-        ) || BetterTogether::Billing::OwnershipResolver.resolve_record(
-          'BetterTogether::Community',
-          metadata['bt_community_id']
-        )
+        resolved_billable_owner(subscription:, checkout_session:)
       end
 
       def merged_metadata(subscription:, checkout_session:)
