@@ -21,6 +21,7 @@ module BetterTogether
       def call(event)
         sync_result = sync_result_for(event)
         schedule_fast_retry_if_needed(event, sync_result)
+        process_sponsorship_contribution(sync_result)
         billable_owner = billable_owner_for(sync_result, event)
         persist_success(event, sync_result, billable_owner)
       rescue StandardError => e
@@ -35,6 +36,20 @@ module BetterTogether
         return unless billing_event_for(event).attempt_count.to_i.zero?
 
         BetterTogether::Billing::ProcessStripeEventJob.set(wait: FAST_RETRY_DELAY).perform_later(event.to_hash)
+      end
+
+      # Authoritative sponsorship-credit trigger — fires here regardless of
+      # whether the payer ever returns to the checkout success URL (closed
+      # tab, network loss, redirect blocked). CommunityBillingsController
+      # also calls the same shared service on browser return for immediate
+      # UI feedback; CreditBeneficiaryBalance's internal lock makes it safe
+      # for both legs to race here.
+      def process_sponsorship_contribution(sync_result)
+        one_time_payment = sync_result.try(:one_time_payment)
+        checkout_session = sync_result.try(:checkout_session)
+        return if one_time_payment.blank? || checkout_session.blank?
+
+        BetterTogether::Billing::ProcessSponsorshipContribution.new.call(one_time_payment:, checkout_session:)
       end
 
       def sync_result_for(event)

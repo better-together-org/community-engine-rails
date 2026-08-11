@@ -345,5 +345,62 @@ RSpec.describe BetterTogether::Billing::StripeEventProcessor do
         end
       end
     end
+
+    context 'checkout.session.completed for a sponsorship contribution one-time payment' do
+      let(:sponsor) { create(:better_together_community) }
+      let(:beneficiary) { create(:better_together_community) }
+      let!(:beneficiary_pay_customer) do
+        Pay::Customer.create!(owner: beneficiary, processor: 'stripe', processor_id: 'cus_test_webhook_beneficiary',
+                              default: true)
+      end
+      let(:one_time_payment) do
+        create('better_together/billing/one_time_payment', owner: sponsor, amount_cents: 3_000)
+      end
+      let(:checkout_session) do
+        Struct.new(:metadata, keyword_init: true).new(
+          metadata: {
+            'bt_sponsorship_beneficiary_type' => beneficiary.class.name,
+            'bt_sponsorship_beneficiary_id' => beneficiary.id
+          }
+        )
+      end
+      let(:checkout_event) do
+        data = Struct.new(:object, keyword_init: true).new(object: Struct.new(:id, keyword_init: true).new(id: 'cs_test_sponsorship_webhook'))
+        payload = { id: 'evt_checkout_sponsorship_webhook', type: 'checkout.session.completed' }
+
+        Struct.new(:id, :type, :data, :payload, keyword_init: true) do
+          def to_hash
+            payload
+          end
+        end.new(id: 'evt_checkout_sponsorship_webhook', type: 'checkout.session.completed', data:, payload:)
+      end
+
+      before do
+        result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
+          synced: true, one_time_payment:, checkout_session:, billable_owner: sponsor
+        )
+        checkout_sync = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync)
+        allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(checkout_sync)
+        allow(checkout_sync).to receive(:call).and_return(result)
+        allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(
+          Struct.new(:id, keyword_init: true).new(id: 'txn_test_webhook_sponsorship')
+        )
+      end
+
+      # The webhook fires regardless of whether the payer's browser ever
+      # returns to the checkout success URL — this is the authoritative
+      # credit trigger, not just a browser-return convenience.
+      it 'credits the beneficiary balance with no browser interaction at all' do
+        described_class.new.call(checkout_event)
+
+        expect(
+          BetterTogether::Billing::Sponsorship.status_active.for_sponsor(sponsor).for_beneficiary(beneficiary)
+        ).to exist
+        expect(BetterTogether::Billing::MonetaryContribution.sole).to have_attributes(
+          amount_cents: 3_000, one_time_payment:
+        )
+        expect(Stripe::Customer).to have_received(:create_balance_transaction).once
+      end
+    end
   end
 end
