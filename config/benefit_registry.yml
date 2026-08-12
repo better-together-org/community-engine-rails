@@ -1,0 +1,5 @@
+benefits:
+  - key: event_registration
+    name: Event Registration Credit
+    description: A credited registration for a ticketed or capacity-limited event, redeemable in place of payment.
+    unit: registration

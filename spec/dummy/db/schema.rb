@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_07_220003) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_08_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -220,6 +220,27 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_220003) do
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
     t.index ["platform_id"], name: "index_better_together_authorships_on_platform_id"
     t.index ["role"], name: "by_better_together_authorships_role"
+  end
+
+  create_table "better_together_billing_benefit_credits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "beneficiary_type", null: false
+    t.uuid "beneficiary_id", null: false
+    t.string "sponsor_type"
+    t.uuid "sponsor_id"
+    t.uuid "sponsorship_id"
+    t.string "related_record_type"
+    t.uuid "related_record_id"
+    t.string "benefit_key", null: false
+    t.integer "quantity", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["beneficiary_type", "beneficiary_id", "benefit_key"], name: "idx_bt_billing_benefit_credits_beneficiary_key"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "index_better_together_billing_benefit_credits_on_beneficiary"
+    t.index ["related_record_type", "related_record_id"], name: "index_better_together_billing_benefit_credits_on_related_record"
+    t.index ["sponsor_type", "sponsor_id"], name: "index_better_together_billing_benefit_credits_on_sponsor"
+    t.index ["sponsorship_id"], name: "idx_on_sponsorship_id_5e9aa58dd6"
   end
 
   create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2758,6 +2779,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_07_220003) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_benefit_credits", "better_together_billing_sponsorships", column: "sponsorship_id"
   add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
   add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_one_time_payments", column: "one_time_payment_id"
   add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_sponsorships", column: "sponsorship_id"
