@@ -45,6 +45,7 @@ module BetterTogether
           latest_checkout_session_id: checkout_session_id
         )
         billing_subscription.save!
+        billing_subscription.sync_lapse_state!
 
         Result.new(synced: true, billing_subscription:, billing_plan:, reason: :synced)
       end

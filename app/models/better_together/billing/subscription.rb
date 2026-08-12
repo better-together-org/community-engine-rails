@@ -43,6 +43,16 @@ module BetterTogether
         joins(:pay_subscription).where(pay_subscriptions: { status: %w[trialing active past_due] })
       }
 
+      # Candidates for grace-period notification — anything ever marked
+      # lapsed, whether or not it has since recovered or the grace period
+      # has already expired. Cheap jsonb key-existence filter; the caller
+      # narrows further via #in_grace_period?/#grace_notice_sent?.
+      scope :possibly_lapsed, lambda {
+        # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ? key-existence operator has no Arel equivalent
+        where(Arel.sql("metadata ? 'lapsed_at'"))
+        # rubocop:enable BetterTogether/NoRawSqlInQueries
+      }
+
       class << self
         def current_for_owner(owner)
           current_from_scope(for_owner(owner))
@@ -136,7 +146,64 @@ module BetterTogether
         update!(metadata: metadata.to_h.except('last_portal_error_at', 'last_portal_error_message'))
       end
 
+      # App-owned grace period. Stripe's own dunning/retry cycle is already
+      # covered by #activeish? including 'past_due' — this is the second,
+      # BTS-owned buffer that applies once Stripe's retries are exhausted
+      # and the subscription has genuinely lapsed, giving a beneficiary time
+      # to notice and fix billing before hosted access is actually cut.
+      def self.grace_period
+        ActiveSupport::Duration.days(
+          ENV.fetch('BT_BILLING_HOSTED_ACCESS_GRACE_PERIOD_DAYS', 7).to_i
+        )
+      end
+
+      def lapsed_at
+        timestamp_from_metadata('lapsed_at')
+      end
+
+      def grace_period_expires_at
+        return if lapsed_at.blank?
+
+        lapsed_at + self.class.grace_period
+      end
+
+      def in_grace_period?
+        grace_period_expires_at.present? && grace_period_expires_at.future?
+      end
+
+      def grace_period_expired?
+        grace_period_expires_at.present? && !grace_period_expires_at.future?
+      end
+
+      def grace_notice_sent?
+        metadata.to_h['grace_notice_sent_at'].present?
+      end
+
+      def record_grace_notice_sent!
+        update!(metadata: metadata.to_h.merge('grace_notice_sent_at' => Time.current.iso8601))
+      end
+
+      # Called after every subscription sync (webhook-driven status change)
+      # to track when this subscription first left the activeish state, and
+      # to clear that marker if it recovers. Idempotent — does not reset the
+      # grace-period clock on repeated syncs while still lapsed.
+      def sync_lapse_state!
+        activeish? ? clear_lapse! : record_lapse!
+      end
+
       private
+
+      def record_lapse!
+        return if lapsed_at.present?
+
+        update!(metadata: metadata.to_h.merge('lapsed_at' => Time.current.iso8601))
+      end
+
+      def clear_lapse!
+        return if lapsed_at.blank? && !grace_notice_sent?
+
+        update!(metadata: metadata.to_h.except('lapsed_at', 'grace_notice_sent_at'))
+      end
 
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       def assign_billable_owner_customer(record)

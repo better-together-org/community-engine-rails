@@ -63,3 +63,9 @@
   class: "BetterTogether::Billing::DeadLetterStaleBillingEventsJob"
   queue: "maintenance"
   description: "Promote repeatedly failing or stale unresolved billing events into a dead-letter state for operator review"
+
+"better_together:billing:notify_hosted_access_grace_daily":
+  cron: "30 5 * * *" # daily at 05:30 UTC
+  class: "BetterTogether::Billing::NotifyHostedAccessGraceJob"
+  queue: "maintenance"
+  description: "Notify community managers once when hosted-access billing enters its app-owned grace period"

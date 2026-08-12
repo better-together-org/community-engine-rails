@@ -1,0 +1,23 @@
+---
+title: Hosted entitlement — grace period
+audience:
+- board_member
+- community_steward
+- operator
+journey_step: A steward opens community billing after a payment has genuinely lapsed
+  (not just a Stripe retry) and sees exactly how much runway remains before hosted
+  access actually pauses.
+callouts:
+- :title: Grace period badge
+  :description: HostedEntitlementResolver#hosted_status_for returns :grace once Subscription#in_grace_period?
+    is true — the subscription is no longer activeish (status left trialing/active/past_due)
+    but grace_period_expires_at (lapsed_at + BT_BILLING_HOSTED_ACCESS_GRACE_PERIOD_DAYS,
+    7 by default) is still in the future. Access itself stays on during this window
+    (Subscription#access_active? OR-combines activeish? and in_grace_period?) — only
+    the badge and explainer text change to warn the steward before anything actually
+    breaks.
+accessibility_notes: The badge uses text-bg-danger (red) styling with the same badge
+  markup pattern as the other three statuses, so screen readers announce the status
+  text itself rather than relying on color alone.
+slug: hosted_entitlement_grace_period
+device: mobile
