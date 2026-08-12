@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ApplicationPolicy # rubocop:todo Style/Documentation
+  class ApplicationPolicy # rubocop:todo Style/Documentation, Metrics/ClassLength
     attr_reader :user, :record, :agent, :robot, :invitation_token
 
     def initialize(user, record, invitation_token: nil)
@@ -98,6 +98,10 @@ module BetterTogether
       def feature_enabled?(feature_key, platform: Current.platform)
         actor = user || agent || robot
         BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:)
+      end
+
+      def entitled_to?(entitlement_key, holder:)
+        BetterTogether::Billing::EntitlementResolver.call(holder:, entitlement_key:).entitled?
       end
 
       private
@@ -243,6 +247,10 @@ module BetterTogether
     def feature_enabled?(feature_key, target: record, platform: Current.platform)
       actor = user || agent || robot
       BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:, record: target)
+    end
+
+    def entitled_to?(entitlement_key, holder:)
+      BetterTogether::Billing::EntitlementResolver.call(holder:, entitlement_key:).entitled?
     end
 
     def public_or_member_scoped_community?(target = record)

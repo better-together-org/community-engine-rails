@@ -67,7 +67,7 @@ module BetterTogether
           community: community,
           billing_subscription: subscription,
           hosted_status: status,
-          hosted_access_active: hosted_access_active?(subscription, status),
+          hosted_access_active: hosted_access_active?(subscription),
           hosted_access_level: plan&.hosted_access_level,
           support_tier: plan&.support_tier,
           community_capacity_tier: plan&.community_capacity_tier,
@@ -95,10 +95,10 @@ module BetterTogether
         :inactive
       end
 
-      def hosted_access_active?(subscription, status)
+      def hosted_access_active?(subscription)
         return false if subscription.blank?
 
-        subscription.activeish? || status == :grace
+        subscription.access_active?
       end
     end
   end

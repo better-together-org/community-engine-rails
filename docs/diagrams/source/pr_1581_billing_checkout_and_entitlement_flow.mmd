@@ -10,15 +10,18 @@ flowchart LR
   Checkout["Stripe Checkout session starts<br/>(always self-funded — billable_owner is the payer)"]:::system
   Webhook["Stripe sends checkout/subscription webhooks"]:::system
   Sync["CE syncs the local Billing::Subscription"]:::action
-  Resolve{"Is there an active current subscription<br/>for this billable_owner?"}:::decision
-  Entitled["Hosted entitlement is active"]:::outcome
-  NotEntitled["Hosted entitlement is inactive or needs attention"]:::outcome
+  Hook["StripeEventProcessor calls EntitlementGrantSync<br/>for every key in Plan#granted_entitlement_keys<br/>(webhook leg only — never the browser checkout-return leg)"]:::action
+  AccessActive{"source.access_active?<br/>(activeish? OR in_grace_period?;<br/>one-time payments always grantable)"}:::decision
+  Grant["Billing::Entitlement row upserted active<br/>for this holder + key"]:::action
+  Revoke["Billing::Entitlement row revoked<br/>for this holder + key"]:::action
+  Entitled["entitled_to?(key) resolves true"]:::outcome
+  NotEntitled["entitled_to?(key) resolves false"]:::outcome
   Provision["Community can open platform provisioning"]:::outcome
   Alerts["If sync fails, billing alerts and replay paths stay visible"]:::outcome
 
-  Start --> Choose --> Checkout --> Webhook --> Sync --> Resolve
-  Resolve -->|Yes| Entitled --> Provision
-  Resolve -->|No| NotEntitled
+  Start --> Choose --> Checkout --> Webhook --> Sync --> Hook --> AccessActive
+  AccessActive -->|Yes| Grant --> Entitled --> Provision
+  AccessActive -->|No| Revoke --> NotEntitled
   Webhook --> Alerts
   Sync --> Alerts
 
