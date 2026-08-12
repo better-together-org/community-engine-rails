@@ -18,6 +18,8 @@ class CorrectPlatformIdMismatchForMetricsShares < ActiveRecord::Migration[7.2]
     return unless column_exists?(:better_together_metrics_shares, :platform_id)
 
     CONTENT_TYPES.each do |type, owner_table|
+      next unless column_exists?(owner_table, :platform_id)
+
       execute <<~SQL.squish
         UPDATE better_together_metrics_shares m
         SET platform_id = owner.platform_id
