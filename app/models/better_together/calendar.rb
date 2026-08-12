@@ -30,15 +30,18 @@ module BetterTogether
       name
     end
 
-    # The bootstrapping host community creates its own default calendar via
-    # Community's after_create :create_default_calendar callback, which fires
-    # before PrimaryCommunity#backfill_primary_community_platform has a
-    # platform to backfill (the platform itself doesn't exist yet — see
-    # Community#bootstrapping_host_community?). Overrides
+    # Every primary community (the bootstrapping host community, and every
+    # subsequent platform's own primary community) creates its own default
+    # calendar via Community's after_create :create_default_calendar
+    # callback, which fires before PrimaryCommunity#backfill_primary_community_platform
+    # has a platform to backfill (see Community#bootstrapping_host_community?
+    # / #bootstrapping_primary_community). Overrides
     # PlatformScoped#platform_presence_optional? the same way Community and
     # ContactDetail do for the same underlying bootstrap ordering problem.
     def platform_presence_optional?
-      community&.bootstrapping_host_community? || false
+      return false unless community
+
+      community.bootstrapping_host_community? || community.bootstrapping_primary_community
     end
   end
 end

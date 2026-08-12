@@ -40,6 +40,16 @@ module BetterTogether
     def assign_current_platform_if_available
       return unless has_attribute?(:platform_id)
       return if platform_id.present?
+      # A record bootstrapping as some platform's own primary community (or
+      # that community's contact_detail/calendar) must not resolve to the
+      # generic ambient platform (Current.platform / host platform /
+      # Platform.first) meant for ordinary platform-scoped content created
+      # within a request — it belongs to the platform being bootstrapped,
+      # which PrimaryCommunity#backfill_primary_community_platform corrects
+      # once that platform has a persisted id. See
+      # Community#bootstrapping_host_community? /
+      # #bootstrapping_primary_community for the two cases this covers.
+      return if platform_presence_optional?
 
       resolved = Current.platform ||
                  BetterTogether::Platform.find_by(host: true) ||
