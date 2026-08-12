@@ -17,6 +17,28 @@ RSpec.describe BetterTogether::Billing::Subscription do
     expect(subscription.activeish?).to be(false)
   end
 
+  describe '#access_active?' do
+    it 'is true when activeish' do
+      expect(subscription.access_active?).to be(true)
+    end
+
+    it 'is true when lapsed but still within the grace period' do
+      persisted = create('better_together/billing/subscription')
+      persisted.pay_subscription.update!(status: 'canceled')
+      persisted.sync_lapse_state!
+
+      expect(persisted.access_active?).to be(true)
+    end
+
+    it 'is false when lapsed and the grace period has expired' do
+      persisted = create('better_together/billing/subscription')
+      persisted.pay_subscription.update!(status: 'canceled')
+      persisted.sync_lapse_state!
+
+      travel_to(8.days.from_now) { expect(persisted.access_active?).to be(false) }
+    end
+  end
+
   it 'delegates status to pay_subscription' do
     expect(subscription.status).to eq(subscription.pay_subscription.status)
   end

@@ -22,6 +22,7 @@ module BetterTogether
         sync_result = sync_result_for(event)
         schedule_fast_retry_if_needed(event, sync_result)
         billable_owner = billable_owner_for(sync_result, event)
+        sync_entitlements!(sync_result, billable_owner)
         persist_success(event, sync_result, billable_owner)
       rescue StandardError => e
         persist_failure(event, e)
@@ -29,6 +30,20 @@ module BetterTogether
       end
 
       private
+
+      def sync_entitlements!(sync_result, billable_owner)
+        return unless sync_result.try(:synced)
+
+        billing_plan = sync_result.try(:billing_plan)
+        source = sync_result.try(:billing_subscription) || sync_result.try(:one_time_payment)
+        return if billing_plan.blank? || source.blank?
+
+        entitlement_grant_sync.call(billable_owner:, billing_plan:, source:)
+      end
+
+      def entitlement_grant_sync
+        @entitlement_grant_sync ||= BetterTogether::Billing::EntitlementGrantSync.new
+      end
 
       def schedule_fast_retry_if_needed(event, sync_result)
         return unless FAST_RETRY_REASONS.include?(sync_result.try(:reason))

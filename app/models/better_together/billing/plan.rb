@@ -34,6 +34,7 @@ module BetterTogether
       validates :active, inclusion: { in: [true, false] }
       validate :price_fields_immutable_after_create
       validate :pricing_tier_within_known_values
+      validate :entitlement_keys_within_known_values
 
       after_commit :enqueue_stripe_sync!, on: %i[create update]
 
@@ -49,7 +50,8 @@ module BetterTogether
           { metadata: [:participant_summary, :beneficiary_label, :hosted_access_level,
                        :support_tier, :community_capacity_tier,
                        :pricing_tier, :solidarity_description, :sponsorship_contribution,
-                       { participant_benefits: [], eligible_billable_owner_types: [] }] }
+                       { participant_benefits: [], eligible_billable_owner_types: [],
+                         grants_entitlements: [] }] }
         ]
       end
 
@@ -130,6 +132,12 @@ module BetterTogether
         ActiveModel::Type::Boolean.new.cast(metadata.to_h['sponsorship_contribution'])
       end
 
+      # Entitlement keys granted to the buyer when this plan's subscription/
+      # one-time payment successfully syncs — see Billing::EntitlementGrantSync.
+      def granted_entitlement_keys
+        Array(metadata.to_h['grants_entitlements']).filter_map(&:presence)
+      end
+
       private
 
       def default_participant_summary
@@ -162,6 +170,14 @@ module BetterTogether
 
         errors.add(:base, :invalid_pricing_tier,
                    message: "pricing tier '#{tier}' is not one of: #{PLAN_PRICING_TIERS.join(', ')}")
+      end
+
+      def entitlement_keys_within_known_values
+        unknown_keys = granted_entitlement_keys - BetterTogether::EntitlementRegistry.keys
+        return if unknown_keys.empty?
+
+        errors.add(:base, :invalid_entitlement_keys,
+                   message: "entitlement keys #{unknown_keys.join(', ')} are not registered in EntitlementRegistry")
       end
 
       def price_fields_immutable_after_create

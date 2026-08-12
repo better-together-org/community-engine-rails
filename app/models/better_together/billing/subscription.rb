@@ -89,6 +89,15 @@ module BetterTogether
         status.in?(%w[trialing active past_due])
       end
 
+      # Whether this subscription currently grants access — activeish
+      # (including Stripe's own past_due dunning window) OR still within
+      # the app-owned grace period after a genuine lapse. Shared by
+      # HostedEntitlementResolver and Billing::EntitlementGrantSync so
+      # both agree on the same access boundary.
+      def access_active?
+        activeish? || in_grace_period?
+      end
+
       def cancel_at_period_end
         pay_subscription&.attributes&.[]('cancel_at_period_end') || false
       end
