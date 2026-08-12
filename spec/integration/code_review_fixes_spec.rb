@@ -168,6 +168,31 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         expect(strategy).not_to eq(Doorkeeper::SecretStoring::Plain)
       end
     end
+
+    describe '2.4 — Permanent IP denylist (CVE-2026-66066 confirmed attackers)' do
+      it 'has a blocklist rule registered' do
+        expect(Rack::Attack.blocklists.keys).to include('permanent-ip-denylist')
+      end
+
+      it 'blocks a confirmed CVE-2026-66066 attacker IP' do
+        request = Rack::Attack::Request.new(Rack::MockRequest.env_for('/', 'REMOTE_ADDR' => '157.66.56.32'))
+        expect(Rack::Attack.blocklists['permanent-ip-denylist'].matched_by?(request)).to be true
+      end
+
+      it 'does not block an unrelated IP' do
+        request = Rack::Attack::Request.new(Rack::MockRequest.env_for('/', 'REMOTE_ADDR' => '198.51.100.7'))
+        expect(Rack::Attack.blocklists['permanent-ip-denylist'].matched_by?(request)).to be false
+      end
+
+      it 'blocks an IP supplied via RACK_ATTACK_EXTRA_IP_DENYLIST' do
+        original = ENV.fetch('RACK_ATTACK_EXTRA_IP_DENYLIST', nil)
+        ENV['RACK_ATTACK_EXTRA_IP_DENYLIST'] = '198.51.100.9, 198.51.100.10'
+        request = Rack::Attack::Request.new(Rack::MockRequest.env_for('/', 'REMOTE_ADDR' => '198.51.100.9'))
+        expect(Rack::Attack.blocklists['permanent-ip-denylist'].matched_by?(request)).to be true
+      ensure
+        ENV['RACK_ATTACK_EXTRA_IP_DENYLIST'] = original
+      end
+    end
   end
 
   # ─────────────────────────────────────────────────────────────────────────────
