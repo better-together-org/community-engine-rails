@@ -1,0 +1,47 @@
+{
+  "name": "sponsorship_review_awaiting_beneficiary",
+  "device": "mobile",
+  "url": "/en/sponsorships/gsz1zvW2Bdtd7BfbNr1FdgyK",
+  "title": "Test Host Community",
+  "locale": "en",
+  "feature_set": "sponsorship_panel_states",
+  "source_spec": "./spec/docs_screenshots/better_together/sponsorship_panel_states_spec.rb",
+  "callouts": [
+    {
+      "selector": "#sponsorship-awaiting-beneficiary-alert",
+      "title": "Awaiting beneficiary",
+      "bullets": [
+        "The sponsor cannot accept or decline their own offer.",
+        "Confirms the offer was sent and names who needs to act on it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 172.28125,
+        "width": 476.0,
+        "height": 82.0,
+        "right": 488.0,
+        "bottom": 254.28125,
+        "center_x": 250.0,
+        "center_y": 213.28125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 172.28125,
+        "width": 476.0,
+        "height": 82.0,
+        "right": 488.0,
+        "bottom": 254.28125,
+        "center_x": 250.0,
+        "center_y": 213.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 274.28,
+        "width": 270.0,
+        "height": 294,
+        "score": 1006.71875
+      }
+    }
+  ]
+}

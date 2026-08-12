@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::ProcessSponsorshipContribution do
   let(:sponsor) { create(:better_together_community) }
-  let(:beneficiary) { create(:better_together_community) }
+  let(:beneficiary) { create(:better_together_community, accepts_sponsorship: true) }
   let(:one_time_payment) { create('better_together/billing/one_time_payment', owner: sponsor, amount_cents: 2_500) }
   let(:balance_transaction) { Struct.new(:id, keyword_init: true).new(id: 'txn_test_process_contribution') }
 

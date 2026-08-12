@@ -65,6 +65,9 @@ module BetterTogether
       @sponsorship_contribution_plans = available_sponsorship_contribution_plans
       @received_monetary_contributions = received_monetary_contributions
       process_sponsorship_contribution(@checkout_sync_result) if @checkout_sync_result&.one_time_payment.present?
+      @received_sponsorship_offers = received_sponsorship_offers
+      @received_active_sponsorships = received_active_sponsorships
+      @given_active_sponsorships = given_active_sponsorships
     end
 
     def find_sponsorship_beneficiary
@@ -72,9 +75,10 @@ module BetterTogether
     end
 
     # Fail closed BEFORE any Stripe redirect — the model-level validation on
-    # Sponsorship#create only fires once find_or_create_active_sponsorship
-    # runs, which happens AFTER the sponsor's payment already succeeded. This
-    # check prevents "money moved, tracking lost" for an opted-out beneficiary.
+    # Sponsorship#create only fires once ProcessSponsorshipContribution's
+    # find_or_create_active_sponsorship runs, which happens AFTER the
+    # sponsor's payment already succeeded. This check prevents "money moved,
+    # tracking lost" for an opted-out beneficiary.
     def beneficiary_accepts_sponsorship?(beneficiary)
       return true unless BetterTogether::Billing::Sponsorship.consent_enforced?
 

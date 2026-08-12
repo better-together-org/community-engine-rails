@@ -1,14 +1,14 @@
 {
   "name": "pr_1581_billing_plan_solidarity_detail",
   "device": "mobile",
-  "url": "/en/host/billing/plans/454e44c3-46fc-42d9-9a9e-847124d0c582",
+  "url": "/en/host/billing/plans/a34e9b5a-6dd2-4ef5-83af-873cf3f68ef0",
   "title": "Harbour Solidarity | Billing Plans | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#pricing_tier_billing_plan_454e44c3-46fc-42d9-9a9e-847124d0c582",
+      "selector": "#pricing_tier_billing_plan_a34e9b5a-6dd2-4ef5-83af-873cf3f68ef0",
       "title": "Pricing tier",
       "bullets": [
         "Session follow-up: this field existed on every plan already, but the admin plan show page never rendered it — added alongside solidarity description below."
@@ -43,7 +43,7 @@
       }
     },
     {
-      "selector": "#solidarity_description_billing_plan_454e44c3-46fc-42d9-9a9e-847124d0c582",
+      "selector": "#solidarity_description_billing_plan_a34e9b5a-6dd2-4ef5-83af-873cf3f68ef0",
       "title": "Solidarity description",
       "bullets": [
         "The admin form's own hint text said this is \"shown to potential subscribers\", but nothing actually rendered it anywhere until this session's follow-up.",

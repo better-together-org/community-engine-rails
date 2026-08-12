@@ -1,7 +1,7 @@
 {
   "name": "pr_1581_community_billing_overview",
   "device": "desktop",
-  "url": "/en/c/harbour-voices-e13103ce/billing",
+  "url": "/en/c/harbour-voices-33b30342/billing",
   "title": "Community Billing | Harbour Voices | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
@@ -44,38 +44,38 @@
       }
     },
     {
-      "selector": "#sponsorship_received_notice_community_4f81e4e7-dab7-4d50-bd2b-dbe52b703805",
+      "selector": "#sponsorship_received_notice_community_dfb9cab4-31c6-4484-8ff2-a7589194168d",
       "title": "Sponsorship received",
       "bullets": [
         "Shown whenever a sponsor's contribution has been credited to this community's balance."
       ],
       "target": {
-        "x": 81.5,
-        "y": 770.0,
-        "width": 382.0,
+        "x": 64.5,
+        "y": 712.0,
+        "width": 416.0,
         "height": 82.0,
-        "right": 463.5,
-        "bottom": 852.0,
+        "right": 480.5,
+        "bottom": 794.0,
         "center_x": 272.5,
-        "center_y": 811.0
+        "center_y": 753.0
       },
       "avoid": {
-        "x": 81.5,
-        "y": 770.0,
-        "width": 382.0,
+        "x": 64.5,
+        "y": 712.0,
+        "width": 416.0,
         "height": 82.0,
-        "right": 463.5,
-        "bottom": 852.0,
+        "right": 480.5,
+        "bottom": 794.0,
         "center_x": 272.5,
-        "center_y": 811.0
+        "center_y": 753.0
       },
       "placement": {
         "side": "right",
-        "x": 483.5,
-        "y": 719.0,
+        "x": 500.5,
+        "y": 661.0,
         "width": 380,
         "height": 184,
-        "score": 976.5
+        "score": 959.5
       }
     }
   ]

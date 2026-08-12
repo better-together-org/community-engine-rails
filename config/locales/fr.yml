@@ -1226,8 +1226,8 @@ fr:
       sponsorship_mailer:
         accepted:
           greeting: Bonjour %{name},
-          message: "%{beneficiary_name} a accepté votre offre de parrainage. Vous pouvez
-            maintenant contribuer à son solde."
+          message: "%{beneficiary_name} a accepté votre offre de parrainage. Vous
+            pouvez maintenant contribuer à son solde."
           subject: "%{beneficiary_name} a accepté votre offre de parrainage"
           view_sponsorship: Voir ce parrainage
         declined:

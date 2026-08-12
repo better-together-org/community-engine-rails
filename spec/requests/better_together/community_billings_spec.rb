@@ -343,7 +343,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         metadata: { 'sponsorship_contribution' => true }
       )
     end
-    let(:beneficiary_community) { create(:better_together_community, name: 'Beneficiary Co-op') }
+    let(:beneficiary_community) { create(:better_together_community, name: 'Beneficiary Co-op', accepts_sponsorship: true) }
 
     it 'redirects to a hosted Stripe checkout session funding the beneficiary community, never the current community itself as owner' do
       checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/contribution-session')
@@ -385,38 +385,18 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
 
-    context 'when sponsorship consent is enforced' do
-      around do |example|
-        original = ENV.fetch('BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED', nil)
-        ENV['BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED'] = 'true'
-        example.run
-      ensure
-        ENV['BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED'] = original
-      end
+    it 'fails closed before any Stripe redirect when the beneficiary has not opted in to sponsorship' do
+      opted_out_beneficiary = create(:better_together_community, name: 'Opted Out Co-op', accepts_sponsorship: false)
 
-      it 'rejects the contribution before any Stripe checkout session is created when the beneficiary has not opted in' do
-        allow(Stripe::Checkout::Session).to receive(:create)
+      allow(Stripe::Checkout::Session).to receive(:create)
 
-        post better_together.contribute_community_billing_path(community, locale:),
-             params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: opted_out_beneficiary.slug, billing_plan_id: contribution_plan.identifier }
 
-        expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
-        follow_redirect!
-        expect(response.body).to include('This community has not opted in to receive sponsorship contributions.')
-        expect(Stripe::Checkout::Session).not_to have_received(:create)
-      end
-
-      it 'allows the contribution once the beneficiary has opted in' do
-        beneficiary_community.update!(accepts_sponsorship: true)
-        checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/consenting-session')
-        Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_consenting')
-        allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
-
-        post better_together.contribute_community_billing_path(community, locale:),
-             params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
-
-        expect(response).to redirect_to('https://checkout.stripe.test/consenting-session')
-      end
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('This community has not opted in to receive sponsorship contributions.')
+      expect(Stripe::Checkout::Session).not_to have_received(:create)
     end
   end
 
@@ -431,7 +411,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         metadata: { 'sponsorship_contribution' => true }
       )
     end
-    let(:beneficiary_community) { create(:better_together_community, name: 'Funded Co-op') }
+    let(:beneficiary_community) { create(:better_together_community, name: 'Funded Co-op', accepts_sponsorship: true) }
     let!(:sponsor_pay_customer) do
       Pay::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_return')
     end

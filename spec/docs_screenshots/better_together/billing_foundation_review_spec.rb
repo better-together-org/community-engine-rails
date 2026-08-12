@@ -105,11 +105,13 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
           { title: 'Hosted plan status',
             description: 'This card translates billing into plain operational terms: whether the hosted community is active, what support tier it has, and whether platform provisioning is allowed.' },
           { title: 'Current subscription',
-            description: 'This community\'s own hosted plan, if it pays for itself — a subscription is always self-funded (billable_owner and beneficiary are the same record now; see Subscription#beneficiary). Session follow-up: replaces the old "takeover" mechanism (billing ownership reassignment) entirely — a third party funding this community\'s access instead does so via the new Sponsorship relationship below, crediting this community\'s own Stripe balance rather than taking over the subscription record.' },
+            description: 'This community\'s own hosted plan, if it pays for itself — a subscription is always self-funded (billable_owner and beneficiary are the same record now; see Subscription#beneficiary). Replaces the old "takeover" mechanism (billing ownership reassignment) entirely — a third party funding this community\'s access instead does so via the Sponsorship panel below, crediting this community\'s own Stripe balance rather than taking over the subscription record.' },
           { title: 'Sponsorship received',
-            description: 'New in this PR: a Billing::Sponsorship crediting this community\'s balance via a MonetaryContribution, replacing the removed takeover UI ("Let Collective Budget pay instead"). This banner only shows the total credited so far — see the dedicated sponsorship-panel screenshots (a later PR in this stack) for who the sponsor is and accept/decline actions.' },
+            description: 'A Billing::Sponsorship crediting this community\'s balance via a MonetaryContribution, replacing the removed takeover UI ("Let Collective Budget pay instead"). This banner only shows the total credited so far — see the Sponsorship panel below for who the sponsor is and accept/decline actions.' },
           { title: 'Contribute to another community',
-            description: 'New in this PR: this community can fund another community\'s hosted-access balance directly, without ever taking over that community\'s subscription ownership.' },
+            description: 'This community can fund another community\'s hosted-access balance directly, without ever taking over that community\'s subscription ownership.' },
+          { title: 'Sponsorship',
+            description: 'A sponsor\'s contribution is credited to the beneficiary\'s own Stripe Customer Balance; it never reassigns billable_owner on a Subscription record. This panel (below the fixed screenshot viewport on this page, so it has no callout box here — see sponsorship_panel_states for the dedicated, annotated view) shows who currently sponsors this account, who this account sponsors, and lets a steward offer to sponsor another community or person.' },
           { title: 'Merchant account',
             description: 'Hosted billing and payout onboarding are intentionally separate. A community can have hosted access without yet being ready to receive payouts.' },
           { title: 'Billing activity alerts',
@@ -128,6 +130,8 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsorship_received_notice)}",
                                text: '$50.00')
       expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsor_contribution_card)}")
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(community, :sponsorship_panels)}",
+                               text: 'Collective Budget')
       expect(page).to have_css('.billing-plan-solidarity-badge', text: 'Solidarity — Small')
     end
   end

@@ -88,7 +88,53 @@ module BetterTogether
         redirect_to_billing_with_alert(replay_event_not_found_message)
       end
 
+      def accepts_sponsorship
+        billing_owner.update!(accepts_sponsorship: sponsorship_opt_in_param)
+
+        redirect_to_billing_with_notice(accepts_sponsorship_updated_message)
+      end
+
       private
+
+      def sponsorship_opt_in_param
+        ActiveModel::Type::Boolean.new.cast(params[:accepts_sponsorship])
+      end
+
+      def accepts_sponsorship_updated_message
+        if billing_owner.accepts_sponsorship?
+          t(
+            'better_together.billing.accepts_sponsorship_enabled',
+            default: 'This account can now receive sponsorship contributions.'
+          )
+        else
+          t(
+            'better_together.billing.accepts_sponsorship_disabled',
+            default: 'This account will no longer receive new sponsorship contributions.'
+          )
+        end
+      end
+
+      # Sponsorships where billing_owner is the beneficiary, awaiting a
+      # decision. Used to render an "offers received" panel.
+      def received_sponsorship_offers
+        BetterTogether::Billing::Sponsorship.where(beneficiary: billing_owner).status_pending.order(created_at: :desc)
+      end
+
+      # Active sponsorships where billing_owner is the beneficiary — i.e. who
+      # is currently sponsoring this account.
+      def received_active_sponsorships
+        active_sponsorships_scope.where(beneficiary: billing_owner)
+      end
+
+      # Active sponsorships where billing_owner is the sponsor — i.e. who
+      # this account is currently sponsoring.
+      def given_active_sponsorships
+        active_sponsorships_scope.where(sponsor: billing_owner)
+      end
+
+      def active_sponsorships_scope
+        BetterTogether::Billing::Sponsorship.where(status: %w[accepted active]).order(created_at: :desc)
+      end
 
       def authorize_merchant_account_management
         authorize billing_owner, :manage_merchant_account?

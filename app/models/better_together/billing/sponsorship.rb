@@ -39,15 +39,17 @@ module BetterTogether
       scope :for_sponsor, ->(record) { where(sponsor: record) }
 
       def self.consent_enforced?
-        ActiveModel::Type::Boolean.new.cast(ENV.fetch('BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED', 'false'))
+        ActiveModel::Type::Boolean.new.cast(ENV.fetch('BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED', 'true'))
       end
 
       def accept!
         update!(status: 'accepted', accepted_at: Time.current)
+        notification_service.notify_accepted
       end
 
       def decline!(reason: nil)
         update!(status: 'declined', declined_at: Time.current, cancellation_reason: reason)
+        notification_service.notify_declined
       end
 
       def activate!
@@ -60,6 +62,11 @@ module BetterTogether
       # sponsor under this design.
       def end!(reason: nil)
         update!(status: 'ended', ended_at: Time.current, cancellation_reason: reason)
+        notification_service.notify_ended
+      end
+
+      def notification_service
+        BetterTogether::Billing::SponsorshipNotificationService.new(self)
       end
 
       private

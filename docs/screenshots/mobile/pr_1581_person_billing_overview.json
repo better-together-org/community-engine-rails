@@ -8,7 +8,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#current_subscription_card_person_4566fa40-626f-4d88-b110-dbadc68540c8",
+      "selector": "#current_subscription_card_person_03d82f08-293a-4d6a-b1b0-eeb0ee2c4840",
       "title": "Personal subscription",
       "bullets": [
         "Shows the plan attached to the person as payer.",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#sponsored_communities_card_person_4566fa40-626f-4d88-b110-dbadc68540c8",
+      "selector": "#sponsored_communities_card_person_03d82f08-293a-4d6a-b1b0-eeb0ee2c4840",
       "title": "Sponsored communities",
       "bullets": [
         "Lists communities this person is currently paying for.",

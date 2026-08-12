@@ -83,6 +83,17 @@
                  checkout_path_for: ->(billing_plan) do
                    checkout_person_billing_path(@person, billing_plan_id: billing_plan.identifier, locale: I18n.locale)
                  end %>
+
+      <%= render 'better_together/shared/sponsorship_panels',
+                 owner: @person,
+                 accepts_sponsorship_path: accepts_sponsorship_person_billing_path(@person, locale: I18n.locale),
+                 offer_sponsorship_path: sponsorships_path(locale: I18n.locale),
+                 received_offers: @received_sponsorship_offers,
+                 received_active: @received_active_sponsorships,
+                 given_active: @given_active_sponsorships,
+                 accept_path_for: ->(sponsorship) { accept_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 decline_path_for: ->(sponsorship) { decline_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 end_path_for: ->(sponsorship) { end_sponsorship_path(sponsorship.id, locale: I18n.locale) } %>
     </div>
   </div>
 </div>

@@ -1,14 +1,14 @@
 {
   "name": "pr_1581_billing_plan_detail",
   "device": "mobile",
-  "url": "/en/host/billing/plans/cee5dfd7-c710-456a-8d9a-c999b9217b6e",
+  "url": "/en/host/billing/plans/306ac15f-78da-489e-abb3-e9dbe8a6ca1b",
   "title": "Community Stewardship | Billing Plans | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#summary_card_billing_plan_cee5dfd7-c710-456a-8d9a-c999b9217b6e",
+      "selector": "#summary_card_billing_plan_306ac15f-78da-489e-abb3-e9dbe8a6ca1b",
       "title": "Plan summary",
       "bullets": [
         "Shows the immutable Stripe-linked pricing identifiers.",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#metadata_card_billing_plan_cee5dfd7-c710-456a-8d9a-c999b9217b6e",
+      "selector": "#metadata_card_billing_plan_306ac15f-78da-489e-abb3-e9dbe8a6ca1b",
       "title": "Plan metadata",
       "bullets": [
         "Explains the plain-language copy shown to subscribers.",
