@@ -32,6 +32,20 @@ module BetterTogether
             inverse_of: :community,
             dependent: :nullify
 
+    # Transient (non-persisted) flag: set by PrimaryCommunity#create_primary_community
+    # when this Community is being created as some Platform's own primary
+    # community, so it doesn't try to resolve the generic ambient platform
+    # (Current.platform / host platform / Platform.first) for a platform_id
+    # that PrimaryCommunity#backfill_primary_community_platform is going to
+    # overwrite anyway once the owning platform has a persisted id. Without
+    # this, any platform after the very first ends up with its own primary
+    # community silently scoped under whatever the ambient platform happens
+    # to be (typically the host platform) instead of itself — which as of
+    # PrivacyCeilingValidatable actively breaks community creation whenever
+    # that ambient platform is more restrictive than the community being
+    # bootstrapped.
+    attr_accessor :bootstrapping_primary_community
+
     # The very first Platform ever created has no platform yet for its own host
     # community to reference — PrimaryCommunity#create_primary_community creates
     # this community first (better_together_communities.platform_id is
@@ -42,7 +56,7 @@ module BetterTogether
     # PlatformScoped#platform_presence_optional? — see that concern for why
     # this is a hook method rather than a redeclared belongs_to.
     def platform_presence_optional?
-      bootstrapping_host_community?
+      bootstrapping_host_community? || bootstrapping_primary_community
     end
 
     def bootstrapping_host_community?
