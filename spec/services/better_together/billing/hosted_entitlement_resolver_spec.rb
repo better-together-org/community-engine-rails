@@ -96,4 +96,74 @@ RSpec.describe BetterTogether::Billing::HostedEntitlementResolver do
       expect(result.hosted_access_active).to be(false)
     end
   end
+
+  describe 'agreement with Billing::EntitlementResolver' do
+    let(:granting_plan) do
+      create(:better_together_billing_plan, metadata: { 'grants_entitlements' => ['hosted_access'] })
+    end
+
+    # hosted_access_active (not the narrower #active?, which excludes
+    # :attention/:grace) is the correct comparison point — both it and
+    # entitled_to? answer "does this holder currently have functional
+    # access," not "is status exactly :active."
+    let(:sync_and_compare) do
+      lambda do |status:|
+        subscription = create_subscription_for(owner: community, billing_plan: granting_plan, status:)
+        subscription.sync_lapse_state!
+        BetterTogether::Billing::EntitlementGrantSync.new.call(
+          billable_owner: community, billing_plan: granting_plan, source: subscription
+        )
+
+        resolver.call(community:)
+      end
+    end
+
+    it 'agrees for an active subscription' do
+      result = sync_and_compare.call(status: 'active')
+
+      expect(result.hosted_access_active).to be(true)
+      expect(community.entitled_to?('hosted_access')).to eq(result.hosted_access_active)
+    end
+
+    it 'agrees for a past_due (:attention) subscription — Stripe\'s own dunning window still grants access' do
+      result = sync_and_compare.call(status: 'past_due')
+
+      expect(result).to be_attention_needed
+      expect(result.hosted_access_active).to be(true)
+      expect(community.entitled_to?('hosted_access')).to eq(result.hosted_access_active)
+    end
+
+    it 'agrees for a lapsed subscription within its grace period' do
+      result = sync_and_compare.call(status: 'canceled')
+
+      expect(result).to be_grace_period
+      expect(result.hosted_access_active).to be(true)
+      expect(community.entitled_to?('hosted_access')).to eq(result.hosted_access_active)
+    end
+
+    it 'agrees once the grace period has expired' do
+      sync_and_compare.call(status: 'canceled')
+
+      result = travel_to(8.days.from_now) { resolver.call(community:) }
+      # A fresh sync (as would happen on the subscription's next webhook)
+      # is what actually revokes the entitlement — resolver_result and
+      # entitled_to? still agree on the pre-revocation snapshot here.
+      travel_to(8.days.from_now) do
+        subscription = BetterTogether::Billing::Subscription.current_for_owner(community)
+        BetterTogether::Billing::EntitlementGrantSync.new.call(
+          billable_owner: community, billing_plan: granting_plan, source: subscription
+        )
+      end
+
+      expect(result.hosted_access_active).to be(false)
+      expect(community.entitled_to?('hosted_access')).to eq(result.hosted_access_active)
+    end
+
+    it 'agrees for a community with no subscription at all' do
+      result = resolver.call(community:)
+
+      expect(result.hosted_access_active).to be(false)
+      expect(community.entitled_to?('hosted_access')).to eq(result.hosted_access_active)
+    end
+  end
 end
