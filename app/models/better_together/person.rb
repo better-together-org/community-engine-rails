@@ -11,6 +11,7 @@ module BetterTogether
 
     include Author
     include Billing::Billable
+    include Billing::EntitlementHolder
     include Billing::SponsorshipRecipient
     include Communicator
     include Contactable

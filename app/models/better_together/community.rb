@@ -6,6 +6,7 @@ module BetterTogether
   # A gathering
   class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Billing::Billable
+    include Billing::EntitlementHolder
     include Billing::SponsorshipRecipient
     include Contactable
     include HostsEvents
