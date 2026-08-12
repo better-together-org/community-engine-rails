@@ -598,6 +598,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post :rsvp_going
           delete :rsvp_cancel
         end
+
+        # Per-session (EventOccurrence) actions — lazily creates the
+        # occurrence row on first interaction. :occurrence_date is an
+        # ISO8601 date (e.g. 2026-08-14), not a persisted record id.
+        resources :occurrences, only: %i[update], param: :occurrence_date, controller: 'event_occurrences' do
+          member do
+            post :rsvp_interested
+            post :rsvp_going
+            delete :rsvp_cancel
+            post :comments
+          end
+        end
       end
 
       # Token-based invitation review and actions (public)

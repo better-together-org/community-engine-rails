@@ -24,6 +24,7 @@ module BetterTogether
     validate :validate_exception_dates_present
 
     before_validation :extract_frequency_from_rule
+    after_commit :refresh_schedulable_next_occurrence_at
 
     # Get the ice_cube schedule object from the rule
     # @return [IceCube::Schedule, nil]
@@ -153,6 +154,15 @@ module BetterTogether
     end
 
     private
+
+    # Keeps the parent Event's denormalized next_occurrence_at column
+    # correct immediately whenever the rule/exception_dates/ends_on change,
+    # rather than waiting for the next hourly EventNextOccurrenceRefreshScanJob pass.
+    def refresh_schedulable_next_occurrence_at
+      return unless schedulable.respond_to?(:refresh_next_occurrence_at!)
+
+      schedulable.refresh_next_occurrence_at!
+    end
 
     # Validate that the rule is valid ice_cube YAML
     def validate_rule_format

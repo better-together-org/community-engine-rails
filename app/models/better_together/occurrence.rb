@@ -4,21 +4,51 @@ module BetterTogether
   # Value object representing a single occurrence of a recurring schedulable resource
   # Delegates most attributes to the parent resource but calculates specific occurrence times
   class Occurrence
-    attr_reader :parent, :starts_at
+    attr_reader :parent, :override
 
     # @param parent [ActiveRecord::Base] The recurring parent resource (Event, Task, etc.)
-    # @param starts_at [Time] The specific start time for this occurrence
-    def initialize(parent, starts_at)
+    # @param computed_starts_at [Time] The schedule-computed start time for this occurrence
+    # @param override [EventOccurrence, nil] A persisted per-occurrence override, if one exists
+    #   for this date — its effective_* values win over the computed default.
+    def initialize(parent, computed_starts_at, override: nil)
       @parent = parent
-      @starts_at = starts_at
+      @computed_starts_at = computed_starts_at
+      @override = override
     end
 
-    # Calculate end time for this occurrence based on parent's duration
+    # @return [Time]
+    def starts_at
+      override&.effective_starts_at || @computed_starts_at
+    end
+
+    # Calculate end time for this occurrence based on parent's duration, or
+    # the override's effective end time when one exists.
     # @return [Time, nil]
     def ends_at
+      return override.effective_ends_at if override
+
       return nil unless parent.respond_to?(:duration_minutes) && parent.duration_minutes.present?
 
       starts_at + parent.duration_minutes.minutes
+    end
+
+    # @return [Boolean] whether this specific occurrence has been cancelled
+    def cancelled?
+      override&.cancelled? || false
+    end
+
+    # @return the overridden location if one is set, else the parent's own
+    def location
+      return override.effective_location if override
+
+      parent.respond_to?(:location) ? parent.location : nil
+    end
+
+    # @return the overridden description if one is set, else the parent's own
+    def description
+      return override.effective_description if override
+
+      parent.respond_to?(:description) ? parent.description : nil
     end
 
     # Delegate all other methods to the parent resource

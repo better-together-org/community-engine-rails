@@ -2018,6 +2018,10 @@ uk:
         order_soonest: Найближчі
         past_label: Минулі події
         per_page_label: Подій на сторінку
+        recurring_all: Усі
+        recurring_label: Повторення
+        recurring_one_time_only: Лише одноразові
+        recurring_only: Лише повторювані
         search_button: Пошук
         search_label: Пошук
         search_placeholder: Пошук за назвою або описом...
@@ -2045,6 +2049,13 @@ uk:
         many: 'Виникло %{count} помилок під час збереження %{resource}:'
         one: 'Виникла помилка під час збереження %{resource}:'
         other: 'Виникло %{count} помилок під час збереження %{resource}:'
+      occurrences:
+        cancelled_badge: Скасовано
+        comment_saved: Коментар збережено
+        invalid_date: Ця дата недійсна.
+        override_saved: Сесію оновлено
+        rsvp_cancelled_for_date: RSVP на %{date} скасовано
+        rsvp_saved_for_date: RSVP на %{date} збережено
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       placeholders:
@@ -4300,6 +4311,8 @@ uk:
         accept_link: Перегляньте та прийміть угоду про публікацію
         message: Щоб публікувати події чи пости, видимі для учасників або всім, спершу
           потрібно прийняти угоду про публікацію контенту.
+      recurring_badge_aria_label: 'Повторюється: %{summary}'
+      recurring_badge_label: Повторюється
       translated_field_hints:
         description: Короткий опис (повинна бути заповнена хоча б одна локаль)
         description_html: Опис у форматі з багатим текстом (підтримує форматування;
@@ -5379,6 +5392,7 @@ uk:
       posts: Дописи
       roles_and_permissions: Roles & Permissions
       safety: Безпека
+      sessions: Сесії
     to: До
     'true': так
     undo_clear: Скасувати очищення

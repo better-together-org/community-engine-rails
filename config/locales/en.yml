@@ -2008,6 +2008,10 @@ en:
         order_soonest: Soonest
         past_label: Past events
         per_page_label: Events Per Page
+        recurring_all: All
+        recurring_label: Recurring
+        recurring_one_time_only: One-time only
+        recurring_only: Recurring only
         search_button: Search
         search_label: Search
         search_placeholder: Search by name or description...
@@ -2033,6 +2037,13 @@ en:
       not_saved:
         one: 'There was an error while saving %{resource}:'
         other: 'There were %{count} errors while saving %{resource}:'
+      occurrences:
+        cancelled_badge: Cancelled
+        comment_saved: Comment saved
+        invalid_date: That date isn't valid.
+        override_saved: Session updated
+        rsvp_cancelled_for_date: RSVP for %{date} cancelled
+        rsvp_saved_for_date: RSVP for %{date} saved
       odd: must be odd
       other_than: must be other than %{count}
       placeholders:
@@ -4238,6 +4249,8 @@ en:
         accept_link: Review and accept the publishing agreement
         message: To publish events or posts visible to members or the public, you
           need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Repeats: %{summary}'
+      recurring_badge_label: Repeats
       translated_field_hints:
         description: Short description (at least one locale must be filled)
         description_html: Rich-text description (supports formatting; at least one
@@ -5281,6 +5294,7 @@ en:
       posts: Posts
       roles_and_permissions: Roles & Permissions
       safety: Safety
+      sessions: Sessions
     to: To
     'true': true
     undo_clear: Undo Clear

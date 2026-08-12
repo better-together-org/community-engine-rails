@@ -46,7 +46,7 @@
           <% @upcoming_events.each do |event| %>
             <li id="<%= dom_id(event, :upcoming) %>">
               <%= link_to event.name, better_together.event_path(event) %>
-              <small class="text-muted"><%= l(event.starts_at, format: :long) %></small>
+              <small class="text-muted"><%= l(event.next_occurrence_at || event.starts_at, format: :long) %></small>
             </li>
           <% end %>
         </ul>
