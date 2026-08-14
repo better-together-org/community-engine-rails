@@ -130,6 +130,16 @@ module Rack
       req.ip if req.path.include?('/api/v1/membership_requests') && req.post?
     end
 
+    # Throttle ActiveStorage direct-upload blob creation by IP (10 requests per minute).
+    # This Rails-core endpoint has no auth of its own (ActiveStorage::DirectUploadsController
+    # inherits from ActiveStorage::BaseController, not this app's ApplicationController) and
+    # is intentionally reachable anonymously (e.g. Trix image attachments on the sign-up
+    # form), so it needs its own dedicated guard against being used to spam free writes to
+    # storage. 10/min accommodates attaching several images in one sign-up/edit session.
+    throttle('direct_uploads/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.path == '/rails/active_storage/direct_uploads' && req.post?
+    end
+
     # Throttle OAuth token endpoint by IP (10 requests per minute)
     throttle('oauth/token/ip', limit: 10, period: 1.minute) do |req|
       req.ip if req.path.include?('/oauth/token') && req.post?
