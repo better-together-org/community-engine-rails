@@ -121,10 +121,8 @@ module BetterTogether
     end
 
     def permitted_attributes
-      %i[
-        privacy
-      ].concat(BetterTogether::Community.localized_attribute_list)
-       .concat(resource_class.extra_permitted_attributes)
+      base_attributes = %i[privacy]
+      base_attributes + BetterTogether::Community.localized_attribute_list + resource_class.extra_permitted_attributes
     end
 
     def resource_class
