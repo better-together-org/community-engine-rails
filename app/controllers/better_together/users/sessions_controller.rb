@@ -7,9 +7,9 @@ module BetterTogether
 
       skip_before_action :check_platform_privacy
 
-      def respond_to_on_destroy
+      def respond_to_on_destroy(non_navigational_status: :no_content)
         respond_to do |format|
-          format.all { head :no_content }
+          format.all { head non_navigational_status }
           format.any(*navigational_formats) { redirect_to after_sign_out_path_for(resource_name), status: :see_other }
         end
       end
