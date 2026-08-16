@@ -14,8 +14,6 @@ RSpec.describe BetterTogether::Agreement do
   describe 'associations' do
     it { is_expected.to have_many(:agreement_terms).class_name('BetterTogether::AgreementTerm') }
     it { is_expected.to belong_to(:creator).class_name('BetterTogether::Person').optional }
-    it { is_expected.to have_many(:citations).dependent(:destroy) }
-    it { is_expected.to have_many(:claims).dependent(:destroy) }
   end
 
   describe 'validations' do
@@ -59,14 +57,6 @@ RSpec.describe BetterTogether::Agreement do
       agreement = create(:agreement, protected: true)
       expect(agreement.destroy).to be_falsey
       expect(agreement.errors[:base]).to include('This record is protected and cannot be destroyed.')
-    end
-  end
-
-  describe 'evidence selector options' do
-    it 'includes the description rich text selector' do
-      expect(agreement.evidence_selector_options).to include(
-        include(value: 'rich_text:description', label: 'Description rich text')
-      )
     end
   end
 end

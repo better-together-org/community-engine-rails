@@ -1,0 +1,22 @@
+flowchart TD
+  A[GET new_platform_setup] --> B[NewPlatformSetupController#start]
+  B --> C[build_draft_platform — placeholder name, host_url, time_zone: Etc/UTC]
+  C --> D{authorize draft, :create?, PlatformPolicy}
+  D -->|Pundit::NotAuthorizedError| E[404 — render_not_found]
+  D -->|Authorized| F[Transaction: draft.save!]
+  F -->|ActiveRecord::RecordInvalid| G[Flash alert — redirect to platforms_path]
+  F -->|Saved| H[NewPlatformSetupWizardBuilder.build]
+  H --> I[Wizard row — identifier: new_platform_setup, platform-scoped, max_completions: 1]
+  I --> J[WizardStepDefinition rows — identifier + platform_id composite-unique]
+  J --> K[Redirect to step 1 — welcome]
+
+  L[Every subsequent step action] --> M{authorize platform, :update?, PlatformPolicy}
+  M -->|can_manage_platform_settings? — global manage_platform fallback| N[Step action proceeds]
+  M -->|Not authorized| E
+
+  classDef decision fill:#fff8e1,stroke:#8a6d00,color:#5f4b00;
+  classDef fail fill:#fce8e6,stroke:#b3261e,color:#5f2120;
+  classDef success fill:#e6f4ea,stroke:#137333,color:#0d652d;
+  class D,M decision;
+  class E,G fail;
+  class K,N success;

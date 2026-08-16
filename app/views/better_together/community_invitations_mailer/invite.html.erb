@@ -19,15 +19,10 @@
       <%= @community.name %>
     </p>
     
-    <% if @community.description_html.present? %>
+    <% if @community.description.present? %>
       <div style="margin: 12px 0;">
         <strong><%= t('.about', default: 'About') %>:</strong><br>
-        <%= simple_format(@community.description_html.to_plain_text) %>
-      </div>
-    <% elsif @community.description.present? %>
-      <div style="margin: 12px 0;">
-        <strong><%= t('.about', default: 'About') %>:</strong><br>
-        <%= simple_format(@community.description) %>
+        <%= simple_format(@community.description.to_plain_text) %>
       </div>
     <% end %>
 

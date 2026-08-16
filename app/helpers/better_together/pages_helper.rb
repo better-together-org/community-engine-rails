@@ -64,10 +64,11 @@ module BetterTogether
         page.updated_at,
         page.page_blocks.maximum(:updated_at),
         page.blocks.maximum(:updated_at),
+        page.contributions.maximum(:updated_at),
         page.sidebar_nav&.cache_key_with_version,
         page_visibility_cache_context,
         I18n.locale,
-        'v2'
+        'v3'
       ]
     end
 

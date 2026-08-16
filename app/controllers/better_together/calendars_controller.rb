@@ -7,8 +7,23 @@ module BetterTogether
     def show
       @calendar = set_resource_instance
       authorize @calendar
-      @upcoming_events = @calendar.events.upcoming.order(:starts_at)
-      @past_events = @calendar.events.past.order(starts_at: :desc)
+      # next_occurrence_at (not starts_at): override- and recurrence-aware —
+      # see Event#refresh_next_occurrence_at! — so a recurring event whose
+      # original starts_at is long past still sorts correctly as upcoming.
+      @upcoming_events = @calendar.events.upcoming.order(:next_occurrence_at)
+      @past_events = @calendar.events.past.order(next_occurrence_at: :desc)
+      # Grid views (month/week/day) need every occurrence in range, not just
+      # upcoming, since navigating to a past month/week/day must still show
+      # its events — expanded via CalendarOccurrenceExpander so a recurring
+      # event renders on every occurrence date, not only its original
+      # starts_at. Windowed (not a raw relation) to keep the expansion
+      # bounded regardless of how far into the past/future the grid is
+      # navigated.
+      @calendar_events = BetterTogether::CalendarOccurrenceExpander.call(
+        events: @calendar.events.includes(:recurrence, cover_image_attachment: :blob),
+        window_start: calendar_window_start,
+        window_end: calendar_window_end
+      )
     end
 
     # GET /better_together/calendars/:id/feed.ics
@@ -115,6 +130,24 @@ module BetterTogether
     end
 
     private
+
+    # simple_calendar's month/week/day grids all read the same params[:start_date]
+    # on this one page — a ±6 week window around it safely covers a full month
+    # grid (which can show up to 6 weeks of days) regardless of which tab is
+    # active, without expanding occurrences across the entire event lifetime.
+    def calendar_window_anchor
+      Date.iso8601(params[:start_date])
+    rescue ArgumentError, TypeError
+      Date.current
+    end
+
+    def calendar_window_start
+      calendar_window_anchor.beginning_of_day - 6.weeks
+    end
+
+    def calendar_window_end
+      calendar_window_anchor.end_of_day + 6.weeks
+    end
 
     def valid_subscription_token?
       return false unless @calendar&.subscription_token.present?

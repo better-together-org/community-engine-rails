@@ -27,7 +27,7 @@ The current implementation adds:
 - a seeded `content_publishing_agreement`
 - a shared `BetterTogether::PublicVisibilityGate`
 - model-level validation hooks through `Privacy`, `Publishable`, and platform network visibility
-- request/tool context via `Current.governed_agent`
+- request/tool context via `Current.agent`
 - MCP publication defaults that prefer private drafts over immediate public output
 
 ## Current Enforcement Targets

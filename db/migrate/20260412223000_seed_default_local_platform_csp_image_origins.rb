@@ -1,37 +1,30 @@
 # frozen_string_literal: true
 
+# Backfills the default map-tile CSP img_src origins (OpenStreetMap wildcard + bare host,
+# Esri/ArcGIS satellite tiles — see ContentSecurityPolicySources::DEFAULT_MAP_TILE_IMG_SOURCES)
+# onto any local platform missing one or more of them. Delegates to the idempotent rake task
+# so the same repair can be re-run on demand (e.g. to correct production settings drift)
+# without needing a follow-up migration each time.
 class SeedDefaultLocalPlatformCspImageOrigins < ActiveRecord::Migration[7.1]
-  class MigrationPlatform < ActiveRecord::Base
-    self.table_name = 'better_together_platforms'
-  end
-
-  DEFAULT_CSP_IMG_SOURCES = [
-    'https://*.tile.openstreetmap.org'
-  ].freeze
-
   def up
     return unless platforms_table_ready?
 
-    migrate_local_platforms do |settings|
-      settings['csp_img_src'] = merge_sources(settings['csp_img_src'], DEFAULT_CSP_IMG_SOURCES)
-      settings
+    puts 'Seeding default map-tile CSP img_src origins onto local platforms missing them...'
+
+    load BetterTogether::Engine.root.join(
+      'lib', 'tasks', 'better_together', 'seed_platform_csp_img_src_defaults.rake'
+    )
+
+    begin
+      Rake::Task['better_together:seed:platform_csp_img_src_defaults'].invoke
+    rescue RuntimeError
+      Rake::Task['app:better_together:seed:platform_csp_img_src_defaults'].invoke
     end
   end
 
   def down
-    return unless platforms_table_ready?
-
-    migrate_local_platforms do |settings|
-      updated_sources = normalize_sources(settings['csp_img_src']) - DEFAULT_CSP_IMG_SOURCES
-
-      if updated_sources.empty?
-        settings.delete('csp_img_src')
-      else
-        settings['csp_img_src'] = updated_sources
-      end
-
-      settings
-    end
+    raise ActiveRecord::IrreversibleMigration,
+          'Cannot safely distinguish auto-seeded default CSP origins from admin-configured ones'
   end
 
   private
@@ -40,29 +33,5 @@ class SeedDefaultLocalPlatformCspImageOrigins < ActiveRecord::Migration[7.1]
     table_exists?(:better_together_platforms) &&
       column_exists?(:better_together_platforms, :settings) &&
       column_exists?(:better_together_platforms, :external)
-  end
-
-  def migrate_local_platforms
-    MigrationPlatform.reset_column_information
-
-    MigrationPlatform.where(external: false).find_each do |platform|
-      settings = normalized_settings(platform.settings)
-      updated_settings = yield(settings.deep_dup)
-      next if updated_settings == settings
-
-      platform.update_columns(settings: updated_settings, updated_at: Time.current)
-    end
-  end
-
-  def normalized_settings(raw_settings)
-    raw_settings.is_a?(Hash) ? raw_settings.deep_dup : {}
-  end
-
-  def merge_sources(existing_sources, additional_sources)
-    (normalize_sources(existing_sources) + normalize_sources(additional_sources)).uniq
-  end
-
-  def normalize_sources(values)
-    Array(values).map(&:to_s).map(&:strip).reject(&:empty?).uniq
   end
 end

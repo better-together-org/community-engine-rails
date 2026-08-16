@@ -6,12 +6,10 @@ module BetterTogether
   # An informational document used to display custom content to the user
   class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
     include Authorable
-    include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
-    include Citable
     include CommunityAssignable
     include Creatable
     include Federatable

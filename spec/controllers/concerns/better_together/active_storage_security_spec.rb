@@ -28,6 +28,83 @@ module BetterTogether
       controller.instance_variable_set(:@_response, ActionDispatch::TestResponse.create)
     end
 
+    describe '#verify_content_signature' do
+      let(:blob) do
+        instance_double(ActiveStorage::Blob, id: 'blob-id', content_type: declared_type, filename: filename)
+      end
+
+      before do
+        controller.instance_variable_set(:@blob, blob)
+        allow(blob).to receive(:download_chunk).with(0...described_class::CONTENT_SIGNATURE_SNIFF_BYTES)
+                                               .and_return(bytes)
+      end
+
+      context 'when the blob is not present' do
+        let(:declared_type) { 'image/png' }
+        let(:filename) { ActiveStorage::Filename.new('avatar.png') }
+        let(:bytes) { "\x89PNG\r\n\x1a\n".b }
+
+        it 'does not render' do
+          controller.instance_variable_set(:@blob, nil)
+          expect(controller).not_to receive(:head)
+          controller.send(:verify_content_signature)
+        end
+      end
+
+      context 'when the real content matches the declared type' do
+        let(:declared_type) { 'image/png' }
+        let(:filename) { ActiveStorage::Filename.new('avatar.png') }
+        let(:bytes) { "\x89PNG\r\n\x1a\n".b }
+
+        it 'does not render' do
+          expect(controller).not_to receive(:head)
+          controller.send(:verify_content_signature)
+        end
+      end
+
+      context 'when the real content does not match the declared type' do
+        let(:declared_type) { 'image/png' }
+        let(:filename) { ActiveStorage::Filename.new('avatar.png') }
+        # Filename still claims .png/image-png, but the real bytes have a strong,
+        # unambiguous, unrelated magic signature -- exactly the attack pattern this
+        # check exists to catch (declared image/png, actual bytes something else
+        # entirely). A ZIP header is used here as a stand-in for "some other definite,
+        # unrelated format" rather than the real MATLAB signature from the observed
+        # attack, since the exact test fixture format doesn't matter -- only that
+        # magic-byte detection returns something concrete and different from the
+        # declared type.
+        let(:bytes) { "PK\x03\x04\x14\x00\x00\x00\x00\x00".b }
+
+        it 'renders 422 and does not proceed to authorization' do
+          expect(controller).to receive(:head).with(:unprocessable_entity)
+          controller.send(:verify_content_signature)
+        end
+      end
+
+      context 'when the real content has no recognizable magic signature' do
+        let(:declared_type) { 'image/png' }
+        let(:filename) { ActiveStorage::Filename.new('avatar.png') }
+        let(:bytes) { 'this is plain text with no strong magic-byte signature' }
+
+        it 'fails open and does not render' do
+          expect(controller).not_to receive(:head)
+          controller.send(:verify_content_signature)
+        end
+      end
+
+      context 'when sniffing the content raises' do
+        let(:declared_type) { 'image/png' }
+        let(:filename) { ActiveStorage::Filename.new('avatar.png') }
+        let(:bytes) { "\x89PNG\r\n\x1a\n".b }
+
+        it 'fails open and does not render' do
+          allow(blob).to receive(:download_chunk).and_raise(StandardError, 'storage unavailable')
+          expect(controller).not_to receive(:head)
+          controller.send(:verify_content_signature)
+        end
+      end
+    end
+
     describe '#publicly_accessible?' do
       context 'when the record is nil' do
         it 'returns false' do

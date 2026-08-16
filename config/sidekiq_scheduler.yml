@@ -16,6 +16,12 @@
   queue: "notifications"
   description: "Scan upcoming events and schedule per-event reminders"
 
+"better_together:event_next_occurrence_refresh_scan_hourly":
+  cron: "5 * * * *" # hourly at :05 UTC
+  class: "BetterTogether::EventNextOccurrenceRefreshScanJob"
+  queue: "maintenance"
+  description: "Advance next_occurrence_at for recurring events whose stored value has passed"
+
 "better_together:federated_sync_scan_hourly":
   cron: "15 * * * *" # hourly at :15 UTC
   class: "BetterTogether::FederatedSyncScanJob"
@@ -33,9 +39,3 @@
   class: "BetterTogether::FederationAccessTokenPurgeJob"
   queue: "maintenance"
   description: "Purge revoked and expired federation access tokens to prevent unbounded table growth"
-
-"better_together:c3:expire_balance_locks":
-  cron: "*/15 * * * *" # every 15 minutes
-  class: "BetterTogether::C3::ExpireBalanceLocksJob"
-  queue: "default"
-  description: "Release C3 balance locks that have passed their 24-hour expiry — returns reserved Tree Seeds to the payer"

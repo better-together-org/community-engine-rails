@@ -5,7 +5,7 @@
 # Pin everything under app/javascript as a fallback
 pin_all_from File.expand_path('../app/javascript/better_together', __dir__),
              under: 'better_together'
-pin_all_from File.expand_path('../app/javascript/better_together/trix_extensions', __dir__),
+pin_all_from File.expand_path('../app/javascript/better_together/trix-extensions', __dir__),
              under: 'better_together/trix-extensions'
 pin_all_from File.expand_path('../app/javascript/channels/better_together', __dir__),
              under: 'channels/better_together'

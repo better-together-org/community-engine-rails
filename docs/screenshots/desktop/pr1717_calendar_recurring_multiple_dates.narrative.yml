@@ -1,0 +1,23 @@
+---
+title: Calendar — a weekly event on every occurrence date
+audience:
+- community_member
+- event_organizer
+- platform_manager
+- developer
+journey_step: As someone planning around a calendar, I see a weekly event show up
+  every week it actually happens, not just once.
+callouts:
+- :id: first_occurrence
+  :title: First occurrence day cell
+  :description: app/services/better_together/calendar_occurrence_expander.rb, windowed
+    ±6 weeks around the navigated start_date.
+- :id: second_occurrence
+  :title: Same event, a different day cell
+  :description: 'Both cells link to the same canonical event show page — better_together.event_path,
+    with turbo_frame: "_top" so the click actually navigates instead of silently no-oping
+    inside the tab''s frame.'
+accessibility_notes: Each day-cell link uses the event name as its accessible text;
+  no information is conveyed by position or color alone.
+slug: pr1717_calendar_recurring_multiple_dates
+device: desktop

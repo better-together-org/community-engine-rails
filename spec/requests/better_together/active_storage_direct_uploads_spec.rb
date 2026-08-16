@@ -21,7 +21,13 @@ RSpec.describe 'ActiveStorage direct uploads' do
     }
   end
 
-  context 'when the requester is not signed in', :no_auth do
+  let(:token) do
+    Rails.application.message_verifier(:direct_upload).generate(
+      { path: '/en/users/sign_up', iat: Time.current.to_i }, expires_in: 30.minutes
+    )
+  end
+
+  context 'without a direct-upload token' do
     it 'returns 401 and does not create a blob' do
       expect do
         post direct_uploads_path, params: blob_params, as: :json
@@ -31,13 +37,32 @@ RSpec.describe 'ActiveStorage direct uploads' do
     end
   end
 
-  context 'when the requester is signed in', :as_user do
+  context 'with a valid direct-upload token' do
     it 'creates the blob as normal' do
       expect do
-        post direct_uploads_path, params: blob_params, as: :json
+        post direct_uploads_path, params: blob_params, headers: { 'X-Direct-Upload-Token' => token }, as: :json
       end.to change(ActiveStorage::Blob, :count).by(1)
 
       expect(response).to have_http_status(:ok)
+    end
+  end
+
+  context 'with an expired direct-upload token' do
+    let(:expired_token) do
+      travel_to(35.minutes.ago) do
+        Rails.application.message_verifier(:direct_upload).generate(
+          { path: '/en/users/sign_up', iat: Time.current.to_i }, expires_in: 30.minutes
+        )
+      end
+    end
+
+    it 'returns 401 and does not create a blob' do
+      expect do
+        post direct_uploads_path, params: blob_params, headers: { 'X-Direct-Upload-Token' => expired_token },
+                                  as: :json
+      end.not_to change(ActiveStorage::Blob, :count)
+
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 end

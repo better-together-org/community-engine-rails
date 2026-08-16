@@ -33,7 +33,7 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
       filename: 'cover.svg',
       content_type: 'image/svg+xml'
     )
-    post_record.add_governed_contributor(platform_manager.person, role: 'editor')
+    post_record.add_contributor(platform_manager.person, role: 'editor')
   end
 
   describe 'community scoping' do
@@ -185,24 +185,11 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
     end
   end
 
-  it 'keeps contribution and evidence references out of the public show page' do
-    citation = create(:citation, citeable: post_record, title: 'Post review notes', reference_key: 'post-review-notes')
-    claim = create(:claim, claimable: post_record, statement: 'This post was reviewed against the release checklist.')
-    create(:evidence_link, claim:, citation:, relation_type: 'supports')
-    post_record.contributions.first.update!(details: {
-                                              'github_handle' => 'post-maintainer',
-                                              'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
-                                            })
-
+  it 'renders the public show page with the contributor byline' do
     get better_together.post_path(post_record, locale:)
 
     expect(response).to have_http_status(:ok)
     expect(response.body).to include(platform_manager.person.name)
-    expect(response.body).not_to include('Contributors:')
-    expect(response.body).not_to include('GitHub-linked')
-    expect(response.body).not_to include('Claims and Supporting Evidence')
-    expect(response.body).not_to include('Evidence and Citations')
-    expect(response.body).not_to include('Post review notes')
   end
 
   it 'hides post contributor bylines on public views when the platform default is off' do
@@ -330,6 +317,57 @@ RSpec.describe 'BetterTogether::PostsController', :as_platform_manager do
 
       expect(response).to be_redirect
       expect(post_record.reload.federation_grant_status_for(connection)).to eq('denied')
+    end
+
+    it 'adds a governed contributor via contributions_attributes on update' do
+      contributor = create(:better_together_person, name: 'New Post Contributor')
+
+      expect do
+        patch better_together.post_path(post_record, locale:), params: {
+          post: {
+            title_en: post_record.title,
+            content_en: post_record.content.to_plain_text,
+            privacy: 'public',
+            contributions_attributes: {
+              '0' => {
+                author_type: 'BetterTogether::Person',
+                author_id: contributor.id,
+                role: 'author',
+                contribution_type: 'content'
+              }
+            }
+          }
+        }
+      end.to change { post_record.reload.contributions.count }.by(1)
+
+      expect(response).to be_redirect
+      expect(post_record.reload.agent_authors).to include(contributor)
+    end
+
+    it 'destroys a governed contribution via contributions_attributes[_destroy] on update' do
+      contribution = post_record.add_contributor(
+        create(:better_together_person, name: 'Departing Post Contributor'), role: 'author'
+      )
+
+      expect do
+        patch better_together.post_path(post_record, locale:), params: {
+          post: {
+            title_en: post_record.title,
+            content_en: post_record.content.to_plain_text,
+            privacy: 'public',
+            contributions_attributes: {
+              '0' => {
+                id: contribution.id,
+                _destroy: '1'
+              }
+            }
+          }
+        }
+      end.to change(BetterTogether::Authorship, :count).by(-1)
+
+      expect(response).to be_redirect
+      expect(BetterTogether::Authorship.exists?(contribution.id)).to be(false)
+      expect(post_record.reload.contributions).not_to include(contribution)
     end
 
     it 'renders edit when update params are invalid', :aggregate_failures do

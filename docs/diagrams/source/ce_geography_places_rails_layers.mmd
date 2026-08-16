@@ -6,7 +6,7 @@ classDiagram
     class BetterTogether__Address["Address"] {
       <<Model>>
       table: better_together_addresses
-      concerns: BetterTogetherId, Geography::Geospatial::One, Labelable, PrimaryFlag +2
+      concerns: BetterTogetherId, Geography::Geospatial::One, Labelable, PlatformScoped +4
       weak refs: owner: seeds, owner: geospatial_space
     }
     class BetterTogether__Geography__Continent["Geography::Continent"] {
@@ -46,7 +46,7 @@ classDiagram
       table: better_together_geography_maps
       variants: Geography::CommunityCollectionMap, Geography::CommunityMap
       translates: description, slug, title
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +5
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +6
       weak refs: target: mappable, owner: seeds, owner: slugs, owner: views +7
     }
     class BetterTogether__Geography__Region["Geography::Region"] {
@@ -87,11 +87,12 @@ classDiagram
       <<Model>>
       table: better_together_places
       translates: slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +3
+      concerns: BetterTogetherId, CommunityAssignable, Creatable, FriendlySlug +6
       weak refs: owner: seeds, owner: slugs, owner: string_translations
     }
   }
 
+  BetterTogether__Address --> BetterTogether__Platform : platform
   BetterTogether__Address --> BetterTogether__ContactDetail : contact_detail
   BetterTogether__Geography__Continent --> BetterTogether__Community : community
   BetterTogether__Geography__Country --> BetterTogether__Community : community
@@ -111,6 +112,7 @@ classDiagram
   BetterTogether__Geography__Space --> BetterTogether__Person : creator
   BetterTogether__Geography__State --> BetterTogether__Community : community
   BetterTogether__Geography__State --> BetterTogether__Geography__Country : country
+  BetterTogether__Place --> BetterTogether__Platform : platform
   BetterTogether__Place --> BetterTogether__Person : creator
   BetterTogether__Place --> BetterTogether__Community : community
   BetterTogether__Place --> BetterTogether__Geography__Space : space

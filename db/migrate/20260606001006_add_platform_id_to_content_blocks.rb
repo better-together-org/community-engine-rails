@@ -19,12 +19,19 @@ class AddPlatformIdToContentBlocks < ActiveRecord::Migration[7.2]
 
     remove_index :better_together_content_blocks, :identifier, if_exists: true
 
-    # NOTE: the partial predicate (platform_id IS NOT NULL) means two records with
-    # the same identifier and a NULL platform_id are NOT caught by this index —
-    # the Identifier#validate_identifier_uniqueness model validation covers that gap.
+    # NOTE: the partial predicate excludes NULL platform_id (pre-backfill legacy
+    # rows) and blank identifier -- both gaps are intentional and covered by
+    # Identifier#validate_identifier_uniqueness, which itself does
+    # `return if identifier.blank?` and never enforces blank-identifier
+    # uniqueness at the app layer either. Without excluding blank identifier
+    # here, a host with more than one blank-identifier content block (a
+    # legitimate, common state for e.g. Content::RichText/Css/Hero blocks
+    # accessed via their parent association rather than by identifier) hits a
+    # PG::UniqueViolation the moment a later migration backfills platform_id
+    # for both onto the same value.
     add_index :better_together_content_blocks, %i[identifier platform_id], unique: true,
                                                                            name: 'idx_bt_content_blocks_on_identifier_platform_id',
-                                                                           where: 'platform_id IS NOT NULL'
+                                                                           where: "platform_id IS NOT NULL AND identifier != ''"
   end
 
   def down

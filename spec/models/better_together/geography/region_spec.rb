@@ -71,9 +71,9 @@ RSpec.describe BetterTogether::Geography::Region do
       Mobility.with_locale(:es) do
         region.description = 'Una región metropolitana'
       end
-      expect(region.description).to eq('A metropolitan region')
+      expect(region.description.to_plain_text).to eq('A metropolitan region')
       Mobility.with_locale(:es) do
-        expect(region.description).to eq('Una región metropolitana')
+        expect(region.description.to_plain_text).to eq('Una región metropolitana')
       end
     end
   end
