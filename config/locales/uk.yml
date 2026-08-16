@@ -1562,12 +1562,14 @@ uk:
       actions:
         create_new: Створити новий %{model}
         create_new_short: Новий
-      add_to_calendar: Add to calendar (.ics)
-      attendees: Attendees
-      back_to_events: View Events
+      add_to_calendar: Додати до календаряr (.ics)
+      attendees: Учасники
+      back_to_events: Переглянути події
       date_and_time: Дата та Час
+      delete_event: Видалити подію
+      edit_event: Редагувати подію
       form_errors_heading: 'Виникли такі помилки:'
-      greater_than_or_equal_to: must be greater than or equal to %{count}
+      greater_than_or_equal_to: повинно бути більше або дорівнювати %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
         description: Надайте деталі про те, чого учасники можуть очікувати на цій
@@ -3926,6 +3928,8 @@ uk:
         accept_link: Перегляньте і прийміть угоду про створення спільноти
         message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення
           спільноти.
+      event_status_level: 'Статус події: %{status}'
+      event_status_tooltip: 'Статус події: %{status}'
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
       publishing_agreement_notice:
