@@ -137,6 +137,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - `FleetNodePolicy` + Pundit authorization on `NodesController` to prevent unauthorized fleet-node management via the fleet API
 
 ### Fixed
+- **Federation:** `HttpAdapter` resolved every outbound feed/token URL from `connection.source_platform` unconditionally, so a connection where the local platform happened to be `source_platform` (rather than `target_platform`) pulled federated content from itself instead of the actual peer — silently breaking one direction of every federation link. Resolve the peer via each platform's `external?` flag instead. Also add exponential backoff (5min–6hr) on consecutive `PlatformConnection` sync failures so an unreachable partner is not re-dispatched every hourly scan tick, harden the TCP reachability pre-check to rescue `IO::TimeoutError`, and normalize `SsrfFilter::TooManyRedirects`/`UnresolvedHostname` to the existing `SSRFError` alongside `PrivateIPAddress`.
 - **Content Blocks:** Production readiness fixes for markdown, video, and iframe blocks; restored `content_addable? = true` on 11 regressed block types; all blocks enabled and PR #1492 review findings resolved
 - **Uploads:** Honor upload content-security state toggles; align upload download authorization to the content-security review state
 - **Federation:** Namespace mirrored content imports to prevent cross-tenant identifier collisions (#1597); add idempotent repair migration for federated mirrored identifier backfill; localize federation remediation messages (es/fr/uk)
