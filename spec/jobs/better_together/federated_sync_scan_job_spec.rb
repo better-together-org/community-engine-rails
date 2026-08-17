@@ -75,5 +75,25 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
       expect(remote_connection.reload.last_sync_status).to eq('failed')
       expect(remote_connection.last_sync_error_message).to include('source platform is not reachable')
     end
+
+    it 'does not re-dispatch a connection still inside its backoff window' do
+      backed_off_connection = create(
+        :better_together_platform_connection,
+        :active,
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+      backed_off_connection.mark_sync_failed!(message: 'timeout', failed_at: Time.current)
+
+      described_class.perform_now(pull_limit: 25)
+
+      pull_jobs = enqueued_jobs.select { |job| job[:job] == BetterTogether::FederatedContentPullJob }
+      enqueued_connection_ids = pull_jobs.map { |job| job[:args].first&.dig('platform_connection_id') }
+
+      expect(enqueued_connection_ids).not_to include(backed_off_connection.id)
+    end
   end
 end

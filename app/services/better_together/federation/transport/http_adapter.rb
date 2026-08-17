@@ -74,12 +74,20 @@ module BetterTogether
             "(#{connection_host})"
         end
 
+        # The connection's two platform sides don't encode "local vs remote" by
+        # position (source/target reflect who initiated the link, not who's local) —
+        # resolve the actual federated peer via its external flag instead of assuming
+        # source_platform is always the remote. See PlatformFederationStatus.
+        def remote_platform
+          @remote_platform ||= [connection.source_platform, connection.target_platform].find(&:external_peer?)
+        end
+
         def connection_host
-          connection.source_platform&.resolved_host_url
+          remote_platform&.resolved_host_url
         end
 
         def feed_uri
-          base_uri = URI.parse(connection.source_platform.resolved_host_url)
+          base_uri = URI.parse(remote_platform.resolved_host_url)
           base_uri.path = feed_path
           params = { limit: }
           params[:cursor] = cursor if cursor.present?
@@ -103,7 +111,7 @@ module BetterTogether
               read_timeout: DEFAULT_READ_TIMEOUT
             }
           )
-        rescue SsrfFilter::PrivateIPAddress => e
+        rescue SsrfFilter::PrivateIPAddress, SsrfFilter::TooManyRedirects, SsrfFilter::UnresolvedHostname => e
           raise SSRFError, e.message
         end
 
@@ -157,7 +165,10 @@ module BetterTogether
         end
 
         def token_uri
-          base_uri = URI.parse(connection.source_platform.oauth_issuer_url.presence || connection.source_platform.resolved_host_url)
+          # Not remote_platform.effective_oauth_issuer_url: that helper only falls back to
+          # resolved_host_url for community_engine? peers, and can return nil (URI.parse
+          # would raise) for a non-CE federation partner with no oauth_issuer_url set.
+          base_uri = URI.parse(remote_platform.oauth_issuer_url.presence || remote_platform.resolved_host_url)
           base_uri.path = ::BetterTogether::Engine.routes.url_helpers.federation_oauth_token_path(locale: I18n.default_locale)
           base_uri.query = nil
           base_uri
@@ -176,7 +187,7 @@ module BetterTogether
               read_timeout: DEFAULT_READ_TIMEOUT
             }
           )
-        rescue SsrfFilter::PrivateIPAddress => e
+        rescue SsrfFilter::PrivateIPAddress, SsrfFilter::TooManyRedirects, SsrfFilter::UnresolvedHostname => e
           raise SSRFError, e.message
         end
 
@@ -186,7 +197,7 @@ module BetterTogether
           end
 
           true
-        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ENETUNREACH, SocketError, Timeout::Error
+        rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ENETUNREACH, SocketError, Timeout::Error, IO::TimeoutError
           false
         end
       end
