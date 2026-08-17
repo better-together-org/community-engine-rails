@@ -5,6 +5,11 @@ module BetterTogether
   module PlatformConnectionSyncTracking
     extend ActiveSupport::Concern
 
+    # Backoff on consecutive sync failures so a permanently broken connection isn't
+    # re-dispatched on every scan tick forever: 5 min, doubling, capped at 6 hr.
+    SYNC_BACKOFF_BASE_SECONDS = 300
+    SYNC_BACKOFF_MAX_SECONDS = 21_600
+
     def sync_idle?
       last_sync_status == 'idle'
     end
@@ -55,22 +60,31 @@ module BetterTogether
         last_synced_at: synced_at.iso8601,
         last_sync_error_at: '',
         last_sync_error_message: message.to_s.truncate(500),
-        last_sync_item_count: item_count.to_i
+        last_sync_item_count: item_count.to_i,
+        sync_failure_streak: 0,
+        sync_backoff_until: ''
       )
       record_sync_activity('platform_connection.sync_succeeded', parameters: { item_count: item_count.to_i })
     end
 
     def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current)
+      streak = sync_failure_streak.to_i + 1
       update!(
         sync_cursor: normalized_cursor(cursor),
         last_sync_status: 'failed',
         last_sync_error_at: failed_at.iso8601,
-        last_sync_error_message: message.to_s.truncate(500)
+        last_sync_error_message: message.to_s.truncate(500),
+        sync_failure_streak: streak,
+        sync_backoff_until: (failed_at + sync_backoff_interval(streak)).iso8601
       )
       record_sync_activity('platform_connection.sync_failed', parameters: { message: message.to_s.truncate(500) })
     end
 
     private
+
+    def sync_backoff_interval(streak)
+      [SYNC_BACKOFF_BASE_SECONDS * (2**(streak - 1)), SYNC_BACKOFF_MAX_SECONDS].min.seconds
+    end
 
     # PlatformConnection deliberately does not include TrackedActivity/PublicActivity::Model
     # (it has no privacy column, and connection audit activity must never leak into the

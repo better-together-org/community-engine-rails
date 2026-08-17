@@ -76,6 +76,8 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
+      sync_failure_streak Integer, default: 0
+      sync_backoff_until String, default: ''
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -120,12 +122,19 @@ module BetterTogether
       # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB interval arithmetic has no Arel equivalent
       tbl = quoted_table_name
       where(Arel.sql(<<~SQL.squish))
-        (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
-        OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
-        OR (#{tbl}.settings->>'last_synced_at') = ''
-        OR (#{tbl}.settings->>'last_synced_at')::timestamptz
-             + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
-             <= NOW()
+        (
+          (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
+          OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
+          OR (#{tbl}.settings->>'last_synced_at') = ''
+          OR (#{tbl}.settings->>'last_synced_at')::timestamptz
+               + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
+               <= NOW()
+        )
+        AND (
+          (#{tbl}.settings->>'sync_backoff_until') IS NULL
+          OR (#{tbl}.settings->>'sync_backoff_until') = ''
+          OR (#{tbl}.settings->>'sync_backoff_until')::timestamptz <= NOW()
+        )
       SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
