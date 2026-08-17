@@ -350,8 +350,19 @@ module BetterTogether
                extract_locale_from_accept_language_header || # Language header - browser config
                I18n.default_locale # Set in your config files, english by super-default
 
+      locale = valid_locale_or_default(locale)
+
       I18n.locale = locale
       session[:locale] = locale # Store the locale in the session
+    end
+
+    # Every source set_locale reads from except the accept-language header is unvalidated
+    # user input (or a value cached from it in the session) — an invalid locale raises
+    # I18n::InvalidLocale as an unhandled 500 before any controller logic runs.
+    def valid_locale_or_default(locale)
+      return locale if I18n.available_locales.map(&:to_s).include?(locale.to_s)
+
+      I18n.default_locale
     end
 
     # Set timezone for the duration of the request based on user/platform preferences

@@ -162,6 +162,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Navigation:** Correct header/footer visibility cache keys and helper memoization for access-context-sensitive navigation rendering (#1274)
 - **Routing:** Prevent `URI::InvalidURIError` on non-default locale + accented slug URLs (#1351)
 - **Security:** Extend URI encoding; add Rack::Attack bot/scanner blocklists (#1352)
+- **Security:** `ApplicationController#set_locale` assigned `params[:locale]`/`session[:locale]` straight to `I18n.locale=` with no validation — a malformed or malicious locale (blind-SQLi scanner probes were observed in production) raised `I18n::InvalidLocale` as an unhandled 500; now falls back to the default locale. `UrlSanitizer::URI_UNSAFE_ASCII` (added for #1351/#1352) still excluded `"` and `,` — a scanner probe using those characters reached `URI.parse` unescaped and raised the same error class; extended the character class to close the gap.
 - **CI:** Restore main mailer and Rubocop green (#1384)
 - **Performance:** Reduce N+1 queries on platform lookup and person profile pages (#1354)
 - **Settings / Privacy:** Move account deletion requests into the account tab and retire the legacy My Data seed section after the deletion-audit rollout
