@@ -65,6 +65,29 @@ RSpec.describe BetterTogether::PlatformConnection do
     end
   end
 
+  describe '.due_for_sync' do
+    it 'excludes a connection whose backoff window has not yet elapsed' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.current)
+
+      expect(described_class.due_for_sync).not_to include(connection)
+    end
+
+    it 'includes a connection once its backoff window has elapsed' do
+      connection = create(:better_together_platform_connection)
+      # first failure backs off 5 minutes, well within the elapsed hour below
+      connection.mark_sync_failed!(message: 'timeout', failed_at: 1.hour.ago)
+
+      expect(described_class.due_for_sync).to include(connection)
+    end
+
+    it 'includes a connection with no backoff state (never failed)' do
+      connection = create(:better_together_platform_connection)
+
+      expect(described_class.due_for_sync).to include(connection)
+    end
+  end
+
   describe 'policy settings' do
     it 'derives compatibility booleans from explicit policy modes' do
       connection = create(
@@ -153,6 +176,37 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.last_sync_error_message).to eq('Remote timeout')
       expect(connection.last_sync_error_at_time).to be_present
       expect(connection.last_synced_at_time).to be_present
+    end
+
+    it 'escalates a backoff window on consecutive failures and resets it on success' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(1)
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 5.minutes)
+
+      connection.mark_sync_failed!(message: 'timeout again', failed_at: Time.zone.parse('2026-03-12 12:10:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(2)
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:10:00 UTC') + 10.minutes)
+
+      connection.mark_sync_succeeded!(synced_at: Time.zone.parse('2026-03-12 12:20:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(0)
+      expect(connection.sync_backoff_until).to be_blank
+    end
+
+    it 'caps the backoff window at 6 hours regardless of how long the failure streak runs' do
+      connection = create(:better_together_platform_connection)
+
+      10.times { |n| connection.mark_sync_failed!(message: "failure #{n}", failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC')) }
+      connection.reload
+
+      expect(connection.sync_failure_streak).to eq(10)
+      expect(Time.zone.parse(connection.sync_backoff_until)).to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 6.hours)
     end
 
     it 'records an Activity for each sync lifecycle transition' do
