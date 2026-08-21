@@ -293,7 +293,7 @@ module BetterTogether
       method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
       return unless BetterTogether::Geography::LocatableLocation.respond_to?(method_name)
 
-      BetterTogether::Geography::LocatableLocation.public_send(method_name, helpers.current_person)
+      BetterTogether::Geography::LocatableLocation.public_send(method_name, helpers.current_person, search: params[:search])
     end
 
     # index skips the :resource_collection before_action (see
