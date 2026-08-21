@@ -213,6 +213,16 @@ export default class extends Controller {
             // For single-select: update element value (existing behavior)
             // Ensure the original select element is properly updated
             if (newVal && newVal.length > 0) {
+              // AJAX search results are rendered by SlimSelect's own internal
+              // list and are never added as real <option>s on the native
+              // select (only the unfiltered initial list gets that, via
+              // loadInitialResults below) - setting .value below is a silent
+              // no-op without a matching <option>, so add one here first.
+              const hasMatchingOption = Array.from(this.element.options).some((option) => option.value === newVal[0].value);
+              if (!hasMatchingOption) {
+                this.element.add(new Option(newVal[0].text, newVal[0].value, false, false));
+              }
+
               this.element.value = newVal[0].value;
               // Clear any validation errors since we have a selection
               this.element.setCustomValidity('');
