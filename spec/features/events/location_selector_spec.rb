@@ -182,26 +182,7 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
   # rubocop:enable RSpec/ExampleLength
 
   # rubocop:todo RSpec/ExampleLength
-  scenario 'selects an existing settlement via the AJAX-backed slim select', skip: <<~REASON do
-    Capybara/Selenium-specific gap clicking a live AJAX-populated slim-select
-    option, not a bug in this feature. Verified independently and thoroughly:
-    the #available_locations endpoint returns the settlement correctly (see
-    the 8 passing examples in events_available_locations_spec.rb), the radio
-    correctly points the select's data-better_together--slim_select-options-value
-    at the right ajax.url (confirmed via direct DOM inspection after fixing
-    the controller-identifier/data-attribute-key bugs found while debugging
-    this scenario — see slim_select_controller.js and location_selector_controller.js),
-    and the option DOES render with the right text and the right structure
-    (`.ss-content > .ss-list > .ss-option`, confirmed via a tree-walker DOM
-    dump: <div class="ss-option" role="option">Settlement 1</div>). But
-    neither a native Capybara click nor a JS-dispatched .click() on that
-    element causes slim-select's own internal handler to update the
-    underlying <select>'s value — the option renders correctly but selecting
-    it doesn't propagate. Root cause not isolated further (would need to read
-    the slim-select library's own internal event-binding source, out of scope
-    here). Manual verification in a real (non-headless) browser is the
-    recommended next step before considering this scenario resolved.
-  REASON
+  scenario 'selects an existing settlement via the AJAX-backed slim select' do
     settlement = create(:geography_settlement)
 
     visit better_together.new_event_path(locale: I18n.default_locale)
