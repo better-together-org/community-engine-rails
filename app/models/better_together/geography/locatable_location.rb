@@ -152,90 +152,118 @@ module BetterTogether
         location_type_matches?('region')
       end
 
-      # Helper method for forms - get available addresses for the user/context
-      def self.available_addresses_for(context = nil) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        return BetterTogether::Address.none unless context
+      # Helper method for forms - get available addresses for the user/context.
+      # `search` filters by substring match across the address's component fields
+      # (no single translated `name` field to run a trigram search against, unlike
+      # Building/Floor/Room/Settlement/Region).
+      def self.available_addresses_for(context = nil, search: nil) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        scope = if context
+                  case context
+                  when BetterTogether::Person
+                    # Use policy to get authorized addresses for the person
+                    user = context.user
+                    if user
+                      policy_scope = BetterTogether::AddressPolicy::Scope.new(user, BetterTogether::Address).resolve
+                      policy_scope.includes(:contact_detail)
+                    else
+                      # Person without user - only public addresses
+                      BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
+                    end
+                  when BetterTogether::Community
+                    # Communities can access public addresses and their own addresses
+                    community_address_ids = BetterTogether::Address
+                                            .joins(:contact_detail)
+                                            .where(better_together_contact_details: { contactable: context })
+                                            .pluck(:id)
 
-        case context
-        when BetterTogether::Person
-          # Use policy to get authorized addresses for the person
-          user = context.user
-          if user
-            policy_scope = BetterTogether::AddressPolicy::Scope.new(user, BetterTogether::Address).resolve
-            policy_scope.includes(:contact_detail)
-          else
-            # Person without user - only public addresses
-            BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
-          end
-        when BetterTogether::Community
-          # Communities can access public addresses and their own addresses
-          community_address_ids = BetterTogether::Address
-                                  .joins(:contact_detail)
-                                  .where(better_together_contact_details: { contactable: context })
-                                  .pluck(:id)
+                    public_address_ids = BetterTogether::Address.where(privacy: 'public').pluck(:id)
 
-          public_address_ids = BetterTogether::Address.where(privacy: 'public').pluck(:id)
+                    # Combine IDs and query with includes
+                    all_address_ids = (community_address_ids + public_address_ids).uniq
+                    BetterTogether::Address.where(id: all_address_ids).includes(:contact_detail)
+                  else
+                    # Default: return public addresses only
+                    BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
+                  end
+                else
+                  BetterTogether::Address.none
+                end
 
-          # Combine IDs and query with includes
-          all_address_ids = (community_address_ids + public_address_ids).uniq
-          BetterTogether::Address.where(id: all_address_ids).includes(:contact_detail)
-        else
-          # Default: return public addresses only
-          BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
-        end
+        filter_addresses_by_search(scope, search)
       end
 
       # Helper method for forms - get available buildings for the user/context
-      def self.available_buildings_for(context = nil) # rubocop:todo Metrics/MethodLength
-        return BetterTogether::Infrastructure::Building.none unless context
+      def self.available_buildings_for(context = nil, search: nil) # rubocop:todo Metrics/MethodLength
+        scope = if context
+                  case context
+                  when BetterTogether::Person
+                    if context.user
+                      # Person with user can access buildings they created and public buildings
+                      BetterTogether::Infrastructure::Building
+                        .where(creator: context)
+                        .or(BetterTogether::Infrastructure::Building.where(privacy: 'public'))
+                        .includes(:string_translations, :address)
+                    else
+                      # Person without user - only public buildings
+                      BetterTogether::Infrastructure::Building
+                        .where(privacy: 'public')
+                        .includes(:string_translations, :address)
+                    end
+                  when BetterTogether::Community
+                    # Communities get public buildings for now
+                    BetterTogether::Infrastructure::Building
+                      .where(privacy: 'public')
+                      .includes(:string_translations, :address)
+                  else
+                    # Fallback: return empty scope for unsupported context types
+                    BetterTogether::Infrastructure::Building.none
+                  end
+                else
+                  BetterTogether::Infrastructure::Building.none
+                end
 
-        case context
-        when BetterTogether::Person
-          if context.user
-            # Person with user can access buildings they created and public buildings
-            BetterTogether::Infrastructure::Building
-              .where(creator: context)
-              .or(BetterTogether::Infrastructure::Building.where(privacy: 'public'))
-              .includes(:string_translations, :address)
-          else
-            # Person without user - only public buildings
-            BetterTogether::Infrastructure::Building
-              .where(privacy: 'public')
-              .includes(:string_translations, :address)
-          end
-        when BetterTogether::Community
-          # Communities get public buildings for now
-          BetterTogether::Infrastructure::Building
-            .where(privacy: 'public')
-            .includes(:string_translations, :address)
-        else
-          # Fallback: return empty scope for unsupported context types
-          BetterTogether::Infrastructure::Building.none
-        end
+        search.present? ? scope.merge(BetterTogether::Infrastructure::Building.name_similarity_scope(search)) : scope
       end
 
       # Settlement/Region are global curated reference data (no privacy column, no
       # creator-based visibility), unlike Address/Building — so no policy scoping is
       # needed. `context` is accepted only for call-site symmetry with
       # .available_addresses_for/.available_buildings_for.
-      def self.available_settlements_for(_context = nil)
-        BetterTogether::Geography::Settlement.i18n.order(:name)
+      def self.available_settlements_for(_context = nil, search: nil)
+        return BetterTogether::Geography::Settlement.i18n.order(:name) if search.blank?
+
+        BetterTogether::Geography::Settlement.name_similarity_scope(search)
       end
 
-      def self.available_regions_for(_context = nil)
-        BetterTogether::Geography::Region.i18n.order(:name)
+      def self.available_regions_for(_context = nil, search: nil)
+        return BetterTogether::Geography::Region.i18n.order(:name) if search.blank?
+
+        BetterTogether::Geography::Region.name_similarity_scope(search)
       end
 
       # Floors/Rooms have no independent privacy or visibility scoping of their
       # own — availability is entirely inherited from their building, so these
       # compose on top of .available_buildings_for rather than duplicating its
-      # policy/context logic.
-      def self.available_floors_for(context = nil)
-        BetterTogether::Infrastructure::Floor.where(building: available_buildings_for(context))
+      # policy/context logic. `search` matches against the floor/room's own name,
+      # not the parent building's, so it's applied after inheriting the building scope.
+      def self.available_floors_for(context = nil, search: nil)
+        scope = BetterTogether::Infrastructure::Floor.where(building: available_buildings_for(context))
+        search.present? ? scope.merge(BetterTogether::Infrastructure::Floor.name_similarity_scope(search)) : scope
       end
 
-      def self.available_rooms_for(context = nil)
-        BetterTogether::Infrastructure::Room.where(floor: available_floors_for(context))
+      def self.available_rooms_for(context = nil, search: nil)
+        scope = BetterTogether::Infrastructure::Room.where(floor: available_floors_for(context))
+        search.present? ? scope.merge(BetterTogether::Infrastructure::Room.name_similarity_scope(search)) : scope
+      end
+
+      def self.filter_addresses_by_search(scope, search)
+        return scope if search.blank?
+
+        pattern = "%#{search}%"
+        columns = %i[line1 line2 city_name state_province_name postal_code country_name]
+        conditions = columns.map { |col| BetterTogether::Address.arel_table[col].matches(pattern) }.reduce(:or)
+
+        scope.where(conditions)
       end
 
       private

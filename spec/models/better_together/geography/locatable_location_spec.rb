@@ -398,6 +398,28 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
           expect(result).not_to include(private_address)
         end
       end
+
+      context 'with a search term' do
+        let!(:matching_address) do
+          create(:better_together_address, privacy: 'public', line1: '123 Distinctive Court', city_name: 'Searchtown')
+        end
+        let!(:other_public_address) do
+          create(:better_together_address, privacy: 'public', line1: '456 Other Street', city_name: 'Elsewhere')
+        end
+
+        it 'filters to addresses matching the search term across component fields' do
+          result = described_class.available_addresses_for('unsupported', search: 'Searchtown')
+
+          expect(result).to include(matching_address)
+          expect(result).not_to include(other_public_address)
+        end
+
+        it 'is case-insensitive' do
+          result = described_class.available_addresses_for('unsupported', search: 'distinctive')
+
+          expect(result).to include(matching_address)
+        end
+      end
     end
 
     describe '.available_buildings_for' do
@@ -464,6 +486,22 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
           expect(result).to eq(BetterTogether::Infrastructure::Building.none)
         end
       end
+
+      context 'with a search term' do
+        let!(:matching_building) do
+          create(:better_together_infrastructure_building, privacy: 'public', name: 'Distinctive Tower')
+        end
+        let!(:other_public_building) do
+          create(:better_together_infrastructure_building, privacy: 'public', name: 'Unrelated Hall')
+        end
+
+        it 'filters to buildings whose name matches the search term' do
+          result = described_class.available_buildings_for(community, search: 'Distinctive')
+
+          expect(result).to include(matching_building)
+          expect(result).not_to include(other_public_building)
+        end
+      end
     end
 
     describe '.available_floors_for' do
@@ -509,6 +547,13 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
 
         expect(result.to_a).to eq([settlement_b, settlement_a])
       end
+
+      it 'filters to settlements matching the search term when provided' do
+        result = described_class.available_settlements_for(nil, search: 'Zeta')
+
+        expect(result).to include(settlement_a)
+        expect(result).not_to include(settlement_b)
+      end
     end
 
     describe '.available_regions_for' do
@@ -519,6 +564,13 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
         result = described_class.available_regions_for(nil)
 
         expect(result.to_a).to eq([region_b, region_a])
+      end
+
+      it 'filters to regions matching the search term when provided' do
+        result = described_class.available_regions_for(nil, search: 'Zeta')
+
+        expect(result).to include(region_a)
+        expect(result).not_to include(region_b)
       end
     end
 
