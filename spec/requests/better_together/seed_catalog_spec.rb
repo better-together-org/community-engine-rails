@@ -116,6 +116,40 @@ RSpec.describe 'BetterTogether::SeedCatalog' do
       end.not_to raise_error
       expect(BetterTogether::Geography::Continent.count).to eq(count_after_first)
     end
+
+    it 'redirects with an alert instead of raising when planting provinces before countries exist' do
+      expect do
+        post better_together.seed_catalog_plant_seeds_path(locale:, catalog_key: 'geography', category_key: 'provinces')
+      end.not_to raise_error
+
+      expect(BetterTogether::Geography::State.count).to eq(0)
+      expect(response).to redirect_to(better_together.seed_catalog_seeds_path(locale:))
+      follow_redirect!
+      expect(response.body).to include('Countries')
+    end
+
+    it 'redirects with an alert instead of raising when planting settlements before provinces exist' do
+      expect do
+        post better_together.seed_catalog_plant_seeds_path(locale:, catalog_key: 'geography', category_key: 'settlements')
+      end.not_to raise_error
+
+      expect(BetterTogether::Geography::Settlement.count).to eq(0)
+      expect(response).to redirect_to(better_together.seed_catalog_seeds_path(locale:))
+    end
+
+    it 'disables the plant button in the listing when a prerequisite is missing' do
+      get better_together.seed_catalog_seeds_path(locale:)
+
+      expect(response.body).to match(/id="plant-provinces-btn"[^>]*disabled/)
+    end
+
+    it 'succeeds when the prerequisite is planted first' do
+      post better_together.seed_catalog_plant_seeds_path(locale:, catalog_key: 'geography', category_key: 'countries')
+
+      expect do
+        post better_together.seed_catalog_plant_seeds_path(locale:, catalog_key: 'geography', category_key: 'provinces')
+      end.to change(BetterTogether::Geography::State, :count).from(0)
+    end
   end
 
   describe 'POST plant_all', :as_platform_manager do

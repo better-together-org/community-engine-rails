@@ -5494,6 +5494,7 @@ uk:
       category: Категорія
       description: Встановлюйте перевірені довідкові дані на вимогу — по одній категорії
         або всі одразу.
+      missing_prerequisites: Спочатку встановіть %{prerequisites}
       not_planted: Не встановлено
       plant: Встановити
       plant_all: Встановити все
@@ -5502,6 +5503,7 @@ uk:
       status: Статус
       title: Каталог початкових даних
     plant:
+      missing_prerequisites: "%{category} потребує спочатку встановити %{prerequisites}."
       success: "%{category}: встановлено."
       unknown_category: Невідома категорія.
     plant_all:

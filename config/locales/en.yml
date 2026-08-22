@@ -5377,6 +5377,7 @@ en:
       category: Category
       description: Install curated reference data on demand, one category at a time
         or all at once.
+      missing_prerequisites: Plant %{prerequisites} first
       not_planted: Not planted
       plant: Plant
       plant_all: Plant All
@@ -5385,6 +5386,8 @@ en:
       status: Status
       title: Seed Catalog
     plant:
+      missing_prerequisites: "%{category} requires %{prerequisites} to be planted
+        first."
       success: "%{category} planted."
       unknown_category: Unknown category.
     plant_all:

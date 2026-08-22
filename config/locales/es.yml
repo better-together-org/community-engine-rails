@@ -5465,6 +5465,7 @@ es:
       category: Categoría
       description: Instale datos de referencia curados a petición, una categoría a
         la vez o todas a la vez.
+      missing_prerequisites: Sembrar %{prerequisites} primero
       not_planted: No sembrado
       plant: Sembrar
       plant_all: Sembrar todo
@@ -5473,6 +5474,7 @@ es:
       status: Estado
       title: Catálogo de siembra
     plant:
+      missing_prerequisites: "%{category} requiere sembrar %{prerequisites} primero."
       success: "%{category} sembrado."
       unknown_category: Categoría desconocida.
     plant_all:
