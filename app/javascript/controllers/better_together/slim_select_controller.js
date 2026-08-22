@@ -122,33 +122,47 @@ export default class extends Controller {
       options.events = {
         search: (search, currentData) => {
           return new Promise((resolve, reject) => {
-            const url = new URL(options.ajax.url, window.location.origin);
-
-            // Add cache-busting timestamp to prevent stale results
-            url.searchParams.append('_', Date.now().toString());
-
-            // Add search parameter if search term is provided
-            if (search && search.trim().length > 0) {
-              url.searchParams.append('search', search.trim());
+            // Debounced: an AJAX source that fans out to multiple backing
+            // queries per request (e.g. the event location picker's mixed
+            // search across every Placeable type) turns "fetch on every
+            // keystroke" from one cheap query into several per keystroke.
+            // Only the last keystroke within the window actually fetches -
+            // earlier pending timers are cleared, and their promises are
+            // simply left unresolved (harmless: nothing awaits them once
+            // superseded).
+            if (this.searchDebounceTimer) {
+              clearTimeout(this.searchDebounceTimer);
             }
 
-            fetch(url.toString(), {
-              method: 'GET',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Cache-Control': 'no-cache'
+            this.searchDebounceTimer = setTimeout(() => {
+              const url = new URL(options.ajax.url, window.location.origin);
+
+              // Add cache-busting timestamp to prevent stale results
+              url.searchParams.append('_', Date.now().toString());
+
+              // Add search parameter if search term is provided
+              if (search && search.trim().length > 0) {
+                url.searchParams.append('search', search.trim());
               }
-            })
-            .then(response => response.json())
-            .then(data => {
-              resolve(data);
-            })
-            .catch(error => {
-              console.error('SlimSelect AJAX error:', error);
-              reject(error);
-            });
+
+              fetch(url.toString(), {
+                method: 'GET',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Cache-Control': 'no-cache'
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                resolve(data);
+              })
+              .catch(error => {
+                console.error('SlimSelect AJAX error:', error);
+                reject(error);
+              });
+            }, 300);
           });
         },
         beforeOpen: () => {
@@ -340,6 +354,9 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
     if (this.slimSelect) {
       this.slimSelect.destroy();
     }
