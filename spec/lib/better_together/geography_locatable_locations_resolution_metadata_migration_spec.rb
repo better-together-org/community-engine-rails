@@ -49,4 +49,28 @@ RSpec.describe 'Add resolution metadata to locatable_locations migration' do # r
   it 'is idempotent when re-run against an already-migrated schema' do
     expect { migration_class.migrate(:up) }.not_to raise_error
   end
+
+  it 'logs every doomed row before deleting it, so a bad "keep the newest" choice is traceable' do
+    connection.remove_index(table, name: index_name)
+    connection.schema_cache.clear_data_source_cache!(table.to_s)
+
+    address = create(:better_together_address)
+    settlement = create(:geography_settlement)
+
+    older = BetterTogether::Geography::LocatableLocation.create!(
+      locatable: address, location: settlement, resolution_method: 'polygon', resolved_at: 2.days.ago
+    )
+    older.update_column(:created_at, 2.days.ago) # rubocop:disable Rails/SkipsModelValidations
+    BetterTogether::Geography::LocatableLocation.create!(
+      locatable: address, location: settlement, resolution_method: 'polygon', resolved_at: 1.hour.ago
+    )
+
+    expect(Rails.logger).to receive(:warn).with(a_string_including(
+                                                  'AddResolutionMetadataToBetterTogetherGeographyLocatableLocations', "id=#{older.id}",
+                                                  "locatable=#{address.class.name}##{address.id}", 'location_type=BetterTogether::Geography::Settlement'
+                                                ))
+
+    migration_class.migrate(:up)
+    connection.schema_cache.clear_data_source_cache!(table.to_s)
+  end
 end
