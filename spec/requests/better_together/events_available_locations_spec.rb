@@ -125,6 +125,53 @@ RSpec.describe 'GET /events/available_locations' do
     end
   end
 
+  context 'with no location_type (mixed search)', :as_platform_manager do
+    it 'returns composite ClassName:id values merged across every Placeable type' do
+      address = create(:better_together_address, privacy: 'public', city_name: 'Mixed Search City')
+      settlement = create(:geography_settlement, name: 'Mixed Search Settlement')
+
+      get better_together.available_locations_events_path(
+        search: 'Mixed Search',
+        locale: I18n.default_locale
+      )
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      values = json.map { |r| r['value'] }
+      expect(values).to include("#{address.class.name}:#{address.id}")
+      expect(values).to include("#{settlement.class.name}:#{settlement.id}")
+    end
+
+    it 'excludes non-matching records from the merged result set' do
+      create(:geography_settlement, name: 'Totally Unrelated Place')
+      matching = create(:geography_settlement, name: 'Findable Settlement')
+
+      get better_together.available_locations_events_path(
+        search: 'Findable',
+        locale: I18n.default_locale
+      )
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      values = json.map { |r| r['value'] }
+      expect(values).to include("#{matching.class.name}:#{matching.id}")
+      expect(values.size).to eq(1)
+    end
+
+    it 'appends the localized model name to each result\'s text' do
+      settlement = create(:geography_settlement, name: 'Labeled Settlement')
+
+      get better_together.available_locations_events_path(
+        search: 'Labeled',
+        locale: I18n.default_locale
+      )
+
+      json = JSON.parse(response.body)
+      entry = json.find { |r| r['value'] == "#{settlement.class.name}:#{settlement.id}" }
+      expect(entry['text']).to include(settlement.class.model_name.human)
+    end
+  end
+
   context 'with an invalid location_type', :as_platform_manager do
     it 'returns an error payload and unprocessable_content status' do
       # Mirrors #available_hosts's own invalid-type convention (an {error:}
