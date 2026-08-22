@@ -909,7 +909,7 @@ es:
         de webhook de Stripe)
       available_plans: Planes disponibles
       beneficiary_community: Comunidad a apoyar
-      beneficiary_community_placeholder: Slug de la comunidad
+      beneficiary_community_placeholder: Buscar comunidades
       beneficiary_identifier: Identificador del beneficiario (slug o nombre de usuario)
       beneficiary_type: Tipo de beneficiario
       billed_to: 'Facturado a:'
@@ -1023,6 +1023,9 @@ es:
       merchant_status_guidance: Usa la incorporacion para completar la configuracion
         de Stripe Connect y luego actualiza esta tarjeta despues de que Stripe revise
         la cuenta.
+      merchant_status_guidance_community: Usa la incorporacion para completar la configuracion
+        de Stripe Connect de esta comunidad y luego actualiza esta tarjeta despues
+        de que Stripe revise la cuenta.
       merchant_support_attention_body: Esta cuenta comercial no esta lista para pagos
         en este momento. Revisa el estado en Stripe y actualiza esta pagina despues
         de cualquier accion correctiva.

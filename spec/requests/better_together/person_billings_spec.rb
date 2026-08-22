@@ -71,7 +71,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sponsored communities')
       expect(response.body).to include('Mutual Aid Circle')
-      expect(response.body).to include('$50.00 contributed')
+      expect(response.body).to include('CA$50.00 contributed')
       expect(response.body).to include('Manage billing')
     end
 

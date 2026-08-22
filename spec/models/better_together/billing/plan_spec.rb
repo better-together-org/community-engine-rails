@@ -51,6 +51,22 @@ RSpec.describe BetterTogether::Billing::Plan do
     expect(plan.beneficiary_label).to eq('Hosted access')
   end
 
+  describe 'currency validation' do
+    it 'accepts every supported currency code' do
+      BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES.each do |code|
+        plan.currency = code
+        expect(plan).to be_valid, "expected currency '#{code}' to be valid"
+      end
+    end
+
+    it 'rejects a currency code outside the supported list' do
+      plan.currency = 'ZZZ'
+
+      expect(plan).not_to be_valid
+      expect(plan.errors[:currency]).to be_present
+    end
+  end
+
   describe 'uniqueness validation' do
     it 'rejects a duplicate stripe_price_id' do
       create('better_together/billing/plan', stripe_price_id: 'price_unique_one')

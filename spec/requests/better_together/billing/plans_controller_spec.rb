@@ -130,6 +130,15 @@ RSpec.describe BetterTogether::Billing::PlansController do
 
       expect(response).to have_http_status(:unprocessable_content)
     end
+
+    it 'rejects a currency code outside the supported list' do
+      expect do
+        post better_together.billing_plans_path(locale:),
+             params: valid_params.deep_merge(billing_plan: { currency: 'ZZZ' })
+      end.not_to change(BetterTogether::Billing::Plan, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe 'GET /:locale/host/billing/plans/:id' do

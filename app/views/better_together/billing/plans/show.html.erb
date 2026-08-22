@@ -34,7 +34,7 @@
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents', default: 'Price') %></dt>
             <dd id="<%= dom_id(@plan, :price) %>" class="col-sm-7">
-              <%= number_to_currency(@plan.amount_cents / 100.0, unit: @plan.currency + ' ') %>
+              <%= billing_amount(@plan.amount_cents, @plan.currency) %>
             </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_stripe_price_id', default: 'Stripe Price ID') %></dt>

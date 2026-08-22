@@ -101,7 +101,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Contribute to another community')
-      expect(response.body).to include('$25.00')
+      expect(response.body).to include('CA$25.00')
     end
 
     it 'shows received sponsorship contributions when this community has been funded by a sponsor' do
@@ -113,7 +113,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('This community has received')
-      expect(response.body).to include('$50.00')
+      expect(response.body).to include('CA$50.00')
     end
 
     it 'shows merchant account status when one exists' do
@@ -380,6 +380,18 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       )
     end
 
+    it 'accepts the beneficiary community by real id, as the SlimSelect field now submits' do
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/contribution-session-by-id')
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_contribution_by_id')
+
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: beneficiary_community.id, billing_plan_id: contribution_plan.identifier }
+
+      expect(response).to redirect_to('https://checkout.stripe.test/contribution-session-by-id')
+    end
+
     it 'redirects with an alert when the beneficiary community cannot be found' do
       post better_together.contribute_community_billing_path(community, locale:),
            params: { beneficiary_community_id: 'does-not-exist', billing_plan_id: contribution_plan.identifier }
@@ -420,6 +432,38 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
       follow_redirect!
       expect(response.body).to include('This contribution could not be processed right now')
+    end
+  end
+
+  describe 'GET /:locale/c/:community_id/billing/search_beneficiaries' do
+    let!(:eligible_community) { create(:better_together_community, name: 'Eligible Aid Circle', accepts_sponsorship: true) }
+    let!(:ineligible_community) { create(:better_together_community, name: 'Ineligible Circle', accepts_sponsorship: false) }
+
+    it 'returns only sponsorship-eligible communities, excluding the current community itself' do
+      get better_together.search_beneficiaries_community_billing_path(community, locale:)
+
+      body = response.parsed_body
+      returned_ids = body.pluck('value')
+
+      expect(returned_ids).to include(eligible_community.id.to_s)
+      expect(returned_ids).not_to include(ineligible_community.id.to_s)
+      expect(returned_ids).not_to include(community.id.to_s)
+    end
+
+    it 'returns the shape SlimSelect expects' do
+      get better_together.search_beneficiaries_community_billing_path(community, locale:)
+
+      row = response.parsed_body.find { |entry| entry['value'] == eligible_community.id.to_s }
+      expect(row).to include('text' => eligible_community.name, 'data' => { 'slug' => eligible_community.slug })
+    end
+
+    it 'filters by the q search term against the community name' do
+      get better_together.search_beneficiaries_community_billing_path(community, locale:), params: { q: 'Eligible Aid' }
+
+      returned_names = response.parsed_body.pluck('text')
+
+      expect(returned_names).to include('Eligible Aid Circle')
+      expect(returned_names).not_to include('Ineligible Circle')
     end
   end
 

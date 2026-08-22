@@ -163,6 +163,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post 'events/:event_id/replay', action: :replay_event, as: :replay_event
             get  :provision_platform
             patch :accepts_sponsorship
+            get :search_beneficiaries
           end
 
           resources :invitations, only: %i[create destroy] do

@@ -33,6 +33,7 @@
               <% @sponsored_communities.each do |sponsorship| %>
                 <% sponsored_community = sponsorship.beneficiary %>
                 <% contributed_total = sponsorship.monetary_contributions.sum(&:amount_cents) %>
+                <% contributed_currency = sponsorship.monetary_contributions.first&.currency || 'CAD' %>
                 <div id="<%= dom_id(sponsored_community, :sponsorship_row) %>" class="list-group-item px-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                   <div>
                     <div class="fw-semibold"><%= sponsored_community.name %></div>
@@ -40,7 +41,7 @@
                       <%= t(
                             'better_together.billing.sponsorship_contributed_total',
                             default: '%{amount} contributed',
-                            amount: number_to_currency(contributed_total / 100.0)
+                            amount: billing_amount(contributed_total, contributed_currency)
                           ) %>
                     </div>
                   </div>

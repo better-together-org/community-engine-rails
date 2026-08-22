@@ -894,7 +894,7 @@ uk:
         Stripe)
       available_plans: Dostupni taryfy
       beneficiary_community: Спільнота для підтримки
-      beneficiary_community_placeholder: Слаг спільноти
+      beneficiary_community_placeholder: Пошук спільнот
       beneficiary_identifier: Отримувач (слаг або ім'я користувача)
       beneficiary_type: Тип отримувача
       billed_to: 'Vystavleno dlia:'
@@ -1004,6 +1004,9 @@ uk:
       merchant_required_action_heading: Dlia merchant account potribna dia
       merchant_status_guidance: Vykorystai onboarding, shchob zavershyty nalashtuvannia
         Stripe Connect, a potim onovy tsiu kartku pislia perevirky akkaunta v Stripe.
+      merchant_status_guidance_community: Vykorystai onboarding, shchob zavershyty
+        nalashtuvannia Stripe Connect dlia tsiiei spilnoty, a potim onovy tsiu kartku
+        pislia perevirky akkaunta v Stripe.
       merchant_support_attention_body: Tsei merchant account zaraz ne hotovyi do vyplat.
         Perevir stan akkaunta v Stripe ta onovy tsiu storinku pislia bud-yakoi korektsiinoi
         dii.

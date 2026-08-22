@@ -25,6 +25,13 @@ module BetterTogether
       redirect_to_billing_with_alert(contribute_unavailable_message(e))
     end
 
+    # Searchable beneficiary lookup for the "contribute to another community"
+    # SlimSelect field — mirrors PersonBlocksController#search's shape
+    # ({text:, value:, data: {slug:}} JSON, .limit(20)).
+    def search_beneficiaries
+      render json: format_communities_for_select(sponsorship_eligible_communities)
+    end
+
     # Entitlement pre-check + kickoff redirect into the new_platform_setup wizard
     # (docs/plans/richer_platform_setup_wizard_implementation_plan.md, "Phase 5:
     # Billing entry-point wiring"). Does not authorize via PlatformPolicy#create?
@@ -74,6 +81,29 @@ module BetterTogether
 
     def find_sponsorship_beneficiary
       BetterTogether::Community.friendly.find(params[:beneficiary_community_id])
+    end
+
+    def sponsorship_eligible_communities
+      scope = BetterTogether::Community.where(accepts_sponsorship: true).where.not(id: @community.id)
+      search_term = params[:q].to_s.strip
+      return scope.limit(20) if search_term.blank?
+
+      search_pattern = "%#{search_term}%"
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- Mobility's i18n scope has no Arel
+      # equivalent for a case-insensitive match against the joined translation table.
+      # with_translations (Translatable concern) eager-loads string_translations first --
+      # required so the raw SQL below has a FROM-clause entry to reference; mirrors
+      # PersonPolicy::Scope#resolve's with_translations + PersonBlocksController#
+      # filter_by_search_term pairing.
+      scope.with_translations.i18n.where(
+        Arel.sql('mobility_string_translations.value ILIKE ?'),
+        search_pattern
+      ).where(mobility_string_translations: { key: 'name' }).limit(20)
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
+    end
+
+    def format_communities_for_select(communities)
+      communities.map { |c| { text: c.name, value: c.id.to_s, data: { slug: c.slug } } }
     end
 
     # Fail closed BEFORE any Stripe redirect — the model-level validation on

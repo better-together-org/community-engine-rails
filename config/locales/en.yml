@@ -914,7 +914,7 @@ en:
         log)
       available_plans: Available plans
       beneficiary_community: Community to support
-      beneficiary_community_placeholder: Community slug
+      beneficiary_community_placeholder: Search communities
       beneficiary_identifier: Beneficiary (slug or username)
       beneficiary_type: Beneficiary type
       billed_to: 'Billed to:'
@@ -1026,6 +1026,9 @@ en:
       merchant_required_action_heading: Merchant account action required
       merchant_status_guidance: Use onboarding to finish Stripe Connect setup, then
         refresh this card after Stripe reviews the account.
+      merchant_status_guidance_community: Use onboarding to finish Stripe Connect
+        setup for this community, then refresh this card after Stripe reviews the
+        account.
       merchant_support_attention_body: This merchant account is not currently payout-ready.
         Review the account status in Stripe and refresh this page after any corrective
         action.
