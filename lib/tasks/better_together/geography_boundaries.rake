@@ -8,7 +8,8 @@ namespace :better_together do
     task import_boundaries: :environment do
       summary = BetterTogether::Geography::BoundaryImportJob.import_all_missing
 
-      puts "Boundary import complete: #{summary[:imported]} fetched, #{summary[:skipped]} already had a boundary."
+      puts "Boundary import complete: #{summary[:imported]} fetched, #{summary[:skipped]} already had a boundary, " \
+           "#{summary[:unsupported] || 0} had no usable boundary data, #{summary[:failed] || 0} failed."
     end
   end
 end
