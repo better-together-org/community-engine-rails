@@ -3,6 +3,12 @@
 <% end %>
 
 <div id="<%= dom_id(@person, :billing_page) %>" class="container my-4">
+  <% if @checkout_session_pending %>
+    <%= turbo_stream_from BetterTogether::Billing::CheckoutSessionSyncBroadcaster.stream_name(params[:checkout_session_id]) %>
+    <%= render 'better_together/shared/checkout_session_pending',
+               dom_id: BetterTogether::Billing::CheckoutSessionSyncBroadcaster.target_dom_id(params[:checkout_session_id]) %>
+  <% end %>
+
   <%= render 'better_together/shared/billing_page_header',
              owner: @person,
              owner_path: person_path(@person, locale: I18n.locale),

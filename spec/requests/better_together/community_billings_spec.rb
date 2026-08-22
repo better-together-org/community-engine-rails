@@ -278,8 +278,17 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response.body).to include('Replay event')
     end
 
-    it 'synchronizes a checkout session when one is returned from Stripe' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+    it 'enqueues an async sync job and renders a pending state when a checkout session is returned from Stripe' do
+      expect do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+      end.to have_enqueued_job(BetterTogether::Billing::SyncCheckoutSessionJob)
+        .with('cs_test_123', community.class.name, community.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Confirming your payment with Stripe')
+    end
+
+    it 'broadcasts the synced result via Turbo Streams once the async job runs' do
       sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
         synced: true,
         billable_owner: community,
@@ -287,15 +296,22 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         reason: :synced
       )
       sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
-
-      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
       allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(sync_service)
+      allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to)
 
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Stripe checkout was synchronized successfully.')
       expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: community)
+      expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
+        'checkout_session_cs_test_123',
+        hash_including(
+          locals: hash_including(
+            messages: [hash_including(variant: :notice, text: a_string_matching(/synchronized successfully/))]
+          )
+        )
+      )
     end
   end
 
@@ -540,10 +556,11 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(checkout_session)
       allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
 
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_return')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_return')
+      end
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Your contribution to Funded Co-op was recorded.')
       expect(
         BetterTogether::Billing::Sponsorship.status_active.for_sponsor(community).for_beneficiary(beneficiary_community)
       ).to exist
@@ -561,8 +578,12 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(checkout_session)
       allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
 
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      end
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      end
 
       expect(BetterTogether::Billing::MonetaryContribution.count).to eq(1)
       expect(Stripe::Customer).to have_received(:create_balance_transaction).once
@@ -582,10 +603,14 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       )
 
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(first_session)
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_first_sponsor')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_first_sponsor')
+      end
 
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(second_session)
-      get better_together.community_billing_path(other_sponsor, locale:, checkout_session_id: 'cs_test_second_sponsor')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(other_sponsor, locale:, checkout_session_id: 'cs_test_second_sponsor')
+      end
 
       expect(BetterTogether::Billing::Sponsorship.status_active.for_beneficiary(beneficiary_community).count).to eq(2)
       expect(BetterTogether::Billing::MonetaryContribution.count).to eq(2)

@@ -918,6 +918,7 @@ fr:
       billed_to: 'Facture a :'
       breadcrumb_label: Facturation
       cancel_at_period_end: 'Annuler a la fin de la periode :'
+      checkout_session_confirming: Confirmation de votre paiement avec Stripe...
       checkout_session_invalid: 'La session Stripe n''a pas pu etre synchronisee :
         %<message>s'
       checkout_sync_complete: Le paiement Stripe a ete synchronise avec succes.

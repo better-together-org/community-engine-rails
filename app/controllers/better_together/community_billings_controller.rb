@@ -72,7 +72,6 @@ module BetterTogether
       @hosted_entitlement = hosted_entitlement_resolver.call(community: @community, billing_subscription: @billing_subscription)
       @sponsorship_contribution_plans = available_sponsorship_contribution_plans
       @received_monetary_contributions = received_monetary_contributions
-      process_sponsorship_contribution(@checkout_sync_result) if @checkout_sync_result&.one_time_payment.present?
       @received_sponsorship_offers = received_sponsorship_offers
       @received_active_sponsorships = received_active_sponsorships
       @given_active_sponsorships = given_active_sponsorships
@@ -143,27 +142,6 @@ module BetterTogether
       )
     end
 
-    # Best-effort immediate UI feedback on browser return — the webhook leg
-    # (StripeEventProcessor#process_sponsorship_contribution) is the
-    # authoritative trigger and fires even if the payer never lands back
-    # here. Both call the same shared, idempotent service, so whichever
-    # leg runs first actually credits the balance and the other safely
-    # no-ops (result.credit_result.already_credited).
-    def process_sponsorship_contribution(result)
-      service_result = BetterTogether::Billing::ProcessSponsorshipContribution.new.call(
-        one_time_payment: result.one_time_payment, checkout_session: result.checkout_session
-      )
-      flash_sponsorship_contribution_result(service_result)
-    rescue ActiveRecord::RecordInvalid, Stripe::StripeError => e
-      flash.now[:alert] = sponsorship_contribution_failed_message(e)
-    end
-
-    def flash_sponsorship_contribution_result(service_result)
-      return if service_result.blank? || service_result.credit_result.already_credited
-
-      flash.now[:notice] = sponsorship_contribution_complete_message(service_result.beneficiary)
-    end
-
     def contribute_unavailable_message(error)
       t(
         'better_together.billing.contribute_unavailable',
@@ -183,22 +161,6 @@ module BetterTogether
       t(
         'better_together.billing.sponsorship_consent_required',
         default: 'This community has not opted in to receive sponsorship contributions.'
-      )
-    end
-
-    def sponsorship_contribution_complete_message(beneficiary)
-      t(
-        'better_together.billing.sponsorship_contribution_complete',
-        default: 'Your contribution to %<beneficiary>s was recorded.',
-        beneficiary: beneficiary.name
-      )
-    end
-
-    def sponsorship_contribution_failed_message(error)
-      t(
-        'better_together.billing.sponsorship_contribution_failed',
-        default: 'Your payment succeeded, but recording the contribution failed: %<message>s',
-        message: ERB::Util.html_escape(error.message)
       )
     end
 

@@ -920,6 +920,7 @@ en:
       billed_to: 'Billed to:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Cancel at period end:'
+      checkout_session_confirming: Confirming your payment with Stripe…
       checkout_session_invalid: 'The Stripe checkout session could not be synchronized:
         %<message>s'
       checkout_sync_complete: Stripe checkout was synchronized successfully.

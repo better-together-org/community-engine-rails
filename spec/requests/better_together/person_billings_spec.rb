@@ -211,8 +211,17 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response.body).to include('Replay event')
     end
 
-    it 'synchronizes a checkout session when one is returned from Stripe' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: person)
+    it 'enqueues an async sync job and renders a pending state when a checkout session is returned from Stripe' do
+      expect do
+        get better_together.person_billing_path(person, locale:, checkout_session_id: 'cs_test_123')
+      end.to have_enqueued_job(BetterTogether::Billing::SyncCheckoutSessionJob)
+        .with('cs_test_123', person.class.name, person.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Confirming your payment with Stripe')
+    end
+
+    it 'broadcasts the synced result via Turbo Streams once the async job runs' do
       sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
         synced: true,
         billable_owner: person,
@@ -220,15 +229,22 @@ RSpec.describe 'BetterTogether::PersonBillings' do
         reason: :synced
       )
       sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
-
-      allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
       allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(sync_service)
+      allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to)
 
-      get better_together.person_billing_path(person, locale:, checkout_session_id: 'cs_test_123')
+      perform_enqueued_jobs do
+        get better_together.person_billing_path(person, locale:, checkout_session_id: 'cs_test_123')
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Stripe checkout was synchronized successfully.')
       expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: person)
+      expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
+        'checkout_session_cs_test_123',
+        hash_including(
+          locals: hash_including(
+            messages: [hash_including(variant: :notice, text: a_string_matching(/synchronized successfully/))]
+          )
+        )
+      )
     end
   end
 

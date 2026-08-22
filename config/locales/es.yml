@@ -915,6 +915,7 @@ es:
       billed_to: 'Facturado a:'
       breadcrumb_label: Facturacion
       cancel_at_period_end: 'Cancelar al final del periodo:'
+      checkout_session_confirming: Confirmando tu pago con Stripe...
       checkout_session_invalid: 'La sesion de Stripe no pudo sincronizarse: %<message>s'
       checkout_sync_complete: El pago de Stripe se sincronizo correctamente.
       checkout_sync_pending: Se recibio el pago de Stripe, pero todavia no pudo sincronizarse

@@ -28,7 +28,8 @@ module BetterTogether
       end
 
       def show
-        @checkout_sync_result = sync_checkout_session if valid_checkout_session_id?
+        @checkout_session_pending = valid_checkout_session_id?
+        enqueue_checkout_session_sync if @checkout_session_pending
         @billing_plans = available_billing_plans
         @billing_subscription = current_billing_subscription
         @merchant_account = current_merchant_account
@@ -204,29 +205,10 @@ module BetterTogether
         params[:checkout_session_id].to_s.match?(/\Acs_[a-zA-Z0-9_]+\z/)
       end
 
-      def sync_checkout_session
-        result = BetterTogether::Billing::StripeCheckoutSessionSync.new.call(
-          checkout_session_id: params[:checkout_session_id],
-          beneficiary: billing_owner
+      def enqueue_checkout_session_sync
+        BetterTogether::Billing::SyncCheckoutSessionJob.perform_later(
+          params[:checkout_session_id], billing_owner.class.name, billing_owner.id
         )
-        flash.now[sync_flash_key(result)] = sync_flash_message(result)
-        result
-      rescue Stripe::InvalidRequestError => e
-        flash.now[:alert] = checkout_session_invalid_message(e)
-        nil
-      end
-
-      def sync_flash_key(result)
-        result&.synced ? :notice : :alert
-      end
-
-      def sync_flash_message(result)
-        return checkout_sync_complete_message if result&.synced
-        if result&.reason.in?(%i[beneficiary_mismatch billable_owner_mismatch ownership_mismatch])
-          return checkout_sync_wrong_beneficiary_message
-        end
-
-        checkout_sync_pending_message
       end
 
       def current_billing_subscription
@@ -319,32 +301,6 @@ module BetterTogether
         t(
           'better_together.billing.reconciliation_enqueued',
           default: 'A Stripe reconciliation job was queued for this billing account.'
-        )
-      end
-
-      def checkout_session_invalid_message(error)
-        t(
-          'better_together.billing.checkout_session_invalid',
-          default: 'The Stripe checkout session could not be synchronized: %<message>s',
-          message: ERB::Util.html_escape(error.message)
-        )
-      end
-
-      def checkout_sync_complete_message
-        t('better_together.billing.checkout_sync_complete', default: 'Stripe checkout was synchronized successfully.')
-      end
-
-      def checkout_sync_wrong_beneficiary_message
-        t(
-          'better_together.billing.checkout_sync_wrong_beneficiary',
-          default: 'This Stripe checkout session does not belong to this billing page.'
-        )
-      end
-
-      def checkout_sync_pending_message
-        t(
-          'better_together.billing.checkout_sync_pending',
-          default: 'Stripe checkout was received, but no subscription state could be synchronized yet.'
         )
       end
 

@@ -900,6 +900,7 @@ uk:
       billed_to: 'Vystavleno dlia:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
+      checkout_session_confirming: Підтверджуємо ваш платіж через Stripe...
       checkout_session_invalid: 'Sesiiu Stripe ne vdalosia synchronizuvaty: %<message>s'
       checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
       checkout_sync_pending: Platezh Stripe otrymano, ale stan pidpysky shche ne vdalosia
