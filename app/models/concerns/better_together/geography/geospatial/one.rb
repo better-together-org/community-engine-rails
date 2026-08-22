@@ -79,9 +79,12 @@ module BetterTogether
           return false if geocoding_string.blank?
           return false if self.class.auto_geocoding_suppressed?
 
-          # space.reload # in case it has been geocoded since last load
-
-          (changed? or !geocoded?)
+          # `changed?` is always false here: schedule_geocoding runs from
+          # after_create/after_update, and Rails clears dirty state
+          # (changes_applied) before those callbacks fire - `saved_changes?`
+          # is the equivalent check that's actually still true at this point
+          # in the callback chain.
+          saved_changes? || !geocoded?
         end
 
         def geospatial_space
