@@ -8,12 +8,12 @@ audience:
 journey_step: As an event organizer editing an existing event, I see which settlement
   is currently assigned and can search for a different one without leaving the form.
 callouts:
-- :id: location_select
-  :title: AJAX-backed location search
-  :description: 'Genuinely new capability in this PR: this single field works for
-    all four structured types. Selecting the radio above rewrites this field''s search
-    source — Address and Building searches are scoped to records the organizer is
-    allowed to use; Settlement and Region search the full curated reference list.'
+- :id: location_picker
+  :title: Splitting the composite value back apart
+  :description: location_selector_controller#applyLocationSelection splits a picked
+    composite value back into the plain location_id/location_type hidden fields LocatableLocation's
+    ordinary polymorphic assignment already expects — no change was needed to that
+    assignment path itself.
 accessibility_notes: The search combobox is keyboard-operable (type-ahead, arrow keys,
   Enter to select) and exposes role="combobox" to assistive technology.
 slug: event_location_settlement_assigned

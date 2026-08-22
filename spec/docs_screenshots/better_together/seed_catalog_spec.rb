@@ -94,6 +94,16 @@ RSpec.describe 'Documentation screenshots for the geography seed catalog',
             'Packet-backed (lib/better_together/geography/seed_coordinates.yml): records land already ' \
             'geocoded, with zero live Nominatim calls in the common case.'
           ]
+        },
+        {
+          id: 'missing_prerequisites',
+          selector: '#plant-provinces-missing-prerequisites',
+          title: 'Prerequisite-blocked category',
+          bullets: [
+            'New in this PR: Provinces requires Countries; Settlements requires Provinces.',
+            'The Plant button for a category with an unmet prerequisite is disabled, with this hint ' \
+            'explaining what to plant first.'
+          ]
         }
       ],
       narrative: {
@@ -120,10 +130,22 @@ RSpec.describe 'Documentation screenshots for the geography seed catalog',
             title: 'Plant one category',
             description: 'Category-level granularity, matching GeographyBuilder\'s existing separable ' \
                          'seed_continents/seed_countries/seed_provinces/seed_regions/seed_settlements methods.'
+          },
+          {
+            id: 'missing_prerequisites',
+            title: 'Prerequisite guard',
+            description: 'Bug fixed in this PR: planting Settlements before Provinces (or Provinces ' \
+                         'before Countries) previously raised an uncaught 500 -- seed_settlements looks ' \
+                         'up its State by identifier and reads state.country, which is nil if Provinces ' \
+                         'was never planted. GeographyCatalog.missing_prerequisites now checks this ' \
+                         'server-side (returning a friendly alert instead of calling the builder method), ' \
+                         'and the same check disables the button and shows this hint in the UI before the ' \
+                         'organizer can even click it.'
           }
         ],
         accessibility_notes: 'Plant buttons carry an aria-label naming the specific category; the ' \
-                             'disabled state (once planted) is a real disabled attribute, not just a CSS class.'
+                             'disabled state (once planted, or once blocked on a missing prerequisite) is ' \
+                             'a real disabled attribute, not just a CSS class.'
       }
     ) do
       capybara_login_as_platform_manager
@@ -131,6 +153,8 @@ RSpec.describe 'Documentation screenshots for the geography seed catalog',
 
       expect(page).to have_css('#seed-catalog-geography-table')
       expect(page).to have_content('Not planted')
+      expect(page).to have_css('#plant-provinces-btn[disabled]')
+      expect(page).to have_css('#plant-provinces-missing-prerequisites')
     end
   end
 
@@ -184,7 +208,11 @@ RSpec.describe 'Documentation screenshots for the geography seed catalog',
             description: 'Each category is planted independently via its own button, or all at once via Plant All.'
           }
         ],
-        accessibility_notes: 'Status changes are reflected in both badge color and text, not color alone.'
+        accessibility_notes: 'Status changes are reflected in both badge color and text, not color alone. ' \
+                             'Provinces and Settlements are also visibly disabled with a hint at this ' \
+                             'point (see the "nothing planted" screenshot above for the dedicated ' \
+                             'prerequisite-guard callout) -- planting Continents alone does not unblock ' \
+                             'either of them.'
       }
     ) do
       capybara_login_as_platform_manager
@@ -192,6 +220,7 @@ RSpec.describe 'Documentation screenshots for the geography seed catalog',
 
       expect(page).to have_css('.continents-status-badge', text: 'Planted')
       expect(page).to have_css('.countries-status-badge', text: 'Not planted')
+      expect(page).to have_css('#plant-provinces-btn[disabled]')
     end
   end
 

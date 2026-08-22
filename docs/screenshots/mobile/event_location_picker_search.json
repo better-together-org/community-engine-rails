@@ -1,20 +1,20 @@
 {
-  "name": "event_location_settlement_assigned",
+  "name": "event_location_picker_search",
   "device": "mobile",
-  "url": "/en/events/b5fabab9-5972-488e-af80-b71426640524/edit",
-  "title": "Edit Community Meetup | Events | Funk, Altenwerth and Bruen",
+  "url": "/en/events/new",
+  "title": "Hyatt, Herzog and Swaniawski",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_location_picker",
-  "flow": "event_location_settlement_assigned",
+  "flow": "event_location_picker_search",
   "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
   "callouts": [
     {
       "selector": "#event_location_picker",
-      "title": "Currently assigned location",
+      "title": "One field searches everything",
       "bullets": [
-        "Pre-selected with a composite value (\"BetterTogether::Geography::Settlement:<id>\") built server-side from the event's existing location.",
-        "The organizer can search for a different location in the same field without a separate mode switch."
+        "Replaces the old location-type radio group entirely.",
+        "Searches Address, Building, Floor, Room, Settlement, and Region at once as you type."
       ],
       "target": {
         "x": 12.0,
@@ -39,9 +39,9 @@
       "placement": {
         "side": "above",
         "x": 47.33,
-        "y": 635.39,
+        "y": 739.39,
         "width": 270.0,
-        "height": 424,
+        "height": 320,
         "score": 1079.390625
       }
     }

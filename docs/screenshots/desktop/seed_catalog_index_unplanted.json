@@ -2,7 +2,7 @@
   "name": "seed_catalog_index_unplanted",
   "device": "desktop",
   "url": "/en/host/seeds/catalog",
-  "title": "Community Engine",
+  "title": "Hyatt, Herzog and Swaniawski",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "seed_catalog",
@@ -53,32 +53,32 @@
         "Coarse signal: checks for at least one record, not full seed-source coverage."
       ],
       "target": {
-        "x": 751.53125,
+        "x": 538.765625,
         "y": 317.8125,
         "width": 95.609375,
         "height": 20.375,
-        "right": 847.140625,
+        "right": 634.375,
         "bottom": 338.1875,
-        "center_x": 799.3359375,
+        "center_x": 586.5703125,
         "center_y": 328.0
       },
       "avoid": {
-        "x": 751.53125,
+        "x": 538.765625,
         "y": 317.8125,
         "width": 95.609375,
         "height": 20.375,
-        "right": 847.140625,
+        "right": 634.375,
         "bottom": 338.1875,
-        "center_x": 799.3359375,
+        "center_x": 586.5703125,
         "center_y": 328.0
       },
       "placement": {
-        "side": "left",
-        "x": 351.53,
-        "y": 223.0,
+        "side": "below",
+        "x": 396.57,
+        "y": 358.19,
         "width": 380,
         "height": 210,
-        "score": 751.53125
+        "score": 1122.8125
       }
     },
     {
@@ -115,6 +115,42 @@
         "width": 380,
         "height": 340,
         "score": 1115.0
+      }
+    },
+    {
+      "selector": "#plant-provinces-missing-prerequisites",
+      "title": "Prerequisite-blocked category",
+      "bullets": [
+        "New in this PR: Provinces requires Countries; Settlements requires Provinces.",
+        "The Plant button for a category with an unmet prerequisite is disabled, with this hint explaining what to plant first."
+      ],
+      "target": {
+        "x": 801.375,
+        "y": 411.0,
+        "width": 557.625,
+        "height": 21.0,
+        "right": 1359.0,
+        "bottom": 432.0,
+        "center_x": 1080.1875,
+        "center_y": 421.5
+      },
+      "avoid": {
+        "x": 801.375,
+        "y": 411.0,
+        "width": 557.625,
+        "height": 21.0,
+        "right": 1359.0,
+        "bottom": 432.0,
+        "center_x": 1080.1875,
+        "center_y": 421.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 716,
+        "width": 380,
+        "height": 346,
+        "score": 0
       }
     }
   ]

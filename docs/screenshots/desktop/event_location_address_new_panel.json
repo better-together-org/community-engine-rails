@@ -13,7 +13,7 @@
       "selector": "[data-better_together--location-selector-target=\"newRecordBlock\"][data-location-type=\"address\"]",
       "title": "Inline address fields",
       "bullets": [
-        "Revealed by the \"+ New\" link next to the search field.",
+        "Revealed by the \"+ New\" link next to the search field — always available now, not gated behind picking \"Address\" from a radio group first.",
         "The new address is saved together with the event in a single submit."
       ],
       "target": {
@@ -39,9 +39,9 @@
       "placement": {
         "side": "above",
         "x": 687.5,
-        "y": 463.0,
+        "y": 385.0,
         "width": 380,
-        "height": 236,
+        "height": 314,
         "score": 719.0
       }
     }

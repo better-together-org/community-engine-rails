@@ -1,11 +1,49 @@
 {
   "name": "event_location_settlement_assigned",
   "device": "desktop",
-  "url": "/en/events/74af0472-9975-4252-ac86-854fd52062f8/edit",
-  "title": "Edit Community Meetup | Events | Community Engine",
+  "url": "/en/events/b5fabab9-5972-488e-af80-b71426640524/edit",
+  "title": "Edit Community Meetup | Events | Funk, Altenwerth and Bruen",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_location_picker",
   "flow": "event_location_settlement_assigned",
-  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb"
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event_location_picker",
+      "title": "Currently assigned location",
+      "bullets": [
+        "Pre-selected with a composite value (\"BetterTogether::Geography::Settlement:<id>\") built server-side from the event's existing location.",
+        "The organizer can search for a different location in the same field without a separate mode switch."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 739.0,
+        "width": 832.875,
+        "height": 38.0,
+        "right": 1234.875,
+        "bottom": 777.0,
+        "center_x": 818.4375,
+        "center_y": 758.0
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 739.0,
+        "width": 832.875,
+        "height": 38.0,
+        "right": 1234.875,
+        "bottom": 777.0,
+        "center_x": 818.4375,
+        "center_y": 758.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 628.44,
+        "y": 373.0,
+        "width": 380,
+        "height": 346,
+        "score": 739.0
+      }
+    }
+  ]
 }

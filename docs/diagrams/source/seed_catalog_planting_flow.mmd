@@ -5,15 +5,20 @@ flowchart TD
     A["Platform manager visits\n/host/seeds/catalog"] --> B["SeedCatalogController#index"]
     B --> C["Registry.all -> GeographyCatalog"]
     C --> D["planted? per category\n(Model.exists? -- coarse signal)"]
+    D --> D2["missing_prerequisites? per category (new)\nPlant button disabled + hint shown\n('Plant Countries first') when unmet"]
   end
 
   subgraph Plant["Plant one category (new)"]
     direction TB
     E["POST catalog/:catalog_key/plant/:category_key"] --> F["SeedCatalogController#plant"]
-    F --> G["GeographyCatalog.plant(category_key)"]
+    F --> F2{"missing_prerequisites(category_key)\nany unplanted?"}
+    F2 -- "yes\n(e.g. Settlements before Provinces,\nProvinces before Countries)" --> F3["Alert: category requires\nprerequisites to be planted first\nno-op -- builder method never called"]
+    F2 -- "no" --> G["GeographyCatalog.plant(category_key)"]
     G --> H{"planted?(category_key)\nalready true?"}
     H -- "yes" --> Z["No-op\n(idempotent -- a raw repeat POST\ncan't hit a duplicate-identifier error)"]
-    H -- "no" --> I["without_auto_geocoding { ... }\n(thread-local suppression)"]
+    H -- "no" --> H2{"missing_prerequisites(category_key)\nany unplanted? (re-checked server-side)"}
+    H2 -- "yes" --> Z2["Returns false, no-op\n(defense in depth -- same check\nas the controller above)"]
+    H2 -- "no" --> I["without_auto_geocoding { ... }\n(thread-local suppression)"]
     I --> J["GeographyBuilder.seed_continents /\nseed_countries / seed_provinces /\nseed_regions / seed_settlements"]
     J --> K["seed_coordinates.yml packet\n(pre-geocoded lat/lng, keyed by identifier)"]
     K --> L["Records created with coordinates\nalready set -- zero live Nominatim\ncalls in the common case"]
@@ -27,5 +32,5 @@ flowchart TD
     P --> Q["GeographyBuilder.build_if_missing\n(no-ops if Continent.exists?)"]
   end
 
-  D --> E
-  D --> N
+  D2 --> E
+  D2 --> N
