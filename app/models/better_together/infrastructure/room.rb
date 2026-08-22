@@ -20,7 +20,12 @@ module BetterTogether
       delegate :level, to: :floor
 
       # Rooms have no independent space of their own — every geospatial read
-      # resolves through the building they belong to.
+      # resolves through the building they belong to. Deliberately NOT a real
+      # has_one :through :building here - see Floor's identical comment: Rails
+      # does not reliably resolve a has_one :through chained through another
+      # has_one :through (confirmed nil in every access pattern). See
+      # EventCollectionMap.records for how eager-loading through Floor/Room
+      # locations is handled instead.
       delegate :space, :latitude, :longitude, :elevation, :geocoded, :geocoded?,
                to: :building, allow_nil: true
 

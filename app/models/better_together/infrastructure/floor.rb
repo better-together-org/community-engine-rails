@@ -21,7 +21,14 @@ module BetterTogether
       has_many :rooms, class_name: 'BetterTogether::Infrastructure::Room', dependent: :destroy
 
       # Floors have no independent space of their own — every geospatial read
-      # resolves through the building they belong to.
+      # resolves through the building they belong to. Deliberately NOT a real
+      # has_one :through :building here: `building.space` is itself a
+      # has_one :through :geospatial_space, and Rails does not reliably
+      # resolve a has_one :through chained through another has_one :through
+      # (confirmed: returns nil in every access pattern - direct, reloaded,
+      # and .includes-preloaded - despite Building's own record having real
+      # coordinates). See EventCollectionMap.records for how eager-loading
+      # through Floor/Room locations is handled instead.
       delegate :space, :latitude, :longitude, :elevation, :geocoded, :geocoded?,
                to: :building, allow_nil: true
 
