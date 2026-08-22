@@ -53,7 +53,7 @@
         </div>
       <% end %>
       <p class="mb-2">
-        <span class="badge text-bg-info billing-merchant-status-badge">
+        <span class="badge <%= merchant_account.status_badge_class %> billing-merchant-status-badge">
           <%= t("better_together.billing.merchant_account_status.#{merchant_account.status}", default: merchant_account.status.humanize) %>
         </span>
       </p>

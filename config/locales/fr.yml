@@ -925,9 +925,12 @@ fr:
         n'a encore pu etre synchronise.
       checkout_sync_wrong_beneficiary: Cette session Stripe Checkout ne correspond
         pas a cette page de facturation.
+      checkout_unavailable: 'Le paiement n''est pas disponible pour le moment : %<message>s'
       community_capacity_tier: 'Niveau de capacite de la communaute :'
       community_sponsor_checkout: Payer via %{community}
       contribute_now: Contribuer maintenant
+      contribute_unavailable: 'Cette contribution n''a pas pu etre traitee pour le
+        moment : %<message>s'
       contribution_amount: Montant
       current_period_ends: 'Fin de la periode courante :'
       current_subscription: Abonnement actuel
@@ -939,6 +942,8 @@ fr:
       decline_sponsorship: Refuser
       details: Details
       end_sponsorship: Arrêter ce parrainage
+      end_sponsorship_confirm: Arreter ce parrainage ? Le beneficiaire ne recevra
+        plus de contributions issues de cette relation.
       event_type: Evenement
       failed_without_message: Le processeur a signale un echec sans message d'erreur.
       heading: Facturation de la communaute
@@ -985,12 +990,12 @@ fr:
       merchant_account_status:
         active: Actif
         disabled: Desactive
-        enabled: Active
+        disconnected: Deconnecte
         errored: Erreur
+        onboarding: En cours d'integration
         pending: En attente
-        rejected: Rejete
+        required_action: Action requise
         restricted: Restreint
-        restricted_soon: Bientot restreint
       merchant_charges_enabled: 'Paiements encaissables :'
       merchant_connect_explainer_community: Connectez Stripe afin que cette communaute
         puisse terminer l''integration et recevoir des versements dans les futurs

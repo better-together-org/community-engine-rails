@@ -45,7 +45,9 @@
           <li id="<%= dom_id(sponsorship) %>" class="list-group-item d-flex justify-content-between align-items-center">
             <span><%= sponsorship_counterpart_name(sponsorship.sponsor) %></span>
             <%= button_to t('better_together.billing.end_sponsorship', default: 'Stop this sponsorship'),
-                          end_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-danger', data: { turbo: false } %>
+                          end_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-danger',
+                          data: { turbo: false, turbo_confirm: t('better_together.billing.end_sponsorship_confirm',
+                            default: 'Stop this sponsorship? The beneficiary will no longer receive contributions from this relationship.') } %>
           </li>
         <% end %>
       </ul>
@@ -60,7 +62,9 @@
           <li id="<%= dom_id(sponsorship) %>" class="list-group-item d-flex justify-content-between align-items-center">
             <span><%= sponsorship_counterpart_name(sponsorship.beneficiary) %></span>
             <%= button_to t('better_together.billing.end_sponsorship', default: 'Stop this sponsorship'),
-                          end_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-danger', data: { turbo: false } %>
+                          end_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-danger',
+                          data: { turbo: false, turbo_confirm: t('better_together.billing.end_sponsorship_confirm',
+                            default: 'Stop this sponsorship? The beneficiary will no longer receive contributions from this relationship.') } %>
           </li>
         <% end %>
       </ul>

@@ -42,6 +42,8 @@ module BetterTogether
         redirect_to checkout_session_for(find_billing_plan).url, allow_other_host: true
       rescue ActiveRecord::RecordNotFound
         redirect_to_billing_with_alert(plan_not_found_message)
+      rescue StandardError => e
+        redirect_to_billing_with_alert(checkout_unavailable_message(e))
       end
 
       def portal
@@ -92,6 +94,8 @@ module BetterTogether
         billing_owner.update!(accepts_sponsorship: sponsorship_opt_in_param)
 
         redirect_to_billing_with_notice(accepts_sponsorship_updated_message)
+      rescue ActiveRecord::RecordInvalid => e
+        redirect_to_billing_with_alert(e.record.errors.full_messages.to_sentence)
       end
 
       private
@@ -341,6 +345,14 @@ module BetterTogether
         t(
           'better_together.billing.checkout_sync_pending',
           default: 'Stripe checkout was received, but no subscription state could be synchronized yet.'
+        )
+      end
+
+      def checkout_unavailable_message(error)
+        t(
+          'better_together.billing.checkout_unavailable',
+          default: 'Checkout is not available right now: %<message>s',
+          message: ERB::Util.html_escape(error.message)
         )
       end
 

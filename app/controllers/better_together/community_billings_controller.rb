@@ -21,6 +21,8 @@ module BetterTogether
       redirect_to sponsorship_checkout_session_for(beneficiary, billing_plan).url, allow_other_host: true
     rescue ActiveRecord::RecordNotFound
       redirect_to_billing_with_alert(sponsorship_target_invalid_message)
+    rescue StandardError => e
+      redirect_to_billing_with_alert(contribute_unavailable_message(e))
     end
 
     # Entitlement pre-check + kickoff redirect into the new_platform_setup wizard
@@ -131,6 +133,14 @@ module BetterTogether
       return if service_result.blank? || service_result.credit_result.already_credited
 
       flash.now[:notice] = sponsorship_contribution_complete_message(service_result.beneficiary)
+    end
+
+    def contribute_unavailable_message(error)
+      t(
+        'better_together.billing.contribute_unavailable',
+        default: 'This contribution could not be processed right now: %<message>s',
+        message: ERB::Util.html_escape(error.message)
+      )
     end
 
     def sponsorship_target_invalid_message

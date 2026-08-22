@@ -47,6 +47,25 @@ RSpec.describe BetterTogether::Billing::Subscription do
     expect(subscription.processor).to eq('stripe')
   end
 
+  describe '#status_badge_class' do
+    {
+      'active' => 'text-bg-success',
+      'trialing' => 'text-bg-success',
+      'past_due' => 'text-bg-warning',
+      'unpaid' => 'text-bg-warning',
+      'canceled' => 'text-bg-danger',
+      'incomplete_expired' => 'text-bg-danger',
+      'incomplete' => 'text-bg-secondary',
+      'paused' => 'text-bg-secondary'
+    }.each do |status, expected_class|
+      it "returns #{expected_class} for status #{status}" do
+        subscription.pay_subscription.status = status
+
+        expect(subscription.status_badge_class).to eq(expected_class)
+      end
+    end
+  end
+
   it 'persists portal access failures in metadata' do
     subscription = create('better_together/billing/subscription')
 

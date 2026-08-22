@@ -329,6 +329,17 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response.body).to include('data-turbo="false"')
     end
+
+    it 'redirects with a friendly alert instead of a 500 when Stripe raises' do
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_community_checkout_error')
+      allow(Stripe::Checkout::Session).to receive(:create).and_raise(Stripe::InvalidRequestError.new('No such price', 'price'))
+
+      post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.identifier }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('Checkout is not available right now')
+    end
   end
 
   describe 'POST /:locale/c/:community_id/billing/contribute' do
@@ -397,6 +408,38 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       follow_redirect!
       expect(response.body).to include('This community has not opted in to receive sponsorship contributions.')
       expect(Stripe::Checkout::Session).not_to have_received(:create)
+    end
+
+    it 'redirects with a friendly alert instead of a 500 when Stripe raises' do
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_contribution_error')
+      allow(Stripe::Checkout::Session).to receive(:create).and_raise(Stripe::InvalidRequestError.new('No such price', 'price'))
+
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('This contribution could not be processed right now')
+    end
+  end
+
+  describe 'PATCH /:locale/c/:community_id/billing/accepts_sponsorship' do
+    it 'updates the opt-in flag and redirects with a notice' do
+      patch better_together.accepts_sponsorship_community_billing_path(community, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(community.reload.accepts_sponsorship?).to be(true)
+    end
+
+    it 'redirects with an alert instead of a 500 when the update fails validation' do
+      allow_any_instance_of(BetterTogether::Community) # rubocop:disable RSpec/AnyInstance
+        .to receive(:update!).and_raise(ActiveRecord::RecordInvalid.new(community))
+
+      patch better_together.accepts_sponsorship_community_billing_path(community, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
   end
 

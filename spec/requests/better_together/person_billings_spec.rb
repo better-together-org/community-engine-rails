@@ -262,6 +262,37 @@ RSpec.describe 'BetterTogether::PersonBillings' do
 
       expect(response.body).to include('data-turbo="false"')
     end
+
+    it 'redirects with a friendly alert instead of a 500 when Stripe raises' do
+      Pay::Stripe::Customer.create!(owner: person, processor: 'stripe', processor_id: 'cus_person_checkout_error')
+      allow(Stripe::Checkout::Session).to receive(:create).and_raise(Stripe::InvalidRequestError.new('No such price', 'price'))
+
+      post better_together.checkout_person_billing_path(person, locale:), params: { billing_plan_id: billing_plan.identifier }
+
+      expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
+      follow_redirect!
+      expect(response.body).to include('Checkout is not available right now')
+    end
+  end
+
+  describe 'PATCH /:locale/p/:person_id/billing/accepts_sponsorship' do
+    it 'updates the opt-in flag and redirects with a notice' do
+      patch better_together.accepts_sponsorship_person_billing_path(person, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
+      expect(person.reload.accepts_sponsorship?).to be(true)
+    end
+
+    it 'redirects with an alert instead of a 500 when the update fails validation' do
+      allow_any_instance_of(BetterTogether::Person) # rubocop:disable RSpec/AnyInstance
+        .to receive(:update!).and_raise(ActiveRecord::RecordInvalid.new(person))
+
+      patch better_together.accepts_sponsorship_person_billing_path(person, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
+    end
   end
 
   describe 'POST /:locale/p/:person_id/billing/portal' do

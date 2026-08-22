@@ -200,6 +200,19 @@ module BetterTogether
         activeish? ? clear_lapse! : record_lapse!
       end
 
+      def status_badge_class
+        case status
+        when 'active', 'trialing'
+          'text-bg-success'
+        when 'past_due', 'unpaid'
+          'text-bg-warning'
+        when 'canceled', 'incomplete_expired'
+          'text-bg-danger'
+        else # 'incomplete', 'paused'
+          'text-bg-secondary'
+        end
+      end
+
       private
 
       def record_lapse!
