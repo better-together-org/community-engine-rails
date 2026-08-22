@@ -55,7 +55,7 @@ module BetterTogether
       def create_planting!
         ::BetterTogether::SeedPlanting.create!(
           planting_type: :federated_tending,
-          source: connection.source_platform.resolved_host_url,
+          source: (connection.remote_platform || connection.source_platform).resolved_host_url,
           privacy: 'private',
           metadata: {
             'source_platform_id' => connection.source_platform.id,
@@ -65,9 +65,12 @@ module BetterTogether
         )
       end
 
+      # source_platform/target_platform reflect who initiated the connection,
+      # not who's local — Current.platform during ingest must be the platform
+      # actually receiving this content, not literally connection.target_platform.
       def process_seeds
         batches = empty_seed_batches
-        Current.set(platform: connection.target_platform) do
+        Current.set(platform: connection.local_platform || connection.target_platform) do
           seeds.each { |seed_data| classify_seed(seed_data, batches) }
         end
         batches

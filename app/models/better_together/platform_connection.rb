@@ -143,6 +143,20 @@ module BetterTogether
       source_platform_id == platform.id || target_platform_id == platform.id
     end
 
+    # source_platform/target_platform reflect who initiated the connection, not
+    # who's local — code that needs "which side is actually this install" must
+    # resolve it via external_peer?, not assume it's always target_platform (or
+    # always source_platform). Mirrors HttpAdapter's original remote_platform
+    # resolution, promoted here so every federation service shares one
+    # definition instead of re-deriving (and re-breaking) it independently.
+    def local_platform
+      [source_platform, target_platform].find(&:local_hosted?)
+    end
+
+    def remote_platform
+      [source_platform, target_platform].find(&:external_peer?)
+    end
+
     def peer_for(platform)
       return target_platform if source_platform_id == platform.id
       return source_platform if target_platform_id == platform.id

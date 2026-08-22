@@ -68,7 +68,7 @@ module BetterTogether
           federation_consent_scoped(
             ::BetterTogether::Post
               .with_translations
-              .where(platform: connection.source_platform, privacy: 'public')
+              .where(platform: connection.local_platform, privacy: 'public')
               .where(source_id: nil)
               .where.not(published_at: nil)
               .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
@@ -81,7 +81,7 @@ module BetterTogether
           federation_consent_scoped(
             ::BetterTogether::Page
               .with_translations
-              .where(platform: connection.source_platform, privacy: 'public')
+              .where(platform: connection.local_platform, privacy: 'public')
               .where(source_id: nil)
               .where.not(published_at: nil)
               .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
@@ -94,7 +94,7 @@ module BetterTogether
           federation_consent_scoped(
             ::BetterTogether::Event
               .with_translations
-              .where(platform: connection.source_platform, privacy: 'public')
+              .where(platform: connection.local_platform, privacy: 'public')
               .where(source_id: nil)
               .where.not(starts_at: nil)
           )

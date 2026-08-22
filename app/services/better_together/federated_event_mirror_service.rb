@@ -48,15 +48,15 @@ module BetterTogether
     end
 
     def find_or_initialize_event_by_source_id
-      ::BetterTogether::Event.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+      ::BetterTogether::Event.find_or_initialize_by(platform: target_platform, source_id: remote_id)
     end
 
     def existing_event_with_remote_uuid
-      ::BetterTogether::Event.find_by(id: remote_id, platform: connection.target_platform)
+      ::BetterTogether::Event.find_by(id: remote_id, platform: target_platform)
     end
 
     def existing_event_by_source_id
-      ::BetterTogether::Event.find_by(platform: connection.target_platform, source_id: remote_id)
+      ::BetterTogether::Event.find_by(platform: target_platform, source_id: remote_id)
     end
 
     def assign_attributes(event)
@@ -93,10 +93,14 @@ module BetterTogether
       ::BetterTogether::Person.where(id: remote_id).pick(:id)
     end
 
+    # Credits the platform this event actually originated on — the remote
+    # peer we're mirroring from — not literally connection.source_platform,
+    # which reflects who initiated the connection, not who's local.
     def ensure_source_platform_host(event)
-      return if event.event_hosts.any? { |hosting| hosting.host == connection.source_platform }
+      origin_platform = connection.remote_platform || connection.source_platform
+      return if event.event_hosts.any? { |hosting| hosting.host == origin_platform }
 
-      event.event_hosts.build(host: connection.source_platform)
+      event.event_hosts.build(host: origin_platform)
     end
 
     def normalized_identifier(event)
@@ -135,8 +139,11 @@ module BetterTogether
       resolve_local_creator(remote_attributes[:creator_id])
     end
 
+    # source_platform/target_platform reflect who initiated the connection,
+    # not who's local — mirrored content must be stored under the actual
+    # local platform, not literally connection.target_platform.
     def target_platform
-      connection.target_platform
+      connection.local_platform || connection.target_platform
     end
 
     def preserve_remote_uuid?

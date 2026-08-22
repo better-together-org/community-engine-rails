@@ -175,6 +175,22 @@ module BetterTogether # :nodoc:
           I18n.t('better_together.federation.ingest.errors.connection_required')
         )
       end
+
+      context 'when the local platform is source_platform on the connection, not target_platform' do
+        let(:source_platform) { create(:better_together_platform, :public) }
+        let(:target_platform) { create(:better_together_platform, :community_engine_peer) }
+
+        it 'still mirrors content under the actual local platform, not the remote peer' do
+          previous_platform = Current.platform
+
+          described_class.call(connection:, seeds:)
+
+          mirrored_post = BetterTogether::Post.find_by(identifier: "#{target_platform.identifier}--remote-post")
+
+          expect(Current.platform).to eq(previous_platform)
+          expect(mirrored_post).to have_attributes(platform: source_platform)
+        end
+      end
     end
   end
 end

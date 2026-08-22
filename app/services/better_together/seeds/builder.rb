@@ -91,11 +91,15 @@ module BetterTogether
 
       def federated_origin_attributes
         connection = required_connection
+        # This seed's origin is whichever side is actually exporting it (the
+        # local platform), not connection.source_platform — source/target
+        # reflect who initiated the connection, not who's local.
+        origin_platform = connection.local_platform || connection.source_platform
 
         {
-          source_platform_id: connection.source_platform.id,
-          source_platform_identifier: connection.source_platform.identifier,
-          source_platform_url: connection.source_platform.resolved_host_url,
+          source_platform_id: origin_platform.id,
+          source_platform_identifier: origin_platform.identifier,
+          source_platform_url: origin_platform.resolved_host_url,
           visibility: serialized_attributes[:privacy],
           content_type: serialized_type
         }.merge(context[:origin_metadata] || {})
@@ -120,8 +124,9 @@ module BetterTogether
 
       def federated_identifier
         connection = required_connection
+        origin_platform = connection.local_platform || connection.source_platform
         digest = Digest::SHA256.hexdigest(
-          [connection.source_platform.id, subject.class.name, subject.id, lane].join(':')
+          [origin_platform.id, subject.class.name, subject.id, lane].join(':')
         )
         "seed-#{serialized_type}-#{digest.first(24)}"
       end
