@@ -10,10 +10,21 @@ RSpec.describe BetterTogether::InboundEmailMessage do
   end
 
   describe 'associations' do
-    it { is_expected.to belong_to(:inbound_email).class_name('ActionMailbox::InboundEmail') }
+    it { is_expected.to belong_to(:inbound_email).class_name('ActionMailbox::InboundEmail').optional }
     it { is_expected.to belong_to(:platform).class_name('BetterTogether::Platform').optional }
     it { is_expected.to belong_to(:target).optional }
     it { is_expected.to belong_to(:routed_record).optional }
+  end
+
+  describe 'inbound_email incineration' do
+    it 'survives ActionMailbox destroying the underlying inbound email' do
+      message = create(:inbound_email_message)
+
+      expect { message.inbound_email.destroy! }.not_to raise_error
+
+      expect(message.reload.inbound_email_id).to be_nil
+      expect(message).to be_valid
+    end
   end
 
   describe 'validations' do
