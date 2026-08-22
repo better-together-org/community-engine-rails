@@ -28,6 +28,30 @@ RSpec.describe BetterTogether::Geography::Geospatial::One do
     end
   end
 
+  describe '#should_geocode?' do
+    it 'returns true when this save changed the record, even if already geocoded ' \
+       '(regression: changed? is always false by the time after_create/after_update ' \
+       'fire, since Rails clears dirty state before those callbacks run - saved_changes? ' \
+       'is the check that is actually still true at that point)' do
+      address = create(:better_together_address)
+      allow(address).to receive(:geocoded?).and_return(true)
+
+      address.line1 = 'A brand new distinguishing address line'
+      address.save!
+
+      expect(address.should_geocode?).to be(true)
+    end
+
+    it 'returns false when this save changed nothing and the record is already geocoded' do
+      address = create(:better_together_address)
+      allow(address).to receive(:geocoded?).and_return(true)
+
+      address.save!
+
+      expect(address.should_geocode?).to be(false)
+    end
+  end
+
   describe '.without_auto_geocoding' do
     # class_methods (inside the concern) mix into includers, not into the concern
     # module itself — call through an actual includer. The underlying flag is a
