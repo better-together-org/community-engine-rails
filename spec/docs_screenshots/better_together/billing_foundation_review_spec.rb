@@ -136,6 +136,85 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
     end
   end
 
+  it 'captures the checkout-session pending state on browser return from Stripe' do
+    checkout_session_id = 'cs_pr1581_pending_demo'
+    dom_id = BetterTogether::Billing::CheckoutSessionSyncBroadcaster.target_dom_id(checkout_session_id)
+
+    capture_docs_screenshot(
+      'pr_1581_checkout_session_pending',
+      callouts: [
+        { selector: "##{dom_id}", title: 'Confirming payment',
+          bullets: ['The page renders immediately instead of blocking on a live Stripe API call.', 'A background job confirms the payment and updates this region in place once it completes.'] }
+      ],
+      narrative: {
+        title: 'Checkout return — confirming payment (async)',
+        audience: %w[board_member community_steward operator developer],
+        journey_step: 'A steward is redirected back from Stripe Checkout. The billing page used to make a live, synchronous Stripe API call on the request thread right at this moment, with no timeout handling — this pending state is what replaces that wait.',
+        callouts: [
+          { title: 'Confirming payment',
+            description: 'Session follow-up (second-round remediation): CommunityBillingsController#show used to call StripeCheckoutSessionSync (and, inside it, Stripe::Checkout::Session.retrieve) synchronously on the request thread. It is now purely a valid_checkout_session_id? pre-check that enqueues BetterTogether::Billing::SyncCheckoutSessionJob and renders this pending region immediately; see pr_1581_checkout_session_resolved for the state the job pushes here via Turbo Streams once it completes. The webhook-driven sync (StripeEventProcessor) remains the authoritative source of truth throughout and is unaffected by this change.' }
+        ],
+        accessibility_notes: 'The pending region uses role="status" and aria-live="polite" so assistive technology announces it without requiring focus, and announces the replacement content again when the Turbo Stream update lands.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.community_billing_path(community, locale: I18n.default_locale, checkout_session_id:)
+      expect(page).to have_css("##{dom_id}", text: 'Confirming your payment with Stripe')
+    end
+  end
+
+  it 'captures the checkout-session resolved state pushed via Turbo Streams' do
+    checkout_session_id = 'cs_pr1581_resolved_demo'
+    dom_id = BetterTogether::Billing::CheckoutSessionSyncBroadcaster.target_dom_id(checkout_session_id)
+
+    capture_docs_screenshot(
+      'pr_1581_checkout_session_resolved',
+      callouts: [
+        { selector: "##{dom_id}", title: 'Payment confirmed',
+          bullets: ['Delivered by CheckoutSessionSyncBroadcaster once SyncCheckoutSessionJob finishes.', 'Replaces the pending spinner in place — no page reload.'] }
+      ],
+      narrative: {
+        title: 'Checkout return — payment confirmed (async)',
+        audience: %w[board_member community_steward operator developer],
+        journey_step: 'Once SyncCheckoutSessionJob finishes syncing with Stripe, CheckoutSessionSyncBroadcaster replaces the pending region shown in pr_1581_checkout_session_pending with this confirmation, over the Turbo Stream subscription the page opened on load.',
+        callouts: [
+          { title: 'Payment confirmed',
+            description: 'Reuses the exact same message text the old synchronous flash.now-based code showed ("Stripe checkout was synchronized successfully."), just delivered via a Turbo Stream replace instead of being present in the initial response body. This screenshot renders the actual _checkout_session_result partial directly (rather than racing a live ActionCable delivery under headless Chrome, which this codebase\'s own Turbo-Stream-broadcast feature specs — see spec/features/conversations/send_message_spec.rb — already flag as flaky) so the captured markup is byte-for-byte what the broadcaster sends in production.' }
+        ],
+        accessibility_notes: 'Same role="status"/aria-live="polite" region as the pending state, so the confirmation is announced without the user needing to have focus on the page.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.community_billing_path(community, locale: I18n.default_locale, checkout_session_id:)
+      expect(page).to have_css("##{dom_id}")
+
+      result_html = BetterTogether::ApplicationController.render(
+        partial: 'better_together/shared/checkout_session_result',
+        locals: { dom_id:, messages: [{ variant: :notice, text: 'Stripe checkout was synchronized successfully.' }] }
+      )
+      page.execute_script("document.getElementById(#{dom_id.to_json}).outerHTML = #{result_html.to_json};")
+      expect(page).to have_content('Stripe checkout was synchronized successfully.')
+    end
+  end
+
+  # NOTE: (session follow-up, unresolved) a dedicated screenshot for the new
+  # SlimSelect-backed "contribute to another community" search field
+  # (community_billings/show.html.erb's sponsor_contribution_card, replacing
+  # the old raw-slug text field) was attempted here and removed. The field
+  # itself works (covered by community_billings_spec.rb's search_beneficiaries
+  # request specs and the community_billing_overview capture below, which
+  # renders the same page successfully); annotating it specifically hit a
+  # ScreenshotCalloutProcessor/Selenium failure ("page.current_path is empty")
+  # that reproduced identically with and without an explicit scroll-into-view,
+  # both in isolation and as part of the full suite. sponsor_contribution_card
+  # sits below the fixed 1440x1600 screenshot viewport on this page (same
+  # constraint already documented on pr_1581_community_billing_overview and
+  # pr_1581_person_billing_overview for the plans table and sponsorship
+  # panel) — resolving a callout box on an off-screen SlimSelect widget likely
+  # needs either a shorter seed fixture (fewer cards above it) or a
+  # scroll-aware fix in ScreenshotCalloutProcessor itself. Follow-up needed
+  # before this field gets its own annotated screenshot.
+
   it 'captures the provision hosted platform entry point redirecting into the setup wizard' do
     capture_docs_screenshot(
       'pr_1581_provision_hosted_platform',
@@ -161,7 +240,8 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       }
     ) do
       capybara_login_as_platform_manager
-      visit better_together.provision_platform_community_billing_path(community, locale: I18n.default_locale)
+      visit better_together.community_billing_path(community, locale: I18n.default_locale)
+      click_on I18n.t('better_together.billing.provision_platform_cta', locale: I18n.default_locale, default: 'Provision hosted platform')
       expect(page).to have_css('#new-platform-setup-progress')
       draft = BetterTogether::Platform.order(:created_at).last
       expect(draft.provisioning_community).to eq(community)
@@ -174,7 +254,10 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       callouts: [
         { selector: "##{ActionView::RecordIdentifier.dom_id(platform_manager.person, :current_subscription_card)}",
           title: 'Personal subscription', bullets: ['Shows the plan attached to the person as payer.', 'Surfaces portal issues and renewal timing.'] },
-        { selector: "##{ActionView::RecordIdentifier.dom_id(platform_manager.person, :sponsored_communities_card)}", title: 'Sponsored communities', bullets: ['Lists communities this person is currently paying for.', 'Provides direct links to each community billing page.'] }
+        { selector: "##{ActionView::RecordIdentifier.dom_id(platform_manager.person, :sponsored_communities_card)}", title: 'Sponsored communities', bullets: ['Lists communities this person is currently paying for.', 'Provides direct links to each community billing page.'] },
+        { selector: "##{ActionView::RecordIdentifier.dom_id(platform_manager.person, :merchant_account_card)}",
+          title: 'Merchant account (connected)',
+          bullets: ['Session follow-up: the status badge now reflects real state (green here) instead of a hardcoded color regardless of status.', 'The explainer text below correctly describes a connected, active account — a prior bug reused the not-connected copy for both states on the community version of this page.'] }
       ],
       narrative: {
         title: 'Personal billing overview',
@@ -185,6 +268,8 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
             description: 'This card is the person-facing equivalent of the community subscription card. It focuses on the individual payer and their current hosted support plan. Session follow-up: the subscription status and merchant account status badges on this page were rendering the raw Stripe/Pay enum value (e.g. "active") instead of the translated label used everywhere else; both now go through the same t() lookup as the community billing page.' },
           { title: 'Sponsored communities',
             description: 'This is the key new accountability surface for sponsorship. A person can now see which communities their payment is supporting and jump directly to those community billing records.' },
+          { title: 'Merchant account (connected)',
+            description: 'Second-round remediation follow-up: MerchantAccount#status_badge_class replaces a badge that was hardcoded to text-bg-info regardless of status — this account (seeded active/charges+payouts enabled) now shows text-bg-success. This is the only screenshot in the pack seeded with a connected merchant account, so it is also the only one demonstrating the community-side duplicate-i18n-key fix indirectly: person_billings/show.html.erb already used two distinct explainer keys for connected vs not-connected (the bug was community-only), and this connected state confirms the correct copy renders when it should.' },
           { title: 'Personal plans',
             description: 'Personal recurring plans are separated from community plans so the review packet makes clear who each plan is designed to support.' },
           { title: 'Solidarity pricing tier',

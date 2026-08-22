@@ -59,6 +59,44 @@ RSpec.describe BetterTogether::Billing::MerchantAccount do
     expect(merchant_account.deauthorized_at).to be_present
   end
 
+  describe '#status_badge_class' do
+    {
+      'disconnected' => 'text-bg-danger',
+      'errored' => 'text-bg-danger',
+      'restricted' => 'text-bg-danger',
+      'disabled' => 'text-bg-danger',
+      'required_action' => 'text-bg-warning'
+    }.each do |status, expected_class|
+      it "returns #{expected_class} for status #{status}" do
+        merchant_account.status = status
+
+        expect(merchant_account.status_badge_class).to eq(expected_class)
+      end
+    end
+
+    it 'returns text-bg-success for an active, fully payout-ready account' do
+      merchant_account.status = 'active'
+      merchant_account.charges_enabled = true
+      merchant_account.payouts_enabled = true
+
+      expect(merchant_account.status_badge_class).to eq('text-bg-success')
+    end
+
+    it 'returns text-bg-warning for an active account with a capability gap' do
+      merchant_account.status = 'active'
+      merchant_account.charges_enabled = false
+      merchant_account.payouts_enabled = false
+
+      expect(merchant_account.status_badge_class).to eq('text-bg-warning')
+    end
+
+    it 'returns text-bg-warning for onboarding-incomplete statuses (pending/onboarding)' do
+      merchant_account.status = 'pending'
+
+      expect(merchant_account.status_badge_class).to eq('text-bg-warning')
+    end
+  end
+
   describe '.supported_owner_types' do
     it 'derives from Billing::Billable.included_in_models rather than a hardcoded list' do
       expect(described_class.supported_owner_types).to match_array(

@@ -101,7 +101,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Contribute to another community')
-      expect(response.body).to include('$25.00')
+      expect(response.body).to include('CA$25.00')
     end
 
     it 'shows received sponsorship contributions when this community has been funded by a sponsor' do
@@ -113,7 +113,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('This community has received')
-      expect(response.body).to include('$50.00')
+      expect(response.body).to include('CA$50.00')
     end
 
     it 'shows merchant account status when one exists' do
@@ -278,8 +278,17 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       expect(response.body).to include('Replay event')
     end
 
-    it 'synchronizes a checkout session when one is returned from Stripe' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: community)
+    it 'enqueues an async sync job and renders a pending state when a checkout session is returned from Stripe' do
+      expect do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+      end.to have_enqueued_job(BetterTogether::Billing::SyncCheckoutSessionJob)
+        .with('cs_test_123', community.class.name, community.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Confirming your payment with Stripe')
+    end
+
+    it 'broadcasts the synced result via Turbo Streams once the async job runs' do
       sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
         synced: true,
         billable_owner: community,
@@ -287,15 +296,22 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
         reason: :synced
       )
       sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
-
-      allow(BetterTogether::Community).to receive(:friendly).and_return(friendly_scope)
       allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(sync_service)
+      allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to)
 
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_123')
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Stripe checkout was synchronized successfully.')
       expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: community)
+      expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
+        'checkout_session_cs_test_123',
+        hash_including(
+          locals: hash_including(
+            messages: [hash_including(variant: :notice, text: a_string_matching(/synchronized successfully/))]
+          )
+        )
+      )
     end
   end
 
@@ -328,6 +344,17 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       get better_together.community_billing_path(community, locale:)
 
       expect(response.body).to include('data-turbo="false"')
+    end
+
+    it 'redirects with a friendly alert instead of a 500 when Stripe raises' do
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_community_checkout_error')
+      allow(Stripe::Checkout::Session).to receive(:create).and_raise(Stripe::InvalidRequestError.new('No such price', 'price'))
+
+      post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.identifier }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('Checkout is not available right now')
     end
   end
 
@@ -369,6 +396,18 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       )
     end
 
+    it 'accepts the beneficiary community by real id, as the SlimSelect field now submits' do
+      checkout_session = instance_double(Stripe::Checkout::Session, url: 'https://checkout.stripe.test/contribution-session-by-id')
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_contribution_by_id')
+
+      allow(Stripe::Checkout::Session).to receive(:create).and_return(checkout_session)
+
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: beneficiary_community.id, billing_plan_id: contribution_plan.identifier }
+
+      expect(response).to redirect_to('https://checkout.stripe.test/contribution-session-by-id')
+    end
+
     it 'redirects with an alert when the beneficiary community cannot be found' do
       post better_together.contribute_community_billing_path(community, locale:),
            params: { beneficiary_community_id: 'does-not-exist', billing_plan_id: contribution_plan.identifier }
@@ -397,6 +436,70 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       follow_redirect!
       expect(response.body).to include('This community has not opted in to receive sponsorship contributions.')
       expect(Stripe::Checkout::Session).not_to have_received(:create)
+    end
+
+    it 'redirects with a friendly alert instead of a 500 when Stripe raises' do
+      Pay::Stripe::Customer.create!(owner: community, processor: 'stripe', processor_id: 'cus_sponsor_contribution_error')
+      allow(Stripe::Checkout::Session).to receive(:create).and_raise(Stripe::InvalidRequestError.new('No such price', 'price'))
+
+      post better_together.contribute_community_billing_path(community, locale:),
+           params: { beneficiary_community_id: beneficiary_community.slug, billing_plan_id: contribution_plan.identifier }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      follow_redirect!
+      expect(response.body).to include('This contribution could not be processed right now')
+    end
+  end
+
+  describe 'GET /:locale/c/:community_id/billing/search_beneficiaries' do
+    let!(:eligible_community) { create(:better_together_community, name: 'Eligible Aid Circle', accepts_sponsorship: true) }
+    let!(:ineligible_community) { create(:better_together_community, name: 'Ineligible Circle', accepts_sponsorship: false) }
+
+    it 'returns only sponsorship-eligible communities, excluding the current community itself' do
+      get better_together.search_beneficiaries_community_billing_path(community, locale:)
+
+      body = response.parsed_body
+      returned_ids = body.pluck('value')
+
+      expect(returned_ids).to include(eligible_community.id.to_s)
+      expect(returned_ids).not_to include(ineligible_community.id.to_s)
+      expect(returned_ids).not_to include(community.id.to_s)
+    end
+
+    it 'returns the shape SlimSelect expects' do
+      get better_together.search_beneficiaries_community_billing_path(community, locale:)
+
+      row = response.parsed_body.find { |entry| entry['value'] == eligible_community.id.to_s }
+      expect(row).to include('text' => eligible_community.name, 'data' => { 'slug' => eligible_community.slug })
+    end
+
+    it 'filters by the q search term against the community name' do
+      get better_together.search_beneficiaries_community_billing_path(community, locale:), params: { q: 'Eligible Aid' }
+
+      returned_names = response.parsed_body.pluck('text')
+
+      expect(returned_names).to include('Eligible Aid Circle')
+      expect(returned_names).not_to include('Ineligible Circle')
+    end
+  end
+
+  describe 'PATCH /:locale/c/:community_id/billing/accepts_sponsorship' do
+    it 'updates the opt-in flag and redirects with a notice' do
+      patch better_together.accepts_sponsorship_community_billing_path(community, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(community.reload.accepts_sponsorship?).to be(true)
+    end
+
+    it 'redirects with an alert instead of a 500 when the update fails validation' do
+      allow_any_instance_of(BetterTogether::Community) # rubocop:disable RSpec/AnyInstance
+        .to receive(:update!).and_raise(ActiveRecord::RecordInvalid.new(community))
+
+      patch better_together.accepts_sponsorship_community_billing_path(community, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
     end
   end
 
@@ -453,10 +556,11 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(checkout_session)
       allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
 
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_return')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_return')
+      end
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Your contribution to Funded Co-op was recorded.')
       expect(
         BetterTogether::Billing::Sponsorship.status_active.for_sponsor(community).for_beneficiary(beneficiary_community)
       ).to exist
@@ -474,8 +578,12 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(checkout_session)
       allow(Stripe::Customer).to receive(:create_balance_transaction).and_return(balance_transaction)
 
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      end
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_contribution_repeat')
+      end
 
       expect(BetterTogether::Billing::MonetaryContribution.count).to eq(1)
       expect(Stripe::Customer).to have_received(:create_balance_transaction).once
@@ -495,10 +603,14 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       )
 
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(first_session)
-      get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_first_sponsor')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(community, locale:, checkout_session_id: 'cs_test_first_sponsor')
+      end
 
       allow(Stripe::Checkout::Session).to receive(:retrieve).and_return(second_session)
-      get better_together.community_billing_path(other_sponsor, locale:, checkout_session_id: 'cs_test_second_sponsor')
+      perform_enqueued_jobs do
+        get better_together.community_billing_path(other_sponsor, locale:, checkout_session_id: 'cs_test_second_sponsor')
+      end
 
       expect(BetterTogether::Billing::Sponsorship.status_active.for_beneficiary(beneficiary_community).count).to eq(2)
       expect(BetterTogether::Billing::MonetaryContribution.count).to eq(2)
@@ -667,13 +779,13 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
     end
   end
 
-  describe 'GET /:locale/c/:community_id/billing/provision_platform' do
+  describe 'POST /:locale/c/:community_id/billing/provision_platform' do
     context 'when the community has an active hosted subscription' do
       it 'creates a draft platform linked to the community and redirects into the setup wizard' do
         create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
 
         expect do
-          get better_together.provision_platform_community_billing_path(community, locale:)
+          post better_together.provision_platform_community_billing_path(community, locale:)
         end.to change(BetterTogether::Platform, :count).by(1)
 
         draft = BetterTogether::Platform.order(:created_at).last
@@ -686,11 +798,38 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       it 'builds the wizard for the draft platform' do
         create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
 
-        get better_together.provision_platform_community_billing_path(community, locale:)
+        post better_together.provision_platform_community_billing_path(community, locale:)
 
         draft = BetterTogether::Platform.order(:created_at).last
         expect(BetterTogether::Wizard.for_platform(draft)
           .find_by(identifier: BetterTogether::NewPlatformSetupWizardBuilder::IDENTIFIER)).to be_present
+      end
+
+      it 'reuses an existing in-progress draft instead of minting a second one on a repeat call' do
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
+
+        post better_together.provision_platform_community_billing_path(community, locale:)
+        first_draft = BetterTogether::Platform.order(:created_at).last
+
+        expect do
+          post better_together.provision_platform_community_billing_path(community, locale:)
+        end.not_to change(BetterTogether::Platform, :count)
+
+        expect(response).to redirect_to(
+          better_together.new_platform_setup_step_welcome_path(platform_id: first_draft.to_param)
+        )
+      end
+
+      it 'mints a fresh draft once the prior one has completed platform_identity (host_url no longer a placeholder)' do
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
+
+        post better_together.provision_platform_community_billing_path(community, locale:)
+        first_draft = BetterTogether::Platform.order(:created_at).last
+        first_draft.update!(host_url: 'https://real-platform.example.test')
+
+        expect do
+          post better_together.provision_platform_community_billing_path(community, locale:)
+        end.to change(BetterTogether::Platform, :count).by(1)
       end
     end
 
@@ -698,7 +837,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       create_owned_billing_subscription(owner: community, billing_plan:, status: 'past_due')
 
       expect do
-        get better_together.provision_platform_community_billing_path(community, locale:)
+        post better_together.provision_platform_community_billing_path(community, locale:)
       end.not_to change(BetterTogether::Platform, :count)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
@@ -707,7 +846,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
     it 'does not create a platform and redirects with an alert when there is no active subscription' do
       expect do
-        get better_together.provision_platform_community_billing_path(community, locale:)
+        post better_together.provision_platform_community_billing_path(community, locale:)
       end.not_to change(BetterTogether::Platform, :count)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))

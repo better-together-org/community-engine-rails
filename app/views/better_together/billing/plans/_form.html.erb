@@ -74,11 +74,11 @@
         <%= form.label :currency,
                        t('better_together.billing.plans.field_currency', default: 'Currency'),
                        class: 'form-label' %>
-        <%= form.text_field :currency,
-                            class: 'form-control',
-                            maxlength: 3,
-                            placeholder: 'CAD',
-                            required: true %>
+        <%= form.select :currency,
+                        BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES,
+                        { selected: billing_plan.currency.presence || 'CAD' },
+                        class: 'form-select',
+                        required: true %>
       </div>
     </div>
   </div>

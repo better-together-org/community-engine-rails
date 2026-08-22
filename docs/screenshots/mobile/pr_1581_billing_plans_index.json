@@ -2,7 +2,7 @@
   "name": "pr_1581_billing_plans_index",
   "device": "mobile",
   "url": "/en/host/billing/plans",
-  "title": "Billing Plans | Test Host Community",
+  "title": "Billing Plans | Community Engine",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",

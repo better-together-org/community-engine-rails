@@ -161,8 +161,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             post :merchant_onboarding
             post :refresh_merchant_account
             post 'events/:event_id/replay', action: :replay_event, as: :replay_event
-            get  :provision_platform
+            post :provision_platform
             patch :accepts_sponsorship
+            get :search_beneficiaries
           end
 
           resources :invitations, only: %i[create destroy] do
@@ -677,7 +678,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # run gets its own platform-scoped Wizard row, so every step route
         # carries :platform_id — see
         # NewPlatformSetupStepsController#wizard/#target_platform.
-        get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
+        post 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
         scope path: 'new_platform_setup/:platform_id' do # rubocop:todo Metrics/BlockLength
           get 'welcome', to: 'new_platform_setup_steps#welcome',

@@ -8,7 +8,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
   "callouts": [
     {
-      "selector": "#current_subscription_card_person_03d82f08-293a-4d6a-b1b0-eeb0ee2c4840",
+      "selector": "#current_subscription_card_person_ddceeec5-8387-43c3-bb3e-0e4bbe5ce7e4",
       "title": "Personal subscription",
       "bullets": [
         "Shows the plan attached to the person as payer.",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#sponsored_communities_card_person_03d82f08-293a-4d6a-b1b0-eeb0ee2c4840",
+      "selector": "#sponsored_communities_card_person_ddceeec5-8387-43c3-bb3e-0e4bbe5ce7e4",
       "title": "Sponsored communities",
       "bullets": [
         "Lists communities this person is currently paying for.",
@@ -77,6 +77,42 @@
         "width": 380,
         "height": 210,
         "score": 1057.0
+      }
+    },
+    {
+      "selector": "#merchant_account_card_person_ddceeec5-8387-43c3-bb3e-0e4bbe5ce7e4",
+      "title": "Merchant account (connected)",
+      "bullets": [
+        "Session follow-up: the status badge now reflects real state (green here) instead of a hardcoded color regardless of status.",
+        "The explainer text below correctly describes a connected, active account — a prior bug reused the not-connected copy for both states on the community version of this page."
+      ],
+      "target": {
+        "x": 504.5,
+        "y": 428.0,
+        "width": 856.0,
+        "height": 222.0,
+        "right": 1360.5,
+        "bottom": 650.0,
+        "center_x": 932.5,
+        "center_y": 539.0
+      },
+      "avoid": {
+        "x": 504.5,
+        "y": 428.0,
+        "width": 856.0,
+        "height": 222.0,
+        "right": 1360.5,
+        "bottom": 650.0,
+        "center_x": 932.5,
+        "center_y": 539.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 1036,
+        "y": 670.0,
+        "width": 380,
+        "height": 424,
+        "score": 0
       }
     }
   ]

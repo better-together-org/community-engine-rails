@@ -38,7 +38,7 @@
                   <%= t("better_together.billing.plans.interval_#{plan.billing_interval}",
                         default: plan.billing_interval.humanize) %>
                 </td>
-                <td><%= number_to_currency(plan.amount_cents / 100.0, unit: plan.currency + ' ') %></td>
+                <td><%= billing_amount(plan.amount_cents, plan.currency) %></td>
                 <td>
                   <% if plan.active? %>
                     <span class="badge bg-success billing-plan-status-badge"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>

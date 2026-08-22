@@ -24,10 +24,9 @@
               <tr id="<%= dom_id(billing_plan) %>">
                 <td><strong><%= billing_plan.name %></strong></td>
                 <td><%= render 'better_together/shared/billing_plan_details', billing_plan: billing_plan %></td>
-                <td><%= billing_plan.billing_interval %></td>
+                <td><%= billing_interval_label(billing_plan.billing_interval) %></td>
                 <td>
-                  <%= number_to_currency(billing_plan.amount_cents / 100.0,
-                                          unit: billing_plan.currency.upcase == 'CAD' ? 'CA$' : "#{billing_plan.currency.upcase} ") %>
+                  <%= billing_amount(billing_plan.amount_cents, billing_plan.currency) %>
                 </td>
                 <td class="text-end">
                   <%= button_to t('better_together.billing.start_checkout', default: 'Start checkout'),

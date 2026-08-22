@@ -20,7 +20,7 @@
       <% end %>
       <p class="mb-2"><strong><%= billing_subscription.billing_plan.name %></strong></p>
       <p class="mb-2">
-        <span class="badge text-bg-primary billing-subscription-status-badge">
+        <span class="badge <%= billing_subscription.status_badge_class %> billing-subscription-status-badge">
           <%= t("better_together.billing.subscription_status.#{billing_subscription.status}", default: billing_subscription.status.humanize) %>
         </span>
       </p>

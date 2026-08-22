@@ -162,5 +162,14 @@ RSpec.describe 'BetterTogether::Sponsorships' do
       expect(response).to have_http_status(:redirect)
       expect(sponsorship.reload).to be_status_active
     end
+
+    it 'renders the stop-sponsorship button with a confirmation prompt' do
+      sign_in sponsor_user
+
+      get better_together.sponsorship_path(sponsorship.token, locale:)
+
+      expect(response.body).to include('data-turbo-confirm=')
+      expect(response.body).to include('Stop this sponsorship?')
+    end
   end
 end

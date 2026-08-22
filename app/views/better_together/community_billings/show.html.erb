@@ -3,6 +3,12 @@
 <% end %>
 
 <div id="<%= dom_id(@community, :billing_page) %>" class="container my-4">
+  <% if @checkout_session_pending %>
+    <%= turbo_stream_from BetterTogether::Billing::CheckoutSessionSyncBroadcaster.stream_name(params[:checkout_session_id]) %>
+    <%= render 'better_together/shared/checkout_session_pending',
+               dom_id: BetterTogether::Billing::CheckoutSessionSyncBroadcaster.target_dom_id(params[:checkout_session_id]) %>
+  <% end %>
+
   <%= render 'better_together/shared/billing_page_header',
              owner: @community,
              owner_path: community_path(@community, locale: I18n.locale),
@@ -25,7 +31,7 @@
           <%= t(
                 'better_together.billing.sponsorship_received_notice',
                 default: 'This community has received %{amount} in sponsorship contributions.',
-                amount: number_to_currency(received_contribution_total / 100.0)
+                amount: billing_amount(received_contribution_total, @received_monetary_contributions.first&.currency || 'CAD')
               ) %>
         </div>
       <% end %>
@@ -45,8 +51,8 @@
                  onboarding_path: merchant_onboarding_community_billing_path(@community, locale: I18n.locale),
                  onboarding_confirm_text: t('better_together.billing.merchant_onboarding_confirm',
                                             default: "This will create a Stripe-managed merchant account linked to this community. Stripe's data practices apply. Proceed?"),
-                 connected_explainer_text: t('better_together.billing.merchant_connect_explainer_community',
-                                             default: 'Connect Stripe so this community can complete onboarding and receive payouts in later commerce flows.'),
+                 connected_explainer_text: t('better_together.billing.merchant_status_guidance_community',
+                                             default: 'Use onboarding to finish Stripe Connect setup for this community, then refresh this card after Stripe reviews the account.'),
                  connect_explainer_text: t('better_together.billing.merchant_connect_explainer_community',
                                            default: 'Connect Stripe so this community can complete onboarding and receive payouts in later commerce flows.'),
                  admin_only_text: t('better_together.billing.merchant_onboarding_admin_only_community',
@@ -86,12 +92,32 @@
               <div class="row g-2 align-items-end">
                 <div class="col-md-5">
                   <%= f.label :beneficiary_community_id, t('better_together.billing.beneficiary_community', default: 'Community to support'), class: 'form-label' %>
-                  <%= f.text_field :beneficiary_community_id, class: 'form-control', placeholder: t('better_together.billing.beneficiary_community_placeholder', default: 'Community slug') %>
+                  <%= f.select :beneficiary_community_id,
+                               options_for_select([]),
+                               { include_blank: true },
+                               {
+                                 class: 'form-select',
+                                 required: true,
+                                 data: {
+                                   controller: 'better-together--slim-select',
+                                   'better-together--slim-select-options-value': {
+                                     ajax: {
+                                       url: search_beneficiaries_community_billing_path(@community, locale: I18n.locale),
+                                       fetch: true,
+                                       delay: 300
+                                     },
+                                     searchPlaceholder: t('better_together.billing.beneficiary_community_placeholder', default: 'Search communities'),
+                                     searchHighlight: true,
+                                     closeOnSelect: true,
+                                     allowDeselect: true
+                                   }.to_json
+                                 }
+                               } %>
                 </div>
                 <div class="col-md-4">
                   <%= f.label :billing_plan_id, t('better_together.billing.contribution_amount', default: 'Amount'), class: 'form-label' %>
                   <%= f.select :billing_plan_id,
-                               @sponsorship_contribution_plans.map { |plan| [number_to_currency(plan.amount_cents / 100.0), plan.identifier] },
+                               @sponsorship_contribution_plans.map { |plan| [billing_amount(plan.amount_cents, plan.currency), plan.identifier] },
                                {}, class: 'form-select' %>
                 </div>
                 <div class="col-md-3">

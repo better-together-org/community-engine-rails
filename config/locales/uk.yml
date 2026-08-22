@@ -894,21 +894,24 @@ uk:
         Stripe)
       available_plans: Dostupni taryfy
       beneficiary_community: Спільнота для підтримки
-      beneficiary_community_placeholder: Слаг спільноти
+      beneficiary_community_placeholder: Пошук спільнот
       beneficiary_identifier: Отримувач (слаг або ім'я користувача)
       beneficiary_type: Тип отримувача
       billed_to: 'Vystavleno dlia:'
       breadcrumb_label: Billing
       cancel_at_period_end: 'Skasuvaty naprykintsi periodu:'
+      checkout_session_confirming: Підтверджуємо ваш платіж через Stripe...
       checkout_session_invalid: 'Sesiiu Stripe ne vdalosia synchronizuvaty: %<message>s'
       checkout_sync_complete: Platezh Stripe uspishno synchronizovano.
       checkout_sync_pending: Platezh Stripe otrymano, ale stan pidpysky shche ne vdalosia
         synchronizuvaty.
       checkout_sync_wrong_beneficiary: Tsei seans Stripe Checkout ne nalezhyt tsii
         storintsi vystavlennia rakhunkiv.
+      checkout_unavailable: 'Oplata zaraz nedostupna: %<message>s'
       community_capacity_tier: 'Riven vmistymosti spilnoty:'
       community_sponsor_checkout: Oplatyty cherez %{community}
       contribute_now: Внести вклад
+      contribute_unavailable: 'Не вдалося обробити цей внесок зараз: %<message>s'
       contribution_amount: Сума
       current_period_ends: 'Potochnyi period zakinchuietsia:'
       current_subscription: Potochna pidpyska
@@ -920,6 +923,8 @@ uk:
       decline_sponsorship: Відмовитися
       details: Detali
       end_sponsorship: Завершити спонсорство
+      end_sponsorship_confirm: Завершити це спонсорство? Отримувач більше не отримуватиме
+        внески в рамках цих відносин.
       event_type: Podiia
       failed_without_message: Protsesor povidomyv pro pomylku bez tekstu pomylky.
       heading: Billing spilnoty
@@ -965,12 +970,12 @@ uk:
       merchant_account_status:
         active: Aktyvny
         disabled: Vymknenyi
-        enabled: Uvimkneno
+        disconnected: Vidkliucheno
         errored: Pomylka
+        onboarding: Na etapi pidkliuchennia
         pending: Ochikuye
-        rejected: Vidkhyleno
+        required_action: Potribna diia
         restricted: Obmezhenyi
-        restricted_soon: Skoro buде obmezhenyi
       merchant_charges_enabled: 'Charges enabled:'
       merchant_connect_explainer_community: Pidkliuchit Stripe, shchob tsia spilnota
         mohla zavershyty onboarding i otrymuvaty vyplaty v maibutnikh komertsiinykh
@@ -1000,6 +1005,9 @@ uk:
       merchant_required_action_heading: Dlia merchant account potribna dia
       merchant_status_guidance: Vykorystai onboarding, shchob zavershyty nalashtuvannia
         Stripe Connect, a potim onovy tsiu kartku pislia perevirky akkaunta v Stripe.
+      merchant_status_guidance_community: Vykorystai onboarding, shchob zavershyty
+        nalashtuvannia Stripe Connect dlia tsiiei spilnoty, a potim onovy tsiu kartku
+        pislia perevirky akkaunta v Stripe.
       merchant_support_attention_body: Tsei merchant account zaraz ne hotovyi do vyplat.
         Perevir stan akkaunta v Stripe ta onovy tsiu storinku pislia bud-yakoi korektsiinoi
         dii.

@@ -114,11 +114,21 @@ RSpec.describe 'Billing foundation DOM contracts', :skip_host_setup, type: :feat
     create(:better_together_billing_subscription, billing_plan: plan, billable_owner: community, beneficiary: community)
     capybara_login_as_platform_manager
 
-    visit better_together.provision_platform_community_billing_path(community, locale: I18n.default_locale)
+    visit better_together.community_billing_path(community, locale: I18n.default_locale)
+    expect(page).to have_css('#provision-hosted-platform-btn')
+    click_on I18n.t('better_together.billing.provision_platform_cta', locale: I18n.default_locale, default: 'Provision hosted platform')
 
     expect(page).to have_css('#new-platform-setup-progress')
     draft = BetterTogether::Platform.order(:created_at).last
     expect(draft.provisioning_community).to eq(community)
+  end
+
+  it 'platforms index exposes a stable Provision New Platform entry point' do
+    capybara_login_as_platform_manager
+
+    visit better_together.platforms_path(locale: I18n.default_locale)
+
+    expect(page).to have_css('#provision-new-platform-btn')
   end
 
   it 'community edit exposes a stable billing entry point anchor' do

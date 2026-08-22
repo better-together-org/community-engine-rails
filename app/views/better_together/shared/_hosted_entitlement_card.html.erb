@@ -32,7 +32,7 @@
       </p>
     <% end %>
 
-    <p class="mb-0 text-muted small">
+    <p id="hosted-entitlement-explainer" class="mb-0 text-muted small">
       <% if hosted_entitlement.active? %>
         <%= t('better_together.billing.hosted_entitlement_active_explainer', default: 'This community currently has an active hosted plan and remains in good standing for hosted operations.') %>
       <% elsif hosted_entitlement.attention_needed? %>
@@ -40,7 +40,7 @@
       <% elsif hosted_entitlement.grace_period? %>
         <%= t('better_together.billing.hosted_entitlement_grace_explainer',
               default: 'This community still has hosted access, but billing has lapsed. Access will pause on %{grace_period_ends_at} unless this is resolved.',
-              grace_period_ends_at: hosted_entitlement.grace_period_ends_at.to_date.to_s) %>
+              grace_period_ends_at: l(hosted_entitlement.grace_period_ends_at, format: :long)) %>
       <% else %>
         <%= t('better_together.billing.hosted_entitlement_inactive_explainer', default: 'No active hosted plan is currently synced for this community.') %>
       <% end %>
@@ -53,9 +53,12 @@
           <%= t('better_together.billing.provision_platform_cta_explainer',
                 default: 'Your plan entitles this community to a hosted platform. Provision one now to activate platform services.') %>
         </p>
-        <%= link_to t('better_together.billing.provision_platform_cta', default: 'Provision hosted platform'),
-                    provision_path,
-                    class: 'btn btn-success btn-sm' %>
+        <%= button_to t('better_together.billing.provision_platform_cta', default: 'Provision hosted platform'),
+                      provision_path,
+                      method: :post,
+                      id: 'provision-hosted-platform-btn',
+                      class: 'btn btn-success btn-sm',
+                      data: { turbo: false } %>
       </div>
     <% end %>
   </div>

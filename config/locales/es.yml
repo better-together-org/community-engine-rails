@@ -909,21 +909,26 @@ es:
         de webhook de Stripe)
       available_plans: Planes disponibles
       beneficiary_community: Comunidad a apoyar
-      beneficiary_community_placeholder: Slug de la comunidad
+      beneficiary_community_placeholder: Buscar comunidades
       beneficiary_identifier: Identificador del beneficiario (slug o nombre de usuario)
       beneficiary_type: Tipo de beneficiario
       billed_to: 'Facturado a:'
       breadcrumb_label: Facturacion
       cancel_at_period_end: 'Cancelar al final del periodo:'
+      checkout_session_confirming: Confirmando tu pago con Stripe...
       checkout_session_invalid: 'La sesion de Stripe no pudo sincronizarse: %<message>s'
       checkout_sync_complete: El pago de Stripe se sincronizo correctamente.
       checkout_sync_pending: Se recibio el pago de Stripe, pero todavia no pudo sincronizarse
         el estado de la suscripcion.
       checkout_sync_wrong_beneficiary: Esta sesion de Stripe Checkout no pertenece
         a esta pagina de facturacion.
+      checkout_unavailable: 'El proceso de pago no esta disponible en este momento:
+        %<message>s'
       community_capacity_tier: 'Nivel de capacidad de la comunidad:'
       community_sponsor_checkout: Pagar a traves de %{community}
       contribute_now: Contribuir ahora
+      contribute_unavailable: 'No fue posible procesar esta contribucion en este momento:
+        %<message>s'
       contribution_amount: Cantidad
       current_period_ends: 'El periodo actual termina:'
       current_subscription: Suscripcion actual
@@ -935,6 +940,8 @@ es:
       decline_sponsorship: Rechazar
       details: Detalles
       end_sponsorship: Detener este patrocinio
+      end_sponsorship_confirm: Deseas detener este patrocinio? El beneficiario dejara
+        de recibir contribuciones de esta relacion.
       event_type: Evento
       failed_without_message: El procesador informo un fallo sin mensaje de error.
       heading: Facturacion de la comunidad
@@ -980,12 +987,12 @@ es:
       merchant_account_status:
         active: Activo
         disabled: Deshabilitado
-        enabled: Habilitado
+        disconnected: Desconectado
         errored: Error
+        onboarding: En proceso de incorporacion
         pending: Pendiente
-        rejected: Rechazado
+        required_action: Accion requerida
         restricted: Restringido
-        restricted_soon: Restringido pronto
       merchant_charges_enabled: 'Cobros habilitados:'
       merchant_connect_explainer_community: Conecta Stripe para que esta comunidad
         pueda completar la incorporacion y recibir pagos en futuros flujos comerciales.
@@ -1017,6 +1024,9 @@ es:
       merchant_status_guidance: Usa la incorporacion para completar la configuracion
         de Stripe Connect y luego actualiza esta tarjeta despues de que Stripe revise
         la cuenta.
+      merchant_status_guidance_community: Usa la incorporacion para completar la configuracion
+        de Stripe Connect de esta comunidad y luego actualiza esta tarjeta despues
+        de que Stripe revise la cuenta.
       merchant_support_attention_body: Esta cuenta comercial no esta lista para pagos
         en este momento. Revisa el estado en Stripe y actualiza esta pagina despues
         de cualquier accion correctiva.

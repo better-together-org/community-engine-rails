@@ -114,7 +114,7 @@ RSpec.describe 'Documentation screenshots for sponsorship panel states',
         { selector: '#sponsorship-active-alert', title: 'Active sponsorship',
           bullets: ['Confirms the sponsorship is live and contributions are being credited.'] },
         { selector: '#sponsorship-end-btn', title: 'Stop this sponsorship',
-          bullets: ['Either party can end an active sponsorship at any time.', 'Ending does not retroactively remove contributions already credited.'] }
+          bullets: ['Either party can end an active sponsorship at any time.', 'Ending does not retroactively remove contributions already credited.', 'Session follow-up: now requires a confirmation prompt before firing — the native browser dialog itself isn\'t visible in a static screenshot, but this is the only destructive action on this page and it previously fired immediately on a single click.'] }
       ],
       narrative: {
         title: 'Sponsorship — active',
@@ -124,9 +124,9 @@ RSpec.describe 'Documentation screenshots for sponsorship panel states',
           { title: 'Active sponsorship',
             description: 'Reachable from both "accepted" and "active" statuses (Sponsorship#status_accepted? transitions to active on first contribution) — the view intentionally treats both as one visual state.' },
           { title: 'Stop this sponsorship',
-            description: 'SponsorshipPolicy#end? authorizes either the sponsor or the beneficiary, unlike accept?/decline? which are beneficiary-only.' }
+            description: 'SponsorshipPolicy#end? authorizes either the sponsor or the beneficiary, unlike accept?/decline? which are beneficiary-only. Session follow-up: this button now carries data-turbo-confirm, matching the confirm pattern already used by the plan-deactivate toggle elsewhere in billing — previously a misclick immediately ended what may be an active funding relationship with no warning.' }
         ],
-        accessibility_notes: 'The end button is a standard button_to submit; the status alert uses alert-success semantics.'
+        accessibility_notes: 'The end button is a standard button_to submit with data-turbo-confirm; browsers render the confirmation as a native modal dialog, so it is keyboard-operable and announced by screen readers without any additional app-level work. The status alert uses alert-success semantics.'
       }
     ) do
       capybara_login_as_platform_manager

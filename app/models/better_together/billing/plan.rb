@@ -9,6 +9,15 @@ module BetterTogether
       BILLING_INTERVALS = %w[month year one_time].freeze
       DEFAULT_ELIGIBLE_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
 
+      # ISO 4217 alpha-3 codes this platform accepts for a Plan's price.
+      # Deliberately a superset of BillingHelper::CURRENCY_SYMBOLS - a
+      # currency can be billed here without yet having a curated display
+      # symbol (the helper falls back to the raw code in that case).
+      SUPPORTED_CURRENCY_CODES = %w[
+        AUD BRL CAD CHF CNY DKK EUR GBP HKD INR
+        JPY KRW MXN NOK NZD PLN SEK SGD USD ZAR
+      ].freeze
+
       # Fields that must not change once a Stripe Price has been linked.
       PRICE_IMMUTABLE_FIELDS = %i[amount_cents currency billing_interval].freeze
 
@@ -30,7 +39,7 @@ module BetterTogether
       validates :stripe_price_id, uniqueness: true
       validates :amount_cents, numericality: { greater_than_or_equal_to: 0, only_integer: true }
       validates :billing_interval, inclusion: { in: BILLING_INTERVALS }
-      validates :currency, length: { is: 3 }
+      validates :currency, length: { is: 3 }, inclusion: { in: SUPPORTED_CURRENCY_CODES }
       validates :active, inclusion: { in: [true, false] }
       validate :price_fields_immutable_after_create
       validate :pricing_tier_within_known_values

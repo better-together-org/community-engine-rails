@@ -42,7 +42,9 @@
                     end_sponsorship_path(@sponsorship.id, locale: I18n.locale),
                     method: :post,
                     id: 'sponsorship-end-btn',
-                    class: 'btn btn-outline-danger' %>
+                    class: 'btn btn-outline-danger',
+                    data: { turbo: false, turbo_confirm: t('better_together.billing.end_sponsorship_confirm',
+                      default: 'Stop this sponsorship? The beneficiary will no longer receive contributions from this relationship.') } %>
     <% end %>
   <% elsif @sponsorship.status_ended? %>
     <div id="sponsorship-ended-alert" class="alert alert-secondary">

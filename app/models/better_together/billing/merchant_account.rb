@@ -84,6 +84,17 @@ module BetterTogether
         support_state.present?
       end
 
+      def status_badge_class
+        case support_state
+        when :disconnected, :errored, :restricted, :disabled
+          'text-bg-danger'
+        when :required_action, :capability_gap
+          'text-bg-warning'
+        else
+          active? ? 'text-bg-success' : 'text-bg-secondary'
+        end
+      end
+
       def deauthorized_at
         timestamp_from_metadata('deauthorized_at')
       end

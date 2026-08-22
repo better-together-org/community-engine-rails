@@ -71,7 +71,7 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include('Sponsored communities')
       expect(response.body).to include('Mutual Aid Circle')
-      expect(response.body).to include('$50.00 contributed')
+      expect(response.body).to include('CA$50.00 contributed')
       expect(response.body).to include('Manage billing')
     end
 
@@ -211,8 +211,17 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       expect(response.body).to include('Replay event')
     end
 
-    it 'synchronizes a checkout session when one is returned from Stripe' do
-      friendly_scope = instance_double(ActiveRecord::Relation, find: person)
+    it 'enqueues an async sync job and renders a pending state when a checkout session is returned from Stripe' do
+      expect do
+        get better_together.person_billing_path(person, locale:, checkout_session_id: 'cs_test_123')
+      end.to have_enqueued_job(BetterTogether::Billing::SyncCheckoutSessionJob)
+        .with('cs_test_123', person.class.name, person.id)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Confirming your payment with Stripe')
+    end
+
+    it 'broadcasts the synced result via Turbo Streams once the async job runs' do
       sync_result = BetterTogether::Billing::StripeCheckoutSessionSync::Result.new(
         synced: true,
         billable_owner: person,
@@ -220,15 +229,22 @@ RSpec.describe 'BetterTogether::PersonBillings' do
         reason: :synced
       )
       sync_service = instance_double(BetterTogether::Billing::StripeCheckoutSessionSync, call: sync_result)
-
-      allow(BetterTogether::Person).to receive(:friendly).and_return(friendly_scope)
       allow(BetterTogether::Billing::StripeCheckoutSessionSync).to receive(:new).and_return(sync_service)
+      allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to)
 
-      get better_together.person_billing_path(person, locale:, checkout_session_id: 'cs_test_123')
+      perform_enqueued_jobs do
+        get better_together.person_billing_path(person, locale:, checkout_session_id: 'cs_test_123')
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Stripe checkout was synchronized successfully.')
       expect(sync_service).to have_received(:call).with(checkout_session_id: 'cs_test_123', beneficiary: person)
+      expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
+        'checkout_session_cs_test_123',
+        hash_including(
+          locals: hash_including(
+            messages: [hash_including(variant: :notice, text: a_string_matching(/synchronized successfully/))]
+          )
+        )
+      )
     end
   end
 
@@ -261,6 +277,37 @@ RSpec.describe 'BetterTogether::PersonBillings' do
       get better_together.person_billing_path(person, locale:)
 
       expect(response.body).to include('data-turbo="false"')
+    end
+
+    it 'redirects with a friendly alert instead of a 500 when Stripe raises' do
+      Pay::Stripe::Customer.create!(owner: person, processor: 'stripe', processor_id: 'cus_person_checkout_error')
+      allow(Stripe::Checkout::Session).to receive(:create).and_raise(Stripe::InvalidRequestError.new('No such price', 'price'))
+
+      post better_together.checkout_person_billing_path(person, locale:), params: { billing_plan_id: billing_plan.identifier }
+
+      expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
+      follow_redirect!
+      expect(response.body).to include('Checkout is not available right now')
+    end
+  end
+
+  describe 'PATCH /:locale/p/:person_id/billing/accepts_sponsorship' do
+    it 'updates the opt-in flag and redirects with a notice' do
+      patch better_together.accepts_sponsorship_person_billing_path(person, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
+      expect(person.reload.accepts_sponsorship?).to be(true)
+    end
+
+    it 'redirects with an alert instead of a 500 when the update fails validation' do
+      allow_any_instance_of(BetterTogether::Person) # rubocop:disable RSpec/AnyInstance
+        .to receive(:update!).and_raise(ActiveRecord::RecordInvalid.new(person))
+
+      patch better_together.accepts_sponsorship_person_billing_path(person, locale:),
+            params: { accepts_sponsorship: '1' }
+
+      expect(response).to redirect_to(better_together.person_billing_path(person, locale:))
     end
   end
 

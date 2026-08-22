@@ -1,8 +1,8 @@
 {
   "name": "sponsorship_review_awaiting_decision",
   "device": "desktop",
-  "url": "/en/sponsorships/CFTx3TGrJ7sHgH7ezKsvZU4t",
-  "title": "Test Host Community",
+  "url": "/en/sponsorships/xFsuu8EnLLqCo6xAPRrf9fse",
+  "title": "Community Engine",
   "locale": "en",
   "feature_set": "sponsorship_panel_states",
   "source_spec": "./spec/docs_screenshots/better_together/sponsorship_panel_states_spec.rb",
