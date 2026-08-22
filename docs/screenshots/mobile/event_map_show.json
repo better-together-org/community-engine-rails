@@ -1,8 +1,8 @@
 {
   "name": "event_map_show",
   "device": "mobile",
-  "url": "/en/events/536ee0ec-2a20-46f5-92e5-42bd66fb3020",
-  "title": "Community Meetup | Events | Community Engine",
+  "url": "/en/events/30e50b12-f6ab-4659-b803-b1f01804abfb",
+  "title": "Community Meetup | Events | Hyatt, Herzog and Swaniawski",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_map",
@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 29.0,
-        "y": 771.390625,
+        "y": 811.390625,
         "width": 427.0,
-        "height": 489.609375,
+        "height": 449.609375,
         "right": 456.0,
         "bottom": 1261.0,
         "center_x": 242.5,
-        "center_y": 1016.1953125
+        "center_y": 1036.1953125
       },
       "avoid": {
         "x": 29.0,
-        "y": 771.390625,
+        "y": 811.390625,
         "width": 427.0,
-        "height": 489.609375,
+        "height": 449.609375,
         "right": 456.0,
         "bottom": 1261.0,
         "center_x": 242.5,
-        "center_y": 1016.1953125
+        "center_y": 1036.1953125
       },
       "placement": {
         "side": "above",
         "x": 107.5,
-        "y": 333.39,
+        "y": 373.39,
         "width": 270.0,
         "height": 418,
-        "score": 771.390625
+        "score": 811.390625
       }
     }
   ]

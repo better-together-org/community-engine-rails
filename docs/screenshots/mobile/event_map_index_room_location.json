@@ -1,20 +1,20 @@
 {
-  "name": "event_map_index",
+  "name": "event_map_index_room_location",
   "device": "mobile",
   "url": "/en/events",
-  "title": "Events | Funk, Altenwerth and Bruen",
+  "title": "Events | Test Host Community",
   "locale": "en",
   "role": "community_organizer",
   "feature_set": "event_map",
-  "flow": "event_map_index",
+  "flow": "event_map_index_room_location",
   "source_spec": "./spec/docs_screenshots/better_together/event_map_spec.rb",
   "callouts": [
     {
       "selector": ".events-map",
-      "title": "All events with a location",
+      "title": "Room-located event renders without error",
       "bullets": [
-        "Aggregates every event with a geocoded location onto one map (BetterTogether::Geography::EventCollectionMap).",
-        "Mirrors the existing communities index map — same shared _map.html.erb partial and Stimulus controller."
+        "Regression coverage: a Room (or Floor) assigned as an event's location previously 500'd this entire page.",
+        "Room/Floor have no space of their own — their marker position comes from their building's geocoded space."
       ],
       "target": {
         "x": 12.0,
@@ -41,7 +41,7 @@
         "x": 24.0,
         "y": 44,
         "width": 270.0,
-        "height": 398
+        "height": 456
       }
     }
   ]

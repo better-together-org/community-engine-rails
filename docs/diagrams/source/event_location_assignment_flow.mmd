@@ -1,28 +1,28 @@
 %% render.orientation: portrait
 flowchart TD
-  A[Organizer opens the event form] --> B{Location type radio}
-  B -->|Simple| C[Free-text location name field]
-  B -->|Address / Building / Settlement / Region| D["location_selector_controller.js\npoints the search field at the chosen type"]
+  A[Organizer opens the event form] --> B["Mixed-search picker\n(single field, no type radio)"]
+  B --> C["GET /events/available_locations?search=..."]
+  C --> D["EventsController#available_locations\n(location_type omitted)"]
+  D --> E{Per Placeable type}
+  E -->|Address / Building| F["Policy-scoped:\norganizer's own + public records"]
+  E -->|Settlement / Region| G[Unscoped: full curated reference list]
+  E -->|Floor / Room| H[Scoped via their building's visibility]
+  F --> I
+  G --> I
+  H --> I["Composite 'ClassName:id' results,\nmerged and type-labeled"]
 
-  D --> E["GET /events/available_locations?location_type=X"]
-  E --> F["EventsController#available_locations"]
-  F --> G{Which type?}
-  G -->|Address or Building| H["Policy-scoped:\norganizer's own + public records"]
-  G -->|Settlement or Region| I["Unscoped:\nfull curated reference list"]
-  H --> J[SlimSelect shows matching results]
-  I --> J
+  I --> J{Organizer's choice}
+  J -->|Picks a result| K["applyLocationSelection splits the composite\nvalue into location_id + location_type"]
+  J -->|"Types free text, no match\n(addable)"| L["Written to the hidden\nname field instead"]
+  J -->|"Clicks '+New'\n(Address/Building only, always available)"| M[Inline new-record fields submitted alongside]
 
-  J --> K{Organizer's choice}
-  K -->|Picks an existing record| L["location_id + location_type submitted"]
-  K -->|"Clicks + New\n(Address/Building only)"| M["Inline new-record fields submitted alongside"]
+  K --> N["location_id + location_type\nsubmitted as plain fields"]
+  L --> N
+  N --> O["Ordinary Rails mass assignment\n(belongs_to :location, polymorphic)\n— no custom setter involved"]
 
-  L --> N["LocatableLocation#location_attributes="]
-  M --> N
-  N --> O{"id" present?}
-  O -->|Yes| P["assign_location_by_id:\nlook up the existing record\nacross every allowed type"]
-  O -->|"No\n(picker submits location_id, not id)"| Q["assign_location_by_type:\ndispatch via Placeable.included_in_models"]
-  Q --> R["klass.locatable_location_build(attrs):\nlooks up by id/location_id first,\nonly builds a new record if not found"]
+  M --> P["LocatableLocation#location_attributes=\n(custom setter, '+New' path only)"]
+  P --> Q["klass.locatable_location_build(attrs):\nlooks up by id first,\nonly builds a new record if not found"]
 
-  P --> S["belongs_to :location, autosave: true"]
-  R --> S
-  S --> T[Event + location saved together in one submit]
+  O --> R["belongs_to :location, autosave: true"]
+  Q --> R
+  R --> S[Event + location saved together in one submit]

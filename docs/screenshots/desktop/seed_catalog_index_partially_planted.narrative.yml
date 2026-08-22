@@ -16,6 +16,8 @@ callouts:
   :description: Each category is planted independently via its own button, or all
     at once via Plant All.
 accessibility_notes: Status changes are reflected in both badge color and text, not
-  color alone.
+  color alone. Provinces and Settlements are also visibly disabled with a hint at
+  this point (see the "nothing planted" screenshot above for the dedicated prerequisite-guard
+  callout) -- planting Continents alone does not unblock either of them.
 slug: seed_catalog_index_partially_planted
 device: desktop

@@ -50,47 +50,63 @@ RSpec.describe 'Documentation screenshots for the event location picker',
     expect(page).to have_css('#event-time-and-place.show')
   end
 
-  it 'captures the location type selector on a new event' do
+  it 'captures the mixed-search picker showing live results across location types' do
+    settlement = create(:geography_settlement, name: 'Corner Brook')
+    address_event = create(:better_together_event, :with_address_location, platform: host_platform,
+                                                                           creator: manager.person,
+                                                                           name: 'Corner Meetup')
+    address_event.location.location.update!(city_name: 'Corner Brook')
+
     BetterTogether::CapybaraScreenshotEngine.capture(
-      'event_location_type_selector',
+      'event_location_picker_search',
       device: :both,
-      metadata: screenshot_metadata(flow: 'event_location_type_selector', role: 'event_organizer'),
+      metadata: screenshot_metadata(flow: 'event_location_picker_search', role: 'event_organizer'),
       callouts: [
         {
-          id: 'type_selector',
-          selector: '[data-better_together--location-selector-target="typeSelector"]',
-          title: 'Location type',
+          id: 'location_picker',
+          selector: '#event_location_picker',
+          title: 'One field searches everything',
           bullets: [
-            'Simple: free-text name only (original behavior, still the default).',
-            'Address / Building / Settlement / Region: attach a real, existing record.'
+            'Replaces the old location-type radio group entirely.',
+            'Searches Address, Building, Floor, Room, Settlement, and Region at once as you type.'
           ]
         }
       ],
       narrative: {
-        title: 'Event Form — Location Type Selector',
+        title: 'Event Form — Mixed-Search Location Picker',
         audience: %w[event_organizer community_organizer developer],
-        journey_step: 'As an event organizer, I choose how precisely to describe where my event ' \
-                      'takes place — a plain name, or a real address/building/settlement/region ' \
-                      'already known to the platform.',
+        journey_step: 'As an event organizer, I type a few letters of the venue name and see matching ' \
+                      'addresses, buildings, and curated places together in one list, instead of first ' \
+                      'having to know and pick which kind of location it is.',
         callouts: [
           {
-            id: 'type_selector',
-            title: 'Location type radio group',
-            description: 'New in this PR: Settlement and Region join the existing Address and ' \
-                         'Building options. The allow-list is read from ' \
-                         'BetterTogether::Geography::Placeable.included_in_models on the server, ' \
-                         'so a future fifth location type appears here automatically with no view change.'
+            id: 'location_picker',
+            title: 'Mixed-type search',
+            description: 'New in this PR: EventsController#available_locations searches every ' \
+                         'Geography::Placeable type at once when no location_type is given, returning ' \
+                         'composite "ClassName:id" values so one merged, type-labeled result list can span ' \
+                         'types without id collisions. The allow-list is read from ' \
+                         'Placeable.included_in_models, so a future new location type is searched here ' \
+                         'automatically with no view change.'
           }
         ],
-        accessibility_notes: 'Each radio has an associated <label for=""> and the group is a role="group" ' \
-                             'button toolbar; screen readers announce the currently selected type.'
+        accessibility_notes: 'The search combobox is keyboard-operable (type-ahead, arrow keys, Enter to ' \
+                             'select) and exposes role="combobox" to assistive technology.'
       }
     ) do
       capybara_login_as_platform_manager
       visit better_together.new_event_path(locale: I18n.default_locale)
       open_time_and_place_tab
 
-      expect(page).to have_css('[data-better_together--location-selector-target="typeSelector"]')
+      expect(page).to have_css('select#event_location_picker', visible: :all, wait: 10)
+      expect(page).to have_css('.location-fields .ss-main', wait: 5)
+
+      within('.location-fields') do
+        find('.ss-main', match: :first).click
+      end
+
+      expect(page).to have_content(settlement.name, wait: 10)
+      expect(page).to have_content(address_event.location.location.city_name, wait: 10)
     end
   end
 
@@ -104,14 +120,18 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       'event_location_settlement_assigned',
       device: :both,
       metadata: screenshot_metadata(flow: 'event_location_settlement_assigned', role: 'event_organizer'),
-      # No callout box here: selecting the settlement radio on connect()
-      # destroys and rebuilds the SlimSelect widget to point it at the
-      # settlement AJAX source, and that rebuild can still be settling at the
-      # exact moment the callout engine's synchronous querySelector runs —
-      # an annotation-timing quirk in the SlimSelect/Capybara integration, not
-      # a bug in the feature itself (confirmed correct via direct DOM
-      # inspection: the field and its assigned value both render correctly).
-      # The narrative below still documents what the screenshot shows.
+      callouts: [
+        {
+          id: 'location_picker',
+          selector: '#event_location_picker',
+          title: 'Currently assigned location',
+          bullets: [
+            'Pre-selected with a composite value ("BetterTogether::Geography::Settlement:<id>") built ' \
+            'server-side from the event\'s existing location.',
+            'The organizer can search for a different location in the same field without a separate mode switch.'
+          ]
+        }
+      ],
       narrative: {
         title: 'Event Form — Settlement Already Assigned',
         audience: %w[event_organizer community_organizer platform_organizer developer],
@@ -119,12 +139,12 @@ RSpec.describe 'Documentation screenshots for the event location picker',
                       'currently assigned and can search for a different one without leaving the form.',
         callouts: [
           {
-            id: 'location_select',
-            title: 'AJAX-backed location search',
-            description: 'Genuinely new capability in this PR: this single field works for all four ' \
-                         'structured types. Selecting the radio above rewrites this field\'s search ' \
-                         'source — Address and Building searches are scoped to records the organizer ' \
-                         'is allowed to use; Settlement and Region search the full curated reference list.'
+            id: 'location_picker',
+            title: 'Splitting the composite value back apart',
+            description: 'location_selector_controller#applyLocationSelection splits a picked composite ' \
+                         'value back into the plain location_id/location_type hidden fields ' \
+                         'LocatableLocation\'s ordinary polymorphic assignment already expects — no change ' \
+                         'was needed to that assignment path itself.'
           }
         ],
         accessibility_notes: 'The search combobox is keyboard-operable (type-ahead, arrow keys, Enter to ' \
@@ -135,13 +155,6 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       visit better_together.edit_event_path(event, locale: I18n.default_locale)
       open_time_and_place_tab
 
-      # Selecting the settlement radio on connect() reinitializes SlimSelect
-      # (destroy + rebuild) to point it at the settlement AJAX source. Wait for
-      # that churn to settle — evidenced by the assigned settlement's name
-      # actually appearing in the rebuilt widget — before the callout engine's
-      # synchronous querySelector runs, or it can catch the brief in-between
-      # state where the old widget was torn down and the new one isn't
-      # attached yet.
       expect(page).to have_css('.location-fields .ss-main', text: settlement.name, wait: 5)
     end
   end
@@ -151,18 +164,14 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       'event_location_address_new_panel',
       device: :both,
       metadata: screenshot_metadata(flow: 'event_location_address_new_panel', role: 'event_organizer'),
-      # Single callout only: declaring both the button and the panel hit an
-      # annotation-timing edge case where the placement engine dropped one of
-      # the two boxes regardless of declaration order. The panel is the more
-      # informative target — its bounds also visually include the button
-      # above it in these desktop/mobile widths.
       callouts: [
         {
           id: 'new_address_panel',
           selector: '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]',
           title: 'Inline address fields',
           bullets: [
-            'Revealed by the "+ New" link next to the search field.',
+            'Revealed by the "+ New" link next to the search field — always available now, not gated ' \
+            'behind picking "Address" from a radio group first.',
             'The new address is saved together with the event in a single submit.'
           ]
         }
@@ -178,14 +187,17 @@ RSpec.describe 'Documentation screenshots for the event location picker',
             title: '"+ New" trigger',
             description: 'Only shown when the organizer has permission to create addresses ' \
                          '(Pundit-gated). Settlement and Region have no equivalent button — they are ' \
-                         'curated reference data, chosen from the existing list only, never created here.'
+                         'curated reference data, chosen from the existing list only, never created here. ' \
+                         'Changed in this PR: previously only appeared after selecting the matching radio ' \
+                         '— a user reaches for "+New" precisely when nothing in search matches, so it is ' \
+                         'now always available regardless of what the picker currently holds.'
           },
           {
             id: 'new_address_panel',
             title: 'Inline creation fields',
-            description: 'Bug fixed in this PR: the "Label" dropdown (Main/Work/Other) previously ' \
-                         'failed to save correctly and silently blocked every submission with a ' \
-                         '"Label can\'t be blank" error. That is now fixed and covered by model specs.'
+            description: 'Picking an existing location, or typing a new simple name, automatically closes ' \
+                         'this panel and disables its fields again so they never compete with the ' \
+                         'just-picked location on submit.'
           }
         ],
         accessibility_notes: 'The "+ New" control is a real link with visible focus state; the revealed ' \
@@ -196,13 +208,8 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       visit better_together.new_event_path(locale: I18n.default_locale)
       open_time_and_place_tab
 
-      find('label[for="address_location"]', visible: :all).click
       expect(page).to have_css('.location-fields .ss-main')
-
-      within('[data-better_together--location-selector-target="structuredLocation"]') do
-        find('a.btn', text: I18n.t('better_together.events.actions.create_new_short', default: 'New'),
-                      match: :first).click
-      end
+      find('a[data-location-type="address"]', match: :first).click
 
       panel = find(
         '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]',
