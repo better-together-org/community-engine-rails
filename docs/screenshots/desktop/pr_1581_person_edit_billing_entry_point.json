@@ -2,7 +2,7 @@
   "name": "pr_1581_person_edit_billing_entry_point",
   "device": "desktop",
   "url": "/en/p/manager-example-test/edit",
-  "title": "Platform Steward | People | Test Host Community",
+  "title": "Platform Steward | People | Community Engine",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",

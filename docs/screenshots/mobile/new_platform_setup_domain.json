@@ -1,8 +1,8 @@
 {
   "name": "new_platform_setup_domain",
   "device": "mobile",
-  "url": "/en/w/new_platform_setup/new-platform-7b36e8f18c3a/domain",
-  "title": "Add a Domain (Optional) | Test Host Community",
+  "url": "/en/w/new_platform_setup/new-platform-63d93340b2cb/domain",
+  "title": "Add a Domain (Optional) | Community Engine",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "new_platform_setup",
@@ -88,21 +88,21 @@
       "target": {
         "x": 12.0,
         "y": 729.546875,
-        "width": 476.0,
+        "width": 461.0,
         "height": 38.0,
-        "right": 488.0,
+        "right": 473.0,
         "bottom": 767.546875,
-        "center_x": 250.0,
+        "center_x": 242.5,
         "center_y": 748.546875
       },
       "avoid": {
         "x": 12.0,
         "y": 729.546875,
-        "width": 476.0,
+        "width": 461.0,
         "height": 38.0,
-        "right": 488.0,
+        "right": 473.0,
         "bottom": 767.546875,
-        "center_x": 250.0,
+        "center_x": 242.5,
         "center_y": 748.546875
       },
       "placement": {

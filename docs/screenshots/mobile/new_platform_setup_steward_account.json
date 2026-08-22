@@ -1,8 +1,8 @@
 {
   "name": "new_platform_setup_steward_account",
   "device": "mobile",
-  "url": "/en/w/new_platform_setup/new-platform-a0c318c74c14/steward_account",
-  "title": "Create the Steward Account | Test Host Community",
+  "url": "/en/w/new_platform_setup/new-platform-76cefd2e5685/steward_account",
+  "title": "Create the Steward Account | Community Engine",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "new_platform_setup",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 472.546875,
+        "y": 432.546875,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 510.546875,
+        "bottom": 470.546875,
         "center_x": 242.5,
-        "center_y": 491.546875
+        "center_y": 451.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 472.546875,
+        "y": 432.546875,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 510.546875,
+        "bottom": 470.546875,
         "center_x": 242.5,
-        "center_y": 491.546875
+        "center_y": 451.546875
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 530.55,
+        "y": 490.55,
         "width": 270.0,
         "height": 158,
-        "score": 750.453125
+        "score": 790.453125
       }
     },
     {
@@ -52,23 +52,23 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 606.546875,
+        "y": 566.546875,
         "width": 416.0,
         "height": 38.0,
         "right": 428.0,
-        "bottom": 644.546875,
+        "bottom": 604.546875,
         "center_x": 220.0,
-        "center_y": 625.546875
+        "center_y": 585.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 606.546875,
+        "y": 566.546875,
         "width": 416.0,
         "height": 38.0,
         "right": 428.0,
-        "bottom": 644.546875,
+        "bottom": 604.546875,
         "center_x": 220.0,
-        "center_y": 625.546875
+        "center_y": 585.546875
       },
       "placement": {
         "side": "right",
@@ -87,31 +87,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 956.546875,
+        "y": 916.546875,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 994.546875,
+        "bottom": 954.546875,
         "center_x": 242.5,
-        "center_y": 975.546875
+        "center_y": 935.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 956.546875,
+        "y": 916.546875,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 994.546875,
+        "bottom": 954.546875,
         "center_x": 242.5,
-        "center_y": 975.546875
+        "center_y": 935.546875
       },
       "placement": {
         "side": "above",
         "x": 107.5,
-        "y": 778.55,
+        "y": 738.55,
         "width": 270.0,
         "height": 158,
-        "score": 956.546875
+        "score": 916.546875
       }
     }
   ]

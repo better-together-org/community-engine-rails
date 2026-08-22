@@ -32,7 +32,7 @@
       </p>
     <% end %>
 
-    <p class="mb-0 text-muted small">
+    <p id="hosted-entitlement-explainer" class="mb-0 text-muted small">
       <% if hosted_entitlement.active? %>
         <%= t('better_together.billing.hosted_entitlement_active_explainer', default: 'This community currently has an active hosted plan and remains in good standing for hosted operations.') %>
       <% elsif hosted_entitlement.attention_needed? %>
@@ -56,6 +56,7 @@
         <%= button_to t('better_together.billing.provision_platform_cta', default: 'Provision hosted platform'),
                       provision_path,
                       method: :post,
+                      id: 'provision-hosted-platform-btn',
                       class: 'btn btn-success btn-sm',
                       data: { turbo: false } %>
       </div>

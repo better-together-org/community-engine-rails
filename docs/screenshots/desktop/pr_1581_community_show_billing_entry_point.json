@@ -1,8 +1,8 @@
 {
   "name": "pr_1581_community_show_billing_entry_point",
   "device": "desktop",
-  "url": "/en/c/harbour-voices-28d59faa",
-  "title": "Harbour Voices | Communities | Test Host Community",
+  "url": "/en/c/harbour-voices-5c882198",
+  "title": "Harbour Voices | Communities | Community Engine",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",

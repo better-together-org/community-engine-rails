@@ -10,6 +10,7 @@
         <%= button_to t('better_together.platforms.index.provision_new_platform'),
                       better_together.new_platform_setup_path,
                       method: :post,
+                      id: 'provision-new-platform-btn',
                       class: 'btn btn-primary',
                       data: { turbo: false } %>
       <% end %>

@@ -1,0 +1,26 @@
+---
+title: Checkout return — confirming payment (async)
+audience:
+- board_member
+- community_steward
+- operator
+- developer
+journey_step: A steward is redirected back from Stripe Checkout. The billing page
+  used to make a live, synchronous Stripe API call on the request thread right at
+  this moment, with no timeout handling — this pending state is what replaces that
+  wait.
+callouts:
+- :title: Confirming payment
+  :description: 'Session follow-up (second-round remediation): CommunityBillingsController#show
+    used to call StripeCheckoutSessionSync (and, inside it, Stripe::Checkout::Session.retrieve)
+    synchronously on the request thread. It is now purely a valid_checkout_session_id?
+    pre-check that enqueues BetterTogether::Billing::SyncCheckoutSessionJob and renders
+    this pending region immediately; see pr_1581_checkout_session_resolved for the
+    state the job pushes here via Turbo Streams once it completes. The webhook-driven
+    sync (StripeEventProcessor) remains the authoritative source of truth throughout
+    and is unaffected by this change.'
+accessibility_notes: The pending region uses role="status" and aria-live="polite"
+  so assistive technology announces it without requiring focus, and announces the
+  replacement content again when the Turbo Stream update lands.
+slug: pr_1581_checkout_session_pending
+device: desktop

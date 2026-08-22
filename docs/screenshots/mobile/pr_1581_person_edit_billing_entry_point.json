@@ -2,7 +2,7 @@
   "name": "pr_1581_person_edit_billing_entry_point",
   "device": "mobile",
   "url": "/en/p/manager-example-test/edit",
-  "title": "Platform Steward | People | Test Host Community",
+  "title": "Platform Steward | People | Community Engine",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
@@ -16,31 +16,31 @@
       ],
       "target": {
         "x": 133.96875,
-        "y": 165.390625,
+        "y": 125.390625,
         "width": 217.0625,
         "height": 38.0,
         "right": 351.03125,
-        "bottom": 203.390625,
+        "bottom": 163.390625,
         "center_x": 242.5,
-        "center_y": 184.390625
+        "center_y": 144.390625
       },
       "avoid": {
         "x": 133.96875,
-        "y": 165.390625,
+        "y": 125.390625,
         "width": 217.0625,
         "height": 38.0,
         "right": 351.03125,
-        "bottom": 203.390625,
+        "bottom": 163.390625,
         "center_x": 242.5,
-        "center_y": 184.390625
+        "center_y": 144.390625
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 223.39,
+        "y": 183.39,
         "width": 270.0,
         "height": 288,
-        "score": 1057.609375
+        "score": 1097.609375
       }
     }
   ]

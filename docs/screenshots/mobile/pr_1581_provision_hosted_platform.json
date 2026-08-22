@@ -1,8 +1,8 @@
 {
   "name": "pr_1581_provision_hosted_platform",
   "device": "mobile",
-  "url": "/en/w/new_platform_setup/new-platform-eafce5f2c77d/welcome",
-  "title": "Let&#39;s Set Up a New Platform | Test Host Community",
+  "url": "/en/w/new_platform_setup/new-platform-1877570912de/welcome",
+  "title": "Let&#39;s Set Up a New Platform | Community Engine",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",

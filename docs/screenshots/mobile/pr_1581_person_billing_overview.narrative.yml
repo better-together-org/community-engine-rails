@@ -18,6 +18,15 @@ callouts:
   :description: This is the key new accountability surface for sponsorship. A person
     can now see which communities their payment is supporting and jump directly to
     those community billing records.
+- :title: Merchant account (connected)
+  :description: 'Second-round remediation follow-up: MerchantAccount#status_badge_class
+    replaces a badge that was hardcoded to text-bg-info regardless of status — this
+    account (seeded active/charges+payouts enabled) now shows text-bg-success. This
+    is the only screenshot in the pack seeded with a connected merchant account, so
+    it is also the only one demonstrating the community-side duplicate-i18n-key fix
+    indirectly: person_billings/show.html.erb already used two distinct explainer
+    keys for connected vs not-connected (the bug was community-only), and this connected
+    state confirms the correct copy renders when it should.'
 - :title: Personal plans
   :description: Personal recurring plans are separated from community plans so the
     review packet makes clear who each plan is designed to support.

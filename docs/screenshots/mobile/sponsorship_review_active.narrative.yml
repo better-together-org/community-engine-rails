@@ -12,9 +12,14 @@ callouts:
     transitions to active on first contribution) — the view intentionally treats both
     as one visual state.
 - :title: Stop this sponsorship
-  :description: SponsorshipPolicy#end? authorizes either the sponsor or the beneficiary,
-    unlike accept?/decline? which are beneficiary-only.
-accessibility_notes: The end button is a standard button_to submit; the status alert
-  uses alert-success semantics.
+  :description: 'SponsorshipPolicy#end? authorizes either the sponsor or the beneficiary,
+    unlike accept?/decline? which are beneficiary-only. Session follow-up: this button
+    now carries data-turbo-confirm, matching the confirm pattern already used by the
+    plan-deactivate toggle elsewhere in billing — previously a misclick immediately
+    ended what may be an active funding relationship with no warning.'
+accessibility_notes: The end button is a standard button_to submit with data-turbo-confirm;
+  browsers render the confirmation as a native modal dialog, so it is keyboard-operable
+  and announced by screen readers without any additional app-level work. The status
+  alert uses alert-success semantics.
 slug: sponsorship_review_active
 device: mobile

@@ -1,7 +1,7 @@
 {
   "name": "pr_1581_community_billing_overview",
   "device": "desktop",
-  "url": "/en/c/harbour-voices-33b30342/billing",
+  "url": "/en/c/harbour-voices-90c1240a/billing",
   "title": "Community Billing | Harbour Voices | Test Host Community",
   "locale": "en",
   "feature_set": "billing_foundation_review",
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#sponsorship_received_notice_community_dfb9cab4-31c6-4484-8ff2-a7589194168d",
+      "selector": "#sponsorship_received_notice_community_9dacb2a8-ba76-4f32-b1e3-802f8cae5fb6",
       "title": "Sponsorship received",
       "bullets": [
         "Shown whenever a sponsor's contribution has been credited to this community's balance."

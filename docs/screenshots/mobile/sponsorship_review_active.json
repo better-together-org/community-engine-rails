@@ -1,8 +1,8 @@
 {
   "name": "sponsorship_review_active",
   "device": "mobile",
-  "url": "/en/sponsorships/3kVnXGxmt3T2hEptobjb6ZuQ",
-  "title": "Test Host Community",
+  "url": "/en/sponsorships/W2EGN7pFEwaJyenfxMA5xEsY",
+  "title": "Community Engine",
   "locale": "en",
   "feature_set": "sponsorship_panel_states",
   "source_spec": "./spec/docs_screenshots/better_together/sponsorship_panel_states_spec.rb",
@@ -47,7 +47,8 @@
       "title": "Stop this sponsorship",
       "bullets": [
         "Either party can end an active sponsorship at any time.",
-        "Ending does not retroactively remove contributions already credited."
+        "Ending does not retroactively remove contributions already credited.",
+        "Session follow-up: now requires a confirmation prompt before firing — the native browser dialog itself isn't visible in a static screenshot, but this is the only destructive action on this page and it previously fired immediately on a single click."
       ],
       "target": {
         "x": 12.0,
@@ -71,11 +72,10 @@
       },
       "placement": {
         "side": "floating",
-        "x": 24,
-        "y": 504,
+        "x": 24.0,
+        "y": 454.28,
         "width": 270.0,
-        "height": 320,
-        "score": 0
+        "height": 684
       }
     }
   ]

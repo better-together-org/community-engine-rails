@@ -1,7 +1,7 @@
 {
   "name": "new_platform_setup_review_and_launch",
   "device": "mobile",
-  "url": "/en/w/new_platform_setup/new-platform-0dc35d98f2a1/review_and_launch",
+  "url": "/en/w/new_platform_setup/new-platform-77e8a70d07c9/review_and_launch",
   "title": "Review &amp; Launch | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 360.546875,
+        "y": 424.546875,
         "width": 167.359375,
         "height": 24.0,
         "right": 179.359375,
-        "bottom": 384.546875,
+        "bottom": 448.546875,
         "center_x": 95.6796875,
-        "center_y": 372.546875
+        "center_y": 436.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 360.546875,
+        "y": 424.546875,
         "width": 167.359375,
         "height": 24.0,
         "right": 179.359375,
-        "bottom": 384.546875,
+        "bottom": 448.546875,
         "center_x": 95.6796875,
-        "center_y": 372.546875
+        "center_y": 436.546875
       },
       "placement": {
         "side": "below",
         "x": 24,
-        "y": 404.55,
+        "y": 468.55,
         "width": 270.0,
         "height": 242,
-        "score": 876.453125
+        "score": 812.453125
       }
     },
     {
@@ -52,31 +52,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 743.546875,
+        "y": 807.546875,
         "width": 169.140625,
         "height": 24.0,
         "right": 181.140625,
-        "bottom": 767.546875,
+        "bottom": 831.546875,
         "center_x": 96.5703125,
-        "center_y": 755.546875
+        "center_y": 819.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 743.546875,
+        "y": 807.546875,
         "width": 169.140625,
         "height": 24.0,
         "right": 181.140625,
-        "bottom": 767.546875,
+        "bottom": 831.546875,
         "center_x": 96.5703125,
-        "center_y": 755.546875
+        "center_y": 819.546875
       },
       "placement": {
         "side": "below",
         "x": 24,
-        "y": 787.55,
+        "y": 851.55,
         "width": 270.0,
         "height": 190,
-        "score": 493.453125
+        "score": 429.453125
       }
     },
     {
@@ -87,23 +87,23 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 897.546875,
-        "width": 476.0,
+        "y": 961.546875,
+        "width": 461.0,
         "height": 38.0,
-        "right": 488.0,
-        "bottom": 935.546875,
-        "center_x": 250.0,
-        "center_y": 916.546875
+        "right": 473.0,
+        "bottom": 999.546875,
+        "center_x": 242.5,
+        "center_y": 980.546875
       },
       "avoid": {
         "x": 12.0,
-        "y": 897.546875,
-        "width": 476.0,
+        "y": 961.546875,
+        "width": 461.0,
         "height": 38.0,
-        "right": 488.0,
-        "bottom": 935.546875,
-        "center_x": 250.0,
-        "center_y": 916.546875
+        "right": 473.0,
+        "bottom": 999.546875,
+        "center_x": 242.5,
+        "center_y": 980.546875
       },
       "placement": {
         "side": "right",

@@ -16,6 +16,12 @@ callouts:
     (Subscription#access_active? OR-combines activeish? and in_grace_period?) — only
     the badge and explainer text change to warn the steward before anything actually
     breaks.
+- :title: Grace period explainer date
+  :description: 'Second-round remediation follow-up: grace_period_ends_at was previously
+    interpolated with .to_date.to_s, producing a raw, unlocalized ISO date directly
+    in translated copy (this string ships in en/es/fr/uk). It now goes through l(...,
+    format: :long), matching current_period_end and deauthorized_at on the sibling
+    subscription/merchant cards on this same page.'
 accessibility_notes: The badge uses text-bg-danger (red) styling with the same badge
   markup pattern as the other three statuses, so screen readers announce the status
   text itself rather than relying on color alone.

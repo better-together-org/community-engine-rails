@@ -1,8 +1,8 @@
 {
   "name": "pr_1581_community_edit_billing_entry_point",
   "device": "mobile",
-  "url": "/en/c/harbour-voices-0a2a8707/edit",
-  "title": "Edit Harbour Voices | Communities | Test Host Community",
+  "url": "/en/c/harbour-voices-fc15ba3b/edit",
+  "title": "Edit Harbour Voices | Communities | Community Engine",
   "locale": "en",
   "feature_set": "billing_foundation_review",
   "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
@@ -16,31 +16,31 @@
       ],
       "target": {
         "x": 171.0625,
-        "y": 165.390625,
+        "y": 125.390625,
         "width": 142.875,
         "height": 38.0,
         "right": 313.9375,
-        "bottom": 203.390625,
+        "bottom": 163.390625,
         "center_x": 242.5,
-        "center_y": 184.390625
+        "center_y": 144.390625
       },
       "avoid": {
         "x": 171.0625,
-        "y": 165.390625,
+        "y": 125.390625,
         "width": 142.875,
         "height": 38.0,
         "right": 313.9375,
-        "bottom": 203.390625,
+        "bottom": 163.390625,
         "center_x": 242.5,
-        "center_y": 184.390625
+        "center_y": 144.390625
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 223.39,
+        "y": 183.39,
         "width": 270.0,
         "height": 288,
-        "score": 1057.609375
+        "score": 1097.609375
       }
     },
     {
@@ -51,23 +51,23 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 227.390625,
+        "y": 187.390625,
         "width": 461.0,
         "height": 253.0,
         "right": 473.0,
-        "bottom": 480.390625,
+        "bottom": 440.390625,
         "center_x": 242.5,
-        "center_y": 353.890625
+        "center_y": 313.890625
       },
       "avoid": {
         "x": 12.0,
-        "y": 227.390625,
+        "y": 187.390625,
         "width": 461.0,
         "height": 253.0,
         "right": 473.0,
-        "bottom": 480.390625,
+        "bottom": 440.390625,
         "center_x": 242.5,
-        "center_y": 353.890625
+        "center_y": 313.890625
       },
       "placement": {
         "side": "floating",

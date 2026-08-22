@@ -1,7 +1,7 @@
 {
   "name": "hosted_entitlement_grace_period",
   "device": "mobile",
-  "url": "/en/c/harbour-voices-a9d31475/billing",
+  "url": "/en/c/harbour-voices-ff5a7aa7/billing",
   "title": "Community Billing | Harbour Voices | Test Host Community",
   "locale": "en",
   "feature_set": "hosted_entitlement_grace_period",
@@ -40,6 +40,40 @@
         "width": 270.0,
         "height": 340,
         "score": 860.421875
+      }
+    },
+    {
+      "selector": "#hosted-entitlement-explainer",
+      "title": "Grace period explainer date",
+      "bullets": [
+        "Session follow-up: this date used to interpolate a raw ISO timestamp (e.g. \"2026-08-23T14:22:00Z\") — now renders via l(..., format: :long) like every other date on this page."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 493.390625,
+        "width": 427.0,
+        "height": 63.0,
+        "right": 456.0,
+        "bottom": 556.390625,
+        "center_x": 242.5,
+        "center_y": 524.890625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 493.390625,
+        "width": 427.0,
+        "height": 63.0,
+        "right": 456.0,
+        "bottom": 556.390625,
+        "center_x": 242.5,
+        "center_y": 524.890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 780.58,
+        "width": 270.0,
+        "height": 372
       }
     }
   ]
