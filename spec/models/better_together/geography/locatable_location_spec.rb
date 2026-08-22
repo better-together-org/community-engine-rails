@@ -325,6 +325,24 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
   end
 
   describe 'class methods' do
+    # Regression guard: EventsController#location_scope_for derives
+    # "available_#{klass.name.demodulize.underscore.pluralize}_for" by naming
+    # convention from Placeable.included_in_models and 422s ("Invalid location
+    # type") if the derived method doesn't exist here. All 6 current Placeable
+    # includers happen to have one today, but nothing enforces that a *future*
+    # Placeable includer gets one too - this fails CI instead of only surfacing
+    # as a silent runtime 422 on the picker's AJAX request.
+    describe 'available_*_for parity with Geography::Placeable.included_in_models' do
+      it 'defines an available_*_for class method for every current Placeable includer' do
+        missing = BetterTogether::Geography::Placeable.included_in_models.reject do |klass|
+          method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
+          described_class.respond_to?(method_name)
+        end
+
+        expect(missing).to eq([])
+      end
+    end
+
     describe '.available_addresses_for' do
       let(:user) { create(:better_together_user, :confirmed) }
       let(:person) { user.person }
