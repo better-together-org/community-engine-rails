@@ -5479,6 +5479,7 @@ fr:
       category: Catégorie
       description: Installez des données de référence organisées à la demande, une
         catégorie à la fois ou toutes en même temps.
+      missing_prerequisites: Planter %{prerequisites} d'abord
       not_planted: Non planté
       plant: Planter
       plant_all: Tout planter
@@ -5487,6 +5488,8 @@ fr:
       status: Statut
       title: Catalogue de semences
     plant:
+      missing_prerequisites: "%{category} nécessite que %{prerequisites} soit planté
+        au préalable."
       success: "%{category} planté."
       unknown_category: Catégorie inconnue.
     plant_all:

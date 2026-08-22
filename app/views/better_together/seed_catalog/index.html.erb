@@ -27,6 +27,7 @@
           <tbody>
             <% catalog.categories.each do |category| %>
               <% planted = catalog.planted?(category[:key]) %>
+              <% missing_prerequisites = catalog.missing_prerequisites(category[:key]) %>
               <tr id="seed-catalog-<%= catalog.key %>-<%= category[:key] %>-row">
                 <td><%= category[:label] %></td>
                 <td>
@@ -35,12 +36,19 @@
                   </span>
                 </td>
                 <td class="text-end">
+                  <% if missing_prerequisites.any? %>
+                    <% prerequisite_labels = missing_prerequisites.map { |key| catalog.category(key)&.fetch(:label, key.to_s) }.join(', ') %>
+                    <span class="text-muted small d-block mb-1"
+                          id="plant-<%= category[:key] %>-missing-prerequisites">
+                      <%= t('seed_catalog.index.missing_prerequisites', prerequisites: prerequisite_labels) %>
+                    </span>
+                  <% end %>
                   <%= button_to t('seed_catalog.index.plant'),
                                 seed_catalog_plant_seeds_path(catalog_key: catalog.key, category_key: category[:key]),
                                 method: :post,
                                 id: "plant-#{category[:key]}-btn",
                                 class: 'btn btn-outline-secondary btn-sm',
-                                disabled: planted,
+                                disabled: planted || missing_prerequisites.any?,
                                 'aria-label': t('seed_catalog.index.plant_category', category: category[:label]) %>
                 </td>
               </tr>

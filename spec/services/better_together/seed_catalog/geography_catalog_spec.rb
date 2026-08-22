@@ -37,6 +37,26 @@ RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog do
     end
   end
 
+  describe '.missing_prerequisites' do
+    it 'is empty for a category with no prerequisites' do
+      expect(described_class.missing_prerequisites(:continents)).to eq([])
+    end
+
+    it 'lists an unplanted prerequisite' do
+      expect(described_class.missing_prerequisites(:provinces)).to eq([:countries])
+    end
+
+    it 'is empty once the prerequisite is planted' do
+      described_class.plant(:countries)
+
+      expect(described_class.missing_prerequisites(:provinces)).to eq([])
+    end
+
+    it 'is empty for an unknown category key rather than raising' do
+      expect(described_class.missing_prerequisites(:not_a_category)).to eq([])
+    end
+  end
+
   describe '.plant' do
     it 'seeds only the requested category' do
       described_class.plant(:continents)
@@ -49,6 +69,29 @@ RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog do
       result = nil
       expect { result = described_class.plant(:not_a_category) }.not_to raise_error
       expect(result).to be(false)
+    end
+
+    it 'returns false and does not raise when planting provinces before countries exist' do
+      result = nil
+      expect { result = described_class.plant(:provinces) }.not_to raise_error
+
+      expect(result).to be(false)
+      expect(BetterTogether::Geography::State.count).to eq(0)
+    end
+
+    it 'returns false and does not raise when planting settlements before provinces exist' do
+      result = nil
+      expect { result = described_class.plant(:settlements) }.not_to raise_error
+
+      expect(result).to be(false)
+      expect(BetterTogether::Geography::Settlement.count).to eq(0)
+    end
+
+    it 'succeeds once the prerequisite is planted first' do
+      described_class.plant(:countries)
+
+      expect(described_class.plant(:provinces)).to be(true)
+      expect(BetterTogether::Geography::State.count).to be_positive
     end
 
     it 'syncs the country<->continent join once both sides are planted, regardless of plant order' do
