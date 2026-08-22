@@ -282,12 +282,14 @@ module BetterTogether
       ::BetterTogether::Role.find_by(identifier: 'community_member')
     end
 
-    # Same authorization as the platform's own manage_platform_settings/
-    # manage_platform check (PlatformPolicy) — provisioning must be
+    # Reuses PlatformPolicy#create? rather than #update? deliberately: nobody
+    # holds a PersonPlatformMembership on the draft platform yet (the steward
+    # step hasn't run), so per-platform-scoped #update? would reject even the
+    # person who legitimately started the run. Provisioning must be
     # continuable only by the same class of person who could have kicked it
-    # off via NewPlatformSetupController#start.
+    # off via NewPlatformSetupController#start, i.e. the same check.
     def authorize_target_platform
-      authorize target_platform, :update?, policy_class: ::BetterTogether::PlatformPolicy
+      authorize target_platform, :create?, policy_class: ::BetterTogether::PlatformPolicy
     rescue Pundit::NotAuthorizedError
       render_not_found
     end
