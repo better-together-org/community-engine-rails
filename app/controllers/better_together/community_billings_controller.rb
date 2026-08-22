@@ -44,8 +44,7 @@ module BetterTogether
       @hosted_entitlement = hosted_entitlement_resolver.call(community: @community)
       return redirect_to_billing_with_alert(provision_requires_plan_message) unless @hosted_entitlement.active?
 
-      draft = build_new_platform_setup_draft(provisioning_community: @community)
-      provision_new_platform_setup_draft(draft)
+      draft = platform_setup_draft_for_provisioning
       redirect_to new_platform_setup_step_welcome_path(platform_id: draft.to_param)
     rescue ActiveRecord::RecordInvalid => e
       redirect_to_billing_with_alert(e.record.errors.full_messages.to_sentence)
@@ -235,6 +234,13 @@ module BetterTogether
 
     def hosted_entitlement_resolver
       @hosted_entitlement_resolver ||= BetterTogether::Billing::HostedEntitlementResolver.new
+    end
+
+    def platform_setup_draft_for_provisioning
+      draft = existing_in_progress_draft_for(@community) ||
+              build_new_platform_setup_draft(provisioning_community: @community)
+      provision_new_platform_setup_draft(draft) if draft.new_record?
+      draft
     end
 
     def provision_requires_plan_message

@@ -45,5 +45,27 @@ module BetterTogether
         )
       end
     end
+
+    # Idempotency guard for repeat-click/prefetch/double-submit protection —
+    # community-scoped callers (CommunityBillingsController#provision_platform)
+    # can key a lookup off provisioning_community_id to avoid minting a second
+    # draft Platform for the same community. Matches on the placeholder
+    # host_url set by #build_new_platform_setup_draft: once the real
+    # platform_identity step runs, host_url is overwritten with a real value,
+    # so a still-placeholder host_url reliably means "in-progress draft."
+    #
+    # Not used by NewPlatformSetupController#start (the staff-facing entry
+    # point) — that path has no natural per-caller dedupe key to scope the
+    # lookup to, since any staff member with PlatformPolicy#create? may
+    # legitimately want to start an unrelated new platform at any time.
+    def existing_in_progress_draft_for(community)
+      return if community.blank?
+
+      platforms = ::BetterTogether::Platform.arel_table
+      ::BetterTogether::Platform.where(provisioning_community_id: community.id)
+                                .where(platforms[:host_url].matches('https://draft-%.pending.invalid'))
+                                .order(created_at: :desc)
+                                .first
+    end
   end
 end

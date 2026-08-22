@@ -161,7 +161,8 @@ RSpec.describe 'Documentation screenshots for billing foundation review',
       }
     ) do
       capybara_login_as_platform_manager
-      visit better_together.provision_platform_community_billing_path(community, locale: I18n.default_locale)
+      visit better_together.community_billing_path(community, locale: I18n.default_locale)
+      click_on I18n.t('better_together.billing.provision_platform_cta', locale: I18n.default_locale, default: 'Provision hosted platform')
       expect(page).to have_css('#new-platform-setup-progress')
       draft = BetterTogether::Platform.order(:created_at).last
       expect(draft.provisioning_community).to eq(community)

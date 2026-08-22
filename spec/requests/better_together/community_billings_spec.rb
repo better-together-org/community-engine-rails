@@ -754,13 +754,13 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
     end
   end
 
-  describe 'GET /:locale/c/:community_id/billing/provision_platform' do
+  describe 'POST /:locale/c/:community_id/billing/provision_platform' do
     context 'when the community has an active hosted subscription' do
       it 'creates a draft platform linked to the community and redirects into the setup wizard' do
         create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
 
         expect do
-          get better_together.provision_platform_community_billing_path(community, locale:)
+          post better_together.provision_platform_community_billing_path(community, locale:)
         end.to change(BetterTogether::Platform, :count).by(1)
 
         draft = BetterTogether::Platform.order(:created_at).last
@@ -773,11 +773,38 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       it 'builds the wizard for the draft platform' do
         create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
 
-        get better_together.provision_platform_community_billing_path(community, locale:)
+        post better_together.provision_platform_community_billing_path(community, locale:)
 
         draft = BetterTogether::Platform.order(:created_at).last
         expect(BetterTogether::Wizard.for_platform(draft)
           .find_by(identifier: BetterTogether::NewPlatformSetupWizardBuilder::IDENTIFIER)).to be_present
+      end
+
+      it 'reuses an existing in-progress draft instead of minting a second one on a repeat call' do
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
+
+        post better_together.provision_platform_community_billing_path(community, locale:)
+        first_draft = BetterTogether::Platform.order(:created_at).last
+
+        expect do
+          post better_together.provision_platform_community_billing_path(community, locale:)
+        end.not_to change(BetterTogether::Platform, :count)
+
+        expect(response).to redirect_to(
+          better_together.new_platform_setup_step_welcome_path(platform_id: first_draft.to_param)
+        )
+      end
+
+      it 'mints a fresh draft once the prior one has completed platform_identity (host_url no longer a placeholder)' do
+        create_owned_billing_subscription(owner: community, billing_plan:, status: 'active')
+
+        post better_together.provision_platform_community_billing_path(community, locale:)
+        first_draft = BetterTogether::Platform.order(:created_at).last
+        first_draft.update!(host_url: 'https://real-platform.example.test')
+
+        expect do
+          post better_together.provision_platform_community_billing_path(community, locale:)
+        end.to change(BetterTogether::Platform, :count).by(1)
       end
     end
 
@@ -785,7 +812,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
       create_owned_billing_subscription(owner: community, billing_plan:, status: 'past_due')
 
       expect do
-        get better_together.provision_platform_community_billing_path(community, locale:)
+        post better_together.provision_platform_community_billing_path(community, locale:)
       end.not_to change(BetterTogether::Platform, :count)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
@@ -794,7 +821,7 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
 
     it 'does not create a platform and redirects with an alert when there is no active subscription' do
       expect do
-        get better_together.provision_platform_community_billing_path(community, locale:)
+        post better_together.provision_platform_community_billing_path(community, locale:)
       end.not_to change(BetterTogether::Platform, :count)
 
       expect(response).to redirect_to(better_together.community_billing_path(community, locale:))

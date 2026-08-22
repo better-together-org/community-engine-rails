@@ -53,9 +53,11 @@
           <%= t('better_together.billing.provision_platform_cta_explainer',
                 default: 'Your plan entitles this community to a hosted platform. Provision one now to activate platform services.') %>
         </p>
-        <%= link_to t('better_together.billing.provision_platform_cta', default: 'Provision hosted platform'),
-                    provision_path,
-                    class: 'btn btn-success btn-sm' %>
+        <%= button_to t('better_together.billing.provision_platform_cta', default: 'Provision hosted platform'),
+                      provision_path,
+                      method: :post,
+                      class: 'btn btn-success btn-sm',
+                      data: { turbo: false } %>
       </div>
     <% end %>
   </div>
