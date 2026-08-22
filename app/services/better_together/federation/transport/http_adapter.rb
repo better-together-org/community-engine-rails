@@ -136,7 +136,10 @@ module BetterTogether
 
         def fetch_and_cache_oauth_token(cache_key)
           response = http_post_form(token_uri, oauth_token_request_params)
-          return unless response.is_a?(Net::HTTPSuccess)
+          unless response.is_a?(Net::HTTPSuccess)
+            log_token_response_failure(response)
+            return
+          end
 
           body  = JSON.parse(response.body)
           token = body.fetch('access_token')
@@ -146,6 +149,13 @@ module BetterTogether
         rescue JSON::ParserError, KeyError => e
           log_token_parse_failure(e)
           nil
+        end
+
+        def log_token_response_failure(response)
+          Rails.logger.warn(
+            "[BetterTogether::Federation] token request for connection #{connection.id} " \
+            "(#{connection_host}) failed: HTTP #{response.code} #{response.body.to_s.truncate(200)}"
+          )
         end
 
         def log_token_parse_failure(error)
