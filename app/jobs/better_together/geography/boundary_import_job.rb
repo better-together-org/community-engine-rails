@@ -36,6 +36,7 @@ module BetterTogether
       def self.import_all_missing # rubocop:todo Metrics/MethodLength
         imported = 0
         skipped = 0
+        unsupported = 0
         failed = 0
 
         HIERARCHY_LEVELS.each do |klass|
@@ -45,16 +46,25 @@ module BetterTogether
               next
             end
 
-            if perform_with_retries(record)
-              imported += 1
-            else
-              failed += 1
+            # perform_with_retries propagates #perform's own return value on a clean
+            # (non-exception) path: true when a boundary was actually saved, nil when
+            # every intermediate step (no data, unparseable geometry, unsupported
+            # geometry type) chose not to save one - distinct from `false`, which
+            # perform_with_retries returns only after exhausting real retries on a
+            # raised exception. Without this distinction, an unsupported-geometry
+            # record was previously counted as `imported` even though no boundary was
+            # ever saved, and got silently re-fetched and re-skipped forever with no
+            # visible signal.
+            case perform_with_retries(record)
+            when true then imported += 1
+            when false then failed += 1
+            else unsupported += 1
             end
             sleep 1.1 if Rails.env.production?
           end
         end
 
-        { imported:, skipped:, failed: }
+        { imported:, skipped:, unsupported:, failed: }
       end
 
       # Retries a transient failure (network timeout, 5xx, parse error) up to
@@ -71,7 +81,6 @@ module BetterTogether
         begin
           attempt += 1
           perform_now(record)
-          true
         rescue StandardError => e
           if attempt < attempts
             sleep(2**attempt)
@@ -86,7 +95,7 @@ module BetterTogether
         end
       end
 
-      def perform(geographic_record, force_refresh: false)
+      def perform(geographic_record, force_refresh: false) # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
         return if geographic_record.space&.boundary.present? && !force_refresh
 
         data = fetch_polygon_data(geographic_record)
@@ -95,7 +104,17 @@ module BetterTogether
         geometry = parse_geometry(data['geojson'])
         return unless geometry
 
-        save_boundary(geographic_record, geometry, data)
+        multi_polygon = to_multi_polygon(geometry)
+        if multi_polygon.nil?
+          Rails.logger.warn(
+            "BoundaryImportJob: #{geographic_record.class.name}##{geographic_record.id} " \
+            "returned an unsupported geometry type (#{geometry.class.name}) - skipping " \
+            'rather than saving a nil boundary'
+          )
+          return
+        end
+
+        save_boundary(geographic_record, multi_polygon, data)
       end
 
       private
@@ -108,9 +127,9 @@ module BetterTogether
         RGeo::GeoJSON.decode(geojson_hash, geo_factory: rgeo_factory)
       end
 
-      def save_boundary(record, geometry, data)
+      def save_boundary(record, multi_polygon, data)
         space = record.space
-        space.boundary = to_multi_polygon(geometry)
+        space.boundary = multi_polygon
         space.metadata = space.metadata.merge(
           'boundary_source' => {
             'provider' => 'nominatim',

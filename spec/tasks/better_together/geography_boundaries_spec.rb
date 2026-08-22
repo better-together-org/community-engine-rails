@@ -21,8 +21,10 @@ RSpec.describe 'better_together:geography:import_boundaries rake task', type: :t
     task.reenable
 
     allow(BetterTogether::Geography::BoundaryImportJob).to receive(:import_all_missing)
-      .and_return({ imported: 3, skipped: 2 })
+      .and_return({ imported: 3, skipped: 2, unsupported: 1, failed: 0 })
 
-    expect { task.invoke }.to output(/Boundary import complete: 3 fetched, 2 already had a boundary/).to_stdout
+    expect { task.invoke }.to output(
+      /Boundary import complete: 3 fetched, 2 already had a boundary, 1 had no usable boundary data, 0 failed/
+    ).to_stdout
   end
 end
