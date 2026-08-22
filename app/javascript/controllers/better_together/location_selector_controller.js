@@ -1,61 +1,99 @@
-// Stimulus controller for dynamic location selection in event forms
+// Stimulus controller for the event location picker: a single mixed-type
+// SlimSelect field searches every Geography::Placeable type at once (see
+// EventsController#available_locations) and, on selection, splits the
+// composite "ClassName:id" value back into the plain hidden location_id/
+// location_type fields LocatableLocation's ordinary polymorphic assignment
+// already expects - no change needed on the Ruby side of that assignment.
+// Free-typed text with no match (SlimSelect's `addable` option, already
+// implemented generically in slim_select_controller.js) falls into the
+// hidden `name` field instead, matching a "simple" (unstructured) location.
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-    "typeSelector",
-    "simpleLocation",
-    "structuredLocation",
+    "locationSelect",
+    "locationIdField",
     "locationTypeField",
-    "locationIdSelect",
+    "simpleNameField",
     "newRecordBlock",
     "newRecordButton"
   ]
 
   static values = {
     // Populated from the server (BetterTogether::Geography::Placeable.included_in_models)
-    // rather than hardcoded here, so the radio-value -> class-name mapping can't drift
-    // from the Ruby-side allow-list.
-    locationTypeMap: Object,
-    availableLocationsUrl: String
+    // rather than hardcoded here, so the key -> class-name mapping can't drift
+    // from the Ruby-side allow-list. Used to recognize a matched composite
+    // value's class-name prefix as a real Placeable type.
+    locationTypeMap: Object
   }
 
   connect() {
-    // Initialize form state based on existing data
-    this.updateVisibility()
-  }
-
-  toggleLocationType(event) {
-    const selectedType = event.target.value
-    this.hideAllLocationTypes()
-
-    if (selectedType === 'simple') {
-      this.showSimpleLocation()
-    } else {
-      this.showStructuredLocation(selectedType)
-    }
-  }
-
-  hideAllLocationTypes() {
-    if (this.hasSimpleLocationTarget) {
-      this.simpleLocationTarget.style.display = 'none'
-    }
-    if (this.hasStructuredLocationTarget) {
-      this.structuredLocationTarget.style.display = 'none'
-    }
-
-    // hide every inline "+New" block and its trigger button
-    this.newRecordButtonTargets.forEach((el) => { el.style.display = 'none' })
-    this.newRecordBlockTargets.forEach((el) => { el.style.display = 'none' })
-
-    // Every "+New" block nests fields_for :location for the SAME location
-    // association. A hidden block's fields still POST (display:none doesn't stop
-    // form submission) and collide with whichever type is actually selected — e.g.
-    // Building's translatable name_en field getting submitted alongside an
-    // Address, raising ActiveModel::UnknownAttributeError. Disabled fields are
-    // excluded from form submission, so keep every block disabled whenever it
-    // isn't the active, opened type.
+    // "+New X" blocks start closed and, crucially, disabled - a hidden
+    // block's fields still POST (display:none doesn't stop form submission)
+    // and would collide with whichever location the picker actually holds
+    // (e.g. Building's translatable name_en field submitted alongside a
+    // picked Address, raising ActiveModel::UnknownAttributeError).
     this.newRecordBlockTargets.forEach((el) => this.toggleFieldsDisabled(el, true))
+  }
+
+  // Fires on the picker select's native `change` event (dispatched by
+  // slim_select_controller's afterChange, after F1's fix ensures a matching
+  // <option> - and therefore a real .value - exists for whatever was picked,
+  // whether an AJAX search result or an addable-typed value).
+  applyLocationSelection() {
+    const value = this.hasLocationSelectTarget ? this.locationSelectTarget.value : ''
+
+    if (!value) {
+      this.clearStructuredLocationFields()
+      this.clearSimpleLocationFields()
+      return
+    }
+
+    const matchedType = this.matchLocationType(value)
+
+    if (matchedType) {
+      const id = value.slice(matchedType.length + 1)
+      this.setStructuredLocation(matchedType, id)
+    } else {
+      this.setSimpleLocation(value)
+    }
+
+    // Picking an existing (or freshly typed simple) location supersedes any
+    // in-progress "+New" build - close every block so its fields go back to
+    // disabled and stop competing with the just-picked location on submit.
+    this.closeAllNewRecordBlocks()
+  }
+
+  // A real result's value is always "<one of locationTypeMapValue's class
+  // names>:<id>" (see EventsController#mixed_location_options) - checked
+  // against the actual allow-list rather than a bare ":" heuristic, since
+  // addable free text could itself contain a colon.
+  matchLocationType(value) {
+    if (!this.hasLocationTypeMapValue) return null
+
+    return Object.values(this.locationTypeMapValue).find((className) => value.startsWith(`${className}:`)) || null
+  }
+
+  setStructuredLocation(locationType, id) {
+    if (this.hasLocationIdFieldTarget) this.locationIdFieldTarget.value = id
+    if (this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = locationType
+
+    this.clearSimpleLocationFields()
+  }
+
+  setSimpleLocation(name) {
+    if (this.hasSimpleNameFieldTarget) this.simpleNameFieldTarget.value = name
+
+    this.clearStructuredLocationFields()
+  }
+
+  clearStructuredLocationFields() {
+    if (this.hasLocationIdFieldTarget) this.locationIdFieldTarget.value = ''
+    if (this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = ''
+  }
+
+  clearSimpleLocationFields() {
+    if (this.hasSimpleNameFieldTarget) this.simpleNameFieldTarget.value = ''
   }
 
   toggleFieldsDisabled(target, disabled) {
@@ -65,106 +103,20 @@ export default class extends Controller {
     })
   }
 
-  showSimpleLocation() {
-    if (this.hasSimpleLocationTarget) {
-      this.simpleLocationTarget.style.display = 'block'
-    }
-    // Clear structured location fields
-    this.clearStructuredLocationFields()
-  }
-
-  // Shows the single unified location_id select and points its SlimSelect
-  // AJAX source at #available_locations for the selected radio's mapped class.
-  showStructuredLocation(selectedType) {
-    if (this.hasStructuredLocationTarget) {
-      this.structuredLocationTarget.style.display = 'block'
-    }
-    // Clear simple name field
-    this.clearSimpleLocationFields()
-
-    const locationType = this.hasLocationTypeMapValue ? this.locationTypeMapValue[selectedType] : null
-    if (!locationType) return
-
-    if (this.hasLocationTypeFieldTarget) {
-      this.locationTypeFieldTarget.value = locationType
-    }
-
-    this.updateLocationSelectSource(locationType)
-
-    // Only inline-creatable Placeable types (Address/Building) render trigger
-    // buttons/blocks at all — server-gated by Pundit (rendered only when
-    // policy(...).create? is true) and by Placeable#inline_creatable? (lookup-only
-    // types like Settlement/Region never render one). Shown/hidden here based on
-    // the currently selected radio, since the server only knows the type at
-    // initial render, not after the user switches radios client-side.
-    this.newRecordButtonTargets.forEach((el) => {
-      el.style.display = el.dataset.locationType === selectedType ? 'inline-block' : 'none'
-    })
+  closeAllNewRecordBlocks() {
     this.newRecordBlockTargets.forEach((el) => {
-      if (el.dataset.locationType !== selectedType) {
-        el.style.display = 'none'
-        this.toggleFieldsDisabled(el, true)
-      }
+      el.style.display = 'none'
+      this.toggleFieldsDisabled(el, true)
     })
-  }
-
-  // Rewrites the location_id select's slim-select options data attribute with
-  // a fresh ajax.url for the given location_type — this DOM mutation is what
-  // slim_select_controller's optionsValueChanged callback reacts to, tearing
-  // down and reinitializing SlimSelect against the new AJAX source. The
-  // attribute name must match slim_select_controller's own canonical Values
-  // API name for its `options` value (data-<controller-identifier>-options-value,
-  // using the identifier exactly as declared in data-controller — underscore,
-  // not hyphen) or Stimulus never observes the mutation and this silently no-ops.
-  updateLocationSelectSource(locationType) {
-    if (!this.hasLocationIdSelectTarget || !this.hasAvailableLocationsUrlValue) return
-
-    const url = new URL(this.availableLocationsUrlValue, window.location.origin)
-    url.searchParams.set('location_type', locationType)
-
-    const optionsValue = JSON.stringify({ ajax: { url: url.pathname + url.search } })
-    this.locationIdSelectTarget.setAttribute('data-better_together--slim-select-options-value', optionsValue)
-  }
-
-  updateVisibility() {
-    // Show the appropriate section based on current data
-    const checkedRadio = this.element.querySelector('input[name="location_type_selector"]:checked')
-    if (checkedRadio) {
-      this.toggleLocationType({ target: { value: checkedRadio.value } })
-    } else {
-      // Default to simple location if nothing is selected
-      this.hideAllLocationTypes()
-      this.showSimpleLocation()
-      const simpleRadio = this.element.querySelector('#simple_location')
-      if (simpleRadio) {
-        simpleRadio.checked = true
-      }
-    }
-  }
-
-  clearSimpleLocationFields() {
-    const nameField = this.element.querySelector('input[name*="[name]"]')
-    if (nameField) {
-      nameField.value = ''
-    }
-  }
-
-  clearStructuredLocationFields() {
-    // Clear location_id and location_type for the unified structured location fields
-    if (this.hasLocationIdSelectTarget) {
-      this.locationIdSelectTarget.selectedIndex = 0
-    }
-    if (this.hasLocationTypeFieldTarget) {
-      this.locationTypeFieldTarget.value = ''
-    }
-
-    // hide inline new blocks when switching
-    this.newRecordBlockTargets.forEach((el) => { el.style.display = 'none' })
-    this.newRecordBlockTargets.forEach((el) => this.toggleFieldsDisabled(el, true))
   }
 
   // Shows/hides the inline "+New" fields block for the clicked button's
   // location type, matched via the shared data-location-type attribute.
+  // Always available (server-gated only by Pundit policy(...).create? and by
+  // Placeable#inline_creatable? - lookup-only types like Settlement/Region
+  // never render a button at all) - independent of whatever the picker
+  // currently holds, since a user reaches for "+New" precisely when nothing
+  // in the search results is the location they want.
   showNewRecord(event) {
     event.preventDefault()
     const type = event.currentTarget.dataset.locationType

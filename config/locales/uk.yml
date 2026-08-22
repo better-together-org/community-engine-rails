@@ -1578,7 +1578,6 @@ uk:
           зміні часу початку або закінчення.
         ends_at: Коли подія завершується. Оновлюється автоматично при зміні тривалості.
         location: Де учасники зустрінуться для цієї події
-        location_name: Назва місця проведення або місця зустрічі
         name: Чіткий, описовий заголовок для вашої події
         select_location: Вибрати місцезнаходження
         slug: Дружній до URL ідентифікатор для цієї події
@@ -1634,8 +1633,6 @@ uk:
         duration_minutes: Тривалість
         ends_at: Закінчується о
         location: Місце
-        location_name: Назва місця
-        location_type: Тип місця
         privacy: Конфіденційність
         select_location: Вибрати місцезнаходження
         starts_at: Починається о
@@ -1667,14 +1664,6 @@ uk:
         status_draft: Чернетка
         status_label: Статус
       location: Місце
-      location_types:
-        address: Адреса
-        building: Будівля
-        floor: Поверх
-        region: Регіон
-        room: Кімната
-        settlement: Поселення
-        simple: Простий
       login_required: Будь ласка, увійдіть для управління RSVP.
       model_invalid: 'Помилка валідації: %{errors}'
       no_attendees: Учасників поки що немає.
@@ -1698,8 +1687,6 @@ uk:
         rsvp_saved_for_date: RSVP на %{date} збережено
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
-      placeholders:
-        location_name: Назва місця
       present: має бути порожнім
       prompts:
         select_location: Вибрати місцезнаходження

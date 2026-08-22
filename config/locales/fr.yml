@@ -1593,7 +1593,6 @@ fr:
         ends_at: Quand l'événement se termine. Se met à jour automatiquement lorsque
           la durée change.
         location: Où les participants se rencontreront pour cet événement
-        location_name: Nom du lieu ou point de rencontre
         name: Un titre clair et descriptif pour votre événement
         select_location: Sélectionner un emplacement
         slug: Identifiant convivial pour l'URL de cet événement
@@ -1647,8 +1646,6 @@ fr:
         duration_minutes: Durée
         ends_at: Se termine à
         location: Lieu
-        location_name: Nom du lieu
-        location_type: Type de lieu
         privacy: Confidentialité
         select_location: Sélectionner un emplacement
         starts_at: Débute à
@@ -1680,14 +1677,6 @@ fr:
         status_draft: Brouillon
         status_label: Statut
       location: Lieu
-      location_types:
-        address: Adresse
-        building: Bâtiment
-        floor: Étage
-        region: Région
-        room: Pièce
-        settlement: Habitat
-        simple: Simple
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
@@ -1710,8 +1699,6 @@ fr:
         rsvp_saved_for_date: RSVP pour le %{date} enregistrée
       odd: doit être impair
       other_than: doit être différent de %{count}
-      placeholders:
-        location_name: Nom du lieu
       present: doit être vide
       prompts:
         select_location: Sélectionner un emplacement

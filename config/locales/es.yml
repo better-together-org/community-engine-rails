@@ -1587,7 +1587,6 @@ es:
         ends_at: Cuándo concluye el evento. Se actualiza automáticamente cuando cambia
           la duración.
         location: Dónde se reunirán los asistentes para este evento
-        location_name: Nombre del lugar o punto de encuentro
         name: Un título claro y descriptivo para su evento
         select_location: Seleccionar ubicación
         slug: Identificador amigable para URL de este evento
@@ -1640,8 +1639,6 @@ es:
         duration_minutes: Duración
         ends_at: Termina en
         location: Ubicación
-        location_name: Nombre de la ubicación
-        location_type: Tipo de ubicación
         privacy: Privacidad
         select_location: Seleccionar ubicación
         starts_at: Comienza en
@@ -1673,14 +1670,6 @@ es:
         status_draft: Borrador
         status_label: Estado
       location: Ubicación
-      location_types:
-        address: Dirección
-        building: Edificio
-        floor: Piso
-        region: Región
-        room: Habitación
-        settlement: Asentamiento
-        simple: Simple
       login_required: Por favor, inicia sesión para gestionar las confirmaciones de
         asistencia.
       model_invalid: 'La validación falló: %{errors}'
@@ -1703,8 +1692,6 @@ es:
         rsvp_saved_for_date: RSVP para el %{date} guardada
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
-      placeholders:
-        location_name: Nombre de la ubicación
       present: debe estar en blanco
       prompts:
         select_location: Seleccionar ubicación

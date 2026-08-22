@@ -212,90 +212,91 @@
                end %>
 
             <div class="location-fields" data-controller="better_together--location-selector"
-                 data-better_together--location-selector-location-type-map-value="<%= location_type_map.to_json %>"
-                 data-better_together--location-selector-available-locations-url-value="<%= available_locations_events_path %>">
+                 data-better_together--location-selector-location-type-map-value="<%= location_type_map.to_json %>">
               <%= form.fields_for :location, (event.location || event.build_location) do |location_form| %>
                 <%= location_form.hidden_field :locatable_id  %>
                 <%= location_form.hidden_field :locatable_type  %>
 
-                <!-- Location Type Selection -->
-                <div class="mb-3">
-                  <label class="form-label"><%= t('better_together.events.labels.location_type') %></label>
-                  <div class="btn-group w-100" role="group" data-better_together--location-selector-target="typeSelector">
-                    <input type="radio" class="btn-check" name="location_type_selector" id="simple_location" value="simple"
-                            <%= 'checked' if event.location&.simple_location? %>
-                            data-action="change->better_together--location-selector#toggleLocationType">
-                    <label class="btn btn-outline-primary" for="simple_location">
-                      <%= t('better_together.events.location_types.simple') %>
-                    </label>
+                <%= label_tag 'event_location_picker', t('better_together.events.labels.select_location'), class: 'form-label' %>
 
-                    <% location_type_map.each_key do |key| %>
-                      <input type="radio" class="btn-check" name="location_type_selector" id="<%= key %>_location" value="<%= key %>"
-                              <%= 'checked' if event.location&.location_type_matches?(key) %>
-                              data-action="change->better_together--location-selector#toggleLocationType">
-                      <label class="btn btn-outline-primary" for="<%= key %>_location">
-                        <%= t("better_together.events.location_types.#{key}") %>
-                      </label>
-                    <% end %>
-                  </div>
-                </div>
-
-                <!-- Simple Location Name -->
-                <div class="mb-3" data-better_together--location-selector-target="simpleLocation"
-                      style="<%= 'display: none;' unless event.location&.simple_location? %>">
-                  <%= location_form.label :name, t('better_together.events.labels.location_name'), class: 'form-label' %>
-                  <%= location_form.text_field :name, class: 'form-control',
-                      placeholder: t('better_together.events.placeholders.location_name') %>
-                  <small class="form-text text-muted"><%= t('better_together.events.hints.location_name') %></small>
-                </div>
-
-                <!-- Structured Location (Address / Building / Settlement / Region) -->
+                <%# One field searches every Placeable type at once (see
+                    EventsController#available_locations's mixed-search mode) and,
+                    on selection, gets split back into location_id/location_type by
+                    location_selector_controller#applyLocationSelection - so this
+                    select is a picker UI only and is deliberately NOT the
+                    LocatableLocation-bound `location_id` field itself (that's the
+                    separate hidden field below); its own submitted value is
+                    discarded server-side. %>
                 <% current_location_key = location_type_map.each_key.find { |key| event.location&.location_type_matches?(key) } %>
-                <div class="mb-3" data-better_together--location-selector-target="structuredLocation"
-                      style="<%= 'display: none;' unless current_location_key %>">
-                  <%= location_form.label :location_id, t('better_together.events.labels.select_location'), class: 'form-label' %>
-                  <div class="d-flex gap-2 align-items-start">
-                    <% preselected = current_location_key && location_form.object.location %>
-                    <%= location_form.select :location_id,
-                        (preselected ? options_for_select([[preselected.respond_to?(:to_formatted_s) ? preselected.to_formatted_s : preselected.to_s, preselected.id]], preselected.id) : []),
-                        { include_blank: true },
-                        { class: 'form-select',
-                          'data-controller': 'better_together--slim-select',
-                          'data-better_together--location-selector-target': 'locationIdSelect',
-                          'data-better_together--slim-select-options-value': (current_location_key ? { ajax: { url: "#{available_locations_events_path}?location_type=#{location_type_map[current_location_key]}" } } : {}).to_json } %>
+                <% current_location = current_location_key && location_form.object.location %>
+                <% picker_initial_option = if current_location
+                                              text = current_location.respond_to?(:to_formatted_s) ? current_location.to_formatted_s : current_location.to_s
+                                              value = "#{location_type_map[current_location_key]}:#{current_location.id}"
+                                              [["#{text} (#{current_location.class.model_name.human})", value]]
+                                            elsif event.location&.simple_location? && event.location.name.present?
+                                              [[event.location.name, event.location.name]]
+                                            else
+                                              []
+                                            end %>
 
-                    <% inline_creatable_klasses = location_type_map.values.map(&:constantize).select(&:inline_creatable?) %>
-                    <% inline_creatable_klasses.each do |klass| %>
-                      <% key = klass.name.demodulize.underscore %>
-                      <% next unless policy(klass).create? %>
-                      <!-- Button to create a new <%= key %> inline -->
-                      <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
-                          'data-action': 'click->better_together--location-selector#showNewRecord',
-                          'data-location-type': key,
-                          'data-better_together--location-selector-target': 'newRecordButton',
-                          style: ('display: none;' unless current_location_key == key) do %>
-                        <i class="fa-solid fa-plus"></i>
-                        <span class="visually-hidden"><%= t('better_together.events.actions.create_new', model: klass.model_name.human) %></span>
-                        <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
-                      <% end %>
-                    <% end %>
-                  </div>
+                <div class="d-flex gap-2 align-items-start">
+                  <%# Rails' `data: {...}` hash dasherizes every key (including
+                      underscores inside a namespace segment), which corrupts a
+                      Stimulus identifier like `better_together--location-selector`
+                      into `better-together--location-selector` - silently breaking
+                      target/action wiring with no error. slim_select_controller.js
+                      defends against this for its own options-value (see its
+                      connect()'s dataset/getAttribute fallback chain), but Stimulus's
+                      target/action system has no such fallback - so, matching every
+                      other data-*-target attribute already in this partial, these are
+                      passed as literal 'data-...' string keys instead of nested under
+                      `data:`. %>
+                  <%= select_tag 'event_location_picker',
+                      options_for_select(picker_initial_option, picker_initial_option.first&.last),
+                      include_blank: true,
+                      class: 'form-select',
+                      id: 'event_location_picker',
+                      'data-controller': 'better_together--slim-select',
+                      'data-better_together--location-selector-target': 'locationSelect',
+                      'data-action': 'change->better_together--location-selector#applyLocationSelection',
+                      'data-better_together--slim-select-options-value': { ajax: { url: available_locations_events_path }, addable: true }.to_json %>
 
-                  <%= location_form.hidden_field :location_type, 'data-better_together--location-selector-target': 'locationTypeField' %>
-
-                  <small class="form-text text-muted"><%= t('better_together.events.hints.select_location') %></small>
-
-                  <!-- Inline new-record fields per inline-creatable Placeable type (hidden until user clicks 'New') -->
+                  <%# Always available (Pundit/inline_creatable?-gated only) - a user
+                      reaches for "+New" precisely when nothing in the search results
+                      is the location they want, so visibility can't depend on having
+                      already picked that type via the picker. %>
+                  <% inline_creatable_klasses = location_type_map.values.map(&:constantize).select(&:inline_creatable?) %>
                   <% inline_creatable_klasses.each do |klass| %>
                     <% key = klass.name.demodulize.underscore %>
-                    <div data-better_together--location-selector-target="newRecordBlock" data-location-type="<%= key %>"
-                         style="display: none; margin-top: 0.75rem;">
-                      <%= location_form.fields_for :location, klass.new do |new_form| %>
-                        <%= render klass.inline_create_fields_partial, form: new_form %>
-                      <% end %>
-                    </div>
+                    <% next unless policy(klass).create? %>
+                    <!-- Button to create a new <%= key %> inline -->
+                    <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
+                        'data-action': 'click->better_together--location-selector#showNewRecord',
+                        'data-location-type': key,
+                        'data-better_together--location-selector-target': 'newRecordButton' do %>
+                      <i class="fa-solid fa-plus"></i>
+                      <span class="visually-hidden"><%= t('better_together.events.actions.create_new', model: klass.model_name.human) %></span>
+                      <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
+                    <% end %>
                   <% end %>
                 </div>
+
+                <%= location_form.hidden_field :location_id, 'data-better_together--location-selector-target': 'locationIdField' %>
+                <%= location_form.hidden_field :location_type, 'data-better_together--location-selector-target': 'locationTypeField' %>
+                <%= location_form.hidden_field :name, 'data-better_together--location-selector-target': 'simpleNameField' %>
+
+                <small class="form-text text-muted"><%= t('better_together.events.hints.select_location') %></small>
+
+                <!-- Inline new-record fields per inline-creatable Placeable type (hidden until user clicks 'New') -->
+                <% inline_creatable_klasses.each do |klass| %>
+                  <% key = klass.name.demodulize.underscore %>
+                  <div data-better_together--location-selector-target="newRecordBlock" data-location-type="<%= key %>"
+                       style="display: none; margin-top: 0.75rem;">
+                    <%= location_form.fields_for :location, klass.new do |new_form| %>
+                      <%= render klass.inline_create_fields_partial, form: new_form %>
+                    <% end %>
+                  </div>
+                <% end %>
               <% end %>
             </div>
             <% if event.errors[:location].any? %>

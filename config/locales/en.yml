@@ -1579,7 +1579,6 @@ en:
           start or end time changes.
         ends_at: When the event concludes. Updates automatically when duration changes.
         location: Where attendees will meet for this event
-        location_name: Name of the venue or meeting place
         name: A clear, descriptive title for your event
         select_location: Select location
         slug: URL-friendly identifier for this event
@@ -1629,8 +1628,6 @@ en:
         duration_minutes: Duration
         ends_at: Ends at
         location: Location
-        location_name: Location name
-        location_type: Location type
         privacy: Privacy
         select_location: Select location
         starts_at: Starts at
@@ -1662,14 +1659,6 @@ en:
         status_draft: Draft
         status_label: Status
       location: Location
-      location_types:
-        address: Address
-        building: Building
-        floor: Floor
-        region: Region
-        room: Room
-        settlement: Settlement
-        simple: Simple
       login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
@@ -1691,8 +1680,6 @@ en:
         rsvp_saved_for_date: RSVP for %{date} saved
       odd: must be odd
       other_than: must be other than %{count}
-      placeholders:
-        location_name: Location name
       present: must be blank
       prompts:
         select_location: Select location
