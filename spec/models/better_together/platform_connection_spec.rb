@@ -44,6 +44,47 @@ RSpec.describe BetterTogether::PlatformConnection do
     end
   end
 
+  describe '#involves?' do
+    it 'returns true for the source platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.involves?(connection.source_platform)).to be(true)
+    end
+
+    it 'returns true for the target platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.involves?(connection.target_platform)).to be(true)
+    end
+
+    it 'returns false for an unrelated platform' do
+      connection = create(:better_together_platform_connection)
+      unrelated = create(:better_together_platform)
+
+      expect(connection.involves?(unrelated)).to be(false)
+    end
+  end
+
+  describe '#local_platform and #remote_platform' do
+    it 'resolves local/remote correctly when source_platform is the local platform' do
+      local = create(:better_together_platform, external: false)
+      remote = create(:better_together_platform, :community_engine_peer)
+      connection = create(:better_together_platform_connection, source_platform: local, target_platform: remote)
+
+      expect(connection.local_platform).to eq(local)
+      expect(connection.remote_platform).to eq(remote)
+    end
+
+    it 'resolves local/remote correctly when target_platform is the local platform' do
+      local = create(:better_together_platform, external: false)
+      remote = create(:better_together_platform, :community_engine_peer)
+      connection = create(:better_together_platform_connection, source_platform: remote, target_platform: local)
+
+      expect(connection.local_platform).to eq(local)
+      expect(connection.remote_platform).to eq(remote)
+    end
+  end
+
   describe '#to_s' do
     it 'includes both platform names, not the default Object#to_s' do
       connection = create(:better_together_platform_connection)

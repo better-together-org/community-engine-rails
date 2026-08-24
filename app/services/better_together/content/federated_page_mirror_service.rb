@@ -54,7 +54,7 @@ module BetterTogether
       end
 
       def find_or_initialize_page_by_source_id
-        ::BetterTogether::Page.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+        ::BetterTogether::Page.find_or_initialize_by(platform: target_platform, source_id: remote_id)
       end
 
       def reload_after_concurrent_insert
@@ -85,11 +85,11 @@ module BetterTogether
       end
 
       def existing_page_with_remote_uuid
-        ::BetterTogether::Page.find_by(id: remote_id, platform: connection.target_platform)
+        ::BetterTogether::Page.find_by(id: remote_id, platform: target_platform)
       end
 
       def existing_page_by_source_id
-        ::BetterTogether::Page.find_by(platform: connection.target_platform, source_id: remote_id)
+        ::BetterTogether::Page.find_by(platform: target_platform, source_id: remote_id)
       end
 
       def assign_attributes(page)
@@ -128,7 +128,7 @@ module BetterTogether
 
       def mirror_tracking_attributes
         {
-          platform: connection.target_platform,
+          platform: target_platform,
           source_id: effective_preserve_remote_uuid? ? nil : remote_id,
           source_updated_at: normalized_source_updated_at,
           last_synced_at: Time.current
@@ -173,6 +173,13 @@ module BetterTogether
 
       def shared_target_database?
         connection.target_platform.local_hosted?
+      end
+
+      # source_platform/target_platform reflect who initiated the connection,
+      # not who's local — mirrored content must be stored under the actual
+      # local platform, not literally connection.target_platform.
+      def target_platform
+        connection.local_platform || connection.target_platform
       end
 
       def uuid?(value)

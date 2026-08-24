@@ -61,7 +61,8 @@ module BetterTogether
     end
 
     def inaccessible_message_for(connection)
-      host = connection.source_platform&.resolved_host_url.presence || connection.source_platform&.host_url
+      remote = connection.remote_platform || connection.source_platform
+      host = remote&.resolved_host_url.presence || remote&.host_url
       return INACCESSIBLE_MESSAGE if host.blank?
 
       "#{INACCESSIBLE_MESSAGE}: #{host}"

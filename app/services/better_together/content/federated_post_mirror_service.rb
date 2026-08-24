@@ -48,15 +48,15 @@ module BetterTogether
       end
 
       def find_or_initialize_post_by_source_id
-        ::BetterTogether::Post.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+        ::BetterTogether::Post.find_or_initialize_by(platform: target_platform, source_id: remote_id)
       end
 
       def existing_post_with_remote_uuid
-        ::BetterTogether::Post.find_by(id: remote_id, platform: connection.target_platform)
+        ::BetterTogether::Post.find_by(id: remote_id, platform: target_platform)
       end
 
       def existing_post_by_source_id
-        ::BetterTogether::Post.find_by(platform: connection.target_platform, source_id: remote_id)
+        ::BetterTogether::Post.find_by(platform: target_platform, source_id: remote_id)
       end
 
       def assign_attributes(post)
@@ -117,8 +117,11 @@ module BetterTogether
         resolve_local_creator(remote_attributes[:creator_id])
       end
 
+      # source_platform/target_platform reflect who initiated the connection,
+      # not who's local — mirrored content must be stored under the actual
+      # local platform, not literally connection.target_platform.
       def target_platform
-        connection.target_platform
+        connection.local_platform || connection.target_platform
       end
 
       def preserve_remote_uuid?
