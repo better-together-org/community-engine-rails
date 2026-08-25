@@ -116,35 +116,19 @@ module BetterTogether
       render wizard_step_definition.template
     end
 
-    # rubocop:todo Metrics/MethodLength
     def create_steward_account # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       @form = ::BetterTogether::NewPlatformStewardForm.new(::BetterTogether::User.new)
 
       if @form.validate(steward_params)
-        ActiveRecord::Base.transaction do
-          user = ::BetterTogether::User.new(steward_params)
+        ::BetterTogether::TenantPlatformProvisioningService.provision_steward_for_existing_platform!(
+          platform: target_platform,
+          user: ::BetterTogether::User.new(steward_params)
+        )
 
-          if user.save!
-            target_platform.person_platform_memberships.create!(
-              member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-                    ::BetterTogether::Role.find_by(identifier: 'platform_manager')
-            )
-
-            primary_community = target_platform.primary_community
-            primary_community.person_community_memberships.create!(
-              member: user.person,
-              role: ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
-            )
-            primary_community.creator = user.person
-            primary_community.save!
-
-            mark_current_step_as_completed
-            wizard.reload
-            determine_wizard_outcome
-            return
-          end
-        end
+        mark_current_step_as_completed
+        wizard.reload
+        determine_wizard_outcome
+        return
       end
 
       @user = ::BetterTogether::User.new(steward_params)
@@ -157,7 +141,6 @@ module BetterTogether
       flash.now[:alert] = e.record.errors.full_messages.to_sentence
       render wizard_step_definition.template, status: :unprocessable_entity
     end
-    # rubocop:enable Metrics/MethodLength
 
     # --- Step 5: invite_members (optional — reuses PlatformInvitation) ----
 
