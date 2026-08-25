@@ -64,7 +64,7 @@ module BetterTogether
 
           # Platform managers / joatu managers see everything
           if user.present?
-            return base                   if permitted_to?('manage_platform')
+            return base                   if permitted_to?('manage_platform', current_platform)
             return platform_scoped        if can_manage_joatu?
             return platform_scoped        if can_manage_network_connections? && connection_request_scope?
           end
@@ -124,11 +124,11 @@ module BetterTogether
         end
 
         def can_manage_joatu?
-          permitted_to?('manage_joatu')
+          permitted_to?('manage_joatu', current_platform)
         end
 
         def can_manage_network_connections?
-          permitted_to?('manage_network_connections')
+          permitted_to?('manage_network_connections', current_platform)
         end
 
         def connection_request_scope?
@@ -143,11 +143,11 @@ module BetterTogether
       end
 
       def can_manage_joatu?
-        permitted_to?('manage_joatu')
+        permitted_to?('manage_joatu', record.platform)
       end
 
       def can_manage_network_connections?
-        permitted_to?('manage_network_connections')
+        permitted_to?('manage_network_connections', record.platform)
       end
 
       def can_view_network_request?
