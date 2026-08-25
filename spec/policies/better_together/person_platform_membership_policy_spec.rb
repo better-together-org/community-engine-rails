@@ -177,6 +177,50 @@ RSpec.describe BetterTogether::PersonPlatformMembershipPolicy, type: :policy do
     end
   end
 
+  describe 'cross-tenant isolation' do
+    let(:other_platform) { create(:better_together_platform, :public) }
+    let(:other_manager_user) { create(:better_together_user, :confirmed) }
+    let(:host_membership) do
+      create(:better_together_person_platform_membership,
+             joinable: platform,
+             member: target_person,
+             role: analytics_viewer_role)
+    end
+
+    before do
+      BetterTogether::PersonPlatformMembership.create!(
+        joinable: other_platform,
+        member: other_manager_user.person,
+        role: platform_steward_role,
+        status: 'active'
+      )
+    end
+
+    it "denies managing another platform's membership" do
+      policy = described_class.new(other_manager_user, host_membership)
+
+      expect(policy.show?).to be false
+      expect(policy.destroy?).to be false
+    end
+
+    it 'allows managing memberships on their own platform' do
+      own_platform_membership = create(:better_together_person_platform_membership,
+                                       joinable: other_platform,
+                                       member: target_person,
+                                       role: analytics_viewer_role)
+      policy = described_class.new(other_manager_user, own_platform_membership)
+
+      expect(policy.destroy?).to be true
+    end
+
+    it "excludes another platform's memberships from the manager's resolved scope" do
+      host_membership
+      resolved = described_class::Scope.new(other_manager_user, BetterTogether::PersonPlatformMembership).resolve
+
+      expect(resolved).not_to include(host_membership)
+    end
+  end
+
   describe 'Scope' do
     let!(:first_membership) do
       create(:better_together_person_platform_membership,

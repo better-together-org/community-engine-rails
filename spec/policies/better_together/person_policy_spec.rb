@@ -81,6 +81,35 @@ RSpec.describe BetterTogether::PersonPolicy do
     expect(described_class.new(people_reviewer, private_person).show?).to be true
   end
 
+  describe 'cross-tenant isolation' do
+    let(:tenant_platform) { create(:better_together_platform, :public) }
+    let(:tenant_admin) { create(:better_together_user, :confirmed) }
+    let(:tenant_person) { create(:better_together_person, platform: tenant_platform) }
+
+    before do
+      membership = tenant_platform.person_platform_memberships.find_or_initialize_by(member: tenant_admin.person)
+      membership.role ||= create(:better_together_role, :platform_role)
+      membership.role.assign_resource_permissions(%w[update_person delete_person])
+      membership.status = :active
+      membership.save!
+    end
+
+    it 'denies updating or destroying a person belonging to a different platform' do
+      other_platform_person = create(:better_together_person, platform: BetterTogether::Platform.find_by(host: true))
+      policy = described_class.new(tenant_admin, other_platform_person)
+
+      expect(policy.update?).to be false
+      expect(policy.destroy?).to be false
+    end
+
+    it 'allows managing a person belonging to their own platform' do
+      policy = described_class.new(tenant_admin, tenant_person)
+
+      expect(policy.update?).to be true
+      expect(policy.destroy?).to be true
+    end
+  end
+
   describe 'Scope' do
     let(:scope) { BetterTogether::Person }
 
