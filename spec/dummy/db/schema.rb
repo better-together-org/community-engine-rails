@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_22_170000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_25_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -831,10 +831,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_22_170000) do
     t.string "mappable_type"
     t.uuid "mappable_id"
     t.string "type", default: "BetterTogether::Geography::Map", null: false
+    t.uuid "platform_id"
     t.index ["creator_id"], name: "by_better_together_geography_maps_creator"
     t.index ["identifier"], name: "index_better_together_geography_maps_on_identifier", unique: true
     t.index ["locale"], name: "by_better_together_geography_maps_locale"
     t.index ["mappable_type", "mappable_id"], name: "index_better_together_geography_maps_on_mappable"
+    t.index ["platform_id"], name: "index_better_together_geography_maps_on_platform_id"
     t.index ["privacy"], name: "by_better_together_geography_maps_privacy"
   end
 
@@ -2571,6 +2573,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_22_170000) do
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
   add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_geography_maps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"
   add_foreign_key "better_together_geography_regions", "better_together_communities", column: "community_id"
