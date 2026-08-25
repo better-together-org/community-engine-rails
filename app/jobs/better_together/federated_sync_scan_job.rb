@@ -44,12 +44,20 @@ module BetterTogether
     def eligible_connections
       # rubocop:disable BetterTogether/NoRawSqlInQueries -- PostgreSQL JSONB ->> operator has no Arel equivalent
       sharing_policies = Arel.sql("settings->>'content_sharing_policy' IN ('mirror_network_feed', 'mirrored_publish_back')")
+      # Exactly one side must be an external peer — same-instance connections (both sides
+      # local_hosted?, e.g. host<->tenant on this install) have no remote_platform for
+      # HttpAdapter to fetch from and aren't a real federation sync target.
+      exactly_one_external = Arel.sql(<<~SQL.squish)
+        (SELECT external FROM better_together_platforms WHERE id = better_together_platform_connections.source_platform_id)
+        != (SELECT external FROM better_together_platforms WHERE id = better_together_platform_connections.target_platform_id)
+      SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
       ::BetterTogether::PlatformConnection.active
                                           .content_read_capable
                                           .not_syncing
                                           .due_for_sync
                                           .where(sharing_policies)
+                                          .where(exactly_one_external)
     end
 
     def dispatchable_connection?(connection)

@@ -43,6 +43,7 @@ module BetterTogether
 
     def setup_request_context
       @membership_request = params[:membership_request]
+      @platform = @membership_request&.platform
       @recipient = normalize_recipient(params[:recipient])
       assign_community_context
       assign_requestor_context
@@ -98,6 +99,7 @@ module BetterTogether
 
     def assign_digest_community_context
       @community = params[:community]
+      @platform = @community&.platform
       @community_name = @community&.name || default_community_name
     end
 
