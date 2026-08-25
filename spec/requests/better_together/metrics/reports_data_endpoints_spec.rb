@@ -313,6 +313,50 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
     end
   end
 
+  describe 'user account endpoints' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let!(:host_scoped_count) { BetterTogether::User.for_platform(host_platform).count }
+    let!(:other_platform) { create(:better_together_platform, :public) }
+    let!(:other_platform_user) do
+      Current.set(platform: other_platform) { create(:better_together_user, :confirmed) }
+    end
+
+    describe 'GET /user_accounts_daily_data' do
+      it "excludes another platform's user accounts from the daily totals" do
+        get "#{base_path}/user_accounts_daily_data", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+        created_dataset = json['datasets'].find { |d| d['label'] == I18n.t('better_together.metrics.reports.charts.accounts_created') }
+
+        expect(created_dataset['data'].sum).to eq(host_scoped_count)
+        expect(created_dataset['data'].sum).to be < BetterTogether::User.count
+      end
+    end
+
+    describe 'GET /user_registration_sources_data' do
+      it "does not count another platform's users in registration source totals" do
+        get "#{base_path}/user_registration_sources_data", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['values'].sum).to eq(host_scoped_count)
+      end
+    end
+
+    describe 'GET /user_cumulative_growth_data' do
+      it "does not include another platform's users in cumulative growth" do
+        get "#{base_path}/user_cumulative_growth_data", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['values'].last).to eq(host_scoped_count)
+      end
+    end
+  end
+
   describe 'additional filters' do
     describe 'locale filter' do
       it 'filters page views by locale' do
