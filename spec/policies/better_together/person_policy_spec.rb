@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   # rubocop:disable Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
@@ -97,6 +106,22 @@ RSpec.describe BetterTogether::PersonPolicy do
       resolved = described_class::Scope.new(people_reviewer, scope).resolve
 
       expect(resolved).to include(people_reviewer.person, public_person, private_person)
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_b_person) { create(:better_together_person, platform: platform_b) }
+
+    it 'denies a steward of platform A from updating a person on platform B' do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_person).update?).to be false
+    end
+
+    it 'allows a steward of platform B to update a person on platform B' do
+      steward_b = steward_of(platform_b)
+      expect(described_class.new(steward_b, platform_b_person).update?).to be true
     end
   end
 end

@@ -5,6 +5,15 @@ require 'rails_helper'
 # rubocop:disable RSpec/MultipleMemoizedHelpers, RSpec/NamedSubject
 
 RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec/MultipleMemoizedHelpers
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   let(:scoped_community) { create(:better_together_community, privacy: 'public') }
   let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
   let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
@@ -349,5 +358,29 @@ RSpec.describe BetterTogether::PagePolicy, type: :policy do # rubocop:todo RSpec
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
   end
+
+  # rubocop:disable RSpec/MultipleMemoizedHelpers
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform, :public) }
+    let(:platform_b) { create(:better_together_platform, :public) }
+    let(:platform_a_page) { create(:better_together_page, platform: platform_a) }
+    let(:platform_b_page) { create(:better_together_page, platform: platform_b) }
+
+    it "denies a steward of platform A from updating platform B's page" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_page).update?).to be false
+    end
+
+    it "allows a steward of platform A to update platform A's own page" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_a_page).update?).to be true
+    end
+
+    it "denies a steward of platform A from destroying platform B's page" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_page).destroy?).to be false
+    end
+  end
+  # rubocop:enable RSpec/MultipleMemoizedHelpers
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers, RSpec/NamedSubject

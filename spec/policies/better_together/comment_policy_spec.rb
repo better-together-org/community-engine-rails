@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::CommentPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:creator_user) { create(:better_together_user, :confirmed) }
@@ -201,6 +210,26 @@ RSpec.describe BetterTogether::CommentPolicy do
       scope = described_class::Scope.new(regular_user, host_post.comments)
 
       expect(scope.resolve).to include(restricted_comment)
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_a_post) { create(:better_together_post, platform: platform_a) }
+    let(:platform_b_post) { create(:better_together_post, platform: platform_b) }
+    # Comment's platform isn't auto-derived from its commentable — PlatformScoped's generic
+    # fallback (Current.platform || host) would otherwise misattribute it, so it's set explicitly.
+    let(:platform_b_comment) { create(:comment, commentable: platform_b_post, platform: platform_b) }
+
+    it "denies a steward of platform A from destroying a comment on platform B's post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_comment).destroy?).to be false
+    end
+
+    it "allows a steward of platform B to destroy a comment on platform B's own post" do
+      steward_b = steward_of(platform_b)
+      expect(described_class.new(steward_b, platform_b_comment).destroy?).to be true
     end
   end
 end
