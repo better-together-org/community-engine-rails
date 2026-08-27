@@ -85,7 +85,7 @@ bin/dc-run bin/i18n                                         # I18n validation
 ## Technology Stack
 
 - **Rails 7.1+** (engine & current hosts) – compatible with Rails 8 targets
-- **Ruby 3.3+**
+- **Ruby 3.4+**
 - **PostgreSQL (+ PostGIS, pgcrypto)**
 - **Redis** for caching & Sidekiq queues
 - **Sidekiq** for background jobs (queue namespaced, e.g. `:metrics`)

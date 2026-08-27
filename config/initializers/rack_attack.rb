@@ -72,6 +72,15 @@ module Rack
       req.ip if req.path.start_with?('/mcp')
     end
 
+    # A /mcp/sse GET opens a Server-Sent Events stream that holds a web-server
+    # thread for the life of the connection. A well-behaved MCP client opens one
+    # and keeps it; a client that reconnects every few seconds can exhaust the
+    # thread pool and take the app down (INC 2026-08-27, communityengine.app
+    # flapping). Cap new SSE stream opens hard, below the general mcp/ip limit.
+    throttle('mcp/sse/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.get? && req.path == '/mcp/sse'
+    end
+
     # Throttle MCP tool call POSTs more aggressively (30 per minute)
     throttle('mcp/tool-calls/ip', limit: 30, period: 1.minute) do |req|
       req.ip if req.path == '/mcp/messages' && req.post?
