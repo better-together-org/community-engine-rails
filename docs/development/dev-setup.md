@@ -4,7 +4,7 @@
 
 ## Prerequisites
 - Docker Engine running (all DB-dependent commands must use `bin/dc-run`)
-- Ruby 3.4.4 (managed by `rbenv` in the setup scripts)
+- Ruby 3.4.10 (managed by `rbenv` in the setup scripts)
 - Node 20
 
 ## Initial Setup

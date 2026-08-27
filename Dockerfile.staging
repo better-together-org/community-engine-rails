@@ -6,7 +6,7 @@
 #   - No AWS build args
 
 # Stage 1: Build environment
-FROM ruby:3.4.4 AS builder
+FROM ruby:3.4.10 AS builder
 
 # Install dependencies
 RUN apt-get update -qq \
@@ -43,7 +43,7 @@ ENV ASSET_SYNC_ENABLED=false
 RUN cd spec/dummy && bundle exec rake assets:precompile
 
 # Stage 2: Runtime environment
-FROM ruby:3.4.4
+FROM ruby:3.4.10
 
 # Install runtime dependencies (no Sentry CLI)
 RUN apt-get update -qq \
