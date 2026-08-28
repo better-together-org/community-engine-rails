@@ -150,6 +150,11 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         throttle_names = Rack::Attack.throttles.keys
         expect(throttle_names).to include('oauth/token/client_id')
       end
+
+      it 'has a dedicated throttle for MCP SSE stream opens' do
+        expect(Rack::Attack.throttles.keys).to include('mcp/sse/ip')
+        expect(Rack::Attack.throttles['mcp/sse/ip'].limit).to eq(5)
+      end
     end
 
     describe '2.2 — Token introspection restricted' do
