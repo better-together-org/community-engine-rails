@@ -71,7 +71,7 @@ jobs:
           BUNDLE_WITHOUT: ""
           BUNDLE_WITH: "development:test"
         with:
-          ruby-version: '3.4.4'
+          ruby-version: '3.4.10'
       - name: Resolve branch-native bundle
         shell: bash
         run: |
