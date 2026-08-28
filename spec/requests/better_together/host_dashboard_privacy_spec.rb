@@ -61,10 +61,9 @@ RSpec.describe 'BetterTogether::HostDashboard privacy' do
     expect(flash[:error]).to be_present
   end
 
-  it 'redirects safety review without safety review permission' do
+  it 'allows safety review access for default platform managers/stewards (manage_platform_safety is now a default grant)' do
     get better_together.host_dashboard_safety_review_path(locale:)
 
-    expect(response).to redirect_to(better_together.home_page_path(locale:))
-    expect(flash[:error]).to be_present
+    expect(response).to have_http_status(:ok)
   end
 end

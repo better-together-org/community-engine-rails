@@ -7,6 +7,8 @@ module BetterTogether
       # Returns the opposite type matches for a request or offer
       # - If given a Request -> returns matching Offers
       # - If given an Offer   -> returns matching Requests
+      # Candidates are restricted to the same platform as record - mutual aid
+      # matching does not cross tenant boundaries.
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/CyclomaticComplexity
       def self.match(record) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
@@ -16,7 +18,7 @@ module BetterTogether
 
         case record
         when request_klass
-          candidates = offer_klass.status_open
+          candidates = offer_klass.status_open.where(platform_id: record.platform_id)
           # Category overlap if any
           if record.category_ids.any?
             candidates = candidates.joins(:categories)
@@ -49,7 +51,7 @@ module BetterTogether
 
           candidates.distinct
         when offer_klass
-          candidates = request_klass.status_open
+          candidates = request_klass.status_open.where(platform_id: record.platform_id)
           if record.category_ids.any?
             candidates = candidates.joins(:categories)
                                    .where(BetterTogether::Joatu::Category.table_name => { id: record.category_ids })

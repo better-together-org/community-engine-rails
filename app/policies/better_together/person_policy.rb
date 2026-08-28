@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && (permitted_to?('create_person') || platform_manager?)
+      user.present? && (permitted_to?('create_person', current_platform) || platform_manager?)
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (me? || permitted_to?('update_person') || platform_manager?)
+      user.present? && (me? || permitted_to?('update_person', record.platform) || platform_manager?)
     end
 
     def edit?
@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && permitted_to?('delete_person')
+      user.present? && permitted_to?('delete_person', record.platform)
     end
 
     def me?

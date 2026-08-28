@@ -103,22 +103,22 @@ module BetterTogether
 
       # JSON endpoint for daily user account creation and confirmation
       def user_accounts_daily_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        render json: user_accounts_daily_payload(filter_by_datetime(BetterTogether::User, :created_at))
+        render json: user_accounts_daily_payload(filtered_metrics_scope(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for confirmation rate trend
       def user_confirmation_rate_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        render json: user_confirmation_rate_payload(filter_by_datetime(BetterTogether::User, :created_at))
+        render json: user_confirmation_rate_payload(filtered_metrics_scope(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for registration sources breakdown
       def user_registration_sources_data # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-        render json: user_registration_sources_payload(filter_by_datetime(BetterTogether::User, :created_at))
+        render json: user_registration_sources_payload(filtered_metrics_scope(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for cumulative user growth
       def user_cumulative_growth_data # rubocop:disable Metrics/AbcSize
-        render json: user_cumulative_growth_payload(filter_by_datetime(BetterTogether::User, :created_at))
+        render json: user_cumulative_growth_payload(filtered_metrics_scope(BetterTogether::User, :created_at))
       end
 
       # JSON endpoint for downloads grouped by file name
@@ -183,9 +183,9 @@ module BetterTogether
           link_clicks: (metrics_scope(BetterTogether::Metrics::LinkClick).minimum(:clicked_at) || 1.year.ago) - 1.day,
           downloads: (metrics_scope(BetterTogether::Metrics::Download).minimum(:downloaded_at) || 1.year.ago) - 1.day,
           shares: (metrics_scope(BetterTogether::Metrics::Share).minimum(:shared_at) || 1.year.ago) - 1.day,
-          link_checker: (BetterTogether::Content::Link.minimum(:created_at) || 1.year.ago) - 1.day,
+          link_checker: (platform_link_checker_scope.minimum(:created_at) || 1.year.ago) - 1.day,
           search_queries: (metrics_scope(BetterTogether::Metrics::SearchQuery).minimum(:searched_at) || 1.year.ago) - 1.day,
-          user_accounts: (BetterTogether::User.minimum(:created_at) || 1.year.ago) - 1.day
+          user_accounts: (metrics_scope(BetterTogether::User).minimum(:created_at) || 1.year.ago) - 1.day
         }
       end
       # rubocop:enable Metrics/AbcSize
@@ -246,9 +246,19 @@ module BetterTogether
       end
 
       def link_checker_scope(column_name, valid_only: nil)
-        scope = BetterTogether::Content::Link.all
+        scope = platform_link_checker_scope
         scope = scope.where(valid_link: valid_only) unless valid_only.nil?
         scope.where(column_name => @start_date..@end_date)
+      end
+
+      # Content::Link rows are shared/deduplicated by URL across every platform
+      # that links to them (see Metrics::RichTextLink, the actual per-occurrence
+      # platform-scoped join) - there is no platform_id on Link itself to filter
+      # by directly. Restrict to links this platform's own rich content
+      # actually references, via the join table's already-scoped relation.
+      def platform_link_checker_scope
+        referenced_link_ids = BetterTogether::Metrics::RichTextLink.for_platform(metrics_platform).select(:link_id)
+        BetterTogether::Content::Link.where(id: referenced_link_ids)
       end
 
       def page_views_by_url_payload(scope)

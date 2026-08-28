@@ -162,6 +162,7 @@ module BetterTogether
             manage_platform_database
             manage_platform_deployment
             manage_platform_roles
+            manage_platform_safety
             manage_platform_security
             manage_platform_settings
             view_metrics_dashboard
@@ -186,6 +187,7 @@ module BetterTogether
             manage_platform_database
             manage_platform_deployment
             manage_platform_roles
+            manage_platform_safety
             manage_platform_security
             manage_platform_settings
             view_metrics_dashboard

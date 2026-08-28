@@ -14,7 +14,7 @@ module BetterTogether
 
     # GET /platforms/:platform_id/platform_invitations
     def index # rubocop:todo Metrics/MethodLength
-      authorize BetterTogether::PlatformInvitation
+      authorize BetterTogether::PlatformInvitation.new(invitable: @platform)
 
       # Build filtered and sorted collection with pagination
       @platform_invitations = build_filtered_collection
