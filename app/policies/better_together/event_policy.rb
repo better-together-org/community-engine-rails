@@ -163,7 +163,7 @@ module BetterTogether
       private
 
       def platform_event_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
       end
     end
 

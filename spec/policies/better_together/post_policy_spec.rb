@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PostPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:community_member_user) { create(:better_together_user, :confirmed) }
@@ -293,6 +302,28 @@ RSpec.describe BetterTogether::PostPolicy do
 
       scope = described_class::Scope.new(regular_user, BetterTogether::Post)
       expect(scope.resolve).not_to include(blocked_public_post)
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_a_post) { create(:better_together_post, platform: platform_a) }
+    let(:platform_b_post) { create(:better_together_post, platform: platform_b) }
+
+    it "denies a steward of platform A from updating platform B's post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_post).update?).to be false
+    end
+
+    it "allows a steward of platform A to update platform A's own post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_a_post).update?).to be true
+    end
+
+    it "denies a steward of platform A from destroying platform B's post" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_post).destroy?).to be false
     end
   end
 end
