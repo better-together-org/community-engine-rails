@@ -97,7 +97,7 @@ module BetterTogether
           recipients = [creator, other&.creator].compact
           next if recipients.empty?
 
-          notifier = BetterTogether::Joatu::MatchNotifier.with(offer: offer_rec, request: request_rec)
+          notifier = BetterTogether::Joatu::MatchNotifier.with(offer: offer_rec, request: request_rec, record: offer_rec)
           notifier.deliver_later(recipients)
         end
       end
