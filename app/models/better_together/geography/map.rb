@@ -3,7 +3,7 @@
 module BetterTogether
   module Geography
     # Spatial representations of data
-    class Map < ApplicationRecord
+    class Map < PlatformRecord
       include Creatable # Tracks the Creator of the record
       include FriendlySlug # Generates friendly slugs for URLs
       include Identifier # Adds unique identifier functionality
