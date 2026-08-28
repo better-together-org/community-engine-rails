@@ -20,18 +20,20 @@ module BetterTogether
       def update?
         return false unless user.present?
 
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || record.creator_id == agent&.id
+        permitted_to?('manage_platform_settings', record.platform) || permitted_to?('manage_platform', record.platform) ||
+          record.creator_id == agent&.id
       end
       alias edit? update?
 
-      def destroy?
+      def destroy? # rubocop:todo Metrics/AbcSize
         return false unless user.present?
 
         # Prevent destroy if there are any agreements for this offer — applies to everyone
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
         # Platform stewards or the creator may destroy when there are no agreements
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') || record.creator_id == agent&.id
+        permitted_to?('manage_platform_settings', record.platform) || permitted_to?('manage_platform', record.platform) ||
+          record.creator_id == agent&.id
       end
 
       class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
@@ -40,7 +42,8 @@ module BetterTogether
           return scope.none unless current_platform
 
           # Platform stewards see everything on the platform
-          if user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform'))
+          if user.present? && (permitted_to?('manage_platform_settings', current_platform) ||
+                                permitted_to?('manage_platform', current_platform))
             return platform_scoped
           end
 

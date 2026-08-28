@@ -3,7 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'Nested Checklist Items', :as_platform_manager do
-  let(:checklist) { create(:better_together_checklist) }
+  # Explicit host platform — the checklist factory otherwise builds its own
+  # unrelated platform, which the :as_platform_manager (host-scoped) actor
+  # would correctly no longer manage under per-platform scoping.
+  let(:checklist) { create(:better_together_checklist, platform: BetterTogether::Platform.find_by(host: true)) }
   # create a few items
   let!(:parent) { create(:better_together_checklist_item, checklist: checklist) }
   # capture existing item ids so newly created items can be found without relying on a `label` column

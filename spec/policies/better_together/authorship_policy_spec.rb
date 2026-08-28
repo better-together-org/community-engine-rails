@@ -13,8 +13,8 @@ RSpec.describe BetterTogether::AuthorshipPolicy, type: :policy do
     let(:user) { instance_double(BetterTogether::User, person:) }
 
     before do
-      allow(person).to receive(:permitted_to?).with('manage_platform_settings').and_return(true)
-      allow(person).to receive(:permitted_to?).with('manage_platform').and_return(false)
+      allow(person).to receive(:permitted_to?).with('manage_platform_settings', anything).and_return(true)
+      allow(person).to receive(:permitted_to?).with('manage_platform', anything).and_return(false)
     end
 
     it 'includes authorships for platform settings managers' do
