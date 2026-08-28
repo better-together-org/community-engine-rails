@@ -5,7 +5,7 @@ require 'action_dispatch/routing/mapper'
 module BetterTogether
   # Allows jsonapi-resources 0.10.x to keep passing a positional options hash to
   # Rails 8.1's keyword-based mapper resource initializer.
-  module Rails81JsonapiResourcesCompat
+  module Rails81JSONAPIResourcesCompat
     # Adapts the mapper resource initializer to accept the legacy positional
     # options hash used by jsonapi-resources 0.10.x.
     module MapperResourceInitializeCompat
@@ -28,6 +28,8 @@ module BetterTogether
       resource_class.prepend(MapperResourceInitializeCompat)
     end
   end
+
+  Rails81JsonapiResourcesCompat = Rails81JSONAPIResourcesCompat
 end
 
-BetterTogether::Rails81JsonapiResourcesCompat.apply! if Rails.gem_version >= Gem::Version.new('8.1.0')
+BetterTogether::Rails81JSONAPIResourcesCompat.apply! if Rails.gem_version >= Gem::Version.new('8.1.0')

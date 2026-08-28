@@ -17,6 +17,6 @@
 
   <small class="form-text text-muted"><%= t("helpers.hint.#{model.model_name.i18n_key}.#{attr}") %></small>
 
-  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="<%= preview_class %>" data-url="<%= model.public_send(attr).url if model.public_send(attr).attached? %>">
+  <div class="my-3 text-center preview-target" data-better_together--image-preview-target="preview" data-image-classes="<%= preview_class %>" data-url="<%= storage_proxy_url_for(model.public_send(attr)) if model.public_send(attr).attached? %>">
   </div>
 </div>

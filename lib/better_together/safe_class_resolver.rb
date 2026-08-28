@@ -11,11 +11,12 @@ module BetterTogether
     def resolve(candidate, allowed: [])
       return nil if candidate.blank?
 
-      allowed_names = Array(allowed).map { |a| a.is_a?(Class) ? a.name : a.to_s }
-      return nil unless allowed_names.include?(candidate.to_s)
+      normalized_candidate = normalize_name(candidate)
+      allowed_names = Array(allowed).map { |a| normalize_name(a.is_a?(Class) ? a.name : a) }
+      return nil unless allowed_names.include?(normalized_candidate)
 
       # Safe constant resolution because we verified it's in allow-list
-      candidate.to_s.safe_constantize
+      candidate.to_s.safe_constantize || normalized_candidate.safe_constantize
     end
 
     # Resolve or raise an error when disallowed
@@ -24,6 +25,10 @@ module BetterTogether
       return klass if klass
 
       raise error_class, "Disallowed class: #{candidate}"
+    end
+
+    def normalize_name(name)
+      name.to_s.delete_prefix('::')
     end
   end
 end

@@ -11,13 +11,19 @@ set -euo pipefail
 
 echo "pre-push: Running rubocop --parallel on full repo…"
 
+if [ -x "$(git rev-parse --show-toplevel)/bin/dc-run" ]; then
+  rubocop_cmd="$(git rev-parse --show-toplevel)/bin/dc-run rubocop"
+else
+  rubocop_cmd="bundle exec rubocop"
+fi
+
 rubocop_exit=0
-bundle exec rubocop --parallel || rubocop_exit=$?
+$rubocop_cmd --parallel || rubocop_exit=$?
 
 if [ "$rubocop_exit" -ne 0 ]; then
   echo ""
   echo "pre-push: ✗ RuboCop offenses detected. Fix them before pushing."
-  echo "          Run 'bundle exec rubocop -A' to auto-correct where possible."
+  echo "          Run 'bin/dc-run rubocop -A' (or 'bundle exec rubocop -A') to auto-correct."
   exit 1
 fi
 

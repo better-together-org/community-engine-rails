@@ -19,6 +19,8 @@ module BetterTogether
       return false if owned_by_current_person?(record)
 
       true
+    rescue Devise::MissingWarden
+      false
     end
 
     def content_actions_trigger_label(record)

@@ -4,6 +4,8 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 repo_basename="$(basename "$repo_root")"
+git_dir="$(git -C "$repo_root" rev-parse --absolute-git-dir 2>/dev/null || printf '%s/.git' "$repo_root")"
+git_common_dir="$(git -C "$repo_root" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || printf '%s' "$git_dir")"
 
 # Community Engine's compose stack uses fixed service/container/volume names for the
 # shared dev database, Redis, and Elasticsearch services. Secondary git worktrees
@@ -15,7 +17,7 @@ sanitize_slug() {
   printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+//; s/_+$//'
 }
 
-if [[ "$repo_basename" == "community-engine-rails" ]]; then
+if [[ "$git_dir" == "$git_common_dir" ]]; then
   worktree_db_suffix=""
 else
   worktree_db_suffix="_$(sanitize_slug "$repo_basename")"
