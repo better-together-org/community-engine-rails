@@ -152,6 +152,12 @@ RSpec.describe BetterTogether::Post do
       expect(post.local_to_platform?(remote_platform)).to be true
       expect(post.source_identifier).to eq('remote-123')
     end
+
+    it 'treats a synced post stored under the local platform as mirrored' do
+      post = build(:better_together_post, source_id: nil, last_synced_at: Time.current)
+
+      expect(post.mirrored?).to be true
+    end
   end
 
   describe 'federation_visibility (Federatable)' do
@@ -320,6 +326,15 @@ RSpec.describe BetterTogether::Post do
       post = create(:better_together_post, platform: public_platform, community: public_community, privacy: 'public')
       post.title = 'Updated title'
       expect(post).to be_valid
+    end
+
+    context 'federated mirror (last_synced_at present)' do
+      it 'allows public privacy even under a private platform and community' do
+        post = post_for.call(platform: private_platform, community: private_community, privacy: 'public')
+        post.last_synced_at = Time.current
+
+        expect(post).to be_valid
+      end
     end
   end
 end

@@ -509,6 +509,17 @@ module BetterTogether # :nodoc:
         expect(mirrored_event).to be_preserved_remote_uuid
         expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
       end
+
+      it 'treats a synced event stored under the local platform as mirrored' do
+        mirrored_event = build(
+          :event,
+          platform: local_platform,
+          source_id: nil,
+          last_synced_at: Time.current
+        )
+
+        expect(mirrored_event).to be_mirrored
+      end
     end
 
     describe 'federation_visibility (Federatable)' do
@@ -630,6 +641,15 @@ module BetterTogether # :nodoc:
         event = create(:event, platform: public_platform, privacy: 'public')
         event.name = 'Updated name'
         expect(event).to be_valid
+      end
+
+      context 'federated mirror (last_synced_at present)' do
+        it 'allows public privacy even under a private platform' do
+          event = event_for.call(platform: private_platform, privacy: 'public')
+          event.last_synced_at = Time.current
+
+          expect(event).to be_valid
+        end
       end
     end
   end

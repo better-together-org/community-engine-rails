@@ -240,6 +240,17 @@ module BetterTogether # :nodoc:
           expect(mirrored_page).to be_preserved_remote_uuid
           expect(mirrored_page.source_identifier).to eq(mirrored_page.id)
         end
+
+        it 'treats a synced page stored under the local platform as mirrored' do
+          mirrored_page = build(
+            :better_together_page,
+            platform: local_platform,
+            source_id: nil,
+            last_synced_at: Time.current
+          )
+
+          expect(mirrored_page).to be_mirrored
+        end
       end
 
       describe 'federation_visibility (Federatable)' do
@@ -392,6 +403,15 @@ module BetterTogether # :nodoc:
         page = create(:better_together_page, platform: public_platform, community: public_community, privacy: 'public')
         page.title = 'Updated title'
         expect(page).to be_valid
+      end
+
+      context 'federated mirror (last_synced_at present)' do
+        it 'allows public privacy even under a private platform and community' do
+          page = page_for.call(platform: private_platform, community: private_community, privacy: 'public')
+          page.last_synced_at = Time.current
+
+          expect(page).to be_valid
+        end
       end
     end
 

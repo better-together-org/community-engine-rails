@@ -98,6 +98,9 @@ module BetterTogether
         end
       rescue ActiveRecord::RecordInvalid => e
         conflict = build_conflict_summary(seed_data, e)
+        # A validation failure on one seed must not abort the whole batch. Only
+        # re-raise when the error isn't on one of our importer models (i.e. the
+        # ingest pipeline itself is broken, not just this record).
         raise unless conflict
 
         batches[:conflicted_seeds] << conflict
@@ -134,31 +137,46 @@ module BetterTogether
         )
       end
 
-      # rubocop:disable Metrics/AbcSize
       def build_conflict_summary(seed_data, error)
         payload = extract_payload(seed_data)
-        return unless mirrored_collision_error?(payload, error)
+        return unless importer_error?(payload, error)
 
+        return identifier_collision_summary(payload, error) if collision_validation?(error)
+
+        validation_rejected_summary(payload, error)
+      end
+
+      def identifier_collision_summary(payload, error)
         model_class = importer_model_for(payload[:type])
         existing_record = conflicting_record_for(model_class, payload, error.record)
 
+        base_conflict_summary(payload, error).merge(
+          'existing_local_identifier' => existing_record&.identifier,
+          'conflict_kind' => 'mirrored_identifier_collision'
+        )
+      end
+
+      # Any other single-record validation failure (e.g. a privacy ceiling the
+      # receiving platform imposes on mirrored content). Recorded as a conflict
+      # so the rest of the batch still imports.
+      def validation_rejected_summary(payload, error)
+        base_conflict_summary(payload, error).merge('conflict_kind' => 'validation_rejected')
+      end
+
+      def base_conflict_summary(payload, error)
         {
           'seed_type' => payload[:type].to_s,
           'remote_id' => payload[:id].to_s,
           'remote_identifier' => payload.dig(:attributes, :identifier).presence,
           'source_platform_identifier' => connection.source_platform.identifier,
           'target_platform_identifier' => connection.target_platform.identifier,
-          'existing_local_identifier' => existing_record&.identifier,
-          'validation_messages' => error.record.errors.full_messages,
-          'conflict_kind' => 'mirrored_identifier_collision'
+          'validation_messages' => error.record.errors.full_messages
         }
       end
-      # rubocop:enable Metrics/AbcSize
 
-      def mirrored_collision_error?(payload, error)
+      def importer_error?(payload, error)
         IMPORTER_MAP.key?(payload[:type].to_s) &&
-          importer_model_for(payload[:type]) == error.record.class &&
-          collision_validation?(error)
+          importer_model_for(payload[:type]) == error.record.class
       end
 
       def collision_validation?(error)
