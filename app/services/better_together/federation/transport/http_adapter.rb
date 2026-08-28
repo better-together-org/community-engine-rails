@@ -4,6 +4,7 @@ require 'json'
 require 'net/http'
 require 'ssrf_filter'
 require 'socket'
+require 'time'
 require 'uri'
 require 'cgi'
 
@@ -18,6 +19,21 @@ module BetterTogether
 
         # Raised when an outbound federation request targets a private/loopback address.
         class SSRFError < StandardError; end
+
+        # Raised when the remote rate-limits us (HTTP 429/503). Carries the
+        # server's requested cool-off (`Retry-After`, in seconds) when present so
+        # the caller can schedule the next attempt politely instead of retrying
+        # immediately.
+        class RateLimitedError < StandardError
+          attr_reader :retry_after
+
+          def initialize(message, retry_after: nil)
+            super(message)
+            @retry_after = retry_after
+          end
+        end
+
+        RATE_LIMIT_CODES = %w[429 503].freeze
 
         def self.call(connection:, cursor: nil, limit: BetterTogether::FederatedContentPullService::DEFAULT_LIMIT)
           new(connection:, cursor:, limit:).call
@@ -43,20 +59,26 @@ module BetterTogether
           raise ArgumentError, 'connection is required' unless connection
 
           response = fetch_feed_response
+          raise_feed_status_errors(response)
+          build_result(JSON.parse(response.body))
+        end
+
+        private
+
+        attr_reader :connection, :cursor, :limit
+
+        def raise_feed_status_errors(response)
+          raise rate_limited_error(response) if RATE_LIMIT_CODES.include?(response.code)
           raise federation_error(response) unless response.is_a?(Net::HTTPSuccess)
+        end
 
-          payload = JSON.parse(response.body)
-
+        def build_result(payload)
           ::BetterTogether::FederatedContentPullService::Result.new(
             connection:,
             seeds: payload['seeds'] || payload.fetch('items', []),
             next_cursor: payload['next_cursor']
           )
         end
-
-        private
-
-        attr_reader :connection, :cursor, :limit
 
         # A cached token can be rejected by the remote (revoked/rotated) before its local
         # TTL expires. On a 401 we invalidate the cache and retry once with a freshly
@@ -72,6 +94,25 @@ module BetterTogether
         def federation_error(response)
           "federation feed request failed with #{response.code} for connection #{connection.id} " \
             "(#{connection_host})"
+        end
+
+        def rate_limited_error(response, context: 'feed')
+          message = "federation #{context} request rate-limited (HTTP #{response.code}) for " \
+                    "connection #{connection.id} (#{connection_host})"
+          RateLimitedError.new(message, retry_after: parse_retry_after(response))
+        end
+
+        # `Retry-After` is either a delta in seconds or an HTTP-date. Return an
+        # integer number of seconds, or nil if absent/unparseable.
+        def parse_retry_after(response)
+          raw = response['retry-after'].to_s.strip
+          return if raw.empty?
+          return raw.to_i if raw.match?(/\A\d+\z/)
+
+          seconds = (Time.httpdate(raw) - Time.current).round
+          seconds.positive? ? seconds : nil
+        rescue ArgumentError
+          nil
         end
 
         # The connection's two platform sides don't encode "local vs remote" by
@@ -136,19 +177,24 @@ module BetterTogether
 
         def fetch_and_cache_oauth_token(cache_key)
           response = http_post_form(token_uri, oauth_token_request_params)
+          raise rate_limited_error(response, context: 'token') if RATE_LIMIT_CODES.include?(response.code)
+
           unless response.is_a?(Net::HTTPSuccess)
             log_token_response_failure(response)
             return
           end
 
-          body  = JSON.parse(response.body)
+          cache_oauth_token(cache_key, JSON.parse(response.body))
+        rescue JSON::ParserError, KeyError => e
+          log_token_parse_failure(e)
+          nil
+        end
+
+        def cache_oauth_token(cache_key, body)
           token = body.fetch('access_token')
           ttl   = body.fetch('expires_in', 840).to_i
           Rails.cache.write(cache_key, token, expires_in: ttl.seconds)
           token
-        rescue JSON::ParserError, KeyError => e
-          log_token_parse_failure(e)
-          nil
         end
 
         def log_token_response_failure(response)

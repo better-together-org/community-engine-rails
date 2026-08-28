@@ -186,6 +186,48 @@ RSpec.describe BetterTogether::Federation::Transport::HttpAdapter do
         described_class.call(connection:)
       end.to raise_error(/federation feed request failed with 401 for connection #{connection.id}/)
     end
+
+    context 'when the remote rate-limits the request' do
+      before do
+        stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+          .to_return(
+            status: 200,
+            body: { access_token: 'oauth-access-token', token_type: 'Bearer', expires_in: 900,
+                    scope: 'content.feed.read' }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+      end
+
+      it 'raises RateLimitedError with the Retry-After seconds on a 503 feed response' do
+        stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
+          .to_return(status: 503, body: '', headers: { 'Retry-After' => '120' })
+
+        expect { described_class.call(connection:) }.to raise_error do |error|
+          expect(error).to be_a(described_class::RateLimitedError)
+          expect(error.retry_after).to eq(120)
+          expect(error.message).to match(/rate-limited \(HTTP 503\) for connection #{connection.id}/)
+        end
+      end
+
+      it 'raises RateLimitedError with nil retry_after when the header is absent (429)' do
+        stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
+          .to_return(status: 429, body: '')
+
+        expect { described_class.call(connection:) }.to raise_error(described_class::RateLimitedError) do |error|
+          expect(error.retry_after).to be_nil
+        end
+      end
+
+      it 'raises RateLimitedError (token context) when the token endpoint is throttled' do
+        stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+          .to_return(status: 503, body: '', headers: { 'Retry-After' => '30' })
+
+        expect { described_class.call(connection:) }.to raise_error(described_class::RateLimitedError) do |error|
+          expect(error.retry_after).to eq(30)
+          expect(error.message).to include('token request rate-limited')
+        end
+      end
+    end
   end
 
   describe 'remote platform resolution' do
