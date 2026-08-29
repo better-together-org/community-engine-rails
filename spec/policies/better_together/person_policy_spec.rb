@@ -138,7 +138,7 @@ RSpec.describe BetterTogether::PersonPolicy do
     end
   end
 
-  describe 'cross-tenant isolation' do
+  describe 'cross-tenant isolation (platform steward boundaries)' do
     let(:platform_a) { create(:better_together_platform) }
     let(:platform_b) { create(:better_together_platform) }
     let(:platform_b_person) { create(:better_together_person, platform: platform_b) }

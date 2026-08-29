@@ -53,21 +53,28 @@ module BetterTogether
       record_sync_activity('platform_connection.sync_started')
     end
 
-    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current, message: nil)
-      update!(
+    # `final:` distinguishes a fully-completed pull (no more pages) from an
+    # intermediate page. Only a completed pull clears the failure streak and
+    # backoff — otherwise a connection that can serve exactly one page before
+    # failing would reset its backoff on every scan and be retried forever.
+    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current, message: nil, final: true)
+      attrs = {
         sync_cursor: normalized_cursor(cursor),
         last_sync_status: 'succeeded',
         last_synced_at: synced_at.iso8601,
         last_sync_error_at: '',
         last_sync_error_message: message.to_s.truncate(500),
-        last_sync_item_count: item_count.to_i,
-        sync_failure_streak: 0,
-        sync_backoff_until: ''
-      )
+        last_sync_item_count: item_count.to_i
+      }
+      attrs.merge!(sync_failure_streak: 0, sync_backoff_until: '') if final
+      update!(attrs)
       record_sync_activity('platform_connection.sync_succeeded', parameters: { item_count: item_count.to_i })
     end
 
-    def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current)
+    # `retry_after` (seconds) is the remote's own requested cool-off from a
+    # rate-limit response; the effective backoff is the longer of that and our
+    # exponential schedule.
+    def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current, retry_after: nil)
       streak = sync_failure_streak.to_i + 1
       update!(
         sync_cursor: normalized_cursor(cursor),
@@ -75,15 +82,16 @@ module BetterTogether
         last_sync_error_at: failed_at.iso8601,
         last_sync_error_message: message.to_s.truncate(500),
         sync_failure_streak: streak,
-        sync_backoff_until: (failed_at + sync_backoff_interval(streak)).iso8601
+        sync_backoff_until: (failed_at + sync_backoff_interval(streak, retry_after)).iso8601
       )
       record_sync_activity('platform_connection.sync_failed', parameters: { message: message.to_s.truncate(500) })
     end
 
     private
 
-    def sync_backoff_interval(streak)
-      [SYNC_BACKOFF_BASE_SECONDS * (2**(streak - 1)), SYNC_BACKOFF_MAX_SECONDS].min.seconds
+    def sync_backoff_interval(streak, retry_after = nil)
+      exponential = [SYNC_BACKOFF_BASE_SECONDS * (2**(streak - 1)), SYNC_BACKOFF_MAX_SECONDS].min
+      [exponential, retry_after.to_i].max.seconds
     end
 
     # PlatformConnection deliberately does not include TrackedActivity/PublicActivity::Model

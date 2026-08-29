@@ -250,6 +250,29 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(Time.zone.parse(connection.sync_backoff_until)).to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 6.hours)
     end
 
+    it 'keeps the failure streak and backoff on a non-final (paginated) success' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+
+      connection.mark_sync_succeeded!(synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'), final: false)
+      connection.reload
+
+      expect(connection.sync_failure_streak).to eq(1)
+      expect(connection.sync_backoff_until).to be_present
+    end
+
+    it 'uses the longer of the exponential window and the remote Retry-After' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_failed!(message: 'rate limited', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'),
+                                   retry_after: 1800)
+      connection.reload
+
+      # streak 1 exponential window is 5 minutes; Retry-After of 1800s wins
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 1800.seconds)
+    end
+
     it 'records an Activity for each sync lifecycle transition' do
       connection = create(:better_together_platform_connection)
       own_activities = -> { BetterTogether::Activity.where(trackable: connection) }
