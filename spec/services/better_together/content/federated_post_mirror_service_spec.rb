@@ -125,6 +125,29 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
       expect(updated.identifier).to eq("#{source_platform.identifier}--remote-post")
     end
 
+    it 'mirrors public content even when the local platform/community would cap it lower' do
+      private_target = create(:better_together_platform, privacy: 'private')
+      private_connection = create(
+        :better_together_platform_connection,
+        :active,
+        source_platform:,
+        target_platform: private_target,
+        content_sharing_policy: 'mirror_network_feed',
+        share_posts: true
+      )
+
+      post = described_class.new(
+        connection: private_connection,
+        remote_attributes:,
+        remote_id: SecureRandom.uuid,
+        preserve_remote_uuid: true
+      ).call
+
+      expect(post).to be_persisted
+      expect(post.privacy).to eq('public')
+      expect(post.platform).to eq(private_target)
+    end
+
     it 'rejects mirroring when the connection policy does not allow posts' do
       connection.update!(content_sharing_policy: 'none')
 
