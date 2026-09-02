@@ -82,6 +82,9 @@
             <% attendees_count = @event.event_attendances.count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
+          <% if @event.recurring? %>
+            <%= link_to t('globals.tabs.sessions', default: 'Sessions'), '#sessions', class: 'nav-link', id: 'sessions-tab', data: { bs_toggle: 'tab', bs_target: '#sessions', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'sessions', selected: 'false' }, tabindex: '0' %>
+          <% end %>
           <% if policy(@invitation).create? %>
             <% invitations_count = @event.invitations.count %>
             <%= link_to "#{t('globals.tabs.invitations', default: 'Invitations')} (#{invitations_count})", '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'invitations', selected: 'false' }, tabindex: '0' %>
@@ -155,6 +158,18 @@
               </div>
             </div>
           </div>
+
+          <% if @event.recurring? %>
+            <!-- Sessions Tab Pane — upcoming occurrences, including cancelled ones (shown with a badge, not omitted) -->
+            <div id="sessions" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="sessions-tab">
+              <div class="row">
+                <div class="col-md-12">
+                  <h6 class="mb-2"><%= t('globals.tabs.sessions', default: 'Sessions') %></h6>
+                  <%= next_occurrences_list(@event) %>
+                </div>
+              </div>
+            </div>
+          <% end %>
 
           <% if policy(@invitation).create? %>
             <!-- Invitations (organizer-only) Tab Pane -->

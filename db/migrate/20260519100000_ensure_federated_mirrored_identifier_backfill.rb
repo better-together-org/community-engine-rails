@@ -8,16 +8,22 @@
 class EnsureFederatedMirroredIdentifierBackfill < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   NAMESPACE_SEPARATOR = '--'
 
+  # better_together_posts.type backs STI on the real BetterTogether::Post
+  # model. Without disabling it here, Rails resolves the type column against
+  # the real class and rejects this stand-in as an invalid subclass.
   class MigrationPost < ActiveRecord::Base
     self.table_name = 'better_together_posts'
+    self.inheritance_column = :_type_disabled_for_backfill
   end
 
   class MigrationPage < ActiveRecord::Base
     self.table_name = 'better_together_pages'
   end
 
+  # better_together_events.type backs STI the same way; see MigrationPost.
   class MigrationEvent < ActiveRecord::Base
     self.table_name = 'better_together_events'
+    self.inheritance_column = :_type_disabled_for_backfill
   end
 
   class MigrationPlatform < ActiveRecord::Base

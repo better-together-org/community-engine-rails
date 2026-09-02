@@ -6,6 +6,7 @@ module BetterTogether
     # rubocop:todo Metrics/AbcSize
     def new_message_notification # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
       @message = params[:message]
+      @platform = @message.platform
       @conversation = @message.conversation
       @recipient = params[:recipient]
       @sender = @message.sender

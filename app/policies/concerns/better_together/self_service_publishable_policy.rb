@@ -10,9 +10,17 @@ module BetterTogether
 
     # Canonical platform-manager bypass, replacing the repeated
     # `permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')`
-    # duplicated across several policies.
-    def platform_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+    # duplicated across several policies. Scoped to the target's OWNING platform
+    # (not the target record itself — permitted_to?'s record-scoped check only
+    # resolves against Joinable types like Platform, so a Post/Comment/etc. record
+    # must be resolved to record.platform first) so a steward of one platform can't
+    # manage another platform's self-service content. Defaults to `record`, or
+    # falls back to Current.platform for create-style checks where record isn't
+    # yet a persisted/platform-bearing instance.
+    def platform_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || Current.platform
+
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
 
     # Canonical creator/ownership check.

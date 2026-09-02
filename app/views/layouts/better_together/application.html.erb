@@ -23,6 +23,7 @@
       <%= tag.meta 'http-equiv': 'Expires', content: '0' %>
     <% end %>
     <%= csrf_meta_tags %>
+    <%= tag.meta name: "direct-upload-token", content: direct_upload_authorization_token %>
     <% if current_user&.person %>
       <%= tag.meta name: "current-person-id", content: current_user.person.id %>
       <% if e2ee_messaging_enabled? %>

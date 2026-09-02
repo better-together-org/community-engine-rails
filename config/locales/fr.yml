@@ -1667,6 +1667,10 @@ fr:
         order_soonest: Le plus proche
         past_label: Événements passés
         per_page_label: Événements par page
+        recurring_all: Tous
+        recurring_label: Récurrence
+        recurring_one_time_only: Ponctuels uniquement
+        recurring_only: Récurrents uniquement
         search_button: Rechercher
         search_label: Rechercher
         search_placeholder: Rechercher par nom ou description...
@@ -1697,6 +1701,13 @@ fr:
         one: 'Une erreur est survenue lors de l''enregistrement de %{resource} :'
         other: 'Des %{count} erreurs sont survenues lors de l''enregistrement de %{resource}
           :'
+      occurrences:
+        cancelled_badge: Annulée
+        comment_saved: Commentaire enregistré
+        invalid_date: Cette date n'est pas valide.
+        override_saved: Séance mise à jour
+        rsvp_cancelled_for_date: RSVP pour le %{date} annulée
+        rsvp_saved_for_date: RSVP pour le %{date} enregistrée
       odd: doit être impair
       other_than: doit être différent de %{count}
       placeholders:
@@ -3967,6 +3978,8 @@ fr:
         accept_link: Review and accept the publishing agreement
         message: To publish events or posts visible to members or the public, you
           need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Se répète : %{summary}'
+      recurring_badge_label: Se répète
       translated_field_hints:
         description: Description courte (au moins une langue doit être remplie)
         description_html: Description enrichie (mise en forme possible); au moins
@@ -4030,6 +4043,10 @@ fr:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
+        selected storage configuration. Per-tenant storage isolation isn't available
+        yet — file uploads across the whole installation continue to use the shared/host
+        storage backend until multi-tenant storage support ships."
       activated_with_restart: "'%{name}' activated. This process has rebound immediately.
         Other app processes will pick up the change on their next restart."
       cancel: Cancel
@@ -5033,6 +5050,7 @@ fr:
       posts: Publications
       roles_and_permissions: Roles & Permissions
       safety: Sécurité
+      sessions: Séances
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement

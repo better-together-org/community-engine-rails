@@ -91,18 +91,40 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength
 
+    # Render a "Repeats" badge for a recurring entity (e.g. Event). Visible
+    # text label, never color-only — the tooltip/aria-label carries the full
+    # human-readable recurrence summary (via RecurrenceHelper#format_recurrence_rule)
+    # so the badge and any displayed next-occurrence date can never contradict
+    # each other silently.
+    def recurring_badge(entity, rounded: true, style: 'info')
+      return unless entity.respond_to?(:recurring?) && entity.recurring?
+
+      summary = format_recurrence_rule(entity.recurrence)
+
+      create_badge(
+        t('better_together.shared.recurring_badge_label'),
+        rounded: rounded,
+        style: style,
+        tooltip: summary,
+        aria_label: t('better_together.shared.recurring_badge_aria_label', summary: summary),
+        extra_class: 'event-recurring-badge'
+      )
+    end
+
     private
 
-    def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil)
+    # rubocop:disable Metrics/ParameterLists
+    def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil, extra_class: nil)
       rounded_class = rounded ? 'rounded-pill' : ''
       style_class = "text-bg-#{style}"
 
-      options = { class: "badge #{rounded_class} #{style_class} icon-above-stretched-link" }
+      options = { class: "badge #{rounded_class} #{style_class} icon-above-stretched-link #{extra_class}".strip }
       options['data-bs-toggle'] = 'tooltip' if tooltip
       options[:title] = tooltip if tooltip
       options['aria-label'] = aria_label if aria_label
 
       content_tag :span, label, options
     end
+    # rubocop:enable Metrics/ParameterLists
   end
 end

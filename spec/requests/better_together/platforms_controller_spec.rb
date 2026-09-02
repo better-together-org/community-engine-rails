@@ -178,8 +178,19 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       expect(response.body).to include(better_together.platform_robots_path(host_platform, locale: locale))
     end
 
-    it 'keeps safety review controls hidden for platform managers without safety permissions' do
+    it 'shows safety review controls to default platform managers/stewards (manage_platform_safety is now a default grant)' do
       host_platform = BetterTogether::Platform.find_by(host: true)
+
+      get better_together.platform_path(locale:, id: host_platform.slug)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Safety Review')
+    end
+
+    it 'keeps safety review controls hidden for signed-in users with no platform role at all' do
+      host_platform = BetterTogether::Platform.find_by(host: true)
+      unprivileged_user = create(:better_together_user, :confirmed, email: 'platform-no-role@example.test')
+      sign_in unprivileged_user
 
       get better_together.platform_path(locale:, id: host_platform.slug)
 

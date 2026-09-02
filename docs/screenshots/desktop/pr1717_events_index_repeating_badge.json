@@ -1,0 +1,84 @@
+{
+  "name": "pr1717_events_index_repeating_badge",
+  "device": "desktop",
+  "url": "/en/events",
+  "title": "Events | Community Engine",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_occurrences_ux",
+  "flow": "events_index_recurring_badge",
+  "source_spec": "./spec/docs_screenshots/better_together/event_occurrences_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#events-recurring",
+      "title": "Recurring / one-time filter",
+      "bullets": [
+        "New tri-state filter: All / Recurring only / One-time only."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 619.0,
+        "width": 306.0,
+        "height": 38.0,
+        "right": 378.0,
+        "bottom": 657.0,
+        "center_x": 225.0,
+        "center_y": 638.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 619.0,
+        "width": 306.0,
+        "height": 38.0,
+        "right": 378.0,
+        "bottom": 657.0,
+        "center_x": 225.0,
+        "center_y": 638.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 398.0,
+        "y": 543.0,
+        "width": 380,
+        "height": 190,
+        "score": 1062.0
+      }
+    },
+    {
+      "selector": ".event-recurring-badge",
+      "title": "\"Repeats\" badge",
+      "bullets": [
+        "Visible text label, never color alone — aria-label carries the full frequency summary.",
+        "The displayed date is next_occurrence_at (override-aware), never the stale original starts_at."
+      ],
+      "target": {
+        "x": 748.0,
+        "y": 691.8125,
+        "width": 70.6875,
+        "height": 20.375,
+        "right": 818.6875,
+        "bottom": 712.1875,
+        "center_x": 783.34375,
+        "center_y": 702.0
+      },
+      "avoid": {
+        "x": 748.0,
+        "y": 691.8125,
+        "width": 70.6875,
+        "height": 20.375,
+        "right": 818.6875,
+        "bottom": 712.1875,
+        "center_x": 783.34375,
+        "center_y": 702.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 838.69,
+        "y": 558.0,
+        "width": 380,
+        "height": 288,
+        "score": 621.3125
+      }
+    }
+  ]
+}

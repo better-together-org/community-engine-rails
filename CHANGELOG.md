@@ -137,6 +137,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - `FleetNodePolicy` + Pundit authorization on `NodesController` to prevent unauthorized fleet-node management via the fleet API
 
 ### Fixed
+- **Federation:** `HttpAdapter` resolved every outbound feed/token URL from `connection.source_platform` unconditionally, so a connection where the local platform happened to be `source_platform` (rather than `target_platform`) pulled federated content from itself instead of the actual peer — silently breaking one direction of every federation link. Resolve the peer via each platform's `external?` flag instead. Also add exponential backoff (5min–6hr) on consecutive `PlatformConnection` sync failures so an unreachable partner is not re-dispatched every hourly scan tick, harden the TCP reachability pre-check to rescue `IO::TimeoutError`, and normalize `SsrfFilter::TooManyRedirects`/`UnresolvedHostname` to the existing `SSRFError` alongside `PrivateIPAddress`.
 - **Content Blocks:** Production readiness fixes for markdown, video, and iframe blocks; restored `content_addable? = true` on 11 regressed block types; all blocks enabled and PR #1492 review findings resolved
 - **Uploads:** Honor upload content-security state toggles; align upload download authorization to the content-security review state
 - **Federation:** Namespace mirrored content imports to prevent cross-tenant identifier collisions (#1597); add idempotent repair migration for federated mirrored identifier backfill; localize federation remediation messages (es/fr/uk)
@@ -161,6 +162,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Navigation:** Correct header/footer visibility cache keys and helper memoization for access-context-sensitive navigation rendering (#1274)
 - **Routing:** Prevent `URI::InvalidURIError` on non-default locale + accented slug URLs (#1351)
 - **Security:** Extend URI encoding; add Rack::Attack bot/scanner blocklists (#1352)
+- **Security:** `ApplicationController#set_locale` assigned `params[:locale]`/`session[:locale]` straight to `I18n.locale=` with no validation — a malformed or malicious locale (blind-SQLi scanner probes were observed in production) raised `I18n::InvalidLocale` as an unhandled 500; now falls back to the default locale. `UrlSanitizer::URI_UNSAFE_ASCII` (added for #1351/#1352) still excluded `"` and `,` — a scanner probe using those characters reached `URI.parse` unescaped and raised the same error class; extended the character class to close the gap.
 - **CI:** Restore main mailer and Rubocop green (#1384)
 - **Performance:** Reduce N+1 queries on platform lookup and person profile pages (#1354)
 - **Settings / Privacy:** Move account deletion requests into the account tab and retire the legacy My Data seed section after the deletion-audit rollout

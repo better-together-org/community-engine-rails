@@ -275,7 +275,7 @@ module BetterTogether
     def filter_params
       # :status is permitted both as a scalar (?status=draft) and as an
       # array (?status[]=draft&status[]=confirmed) for union filtering.
-      params.permit(:q, :order_by, :per_page, :page, :past, :status,
+      params.permit(:q, :order_by, :per_page, :page, :past, :status, :recurring,
                     category_ids: [], status: [])
     end
 

@@ -44,6 +44,47 @@ RSpec.describe BetterTogether::PlatformConnection do
     end
   end
 
+  describe '#involves?' do
+    it 'returns true for the source platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.involves?(connection.source_platform)).to be(true)
+    end
+
+    it 'returns true for the target platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.involves?(connection.target_platform)).to be(true)
+    end
+
+    it 'returns false for an unrelated platform' do
+      connection = create(:better_together_platform_connection)
+      unrelated = create(:better_together_platform)
+
+      expect(connection.involves?(unrelated)).to be(false)
+    end
+  end
+
+  describe '#local_platform and #remote_platform' do
+    it 'resolves local/remote correctly when source_platform is the local platform' do
+      local = create(:better_together_platform, external: false)
+      remote = create(:better_together_platform, :community_engine_peer)
+      connection = create(:better_together_platform_connection, source_platform: local, target_platform: remote)
+
+      expect(connection.local_platform).to eq(local)
+      expect(connection.remote_platform).to eq(remote)
+    end
+
+    it 'resolves local/remote correctly when target_platform is the local platform' do
+      local = create(:better_together_platform, external: false)
+      remote = create(:better_together_platform, :community_engine_peer)
+      connection = create(:better_together_platform_connection, source_platform: remote, target_platform: local)
+
+      expect(connection.local_platform).to eq(local)
+      expect(connection.remote_platform).to eq(remote)
+    end
+  end
+
   describe '#to_s' do
     it 'includes both platform names, not the default Object#to_s' do
       connection = create(:better_together_platform_connection)
@@ -62,6 +103,29 @@ RSpec.describe BetterTogether::PlatformConnection do
       create(:better_together_platform_connection)
 
       expect(described_class.for_platform(platform)).to contain_exactly(outgoing, incoming)
+    end
+  end
+
+  describe '.due_for_sync' do
+    it 'excludes a connection whose backoff window has not yet elapsed' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.current)
+
+      expect(described_class.due_for_sync).not_to include(connection)
+    end
+
+    it 'includes a connection once its backoff window has elapsed' do
+      connection = create(:better_together_platform_connection)
+      # first failure backs off 5 minutes, well within the elapsed hour below
+      connection.mark_sync_failed!(message: 'timeout', failed_at: 1.hour.ago)
+
+      expect(described_class.due_for_sync).to include(connection)
+    end
+
+    it 'includes a connection with no backoff state (never failed)' do
+      connection = create(:better_together_platform_connection)
+
+      expect(described_class.due_for_sync).to include(connection)
     end
   end
 
@@ -153,6 +217,60 @@ RSpec.describe BetterTogether::PlatformConnection do
       expect(connection.last_sync_error_message).to eq('Remote timeout')
       expect(connection.last_sync_error_at_time).to be_present
       expect(connection.last_synced_at_time).to be_present
+    end
+
+    it 'escalates a backoff window on consecutive failures and resets it on success' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(1)
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 5.minutes)
+
+      connection.mark_sync_failed!(message: 'timeout again', failed_at: Time.zone.parse('2026-03-12 12:10:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(2)
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:10:00 UTC') + 10.minutes)
+
+      connection.mark_sync_succeeded!(synced_at: Time.zone.parse('2026-03-12 12:20:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(0)
+      expect(connection.sync_backoff_until).to be_blank
+    end
+
+    it 'caps the backoff window at 6 hours regardless of how long the failure streak runs' do
+      connection = create(:better_together_platform_connection)
+
+      10.times { |n| connection.mark_sync_failed!(message: "failure #{n}", failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC')) }
+      connection.reload
+
+      expect(connection.sync_failure_streak).to eq(10)
+      expect(Time.zone.parse(connection.sync_backoff_until)).to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 6.hours)
+    end
+
+    it 'keeps the failure streak and backoff on a non-final (paginated) success' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+
+      connection.mark_sync_succeeded!(synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'), final: false)
+      connection.reload
+
+      expect(connection.sync_failure_streak).to eq(1)
+      expect(connection.sync_backoff_until).to be_present
+    end
+
+    it 'uses the longer of the exponential window and the remote Retry-After' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_failed!(message: 'rate limited', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'),
+                                   retry_after: 1800)
+      connection.reload
+
+      # streak 1 exponential window is 5 minutes; Retry-After of 1800s wins
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 1800.seconds)
     end
 
     it 'records an Activity for each sync lifecycle transition' do

@@ -6,6 +6,15 @@ module BetterTogether
     class LocalReviewSnapshotService
       CACHE_KEY = 'better_together/safety/local_review_snapshot/v1'
 
+      # A snapshot built from unscoped case_scope/report_scope/
+      # content_security_subject_scope defaults aggregates every platform's
+      # safety data into one number - callers serving a specific platform's
+      # review queue (the common case) must pass platform-scoped relations
+      # explicitly and cache under this key, not the bare CACHE_KEY constant.
+      def self.cache_key_for(platform)
+        "#{CACHE_KEY}/#{platform&.id || 'none'}"
+      end
+
       def initialize(
         case_scope: BetterTogether::Safety::Case.all,
         report_scope: BetterTogether::Report.all,

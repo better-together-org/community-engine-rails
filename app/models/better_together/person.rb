@@ -249,8 +249,6 @@ module BetterTogether
               inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
               allow_nil: true
 
-    translates :description_html, backend: :action_text
-
     # Return email from user if available, otherwise from contact details
     def email
       return user.email if user&.email.present?
@@ -305,10 +303,6 @@ module BetterTogether
       else
         cover_image.variant(:optimized_jpeg)
       end
-    end
-
-    def description_html(locale: I18n.locale)
-      super || description
     end
 
     def valid_event_host_ids

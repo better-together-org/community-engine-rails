@@ -57,12 +57,12 @@ module BetterTogether
         :id,
         :identifier,
         :name,
-        :description,
         :privacy,
         :preferences,
         :notification_preferences,
         :email
       ).merge(
+        description: person.description.presence&.to_plain_text,
         created_at: person.created_at&.iso8601,
         updated_at: person.updated_at&.iso8601
       )

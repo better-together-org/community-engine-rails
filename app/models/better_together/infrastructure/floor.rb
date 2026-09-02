@@ -26,7 +26,6 @@ module BetterTogether
                to: :building, allow_nil: true
 
       translates :name, type: :string
-      translates :description, backend: :action_text
 
       slugged :name
 

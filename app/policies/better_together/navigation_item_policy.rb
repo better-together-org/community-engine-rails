@@ -46,14 +46,15 @@ module BetterTogether
       private
 
       def platform_navigation_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
       end
     end
 
     private
 
-    def platform_navigation_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+    def platform_navigation_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
   end
 end

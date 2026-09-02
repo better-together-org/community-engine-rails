@@ -93,9 +93,10 @@
 
           <div class="mb-3">
             <%= person_form.label :description, t('.fields.description.label'), for: 'new_platform_steward_person_description', class: 'form-label' %>
-            <%= person_form.text_area :description, required: true, rows: 3, id: 'new_platform_steward_person_description',
+            <%= person_form.rich_text_area :description, required: true, id: 'new_platform_steward_person_description',
                   class: "form-control#{' is-invalid' if @form.errors[:description].any?}",
                   'aria-describedby': 'new_platform_steward_person_description_help',
+                  'aria-label': t('.fields.description.label'),
                   data: { action: 'blur->better_together--form-validation#checkValidity' } %>
             <small id="new_platform_steward_person_description_help" class="form-text text-muted">
               <%= t('.fields.description.help') %>

@@ -98,6 +98,57 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       expect(BetterTogether::Federation::Transport::HttpAdapter).not_to have_received(:call)
     end
 
+    context 'when the remote rate-limits the pull' do
+      let(:rate_limit_error) do
+        BetterTogether::Federation::Transport::HttpAdapter::RateLimitedError.new(
+          'feed rate-limited', retry_after: 600
+        )
+      end
+
+      before do
+        allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+        allow(BetterTogether::FederatedContentPullService).to receive(:call).and_raise(rate_limit_error)
+      end
+
+      it 'marks the connection failed with a Retry-After-aware backoff and does not retry the job' do
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-1')
+        end.not_to have_enqueued_job(described_class)
+
+        connection.reload
+        expect(connection).to be_sync_failed
+        expect(Time.zone.parse(connection.sync_backoff_until)).to be > 500.seconds.from_now
+      end
+    end
+
+    it 'does not clear an existing failure streak on an intermediate (non-final) page' do
+      connection.mark_sync_failed!(message: 'earlier failure')
+      connection.mark_sync_failed!(message: 'earlier failure')
+      streak_before = connection.reload.sync_failure_streak.to_i
+
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+      allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(pull_result) # next_cursor present
+      allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(ingest_result)
+
+      described_class.perform_now(platform_connection_id: connection.id)
+
+      connection.reload
+      expect(connection).to be_sync_succeeded
+      expect(connection.sync_failure_streak.to_i).to eq(streak_before)
+    end
+
+    it 'clears the failure streak when the final page completes' do
+      connection.mark_sync_failed!(message: 'earlier failure')
+      final_result = BetterTogether::FederatedContentPullService::Result.new(connection:, seeds: [], next_cursor: nil)
+
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+      allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(final_result)
+
+      described_class.perform_now(platform_connection_id: connection.id)
+
+      expect(connection.reload.sync_failure_streak.to_i).to eq(0)
+    end
+
     it 'records a sync summary when ingest completed with mirrored content conflicts' do
       conflict_result = BetterTogether::Content::FederatedContentIngestService::Result.new(
         connection:,

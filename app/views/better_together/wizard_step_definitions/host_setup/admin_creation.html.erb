@@ -142,8 +142,9 @@
           <!-- Description Field -->
           <div class="mb-3">
             <%= person_form.label :description, t('.fields.description.label'), class: 'form-label' %>
-            <%= person_form.text_area :description, required: true, rows: 3,
+            <%= person_form.rich_text_area :description, required: true,
                   class: "form-control#{' is-invalid' if @form.errors[:description].any?}",
+                  'aria-label': t('.fields.description.label'),
                   data: { action: 'blur->better_together--form-validation#checkValidity' } %>
             <small class="form-text text-muted">
               <%= t('.fields.description.help') %>

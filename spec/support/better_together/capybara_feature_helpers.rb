@@ -131,6 +131,68 @@ module BetterTogether # :nodoc:
     alias sign_in_user capybara_sign_in_user
     alias sign_out_current_user capybara_sign_out_current_user
 
+    # Fills a Trix-backed rich text field — Capybara's plain `fill_in` can't
+    # target the custom <trix-editor> element Trix pairs with a hidden input.
+    # `locator` may be either the trix-editor's own explicit `id` (when the
+    # rich_text_area call was given an `id:` option, which lands on the
+    # <trix-editor> tag itself, not the hidden input — e.g. the setup
+    # wizards' description fields) or the hidden input's `name` attribute
+    # (when no explicit id was set — resolved via the input's `id` <->
+    # trix-editor's `input` attribute link). Content is set via the same JS
+    # activation approach already used for conversation Trix fields — see
+    # conversation_helpers.rb.
+    def fill_in_trix_field(locator, with:)
+      # Normalize to plain text upfront — if `with` is a rich-text object
+      # (e.g. some_record.description), `.to_s` would be raw HTML, which
+      # would never match the have_selector `text:` assertion below (that
+      # matcher checks rendered text, not HTML source).
+      plain_text = with.respond_to?(:to_plain_text) ? with.to_plain_text : with.to_s
+
+      editor_selector = if page.has_selector?("trix-editor##{locator}", visible: :all, wait: 0)
+                          "trix-editor##{locator}"
+                        else
+                          input_id = find("input[name='#{locator}']", visible: :all)[:id]
+                          "trix-editor[input=\"#{input_id}\"]"
+                        end
+
+      begin
+        activate_trix_editor(editor_selector, plain_text)
+      rescue Capybara::NotSupportedByDriverError
+        # Non-JS driver (e.g. rack_test) — Trix never activates/renders at all in this
+        # context, so there's no editor to script. Set the hidden input Trix would
+        # otherwise populate directly; this is exactly what the controller receives
+        # regardless of driver.
+        hidden_input_for_trix_editor(editor_selector, locator).set(plain_text)
+      end
+    end
+
+    def hidden_input_for_trix_editor(editor_selector, locator)
+      if page.has_selector?(editor_selector, visible: :all, wait: 0)
+        input_id = find(editor_selector, visible: :all)[:input]
+        find("input##{input_id}", visible: :all)
+      else
+        find("input[name='#{locator}']", visible: :all)
+      end
+    end
+
+    def activate_trix_editor(editor_selector, plain_text)
+      page.execute_script(<<~JS)
+        (function(){
+          var editor = document.querySelector(#{editor_selector.to_json});
+          if (!editor) return;
+          if (editor.editor && typeof editor.editor.loadHTML === 'function') {
+            editor.editor.loadHTML(#{plain_text.to_json});
+          } else {
+            editor.innerHTML = #{plain_text.to_json};
+          }
+          editor.dispatchEvent(new Event('input', { bubbles: true }));
+          editor.dispatchEvent(new Event('change', { bubbles: true }));
+        })();
+      JS
+
+      expect(page).to have_selector(editor_selector, text: plain_text, wait: 2)
+    end
+
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/CyclomaticComplexity
@@ -142,7 +204,7 @@ module BetterTogether # :nodoc:
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name
       fill_in 'user[person_attributes][identifier]', with: person.identifier
-      fill_in 'user[person_attributes][description]', with: person.description
+      fill_in_trix_field 'user[person_attributes][description]', with: person.description
 
       # Check agreement checkboxes. The view renders checkbox ids/names as
       # `terms_of_service_agreement` and `privacy_policy_agreement`. Older

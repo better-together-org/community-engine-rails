@@ -18,8 +18,6 @@ module BetterTogether
 
       slugged :name
 
-      translates :description, backend: :action_text
-
       belongs_to :country, class_name: 'BetterTogether::Geography::Country', optional: true
       belongs_to :state, class_name: 'BetterTogether::Geography::State', optional: true
 

@@ -1660,6 +1660,10 @@ es:
         order_soonest: Más próximo
         past_label: Eventos pasados
         per_page_label: Eventos por página
+        recurring_all: Todos
+        recurring_label: Recurrencia
+        recurring_one_time_only: Solo eventos únicos
+        recurring_only: Solo recurrentes
         search_button: Buscar
         search_label: Buscar
         search_placeholder: Buscar por nombre o descripción...
@@ -1690,6 +1694,13 @@ es:
       not_saved:
         one: 'Ocurrió un error al tratar de guardar %{resource}:'
         other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
+      occurrences:
+        cancelled_badge: Cancelado
+        comment_saved: Comentario guardado
+        invalid_date: Esa fecha no es válida.
+        override_saved: Sesión actualizada
+        rsvp_cancelled_for_date: RSVP para el %{date} cancelada
+        rsvp_saved_for_date: RSVP para el %{date} guardada
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       placeholders:
@@ -3940,6 +3951,8 @@ es:
         accept_link: Review and accept the publishing agreement
         message: To publish events or posts visible to members or the public, you
           need to accept the content publishing agreement first.
+      recurring_badge_aria_label: 'Se repite: %{summary}'
+      recurring_badge_label: Se repite
       translated_field_hints:
         description: Descripción corta (al menos un idioma debe completarse)
         description_html: Descripción enriquecida (formatos admitidos; al menos un
@@ -4003,6 +4016,10 @@ es:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
+        selected storage configuration. Per-tenant storage isolation isn't available
+        yet — file uploads across the whole installation continue to use the shared/host
+        storage backend until multi-tenant storage support ships."
       activated_with_restart: "'%{name}' activated. This process has rebound immediately.
         Other app processes will pick up the change on their next restart."
       cancel: Cancel
@@ -4995,6 +5012,7 @@ es:
       posts: Publicaciones
       roles_and_permissions: Roles & Permissions
       safety: Seguridad
+      sessions: Sesiones
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado

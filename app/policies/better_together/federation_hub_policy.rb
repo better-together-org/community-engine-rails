@@ -19,7 +19,8 @@ module BetterTogether
     def manage_connections_section?
       return false unless user
 
-      user.permitted_to?('manage_network_connections') || user.permitted_to?('approve_network_connections')
+      platform = ::Current.platform || ::Current.host_platform
+      user.permitted_to?('manage_network_connections', platform) || user.permitted_to?('approve_network_connections', platform)
     end
   end
 end

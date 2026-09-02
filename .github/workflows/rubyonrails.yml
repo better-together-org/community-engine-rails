@@ -86,7 +86,7 @@ jobs:
           scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
 
   rspec:
-    name: rspec (3.4.4, ${{ needs.prepare.outputs.rails_version }})
+    name: rspec (3.4.10, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
     if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
@@ -128,7 +128,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.4"
+          ruby-version: "3.4.10"
 
       - name: Resolve branch-native bundle
         shell: bash
@@ -180,7 +180,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          name: coverage-report-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
 
@@ -188,7 +188,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rspec-results-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rspec-results-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: tmp/rspec_results*.json
           if-no-files-found: warn
 
@@ -196,7 +196,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rails-test-log-ruby-3.4.4-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rails-test-log-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: spec/dummy/log/test.log
           if-no-files-found: warn
 
@@ -226,7 +226,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.4"
+          ruby-version: "3.4.10"
       - name: Resolve branch-native bundle
         shell: bash
         run: |
@@ -245,7 +245,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.4"
+          ruby-version: "3.4.10"
       - name: Resolve branch-native bundle
         shell: bash
         run: |

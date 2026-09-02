@@ -175,12 +175,12 @@ module BetterTogether
 
     # Authorizes the index action
     def authorize_index
-      authorize BetterTogether::PersonPlatformMembership
+      authorize BetterTogether::PersonPlatformMembership.new(joinable_id: @platform.id)
     end
 
     # Authorizes the new action
     def authorize_new_action
-      authorize BetterTogether::PersonPlatformMembership
+      authorize BetterTogether::PersonPlatformMembership.new(joinable_id: @platform.id)
     end
 
     # Sets up data needed for the form

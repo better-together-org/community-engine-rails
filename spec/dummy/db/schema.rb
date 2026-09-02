@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_25_010000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -633,8 +633,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
     t.uuid "person_id", null: false
     t.string "status", default: "interested", null: false
     t.uuid "platform_id"
-    t.index ["event_id", "person_id"], name: "by_event_and_person", unique: true
+    t.uuid "event_occurrence_id"
+    t.index ["event_id", "person_id", "event_occurrence_id"], name: "by_event_person_and_occurrence", unique: true
     t.index ["event_id"], name: "bt_event_attendance_by_event"
+    t.index ["event_occurrence_id"], name: "bt_event_attendance_by_occurrence"
     t.index ["person_id"], name: "bt_event_attendance_by_person"
     t.index ["platform_id"], name: "index_better_together_event_attendances_on_platform_id"
   end
@@ -650,6 +652,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
     t.index ["event_id"], name: "index_better_together_event_hosts_on_event_id"
     t.index ["host_type", "host_id"], name: "index_better_together_event_hosts_on_host"
     t.index ["platform_id"], name: "index_better_together_event_hosts_on_platform_id"
+  end
+
+  create_table "better_together_event_occurrences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "event_id", null: false
+    t.date "occurrence_date", null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.boolean "cancelled", default: false, null: false
+    t.index ["event_id", "occurrence_date"], name: "by_event_and_occurrence_date", unique: true
+    t.index ["event_id"], name: "bt_event_occurrences_by_event"
   end
 
   create_table "better_together_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -671,10 +686,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
     t.datetime "last_synced_at"
     t.string "status", default: "draft", null: false
     t.string "federation_visibility", limit: 50, default: "platform_default", null: false
+    t.datetime "next_occurrence_at"
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["federation_visibility"], name: "by_better_together_events_federation_visibility"
     t.index ["identifier"], name: "index_better_together_events_on_identifier", unique: true
+    t.index ["next_occurrence_at"], name: "bt_events_by_next_occurrence_at"
     t.index ["platform_id", "source_id"], name: "index_bt_events_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
@@ -818,10 +835,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
     t.string "mappable_type"
     t.uuid "mappable_id"
     t.string "type", default: "BetterTogether::Geography::Map", null: false
+    t.uuid "platform_id"
     t.index ["creator_id"], name: "by_better_together_geography_maps_creator"
     t.index ["identifier"], name: "index_better_together_geography_maps_on_identifier", unique: true
     t.index ["locale"], name: "by_better_together_geography_maps_locale"
     t.index ["mappable_type", "mappable_id"], name: "index_better_together_geography_maps_on_mappable"
+    t.index ["platform_id"], name: "index_better_together_geography_maps_on_platform_id"
     t.index ["privacy"], name: "by_better_together_geography_maps_privacy"
   end
 
@@ -918,7 +937,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
   end
 
   create_table "better_together_inbound_email_messages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "inbound_email_id", null: false
+    t.uuid "inbound_email_id"
     t.string "route_kind", null: false
     t.string "status", default: "received", null: false
     t.string "target_type"
@@ -2540,11 +2559,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
   add_foreign_key "better_together_conversations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_email_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_email_addresses", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_event_attendances", "better_together_event_occurrences", column: "event_occurrence_id"
   add_foreign_key "better_together_event_attendances", "better_together_events", column: "event_id"
   add_foreign_key "better_together_event_attendances", "better_together_people", column: "person_id"
   add_foreign_key "better_together_event_attendances", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_event_hosts", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_event_occurrences", "better_together_events", column: "event_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_feature_access_grants", "better_together_people", column: "granted_by_person_id"
@@ -2559,6 +2580,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
   add_foreign_key "better_together_geography_geospatial_spaces", "better_together_geography_spaces", column: "space_id"
   add_foreign_key "better_together_geography_locatable_locations", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_geography_maps", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_geography_maps", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_regions", column: "region_id"
   add_foreign_key "better_together_geography_region_settlements", "better_together_geography_settlements", column: "settlement_id"
   add_foreign_key "better_together_geography_regions", "better_together_communities", column: "community_id"
@@ -2571,7 +2593,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_22_010000) do
   add_foreign_key "better_together_geography_states", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_geography_states", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_identifications", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_inbound_email_messages", "action_mailbox_inbound_emails", column: "inbound_email_id"
+  add_foreign_key "better_together_inbound_email_messages", "action_mailbox_inbound_emails", column: "inbound_email_id", on_delete: :nullify
   add_foreign_key "better_together_inbound_email_messages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_inbound_email_reply_tokens", "better_together_people", column: "recipient_id"
   add_foreign_key "better_together_inbound_email_reply_tokens", "better_together_platforms", column: "platform_id"

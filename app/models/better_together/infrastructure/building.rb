@@ -48,7 +48,6 @@ module BetterTogether
       after_update :schedule_address_geocoding
 
       translates :name, type: :string
-      translates :description, backend: :action_text
 
       slugged :name
 

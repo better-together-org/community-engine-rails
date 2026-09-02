@@ -26,11 +26,22 @@ module BetterTogether
     # visibility gating (e.g. Agreement — its policy shows records to everyone
     # regardless of `privacy`) and so shouldn't be constrained by a platform's
     # or community's own privacy tier. Override to return true in such models.
+    # The base implementation also exempts federated mirrors (see below).
     def privacy_ceiling_exempt?
-      false
+      federated_mirror_privacy_ceiling_exempt?
     end
 
     private
+
+    # A federated mirror carries the origin platform's already-vetted privacy —
+    # the origin applied its own ceiling and publishing-agreement gate before
+    # federating. The receiving instance stores the mirror under its own local
+    # platform (for local visibility), so `external_wrapping_platform?` never
+    # fires for it; exempt it here instead. Local visibility of the mirror is
+    # still governed by policy/scopes, not this validation.
+    def federated_mirror_privacy_ceiling_exempt?
+      respond_to?(:mirrored?) && mirrored?
+    end
 
     def privacy_within_platform_community_bounds
       max = privacy_ceiling

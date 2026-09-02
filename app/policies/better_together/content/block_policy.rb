@@ -49,8 +49,9 @@ module BetterTogether
 
       private
 
-      def platform_content_manager?
-        user.present? && (permitted_to?('manage_platform_settings') || permitted_to?('manage_platform'))
+      def platform_content_manager?(target = record)
+        platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+        user.present? && (permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform))
       end
     end
   end
