@@ -86,6 +86,7 @@ en:
         media_settings: Media settings
         page_blocks: Page blocks
         pages: Pages
+        privacy: Privacy
       better_together/content/image:
         accessibility_attributes: Accessibility attributes
         content_settings: Content settings
@@ -1155,6 +1156,12 @@ en:
         events_block:
           empty: No events to display.
         fields:
+          block:
+            identifier_hint: An optional identifier makes this block easier to find
+              later. Use no spaces and keep it under 100 characters.
+            identifier_placeholder: "(optional)"
+            privacy_hint: Choose who can see this block. Blocks on a public page should
+              be Public.
           image:
             library:
               empty: No reviewed image uploads are available in your library yet.
