@@ -1568,6 +1568,8 @@ en:
       attendees: Attendees
       back_to_events: View Events
       date_and_time: Date & Time
+      delete_event: Delete Event
+      edit_event: Edit Event
       form_errors_heading: 'The following errors occurred:'
       greater_than_or_equal_to: must be greater than or equal to %{count}
       hints:
@@ -3869,6 +3871,8 @@ en:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      event_status_level: 'Event status: %{status}'
+      event_status_tooltip: 'Event status: %{status}'
       privacy_level: 'Privacy: %{privacy}'
       privacy_tooltip: This content is %{privacy}
       publishing_agreement_notice:

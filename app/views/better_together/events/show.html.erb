@@ -34,26 +34,31 @@
             <%= viewer_timezone_conversion(@event, current_person) if current_person %>
           </div>
         <% end %>
+        <% unless @event.status_confirmed? %>
+          <div class="mt-2">
+            <%= event_status_badge(@event) %>
+          </div>
+        <% end %>  
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
+      <div class="col-auto">
         <%= render 'shared/resource_toolbar',
-                   edit_path: policy(@resource).edit? ? edit_event_path(@resource) : nil,
-                   edit_aria_label: 'Edit Partner',
-                   destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
-                   destroy_confirm: t('globals.confirm_delete'),
-                   destroy_aria_label: 'Delete Record' do %>
+                    edit_path: policy(@resource).edit? ? edit_event_path(@resource) : nil,
+                    edit_aria_label: t('better_together.events.edit_event'),
+                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
+                    destroy_confirm: t('globals.confirm_delete'),
+                    destroy_aria_label: t('better_together.events.delete_event') do %>
           <% if policy(@event).ics? %>
             <%= link_to ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' do %>
               <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
             <% end %>
           <% end %>
           <%= render 'shared/content_actions', record: @event %>
-        <% end %>
-      </div>
-    </div>
+        <% end %>      
+      </div>      
+    </div>  
   </div>
+
+
 
   <div class="container mt-4">
     <!-- Membership section -->
