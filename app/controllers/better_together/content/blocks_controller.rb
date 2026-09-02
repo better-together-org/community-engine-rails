@@ -114,9 +114,12 @@ module BetterTogether
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
-          :type, :media, :identifier, :privacy, :markdown_source_type, :media_signed_id,
-          *resource_class.localized_block_attributes,
-          *resource_class.storext_keys
+          # standalone-form-only helpers; the shared block attribute list
+          # (identifier, privacy, visible, type, localized, storext, ...) comes
+          # from Content::Block.permitted_attributes so it stays in lock-step
+          # with the page builder (PagesController#block_permitted_attributes).
+          :media, :media_signed_id, :markdown_source_type,
+          *BetterTogether::Content::Block.permitted_attributes
         )
 
         # Handle markdown_source_type: explicitly clear the unused field so DB values are overwritten
@@ -131,18 +134,6 @@ module BetterTogether
         end
 
         permitted_params
-      end
-
-      def permitted_block_attributes
-        [
-          :type,
-          :media,
-          :identifier,
-          :markdown_source_type,
-          *resource_class.localized_block_attributes,
-          *resource_class.storext_keys,
-          *resource_class.extra_permitted_attributes
-        ]
       end
 
       def processed_block_params

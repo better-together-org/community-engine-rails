@@ -292,12 +292,7 @@ module BetterTogether
     end
 
     def block_permitted_attributes
-      [
-        :id, :type, :identifier, :_destroy,
-        *BetterTogether::Content::Block.localized_block_attributes,
-        *BetterTogether::Content::Block.storext_keys,
-        *BetterTogether::Content::Block.extra_permitted_attributes
-      ]
+      BetterTogether::Content::Block.permitted_attributes(id: true, destroy: true)
     end
 
     # Preloads string_translations only on block types that define the association,
