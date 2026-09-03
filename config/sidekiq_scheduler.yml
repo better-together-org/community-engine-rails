@@ -39,3 +39,9 @@
   class: "BetterTogether::FederationAccessTokenPurgeJob"
   queue: "maintenance"
   description: "Purge revoked and expired federation access tokens to prevent unbounded table growth"
+
+"better_together:sitemap_refresh_daily":
+  cron: "0 2 * * *" # daily at 02:00 UTC
+  class: "BetterTogether::SitemapRefreshScanJob"
+  queue: "maintenance"
+  description: "Regenerate per-platform XML sitemaps for all locally-hosted platforms"

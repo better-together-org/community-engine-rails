@@ -45,7 +45,9 @@ module BetterTogether
       # @param sitemap [SitemapGenerator::Builder::SitemapFile] The sitemap builder instance
       # @param locale [Symbol, String] The locale to generate URLs for
       def add_home_page(sitemap, locale = I18n.default_locale)
-        sitemap.add helpers.home_page_path(locale: locale)
+        # lastmod: false - static route, and sitemap_generator would otherwise
+        # stamp Time.now, making every regeneration a different file.
+        sitemap.add helpers.home_page_path(locale: locale), lastmod: false
       end
 
       # Add communities index and individual public community pages
@@ -53,7 +55,7 @@ module BetterTogether
       # @param locale [Symbol, String] The locale to generate URLs for
       # @param platform [BetterTogether::Platform] restricts to this platform's own communities
       def add_communities(sitemap, locale = I18n.default_locale, platform: default_platform)
-        sitemap.add helpers.communities_path(locale: locale)
+        sitemap.add helpers.communities_path(locale: locale), lastmod: false
         BetterTogether::Community.for_platform(platform).privacy_public.find_each do |community|
           sitemap.add helpers.community_path(community, locale: locale),
                       lastmod: community.updated_at
@@ -65,7 +67,7 @@ module BetterTogether
       # @param locale [Symbol, String] The locale to generate URLs for
       # @param platform [BetterTogether::Platform] restricts to this platform's own posts
       def add_posts(sitemap, locale = I18n.default_locale, platform: default_platform)
-        sitemap.add helpers.posts_path(locale: locale)
+        sitemap.add helpers.posts_path(locale: locale), lastmod: false
         BetterTogether::Post.for_platform(platform).published.privacy_public.find_each do |post|
           sitemap.add helpers.post_path(post, locale: locale),
                       lastmod: post.updated_at
@@ -77,7 +79,7 @@ module BetterTogether
       # @param locale [Symbol, String] The locale to generate URLs for
       # @param platform [BetterTogether::Platform] restricts to this platform's own events
       def add_events(sitemap, locale = I18n.default_locale, platform: default_platform)
-        sitemap.add helpers.events_path(locale: locale)
+        sitemap.add helpers.events_path(locale: locale), lastmod: false
         BetterTogether::Event.for_platform(platform).privacy_public.find_each do |event|
           sitemap.add helpers.event_path(event, locale: locale),
                       lastmod: event.updated_at

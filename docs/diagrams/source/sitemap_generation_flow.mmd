@@ -1,66 +1,49 @@
 graph TB
-    Start([Sitemap Generation Triggered]) --> CheckDB{Database<br/>Available?}
-    
-    CheckDB -->|No| SkipDB[Log: Database unavailable<br/>Skip generation]
-    CheckDB -->|Yes| CheckPlatform{Host Platform<br/>Exists?}
+    Start([better_together:sitemap:refresh / SitemapRefreshJob]) --> CheckDB{Database<br/>available?}
+
+    CheckDB -->|No| SkipDB[Log: database unavailable<br/>skip]
+    CheckDB -->|Yes| PlatformScope[Platform.internal<br/>locally-hosted platforms]
     SkipDB --> End([End])
-    
-    CheckPlatform -->|No| SkipPlatform[Log: No host platform<br/>Skip generation]
-    CheckPlatform -->|Yes| InitGen[Initialize Sitemap Generator<br/>public_path: tmp/]
+
+    PlatformScope -->|none| SkipPlatform[Log: no locally-hosted platform<br/>skip]
+    PlatformScope -->|for each platform| Generator[Sitemaps::Generator.new platform]
     SkipPlatform --> End
-    
-    InitGen --> LocaleLoop{For each locale<br/>en, es, fr, uk}
-    
-    LocaleLoop --> SetLocalePath[Set sitemaps_path:<br/>sitemaps/locale/]
-    SetLocalePath --> LoadConfig[Load config/sitemap.rb]
-    LoadConfig --> GenResources[Generate Sitemap Resources]
-    
-    GenResources --> AddHome[Add Home Page<br/>with locale param]
-    AddHome --> AddCommIndex[Add Communities Index<br/>with locale param]
-    AddCommIndex --> AddComm[Add Public Communities<br/>.privacy_public filter]
-    
-    AddComm --> AddPostIndex[Add Posts Index<br/>with locale param]
-    AddPostIndex --> AddPost[Add Published Public Posts<br/>.published.privacy_public]
-    
-    AddPost --> AddEventIndex[Add Events Index<br/>with locale param]
-    AddEventIndex --> AddEvent[Add Public Events<br/>.privacy_public filter]
-    
-    AddEvent --> AddPages[Add Published Public Pages<br/>.published.privacy_public]
-    
-    AddPages --> CompressSitemap[Compress to<br/>sitemap.xml.gz]
-    CompressSitemap --> AttachFile[Attach file to<br/>Active Storage]
-    
-    AttachFile --> SaveRecord[Save Sitemap record<br/>platform_id + locale]
-    SaveRecord --> LogSuccess[Log: Sitemap generated<br/>for locale]
-    
-    LogSuccess --> MoreLocales{More locales?}
+
+    Generator --> ResolveHost[default_host =<br/>platform.resolved_host_url]
+    ResolveHost --> LocaleLoop{For each locale<br/>en, es, fr, uk}
+
+    LocaleLoop --> BuildLinkSet[Fresh SitemapGenerator::LinkSet<br/>public_path tmp/sitemaps/&lt;platform.id&gt;]
+    BuildLinkSet --> AddResources[SitemapHelper.add_better_together_resources<br/>platform:]
+
+    AddResources --> AddComm[Communities.for_platform.privacy_public]
+    AddComm --> AddPost[Posts.for_platform.published.privacy_public]
+    AddPost --> AddEvent[Events.for_platform.privacy_public]
+    AddEvent --> AddPages[Pages.for_platform.published.privacy_public]
+
+    AddPages --> AttachFile[attach_file_if_changed?<br/>Sitemap.current platform, locale]
+    AttachFile --> MoreLocales{More locales?}
     MoreLocales -->|Yes| LocaleLoop
-    MoreLocales -->|No| GenIndex[Generate Sitemap Index]
-    
-    GenIndex --> IndexLoop{For each locale}
-    IndexLoop --> AddIndexEntry[Add locale sitemap URL<br/>to index]
-    AddIndexEntry --> MoreIndex{More locales?}
-    MoreIndex -->|Yes| IndexLoop
-    MoreIndex -->|No| CompressIndex[Compress index to<br/>sitemap_index.xml.gz]
-    
-    CompressIndex --> AttachIndex[Attach index to<br/>Active Storage]
-    AttachIndex --> SaveIndex[Save Sitemap record<br/>platform_id + locale: 'index']
-    SaveIndex --> LogIndexSuccess[Log: Index generated]
-    
-    LogIndexSuccess --> Cleanup[Cleanup tmp files]
-    Cleanup --> End
-    
-    GenResources -.->|Error| HandleError[Catch Exception<br/>Log error + backtrace]
-    HandleError --> Cleanup
-    
+    MoreLocales -->|No| BuildIndex[Sitemaps::IndexBuilder<br/>&lt;loc&gt; = resolved_host_url/&lt;locale&gt;/sitemap.xml.gz]
+
+    BuildIndex --> AttachIndex[attach_file_if_changed?<br/>Sitemap.current_index platform]
+    AttachIndex --> Cleanup[Remove tmp/sitemaps/&lt;platform.id&gt;]
+    Cleanup --> MorePlatforms{More platforms?}
+    MorePlatforms -->|Yes| Generator
+    MorePlatforms -->|No| End
+
+    Generator -.->|Error| HandleError[Log error<br/>continue with next platform]
+    HandleError --> MorePlatforms
+
+    Serve[SitemapsController / RobotsTxtController] --> ResolvePlatform[Current.platform<br/>from request host]
+    ResolvePlatform --> ServeFile[Redirect to that platform's<br/>Active Storage file]
+
     style Start fill:#e1f5e1
     style End fill:#ffe1e1
     style CheckDB fill:#fff3cd
-    style CheckPlatform fill:#fff3cd
     style AddComm fill:#d4edda
     style AddPost fill:#d4edda
     style AddEvent fill:#d4edda
     style AddPages fill:#d4edda
     style HandleError fill:#f8d7da
-    style SaveRecord fill:#cce5ff
-    style SaveIndex fill:#cce5ff
+    style AttachFile fill:#cce5ff
+    style AttachIndex fill:#cce5ff
