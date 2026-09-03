@@ -1569,7 +1569,6 @@ es:
     events:
       actions:
         create_new: Crear nuevo %{model}
-        create_new_short: Nuevo
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes
       back_to_events: Volver a eventos
@@ -1586,9 +1585,10 @@ es:
           cambian las horas de inicio o fin.
         ends_at: Cuándo concluye el evento. Se actualiza automáticamente cuando cambia
           la duración.
-        location: Dónde se reunirán los asistentes para este evento
+        location: Busca una dirección, un edificio o un lugar existente. Si no está
+          en la lista, elige «Crear nueva dirección» o usa el texto que escribiste
+          como nombre personalizado.
         name: Un título claro y descriptivo para su evento
-        select_location: Seleccionar ubicación
         slug: Identificador amigable para URL de este evento
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
@@ -1640,7 +1640,6 @@ es:
         ends_at: Termina en
         location: Ubicación
         privacy: Privacidad
-        select_location: Seleccionar ubicación
         starts_at: Comienza en
         status: Estado
         timezone: Zona Horaria del Evento
@@ -1670,6 +1669,17 @@ es:
         status_draft: Borrador
         status_label: Estado
       location: Ubicación
+      location_picker:
+        announcements:
+          cancelled: Nueva dirección cancelada. Has vuelto al campo de búsqueda de
+            ubicación.
+          creating: Creando una nueva dirección. Rellena los campos de dirección a
+            continuación y luego guarda el evento.
+        cancel_new_address: Cancelar nueva dirección
+        create_row:
+          new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
+          use_typed_name: Usar «%{q}» como nombre de ubicación personalizado
+        new_address_legend: Nueva dirección
       login_required: Por favor, inicia sesión para gestionar las confirmaciones de
         asistencia.
       model_invalid: 'La validación falló: %{errors}'
@@ -1693,8 +1703,6 @@ es:
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
-      prompts:
-        select_location: Seleccionar ubicación
       recurrence:
         actions:
           add_exception_date: Añadir fecha de excepción
