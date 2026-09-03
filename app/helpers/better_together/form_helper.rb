@@ -8,7 +8,10 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/MethodLength
-    def label_select_field(form) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    # `required:`/`prompt:` are overridable so an inline nested address form (event
+    # location picker) can render the label select without a blank prompt option
+    # that a browser `required` check would otherwise block on.
+    def label_select_field(form, required: true, prompt: 'Select Label') # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # rubocop:todo Metrics/BlockLength
       content_tag(:div, class: 'label-select', data: { controller: 'better_together--dependent-fields' }) do
         field_label = required_label(
@@ -21,7 +24,7 @@ module BetterTogether
         select_field = form.select(
           :select_label,
           form.object.class.label_options,
-          { prompt: 'Select Label', required: true },
+          { prompt: prompt, required: required },
           class: 'form-select',
           id: label_select_id,
           'data-better_together--dependent-fields-target' => 'controlField'

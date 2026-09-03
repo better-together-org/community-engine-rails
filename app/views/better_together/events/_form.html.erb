@@ -202,109 +202,109 @@
 
           <!-- Start Location Field -->
           <div class="col-12 mb-3 pb-3 border-bottom">
-            <%# form.label :location, t('better_together.events.labels.location') %>
-
-            <%# Radio-key -> full class name, derived from the same allow-list the
-                controller/policy use — never hardcoded, so the form can't drift out
-                of sync with BetterTogether::Geography::Placeable.included_in_models. %>
+            <%# key -> full class name, from the same allow-list the controller and
+                policy use - never hardcoded, so the form can't drift from
+                BetterTogether::Geography::Placeable.included_in_models. %>
             <% location_type_map = BetterTogether::Geography::Placeable.included_in_models.each_with_object({}) do |klass, memo|
                  memo[klass.name.demodulize.underscore] = klass.name
                end %>
+            <% has_location_error = event.errors[:location].any? %>
+            <% picker_describedby = ['event_location_picker_hint',
+                                     ('event_location_picker_error' if has_location_error)].compact.join(' ') %>
 
             <div class="location-fields" data-controller="better_together--location-selector"
-                 data-better_together--location-selector-location-type-map-value="<%= location_type_map.to_json %>">
+                 data-better_together--location-selector-location-type-map-value="<%= location_type_map.to_json %>"
+                 data-better_together--location-selector-new-record-opened-announcement-value="<%= t('better_together.events.location_picker.announcements.creating') %>"
+                 data-better_together--location-selector-new-record-cancelled-announcement-value="<%= t('better_together.events.location_picker.announcements.cancelled') %>">
               <%= form.fields_for :location, (event.location || event.build_location) do |location_form| %>
-                <%= location_form.hidden_field :locatable_id  %>
-                <%= location_form.hidden_field :locatable_type  %>
+                <%= location_form.hidden_field :locatable_id %>
+                <%= location_form.hidden_field :locatable_type %>
 
-                <%= label_tag 'event_location_picker', t('better_together.events.labels.select_location'), class: 'form-label' %>
+                <%= label_tag 'event_location_picker', t('better_together.events.labels.location'), class: 'form-label' %>
 
-                <%# One field searches every Placeable type at once (see
-                    EventsController#available_locations's mixed-search mode) and,
-                    on selection, gets split back into location_id/location_type by
-                    location_selector_controller#applyLocationSelection - so this
-                    select is a picker UI only and is deliberately NOT the
-                    LocatableLocation-bound `location_id` field itself (that's the
-                    separate hidden field below); its own submitted value is
-                    discarded server-side. %>
+                <%# The picker is a search UI only: on selection
+                    location_selector_controller#applyLocationSelection splits the
+                    composite "ClassName:id" value into the hidden
+                    location_id/location_type fields below (or the hidden name field
+                    for a free-typed simple location). The select's own submitted
+                    value is discarded server-side. %>
                 <% current_location_key = location_type_map.each_key.find { |key| event.location&.location_type_matches?(key) } %>
                 <% current_location = current_location_key && location_form.object.location %>
                 <% picker_initial_option = if current_location
                                               text = current_location.respond_to?(:to_formatted_s) ? current_location.to_formatted_s : current_location.to_s
-                                              value = "#{location_type_map[current_location_key]}:#{current_location.id}"
-                                              [["#{text} (#{current_location.class.model_name.human})", value]]
+                                              [["#{text} (#{current_location.class.model_name.human})",
+                                                "#{location_type_map[current_location_key]}:#{current_location.id}"]]
                                             elsif event.location&.simple_location? && event.location.name.present?
                                               [[event.location.name, event.location.name]]
                                             else
                                               []
                                             end %>
 
-                <div class="d-flex gap-2 align-items-start">
-                  <%# Rails' `data: {...}` hash dasherizes every key (including
-                      underscores inside a namespace segment), which corrupts a
-                      Stimulus identifier like `better_together--location-selector`
-                      into `better-together--location-selector` - silently breaking
-                      target/action wiring with no error. slim_select_controller.js
-                      defends against this for its own options-value (see its
-                      connect()'s dataset/getAttribute fallback chain), but Stimulus's
-                      target/action system has no such fallback - so, matching every
-                      other data-*-target attribute already in this partial, these are
-                      passed as literal 'data-...' string keys instead of nested under
-                      `data:`. %>
-                  <%= select_tag 'event_location_picker',
-                      options_for_select(picker_initial_option, picker_initial_option.first&.last),
-                      include_blank: true,
-                      class: 'form-select',
-                      id: 'event_location_picker',
-                      'data-controller': 'better_together--slim-select',
-                      'data-better_together--location-selector-target': 'locationSelect',
-                      'data-action': 'change->better_together--location-selector#applyLocationSelection',
-                      'data-better_together--slim-select-options-value': { ajax: { url: available_locations_events_path }, addable: true }.to_json %>
-
-                  <%# Always available (Pundit/inline_creatable?-gated only) - a user
-                      reaches for "+New" precisely when nothing in the search results
-                      is the location they want, so visibility can't depend on having
-                      already picked that type via the picker. %>
-                  <% inline_creatable_klasses = location_type_map.values.map(&:constantize).select(&:inline_creatable?) %>
-                  <% inline_creatable_klasses.each do |klass| %>
-                    <% key = klass.name.demodulize.underscore %>
-                    <% next unless policy(klass).create? %>
-                    <!-- Button to create a new <%= key %> inline -->
-                    <%= link_to '#', class: 'btn btn-outline-secondary btn-sm mt-1',
-                        'data-action': 'click->better_together--location-selector#showNewRecord',
-                        'data-location-type': key,
-                        'data-better_together--location-selector-target': 'newRecordButton' do %>
-                      <i class="fa-solid fa-plus"></i>
-                      <span class="visually-hidden"><%= t('better_together.events.actions.create_new', model: klass.model_name.human) %></span>
-                      <span aria-hidden="true"><%= t('better_together.events.actions.create_new_short', default: 'New') %></span>
-                    <% end %>
-                  <% end %>
-                </div>
+                <%# Literal 'data-...' string keys (not a `data:` hash): Rails
+                    dasherizes hash keys, corrupting the `better_together--` Stimulus
+                    namespace into `better-together--` and silently breaking
+                    target/action wiring. %>
+                <%= select_tag 'event_location_picker',
+                    options_for_select(picker_initial_option, picker_initial_option.first&.last),
+                    include_blank: true,
+                    class: 'form-select',
+                    id: 'event_location_picker',
+                    'aria-describedby': picker_describedby,
+                    'aria-invalid': (has_location_error ? 'true' : nil),
+                    'data-controller': 'better_together--slim-select',
+                    'data-better_together--location-selector-target': 'locationSelect',
+                    'data-action': 'change->better_together--location-selector#applyLocationSelection better_together--slim-select:create->better_together--location-selector#revealNewRecord',
+                    'data-better_together--slim-select-options-value': location_picker_slim_select_options.to_json %>
 
                 <%= location_form.hidden_field :location_id, 'data-better_together--location-selector-target': 'locationIdField' %>
                 <%= location_form.hidden_field :location_type, 'data-better_together--location-selector-target': 'locationTypeField' %>
                 <%= location_form.hidden_field :name, 'data-better_together--location-selector-target': 'simpleNameField' %>
 
-                <small class="form-text text-muted"><%= t('better_together.events.hints.select_location') %></small>
-
-                <!-- Inline new-record fields per inline-creatable Placeable type (hidden until user clicks 'New') -->
-                <% inline_creatable_klasses.each do |klass| %>
-                  <% key = klass.name.demodulize.underscore %>
-                  <div data-better_together--location-selector-target="newRecordBlock" data-location-type="<%= key %>"
-                       style="display: none; margin-top: 0.75rem;">
-                    <%= location_form.fields_for :location, klass.new do |new_form| %>
-                      <%= render klass.inline_create_fields_partial, form: new_form %>
-                    <% end %>
+                <% if has_location_error %>
+                  <div id="event_location_picker_error" class="text-danger small mt-1" role="alert">
+                    <%= event.errors[:location].to_sentence %>
                   </div>
+                <% end %>
+
+                <small id="event_location_picker_hint" class="form-text text-muted d-block">
+                  <%= t('better_together.events.hints.location') %>
+                </small>
+
+                <div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"
+                     data-better_together--location-selector-target="announcement"></div>
+
+                <%# Inline "create a new address" panel - revealed when the user picks
+                    the "Create new address" row in the search results. Address is the
+                    only inline-creatable location type here; Buildings and curated
+                    types (Settlement/Region) are chosen from the existing set only. %>
+                <% if policy(BetterTogether::Address).create? %>
+                  <% picked_location = location_form.object.location %>
+                  <% inline_address = (picked_location if picked_location.is_a?(BetterTogether::Address) && picked_location.new_record?) ||
+                                      BetterTogether::Address.new %>
+                  <% address_panel_open = inline_address.new_record? && (has_location_error || inline_address.line1.present?) %>
+                  <fieldset id="event_location_new_address" class="border rounded p-3 mt-3"
+                            data-better_together--location-selector-target="newRecordBlock"
+                            data-location-type="address"
+                            data-new-record-query="<%= inline_address.line1 %>"
+                            <%= 'hidden' unless address_panel_open %>>
+                    <legend class="fs-6 fw-semibold">
+                      <%= t('better_together.events.location_picker.new_address_legend') %>
+                      <span class="fw-normal text-muted ms-1"
+                            data-better_together--location-selector-target="newRecordQuery"><%= "\"#{inline_address.line1}\"" if inline_address.line1.present? %></span>
+                    </legend>
+                    <%= location_form.fields_for :location, inline_address do |new_form| %>
+                      <%= render 'better_together/addresses/address_fields', form: new_form, destroy: false, only_primary: true, inline: true %>
+                    <% end %>
+                    <div class="mt-2">
+                      <%= button_tag t('better_together.events.location_picker.cancel_new_address'), type: 'button',
+                          class: 'btn btn-outline-secondary btn-sm',
+                          'data-action': 'click->better_together--location-selector#cancelNewRecord',
+                          'data-better_together--location-selector-target': 'cancelNewRecordButton' %>
+                    </div>
+                  </fieldset>
                 <% end %>
               <% end %>
             </div>
-            <% if event.errors[:location].any? %>
-              <div class="invalid-feedback">
-                <%= event.errors[:location].join(", ") %>
-              </div>
-            <% end %>
-            <small class="form-text text-muted mt-2"><%= t('better_together.events.hints.location') %></small>
           </div>
         </div>
       </div>

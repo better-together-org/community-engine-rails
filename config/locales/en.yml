@@ -1563,7 +1563,6 @@ en:
     events:
       actions:
         create_new: Create new %{model}
-        create_new_short: New
       add_to_calendar: Add to calendar (.ics)
       attendees: Attendees
       back_to_events: View Events
@@ -1578,9 +1577,9 @@ en:
         duration_minutes: How long the event will last. Changes automatically when
           start or end time changes.
         ends_at: When the event concludes. Updates automatically when duration changes.
-        location: Where attendees will meet for this event
+        location: Search for an existing address, building, or place. If it is not
+          listed, choose "Create new address" or use your typed text as a custom name.
         name: A clear, descriptive title for your event
-        select_location: Select location
         slug: URL-friendly identifier for this event
         starts_at: When the event begins. All times are in the timezone selected above.
         status: Draft events are visible only to you, your co-hosts, and platform
@@ -1629,7 +1628,6 @@ en:
         ends_at: Ends at
         location: Location
         privacy: Privacy
-        select_location: Select location
         starts_at: Starts at
         status: Status
         timezone: Event Timezone
@@ -1659,6 +1657,16 @@ en:
         status_draft: Draft
         status_label: Status
       location: Location
+      location_picker:
+        announcements:
+          cancelled: New address cancelled. Returned to the location search field.
+          creating: Creating a new address. Fill in the address fields below, then
+            save the event.
+        cancel_new_address: Cancel new address
+        create_row:
+          new_named_with_query: 'Create new %{model}: "%{q}"'
+          use_typed_name: Use "%{q}" as a custom location name
+        new_address_legend: New address
       login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
@@ -1681,8 +1689,6 @@ en:
       odd: must be odd
       other_than: must be other than %{count}
       present: must be blank
-      prompts:
-        select_location: Select location
       recurrence:
         actions:
           add_exception_date: Add exception date

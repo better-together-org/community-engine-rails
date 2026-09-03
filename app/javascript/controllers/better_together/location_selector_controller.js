@@ -1,135 +1,230 @@
-// Stimulus controller for the event location picker: a single mixed-type
-// SlimSelect field searches every Geography::Placeable type at once (see
-// EventsController#available_locations) and, on selection, splits the
-// composite "ClassName:id" value back into the plain hidden location_id/
-// location_type fields LocatableLocation's ordinary polymorphic assignment
-// already expects - no change needed on the Ruby side of that assignment.
-// Free-typed text with no match (SlimSelect's `addable` option, already
-// implemented generically in slim_select_controller.js) falls into the
-// hidden `name` field instead, matching a "simple" (unstructured) location.
-import { Controller } from "@hotwired/stimulus"
+// Stimulus controller for the event location picker. A single mixed-type
+// SlimSelect field (see EventsController#available_locations) searches every
+// Geography::Placeable type at once; on selection, the composite "ClassName:id"
+// value is split back into the hidden location_id/location_type fields that
+// LocatableLocation's polymorphic assignment already expects. Free-typed text
+// with no match becomes the hidden `name` field (a "simple" location).
+//
+// The dropdown also offers "Create new address" and "Use my typed text" rows
+// (slim_select_controller.js createOptions). Picking one dispatches
+// better_together--slim-select:create, which this controller turns into either
+// the inline address <fieldset> or a simple-name assignment.
+import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
   static targets = [
-    "locationSelect",
-    "locationIdField",
-    "locationTypeField",
-    "simpleNameField",
-    "newRecordBlock",
-    "newRecordButton"
-  ]
+    'locationSelect',
+    'locationIdField',
+    'locationTypeField',
+    'simpleNameField',
+    'newRecordBlock',
+    'newRecordQuery',
+    'cancelNewRecordButton',
+    'announcement'
+  ];
 
   static values = {
-    // Populated from the server (BetterTogether::Geography::Placeable.included_in_models)
-    // rather than hardcoded here, so the key -> class-name mapping can't drift
-    // from the Ruby-side allow-list. Used to recognize a matched composite
-    // value's class-name prefix as a real Placeable type.
-    locationTypeMap: Object
-  }
+    // Populated from BetterTogether::Geography::Placeable.included_in_models so the
+    // key -> class-name mapping can't drift from the Ruby allow-list. Used to
+    // recognize a matched composite value's class-name prefix.
+    locationTypeMap: Object,
+    newRecordOpenedAnnouncement: String,
+    newRecordCancelledAnnouncement: String
+  };
 
   connect() {
-    // "+New X" blocks start closed and, crucially, disabled - a hidden
-    // block's fields still POST (display:none doesn't stop form submission)
-    // and would collide with whichever location the picker actually holds
-    // (e.g. Building's translatable name_en field submitted alongside a
-    // picked Address, raising ActiveModel::UnknownAttributeError).
-    this.newRecordBlockTargets.forEach((el) => this.toggleFieldsDisabled(el, true))
+    // A hidden new-record fieldset still POSTs ([hidden]/display:none does not
+    // stop submission), so its fields are disabled unless the server rendered it
+    // open - an error re-render carrying the user's typed address back.
+    this.newRecordBlockTargets.forEach((block) => {
+      const openOnLoad = !block.hasAttribute('hidden');
+      this.toggleFieldsDisabled(block, !openOnLoad);
+      if (openOnLoad) this.syncQueryCaption(block, block.dataset.newRecordQuery || '');
+    });
   }
 
-  // Fires on the picker select's native `change` event (dispatched by
-  // slim_select_controller's afterChange, after F1's fix ensures a matching
-  // <option> - and therefore a real .value - exists for whatever was picked,
-  // whether an AJAX search result or an addable-typed value).
+  // change on the picker select (dispatched by slim_select_controller afterChange).
   applyLocationSelection() {
-    const value = this.hasLocationSelectTarget ? this.locationSelectTarget.value : ''
+    const value = this.hasLocationSelectTarget ? this.locationSelectTarget.value : '';
 
     if (!value) {
-      this.clearStructuredLocationFields()
-      this.clearSimpleLocationFields()
-      return
+      this.clearStructuredLocationFields();
+      this.clearSimpleLocationFields();
+      return;
     }
 
-    const matchedType = this.matchLocationType(value)
-
+    const matchedType = this.matchLocationType(value);
     if (matchedType) {
-      const id = value.slice(matchedType.length + 1)
-      this.setStructuredLocation(matchedType, id)
+      this.setStructuredLocation(matchedType, value.slice(matchedType.length + 1));
     } else {
-      this.setSimpleLocation(value)
+      this.setSimpleLocation(value);
     }
 
-    // Picking an existing (or freshly typed simple) location supersedes any
-    // in-progress "+New" build - close every block so its fields go back to
-    // disabled and stop competing with the just-picked location on submit.
-    this.closeAllNewRecordBlocks()
+    // Picking a location supersedes any in-progress "+New" address.
+    this.closeAllNewRecordBlocks();
+    this.clearNewRecordInputs();
+  }
+
+  // better_together--slim-select:create - the user picked a "Create new X" or
+  // "Use my typed text" row from the dropdown.
+  revealNewRecord(event) {
+    const detail = event.detail || {};
+    const type = detail.type;
+    const query = detail.query || '';
+
+    if (type === 'simple') {
+      this.applySimpleFromQuery(query);
+      return;
+    }
+
+    const block = this.newRecordBlockTargets.find((el) => el.dataset.locationType === type);
+    if (!block) return;
+
+    // Clearing the picker fires applyLocationSelection (empty value), which also
+    // closes and disables every new-record block - do it first, then open ours.
+    this.resetPickerSelection();
+    this.clearStructuredLocationFields();
+    this.clearSimpleLocationFields();
+    this.closeAllNewRecordBlocks();
+
+    block.hidden = false;
+    this.toggleFieldsDisabled(block, false);
+    this.prefillFromQuery(block, query);
+    this.syncQueryCaption(block, query);
+
+    const firstField = block.querySelector(
+      'input:not([type=hidden]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
+    );
+    if (firstField) firstField.focus();
+
+    this.announce(this.newRecordOpenedAnnouncementValue);
+  }
+
+  cancelNewRecord(event) {
+    if (event) event.preventDefault();
+
+    this.closeAllNewRecordBlocks();
+    this.clearNewRecordInputs();
+    this.clearStructuredLocationFields();
+    this.clearSimpleLocationFields();
+    this.resetPickerSelection();
+    this.focusCombobox();
+    this.announce(this.newRecordCancelledAnnouncementValue);
+  }
+
+  // "Use '<text>' as a custom location name" - no structured record, just the
+  // hidden name field. SlimSelect cancelled its own selection of the sentinel row
+  // (beforeChange returned false), so synthesize a matching <option> the way
+  // slim_select_controller's afterChange does for AJAX results.
+  applySimpleFromQuery(query) {
+    const name = (query || '').trim();
+    if (!name) return;
+
+    this.setSimpleLocation(name);
+
+    if (this.hasLocationSelectTarget) {
+      const select = this.locationSelectTarget;
+      const exists = Array.from(select.options).some((option) => option.value === name);
+      if (!exists) select.add(new Option(name, name, false, false));
+      select.value = name;
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    this.closeAllNewRecordBlocks();
+    this.clearNewRecordInputs();
   }
 
   // A real result's value is always "<one of locationTypeMapValue's class
-  // names>:<id>" (see EventsController#mixed_location_options) - checked
-  // against the actual allow-list rather than a bare ":" heuristic, since
-  // addable free text could itself contain a colon.
+  // names>:<id>" - checked against the allow-list rather than a bare ":"
+  // heuristic, since free text could itself contain a colon.
   matchLocationType(value) {
-    if (!this.hasLocationTypeMapValue) return null
+    if (!this.hasLocationTypeMapValue) return null;
 
-    return Object.values(this.locationTypeMapValue).find((className) => value.startsWith(`${className}:`)) || null
+    return Object.values(this.locationTypeMapValue).find((className) => value.startsWith(`${className}:`)) || null;
   }
 
   setStructuredLocation(locationType, id) {
-    if (this.hasLocationIdFieldTarget) this.locationIdFieldTarget.value = id
-    if (this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = locationType
-
-    this.clearSimpleLocationFields()
+    if (this.hasLocationIdFieldTarget) this.locationIdFieldTarget.value = id;
+    if (this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = locationType;
+    this.clearSimpleLocationFields();
   }
 
   setSimpleLocation(name) {
-    if (this.hasSimpleNameFieldTarget) this.simpleNameFieldTarget.value = name
-
-    this.clearStructuredLocationFields()
+    if (this.hasSimpleNameFieldTarget) this.simpleNameFieldTarget.value = name;
+    this.clearStructuredLocationFields();
   }
 
   clearStructuredLocationFields() {
-    if (this.hasLocationIdFieldTarget) this.locationIdFieldTarget.value = ''
-    if (this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = ''
+    if (this.hasLocationIdFieldTarget) this.locationIdFieldTarget.value = '';
+    if (this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = '';
   }
 
   clearSimpleLocationFields() {
-    if (this.hasSimpleNameFieldTarget) this.simpleNameFieldTarget.value = ''
+    if (this.hasSimpleNameFieldTarget) this.simpleNameFieldTarget.value = '';
   }
 
   toggleFieldsDisabled(target, disabled) {
-    if (!target) return
+    if (!target) return;
     target.querySelectorAll('input, select, textarea').forEach((field) => {
-      field.disabled = disabled
-    })
+      field.disabled = disabled;
+    });
   }
 
   closeAllNewRecordBlocks() {
-    this.newRecordBlockTargets.forEach((el) => {
-      el.style.display = 'none'
-      this.toggleFieldsDisabled(el, true)
-    })
+    this.newRecordBlockTargets.forEach((block) => {
+      block.hidden = true;
+      this.toggleFieldsDisabled(block, true);
+    });
   }
 
-  // Shows/hides the inline "+New" fields block for the clicked button's
-  // location type, matched via the shared data-location-type attribute.
-  // Always available (server-gated only by Pundit policy(...).create? and by
-  // Placeable#inline_creatable? - lookup-only types like Settlement/Region
-  // never render a button at all) - independent of whatever the picker
-  // currently holds, since a user reaches for "+New" precisely when nothing
-  // in the search results is the location they want.
-  showNewRecord(event) {
-    event.preventDefault()
-    const type = event.currentTarget.dataset.locationType
-    const block = this.newRecordBlockTargets.find((el) => el.dataset.locationType === type)
-    if (!block) return
+  clearNewRecordInputs() {
+    this.newRecordBlockTargets.forEach((block) => {
+      block.querySelectorAll('input, textarea').forEach((field) => {
+        if (field.type === 'checkbox' || field.type === 'radio') {
+          field.checked = field.defaultChecked;
+        } else if (field.type !== 'hidden') {
+          field.value = '';
+        }
+      });
+      block.querySelectorAll('select').forEach((field) => {
+        field.selectedIndex = 0;
+      });
+    });
+  }
 
-    const opening = block.style.display === 'none'
-    block.style.display = opening ? 'block' : 'none'
-    this.toggleFieldsDisabled(block, !opening)
-    // focus first input inside the new record block for accessibility
-    if (opening) {
-      const focusable = block.querySelector('input, select, textarea')
-      if (focusable) focusable.focus()
-    }
+  prefillFromQuery(block, query) {
+    const term = (query || '').trim();
+    if (!term) return;
+    const line1 = block.querySelector('input[name*="[line1]"]');
+    if (line1 && !line1.value) line1.value = term;
+  }
+
+  syncQueryCaption(block, query) {
+    const term = (query || '').trim();
+    this.newRecordQueryTargets
+      .filter((el) => block.contains(el))
+      .forEach((el) => { el.textContent = term ? `"${term}"` : ''; });
+  }
+
+  // Ask slim_select_controller (createOptions selects only) to drop the current
+  // selection. Falls back to nudging the native select directly.
+  resetPickerSelection() {
+    if (!this.hasLocationSelectTarget) return;
+    this.locationSelectTarget.dispatchEvent(
+      new CustomEvent('better_together--slim-select:reset-picker', { bubbles: false })
+    );
+  }
+
+  focusCombobox() {
+    const combobox = this.element.querySelector('.ss-main');
+    if (combobox && typeof combobox.focus === 'function') combobox.focus();
+  }
+
+  announce(message) {
+    if (!message || !this.hasAnnouncementTarget) return;
+    this.announcementTarget.textContent = '';
+    // Clear then set on the next tick so the live region re-announces even when
+    // the message text repeats.
+    setTimeout(() => { this.announcementTarget.textContent = message; }, 50);
   }
 }
