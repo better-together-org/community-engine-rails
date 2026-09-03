@@ -1,0 +1,5 @@
+entitlements:
+  - key: hosted_access
+    name: Hosted Platform Access
+    description: Active hosted-access gate for provisioning and operating a Better Together platform.
+    resolution: grant

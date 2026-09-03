@@ -1,0 +1,9 @@
+<p><%= t('.greeting', name: @recipient&.name, default: 'Hi %{name},') %></p>
+
+<p>
+  <%= t(
+        '.message',
+        beneficiary_name: @beneficiary_name,
+        default: '%{beneficiary_name} declined your sponsorship offer.'
+      ) %>
+</p>

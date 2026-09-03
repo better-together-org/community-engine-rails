@@ -1,0 +1,15 @@
+---
+title: Profile settings — billing entry point
+audience:
+- sponsor
+- operator
+journey_step: A person editing their own profile needs a direct path to personal billing,
+  including any communities they sponsor.
+callouts:
+- :title: Manage billing
+  :description: This is the person-facing equivalent of the community edit billing
+    link, keeping the same cross-link pattern for both billable owner types.
+accessibility_notes: The link uses a stable ID and standard focusable anchor markup
+  consistent with the community edit entry point.
+slug: pr_1581_person_edit_billing_entry_point
+device: mobile

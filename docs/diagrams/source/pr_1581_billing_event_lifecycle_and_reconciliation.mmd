@@ -1,0 +1,60 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef action fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef system fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+  classDef warning fill:#fbeaea,stroke:#a13d3d,color:#4a1414,stroke-width:1px;
+
+  subgraph Webhook["Webhook processing"]
+    direction LR
+    Stripe["Stripe sends a webhook event"]:::system
+    ProcessJob["ProcessStripeEventJob"]:::action
+    Dispatcher["StripeEventDispatcher<br/>routes by event type"]:::action
+    Processor["StripeEventProcessor<br/>applies the event"]:::action
+    Outcome{"Did the event apply cleanly?"}:::decision
+    Processed["Billing::Event marked processed"]:::outcome
+    Attempted["Attempt recorded, error retained"]:::warning
+
+    Stripe --> ProcessJob --> Dispatcher --> Processor --> Outcome
+    Outcome -->|Yes| Processed
+    Outcome -->|No| Attempted
+  end
+
+  subgraph Recovery["Failure recovery and privacy retention"]
+    direction LR
+    DeadLetter["DeadLetterStaleBillingEventsJob<br/>marks events dead_lettered after repeated failures"]:::action
+    DeadLettered["Billing::Event: dead_lettered"]:::warning
+    Alerts["Billing activity alerts<br/>(community/person billing pages)"]:::outcome
+    Replay["ReplayStripeBillingEvent<br/>operator-triggered retry"]:::action
+    Redact["RedactExpiredEventPayloadsJob<br/>scheduled payload redaction"]:::action
+    Redacted["Payload redacted after retention window"]:::outcome
+
+    Attempted --> DeadLetter --> DeadLettered --> Alerts
+    Alerts -->|steward replays| Replay --> Processor
+    Processed --> Redact --> Redacted
+  end
+
+  subgraph Reconciliation["Scheduled reconciliation (drift repair)"]
+    direction LR
+    OwnerScan["ReconcileStripeBillableOwnerBillingScanJob<br/>scans all billable owners"]:::action
+    OwnerJob["ReconcileStripeBillableOwnerBillingJob<br/>per owner"]:::action
+    OwnerService["StripeBillableOwnerReconciliation"]:::action
+    CommunityJob["ReconcileStripeCommunityBillingJob"]:::action
+    CommunityService["StripeCommunityReconciliation"]:::action
+    MerchantScan["ReconcileStripeMerchantAccountScanJob<br/>scans all merchant accounts"]:::action
+    MerchantJob["ReconcileStripeMerchantAccountJob<br/>per account"]:::action
+    MerchantSync["MerchantAccounts::StripeConnect::SyncAccount"]:::action
+    Repaired["Local Subscription / MerchantAccount<br/>state matches Stripe"]:::outcome
+
+    OwnerScan --> OwnerJob --> OwnerService --> Repaired
+    OwnerJob --> CommunityJob --> CommunityService --> Repaired
+    MerchantScan --> MerchantJob --> MerchantSync --> Repaired
+  end
+
+  Dispatcher -.->|"same source of truth as"| OwnerService
+  MerchantSync -.->|"keeps in sync with"| Stripe
+
+  subgraph PlainLanguage["How to read this"]
+    Note["Webhooks keep billing state fresh in real time.<br/>Dead-lettering and replay handle events that failed repeatedly.<br/>Scheduled reconciliation scans catch drift the webhook stream missed<br/>(e.g. a webhook that never arrived) and repair it independently."]:::outcome
+  end

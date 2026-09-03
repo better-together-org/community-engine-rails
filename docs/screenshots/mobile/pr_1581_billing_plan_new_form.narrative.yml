@@ -1,0 +1,16 @@
+---
+title: New billing plan
+audience:
+- operator
+- board_member
+journey_step: A host steward creates a new recurring plan before it can appear in
+  the plan catalog or be selected during checkout.
+callouts:
+- :title: New plan form
+  :description: This is the creation path for the same form used by the plan editor.
+    Reviewers should confirm identifier and Stripe Price ID stay immutable once a
+    plan is persisted.
+accessibility_notes: The form reuses the shared billing plan partial, so the same
+  stable IDs and label associations apply here as on the editor.
+slug: pr_1581_billing_plan_new_form
+device: mobile

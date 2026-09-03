@@ -1,0 +1,11 @@
+<%= t('.greeting', name: @recipient&.name, default: 'Hi %{name},') %>
+
+<%= t(
+      '.message',
+      sponsor_name: @sponsor_name,
+      default: '%{sponsor_name} has offered to sponsor your hosted-access balance.'
+    ) %>
+
+<% if @review_url.present? %>
+<%= t('.review_offer', default: 'Review this offer') %>: <%= @review_url %>
+<% end %>

@@ -142,4 +142,22 @@ RSpec.describe BetterTogether::ApplicationHelper do
       expect(helper.contributor_display_visible_for?(record)).to be(false)
     end
   end
+
+  describe '#entitled_to?' do
+    let(:holder) { create(:better_together_community) }
+
+    it 'delegates to Billing::EntitlementResolver and reflects a current grant' do
+      BetterTogether::Billing::Entitlement.grant!(holder:, entitlement_key: 'hosted_access')
+
+      expect(helper.entitled_to?('hosted_access', holder:)).to be(true)
+    end
+
+    it 'returns false when the holder has no matching grant' do
+      expect(helper.entitled_to?('hosted_access', holder:)).to be(false)
+    end
+
+    it 'returns false instead of raising for an unregistered entitlement_key' do
+      expect(helper.entitled_to?('not_a_real_entitlement', holder:)).to be(false)
+    end
+  end
 end

@@ -1,0 +1,81 @@
+{
+  "name": "hosted_entitlement_grace_period",
+  "device": "desktop",
+  "url": "/en/c/harbour-voices-ff5a7aa7/billing",
+  "title": "Community Billing | Harbour Voices | Test Host Community",
+  "locale": "en",
+  "feature_set": "hosted_entitlement_grace_period",
+  "source_spec": "./spec/docs_screenshots/better_together/hosted_entitlement_grace_period_spec.rb",
+  "callouts": [
+    {
+      "selector": "#hosted-entitlement-card .hosted-entitlement-status-badge",
+      "title": "Grace period badge",
+      "bullets": [
+        "Distinct from both \"active\" (green) and \"billing attention needed\" (yellow) — this is the app-owned second buffer after Stripe's own dunning retries are exhausted."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 328.8125,
+        "width": 213.171875,
+        "height": 20.375,
+        "right": 294.671875,
+        "bottom": 349.1875,
+        "center_x": 188.0859375,
+        "center_y": 339.0
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 328.8125,
+        "width": 213.171875,
+        "height": 20.375,
+        "right": 294.671875,
+        "bottom": 349.1875,
+        "center_x": 188.0859375,
+        "center_y": 339.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 314.67,
+        "y": 208.0,
+        "width": 380,
+        "height": 262,
+        "score": 1145.328125
+      }
+    },
+    {
+      "selector": "#hosted-entitlement-explainer",
+      "title": "Grace period explainer date",
+      "bullets": [
+        "Session follow-up: this date used to interpolate a raw ISO timestamp (e.g. \"2026-08-23T14:22:00Z\") — now renders via l(..., format: :long) like every other date on this page."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 466.0,
+        "width": 382.0,
+        "height": 63.0,
+        "right": 463.5,
+        "bottom": 529.0,
+        "center_x": 272.5,
+        "center_y": 497.5
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 466.0,
+        "width": 382.0,
+        "height": 63.0,
+        "right": 463.5,
+        "bottom": 529.0,
+        "center_x": 272.5,
+        "center_y": 497.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 82.5,
+        "y": 549.0,
+        "width": 380,
+        "height": 294,
+        "score": 932.0
+      }
+    }
+  ]
+}

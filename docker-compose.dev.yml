@@ -14,3 +14,8 @@ services:
     env_file:
       - './.env'
       - './.env.dev'
+
+  stripe-cli:
+    env_file:
+      - './.env'
+      - './.env.dev'

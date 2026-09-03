@@ -23,6 +23,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       to: 'content_security/active_storage/representations/proxy#show',
       as: :content_security_blob_representation_proxy
 
+  mount Pay::Engine, at: '/pay'
+
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
@@ -147,7 +149,23 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
         resources :communities, only: %i[create new]
+        # rubocop:todo Metrics/BlockLength
         resources :communities, only: %i[edit update destroy], path: 'c' do
+          resource :billing,
+                   only: :show,
+                   controller: 'community_billings' do
+            post :checkout
+            post :contribute
+            post :portal
+            post :reconcile
+            post :merchant_onboarding
+            post :refresh_merchant_account
+            post 'events/:event_id/replay', action: :replay_event, as: :replay_event
+            post :provision_platform
+            patch :accepts_sponsorship
+            get :search_beneficiaries
+          end
+
           resources :invitations, only: %i[create destroy] do
             collection do
               get :available_people
@@ -168,6 +186,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
           end
         end
+        # rubocop:enable Metrics/BlockLength
 
         resources :conversations, only: %i[index new create update show] do
           resources :messages, only: %i[index new create]
@@ -311,6 +330,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :people, only: %i[update edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
+
+          resource :billing,
+                   only: :show,
+                   controller: 'person_billings' do
+            post :checkout
+            post :portal
+            post :reconcile
+            post :merchant_onboarding
+            post :refresh_merchant_account
+            post 'events/:event_id/replay', action: :replay_event, as: :replay_event
+            patch :accepts_sponsorship
+          end
         end
 
         resources :person_access_grants, path: 'access-grants', only: %i[index show update] do
@@ -518,6 +549,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             end
             resources :oauth_applications
 
+            # Billing plan management (platform stewards only)
+            namespace :billing do
+              resources :plans
+            end
+
             # Geography Routes for WIP Geography Feature
             namespace :geography do
               resources :continents, except: %i[new create destroy]
@@ -581,6 +617,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       get 'invitations/:token', to: 'invitations#show', as: :invitation
       post 'invitations/:token/accept', to: 'invitations#accept', as: :accept_invitation
       post 'invitations/:token/decline', to: 'invitations#decline', as: :decline_invitation
+
+      # Sponsorship offer creation (authenticated) + token-based public review/
+      # accept/decline, plus authenticated ending of an active sponsorship.
+      post 'sponsorships', to: 'sponsorships#create', as: :sponsorships
+      get 'sponsorships/:token', to: 'sponsorships#show', as: :sponsorship
+      post 'sponsorships/:token/accept', to: 'sponsorships#accept', as: :accept_sponsorship
+      post 'sponsorships/:token/decline', to: 'sponsorships#decline', as: :decline_sponsorship
+      post 'sponsorships/:id/end', to: 'sponsorships#end', as: :end_sponsorship
       resources :posts, only: %i[index show]
 
       # Configures file list and download paths
@@ -634,7 +678,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # run gets its own platform-scoped Wizard row, so every step route
         # carries :platform_id — see
         # NewPlatformSetupStepsController#wizard/#target_platform.
-        get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
+        post 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
 
         scope path: 'new_platform_setup/:platform_id' do # rubocop:todo Metrics/BlockLength
           get 'welcome', to: 'new_platform_setup_steps#welcome',

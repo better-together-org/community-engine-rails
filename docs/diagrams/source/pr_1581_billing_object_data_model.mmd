@@ -1,0 +1,40 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef record fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef external fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+
+  Person["Person<br/>An individual community member or sponsor"]:::record
+  Community["Community<br/>A group that may receive hosted service"]:::record
+  Plan["Billing Plan<br/>Defines price, interval, and plain-language benefits"]:::record
+  Subscription["Billing Subscription<br/>Local record linking a plan and its self-funded payer"]:::record
+  Sponsorship["Sponsorship<br/>Standing consent relationship: sponsor funds beneficiary's own balance"]:::record
+  Contribution["Monetary Contribution<br/>One credited payment against an active Sponsorship"]:::record
+  Merchant["Merchant Account<br/>Optional payout onboarding for future commerce"]:::record
+  Event["Billing Event<br/>Recorded Stripe webhook activity and replay state"]:::record
+  Report["Subscription Summary Report<br/>Point-in-time CSV export of subscription/MRR/event health"]:::record
+  Hosted["Hosted Entitlement<br/>Calculated answer: is hosted access active?"]:::outcome
+  Stripe["Stripe<br/>External billing and payout provider"]:::external
+
+  Person -->|pays for its own| Subscription
+  Community -->|pays for its own| Subscription
+  Plan -->|chosen by| Subscription
+  Subscription -->|produces| Hosted
+  Subscription -->|generates sync records in| Event
+  Stripe -->|sends webhook updates to| Event
+  Community -->|may connect| Merchant
+  Person -->|may connect| Merchant
+  Merchant -->|syncs with| Stripe
+  Event -->|helps repair| Subscription
+  Person -->|requests, as creator| Report
+  Subscription -->|aggregated into| Report
+  Event -->|aggregated into| Report
+
+  Person -->|can sponsor| Sponsorship
+  Community -->|can sponsor or be sponsored by| Sponsorship
+  Sponsorship -->|accrues| Contribution
+  Contribution -->|credited to beneficiary's| Hosted
+
+  subgraph PlainLanguage["How to read this model"]
+    DirectionNote["A Subscription's payer is always its own beneficiary now — billable_owner\nand beneficiary are the same record (see Subscription#beneficiary).\nA third party funding someone else's access does so through a separate\nSponsorship + Monetary Contribution, crediting the beneficiary's own\nStripe balance. It never reassigns who owns a Subscription."]:::outcome
+  end

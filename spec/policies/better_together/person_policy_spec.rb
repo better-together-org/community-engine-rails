@@ -90,6 +90,24 @@ RSpec.describe BetterTogether::PersonPolicy do
     expect(described_class.new(people_reviewer, private_person).show?).to be true
   end
 
+  describe '#manage_merchant_account?' do
+    it 'denies an ordinary member managing their own payout onboarding' do
+      regular_user = create(:better_together_user, :confirmed)
+
+      expect(described_class.new(regular_user, regular_user.person).manage_merchant_account?).to be false
+    end
+
+    it 'allows a person with an explicit manage_platform_settings permission' do
+      grant_platform_permission(people_reviewer, 'manage_platform_settings')
+
+      expect(described_class.new(people_reviewer, public_person).manage_merchant_account?).to be true
+    end
+
+    it 'denies unauthenticated users' do
+      expect(described_class.new(nil, public_person).manage_merchant_account?).to be false
+    end
+  end
+
   describe 'cross-tenant isolation' do
     let(:tenant_platform) { create(:better_together_platform, :public) }
     let(:tenant_admin) { create(:better_together_user, :confirmed) }

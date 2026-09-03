@@ -1,0 +1,148 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.page_title', default: 'Community Billing') %> | <%= @community.name %>
+<% end %>
+
+<div id="<%= dom_id(@community, :billing_page) %>" class="container my-4">
+  <% if @checkout_session_pending %>
+    <%= turbo_stream_from BetterTogether::Billing::CheckoutSessionSyncBroadcaster.stream_name(params[:checkout_session_id]) %>
+    <%= render 'better_together/shared/checkout_session_pending',
+               dom_id: BetterTogether::Billing::CheckoutSessionSyncBroadcaster.target_dom_id(params[:checkout_session_id]) %>
+  <% end %>
+
+  <%= render 'better_together/shared/billing_page_header',
+             owner: @community,
+             owner_path: community_path(@community, locale: I18n.locale),
+             heading: t('better_together.billing.heading', default: 'Community Billing'),
+             subheading: t('better_together.billing.subheading',
+                           default: 'Choose a hosted community plan, confirm who is paying, and manage sponsorship and billing access for this community.'),
+             edit_path: edit_community_path(@community, locale: I18n.locale),
+             reconcile_path: reconcile_community_billing_path(@community, locale: I18n.locale),
+             portal_path: portal_community_billing_path(@community, locale: I18n.locale) %>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <%= render 'better_together/shared/hosted_entitlement_card',
+                 hosted_entitlement: @hosted_entitlement,
+                 provision_path: provision_platform_community_billing_path(@community, locale: I18n.locale) %>
+
+      <% received_contribution_total = @received_monetary_contributions.sum(&:amount_cents) %>
+      <% if received_contribution_total.positive? %>
+        <div id="<%= dom_id(@community, :sponsorship_received_notice) %>" class="alert alert-info mb-3">
+          <%= t(
+                'better_together.billing.sponsorship_received_notice',
+                default: 'This community has received %{amount} in sponsorship contributions.',
+                amount: billing_amount(received_contribution_total, @received_monetary_contributions.first&.currency || 'CAD')
+              ) %>
+        </div>
+      <% end %>
+
+      <%= render 'better_together/shared/billing_subscription_card',
+                 owner: @community,
+                 billing_subscription: @billing_subscription,
+                 no_subscription_message: t('better_together.billing.no_subscription',
+                                            default: 'No synced subscription is recorded for this community yet.') %>
+    </div>
+
+    <div class="col-lg-8">
+      <%= render 'better_together/shared/billing_merchant_account_card',
+                 owner: @community,
+                 merchant_account: @merchant_account,
+                 refresh_path: refresh_merchant_account_community_billing_path(@community, locale: I18n.locale),
+                 onboarding_path: merchant_onboarding_community_billing_path(@community, locale: I18n.locale),
+                 onboarding_confirm_text: t('better_together.billing.merchant_onboarding_confirm',
+                                            default: "This will create a Stripe-managed merchant account linked to this community. Stripe's data practices apply. Proceed?"),
+                 connected_explainer_text: t('better_together.billing.merchant_status_guidance_community',
+                                             default: 'Use onboarding to finish Stripe Connect setup for this community, then refresh this card after Stripe reviews the account.'),
+                 connect_explainer_text: t('better_together.billing.merchant_connect_explainer_community',
+                                           default: 'Connect Stripe so this community can complete onboarding and receive payouts in later commerce flows.'),
+                 admin_only_text: t('better_together.billing.merchant_onboarding_admin_only_community',
+                                    default: 'Payout onboarding for future commerce flows is managed by a community settings administrator or platform steward, not by general community stewardship access.') %>
+
+      <%= render 'better_together/shared/billing_event_alerts',
+                 billing_alert_events: @billing_alert_events,
+                 billing_alert_summary: @billing_alert_summary,
+                 replay_billing_event_path: ->(billing_event) do
+                   replay_event_community_billing_path(@community, event_id: billing_event.id, locale: I18n.locale)
+                 end,
+                 last_billing_event: @last_billing_event %>
+
+      <%= render 'better_together/shared/billing_available_plans_card',
+                 owner: @community,
+                 billing_plans: @billing_plans,
+                 table_id: 'community-billing-plans-table',
+                 scope_body_text: t('better_together.billing.hosted_plan_scope_body',
+                                    default: 'These recurring plans support this community space directly. One-time payment plans are intentionally excluded from the current launch path until their fulfillment flow is completed.'),
+                 checkout_path_for: ->(billing_plan) do
+                   checkout_community_billing_path(@community, billing_plan_id: billing_plan.identifier, locale: I18n.locale)
+                 end %>
+
+      <div id="<%= dom_id(@community, :sponsor_contribution_card) %>" class="card mt-4">
+        <div class="card-header">
+          <strong><%= t('better_together.billing.sponsor_a_community', default: 'Contribute to another community') %></strong>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">
+            <%= t(
+                  'better_together.billing.sponsor_a_community_explainer',
+                  default: "Fund another community's hosted-access balance. Your contribution is credited directly to their account — it never changes who owns their subscription."
+                ) %>
+          </p>
+          <% if @sponsorship_contribution_plans.any? %>
+            <%= form_with url: contribute_community_billing_path(@community, locale: I18n.locale), method: :post, data: { turbo: false } do |f| %>
+              <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                  <%= f.label :beneficiary_community_id, t('better_together.billing.beneficiary_community', default: 'Community to support'), class: 'form-label' %>
+                  <%= f.select :beneficiary_community_id,
+                               options_for_select([]),
+                               { include_blank: true },
+                               {
+                                 class: 'form-select',
+                                 required: true,
+                                 data: {
+                                   controller: 'better-together--slim-select',
+                                   'better-together--slim-select-options-value': {
+                                     ajax: {
+                                       url: search_beneficiaries_community_billing_path(@community, locale: I18n.locale),
+                                       fetch: true,
+                                       delay: 300
+                                     },
+                                     searchPlaceholder: t('better_together.billing.beneficiary_community_placeholder', default: 'Search communities'),
+                                     searchHighlight: true,
+                                     closeOnSelect: true,
+                                     allowDeselect: true
+                                   }.to_json
+                                 }
+                               } %>
+                </div>
+                <div class="col-md-4">
+                  <%= f.label :billing_plan_id, t('better_together.billing.contribution_amount', default: 'Amount'), class: 'form-label' %>
+                  <%= f.select :billing_plan_id,
+                               @sponsorship_contribution_plans.map { |plan| [billing_amount(plan.amount_cents, plan.currency), plan.identifier] },
+                               {}, class: 'form-select' %>
+                </div>
+                <div class="col-md-3">
+                  <%= f.submit t('better_together.billing.contribute_now', default: 'Contribute'), class: 'btn btn-primary w-100' %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <p class="mb-0 text-muted">
+              <%= t('better_together.billing.no_sponsorship_plans', default: 'No sponsorship contribution amounts are configured yet.') %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+
+      <%= render 'better_together/shared/sponsorship_panels',
+                 owner: @community,
+                 accepts_sponsorship_path: accepts_sponsorship_community_billing_path(@community, locale: I18n.locale),
+                 offer_sponsorship_path: sponsorships_path(locale: I18n.locale),
+                 received_offers: @received_sponsorship_offers,
+                 received_active: @received_active_sponsorships,
+                 given_active: @given_active_sponsorships,
+                 accept_path_for: ->(sponsorship) { accept_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 decline_path_for: ->(sponsorship) { decline_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 end_path_for: ->(sponsorship) { end_sponsorship_path(sponsorship.id, locale: I18n.locale) } %>
+    </div>
+  </div>
+</div>

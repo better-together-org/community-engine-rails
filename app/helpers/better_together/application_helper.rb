@@ -145,6 +145,12 @@ module BetterTogether
       false
     end
 
+    def entitled_to?(entitlement_key, holder:)
+      BetterTogether::Billing::EntitlementResolver.call(holder:, entitlement_key:).entitled?
+    rescue KeyError
+      false
+    end
+
     def contributor_display_visible_for?(record)
       return false unless record.respond_to?(:contributors_display_visible?)
 

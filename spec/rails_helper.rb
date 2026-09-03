@@ -226,7 +226,8 @@ RSpec.configure do |config|
     end
 
     DatabaseCleaner.strategy =
-      if example.metadata[:js] || example.metadata[:feature] || example.metadata[:system]
+      if example.metadata[:js] || example.metadata[:feature] || example.metadata[:system] ||
+         example.metadata[:multi_connection]
         [:deletion, { except: ESSENTIAL_TABLES }]
       else
         :transaction

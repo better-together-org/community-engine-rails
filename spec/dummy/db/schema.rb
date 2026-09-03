@@ -222,6 +222,220 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
     t.index ["role"], name: "by_better_together_authorships_role"
   end
 
+  create_table "better_together_billing_benefit_credits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "beneficiary_type", null: false
+    t.uuid "beneficiary_id", null: false
+    t.string "sponsor_type"
+    t.uuid "sponsor_id"
+    t.uuid "sponsorship_id"
+    t.string "related_record_type"
+    t.uuid "related_record_id"
+    t.string "benefit_key", null: false
+    t.integer "quantity", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["beneficiary_type", "beneficiary_id", "benefit_key"], name: "idx_bt_billing_benefit_credits_beneficiary_key"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "index_better_together_billing_benefit_credits_on_beneficiary"
+    t.index ["related_record_type", "related_record_id"], name: "index_better_together_billing_benefit_credits_on_related_record"
+    t.index ["sponsor_type", "sponsor_id"], name: "index_better_together_billing_benefit_credits_on_sponsor"
+    t.index ["sponsorship_id"], name: "idx_on_sponsorship_id_5e9aa58dd6"
+  end
+
+  create_table "better_together_billing_entitlements", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "holder_type", null: false
+    t.uuid "holder_id", null: false
+    t.string "source_type"
+    t.uuid "source_id"
+    t.uuid "billing_plan_id"
+    t.string "granted_by_type"
+    t.uuid "granted_by_id"
+    t.string "entitlement_key", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "granted_at", null: false
+    t.datetime "expires_at"
+    t.datetime "revoked_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["billing_plan_id"], name: "index_better_together_billing_entitlements_on_billing_plan_id"
+    t.index ["granted_by_type", "granted_by_id"], name: "index_better_together_billing_entitlements_on_granted_by"
+    t.index ["holder_type", "holder_id", "entitlement_key", "source_type", "source_id"], name: "idx_bt_billing_entitlements_holder_key_source_uniq", unique: true
+    t.index ["holder_type", "holder_id", "entitlement_key", "status"], name: "idx_bt_billing_entitlements_holder_key_status"
+    t.index ["holder_type", "holder_id", "entitlement_key"], name: "idx_bt_billing_entitlements_holder_key_null_source_uniq", unique: true, where: "((source_type IS NULL) AND (source_id IS NULL))"
+    t.index ["holder_type", "holder_id"], name: "index_better_together_billing_entitlements_on_holder"
+    t.index ["source_type", "source_id"], name: "index_better_together_billing_entitlements_on_source"
+  end
+
+  create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "billing_subscription_id"
+    t.string "billable_owner_type"
+    t.uuid "billable_owner_id"
+    t.string "processor", default: "stripe", null: false
+    t.string "event_type", null: false
+    t.string "event_id", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.datetime "processed_at"
+    t.string "processing_status", default: "pending", null: false
+    t.text "error_message"
+    t.datetime "first_received_at"
+    t.datetime "last_attempted_at"
+    t.integer "attempt_count", default: 0, null: false
+    t.datetime "payload_redacted_at"
+    t.datetime "dead_lettered_at"
+    t.string "dead_letter_reason"
+    t.datetime "last_replayed_at"
+    t.integer "replay_count", default: 0, null: false
+    t.string "last_replay_requested_by_type"
+    t.uuid "last_replay_requested_by_id"
+    t.string "beneficiary_type"
+    t.uuid "beneficiary_id"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_events_beneficiary"
+    t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_events_owner"
+    t.index ["billing_subscription_id"], name: "idx_bt_billing_events_subscription"
+    t.index ["dead_lettered_at"], name: "idx_bt_billing_events_dead_lettered_at"
+    t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
+    t.index ["last_replay_requested_by_type", "last_replay_requested_by_id"], name: "idx_bt_billing_events_last_replay_requested_by"
+    t.index ["payload_redacted_at"], name: "idx_bt_billing_events_payload_redacted_at"
+    t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
+    t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
+  end
+
+  create_table "better_together_billing_merchant_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.string "provider", null: false
+    t.string "external_account_id"
+    t.string "status", default: "pending", null: false
+    t.boolean "charges_enabled", default: false, null: false
+    t.boolean "payouts_enabled", default: false, null: false
+    t.jsonb "capabilities", default: {}, null: false
+    t.string "country"
+    t.string "currency"
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "last_synced_at"
+    t.index ["owner_type", "owner_id", "provider"], name: "idx_bt_billing_merchant_accounts_owner_provider", unique: true
+    t.index ["owner_type", "owner_id"], name: "idx_bt_billing_merchant_accounts_owner"
+    t.index ["provider", "external_account_id"], name: "idx_bt_billing_merchant_accounts_external", unique: true, where: "(external_account_id IS NOT NULL)"
+    t.index ["provider"], name: "idx_bt_billing_merchant_accounts_provider"
+    t.index ["status"], name: "idx_bt_billing_merchant_accounts_status"
+  end
+
+  create_table "better_together_billing_monetary_contributions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "sponsorship_id", null: false
+    t.uuid "one_time_payment_id"
+    t.integer "amount_cents", null: false
+    t.string "currency", null: false
+    t.string "stripe_balance_transaction_id", null: false
+    t.string "stripe_payment_intent_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["one_time_payment_id"], name: "idx_on_one_time_payment_id_0011f9a2d1"
+    t.index ["sponsorship_id"], name: "idx_on_sponsorship_id_cbd46edfdc"
+    t.index ["stripe_balance_transaction_id"], name: "idx_bt_billing_monetary_contributions_balance_txn", unique: true
+  end
+
+  create_table "better_together_billing_one_time_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.uuid "billing_plan_id", null: false
+    t.string "stripe_checkout_session_id", null: false
+    t.string "stripe_payment_intent_id"
+    t.integer "amount_cents", null: false
+    t.string "currency", null: false
+    t.string "status", default: "succeeded", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "last_synced_at"
+    t.index ["billing_plan_id"], name: "idx_on_billing_plan_id_657f563063"
+    t.index ["owner_type", "owner_id"], name: "idx_bt_billing_one_time_payments_owner"
+    t.index ["stripe_checkout_session_id"], name: "idx_bt_billing_one_time_payments_checkout_session", unique: true
+    t.index ["stripe_payment_intent_id"], name: "idx_bt_billing_one_time_payments_payment_intent"
+  end
+
+  create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "billing_interval", default: "month", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", default: "CAD", null: false
+    t.boolean "active", default: true, null: false
+    t.string "stripe_price_id", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "stripe_product_id"
+    t.string "sync_source"
+    t.datetime "synced_to_stripe_at"
+    t.string "latest_stripe_event_id"
+    t.index ["active"], name: "idx_bt_billing_plans_active"
+    t.index ["identifier"], name: "idx_bt_billing_plans_identifier", unique: true
+    t.index ["stripe_price_id"], name: "idx_bt_billing_plans_stripe_price_id", unique: true
+    t.index ["stripe_product_id"], name: "idx_bt_billing_plans_stripe_product_id", unique: true, where: "(stripe_product_id IS NOT NULL)"
+  end
+
+  create_table "better_together_billing_sponsorships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "token", null: false
+    t.string "sponsor_type", null: false
+    t.uuid "sponsor_id", null: false
+    t.string "beneficiary_type", null: false
+    t.uuid "beneficiary_id", null: false
+    t.string "status", default: "pending", null: false
+    t.datetime "accepted_at"
+    t.datetime "declined_at"
+    t.datetime "ended_at"
+    t.string "cancellation_reason"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_sponsorships_beneficiary"
+    t.index ["sponsor_type", "sponsor_id"], name: "idx_bt_billing_sponsorships_sponsor"
+    t.index ["token"], name: "idx_bt_billing_sponsorships_token", unique: true
+  end
+
+  create_table "better_together_billing_subscription_summary_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "filters", default: {}, null: false
+    t.string "file_format", default: "csv", null: false
+    t.jsonb "report_data", default: {}, null: false
+    t.uuid "creator_id"
+    t.index ["creator_id"], name: "idx_on_creator_id_3dc5d8bde5"
+    t.index ["filters"], name: "idx_bt_billing_sub_summary_reports_filters", using: :gin
+  end
+
+  create_table "better_together_billing_subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "pay_subscription_id", null: false
+    t.uuid "billing_plan_id", null: false
+    t.string "sync_source"
+    t.string "latest_checkout_session_id"
+    t.string "latest_processor_event_id"
+    t.datetime "last_synced_at"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["billing_plan_id"], name: "idx_bt_billing_subscriptions_plan"
+    t.index ["last_synced_at"], name: "idx_bt_billing_subscriptions_last_synced_at"
+    t.index ["pay_subscription_id"], name: "idx_bt_billing_subscriptions_pay_subscription", unique: true
+  end
+
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -392,6 +606,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
     t.boolean "requires_invitation", default: true, null: false
     t.jsonb "settings", default: {}, null: false
     t.uuid "platform_id"
+    t.boolean "accepts_sponsorship", default: false, null: false
     t.index ["creator_id"], name: "by_creator"
     t.index ["host"], name: "index_better_together_communities_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_communities_on_identifier", unique: true
@@ -1560,6 +1775,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
     t.datetime "deleted_at"
     t.datetime "anonymized_at"
     t.uuid "platform_id"
+    t.boolean "accepts_sponsorship", default: false, null: false
     t.index ["community_id"], name: "by_person_community"
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["platform_id"], name: "index_better_together_people_on_platform_id"
@@ -1924,12 +2140,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
     t.boolean "external", default: false, null: false
     t.uuid "creator_id"
     t.uuid "storage_configuration_id"
+    t.uuid "provisioning_community_id"
     t.index ["community_id"], name: "by_platform_community"
     t.index ["creator_id"], name: "by_better_together_platforms_creator"
     t.index ["external"], name: "index_better_together_platforms_on_external"
     t.index ["host"], name: "index_better_together_platforms_on_host", unique: true, where: "(host IS TRUE)"
     t.index ["identifier"], name: "index_better_together_platforms_on_identifier", unique: true
     t.index ["privacy"], name: "by_platform_privacy"
+    t.index ["provisioning_community_id"], name: "idx_bt_platforms_provisioning_community"
     t.index ["storage_configuration_id"], name: "index_better_together_platforms_on_storage_configuration_id"
     t.index ["url"], name: "index_better_together_platforms_on_url", unique: true
   end
@@ -2491,6 +2709,105 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "pay_charges", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.uuid "subscription_id"
+    t.string "processor_id", null: false
+    t.integer "amount", null: false
+    t.string "currency"
+    t.integer "application_fee_amount"
+    t.integer "amount_refunded"
+    t.json "metadata"
+    t.json "data"
+    t.string "stripe_account"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.json "object"
+    t.index ["customer_id", "processor_id"], name: "index_pay_charges_on_customer_id_and_processor_id", unique: true
+    t.index ["subscription_id"], name: "index_pay_charges_on_subscription_id"
+  end
+
+  create_table "pay_customers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "owner_type"
+    t.uuid "owner_id"
+    t.string "processor", null: false
+    t.string "processor_id"
+    t.boolean "default"
+    t.json "data"
+    t.string "stripe_account"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.json "object"
+    t.index ["owner_type", "owner_id", "deleted_at"], name: "pay_customer_owner_index", unique: true
+    t.index ["processor", "processor_id"], name: "index_pay_customers_on_processor_and_processor_id", unique: true
+  end
+
+  create_table "pay_merchants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "owner_type"
+    t.uuid "owner_id"
+    t.string "processor", null: false
+    t.string "processor_id"
+    t.boolean "default"
+    t.json "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.index ["owner_type", "owner_id", "processor"], name: "index_pay_merchants_on_owner_type_and_owner_id_and_processor"
+  end
+
+  create_table "pay_payment_methods", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.string "processor_id", null: false
+    t.boolean "default"
+    t.string "payment_method_type"
+    t.json "data"
+    t.string "stripe_account"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.index ["customer_id", "processor_id"], name: "index_pay_payment_methods_on_customer_id_and_processor_id", unique: true
+  end
+
+  create_table "pay_subscriptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "customer_id", null: false
+    t.string "name", null: false
+    t.string "processor_id", null: false
+    t.string "processor_plan", null: false
+    t.integer "quantity", default: 1, null: false
+    t.string "status", null: false
+    t.datetime "current_period_start"
+    t.datetime "current_period_end"
+    t.datetime "trial_ends_at"
+    t.datetime "ends_at"
+    t.boolean "metered"
+    t.string "pause_behavior"
+    t.datetime "pause_starts_at"
+    t.datetime "pause_resumes_at"
+    t.decimal "application_fee_percent", precision: 8, scale: 2
+    t.json "metadata"
+    t.json "data"
+    t.string "stripe_account"
+    t.string "payment_method_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.json "object"
+    t.index ["customer_id", "processor_id"], name: "index_pay_subscriptions_on_customer_id_and_processor_id", unique: true
+    t.index ["metered"], name: "index_pay_subscriptions_on_metered"
+    t.index ["pause_starts_at"], name: "index_pay_subscriptions_on_pause_starts_at"
+  end
+
+  create_table "pay_webhooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "processor"
+    t.string "event_type"
+    t.json "event"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_activities", "better_together_platforms", column: "platform_id"
@@ -2507,6 +2824,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_benefit_credits", "better_together_billing_sponsorships", column: "sponsorship_id"
+  add_foreign_key "better_together_billing_entitlements", "better_together_billing_plans", column: "billing_plan_id"
+  add_foreign_key "better_together_billing_events", "better_together_billing_subscriptions", column: "billing_subscription_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_one_time_payments", column: "one_time_payment_id"
+  add_foreign_key "better_together_billing_monetary_contributions", "better_together_billing_sponsorships", column: "sponsorship_id"
+  add_foreign_key "better_together_billing_one_time_payments", "better_together_billing_plans", column: "billing_plan_id"
+  add_foreign_key "better_together_billing_subscription_summary_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_billing_subscriptions", "better_together_billing_plans", column: "billing_plan_id", on_delete: :restrict
+  add_foreign_key "better_together_billing_subscriptions", "pay_subscriptions", on_delete: :cascade
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"
@@ -2714,6 +3040,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
+  add_foreign_key "better_together_platforms", "better_together_communities", column: "provisioning_community_id", on_delete: :nullify
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_platforms", "better_together_storage_configurations", column: "storage_configuration_id", deferrable: :deferred
   add_foreign_key "better_together_posts", "better_together_communities", column: "community_id"
@@ -2765,4 +3092,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_02_190000) do
   add_foreign_key "better_together_wizard_steps", "better_together_wizards", column: "wizard_id"
   add_foreign_key "better_together_wizards", "better_together_platforms", column: "platform_id"
   add_foreign_key "noticed_notifications", "better_together_platforms", column: "platform_id"
+  add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
+  add_foreign_key "pay_charges", "pay_subscriptions", column: "subscription_id"
+  add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
+  add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
 end

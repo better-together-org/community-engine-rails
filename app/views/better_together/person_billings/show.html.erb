@@ -1,0 +1,106 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.person_page_title', default: 'Personal Billing') %> | <%= @person.name %>
+<% end %>
+
+<div id="<%= dom_id(@person, :billing_page) %>" class="container my-4">
+  <% if @checkout_session_pending %>
+    <%= turbo_stream_from BetterTogether::Billing::CheckoutSessionSyncBroadcaster.stream_name(params[:checkout_session_id]) %>
+    <%= render 'better_together/shared/checkout_session_pending',
+               dom_id: BetterTogether::Billing::CheckoutSessionSyncBroadcaster.target_dom_id(params[:checkout_session_id]) %>
+  <% end %>
+
+  <%= render 'better_together/shared/billing_page_header',
+             owner: @person,
+             owner_path: person_path(@person, locale: I18n.locale),
+             heading: t('better_together.billing.person_heading', default: 'Personal Billing'),
+             subheading: t('better_together.billing.person_subheading',
+                           default: 'Choose a hosted support plan for yourself, review any communities you sponsor, and manage billing access for your personal account.'),
+             edit_path: edit_person_path(@person, locale: I18n.locale),
+             reconcile_path: reconcile_person_billing_path(@person, locale: I18n.locale),
+             portal_path: portal_person_billing_path(@person, locale: I18n.locale) %>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <%= render 'better_together/shared/billing_subscription_card',
+                 owner: @person,
+                 billing_subscription: @billing_subscription,
+                 no_subscription_message: t('better_together.billing.person_no_subscription',
+                                            default: 'No synced subscription is recorded for this person yet.') %>
+    </div>
+
+    <div class="col-lg-8">
+      <% if @sponsored_communities.any? %>
+        <div id="<%= dom_id(@person, :sponsored_communities_card) %>" class="card mb-4">
+          <div class="card-header">
+            <strong><%= t('better_together.billing.sponsored_communities', default: 'Sponsored communities') %></strong>
+          </div>
+          <div class="card-body">
+            <div id="person-sponsored-communities-list" class="list-group list-group-flush">
+              <% @sponsored_communities.each do |sponsorship| %>
+                <% sponsored_community = sponsorship.beneficiary %>
+                <% contributed_total = sponsorship.monetary_contributions.sum(&:amount_cents) %>
+                <% contributed_currency = sponsorship.monetary_contributions.first&.currency || 'CAD' %>
+                <div id="<%= dom_id(sponsored_community, :sponsorship_row) %>" class="list-group-item px-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  <div>
+                    <div class="fw-semibold"><%= sponsored_community.name %></div>
+                    <div class="text-muted small">
+                      <%= t(
+                            'better_together.billing.sponsorship_contributed_total',
+                            default: '%{amount} contributed',
+                            amount: billing_amount(contributed_total, contributed_currency)
+                          ) %>
+                    </div>
+                  </div>
+                  <%= link_to t('better_together.billing.manage_billing', default: 'Manage billing'),
+                              community_billing_path(sponsored_community, locale: I18n.locale),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <%= render 'better_together/shared/billing_merchant_account_card',
+                 owner: @person,
+                 merchant_account: @merchant_account,
+                 refresh_path: refresh_merchant_account_person_billing_path(@person, locale: I18n.locale),
+                 onboarding_path: merchant_onboarding_person_billing_path(@person, locale: I18n.locale),
+                 connected_explainer_text: t('better_together.billing.merchant_status_guidance',
+                                             default: 'Use onboarding to finish Stripe Connect setup, then refresh this card after Stripe reviews the account.'),
+                 connect_explainer_text: t('better_together.billing.merchant_connect_explainer_person',
+                                           default: 'Connect Stripe if you want this person to receive payouts for future commerce flows.'),
+                 admin_only_text: t('better_together.billing.merchant_onboarding_admin_only_person',
+                                    default: 'Payout onboarding for future commerce flows is not open to individual members yet. Contact a platform administrator if this changes.') %>
+
+      <%= render 'better_together/shared/billing_event_alerts',
+                 billing_alert_events: @billing_alert_events,
+                 billing_alert_summary: @billing_alert_summary,
+                 replay_billing_event_path: ->(billing_event) do
+                   replay_event_person_billing_path(@person, event_id: billing_event.id, locale: I18n.locale)
+                 end,
+                 last_billing_event: @last_billing_event %>
+
+      <%= render 'better_together/shared/billing_available_plans_card',
+                 owner: @person,
+                 billing_plans: @billing_plans,
+                 table_id: 'person-billing-plans-table',
+                 scope_body_text: t('better_together.billing.personal_plan_scope_body',
+                                    default: 'These recurring plans support your personal participation or sponsorship role. One-time payment plans are intentionally excluded from the current launch path until their fulfillment flow is completed.'),
+                 checkout_path_for: ->(billing_plan) do
+                   checkout_person_billing_path(@person, billing_plan_id: billing_plan.identifier, locale: I18n.locale)
+                 end %>
+
+      <%= render 'better_together/shared/sponsorship_panels',
+                 owner: @person,
+                 accepts_sponsorship_path: accepts_sponsorship_person_billing_path(@person, locale: I18n.locale),
+                 offer_sponsorship_path: sponsorships_path(locale: I18n.locale),
+                 received_offers: @received_sponsorship_offers,
+                 received_active: @received_active_sponsorships,
+                 given_active: @given_active_sponsorships,
+                 accept_path_for: ->(sponsorship) { accept_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 decline_path_for: ->(sponsorship) { decline_sponsorship_path(sponsorship.token, locale: I18n.locale) },
+                 end_path_for: ->(sponsorship) { end_sponsorship_path(sponsorship.id, locale: I18n.locale) } %>
+    </div>
+  </div>
+</div>

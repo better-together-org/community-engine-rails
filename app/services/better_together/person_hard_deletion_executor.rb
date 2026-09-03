@@ -31,10 +31,22 @@ module BetterTogether
       audit = nil
 
       ActiveRecord::Base.transaction do
-        approve_request_if_needed!
-        audit = build_audit(inventory)
-        prepare_owned_belongs_to_cycles!(inventory)
-        complete_audit!(audit, execute_inventory(inventory))
+        # Destroying a person's memberships (PersonCommunityMembership,
+        # PersonPlatformMembership — both belongs_to :member, touch: true)
+        # cascades touch calls back onto this same person record. Multiple
+        # memberships touching the same person within one transaction races
+        # against itself: each touch call captures the target's in-memory
+        # lock_version at load time, but the prior membership's touch has
+        # already bumped the actual row, so the second touch's optimistic
+        # lock check fails with StaleObjectError. Touching a record that's
+        # being deleted along with everything that references it is
+        # meaningless anyway — suppress it for the whole operation.
+        BetterTogether::Person.no_touching do
+          approve_request_if_needed!
+          audit = build_audit(inventory)
+          prepare_owned_belongs_to_cycles!(inventory)
+          complete_audit!(audit, execute_inventory(inventory))
+        end
       end
 
       audit.reload

@@ -1,0 +1,99 @@
+<div id="<%= dom_id(owner, :sponsorship_panels) %>" class="card mt-4">
+  <div class="card-header">
+    <strong><%= t('better_together.billing.sponsorship_heading', default: 'Sponsorship') %></strong>
+  </div>
+  <div class="card-body">
+    <%= form_with url: accepts_sponsorship_path, method: :patch, data: { turbo: false } do %>
+      <div class="form-check form-switch mb-4">
+        <input type="hidden" name="accepts_sponsorship" value="0">
+        <input type="checkbox"
+               class="form-check-input"
+               role="switch"
+               id="<%= dom_id(owner, :accepts_sponsorship_toggle) %>"
+               name="accepts_sponsorship"
+               value="1"
+               onchange="this.form.requestSubmit()"
+               <%= 'checked' if owner.accepts_sponsorship? %>>
+        <label class="form-check-label" for="<%= dom_id(owner, :accepts_sponsorship_toggle) %>">
+          <%= t('better_together.billing.accepts_sponsorship_toggle_label',
+                default: 'Allow other communities and members to sponsor this account') %>
+        </label>
+      </div>
+    <% end %>
+
+    <% if received_offers.any? %>
+      <h3 class="h6"><%= t('better_together.billing.sponsorship_offers_received', default: 'Sponsorship offers received') %></h3>
+      <ul class="list-group mb-4">
+        <% received_offers.each do |sponsorship| %>
+          <li id="<%= dom_id(sponsorship) %>" class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= sponsorship_counterpart_name(sponsorship.sponsor) %></span>
+            <span class="d-flex gap-2">
+              <%= button_to t('better_together.billing.accept_sponsorship', default: 'Accept'),
+                            accept_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-primary', data: { turbo: false } %>
+              <%= button_to t('better_together.billing.decline_sponsorship', default: 'Decline'),
+                            decline_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-secondary', data: { turbo: false } %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
+    <h3 class="h6"><%= t('better_together.billing.sponsors_supporting_you', default: 'Sponsors supporting this account') %></h3>
+    <% if received_active.any? %>
+      <ul class="list-group mb-4">
+        <% received_active.each do |sponsorship| %>
+          <li id="<%= dom_id(sponsorship) %>" class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= sponsorship_counterpart_name(sponsorship.sponsor) %></span>
+            <%= button_to t('better_together.billing.end_sponsorship', default: 'Stop this sponsorship'),
+                          end_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-danger',
+                          data: { turbo: false, turbo_confirm: t('better_together.billing.end_sponsorship_confirm',
+                            default: 'Stop this sponsorship? The beneficiary will no longer receive contributions from this relationship.') } %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted mb-4"><%= t('better_together.billing.no_sponsors_yet', default: 'No one is sponsoring this account yet.') %></p>
+    <% end %>
+
+    <h3 class="h6"><%= t('better_together.billing.accounts_you_sponsor', default: 'Accounts you sponsor') %></h3>
+    <% if given_active.any? %>
+      <ul class="list-group mb-4">
+        <% given_active.each do |sponsorship| %>
+          <li id="<%= dom_id(sponsorship) %>" class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= sponsorship_counterpart_name(sponsorship.beneficiary) %></span>
+            <%= button_to t('better_together.billing.end_sponsorship', default: 'Stop this sponsorship'),
+                          end_path_for.call(sponsorship), method: :post, class: 'btn btn-sm btn-outline-danger',
+                          data: { turbo: false, turbo_confirm: t('better_together.billing.end_sponsorship_confirm',
+                            default: 'Stop this sponsorship? The beneficiary will no longer receive contributions from this relationship.') } %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-muted mb-0"><%= t('better_together.billing.no_sponsorships_given_yet', default: 'You are not sponsoring any accounts yet.') %></p>
+    <% end %>
+
+    <hr>
+
+    <h3 class="h6"><%= t('better_together.billing.offer_sponsorship_heading', default: 'Offer to sponsor someone') %></h3>
+    <%= form_with url: offer_sponsorship_path, method: :post, data: { turbo: false } do |f| %>
+      <input type="hidden" name="sponsor_type" value="<%= owner.class.name %>">
+      <input type="hidden" name="sponsor_id" value="<%= owner.id %>">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <%= f.label :beneficiary_type, t('better_together.billing.beneficiary_type', default: 'Beneficiary type'), class: 'form-label' %>
+          <%= f.select :beneficiary_type,
+                       [[t('globals.community', default: 'Community'), 'BetterTogether::Community'],
+                        [t('globals.person', default: 'Person'), 'BetterTogether::Person']],
+                       {}, class: 'form-select' %>
+        </div>
+        <div class="col-md-5">
+          <%= f.label :beneficiary_identifier, t('better_together.billing.beneficiary_identifier', default: 'Beneficiary (slug or username)'), class: 'form-label' %>
+          <%= f.text_field :beneficiary_identifier, class: 'form-control' %>
+        </div>
+        <div class="col-md-3">
+          <%= f.submit t('better_together.billing.send_offer', default: 'Send offer'), class: 'btn btn-primary w-100' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

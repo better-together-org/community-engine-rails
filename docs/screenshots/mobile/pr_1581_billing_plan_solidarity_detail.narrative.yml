@@ -1,0 +1,19 @@
+---
+title: Billing plan detail — solidarity tier
+audience:
+- operator
+- board_member
+journey_step: A host steward reviews a solidarity-tier plan to confirm the reduced-contribution
+  framing a subscriber will see.
+callouts:
+- :title: Pricing tier
+  :description: Distinguishes this plan from the standard tier so operators can see
+    at a glance which plans offer reduced-contribution access.
+- :title: Solidarity description
+  :description: Free-text field explaining who the reduced tier is for. Previously
+    editable in the admin form but invisible everywhere else — this screenshot documents
+    it finally being rendered.
+accessibility_notes: Both fields use the same stable dom_id + definition-list pattern
+  as the rest of the metadata card.
+slug: pr_1581_billing_plan_solidarity_detail
+device: mobile

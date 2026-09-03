@@ -39,11 +39,21 @@ module BetterTogether
 
       create_community(
         name:,
-        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
+        description: primary_community_description,
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
         privacy: primary_community_privacy,
         **primary_community_extra_attrs
       )
+    end
+
+    # description here is rich text (ActionText) — reduce to plain text before
+    # handing it off, so the auto-created Community doesn't inherit raw HTML/rich
+    # formatting from whatever record is delegating its primary community to it.
+    def primary_community_description
+      return "#{name}'s primary community" unless respond_to?(:description)
+
+      value = description
+      value.respond_to?(:to_plain_text) ? value.to_plain_text : value
     end
 
     # A Platform's own primary Community — and that Community's ContactDetail,
