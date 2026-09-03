@@ -464,11 +464,17 @@ module BetterTogether # :nodoc:
         end
       end
 
-      it 'still indexes seeded template block chrome' do
-        create(:better_together_content_page_block, page: indexed_page,
-                                                    block: create(:content_template), position: 99)
+      it 'indexes a public template block but not a non-public one' do
+        public_template = create(:content_template, template_path: 'better_together/static_pages/faq')
+                          .tap { |b| b.update_columns(privacy: 'public') }
+        private_template = create(:content_template, template_path: 'better_together/static_pages/privacy')
+                           .tap { |b| b.update_columns(privacy: 'private') }
+        create(:better_together_content_page_block, page: indexed_page, block: public_template, position: 98)
+        create(:better_together_content_page_block, page: indexed_page, block: private_template, position: 99)
 
-        expect(indexed_page.as_indexed_json[:template_blocks]).not_to be_empty
+        indexed_paths = indexed_page.as_indexed_json[:template_blocks].map { |t| t[:template_path] }
+        expect(indexed_paths).to include('better_together/static_pages/faq')
+        expect(indexed_paths).not_to include('better_together/static_pages/privacy')
       end
     end
   end

@@ -119,19 +119,17 @@ module BetterTogether
     # Payload for search indexing (database fallback and future external backends).
     # Includes block content so full-text search can match text that only lives
     # inside a block (e.g. markdown source) rather than a direct Page column.
-    # Only publicly-visible block text is indexed: a non-public block must not
-    # make its page a search hit for people who could not see that block
-    # (mirrors Content::BlockPolicy). Seeded template blocks are host chrome and
-    # stay indexed.
+    # Only publicly-visible block text is indexed (blocks and template blocks
+    # alike): a non-public block must not make its page a search hit for people
+    # who could not see that block (mirrors Content::BlockPolicy).
     def as_indexed_json
       {
         title: title,
         meta_description: meta_description,
         keywords: keywords,
         content: content&.to_plain_text,
-        blocks: content_blocks.select { |block| publicly_indexable_block?(block) }
-                              .filter_map { |block| indexed_block_text(block) },
-        template_blocks: template_blocks.map { |block| indexed_template_block(block) }
+        blocks: indexed_blocks,
+        template_blocks: indexed_template_blocks
       }.with_indifferent_access
     end
 
@@ -175,6 +173,16 @@ module BetterTogether
     end
 
     private
+
+    def indexed_blocks
+      content_blocks.select { |block| publicly_indexable_block?(block) }
+                    .filter_map { |block| indexed_block_text(block) }
+    end
+
+    def indexed_template_blocks
+      template_blocks.select { |block| publicly_indexable_block?(block) }
+                     .map { |block| indexed_template_block(block) }
+    end
 
     def indexed_block_text(block)
       return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
