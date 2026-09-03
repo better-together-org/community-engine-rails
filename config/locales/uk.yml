@@ -86,6 +86,7 @@ uk:
         media_settings: Налаштування медіа
         page_blocks: Блоки сторінки
         pages: Сторінки
+        privacy: Приватність
       better_together/content/image:
         accessibility_attributes: Атрибути доступності
         content_settings: Налаштування контенту
@@ -1143,6 +1144,12 @@ uk:
         events_block:
           empty: Немає подій для відображення.
         fields:
+          block:
+            identifier_hint: Необов'язковий ідентифікатор полегшує пошук цього блоку
+              згодом. Не використовуйте пробіли та не перевищуйте 100 символів.
+            identifier_placeholder: "(необов'язково)"
+            privacy_hint: Виберіть, хто може бачити цей блок. Блоки на публічній сторінці
+              мають бути публічними.
           image:
             library:
               empty: У вашій бібліотеці ще немає доступних перевірених завантажень

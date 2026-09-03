@@ -165,9 +165,17 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
     context 'when user is a normal user' do
       let(:user) { normal_user }
 
-      it 'returns all markdown blocks (filtering happens in policy methods)' do
+      it 'excludes private blocks the user has no path to' do
         scope = described_class::Scope.new(user, BetterTogether::Content::Markdown.all).resolve
-        expect(scope).to include(markdown_block1, markdown_block2)
+        expect(scope).not_to include(markdown_block1, markdown_block2)
+      end
+
+      it 'includes public blocks' do
+        markdown_block1.update_columns(privacy: 'public')
+
+        scope = described_class::Scope.new(user, BetterTogether::Content::Markdown.all).resolve
+        expect(scope).to include(markdown_block1)
+        expect(scope).not_to include(markdown_block2)
       end
     end
   end

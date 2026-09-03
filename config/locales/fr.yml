@@ -86,6 +86,7 @@ fr:
         media_settings: Paramètres multimédias
         page_blocks: Blocs de pages
         pages: Pages
+        privacy: Confidentialité
       better_together/content/image:
         accessibility_attributes: Attributs d'accessibilité
         content_settings: Paramètres de contenu
@@ -1156,6 +1157,13 @@ fr:
         events_block:
           empty: Aucun événement à afficher.
         fields:
+          block:
+            identifier_hint: Un identifiant facultatif permet de retrouver ce bloc
+              plus facilement par la suite. N'utilisez pas d'espaces et limitez-le
+              à 100 caractères.
+            identifier_placeholder: "(facultatif)"
+            privacy_hint: Choisissez qui peut voir ce bloc. Les blocs d'une page publique
+              doivent être Publics.
           image:
             library:
               empty: Aucun téléversement d'image révisé n'est encore disponible dans

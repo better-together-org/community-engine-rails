@@ -22,6 +22,7 @@ module BetterTogether
     include Searchable
     include Seedable
     include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
     include ::Storext.model
     include CommunityAssignable

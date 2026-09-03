@@ -23,6 +23,7 @@ module BetterTogether
     include Searchable
     include Seedable
     include Shortlinkable
+    include SitemapRefreshable
     include TimezoneAttributeAliasing
     include TrackedActivity
 

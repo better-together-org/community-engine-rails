@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::Platform do
       it 'destroys sitemap when platform is destroyed' do
         sitemap = create(:better_together_sitemap, platform:)
         # Attaching the sitemap file triggers an internal re-save that the
-        # already-loaded `platform.sitemap` association target doesn't see;
+        # already-loaded `platform.sitemaps` association target doesn't see;
         # reload so the cascade delete uses a current lock_version.
         platform.reload
 

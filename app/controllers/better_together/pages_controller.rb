@@ -4,6 +4,7 @@ module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
     include ChecksRequiredAgreements
+    include PageBlockVisibility
 
     before_action :set_page, only: %i[show edit update destroy]
     before_action :check_content_publishing_agreement, only: %i[new create]
@@ -35,17 +36,16 @@ module BetterTogether
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      # Preload content blocks with their associations for better performance.
-      # Do NOT include :string_translations here — block STI collections may
-      # contain Content::Template records that have no string_translations
-      # association, causing AssociationNotFoundError in Rails 8 (branch.rb:85).
-      # Instead, use preload_block_string_translations to selectively preload
-      # only on block types that define the association.
-      content_blocks = @page.content_blocks.includes(
-        background_image_file_attachment: :blob
-      ).load
-      preload_block_string_translations(content_blocks)
-      @content_blocks = content_blocks
+      # Page editors/managers see every block (the view badges the non-public
+      # ones); everyone else sees only what BlockPolicy::Scope / #show? permits.
+      # Sets @viewer_is_page_editor, @content_blocks, @hero_block.
+      assign_visible_page_content_blocks(@page)
+
+      # STI block collections may contain Content::Template records that have no
+      # string_translations association (AssociationNotFoundError in Rails 8), so
+      # preload selectively rather than via .includes(:string_translations).
+      preload_block_string_translations(@content_blocks)
+
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
@@ -292,12 +292,7 @@ module BetterTogether
     end
 
     def block_permitted_attributes
-      [
-        :id, :type, :identifier, :_destroy,
-        *BetterTogether::Content::Block.localized_block_attributes,
-        *BetterTogether::Content::Block.storext_keys,
-        *BetterTogether::Content::Block.extra_permitted_attributes
-      ]
+      BetterTogether::Content::Block.permitted_attributes(id: true, destroy: true)
     end
 
     # Preloads string_translations only on block types that define the association,

@@ -20,6 +20,7 @@ module BetterTogether
     include Reportable
     include Searchable
     include Shortlinkable
+    include SitemapRefreshable
     include ::Storext.model
 
     belongs_to :creator,

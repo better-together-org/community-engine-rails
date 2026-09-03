@@ -410,4 +410,90 @@ RSpec.describe 'BetterTogether::PagesController self-service gate platform manag
     expect(response).to have_http_status(:ok)
   end
 end
+
+# Block-level privacy gates a block's visibility within its (already viewable) page.
+RSpec.describe 'BetterTogether::PagesController block privacy visibility', :no_auth do
+  let(:locale) { I18n.default_locale }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:host_community) { host_platform.community }
+  let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+  let(:page) do
+    slug = "block-privacy-page-#{SecureRandom.hex(4)}"
+    create(:better_together_page, slug:, identifier: slug, protected: false,
+                                  published_at: 1.day.ago, privacy: 'public')
+  end
+
+  # Distinct tokens land in each block's rendered HTML so we can assert presence.
+  let(:tokens) { { 'public' => 'PUBLICBLOCKTOKEN', 'community' => 'COMMUNITYBLOCKTOKEN', 'private' => 'PRIVATEBLOCKTOKEN' } }
+
+  before do
+    %w[public community private].each_with_index do |block_privacy, idx|
+      block = create(:content_markdown, markdown_source: tokens[block_privacy])
+      block.update_columns(privacy: block_privacy)
+      page.page_blocks.create!(block:, position: idx)
+    end
+  end
+
+  def visit_page
+    get better_together.render_page_path(path: page.slug, locale:)
+  end
+
+  def community_member
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonCommunityMembership.create!(
+      joinable: host_community, member: user.person, role: member_role, status: 'active'
+    )
+    user
+  end
+
+  context 'as an anonymous visitor' do
+    it 'renders only the public block' do
+      visit_page
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(tokens['public'])
+      expect(response.body).not_to include(tokens['community'])
+      expect(response.body).not_to include(tokens['private'])
+      expect(response.body).not_to include('bt-content-block-privacy-badge')
+    end
+  end
+
+  context 'as a signed-in non-member' do
+    before { login(create(:better_together_user, :confirmed).email, 'SecureTest123!@#') }
+
+    it 'renders only the public block' do
+      visit_page
+
+      expect(response.body).to include(tokens['public'])
+      expect(response.body).not_to include(tokens['community'])
+      expect(response.body).not_to include(tokens['private'])
+    end
+  end
+
+  context 'as a member of the platform community' do
+    before { login(community_member.email, 'SecureTest123!@#') }
+
+    it 'renders the public and community blocks but not the private block' do
+      visit_page
+
+      expect(response.body).to include(tokens['public'], tokens['community'])
+      expect(response.body).not_to include(tokens['private'])
+      expect(response.body).not_to include('bt-content-block-privacy-badge')
+    end
+  end
+
+  context 'as a platform manager' do
+    let(:manager) { create(:better_together_user, :confirmed, :platform_manager) }
+
+    before { login(manager.email, 'SecureTest123!@#') }
+
+    it 'renders every block and badges the non-public ones' do
+      visit_page
+
+      expect(response.body).to include(tokens['public'], tokens['community'], tokens['private'])
+      expect(response.body).to include('bt-content-block-privacy-badge')
+    end
+  end
+end
 # rubocop:enable RSpec/MultipleDescribes

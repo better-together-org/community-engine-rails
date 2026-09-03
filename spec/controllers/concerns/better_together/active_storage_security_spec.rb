@@ -2,6 +2,16 @@
 
 require 'rails_helper'
 
+# Instance methods added via `include` survive rspec-rebound's example wrapper,
+# unlike a bare `def` inside a nested `describe`.
+module ActiveStorageSecuritySpecHelpers
+  def block_on(page, block_privacy)
+    block = create(:content_markdown).tap { |b| b.update_columns(privacy: block_privacy) }
+    create(:page_content_block, page: page, block: block)
+    block
+  end
+end
+
 module BetterTogether
   # rubocop:todo RSpec/SpecFilePathFormat
   RSpec.describe ActiveStorageSecurity do
@@ -131,6 +141,29 @@ module BetterTogether
 
         it 'returns false' do
           expect(controller.send(:publicly_accessible?, record)).to be false
+        end
+      end
+
+      context 'when the record is a Content::Block' do
+        include ActiveStorageSecuritySpecHelpers
+
+        let(:published_public_page) { create(:better_together_page, privacy: 'public', published_at: 1.day.ago) }
+        let(:unpublished_page) { create(:better_together_page, privacy: 'public', published_at: nil) }
+
+        it 'delegates to BlockPolicy#show? (anonymous) instead of the bare privacy check' do
+          public_block = block_on(published_public_page, 'public')
+          expect(controller.send(:publicly_accessible?, public_block)).to be true
+        end
+
+        it 'is not publicly accessible when the block is public but its page is unpublished' do
+          orphaned_public_block = block_on(unpublished_page, 'public')
+          expect(orphaned_public_block.privacy_public?).to be true
+          expect(controller.send(:publicly_accessible?, orphaned_public_block)).to be false
+        end
+
+        it 'is not publicly accessible for a community block on a public page' do
+          community_block = block_on(published_public_page, 'community')
+          expect(controller.send(:publicly_accessible?, community_block)).to be false
         end
       end
     end
