@@ -50,12 +50,19 @@ RSpec.describe 'Documentation screenshots for the event location picker',
     expect(page).to have_css('#event-time-and-place.show')
   end
 
+  # SlimSelect portals .ss-content to <body>; scope by the picker's shared data-id.
+  def picker_content_selector
+    # SlimSelect adds data-id to the native select and its portaled .ss-content.
+    ss_id = find('select#event_location_picker', visible: :all)['data-id']
+    "div.ss-content[data-id='#{ss_id}']"
+  end
+
   # Opens the picker, types a term, and waits for the debounced results (the
   # "Create new ..." rows are appended once a term is present).
   def search_picker(term)
     within('.location-fields') { find('.ss-main', match: :first).click }
-    find('.location-fields .ss-content .ss-search input', wait: 5).set(term)
-    expect(page).to have_css('.ss-content .ss-option.ss-create-option', wait: 10)
+    within(picker_content_selector, visible: :all) { find('.ss-search input').set(term) }
+    expect(page).to have_css("#{picker_content_selector} .ss-option.ss-create-option", wait: 10)
   end
 
   it 'captures the mixed-search picker showing live results across location types' do
@@ -175,7 +182,7 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       callouts: [
         {
           id: 'create_row',
-          selector: '.ss-content .ss-option.ss-create-option',
+          selector: '.ss-create-option',
           title: 'Creation lives in the results list',
           bullets: [
             'Type an address that is not on file and the last rows offer "Create new address" and ' \
@@ -264,7 +271,7 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       expect(page).to have_css('select#event_location_picker', visible: :all, wait: 10)
       expect(page).to have_css('.location-fields .ss-main', wait: 5)
       search_picker('124 Water Street')
-      row = find('.ss-content .ss-option.ss-create-option', text: /create new/i, match: :first, wait: 10)
+      row = find("#{picker_content_selector} .ss-option.ss-create-option", text: /create new/i, match: :first, wait: 10)
       page.execute_script('arguments[0].click()', row.native)
 
       panel = find('#event_location_new_address', visible: true)

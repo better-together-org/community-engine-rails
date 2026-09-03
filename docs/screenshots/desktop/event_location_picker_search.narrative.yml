@@ -10,12 +10,13 @@ journey_step: As an event organizer, I type a few letters of the venue name and 
 callouts:
 - :id: location_picker
   :title: Mixed-type search
-  :description: 'New in this PR: EventsController#available_locations searches every
-    Geography::Placeable type at once when no location_type is given, returning composite
-    "ClassName:id" values so one merged, type-labeled result list can span types without
-    id collisions. The allow-list is read from Placeable.included_in_models, so a
-    future new location type is searched here automatically with no view change.'
-accessibility_notes: The search combobox is keyboard-operable (type-ahead, arrow keys,
-  Enter to select) and exposes role="combobox" to assistive technology.
+  :description: EventsController#available_locations searches every Geography::Placeable
+    type at once when no location_type is given, returning composite "ClassName:id"
+    values so one merged, type-labeled result list can span types without id collisions.
+    The allow-list is read from Placeable.included_in_models, so a future new location
+    type is searched here automatically with no view change.
+accessibility_notes: The field has a single "Location" label and one hint wired via
+  aria-describedby. The combobox is keyboard-operable (type-ahead, arrow keys, Enter
+  to select) and exposes role="combobox" to assistive technology.
 slug: event_location_picker_search
 device: desktop
