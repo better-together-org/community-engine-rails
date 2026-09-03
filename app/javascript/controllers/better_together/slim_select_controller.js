@@ -1,6 +1,19 @@
 import { Controller } from '@hotwired/stimulus';
 import 'slim-select';
 
+// Opt-in "create a new record" rows for AJAX-backed selects (see the
+// createOptions key handled in initializeSlimSelect). A picked row whose value
+// starts with CREATE_SENTINEL is not a real selection: beforeChange cancels it
+// and dispatches better_together--slim-select:create for a sibling controller
+// (e.g. location_selector) to open an inline form. SIMPLE_SENTINEL is the
+// "use my typed text as-is" row. Nothing here runs unless createOptions is set.
+const CREATE_SENTINEL = '__ce_create__:';
+const SIMPLE_SENTINEL = '__ce_create__:simple';
+
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]
+));
+
 export default class extends Controller {
   static values = {
     options: Object
@@ -45,9 +58,32 @@ export default class extends Controller {
 
     this.initializeSlimSelect(optionsData);
 
+    // createOptions selects let a sibling controller clear the picked value after
+    // it hands off to an inline "create" form. Listen once here rather than on
+    // every reinit.
+    if (optionsData && optionsData.createOptions) {
+      this.resetSelection = this.resetSelection.bind(this);
+      this.element.addEventListener('better_together--location-selector:reset-picker', this.resetSelection);
+    }
+
     // Marks connect()'s own init as done so optionsValueChanged (below) can tell
     // its pre-connect invocation apart from a genuine post-connect mutation.
     this.hasInitialized = true;
+  }
+
+  // Clears the current selection in response to
+  // better_together--location-selector:reset-picker. Only wired for
+  // createOptions selects (see connect()).
+  resetSelection() {
+    try {
+      if (this.slimSelect && typeof this.slimSelect.setSelected === 'function') {
+        this.slimSelect.setSelected('');
+      }
+    } catch (e) {
+      console.warn('Unable to reset SlimSelect selection:', e);
+    }
+    this.element.value = '';
+    this.element.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
   // Reinitializes SlimSelect when the options value changes after the initial
@@ -86,6 +122,10 @@ export default class extends Controller {
 
     // Merge with custom options from the element
     const options = { ...defaultOptions, ...optionsData };
+
+    // Kept for buildCreateRows / beforeChange, which need the createOptions config
+    // at search and selection time.
+    this.currentOptions = options;
 
     if (options.addable) {
       const existingEvents = options.events || {};
@@ -255,6 +295,36 @@ export default class extends Controller {
       };
     }
 
+    // Opt-in: append "Create new ..." rows to the AJAX results and intercept a
+    // pick of one. Purely additive - a select without createOptions is untouched.
+    if (options.createOptions && options.ajax) {
+      const innerSearch = options.events.search;
+      options.events.search = (search, currentData) => (
+        Promise.resolve(innerSearch(search, currentData)).then((data) => {
+          const results = Array.isArray(data) ? data : [];
+          return [...results, ...this.buildCreateRows(search, results)];
+        })
+      );
+
+      const innerBeforeChange = options.events.beforeChange;
+      options.events.beforeChange = (after, before) => {
+        const picked = Array.isArray(after) && after[0];
+        if (picked && typeof picked.value === 'string' && picked.value.startsWith(CREATE_SENTINEL)) {
+          const type = (picked.data && picked.data.ceCreate) || picked.value.slice(CREATE_SENTINEL.length);
+          const query = (picked.data && picked.data.ceQuery) || this.lastSearchTerm || '';
+          this.element.dispatchEvent(new CustomEvent('better_together--slim-select:create', {
+            bubbles: true,
+            detail: { type, query }
+          }));
+          setTimeout(() => {
+            try { if (this.slimSelect) this.slimSelect.close(); } catch (_) { /* noop */ }
+          }, 0);
+          return false;
+        }
+        return innerBeforeChange ? innerBeforeChange(after, before) : true;
+      };
+    }
+
     // Store multiSelectJson flag for later use in event handlers
     this.isMultiSelectJson = optionsData.multiSelectJson === true;
 
@@ -299,6 +369,48 @@ export default class extends Controller {
       // Fail silently - SlimSelect might not support set() in some versions
       console.warn('Unable to refresh SlimSelect selected values:', e);
     }
+  }
+
+  // Builds the synthetic "Create new ..." rows appended to every AJAX result set
+  // when createOptions is configured. Always returns at least one row for a
+  // configured select, so SlimSelect's renderOptions never sees an empty array
+  // (which would suppress everything but the "no results" text). Also records the
+  // current search term for beforeChange to read back.
+  buildCreateRows(rawTerm, results) {
+    const term = (rawTerm || '').trim();
+    this.lastSearchTerm = term;
+
+    const config = (this.currentOptions && this.currentOptions.createOptions) || {};
+    const rows = [];
+
+    (config.types || []).forEach((type) => {
+      const label = term && type.labelWithQuery
+        ? type.labelWithQuery.replace('%{q}', term)
+        : type.label;
+      rows.push({
+        value: `${CREATE_SENTINEL}${type.type}`,
+        text: label,
+        html: `<span class="ss-create-option__label"><i class="fa-solid fa-plus" aria-hidden="true"></i> ${escapeHtml(label)}</span>`,
+        class: 'ss-create-option',
+        data: { ceCreate: type.type, ceQuery: term }
+      });
+    });
+
+    const hasExactMatch = term && results.some((row) => (
+      typeof row.text === 'string' && row.text.toLowerCase() === term.toLowerCase()
+    ));
+    if (config.simple && term && !hasExactMatch) {
+      const label = (config.simple.label || '').replace('%{q}', term);
+      rows.push({
+        value: SIMPLE_SENTINEL,
+        text: label,
+        html: `<span class="ss-create-option__label ss-create-option__label--simple">${escapeHtml(label)}</span>`,
+        class: 'ss-create-option ss-create-option--simple',
+        data: { ceCreate: 'simple', ceQuery: term }
+      });
+    }
+
+    return rows;
   }
 
   loadInitialResults(url) {
@@ -360,6 +472,7 @@ export default class extends Controller {
     if (this.slimSelect) {
       this.slimSelect.destroy();
     }
+    this.element.removeEventListener('better_together--location-selector:reset-picker', this.resetSelection);
   }
 
   // Helper method to check if element is inside a Bootstrap modal
