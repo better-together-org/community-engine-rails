@@ -10,6 +10,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
+
+  # Per-platform robots.txt (no locale). Host apps must remove their static
+  # public/robots.txt for this dynamic route to take effect.
+  get '/robots.txt', to: 'robots_txt#show', as: :robots_txt, defaults: { format: 'text' }
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
   get '/bot-defense/challenges/:form_id',
       to: 'bot_defense/challenges#show',
