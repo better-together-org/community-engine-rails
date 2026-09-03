@@ -65,6 +65,32 @@ module BetterTogether
       privacy_style_map[privacy_key] || 'primary'
     end
 
+    # EVENT_STATUS BADGE TO SHOW DRAFT OR CANCELED STATUS
+    # rubocop:disable Metrics/MethodLength
+    def event_status_badge(event, rounded: true, style: nil) # rubocop:disable Metrics/MethodLength
+      return unless event.respond_to?(:status) && event.status.present?
+
+      event_status_key = event.status.to_s.downcase
+      # Map event status values to Bootstrap text-bg-* styles. Consumers can override by passing `style:`.
+      event_status_style_map = {
+        'draft' => 'warning',
+        'cancelled' => 'danger'
+      }
+
+      chosen_style = style || event_status_style_map[event_status_key] || 'primary'
+      event_status_label = t("better_together.events.statuses.#{event_status_key}")
+      tooltip_text = t('better_together.shared.event_status_tooltip', status: event_status_label)
+
+      create_badge(
+        event_status_label,
+        rounded: rounded,
+        style: chosen_style,
+        tooltip: tooltip_text,
+        aria_label: t('better_together.shared.event_status_level', status: event_status_label)
+      )
+    end
+    # rubocop:enable Metrics/MethodLength
+
     # Render a "Repeats" badge for a recurring entity (e.g. Event). Visible
     # text label, never color-only — the tooltip/aria-label carries the full
     # human-readable recurrence summary (via RecurrenceHelper#format_recurrence_rule)

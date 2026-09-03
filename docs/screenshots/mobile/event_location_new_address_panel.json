@@ -1,0 +1,49 @@
+{
+  "name": "event_location_new_address_panel",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_location_picker",
+  "flow": "event_location_new_address_panel",
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event_location_new_address",
+      "title": "One labelled inline address form",
+      "bullets": [
+        "A <fieldset> with a <legend> (\"New address\" plus the text you typed).",
+        "Line 1 is prefilled from your search term; Cancel closes it and returns focus to the search field.",
+        "Saved together with the event in a single submit."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 334.390625,
+        "width": 461.0,
+        "height": 555.0,
+        "right": 473.0,
+        "bottom": 889.390625,
+        "center_x": 242.5,
+        "center_y": 611.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 334.390625,
+        "width": 461.0,
+        "height": 555.0,
+        "right": 473.0,
+        "bottom": 889.390625,
+        "center_x": 242.5,
+        "center_y": 611.890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 482
+      }
+    }
+  ]
+}

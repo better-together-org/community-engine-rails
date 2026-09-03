@@ -111,6 +111,43 @@ module BetterTogether
       render json: options
     end
 
+    # Number of results returned per Placeable type when no location_type is
+    # given (the mixed-search path) - keeps the merged result set scannable
+    # rather than one type crowding out the others.
+    MIXED_LOCATION_RESULTS_PER_TYPE = 5
+
+    # Returns available locations for the event location picker. With
+    # location_type given, returns bare-id options scoped to that one
+    # Placeable type (the original single-type picker). Without it, searches
+    # every Placeable type at once and returns composite "ClassName:id"
+    # values so a single field can hold results across types - see
+    # #location_attributes_for_picker in location_selector_controller.js for
+    # how the composite value gets split back into location_type/location_id
+    # before submit.
+    def available_locations # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize BetterTogether::Event, :available_locations?
+
+      return render(json: mixed_location_options) if params[:location_type].blank?
+
+      klass = BetterTogether::Geography::Placeable.included_in_models.find do |allowed_klass|
+        allowed_klass.name == params[:location_type]
+      end
+
+      unless klass
+        render json: { error: 'Invalid location type' }, status: :unprocessable_entity
+        return
+      end
+
+      scope = location_scope_for(klass)
+
+      unless scope
+        render json: { error: 'Invalid location type' }, status: :unprocessable_entity
+        return
+      end
+
+      render json: location_options(scope)
+    end
+
     # Renders a preview of the next few occurrences for the recurrence fields
     # currently filled into the event form, before the event is saved. Called
     # by the recurrence Stimulus controller on every field change.
@@ -247,6 +284,46 @@ module BetterTogether
       # array (?status[]=draft&status[]=confirmed) for union filtering.
       params.permit(:q, :order_by, :per_page, :page, :past, :status, :recurring,
                     category_ids: [], status: [])
+    end
+
+    # Dispatches to the existing, already-scoped LocatableLocation lookup methods —
+    # Address/Building are Pundit-policy-scoped to current_person; Settlement/Region
+    # are unscoped curated reference data (see LocatableLocation.available_*_for).
+    #
+    # Derives the method name from klass itself (matching the same
+    # klass.name.demodulize.underscore convention the view's location_type_map already
+    # uses) instead of a hardcoded case/when, so a future Geography::Placeable includer
+    # only needs a matching LocatableLocation.available_<type>_for method defined —
+    # no controller change required. Returns nil (handled by the caller) rather than
+    # raising when that scope method doesn't exist yet.
+    def location_scope_for(klass)
+      method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
+      return unless BetterTogether::Geography::LocatableLocation.respond_to?(method_name)
+
+      BetterTogether::Geography::LocatableLocation.public_send(method_name, helpers.current_person, search: params[:search])
+    end
+
+    def location_options(scope)
+      scope.map do |record|
+        text = record.respond_to?(:to_formatted_s) ? record.to_formatted_s : record.to_s
+        { value: record.id, text: text }
+      end
+    end
+
+    # Searches every Placeable type via the same location_scope_for each
+    # single-type request already uses (so search/privacy scoping never
+    # drifts between the two modes), capping each type's contribution so no
+    # single type crowds out the rest of the merged list.
+    def mixed_location_options
+      BetterTogether::Geography::Placeable.included_in_models.flat_map do |klass|
+        scope = location_scope_for(klass)
+        next [] unless scope
+
+        scope.limit(MIXED_LOCATION_RESULTS_PER_TYPE).map do |record|
+          text = record.respond_to?(:to_formatted_s) ? record.to_formatted_s : record.to_s
+          { value: "#{klass.name}:#{record.id}", text: "#{text} (#{klass.model_name.human})" }
+        end
+      end
     end
 
     # index skips the :resource_collection before_action (see

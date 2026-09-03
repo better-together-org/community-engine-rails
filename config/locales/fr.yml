@@ -1582,13 +1582,13 @@ fr:
         when: Quand
     events:
       actions:
-        create_new_address: Créer une nouvelle adresse
-        create_new_building: Créer un nouveau bâtiment
-        create_new_short: Nouveau
+        create_new: Créer un(e) nouveau/nouvelle %{model}
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants
       back_to_events: Voir les événements
       date_and_time: Date et Heure
+      delete_event: Supprimer l'événement
+      edit_event: Modifier l'événement
       form_errors_heading: 'Les erreurs suivantes se sont produites :'
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
       hints:
@@ -1599,11 +1599,10 @@ fr:
           synchronisé avec l'heure de fin.
         ends_at: Quand l'événement se termine. Se met à jour automatiquement lorsque
           la durée change.
-        location: Où les participants se rencontreront pour cet événement
-        location_name: Nom du lieu ou point de rencontre
+        location: Recherchez une adresse, un bâtiment ou un lieu existant. S'il n'est
+          pas répertorié, choisissez « Créer une nouvelle adresse » ou utilisez le
+          texte saisi comme nom personnalisé.
         name: Un titre clair et descriptif pour votre événement
-        select_address: Sélectionner une adresse
-        select_building: Sélectionner un bâtiment
         slug: Identifiant convivial pour l'URL de cet événement
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
@@ -1655,11 +1654,7 @@ fr:
         duration_minutes: Durée
         ends_at: Se termine à
         location: Lieu
-        location_name: Nom du lieu
-        location_type: Type de lieu
         privacy: Confidentialité
-        select_address: Sélectionner une adresse
-        select_building: Sélectionner un bâtiment
         starts_at: Débute à
         status: Statut
         timezone: Fuseau Horaire de l'Événement
@@ -1689,10 +1684,16 @@ fr:
         status_draft: Brouillon
         status_label: Statut
       location: Lieu
-      location_types:
-        address: Adresse
-        building: Bâtiment
-        simple: Simple
+      location_picker:
+        announcements:
+          cancelled: Nouvelle adresse annulée. Retour au champ de recherche de lieu.
+          creating: Création d'une nouvelle adresse. Remplissez les champs d'adresse
+            ci-dessous, puis enregistrez l'événement.
+        cancel_new_address: Annuler la nouvelle adresse
+        create_row:
+          new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
+          use_typed_name: Utiliser « %{q} » comme nom de lieu personnalisé
+        new_address_legend: Nouvelle adresse
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
@@ -1715,12 +1716,7 @@ fr:
         rsvp_saved_for_date: RSVP pour le %{date} enregistrée
       odd: doit être impair
       other_than: doit être différent de %{count}
-      placeholders:
-        location_name: Nom du lieu
       present: doit être vide
-      prompts:
-        select_address: Sélectionner une adresse
-        select_building: Sélectionner un bâtiment
       recurrence:
         actions:
           add_exception_date: Ajouter une date d'exception
@@ -3976,6 +3972,8 @@ fr:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      event_status_level: 'Statut de l''événement: %{status}'
+      event_status_tooltip: 'Statut de l''événement: %{status}'
       privacy_level: 'Confidentialité: %{privacy}'
       privacy_tooltip: Ce contenu est %{privacy}
       publishing_agreement_notice:
@@ -5512,6 +5510,27 @@ fr:
   search:
     button: Rechercher
     placeholder: Rechercher...
+  seed_catalog:
+    index:
+      actions: Actions
+      category: Catégorie
+      description: Installez des données de référence organisées à la demande, une
+        catégorie à la fois ou toutes en même temps.
+      missing_prerequisites: Planter %{prerequisites} d'abord
+      not_planted: Non planté
+      plant: Planter
+      plant_all: Tout planter
+      plant_category: Planter %{category}
+      planted: Planté
+      status: Statut
+      title: Catalogue de semences
+    plant:
+      missing_prerequisites: "%{category} nécessite que %{prerequisites} soit planté
+        au préalable."
+      success: "%{category} planté."
+      unknown_category: Catégorie inconnue.
+    plant_all:
+      success: "%{catalog} entièrement planté."
   seeds:
     actions:
       destroy: Supprimer la graine

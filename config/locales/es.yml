@@ -1575,13 +1575,13 @@ es:
         when: Cuándo
     events:
       actions:
-        create_new_address: Crear nueva dirección
-        create_new_building: Crear nuevo edificio
-        create_new_short: Nuevo
+        create_new: Crear nuevo %{model}
       add_to_calendar: Agregar al calendario (.ics)
       attendees: Asistentes
       back_to_events: Volver a eventos
       date_and_time: Fecha y Hora
+      delete_event: Eliminar Evento
+      edit_event: Editar Evento
       form_errors_heading: 'Se produjeron los siguientes errores:'
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       hints:
@@ -1592,11 +1592,10 @@ es:
           cambian las horas de inicio o fin.
         ends_at: Cuándo concluye el evento. Se actualiza automáticamente cuando cambia
           la duración.
-        location: Dónde se reunirán los asistentes para este evento
-        location_name: Nombre del lugar o punto de encuentro
+        location: Busca una dirección, un edificio o un lugar existente. Si no está
+          en la lista, elige «Crear nueva dirección» o usa el texto que escribiste
+          como nombre personalizado.
         name: Un título claro y descriptivo para su evento
-        select_address: Seleccionar dirección
-        select_building: Seleccionar edificio
         slug: Identificador amigable para URL de este evento
         starts_at: Cuándo comienza el evento. Todas las horas están en la zona horaria
           seleccionada arriba.
@@ -1647,11 +1646,7 @@ es:
         duration_minutes: Duración
         ends_at: Termina en
         location: Ubicación
-        location_name: Nombre de la ubicación
-        location_type: Tipo de ubicación
         privacy: Privacidad
-        select_address: Seleccionar dirección
-        select_building: Seleccionar edificio
         starts_at: Comienza en
         status: Estado
         timezone: Zona Horaria del Evento
@@ -1681,10 +1676,17 @@ es:
         status_draft: Borrador
         status_label: Estado
       location: Ubicación
-      location_types:
-        address: Dirección
-        building: Edificio
-        simple: Simple
+      location_picker:
+        announcements:
+          cancelled: Nueva dirección cancelada. Has vuelto al campo de búsqueda de
+            ubicación.
+          creating: Creando una nueva dirección. Rellena los campos de dirección a
+            continuación y luego guarda el evento.
+        cancel_new_address: Cancelar nueva dirección
+        create_row:
+          new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
+          use_typed_name: Usar «%{q}» como nombre de ubicación personalizado
+        new_address_legend: Nueva dirección
       login_required: Por favor, inicia sesión para gestionar las confirmaciones de
         asistencia.
       model_invalid: 'La validación falló: %{errors}'
@@ -1707,12 +1709,7 @@ es:
         rsvp_saved_for_date: RSVP para el %{date} guardada
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
-      placeholders:
-        location_name: Nombre de la ubicación
       present: debe estar en blanco
-      prompts:
-        select_address: Seleccionar dirección
-        select_building: Seleccionar edificio
       recurrence:
         actions:
           add_exception_date: Añadir fecha de excepción
@@ -3948,6 +3945,8 @@ es:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
+      event_status_level: 'Estado del evento: %{status}'
+      event_status_tooltip: 'Estado del evento: %{status}'
       privacy_level: 'Privacidad: %{privacy}'
       privacy_tooltip: Este contenido es %{privacy}
       publishing_agreement_notice:
@@ -5475,6 +5474,26 @@ es:
   search:
     button: Buscar
     placeholder: Buscar...
+  seed_catalog:
+    index:
+      actions: Acciones
+      category: Categoría
+      description: Instale datos de referencia curados a petición, una categoría a
+        la vez o todas a la vez.
+      missing_prerequisites: Sembrar %{prerequisites} primero
+      not_planted: No sembrado
+      plant: Sembrar
+      plant_all: Sembrar todo
+      plant_category: Sembrar %{category}
+      planted: Sembrado
+      status: Estado
+      title: Catálogo de siembra
+    plant:
+      missing_prerequisites: "%{category} requiere sembrar %{prerequisites} primero."
+      success: "%{category} sembrado."
+      unknown_category: Categoría desconocida.
+    plant_all:
+      success: "%{catalog} sembrado por completo."
   seeds:
     actions:
       destroy: Eliminar semilla

@@ -1567,15 +1567,15 @@ uk:
         when: When
     events:
       actions:
-        create_new_address: Create new address
-        create_new_building: Create new building
-        create_new_short: New
-      add_to_calendar: Add to calendar (.ics)
-      attendees: Attendees
-      back_to_events: View Events
+        create_new: Створити новий %{model}
+      add_to_calendar: Додати до календаряr (.ics)
+      attendees: Учасники
+      back_to_events: Переглянути події
       date_and_time: Дата та Час
+      delete_event: Видалити подію
+      edit_event: Редагувати подію
       form_errors_heading: 'Виникли такі помилки:'
-      greater_than_or_equal_to: must be greater than or equal to %{count}
+      greater_than_or_equal_to: повинно бути більше або дорівнювати %{count}
       hints:
         create_permission_denied: Дозвіл на створення відхилено
         description: Надайте деталі про те, чого учасники можуть очікувати на цій
@@ -1583,11 +1583,10 @@ uk:
         duration_minutes: Скільки часу триватиме подія. Змінюється автоматично при
           зміні часу початку або закінчення.
         ends_at: Коли подія завершується. Оновлюється автоматично при зміні тривалості.
-        location: Де учасники зустрінуться для цієї події
-        location_name: Назва місця проведення або місця зустрічі
+        location: Знайдіть наявну адресу, будівлю або місце. Якщо його немає у списку,
+          виберіть «Створити нову адресу» або використайте введений текст як власну
+          назву.
         name: Чіткий, описовий заголовок для вашої події
-        select_address: Вибрати адресу
-        select_building: Вибрати будівлю
         slug: Дружній до URL ідентифікатор для цієї події
         starts_at: Коли починається подія. Весь час вказано в часовому поясі, вибраному
           вище.
@@ -1641,11 +1640,7 @@ uk:
         duration_minutes: Тривалість
         ends_at: Закінчується о
         location: Місце
-        location_name: Назва місця
-        location_type: Тип місця
         privacy: Конфіденційність
-        select_address: Вибрати адресу
-        select_building: Вибрати будівлю
         starts_at: Починається о
         status: Статус
         timezone: Часовий Пояс Події
@@ -1675,10 +1670,16 @@ uk:
         status_draft: Чернетка
         status_label: Статус
       location: Місце
-      location_types:
-        address: Адреса
-        building: Будівля
-        simple: Простий
+      location_picker:
+        announcements:
+          cancelled: Створення нової адреси скасовано. Повернення до поля пошуку місцезнаходження.
+          creating: Створення нової адреси. Заповніть поля адреси нижче, потім збережіть
+            подію.
+        cancel_new_address: Скасувати нову адресу
+        create_row:
+          new_named_with_query: 'Створити новий %{model}: «%{q}»'
+          use_typed_name: Використати «%{q}» як власну назву місцезнаходження
+        new_address_legend: Нова адреса
       login_required: Будь ласка, увійдіть для управління RSVP.
       model_invalid: 'Помилка валідації: %{errors}'
       no_attendees: Учасників поки що немає.
@@ -1702,12 +1703,7 @@ uk:
         rsvp_saved_for_date: RSVP на %{date} збережено
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
-      placeholders:
-        location_name: Назва місця
       present: має бути порожнім
-      prompts:
-        select_address: Вибрати адресу
-        select_building: Вибрати будівлю
       recurrence:
         actions:
           add_exception_date: Додати виняткову дату
@@ -3944,6 +3940,8 @@ uk:
         accept_link: Перегляньте і прийміть угоду про створення спільноти
         message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення
           спільноти.
+      event_status_level: 'Статус події: %{status}'
+      event_status_tooltip: 'Статус події: %{status}'
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
       publishing_agreement_notice:
@@ -5504,6 +5502,26 @@ uk:
   search:
     button: Пошук
     placeholder: Пошук...
+  seed_catalog:
+    index:
+      actions: Дії
+      category: Категорія
+      description: Встановлюйте перевірені довідкові дані на вимогу — по одній категорії
+        або всі одразу.
+      missing_prerequisites: Спочатку встановіть %{prerequisites}
+      not_planted: Не встановлено
+      plant: Встановити
+      plant_all: Встановити все
+      plant_category: Встановити %{category}
+      planted: Встановлено
+      status: Статус
+      title: Каталог початкових даних
+    plant:
+      missing_prerequisites: "%{category} потребує спочатку встановити %{prerequisites}."
+      success: "%{category}: встановлено."
+      unknown_category: Невідома категорія.
+    plant_all:
+      success: "%{catalog}: повністю встановлено."
   seeds:
     actions:
       destroy: Видалити seed

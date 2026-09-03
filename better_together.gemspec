@@ -73,6 +73,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'rails', '>= 7.2', '< 8.2'
   spec.add_dependency 'redcarpet', '~> 3.6'
   spec.add_dependency 'reform-rails', '>= 0.2', '< 0.4'
+  spec.add_dependency 'rgeo-geojson'
   spec.add_dependency 'rswag', '>= 2.3.1', '< 2.18.0'
   spec.add_dependency 'ruby_llm'
   spec.add_dependency 'ruby-vips', '~> 2.2'

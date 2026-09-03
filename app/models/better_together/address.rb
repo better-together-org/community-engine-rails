@@ -3,6 +3,10 @@
 module BetterTogether
   class Address < PlatformRecord # rubocop:todo Style/Documentation
     include Geography::Geospatial::One
+
+    geocodes_self
+    include Geography::Locatable::Many
+    include Geography::Placeable
     include PrimaryFlag
     include Privacy
 
@@ -16,15 +20,11 @@ module BetterTogether
                optional: true
     has_many :buildings, class_name: 'BetterTogether::Infrastructure::Building'
 
-    geocoded_by :geocoding_string
-
     # Validations
     validates :physical, :postal, inclusion: { in: [true, false] }
     validate :at_least_one_address_type
 
     after_update :update_buildings
-    after_create :schedule_geocoding
-    after_update :schedule_geocoding
 
     def self.address_formats
       {
@@ -41,22 +41,30 @@ module BetterTogether
       ]
     end
 
+    # Placeable: reuse an existing Address when the picker selected one (matching
+    # Placeable's own default lookup), otherwise build a new Address from nested
+    # locatable_location attrs (unlike Settlement/Region, which rely on Placeable's
+    # lookup-only default for every case).
+    #
+    # attrs may carry keys that only make sense on LocatableLocation itself (name,
+    # location_id, location_type, ...) — slice down to Address's own permitted
+    # attributes instead of blacklisting individual foreign keys, so passing an
+    # unrelated key here raises a clear "not permitted" error at the controller
+    # layer rather than an ActiveModel::UnknownAttributeError from .new.
+    def self.locatable_location_build(attrs)
+      existing = find_by(id: attrs['id'] || attrs['location_id'])
+      return existing if existing
+
+      allowed_keys = permitted_attributes(id: true).grep(Symbol).map(&:to_s)
+      new(attrs.slice(*allowed_keys))
+    end
+
+    def self.inline_create_fields_partial
+      'better_together/addresses/address_fields'
+    end
+
     def geocoding_string
       to_formatted_s(excluded: %i[display_label line2])
-    end
-
-    def schedule_geocoding
-      return unless should_geocode?
-
-      BetterTogether::Geography::GeocodingJob.perform_later(self)
-    end
-
-    def should_geocode?
-      return false if geocoding_string.blank?
-
-      # space.reload # in case it has been geocoded since last load
-
-      (changed? or !geocoded?)
     end
 
     def to_formatted_s(

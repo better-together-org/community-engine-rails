@@ -9,6 +9,8 @@ module BetterTogether
       include Identifier
       include FriendlySlug
       include Geography::Geospatial::One
+      include Geography::Locatable::Many
+      include Geography::Placeable
       include Privacy
       include PrimaryCommunity
 
@@ -35,7 +37,10 @@ module BetterTogether
 
       delegate :geocoding_string, to: :address, allow_nil: true
 
-      geocoded_by :geocoding_string
+      # Building geocodes its address (schedule_address_geocoding below, driven off
+      # address_changed?), not itself, so it never calls Geospatial::One.geocodes_self
+      # — otherwise GeocodingJob.perform_later would get enqueued twice per
+      # create/update, once from each callback.
 
       after_create :ensure_floor
 
@@ -52,6 +57,33 @@ module BetterTogether
             address_attributes: Address.permitted_attributes(id: true)
           }
         ] + super
+      end
+
+      # Placeable: Buildings are picked from the existing set, never created inline
+      # from the event location form (that would produce orphan Building records
+      # with no address or coordinates) - Placeable#inline_create_fields_partial is
+      # left at its lookup-only default. This method still builds a new Building
+      # when nested attrs arrive from any other locatable form: reuse an existing
+      # Building when the picker selected one, otherwise build one, hoisting any
+      # top-level address attribute keys into address_attributes so Building.new
+      # receives them nested as it expects.
+      def self.locatable_location_build(attrs) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        existing = find_by(id: attrs['id'] || attrs['location_id'])
+        return existing if existing
+
+        attrs = attrs.dup
+        address_keys = BetterTogether::Address.permitted_attributes(id: true, destroy: true).grep(Symbol).map(&:to_s)
+
+        attrs['address_attributes'] ||= {}
+        address_keys.each do |akey|
+          next unless attrs.key?(akey)
+
+          attrs['address_attributes'][akey] = attrs.delete(akey)
+        end
+
+        attrs.except!('id', '_destroy', 'location_type', 'name', 'locatable_id', 'locatable_type', 'location_id')
+
+        new(attrs)
       end
 
       def address?

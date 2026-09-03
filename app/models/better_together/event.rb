@@ -11,6 +11,8 @@ module BetterTogether
     include FriendlySlug
     include Identifier
     include Geography::Geospatial::One
+
+    geocodes_self
     include Geography::Locatable::One
     include Invitable
     include Metrics::Shareable
@@ -46,11 +48,6 @@ module BetterTogether
     categorizable(class_name: 'BetterTogether::EventCategory')
 
     has_many :event_hosts, dependent: :destroy
-
-    # belongs_to :address, -> { where(physical: true, primary_flag: true) }
-    # accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
-    # delegate :geocoding_string, to: :address, allow_nil: true
-    # geocoded_by :geocoding_string
 
     translates :name, type: :string
     translates :description, backend: :action_text
@@ -247,20 +244,6 @@ module BetterTogether
       event_hosts.build(host: creator)
     end
 
-    def schedule_address_geocoding
-      return unless should_geocode?
-
-      BetterTogether::Geography::GeocodingJob.perform_later(self)
-    end
-
-    def should_geocode?
-      return false if geocoding_string.blank?
-
-      # space.reload # in case it has been geocoded since last load
-
-      (address_changed? or !geocoded?)
-    end
-
     def to_s
       name
     end
@@ -410,6 +393,13 @@ module BetterTogether
     # Delegate location methods
     delegate :display_name, to: :location, prefix: true, allow_nil: true
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
+
+    # Overrides Geospatial::One's default `geocoding_string` (which falls back to
+    # `to_s`, i.e. the event's name) so the shared geocoded_by/schedule_geocoding
+    # hooks geocode the event's actual structured location, not its title text.
+    def geocoding_string
+      location_geocoding_string
+    end
 
     # Public URL to this event for use in ICS export
     def url

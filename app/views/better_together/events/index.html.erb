@@ -16,6 +16,12 @@
     <%= render 'better_together/shared/publishing_agreement_notice' %>
   <% end %>
 
+  <% if events_map && events_map.spaces.any? %>
+    <section class="events-map my-4">
+      <%= render partial: 'better_together/shared/map', locals: { map: events_map, use_label_as_popup: true } %>
+    </section>
+  <% end %>
+
   <div class="row">
     <!-- Filter Sidebar -->
     <div class="col-lg-3 mb-4">

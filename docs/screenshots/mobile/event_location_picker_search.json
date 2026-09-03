@@ -1,0 +1,49 @@
+{
+  "name": "event_location_picker_search",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Community Engine",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_location_picker",
+  "flow": "event_location_picker_search",
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event_location_picker",
+      "title": "One field searches everything",
+      "bullets": [
+        "One field searches Address, Building, Floor, Room, Settlement, and Region at once as you type.",
+        "No location-type picker to choose first: results are labeled with their type."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1039.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1077.390625,
+        "center_x": 242.5,
+        "center_y": 1058.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1039.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1077.390625,
+        "center_x": 242.5,
+        "center_y": 1058.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 621.39,
+        "width": 270.0,
+        "height": 398,
+        "score": 1039.390625
+      }
+    }
+  ]
+}
