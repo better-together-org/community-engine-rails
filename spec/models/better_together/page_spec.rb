@@ -438,5 +438,38 @@ module BetterTogether # :nodoc:
         expect(page.privacy).to eq('community')
       end
     end
+
+    describe '#as_indexed_json' do
+      let(:indexed_page) { create(:better_together_page, :published_public) }
+
+      before do
+        [
+          ['PUBLICINDEXTOKEN', 'public', true],
+          ['COMMUNITYINDEXTOKEN', 'community', true],
+          ['PRIVATEINDEXTOKEN', 'private', true],
+          ['HIDDENINDEXTOKEN', 'public', false]
+        ].each_with_index do |(token, privacy, visible), position|
+          block = create(:content_markdown, markdown_source: token)
+          block.update_columns(privacy: privacy, visible: visible)
+          create(:better_together_content_page_block, page: indexed_page, block: block, position: position)
+        end
+      end
+
+      it 'indexes only publicly-visible block text' do
+        haystack = indexed_page.as_indexed_json[:blocks].join(' ')
+
+        expect(haystack).to include('PUBLICINDEXTOKEN')
+        %w[COMMUNITYINDEXTOKEN PRIVATEINDEXTOKEN HIDDENINDEXTOKEN].each do |token|
+          expect(haystack).not_to include(token)
+        end
+      end
+
+      it 'still indexes seeded template block chrome' do
+        create(:better_together_content_page_block, page: indexed_page,
+                                                    block: create(:content_template), position: 99)
+
+        expect(indexed_page.as_indexed_json[:template_blocks]).not_to be_empty
+      end
+    end
   end
 end
