@@ -300,10 +300,12 @@ export default class extends Controller {
     if (options.createOptions && options.ajax) {
       const innerSearch = options.events.search;
       options.events.search = (search, currentData) => (
-        Promise.resolve(innerSearch(search, currentData)).then((data) => {
-          const results = Array.isArray(data) ? data : [];
-          return [...results, ...this.buildCreateRows(search, results)];
-        })
+        // Resolve to the AJAX results, or [] if that request fails - the
+        // "Create new ..." rows must still be offered when the location search
+        // is empty or erroring.
+        Promise.resolve(innerSearch(search, currentData))
+          .then((data) => (Array.isArray(data) ? data : []), () => [])
+          .then((results) => [...results, ...this.buildCreateRows(search, results)])
       );
 
       const innerBeforeChange = options.events.beforeChange;

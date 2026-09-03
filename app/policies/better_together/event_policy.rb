@@ -38,7 +38,7 @@ module BetterTogether
 
     def available_hosts?
       # Users who can create or edit events can view available hosts
-      user.present? && (platform_manager? || agent.valid_event_host_ids.any?)
+      user.present? && (platform_manager? || agent&.valid_event_host_ids&.any?)
     end
 
     def available_locations?
@@ -50,7 +50,7 @@ module BetterTogether
       # a real NoMethodError when exercised: "undefined method 'event_hosts' for
       # class BetterTogether::Event". #available_hosts? already avoids this by
       # using the same class-safe gate reused here.
-      user.present? && (platform_manager? || agent.valid_event_host_ids.any?)
+      user.present? && (platform_manager? || agent&.valid_event_host_ids&.any?)
     end
 
     def recurrence_preview?
