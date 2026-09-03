@@ -271,7 +271,8 @@ RSpec.describe 'Documentation screenshots for the event location picker',
       expect(page).to have_css('select#event_location_picker', visible: :all, wait: 10)
       expect(page).to have_css('.location-fields .ss-main', wait: 5)
       search_picker('124 Water Street')
-      row = find("#{picker_content_selector} .ss-option.ss-create-option", text: /create new/i, match: :first, wait: 10)
+      row = find("#{picker_content_selector} .ss-option.ss-create-option:not(.ss-create-option--simple)",
+                 match: :first, wait: 10)
       page.execute_script('arguments[0].click()', row.native)
 
       panel = find('#event_location_new_address', visible: true)

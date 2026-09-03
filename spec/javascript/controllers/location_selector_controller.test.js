@@ -157,7 +157,7 @@ describe("LocationSelectorController", () => {
   })
 
   describe("revealNewRecord — address", () => {
-    it("shows the fieldset, enables its fields, prefills line1, and sets the legend caption", () => {
+    it("shows the fieldset, enables its fields, prefills line1, sets the caption and location_type", () => {
       element.dispatchEvent(createEvent("address", "42 Elm St"))
 
       const block = controller.newRecordBlockTargets[0]
@@ -165,16 +165,13 @@ describe("LocationSelectorController", () => {
       expect(block.querySelector('input[name*="[line1]"]').disabled).toBe(false)
       expect(block.querySelector('input[name*="[line1]"]').value).toBe("42 Elm St")
       expect(controller.newRecordQueryTarget.textContent).toBe('"42 Elm St"')
+      expect(controller.locationTypeFieldTarget.value).toBe("BetterTogether::Address")
     })
-  })
 
-  describe("revealNewRecord — simple", () => {
-    it("assigns the typed text to the simple name field and leaves the fieldset hidden", () => {
+    it("ignores a create event for a type with no matching block (e.g. simple)", () => {
       element.dispatchEvent(createEvent("simple", "My Backyard"))
 
-      expect(controller.simpleNameFieldTarget.value).toBe("My Backyard")
       expect(controller.newRecordBlockTargets[0].hidden).toBe(true)
-      expect(controller.locationSelectTarget.value).toBe("My Backyard")
     })
   })
 
