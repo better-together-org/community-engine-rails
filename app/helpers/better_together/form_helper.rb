@@ -14,13 +14,17 @@ module BetterTogether
     def label_select_field(form, required: true, prompt: 'Select Label') # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       # rubocop:todo Metrics/BlockLength
       content_tag(:div, class: 'label-select', data: { controller: 'better_together--dependent-fields' }) do
+        label_select_id = dom_id(form.object, :label).split('-').first
+
+        # `for:` must match the select's overridden id below, or the select has no
+        # accessible name (axe select-name).
         field_label = required_label(
           form,
           :label,
-          class: 'form-label'
+          class: 'form-label',
+          for: label_select_id
         )
 
-        label_select_id = dom_id(form.object, :label).split('-').first
         select_field = form.select(
           :select_label,
           form.object.class.label_options,

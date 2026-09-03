@@ -312,15 +312,31 @@ export default class extends Controller {
       options.events.beforeChange = (after, before) => {
         const picked = Array.isArray(after) && after[0];
         if (picked && typeof picked.value === 'string' && picked.value.startsWith(CREATE_SENTINEL)) {
-          const type = (picked.data && picked.data.ceCreate) || picked.value.slice(CREATE_SENTINEL.length);
           const query = (picked.data && picked.data.ceQuery) || this.lastSearchTerm || '';
+
+          if (picked.value === SIMPLE_SENTINEL) {
+            // "Use my typed text" - rewrite the row into an ordinary free-text
+            // selection and let SlimSelect select it; afterChange's option-sync
+            // then routes it to the hidden simple-name field.
+            picked.value = query;
+            picked.text = query;
+            picked.html = '';
+            picked.class = '';
+            return innerBeforeChange ? innerBeforeChange(after, before) : true;
+          }
+
+          // "Create new <type>" - cancel the selection and hand off to the
+          // sibling controller to open the inline form. Queue the close BEFORE
+          // dispatching so that controller's focus() (queued from the event
+          // handler) runs after close()'s own refocus and wins.
+          const type = (picked.data && picked.data.ceCreate) || picked.value.slice(CREATE_SENTINEL.length);
+          setTimeout(() => {
+            try { if (this.slimSelect) this.slimSelect.close(); } catch (_) { /* noop */ }
+          }, 0);
           this.element.dispatchEvent(new CustomEvent('better_together--slim-select:create', {
             bubbles: true,
             detail: { type, query }
           }));
-          setTimeout(() => {
-            try { if (this.slimSelect) this.slimSelect.close(); } catch (_) { /* noop */ }
-          }, 0);
           return false;
         }
         return innerBeforeChange ? innerBeforeChange(after, before) : true;

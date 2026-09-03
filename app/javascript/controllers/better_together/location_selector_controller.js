@@ -65,17 +65,13 @@ export default class extends Controller {
     this.clearNewRecordInputs();
   }
 
-  // better_together--slim-select:create - the user picked a "Create new X" or
-  // "Use my typed text" row from the dropdown.
+  // better_together--slim-select:create - the user picked a "Create new <type>"
+  // row from the dropdown. (The "use my typed text" row is handled entirely in
+  // slim_select_controller as an ordinary free-text selection.)
   revealNewRecord(event) {
     const detail = event.detail || {};
     const type = detail.type;
     const query = detail.query || '';
-
-    if (type === 'simple') {
-      this.applySimpleFromQuery(query);
-      return;
-    }
 
     const block = this.newRecordBlockTargets.find((el) => el.dataset.locationType === type);
     if (!block) return;
@@ -87,6 +83,12 @@ export default class extends Controller {
     this.clearSimpleLocationFields();
     this.closeAllNewRecordBlocks();
 
+    // The panel's fields POST nested under location_attributes; the server's
+    // location_attributes= falls back to the location_type *column* to pick the
+    // class to build, so set it here.
+    const className = this.hasLocationTypeMapValue ? this.locationTypeMapValue[type] : null;
+    if (className && this.hasLocationTypeFieldTarget) this.locationTypeFieldTarget.value = className;
+
     block.hidden = false;
     this.toggleFieldsDisabled(block, false);
     this.prefillFromQuery(block, query);
@@ -95,7 +97,10 @@ export default class extends Controller {
     const firstField = block.querySelector(
       'input:not([type=hidden]):not([disabled]), select:not([disabled]), textarea:not([disabled])'
     );
-    if (firstField) firstField.focus();
+    // Deferred: slim_select_controller's beforeChange schedules a
+    // slimSelect.close() (which refocuses the combobox) on the next tick, so
+    // focus the panel field after that to win the race.
+    if (firstField) setTimeout(() => firstField.focus(), 0);
 
     this.announce(this.newRecordOpenedAnnouncementValue);
   }
@@ -110,28 +115,6 @@ export default class extends Controller {
     this.resetPickerSelection();
     this.focusCombobox();
     this.announce(this.newRecordCancelledAnnouncementValue);
-  }
-
-  // "Use '<text>' as a custom location name" - no structured record, just the
-  // hidden name field. SlimSelect cancelled its own selection of the sentinel row
-  // (beforeChange returned false), so synthesize a matching <option> the way
-  // slim_select_controller's afterChange does for AJAX results.
-  applySimpleFromQuery(query) {
-    const name = (query || '').trim();
-    if (!name) return;
-
-    this.setSimpleLocation(name);
-
-    if (this.hasLocationSelectTarget) {
-      const select = this.locationSelectTarget;
-      const exists = Array.from(select.options).some((option) => option.value === name);
-      if (!exists) select.add(new Option(name, name, false, false));
-      select.value = name;
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
-    this.closeAllNewRecordBlocks();
-    this.clearNewRecordInputs();
   }
 
   // A real result's value is always "<one of locationTypeMapValue's class

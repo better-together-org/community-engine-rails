@@ -208,7 +208,11 @@
             <% location_type_map = BetterTogether::Geography::Placeable.included_in_models.each_with_object({}) do |klass, memo|
                  memo[klass.name.demodulize.underscore] = klass.name
                end %>
-            <% has_location_error = event.errors[:location].any? %>
+            <% location_error_messages = event.errors[:location].presence ||
+                                        event.errors[:'location.location'].presence ||
+                                        (event.location&.errors&.full_messages.presence if event.location&.errors&.any?) ||
+                                        [] %>
+            <% has_location_error = location_error_messages.any? %>
             <% picker_describedby = ['event_location_picker_hint',
                                      ('event_location_picker_error' if has_location_error)].compact.join(' ') %>
 
@@ -262,7 +266,7 @@
 
                 <% if has_location_error %>
                   <div id="event_location_picker_error" class="text-danger small mt-1" role="alert">
-                    <%= event.errors[:location].to_sentence %>
+                    <%= location_error_messages.to_sentence %>
                   </div>
                 <% end %>
 
