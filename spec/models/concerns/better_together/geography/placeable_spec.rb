@@ -41,7 +41,7 @@ RSpec.describe BetterTogether::Geography::Placeable do
     end
   end
 
-  describe 'Address/Building overrides (build a new nested record)' do
+  describe 'locatable_location_build overrides (build a new nested record)' do
     it 'Address builds a new record from attrs instead of looking one up' do
       result = BetterTogether::Address.locatable_location_build('line1' => '1 Main St')
 
@@ -50,7 +50,7 @@ RSpec.describe BetterTogether::Geography::Placeable do
       expect(result.line1).to eq('1 Main St')
     end
 
-    it 'Building hoists top-level address attributes into address_attributes' do
+    it 'Building still hoists top-level address attributes into address_attributes when built from another form' do
       result = BetterTogether::Infrastructure::Building.locatable_location_build('line1' => '1 Main St')
 
       expect(result).to be_a(BetterTogether::Infrastructure::Building)
@@ -64,21 +64,25 @@ RSpec.describe BetterTogether::Geography::Placeable do
       expect(BetterTogether::Geography::Region.inline_creatable?).to be(false)
     end
 
-    it 'is true for types that override inline_create_fields_partial' do
+    it 'is false for Building even though it can build a new record from nested attrs' do
+      # Buildings are curated reference data - selectable from the existing set but
+      # never created inline from the event location form.
+      expect(BetterTogether::Infrastructure::Building.inline_creatable?).to be(false)
+    end
+
+    it 'is true only for Address, the one type that renders inline-create fields in the picker' do
       expect(BetterTogether::Address.inline_creatable?).to be(true)
-      expect(BetterTogether::Infrastructure::Building.inline_creatable?).to be(true)
     end
   end
 
   describe '.inline_create_fields_partial' do
-    it 'is nil by default' do
+    it 'is nil by default and for Building' do
       expect(BetterTogether::Geography::Settlement.inline_create_fields_partial).to be_nil
+      expect(BetterTogether::Infrastructure::Building.inline_create_fields_partial).to be_nil
     end
 
-    it 'points at each inline-creatable type\'s own fields partial' do
+    it 'points at the Address inline-create fields partial' do
       expect(BetterTogether::Address.inline_create_fields_partial).to eq('better_together/addresses/address_fields')
-      expect(BetterTogether::Infrastructure::Building.inline_create_fields_partial)
-        .to eq('better_together/infrastructure/buildings/fields')
     end
   end
 end
