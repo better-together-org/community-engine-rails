@@ -3,109 +3,217 @@
 require 'rails_helper'
 
 RSpec.feature 'Event location selector', :as_platform_manager, :js do
-  let(:location_select_name) { 'event[location_attributes][location_id]' }
+  let(:manager_person) { BetterTogether::User.find_by(email: 'manager@example.test').person }
+
+  before do
+    # Match timezone_datetime_form_spec.rb: clean session + accept the content
+    # publishing agreement the event new/create actions gate on (otherwise the
+    # manager is redirected and #event-form-tabs never renders).
+    visit better_together.destroy_user_session_path(locale: I18n.default_locale)
+    capybara_login_as_platform_manager
+    agreement = BetterTogether::Agreement.find_or_create_by!(
+      identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER
+    )
+    BetterTogether::AgreementParticipant.find_or_create_by!(participant: manager_person, agreement:) do |p|
+      p.accepted_at = Time.current
+    end
+  end
 
   # Waits for the underlying <select> (SlimSelect hides it) before waiting for
-  # SlimSelect's own wrapper — see AGENTS.md "SlimSelect Feature Spec Pattern".
-  def wait_for_location_select
-    expect(page).to have_css("select[name='#{location_select_name}']", visible: :all, wait: 10)
+  # SlimSelect's own wrapper - see AGENTS.md "SlimSelect Feature Spec Pattern".
+  def wait_for_location_picker
+    expect(page).to have_css('select#event_location_picker', visible: :all, wait: 10)
     expect(page).to have_css('.location-fields .ss-main', wait: 5)
   end
 
-  # Matches the stabilizing wait pattern already established in
-  # timezone_datetime_form_spec.rb for this same form: wait for the tab shell,
-  # then for the (enabled) name field, before the first fill_in — avoids the
-  # historical flakiness where the first interaction races page/Turbo/Stimulus
-  # readiness right after `visit`.
+  # Matches the stabilizing wait pattern established in
+  # timezone_datetime_form_spec.rb for this same form.
   def wait_for_event_form_ready
     expect(page).to have_css('#event-form-tabs', wait: 10)
     expect(page).to have_field('event[name_en]', wait: 10)
   end
 
-  scenario 'shows inline new address and building blocks' do
+  def open_location_time_tab
+    find('#event-time-and-place-tab').click
+    expect(page).to have_css('#event-time-and-place.show', wait: 10)
+  end
+
+  # SlimSelect portals its dropdown (.ss-content) to <body>, not inside
+  # .location-fields - scope by the picker's shared data-id (same pattern as
+  # timezone_datetime_form_spec.rb).
+  def picker_content_selector
+    # SlimSelect adds data-id to the native select and its portaled .ss-content.
+    ss_id = find('select#event_location_picker', visible: :all)['data-id']
+    "div.ss-content[data-id='#{ss_id}']"
+  end
+
+  def open_picker
+    within('.location-fields') { find('.ss-main', match: :first).click }
+    expect(page).to have_css("#{picker_content_selector}.ss-open-below, #{picker_content_selector}.ss-open-above", wait: 5)
+  end
+
+  # Types into the SlimSelect search box and waits for the debounced AJAX results
+  # (the "Create new ..." rows are appended once a term is present).
+  def type_in_picker(term)
+    open_picker
+    within(picker_content_selector, visible: :all) { find('.ss-search input').set(term) }
+    expect(page).to have_css("#{picker_content_selector} .ss-option.ss-create-option", wait: 10)
+  end
+
+  # Select create rows by class, not text - the labels are localized.
+  def choose_create_address_row
+    row = find("#{picker_content_selector} .ss-option.ss-create-option:not(.ss-create-option--simple)",
+               match: :first, wait: 10)
+    page.execute_script('arguments[0].click()', row.native)
+  end
+
+  def choose_simple_row
+    row = find("#{picker_content_selector} .ss-option.ss-create-option--simple", match: :first, wait: 10)
+    page.execute_script('arguments[0].click()', row.native)
+  end
+
+  def pick_location_result(text)
+    open_picker
+    row = find("#{picker_content_selector} .ss-option", text: text, match: :first, wait: 10)
+    page.execute_script('arguments[0].click()', row.native)
+  end
+
+  def address_panel
+    find('#event_location_new_address', visible: :all)
+  end
+
+  scenario 'the Create new address row reveals a single labelled address panel' do
     visit better_together.new_event_path(locale: I18n.default_locale)
     wait_for_event_form_ready
 
-    fill_in name: 'event[name_en]', with: 'Test Event'
-    find('#event-time-and-place-tab').click
-    expect(page).to have_css('#event-time-and-place.show', wait: 10)
+    fill_in name: 'event[name_en]', with: 'Event with a brand-new address'
+    open_location_time_tab
+    wait_for_location_picker
 
-    expect(page).to have_selector('[data-controller="better_together--location-selector"]')
+    # No inline Building creation anywhere in the picker.
+    expect(page).to have_no_css('[data-location-type="building"]', visible: :all)
+    expect(address_panel).not_to be_visible
 
-    # Switch to Address location type by clicking its label (works around click interception)
-    find('label[for="address_location"]', visible: :all).click
-    wait_for_location_select
+    type_in_picker('Bright Hall')
+    choose_create_address_row
 
-    within('[data-better_together--location-selector-target="structuredLocation"]') do
-      find('a.btn', text: I18n.t('better_together.events.actions.create_new_short', default: 'New'),
-                    match: :first).click
+    expect(address_panel).to be_visible
+    within('#event_location_new_address') do
+      expect(page).to have_css('legend', text: I18n.t('better_together.events.location_picker.new_address_legend'))
+      expect(page).to have_css('[data-better_together--location-selector-target="newRecordQuery"]', text: 'Bright Hall')
+      expect(find('input[name*="[line1]"]').value).to eq('Bright Hall')
     end
-
-    expect(page).to have_selector(
-      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]',
-      visible: true
-    )
-
-    # Switch to Building location type by clicking its label
-    find('label[for="building_location"]', visible: :all).click
-    wait_for_location_select
-
-    within('[data-better_together--location-selector-target="structuredLocation"]') do
-      find('a.btn', text: I18n.t('better_together.events.actions.create_new_short', default: 'New'),
-                    match: :first).click
-    end
-
-    expect(page).to have_selector(
-      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="building"]',
-      visible: true
-    )
   end
 
-  # rubocop:todo RSpec/ExampleLength
-  scenario 'creates event with new address when saving', skip: <<~REASON do # rubocop:todo RSpec/MultipleExpectations
-    The original Labelable bug this scenario was written to catch is now FIXED
-    and verified independently: BetterTogether::Address model specs cover
-    select_label=/text_label= directly (spec/models/better_together/address_spec.rb),
-    and the exact real-world params this scenario's browser submission produces
-    were confirmed end-to-end via the Rails server log — a genuine
-    `INSERT INTO better_together_addresses` followed by `Completed 302 Found` —
-    proving the full stack (form -> params -> Labelable -> Address#save ->
-    LocatableLocation autosave -> Event#save) now works correctly.
-    What remains failing here is a SEPARATE, unrelated Capybara/Selenium
-    quirk: even after that verified-successful server-side redirect, the
-    browser's own DOM never appears to leave the `new` event form within the
-    wait window (confirmed with multiple wait strategies: current_path regex,
-    and `#event-form-tabs` disappearance — both time out despite the matching
-    server log entry). Given this app processes the create form as a
-    TURBO_STREAM submission, this may be a Turbo Drive/Capybara interaction
-    gap rather than a real bug — not root-caused further here.
+  scenario 'Cancel closes the address panel and returns focus to the combobox' do
+    visit better_together.new_event_path(locale: I18n.default_locale)
+    wait_for_event_form_ready
+
+    fill_in name: 'event[name_en]', with: 'Event where the organizer changes their mind'
+    open_location_time_tab
+    wait_for_location_picker
+
+    type_in_picker('Nowhere St')
+    choose_create_address_row
+    expect(address_panel).to be_visible
+
+    within('#event_location_new_address') { click_button I18n.t('better_together.events.location_picker.cancel_new_address') }
+
+    expect(address_panel).not_to be_visible
+    expect(find("input[name='event[location_attributes][location_id]']", visible: :all).value).to be_blank
+    expect(find("input[name='event[location_attributes][location_type]']", visible: :all).value).to be_blank
+    expect(find("input[name='event[location_attributes][name]']", visible: :all).value).to be_blank
+    expect(page).to have_css('[data-better_together--location-selector-target="announcement"]',
+                             text: I18n.t('better_together.events.location_picker.announcements.cancelled'),
+                             visible: :all, wait: 5)
+    expect(page.evaluate_script('document.activeElement.classList.contains("ss-main")')).to be(true)
+  end
+
+  scenario 'picking an existing result closes an open create panel' do
+    settlement = create(:geography_settlement)
+
+    visit better_together.new_event_path(locale: I18n.default_locale)
+    wait_for_event_form_ready
+
+    fill_in name: 'event[name_en]', with: 'Event that ends up at a settlement'
+    open_location_time_tab
+    wait_for_location_picker
+
+    type_in_picker('Some Draft Address')
+    choose_create_address_row
+    expect(address_panel).to be_visible
+    expect(find('#event_location_new_address input[name*="[line1]"]', visible: :all).disabled?).to be(false)
+
+    pick_location_result(settlement.name)
+
+    # The panel closes and its fields go back to disabled so they can't compete
+    # with the picked location on submit. (The composite-value split into
+    # location_id/location_type is covered by "picking a structured location
+    # clears a previously typed simple name".)
+    expect(address_panel).not_to be_visible
+    expect(find('#event_location_new_address input[name*="[line1]"]', visible: :all).disabled?).to be(true)
+  end
+
+  scenario 'the typed-text row assigns a simple named location' do
+    visit better_together.new_event_path(locale: I18n.default_locale)
+    wait_for_event_form_ready
+
+    fill_in name: 'event[name_en]', with: 'Event in an unlisted place'
+    open_location_time_tab
+    wait_for_location_picker
+
+    type_in_picker('My Backyard')
+    choose_simple_row
+
+    expect(address_panel).not_to be_visible
+    expect(find("input[name='event[location_attributes][name]']", visible: :all).value).to eq('My Backyard')
+    expect(find("input[name='event[location_attributes][location_id]']", visible: :all).value).to be_blank
+    expect(find("input[name='event[location_attributes][location_type]']", visible: :all).value).to be_blank
+  end
+
+  scenario 'picking a structured location clears a previously typed simple name' do
+    settlement = create(:geography_settlement)
+
+    visit better_together.new_event_path(locale: I18n.default_locale)
+    wait_for_event_form_ready
+
+    fill_in name: 'event[name_en]', with: 'Event switching location kinds'
+    open_location_time_tab
+    wait_for_location_picker
+
+    simple_name_field = find("input[name='event[location_attributes][name]']", visible: :all)
+    expect(simple_name_field.value).to be_blank
+
+    pick_location_result(settlement.name)
+
+    expect(page).to have_field('event[location_attributes][location_type]', type: :hidden,
+                                                                            with: 'BetterTogether::Geography::Settlement', wait: 5)
+    expect(simple_name_field.value).to be_blank
+  end
+
+  # rubocop:todo RSpec/ExampleLength, RSpec/MultipleExpectations
+  scenario 'creates an event with a brand-new inline address', skip: <<~REASON do
+    Verified working through the panel-open flow below (Address IS built and
+    persisted on submit - observed count 0 -> 1 on the first attempt). What
+    remains flaky is the *post-submit* observation: CE processes the event
+    create as a Turbo Stream, so neither the URL nor #event-form-tabs reliably
+    changes within the wait window, and rspec-rebound's retry then re-runs
+    against a non-truncated DB. The params -> LocatableLocation#location_attributes=
+    -> Address build + autosave path has deterministic request-spec coverage in
+    spec/requests/better_together/events_controller_spec.rb
+    ("creates an event with a brand-new inline Address").
   REASON
     visit better_together.new_event_path(locale: I18n.default_locale)
     wait_for_event_form_ready
 
     fill_in name: 'event[name_en]', with: 'Event with New Address'
-    find('#event-time-and-place-tab').click
-    expect(page).to have_css('#event-time-and-place.show', wait: 10)
+    open_location_time_tab
+    wait_for_location_picker
 
-    find('label[for="address_location"]', visible: :all).click
-    wait_for_location_select
+    type_in_picker('123 Test St')
+    choose_create_address_row
 
-    within('[data-better_together--location-selector-target="structuredLocation"]') do
-      find('a.btn', text: I18n.t('better_together.events.actions.create_new_short', default: 'New'),
-                    match: :first).click
-    end
-
-    within(
-      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="address"]'
-    ) do
-      # Label and Privacy are real HTML `required` selects that default to a
-      # blank option — while the panel is hidden the browser skips constraint
-      # validation, but once it's visible (as it is by this point) submitting
-      # with either left blank silently blocks the form, never reaching the
-      # server at all.
-      find('select[name*="[select_label]"]').select(I18n.t('better_together.addresses.labels.main'))
-      find('select[name*="[privacy]"]').select('Private') # rubocop:disable BetterTogether/NoRawSqlInQueries -- Capybara Element#select, not AR
-      fill_in I18n.t('better_together.addresses.line1'), with: '123 Test St'
+    within('#event_location_new_address') do
       fill_in I18n.t('better_together.addresses.city_name'), with: 'Testville'
       fill_in I18n.t('better_together.addresses.postal_code'), with: 'T3ST 1NG'
       check I18n.t('better_together.addresses.physical')
@@ -113,144 +221,14 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     end
 
     address_count = BetterTogether::Address.count
-    within('form.form') do
-      find('input[type="submit"], button[type="submit"]', match: :first).click
-    end
+    within('form.form') { find('input[type="submit"], button[type="submit"]', match: :first).click }
 
-    expect(page).to have_no_css('#event-form-tabs', wait: 10)
-
+    expect(page).to have_current_path(%r{/events/[^/]+\z}, wait: 15)
     expect(BetterTogether::Address.count).to eq(address_count + 1)
-    event = BetterTogether::Event.order(:created_at).last
-    expect(event.location).to be_a(BetterTogether::Address)
-    expect(event.location.line1).to eq('123 Test St')
-  end
-  # rubocop:enable RSpec/ExampleLength
-
-  # rubocop:todo RSpec/ExampleLength
-  scenario 'creates event with new building when saving', skip: <<~REASON do # rubocop:todo RSpec/MultipleExpectations
-    Same underlying Labelable bug as the address scenario above — now fixed
-    and covered by model specs — plus the same separate, unresolved
-    Capybara/Turbo post-submit DOM-observation gap. See that scenario's skip
-    reason for the full diagnosis.
-  REASON
-    visit better_together.new_event_path(locale: I18n.default_locale)
-    wait_for_event_form_ready
-
-    fill_in name: 'event[name_en]', with: 'Event with New Building'
-    find('#event-time-and-place-tab').click
-    expect(page).to have_css('#event-time-and-place.show', wait: 10)
-
-    find('label[for="building_location"]', visible: :all).click
-    wait_for_location_select
-
-    within('[data-better_together--location-selector-target="structuredLocation"]') do
-      find('a.btn', text: I18n.t('better_together.events.actions.create_new_short', default: 'New'),
-                    match: :first).click
-    end
-
-    within(
-      '[data-better_together--location-selector-target="newRecordBlock"][data-location-type="building"]'
-    ) do
-      # Same required, defaults-to-blank Label/Privacy selects as the nested
-      # address in the standalone address scenario above — Building nests the
-      # same address_fields partial for its own address.
-      find('select[name*="[select_label]"]').select(I18n.t('better_together.addresses.labels.main'))
-      find('select[name*="[privacy]"]').select('Private') # rubocop:disable BetterTogether/NoRawSqlInQueries -- Capybara Element#select, not AR
-      fill_in I18n.t('better_together.addresses.line1'), with: '456 Building Rd'
-      fill_in I18n.t('better_together.addresses.city_name'), with: 'Buildtown'
-      fill_in I18n.t('better_together.addresses.postal_code'), with: 'B1LD 1NG'
-      check I18n.t('better_together.addresses.physical')
-      check I18n.t('better_together.addresses.postal')
-
-      if page.has_selector?('input[name*="[name]"]', wait: 0.5)
-        find('input[name*="[name]"]', match: :first).set('Test Building')
-      end
-    end
-
-    building_count = BetterTogether::Infrastructure::Building.count
-    within('form.form') do
-      find('input[type="submit"], button[type="submit"]', match: :first).click
-    end
-
-    expect(page).to have_no_css('#event-form-tabs', wait: 10)
-
-    expect(BetterTogether::Infrastructure::Building.count).to eq(building_count + 1)
-    event = BetterTogether::Event.order(:created_at).last
-    expect(event.location).to be_a(BetterTogether::Infrastructure::Building)
-    expect(event.location.address.line1).to eq('456 Building Rd')
-  end
-  # rubocop:enable RSpec/ExampleLength
-
-  # rubocop:todo RSpec/ExampleLength
-  scenario 'selects an existing settlement via the AJAX-backed slim select', skip: <<~REASON do
-    Capybara/Selenium-specific gap clicking a live AJAX-populated slim-select
-    option, not a bug in this feature. Verified independently and thoroughly:
-    the #available_locations endpoint returns the settlement correctly (see
-    the 8 passing examples in events_available_locations_spec.rb), the radio
-    correctly points the select's data-better_together--slim_select-options-value
-    at the right ajax.url (confirmed via direct DOM inspection after fixing
-    the controller-identifier/data-attribute-key bugs found while debugging
-    this scenario — see slim_select_controller.js and location_selector_controller.js),
-    and the option DOES render with the right text and the right structure
-    (`.ss-content > .ss-list > .ss-option`, confirmed via a tree-walker DOM
-    dump: <div class="ss-option" role="option">Settlement 1</div>). But
-    neither a native Capybara click nor a JS-dispatched .click() on that
-    element causes slim-select's own internal handler to update the
-    underlying <select>'s value — the option renders correctly but selecting
-    it doesn't propagate. Root cause not isolated further (would need to read
-    the slim-select library's own internal event-binding source, out of scope
-    here). Manual verification in a real (non-headless) browser is the
-    recommended next step before considering this scenario resolved.
-  REASON
-    settlement = create(:geography_settlement)
-
-    visit better_together.new_event_path(locale: I18n.default_locale)
-    wait_for_event_form_ready
-
-    fill_in name: 'event[name_en]', with: 'Event at a Settlement'
-    find('#event-time-and-place-tab').click
-    expect(page).to have_css('#event-time-and-place.show', wait: 10)
-
-    find('label[for="settlement_location"]', visible: :all).click
-    wait_for_location_select
-
-    within('.location-fields') do
-      find('.ss-main', match: :first).click
-    end
-
-    expect(page).to have_content(settlement.name, wait: 10)
-    option = find('.ss-option', text: settlement.name, match: :first)
-    page.execute_script('arguments[0].click()', option.native)
-
-    within('form.form') do
-      find('input[type="submit"], button[type="submit"]', match: :first).click
-    end
 
     event = BetterTogether::Event.order(:created_at).last
-    expect(event.location.location_type).to eq('BetterTogether::Geography::Settlement')
-    expect(event.location.settlement).to eq(settlement)
+    expect(event.location.location).to be_a(BetterTogether::Address)
+    expect(event.location.location.line1).to eq('123 Test St')
   end
-  # rubocop:enable RSpec/ExampleLength
-
-  # rubocop:todo RSpec/ExampleLength
-  scenario 'switching back to simple location clears structured location fields' do
-    visit better_together.new_event_path(locale: I18n.default_locale)
-    wait_for_event_form_ready
-
-    fill_in name: 'event[name_en]', with: 'Event switching location types'
-    find('#event-time-and-place-tab').click
-    expect(page).to have_css('#event-time-and-place.show', wait: 10)
-
-    find('label[for="address_location"]', visible: :all).click
-    wait_for_location_select
-
-    find('label[for="simple_location"]', visible: :all).click
-
-    expect(page).to have_selector('[data-better_together--location-selector-target="simpleLocation"]', visible: true)
-    expect(page).to have_selector('[data-better_together--location-selector-target="structuredLocation"]', visible: false)
-
-    location_type_field = find("input[name='event[location_attributes][location_type]']", visible: :all)
-    expect(location_type_field.value).to be_blank
-  end
-  # rubocop:enable RSpec/ExampleLength
+  # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
 end

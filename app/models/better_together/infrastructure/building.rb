@@ -59,10 +59,13 @@ module BetterTogether
         ] + super
       end
 
-      # Placeable: reuse an existing Building when the picker selected one (matching
-      # Placeable's own default lookup), otherwise build a new Building from nested
-      # locatable_location attrs. Building may include nested address attributes; hoist
-      # any top-level address attribute keys into address_attributes so Building.new
+      # Placeable: Buildings are picked from the existing set, never created inline
+      # from the event location form (that would produce orphan Building records
+      # with no address or coordinates) - Placeable#inline_create_fields_partial is
+      # left at its lookup-only default. This method still builds a new Building
+      # when nested attrs arrive from any other locatable form: reuse an existing
+      # Building when the picker selected one, otherwise build one, hoisting any
+      # top-level address attribute keys into address_attributes so Building.new
       # receives them nested as it expects.
       def self.locatable_location_build(attrs) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         existing = find_by(id: attrs['id'] || attrs['location_id'])
@@ -81,10 +84,6 @@ module BetterTogether
         attrs.except!('id', '_destroy', 'location_type', 'name', 'locatable_id', 'locatable_type', 'location_id')
 
         new(attrs)
-      end
-
-      def self.inline_create_fields_partial
-        'better_together/infrastructure/buildings/fields'
       end
 
       def address?

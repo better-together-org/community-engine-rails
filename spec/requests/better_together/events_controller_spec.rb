@@ -304,6 +304,47 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a brand-new inline Address' do # rubocop:todo RSpec/MultipleExpectations, RSpec/ExampleLength
+        # rubocop:enable RSpec/MultipleExpectations
+        # The picker's "Create new address" flow submits nested
+        # location_attributes[location_attributes][...]; the browser flow has
+        # coverage in spec/features/events/location_selector_spec.rb, this guards
+        # the params -> LocatableLocation#location_attributes= -> Address build +
+        # autosave path.
+        params = {
+          event: {
+            name: 'Inline Address Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_type: 'BetterTogether::Address',
+              location_attributes: {
+                label: 'main',
+                privacy: 'public',
+                physical: '1',
+                postal: '0',
+                line1: '9 New Street',
+                city_name: 'Newville',
+                postal_code: 'N3W 1AB'
+              }
+            }
+          },
+          locale: locale
+        }
+
+        expect do
+          post better_together.events_path(locale: locale), params: params
+        end.to change(BetterTogether::Address, :count).by(1)
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event.location.location).to be_a(BetterTogether::Address)
+        expect(event.location.location.line1).to eq('9 New Street')
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
       it 'creates an event with an Address location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         address = create(:better_together_address, privacy: 'public')
@@ -462,6 +503,30 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         end.not_to change(BetterTogether::Event, :count)
 
         expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'flags the location picker invalid and renders the alert when the inline address fails' do # rubocop:todo RSpec/MultipleExpectations, RSpec/ExampleLength
+        expect do
+          post better_together.events_path(locale: locale), params: {
+            event: {
+              name: 'Event with a broken inline address',
+              starts_at: 1.day.from_now.iso8601,
+              identifier: SecureRandom.uuid,
+              privacy: 'public',
+              creator_id: manager_user.person.id,
+              location_attributes: {
+                location_type: 'BetterTogether::Address',
+                location_attributes: { label: 'main', privacy: 'public', physical: '0', postal: '0', city_name: 'Nowhere' }
+              }
+            }
+          }
+        end.not_to change(BetterTogether::Address, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        body = CGI.unescapeHTML(response.body)
+        expect(body).to include('id="event_location_picker_error"')
+        expect(body).to include('role="alert"')
+        expect(body).to match(/id="event_location_picker"[^>]*aria-invalid="true"/)
       end
 
       it 'updates an existing event', :aggregate_failures do

@@ -22,6 +22,15 @@ RSpec.describe BetterTogether::Address do
       address = described_class.new(select_label: '', text_label: '')
       expect(address.label).to be_blank
     end
+
+    it 'clears a stale custom label when the "Other" field is cleared while still on "other"' do
+      address = described_class.new(select_label: 'other', text_label: 'Cottage')
+      expect(address.label).to eq('Cottage')
+
+      address.assign_attributes(select_label: 'other', text_label: '')
+
+      expect(address.label).to be_blank
+    end
   end
 
   describe 'factory' do

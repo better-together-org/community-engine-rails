@@ -1,0 +1,49 @@
+{
+  "name": "event_location_create_row",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Community Engine",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_location_picker",
+  "flow": "event_location_create_row",
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
+  "callouts": [
+    {
+      "selector": ".ss-create-option",
+      "title": "Creation lives in the results list",
+      "bullets": [
+        "Type an address that is not on file and the last rows offer \"Create new address\" and \"use your typed text as a custom name\".",
+        "No separate always-present button next to the field."
+      ],
+      "target": {
+        "x": 25.0,
+        "y": 1131.390625,
+        "width": 411.0,
+        "height": 41.0,
+        "right": 436.0,
+        "bottom": 1172.390625,
+        "center_x": 230.5,
+        "center_y": 1151.890625
+      },
+      "avoid": {
+        "x": 25.0,
+        "y": 1131.390625,
+        "width": 411.0,
+        "height": 41.0,
+        "right": 436.0,
+        "bottom": 1172.390625,
+        "center_x": 230.5,
+        "center_y": 1151.890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 95.5,
+        "y": 713.39,
+        "width": 270.0,
+        "height": 398,
+        "score": 1131.390625
+      }
+    }
+  ]
+}

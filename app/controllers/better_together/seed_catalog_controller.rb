@@ -11,12 +11,19 @@ module BetterTogether
       @catalogs = BetterTogether::SeedCatalog::Registry.all
     end
 
-    def plant
+    def plant # rubocop:todo Metrics/AbcSize
       catalog = find_catalog!
+      category_key = params[:category_key]
+      missing = catalog.missing_prerequisites(category_key)
 
-      if catalog.plant(params[:category_key])
+      if missing.any?
         redirect_to seed_catalog_seeds_path,
-                    notice: t('seed_catalog.plant.success', category: params[:category_key].to_s.humanize)
+                    alert: t('seed_catalog.plant.missing_prerequisites',
+                             category: category_key.to_s.humanize,
+                             prerequisites: missing.map { |key| key.to_s.humanize }.to_sentence)
+      elsif catalog.plant(category_key)
+        redirect_to seed_catalog_seeds_path,
+                    notice: t('seed_catalog.plant.success', category: category_key.to_s.humanize)
       else
         redirect_to seed_catalog_seeds_path, alert: t('seed_catalog.plant.unknown_category')
       end

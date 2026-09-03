@@ -2,7 +2,7 @@
   "name": "seed_catalog_index_partially_planted",
   "device": "mobile",
   "url": "/en/host/seeds/catalog",
-  "title": "Community Engine",
+  "title": "Funk, Altenwerth and Bruen",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "seed_catalog",
@@ -17,32 +17,32 @@
         "The Plant button for this category becomes disabled -- clicking again is a no-op either way."
       ],
       "target": {
-        "x": 266.609375,
-        "y": 377.203125,
+        "x": 189.71875,
+        "y": 417.203125,
         "width": 67.609375,
         "height": 20.375,
-        "right": 334.21875,
-        "bottom": 397.578125,
-        "center_x": 300.4140625,
-        "center_y": 387.390625
+        "right": 257.328125,
+        "bottom": 437.578125,
+        "center_x": 223.5234375,
+        "center_y": 427.390625
       },
       "avoid": {
-        "x": 266.609375,
-        "y": 377.203125,
+        "x": 189.71875,
+        "y": 417.203125,
         "width": 67.609375,
         "height": 20.375,
-        "right": 334.21875,
-        "bottom": 397.578125,
-        "center_x": 300.4140625,
-        "center_y": 387.390625
+        "right": 257.328125,
+        "bottom": 437.578125,
+        "center_x": 223.5234375,
+        "center_y": 427.390625
       },
       "placement": {
         "side": "below",
-        "x": 165.41,
-        "y": 417.58,
+        "x": 88.52,
+        "y": 457.58,
         "width": 270.0,
         "height": 288,
-        "score": 863.421875
+        "score": 823.421875
       }
     },
     {
@@ -53,24 +53,24 @@
         "The country<->continent join table only populates once both sides are planted."
       ],
       "target": {
-        "x": 266.609375,
-        "y": 425.203125,
+        "x": 189.71875,
+        "y": 465.203125,
         "width": 95.609375,
         "height": 20.375,
-        "right": 362.21875,
-        "bottom": 445.578125,
-        "center_x": 314.4140625,
-        "center_y": 435.390625
+        "right": 285.328125,
+        "bottom": 485.578125,
+        "center_x": 237.5234375,
+        "center_y": 475.390625
       },
       "avoid": {
-        "x": 266.609375,
-        "y": 425.203125,
+        "x": 189.71875,
+        "y": 465.203125,
         "width": 95.609375,
         "height": 20.375,
-        "right": 362.21875,
-        "bottom": 445.578125,
-        "center_x": 314.4140625,
-        "center_y": 435.390625
+        "right": 285.328125,
+        "bottom": 485.578125,
+        "center_x": 237.5234375,
+        "center_y": 475.390625
       },
       "placement": {
         "side": "right",

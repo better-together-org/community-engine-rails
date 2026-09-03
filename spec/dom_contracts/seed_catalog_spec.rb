@@ -33,6 +33,25 @@ RSpec.describe 'Seed catalog DOM contract', :as_platform_manager, type: :request
     expect(response.body).to include('continents-status-badge badge bg-success')
   end
 
+  it 'exposes the missing-prerequisites hint and disabled state for a blocked category' do # rubocop:disable RSpec/MultipleExpectations
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+
+    expect(response.body).to include('id="plant-provinces-missing-prerequisites"')
+    expect(response.body).to include('id="plant-settlements-missing-prerequisites"')
+    expect(response.body).to match(/id="plant-provinces-btn"[^>]*disabled/)
+    expect(response.body).not_to include('id="plant-continents-missing-prerequisites"')
+    expect(response.body).not_to match(/id="plant-continents-btn"[^>]*disabled/)
+  end
+
+  it 'clears the missing-prerequisites hint once the prerequisite is planted' do
+    BetterTogether::SeedCatalog::GeographyCatalog.plant(:countries)
+
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+
+    expect(response.body).not_to include('id="plant-provinces-missing-prerequisites"')
+    expect(response.body).not_to match(/id="plant-provinces-btn"[^>]*disabled/)
+  end
+
   it 'exposes the Seed Catalog link on the Host Dashboard' do
     get "/#{I18n.default_locale}/host"
 

@@ -1,20 +1,20 @@
 {
-  "name": "event_location_type_selector",
+  "name": "event_location_picker_search",
   "device": "mobile",
   "url": "/en/events/new",
   "title": "Community Engine",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_location_picker",
-  "flow": "event_location_type_selector",
+  "flow": "event_location_picker_search",
   "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
   "callouts": [
     {
-      "selector": "[data-better_together--location-selector-target=\"typeSelector\"]",
-      "title": "Location type",
+      "selector": "#event_location_picker",
+      "title": "One field searches everything",
       "bullets": [
-        "Simple: free-text name only (original behavior, still the default).",
-        "Address / Building / Settlement / Region: attach a real, existing record."
+        "One field searches Address, Building, Floor, Room, Settlement, and Region at once as you type.",
+        "No location-type picker to choose first: results are labeled with their type."
       ],
       "target": {
         "x": 12.0,
@@ -39,9 +39,9 @@
       "placement": {
         "side": "above",
         "x": 107.5,
-        "y": 705.39,
+        "y": 621.39,
         "width": 270.0,
-        "height": 314,
+        "height": 398,
         "score": 1039.390625
       }
     }

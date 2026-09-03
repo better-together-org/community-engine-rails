@@ -142,4 +142,64 @@ RSpec.describe 'Documentation screenshots for the Locatable event map',
       expect(page).to have_css('.events-map [data-controller="better_together--map"]')
     end
   end
+
+  it 'captures the aggregate map including a Room-located event (regression coverage)' do
+    building_event = create(:better_together_event, :with_building_location, platform: host_platform,
+                                                                             creator: manager.person,
+                                                                             name: 'Building Meetup')
+    geocode!(building_event.location)
+
+    # Rooms/Floors have no independent space of their own (delegated to their building) - unlike
+    # Address/Building/Settlement/Region, .includes(location: { location: :space }) needs a real
+    # reflection to eager-load through, so a Room-located event previously raised
+    # ActiveRecord::AssociationNotFoundError and broke this entire page. Fixed at the query level
+    # (EventCollectionMap.records); this scenario is the only visual coverage of that fix.
+    room = building_event.location.location.floors.first.rooms.first
+    room_event = create(:better_together_event, platform: host_platform, creator: manager.person,
+                                                name: 'Room-Based Meetup')
+    create(:locatable_location, locatable: room_event, location: room,
+                                location_type: 'BetterTogether::Infrastructure::Room', name: nil)
+
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'event_map_index_room_location',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'event_map_index_room_location', role: 'community_organizer'),
+      callouts: [
+        {
+          id: 'events_map',
+          selector: '.events-map',
+          title: 'Room-located event renders without error',
+          bullets: [
+            'Regression coverage: a Room (or Floor) assigned as an event\'s location previously 500\'d ' \
+            'this entire page.',
+            'Room/Floor have no space of their own — their marker position comes from their building\'s ' \
+            'geocoded space.'
+          ]
+        }
+      ],
+      narrative: {
+        title: 'Events Index — Aggregate Map Including a Room-Located Event',
+        audience: %w[community_organizer platform_organizer developer],
+        journey_step: 'As a community organizer browsing events, a meetup located in a specific room ' \
+                      'inside a building shows up on the map exactly like any other located event.',
+        callouts: [
+          {
+            id: 'events_map',
+            title: 'Fixed in this PR',
+            description: 'EventCollectionMap.records\' eager-load hash now covers both shapes in one ' \
+                         'preload — [:space, { building: :space }] — so Rails only applies each entry to ' \
+                         'the polymorphic subtypes that actually have a matching reflection, instead of ' \
+                         'requiring every Placeable type to expose the same :space association.'
+          }
+        ],
+        accessibility_notes: 'Marker popups use the event name as visible link text, satisfying link- ' \
+                             'purpose-in-context for screen reader users.'
+      }
+    ) do
+      capybara_login_as_platform_manager
+      visit better_together.events_path(locale: I18n.default_locale)
+
+      expect(page).to have_css('.events-map [data-controller="better_together--map"]')
+    end
+  end
 end

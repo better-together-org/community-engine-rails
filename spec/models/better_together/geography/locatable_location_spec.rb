@@ -325,6 +325,24 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
   end
 
   describe 'class methods' do
+    # Regression guard: EventsController#location_scope_for derives
+    # "available_#{klass.name.demodulize.underscore.pluralize}_for" by naming
+    # convention from Placeable.included_in_models and 422s ("Invalid location
+    # type") if the derived method doesn't exist here. All 6 current Placeable
+    # includers happen to have one today, but nothing enforces that a *future*
+    # Placeable includer gets one too - this fails CI instead of only surfacing
+    # as a silent runtime 422 on the picker's AJAX request.
+    describe 'available_*_for parity with Geography::Placeable.included_in_models' do
+      it 'defines an available_*_for class method for every current Placeable includer' do
+        missing = BetterTogether::Geography::Placeable.included_in_models.reject do |klass|
+          method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
+          described_class.respond_to?(method_name)
+        end
+
+        expect(missing).to eq([])
+      end
+    end
+
     describe '.available_addresses_for' do
       let(:user) { create(:better_together_user, :confirmed) }
       let(:person) { user.person }
@@ -398,6 +416,28 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
           expect(result).not_to include(private_address)
         end
       end
+
+      context 'with a search term' do
+        let!(:matching_address) do
+          create(:better_together_address, privacy: 'public', line1: '123 Distinctive Court', city_name: 'Searchtown')
+        end
+        let!(:other_public_address) do
+          create(:better_together_address, privacy: 'public', line1: '456 Other Street', city_name: 'Elsewhere')
+        end
+
+        it 'filters to addresses matching the search term across component fields' do
+          result = described_class.available_addresses_for('unsupported', search: 'Searchtown')
+
+          expect(result).to include(matching_address)
+          expect(result).not_to include(other_public_address)
+        end
+
+        it 'is case-insensitive' do
+          result = described_class.available_addresses_for('unsupported', search: 'distinctive')
+
+          expect(result).to include(matching_address)
+        end
+      end
     end
 
     describe '.available_buildings_for' do
@@ -464,6 +504,22 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
           expect(result).to eq(BetterTogether::Infrastructure::Building.none)
         end
       end
+
+      context 'with a search term' do
+        let!(:matching_building) do
+          create(:better_together_infrastructure_building, privacy: 'public', name: 'Distinctive Tower')
+        end
+        let!(:other_public_building) do
+          create(:better_together_infrastructure_building, privacy: 'public', name: 'Unrelated Hall')
+        end
+
+        it 'filters to buildings whose name matches the search term' do
+          result = described_class.available_buildings_for(community, search: 'Distinctive')
+
+          expect(result).to include(matching_building)
+          expect(result).not_to include(other_public_building)
+        end
+      end
     end
 
     describe '.available_floors_for' do
@@ -509,6 +565,13 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
 
         expect(result.to_a).to eq([settlement_b, settlement_a])
       end
+
+      it 'filters to settlements matching the search term when provided' do
+        result = described_class.available_settlements_for(nil, search: 'Zeta')
+
+        expect(result).to include(settlement_a)
+        expect(result).not_to include(settlement_b)
+      end
     end
 
     describe '.available_regions_for' do
@@ -519,6 +582,13 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
         result = described_class.available_regions_for(nil)
 
         expect(result.to_a).to eq([region_b, region_a])
+      end
+
+      it 'filters to regions matching the search term when provided' do
+        result = described_class.available_regions_for(nil, search: 'Zeta')
+
+        expect(result).to include(region_a)
+        expect(result).not_to include(region_b)
       end
     end
 

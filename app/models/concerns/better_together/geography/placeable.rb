@@ -9,6 +9,10 @@ module BetterTogether
     module Placeable
       extend ActiveSupport::Concern
 
+      # Matches HierarchyResolutionJob::STATE_NAME_SIMILARITY_THRESHOLD's rationale:
+      # favor avoiding false positives over catching every minor spelling variant.
+      NAME_SIMILARITY_THRESHOLD = 0.2
+
       def self.included_in_models
         included_module = self
         Rails.application.eager_load! unless Rails.env.production?
@@ -22,6 +26,35 @@ module BetterTogether
         # always picked from the existing curated set.
         def locatable_location_build(attrs)
           find_by(id: attrs['id'] || attrs['location_id'])
+        end
+
+        # Trigram-similarity search against this model's Mobility-translated `name`
+        # attribute, reusing the same mobility_string_translations GIN trigram index
+        # and Arel similarity() pattern as HierarchyResolutionJob#name_similarity_function
+        # (the two live in different domains - job-scoped State resolution vs. the event
+        # location picker - so aren't merged into one method, but share the same query
+        # shape deliberately). Only meaningful for models with `translates :name`
+        # (Building, Floor, Room, Settlement, Region); Address has no single translated
+        # name field and implements its own search filtering instead.
+        def name_similarity_scope(search)
+          return all if search.blank?
+
+          translations = Arel::Table.new(:mobility_string_translations)
+          similarity = Arel::Nodes::NamedFunction.new('similarity', [translations[:value], Arel::Nodes.build_quoted(search)])
+
+          joins(name_translations_join)
+            .where(similarity.gt(NAME_SIMILARITY_THRESHOLD))
+            .order(similarity.desc)
+        end
+
+        def name_translations_join # rubocop:todo Metrics/AbcSize
+          translations = Arel::Table.new(:mobility_string_translations)
+
+          arel_table.join(translations)
+                    .on(translations[:translatable_type].eq(base_class.name)
+                          .and(translations[:translatable_id].eq(arel_table[:id]))
+                          .and(translations[:key].eq('name')))
+                    .join_sources
         end
 
         # Path to the partial rendering this model's inline "+New" nested-attributes

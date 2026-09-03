@@ -19,7 +19,17 @@ callouts:
   :title: Plant one category
   :description: Category-level granularity, matching GeographyBuilder's existing separable
     seed_continents/seed_countries/seed_provinces/seed_regions/seed_settlements methods.
+- :id: missing_prerequisites
+  :title: Prerequisite guard
+  :description: 'Bug fixed in this PR: planting Settlements before Provinces (or Provinces
+    before Countries) previously raised an uncaught 500 -- seed_settlements looks
+    up its State by identifier and reads state.country, which is nil if Provinces
+    was never planted. GeographyCatalog.missing_prerequisites now checks this server-side
+    (returning a friendly alert instead of calling the builder method), and the same
+    check disables the button and shows this hint in the UI before the organizer can
+    even click it.'
 accessibility_notes: Plant buttons carry an aria-label naming the specific category;
-  the disabled state (once planted) is a real disabled attribute, not just a CSS class.
+  the disabled state (once planted, or once blocked on a missing prerequisite) is
+  a real disabled attribute, not just a CSS class.
 slug: seed_catalog_index_unplanted
 device: mobile

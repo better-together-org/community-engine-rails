@@ -1575,7 +1575,6 @@ fr:
     events:
       actions:
         create_new: Créer un(e) nouveau/nouvelle %{model}
-        create_new_short: Nouveau
       add_to_calendar: Ajouter au calendrier (.ics)
       attendees: Participants
       back_to_events: Voir les événements
@@ -1592,10 +1591,10 @@ fr:
           synchronisé avec l'heure de fin.
         ends_at: Quand l'événement se termine. Se met à jour automatiquement lorsque
           la durée change.
-        location: Où les participants se rencontreront pour cet événement
-        location_name: Nom du lieu ou point de rencontre
+        location: Recherchez une adresse, un bâtiment ou un lieu existant. S'il n'est
+          pas répertorié, choisissez « Créer une nouvelle adresse » ou utilisez le
+          texte saisi comme nom personnalisé.
         name: Un titre clair et descriptif pour votre événement
-        select_location: Sélectionner un emplacement
         slug: Identifiant convivial pour l'URL de cet événement
         starts_at: Quand l'événement commence. Toutes les heures sont dans le fuseau
           horaire sélectionné ci-dessus.
@@ -1647,10 +1646,7 @@ fr:
         duration_minutes: Durée
         ends_at: Se termine à
         location: Lieu
-        location_name: Nom du lieu
-        location_type: Type de lieu
         privacy: Confidentialité
-        select_location: Sélectionner un emplacement
         starts_at: Débute à
         status: Statut
         timezone: Fuseau Horaire de l'Événement
@@ -1680,14 +1676,16 @@ fr:
         status_draft: Brouillon
         status_label: Statut
       location: Lieu
-      location_types:
-        address: Adresse
-        building: Bâtiment
-        floor: Étage
-        region: Région
-        room: Pièce
-        settlement: Habitat
-        simple: Simple
+      location_picker:
+        announcements:
+          cancelled: Nouvelle adresse annulée. Retour au champ de recherche de lieu.
+          creating: Création d'une nouvelle adresse. Remplissez les champs d'adresse
+            ci-dessous, puis enregistrez l'événement.
+        cancel_new_address: Annuler la nouvelle adresse
+        create_row:
+          new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
+          use_typed_name: Utiliser « %{q} » comme nom de lieu personnalisé
+        new_address_legend: Nouvelle adresse
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
@@ -1710,11 +1708,7 @@ fr:
         rsvp_saved_for_date: RSVP pour le %{date} enregistrée
       odd: doit être impair
       other_than: doit être différent de %{count}
-      placeholders:
-        location_name: Nom du lieu
       present: doit être vide
-      prompts:
-        select_location: Sélectionner un emplacement
       recurrence:
         actions:
           add_exception_date: Ajouter une date d'exception
@@ -5514,6 +5508,7 @@ fr:
       category: Catégorie
       description: Installez des données de référence organisées à la demande, une
         catégorie à la fois ou toutes en même temps.
+      missing_prerequisites: Planter %{prerequisites} d'abord
       not_planted: Non planté
       plant: Planter
       plant_all: Tout planter
@@ -5522,6 +5517,8 @@ fr:
       status: Statut
       title: Catalogue de semences
     plant:
+      missing_prerequisites: "%{category} nécessite que %{prerequisites} soit planté
+        au préalable."
       success: "%{category} planté."
       unknown_category: Catégorie inconnue.
     plant_all:
