@@ -273,33 +273,32 @@ end
 
 #### Location Selector Controller (Stimulus)
 
-**Dynamic Location Forms**
+The event location picker is a single mixed-search SlimSelect combobox that
+searches every `Geography::Placeable` type at once (see the "Location Selector
+Deep Dive" in `docs/developers/systems/events_system.md`). `Address` is the only
+type creatable inline from the form; `Building`, `Settlement`, `Region`, `Floor`,
+and `Room` are chosen from the existing set only.
+
 ```javascript
 // app/javascript/controllers/better_together/location_selector_controller.js
 export default class extends Controller {
   static targets = [
-    "typeSelector",
-    "simpleLocation", 
-    "addressLocation",
-    "buildingLocation"
+    "locationSelect",        // the SlimSelect combobox
+    "locationIdField",       // hidden - existing structured pick
+    "locationTypeField",     // hidden - existing structured pick
+    "simpleNameField",       // hidden - free-typed simple location
+    "newRecordBlock",        // the inline "new address" <fieldset>
+    "newRecordQuery", "cancelNewRecordButton", "announcement"
   ]
-  
-  toggleLocationType(event) {
-    const selectedType = event.target.value
-    this.hideAllLocationTypes()
-    
-    switch(selectedType) {
-      case 'simple':
-        this.showSimpleLocation()
-        break
-      case 'address':
-        this.showAddressLocation()
-        break
-      case 'building':
-        this.showBuildingLocation()
-        break
-    }
-  }
+
+  // change on the picker: split "ClassName:id" into the hidden fields, or write
+  // the simple name field for free text.
+  applyLocationSelection() { /* ... */ }
+
+  // better_together--slim-select:create - the user picked a "Create new address"
+  // or "Use my typed text" row in the dropdown.
+  revealNewRecord(event) { /* reveal + focus the inline address fieldset */ }
+  cancelNewRecord() { /* hide, clear, return focus to the combobox */ }
 }
 ```
 

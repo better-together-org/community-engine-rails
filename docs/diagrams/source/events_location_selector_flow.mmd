@@ -2,7 +2,7 @@ flowchart TD
 
   %% Location Selector Stimulus Controller
   START[Event Form Load] --> INIT["Location Selector Stimulus Controller\nconnect()"]
-  INIT --> DISABLE["Disable every '+New' block's fields\n(hidden but not disabled still POSTs)"]
+  INIT --> DISABLE["Disable the inline address panel's fields\n(hidden but not disabled still POSTs),\nunless the server re-rendered it open"]
 
   %% Search
   DISABLE --> USER[Organizer types in the mixed-search picker]
@@ -16,30 +16,32 @@ flowchart TD
   SCOPES -->|Floor / Room| INHERITED[Scoped via their building's visibility]
   POLICY --> RESULTS
   CURATED --> RESULTS
-  INHERITED --> RESULTS["Composite 'ClassName:id' results,\ncapped per type, type-labeled"]
+  INHERITED --> RESULTS["Composite ClassName:id results,\ncapped per type, type-labeled,\nplus Create-new-address and\nUse-typed-text action rows"]
 
   %% Selection
   RESULTS --> CHOICE{Organizer's choice}
-  CHOICE -->|Picks a result| SPLIT["applyLocationSelection:\nmatch composite value's class-name prefix"]
-  CHOICE -->|"Types free text, no match\n(SlimSelect 'addable')"| SIMPLE["setSimpleLocation:\nwrite hidden name field"]
-  CHOICE -->|"Clicks '+New'\n(Address/Building only, always visible)"| NEWRECORD[Show inline new-record panel,\nenable its fields]
+  CHOICE -->|Picks an existing result| SPLIT["applyLocationSelection:\nmatch composite value's class-name prefix"]
+  CHOICE -->|Selects the Use-typed-text row| SIMPLE["applySimpleFromQuery:\nwrite hidden name field"]
+  CHOICE -->|Selects the Create-new-address row| NEWRECORD["revealNewRecord: reset the picker,\nunhide and enable the inline address\nfieldset, prefill line1, move focus"]
 
   SPLIT --> STRUCTURED["setStructuredLocation:\nwrite hidden location_id/location_type,\nclear simple name field"]
-  STRUCTURED --> CLOSEBLOCKS["closeAllNewRecordBlocks:\nany open '+New' panel closes + disables"]
+  STRUCTURED --> CLOSEBLOCKS["closeAllNewRecordBlocks:\nany open address panel closes and disables"]
   SIMPLE --> CLOSEBLOCKS
-  NEWRECORD --> FILL["Fill inline fields:\nline1, city, postal_code, etc."]
+  NEWRECORD --> FILL["Fill inline address fields:\nline1, city, postal_code, etc."]
+  NEWRECORD --> CANCEL["Cancel: hide and disable the fieldset,\nclear its inputs and the hidden fields,\nreturn focus to the combobox"]
+  CANCEL --> USER
 
   %% Submission & backend
   CLOSEBLOCKS --> SUBMIT[Submit Event Form]
   FILL --> SUBMIT
 
   SUBMIT --> LOCATTR{Which fields are populated?}
-  LOCATTR -->|"location_id + location_type\n(plain polymorphic FK columns)"| DIRECT["Ordinary Rails mass assignment\n(no custom setter involved)"]
-  LOCATTR -->|name only| DIRECT
-  LOCATTR -->|"Nested location_attributes\n(the '+New' panel's own fields)"| CUSTOM["LocatableLocation#location_attributes=\n(custom setter, '+New' path only)"]
-  CUSTOM --> BUILD["klass.locatable_location_build(attrs):\nbuilds the new Address/Building"]
+  LOCATTR -->|location_id + location_type| CUSTOM
+  LOCATTR -->|name only| CUSTOM
+  LOCATTR -->|Nested location_attributes| CUSTOM["LocatableLocation#location_attributes=\n(id lookup, type build, or simple name)"]
+  CUSTOM --> BUILD["Address.locatable_location_build(attrs):\nlooks up by id first,\nonly builds a new Address if not found"]
 
-  DIRECT --> SAVE["belongs_to :location, autosave: true"]
+  CUSTOM --> SAVE["belongs_to :location, autosave: true"]
   BUILD --> SAVE
   SAVE --> GEOCODE{Needs geocoding?}
   GEOCODE -->|"Yes: this save changed something,\nor not yet geocoded"| GEOJOB[Schedule geocoding job]
@@ -51,6 +53,6 @@ flowchart TD
   classDef backend fill:#e8f5e8
   classDef data fill:#fff3e0
 
-  class INIT,DISABLE,DEBOUNCE,SPLIT,STRUCTURED,SIMPLE,CLOSEBLOCKS,NEWRECORD stimulus
-  class BACKEND,MIXED,POLICY,CURATED,INHERITED,DIRECT,CUSTOM,BUILD,GEOJOB backend
+  class INIT,DISABLE,DEBOUNCE,SPLIT,STRUCTURED,SIMPLE,CLOSEBLOCKS,NEWRECORD,CANCEL stimulus
+  class BACKEND,MIXED,POLICY,CURATED,INHERITED,CUSTOM,BUILD,GEOJOB backend
   class RESULTS,FILL,SAVE data
