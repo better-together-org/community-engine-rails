@@ -3,6 +3,8 @@
 module BetterTogether
   # CRUD for Agreements
   class AgreementsController < FriendlyResourceController
+    include PageBlockVisibility
+
     skip_before_action :check_platform_privacy, only: :show
     before_action :authenticate_user!, only: :accept
     before_action :set_resource_instance, only: :accept
@@ -19,7 +21,7 @@ module BetterTogether
 
       if @agreement.page
         @page = @agreement.page
-        @content_blocks = @page.content_blocks
+        assign_visible_page_content_blocks(@page)
         @layout = 'layouts/better_together/page'
         @layout = @page.layout if @page.layout.present?
       end

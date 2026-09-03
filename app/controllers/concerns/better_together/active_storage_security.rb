@@ -11,9 +11,13 @@ module BetterTogether
   #      #verify_content_signature) -- runs first, before any auth/privacy check, and
   #      before any representation/variant generation is ever attempted.
   #   1. Blob not attached to any record → require authentication (no orphaned public blobs).
-  #   2. Blob is attached to a record with Privacy#privacy_public? → allow unauthenticated.
+  #   2. Blob is attached to a publicly-accessible record → allow unauthenticated.
+  #      "Publicly accessible" = Privacy#privacy_public? for most records; for a
+  #      Content::Block it is BlockPolicy#show? as an anonymous viewer (so a public
+  #      block on an unpublished/private page is not served).
   #   3. Otherwise require the user to be signed in.
-  #   4. If the attachment record has a Pundit policy responding to #download? → enforce it.
+  #   4. If the attachment record has a Pundit policy responding to #download? → enforce it
+  #      (Content::BlockPolicy#download? aliases #show?).
   #
   # Handles signed blob IDs and signed blob/variation IDs (representations).
   # @blob is set by ActiveStorage::SetBlob or ActiveStorage::SetBlobAndVariation before
@@ -98,7 +102,14 @@ module BetterTogether
     end
 
     def publicly_accessible?(record)
-      record.respond_to?(:privacy_public?) && record.privacy_public?
+      return false unless record.respond_to?(:privacy_public?)
+
+      # A content block is bounded by its page: a public block whose page is
+      # unpublished/private is not anonymously accessible. Delegate to the block
+      # policy (evaluated as an anonymous viewer) so markup and media agree.
+      return BetterTogether::Content::BlockPolicy.new(nil, record).show? if record.is_a?(BetterTogether::Content::Block)
+
+      record.privacy_public?
     end
 
     def apply_media_cache_headers
