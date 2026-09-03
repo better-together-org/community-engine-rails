@@ -10,9 +10,14 @@ module BetterTogether
     encrypts :content_screening_summary
     encrypts :content_security_records_json
 
+    # optional: true — the underlying ActionMailbox::InboundEmail is incinerated
+    # (destroyed) by Rails ~30 days after receipt; this row is the durable record
+    # and must survive with inbound_email_id nulled out (see migration
+    # NullifyInboundEmailFkOnIncineration).
     belongs_to :inbound_email,
                class_name: 'ActionMailbox::InboundEmail',
-               inverse_of: false
+               inverse_of: false,
+               optional: true
     # Override PlatformScoped's belongs_to: inbound emails may not resolve to a platform.
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :target, polymorphic: true, optional: true

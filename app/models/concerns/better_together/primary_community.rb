@@ -29,6 +29,7 @@ module BetterTogether
 
         before_validation :create_primary_community
         after_create :backfill_primary_community_platform
+        before_destroy :clear_primary_community_platform_scoping
         after_create_commit :after_record_created
       end
     end
@@ -55,26 +56,43 @@ module BetterTogether
       value.respond_to?(:to_plain_text) ? value.to_plain_text : value
     end
 
-    # The very first Platform ever created has no existing platform for its own
-    # primary Community — or that Community's ContactDetail, built by
-    # Contactable#build_default_contact_details as part of the same save, or
-    # its default Calendar, built by Community#create_default_calendar as
-    # another after_create callback on the same save — to resolve via
-    # PlatformScoped#assign_current_platform_if_available.
-    # Community#bootstrapping_host_community?,
-    # ContactDetail#bootstrapping_host_community_contact_detail?, and
-    # Calendar#platform_presence_optional? let all three save with a blank
-    # platform in exactly that one case. Backfill all three platform
-    # references now that this record has a persisted id. No-ops for every
-    # other has_community includer (Person, subsequent Platforms), whose
-    # community (and its contact_detail/calendars) already resolved their own
-    # platform normally when created above.
+    # A Platform's own primary Community — and that Community's ContactDetail,
+    # built by Contactable#build_default_contact_details as part of the same
+    # save, and its default Calendar, built by Community#create_default_calendar
+    # as another after_create callback on the same save — always belongs to
+    # that Platform. create_primary_community passes
+    # bootstrapping_primary_community: true so Community#platform_presence_optional?
+    # (and ContactDetail/Calendar, which delegate to it) skip
+    # PlatformScoped#assign_current_platform_if_available's generic ambient
+    # fallback (Current.platform / host platform / Platform.first) entirely,
+    # since none of the three can reference this Platform yet — it has no id
+    # until after this save. Correct all three now that this record has a
+    # persisted id.
     def backfill_primary_community_platform
       return unless is_a?(BetterTogether::Platform) && community.present?
 
-      backfill_bootstrap_platform_id(community)
-      backfill_bootstrap_platform_id(community.contact_detail)
-      community.calendars.each { |calendar| backfill_bootstrap_platform_id(calendar) }
+      correct_bootstrap_platform_id(community)
+      correct_bootstrap_platform_id(community.contact_detail)
+      community.calendars.each { |calendar| correct_bootstrap_platform_id(calendar) }
+    end
+
+    # belongs_to :community, dependent: :destroy fires *after* self is
+    # destroyed (the opposite order of has_many dependent: :destroy), so
+    # Platform's own row DELETE runs before community.destroy ever cascades
+    # to the calendar/contact_detail/community rows that (correctly, since
+    # backfill_primary_community_platform) self-reference this platform_id.
+    # Postgres then rejects the platform DELETE: those rows are still
+    # referencing it. Null the FK here first -- they're about to be
+    # destroyed via the community cascade a moment later regardless, this
+    # just avoids the ordering conflict. No-op for every other
+    # has_community includer (Person), whose community is correctly scoped
+    # to the ambient platform, not to itself.
+    def clear_primary_community_platform_scoping
+      return unless is_a?(BetterTogether::Platform) && community.present?
+
+      community.calendars.update_all(platform_id: nil)
+      clear_self_referencing_platform_id(community.contact_detail)
+      clear_self_referencing_platform_id(community)
     end
 
     def primary_community_extra_attrs
@@ -101,10 +119,16 @@ module BetterTogether
 
     private
 
-    def backfill_bootstrap_platform_id(record)
-      return if record.blank? || record.platform_id.present?
+    def correct_bootstrap_platform_id(record)
+      return if record.blank? || record.platform_id == id
 
       record.update_column(:platform_id, id)
+    end
+
+    def clear_self_referencing_platform_id(record)
+      return if record.blank? || record.platform_id != id
+
+      record.update_column(:platform_id, nil)
     end
   end
 end

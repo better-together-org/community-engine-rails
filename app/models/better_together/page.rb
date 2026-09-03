@@ -119,14 +119,17 @@ module BetterTogether
     # Payload for search indexing (database fallback and future external backends).
     # Includes block content so full-text search can match text that only lives
     # inside a block (e.g. markdown source) rather than a direct Page column.
+    # Only publicly-visible block text is indexed (blocks and template blocks
+    # alike): a non-public block must not make its page a search hit for people
+    # who could not see that block (mirrors Content::BlockPolicy).
     def as_indexed_json
       {
         title: title,
         meta_description: meta_description,
         keywords: keywords,
         content: content&.to_plain_text,
-        blocks: content_blocks.filter_map { |block| indexed_block_text(block) },
-        template_blocks: template_blocks.map { |block| indexed_template_block(block) }
+        blocks: indexed_blocks,
+        template_blocks: indexed_template_blocks
       }.with_indifferent_access
     end
 
@@ -147,7 +150,7 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.external?
     end
 
     def preserved_remote_uuid?
@@ -171,11 +174,30 @@ module BetterTogether
 
     private
 
+    def indexed_blocks
+      content_blocks.select { |block| publicly_indexable_block?(block) }
+                    .filter_map { |block| indexed_block_text(block) }
+    end
+
+    def indexed_template_blocks
+      template_blocks.select { |block| publicly_indexable_block?(block) }
+                     .map { |block| indexed_template_block(block) }
+    end
+
     def indexed_block_text(block)
       return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
       return block.content if block.respond_to?(:content) && block.content.is_a?(String)
 
       nil
+    end
+
+    # A block's text is indexed only when it is both visible and public. Blocks
+    # that predate the privacy column, or lack it, fall back to "index it".
+    def publicly_indexable_block?(block)
+      return true unless block.respond_to?(:privacy_public?)
+
+      visible = block.respond_to?(:visible?) ? block.visible? : true
+      visible && block.privacy_public?
     end
 
     # Template blocks render their content from a file rather than storing it directly,

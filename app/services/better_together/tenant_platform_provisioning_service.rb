@@ -24,7 +24,7 @@ module BetterTogether
   #   )
   #   result.success? # => true
   #   result.platform # => BetterTogether::Platform instance
-  class TenantPlatformProvisioningService
+  class TenantPlatformProvisioningService # rubocop:todo Metrics/ClassLength
     Result = Struct.new(
       :platform,
       :community,
@@ -39,6 +39,58 @@ module BetterTogether
 
     def self.call(**)
       new(**).call
+    end
+
+    # Attaches an already-built (and already-form-validated) User as steward of an
+    # existing platform, granting the same platform_steward + community_governance_council
+    # roles #provision_steward! grants during full provisioning. Used by
+    # NewPlatformSetupStepsController#create_steward_account, where the platform was
+    # already created by an earlier wizard step and the steward User is built via
+    # NewPlatformStewardForm rather than the flat steward: hash #call accepts - the two
+    # callers construct/validate their User differently, but converge here on the same
+    # idempotent role-assignment path #provision_steward! uses internally.
+    def self.provision_steward_for_existing_platform!(platform:, user:)
+      ActiveRecord::Base.transaction do
+        user.save!
+        assign_platform_role!(platform, user.person)
+        assign_community_role!(platform, user.person)
+
+        primary_community = platform.primary_community
+        if primary_community && primary_community.creator.nil?
+          primary_community.update!(creator: user.person)
+        end
+      end
+      user
+    end
+
+    def self.assign_platform_role!(platform, person)
+      role = platform_steward_role
+      return unless role
+
+      platform.person_platform_memberships.find_or_create_by!(
+        member: person,
+        role:
+      )
+    end
+
+    def self.assign_community_role!(platform, person)
+      community = platform.primary_community
+      role = community_governance_role
+      return unless community && role
+
+      community.person_community_memberships.find_or_create_by!(
+        member: person,
+        role:
+      )
+    end
+
+    def self.platform_steward_role
+      ::BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+        ::BetterTogether::Role.find_by(identifier: 'platform_manager')
+    end
+
+    def self.community_governance_role
+      ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
     end
 
     def initialize(name:, host_url:, time_zone: 'America/St_Johns', host: false, steward: nil, privacy: 'private') # rubocop:disable Metrics/ParameterLists
@@ -102,7 +154,7 @@ module BetterTogether
       platform
     end
 
-    def provision_steward!(platform)
+    def provision_steward!(platform) # rubocop:todo Metrics/AbcSize
       user = ::BetterTogether::User.find_or_initialize_by(email: @steward[:email])
       user.build_person unless user.person
 
@@ -110,40 +162,10 @@ module BetterTogether
       user.person.name = @steward[:name] if @steward[:name].present?
       user.save!
 
-      assign_platform_role!(platform, user.person)
-      assign_community_role!(platform, user.person)
+      self.class.assign_platform_role!(platform, user.person)
+      self.class.assign_community_role!(platform, user.person)
 
       user
-    end
-
-    def assign_platform_role!(platform, person)
-      role = platform_steward_role
-      return unless role
-
-      platform.person_platform_memberships.find_or_create_by!(
-        member: person,
-        role:
-      )
-    end
-
-    def assign_community_role!(platform, person)
-      community = platform.primary_community
-      role = community_governance_role
-      return unless community && role
-
-      community.person_community_memberships.find_or_create_by!(
-        member: person,
-        role:
-      )
-    end
-
-    def platform_steward_role
-      ::BetterTogether::Role.find_by(identifier: 'platform_steward') ||
-        ::BetterTogether::Role.find_by(identifier: 'platform_manager')
-    end
-
-    def community_governance_role
-      ::BetterTogether::Role.find_by(identifier: 'community_governance_council')
     end
   end
 end

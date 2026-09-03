@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Content::FederatedContentExportService do
   describe '#call' do
-    let(:source_platform) { create(:better_together_platform, :community_engine_peer) }
-    let(:target_platform) { create(:better_together_platform, :public) }
+    let(:source_platform) { create(:better_together_platform, :public) }
+    let(:target_platform) { create(:better_together_platform, :community_engine_peer) }
     let(:connection) do
       create(
         :better_together_platform_connection,

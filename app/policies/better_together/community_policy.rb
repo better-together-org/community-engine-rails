@@ -84,7 +84,7 @@ module BetterTogether
       return false unless user.present? && agent.present?
 
       # Platform managers always have event management authority
-      return true if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      return true if platform_manager?
 
       # Explicit event management permission for this community
       return true if permitted_to?('manage_community_events', record)
@@ -170,7 +170,7 @@ module BetterTogether
 
         query = visible_privacy_query(communities_table)
 
-        if permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+        if permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
           query = query.or(communities_table[:privacy].eq('private'))
         elsif agent
           query = query.or(

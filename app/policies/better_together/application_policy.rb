@@ -121,16 +121,25 @@ module BetterTogether
         community_query ? query.or(community_query) : query
       end
 
+      # `scope` may be a model class or an ActiveRecord::Relation (e.g. when a
+      # policy_scope is applied to `page.content_blocks`). Only a class responds
+      # to `name` with the model constant name.
+      def scoped_model_name
+        scope.respond_to?(:klass) ? scope.klass.name : scope.name
+      end
+
       def scoped_community_privacy_query(table) # rubocop:todo Metrics/AbcSize
         return nil if scoped_community_ids.empty?
 
-        case scope.name
+        case scoped_model_name
         when 'BetterTogether::Community'
           table[:privacy].eq('community').and(table[:id].in(scoped_community_ids))
         when 'BetterTogether::Page', 'BetterTogether::Calendar', 'BetterTogether::Platform',
              'BetterTogether::Post'
           table[:privacy].eq('community').and(table[:community_id].in(scoped_community_ids))
-        when 'BetterTogether::Event'
+        when 'BetterTogether::Event', 'BetterTogether::Content::Block'
+          # Blocks (like Events) carry no community_id; a community-scoped block is
+          # visible to members of its platform's community.
           table[:privacy].eq('community').and(table[:platform_id].in(scoped_platform_ids))
         when 'BetterTogether::CallForInterest'
           scoped_call_for_interest_privacy_query(table)

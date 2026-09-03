@@ -5,6 +5,7 @@ module BetterTogether
   class CommentMailer < ApplicationMailer
     def added
       @comment = params[:comment]
+      @platform = @comment.platform
       @commentable = @comment.commentable
       @recipient = params[:recipient]
 

@@ -72,6 +72,30 @@ module BetterTogether
         (super + block_attrs + descendants.map(&:extra_permitted_attributes).flatten).uniq
       end
 
+      # The complete set of mass-assignable block attributes, shared by the
+      # standalone block form (Content::BlocksController) and the page builder
+      # (PagesController -> nested page_blocks_attributes -> block_attributes).
+      # Both controllers must build their permit list from this so a column like
+      # `privacy` or `visible` cannot be editable in one surface and silently
+      # dropped in the other.
+      #
+      # `type`, `identifier`, `privacy` and `visible` are listed explicitly
+      # rather than trusted to the `extra_permitted_attributes` singleton chain:
+      # a model's own `extra_permitted_attributes` override shadows the bare
+      # singleton methods some concerns (Translatable) inject, so localized and
+      # concern-added keys have historically fallen out of that chain (see
+      # posts_controller.rb). `super` still carries `background_image_file` and
+      # any future additions.
+      def self.permitted_attributes(id: false, destroy: false)
+        load_all_subclasses unless Rails.env.production?
+        (
+          super +
+          %i[type identifier privacy visible] +
+          localized_block_attributes +
+          storext_keys
+        ).uniq
+      end
+
       def self.content_addable?(actor: nil) # rubocop:disable Lint/UnusedMethodArgument
         true
       end

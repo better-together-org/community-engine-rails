@@ -86,6 +86,7 @@ uk:
         media_settings: Налаштування медіа
         page_blocks: Блоки сторінки
         pages: Сторінки
+        privacy: Приватність
       better_together/content/image:
         accessibility_attributes: Атрибути доступності
         content_settings: Налаштування контенту
@@ -1514,6 +1515,12 @@ uk:
         events_block:
           empty: Немає подій для відображення.
         fields:
+          block:
+            identifier_hint: Необов'язковий ідентифікатор полегшує пошук цього блоку
+              згодом. Не використовуйте пробіли та не перевищуйте 100 символів.
+            identifier_placeholder: "(необов'язково)"
+            privacy_hint: Виберіть, хто може бачити цей блок. Блоки на публічній сторінці
+              мають бути публічними.
           image:
             library:
               empty: У вашій бібліотеці ще немає доступних перевірених завантажень
@@ -4384,6 +4391,10 @@ uk:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
+        selected storage configuration. Per-tenant storage isolation isn't available
+        yet — file uploads across the whole installation continue to use the shared/host
+        storage backend until multi-tenant storage support ships."
       activated_with_restart: "'%{name}' activated. This process has rebound immediately.
         Other app processes will pick up the change on their next restart."
       cancel: Cancel

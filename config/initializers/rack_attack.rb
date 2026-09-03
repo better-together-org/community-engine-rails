@@ -72,6 +72,15 @@ module Rack
       req.ip if req.path.start_with?('/mcp')
     end
 
+    # A /mcp/sse GET opens a Server-Sent Events stream that holds a web-server
+    # thread for the life of the connection. A well-behaved MCP client opens one
+    # and keeps it; a client that reconnects every few seconds can exhaust the
+    # thread pool and take the app down (INC 2026-08-27, communityengine.app
+    # flapping). Cap new SSE stream opens hard, below the general mcp/ip limit.
+    throttle('mcp/sse/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.get? && req.path == '/mcp/sse'
+    end
+
     # Challenge issuance is lightweight but public. Keep it available while preventing
     # challenge-spam from becoming a cache amplification path.
     throttle('bot_defense/challenges/ip', limit: 60, period: 1.minute) do |req|
@@ -128,6 +137,16 @@ module Rack
     # even when host apps do not wire captcha enforcement yet.
     throttle('api_membership_requests/ip', limit: 5, period: 1.minute) do |req|
       req.ip if req.path.include?('/api/v1/membership_requests') && req.post?
+    end
+
+    # Throttle ActiveStorage direct-upload blob creation by IP (10 requests per minute).
+    # This Rails-core endpoint has no auth of its own (ActiveStorage::DirectUploadsController
+    # inherits from ActiveStorage::BaseController, not this app's ApplicationController) and
+    # is intentionally reachable anonymously (e.g. Trix image attachments on the sign-up
+    # form), so it needs its own dedicated guard against being used to spam free writes to
+    # storage. 10/min accommodates attaching several images in one sign-up/edit session.
+    throttle('direct_uploads/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.path == '/rails/active_storage/direct_uploads' && req.post?
     end
 
     # Throttle OAuth token endpoint by IP (10 requests per minute)

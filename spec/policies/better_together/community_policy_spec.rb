@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::CommunityPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   subject(:policy) { described_class.new(user, community) }
 
   let(:community) { create(:better_together_community) }
@@ -479,6 +488,28 @@ RSpec.describe BetterTogether::CommunityPolicy do
       # The batched query's cost is dominated by a fixed permission-cache warm-up, not
       # candidate count, so the delta between 1 and 23 candidates should be tiny.
       expect(large_batch - small_batch).to be < 5
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_a_community) { create(:better_together_community, platform: platform_a) }
+    let(:platform_b_community) { create(:better_together_community, platform: platform_b) }
+
+    it "denies a steward of platform A from updating platform B's community" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_community).update?).to be false
+    end
+
+    it "allows a steward of platform A to update platform A's own community" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_a_community).update?).to be true
+    end
+
+    it "denies a steward of platform A from destroying platform B's community" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_community).destroy?).to be false
     end
   end
 end

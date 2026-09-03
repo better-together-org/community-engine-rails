@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::Safety::NotePolicy do
     expect(described_class.new(safety_reviewer, note_record).create?).to be true
   end
 
-  it 'denies default platform managers without explicit safety authority' do
-    expect(described_class.new(platform_manager, note_record).create?).to be false
+  it 'allows default platform managers/stewards (manage_platform_safety is now a default grant)' do
+    expect(described_class.new(platform_manager, note_record).create?).to be true
   end
 end

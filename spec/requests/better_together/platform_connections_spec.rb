@@ -14,7 +14,10 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
     create(:better_together_user, :confirmed, email: 'platform-approver@example.test')
   end
   let(:regular_user) { find_or_create_test_user('platform-connection-user@example.test', 'SecureTest123!@#', :user) }
-  let!(:platform_connection) { create(:better_together_platform_connection, :active) }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+  let!(:platform_connection) do
+    create(:better_together_platform_connection, :active, source_platform: host_platform)
+  end
   let(:source_platform) { create(:better_together_platform) }
   let(:target_platform) { create(:better_together_platform) }
 
@@ -24,7 +27,6 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
     role = create(:better_together_role, :platform_role)
     BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
-    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
     membership = host_platform.person_platform_memberships.find_or_initialize_by(member: approval_operator.person)
     membership.role = role
     membership.status = :active
@@ -71,7 +73,7 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
   describe 'GET /show' do
     it 'shows approve controls but no edit link for approval-only operators' do
-      pending_connection = create(:better_together_platform_connection)
+      pending_connection = create(:better_together_platform_connection, source_platform: host_platform)
       sign_in approval_operator
 
       get better_together.platform_connection_path(pending_connection, locale:)
@@ -153,8 +155,10 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
   end
 
   describe 'PATCH /approve' do
-    let(:pending_connection) { create(:better_together_platform_connection) }
-    let(:suspended_connection) { create(:better_together_platform_connection, status: 'suspended') }
+    let(:pending_connection) { create(:better_together_platform_connection, source_platform: host_platform) }
+    let(:suspended_connection) do
+      create(:better_together_platform_connection, status: 'suspended', source_platform: host_platform)
+    end
 
     it 'approves a pending connection as network admin' do
       sign_in network_admin
@@ -213,7 +217,7 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
     end
 
     it 'redirects with alert when suspending a non-active connection' do
-      pending_connection = create(:better_together_platform_connection)
+      pending_connection = create(:better_together_platform_connection, source_platform: host_platform)
       sign_in network_admin
 
       patch better_together.suspend_platform_connection_path(pending_connection, locale:)

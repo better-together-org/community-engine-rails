@@ -18,22 +18,23 @@ RSpec.describe BetterTogether::CommentMailer do
         community = create(:better_together_community, name: 'Comment Mailer Tenant')
         platform = create_tenant(community:, domain: 'tenant-comment-mailer.example.test')
         recipient = create(:better_together_person)
-        post = create(:better_together_post)
-        comment = create(:comment, commentable: post)
+        post = create(:better_together_post, platform:)
+        comment = create(:comment, commentable: post, platform:)
 
-        Current.set(platform:) do
-          mail = described_class.with(comment:, recipient:).added
+        # No Current.platform set here, deliberately — matches real async job
+        # delivery (no request context). The mailer must resolve @platform from
+        # @comment.platform, not ambient Current.platform.
+        mail = described_class.with(comment:, recipient:).added
 
-          expect(mail['Reply-To']&.value).to match(/\Areply\+[A-Za-z0-9_-]+@tenant-comment-mailer\.example\.test\z/)
+        expect(mail['Reply-To']&.value).to match(/\Areply\+[A-Za-z0-9_-]+@tenant-comment-mailer\.example\.test\z/)
 
-          token_value = mail['Reply-To'].value[/\Areply\+([^@]+)@/, 1]
-          token = BetterTogether::InboundEmailReplyToken.find_by(token: token_value)
-          expect(token).to be_present
-          expect(token.recipient).to eq(recipient)
-          expect(token.repliable).to eq(post)
-          expect(token.notification_type).to eq('comment_added')
-          expect(token).to be_usable
-        end
+        token_value = mail['Reply-To'].value[/\Areply\+([^@]+)@/, 1]
+        token = BetterTogether::InboundEmailReplyToken.find_by(token: token_value)
+        expect(token).to be_present
+        expect(token.recipient).to eq(recipient)
+        expect(token.repliable).to eq(post)
+        expect(token.notification_type).to eq('comment_added')
+        expect(token).to be_usable
       end
     end
 
@@ -43,15 +44,13 @@ RSpec.describe BetterTogether::CommentMailer do
         platform = create_tenant(community:, domain: 'tenant-comment-mailer-disabled.example.test')
         platform.update!(allow_inbound_mail: false)
         recipient = create(:better_together_person)
-        post = create(:better_together_post)
-        comment = create(:comment, commentable: post)
+        post = create(:better_together_post, platform:)
+        comment = create(:comment, commentable: post, platform:)
 
-        Current.set(platform:) do
-          expect do
-            mail = described_class.with(comment:, recipient:).added
-            expect(mail['Reply-To']).to be_nil
-          end.not_to change(BetterTogether::InboundEmailReplyToken, :count)
-        end
+        expect do
+          mail = described_class.with(comment:, recipient:).added
+          expect(mail['Reply-To']).to be_nil
+        end.not_to change(BetterTogether::InboundEmailReplyToken, :count)
       end
     end
   end

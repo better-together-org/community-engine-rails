@@ -46,19 +46,21 @@ module BetterTogether
       # When called with the class (e.g. policy(Role).create?), fall back to any-role check
       return can_manage_any_roles? if record.is_a?(Class)
 
+      target = record.platform
+
       case record.resource_type
       when 'BetterTogether::Platform'
-        permitted_to?('manage_platform_roles')
+        permitted_to?('manage_platform_roles', target)
       when 'BetterTogether::Community'
-        permitted_to?('manage_community_roles')
+        permitted_to?('manage_community_roles', target)
       else
         # For other resource types (Person, Metrics, etc.), require any role management permission
-        can_manage_any_roles?
+        can_manage_any_roles?(target)
       end
     end
 
-    def can_manage_any_roles?
-      permitted_to?('manage_platform_roles') || permitted_to?('manage_community_roles')
+    def can_manage_any_roles?(target = current_platform)
+      permitted_to?('manage_platform_roles', target) || permitted_to?('manage_community_roles', target)
     end
   end
 end

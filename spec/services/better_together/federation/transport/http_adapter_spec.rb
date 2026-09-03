@@ -33,6 +33,12 @@ RSpec.describe BetterTogether::Federation::Transport::HttpAdapter do
 
       expect(described_class.accessible?(connection:)).to be(false)
     end
+
+    it 'returns false (not an uncaught exception) when Socket.tcp raises IO::TimeoutError' do
+      allow(Socket).to receive(:tcp).and_raise(IO::TimeoutError)
+
+      expect(described_class.accessible?(connection:)).to be(false)
+    end
   end
 
   describe '.call' do
@@ -179,6 +185,165 @@ RSpec.describe BetterTogether::Federation::Transport::HttpAdapter do
       expect do
         described_class.call(connection:)
       end.to raise_error(/federation feed request failed with 401 for connection #{connection.id}/)
+    end
+
+    context 'when the remote rate-limits the request' do
+      before do
+        stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+          .to_return(
+            status: 200,
+            body: { access_token: 'oauth-access-token', token_type: 'Bearer', expires_in: 900,
+                    scope: 'content.feed.read' }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+      end
+
+      it 'raises RateLimitedError with the Retry-After seconds on a 503 feed response' do
+        stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
+          .to_return(status: 503, body: '', headers: { 'Retry-After' => '120' })
+
+        expect { described_class.call(connection:) }.to raise_error do |error|
+          expect(error).to be_a(described_class::RateLimitedError)
+          expect(error.retry_after).to eq(120)
+          expect(error.message).to match(/rate-limited \(HTTP 503\) for connection #{connection.id}/)
+        end
+      end
+
+      it 'raises RateLimitedError with nil retry_after when the header is absent (429)' do
+        stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
+          .to_return(status: 429, body: '')
+
+        expect { described_class.call(connection:) }.to raise_error(described_class::RateLimitedError) do |error|
+          expect(error.retry_after).to be_nil
+        end
+      end
+
+      it 'raises RateLimitedError (token context) when the token endpoint is throttled' do
+        stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+          .to_return(status: 503, body: '', headers: { 'Retry-After' => '30' })
+
+        expect { described_class.call(connection:) }.to raise_error(described_class::RateLimitedError) do |error|
+          expect(error.retry_after).to eq(30)
+          expect(error.message).to include('token request rate-limited')
+        end
+      end
+    end
+  end
+
+  describe 'remote platform resolution' do
+    # Regression coverage for a bug where every URL was built from source_platform
+    # unconditionally, so a connection where the LOCAL platform happens to be
+    # source_platform (rather than target_platform) would fetch from itself instead
+    # of the actual federated peer. Every existing example above already exercises
+    # the "peer is source_platform" shape; these prove the reverse shape now works
+    # too, for both a host: true local platform and an ordinary non-host one —
+    # i.e. resolution is based on the external flag, not host: true.
+    around do |example|
+      original_cache = Rails.cache
+      Rails.cache = ActiveSupport::Cache::MemoryStore.new
+      example.run
+      Rails.cache = original_cache
+    end
+
+    let(:peer_host) { 'https://example.com' }
+    let(:remote_platform) do
+      create(:better_together_platform, :community_engine_peer, host_url: peer_host, oauth_issuer_url: peer_host)
+    end
+
+    # rails_helper seeds exactly one host: true platform for the whole suite (Platform
+    # enforces a single host record) — reuse it rather than creating a second one.
+    it 'fetches from the remote peer when the local HOST platform is source_platform' do
+      local_host_platform = BetterTogether::Platform.find_by(host: true)
+      connection = create(
+        :better_together_platform_connection, :active,
+        source_platform: local_host_platform,
+        target_platform: remote_platform,
+        federation_auth_policy: 'api_read',
+        content_sharing_policy: 'mirror_network_feed',
+        allow_content_read_scope: true
+      )
+      stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+        .to_return(
+          status: 200,
+          body: { access_token: 'oauth-access-token', token_type: 'Bearer', expires_in: 900,
+                  scope: 'content.feed.read' }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+      stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
+        .with(headers: { 'Authorization' => 'Bearer oauth-access-token' })
+        .to_return(
+          status: 200,
+          body: { seeds: [], next_cursor: nil }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+
+      # WebMock raises NetConnectNotAllowedError on any unstubbed request, so if the
+      # bug regressed (source_platform's own host_url used instead) this fails loudly
+      # rather than silently fetching the wrong thing.
+      expect { described_class.call(connection:) }.not_to raise_error
+    end
+
+    it 'fetches from the remote peer when a non-host local platform is source_platform' do
+      non_host_local_platform = create(:better_together_platform) # external: false, host: false by default
+      connection = create(
+        :better_together_platform_connection, :active,
+        source_platform: non_host_local_platform,
+        target_platform: remote_platform,
+        federation_auth_policy: 'api_read',
+        content_sharing_policy: 'mirror_network_feed',
+        allow_content_read_scope: true
+      )
+      stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+        .to_return(
+          status: 200,
+          body: { access_token: 'oauth-access-token', token_type: 'Bearer', expires_in: 900,
+                  scope: 'content.feed.read' }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+      stub_request(:get, "#{peer_host}/en/federation/content_feed?limit=50")
+        .with(headers: { 'Authorization' => 'Bearer oauth-access-token' })
+        .to_return(
+          status: 200,
+          body: { seeds: [], next_cursor: nil }.to_json,
+          headers: { 'Content-Type' => 'application/json' }
+        )
+
+      expect { described_class.call(connection:) }.not_to raise_error
+    end
+  end
+
+  describe 'SSRF exception normalization' do
+    let(:peer_host) { 'https://example.com' }
+    let(:source_platform) do
+      create(:better_together_platform, :community_engine_peer, host_url: peer_host, oauth_issuer_url: peer_host)
+    end
+    let(:target_platform) { create(:better_together_platform) }
+    let(:connection) do
+      create(
+        :better_together_platform_connection, :active,
+        source_platform:, target_platform:,
+        federation_auth_policy: 'api_read',
+        content_sharing_policy: 'mirror_network_feed',
+        allow_content_read_scope: true
+      )
+    end
+
+    it 'converts SsrfFilter::PrivateIPAddress to SSRFError' do
+      allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::PrivateIPAddress)
+
+      expect { described_class.call(connection:) }.to raise_error(described_class::SSRFError)
+    end
+
+    it 'converts SsrfFilter::TooManyRedirects to SSRFError' do
+      allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::TooManyRedirects)
+
+      expect { described_class.call(connection:) }.to raise_error(described_class::SSRFError)
+    end
+
+    it 'converts SsrfFilter::UnresolvedHostname to SSRFError' do
+      allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::UnresolvedHostname)
+
+      expect { described_class.call(connection:) }.to raise_error(described_class::SSRFError)
     end
   end
 end

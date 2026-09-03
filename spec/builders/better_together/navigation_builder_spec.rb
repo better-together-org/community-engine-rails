@@ -317,11 +317,9 @@ module BetterTogether # :nodoc:
           page = Page.find_by(identifier: 'about')
           expect(page).to be_present
           expect(page.title_en).to eq('About')
-          # Privacy is statically 'private' by default (DB column default) —
-          # the platform ceiling only bounds the max an operator may
-          # explicitly choose, it isn't a source for what unset content
-          # defaults to.
-          expect(page.privacy).to eq('private')
+          # Seeded informational pages are created public so guests can see them
+          # (the DB column default is 'private').
+          expect(page.privacy).to eq('public')
           expect(page.protected).to be true
         end
 
@@ -569,7 +567,7 @@ module BetterTogether # :nodoc:
           home_page = Page.find_by(identifier: 'home')
           expect(home_page).to be_present
           expect(home_page.title_en).to eq('Home')
-          expect(home_page.privacy).to eq('private')
+          expect(home_page.privacy).to eq('public')
           expect(home_page.protected).to be true
         end
 
@@ -579,7 +577,7 @@ module BetterTogether # :nodoc:
           subprocessors_page = Page.find_by(identifier: 'subprocessors')
           expect(subprocessors_page).to be_present
           expect(subprocessors_page.title_en).to eq('Subprocessors')
-          expect(subprocessors_page.privacy).to eq('private')
+          expect(subprocessors_page.privacy).to eq('public')
           expect(subprocessors_page.protected).to be true
         end
       end

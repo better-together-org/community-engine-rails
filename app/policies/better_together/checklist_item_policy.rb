@@ -32,7 +32,7 @@ module BetterTogether
         if scope.ancestors.include?(BetterTogether::Privacy)
           query = visible_privacy_query(table)
 
-          if permitted_to?('manage_platform')
+          if permitted_to?('manage_platform', current_platform)
             query = query.or(table[:privacy].eq('private'))
           elsif agent
             if scope.ancestors.include?(BetterTogether::Joinable) && scope.membership_class.present?

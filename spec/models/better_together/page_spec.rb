@@ -240,6 +240,17 @@ module BetterTogether # :nodoc:
           expect(mirrored_page).to be_preserved_remote_uuid
           expect(mirrored_page.source_identifier).to eq(mirrored_page.id)
         end
+
+        it 'treats a synced page stored under the local platform as mirrored' do
+          mirrored_page = build(
+            :better_together_page,
+            platform: local_platform,
+            source_id: nil,
+            last_synced_at: Time.current
+          )
+
+          expect(mirrored_page).to be_mirrored
+        end
       end
 
       describe 'federation_visibility (Federatable)' do
@@ -393,6 +404,15 @@ module BetterTogether # :nodoc:
         page.title = 'Updated title'
         expect(page).to be_valid
       end
+
+      context 'federated mirror (last_synced_at present)' do
+        it 'allows public privacy even under a private platform and community' do
+          page = page_for.call(platform: private_platform, community: private_community, privacy: 'public')
+          page.last_synced_at = Time.current
+
+          expect(page).to be_valid
+        end
+      end
     end
 
     describe 'privacy default' do
@@ -416,6 +436,45 @@ module BetterTogether # :nodoc:
         page = described_class.new(title: 'Untitled', platform: platform, privacy: 'community')
 
         expect(page.privacy).to eq('community')
+      end
+    end
+
+    describe '#as_indexed_json' do
+      let(:indexed_page) { create(:better_together_page, :published_public) }
+
+      before do
+        [
+          ['PUBLICINDEXTOKEN', 'public', true],
+          ['COMMUNITYINDEXTOKEN', 'community', true],
+          ['PRIVATEINDEXTOKEN', 'private', true],
+          ['HIDDENINDEXTOKEN', 'public', false]
+        ].each_with_index do |(token, privacy, visible), position|
+          block = create(:content_markdown, markdown_source: token)
+          block.update_columns(privacy: privacy, visible: visible)
+          create(:better_together_content_page_block, page: indexed_page, block: block, position: position)
+        end
+      end
+
+      it 'indexes only publicly-visible block text' do
+        haystack = indexed_page.as_indexed_json[:blocks].join(' ')
+
+        expect(haystack).to include('PUBLICINDEXTOKEN')
+        %w[COMMUNITYINDEXTOKEN PRIVATEINDEXTOKEN HIDDENINDEXTOKEN].each do |token|
+          expect(haystack).not_to include(token)
+        end
+      end
+
+      it 'indexes a public template block but not a non-public one' do
+        public_template = create(:content_template, template_path: 'better_together/static_pages/faq')
+                          .tap { |b| b.update_columns(privacy: 'public') }
+        private_template = create(:content_template, template_path: 'better_together/static_pages/privacy')
+                           .tap { |b| b.update_columns(privacy: 'private') }
+        create(:better_together_content_page_block, page: indexed_page, block: public_template, position: 98)
+        create(:better_together_content_page_block, page: indexed_page, block: private_template, position: 99)
+
+        indexed_paths = indexed_page.as_indexed_json[:template_blocks].map { |t| t[:template_path] }
+        expect(indexed_paths).to include('better_together/static_pages/faq')
+        expect(indexed_paths).not_to include('better_together/static_pages/privacy')
       end
     end
   end

@@ -48,6 +48,35 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       end
     end
 
+    describe ':public, created alongside an existing private host platform' do
+      # Only one host platform may exist, so reuse whichever one seeds.rb
+      # (or an earlier-run spec, since suite/DB state is shared) already
+      # created rather than creating a second. Its privacy at this point is
+      # not guaranteed -- other specs' automatic host setup may have already
+      # elevated it to public -- so explicitly arrange the private state this
+      # test actually needs, scoped to this example's own transaction.
+      subject(:host_platform) { described_class.find_by(host: true) }
+
+      before { host_platform.update!(privacy: 'private') unless host_platform.privacy == 'private' }
+
+      it "self-scopes the new platform's primary community instead of inheriting the host platform's" do
+        second_platform = create(:better_together_platform, :public)
+
+        expect(second_platform.primary_community.platform_id).to eq(second_platform.id)
+        expect(second_platform.primary_community.platform_id).not_to eq(host_platform.id)
+        expect(second_platform.primary_community.privacy).to eq('public')
+      end
+
+      it "self-scopes the new platform's contact_detail and calendars" do
+        second_platform = create(:better_together_platform, :public)
+
+        expect(second_platform.primary_community.contact_detail.platform_id).to eq(second_platform.id)
+        second_platform.primary_community.calendars.each do |calendar|
+          expect(calendar.platform_id).to eq(second_platform.id)
+        end
+      end
+    end
+
     describe ':community_engine_peer' do
       subject(:community_engine_peer) { create(:better_together_platform, :community_engine_peer) }
 

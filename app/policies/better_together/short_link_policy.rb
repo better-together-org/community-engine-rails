@@ -27,7 +27,7 @@ module BetterTogether
     # fall outside the scope when no current platform is set.
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        if permitted_to?('manage_platform')
+        if permitted_to?('manage_platform', Current.platform)
           scope.where(platform: Current.platform)
         else
           scope.with_creator(agent).for_platform(Current.platform)
@@ -38,11 +38,7 @@ module BetterTogether
     private
 
     def creator_or_manager?
-      (record.creator_id.present? && record.creator == agent) || permitted_to?('manage_platform')
-    end
-
-    def permitted_to?(permission)
-      agent&.permitted_to?(permission)
+      (record.creator_id.present? && record.creator == agent) || permitted_to?('manage_platform', Current.platform)
     end
   end
 end

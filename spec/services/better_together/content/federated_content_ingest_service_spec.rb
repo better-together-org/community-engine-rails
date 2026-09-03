@@ -141,7 +141,13 @@ module BetterTogether # :nodoc:
         mirrored_event = BetterTogether::Event.find_by(identifier: "#{source_platform.identifier}--remote-event")
 
         expect(Current.platform).to eq(previous_platform)
-        expect(mirrored_post).to have_attributes(platform: target_platform, source_id: seeds.first.dig('better_together', :payload, :id))
+        # The post seed sets preserve_remote_uuid on a genuine cross-instance
+        # connection, so its remote UUID becomes the local id and source_id stays nil.
+        expect(mirrored_post).to have_attributes(
+          platform: target_platform,
+          id: seeds.first.dig('better_together', :payload, :id),
+          source_id: nil
+        )
         expect(mirrored_page).to have_attributes(platform: target_platform, source_id: seeds.second.dig('better_together', :payload, :id))
         expect(mirrored_event).to have_attributes(platform: target_platform, source_id: seeds.third.dig('better_together', :payload, :id))
         expect(mirrored_post).to be_mirrored
@@ -167,6 +173,42 @@ module BetterTogether # :nodoc:
         expect(BetterTogether::Page.find_by(identifier: "#{source_platform.identifier}--remote-page")).to be_present
       end
 
+      it 'records a non-collision validation failure as a conflict without aborting the batch' do
+        invalid_post_seed = {
+          'better_together' => {
+            version: '1.0',
+            seed: {
+              type: 'BetterTogether::Seed',
+              identifier: "seed-post-#{SecureRandom.hex(4)}",
+              created_by: 'FederatedExport',
+              created_at: Time.current.utc.iso8601,
+              description: 'Invalid remote post seed',
+              origin: { lane: 'platform_shared', content_type: 'post' }
+            },
+            payload: {
+              type: 'post',
+              id: SecureRandom.uuid,
+              preserve_remote_uuid: true,
+              attributes: {
+                title: '',
+                content: '',
+                identifier: 'invalid-remote-post',
+                privacy: 'public'
+              }
+            }
+          }
+        }
+
+        result = described_class.call(connection:, seeds: [invalid_post_seed, seeds.second])
+
+        expect(result.processed_count).to eq(1)
+        expect(result.conflict_count).to eq(1)
+        expect(result.conflicted_seeds.first['conflict_kind']).to eq('validation_rejected')
+        expect(result.conflicted_seeds.first['validation_messages']).to be_present
+        expect(result.planting).to be_completed
+        expect(BetterTogether::Page.find_by(identifier: "#{source_platform.identifier}--remote-page")).to be_present
+      end
+
       it 'requires a connection' do
         expect do
           described_class.call(connection: nil, seeds:)
@@ -174,6 +216,22 @@ module BetterTogether # :nodoc:
           ArgumentError,
           I18n.t('better_together.federation.ingest.errors.connection_required')
         )
+      end
+
+      context 'when the local platform is source_platform on the connection, not target_platform' do
+        let(:source_platform) { create(:better_together_platform, :public) }
+        let(:target_platform) { create(:better_together_platform, :community_engine_peer) }
+
+        it 'still mirrors content under the actual local platform, not the remote peer' do
+          previous_platform = Current.platform
+
+          described_class.call(connection:, seeds:)
+
+          mirrored_post = BetterTogether::Post.find_by(identifier: "#{target_platform.identifier}--remote-post")
+
+          expect(Current.platform).to eq(previous_platform)
+          expect(mirrored_post).to have_attributes(platform: source_platform)
+        end
       end
     end
   end

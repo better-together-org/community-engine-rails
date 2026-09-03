@@ -189,7 +189,16 @@ module BetterTogether
     end
 
     def primary_community_extra_attrs
-      { host:, protected: }
+      # bootstrapping_primary_community: true only here, not in the shared
+      # PrimaryCommunity concern -- Person also has_community, and its own
+      # primary community correctly relies on normal ambient-platform
+      # resolution (the "current platform" when a Person signs up IS the
+      # right scope for their community). Only a Platform's own primary
+      # community needs to self-reference instead -- see
+      # PrimaryCommunity#backfill_primary_community_platform, which is
+      # itself guarded to is_a?(BetterTogether::Platform) and is the only
+      # thing that corrects this flag's platform_id afterward.
+      { host:, protected:, bootstrapping_primary_community: true }
     end
 
     # External platforms (OAuth identity providers like GitHub) always get a

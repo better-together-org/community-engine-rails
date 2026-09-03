@@ -86,6 +86,7 @@ fr:
         media_settings: Paramètres multimédias
         page_blocks: Blocs de pages
         pages: Pages
+        privacy: Confidentialité
       better_together/content/image:
         accessibility_attributes: Attributs d'accessibilité
         content_settings: Paramètres de contenu
@@ -1547,6 +1548,13 @@ fr:
         events_block:
           empty: Aucun événement à afficher.
         fields:
+          block:
+            identifier_hint: Un identifiant facultatif permet de retrouver ce bloc
+              plus facilement par la suite. N'utilisez pas d'espaces et limitez-le
+              à 100 caractères.
+            identifier_placeholder: "(facultatif)"
+            privacy_hint: Choisissez qui peut voir ce bloc. Les blocs d'une page publique
+              doivent être Publics.
           image:
             library:
               empty: Aucun téléversement d'image révisé n'est encore disponible dans
@@ -4435,6 +4443,10 @@ fr:
       access_key_hint: Leave blank to keep the existing value when editing.
       access_key_placeholder: AKIAIOSFODNN7EXAMPLE
       activated: "'%{name}' is now the active storage configuration."
+      activated_pending_multi_tenant_support: "'%{name}' has been saved as your platform's
+        selected storage configuration. Per-tenant storage isolation isn't available
+        yet — file uploads across the whole installation continue to use the shared/host
+        storage backend until multi-tenant storage support ships."
       activated_with_restart: "'%{name}' activated. This process has rebound immediately.
         Other app processes will pick up the change on their next restart."
       cancel: Cancel
