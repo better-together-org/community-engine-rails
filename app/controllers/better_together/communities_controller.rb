@@ -136,13 +136,13 @@ module BetterTogether
     end
 
     def permitted_attributes
-      %i[
+      base_attributes = %i[
         requires_invitation
         allow_membership_requests
         contributors_display_visibility
         privacy
-      ].concat(BetterTogether::Community.localized_attribute_list)
-        .concat(resource_class.extra_permitted_attributes)
+      ]
+      base_attributes + BetterTogether::Community.localized_attribute_list + resource_class.extra_permitted_attributes
     end
 
     def set_current_person_community_membership

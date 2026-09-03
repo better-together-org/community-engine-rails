@@ -178,6 +178,17 @@ module Rack
       req.ip if req.path.include?('/federation/content_feed')
     end
 
+    # Throttle ActiveStorage direct-upload blob creation by IP (10 requests per minute).
+    # This Rails-core endpoint has no auth of its own (ActiveStorage::DirectUploadsController
+    # inherits from ActiveStorage::BaseController, not this app's ApplicationController) --
+    # now gated by BetterTogether::DirectUploadSecurity, but this throttle stays as
+    # defense-in-depth against a single authenticated account (compromised or malicious)
+    # spamming free writes to storage. 10/min accommodates attaching several files in one
+    # session.
+    throttle('direct_uploads/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.path == '/rails/active_storage/direct_uploads' && req.post?
+    end
+
     # Throttle POST requests to /users/sign-in by email param
     #
     # Key: "rack::attack:#{Time.now.to_i/:period}:logins/email:#{normalized_email}"
@@ -192,6 +203,45 @@ module Rack
         # protect against rate limit bypasses. Return the normalized email if present, nil otherwise.
         req.params['email'].to_s.downcase.gsub(/\s+/, '').presence
       end
+    end
+
+    ### Permanent IP Denylist ###
+
+    # Confirmed CVE-2026-66066 (Rails ActiveStorage + libvips untrusted-loader
+    # RCE) exploitation-attempt source IPs, identified via a fleet-wide log
+    # forensics sweep (2026-08-12) after the Rails 8.0.5.1 patch closed the
+    # vulnerability. Every one of these IPs was directly observed triggering
+    # the vips crash signature (Vips::Error: matload/mat2vips ... blocked) on
+    # the vulnerable ActiveStorage representation/blob endpoints -- this is
+    # not a generic scanner list, every entry has confirmed attack evidence.
+    #
+    # Deliberately IP-only: the same actors rotated through common, generic
+    # browser user-agent strings (stock Chrome/Firefox/Safari on standard
+    # OSes) shared by large numbers of legitimate visitors -- blocking by UA
+    # would cause real collateral blocking. Two entries self-identified with
+    # the UA "CVE-2026-66066 security verification"; still IP-blocked here
+    # rather than by that UA string, for the same consistency reason.
+    PERMANENT_IP_DENYLIST = %w[
+      157.66.56.32
+      46.250.230.56
+      203.176.137.245
+      138.199.60.25
+      138.199.60.13
+      91.199.163.63
+      91.92.42.135
+      43.156.114.53
+      221.216.138.182
+      185.244.208.177
+      103.151.173.90
+      65.181.112.46
+    ].freeze
+
+    # ENV-based extension point so future confirmed-bad IPs can be added
+    # without a gem release: comma-separated, e.g.
+    # RACK_ATTACK_EXTRA_IP_DENYLIST=1.2.3.4,5.6.7.8
+    blocklist('permanent-ip-denylist') do |req|
+      PERMANENT_IP_DENYLIST.include?(req.ip) ||
+        ENV.fetch('RACK_ATTACK_EXTRA_IP_DENYLIST', '').split(',').map(&:strip).include?(req.ip)
     end
 
     ### Fail2Ban for PHP Files ###
