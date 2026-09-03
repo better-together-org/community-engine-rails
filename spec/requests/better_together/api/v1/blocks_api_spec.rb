@@ -63,6 +63,26 @@ RSpec.describe 'BetterTogether::Api::V1::Blocks', :no_auth do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'when authenticated as a regular user' do
+      let(:regular_jsonapi_headers) { regular_headers.merge(jsonapi_headers) }
+      let(:page) { create(:better_together_page, :published_public) }
+      let!(:public_block) { create(:content_markdown, :simple, privacy: 'public') }
+      let!(:private_block) { create(:content_markdown, :simple).tap { |b| b.update_columns(privacy: 'private') } }
+
+      before do
+        create(:better_together_content_page_block, page: page, block: public_block, position: 0)
+        create(:better_together_content_page_block, page: page, block: private_block, position: 1)
+        get url, params: { filter: { page_id: page.id } }, headers: regular_jsonapi_headers
+      end
+
+      it 'returns public blocks but not private blocks (BlockPolicy::Scope)' do
+        expect(response).to have_http_status(:ok)
+        block_ids = JSON.parse(response.body)['data'].map { |b| b['id'] }
+        expect(block_ids).to include(public_block.id)
+        expect(block_ids).not_to include(private_block.id)
+      end
+    end
   end
 
   describe 'GET /api/v1/blocks/:id' do
