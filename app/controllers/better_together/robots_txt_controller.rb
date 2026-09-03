@@ -11,6 +11,21 @@ module BetterTogether
     skip_before_action :check_platform_privacy
     skip_before_action :check_platform_setup, unless: -> { ::BetterTogether::Platform.where(host: true).any? }
 
+    # Root-level, locale-independent paths that are never crawlable content:
+    # JSON API, admin UI, signed/transient blob proxies, the bot-defense probe,
+    # short-link redirects (the controller also sends X-Robots-Tag: noindex).
+    ROOT_DISALLOW = %w[
+      api sidekiq s bot-defense content-security rails
+    ].freeze
+
+    # Path segments under each /:locale/ that are auth / management surfaces, not
+    # content. Kept deliberately short and unambiguous so a public Page slug is
+    # very unlikely to collide (private controllers such as conversations already
+    # emit noindex and 302 crawlers to sign-in, so they need no rule here).
+    LOCALE_DISALLOW = %w[
+      users host w wizards
+    ].freeze
+
     # GET /robots.txt
     def show
       render plain: robots_body, content_type: 'text/plain'
@@ -21,15 +36,28 @@ module BetterTogether
     def robots_body
       return "User-agent: *\nDisallow: /\n" unless indexable_platform?
 
-      lines = ['User-agent: *', "Disallow: /#{BetterTogether.route_scope_path}/"]
-      lines.concat(locale_disallow_lines)
+      lines = ['User-agent: *']
+      lines.concat(disallow_lines)
       lines << ''
       lines.concat(sitemap_lines)
       "#{lines.join("\n")}\n"
     end
 
-    def locale_disallow_lines
-      I18n.available_locales.map { |locale| "Disallow: /#{locale}/#{BetterTogether.route_scope_path}/" }
+    def disallow_lines
+      root = ROOT_DISALLOW.map { |seg| "Disallow: /#{seg}/" }
+
+      segments = LOCALE_DISALLOW.dup
+      # If a host keeps the default route scope ('bt'), its whole management
+      # surface sits under /:locale/<scope>/ — disallow that prefix too.
+      scope = BetterTogether.route_scope_path.to_s
+      segments << scope if scope.present?
+
+      localized = I18n.available_locales.flat_map do |locale|
+        segments.map { |seg| "Disallow: /#{locale}/#{seg}/" }
+      end
+      localized << "Disallow: /#{scope}/" if scope.present?
+
+      root + localized
     end
 
     def sitemap_lines

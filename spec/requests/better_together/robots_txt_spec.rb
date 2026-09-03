@@ -28,10 +28,33 @@ RSpec.describe 'robots.txt' do
     end
   end
 
-  it 'disallows the management route scope' do
+  it 'disallows non-content root paths and per-locale auth/management prefixes' do
     get '/robots.txt'
 
-    expect(response.body).to include("Disallow: /#{BetterTogether.route_scope_path}/")
+    %w[/api/ /sidekiq/ /s/ /bot-defense/ /content-security/ /rails/].each do |path|
+      expect(response.body).to include("Disallow: #{path}")
+    end
+    I18n.available_locales.each do |locale|
+      expect(response.body).to include("Disallow: /#{locale}/users/")
+      expect(response.body).to include("Disallow: /#{locale}/host/")
+    end
+  end
+
+  it 'never emits a malformed empty Disallow when route_scope_path is blank' do
+    get '/robots.txt'
+
+    expect(BetterTogether.route_scope_path).to eq('') # dummy config
+    expect(response.body).not_to include('Disallow: //')
+    I18n.available_locales.each { |l| expect(response.body).not_to include("Disallow: /#{l}//") }
+  end
+
+  it 'only lists the disallow prefix for a non-blank route scope' do
+    allow(BetterTogether).to receive(:route_scope_path).and_return('bt')
+
+    get '/robots.txt'
+
+    expect(response.body).to include('Disallow: /bt/')
+    expect(response.body).to include("Disallow: /#{I18n.default_locale}/bt/")
   end
 
   context 'when the request host resolves to a different platform domain' do

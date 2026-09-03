@@ -336,10 +336,25 @@ GET /robots.txt
 **Controller**: `BetterTogether::RobotsTxtController#show` (named to avoid the existing
 `RobotsController`, which is CRUD for the AI-agent `BetterTogether::Robot` model).
 
-Served per resolved platform. For a public, locally-hosted platform it emits
-`Disallow` rules for the management route scope plus `Sitemap:` lines for the index
-and every locale, all on `current_platform.resolved_host_url`. For a private or
-external platform it emits `User-agent: * / Disallow: /` and no `Sitemap:` line.
+Served per resolved platform. For a **private or external** platform it emits
+`User-agent: * / Disallow: /` and no `Sitemap:` line.
+
+For a **public, locally-hosted** platform it emits, all under a single
+`User-agent: *`:
+
+- **Root disallows** (`RobotsTxtController::ROOT_DISALLOW`, locale-independent):
+  `/api/`, `/sidekiq/`, `/s/` (short-link redirects — the controller also sets
+  `X-Robots-Tag: noindex`), `/bot-defense/`, `/content-security/` and `/rails/`
+  (signed/transient blob proxies).
+- **Per-locale disallows** (`LOCALE_DISALLOW`, for every `I18n.available_locale`):
+  `/<locale>/users/`, `/<locale>/host/`, `/<locale>/w/`, `/<locale>/wizards/` —
+  auth and host-management surfaces. Kept short and unambiguous so a public `Page`
+  slug is very unlikely to collide; other private controllers (conversations,
+  notifications, …) already emit `noindex` and 302 crawlers to sign-in.
+- If a host keeps the default `BetterTogether.route_scope_path` (`'bt'` — the CE
+  fleet apps all set it to `''`), `/bt/` and `/<locale>/bt/` are disallowed too.
+- **`Sitemap:`** lines for the index and every locale, on
+  `current_platform.resolved_host_url`.
 
 > **Host apps must remove their static `public/robots.txt`.** Rails'
 > `ActionDispatch::Static` serves a file in `public/` before routing, so a static
