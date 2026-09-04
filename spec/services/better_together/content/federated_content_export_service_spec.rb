@@ -65,6 +65,47 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       expect(second_result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(second_post.id)
     end
 
+    it 'exports a record whose rich text body is pathologically wrapped with a truncation marker, ' \
+       'instead of failing the whole page (2026-09 production incident regression guard)' do
+      creator = create(:better_together_person, federate_content: true)
+      healthy_post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                                   published_at: 2.days.ago, updated_at: 2.days.ago)
+      wrapped_event = create(:event, :with_pathologically_wrapped_description, creator:, platform: source_platform,
+                                                                               privacy: 'public', starts_at: 2.days.from_now,
+                                                                               ends_at: 2.days.from_now + 1.hour, updated_at: 1.day.ago)
+
+      result = nil
+      expect { result = described_class.call(connection:, limit: 10) }.not_to raise_error
+
+      payloads_by_id = result.seeds.index_by { |seed| seed['better_together'][:payload][:id] }
+                                   .transform_values { |seed| seed['better_together'][:payload] }
+      expect(payloads_by_id.keys).to include(healthy_post.id, wrapped_event.id)
+      expect(payloads_by_id[wrapped_event.id][:attributes][:description])
+        .to eq(BetterTogether::Seeds::SafeRichText::TRUNCATED_MARKER)
+      expect(result.skipped_count).to eq(0)
+    end
+
+    it 'skips a record entirely (rather than raising) if building its seed fails for a reason other than ' \
+       'a guarded rich text body' do
+      creator = create(:better_together_person, federate_content: true)
+      healthy_post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                                   published_at: 2.days.ago, updated_at: 2.days.ago)
+      broken_post = create(:better_together_post, creator:, platform: source_platform, privacy: 'public',
+                                                  published_at: 1.day.ago, updated_at: 1.day.ago)
+      allow(BetterTogether::Seeds::FederatedSeedAttributes).to receive(:post_attributes)
+        .with(broken_post, sync_depth: anything).and_raise(RuntimeError, 'boom')
+      allow(BetterTogether::Seeds::FederatedSeedAttributes).to receive(:post_attributes)
+        .with(healthy_post, sync_depth: anything).and_call_original
+
+      result = nil
+      expect { result = described_class.call(connection:, limit: 10) }.not_to raise_error
+
+      ids = result.seeds.map { |seed| seed['better_together'][:payload][:id] }
+      expect(ids).to include(healthy_post.id)
+      expect(ids).not_to include(broken_post.id)
+      expect(result.skipped_count).to eq(1)
+    end
+
     it 'excludes person-authored content when the creator has not opted into federation' do
       creator = create(:better_together_person, federate_content: false)
       create(:better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago)

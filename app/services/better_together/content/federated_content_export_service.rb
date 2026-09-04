@@ -10,7 +10,8 @@ module BetterTogether
       Result = Struct.new(
         :connection,
         :seeds,
-        :next_cursor
+        :next_cursor,
+        :skipped_count
       ) do
         def items
           seeds
@@ -31,7 +32,8 @@ module BetterTogether
         Result.new(
           connection:,
           seeds: serialized_seeds,
-          next_cursor: next_cursor
+          next_cursor: next_cursor,
+          skipped_count: skipped_records.size
         )
       end
 
@@ -40,15 +42,38 @@ module BetterTogether
       attr_reader :connection, :cursor, :limit
 
       def serialized_seeds
-        @serialized_seeds ||= selected_records.map do |record|
-          ::BetterTogether::Seeds::Builder.call(
-            subject: record,
-            profile: :platform_shared,
-            context: { connection: connection, sync_depth: connection.sync_depth },
-            lane: 'platform_shared',
-            persist: false
-          ).seed_hash
-        end
+        @serialized_seeds ||= selected_records.filter_map { |record| build_seed(record) }
+      end
+
+      # One record's own content must never take the whole feed page down --
+      # e.g. a pathologically-nested rich text body that blows the Ruby call
+      # stack (SystemStackError isn't a StandardError, so it needs its own
+      # rescue class; Ruby reserves stack headroom for the rescue clause
+      # itself, so this is safe to catch). Skip that record and keep exporting
+      # the rest of the connection's eligible records.
+      def build_seed(record)
+        ::BetterTogether::Seeds::Builder.call(
+          subject: record,
+          profile: :platform_shared,
+          context: { connection: connection, sync_depth: connection.sync_depth },
+          lane: 'platform_shared',
+          persist: false
+        ).seed_hash
+      rescue StandardError, SystemStackError => e
+        skipped_records << record
+        log_export_skip(record, e)
+        nil
+      end
+
+      def skipped_records
+        @skipped_records ||= []
+      end
+
+      def log_export_skip(record, error)
+        Rails.logger.warn(
+          "[BetterTogether::Federation] skipped exporting #{record.class.name} #{record.id} " \
+          "for connection #{connection.id}: #{error.class}: #{error.message.to_s.truncate(200)}"
+        )
       end
 
       def selected_records

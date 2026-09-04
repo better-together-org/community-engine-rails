@@ -1,0 +1,25 @@
+flowchart TD
+    A[ContentFeedController#show] --> B[FederatedContentExportService.call]
+    B --> C[per exportable record]
+    C --> D[Seeds::Builder.call, rescued per record]
+    D --> E[FederatedSeedAttributes post_attributes / event_attributes]
+    E --> F[SafeRichText.trix_html_for record, attribute]
+    F --> G{translation_for:\nActionText::RichText.where.first\nclass-level query, not the has_one reader}
+    G -->|no translation| H[Return nil]
+    G -->|found| I[read body_before_type_cast\nraw pre-deserialize string]
+    I --> J{safe_raw?\nbytesize under 64KB and\ntrix-content repeats 5 or fewer}
+    J -->|unsafe| K[Return TRUNCATED_MARKER]
+    J -->|safe| L[body.to_trix_html\nclean render, not to_s]
+    L --> M[Attribute included in seed payload]
+    K --> M
+    H --> M
+    D -->|any other exception| N[Skip this record, log warning,\ncontinue exporting the rest]
+    M --> O[FederatedContentExportService Result seeds]
+    N --> O
+
+    subgraph incident[Why the guard exists: 2026-09 incident]
+      P[record.rich_text_description reader\nMobility / has_one association reader] -.->|internally calls nil? / present? / empty? / to_s,\nall delegated to ActionText RichText body| Q[ActionText Content.new parses full HTML\nwith Nokogiri, no recursion or depth guard]
+      Q -.->|body repeatedly re-wrapped in its own\ntrix-content render output,\nto_s is not idempotent| R[SystemStackError: stack level too deep]
+    end
+
+    F -.->|bypasses this path entirely, see below| P
