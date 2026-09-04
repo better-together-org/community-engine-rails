@@ -100,6 +100,19 @@ module BetterTogether
         true
       end
 
+      # Transient (non-persisted) flag, same pattern and rationale as
+      # Page#seed_privacy_ceiling_exempt: builder/seed code sets this on a
+      # new block belonging to a built-in public page (About, FAQ,
+      # legal/policy pages, contributor agreements) so it isn't rejected by
+      # the platform's privacy ceiling (Privacy -> PrivacyCeilingValidatable,
+      # included via Content::BlockAttributes). Deliberately not tied to
+      # `protected?`, which is reused for unrelated purposes elsewhere.
+      attr_accessor :seed_privacy_ceiling_exempt
+
+      def privacy_ceiling_exempt?
+        super || seed_privacy_ceiling_exempt
+      end
+
       def block_name
         self.class.block_name
       end
