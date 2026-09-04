@@ -54,6 +54,22 @@ module BetterTogether # :nodoc:
           post.categories = create_list(:better_together_category, evaluator.categories_count)
         end
       end
+
+      # See BetterTogether::Event's :with_pathologically_wrapped_description
+      # trait for context -- same shape, applied to Post#content.
+      trait :with_pathologically_wrapped_content do
+        transient do
+          wrapper_repeats { 400 }
+        end
+
+        after(:create) do |post, evaluator|
+          open_wrapper = '<div class="trix-content">' * evaluator.wrapper_repeats
+          close_wrapper = '</div>' * evaluator.wrapper_repeats
+          wrapped = "#{open_wrapper}<p>Original post content.</p>#{close_wrapper}"
+          BetterTogether::TestSupport::RawRichText.write!(post, :content, wrapped)
+          post.association(:rich_text_content).reset
+        end
+      end
     end
   end
 end

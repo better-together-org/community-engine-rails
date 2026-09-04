@@ -76,7 +76,7 @@ module BetterTogether
           privacy: page.privacy,
           layout: page.layout,
           published_at: page.published_at&.iso8601,
-          content_excerpt: page.content&.to_plain_text&.truncate(200),
+          content_excerpt: BetterTogether::Seeds::SafeRichText.plain_text_for(page, :content)&.truncate(200),
           created_at: page.created_at.iso8601,
           updated_at: page.updated_at.iso8601
         }

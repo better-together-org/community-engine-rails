@@ -22,6 +22,14 @@ RSpec.describe BetterTogether::Seeds::FederatedSeedAttributes, type: :service do
       attrs = described_class.post_attributes(post, sync_depth: 'metadata')
       expect(attrs).not_to have_key(:content)
     end
+
+    it 'does not raise and returns a truncation marker for a pathologically wrapped body' do
+      wrapped_post = create(:better_together_post, :with_pathologically_wrapped_content, platform:, privacy: 'public')
+
+      expect { described_class.post_attributes(wrapped_post) }.not_to raise_error
+      attrs = described_class.post_attributes(wrapped_post)
+      expect(attrs[:content]).to eq(BetterTogether::Seeds::SafeRichText::TRUNCATED_MARKER)
+    end
   end
 
   describe '.page_attributes' do
@@ -69,6 +77,15 @@ RSpec.describe BetterTogether::Seeds::FederatedSeedAttributes, type: :service do
     it 'omits description body when sync_depth is metadata' do
       attrs = described_class.event_attributes(event, sync_depth: 'metadata')
       expect(attrs).not_to have_key(:description)
+    end
+
+    it 'does not raise and returns a truncation marker for a pathologically wrapped body ' \
+       '(2026-09 production incident regression guard)' do
+      wrapped_event = create(:better_together_event, :with_pathologically_wrapped_description)
+
+      expect { described_class.event_attributes(wrapped_event) }.not_to raise_error
+      attrs = described_class.event_attributes(wrapped_event)
+      expect(attrs[:description]).to eq(BetterTogether::Seeds::SafeRichText::TRUNCATED_MARKER)
     end
   end
 end
