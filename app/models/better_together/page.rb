@@ -171,6 +171,25 @@ module BetterTogether
       mirrored? && !local_to_platform?(local_platform)
     end
 
+    # Transient (non-persisted) flag: builder/seed code (NavigationBuilder,
+    # AgreementBuilder) sets this on a brand-new built-in page (About, FAQ,
+    # legal/policy pages, contributor agreements) that must render for
+    # guests regardless of the platform's own privacy ceiling -- the same
+    # reasoning Agreement already gets its own exemption for. Deliberately
+    # NOT tied to `protected?` -- that flag is reused across many contexts
+    # (including page_spec.rb's own privacy-ceiling coverage, via the page
+    # factory's randomized `protected` value) that have nothing to do with
+    # this exemption. Mirrors Community#bootstrapping_primary_community's
+    # transient-flag pattern. Only matters at creation: the ceiling
+    # validation only fires when privacy is new or changing (see
+    # PrivacyCeilingValidatable), so a later, unrelated save of an
+    # already-seeded page is never affected by this flag's absence.
+    attr_accessor :seed_privacy_ceiling_exempt
+
+    def privacy_ceiling_exempt?
+      super || seed_privacy_ceiling_exempt
+    end
+
     private
 
     def indexed_blocks
