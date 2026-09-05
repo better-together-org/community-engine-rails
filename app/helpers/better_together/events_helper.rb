@@ -23,17 +23,22 @@ module BetterTogether
     # rubocop:enable Layout/LineLength
     #
     # @param event [Event] The event object with starts_at and ends_at
+    # @param start_time [Time, nil] Override for event.starts_at — pass a
+    #   recurring event's (override-aware) next_occurrence_at here so cards
+    #   never show the stale original starts_at alongside a "Repeats" badge.
+    # @param end_time [Time, nil] Override for event.ends_at, paired with start_time:
     # @return [String] Formatted time display
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
-    def display_event_time(event) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      return '' unless event&.starts_at
+    def display_event_time(event, start_time: nil, end_time: nil) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      raw_start = start_time || event&.starts_at
+      return '' unless raw_start
 
       # Convert times to event timezone for display
       event_tz = ActiveSupport::TimeZone[event.timezone] || Time.zone
-      start_time = event.starts_at.in_time_zone(event_tz)
-      end_time = event.ends_at&.in_time_zone(event_tz)
+      start_time = raw_start.in_time_zone(event_tz)
+      end_time = (end_time || event.ends_at)&.in_time_zone(event_tz)
       current_year = Time.current.year
 
       # Determine format based on whether year differs from current
@@ -227,6 +232,34 @@ module BetterTogether
       # Convert to event timezone and format for datetime-local input
       datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
     end
+
+    # SlimSelect options-value for the event location picker. AJAX mixed search
+    # plus opt-in "Create new address" / "Use typed text" result rows (see
+    # slim_select_controller.js createOptions). `q: '%{q}'` keeps the %{q}
+    # placeholder literal in the label so the Stimulus controller can substitute
+    # the live search term client-side.
+    # rubocop:disable Style/FormatStringToken, Metrics/MethodLength, Metrics/AbcSize
+    def location_picker_slim_select_options
+      address_model = BetterTogether::Address.model_name.human
+
+      {
+        ajax: { url: available_locations_events_path },
+        createOptions: {
+          simple: {
+            label: t('better_together.events.location_picker.create_row.use_typed_name', q: '%{q}')
+          },
+          types: [
+            {
+              type: 'address',
+              label: t('better_together.events.actions.create_new', model: address_model),
+              labelWithQuery: t('better_together.events.location_picker.create_row.new_named_with_query',
+                                model: address_model, q: '%{q}')
+            }
+          ]
+        }
+      }
+    end
+    # rubocop:enable Style/FormatStringToken, Metrics/MethodLength, Metrics/AbcSize
   end
   # rubocop:enable Metrics/ModuleLength
 end

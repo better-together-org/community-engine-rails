@@ -12,10 +12,17 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
   end
 
   describe '#perform' do
+    before do
+      # Default: any genuinely external connection resolved through HttpAdapter is
+      # reachable. Individual tests override this per-connection where needed.
+      allow(BetterTogether::Federation::Transport::HttpAdapter).to receive(:accessible?).and_return(true)
+    end
+
     let!(:eligible_connection) do
       create(
         :better_together_platform_connection,
         :active,
+        source_platform: create(:better_together_platform, :community_engine_peer, external: true),
         content_sharing_policy: 'mirror_network_feed',
         federation_auth_policy: 'api_read',
         share_posts: true,
@@ -45,6 +52,74 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
       expect(enqueued_connection_ids).to contain_exactly(eligible_connection.id)
       # Negative: ineligible connection must not have been enqueued
       expect(enqueued_connection_ids).not_to include(ineligible_connection.id)
+    end
+
+    it 'does not enqueue pull jobs for inaccessible remote connections' do
+      remote_source_platform = create(:better_together_platform, :community_engine_peer, external: true)
+      remote_connection = create(
+        :better_together_platform_connection,
+        :active,
+        source_platform: remote_source_platform,
+        target_platform: create(:better_together_platform),
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+
+      allow(BetterTogether::Federation::Transport::HttpAdapter)
+        .to receive(:accessible?)
+        .with(connection: remote_connection)
+        .and_return(false)
+
+      described_class.perform_now(pull_limit: 25)
+
+      pull_jobs = enqueued_jobs.select { |job| job[:job] == BetterTogether::FederatedContentPullJob }
+      enqueued_connection_ids = pull_jobs.map { |job| job[:args].first&.dig('platform_connection_id') }
+
+      expect(enqueued_connection_ids).not_to include(remote_connection.id)
+      expect(remote_connection.reload.last_sync_status).to eq('failed')
+      expect(remote_connection.last_sync_error_message).to include('source platform is not reachable')
+    end
+
+    it 'does not dispatch a same-instance connection (both sides local_hosted)' do
+      same_instance_connection = create(
+        :better_together_platform_connection,
+        :active,
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+
+      described_class.perform_now(pull_limit: 25)
+
+      pull_jobs = enqueued_jobs.select { |job| job[:job] == BetterTogether::FederatedContentPullJob }
+      enqueued_connection_ids = pull_jobs.map { |job| job[:args].first&.dig('platform_connection_id') }
+
+      expect(enqueued_connection_ids).not_to include(same_instance_connection.id)
+    end
+
+    it 'does not re-dispatch a connection still inside its backoff window' do
+      backed_off_connection = create(
+        :better_together_platform_connection,
+        :active,
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+      backed_off_connection.mark_sync_failed!(message: 'timeout', failed_at: Time.current)
+
+      described_class.perform_now(pull_limit: 25)
+
+      pull_jobs = enqueued_jobs.select { |job| job[:job] == BetterTogether::FederatedContentPullJob }
+      enqueued_connection_ids = pull_jobs.map { |job| job[:args].first&.dig('platform_connection_id') }
+
+      expect(enqueued_connection_ids).not_to include(backed_off_connection.id)
     end
   end
 end

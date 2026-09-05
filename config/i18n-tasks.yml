@@ -73,6 +73,10 @@ ignore_unused:
   - 'support.**'
   - 'time.**'
   - 'activerecord.attributes.**'
+  # translate_enum generates these lookups dynamically (I18n.translate call
+  # inside the gem, not a literal t(...) in app code), same rationale as the
+  # activerecord.attributes.** rule above.
+  - 'attributes.federation_visibility_list.**'
   - 'activerecord.errors.**'
   - 'activerecord.errors.messages.**'
   - 'activerecord.errors.models.**'

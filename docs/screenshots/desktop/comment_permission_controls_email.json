@@ -1,0 +1,50 @@
+{
+  "name": "comment_permission_controls_email",
+  "device": "desktop",
+  "url": "/community-engine/spec/dummy/tmp/comment_permission_controls_notification_email.html",
+  "title": "",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "comment_permission_controls",
+  "flow": "comment_added_email",
+  "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
+  "callouts": [
+    {
+      "selector": "blockquote",
+      "title": "Email notification body",
+      "bullets": [
+        "Quotes the new comment (truncated to 280 characters) alongside the commenter's name.",
+        "The view link anchors directly to the comment via dom_id, same target as the in-app notification.",
+        "Gated by the same notify_on_comments preference as the in-app notification, checked independently per channel."
+      ],
+      "target": {
+        "x": 493.0,
+        "y": 319.0,
+        "width": 454.0,
+        "height": 18.0,
+        "right": 947.0,
+        "bottom": 337.0,
+        "center_x": 720.0,
+        "center_y": 328.0
+      },
+      "avoid": {
+        "x": 493.0,
+        "y": 319.0,
+        "width": 454.0,
+        "height": 18.0,
+        "right": 947.0,
+        "bottom": 337.0,
+        "center_x": 720.0,
+        "center_y": 328.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 357.0,
+        "width": 380,
+        "height": 450,
+        "score": 1124.0
+      }
+    }
+  ]
+}

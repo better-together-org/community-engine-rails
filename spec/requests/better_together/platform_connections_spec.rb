@@ -14,7 +14,10 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
     create(:better_together_user, :confirmed, email: 'platform-approver@example.test')
   end
   let(:regular_user) { find_or_create_test_user('platform-connection-user@example.test', 'SecureTest123!@#', :user) }
-  let!(:platform_connection) { create(:better_together_platform_connection, :active) }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+  let!(:platform_connection) do
+    create(:better_together_platform_connection, :active, source_platform: host_platform)
+  end
   let(:source_platform) { create(:better_together_platform) }
   let(:target_platform) { create(:better_together_platform) }
 
@@ -24,8 +27,11 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
     role = create(:better_together_role, :platform_role)
     BetterTogether::RoleResourcePermission.create!(role:, resource_permission: permission)
-    host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
-    host_platform.person_platform_memberships.find_or_create_by!(member: approval_operator.person, role:)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: approval_operator.person)
+    membership.role = role
+    membership.status = :active
+    membership.save!
+    approval_operator.person.touch
   end
 
   describe 'GET /index' do
@@ -67,7 +73,7 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
   describe 'GET /show' do
     it 'shows approve controls but no edit link for approval-only operators' do
-      pending_connection = create(:better_together_platform_connection)
+      pending_connection = create(:better_together_platform_connection, source_platform: host_platform)
       sign_in approval_operator
 
       get better_together.platform_connection_path(pending_connection, locale:)
@@ -149,8 +155,10 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
   end
 
   describe 'PATCH /approve' do
-    let(:pending_connection) { create(:better_together_platform_connection) }
-    let(:suspended_connection) { create(:better_together_platform_connection, status: 'suspended') }
+    let(:pending_connection) { create(:better_together_platform_connection, source_platform: host_platform) }
+    let(:suspended_connection) do
+      create(:better_together_platform_connection, status: 'suspended', source_platform: host_platform)
+    end
 
     it 'approves a pending connection as network admin' do
       sign_in network_admin
@@ -209,7 +217,7 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
     end
 
     it 'redirects with alert when suspending a non-active connection' do
-      pending_connection = create(:better_together_platform_connection)
+      pending_connection = create(:better_together_platform_connection, source_platform: host_platform)
       sign_in network_admin
 
       patch better_together.suspend_platform_connection_path(pending_connection, locale:)
@@ -268,6 +276,43 @@ RSpec.describe 'BetterTogether::PlatformConnections', :no_auth do
 
       expect(response).to have_http_status(:not_found)
       expect(platform_connection.reload.federation_auth_policy).not_to eq('api_write')
+    end
+  end
+
+  describe 'PATCH /rotate_secret' do
+    it 'rotates the oauth client secret for network admins' do
+      sign_in network_admin
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:see_other)
+      expect(response).to redirect_to(better_together.platform_connection_path(platform_connection, locale:))
+
+      platform_connection.reload
+      expect(platform_connection.oauth_client_secret).not_to eq(old_secret)
+      expect(platform_connection.authenticate_oauth_secret(old_secret)).to be(false)
+      expect(platform_connection.authenticate_oauth_secret(platform_connection.oauth_client_secret)).to be(true)
+    end
+
+    it 'rejects secret rotation for approval-only operators' do
+      sign_in approval_operator
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.oauth_client_secret).to eq(old_secret)
+    end
+
+    it 'rejects secret rotation for regular users' do
+      sign_in regular_user
+      old_secret = platform_connection.reload.oauth_client_secret
+
+      patch better_together.rotate_secret_platform_connection_path(platform_connection, locale:)
+
+      expect(response).to have_http_status(:not_found)
+      expect(platform_connection.reload.oauth_client_secret).to eq(old_secret)
     end
   end
 

@@ -10,7 +10,7 @@ module BetterTogether
                  mailer: 'BetterTogether::JoatuMailer',
                  method: :agreement_created,
                  params: :email_params, queue: :mailers do |config|
-        config.if = -> { recipient.email.present? && recipient.notification_preferences['notify_by_email'] }
+        config.if = -> { recipient_has_email? }
       end
 
       validates :record, presence: true
@@ -52,13 +52,15 @@ module BetterTogether
       end
 
       def build_message(notification)
-        {
-          title:,
-          body:,
-          identifier:,
-          url:,
-          unread_count: notification.recipient.notifications.unread.count
-        }
+        I18n.with_locale(locale_for_notification(notification)) do
+          {
+            title:,
+            body:,
+            identifier:,
+            url:,
+            unread_count: notification.recipient.notifications.unread.count
+          }
+        end
       end
 
       def email_params(_notification)

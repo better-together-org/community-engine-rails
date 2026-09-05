@@ -5,6 +5,14 @@ module BetterTogether
     # Handles CRUD for content blocks independently of pages.
     # rubocop:todo Metrics/ClassLength
     class BlocksController < ResourceController
+      ALLOWED_RESOURCE_SEARCH_CLASSES = [
+        'BetterTogether::Event',
+        'BetterTogether::Checklist',
+        'BetterTogether::Community',
+        'BetterTogether::Person',
+        'BetterTogether::Post'
+      ].freeze
+
       before_action :authenticate_user!
       before_action :disallow_robots
       before_action :set_block, only: %i[show edit update destroy]
@@ -70,19 +78,55 @@ module BetterTogether
         end
       end
 
+      # AJAX endpoint for resource_ids multi-select field in content blocks.
+      # Filters available records by resource class and optional search term.
+      def resource_search # rubocop:disable Metrics/AbcSize
+        authorize resource_class, :resource_search?
+
+        resource_class_name = params[:resource_class].to_s.strip
+        search_term = params[:search].to_s.strip
+
+        resource_klass = resolve_resource_class(resource_class_name)
+        return render json: [], status: :unprocessable_content if resource_klass.nil?
+
+        scope = policy_scope(resource_klass)
+        scope = search_scope(scope, search_term) if search_term.present?
+        options = scope.limit(50).map { |record| { value: record.id, text: record.to_s } }
+
+        render json: options
+      end
+
       private
+
+      def resolve_resource_class(class_name)
+        return unless ALLOWED_RESOURCE_SEARCH_CLASSES.include?(class_name)
+
+        class_name.constantize
+      end
+
+      def search_scope(scope, search_term)
+        # Use Arel to safely construct ILIKE query for translation searches
+        translations_table = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation.arel_table
+        scope.with_translations.references(:string_translations).where(
+          translations_table[:value].matches("%#{search_term}%")
+        )
+      end
 
       def block_params # rubocop:todo Metrics/MethodLength
         permitted_params = params.require(:block).permit(
-          :type, :media, :identifier, :markdown_source_type, :media_signed_id,
-          *resource_class.localized_block_attributes,
-          *resource_class.storext_keys
+          # standalone-form-only helpers; the shared block attribute list
+          # (identifier, privacy, visible, type, localized, storext, ...) comes
+          # from Content::Block.permitted_attributes so it stays in lock-step
+          # with the page builder (PagesController#block_permitted_attributes).
+          :media, :media_signed_id, :markdown_source_type,
+          *BetterTogether::Content::Block.permitted_attributes
         )
 
-        # Handle markdown_source_type: clear the unused field
+        # Handle markdown_source_type: explicitly clear the unused field so DB values are overwritten
         if permitted_params[:markdown_source_type].present?
           if permitted_params[:markdown_source_type] == 'inline'
-            permitted_params.delete(:markdown_file_path)
+            permitted_params[:markdown_file_path] = ''
+            permitted_params[:auto_sync_from_file] = false
           elsif permitted_params[:markdown_source_type] == 'file'
             permitted_params.delete(:markdown_source)
           end
@@ -90,18 +134,6 @@ module BetterTogether
         end
 
         permitted_params
-      end
-
-      def permitted_block_attributes
-        [
-          :type,
-          :media,
-          :identifier,
-          :markdown_source_type,
-          *resource_class.localized_block_attributes,
-          *resource_class.storext_keys,
-          *resource_class.extra_permitted_attributes
-        ]
       end
 
       def processed_block_params

@@ -34,26 +34,31 @@
             <%= viewer_timezone_conversion(@event, current_person) if current_person %>
           </div>
         <% end %>
+        <% unless @event.status_confirmed? %>
+          <div class="mt-2">
+            <%= event_status_badge(@event) %>
+          </div>
+        <% end %>  
       </div>
-    </div>
-    <div class="row">
-      <div class="col">
+      <div class="col-auto">
         <%= render 'shared/resource_toolbar',
-                   edit_path: policy(@resource).edit? ? edit_event_path(@resource) : nil,
-                   edit_aria_label: 'Edit Partner',
-                   destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
-                   destroy_confirm: t('globals.confirm_delete'),
-                   destroy_aria_label: 'Delete Record' do %>
+                    edit_path: policy(@resource).edit? ? edit_event_path(@resource) : nil,
+                    edit_aria_label: t('better_together.events.edit_event'),
+                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
+                    destroy_confirm: t('globals.confirm_delete'),
+                    destroy_aria_label: t('better_together.events.delete_event') do %>
           <% if policy(@event).ics? %>
             <%= link_to ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' do %>
               <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
             <% end %>
           <% end %>
           <%= render 'shared/content_actions', record: @event %>
-        <% end %>
-      </div>
-    </div>
+        <% end %>      
+      </div>      
+    </div>  
   </div>
+
+
 
   <div class="container mt-4">
     <!-- Membership section -->
@@ -77,6 +82,9 @@
             <% attendees_count = @event.event_attendances.count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
+          <% if @event.recurring? %>
+            <%= link_to t('globals.tabs.sessions', default: 'Sessions'), '#sessions', class: 'nav-link', id: 'sessions-tab', data: { bs_toggle: 'tab', bs_target: '#sessions', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'sessions', selected: 'false' }, tabindex: '0' %>
+          <% end %>
           <% if policy(@invitation).create? %>
             <% invitations_count = @event.invitations.count %>
             <%= link_to "#{t('globals.tabs.invitations', default: 'Invitations')} (#{invitations_count})", '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'invitations', selected: 'false' }, tabindex: '0' %>
@@ -98,6 +106,11 @@
                   <div class="event-location card-text text-muted mt-2">
                     <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
                   </div>
+                <% end %>
+                <% if @event.spaces.any? %>
+                  <section class="event-map my-3">
+                    <%= render partial: 'better_together/shared/map', locals: { map: @event.map } %>
+                  </section>
                 <% end %>
                 <% if @event.starts_at.present? %>
                   <div class="event-datetime card-text text-muted mt-2">
@@ -124,10 +137,6 @@
                   <%= @resource.description.presence || t('better_together.events.no_description_available') %>
                 </p>
 
-                <%= render 'better_together/shared/claims_and_evidence', record: @event %>
-                <%= render 'better_together/shared/bibliography', record: @event %>
-                <%= render 'better_together/shared/governance_bundle_links', record: @event if @event.bibliography_entries.any? || @event.claims.any? %>
-
                 <%= render 'better_together/events/event_hosts', event: @event %>
               </div>
             </div>
@@ -149,6 +158,18 @@
               </div>
             </div>
           </div>
+
+          <% if @event.recurring? %>
+            <!-- Sessions Tab Pane — upcoming occurrences, including cancelled ones (shown with a badge, not omitted) -->
+            <div id="sessions" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="sessions-tab">
+              <div class="row">
+                <div class="col-md-12">
+                  <h6 class="mb-2"><%= t('globals.tabs.sessions', default: 'Sessions') %></h6>
+                  <%= next_occurrences_list(@event) %>
+                </div>
+              </div>
+            </div>
+          <% end %>
 
           <% if policy(@invitation).create? %>
             <!-- Invitations (organizer-only) Tab Pane -->

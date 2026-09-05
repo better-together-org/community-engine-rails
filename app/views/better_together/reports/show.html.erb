@@ -14,9 +14,13 @@
         <div class="col-lg-8">
           <dl class="row mb-0">
             <dt class="col-sm-4"><%= t('better_together.reports.show.reported_record', default: 'Reported record') %></dt>
-            <dd class="col-sm-8">
-              <%= @report.reportable.class.model_name.human %>:
-              <%= content_actions_resource_name(@report.reportable) %>
+            <dd class="col-sm-8" id="report-reported-record">
+              <% if @report.reportable.present? %>
+                <%= @report.reportable.class.model_name.human %>:
+                <%= content_actions_resource_name(@report.reportable) %>
+              <% else %>
+                <span id="report-reportable-unavailable"><%= t('better_together.reports.show.reported_record_unavailable') %></span>
+              <% end %>
             </dd>
 
             <dt class="col-sm-4"><%= t('better_together.reports.attributes.category') %></dt>

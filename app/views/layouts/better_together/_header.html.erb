@@ -3,13 +3,14 @@
   <nav id="top-nav" class="navbar navbar-expand-lg navbar-dark pb-0 justify-content-center">
     <%= render 'layouts/better_together/navbar_brand' %>
 
-    <ul id="primary-nav" class="navbar-nav text-center ms-auto flex-row align-items-center gap-2 gap-md-3">
-      <!-- Social Media Accounts (visible on large screens) -->
-      <div id="social-media-icons">
-        <% cache nav_fragment_cache_key('header_social_media') do %>
-          <%= render_host_community_social_media_accounts %>
-        <% end %>
-      </div>
+    <!-- Social Media Accounts (visible on large screens) -->
+    <div id="social-media-icons" class="ms-auto ms-sm-2">
+      <% cache nav_fragment_cache_key('header_social_media') do %>
+        <%= render_host_community_social_media_accounts %>
+      <% end %>
+    </div>
+
+    <ul id="primary-nav" class="navbar-nav text-center flex-row align-items-center gap-2 gap-md-3">
 
       <%= yield :editor_status if content_for? :editor_status %>
 

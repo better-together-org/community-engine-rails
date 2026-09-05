@@ -78,6 +78,8 @@ RSpec.feature 'User Registration', :user_registration do
       check 'user_accept_code_of_conduct'
     end
 
+    satisfy_bot_defense_minimum_wait(:registration)
+
     # Click the login button (make sure the button text matches your view)
     click_button 'Sign Up'
 

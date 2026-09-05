@@ -16,16 +16,31 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
 
   describe '#index?' do
     it { expect(described_class.new(normal_user, request_rec).index?).to be true }
-    it { expect(described_class.new(nil, request_rec).index?).to be false }
+
+    it 'allows unauthenticated (guest) users' do
+      expect(described_class.new(nil, request_rec).index?).to be true
+    end
   end
 
   describe '#show?' do
     it { expect(described_class.new(normal_user, request_rec).show?).to be false }
-    it { expect(described_class.new(nil, request_rec).show?).to be false }
 
-    it 'allows viewing a public request' do
+    it 'denies a guest viewing a private request' do
+      expect(described_class.new(nil, request_rec).show?).to be false
+    end
+
+    it 'allows viewing a public request when authenticated' do
       request_rec.update_column(:privacy, 'public')
       expect(described_class.new(normal_user, request_rec).show?).to be true
+    end
+
+    it 'allows a guest to view a public standalone request' do
+      request_rec.update_column(:privacy, 'public')
+      expect(described_class.new(nil, request_rec).show?).to be true
+    end
+
+    it 'denies a guest viewing a connection request regardless of privacy' do
+      expect(described_class.new(nil, connection_request).show?).to be false
     end
   end
 
@@ -82,7 +97,10 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
 
     let!(:owned_private_request) { request_rec } # rubocop:todo RSpec/IndexedLet
     let!(:public_request) do # rubocop:todo RSpec/IndexedLet
-      create(:better_together_joatu_request, privacy: 'private').tap { |request| request.update_column(:privacy, 'public') }
+      create(:better_together_joatu_request, privacy: 'private').tap { |r| r.update_column(:privacy, 'public') }
+    end
+    let!(:community_request) do # rubocop:todo RSpec/IndexedLet
+      create(:better_together_joatu_request, privacy: 'private').tap { |r| r.update_column(:privacy, 'community') }
     end
     let!(:other_private_request) { create(:better_together_joatu_request, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
@@ -90,10 +108,21 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
     context 'authenticated user' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { normal_user }
 
-      it 'includes public requests only when the user is unrelated' do
+      it 'includes public and community requests when the user is unrelated' do
         expect(resolved).to include(public_request)
+        expect(resolved).to include(community_request)
         expect(resolved).not_to include(owned_private_request)
         expect(resolved).not_to include(other_private_request)
+      end
+
+      it 'excludes requests from people the user has blocked' do # rubocop:todo RSpec/MultipleExpectations
+        blocked_person   = create(:better_together_person)
+        blocked_request  = create(:better_together_joatu_request, creator: blocked_person,
+                                                                  privacy: 'private').tap { |r| r.update_column(:privacy, 'public') }
+        create(:person_block, blocker: normal_user.person, blocked: blocked_person)
+
+        expect(resolved).not_to include(blocked_request)
+        expect(resolved).to include(public_request)
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers
@@ -102,8 +131,15 @@ RSpec.describe BetterTogether::Joatu::RequestPolicy, type: :policy do
     context 'guest' do # rubocop:todo RSpec/MultipleMemoizedHelpers
       let(:user) { nil }
 
-      it 'returns none' do
-        expect(resolved).to be_empty
+      it 'returns public standalone requests only, excluding private subtypes' do # rubocop:todo RSpec/MultipleExpectations
+        membership_request = create(:better_together_joatu_membership_request)
+        membership_request.update_column(:privacy, 'public')
+
+        expect(resolved).to include(public_request)
+        expect(resolved).not_to include(community_request)
+        expect(resolved).not_to include(owned_private_request)
+        expect(resolved).not_to include(other_private_request)
+        expect(resolved).not_to include(membership_request)
       end
     end
     # rubocop:enable RSpec/MultipleMemoizedHelpers

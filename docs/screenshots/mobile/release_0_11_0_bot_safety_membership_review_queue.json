@@ -1,0 +1,10 @@
+{
+  "name": "release_0_11_0_bot_safety_membership_review_queue",
+  "device": "mobile",
+  "url": "/en/c/test-host-community/membership_requests",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "community_manager",
+  "flow": "membership_review_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_bot_safety_spec.rb"
+}

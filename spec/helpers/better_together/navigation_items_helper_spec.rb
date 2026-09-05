@@ -316,6 +316,7 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
       instance_double(
         BetterTogether::NavigationItem,
         id: 101,
+        identifier: 'visible-item',
         visible_to?: true,
         dropdown?: false,
         children: []
@@ -325,6 +326,7 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
       instance_double(
         BetterTogether::NavigationItem,
         id: 102,
+        identifier: 'hidden-item',
         visible_to?: false,
         dropdown?: false,
         children: []
@@ -352,6 +354,26 @@ RSpec.describe BetterTogether::NavigationItemsHelper do
       expect(helper.platform_footer_nav_items).to eq([visible_item])
       expect(helper.platform_footer_nav_items).to eq([visible_item])
       expect(nav_items_relation).to have_received(:to_a).once
+    end
+  end
+
+  describe '#platform_host_nav_children' do
+    let(:nav_area) { build_stubbed(:better_together_navigation_area, identifier: 'platform-host') }
+    let(:host_nav) { build_stubbed(:better_together_navigation_item, identifier: 'host-nav', navigation_area: nav_area) }
+    let(:children) { [build_stubbed(:better_together_navigation_item, parent: host_nav, navigation_area: nav_area)] }
+
+    before do
+      allow(helper).to receive_messages(
+        platform_host_nav_area: nav_area,
+        platform_host_nav_item: host_nav,
+        host_platform: platform
+      )
+    end
+
+    it 'reuses navigation_item_children_for for the host tree' do
+      allow(helper).to receive(:navigation_item_children_for).with(host_nav, platform: platform).and_return(children)
+
+      expect(helper.platform_host_nav_children).to eq(children)
     end
   end
 end

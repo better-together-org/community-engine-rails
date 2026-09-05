@@ -1,0 +1,50 @@
+{
+  "name": "membership_review_community_shortcut",
+  "device": "desktop",
+  "url": "/en/c/community-a40206bb112117d5aec1",
+  "title": "Harbour Gardeners | Communities | Test Host Community",
+  "locale": "en",
+  "role": "community_manager",
+  "feature_set": "membership_review_access_remediation",
+  "flow": "community_page_review_shortcut",
+  "source_spec": "./spec/docs_screenshots/better_together/membership_review_access_remediation_spec.rb",
+  "callouts": [
+    {
+      "selector": "section[aria-labelledby=\"community-membership-review-heading\"]",
+      "title": "Community managers get a visible review shortcut",
+      "bullets": [
+        "The community page itself now announces pending membership requests.",
+        "The badge gives a quick count, while the button opens the full review queue.",
+        "This keeps day-to-day community stewardship in one surface instead of splitting it across hidden routes."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 725.0,
+        "width": 1296.0,
+        "height": 94.796875,
+        "right": 1368.0,
+        "bottom": 819.796875,
+        "center_x": 720.0,
+        "center_y": 772.3984375
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 725.0,
+        "width": 1296.0,
+        "height": 94.796875,
+        "right": 1368.0,
+        "bottom": 819.796875,
+        "center_x": 720.0,
+        "center_y": 772.3984375
+      },
+      "placement": {
+        "side": "above",
+        "x": 530.0,
+        "y": 301.0,
+        "width": 380,
+        "height": 404,
+        "score": 725.0
+      }
+    }
+  ]
+}

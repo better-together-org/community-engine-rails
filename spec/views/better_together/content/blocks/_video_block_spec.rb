@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'better_together/content/blocks/_video_block.html.erb' do
   helper BetterTogether::Content::BlocksHelper
+  helper BetterTogether::ContentActionsHelper
 
   let(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, host: true) }
   let(:creator) { create(:better_together_person) }
@@ -24,7 +25,10 @@ RSpec.describe 'better_together/content/blocks/_video_block.html.erb' do
     expect(rendered).not_to include(I18n.t('better_together.content.blocks.embeds.blocked_title'))
   end
 
-  it 'renders a visible fallback when the embed origin is not allowed' do
+  it 'still renders an iframe for a known video provider even without an explicit CSP setting' do
+    # VideoBlock (see video_block.rb) unconditionally registers youtube.com/vimeo.com as allowed
+    # CSP frame sources at load time via BetterTogether.register_content_security_policy_sources,
+    # independent of any platform-level csp_frame_src setting — known providers always work.
     platform.update!(settings: platform.settings.except('csp_frame_src'))
     video_block = create(:content_video_block, creator:)
 
@@ -32,8 +36,8 @@ RSpec.describe 'better_together/content/blocks/_video_block.html.erb' do
 
     page = Capybara.string(rendered)
 
-    expect(page).not_to have_css('iframe')
-    expect(rendered).to include(I18n.t('better_together.content.blocks.embeds.blocked_title'))
+    expect(page).to have_css('iframe')
+    expect(rendered).not_to include(I18n.t('better_together.content.blocks.embeds.blocked_title'))
     expect(rendered).to include('https://www.youtube.com')
   end
 end

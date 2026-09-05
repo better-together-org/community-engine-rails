@@ -26,19 +26,19 @@
       
       <p>Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.</p>
       
-      <p>Cookies set by the website owner (in this case, <%= host_platform.name %>) are called "first-party cookies." Cookies set by parties other than the website owner are called "third-party cookies." Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., analytics, error tracking). The parties that set these third-party cookies can recognize your computer both when it visits the website in question and also when it visits certain other websites.</p>
+      <p>Cookies set by the website owner (in this case, <%= host_platform.name %>) are called "first-party cookies." Cookies set by parties other than the website owner are called "third-party cookies." Community Engine relies on first-party cookies for session, security, and basic platform functionality. A host may add third-party services separately, but those are not part of the default Community Engine cookie model.</p>
 
       <h2 id="why-we-use-cookies">2. Why We Use Cookies</h2>
       
-      <p>We use first-party and third-party cookies for several reasons. Some cookies are required for technical reasons in order for our platform to operate (we refer to these as "essential" or "strictly necessary" cookies). Other cookies enable us to track and target the interests of our users to enhance the experience on our platform, provide error tracking, and analyze platform usage. These are "optional" cookies.</p>
+      <p>We use cookies primarily for technical reasons that are necessary for the platform to operate. These are "essential" or "strictly necessary" cookies. Community Engine also includes internal, privacy-focused metrics, but those metrics do not rely on cookies by default.</p>
 
       <h2 id="types-of-cookies">3. Types of Cookies We Use</h2>
 
       <h3>First-Party Cookies (Always Active)</h3>
       <p>These are cookies that we set ourselves. We use these cookies to provide our core services and functionality.</p>
 
-      <h3>Third-Party Cookies (Optional)</h3>
-      <p>These are cookies set by external service providers. We only use third-party cookies when explicitly configured by platform organizers and with your consent where required by law.</p>
+      <h3>Third-Party Cookies (Host-Specific)</h3>
+      <p>Some hosts may add third-party services to their own platform deployment. If that happens, those services may set cookies or similar browser storage. Those integrations are host-specific and should be described in the host's own privacy and cookie disclosures.</p>
 
       <h2 id="essential-cookies">4. Essential Cookies</h2>
       
@@ -88,45 +88,25 @@
 
       <h2 id="optional-cookies">5. Optional Cookies</h2>
 
-      <p>These cookies are only used when explicitly enabled by platform organizers and, where required by law, with your consent.</p>
+      <p>Community Engine does not include optional analytics or advertising cookies by default. If a host adds third-party services that use cookies, that host is responsible for providing the appropriate notices, choices, and consent mechanisms required by law.</p>
 
-      <h3>Analytics and Performance Cookies (If Enabled)</h3>
-      <p>The platform includes built-in metrics functionality that tracks usage patterns <strong>without identifying individual users</strong>. This system is privacy-focused and does not use cookies or track personal data.</p>
-      
-      <p>Platform organizers may choose to enable third-party analytics services. If enabled, you will be notified and asked for consent where required by law.</p>
+      <h3>Built-In Metrics</h3>
+      <p>The platform includes built-in metrics functionality that tracks usage patterns <strong>without identifying individual users</strong>. This system is privacy-focused and does not use cookies to perform its default event tracking.</p>
 
-      <h3>Error Tracking Cookies (If Enabled)</h3>
-      <p>When the platform organizer configures Sentry error tracking (via the SENTRY_CLIENT_KEY environment variable), error data may be collected to help diagnose and fix technical issues. This may include:</p>
-      <ul>
-        <li>Browser information and device type</li>
-        <li>Error messages and stack traces</li>
-        <li>URL where the error occurred</li>
-        <li>Approximate timestamp of the error</li>
-      </ul>
-      <p>Sentry may use cookies to track error sessions. For more information, see <a href="https://sentry.io/privacy/" target="_blank" rel="noopener noreferrer">Sentry's Privacy Policy</a>.</p>
+      <h3>Host-Added Services</h3>
+      <p>A host may add services such as error monitoring, analytics, or other external integrations. Those services are not enabled by default in Community Engine, and any cookies or browser storage they use should be disclosed by the host operating the specific platform you are using.</p>
 
       <h2 id="your-choices">6. Your Choices Regarding Cookies</h2>
 
       <h3>Essential Cookies</h3>
       <p>Essential cookies are necessary for the platform to function properly. While you can configure your browser to block these cookies, doing so will prevent you from using many features of the platform, including signing in and maintaining your session.</p>
 
-      <h3>Optional Cookies</h3>
-      <p>For optional cookies (analytics, error tracking), you have the following choices:</p>
-      <ul>
-        <li><strong>During Registration:</strong> You will be presented with clear options to consent to optional cookies during the registration process</li>
-        <li><strong>Account Settings:</strong> You can modify your cookie preferences at any time in your account settings</li>
-        <li><strong>Browser Settings:</strong> You can configure your browser to block or delete cookies (see below)</li>
-      </ul>
+      <h3>Host-Added Optional Services</h3>
+      <p>If a host has added optional third-party services, your choices will depend on how that host has implemented them. Any additional controls for those services should be explained by the host operating the specific platform you are using.</p>
+
+      <p>You can always use your browser settings to block or delete cookies, subject to the warning above that blocking essential cookies may prevent the platform from working correctly.</p>
 
       <h2 id="cookie-management">7. How to Manage Cookies</h2>
-
-      <h3>Platform Cookie Preferences</h3>
-      <p>You can manage your cookie preferences for this platform by:</p>
-      <ol>
-        <li>Visiting your Account Settings page</li>
-        <li>Navigating to the Privacy & Cookies section</li>
-        <li>Updating your preferences for optional cookies</li>
-      </ol>
 
       <h3>Browser Cookie Settings</h3>
       <p>You can set or amend your web browser controls to accept or refuse cookies. If you choose to reject cookies, you may still use our platform though your access to some functionality and areas may be restricted. The method for disabling cookies varies by browser and device. Please consult your browser's help documentation for specific instructions:</p>
@@ -149,10 +129,10 @@
       <p>This Cookie Policy is part of our compliance with Canada's Personal Information Protection and Electronic Documents Act (PIPEDA). Under PIPEDA:</p>
 
       <ul>
-        <li><strong>Consent:</strong> We obtain your meaningful consent for the collection and use of personal information through cookies, except for essential cookies necessary for the platform to function</li>
+        <li><strong>Consent:</strong> Essential cookies are used because they are necessary for the platform to function. If a host adds optional third-party cookies, that host is responsible for obtaining any consent required by law</li>
         <li><strong>Purpose:</strong> We clearly identify why we use cookies and how they support platform functionality</li>
         <li><strong>Access:</strong> You have the right to access information about what cookies we use and how they collect data about you</li>
-        <li><strong>Withdrawal:</strong> You can withdraw consent for optional cookies at any time through your browser settings or account preferences</li>
+        <li><strong>Withdrawal:</strong> You can limit or delete cookies using your browser settings. Host-added optional services may provide additional controls if the host implements them</li>
         <li><strong>Safeguards:</strong> We implement appropriate security measures to protect data collected through cookies</li>
       </ul>
 
@@ -164,7 +144,7 @@
         <li>File a complaint about our cookie practices with our Privacy Officer or the Office of the Privacy Commissioner of Canada</li>
       </ul>
 
-      <p><strong>Privacy Officer Contact:</strong> If you have questions about our cookie practices under Canadian privacy law, contact our Privacy Officer at <a href="mailto:privacy@bettertogethersolutions.com">privacy@bettertogethersolutions.com</a>.</p>
+      <p><strong>Privacy Contact:</strong> If you have questions about cookie practices under Canadian privacy law, contact the operator of the community platform using its published privacy contact information.</p>
 
       <p><strong>Filing a Complaint:</strong> You may file complaints with the Office of the Privacy Commissioner of Canada:</p>
       <ul>
@@ -199,9 +179,9 @@
 
       <p>If you have questions or concerns about this Cookie Policy or our use of cookies, please contact us:</p>
 
+      <p>Use the contact information published by the operator of the community platform, together with the related policy pages below:</p>
+
       <address>
-        <strong>Better Together Solutions</strong><br>
-        Email: <a href="mailto:hello@bettertogethersolutions.com">hello@bettertogethersolutions.com</a><br>
         <%= link_to 'Privacy Policy', better_together.render_page_path('privacy', locale: I18n.locale) %><br>
         <%= link_to 'Terms of Service', better_together.render_page_path('terms-of-service', locale: I18n.locale) %>
       </address>
@@ -213,9 +193,9 @@
         <p>Here's what you need to know about cookies on our platform:</p>
         <ul class="mb-2">
           <li><strong>Essential cookies:</strong> Required for login and basic platform functions (we must use these)</li>
-          <li><strong>Analytics cookies:</strong> Help us understand how people use the platform (you can opt out)</li>
-          <li><strong>Your choice:</strong> You can manage cookie preferences in your browser or account settings</li>
-          <li><strong>Third parties:</strong> We only use trusted services (listed above) and they follow strict privacy rules</li>
+          <li><strong>Optional third-party cookies:</strong> Community Engine does not use them by default</li>
+          <li><strong>Your choice:</strong> You can manage cookies in your browser, and hosts that add optional third-party services should explain any additional controls they provide</li>
+          <li><strong>Third parties:</strong> Third-party cookie use depends on the host operating the specific platform you are using</li>
           <li><strong>Your rights:</strong> You can see, export, or delete data collected via cookies at any time</li>
           <li><strong>Canadian compliance (PIPEDA):</strong> We follow Canadian privacy law for cookie data</li>
           <li><strong>GDPR (EU) compliance:</strong> European users have full GDPR rights for cookie data</li>

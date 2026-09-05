@@ -209,4 +209,6 @@ RSpec.describe BetterTogether::Conversation do
       expect(conversation.participants).to include(person)
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :conversation
 end

@@ -1,0 +1,50 @@
+{
+  "name": "federation_review_host_dashboard_queue",
+  "device": "desktop",
+  "url": "/en/host/federation-review",
+  "title": "Federation review | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "safety_and_federation_review_operations",
+  "flow": "host_dashboard_federation_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/review_operations_access_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-connection-review-heading",
+      "title": "The host dashboard now exposes federation review work",
+      "bullets": [
+        "Operators who already manage network connections can find pending and active links from the normal dashboard.",
+        "Each row shows the connected platform, direction, current state, and a direct link into the connection record.",
+        "This complements steward notifications by keeping the queue discoverable without typing a direct URL."
+      ],
+      "target": {
+        "x": 431.0,
+        "y": 257.0,
+        "width": 510.890625,
+        "height": 28.796875,
+        "right": 941.890625,
+        "bottom": 285.796875,
+        "center_x": 686.4453125,
+        "center_y": 271.3984375
+      },
+      "avoid": {
+        "x": 414.0,
+        "y": 240.0,
+        "width": 942.0,
+        "height": 350.5625,
+        "right": 1356.0,
+        "bottom": 590.5625,
+        "center_x": 885.0,
+        "center_y": 415.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 695.0,
+        "y": 610.56,
+        "width": 380,
+        "height": 508,
+        "score": 870.4375
+      }
+    }
+  ]
+}

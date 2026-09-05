@@ -3,7 +3,7 @@
 module BetterTogether
   # Base invitation policy class providing common authorization logic for invitation-related resources
   # This class defines standard invitation operations and delegates invitable-specific logic to subclasses
-  class InvitationPolicy < ApplicationPolicy
+  class InvitationPolicy < PlatformRecordPolicy
     def create?
       return false unless user.present?
 
@@ -22,12 +22,12 @@ module BetterTogether
     end
 
     # Base scope class for invitation policies providing common filtering logic
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
         return scope.none unless user.present?
 
         # Users see invitations for resources they can manage
-        filtered_invitations_scope
+        platform_scoped(filtered_invitations_scope)
       end
 
       protected

@@ -58,17 +58,19 @@ module BetterTogether
               ingress_method: 'email'
             },
             object: attachment_object_payload(message, attachment, index, raw_content),
-            content_text: attachment_text_payload(attachment, raw_content)
+            content_text: attachment_text_payload(attachment, raw_content),
+            raw_content:
           )
         end
       end
 
-      def base_payload(source:, object:, content_text:)
+      def base_payload(source:, object:, content_text:, raw_content: nil)
         {
           tenant: tenant_payload,
           source:,
           object:,
           content_text:,
+          raw_content:,
           trigger_event: 'ce_inbound_email_received',
           privacy: privacy_payload,
           visibility: visibility_payload,

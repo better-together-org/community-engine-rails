@@ -8,39 +8,40 @@ RSpec.describe BetterTogether::Metrics::Share do
       community = create(:community)
       share = create(:metrics_share,
                      shareable: community,
-                     platform: 'facebook',
+                     platform_name: 'facebook',
                      url: 'https://facebook.com/share',
                      shared_at: Time.current,
                      locale: 'en')
       expect(share).to be_valid
-      expect(share.platform).to eq('facebook')
+      expect(share.platform_name).to eq('facebook')
     end
   end
 
   describe 'associations' do
     it { is_expected.to belong_to(:shareable).optional }
+    it { is_expected.to belong_to(:platform).class_name('BetterTogether::Platform') }
   end
 
   describe 'validations' do
-    describe 'platform' do
-      it 'requires platform to be present' do
-        share = build(:metrics_share, platform: nil)
+    describe 'platform_name' do
+      it 'requires platform_name to be present' do
+        share = build(:metrics_share, platform_name: nil)
         expect(share).not_to be_valid
-        expect(share.errors[:platform]).to include("can't be blank")
+        expect(share.errors[:platform_name]).to include("can't be blank")
       end
 
-      it 'validates platform is in allowed list' do
-        share = build(:metrics_share, platform: 'invalid_platform')
+      it 'validates platform_name is in allowed list' do
+        share = build(:metrics_share, platform_name: 'invalid_platform')
         expect(share).not_to be_valid
-        expect(share.errors[:platform]).to include('is not included in the list')
+        expect(share.errors[:platform_name]).to include('is not included in the list')
       end
 
       it 'accepts valid platforms' do
         valid_platforms = %w[facebook bluesky linkedin pinterest reddit whatsapp]
 
-        valid_platforms.each do |platform|
-          share = build(:metrics_share, platform: platform)
-          expect(share).to be_valid, "Expected #{platform} to be valid"
+        valid_platforms.each do |platform_name|
+          share = build(:metrics_share, platform_name: platform_name)
+          expect(share).to be_valid, "Expected #{platform_name} to be valid"
         end
       end
     end
@@ -102,6 +103,29 @@ RSpec.describe BetterTogether::Metrics::Share do
   describe 'constants' do
     it 'defines SHAREABLE_PLATFORMS' do
       expect(described_class::SHAREABLE_PLATFORMS).to eq(%w[email facebook bluesky linkedin pinterest reddit whatsapp])
+    end
+  end
+
+  describe 'platform derivation (Metrics::PlatformScoped)' do
+    it "derives platform_id from shareable's own platform when not already set" do
+      federated_platform = create(:better_together_platform, :public, host: false)
+      federated_page = create(:better_together_page, platform: federated_platform)
+
+      share = described_class.create!(shareable: federated_page, platform_name: 'facebook',
+                                      url: 'https://example.com/shared', shared_at: Time.current, locale: 'en')
+
+      expect(share.platform).to eq(federated_platform)
+    end
+
+    it 'does not override an explicitly-set platform' do
+      federated_platform = create(:better_together_platform, :public, host: false)
+      other_platform = create(:better_together_platform, :public, host: false)
+      federated_page = create(:better_together_page, platform: federated_platform)
+
+      share = described_class.create!(shareable: federated_page, platform: other_platform, platform_name: 'facebook',
+                                      url: 'https://example.com/shared', shared_at: Time.current, locale: 'en')
+
+      expect(share.platform).to eq(other_platform)
     end
   end
 end

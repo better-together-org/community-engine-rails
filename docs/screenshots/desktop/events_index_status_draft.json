@@ -1,0 +1,119 @@
+{
+  "name": "events_index_status_draft",
+  "device": "desktop",
+  "url": "/en/events?status=draft",
+  "title": "Events | Community Engine",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "events_index_filters",
+  "flow": "events_index_status_filter",
+  "source_spec": "./spec/docs_screenshots/better_together/events_index_filter_spec.rb",
+  "callouts": [
+    {
+      "selector": "#events-status",
+      "title": "Status filter",
+      "bullets": [
+        "Filters by the new events.status enum (draft/confirmed/cancelled).",
+        "Drafts are only visible to their creator, hosts, invitees, or platform event managers."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 533.0,
+        "width": 306.0,
+        "height": 38.0,
+        "right": 378.0,
+        "bottom": 571.0,
+        "center_x": 225.0,
+        "center_y": 552.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 533.0,
+        "width": 306.0,
+        "height": 38.0,
+        "right": 378.0,
+        "bottom": 571.0,
+        "center_x": 225.0,
+        "center_y": 552.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 398.0,
+        "y": 421.0,
+        "width": 380,
+        "height": 262,
+        "score": 1062.0
+      }
+    },
+    {
+      "selector": "#events-clear-filters",
+      "title": "Clear Filters",
+      "bullets": [
+        "Returns to the default view: upcoming events, soonest-first, 20 per page."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 799.0,
+        "width": 120.890625,
+        "height": 38.0,
+        "right": 192.890625,
+        "bottom": 837.0,
+        "center_x": 132.4453125,
+        "center_y": 818.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 799.0,
+        "width": 120.890625,
+        "height": 38.0,
+        "right": 192.890625,
+        "bottom": 837.0,
+        "center_x": 132.4453125,
+        "center_y": 818.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 212.89,
+        "y": 739.0,
+        "width": 380,
+        "height": 158,
+        "score": 1247.109375
+      }
+    },
+    {
+      "selector": "#events .event-status-badge",
+      "title": "Status badge",
+      "bullets": [
+        "Non-confirmed events carry a localized Draft/Cancelled badge on their card."
+      ],
+      "target": {
+        "x": 418.0,
+        "y": 770.8125,
+        "width": 50.53125,
+        "height": 20.375,
+        "right": 468.53125,
+        "bottom": 791.1875,
+        "center_x": 443.265625,
+        "center_y": 781.0
+      },
+      "avoid": {
+        "x": 418.0,
+        "y": 770.8125,
+        "width": 50.53125,
+        "height": 20.375,
+        "right": 468.53125,
+        "bottom": 791.1875,
+        "center_x": 443.265625,
+        "center_y": 781.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 488.53,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}

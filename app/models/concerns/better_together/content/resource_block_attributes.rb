@@ -8,13 +8,16 @@ module BetterTogether
       extend ActiveSupport::Concern
 
       included do
+        include ::BetterTogether::Translatable
+
+        translates :view_more_url, type: :string
+
         store_attributes :content_data do
           display_style    String,  default: 'grid'
           item_limit       Integer, default: 6
           resource_ids     String,  default: ''
           community_scope_id String, default: ''
           show_view_more_link String, default: 'false'
-          view_more_url String, default: ''
         end
 
         validates :display_style,

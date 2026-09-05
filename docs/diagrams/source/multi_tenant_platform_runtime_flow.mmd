@@ -1,0 +1,15 @@
+flowchart TD
+  A[Incoming request host] --> B[PlatformContextMiddleware]
+  B --> C[Resolve PlatformDomain]
+  C --> D{Domain found?}
+  D -->|Yes| E[Set Current.platform_domain]
+  D -->|No| F[Use cached host platform]
+  E --> G[Set Current.platform]
+  F --> G
+  G --> H[Controller, API, MCP, mailer helpers use platform context]
+  H --> I[Platform-scoped records and permissions]
+  I --> J[Platform connections and federation]
+  I --> K[Platform storage resolution]
+  J --> L[platform_sync jobs]
+  B --> M[Reset Current after request]
+

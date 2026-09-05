@@ -3,24 +3,79 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
+  # rubocop:disable Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
 
     host_platform = BetterTogether::Platform.find_by(host: true) ||
                     create(:better_together_platform, :host, community: user.person.community)
-    role = create(:better_together_role, :platform_role)
+    membership = host_platform.person_platform_memberships.find_or_initialize_by(member: user.person)
+    membership.role ||= create(:better_together_role, :platform_role)
+    role = membership.role
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    membership.status = :active
+    membership.save!
+    user.person.touch
   end
+  # rubocop:enable Metrics/AbcSize
 
   let(:platform_manager) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:people_reviewer) { create(:better_together_user, :confirmed) }
-  let(:public_person) { create(:better_together_person, privacy: 'public') }
+  # community: explicit — the factory's own bare `community` association
+  # always builds a fresh (default-private) community per person, which
+  # would cap this person's 'public' privacy at the privacy ceiling
+  # regardless of the host platform's own privacy (see PrivacyCeilingValidatable).
+  let(:public_person) do
+    create(:better_together_person, privacy: 'public', community: create(:better_together_community, privacy: 'public'))
+  end
   let(:private_person) { create(:better_together_person, privacy: 'private') }
 
   before do
+    # This spec tests person-level privacy independent of platform/community
+    # privacy — ensure the default host platform (and its community) are
+    # public so a person's own 'public' privacy never exceeds the privacy
+    # ceiling (see PrivacyCeilingValidatable) for reasons unrelated to what
+    # these examples are actually testing.
+    BetterTogether::AccessControlBuilder.seed_data
+    host_platform = BetterTogether::Platform.find_by(host: true)
+    if host_platform
+      host_platform.update!(privacy: 'public') unless host_platform.privacy_public?
+      host_platform.community&.update!(privacy: 'public') if host_platform.community && !host_platform.community.privacy_public?
+    end
+
     grant_platform_permission(people_reviewer, 'read_person')
+  end
+
+  describe '#create?' do
+    it 'allows platform managers' do
+      expect(described_class.new(platform_manager, BetterTogether::Person).create?).to be true
+    end
+
+    it 'allows an explicit create_person permission holder' do
+      grant_platform_permission(people_reviewer, 'create_person')
+
+      expect(described_class.new(people_reviewer, BetterTogether::Person).create?).to be true
+    end
+
+    it 'denies a regular user without the permission' do
+      regular_user = create(:better_together_user, :confirmed)
+
+      expect(described_class.new(regular_user, BetterTogether::Person).create?).to be false
+    end
+
+    it 'denies unauthenticated users' do
+      expect(described_class.new(nil, BetterTogether::Person).create?).to be false
+    end
   end
 
   it 'allows guests to view public profiles' do
@@ -33,5 +88,69 @@ RSpec.describe BetterTogether::PersonPolicy do
 
   it 'permits explicit people reviewers to view private profiles' do
     expect(described_class.new(people_reviewer, private_person).show?).to be true
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:tenant_platform) { create(:better_together_platform, :public) }
+    let(:tenant_admin) { create(:better_together_user, :confirmed) }
+    let(:tenant_person) { create(:better_together_person, platform: tenant_platform) }
+
+    before do
+      membership = tenant_platform.person_platform_memberships.find_or_initialize_by(member: tenant_admin.person)
+      membership.role ||= create(:better_together_role, :platform_role)
+      membership.role.assign_resource_permissions(%w[update_person delete_person])
+      membership.status = :active
+      membership.save!
+    end
+
+    it 'denies updating or destroying a person belonging to a different platform' do
+      other_platform_person = create(:better_together_person, platform: BetterTogether::Platform.find_by(host: true))
+      policy = described_class.new(tenant_admin, other_platform_person)
+
+      expect(policy.update?).to be false
+      expect(policy.destroy?).to be false
+    end
+
+    it 'allows managing a person belonging to their own platform' do
+      policy = described_class.new(tenant_admin, tenant_person)
+
+      expect(policy.update?).to be true
+      expect(policy.destroy?).to be true
+    end
+  end
+
+  describe 'Scope' do
+    let(:scope) { BetterTogether::Person }
+
+    it 'limits signed-in users without directory permission to themselves and public profiles' do
+      resolved = described_class::Scope.new(platform_manager, scope).resolve
+
+      expect(resolved).to include(platform_manager.person, public_person)
+      expect(resolved).not_to include(private_person)
+    end
+
+    it 'returns all people for explicit directory reviewers' do
+      grant_platform_permission(people_reviewer, 'list_person')
+
+      resolved = described_class::Scope.new(people_reviewer, scope).resolve
+
+      expect(resolved).to include(people_reviewer.person, public_person, private_person)
+    end
+  end
+
+  describe 'cross-tenant isolation (platform steward boundaries)' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_b_person) { create(:better_together_person, platform: platform_b) }
+
+    it 'denies a steward of platform A from updating a person on platform B' do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_person).update?).to be false
+    end
+
+    it 'allows a steward of platform B to update a person on platform B' do
+      steward_b = steward_of(platform_b)
+      expect(described_class.new(steward_b, platform_b_person).update?).to be true
+    end
   end
 end

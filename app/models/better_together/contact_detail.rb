@@ -1,10 +1,23 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ContactDetail < ApplicationRecord # rubocop:todo Style/Documentation
+  class ContactDetail < PlatformRecord # rubocop:todo Style/Documentation
     # belongs_to :contactable, polymorphic: true, touch: true
     # Use a manual safe touch to avoid raising ActiveRecord::StaleObjectError in tests when lock_version is out of date
     belongs_to :contactable, polymorphic: true, touch: false
+
+    # Every primary community — the bootstrapping host Community, and every
+    # subsequent platform's own primary community — builds its contact_detail
+    # (Contactable#build_default_contact_details) before that platform can be
+    # referenced yet. See Community#bootstrapping_host_community? /
+    # #bootstrapping_primary_community and
+    # PrimaryCommunity#backfill_primary_community_platform, which backfills
+    # this contact_detail's platform_id once the platform is persisted.
+    # Overrides PlatformScoped#platform_presence_optional? — see that concern
+    # for why this is a hook method rather than a redeclared belongs_to.
+    def platform_presence_optional?
+      bootstrapping_primary_community_contact_detail?
+    end
 
     after_commit :safe_touch_contactable, on: %i[create update destroy]
 
@@ -25,7 +38,7 @@ module BetterTogether
         {
           phone_numbers_attributes: [:id, :number, :_destroy, *PhoneNumber.extra_permitted_attributes],
           email_addresses_attributes: [:id, :email, :_destroy, *EmailAddress.extra_permitted_attributes],
-          social_media_accounts_attributes: [:id, :platform, :handle, :url, :_destroy,
+          social_media_accounts_attributes: [:id, :platform_name, :handle, :url, :_destroy,
                                              *SocialMediaAccount.extra_permitted_attributes],
           addresses_attributes: [:id, :physical, :postal, :line1, :line2, :city_name, :state_province_name,
                                  :postal_code, :country_name, :_destroy, *Address.extra_permitted_attributes],
@@ -45,6 +58,12 @@ module BetterTogether
     end
 
     private
+
+    def bootstrapping_primary_community_contact_detail?
+      return false unless contactable.is_a?(BetterTogether::Community)
+
+      contactable.bootstrapping_host_community? || contactable.bootstrapping_primary_community
+    end
 
     def safe_touch_contactable # rubocop:todo Metrics/AbcSize
       return unless contactable.present?

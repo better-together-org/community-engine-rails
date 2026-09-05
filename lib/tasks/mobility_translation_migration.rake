@@ -10,7 +10,7 @@
 # Performance Optimizations:
 # - Uses bulk operations (insert_all, delete_all) instead of individual record operations
 # - Reduces database round trips from N operations to 2 operations
-# - Bypasses ActiveRecord callbacks (especially Elasticsearch indexing)
+# - Bypasses ActiveRecord callbacks (especially external search indexing)
 # - Provides timing information for performance monitoring
 #
 # Usage:
@@ -63,7 +63,7 @@ namespace :translations do # rubocop:todo Metrics/BlockLength
       # This approach is much faster than individual operations:
       # - Single insert_all() vs N individual creates
       # - Single delete_all() vs N individual destroys
-      # - Bypasses ActiveRecord callbacks (especially Elasticsearch)
+      # - Bypasses ActiveRecord callbacks (especially external search hooks)
       # - Reduces database round trips from N to 2 operations
       records_to_create = []
       records_to_delete = []
@@ -137,7 +137,7 @@ namespace :translations do # rubocop:todo Metrics/BlockLength
         end
       end
 
-      # Bulk delete text translations (bypass Elasticsearch callbacks)
+      # Bulk delete text translations (bypass external search callbacks)
       if records_to_delete.any?
         puts "Deleting #{records_to_delete.count} text translations in bulk..."
         start_time = Time.current

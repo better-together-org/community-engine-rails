@@ -192,44 +192,6 @@ RSpec.describe BetterTogether::Content::Markdown do
     end
   end
 
-  describe '#as_indexed_json with localization' do
-    let(:markdown) do
-      m = nil
-      I18n.with_locale(:en) do
-        m = create(:content_markdown, markdown_source: '# English **content**')
-      end
-      I18n.with_locale(:es) do
-        m.update!(markdown_source: '# Contenido **español**')
-      end
-      I18n.with_locale(:fr) do
-        m.update!(markdown_source: '# Contenu **français**')
-      end
-      m
-    end
-
-    it 'indexes content for all available locales' do
-      result = markdown.as_indexed_json
-
-      expect(result[:localized_content][:en]).to include('English')
-      expect(result[:localized_content][:en]).to include('content')
-      expect(result[:localized_content][:en]).not_to include('**')
-
-      expect(result[:localized_content][:es]).to include('Contenido')
-      expect(result[:localized_content][:es]).to include('español')
-
-      expect(result[:localized_content][:fr]).to include('Contenu')
-      expect(result[:localized_content][:fr]).to include('français')
-    end
-
-    it 'strips HTML from indexed content' do
-      result = markdown.as_indexed_json
-
-      I18n.available_locales.each do |locale|
-        expect(result[:localized_content][locale]).not_to match(/<[^>]+>/)
-      end
-    end
-  end
-
   describe '#rendered_html with localization' do
     let(:markdown) do
       m = nil

@@ -1,0 +1,153 @@
+{
+  "name": "new_platform_setup_platform_identity",
+  "device": "desktop",
+  "url": "/en/w/new_platform_setup/new-platform-6f001ee09ae7/platform_identity",
+  "title": "Platform Identity | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "new_platform_setup_platform_identity",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new_platform_platform_name",
+      "title": "Name",
+      "bullets": [
+        "Replaces the draft platform's placeholder name."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 430.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 468.59375,
+        "center_x": 720.0,
+        "center_y": 449.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 430.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 468.59375,
+        "center_x": 720.0,
+        "center_y": 449.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 488.59,
+        "width": 380,
+        "height": 132,
+        "score": 992.40625
+      }
+    },
+    {
+      "selector": "#new_platform_platform_host_url",
+      "title": "Host URL",
+      "bullets": [
+        "Replaces the draft platform's placeholder pending.invalid host URL."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 698.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 736.59375,
+        "center_x": 720.0,
+        "center_y": 717.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 698.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 736.59375,
+        "center_x": 720.0,
+        "center_y": 717.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 756.59,
+        "width": 380,
+        "height": 158,
+        "score": 724.40625
+      }
+    },
+    {
+      "selector": "#new_platform_platform_privacy",
+      "title": "Privacy",
+      "bullets": [
+        "Public or private — controls default visibility for the new platform."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 832.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 870.59375,
+        "center_x": 720.0,
+        "center_y": 851.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 832.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 870.59375,
+        "center_x": 720.0,
+        "center_y": 851.59375
+      },
+      "placement": {
+        "side": "right",
+        "x": 1036,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    },
+    {
+      "selector": "#new_platform_platform_time_zone",
+      "title": "Time zone",
+      "bullets": [
+        "Pre-selects Etc/UTC — the IANA identifier the select actually renders as an option."
+      ],
+      "target": {
+        "x": 402.0,
+        "y": 942.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 980.59375,
+        "center_x": 720.0,
+        "center_y": 961.59375
+      },
+      "avoid": {
+        "x": 402.0,
+        "y": 942.59375,
+        "width": 636.0,
+        "height": 38.0,
+        "right": 1038.0,
+        "bottom": 980.59375,
+        "center_x": 720.0,
+        "center_y": 961.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 1000.59,
+        "width": 380,
+        "height": 184,
+        "score": 480.40625
+      }
+    }
+  ]
+}

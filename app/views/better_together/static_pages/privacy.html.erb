@@ -3,7 +3,7 @@
     <div class="col">
       <h1 id="privacy-information">Privacy Information</h1>
 
-      <p>This notice describes how <a href="https://bettertogethersolutions.com/">Better Together Solutions</a>, or Better Together for short, collects and uses personal information. This notice also provides information about the legal rights individuals have concerning their personal information and how you can exercise those rights.</p>
+      <p>This notice describes how the operator of the community platform collects and uses personal information. This notice also provides information about the legal rights individuals may have concerning their personal information and how they can exercise those rights.</p>
 
       <p>Jump to:</p>
 
@@ -198,7 +198,7 @@
       <p><a id="heading--search-indexing"></a></p>
       <h3 id="bts-indexes-content-for-search">Better Together indexes content for search.</h3>
 
-      <p>Better Together uses self-hosted Elasticsearch to index and search content on community platforms. Search data is stored on the same servers as your other data and is not shared with third parties. This indexing includes:</p>
+      <p>Community Engine indexes content for search within the platform. Search indexing is part of the platform experience and is not the same thing as third-party analytics tracking. The operator of the community platform should describe any host-specific search infrastructure in its own privacy disclosures.</p>
 
       <ul>
         <li>
@@ -237,7 +237,7 @@
       <p><a id="heading--error-tracking"></a></p>
       <h3 id="bts-uses-error-tracking-services">Better Together uses error tracking services.</h3>
 
-      <p>When configured by platform administrators, Better Together uses Sentry for error tracking and monitoring. This service may collect:</p>
+      <p>Some hosts may configure external error-tracking or monitoring services. These services are not part of the default Community Engine privacy model and should be disclosed by the host that enables them. When a host enables such a service, it may collect information such as:</p>
 
       <ul>
         <li>
@@ -254,7 +254,7 @@
         </li>
       </ul>
 
-      <p>Better Together configures Sentry to exclude personally identifiable information where possible. For more information about Sentry's data practices, see <a href="https://sentry.io/privacy/">Sentry's privacy policy</a>.</p>
+      <p>When a host enables an external error-tracking service, that host is responsible for describing the provider, its data practices, and any related browser storage or consent requirements.</p>
 
       <p><a id="heading--cookies"></a></p>
       <h3 id="bts-uses-cookies">Better Together uses cookies.</h3>
@@ -298,14 +298,9 @@
         </table>
       </div>
 
-      <h4>Optional Third-Party Services</h4>
+      <h4>Host-Specific Optional Services</h4>
 
-      <p>When enabled by platform administrators, the following third-party services may set additional cookies:</p>
-
-      <ul>
-        <li><strong>Sentry Error Tracking</strong>: When configured, Sentry may set cookies for error monitoring and session replay. See <a href="https://sentry.io/privacy/">Sentry's privacy policy</a> for details.</li>
-        <li><strong>Platform-Specific Analytics</strong>: Individual community platforms may configure their own analytics services. Consult the privacy policy of the specific platform you are using for details on any analytics cookies they use.</li>
-      </ul>
+      <p>Community Engine does not include optional analytics or advertising cookies by default. A host may add third-party services to its own deployment, and those services may use cookies or similar browser storage. If that happens, the host operating the specific platform you are using must describe those services in its own privacy and cookie disclosures.</p>
 
       <p>Better Together does not use advertising cookies or sell data to third parties.</p>
 
@@ -323,28 +318,21 @@
 
       <p>You can make choices about how data about you is used on the settings page for your account. When a community platform uses access restrictions that vary by category, you can choose who will see your post by choosing the appropriate category.</p>
 
-      <p>Most web browsers let you make choices about whether to accept cookies, for specific websites or more generally. <a href="https://aboutcookies.org">aboutcookies.org</a> has instructions for many different web browsers. <a href="https://youronlinechoices.eu">youronlinechoices.eu</a> and <a href="https://aboutads.info">aboutads.info</a> have more information specifically about cookies used for advertising.</p>
+      <p>Most web browsers let you make choices about whether to accept cookies, for specific websites or more generally. <a href="https://aboutcookies.org">aboutcookies.org</a> has instructions for many different web browsers.</p>
 
       <p>Better Together does not respond to the <a href="https://en.wikipedia.org/wiki/Do_Not_Track">Do Not Track HTTP header</a>.</p>
 
       <p><a id="heading--locality"></a></p>
       <h2 id="where-does-bts-store-data-about-me">Where does Better Together store data about me?</h2>
 
-      <p>Better Together stores data in the following locations:</p>
+      <p>The operator of the community platform should describe where data for this specific deployment is stored and processed.</p>
 
-      <ul>
-        <li>
-          <p><strong>Application, Database, and Search Index</strong>: Self-hosted servers operated by Better Together on-premises in Newfoundland and Labrador, Canada (includes PostgreSQL database and Elasticsearch search index)</p>
-        </li>
-        <li>
-          <p><strong>File Storage</strong>: Amazon Web Services S3 in Canada (ca-central-1 region)</p>
-        </li>
-        <li>
-          <p><strong>Content Delivery</strong>: Amazon CloudFront CDN in United States (us-east-1 region) for SSL/TLS certificates and content delivery</p>
-        </li>
-      </ul>
+      <div class="alert alert-secondary" role="alert">
+        <p class="mb-2"><strong>Operator disclosure required.</strong></p>
+        <p class="mb-0">This template should be replaced or supplemented by the operator of the community platform with the actual data-locality, storage, hosting, and content-delivery details for this deployment.</p>
+      </div>
 
-      <p>Specific community platforms may have different storage configurations. Refer to the privacy policy of the community platform on which your account exists for detailed information about that platform's data storage.</p>
+      <p>Specific community platforms may have different storage configurations. If a host runs Community Engine with different infrastructure, that host should provide its own storage and data-locality disclosure.</p>
 
       <p><a id="heading--retention"></a></p>
       <h2 id="how-long-does-bts-retain-data">How long does Better Together retain data?</h2>
@@ -597,29 +585,21 @@
 
       <p>Better Together shares data about your posts and other community platform activity with others as <a href="#heading--community-platform-data">mentioned in the section about community platform data</a>.</p>
 
-      <p>Better Together uses subprocessors and service providers to operate community platforms and deliver services. We may share personal data with the following service providers:</p>
+      <p>The operator of the community platform should disclose the subprocessors and service providers actually used by this deployment.</p>
 
-      <ul>
-        <li><a href="https://aws.amazon.com/privacy/">Amazon Web Services</a>, for file storage (S3) and content delivery (CloudFront)</li>
-        <li><a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub</a>, for open source development and version control</li>
-        <li><a href="https://stripe.com/privacy">Stripe</a>, for processing payments</li>
-        <li><a href="https://sentry.io/privacy/">Sentry</a>, for error tracking and monitoring (when configured)</li>
-      </ul>
-
-      <p>These service providers are contractually required to protect your data and use it only for the purposes we specify.</p>
+      <div class="alert alert-secondary" role="alert">
+        <p class="mb-2"><strong>Operator disclosure required.</strong></p>
+        <p class="mb-0">This template should be replaced or supplemented with the actual subprocessor list, including any storage, payments, communications, monitoring, search, analytics, or other external services used by the host operating this platform.</p>
+      </div>
 
       <p><a id="heading--contact"></a></p>
-      <h2 id="how-can-i-contact-bts-about-privacy">How can I contact Better Together about privacy?</h2>
+      <h2 id="how-can-i-contact-bts-about-privacy">How can I contact the platform operator about privacy?</h2>
 
-      <p>You can send questions, requests, and complaints to our Privacy Officer:</p>
-
-      <p>Better Together Solutions<br>
-      Privacy Officer<br>
-      <a href="mailto:privacy@bettertogethersolutions.com">privacy@bettertogethersolutions.com</a></p>
+      <p>You can send questions, requests, and complaints using the privacy contact information published by the operator of the community platform.</p>
 
       <p>We aim to respond to privacy inquiries within 30 days. For complex requests, we may extend this timeline and will notify you of any extension.</p>
 
-      <p><strong>For Canadian residents:</strong> If you have concerns about our privacy practices under PIPEDA, you may contact our Privacy Officer using the information above. You also have the right to file a complaint with the Office of the Privacy Commissioner of Canada at <a href="https://www.priv.gc.ca">www.priv.gc.ca</a> or 1-800-282-1376.</p>
+      <p><strong>For Canadian residents:</strong> If you have concerns about privacy practices under PIPEDA, you may contact the operator of the community platform using its published privacy contact information. You also have the right to file a complaint with the Office of the Privacy Commissioner of Canada at <a href="https://www.priv.gc.ca">www.priv.gc.ca</a> or 1-800-282-1376.</p>
 
       <p><strong>For European Union residents:</strong> Questions or complaints about GDPR compliance should be sent to the email address above. You may also lodge complaints with your local data protection supervisory authority.</p>
 
@@ -643,7 +623,7 @@
           <li><strong>What we collect:</strong> Account info, content you create, usage data, and technical information like IP addresses</li>
           <li><strong>Why we collect it:</strong> To provide the platform, improve our service, ensure security, and comply with laws</li>
           <li><strong>Do we sell your data?</strong> No, we never sell your personal information to third parties</li>
-          <li><strong>Cookies:</strong> We use essential cookies for login and functionality, plus optional analytics cookies with your consent</li>
+          <li><strong>Cookies:</strong> We use essential cookies for login and functionality; optional third-party cookies depend on the specific host operating the platform</li>
           <li><strong>Your choices:</strong> You can access, export, change, or delete your data at any time</li>
           <li><strong>Search indexing:</strong> Public content may be indexed for search; private content is never indexed</li>
           <li><strong>Data sharing:</strong> We only share data with service providers (like hosting), when required by law, or with your consent</li>
@@ -652,7 +632,7 @@
           <li><strong>Data security:</strong> We encrypt sensitive data and follow industry-standard security practices</li>
           <li><strong>Data retention:</strong> We keep data as long as needed for service delivery and legal requirements</li>
           <li><strong>Your rights:</strong> Access, correct, delete, export, or object to processing of your data</li>
-          <li><strong>Contact us:</strong> Email privacy@bettertogethersolutions.com for any privacy questions or requests</li>
+          <li><strong>Contact us:</strong> Use the privacy contact information published by the operator of the platform for any privacy questions or requests</li>
         </ul>
         <p class="mb-0 mt-3"><em>This summary is for your convenience only. For complete details, please read the full privacy policy above.</em></p>
       </div>

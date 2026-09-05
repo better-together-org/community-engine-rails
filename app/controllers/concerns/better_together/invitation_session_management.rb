@@ -84,6 +84,7 @@ module BetterTogether
         handle_event_invitation_acceptance(user, invitation)
       end
 
+      grant_inviter_messaging_permission(user, invitation)
       clear_invitation_session_data(invitation_type)
     end
 
@@ -99,13 +100,58 @@ module BetterTogether
       clear_invitation_session_data(invitation_type)
     end
 
-    # Platform-specific invitation acceptance
+    # Grants the invitation sender explicit messaging permission on the invitee's behalf.
+    # The invitee is consenting to receive messages from this person by accepting
+    # the invitation — without globally opting in to messages from all members.
+    def grant_inviter_messaging_permission(user, invitation)
+      inviter_person = person_from_inviter(invitation.inviter)
+      return unless inviter_person && inviter_person != user.person
+
+      BetterTogether::PersonMessagingGrant.find_or_create_by!(
+        grantor: user.person,
+        grantee: inviter_person,
+        platform: resolve_invitation_platform(invitation)
+      )
+    rescue ActiveRecord::RecordNotUnique
+      nil
+    end
+
+    def person_from_inviter(inviter)
+      case inviter
+      when BetterTogether::Person then inviter
+      when BetterTogether::User   then inviter.person
+      end
+    end
+
+    # Resolves the platform an invitation belongs to regardless of invitation type.
+    # Derives from invitable directly rather than trusting the invitation's own
+    # platform_id column — that column is independently populated via the generic
+    # Current.platform/host fallback and can drift from the invitable's real
+    # platform (e.g. an EventInvitation created outside the event's own platform
+    # context). invitable is the unambiguous source of truth: for a
+    # CommunityInvitation/EventInvitation it's the community/event itself; for a
+    # PlatformInvitation it IS the Platform.
+    def resolve_invitation_platform(invitation)
+      invitable = invitation.invitable
+      return invitable if invitable.is_a?(BetterTogether::Platform)
+      return invitable.platform if invitable.respond_to?(:platform)
+
+      invitation.platform if invitation.respond_to?(:platform)
+    end
+
+    # Platform-specific invitation acceptance.
+    # Always creates an active platform membership so the invited person is immediately
+    # visible to other members (e.g. in the messaging contact picker). Falls back to
+    # the platform_member role when the invitation carries no explicit role.
     def handle_platform_invitation_acceptance(user, invitation)
-      if invitation.platform_role
-        helpers.host_platform.person_platform_memberships.create!(
+      role = invitation.platform_role ||
+             BetterTogether::Role.find_by(identifier: 'platform_member')
+
+      if role
+        helpers.host_platform.person_platform_memberships.find_or_create_by!(
           member: user.person,
-          role: invitation.platform_role
-        )
+          role: role
+        ) { |m| m.status = 'active' }
       end
 
       invitation.accept!(invitee: user.person)

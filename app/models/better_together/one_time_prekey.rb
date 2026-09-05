@@ -11,7 +11,8 @@ module BetterTogether
     validates :public_key, presence: true
     validates :key_id,     uniqueness: { scope: :person_id }
 
-    scope :unconsumed, -> { where(consumed: false) }
+    # Order by id ASC so the oldest key is consumed first (Signal Protocol convention).
+    scope :unconsumed, -> { where(consumed: false).order(id: :asc) }
     scope :consumed,   -> { where(consumed: true) }
   end
 end

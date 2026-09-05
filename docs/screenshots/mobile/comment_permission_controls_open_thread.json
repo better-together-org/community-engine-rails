@@ -1,0 +1,85 @@
+{
+  "name": "comment_permission_controls_open_thread",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-4",
+  "title": "Harbour Cleanup Volunteers Needed | Posts | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "comment_permission_controls",
+  "flow": "comment_thread_default",
+  "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
+  "callouts": [
+    {
+      "selector": "#comments_post_5a700529-5f75-49a6-b0fe-9ec82d832a6f",
+      "title": "Comment thread — default (inherit) settings",
+      "bullets": [
+        "Every existing comment renders oldest-first with the author name, timestamp, and body.",
+        "No CommentConfig row exists for this post yet — it reads the default \"inherit\" state, matching pre-PR behavior for every post."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1102.6875,
+        "width": 461.0,
+        "height": 72.0,
+        "right": 473.0,
+        "bottom": 1174.6875,
+        "center_x": 242.5,
+        "center_y": 1138.6875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1102.6875,
+        "width": 461.0,
+        "height": 72.0,
+        "right": 473.0,
+        "bottom": 1174.6875,
+        "center_x": 242.5,
+        "center_y": 1138.6875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 600.69,
+        "width": 270.0,
+        "height": 482,
+        "score": 1102.6875
+      }
+    },
+    {
+      "selector": "#new_comment",
+      "title": "Open comment form",
+      "bullets": [
+        "Shown because the signed-in viewer has accepted the content publishing agreement and nothing restricts posting on this post.",
+        "Submitting appends the new comment in place via Turbo Stream, no full page reload."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1190.6875,
+        "width": 461.0,
+        "height": 70.3125,
+        "right": 473.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 1225.84375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1190.6875,
+        "width": 461.0,
+        "height": 70.3125,
+        "right": 473.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 1225.84375
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 392,
+        "score": 0
+      }
+    }
+  ]
+}

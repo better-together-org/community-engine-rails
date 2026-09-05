@@ -122,6 +122,22 @@ module BetterTogether
               mr.after_agreement_acceptance!(offer:)
             end.not_to change(PersonCommunityMembership, :count)
           end
+
+          it 'activates an existing pending membership for the creator' do
+            membership = create(
+              :better_together_person_community_membership,
+              joinable: community,
+              member: person,
+              role: community_role,
+              status: 'pending'
+            )
+
+            expect do
+              mr.after_agreement_acceptance!(offer:)
+            end.not_to change(PersonCommunityMembership, :count)
+
+            expect(membership.reload.status).to eq('active')
+          end
         end
       end
 

@@ -1,0 +1,73 @@
+features:
+  - key: developer_settings
+    name: Developer Settings
+    description: Exposes developer-focused account settings and token management UI.
+    default_rollout: stable
+    owner_surface: ui
+    category: settings
+  - key: device_permissions
+    name: Device Permissions
+    description: Exposes device permission prompts and diagnostics in account settings.
+    default_rollout: beta
+    owner_surface: both
+    category: settings
+  - key: person_access_grants
+    name: Person Access Grants
+    description: Allows people to review and manage cross-person access grants.
+    default_rollout: stable
+    owner_surface: both
+    category: privacy
+  - key: person_linked_seeds
+    name: Linked Seeds
+    description: Exposes linked seed synchronization records and payload inspection.
+    default_rollout: stable
+    owner_surface: both
+    category: privacy
+  - key: platform_federation_tools
+    name: Platform Federation Tools
+    description: Exposes platform connection and federation management surfaces.
+    default_rollout: stable
+    owner_surface: both
+    category: federation
+  - key: new_content_blocks
+    name: New Content Blocks (v0.11.0)
+    description: Enables all 13 new content block types in the page editor (Accordion, Alert, CallToAction, Checklist, Communities, Events, Iframe, Navigation, People, Posts, Quote, Statistics, Video).
+    default_rollout: alpha
+    owner_surface: ui
+    category: content
+  - key: e2ee_messaging
+    name: End-to-End Encrypted Messaging
+    description: Enables Signal Protocol E2EE for conversations. Also requires BETTER_TOGETHER_E2EE_MESSAGING_ENABLED env var or an explicit platform gate enable. V9/V10 security bundle follow-ups must be complete before activating for general organiser use.
+    default_rollout: alpha
+    owner_surface: both
+    category: security
+  - key: robot_api_access
+    name: Robot API Access
+    description: Allows authenticated API clients to query and invoke robot capabilities via the JSON API.
+    default_rollout: beta
+    owner_surface: api
+    category: automation
+  - key: robot_configuration_ui
+    name: Robot Configuration UI
+    description: Exposes the robot management UI in the host platform dashboard. Disabled by default in 0.11.0; activate when ready for organiser-guided robot setup and documentation is complete.
+    default_rollout: alpha
+    owner_surface: ui
+    category: automation
+  - key: profiling_enabled
+    name: Profiling
+    description: Enables rack-mini-profiler and performance profiling instrumentation. For development and authorised diagnostic use only; never enable on public production traffic.
+    default_rollout: alpha
+    owner_surface: both
+    category: debugging
+  - key: search_suggestions
+    name: Search Suggestions
+    description: Enables real-time search suggestion autocomplete UI. Disabled while the suggestion ranking model is under evaluation.
+    default_rollout: alpha
+    owner_surface: ui
+    category: search
+  - key: message_requests
+    name: Message Requests
+    description: Allows members to send a message request with an explanatory note to people who have not granted them direct messaging permission. When accepted, opens a conversation and records an explicit messaging grant. Gated at alpha while the UX for the request inbox is stabilised.
+    default_rollout: alpha
+    owner_surface: both
+    category: messaging

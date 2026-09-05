@@ -3,11 +3,15 @@
 module BetterTogether
   # Helper methods used for displaying the Community Hub
   module HubHelper
-    def activities
+    def activities(limit: nil)
       # Limit to recent activities to prevent memory issues with large datasets
       # The policy scope performs in-memory filtering for visibility checks
       base_query = PublicActivity::Activity.limit(100)
-      BetterTogether::ActivityPolicy::Scope.new(current_user, base_query).resolve
+      visible_activities = BetterTogether::ActivityPolicy::Scope.new(current_user, base_query).resolve
+
+      return visible_activities unless limit
+
+      visible_activities.first(limit)
     end
 
     # Check if a trackable object is visible to the current user

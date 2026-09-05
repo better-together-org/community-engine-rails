@@ -23,8 +23,15 @@ module BetterTogether
       attr_reader :content
 
       def attachment_renderable?(attachment)
-        attachment.attachable.is_a?(::ActiveStorage::Blob) &&
-          BetterTogether::ContentSecurity::BlobAccessPolicy.public_proxy_allowed?(attachment.attachable)
+        return false unless attachment.attachable.is_a?(::ActiveStorage::Blob)
+        return true unless BetterTogether::ContentSecurity::Configuration.enabled?
+
+        # BlobAccessPolicy.public_proxy_allowed? only recognizes attachments enrolled via
+        # ScannableAttachment#scans_attachment (e.g. Upload#file) — rich-text embeds are
+        # synced independently via RichTextSubjectSync/ActionTextRichTextControls, so check
+        # their own Subject record directly rather than a registry that never includes them.
+        subject = content_security_subject_for(attachment)
+        subject.nil? || subject.publicly_serving_allowed?
       rescue ActiveRecord::RecordNotFound
         false
       end

@@ -1,0 +1,18 @@
+---
+title: Share Panel — Short URL Button
+audience:
+- admin
+- developer
+- content_editor
+- end_user
+journey_step: As a visitor, I click the share link icon on a page to instantly copy
+  the short URL to my clipboard.
+callouts:
+- :id: share_link_button
+  :title: Short URL clipboard button
+  :description: Copies the platform-scoped short URL to the clipboard. The icon briefly
+    shows a checkmark to confirm success. Works for any Shortlinkable model (pages,
+    posts, events).
+accessibility_notes: Button has aria-label and title. Stack icon layers are aria-hidden.
+slug: short_links_share_button
+device: mobile

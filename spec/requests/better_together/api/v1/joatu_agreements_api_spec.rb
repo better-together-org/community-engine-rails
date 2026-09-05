@@ -75,7 +75,10 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
         expect(json['data']['attributes']).to include(
           'status' => agreement.status,
           'terms' => agreement.terms,
-          'value' => agreement.value
+          'value' => agreement.value,
+          'agreement_family' => agreement.agreement_family,
+          'agreement_type' => agreement.agreement_type,
+          'participant_ids' => match_array(agreement.participant_ids)
         )
       end
     end
@@ -105,6 +108,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       it 'accepts the agreement' do
         json = JSON.parse(response.body)
         expect(json['data']['attributes']['status']).to eq('accepted')
+        expect(json['data']['attributes']['decision_made_at']).to be_present
       end
     end
 
@@ -131,6 +135,7 @@ RSpec.describe 'BetterTogether::Api::V1::JoatuAgreements', :no_auth do
       it 'rejects the agreement' do
         json = JSON.parse(response.body)
         expect(json['data']['attributes']['status']).to eq('rejected')
+        expect(json['data']['attributes']['decision_made_at']).to be_present
       end
     end
   end

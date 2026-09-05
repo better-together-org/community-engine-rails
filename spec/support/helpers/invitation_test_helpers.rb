@@ -74,6 +74,9 @@ module InvitationTestHelpers # :nodoc:
       joinable: community
     )
     membership.role = role
+    # permitted_to? scopes to active memberships only (Member#record_permission_granted?);
+    # PersonCommunityMembership's own default status is not 'active'.
+    membership.status = 'active'
     membership.save!
     clear_permissions_cache(user)
     reload_user_associations(user)

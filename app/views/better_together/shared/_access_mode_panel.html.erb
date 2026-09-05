@@ -1,4 +1,6 @@
 <% heading_id = dom_id(resource, :access_mode_heading) %>
+<% memberships = Array(local_assigns[:memberships]).compact %>
+<% effective_membership = memberships.find(&:active?) || memberships.first || local_assigns[:membership] %>
 
 <section class="card shadow-sm border-0 mb-4" aria-labelledby="<%= heading_id %>">
   <div class="card-body">
@@ -14,9 +16,9 @@
       </div>
 
       <div class="d-flex flex-wrap align-items-start gap-2">
-        <% if membership.present? %>
-          <% status_class = membership.active? ? 'text-bg-success' : 'text-bg-info' %>
-          <% status_text = if membership.active?
+        <% if effective_membership.present? %>
+          <% status_class = effective_membership.active? ? 'text-bg-success' : 'text-bg-info' %>
+          <% status_text = if effective_membership.active?
                              t('better_together.access_modes.current_status.active',
                                default: 'You are already a member.')
                            else

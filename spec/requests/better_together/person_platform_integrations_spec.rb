@@ -77,6 +77,20 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
       get better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
       expect_html_content(integration.handle)
     end
+
+    it 'redirects away when requesting another users integration' do
+      other_user = create(:better_together_user, :confirmed)
+      integration = create(:person_platform_integration,
+                           :github,
+                           user: other_user,
+                           person: other_user.person,
+                           platform: github_platform)
+
+      get better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
+
+      expect(response).to redirect_to(better_together.home_page_path(locale: I18n.default_locale))
+      expect(flash[:error]).to be_present
+    end
   end
 
   describe 'GET /new' do
@@ -91,6 +105,20 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
       integration = create(:person_platform_integration, :github, user:, person:, platform: github_platform)
       get better_together.edit_person_platform_integration_path(integration, locale: I18n.default_locale)
       expect(response).to be_successful
+    end
+
+    it 'redirects away when editing another users integration' do
+      other_user = create(:better_together_user, :confirmed)
+      integration = create(:person_platform_integration,
+                           :github,
+                           user: other_user,
+                           person: other_user.person,
+                           platform: github_platform)
+
+      get better_together.edit_person_platform_integration_path(integration, locale: I18n.default_locale)
+
+      expect(response).to redirect_to(better_together.home_page_path(locale: I18n.default_locale))
+      expect(flash[:error]).to be_present
     end
   end
 
@@ -175,6 +203,21 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
+
+    it 'redirects away when updating another users integration' do
+      other_user = create(:better_together_user, :confirmed)
+      other_integration = create(:person_platform_integration,
+                                 :github,
+                                 user: other_user,
+                                 person: other_user.person,
+                                 platform: github_platform)
+
+      patch better_together.person_platform_integration_path(other_integration, locale: I18n.default_locale),
+            params: { person_platform_integration: new_attributes }
+
+      expect(response).to redirect_to(better_together.home_page_path(locale: I18n.default_locale))
+      expect(flash[:error]).to be_present
+    end
   end
 
   describe 'DELETE /destroy' do
@@ -189,6 +232,20 @@ RSpec.describe '/better_together/person_platform_integrations', :as_user do
       integration = create(:person_platform_integration, :github, user:, person:, platform: github_platform)
       delete better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
       expect(response.location).to include('/person_platform_integrations')
+    end
+
+    it 'redirects away when destroying another users integration' do
+      other_user = create(:better_together_user, :confirmed)
+      integration = create(:person_platform_integration,
+                           :github,
+                           user: other_user,
+                           person: other_user.person,
+                           platform: github_platform)
+
+      delete better_together.person_platform_integration_path(integration, locale: I18n.default_locale)
+
+      expect(response).to redirect_to(better_together.home_page_path(locale: I18n.default_locale))
+      expect(flash[:error]).to be_present
     end
   end
 

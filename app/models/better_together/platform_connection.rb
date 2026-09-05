@@ -43,6 +43,12 @@ module BetterTogether
       failed: 'failed'
     }.freeze
 
+    SYNC_DEPTH_VALUES = {
+      metadata: 'metadata',
+      standard: 'standard',
+      full: 'full'
+    }.freeze
+
     belongs_to :source_platform, class_name: '::BetterTogether::Platform'
     belongs_to :target_platform, class_name: '::BetterTogether::Platform'
     has_many :person_links, class_name: '::BetterTogether::PersonLink', dependent: :destroy
@@ -61,6 +67,8 @@ module BetterTogether
       allow_content_read_scope Boolean, default: false
       allow_linked_content_read_scope Boolean, default: false
       allow_content_write_scope Boolean, default: false
+      sync_depth String, default: 'standard'
+      min_sync_interval_seconds Integer, default: 0
       sync_cursor String, default: ''
       last_sync_status String, default: 'idle'
       last_sync_started_at String, default: ''
@@ -68,6 +76,8 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
+      sync_failure_streak Integer, default: 0
+      sync_backoff_until String, default: ''
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -78,10 +88,13 @@ module BetterTogether
     validates :content_sharing_policy, inclusion: { in: CONTENT_SHARING_POLICIES.values }
     validates :federation_auth_policy, inclusion: { in: FEDERATION_AUTH_POLICIES.values }
     validates :last_sync_status, inclusion: { in: SYNC_STATUS_VALUES.values }
+    validates :sync_depth, inclusion: { in: SYNC_DEPTH_VALUES.values }
     validate :source_and_target_must_differ
 
     before_validation :apply_connection_policy_defaults
     before_validation :ensure_oauth_client_credentials
+    after_create_commit :notify_reviewers_of_submission, if: :pending?
+    after_update_commit :notify_reviewers_of_status_change, if: :saved_change_to_status?
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
     scope :for_platform, lambda { |platform|
@@ -105,9 +118,43 @@ module BetterTogether
       where(Arel.sql("#{tbl}.settings->>'last_sync_status' != 'running' OR #{tbl}.settings->>'last_sync_status' IS NULL"))
       # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
+    scope :due_for_sync, lambda {
+      # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB interval arithmetic has no Arel equivalent
+      tbl = quoted_table_name
+      where(Arel.sql(<<~SQL.squish))
+        (
+          (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
+          OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
+          OR (#{tbl}.settings->>'last_synced_at') = ''
+          OR (#{tbl}.settings->>'last_synced_at')::timestamptz
+               + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
+               <= NOW()
+        )
+        AND (
+          (#{tbl}.settings->>'sync_backoff_until') IS NULL
+          OR (#{tbl}.settings->>'sync_backoff_until') = ''
+          OR (#{tbl}.settings->>'sync_backoff_until')::timestamptz <= NOW()
+        )
+      SQL
+      # rubocop:enable BetterTogether/NoRawSqlInQueries
+    }
 
     def involves?(platform)
       source_platform_id == platform.id || target_platform_id == platform.id
+    end
+
+    # source_platform/target_platform reflect who initiated the connection, not
+    # who's local — code that needs "which side is actually this install" must
+    # resolve it via external_peer?, not assume it's always target_platform (or
+    # always source_platform). Mirrors HttpAdapter's original remote_platform
+    # resolution, promoted here so every federation service shares one
+    # definition instead of re-deriving (and re-breaking) it independently.
+    def local_platform
+      [source_platform, target_platform].find(&:local_hosted?)
+    end
+
+    def remote_platform
+      [source_platform, target_platform].find(&:external_peer?)
     end
 
     def peer_for(platform)
@@ -115,6 +162,13 @@ module BetterTogether
       return source_platform if target_platform_id == platform.id
 
       nil
+    end
+
+    # Without this, generic trackable-rendering helpers (e.g. the Federation
+    # Hub activity feed's link_to_trackable) fall back to Ruby's default
+    # Object#to_s ("#<BetterTogether::PlatformConnection:0x...>") as link text.
+    def to_s
+      "#{source_platform&.name} → #{target_platform&.name}"
     end
 
     private
@@ -132,6 +186,17 @@ module BetterTogether
 
       normalize_content_policy_settings!
       normalize_federation_policy_settings!
+    end
+
+    def notify_reviewers_of_submission
+      ::BetterTogether::PlatformConnectionNotificationService.new(self).notify_submission
+    end
+
+    def notify_reviewers_of_status_change
+      previous_status, = previous_changes['status']
+      ::BetterTogether::PlatformConnectionNotificationService.new(self).notify_status_change(
+        previous_status:
+      )
     end
   end
 end

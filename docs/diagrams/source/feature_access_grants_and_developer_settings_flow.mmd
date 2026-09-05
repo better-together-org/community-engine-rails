@@ -1,0 +1,18 @@
+flowchart TD
+  A[Platform manager opens host feature access grants route] --> B{Authorized for target platform?}
+  B -->|No| C[Render 404 host-admin denial]
+  B -->|Yes| D[Load target platform grants]
+  D --> E{Feature key still registered?}
+  E -->|Yes| F[Show current feature label and rollout]
+  E -->|No| G[Show Unknown feature fallback label]
+  F --> H[Create, edit, or revoke grant]
+  G --> H
+
+  I[Signed-in person opens settings/applications] --> J{developer_settings enabled for Current.platform?}
+  J -->|No| K[Render 404 for direct route access]
+  J -->|Yes| L[Load personal OAuth applications UI]
+
+  classDef deny fill:#fce8e6,stroke:#b3261e,color:#5f2120;
+  classDef allow fill:#e6f4ea,stroke:#137333,color:#0d652d;
+  class C,K deny;
+  class F,G,H,L allow;

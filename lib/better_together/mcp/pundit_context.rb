@@ -85,6 +85,22 @@ module BetterTogether
         user.nil?
       end
 
+      # ApplicationPolicy and its Scope classes gate anonymous-vs-authenticated
+      # logic throughout the app via `user.present?`/`user.blank?`. pundit_user
+      # here is always this PunditContext instance itself, never nil — without
+      # this override, `present?` would always be true (a non-nil object),
+      # silently defeating every "unless user.present?" anonymous guard for MCP
+      # requests. Delegate blank?/present? to the wrapped user instead.
+      # @return [Boolean]
+      def blank?
+        user.blank?
+      end
+
+      # @return [Boolean]
+      def present?
+        !blank?
+      end
+
       # Convenience predicate
       # @return [Boolean]
       def authenticated?

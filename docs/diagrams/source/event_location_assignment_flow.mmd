@@ -1,0 +1,28 @@
+%% render.orientation: portrait
+flowchart TD
+  A[Organizer opens the event form] --> B["Mixed-search picker\n(single field, no type radio)"]
+  B --> C["GET /events/available_locations?search=..."]
+  C --> D["EventsController#available_locations\n(location_type omitted)"]
+  D --> E{Per Placeable type}
+  E -->|Address / Building| F["Policy-scoped:\norganizer's own + public records"]
+  E -->|Settlement / Region| G[Unscoped: full curated reference list]
+  E -->|Floor / Room| H[Scoped via their building's visibility]
+  F --> I
+  G --> I
+  H --> I["Composite ClassName:id results,\nmerged and type-labeled, plus\nCreate-new-address / Use-typed-text rows"]
+
+  I --> J{Organizer's choice}
+  J -->|Picks an existing result| K["applyLocationSelection splits the composite\nvalue into location_id + location_type"]
+  J -->|Selects the Use-typed-text row| L["Written to the hidden\nname field instead"]
+  J -->|Selects the Create-new-address row| M["Inline address fieldset revealed;\nits fields submitted alongside\n(Address only - Buildings are picked here,\nnot created)"]
+
+  K --> N["location_id + location_type\nsubmitted as nested location_attributes"]
+  L --> N
+  N --> P
+
+  M --> P["LocatableLocation#location_attributes=\n(custom setter: id lookup / type build /\nsimple name)"]
+  P --> Q["Address.locatable_location_build(attrs):\nlooks up by id first,\nonly builds a new Address if not found"]
+
+  P --> R["belongs_to :location, autosave: true"]
+  Q --> R
+  R --> S[Event + location saved together in one submit]

@@ -1,0 +1,23 @@
+---
+title: Events Index — draft status filter
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer, I filter to my draft events to keep working on them
+  before confirming.
+callouts:
+- :id: status_select
+  :title: Status filter
+  :description: Single value via the select; the controller also accepts status[]
+    arrays for unions (e.g. draft + confirmed).
+- :id: clear_filters
+  :title: Clear Filters
+  :description: Resets all filters to defaults.
+- :id: status_badge
+  :title: Status badge
+  :description: Replaces the old hardcoded DRAFT marker that keyed off a missing start
+    time.
+accessibility_notes: Status select has an explicit label; badge text is localized.
+slug: events_index_status_draft
+device: desktop

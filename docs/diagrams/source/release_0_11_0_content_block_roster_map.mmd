@@ -1,0 +1,26 @@
+flowchart TD
+    A[0.11.0 New Content Block Types]
+
+    A --> B[Storytelling and Calls to Action]
+    B --> B1[Accordion Block<br/>heading, accordion_items_json, open_first]
+    B --> B2[Alert Block<br/>alert_level, heading, body_text, dismissible]
+    B --> B3[Call to Action Block<br/>heading, body_text, button labels and URLs, layout]
+    B --> B4[Quote Block<br/>quote_text, attribution fields]
+    B --> B5[Statistics Block<br/>heading, stats_json, columns]
+
+    A --> C[Collections and Guided Discovery]
+    C --> C1[Communities Block<br/>resource_ids, community_scope_id, display_style, item_limit]
+    C --> C2[People Block<br/>resource_ids, community_scope_id, display_style, item_limit]
+    C --> C3[Posts Block<br/>posts_scope plus shared collection attributes]
+    C --> C4[Events Block<br/>event_scope plus shared collection attributes]
+    C --> C5[Checklist Block<br/>checklist_id plus display and paging controls]
+    C --> C6[Navigation Area Block<br/>navigation_area_id]
+
+    A --> D[Embeds and Media]
+    D --> D1[Iframe Block<br/>iframe_url, aspect_ratio, title, caption]
+    D --> D2[Video Block<br/>video_url, aspect_ratio, caption]
+
+    A --> E[Page Builder Surface]
+    E --> E1[Add Block chooser cards]
+    E --> E2[Inline page block editor forms]
+    E --> E3[Rendered page blocks with representative content]

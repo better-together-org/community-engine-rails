@@ -16,7 +16,7 @@ RSpec.describe 'Platform domain routing' do
     create(:better_together_platform_domain,
            platform: host_platform,
            hostname: 'alias.example.test',
-           primary: false,
+           primary_flag: false,
            active: true)
   end
 

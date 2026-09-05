@@ -4,8 +4,6 @@ volumes:
     name: community-engine-rails_community-engine-bundler-gems
   community-engine-db-data:
     name: community-engine-rails_community-engine-db-data
-  community-engine-elasticsearch:
-    name: community-engine-rails_community-engine-elasticsearch
   community-engine-redis:
     name: community-engine-rails_community-engine-redis
   community-engine-redis-rack-attack:
@@ -31,8 +29,7 @@ x-app-shared: &app-shared
     DB_USERNAME: ${DB_USERNAME:-postgres}
     DB_PASSWORD: ${DB_PASSWORD:-postgres}
     CE_WORKTREE_DB_SUFFIX: ${CE_WORKTREE_DB_SUFFIX:-}
-    ES_HOST: ${ES_HOST:-http://elasticsearch:9200}
-    ELASTICSEARCH_URL: ${ELASTICSEARCH_URL:-http://elasticsearch:9200}
+    SEARCH_BACKEND: ${SEARCH_BACKEND:-pg_search}
     REDIS_URL: ${REDIS_URL:-redis://redis:6379}
     RACK_ATTACK_REDIS_URL: ${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack:6379}
     RACK_ATTACK_REDIS_POOL_SIZE: ${RACK_ATTACK_REDIS_POOL_SIZE:-5}
@@ -41,7 +38,6 @@ x-app-shared: &app-shared
     - db
     - redis
     - redis-rack-attack
-    - elasticsearch
 
 services:
   app: &app
@@ -54,6 +50,7 @@ services:
       - "3000:3000"
     tty: true
     stdin_open: true
+
   db:
     <<: *env-info
     container_name: community-engine-db
@@ -64,27 +61,6 @@ services:
       - "5440:5432"
     env_file:
     - './.env.db.dev'
-
-  elasticsearch:
-    container_name: community-engine-elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.3
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=community-engine-es
-      - discovery.seed_hosts=elasticsearch
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - xpack.security.enrollment.enabled=false
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - 9200:9200
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - community-engine-elasticsearch:/usr/share/elasticsearch/data
 
   sidekiq:
     <<: *app-shared

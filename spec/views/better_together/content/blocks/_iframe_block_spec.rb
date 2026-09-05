@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'better_together/content/blocks/_iframe_block.html.erb' do
   helper BetterTogether::Content::BlocksHelper
   helper BetterTogether::TranslatableFieldsHelper
+  helper BetterTogether::ContentActionsHelper
 
   let(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, host: true) }
   let(:creator) { create(:better_together_person) }

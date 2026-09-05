@@ -1,0 +1,14 @@
+flowchart TD
+  A[Signed-in person reaches agreements status page] --> B[Load unaccepted required registration agreements]
+  B --> C{Any pending onboarding agreements?}
+  C -- No --> D[Redirect to stored return path]
+  C -- Yes --> E[Render agreement cards with locked checkboxes]
+  E --> F[Person opens agreement modal]
+  F --> G[Turbo frame loads agreement content]
+  G --> H{Scrolled through full agreement?}
+  H -- No --> I[Checkbox remains locked]
+  H -- Yes --> J[Stimulus unlocks matching checkbox]
+  J --> K[Person checks all remaining agreements]
+  K --> L[Submit agreements status form]
+  L --> M[Recorder stores acceptance audit entries]
+  M --> N[Redirect to return path or profile]

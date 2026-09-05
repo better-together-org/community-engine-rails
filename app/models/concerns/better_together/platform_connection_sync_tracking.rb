@@ -5,6 +5,11 @@ module BetterTogether
   module PlatformConnectionSyncTracking
     extend ActiveSupport::Concern
 
+    # Backoff on consecutive sync failures so a permanently broken connection isn't
+    # re-dispatched on every scan tick forever: 5 min, doubling, capped at 6 hr.
+    SYNC_BACKOFF_BASE_SECONDS = 300
+    SYNC_BACKOFF_MAX_SECONDS = 21_600
+
     def sync_idle?
       last_sync_status == 'idle'
     end
@@ -45,29 +50,59 @@ module BetterTogether
         last_sync_error_at: '',
         last_sync_error_message: ''
       )
+      record_sync_activity('platform_connection.sync_started')
     end
 
-    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current)
-      update!(
+    # `final:` distinguishes a fully-completed pull (no more pages) from an
+    # intermediate page. Only a completed pull clears the failure streak and
+    # backoff — otherwise a connection that can serve exactly one page before
+    # failing would reset its backoff on every scan and be retried forever.
+    def mark_sync_succeeded!(cursor: nil, item_count: 0, synced_at: Time.current, message: nil, final: true)
+      attrs = {
         sync_cursor: normalized_cursor(cursor),
         last_sync_status: 'succeeded',
         last_synced_at: synced_at.iso8601,
         last_sync_error_at: '',
-        last_sync_error_message: '',
+        last_sync_error_message: message.to_s.truncate(500),
         last_sync_item_count: item_count.to_i
-      )
+      }
+      attrs.merge!(sync_failure_streak: 0, sync_backoff_until: '') if final
+      update!(attrs)
+      record_sync_activity('platform_connection.sync_succeeded', parameters: { item_count: item_count.to_i })
     end
 
-    def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current)
+    # `retry_after` (seconds) is the remote's own requested cool-off from a
+    # rate-limit response; the effective backoff is the longer of that and our
+    # exponential schedule.
+    def mark_sync_failed!(message:, cursor: nil, failed_at: Time.current, retry_after: nil)
+      streak = sync_failure_streak.to_i + 1
       update!(
         sync_cursor: normalized_cursor(cursor),
         last_sync_status: 'failed',
         last_sync_error_at: failed_at.iso8601,
-        last_sync_error_message: message.to_s.truncate(500)
+        last_sync_error_message: message.to_s.truncate(500),
+        sync_failure_streak: streak,
+        sync_backoff_until: (failed_at + sync_backoff_interval(streak, retry_after)).iso8601
       )
+      record_sync_activity('platform_connection.sync_failed', parameters: { message: message.to_s.truncate(500) })
     end
 
     private
+
+    def sync_backoff_interval(streak, retry_after = nil)
+      exponential = [SYNC_BACKOFF_BASE_SECONDS * (2**(streak - 1)), SYNC_BACKOFF_MAX_SECONDS].min
+      [exponential, retry_after.to_i].max.seconds
+    end
+
+    # PlatformConnection deliberately does not include TrackedActivity/PublicActivity::Model
+    # (it has no privacy column, and connection audit activity must never leak into the
+    # public ActivityPolicy::Scope-filtered feed) — so activities are recorded directly
+    # rather than through the trackable.create_activity convenience method. Consumers
+    # (FederationHub::ActivityFeedService) query BetterTogether::Activity for these records
+    # directly, gating visibility via controller-level permission checks instead.
+    def record_sync_activity(key, parameters: {})
+      ::BetterTogether::Activity.create!(trackable: self, key:, parameters:)
+    end
 
     def normalized_cursor(value)
       value.to_s

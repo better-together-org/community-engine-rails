@@ -132,4 +132,6 @@ RSpec.describe BetterTogether::WebhookEndpoint do
       expect(endpoint.secret).to eq(custom_secret)
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :better_together_webhook_endpoint
 end

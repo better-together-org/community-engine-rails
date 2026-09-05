@@ -3,6 +3,8 @@
 module BetterTogether
   module Content
     # Imports or updates a mirrored Post record from a connected remote platform.
+    # rubocop:disable Metrics/ClassLength -- Mirror service keeps identifier, source, and
+    #   remote UUID handling in one place to match the event mirror flow.
     class FederatedPostMirrorService
       include ::BetterTogether::Federation::MirroredIdentifierResolution
 
@@ -36,7 +38,7 @@ module BetterTogether
 
         return if result.allowed?
 
-        raise ArgumentError, "post mirroring not authorized: #{result.reason}"
+        raise ArgumentError, mirroring_not_authorized_message(result.reason)
       end
 
       def find_or_initialize_post
@@ -46,15 +48,15 @@ module BetterTogether
       end
 
       def find_or_initialize_post_by_source_id
-        ::BetterTogether::Post.find_or_initialize_by(platform: connection.target_platform, source_id: remote_id)
+        ::BetterTogether::Post.find_or_initialize_by(platform: target_platform, source_id: remote_id)
       end
 
       def existing_post_with_remote_uuid
-        ::BetterTogether::Post.find_by(id: remote_id, platform: connection.target_platform)
+        ::BetterTogether::Post.find_by(id: remote_id, platform: target_platform)
       end
 
       def existing_post_by_source_id
-        ::BetterTogether::Post.find_by(platform: connection.target_platform, source_id: remote_id)
+        ::BetterTogether::Post.find_by(platform: target_platform, source_id: remote_id)
       end
 
       def assign_attributes(post)
@@ -66,11 +68,17 @@ module BetterTogether
           title: remote_attributes[:title],
           content: remote_attributes[:content],
           identifier: normalized_identifier(post),
-          privacy: remote_attributes[:privacy].presence || 'public',
+          privacy: normalized_privacy,
           published_at: remote_attributes[:published_at],
-          creator_id: remote_attributes[:creator_id],
-          platform: connection.target_platform
+          creator_id: local_creator_id,
+          platform: target_platform
         }.merge(post_sync_attributes)
+      end
+
+      def resolve_local_creator(remote_id)
+        return nil if remote_id.blank?
+
+        ::BetterTogether::Person.where(id: remote_id).pick(:id)
       end
 
       def post_sync_attributes
@@ -85,9 +93,13 @@ module BetterTogether
         # Preserve the existing identifier on a repeat sync — avoids churn on slug/history.
         return post.identifier if post.persisted?
 
-        base = remote_attributes[:identifier].presence ||
-               "federated-post-#{remote_id.parameterize.presence || SecureRandom.hex(6)}"
-        identifier_or_namespaced(::BetterTogether::Post, base, post.id)
+        mirrored_identifier_for(
+          content_type: 'post',
+          remote_identifier: remote_attributes[:identifier],
+          remote_id:,
+          model_class: ::BetterTogether::Post,
+          exclude_id: post.id
+        )
       end
 
       def normalized_source_updated_at
@@ -97,12 +109,27 @@ module BetterTogether
         Time.current
       end
 
+      def normalized_privacy
+        remote_attributes[:privacy].presence || 'public'
+      end
+
+      def local_creator_id
+        resolve_local_creator(remote_attributes[:creator_id])
+      end
+
+      # source_platform/target_platform reflect who initiated the connection,
+      # not who's local — mirrored content must be stored under the actual
+      # local platform, not literally connection.target_platform.
+      def target_platform
+        connection.local_platform || connection.target_platform
+      end
+
       def preserve_remote_uuid?
         preserve_remote_uuid
       end
 
       def effective_preserve_remote_uuid?
-        preserve_remote_uuid? && !shared_target_database?
+        preserve_remote_uuid? && !same_instance_connection?
       end
 
       def mirror_with_remote_uuid?
@@ -113,13 +140,18 @@ module BetterTogether
         connection.source_platform.local_hosted? && connection.target_platform.local_hosted?
       end
 
-      def shared_target_database?
-        connection.target_platform.local_hosted?
-      end
-
       def uuid?(value)
         /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i.match?(value.to_s)
       end
+
+      def mirroring_not_authorized_message(reason)
+        I18n.t(
+          'better_together.federation.mirroring.errors.not_authorized',
+          content_type: I18n.t('better_together.federation.mirroring.content_types.post'),
+          reason:
+        )
+      end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

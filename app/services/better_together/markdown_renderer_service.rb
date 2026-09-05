@@ -34,7 +34,7 @@ module BetterTogether
     def render_html
       return ''.html_safe if markdown_source.blank?
 
-      renderer.render(markdown_source).html_safe
+      MarkdownLinkTargetRewriter.new(renderer.render(markdown_source)).call.html_safe
     end
 
     # Render markdown to plain text (for search indexing)

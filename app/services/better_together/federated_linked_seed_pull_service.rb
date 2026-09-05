@@ -43,6 +43,14 @@ module BetterTogether
 
     attr_reader :connection, :recipient_identifier, :cursor, :limit
 
+    # source_platform/target_platform reflect who initiated the connection,
+    # not who's local — resolve the actual remote peer via external_peer?
+    # instead of assuming source_platform is always the remote. See the
+    # equivalent fix in Federation::Transport::HttpAdapter#remote_platform.
+    def remote_platform
+      @remote_platform ||= connection.remote_platform || connection.source_platform
+    end
+
     def parse_result(payload)
       Result.new(
         connection:,
@@ -53,7 +61,7 @@ module BetterTogether
     end
 
     def feed_uri
-      base_uri = URI.parse(connection.source_platform.resolved_host_url)
+      base_uri = URI.parse(remote_platform.resolved_host_url)
       base_uri.path = ::BetterTogether::Engine.routes.url_helpers.federation_linked_seeds_path(locale: I18n.default_locale)
       base_uri.query = feed_params.to_query
       base_uri
@@ -93,7 +101,7 @@ module BetterTogether
     end
 
     def token_uri
-      base_uri = URI.parse(connection.source_platform.oauth_issuer_url.presence || connection.source_platform.resolved_host_url)
+      base_uri = URI.parse(remote_platform.oauth_issuer_url.presence || remote_platform.resolved_host_url)
       base_uri.path = ::BetterTogether::Engine.routes.url_helpers.federation_oauth_token_path(locale: I18n.default_locale)
       base_uri.query = nil
       base_uri

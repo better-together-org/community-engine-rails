@@ -132,11 +132,13 @@ end
 
 # ── Tasks ──────────────────────────────────────────────────────────────────────
 
-CE_JS_PACKAGE_NAME  = '@better-together/community-engine-js'
-CE_JS_REGISTRY_BASE = 'https://git.btsdev.ca/api/packages/better-together/npm'
-CE_JS_UMD_TAR_PATH  = 'package/dist/community-engine.umd.js'
-CE_JS_VENDOR_DEST   = 'vendor/javascript/community-engine.umd.js'
-CE_JS_VERSION_FILE  = 'config/community_engine_js_version'
+unless defined?(CE_JS_PACKAGE_NAME)
+  CE_JS_PACKAGE_NAME  = '@better-together/community-engine-js'
+  CE_JS_REGISTRY_BASE = 'https://git.btsdev.ca/api/packages/better-together/npm'
+  CE_JS_UMD_TAR_PATH  = 'package/dist/community-engine.umd.js'
+  CE_JS_VENDOR_DEST   = 'vendor/javascript/community-engine.umd.js'
+  CE_JS_VERSION_FILE  = 'config/community_engine_js_version'
+end
 
 namespace :ce_js do
   desc <<~DESC

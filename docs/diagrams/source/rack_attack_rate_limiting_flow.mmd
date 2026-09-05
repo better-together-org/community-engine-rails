@@ -1,0 +1,25 @@
+        flowchart TD
+            Request[Incoming request] --> Safelist{Better Stack monitor?}
+            Safelist -->|yes| Allow[Allow request]
+            Safelist -->|no| CacheStore{RACK_ATTACK_REDIS_URL set?}
+
+            CacheStore -->|yes| RedisStore[Redis cache store
+with connection pool]
+            CacheStore -->|no| RailsCache[Rails cache store]
+            RedisStore --> Throttles
+            RailsCache --> Throttles
+
+            Throttles{Throttle match?}
+            Throttles -->|global| Global[req/ip 300 per 5 min]
+            Throttles -->|mcp| Mcp[mcp/ip and mcp/tool-calls]
+            Throttles -->|auth| Auth[login api and oauth throttles]
+            Throttles -->|none| Blocklists
+
+            Global --> Throttled503[503 throttled response]
+            Mcp --> Throttled503
+            Auth --> Throttled503
+
+            Blocklists{Scanner or exploit probe?}
+            Blocklists -->|php wp traversal injection scanners| Fail2Ban[Fail2Ban blocklist rules]
+            Blocklists -->|no| Allow
+            Fail2Ban --> Blocked503[503 blocklisted response]

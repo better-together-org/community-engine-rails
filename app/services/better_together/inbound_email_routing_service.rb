@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Resolves inbound email aliases into CE community, membership-request, or agent targets.
-  class InboundEmailRoutingService
+  class InboundEmailRoutingService # rubocop:todo Metrics/ClassLength
     def initialize(inbound_email, scanner_runner: nil)
       @inbound_email = inbound_email
       @mail = inbound_email.mail
@@ -10,8 +10,8 @@ module BetterTogether
     end
 
     def route!
-      resolution = resolve_recipient
       sender = primary_sender
+      resolution = resolve_recipient(sender)
       body_plain = extract_body_plain
 
       Current.set(platform: resolution.platform) do
@@ -66,8 +66,8 @@ module BetterTogether
       }
     end
 
-    def resolve_recipient
-      BetterTogether::InboundEmailResolutionService.new(primary_recipient).resolve
+    def resolve_recipient(sender)
+      BetterTogether::InboundEmailResolutionService.new(primary_recipient, sender:, mail: @mail).resolve
     end
 
     def initial_status_for(resolution) = resolution.route_kind == 'unresolved' ? 'rejected' : 'received'
@@ -86,7 +86,12 @@ module BetterTogether
     end
 
     def route_to_target(resolution, sender:, body_plain:)
-      resolution.route_kind == 'membership_request' ? create_membership_request!(resolution.target, sender:, body_plain:) : nil
+      case resolution.route_kind
+      when 'membership_request'
+        create_membership_request!(resolution.target, sender:, body_plain:)
+      when 'reply'
+        create_reply!(resolution.target, body_plain:)
+      end
     end
 
     def create_membership_request!(community, sender:, body_plain:)
@@ -98,6 +103,17 @@ module BetterTogether
         requestor_email: sender.address,
         description: body_plain
       )
+    end
+
+    # Reference implementation for reply-by-email: comment-notification replies only. The
+    # token's repliable is whatever record the originating notification pointed at (currently
+    # always a Commentable, matching CommentMailer#added) -- a future notification type that
+    # wants to support replies would need its own branch here, not a generic dispatch, since
+    # "what does a reply create" is inherently notification-type-specific.
+    def create_reply!(token, body_plain:)
+      comment = token.repliable.comments.create!(creator: token.recipient, content: body_plain)
+      token.consume!
+      comment
     end
 
     def primary_sender = mail_address_from(:from, 'missing sender address')

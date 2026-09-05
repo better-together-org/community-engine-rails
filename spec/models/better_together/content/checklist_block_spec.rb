@@ -11,7 +11,11 @@ module BetterTogether
         expect(described_class.superclass).to eq(BetterTogether::Content::Block)
       end
 
-      it 'is content_addable' do
+      it 'is content_addable for an alpha-entitled actor' do
+        # new_content_blocks defaults to alpha rollout — content_addable? delegates
+        # to FeatureGate, which requires alpha access for an actor to see true.
+        allow(BetterTogether::FeatureGate).to receive(:enabled?).with('new_content_blocks', anything).and_return(true)
+
         expect(described_class.content_addable?).to be true
       end
 

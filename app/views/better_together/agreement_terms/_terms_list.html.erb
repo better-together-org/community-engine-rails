@@ -1,9 +1,12 @@
 <%# Renders the agreement's terms in a simple list format %>
 <% if agreement.agreement_terms.any? %>
   <ul class="list-group">
-    <% agreement.agreement_terms.each do |term| %>
+    <% agreement.agreement_terms.each_with_index do |term, index| %>
       <li class="list-group-item">
-        <h6><%= term.summary %></h6>
+        <div class="text-muted small mb-1">Clause <%= term.position.presence || index + 1 %></div>
+        <% if term.summary.present? %>
+          <h6><%= term.summary %></h6>
+        <% end %>
         <% if term.content.to_plain_text.present? %>
           <%= term.content %>
         <% end %>

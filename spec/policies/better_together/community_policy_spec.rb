@@ -3,10 +3,57 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::CommunityPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   subject(:policy) { described_class.new(user, community) }
 
   let(:community) { create(:better_together_community) }
   let(:user) { nil }
+
+  describe '#create?' do
+    subject(:policy) { described_class.new(user, BetterTogether::Community) }
+
+    context 'when user is a platform manager' do
+      let(:user) { create(:better_together_user, :confirmed, :platform_manager) }
+
+      it 'allows creation without accepting the community creation agreement' do
+        expect(policy.create?).to be true
+      end
+    end
+
+    context 'when user has accepted the community creation agreement' do
+      let(:user) { create(:better_together_user, :confirmed) }
+
+      before { grant_community_creation_agreement(user.person) }
+
+      it 'allows creation' do
+        expect(policy.create?).to be true
+      end
+    end
+
+    context 'when user has not accepted the community creation agreement' do
+      let(:user) { create(:better_together_user, :confirmed) }
+
+      it 'denies creation' do
+        expect(policy.create?).to be false
+      end
+    end
+
+    context 'when user is not authenticated' do
+      let(:user) { nil }
+
+      it 'denies creation' do
+        expect(policy.create?).to be false
+      end
+    end
+  end
 
   describe '#view_members?' do
     context 'when user is not authenticated' do
@@ -33,12 +80,31 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: member_role
+          role: member_role,
+          status: 'active'
         )
       end
 
       it 'allows viewing members' do
         expect(policy.view_members?).to be true
+      end
+    end
+
+    context 'when the membership is pending' do
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community,
+          member: user.person,
+          role: member_role,
+          status: 'pending'
+        )
+      end
+
+      it 'does not allow viewing members' do
+        expect(policy.view_members?).to be false
       end
     end
 
@@ -64,11 +130,13 @@ RSpec.describe BetterTogether::CommunityPolicy do
         manager = find_or_create_test_user('steward@example.test', 'SecureTest123!@#', :platform_steward)
 
         if platform && role && manager.person
-          BetterTogether::PersonPlatformMembership.find_or_create_by!(
+          membership = BetterTogether::PersonPlatformMembership.find_or_initialize_by(
             member: manager.person,
             joinable: platform,
             role: role
           )
+          membership.status = 'active'
+          membership.save!
         end
       end
 
@@ -85,7 +153,8 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: coordinator_role
+          role: coordinator_role,
+          status: 'active'
         )
       end
 
@@ -122,7 +191,45 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: member_role
+          role: member_role,
+          status: 'active'
+        )
+      end
+
+      it 'allows viewing' do
+        expect(policy.show?).to be true
+      end
+    end
+
+    context 'when community is private and user only has a pending membership' do
+      let(:community) { create(:better_together_community, privacy: 'private') }
+      let(:user) { create(:better_together_user) }
+      let(:member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+      before do
+        BetterTogether::PersonCommunityMembership.create!(
+          joinable: community,
+          member: user.person,
+          role: member_role,
+          status: 'pending'
+        )
+      end
+
+      it 'does not allow viewing' do
+        expect(policy.show?).to be false
+      end
+    end
+
+    context 'when community is private and an authorized robot has private-content scope' do
+      let(:community) { create(:better_together_community, privacy: 'private') }
+      let(:user) do
+        create(
+          :robot,
+          settings: {
+            bot_access_enabled: true,
+            bot_access_scopes: %w[read_private_content],
+            bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+          }
         )
       end
 
@@ -149,7 +256,8 @@ RSpec.describe BetterTogether::CommunityPolicy do
         BetterTogether::PersonCommunityMembership.create!(
           joinable: community,
           member: user.person,
-          role: member_role
+          role: member_role,
+          status: 'active'
         )
       end
 
@@ -187,12 +295,29 @@ RSpec.describe BetterTogether::CommunityPolicy do
       BetterTogether::PersonCommunityMembership.create!(
         joinable: community_scoped_community,
         member: user.person,
-        role: member_role
+        role: member_role,
+        status: 'active'
       )
 
       resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
 
       expect(resolved).to include(public_community, community_scoped_community)
+    end
+
+    it 'excludes community-scoped communities for pending members' do
+      user = create(:better_together_user)
+      member_role = BetterTogether::Role.find_by(identifier: 'community_member')
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: community_scoped_community,
+        member: user.person,
+        role: member_role,
+        status: 'pending'
+      )
+
+      resolved = described_class::Scope.new(user, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community)
+      expect(resolved).not_to include(community_scoped_community)
     end
 
     it 'excludes community-scoped communities for signed-in non-members' do
@@ -209,6 +334,44 @@ RSpec.describe BetterTogether::CommunityPolicy do
 
       expect(resolved).to include(public_community)
       expect(resolved).not_to include(community_scoped_community)
+    end
+
+    it 'includes private and community-scoped communities for a private-scope robot' do
+      private_community = create(:better_together_community, privacy: 'private')
+      robot = create(
+        :robot,
+        settings: {
+          bot_access_enabled: true,
+          bot_access_scopes: %w[read_private_content],
+          bot_access_token_digest: BetterTogether::Robot.bot_access_token_digest('token')
+        }
+      )
+
+      resolved = described_class::Scope.new(robot, BetterTogether::Community).resolve
+
+      expect(resolved).to include(public_community, community_scoped_community, private_community)
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_a_community) { create(:better_together_community, platform: platform_a) }
+    let(:platform_b_community) { create(:better_together_community, platform: platform_b) }
+
+    it "denies a steward of platform A from updating platform B's community" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_community).update?).to be false
+    end
+
+    it "allows a steward of platform A to update platform A's own community" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_a_community).update?).to be true
+    end
+
+    it "denies a steward of platform A from destroying platform B's community" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_community).destroy?).to be false
     end
   end
 end

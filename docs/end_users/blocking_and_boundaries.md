@@ -51,9 +51,9 @@ You may also reach it through the Settings page where blocked people appear as a
 3. Search for the person you want to block.
 4. Confirm the action.
 
-![Blocked people list showing the current list of blocked users and the button to add a new block.](../screenshots/desktop/blocked_people_list.png)
+![Blocked people settings tab showing the normal settings layout, the active blocked-people tab, the current list of blocked users, and the button to add a new block.](../screenshots/desktop/release_0_11_0_settings_blocked_people.png)
 
-[Mobile screenshot of the blocked-people list](../screenshots/mobile/blocked_people_list.png)
+[Mobile screenshot of the blocked-people settings tab](../screenshots/mobile/release_0_11_0_settings_blocked_people.png)
 
 ![Block person form showing the person search field and submit button.](../screenshots/desktop/block_person_form.png)
 

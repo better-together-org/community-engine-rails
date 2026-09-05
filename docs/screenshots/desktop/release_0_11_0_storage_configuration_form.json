@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_storage_configuration_form",
+  "device": "desktop",
+  "url": "/en/host/platforms/community-engine-host/storage_configurations/new",
+  "title": "New Storage Configuration | Community Engine Host",
+  "locale": "en",
+  "feature_set": "release_0_11_0_storage_adapter",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

@@ -1,307 +1,208 @@
-// Test file for location_selector_controller.js
-// This tests the dynamic form behavior for location selection
+// Test file for better_together/location_selector_controller.js
+// Covers the mixed-search event-location picker: splitting a composite
+// "ClassName:id" value from the picker select back into the plain
+// location_id/location_type hidden fields, the free-text fallback to the simple
+// `name` field, and the inline "create a new address" fieldset reveal/cancel flow
+// driven by the better_together--slim-select:create custom event.
+//
+// Note: this repo has no JS test runner configured (no package.json, no jest
+// config, node present but no npm/npx) — verified via manual review against the
+// source and a Node syntax check, not by executing the suite (same caveat as the
+// prior version of this file — see 9c0709dcd).
 
 import { Application } from "@hotwired/stimulus"
-import LocationSelectorController from "../../../app/javascript/controllers/location_selector_controller"
+import LocationSelectorController from "../../../app/javascript/controllers/better_together/location_selector_controller"
 
-// Mock DOM elements
+const LOCATION_TYPE_MAP = {
+  address: "BetterTogether::Address",
+  building: "BetterTogether::Infrastructure::Building",
+  settlement: "BetterTogether::Geography::Settlement"
+}
+
+// Mirrors app/views/better_together/events/_form.html.erb: one mixed-search picker
+// select, three hidden fields the controller writes to, a visually-hidden live
+// region, and the single inline address <fieldset> (hidden + a legend caption
+// span). No "+New" anchors and no Building block — inline Building creation was
+// removed; Building stays selectable from the search only.
 const mockDOM = `
-  <form data-controller="location-selector">
-    <fieldset data-location-selector-target="simpleLocationFields">
-      <label for="location_name">Location Name</label>
-      <input type="text" id="location_name" name="event[location_attributes][name]">
+  <div data-controller="better_together--location-selector"
+       data-better_together--location-selector-location-type-map-value='${JSON.stringify(LOCATION_TYPE_MAP)}'
+       data-better_together--location-selector-new-record-opened-announcement-value="Creating a new address."
+       data-better_together--location-selector-new-record-cancelled-announcement-value="New address cancelled.">
+    <div class="ss-main" tabindex="0"></div>
+    <select id="event_location_picker" data-better_together--location-selector-target="locationSelect"
+            data-action="change->better_together--location-selector#applyLocationSelection">
+      <option value=""></option>
+    </select>
+
+    <input type="hidden" name="event[location_attributes][location_id]"
+           data-better_together--location-selector-target="locationIdField">
+    <input type="hidden" name="event[location_attributes][location_type]"
+           data-better_together--location-selector-target="locationTypeField">
+    <input type="hidden" name="event[location_attributes][name]"
+           data-better_together--location-selector-target="simpleNameField">
+
+    <div class="visually-hidden" role="status"
+         data-better_together--location-selector-target="announcement"></div>
+
+    <fieldset id="event_location_new_address" data-location-type="address"
+              data-better_together--location-selector-target="newRecordBlock" hidden>
+      <legend>New address
+        <span data-better_together--location-selector-target="newRecordQuery"></span>
+      </legend>
+      <input type="text" name="event[location_attributes][location_attributes][line1]">
+      <button type="button" data-better_together--location-selector-target="cancelNewRecordButton"
+              data-action="click->better_together--location-selector#cancelNewRecord">Cancel</button>
     </fieldset>
-    
-    <fieldset data-location-selector-target="structuredLocationFields" style="display: none;">
-      <label for="location_type">Location Type</label>
-      <select id="location_type" name="event[location_attributes][location_type]" 
-              data-location-selector-target="locationTypeSelect"
-              data-action="change->location-selector#onLocationTypeChange">
-        <option value="">Select location type...</option>
-        <option value="BetterTogether::Geography::Address">Address</option>
-        <option value="BetterTogether::Geography::Building">Building</option>
-      </select>
-      
-      <div data-location-selector-target="locationOptions" style="display: none;">
-        <select name="event[location_attributes][location_id]" 
-                data-location-selector-target="locationSelect">
-          <option value="">Select location...</option>
-        </select>
-      </div>
-    </fieldset>
-    
-    <div class="form-switch">
-      <label>
-        <input type="checkbox" 
-               data-location-selector-target="locationModeToggle"
-               data-action="change->location-selector#toggleLocationMode">
-        Use structured location
-      </label>
-    </div>
-  </form>
+  </div>
 `
+
+const createEvent = (type, query) => new CustomEvent("better_together--slim-select:create", {
+  bubbles: true,
+  detail: { type, query }
+})
 
 describe("LocationSelectorController", () => {
   let application
   let controller
+  let element
 
   beforeEach(() => {
-    // Setup DOM
     document.body.innerHTML = mockDOM
-    
-    // Setup Stimulus application
+
     application = Application.start()
-    application.register("location-selector", LocationSelectorController)
-    
-    // Get controller instance
-    const element = document.querySelector('[data-controller="location-selector"]')
-    controller = application.getControllerForElementAndIdentifier(element, "location-selector")
+    application.register("better_together--location-selector", LocationSelectorController)
+
+    element = document.querySelector('[data-controller="better_together--location-selector"]')
+    controller = application.getControllerForElementAndIdentifier(
+      element,
+      "better_together--location-selector"
+    )
   })
 
   afterEach(() => {
     document.body.innerHTML = ""
-    if (application) {
-      application.stop()
-    }
+    if (application) application.stop()
   })
 
-  describe("initialization", () => {
+  describe("connect", () => {
     it("connects successfully", () => {
       expect(controller).toBeDefined()
     })
 
-    it("has all required targets", () => {
-      expect(controller.simpleLocationFieldsTarget).toBeTruthy()
-      expect(controller.structuredLocationFieldsTarget).toBeTruthy()
-      expect(controller.locationModeToggleTarget).toBeTruthy()
-      expect(controller.locationTypeSelectTarget).toBeTruthy()
-      expect(controller.locationOptionsTarget).toBeTruthy()
-      expect(controller.locationSelectTarget).toBeTruthy()
-    })
-
-    it("starts in simple location mode", () => {
-      expect(controller.simpleLocationFieldsTarget.style.display).toBe("")
-      expect(controller.structuredLocationFieldsTarget.style.display).toBe("none")
-      expect(controller.locationModeToggleTarget.checked).toBeFalsy()
+    it("starts the hidden newRecordBlock's fields disabled", () => {
+      controller.newRecordBlockTargets.forEach((block) => {
+        block.querySelectorAll("input, select, textarea").forEach((field) => {
+          expect(field.disabled).toBe(true)
+        })
+      })
     })
   })
 
-  describe("toggleLocationMode", () => {
-    it("switches to structured mode when toggle is checked", () => {
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
-
-      expect(controller.simpleLocationFieldsTarget.style.display).toBe("none")
-      expect(controller.structuredLocationFieldsTarget.style.display).toBe("")
+  describe("matchLocationType", () => {
+    it("matches a composite value's class-name prefix against locationTypeMapValue", () => {
+      expect(controller.matchLocationType("BetterTogether::Address:abc-123")).toBe("BetterTogether::Address")
     })
 
-    it("switches back to simple mode when toggle is unchecked", () => {
-      // First switch to structured mode
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
-      
-      // Then switch back
-      controller.locationModeToggleTarget.checked = false
-      controller.toggleLocationMode()
-
-      expect(controller.simpleLocationFieldsTarget.style.display).toBe("")
-      expect(controller.structuredLocationFieldsTarget.style.display).toBe("none")
+    it("returns null for a value that doesn't start with any known class name", () => {
+      expect(controller.matchLocationType("Cottage on the hill")).toBeNull()
     })
 
-    it("clears simple location name when switching to structured", () => {
-      const nameInput = document.getElementById("location_name")
-      nameInput.value = "Test Location"
-      
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
-
-      expect(nameInput.value).toBe("")
-    })
-
-    it("clears structured location selections when switching to simple", () => {
-      // Set up structured location
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
-      controller.locationSelectTarget.value = "123"
-      
-      // Switch to simple mode
-      controller.locationModeToggleTarget.checked = false
-      controller.toggleLocationMode()
-
-      expect(controller.locationTypeSelectTarget.value).toBe("")
-      expect(controller.locationSelectTarget.value).toBe("")
+    it("returns null for a value containing a colon that isn't a known class-name prefix", () => {
+      expect(controller.matchLocationType("Room: 204")).toBeNull()
     })
   })
 
-  describe("onLocationTypeChange", () => {
-    beforeEach(() => {
-      // Switch to structured mode first
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
-    })
+  describe("applyLocationSelection — structured pick", () => {
+    it("splits a composite value into location_id/location_type and clears the simple name field", () => {
+      controller.simpleNameFieldTarget.value = "stale simple name"
+      controller.locationSelectTarget.innerHTML =
+        '<option value="BetterTogether::Address:abc-123" selected>123 Main St (Address)</option>'
 
-    it("shows location options when type is selected", () => {
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
-      controller.onLocationTypeChange()
+      controller.applyLocationSelection()
 
-      expect(controller.locationOptionsTarget.style.display).toBe("")
-    })
-
-    it("hides location options when no type is selected", () => {
-      controller.locationTypeSelectTarget.value = ""
-      controller.onLocationTypeChange()
-
-      expect(controller.locationOptionsTarget.style.display).toBe("none")
-    })
-
-    it("makes API request to fetch location options", async () => {
-      // Mock fetch
-      global.fetch = jest.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve([
-            { id: 1, display_name: "123 Main St" },
-            { id: 2, display_name: "456 Oak Ave" }
-          ])
-        })
-      )
-
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
-      await controller.onLocationTypeChange()
-
-      expect(fetch).toHaveBeenCalledWith(
-        "/better_together/geography/locations/options?type=BetterTogether::Geography::Address",
-        expect.objectContaining({
-          headers: expect.objectContaining({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          })
-        })
-      )
-    })
-
-    it("populates location select with fetched options", async () => {
-      const mockLocations = [
-        { id: 1, display_name: "123 Main St" },
-        { id: 2, display_name: "456 Oak Ave" }
-      ]
-
-      global.fetch = jest.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(mockLocations)
-        })
-      )
-
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
-      await controller.onLocationTypeChange()
-
-      const options = controller.locationSelectTarget.options
-      expect(options.length).toBe(3) // Default option + 2 locations
-      expect(options[1].value).toBe("1")
-      expect(options[1].text).toBe("123 Main St")
-      expect(options[2].value).toBe("2")
-      expect(options[2].text).toBe("456 Oak Ave")
-    })
-
-    it("handles API errors gracefully", async () => {
-      global.fetch = jest.fn(() =>
-        Promise.resolve({
-          ok: false,
-          status: 500
-        })
-      )
-
-      console.error = jest.fn()
-
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
-      await controller.onLocationTypeChange()
-
-      expect(console.error).toHaveBeenCalledWith(
-        "Failed to fetch location options:", 
-        expect.any(Error)
-      )
-    })
-
-    it("clears location select when type changes", async () => {
-      // Set initial options
-      controller.locationSelectTarget.innerHTML = `
-        <option value="">Select location...</option>
-        <option value="1">Old Location</option>
-      `
-
-      global.fetch = jest.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve([])
-        })
-      )
-
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Building"
-      await controller.onLocationTypeChange()
-
-      const options = controller.locationSelectTarget.options
-      expect(options.length).toBe(1)
-      expect(options[0].value).toBe("")
+      expect(controller.locationIdFieldTarget.value).toBe("abc-123")
+      expect(controller.locationTypeFieldTarget.value).toBe("BetterTogether::Address")
+      expect(controller.simpleNameFieldTarget.value).toBe("")
     })
   })
 
-  describe("form validation", () => {
-    it("validates simple location has name", () => {
-      const nameInput = document.getElementById("location_name")
-      nameInput.value = ""
-      
-      const isValid = controller.validateForm()
-      expect(isValid).toBeFalsy()
-    })
+  describe("applyLocationSelection — free-text fallback", () => {
+    it("writes unmatched typed text into the simple name field and clears the structured fields", () => {
+      controller.locationIdFieldTarget.value = "stale-id"
+      controller.locationTypeFieldTarget.value = "BetterTogether::Address"
+      controller.locationSelectTarget.innerHTML =
+        '<option value="A Custom Venue Name" selected>A Custom Venue Name</option>'
 
-    it("validates structured location has both type and selection", () => {
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
-      
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
+      controller.applyLocationSelection()
+
+      expect(controller.simpleNameFieldTarget.value).toBe("A Custom Venue Name")
+      expect(controller.locationIdFieldTarget.value).toBe("")
+      expect(controller.locationTypeFieldTarget.value).toBe("")
+    })
+  })
+
+  describe("applyLocationSelection — cleared selection", () => {
+    it("clears both structured and simple fields when the picker value is blank", () => {
+      controller.locationIdFieldTarget.value = "abc-123"
+      controller.simpleNameFieldTarget.value = "A Custom Venue Name"
       controller.locationSelectTarget.value = ""
-      
-      const isValid = controller.validateForm()
-      expect(isValid).toBeFalsy()
-    })
 
-    it("returns true for valid simple location", () => {
-      const nameInput = document.getElementById("location_name")
-      nameInput.value = "Test Location"
-      
-      const isValid = controller.validateForm()
-      expect(isValid).toBeTruthy()
-    })
+      controller.applyLocationSelection()
 
-    it("returns true for valid structured location", () => {
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
-      
-      controller.locationTypeSelectTarget.value = "BetterTogether::Geography::Address"
-      controller.locationSelectTarget.value = "123"
-      
-      const isValid = controller.validateForm()
-      expect(isValid).toBeTruthy()
+      expect(controller.locationIdFieldTarget.value).toBe("")
+      expect(controller.locationTypeFieldTarget.value).toBe("")
+      expect(controller.simpleNameFieldTarget.value).toBe("")
     })
   })
 
-  describe("accessibility", () => {
-    it("updates ARIA attributes when switching modes", () => {
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
+  describe("revealNewRecord — address", () => {
+    it("shows the fieldset, enables its fields, prefills line1, sets the caption and location_type", () => {
+      element.dispatchEvent(createEvent("address", "42 Elm St"))
 
-      expect(controller.simpleLocationFieldsTarget.getAttribute("aria-hidden")).toBe("true")
-      expect(controller.structuredLocationFieldsTarget.getAttribute("aria-hidden")).toBe("false")
+      const block = controller.newRecordBlockTargets[0]
+      expect(block.hidden).toBe(false)
+      expect(block.querySelector('input[name*="[line1]"]').disabled).toBe(false)
+      expect(block.querySelector('input[name*="[line1]"]').value).toBe("42 Elm St")
+      expect(controller.newRecordQueryTarget.textContent).toBe('"42 Elm St"')
+      expect(controller.locationTypeFieldTarget.value).toBe("BetterTogether::Address")
     })
 
-    it("maintains focus management during mode switches", () => {
-      const nameInput = document.getElementById("location_name")
-      nameInput.focus()
-      
-      controller.locationModeToggleTarget.checked = true
-      controller.toggleLocationMode()
+    it("ignores a create event for a type with no matching block (e.g. simple)", () => {
+      element.dispatchEvent(createEvent("simple", "My Backyard"))
 
-      expect(document.activeElement).toBe(controller.locationTypeSelectTarget)
+      expect(controller.newRecordBlockTargets[0].hidden).toBe(true)
+    })
+  })
+
+  describe("cancelNewRecord", () => {
+    it("hides and disables the fieldset, clears every hidden field, and refocuses the combobox", () => {
+      element.dispatchEvent(createEvent("address", "9 Cancel Rd"))
+      const block = controller.newRecordBlockTargets[0]
+      expect(block.hidden).toBe(false)
+
+      controller.cancelNewRecord(new Event("click"))
+
+      expect(block.hidden).toBe(true)
+      expect(block.querySelector('input[name*="[line1]"]').disabled).toBe(true)
+      expect(controller.locationIdFieldTarget.value).toBe("")
+      expect(controller.locationTypeFieldTarget.value).toBe("")
+      expect(controller.simpleNameFieldTarget.value).toBe("")
+    })
+  })
+
+  describe("mutual exclusion", () => {
+    it("closes an open address fieldset when an existing location is then picked", () => {
+      element.dispatchEvent(createEvent("address", "Draft address"))
+      const block = controller.newRecordBlockTargets[0]
+      expect(block.hidden).toBe(false)
+
+      controller.locationSelectTarget.innerHTML =
+        '<option value="BetterTogether::Geography::Settlement:s-1" selected>Corner Brook (Settlement)</option>'
+      controller.applyLocationSelection()
+
+      expect(block.hidden).toBe(true)
+      expect(controller.locationTypeFieldTarget.value).toBe("BetterTogether::Geography::Settlement")
     })
   })
 })

@@ -1,0 +1,118 @@
+{
+  "name": "new_platform_setup_welcome",
+  "device": "mobile",
+  "url": "/en/w/new_platform_setup/new-platform-ebb924b2b601/welcome",
+  "title": "Let&#39;s Set Up a New Platform | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "new_platform_setup_welcome",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-platform-setup-progress",
+      "title": "Step progress",
+      "bullets": [
+        "Named step list with aria-current=\"step\", plus a percentage progress bar."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 114.0,
+        "width": 476.0,
+        "height": 66.0,
+        "right": 488.0,
+        "bottom": 180.0,
+        "center_x": 250.0,
+        "center_y": 147.0
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 114.0,
+        "width": 476.0,
+        "height": 66.0,
+        "right": 488.0,
+        "bottom": 180.0,
+        "center_x": 250.0,
+        "center_y": 147.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 200.0,
+        "width": 270.0,
+        "height": 210,
+        "score": 1081.0
+      }
+    },
+    {
+      "selector": "#new_platform_setup_locale",
+      "title": "Locale",
+      "bullets": [
+        "Sets the locale used for the rest of the wizard and the new platform itself."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 576.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 614.546875,
+        "center_x": 250.0,
+        "center_y": 595.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 576.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 614.546875,
+        "center_x": 250.0,
+        "center_y": 595.546875
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 634.55,
+        "width": 270.0,
+        "height": 184,
+        "score": 646.453125
+      }
+    },
+    {
+      "selector": "#new-platform-setup-welcome-submit-btn",
+      "title": "Next",
+      "bullets": [
+        "Advances to platform_identity — no data is created by this step."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 654.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 692.546875,
+        "center_x": 250.0,
+        "center_y": 673.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 654.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 692.546875,
+        "center_x": 250.0,
+        "center_y": 673.546875
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 852,
+        "width": 270.0,
+        "height": 184,
+        "score": 0
+      }
+    }
+  ]
+}

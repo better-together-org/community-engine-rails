@@ -100,7 +100,10 @@ RSpec.describe BetterTogether::Content::Markdown do
 
     context 'when using markdown_file_path' do
       let(:file_path) { Rails.root.join('spec/fixtures/files/content_test.md') }
-      let(:markdown) { described_class.new(markdown_file_path: file_path.to_s) }
+      # active_source only syncs from markdown_file_path via a before_save
+      # callback (sync_active_source) — this instance is unsaved, so set it
+      # explicitly for #content to pick the file-loading branch.
+      let(:markdown) { described_class.new(markdown_file_path: file_path.to_s, active_source: 'file') }
       let(:file_content) { "# File Content\n\nThis is from a file." }
 
       before do
@@ -119,7 +122,7 @@ RSpec.describe BetterTogether::Content::Markdown do
 
     context 'when using relative file path' do
       let(:file_path) { 'spec/fixtures/files/relative_test.md' }
-      let(:markdown) { described_class.new(markdown_file_path: file_path) }
+      let(:markdown) { described_class.new(markdown_file_path: file_path, active_source: 'file') }
       let(:full_path) { Rails.root.join(file_path) }
       let(:file_content) { '# Relative Path Test' }
 
@@ -284,39 +287,6 @@ RSpec.describe BetterTogether::Content::Markdown do
         expect(plain).to include('italic')
         expect(plain).to include('Item 1')
         expect(plain).to include('Item 2')
-      end
-    end
-  end
-
-  describe '#as_indexed_json' do
-    let(:markdown_source) { '# Searchable Content' }
-    let(:markdown) { described_class.create!(markdown_source: markdown_source) }
-
-    it 'returns a hash with id and localized_content' do
-      result = markdown.as_indexed_json
-
-      expect(result).to be_a(Hash)
-      expect(result.keys).to contain_exactly(:id, :localized_content)
-    end
-
-    it 'includes the markdown id' do
-      result = markdown.as_indexed_json
-      expect(result[:id]).to eq(markdown.id)
-    end
-
-    it 'includes localized content' do
-      result = markdown.as_indexed_json
-
-      expect(result[:localized_content]).to be_a(Hash)
-      expect(result[:localized_content].keys).to match_array(I18n.available_locales)
-    end
-
-    it 'includes plain text content for each locale' do
-      result = markdown.as_indexed_json
-
-      I18n.available_locales.each do |locale|
-        expect(result[:localized_content][locale]).to be_a(String)
-        expect(result[:localized_content][locale]).to include('Searchable Content')
       end
     end
   end

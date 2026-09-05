@@ -29,4 +29,5 @@
 - Keep Docker running; database and Elasticsearch services are provided by the compose environment.
 - Use `bin/dc-run-dummy` for commands that must run in the dummy app context.
 - Worktrees reuse the shared Docker Postgres, Redis, and Elasticsearch containers through published host ports.
-- Each worktree gets its own database suffix automatically via `CE_WORKTREE_DB_SUFFIX`, so test and development databases stay isolated while the shared infra stays reusable.
+- Linked git worktrees get their own database suffix automatically via `CE_WORKTREE_DB_SUFFIX`, so test and development databases stay isolated while the shared infra stays reusable.
+- Ordinary checkouts and non-worktree clones do not receive a worktree suffix just because the directory name differs; `bin/dc-run` now detects linked worktrees from git metadata instead of path naming.

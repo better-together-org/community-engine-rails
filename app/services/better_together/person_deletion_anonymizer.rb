@@ -76,7 +76,8 @@ module BetterTogether
     def default_notification_preferences
       {
         'notify_by_email' => false,
-        'show_conversation_details' => false
+        'show_conversation_details' => false,
+        'notify_on_comments' => false
       }
     end
   end

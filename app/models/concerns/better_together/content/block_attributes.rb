@@ -119,7 +119,7 @@ module BetterTogether
       end
 
       # rubocop:todo Metrics/MethodLength
-      def block_styles # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      def block_styles # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         styles = {
           background_color:,
           background_image:,
@@ -151,10 +151,14 @@ module BetterTogether
           url_opts[:port] = uri.port unless [80, 443].include?(uri.port)
           ActiveStorage::Current.url_options = url_opts
 
+          proxy_url = BetterTogether::MediaUrlBuilder.proxy_url_for(optimized_background_image, url_options: url_opts)
           bg_image_style = [
-            # rubocop:todo Layout/LineLength
-            "url(#{Rails.application.routes.url_helpers.rails_storage_proxy_url(optimized_background_image)})", background_image.presence
-            # rubocop:enable Layout/LineLength
+            # Quote the URL: ActiveStorage appends the blob filename as the last
+            # path segment, and filenames routinely contain "(", ")", spaces or
+            # commas -- all of which are a syntax error inside an unquoted CSS
+            # url(). Wrapping in double quotes keeps the declaration valid.
+            ("url(\"#{proxy_url}\")" if proxy_url.present?),
+            background_image.presence
           ].reject(&:blank?).join(', ')
           styles = styles.merge({
                                   background_image: bg_image_style,

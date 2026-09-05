@@ -223,6 +223,28 @@ module BetterTogether
         rp
       end
 
+      # A private Offer that's excluded from the policy-scoped resource_collection
+      # still exists on this platform — for an unauthenticated visitor that reads
+      # as "please sign in", not a blanket 404 (which would also incorrectly
+      # apply to genuinely missing offers / offers on another platform).
+      def handle_resource_not_found
+        return super if current_user.present? || current_robot.present?
+
+        offer = platform_scoped_record_ignoring_privacy
+        return super unless offer
+
+        redirect_to new_user_session_path(locale: I18n.locale)
+      end
+
+      def platform_scoped_record_ignoring_privacy
+        platform = Current.platform || Current.host_platform
+        return nil unless platform
+
+        resource_class.where(platform_id: platform.id).friendly.find(id_param)
+      rescue ActiveRecord::RecordNotFound, StandardError
+        nil
+      end
+
       def apply_target_prefill_offer(offer)
         return unless offer
         return unless offer.target.is_a?(::BetterTogether::Platform)

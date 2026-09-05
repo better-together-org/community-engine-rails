@@ -4,6 +4,8 @@ module BetterTogether
   module Geography
     class Continent < ApplicationRecord # rubocop:todo Style/Documentation
       include Geospatial::One
+
+      geocodes_self
       include Identifier
       include Protected
       include PrimaryCommunity

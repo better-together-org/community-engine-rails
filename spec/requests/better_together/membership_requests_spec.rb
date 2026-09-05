@@ -4,8 +4,13 @@ require 'rails_helper'
 
 # @tagged hermetic
 RSpec.describe 'BetterTogether::MembershipRequests' do
-  let!(:platform)  { BetterTogether::Platform.first || create(:better_together_platform) }
   let!(:community) { create(:better_together_community, :membership_requests_enabled) }
+  let!(:host_platform) do
+    BetterTogether::Platform.find_by(host: true)&.tap do |platform|
+      platform.update!(privacy: 'public', allow_membership_requests: true)
+    end || create(:better_together_platform, :host, :public, :membership_requests_enabled)
+  end
+  let!(:community_platform) { create(:better_together_platform, :membership_requests_enabled, community: community) }
   let(:base_path)  { "/#{I18n.locale}/c/#{community.slug}/membership_requests" }
   let(:new_path)   { "#{base_path}/new" }
 
@@ -16,6 +21,19 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
         requestor_email: 'alice@example.test',
         referral_source: 'A friend',
         description: 'I want to help the community.'
+      }
+    }.merge(bot_defense_payload(:membership_request))
+  end
+
+  def bot_defense_payload(form_id)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
       }
     }
   end
@@ -106,6 +124,18 @@ RSpec.describe 'BetterTogether::MembershipRequests' do
         expect(response).to have_http_status(:unprocessable_content)
       ensure
         BetterTogether::MembershipRequestsController.captcha_validation_proc = nil
+      end
+    end
+
+    context 'without bot defense proof' do
+      it 'rejects the submission' do
+        unsafe_params = valid_params.except(:bot_defense)
+
+        expect do
+          post base_path, params: unsafe_params
+        end.not_to change(BetterTogether::Joatu::MembershipRequest, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

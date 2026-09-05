@@ -77,8 +77,8 @@ RSpec.describe 'Event Timezone Display' do
       event = create(:event,
                      name: 'Tokyo Morning Event',
                      timezone: 'Asia/Tokyo',
-                     starts_at: tokyo_tz.parse('2026-03-15 09:00:00'),
-                     ends_at: tokyo_tz.parse('2026-03-15 11:00:00'),
+                     starts_at: tokyo_tz.parse("#{Date.current + 90.days} 09:00:00"),
+                     ends_at: tokyo_tz.parse("#{Date.current + 90.days} 11:00:00"),
                      creator: person)
       create(:better_together_event_host, event: event, host: community)
       event
@@ -89,8 +89,8 @@ RSpec.describe 'Event Timezone Display' do
       event = create(:event,
                      name: 'London Afternoon Event',
                      timezone: 'Europe/London',
-                     starts_at: london_tz.parse('2026-03-15 14:00:00'),
-                     ends_at: london_tz.parse('2026-03-15 16:00:00'),
+                     starts_at: london_tz.parse("#{Date.current + 90.days} 14:00:00"),
+                     ends_at: london_tz.parse("#{Date.current + 90.days} 16:00:00"),
                      creator: person)
       create(:better_together_event_host, event: event, host: community)
       event
@@ -129,8 +129,8 @@ RSpec.describe 'Event Timezone Display' do
       create(:event,
              name: 'Sydney Workshop',
              timezone: 'Australia/Sydney',
-             starts_at: sydney_tz.parse('2026-04-20 10:00:00'),
-             ends_at: sydney_tz.parse('2026-04-20 12:00:00'),
+             starts_at: sydney_tz.parse("#{Date.current + 90.days} 10:00:00"),
+             ends_at: sydney_tz.parse("#{Date.current + 90.days} 12:00:00"),
              creator: person)
     end
 

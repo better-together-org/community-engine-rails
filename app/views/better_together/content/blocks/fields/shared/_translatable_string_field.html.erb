@@ -1,4 +1,4 @@
-<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title', help_text: nil) -%>
+<%# locals: (model:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid, attribute: 'title', help_text: nil, input_options: {}) -%>
 
 <%- temp_id = temp_id_for(model, temp_id:) %>
 
@@ -7,9 +7,11 @@
 
   <%= text_field_tag "#{scope}[#{locale_attribute}]",
         model.public_send(locale_attribute),
-        id: "#{dom_id(model)}-#{locale_attribute}",
-        class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
-        data: {action: "input->better_together--translation#updateTranslationStatus" },
-'data-better_together-translation-target' => "input" %>
+        **{
+          id: "#{dom_id(model)}-#{locale_attribute}",
+          class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
+          data: {action: "input->better_together--translation#updateTranslationStatus" },
+          'data-better_together-translation-target' => "input"
+        }.merge(input_options) %>
 
 <% end %>

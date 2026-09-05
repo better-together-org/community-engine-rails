@@ -25,11 +25,7 @@ export default class extends Controller {
 
     // Track the share internally via AJAX
     this.trackShare(platform, url, shareTrackingUrl, shareableType, shareableId)
-
-    // Conditionally trigger Google Analytics event
-    if (window.GA_ID) {
-      this.trackWithGA(platform, url, title)
-    }
+    this.dispatchShareEvent({ platform, url, title, image, shareableType, shareableId })
   }
 
   constructShareUrl(platform, url, title, image) {
@@ -83,19 +79,8 @@ export default class extends Controller {
     })
   }
 
-  trackWithGA(platform, url, title) {
-    if (typeof gtag === 'function') {
-      gtag('event', 'share', {
-        'method': platform,
-        'content_type': 'article',
-        'item_id': url,
-        'item_title': title
-      })
-    } else if (typeof ga === 'function') {
-      ga('send', 'event', 'Social Share', platform, title)
-    } else {
-      console.warn(this.localizedString('share_controller.ga_not_initialized'))
-    }
+  dispatchShareEvent(detail) {
+    window.dispatchEvent(new CustomEvent('better_together:share', { detail }))
   }
 
   getCSRFToken() {

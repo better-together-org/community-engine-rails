@@ -210,6 +210,8 @@ end
 
 See [Membership Request Workflow](./membership_request_workflow.md) for the bounded invitation-only intake path, enablement rules, diagram exports, and review UI screenshots that document this discoverability contract end to end.
 
+See [Safety and Federation Review Workflow](./safety_and_federation_review_workflow.md) for the reviewer-facing safety-case and federation connection entry points, the labeled notification-digest flow, and the screenshots that document those operational review surfaces end to end.
+
 This keeps private data private by default and ensures that exceptions are auditable, intentional, and role-specific.
 
 ##### Review Artifacts For Reduced Platform-Manager Access

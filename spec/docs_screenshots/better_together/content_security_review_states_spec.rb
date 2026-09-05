@@ -10,9 +10,9 @@ RSpec.describe 'Documentation screenshots for content security review states',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:host_platform) { configure_host_platform }
-  let!(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
-  let!(:platform_manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
+  let(:host_platform) { configure_host_platform }
+  let(:user) { find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user) }
+  let(:platform_manager) { find_or_create_test_user('manager@example.test', 'SecureTest123!@#', :platform_manager) }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'

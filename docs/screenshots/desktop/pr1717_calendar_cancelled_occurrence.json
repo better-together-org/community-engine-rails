@@ -1,0 +1,48 @@
+{
+  "name": "pr1717_calendar_cancelled_occurrence",
+  "device": "desktop",
+  "url": "/en/calendars/78c5fb5f-1296-4307-9b31-dce5574f714e",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_occurrences_ux",
+  "flow": "calendar_cancelled_occurrence",
+  "source_spec": "./spec/docs_screenshots/better_together/event_occurrences_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": ".event-session-cancelled-badge",
+      "title": "\"Cancelled\" indicator",
+      "bullets": [
+        "Shown directly on the day cell — a cancelled session never just silently disappears, which would look identical to \"nothing was ever scheduled here.\""
+      ],
+      "target": {
+        "x": 1095.421875,
+        "y": 827.421875,
+        "width": 71.078125,
+        "height": 17.84375,
+        "right": 1166.5,
+        "bottom": 845.265625,
+        "center_x": 1130.9609375,
+        "center_y": 836.34375
+      },
+      "avoid": {
+        "x": 1095.421875,
+        "y": 827.421875,
+        "width": 71.078125,
+        "height": 17.84375,
+        "right": 1166.5,
+        "bottom": 845.265625,
+        "center_x": 1130.9609375,
+        "center_y": 836.34375
+      },
+      "placement": {
+        "side": "left",
+        "x": 695.42,
+        "y": 718.34,
+        "width": 380,
+        "height": 236,
+        "score": 1095.421875
+      }
+    }
+  ]
+}

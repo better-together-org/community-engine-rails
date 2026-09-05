@@ -44,6 +44,13 @@ module BetterTogether
     validate :target_person_must_belong_to_target_platform, if: :target_person_id?
 
     scope :active, -> { where(status: STATUS_VALUES[:active]) }
+    scope :for_platform, lambda { |platform|
+      where(
+        platform_connection_id: ::BetterTogether::PlatformConnection
+                                .for_platform(platform)
+                                .select(:id)
+      )
+    }
 
     def activate!(verified_at: Time.current)
       update!(status: :active, verified_at:, revoked_at: nil)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonBlockPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PersonBlockPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       user.present?
     end
@@ -40,7 +40,7 @@ module BetterTogether
 
     class Scope < Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.where(blocker: agent)
+        platform_scoped.where(blocker: agent)
       end
     end
   end

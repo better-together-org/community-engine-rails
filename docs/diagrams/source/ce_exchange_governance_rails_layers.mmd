@@ -49,42 +49,42 @@ classDiagram
       <<Model>>
       table: better_together_agreements
       translates: description, slug, title
-      concerns: BetterTogetherId, Citable, Claimable, Creatable +6
-      weak refs: owner: seeds, owner: citations, owner: claims, owner: slugs +7
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +6
+      weak refs: owner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description +5
     }
     class BetterTogether__AgreementParticipant["AgreementParticipant"] {
       <<Model>>
       table: better_together_agreement_participants
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: participant, owner: seeds
     }
     class BetterTogether__AgreementTerm["AgreementTerm"] {
       <<Model>>
       table: better_together_agreement_terms
       translates: content, slug, summary
-      concerns: BetterTogetherId, FriendlySlug, Identifier, Positioned +3
+      concerns: BetterTogetherId, FriendlySlug, Identifier, PlatformScoped +4
       weak refs: owner: seeds, owner: slugs, owner: string_translations, owner: text_translations +6
     }
     class BetterTogether__Checklist["Checklist"] {
       <<Model>>
       table: better_together_checklists
       translates: slug, title
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +7
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +9
       weak refs: owner: seeds, owner: slugs, owner: views, owner: string_translations
     }
     class BetterTogether__ChecklistItem["ChecklistItem"] {
       <<Model>>
       table: better_together_checklist_items
       translates: description, label, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +5
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +7
       weak refs: owner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description +5
     }
     class BetterTogether__Joatu__Agreement["Joatu::Agreement"] {
       <<Model>>
       table: better_together_joatu_agreements
       translates: slug
-      concerns: Authorable, BetterTogetherId, Citable, Claimable +6
-      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +10
+      concerns: Authorable, BetterTogetherId, FriendlySlug, Metrics::Viewable +7
+      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +9
     }
     class BetterTogether__Joatu__AgreementNotifier["Joatu::AgreementNotifier\n(shared table family)"] {
       <<Model>>
@@ -102,41 +102,47 @@ classDiagram
       <<Model>>
       table: better_together_categories
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +7
+      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +8
       weak refs: owner: seeds, owner: slugs, owner: views, owner: cover_image_attachment +7
     }
     class BetterTogether__Joatu__Offer["Joatu::Offer"] {
       <<Model>>
       table: better_together_joatu_offers
       translates: description, name, slug
-      concerns: Authorable, BetterTogetherId, Categorizable, Citable +11
-      weak refs: target: target, owner: seeds, owner: citations, owner: claims +20
+      concerns: Authorable, BetterTogetherId, Categorizable, Creatable +12
+      weak refs: target: target, owner: seeds, owner: slugs, owner: contributions +19
     }
     class BetterTogether__Joatu__Request["Joatu::Request\n(shared table family)"] {
       <<Model>>
       table: better_together_joatu_requests
       variants: Joatu::ConnectionRequest, Joatu::MembershipRequest, Joatu::PersonAccessGrantRequest, Joatu::PersonLinkRequest
       translates: description, name, slug
-      concerns: Authorable, BetterTogetherId, Categorizable, Citable +11
-      weak refs: target: target, owner: seeds, owner: citations, owner: claims +20
+      concerns: Authorable, BetterTogetherId, Categorizable, Creatable +12
+      weak refs: target: target, owner: seeds, owner: slugs, owner: contributions +19
     }
     class BetterTogether__Joatu__ResponseLink["Joatu::ResponseLink"] {
       <<Model>>
       table: better_together_joatu_response_links
-      concerns: BetterTogetherId, Creatable, Seedable
+      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
       weak refs: target: source, target: response, owner: seeds
+    }
+    class BetterTogether__Joatu__Settlement["Joatu::Settlement"] {
+      <<Model>>
+      table: better_together_joatu_settlements
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: payer, target: recipient, owner: seeds
     }
     class BetterTogether__Seed["Seed"] {
       <<Model>>
       table: better_together_seeds
       translates: slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +3
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +4
       weak refs: target: seedable, owner: seeds, owner: slugs, owner: string_translations +1
     }
     class BetterTogether__SeedPlanting["SeedPlanting"] {
       <<Model>>
       table: better_together_seed_plantings
-      concerns: BetterTogetherId, Creatable, Privacy, Seedable
+      concerns: BetterTogetherId, Creatable, Privacy, PrivacyCeilingValidatable +1
       weak refs: owner: seeds
     }
   }
@@ -162,24 +168,38 @@ classDiagram
   BetterTogether__Joatu__RequestsController --|> BetterTogether__Joatu__JoatuController
   BetterTogether__SeedsController ..> BetterTogether__Seed : manages
   BetterTogether__SeedsController --|> BetterTogether__ApplicationController
+  BetterTogether__Agreement --> BetterTogether__Platform : platform
   BetterTogether__Agreement --> BetterTogether__Person : creator
   BetterTogether__Agreement --> BetterTogether__Page : page
+  BetterTogether__AgreementParticipant --> BetterTogether__Platform : platform
   BetterTogether__AgreementParticipant --> BetterTogether__Agreement : agreement
   BetterTogether__AgreementParticipant --> BetterTogether__Person : person
+  BetterTogether__AgreementTerm --> BetterTogether__Platform : platform
   BetterTogether__AgreementTerm --> BetterTogether__Agreement : agreement
+  BetterTogether__Checklist --> BetterTogether__Platform : platform
   BetterTogether__Checklist --> BetterTogether__Person : creator
+  BetterTogether__ChecklistItem --> BetterTogether__Platform : platform
   BetterTogether__ChecklistItem --> BetterTogether__Person : creator
   BetterTogether__ChecklistItem --> BetterTogether__Checklist : checklist
   BetterTogether__ChecklistItem --> BetterTogether__ChecklistItem : parent
+  BetterTogether__Joatu__Agreement --> BetterTogether__Platform : platform
   BetterTogether__Joatu__Agreement --> BetterTogether__Joatu__Offer : offer
   BetterTogether__Joatu__Agreement --> BetterTogether__Joatu__Request : request
   BetterTogether__Joatu__AgreementNotifier__Notification --> Noticed__Event : event
   BetterTogether__Joatu__AgreementNotifier__Notification --> BetterTogether__Platform : platform
+  BetterTogether__Joatu__Category --> BetterTogether__Platform : platform
+  BetterTogether__Joatu__Offer --> BetterTogether__Platform : platform
   BetterTogether__Joatu__Offer --> BetterTogether__Person : creator
   BetterTogether__Joatu__Offer --> BetterTogether__Address : address
+  BetterTogether__Joatu__Request --> BetterTogether__Platform : platform
   BetterTogether__Joatu__Request --> BetterTogether__Person : creator
   BetterTogether__Joatu__Request --> BetterTogether__Address : address
+  BetterTogether__Joatu__ResponseLink --> BetterTogether__Platform : platform
   BetterTogether__Joatu__ResponseLink --> BetterTogether__Person : creator
+  BetterTogether__Joatu__Settlement --> BetterTogether__Platform : platform
+  BetterTogether__Joatu__Settlement --> BetterTogether__Joatu__Agreement : agreement
+  BetterTogether__Joatu__Settlement --> BetterTogether__C3__Token : c3_token
   BetterTogether__Seed --> BetterTogether__Person : creator
   BetterTogether__SeedPlanting --> BetterTogether__Person : creator
   BetterTogether__SeedPlanting --> BetterTogether__Seed : seed
+  BetterTogether__SeedPlanting --> BetterTogether__Platform : platform

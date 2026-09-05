@@ -1,0 +1,21 @@
+        flowchart LR
+            SearchBar[Shared search bar
+GET /search?q=...] --> SearchController[SearchController#search]
+            SearchController --> SearchBackend[BetterTogether::Search.backend]
+            SearchBackend --> ElasticsearchBackend[ElasticsearchBackend]
+            ElasticsearchBackend --> Registry[Search::Registry
+Page + Post only]
+            Registry --> PostIndex[Post index]
+            Registry --> PageIndex[Page index]
+            SearchController --> Results[Paginated results
+10 per page]
+            SearchController --> Suggestions[Optional suggestions]
+
+            McpTool[MCP SearchPostsTool] --> PostScope[PostPolicy::Scope]
+            PostScope --> PostQuery[Translated title/body query
+published and accessible posts]
+            PostQuery --> McpResults[JSON post results]
+
+            BranchNote[No dedicated posts filter form
+on this branch]
+            Results --> BranchNote

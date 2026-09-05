@@ -15,6 +15,14 @@ class AddAcceptanceAuditFieldsToAgreementParticipants < ActiveRecord::Migration[
     remove_acceptance_audit_columns
   end
 
+  AUDIT_COLUMNS = %i[
+    acceptance_method
+    agreement_identifier_snapshot
+    agreement_title_snapshot
+    agreement_updated_at_snapshot
+    agreement_content_digest
+  ].freeze
+
   private
 
   def add_acceptance_audit_columns
@@ -55,16 +63,27 @@ class AddAcceptanceAuditFieldsToAgreementParticipants < ActiveRecord::Migration[
     agreement.updated_at || participant.accepted_at || participant.created_at || Time.current
   end
 
+  # backfill_acceptance_audit_fields skips any participant whose agreement
+  # association is missing/orphaned (`next unless agreement`) — enforcing
+  # NOT NULL unconditionally afterward would hard-fail on exactly those rows
+  # with no diagnostic. Warn and skip instead, matching 20260321000004's
+  # established house style.
   def enforce_acceptance_audit_constraints
     change_column_default :better_together_agreement_participants, :acceptance_method, 'agreement_review'
 
-    %i[
-      acceptance_method
-      agreement_identifier_snapshot
-      agreement_title_snapshot
-      agreement_updated_at_snapshot
-      agreement_content_digest
-    ].each do |column_name|
+    null_count = execute(<<~SQL.squish).first['count'].to_i
+      SELECT COUNT(*) FROM better_together_agreement_participants
+      WHERE #{AUDIT_COLUMNS.map { |c| "#{c} IS NULL" }.join(' OR ')}
+    SQL
+
+    if null_count.positive?
+      say "WARNING: #{null_count} row(s) in better_together_agreement_participants " \
+          'still have a NULL acceptance-audit field (likely an orphaned agreement ' \
+          'association). Skipping NOT NULL constraints — repair those rows and re-run.'
+      return
+    end
+
+    AUDIT_COLUMNS.each do |column_name|
       change_column_null :better_together_agreement_participants, column_name, false
     end
   end

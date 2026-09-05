@@ -53,4 +53,12 @@ RSpec.describe 'layouts/better_together/turbo_native' do
     expect(rendered).to include('<link rel="alternate" hreflang="fr" href="/fr" />')
     expect(rendered).not_to include('<link rel="alternate" hreflang="en" href="/en" />')
   end
+
+  it 'does not include remote CDN stylesheet links' do
+    render template: 'layouts/better_together/turbo_native'
+
+    expect(rendered).not_to include('https://unpkg.com/trix')
+    expect(rendered).not_to include('https://cdnjs.cloudflare.com/ajax/libs/slim-select')
+    expect(rendered).not_to include('https://unpkg.com/leaflet')
+  end
 end

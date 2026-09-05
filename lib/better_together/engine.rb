@@ -11,6 +11,7 @@ require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
+require 'better_together/profiling'
 require 'better_together/storage_resolver'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
@@ -21,8 +22,6 @@ require 'devise-i18n'
 require 'devise/jwt'
 require 'devise_zxcvbn'
 require 'doorkeeper'
-require 'elasticsearch/model'
-require 'elasticsearch/rails'
 require 'fast_mcp'
 require 'font-awesome-sass'
 require 'geocoder'
@@ -48,9 +47,9 @@ require 'sprockets/railtie'
 require 'stimulus-rails'
 require 'translate_enum'
 require 'turbo-rails'
-require 'rack-mini-profiler'
-require 'memory_profiler'
-require 'stackprof'
+require 'rack-mini-profiler' if BetterTogether::Profiling.enabled?
+require 'memory_profiler' if BetterTogether::Profiling.enabled?
+require 'stackprof' if BetterTogether::Profiling.enabled?
 
 module BetterTogether
   # Engine configuration for BetterTogether
@@ -58,11 +57,23 @@ module BetterTogether
     engine_name 'better_together'
     isolate_namespace BetterTogether
 
-    # Avoid modifying frozen autoload path arrays (Rails 8 compatibility)
-    config.autoload_paths = Array(config.autoload_paths) + Dir["#{root}/lib/better_together/**/"]
+    # Avoid registering nested lib directories as Zeitwerk roots. Doing so makes
+    # files like lib/better_together/mcp/pundit_context.rb map to PunditContext
+    # instead of BetterTogether::Mcp::PunditContext.
+    config.autoload_paths = Array(config.autoload_paths) + ["#{root}/lib"]
+
+    initializer 'better_together.zeitwerk_ignores', before: :set_autoload_paths do
+      ignored_lib_paths = %w[generators rubocop tasks].map { |dir| root.join('lib', dir).to_s }
+      ignored_lib_files = [root.join('lib/mobility/backends/attachments/backend.rb').to_s]
+
+      Rails.autoloaders.each do |autoloader|
+        autoloader.ignore(*ignored_lib_paths, *ignored_lib_files)
+      end
+    end
 
     # Add MCP tools and resources to autoload paths
     config.eager_load_paths = Array(config.eager_load_paths) + [
+      "#{root}/lib",
       "#{root}/app/mailboxes",
       "#{root}/app/tools",
       "#{root}/app/resources",
@@ -111,6 +122,13 @@ module BetterTogether
     initializer 'better_together.platform_context_middleware' do |app|
       require root.join('app/middleware/better_together/platform_context_middleware').to_s
       app.middleware.use BetterTogether::PlatformContextMiddleware
+    end
+
+    # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
+    # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
+    # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.
+    initializer 'better_together.active_storage_variant_processor' do |app|
+      app.config.active_storage.variant_processor = :vips
     end
 
     initializer 'better_together.action_mailer' do |app|
@@ -186,22 +204,57 @@ module BetterTogether
     end
 
     initializer 'better_together.append_migrations' do |app|
-      # Skip if this IS the engine (avoids double-loading in development).
-      # Use exact match so spec/dummy (a subdirectory of the engine) is not
-      # incorrectly excluded — spec/dummy is a distinct app root and needs the
-      # engine's migration path appended just like any external host app.
-      next if app.root.to_s == root.to_s
+      begin
+        next if Pathname.new(app.root).realpath == Pathname.new(root).realpath
+      rescue Errno::ENOENT
+        next if app.root.to_s == root.to_s
+      end
 
-      # Skip if the host app has already installed CE migrations via
-      # `rails better_together:install:migrations`. Installed migrations carry
-      # the `.better_together.rb` suffix assigned by Rails' install:migrations
-      # task, so their presence signals that the host app manages migrations
-      # independently and does not need the engine path appended.
+      # Skip if the host app manages migrations via `rails better_together:install:migrations`.
+      # Installed migrations carry the `.better_together.rb` suffix, signalling that the host
+      # app tracks CE migrations independently.
       next if Dir.glob(app.root.join('db', 'migrate', '*.better_together.rb')).any?
 
-      config.paths['db/migrate'].expanded.each do |expanded_path|
-        app.config.paths['db/migrate'] << expanded_path unless app.config.paths['db/migrate'].include?(expanded_path)
+      # Skip when running via this engine's own bin/rails or `rake` from the engine root
+      # (e.g. `bin/dc-run rails db:migrate` against spec/dummy). In that mode Rails sets the
+      # global ENGINE_ROOT constant, and ActiveRecord::Railtie's `db:load_config` task already
+      # injects this engine's db/migrate path into DatabaseTasks.migrations_paths on its own
+      # (see activerecord/lib/active_record/railtie.rb). Appending it here too would add the
+      # same directory twice and raise ActiveRecord::DuplicateMigrationNameError.
+      next if defined?(::ENGINE_ROOT)
+
+      excludes = [root.join('worktrees').to_s, root.join('tmp').to_s]
+      config.paths['db/migrate'].existent_directories.each do |expanded_path|
+        next if excludes.any? { |ex| expanded_path.start_with?(ex) }
+        next if app.config.paths['db/migrate'].include?(expanded_path)
+
+        app.config.paths['db/migrate'] << expanded_path
       end
+    end
+
+    initializer 'better_together.content_security', after: :load_config_initializers do |app|
+      content_security = ActiveSupport::OrderedOptions.new
+      malware_scanning = ActiveSupport::OrderedOptions.new
+
+      malware_scanning.enabled = ENV.fetch('BT_MALWARE_SCANNING_ENABLED', 'false') == 'true'
+      malware_scanning.engine = ENV.fetch('BT_MALWARE_SCANNING_ENGINE', 'clamav')
+      malware_scanning.host = ENV.fetch('BT_MALWARE_SCANNING_HOST', '127.0.0.1')
+      malware_scanning.port = ENV.fetch('BT_MALWARE_SCANNING_PORT', 3310).to_i
+      malware_scanning.timeout = ENV.fetch('BT_MALWARE_SCANNING_TIMEOUT', 10).to_f
+      malware_scanning.max_stream_bytes = ENV.fetch('BT_MALWARE_SCANNING_MAX_STREAM_BYTES', 25.megabytes).to_i
+      malware_scanning.fail_mode = ENV.fetch('BT_MALWARE_SCANNING_FAIL_MODE', 'hold_until_clean')
+      malware_scanning.enabled_surfaces = ENV.fetch('BT_MALWARE_SCANNING_SURFACES', 'uploads').split(',').map(&:strip)
+
+      content_security.malware_scanning = malware_scanning
+      app.config.content_security = content_security
+      BetterTogether.content_security = content_security
+    end
+
+    config.to_prepare do
+      ActiveStorage::Blobs::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Blobs::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::ProxyController.include BetterTogether::ContentSecurity::ActiveStorageGate
+      ActiveStorage::Representations::RedirectController.include BetterTogether::ContentSecurity::ActiveStorageGate
     end
 
     rake_tasks do

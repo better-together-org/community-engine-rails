@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Moderator-recorded protective or accountability action for a safety case.
-    class Action < ApplicationRecord
+    class Action < PlatformRecord
       self.table_name = 'better_together_safety_actions'
 
       enum :action_type, {

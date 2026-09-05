@@ -13,10 +13,16 @@
 #   - Resolve the host platform (host = TRUE).
 #   - For every person that does NOT already have a membership on the host
 #     platform, insert a new active membership with the best available role:
-#       1. 'platform_steward'  (the new canonical name)
-#       2. 'platform_manager'  (legacy name kept during the identifier transition)
-#     The role selection uses whichever exists; 'platform_manager' is the safe
-#     fallback for instances that have not yet run the RBAC identifier rename.
+#       1. 'platform_member'   (basic access-preserving role — the intended
+#                                default; seeded immediately before this
+#                                migration by SeedPlatformMemberRoleBeforeHostBackfill)
+#       2. 'platform_steward'  (canonical admin-tier name, legacy fallback only)
+#       3. 'platform_manager'  (legacy admin-tier name, legacy fallback only)
+#     The role selection uses whichever exists first. This backfill exists to
+#     preserve *access* for pre-existing people, not to grant platform
+#     management authority — it must never silently promote people to an
+#     admin-tier role. platform_steward/platform_manager are fallbacks only
+#     for instances that predate the platform_member seed migration.
 #
 # This migration is intentionally idempotent — re-running it against a database
 # that already has the memberships is a no-op because of the LEFT JOIN / WHERE
@@ -24,9 +30,11 @@
 class BackfillHostPlatformMemberships < ActiveRecord::Migration[7.2]
   def up
     result = execute(<<~SQL)
-      SELECT p.id                              AS host_platform_id,
-             COALESCE(r_steward.id, r_mgr.id) AS role_id
+      SELECT p.id AS host_platform_id,
+             COALESCE(r_member.id, r_steward.id, r_mgr.id) AS role_id
       FROM   better_together_platforms p
+      LEFT JOIN better_together_roles r_member
+             ON r_member.identifier  = 'platform_member'
       LEFT JOIN better_together_roles r_steward
              ON r_steward.identifier = 'platform_steward'
       LEFT JOIN better_together_roles r_mgr

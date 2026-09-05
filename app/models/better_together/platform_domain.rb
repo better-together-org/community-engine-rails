@@ -1,21 +1,39 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Maps inbound hostnames to platforms and their canonical primary domain.
+  # Maps inbound hostnames to platforms and their canonical primary/share domains.
   class PlatformDomain < ApplicationRecord
+    include BetterTogether::PrimaryFlag
+
+    primary_flag_scope :platform_id
+
+    # Backward-compatible attribute alias: existing code using .primary / .primary= / .primary?
+    # continues to work after the column rename to primary_flag.
+    alias_attribute :primary, :primary_flag
+
     belongs_to :platform, class_name: '::BetterTogether::Platform'
 
-    scope :active, -> { where(active: true) }
-    scope :primary, -> { where(primary: true) }
+    scope :active,              -> { where(active: true) }
+    scope :primary,             -> { where(primary_flag: true) }
+    scope :as_share_domain,     -> { where(share_domain: true) }
+    scope :share_domain_active, -> { as_share_domain.active }
 
     before_validation :normalize_hostname!
-    after_commit :bust_resolve_cache
-    validate :single_primary_domain, if: :primary?
-    validate :primary_domain_must_be_active, if: :primary?
+    after_commit      :bust_resolve_cache
 
-    validates :hostname, presence: true, uniqueness: { case_sensitive: false }
-    validates :active, inclusion: { in: [true, false] }
-    validates :primary, inclusion: { in: [true, false] }
+    # Auto-set share_domain=true when this is the first domain for the platform —
+    # mirrors PrimaryFlag#set_default_primary_flag.
+    after_initialize :set_default_share_domain, if: :new_record?
+
+    # Radio-button toggle: setting share_domain=true on this record clears all siblings.
+    before_save :enforce_single_share_domain, if: -> { share_domain? && share_domain_changed? }
+
+    validates :hostname,     presence: true, uniqueness: { case_sensitive: false }
+    validates :active,       inclusion: { in: [true, false] }
+    validates :share_domain, inclusion: { in: [true, false] }
+
+    validate :primary_domain_must_be_active, if: :primary_flag?
+    validate :share_domain_must_be_active,   if: :share_domain?
 
     def self.resolve(hostname)
       normalized = normalize_hostname(hostname)
@@ -43,16 +61,31 @@ module BetterTogether
 
     private
 
-    def single_primary_domain
-      return unless self.class.where(platform_id: platform_id, primary: true).where.not(id: id).exists?
+    def set_default_share_domain
+      return unless platform_id
 
-      errors.add(:primary, :already_taken_for_platform)
+      if self.class.where(platform_id:, share_domain: true).exists?
+        self.share_domain ||= false
+      else
+        self.share_domain = true
+      end
+    end
+
+    def enforce_single_share_domain
+      self.class.where(platform_id:, share_domain: true).where.not(id:)
+          .update_all(share_domain: false)
     end
 
     def primary_domain_must_be_active
       return if active?
 
       errors.add(:active, :must_be_true_for_primary)
+    end
+
+    def share_domain_must_be_active
+      return if active?
+
+      errors.add(:active, :must_be_true_for_share_domain)
     end
 
     def bust_resolve_cache

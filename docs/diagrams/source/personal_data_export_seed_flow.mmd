@@ -1,0 +1,17 @@
+flowchart TD
+  User["Signed-in user"] --> Index["GET /my/seeds"]
+  Index --> Export["POST /my/seeds/export"]
+  Export --> Cooldown{"Export in\nlast hour?"}
+  Cooldown -->|yes| TooSoon["Reject new export"]
+  Cooldown -->|no| Seedable["current_user.person.export_as_seed"]
+
+  Seedable --> Seed["BetterTogether::Seed record"]
+  Seed --> Attachment["YAML attachment callbacks"]
+  Seed --> Show["GET /my/seeds/:id"]
+  Show --> Download["Download YAML"]
+  Show --> Destroy["DELETE /my/seeds/:id"]
+
+  PlatformManager["Platform manager"] --> HostSeeds["/host/seeds CRUD"]
+  HostSeeds --> Seed
+
+  Seed --> Federation["Federated seed services\nfor page/post/event export and ingest"]
