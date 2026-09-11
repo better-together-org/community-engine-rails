@@ -21,7 +21,7 @@ classDiagram
     class BetterTogether__PagesController["PagesController"] {
       <<Controller>>
       models: Page
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__PostsController["PostsController"] {
       <<Controller>>
@@ -106,14 +106,14 @@ classDiagram
       <<Model>>
       table: better_together_pages
       translates: content, slug, title
-      concerns: Authorable, BetterTogetherId, Categorizable, CommunityAssignable +18
+      concerns: Authorable, BetterTogetherId, Categorizable, CommunityAssignable +19
       weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +20
     }
     class BetterTogether__Post["Post"] {
       <<Model>>
       table: better_together_posts
       translates: content, slug, title
-      concerns: Attachments::Images, Authorable, BetterTogetherId, BlockFilterable +21
+      concerns: Attachments::Images, Authorable, BetterTogetherId, BlockFilterable +22
       weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +22
     }
     class BetterTogether__Upload["Upload"] {
