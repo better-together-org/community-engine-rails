@@ -65,6 +65,35 @@ RSpec.describe BetterTogether::Content::FederatedContentExportService do
       expect(second_result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to include(second_post.id)
     end
 
+    it 'does not get stuck on a sub-second updated_at cursor fixpoint ' \
+       '(2026-09 NLO<->CE federation runaway regression guard)' do
+      # The bug: next_cursor was built with `updated_at.iso8601` (whole-second
+      # precision) while apply_cursor compares against the microsecond-precision
+      # DB column. A record with non-zero microseconds then satisfies
+      # `updated_at > <its own second-truncated cursor>` forever - the same
+      # record (and the same next_cursor string) is returned on every
+      # subsequent page. Give the last record an explicit non-zero microsecond
+      # component so this is deterministic regardless of test-run timing.
+      creator = create(:better_together_person, federate_content: true)
+      only_post = create(
+        :better_together_post, creator:, platform: source_platform, privacy: 'public', published_at: 1.day.ago
+      )
+      # ActionText's has_rich_text association touches its parent record after
+      # create (belongs_to :record, touch: true), overwriting any updated_at
+      # passed to `create`. Force the column directly, after creation, to get
+      # a deterministic non-zero microsecond value for this regression guard.
+      only_post.update_column(:updated_at, 1.day.ago.change(usec: 123_456))
+
+      first_result = described_class.call(connection:, limit: 10)
+      expect(first_result.seeds.map { |seed| seed['better_together'][:payload][:id] }).to eq([only_post.id])
+      expect(first_result.next_cursor).to include('.123456')
+
+      second_result = described_class.call(connection:, cursor: first_result.next_cursor, limit: 10)
+
+      expect(second_result.seeds).to be_empty
+      expect(second_result.next_cursor).to be_nil
+    end
+
     it 'exports a record whose rich text body is pathologically wrapped with a truncation marker, ' \
        'instead of failing the whole page (2026-09 production incident regression guard)' do
       creator = create(:better_together_person, federate_content: true)
