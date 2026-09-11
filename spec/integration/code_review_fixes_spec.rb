@@ -537,7 +537,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_people_tool.rb')
         )
-        expect(source).not_to include("%#{query}%")
+        expect(source).not_to include('%#{query}%') # rubocop:disable Lint/InterpolationCheck
         expect(source).to include('sanitize_like')
       end
 
@@ -545,7 +545,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_geography_tool.rb')
         )
-        expect(source).not_to include("%#{query}%")
+        expect(source).not_to include('%#{query}%') # rubocop:disable Lint/InterpolationCheck
         expect(source).to include('sanitize_like')
       end
 
@@ -556,7 +556,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         shared_source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'application_tool.rb')
         )
-        expect(posts_source).not_to include("%#{query}%")
+        expect(posts_source).not_to include('%#{query}%') # rubocop:disable Lint/InterpolationCheck
         # sanitize_like lives in the shared AREL helper in ApplicationTool
         expect(shared_source).to include('sanitize_like')
       end
