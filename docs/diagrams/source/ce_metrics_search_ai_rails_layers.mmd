@@ -25,7 +25,7 @@ classDiagram
     class BetterTogether__Ai__Log__Translation["Ai::Log::Translation"] {
       <<Model>>
       table: better_together_ai_log_translations
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Metrics__Download["Metrics::Download"] {
@@ -94,12 +94,6 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds, owner: report_file_attachment
     }
-    class BetterTogether__OneTimePrekey["OneTimePrekey"] {
-      <<Model>>
-      table: better_together_one_time_prekeys
-      concerns: BetterTogetherId, Seedable
-      weak refs: owner: seeds
-    }
   }
 
   namespace ExternalSubsystems {
@@ -112,6 +106,7 @@ classDiagram
   BetterTogether__NotificationsController --|> BetterTogether__ApplicationController
   BetterTogether__SearchController --|> BetterTogether__ApplicationController
   BetterTogether__ViewPreferencesController --|> BetterTogether__ApplicationController
+  BetterTogether__Ai__Log__Translation --> BetterTogether__Platform : platform
   BetterTogether__Ai__Log__Translation --> BetterTogether__Person : initiator
   BetterTogether__Metrics__Download --> BetterTogether__Platform : platform
   BetterTogether__Metrics__LinkCheckerReport --> BetterTogether__Platform : platform
@@ -131,4 +126,3 @@ classDiagram
   BetterTogether__Metrics__ShortLinkVisit --> BetterTogether__ShortLink : short_link
   BetterTogether__Metrics__UserAccountReport --> BetterTogether__Platform : platform
   BetterTogether__Metrics__UserAccountReport --> BetterTogether__Person : creator
-  BetterTogether__OneTimePrekey --> BetterTogether__Person : person

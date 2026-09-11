@@ -71,14 +71,6 @@ entries:
     foreign_key: person_id
     action: destroy
 
-  - key: BetterTogether::OneTimePrekey#person
-    kind: model_reference
-    owner: person
-    model: BetterTogether::OneTimePrekey
-    association: person
-    foreign_key: person_id
-    action: destroy
-
   - key: BetterTogether::PersonBlock#blocker
     kind: model_reference
     owner: person
