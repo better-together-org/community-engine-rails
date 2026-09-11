@@ -155,10 +155,6 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
       llm_available?(identifier: 'translation', platform:)
     end
 
-    def e2ee_messaging_enabled?
-      ActiveModel::Type::Boolean.new.cast(ENV.fetch('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil)) == true
-    end
-
     def inbound_email_password
       inbound_email_ingress_password.presence || ENV.fetch('RAILS_INBOUND_EMAIL_PASSWORD', nil)
     end

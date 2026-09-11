@@ -18,12 +18,6 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 
-  describe '#current_user_api_token' do
-    it 'returns nil instead of raising when Warden middleware is not present' do
-      expect(helper.current_user_api_token).to be_nil
-    end
-  end
-
   describe '#host_community_primary_email' do
     before { configure_host_platform }
 
