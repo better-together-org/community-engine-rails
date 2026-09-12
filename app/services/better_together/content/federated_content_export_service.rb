@@ -189,7 +189,16 @@ module BetterTogether
         last_record = selected_records.last
         return if last_record.nil?
 
-        [last_record.updated_at.iso8601, last_record.id].join('|')
+        # Full microsecond precision on both sides of the round-trip is required.
+        # `iso8601` (no arg) truncates to whole seconds; `apply_cursor` compares
+        # against the microsecond-precision DB column. A record with a sub-second
+        # updated_at then satisfies `updated_at > cursor` against its own
+        # truncated cursor forever -- a permanent fixpoint that reproduces the
+        # same page (and the same next_cursor) on every subsequent pull,
+        # confirmed as the root cause of the 2026-09 NLO<->CE federation
+        # runaway (BetterTogether::FederatedContentPullJob re-enqueuing the
+        # same cursor indefinitely, sync_failure_streak into the hundreds).
+        [last_record.updated_at.iso8601(6), last_record.id].join('|')
       end
 
       def parse_cursor(cursor_value)
