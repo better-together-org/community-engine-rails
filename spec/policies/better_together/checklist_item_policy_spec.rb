@@ -8,7 +8,12 @@ RSpec.describe BetterTogether::ChecklistItemPolicy, type: :policy do # rubocop:t
   let(:creator_user) { create(:better_together_user, person: creator_person) }
   let(:normal_user) { create(:better_together_user) }
 
-  let(:checklist) { create(:better_together_checklist, creator: creator_person) }
+  # Explicit host platform — the checklist factory otherwise builds its own
+  # unrelated platform, which manager_user's (host-scoped) platform_steward
+  # role would correctly no longer manage under per-platform scoping.
+  let(:checklist) do
+    create(:better_together_checklist, creator: creator_person, platform: BetterTogether::Platform.find_by(host: true))
+  end
   let(:item) { create(:better_together_checklist_item, checklist: checklist) }
 
   describe '#create?' do # rubocop:todo RSpec/MultipleMemoizedHelpers

@@ -16,16 +16,19 @@ module BetterTogether
 
       attributes :created_at, :updated_at
 
-      class << self
-        # Pundit::Resource prints a show?-related warning every time records() is
-        # called for policies that intentionally expose both controller show? and
-        # resource scope semantics. Preserve the scope-based authorization path
-        # without flooding CI logs.
-        def records(options = {})
-          context = options[:context]
-          context[:policy_used]&.call
-          Pundit.policy_scope!(context[:current_user], _model_class)
-        end
+      # Override pundit-resources' default `records` to skip its `warn_if_show_defined`
+      # check. That check assumes policies never define `show?` because pundit-resources
+      # relies solely on the policy's Scope class for filtering — but our policies
+      # legitimately define `show?` too, since it's used directly by the regular
+      # (non-JSONAPI) HTML controllers via Pundit's `authorize resource_instance`.
+      # Without this override, every API resource whose policy defines `show?` would
+      # print a "WARN: pundit-resources does not use the show? action." line to
+      # stdout on every `.records` call — pure noise in test/CI output and logs.
+      # Behavior is otherwise identical to the gem's implementation.
+      def self.records(options = {})
+        context = options[:context]
+        context[:policy_used]&.call
+        Pundit.policy_scope!(context[:current_user], _model_class)
       end
 
       # Helper method for defining translatable attributes
@@ -67,30 +70,16 @@ module BetterTogether
       private
 
       def attachment_proxy_url(attachment)
-        helper_method = route_url_options[:host].present? ? :content_security_service_blob_proxy_url : :content_security_service_blob_proxy_path
-
-        BetterTogether::Engine.routes.url_helpers.public_send(
-          helper_method,
-          attachment.blob.signed_id(expires_in: ::ActiveStorage.urls_expire_in),
-          attachment.filename,
-          **route_url_options
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          attachment,
+          url_options: route_url_options
         )
       end
 
       def variant_proxy_url(variant)
-        helper_method =
-          if route_url_options[:host].present?
-            :content_security_blob_representation_proxy_url
-          else
-            :content_security_blob_representation_proxy_path
-          end
-
-        BetterTogether::Engine.routes.url_helpers.public_send(
-          helper_method,
-          variant.blob.signed_id(expires_in: ::ActiveStorage.urls_expire_in),
-          variant.variation.key,
-          variant.blob.filename,
-          **route_url_options
+        BetterTogether::MediaUrlBuilder.proxy_url_for(
+          variant,
+          url_options: route_url_options
         )
       end
 

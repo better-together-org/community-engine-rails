@@ -1,0 +1,23 @@
+---
+title: New Platform Setup — Domain (optional)
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: 'As a platform manager, I optionally attach a subdomain or a client-owned
+  custom domain to the new platform, reusing the same picker introduced in PR #1677.'
+callouts:
+- :id: hostname_field
+  :title: Hostname
+  :description: Same field backs both picker paths.
+- :id: submit_btn
+  :title: Add and continue
+  :description: Persists a PlatformDomain.
+- :id: skip_btn
+  :title: Skip
+  :description: A blank required field or this button both advance the wizard without
+    creating anything.
+accessibility_notes: Radio buttons and labels use matching for/id pairs; toggling
+  reveals/hides fields client-side via better-together--platform-domain-form.
+slug: new_platform_setup_domain
+device: mobile

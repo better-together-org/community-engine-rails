@@ -200,7 +200,8 @@ module AutomaticTestConfiguration # :nodoc:
         platform_steward.person.reload
         host_platform.person_platform_memberships.create!(
           member_id: platform_steward.person.id,
-          role_id: platform_steward_role.id
+          role_id: platform_steward_role.id,
+          status: 'active'
         )
       rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique, ActiveRecord::StaleObjectError
         nil
@@ -371,12 +372,16 @@ module AutomaticTestConfiguration # :nodoc:
       default_name = role_type == :user ? 'Test User' : 'Platform Steward'
       identifier = base_identifier
 
-      if BetterTogether::Person.where(identifier: identifier).exists?
+      reserved_words = BetterTogether::Person.friendly_id_config.reserved_words || []
+      identifier_taken = BetterTogether::Person.where(identifier: identifier).exists? ||
+                         reserved_words.include?(identifier)
+
+      if identifier_taken
         digest_identifier = "#{base_identifier}-#{Digest::SHA256.hexdigest(email)[0, 8]}"
         identifier = digest_identifier
         suffix = 0
 
-        while BetterTogether::Person.where(identifier: identifier).exists?
+        while BetterTogether::Person.where(identifier: identifier).exists? || reserved_words.include?(identifier)
           suffix += 1
           identifier = "#{digest_identifier}-#{suffix}"
         end
@@ -404,6 +409,7 @@ module AutomaticTestConfiguration # :nodoc:
           member: user.person,
           role: platform_steward_role
         )
+        membership.status = 'active'
         membership.save! if membership.new_record? || membership.changed?
       end
     end

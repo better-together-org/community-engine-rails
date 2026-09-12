@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for event attendance (RSVPs)
-  class EventAttendancePolicy < ApplicationPolicy
+  class EventAttendancePolicy < PlatformRecordPolicy
     def create?
       user.present? && event_allows_rsvp?
     end

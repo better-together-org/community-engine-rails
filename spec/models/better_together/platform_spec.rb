@@ -48,6 +48,35 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       end
     end
 
+    describe ':public, created alongside an existing private host platform' do
+      # Only one host platform may exist, so reuse whichever one seeds.rb
+      # (or an earlier-run spec, since suite/DB state is shared) already
+      # created rather than creating a second. Its privacy at this point is
+      # not guaranteed -- other specs' automatic host setup may have already
+      # elevated it to public -- so explicitly arrange the private state this
+      # test actually needs, scoped to this example's own transaction.
+      subject(:host_platform) { described_class.find_by(host: true) }
+
+      before { host_platform.update!(privacy: 'private') unless host_platform.privacy == 'private' }
+
+      it "self-scopes the new platform's primary community instead of inheriting the host platform's" do
+        second_platform = create(:better_together_platform, :public)
+
+        expect(second_platform.primary_community.platform_id).to eq(second_platform.id)
+        expect(second_platform.primary_community.platform_id).not_to eq(host_platform.id)
+        expect(second_platform.primary_community.privacy).to eq('public')
+      end
+
+      it "self-scopes the new platform's contact_detail and calendars" do
+        second_platform = create(:better_together_platform, :public)
+
+        expect(second_platform.primary_community.contact_detail.platform_id).to eq(second_platform.id)
+        second_platform.primary_community.calendars.each do |calendar|
+          expect(calendar.platform_id).to eq(second_platform.id)
+        end
+      end
+    end
+
     describe ':community_engine_peer' do
       subject(:community_engine_peer) { create(:better_together_platform, :community_engine_peer) }
 
@@ -89,20 +118,34 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
         :better_together_platform,
         csp_frame_ancestors_text: "bebettertogether.ca\nhttps://forms.btsdev.ca",
         csp_frame_src_text: "forms.btsdev.ca\nwww.youtube.com",
-        csp_img_src_text: 'images.example.com'
+        csp_img_src_text: 'images.example.com',
+        csp_script_src_text: 'scripts.example.com',
+        csp_connect_src_text: 'collector.example.com'
       )
 
       expect(platform).to be_valid
       expect(platform.csp_frame_ancestors).to eq(['https://bebettertogether.ca', 'https://forms.btsdev.ca'])
       expect(platform.csp_frame_src).to eq(['https://forms.btsdev.ca', 'https://www.youtube.com'])
-      expect(platform.csp_img_src).to eq(['https://images.example.com'])
+      # csp_img_src merges the explicit value with the seeded local Leaflet/map tile origins
+      # (this platform is non-external, so seed_default_local_csp_settings applies).
+      expect(platform.csp_img_src).to contain_exactly('https://images.example.com',
+                                                      'https://*.tile.openstreetmap.org',
+                                                      'https://tile.openstreetmap.org',
+                                                      'https://server.arcgisonline.com')
+      expect(platform.csp_script_src).to eq(['https://scripts.example.com'])
+      expect(platform.csp_connect_src).to eq(['https://collector.example.com'])
     end
 
     it 'adds validation errors for invalid CSP origin entries' do
-      platform = build(:better_together_platform, csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com")
+      platform = build(
+        :better_together_platform,
+        csp_frame_src_text: "https://forms.btsdev.ca/embed\nhttp://bad.example.com",
+        csp_script_src_text: 'javascript:alert(1)'
+      )
 
       expect(platform).not_to be_valid
       expect(platform.errors[:csp_frame_src_text]).to be_present
+      expect(platform.errors[:csp_script_src_text]).to be_present
     end
   end
 
@@ -133,6 +176,21 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       platform = build(:better_together_platform)
 
       expect(platform.requires_invitation).to be(true)
+    end
+
+    it 'seeds local platform CSP image origins for bundled Leaflet assets' do
+      platform = create(:better_together_platform)
+
+      expect(platform.csp_img_src).to include('https://*.tile.openstreetmap.org',
+                                              'https://tile.openstreetmap.org',
+                                              'https://server.arcgisonline.com')
+      expect(platform.csp_img_src).not_to include('https://unpkg.com')
+    end
+
+    it 'does not seed bundled Leaflet image origins for external platforms' do
+      platform = create(:better_together_platform, :external)
+
+      expect(platform.csp_img_src).to be_empty
     end
   end
 

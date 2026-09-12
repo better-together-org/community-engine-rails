@@ -1,7 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
 require:
-  - ./rubocop/cop/better_together/no_raw_sql_in_queries
+  - ./lib/rubocop/cop/better_together/no_raw_sql_in_queries
 
 AllCops:
   Exclude:
@@ -39,6 +39,12 @@ RSpec/ContextWording:
   Enabled: false
 RSpec/MessageSpies:
   Enabled: false
+RSpec/SpecFilePathSuffix:
+  Exclude:
+    - 'spec/docs_screenshots/_template.rb'
+RSpec/NoExpectationExample:
+  Exclude:
+    - 'spec/docs_screenshots/_template.rb'
 RSpec/LetSetup:
   Enabled: false
 RSpec/EmptyExampleGroup:
@@ -50,6 +56,7 @@ RSpec/DescribeClass:
     - 'spec/requests/**/*'
     - 'spec/system/**/*'
     - 'spec/views/**/*'
+    - 'gems/*/spec/requests/**/*'
 RSpec/VariableName:
   Exclude:
     - 'spec/integration/**/*'  # rswag uses capitalized HTTP header names
@@ -57,24 +64,30 @@ RSpec/VariableName:
 Style/StringLiterals:
   Exclude:
     - 'db/migrate/*'
+    - 'gems/*/db/migrate/*'
 
 Style/Documentation:
   Exclude:
     - 'db/migrate/*'
+    - 'gems/*/db/migrate/*'
     - 'spec/**/*'
+    - 'gems/*/spec/**/*'
 
 Metrics/MethodLength:
   Exclude:
     - 'db/migrate/*'
+    - 'gems/*/db/migrate/*'
 
 Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*'
     - 'spec/support/**/*'
+    - 'gems/*/spec/**/*'
 
 Metrics/AbcSize:
   Exclude:
     - 'db/migrate/*'
+    - 'gems/*/db/migrate/*'
 
 Rails:
   Enabled: false

@@ -18,6 +18,22 @@ Some of it is now lower-leverage than consolidating the primary workflow.
 
 This document defines the cut line so the branch can stop expanding laterally and return to a coherent milestone.
 
+## Final 0.11.0 Scope Decision
+
+During 0.11.0 release stabilization, the pillars below were re-reviewed against the release's actual
+target (federation and multi-platform features). The **Evidence foundation** (§4) — `Claim`,
+`Citation`, `EvidenceLink`, the `Claimable`/`Citable` concerns, the Trix editor citation button/dialog,
+GitHub citation/contribution import, and the "Canonical UI evidence" listing surfaces (§6, citation and
+claim browsing specifically) — was **not** part of the federation/multi-platform target and is not
+shippable/stable enough for public 0.11.0 consumption. It has been carved out of `release/0.11.0-notes`
+and preserved intact on `feature/claims-evidence-citation-governance-01100notes` for future work. The
+"Governed contribution assignment" and "GitHub citation/contribution import" bullets in §6 moved with it.
+
+The Governed agent foundation (§1), Public publishing governance (§2), Contribution attribution
+substrate (§3, minus its GitHub-backed import piece), and JOATU baseline hardening (§5, minus its
+C3-priced settlement branch, which moved to the `better_together-borgberry` extension gem) shipped in
+0.11.0 as originally planned.
+
 ## What Belongs In PR 1494
 
 The following pieces belong together and now form the intended milestone.
@@ -115,7 +131,6 @@ The next work on top of `#1494` should be one focused consolidation slice:
 After that, the next feature PR should focus on one of:
 
 - robot-authored page/post publishing as the canonical governed publishing workflow
-- a true release-package workflow on top of the governed publishing substrate
 - first-class governance and documentation contribution import/reporting beyond content records
 
 ## Practical Rule For Continuing

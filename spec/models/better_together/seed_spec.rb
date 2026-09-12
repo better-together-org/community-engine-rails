@@ -392,6 +392,24 @@ RSpec.describe BetterTogether::Seed do
           result = described_class.create_seed_planting(options)
           expect(result).to be_nil
         end
+
+        it 'captures Current.platform when a request context set one' do
+          federated_platform = create(:better_together_platform, :public, host: false)
+
+          planting = Current.set(platform: federated_platform) do
+            described_class.create_seed_planting(options)
+          end
+
+          expect(planting.platform).to eq(federated_platform)
+        end
+
+        it 'leaves platform_id NULL for automated plantings with no request context' do # rubocop:todo RSpec/MultipleExpectations
+          expect(Current.platform).to be_nil
+
+          planting = described_class.create_seed_planting(options)
+
+          expect(planting.platform_id).to be_nil
+        end
       end
 
       describe '.update_seed_planting_success' do # rubocop:todo RSpec/NestedGroups

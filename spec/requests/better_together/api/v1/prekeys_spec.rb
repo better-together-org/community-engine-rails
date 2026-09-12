@@ -9,6 +9,8 @@ require 'rails_helper'
 #   PUT  /api/v1/people/:id/key_backup            — new: store encrypted backup blob
 
 RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
+  before { allow(BetterTogether).to receive(:e2ee_messaging_enabled?).and_return(true) }
+
   let(:user)         { create(:better_together_user, :confirmed) }
   let(:person)       { user.person }
   let(:other_user)   { create(:better_together_user, :confirmed) }
@@ -322,6 +324,33 @@ RSpec.describe 'BetterTogether::Api::V1::Prekeys', :no_auth do
         put url, params: valid_register_params.to_json, headers: other_headers
         expect(response).to have_http_status(:forbidden)
       end
+    end
+  end
+
+  describe 'server-side E2EE gating' do
+    before { allow(BetterTogether).to receive(:e2ee_messaging_enabled?).and_return(false) }
+
+    it 'rejects register_prekeys when the feature is disabled for this actor/platform' do
+      put "/api/v1/people/#{person.id}/register_prekeys",
+          params: valid_register_params.to_json, headers: auth_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'rejects prekey_bundle when the feature is disabled for this actor/platform' do
+      get "/api/v1/people/#{person.id}/prekey_bundle", headers: auth_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'rejects key_backup reads when the feature is disabled for this actor/platform' do
+      get "/api/v1/people/#{person.id}/key_backup", headers: auth_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it 'rejects key_backup writes when the feature is disabled for this actor/platform' do
+      put "/api/v1/people/#{person.id}/key_backup",
+          params: { blob: Base64.strict_encode64('blob'), salt: Base64.strict_encode64('salt') },
+          headers: auth_headers
+      expect(response).to have_http_status(:forbidden)
     end
   end
 end

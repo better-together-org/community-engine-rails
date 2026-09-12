@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::SettingsController, :as_user do
       request.headers['Turbo-Frame'] = 'my-data-settings'
     end
 
-    it 'renders export content without legacy seed or deletion sections' do
+    it 'renders export content and self-service connection links' do
       create(:better_together_person_data_export, :completed, person: user.person)
       create(:better_together_seed, :personal_export, person: user.person)
 
@@ -28,9 +28,21 @@ RSpec.describe BetterTogether::SettingsController, :as_user do
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(I18n.t('better_together.settings.index.my_data.exports.title'))
-      expect(response.body).not_to include(I18n.t('better_together.settings.index.my_data.deletion.title'))
-      expect(response.body).not_to include(I18n.t('better_together.settings.index.my_data.seeds.title'))
-      expect(response.body).not_to include('fa-solid fa-database me-2')
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.title'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.person_links.title'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.access_grants.title'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.linked_seeds.title'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.person_seeds.title'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.exports.status_values.completed'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.exports.table_caption'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.person_links.open_link'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.access_grants.open_link'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.linked_seeds.open_link'))
+      expect(response.body).to include(I18n.t('better_together.settings.index.my_data.connections.cards.person_seeds.open_link'))
+      expect(response.body).to include(person_links_path(locale: locale))
+      expect(response.body).to include(person_access_grants_path(locale: locale))
+      expect(response.body).to include(person_linked_seeds_path(locale: locale))
+      expect(response.body).to include(person_seeds_path(locale: locale))
     end
   end
 end

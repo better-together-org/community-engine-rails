@@ -1,0 +1,29 @@
+flowchart TD
+  BlockResource["BlockResource\nJSON:API polymorphic resource"]
+
+  BlockResource --> Editorial["Editorial and layout blocks"]
+  BlockResource --> Data["Data-backed blocks"]
+  BlockResource --> Visual["Visual and embed-style blocks"]
+
+  Editorial --> Hero["Hero"]
+  Editorial --> RichText["RichText"]
+  Editorial --> Markdown["Markdown"]
+  Editorial --> Html["Html"]
+  Editorial --> Css["Css"]
+  Editorial --> Template["Template"]
+  Editorial --> Accordion["AccordionBlock"]
+  Editorial --> Alert["AlertBlock"]
+  Editorial --> CTA["CallToActionBlock"]
+  Editorial --> Quote["QuoteBlock"]
+  Editorial --> Stats["StatisticsBlock"]
+
+  Visual --> Image["Image"]
+  Visual --> Video["VideoBlock"]
+  Visual --> Mermaid["MermaidDiagram"]
+
+  Data --> Communities["CommunitiesBlock"]
+  Data --> Events["EventsBlock"]
+  Data --> People["PeopleBlock"]
+  Data --> Posts["PostsBlock"]
+  Data --> Checklist["ChecklistBlock"]
+  Data --> Navigation["NavigationAreaBlock"]

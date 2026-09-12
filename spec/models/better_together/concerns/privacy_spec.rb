@@ -96,6 +96,52 @@ RSpec.describe BetterTogether::Privacy do # rubocop:todo RSpec/SpecFilePathForma
     end
   end
 
+  describe 'federated mirror exemptions' do
+    let!(:publishing_agreement) do
+      BetterTogether::Agreement.find_or_create_by!(
+        identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER
+      ) do |agreement|
+        agreement.title = 'Content Publishing Agreement'
+        agreement.privacy = 'public'
+        agreement.protected = true
+      end
+    end
+
+    let(:private_platform) { create(:better_together_platform, privacy: 'private') }
+    let(:private_community) { create(:better_together_community, privacy: 'private') }
+    let(:actor_without_agreement) { create(:better_together_person) }
+
+    around do |example|
+      previous_agent = Current.agent
+      Current.agent = actor_without_agreement
+      example.run
+      Current.agent = previous_agent
+    end
+
+    it 'skips the privacy ceiling and publishing-agreement gate for a mirrored public page' do
+      mirror = build(
+        :better_together_page,
+        platform: private_platform,
+        community: private_community,
+        privacy: 'public',
+        last_synced_at: Time.current
+      )
+
+      expect(mirror).to be_valid
+    end
+
+    it 'still enforces both gates for a locally-authored public page' do
+      local = build(
+        :better_together_page,
+        platform: private_platform,
+        community: private_community,
+        privacy: 'public'
+      )
+
+      expect(local).not_to be_valid
+    end
+  end
+
   describe 'translations' do
     it 'provides translated privacy level names' do
       I18n.with_locale(:en) do

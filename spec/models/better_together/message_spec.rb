@@ -16,6 +16,14 @@ RSpec.describe BetterTogether::Message do
     end
   end
 
+  describe 'broadcasts' do
+    it 'appends to the conversation stream on create, via the shared Broadcastable concern' do
+      message = build(:message)
+      expect(message).to receive(:broadcast_append_later_to).with(message.conversation, target: 'conversation_messages')
+      message.save!(validate: false)
+    end
+  end
+
   describe 'Associations' do
     it { is_expected.to belong_to(:conversation).touch(true) }
     it { is_expected.to belong_to(:sender).class_name('BetterTogether::Person') }
@@ -56,4 +64,6 @@ RSpec.describe BetterTogether::Message do
       end
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :message
 end

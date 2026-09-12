@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Geography
-    class MapPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+    class MapPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
       def index?
         user.present? && platform_map_manager?
       end
@@ -23,13 +23,13 @@ module BetterTogether
         user.present? && !record.protected? && (record.creator == agent || platform_map_manager?)
       end
 
-      class Scope < Scope
+      class Scope < PlatformRecordPolicy::Scope
       end
 
       private
 
-      def platform_map_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+      def platform_map_manager?(target = record.try(:platform) || current_platform)
+        permitted_to?('manage_platform_settings', target) || permitted_to?('manage_platform', target)
       end
     end
   end

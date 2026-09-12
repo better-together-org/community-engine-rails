@@ -85,4 +85,30 @@ RSpec.describe 'BetterTogether::Federation::LinkedSeeds', :no_auth do
 
     expect(response).to have_http_status(:forbidden)
   end
+
+  context 'when the local platform is target_platform on the connection, not source_platform' do
+    let(:remote_platform) { create(:better_together_platform, :community_engine_peer) }
+    let(:connection) do
+      create(
+        :better_together_platform_connection,
+        :active,
+        source_platform: remote_platform,
+        target_platform: source_platform,
+        federation_auth_policy: 'api_read',
+        allow_content_read_scope: true,
+        allow_linked_content_read_scope: true
+      )
+    end
+
+    it 'still returns recipient-scoped linked private seeds for an authorized peer' do
+      get better_together.federation_linked_seeds_path(locale:),
+          params: { recipient_identifier: grant.grantee_person.identifier },
+          headers: { 'Authorization' => "Bearer #{oauth_access_token}" }
+
+      expect(response).to have_http_status(:ok)
+
+      payload = JSON.parse(response.body)
+      expect(payload['seeds'].length).to eq(1)
+    end
+  end
 end

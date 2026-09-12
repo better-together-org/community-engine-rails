@@ -7,7 +7,7 @@ module BetterTogether
   #
   # Supports both client_credentials (machine-to-machine) and
   # authorization_code (user-delegated) grant flows.
-  class OauthApplication < ApplicationRecord
+  class OauthApplication < PlatformRecord
     include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
 
     self.table_name = 'better_together_oauth_applications'
@@ -16,6 +16,11 @@ module BetterTogether
                class_name: 'BetterTogether::Person',
                optional: true,
                inverse_of: :oauth_applications
+    belongs_to :platform,
+               class_name: 'BetterTogether::Platform',
+               optional: true
+
+    scope :for_platform, ->(platform) { where(platform: platform) }
 
     validates :name, presence: true
     validate :validate_scopes_for_owner

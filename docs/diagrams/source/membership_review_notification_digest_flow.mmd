@@ -1,0 +1,19 @@
+flowchart TD
+  A[New membership request submitted] --> B[Find community and platform reviewers]
+  B --> C[Count open requests for this community in the last 15 minutes]
+
+  C -->|Fewer than 3 open requests| D[Keep per-request notification path]
+  D --> E[Send MembershipRequestSubmittedNotifier to each reviewer]
+
+  C -->|3 or more open requests| F[Switch to digest path]
+  F --> G[Check whether the last digest email for this reviewer and community is older than 30 minutes]
+  G --> H[Remove unread per-request notifications for this community]
+  H --> I[Replace any unread digest notification for this reviewer and community]
+  I --> J[Create a fresh MembershipRequestDigestNotifier]
+  J --> K{Email cooldown cleared?}
+  K -->|Yes| L[Send one digest email with the community review link]
+  K -->|No| M[Keep the in-app digest only]
+
+  E --> N[Reviewer opens the community review queue]
+  L --> N
+  M --> N

@@ -10,7 +10,7 @@ flowchart TB
     BetterTogether__OauthAccessGrant_polymorphic_summary["OauthAccessGrant\nowner: seeds"]
     BetterTogether__OauthAccessToken_polymorphic_summary["OauthAccessToken\nowner: seeds"]
     BetterTogether__OauthApplication_polymorphic_summary["OauthApplication\nowner: seeds"]
-    BetterTogether__Person_polymorphic_summary["Person\nowner: seeds, owner: contributions, owner: authorships, owner: page_contributions, owner: post_contributions +24"]
+    BetterTogether__Person_polymorphic_summary["Person\nowner: seeds, owner: contributions, owner: authorships, owner: page_contributions, owner: post_contributions +25"]
     BetterTogether__PersonAccessGrant_polymorphic_summary["PersonAccessGrant\nowner: seeds"]
     BetterTogether__PersonBlock_polymorphic_summary["PersonBlock\nowner: seeds"]
     BetterTogether__PersonChecklistItem_polymorphic_summary["PersonChecklistItem\nowner: seeds"]
@@ -53,7 +53,7 @@ flowchart TB
   subgraph platform_network["Platforms, communities, routing, and federation"]
     direction TB
     platform_network_polymorphic_anchor:::hidden
-    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +15"]
+    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +18"]
     BetterTogether__CommunityInvitation_polymorphic_summary["CommunityInvitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
     BetterTogether__FederationAccessToken_polymorphic_summary["FederationAccessToken\nowner: seeds"]
     BetterTogether__NavigationArea_polymorphic_summary["NavigationArea\ntarget: navigable, owner: seeds, owner: slugs, owner: string_translations"]
@@ -88,34 +88,28 @@ flowchart TB
   subgraph content_publishing["Content, publishing, navigation, and claims"]
     direction TB
     content_publishing_polymorphic_anchor:::hidden
-    BetterTogether__Authorship_polymorphic_summary["Authorship\ntarget: author, target: authorable, owner: seeds, owner: citations, owner: claims"]
-    BetterTogether__CallForInterest_polymorphic_summary["CallForInterest\ntarget: interestable, owner: seeds, owner: citations, owner: claims, owner: slugs +8"]
+    BetterTogether__Authorship_polymorphic_summary["Authorship\ntarget: author, target: authorable, owner: seeds"]
+    BetterTogether__CallForInterest_polymorphic_summary["CallForInterest\ntarget: interestable, owner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description +6"]
     BetterTogether__Categorization_polymorphic_summary["Categorization\ntarget: category, target: categorizable, owner: seeds"]
     BetterTogether__Category_polymorphic_summary["Category\nowner: seeds, owner: slugs, owner: views, owner: cover_image_attachment, owner: rich_text_translations +6"]
-    BetterTogether__Citation_polymorphic_summary["Citation\ntarget: citeable, owner: seeds"]
-    BetterTogether__Claim_polymorphic_summary["Claim\ntarget: claimable, owner: seeds"]
-    BetterTogether__Comment_polymorphic_summary["Comment\nowner: seeds"]
-    BetterTogether__Content__Block_polymorphic_summary["Content::Block\nfamily: 22 models\nowner: seeds, owner: background_image_file_attachment, owner: text_translations, owner: string_translations, owner: rich_text_translations +6"]
+    BetterTogether__Comment_polymorphic_summary["Comment\ntarget: commentable, owner: seeds, owner: reports_received"]
+    BetterTogether__Content__Block_polymorphic_summary["Content::Block\nfamily: 22 models\nowner: seeds, owner: background_image_file_attachment, owner: reports_received, owner: string_translations, owner: text_translations +7"]
     BetterTogether__Content__Link_polymorphic_summary["Content::Link\nowner: seeds"]
     BetterTogether__Content__PageBlock_polymorphic_summary["Content::PageBlock\nowner: seeds"]
     BetterTogether__Content__PlatformBlock_polymorphic_summary["Content::PlatformBlock\nowner: seeds"]
-    BetterTogether__EvidenceLink_polymorphic_summary["EvidenceLink\nowner: seeds"]
-    BetterTogether__Page_polymorphic_summary["Page\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +18"]
-    BetterTogether__Post_polymorphic_summary["Post\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +18"]
-    BetterTogether__Upload_polymorphic_summary["Upload\nowner: seeds, owner: slugs, owner: file_attachment, owner: string_translations, owner: rich_text_translations +5"]
+    BetterTogether__Page_polymorphic_summary["Page\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +19"]
+    BetterTogether__Post_polymorphic_summary["Post\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +21"]
+    BetterTogether__Upload_polymorphic_summary["Upload\nowner: seeds, owner: slugs, owner: reports_received, owner: file_attachment, owner: string_translations +7"]
     content_publishing_polymorphic_anchor ~~~ BetterTogether__Authorship_polymorphic_summary
     BetterTogether__Authorship_polymorphic_summary ~~~ BetterTogether__CallForInterest_polymorphic_summary
     BetterTogether__CallForInterest_polymorphic_summary ~~~ BetterTogether__Categorization_polymorphic_summary
     BetterTogether__Categorization_polymorphic_summary ~~~ BetterTogether__Category_polymorphic_summary
-    BetterTogether__Category_polymorphic_summary ~~~ BetterTogether__Citation_polymorphic_summary
-    BetterTogether__Citation_polymorphic_summary ~~~ BetterTogether__Claim_polymorphic_summary
-    BetterTogether__Claim_polymorphic_summary ~~~ BetterTogether__Comment_polymorphic_summary
+    BetterTogether__Category_polymorphic_summary ~~~ BetterTogether__Comment_polymorphic_summary
     BetterTogether__Comment_polymorphic_summary ~~~ BetterTogether__Content__Block_polymorphic_summary
     BetterTogether__Content__Block_polymorphic_summary ~~~ BetterTogether__Content__Link_polymorphic_summary
     BetterTogether__Content__Link_polymorphic_summary ~~~ BetterTogether__Content__PageBlock_polymorphic_summary
     BetterTogether__Content__PageBlock_polymorphic_summary ~~~ BetterTogether__Content__PlatformBlock_polymorphic_summary
-    BetterTogether__Content__PlatformBlock_polymorphic_summary ~~~ BetterTogether__EvidenceLink_polymorphic_summary
-    BetterTogether__EvidenceLink_polymorphic_summary ~~~ BetterTogether__Page_polymorphic_summary
+    BetterTogether__Content__PlatformBlock_polymorphic_summary ~~~ BetterTogether__Page_polymorphic_summary
     BetterTogether__Page_polymorphic_summary ~~~ BetterTogether__Post_polymorphic_summary
     BetterTogether__Post_polymorphic_summary ~~~ BetterTogether__Upload_polymorphic_summary
   end
@@ -154,9 +148,9 @@ flowchart TB
   subgraph events_calendar["Events, calendars, attendance, and invitations"]
     direction TB
     events_calendar_polymorphic_anchor:::hidden
-    BetterTogether__Calendar_polymorphic_summary["Calendar\nowner: seeds, owner: citations, owner: claims, owner: slugs, owner: views +7"]
+    BetterTogether__Calendar_polymorphic_summary["Calendar\nowner: seeds, owner: slugs, owner: views, owner: string_translations, owner: rich_text_translations +5"]
     BetterTogether__CalendarEntry_polymorphic_summary["CalendarEntry\nowner: seeds"]
-    BetterTogether__Event_polymorphic_summary["Event\nowner: seeds, owner: citations, owner: claims, owner: slugs, owner: geospatial_space +13"]
+    BetterTogether__Event_polymorphic_summary["Event\nowner: seeds, owner: federation_content_grants, owner: slugs, owner: geospatial_space, owner: location +14"]
     BetterTogether__EventAttendance_polymorphic_summary["EventAttendance\nowner: seeds"]
     BetterTogether__EventCategory_polymorphic_summary["EventCategory\nowner: seeds, owner: slugs, owner: views, owner: cover_image_attachment, owner: rich_text_translations +6"]
     BetterTogether__EventHost_polymorphic_summary["EventHost\ntarget: host, owner: seeds"]
@@ -177,7 +171,7 @@ flowchart TB
     conversations_safety_polymorphic_anchor:::hidden
     BetterTogether__Conversation_polymorphic_summary["Conversation\nowner: seeds"]
     BetterTogether__ConversationParticipant_polymorphic_summary["ConversationParticipant\nowner: seeds"]
-    BetterTogether__Message_polymorphic_summary["Message\nowner: seeds, owner: rich_text_content"]
+    BetterTogether__Message_polymorphic_summary["Message\nowner: seeds, owner: reports_received, owner: rich_text_content"]
     BetterTogether__Report_polymorphic_summary["Report\ntarget: reportable, owner: seeds"]
     BetterTogether__Safety__Action_polymorphic_summary["Safety::Action\nowner: seeds"]
     BetterTogether__Safety__Agreement_polymorphic_summary["Safety::Agreement\nowner: seeds"]
@@ -196,18 +190,19 @@ flowchart TB
   subgraph exchange_governance["Agreements, governance, exchange, and checklist flows"]
     direction TB
     exchange_governance_polymorphic_anchor:::hidden
-    BetterTogether__Agreement_polymorphic_summary["Agreement\nowner: seeds, owner: citations, owner: claims, owner: slugs, owner: rich_text_translations +6"]
+    BetterTogether__Agreement_polymorphic_summary["Agreement\nowner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description, owner: rich_text_description_en +4"]
     BetterTogether__AgreementParticipant_polymorphic_summary["AgreementParticipant\ntarget: participant, owner: seeds"]
     BetterTogether__AgreementTerm_polymorphic_summary["AgreementTerm\nowner: seeds, owner: slugs, owner: string_translations, owner: text_translations, owner: rich_text_translations +5"]
     BetterTogether__Checklist_polymorphic_summary["Checklist\nowner: seeds, owner: slugs, owner: views, owner: string_translations"]
     BetterTogether__ChecklistItem_polymorphic_summary["ChecklistItem\nowner: seeds, owner: slugs, owner: rich_text_translations, owner: rich_text_description, owner: rich_text_description_en +4"]
-    BetterTogether__Joatu__Agreement_polymorphic_summary["Joatu::Agreement\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +9"]
+    BetterTogether__Joatu__Agreement_polymorphic_summary["Joatu::Agreement\nowner: seeds, owner: contributions, owner: authorships, owner: author_contributions, owner: editor_contributions +8"]
     BetterTogether__Joatu__AgreementNotifier_polymorphic_summary["Joatu::AgreementNotifier\nfamily: 3 models\ntarget: record"]
     BetterTogether__Joatu__AgreementNotifier__Notification_polymorphic_summary["Joatu::AgreementNotifier::Notification\nfamily: 3 models\ntarget: recipient"]
     BetterTogether__Joatu__Category_polymorphic_summary["Joatu::Category\nowner: seeds, owner: slugs, owner: views, owner: cover_image_attachment, owner: rich_text_translations +6"]
-    BetterTogether__Joatu__Offer_polymorphic_summary["Joatu::Offer\ntarget: target, owner: seeds, owner: citations, owner: claims, owner: slugs +19"]
-    BetterTogether__Joatu__Request_polymorphic_summary["Joatu::Request\nfamily: 5 models\ntarget: target, owner: seeds, owner: citations, owner: claims, owner: slugs +19"]
+    BetterTogether__Joatu__Offer_polymorphic_summary["Joatu::Offer\ntarget: target, owner: seeds, owner: slugs, owner: contributions, owner: authorships +18"]
+    BetterTogether__Joatu__Request_polymorphic_summary["Joatu::Request\nfamily: 5 models\ntarget: target, owner: seeds, owner: slugs, owner: contributions, owner: authorships +18"]
     BetterTogether__Joatu__ResponseLink_polymorphic_summary["Joatu::ResponseLink\ntarget: source, target: response, owner: seeds"]
+    BetterTogether__Joatu__Settlement_polymorphic_summary["Joatu::Settlement\ntarget: payer, target: recipient, owner: seeds"]
     BetterTogether__Seed_polymorphic_summary["Seed\ntarget: seedable, owner: seeds, owner: slugs, owner: string_translations, owner: yaml_file_attachment"]
     BetterTogether__SeedPlanting_polymorphic_summary["SeedPlanting\nowner: seeds"]
     exchange_governance_polymorphic_anchor ~~~ BetterTogether__Agreement_polymorphic_summary
@@ -222,7 +217,8 @@ flowchart TB
     BetterTogether__Joatu__Category_polymorphic_summary ~~~ BetterTogether__Joatu__Offer_polymorphic_summary
     BetterTogether__Joatu__Offer_polymorphic_summary ~~~ BetterTogether__Joatu__Request_polymorphic_summary
     BetterTogether__Joatu__Request_polymorphic_summary ~~~ BetterTogether__Joatu__ResponseLink_polymorphic_summary
-    BetterTogether__Joatu__ResponseLink_polymorphic_summary ~~~ BetterTogether__Seed_polymorphic_summary
+    BetterTogether__Joatu__ResponseLink_polymorphic_summary ~~~ BetterTogether__Joatu__Settlement_polymorphic_summary
+    BetterTogether__Joatu__Settlement_polymorphic_summary ~~~ BetterTogether__Seed_polymorphic_summary
     BetterTogether__Seed_polymorphic_summary ~~~ BetterTogether__SeedPlanting_polymorphic_summary
   end
 
@@ -239,6 +235,7 @@ flowchart TB
     BetterTogether__Metrics__RichTextLink_polymorphic_summary["Metrics::RichTextLink\ntarget: rich_text_record, owner: seeds"]
     BetterTogether__Metrics__SearchQuery_polymorphic_summary["Metrics::SearchQuery\nowner: seeds"]
     BetterTogether__Metrics__Share_polymorphic_summary["Metrics::Share\ntarget: shareable, owner: seeds"]
+    BetterTogether__Metrics__ShortLinkVisit_polymorphic_summary["Metrics::ShortLinkVisit\nowner: seeds"]
     BetterTogether__Metrics__UserAccountReport_polymorphic_summary["Metrics::UserAccountReport\nowner: seeds, owner: report_file_attachment"]
     BetterTogether__OneTimePrekey_polymorphic_summary["OneTimePrekey\nowner: seeds"]
     metrics_search_ai_polymorphic_anchor ~~~ BetterTogether__Ai__Log__Translation_polymorphic_summary
@@ -251,7 +248,8 @@ flowchart TB
     BetterTogether__Metrics__PageViewReport_polymorphic_summary ~~~ BetterTogether__Metrics__RichTextLink_polymorphic_summary
     BetterTogether__Metrics__RichTextLink_polymorphic_summary ~~~ BetterTogether__Metrics__SearchQuery_polymorphic_summary
     BetterTogether__Metrics__SearchQuery_polymorphic_summary ~~~ BetterTogether__Metrics__Share_polymorphic_summary
-    BetterTogether__Metrics__Share_polymorphic_summary ~~~ BetterTogether__Metrics__UserAccountReport_polymorphic_summary
+    BetterTogether__Metrics__Share_polymorphic_summary ~~~ BetterTogether__Metrics__ShortLinkVisit_polymorphic_summary
+    BetterTogether__Metrics__ShortLinkVisit_polymorphic_summary ~~~ BetterTogether__Metrics__UserAccountReport_polymorphic_summary
     BetterTogether__Metrics__UserAccountReport_polymorphic_summary ~~~ BetterTogether__OneTimePrekey_polymorphic_summary
   end
 
@@ -267,29 +265,71 @@ flowchart TB
   subgraph shared_supporting["Shared and supporting runtime surfaces"]
     direction TB
     shared_supporting_polymorphic_anchor:::hidden
-    BetterTogether__CommunityInvitationNotifier_polymorphic_summary["CommunityInvitationNotifier\nfamily: 11 models\ntarget: record"]
-    BetterTogether__CommunityInvitationNotifier__Notification_polymorphic_summary["CommunityInvitationNotifier::Notification\nfamily: 11 models\ntarget: recipient"]
+    BetterTogether__Activity_polymorphic_summary["Activity\ntarget: trackable, target: owner, target: recipient"]
+    BetterTogether__AgentJobResult_polymorphic_summary["AgentJobResult\ntarget: submitter, owner: seeds"]
+    BetterTogether__C3__Balance_polymorphic_summary["C3::Balance\ntarget: holder, owner: seeds"]
+    BetterTogether__C3__BalanceLock_polymorphic_summary["C3::BalanceLock\nowner: seeds"]
+    BetterTogether__C3__ExchangeRate_polymorphic_summary["C3::ExchangeRate\nowner: seeds"]
+    BetterTogether__C3__Token_polymorphic_summary["C3::Token\ntarget: earner, owner: seeds"]
+    BetterTogether__C3__TokenSeed_polymorphic_summary["C3::TokenSeed\ntarget: seedable, owner: seeds, owner: slugs, owner: string_translations, owner: yaml_file_attachment"]
+    BetterTogether__CommentAddedNotifier_polymorphic_summary["CommentAddedNotifier\nfamily: 22 models\ntarget: record"]
+    BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary["CommentAddedNotifier::Notification\nfamily: 22 models\ntarget: recipient"]
+    BetterTogether__CommentConfig_polymorphic_summary["CommentConfig\ntarget: commentable, owner: seeds"]
     BetterTogether__ContactDetail_polymorphic_summary["ContactDetail\ntarget: contactable, owner: seeds"]
+    BetterTogether__ContentSecurity__Finding_polymorphic_summary["ContentSecurity::Finding\nowner: seeds"]
+    BetterTogether__ContentSecurity__Item_polymorphic_summary["ContentSecurity::Item\ntarget: attachable, owner: seeds"]
+    BetterTogether__ContentSecurity__ScanEvent_polymorphic_summary["ContentSecurity::ScanEvent\nowner: seeds"]
+    BetterTogether__ContentSecurity__Subject_polymorphic_summary["ContentSecurity::Subject\ntarget: subject, owner: seeds"]
     BetterTogether__EmailAddress_polymorphic_summary["EmailAddress\nowner: seeds"]
+    BetterTogether__FeatureAccessGrant_polymorphic_summary["FeatureAccessGrant\nowner: seeds"]
+    BetterTogether__FederationContentGrant_polymorphic_summary["FederationContentGrant\ntarget: federatable, owner: seeds"]
+    BetterTogether__Fleet__Node_polymorphic_summary["Fleet::Node\nowner: seeds, owner: c3_tokens"]
+    BetterTogether__Fleet__NodeOwnership_polymorphic_summary["Fleet::NodeOwnership\ntarget: owner, owner: seeds"]
+    BetterTogether__InboundEmailMessage_polymorphic_summary["InboundEmailMessage\ntarget: target, target: routed_record, owner: seeds"]
+    BetterTogether__InboundEmailReplyToken_polymorphic_summary["InboundEmailReplyToken\ntarget: repliable, owner: seeds"]
     BetterTogether__Infrastructure__Building_polymorphic_summary["Infrastructure::Building\nowner: seeds, owner: contact_detail, owner: contacts, owner: slugs, owner: geospatial_space +8"]
     BetterTogether__Infrastructure__BuildingConnection_polymorphic_summary["Infrastructure::BuildingConnection\ntarget: connection, owner: seeds"]
     BetterTogether__Infrastructure__Floor_polymorphic_summary["Infrastructure::Floor\nowner: seeds, owner: contact_detail, owner: contacts, owner: slugs, owner: geospatial_space +8"]
     BetterTogether__Infrastructure__Room_polymorphic_summary["Infrastructure::Room\nowner: seeds, owner: contact_detail, owner: contacts, owner: slugs, owner: geospatial_space +8"]
     BetterTogether__JwtDenylist_polymorphic_summary["JwtDenylist\nowner: seeds"]
+    BetterTogether__MessageRequest_polymorphic_summary["MessageRequest\nowner: seeds"]
+    BetterTogether__PersonMessagingGrant_polymorphic_summary["PersonMessagingGrant\nowner: seeds"]
     BetterTogether__PhoneNumber_polymorphic_summary["PhoneNumber\nowner: seeds"]
+    BetterTogether__ShortLink_polymorphic_summary["ShortLink\ntarget: linkable, owner: seeds, owner: string_translations"]
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
-    shared_supporting_polymorphic_anchor ~~~ BetterTogether__CommunityInvitationNotifier_polymorphic_summary
-    BetterTogether__CommunityInvitationNotifier_polymorphic_summary ~~~ BetterTogether__CommunityInvitationNotifier__Notification_polymorphic_summary
-    BetterTogether__CommunityInvitationNotifier__Notification_polymorphic_summary ~~~ BetterTogether__ContactDetail_polymorphic_summary
-    BetterTogether__ContactDetail_polymorphic_summary ~~~ BetterTogether__EmailAddress_polymorphic_summary
-    BetterTogether__EmailAddress_polymorphic_summary ~~~ BetterTogether__Infrastructure__Building_polymorphic_summary
+    shared_supporting_polymorphic_anchor ~~~ BetterTogether__Activity_polymorphic_summary
+    BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__AgentJobResult_polymorphic_summary
+    BetterTogether__AgentJobResult_polymorphic_summary ~~~ BetterTogether__C3__Balance_polymorphic_summary
+    BetterTogether__C3__Balance_polymorphic_summary ~~~ BetterTogether__C3__BalanceLock_polymorphic_summary
+    BetterTogether__C3__BalanceLock_polymorphic_summary ~~~ BetterTogether__C3__ExchangeRate_polymorphic_summary
+    BetterTogether__C3__ExchangeRate_polymorphic_summary ~~~ BetterTogether__C3__Token_polymorphic_summary
+    BetterTogether__C3__Token_polymorphic_summary ~~~ BetterTogether__C3__TokenSeed_polymorphic_summary
+    BetterTogether__C3__TokenSeed_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
+    BetterTogether__CommentAddedNotifier_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary
+    BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary ~~~ BetterTogether__CommentConfig_polymorphic_summary
+    BetterTogether__CommentConfig_polymorphic_summary ~~~ BetterTogether__ContactDetail_polymorphic_summary
+    BetterTogether__ContactDetail_polymorphic_summary ~~~ BetterTogether__ContentSecurity__Finding_polymorphic_summary
+    BetterTogether__ContentSecurity__Finding_polymorphic_summary ~~~ BetterTogether__ContentSecurity__Item_polymorphic_summary
+    BetterTogether__ContentSecurity__Item_polymorphic_summary ~~~ BetterTogether__ContentSecurity__ScanEvent_polymorphic_summary
+    BetterTogether__ContentSecurity__ScanEvent_polymorphic_summary ~~~ BetterTogether__ContentSecurity__Subject_polymorphic_summary
+    BetterTogether__ContentSecurity__Subject_polymorphic_summary ~~~ BetterTogether__EmailAddress_polymorphic_summary
+    BetterTogether__EmailAddress_polymorphic_summary ~~~ BetterTogether__FeatureAccessGrant_polymorphic_summary
+    BetterTogether__FeatureAccessGrant_polymorphic_summary ~~~ BetterTogether__FederationContentGrant_polymorphic_summary
+    BetterTogether__FederationContentGrant_polymorphic_summary ~~~ BetterTogether__Fleet__Node_polymorphic_summary
+    BetterTogether__Fleet__Node_polymorphic_summary ~~~ BetterTogether__Fleet__NodeOwnership_polymorphic_summary
+    BetterTogether__Fleet__NodeOwnership_polymorphic_summary ~~~ BetterTogether__InboundEmailMessage_polymorphic_summary
+    BetterTogether__InboundEmailMessage_polymorphic_summary ~~~ BetterTogether__InboundEmailReplyToken_polymorphic_summary
+    BetterTogether__InboundEmailReplyToken_polymorphic_summary ~~~ BetterTogether__Infrastructure__Building_polymorphic_summary
     BetterTogether__Infrastructure__Building_polymorphic_summary ~~~ BetterTogether__Infrastructure__BuildingConnection_polymorphic_summary
     BetterTogether__Infrastructure__BuildingConnection_polymorphic_summary ~~~ BetterTogether__Infrastructure__Floor_polymorphic_summary
     BetterTogether__Infrastructure__Floor_polymorphic_summary ~~~ BetterTogether__Infrastructure__Room_polymorphic_summary
     BetterTogether__Infrastructure__Room_polymorphic_summary ~~~ BetterTogether__JwtDenylist_polymorphic_summary
-    BetterTogether__JwtDenylist_polymorphic_summary ~~~ BetterTogether__PhoneNumber_polymorphic_summary
-    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary
+    BetterTogether__JwtDenylist_polymorphic_summary ~~~ BetterTogether__MessageRequest_polymorphic_summary
+    BetterTogether__MessageRequest_polymorphic_summary ~~~ BetterTogether__PersonMessagingGrant_polymorphic_summary
+    BetterTogether__PersonMessagingGrant_polymorphic_summary ~~~ BetterTogether__PhoneNumber_polymorphic_summary
+    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
+    BetterTogether__ShortLink_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary
     BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__WebsiteLink_polymorphic_summary
   end
 

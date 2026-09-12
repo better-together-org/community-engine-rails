@@ -21,6 +21,10 @@ RSpec.describe BetterTogether::Geography::Settlement do
     it 'includes PrimaryCommunity' do
       expect(described_class.ancestors).to include(BetterTogether::PrimaryCommunity)
     end
+
+    it 'includes Attachments::Images' do
+      expect(described_class.ancestors).to include(BetterTogether::Attachments::Images)
+    end
   end
 
   describe 'database' do
@@ -71,9 +75,9 @@ RSpec.describe BetterTogether::Geography::Settlement do
       Mobility.with_locale(:es) do
         settlement.description = 'Una ciudad costera'
       end
-      expect(settlement.description).to eq('A coastal city')
+      expect(settlement.description.to_plain_text).to eq('A coastal city')
       Mobility.with_locale(:es) do
-        expect(settlement.description).to eq('Una ciudad costera')
+        expect(settlement.description.to_plain_text).to eq('Una ciudad costera')
       end
     end
   end
@@ -107,6 +111,16 @@ RSpec.describe BetterTogether::Geography::Settlement do
       settlement.state = nil
       settlement.save!
       expect(settlement).to be_persisted
+    end
+  end
+
+  describe 'primary community creation' do
+    it "reduces the settlement's rich-text description to plain text for the community" do
+      settlement.community = nil
+      settlement.description = '<b>Coastal</b> city with rich formatting'
+      settlement.save!
+
+      expect(settlement.community.description).to eq('Coastal city with rich formatting')
     end
   end
 end

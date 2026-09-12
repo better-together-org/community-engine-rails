@@ -5,7 +5,7 @@ module BetterTogether
     # LinkCheckerReport maintains a generated report for link-checker results
     # including counts by host and failures over time.
     # rubocop:disable Metrics/ClassLength
-    class LinkCheckerReport < ApplicationRecord
+    class LinkCheckerReport < PlatformRecord
       # Include URL helpers for generating edit links
       include Rails.application.routes.url_helpers
       include BetterTogether::Engine.routes.url_helpers
@@ -317,12 +317,12 @@ module BetterTogether
       end
 
       class << self
-        def create_and_generate!(from_date: nil, to_date: nil, file_format: 'csv')
+        def create_and_generate!(creator: nil, platform: nil, from_date: nil, to_date: nil, file_format: 'csv')
           filters = {}
           filters['from_date'] = from_date if from_date.present?
           filters['to_date'] = to_date if to_date.present?
 
-          create!(filters: filters, file_format: file_format)
+          create!(filters: filters, file_format: file_format, creator: creator, platform: platform)
         end
 
         def export_existing!(id)

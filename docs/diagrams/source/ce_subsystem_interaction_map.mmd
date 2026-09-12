@@ -11,26 +11,30 @@ flowchart LR
   integrations_webhooks["Integrations, webhooks, API, and automation"]
   shared_supporting["Shared and supporting runtime surfaces"]
 
-  content_publishing -->|30 cross-subsystem refs| identity_access
-  content_publishing -->|5 cross-subsystem refs| platform_network
+  content_publishing -->|28 cross-subsystem refs| identity_access
+  content_publishing -->|34 cross-subsystem refs| platform_network
   conversations_safety -->|9 cross-subsystem refs| identity_access
+  conversations_safety -->|8 cross-subsystem refs| platform_network
   events_calendar -->|5 cross-subsystem refs| identity_access
-  events_calendar -->|2 cross-subsystem refs| platform_network
+  events_calendar -->|8 cross-subsystem refs| platform_network
   exchange_governance -->|1 cross-subsystem refs| content_publishing
   exchange_governance -->|6 cross-subsystem refs| geography_and_places
   exchange_governance -->|13 cross-subsystem refs| identity_access
-  exchange_governance -->|3 cross-subsystem refs| platform_network
+  exchange_governance -->|19 cross-subsystem refs| platform_network
+  exchange_governance -->|1 cross-subsystem refs| shared_supporting
   geography_and_places -->|6 cross-subsystem refs| identity_access
-  geography_and_places -->|6 cross-subsystem refs| platform_network
+  geography_and_places -->|8 cross-subsystem refs| platform_network
   geography_and_places -->|1 cross-subsystem refs| shared_supporting
   identity_access -->|2 cross-subsystem refs| exchange_governance
-  identity_access -->|7 cross-subsystem refs| platform_network
+  identity_access -->|24 cross-subsystem refs| platform_network
   integrations_webhooks -->|2 cross-subsystem refs| identity_access
-  integrations_webhooks -->|1 cross-subsystem refs| platform_network
+  integrations_webhooks -->|2 cross-subsystem refs| platform_network
   metrics_search_ai -->|1 cross-subsystem refs| content_publishing
   metrics_search_ai -->|6 cross-subsystem refs| identity_access
-  metrics_search_ai -->|7 cross-subsystem refs| platform_network
+  metrics_search_ai -->|11 cross-subsystem refs| platform_network
+  metrics_search_ai -->|1 cross-subsystem refs| shared_supporting
   platform_network -->|9 cross-subsystem refs| identity_access
+  shared_supporting -->|2 cross-subsystem refs| conversations_safety
   shared_supporting -->|1 cross-subsystem refs| geography_and_places
-  shared_supporting -->|3 cross-subsystem refs| identity_access
-  shared_supporting -->|14 cross-subsystem refs| platform_network
+  shared_supporting -->|12 cross-subsystem refs| identity_access
+  shared_supporting -->|52 cross-subsystem refs| platform_network

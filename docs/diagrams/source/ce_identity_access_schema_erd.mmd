@@ -5,26 +5,38 @@ erDiagram
   EXT_PLATFORM ||--o{ PLATFORM_INVITATIONS : "invitable / invitable_id"
   ROLES ||--o{ PLATFORM_INVITATIONS : "community_role / community_role_id"
   ROLES o|--o{ PLATFORM_INVITATIONS : "platform_role / platform_role_id"
+  EXT_PLATFORM o|--o{ IDENTIFICATIONS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ INVITATIONS : "platform / platform_id"
   PEOPLE o|--o{ INVITATIONS : "creator / creator_id"
   ROLES o|--o{ INVITATIONS : "role / role_id"
+  EXT_PLATFORM o|--o{ OAUTH_ACCESS_GRANTS : "platform / platform_id"
   OAUTH_APPLICATIONS o|--o{ OAUTH_ACCESS_GRANTS : "application / application_id"
+  EXT_PLATFORM o|--o{ OAUTH_ACCESS_TOKENS : "platform / platform_id"
   OAUTH_APPLICATIONS o|--o{ OAUTH_ACCESS_TOKENS : "application / application_id"
   PEOPLE o|--o{ OAUTH_APPLICATIONS : "owner / owner_id"
+  EXT_PLATFORM o|--o{ OAUTH_APPLICATIONS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ USERS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ PEOPLE : "platform / platform_id"
   EXT_COMMUNITY ||--o{ PEOPLE : "community / community_id"
   PERSON_LINKS ||--o{ PERSON_ACCESS_GRANTS : "person_link / person_link_id"
   PEOPLE ||--o{ PERSON_ACCESS_GRANTS : "grantor_person / grantor_person_id"
   PEOPLE o|--o{ PERSON_ACCESS_GRANTS : "grantee_person / grantee_person_id"
+  EXT_PLATFORM o|--o{ PERSON_BLOCKS : "platform / platform_id"
   PEOPLE ||--o{ PERSON_BLOCKS : "blocker / blocker_id"
   PEOPLE ||--o{ PERSON_BLOCKS : "blocked / blocked_id"
+  EXT_PLATFORM o|--o{ PERSON_CHECKLIST_ITEMS : "platform / platform_id"
   PEOPLE o|--o{ PERSON_CHECKLIST_ITEMS : "creator / creator_id"
   PEOPLE ||--o{ PERSON_CHECKLIST_ITEMS : "person / person_id"
   EXT_CHECKLIST ||--o{ PERSON_CHECKLIST_ITEMS : "checklist / checklist_id"
   EXT_CHECKLIST_ITEM ||--o{ PERSON_CHECKLIST_ITEMS : "checklist_item / checklist_item_id"
+  EXT_PLATFORM o|--o{ PERSON_COMMUNITY_MEMBERSHIPS : "platform / platform_id"
   EXT_COMMUNITY ||--o{ PERSON_COMMUNITY_MEMBERSHIPS : "joinable / joinable_id"
   PEOPLE ||--o{ PERSON_COMMUNITY_MEMBERSHIPS : "member / member_id"
   ROLES ||--o{ PERSON_COMMUNITY_MEMBERSHIPS : "role / role_id"
   PEOPLE ||--o{ PERSON_DATA_EXPORTS : "person / person_id"
+  EXT_PLATFORM o|--o{ PERSON_DATA_EXPORTS : "platform / platform_id"
   PEOPLE ||--o{ PERSON_DELETION_REQUESTS : "person / person_id"
+  EXT_PLATFORM o|--o{ PERSON_DELETION_REQUESTS : "platform / platform_id"
   PEOPLE o|--o{ PERSON_DELETION_REQUESTS : "reviewed_by / reviewed_by_id"
   EXT_PLATFORM_CONNECTION ||--o{ PERSON_LINKS : "platform_connection / platform_connection_id"
   PEOPLE ||--o{ PERSON_LINKS : "source_person / source_person_id"
@@ -41,6 +53,10 @@ erDiagram
   PEOPLE o|--o{ PERSON_PURGE_AUDITS : "person / person_id"
   PERSON_DELETION_REQUESTS o|--o{ PERSON_PURGE_AUDITS : "person_deletion_request / person_deletion_request_id"
   PEOPLE o|--o{ PERSON_PURGE_AUDITS : "reviewed_by / reviewed_by_id"
+  EXT_PLATFORM o|--o{ PERSON_PURGE_AUDITS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ RESOURCE_PERMISSIONS : "platform / platform_id"
+  EXT_PLATFORM o|--o{ ROLES : "platform / platform_id"
+  EXT_PLATFORM o|--o{ ROLE_RESOURCE_PERMISSIONS : "platform / platform_id"
   ROLES ||--o{ ROLE_RESOURCE_PERMISSIONS : "role / role_id"
   RESOURCE_PERMISSIONS ||--o{ ROLE_RESOURCE_PERMISSIONS : "resource_permission / resource_permission_id"
 
@@ -60,6 +76,7 @@ erDiagram
   IDENTIFICATIONS {
     agent_id uuid
     identity_id uuid
+    platform_id uuid
     agent_type string
     identity_type string
     active boolean
@@ -70,16 +87,17 @@ erDiagram
     invitable_id uuid
     invitee_id uuid
     inviter_id uuid
+    platform_id uuid
     role_id uuid
     invitable_type string
     invitee_email string
     invitee_type string
     inviter_type string
-    locale string
   }
 
   OAUTH_ACCESS_GRANTS {
     application_id uuid
+    platform_id uuid
     resource_owner_id uuid
     scopes string
     token string
@@ -90,6 +108,7 @@ erDiagram
 
   OAUTH_ACCESS_TOKENS {
     application_id uuid
+    platform_id uuid
     resource_owner_id uuid
     previous_refresh_token string
     refresh_token string
@@ -101,6 +120,7 @@ erDiagram
 
   OAUTH_APPLICATIONS {
     owner_id uuid
+    platform_id uuid
     name string
     scopes string
     secret string
@@ -110,6 +130,7 @@ erDiagram
   }
 
   USERS {
+    platform_id uuid
     confirmation_token string
     current_sign_in_ip string
     email string
@@ -119,20 +140,19 @@ erDiagram
     type string
     unconfirmed_email string
     unlock_token string
-    failed_attempts integer
   }
 
   PEOPLE {
     registration_id integer
     signed_prekey_id integer
     community_id uuid
+    platform_id uuid
+    borgberry_did string
     identifier string
     privacy string
     identity_key_public text
     key_backup_blob text
     key_backup_salt text
-    signed_prekey_public text
-    signed_prekey_sig text
   }
 
   PERSON_ACCESS_GRANTS {
@@ -151,12 +171,14 @@ erDiagram
   PERSON_BLOCKS {
     blocked_id uuid
     blocker_id uuid
+    platform_id uuid
   }
 
   PERSON_CHECKLIST_ITEMS {
     checklist_id uuid
     checklist_item_id uuid
     person_id uuid
+    platform_id uuid
     notes text
     completed_at datetime
   }
@@ -164,12 +186,14 @@ erDiagram
   PERSON_COMMUNITY_MEMBERSHIPS {
     joinable_id uuid
     member_id uuid
+    platform_id uuid
     role_id uuid
     status string
   }
 
   PERSON_DATA_EXPORTS {
     person_id uuid
+    platform_id uuid
     format string
     status string
     error_message text
@@ -180,6 +204,7 @@ erDiagram
 
   PERSON_DELETION_REQUESTS {
     person_id uuid
+    platform_id uuid
     reviewed_by_id uuid
     status string
     requested_reason text
@@ -192,9 +217,9 @@ erDiagram
     platform_connection_id uuid
     source_person_id uuid
     target_person_id uuid
-    remote_target_identifier string
-    remote_target_name string
     status string
+    remote_target_identifier text
+    remote_target_name text
     revoked_at datetime
     verified_at datetime
     settings jsonb
@@ -236,6 +261,7 @@ erDiagram
   PERSON_PURGE_AUDITS {
     person_deletion_request_id uuid
     person_id uuid
+    platform_id uuid
     reviewed_by_id uuid
     person_identifier_snapshot string
     person_name_snapshot string
@@ -243,10 +269,10 @@ erDiagram
     user_email_snapshot string
     error_message text
     requested_reason_snapshot text
-    reviewer_notes_snapshot text
   }
 
   RESOURCE_PERMISSIONS {
+    platform_id uuid
     action string
     identifier string
     resource_type string
@@ -256,6 +282,7 @@ erDiagram
   }
 
   ROLES {
+    platform_id uuid
     identifier string
     resource_type string
     type string
@@ -264,6 +291,7 @@ erDiagram
   }
 
   ROLE_RESOURCE_PERMISSIONS {
+    platform_id uuid
     resource_permission_id uuid
     role_id uuid
   }

@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Internal or participant-visible note attached to a safety case.
-    class Note < ApplicationRecord
+    class Note < PlatformRecord
       self.table_name = 'better_together_safety_notes'
 
       enum :visibility, {

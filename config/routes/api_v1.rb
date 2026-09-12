@@ -14,6 +14,9 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :people
   # NOTE: Relationship routes omitted until all related resources exist
 
+  # Short Links
+  jsonapi_resources :short_links
+
   # Communities
   jsonapi_resources :communities
   # NOTE: Relationship routes omitted until all related resources exist
@@ -68,6 +71,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :authorships
   jsonapi_resources :page_blocks
 
   # Content Blocks (all STI types — filter by page_id or type)
@@ -76,6 +80,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
+  jsonapi_resources :robots, only: %i[index show create update]
 
   # Geography (read-only)
   jsonapi_resources :geography_continents, only: %i[index show]
@@ -92,6 +97,7 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_requests
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/cancel', to: 'joatu_agreements#cancel'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
 
   # Membership requests — create is public (unauthenticated); read/manage require auth

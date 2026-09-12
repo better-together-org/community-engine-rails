@@ -1,0 +1,8 @@
+<div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3">
+  <div>
+    <h1 class="mb-2"><%= t('host_dashboard.safety_review.heading') %></h1>
+    <p class="text-muted mb-0"><%= t('platforms.show.safety.description', platform: host_platform.name) %></p>
+  </div>
+</div>
+
+<%= render partial: 'safety_review_section' %>

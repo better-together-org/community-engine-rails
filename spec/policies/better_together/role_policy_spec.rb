@@ -102,6 +102,31 @@ RSpec.describe BetterTogether::RolePolicy, type: :policy do
     end
   end
 
+  describe 'cross-tenant isolation' do
+    let(:tenant_platform) { create(:better_together_platform, :public) }
+    let(:tenant_manager) { create(:better_together_user, :confirmed) }
+    let(:tenant_role) { create(:better_together_role, :platform_role, platform: tenant_platform) }
+    let(:host_role) { create(:better_together_role, :platform_role) }
+
+    before do
+      BetterTogether::AccessControlBuilder.seed_data
+      permission = BetterTogether::ResourcePermission.find_by!(identifier: 'manage_platform_roles')
+      manager_role = create(:better_together_role, :platform_role)
+      manager_role.assign_resource_permissions([permission.identifier])
+      create(:better_together_person_platform_membership, member: tenant_manager.person, joinable: tenant_platform,
+                                                          role: manager_role)
+    end
+
+    it 'denies managing a role belonging to a different platform' do
+      expect(described_class.new(tenant_manager, host_role).update?).to be false
+      expect(described_class.new(tenant_manager, host_role).destroy?).to be false
+    end
+
+    it 'allows managing a role belonging to their own platform' do
+      expect(described_class.new(tenant_manager, tenant_role).update?).to be true
+    end
+  end
+
   describe '#destroy? protected role' do
     subject { described_class.new(user, protected_role).destroy? }
 

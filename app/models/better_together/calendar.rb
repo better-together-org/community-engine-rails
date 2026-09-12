@@ -2,9 +2,7 @@
 
 module BetterTogether
   # Calendar management and display
-  class Calendar < ApplicationRecord
-    include Citable
-    include Claimable
+  class Calendar < PlatformRecord
     include Creatable
     include FriendlySlug
     include Identifier
@@ -30,6 +28,20 @@ module BetterTogether
 
     def to_s
       name
+    end
+
+    # Every primary community (the bootstrapping host community, and every
+    # subsequent platform's own primary community) creates its own default
+    # calendar via Community's after_create :create_default_calendar
+    # callback, which fires before PrimaryCommunity#backfill_primary_community_platform
+    # has a platform to backfill (see Community#bootstrapping_host_community?
+    # / #bootstrapping_primary_community). Overrides
+    # PlatformScoped#platform_presence_optional? the same way Community and
+    # ContactDetail do for the same underlying bootstrap ordering problem.
+    def platform_presence_optional?
+      return false unless community
+
+      community.bootstrapping_host_community? || community.bootstrapping_primary_community
     end
   end
 end

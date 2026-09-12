@@ -22,7 +22,7 @@ RSpec.describe 'better_together:search rake tasks', type: :task do
     Rake.application&.clear
   end
 
-  let(:backend) { instance_double(BetterTogether::Search::ElasticsearchBackend, backend_key: :elasticsearch) }
+  let(:backend) { instance_double(BetterTogether::Search::BaseBackend, backend_key: :elasticsearch) }
   let(:page_entry) { BetterTogether::Search::Registry::Entry.new(model_name: 'BetterTogether::Page', global_search: true) }
   let(:post_entry) { BetterTogether::Search::Registry::Entry.new(model_name: 'BetterTogether::Post', global_search: true) }
 

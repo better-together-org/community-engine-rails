@@ -1,0 +1,48 @@
+{
+  "name": "developer_settings_personal_oauth_blocked",
+  "device": "mobile",
+  "url": "/en/settings/applications",
+  "title": "404 - Page Not Found | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "feature_access_grants_and_developer_settings",
+  "flow": "developer_settings_direct_route_block",
+  "source_spec": "./spec/docs_screenshots/better_together/feature_access_grants_and_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "main",
+      "title": "Direct route enforcement",
+      "bullets": [
+        "The personal OAuth applications route now follows the developer_settings feature gate.",
+        "Turning the gate off returns the same not-found surface even for a signed-in person."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 66.0,
+        "width": 500.0,
+        "height": 897.0,
+        "right": 500.0,
+        "bottom": 963.0,
+        "center_x": 250.0,
+        "center_y": 514.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 66.0,
+        "width": 500.0,
+        "height": 897.0,
+        "right": 500.0,
+        "bottom": 963.0,
+        "center_x": 250.0,
+        "center_y": 514.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 372
+      }
+    }
+  ]
+}

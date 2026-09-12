@@ -1,0 +1,19 @@
+---
+title: Federation Hub -- Activity Feed
+audience:
+- platform_manager
+- developer
+journey_step: As a network admin, I open the activity feed to confirm a recent sync
+  succeeded.
+callouts:
+- :id: activity_list
+  :title: Federation activity feed
+  :description: Queries BetterTogether::Activity directly, bypassing the public-only
+    policy scope.
+- :id: filters
+  :title: Filters
+  :description: Narrow by content type or (admin-only) direction.
+accessibility_notes: Filter selects have visually-hidden labels; list items use a
+  semantic <ul>/<li> structure.
+slug: federation_hub_activity_feed
+device: desktop

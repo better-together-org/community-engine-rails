@@ -4,9 +4,15 @@ module BetterTogether
   module Geography
     class Settlement < ApplicationRecord # rubocop:todo Style/Documentation
       include Geospatial::One
+
+      geocodes_self
       include Identifier
+      include Placeable
       include Protected
       include PrimaryCommunity
+      include Attachments::Images
+
+      attachable_cover_image
 
       has_community
 
@@ -21,6 +27,8 @@ module BetterTogether
       def to_s
         name
       end
+
+      configure_attachment_cleanup
     end
   end
 end

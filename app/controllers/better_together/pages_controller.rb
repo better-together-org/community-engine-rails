@@ -3,9 +3,21 @@
 module BetterTogether
   # Responds to requests for pages
   class PagesController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    include ChecksRequiredAgreements
+    include PageBlockVisibility
+
     before_action :set_page, only: %i[show edit update destroy]
+    before_action :check_content_publishing_agreement, only: %i[new create]
 
     skip_before_action :check_platform_setup, unless: -> { ::BetterTogether::Platform.where(host: true).any? }
+
+    # #new (below) already builds @page with community_id set and calls
+    # `authorize @page` itself. The inherited :authorize_resource before_action
+    # runs before #new's body, so without this skip it would authorize a
+    # communityless instance first — making PagePolicy's community-dependent
+    # self-service check always fail before #new ever gets a chance to
+    # populate community_id.
+    skip_before_action :authorize_resource, only: %i[new]
 
     before_action only: %i[new edit], if: -> { Rails.env.development? } do
       # Make sure that all BLock subclasses are loaded in dev to generate new block buttons
@@ -24,23 +36,23 @@ module BetterTogether
       # Hide pages that don't exist or aren't viewable to the current user as 404s
       render_not_found and return if @page.nil?
 
-      # Preload content blocks with their associations for better performance.
-      # Do NOT include :string_translations here — block STI collections may
-      # contain Content::Template records that have no string_translations
-      # association, causing AssociationNotFoundError in Rails 8 (branch.rb:85).
-      # Instead, use preload_block_string_translations to selectively preload
-      # only on block types that define the association.
-      content_blocks = @page.content_blocks.includes(
-        background_image_file_attachment: :blob
-      ).load
-      preload_block_string_translations(content_blocks)
-      @content_blocks = content_blocks
+      # Page editors/managers see every block (the view badges the non-public
+      # ones); everyone else sees only what BlockPolicy::Scope / #show? permits.
+      # Sets @viewer_is_page_editor, @content_blocks, @hero_block.
+      assign_visible_page_content_blocks(@page)
+
+      # STI block collections may contain Content::Template records that have no
+      # string_translations association (AssociationNotFoundError in Rails 8), so
+      # preload selectively rather than via .includes(:string_translations).
+      preload_block_string_translations(@content_blocks)
+
       @layout = 'layouts/better_together/page'
       @layout = @page.layout if @page.layout.present?
     end
 
     def new
       @page = resource_class.new
+      @page.community_id = community_context&.id
       authorize @page
     end
 
@@ -60,33 +72,12 @@ module BetterTogether
             end
           else
             format.turbo_stream do
-              render turbo_stream: turbo_stream.update(
-                'form_errors',
-                partial: 'layouts/better_together/errors',
-                locals: { object: @page }
-              )
+              render turbo_stream: re_render_form_with_errors(@page), status: :unprocessable_entity
             end
             format.html { render :new, status: :unprocessable_entity }
           end
         end
       end
-    end
-
-    def create_release_package_draft
-      authorize resource_class
-
-      result = BetterTogether::ReleasePackageDraftBuilder.new(
-        creator: helpers.current_person,
-        title: release_package_draft_title,
-        robot_author_ids: params[:robot_author_ids]
-      ).call
-
-      redirect_to edit_page_path(result.page),
-                  notice: t(
-                    'better_together.pages.release_package_draft.created',
-                    default: 'Private release package draft created. Companion draft post: %<post_title>s',
-                    post_title: result.post.title
-                  )
     end
 
     def edit
@@ -116,12 +107,7 @@ module BetterTogether
             format.html { render :edit }
             format.turbo_stream do
               render turbo_stream: [
-                turbo_stream.replace(helpers.dom_id(@page, 'form'), partial: 'form', locals: { page: @page }),
-                turbo_stream.update(
-                  'form_errors',
-                  partial: 'layouts/better_together/errors',
-                  locals: { object: @page }
-                )
+                re_render_form_with_errors(@page)
               ]
             end
           end
@@ -156,6 +142,10 @@ module BetterTogether
       end
     end
 
+    def page_form_id(page)
+      helpers.dom_id(page, 'form')
+    end
+
     def page
       @page ||= set_page
     end
@@ -176,6 +166,10 @@ module BetterTogether
       @page = preload_page_associations(@page)
     rescue ActiveRecord::RecordNotFound
       render_not_found && return
+    end
+
+    def re_render_form_with_errors(page)
+      turbo_stream.replace(page_form_id(page), partial: 'form', locals: { page: page })
     end
 
     def resource_class
@@ -246,22 +240,38 @@ module BetterTogether
 
     def page_params
       params.require(:page).permit(
-        basic_page_attributes + page_blocks_permitted_attributes
+        basic_page_attributes + page_blocks_permitted_attributes + contributions_permitted_attributes
       ).tap do |attrs|
-        attrs[:creator_id] = helpers.current_person&.id if action_name == 'create'
+        apply_create_defaults(attrs) if action_name == 'create'
       end
     end
 
-    def basic_page_attributes
-      [
-        :meta_description, :keywords, :published_at, :sidebar_nav_id,
-        :privacy, :layout, :template, :show_title, *Page.localized_attribute_list,
-        *Page.extra_permitted_attributes
-      ]
+    def apply_create_defaults(attrs)
+      attrs[:creator_id] = helpers.current_person&.id
+      attrs[:community_id] = community_context&.id if attrs[:community_id].blank?
     end
 
-    def release_package_draft_title
-      params[:title].presence || "Release Package #{Date.current.iso8601}"
+    def basic_page_attributes
+      attrs = [
+        :meta_description, :keywords, :published_at, :sidebar_nav_id,
+        :privacy, :layout, :template, :show_title, :contributors_display_visibility, *Page.localized_attribute_list,
+        *Page.extra_permitted_attributes
+      ]
+      attrs.unshift(:community_id) if action_name == 'create'
+      attrs
+    end
+
+    def community_context
+      @community_context ||= resolved_community || helpers.host_community
+    end
+
+    def resolved_community
+      community_id = params[:community_id].presence
+      return if community_id.blank?
+
+      BetterTogether::Community.friendly.find(community_id)
+    rescue ActiveRecord::RecordNotFound
+      nil
     end
 
     def page_blocks_permitted_attributes
@@ -275,13 +285,14 @@ module BetterTogether
       ]
     end
 
-    def block_permitted_attributes
+    def contributions_permitted_attributes
       [
-        :id, :type, :identifier, :_destroy,
-        *BetterTogether::Content::Block.localized_block_attributes,
-        *BetterTogether::Content::Block.storext_keys,
-        *BetterTogether::Content::Block.extra_permitted_attributes
+        { contributions_attributes: BetterTogether::Authorship.permitted_attributes(id: true, destroy: true) }
       ]
+    end
+
+    def block_permitted_attributes
+      BetterTogether::Content::Block.permitted_attributes(id: true, destroy: true)
     end
 
     # Preloads string_translations only on block types that define the association,

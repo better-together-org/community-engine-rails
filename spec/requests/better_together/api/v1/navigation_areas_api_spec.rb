@@ -26,6 +26,13 @@ RSpec.describe 'BetterTogether::Api::V1::NavigationAreas', :no_auth do
       end
 
       it 'includes navigation areas' do
+        # NavigationArea is in ESSENTIAL_TABLES (protected from cleanup between
+        # :js/:feature/:system specs, to preserve seed data), so the full-suite total
+        # grows unbounded across a long run — asserting our own record appears
+        # somewhere in the unfiltered, default-paginated index response is not
+        # reliable once that total exceeds the default page size. Filter by our own
+        # id instead, matching how a real API consumer would look for one record.
+        get "#{url}?filter[id]=#{nav_area.id}", headers: auth_headers
         json = JSON.parse(response.body)
         area_ids = json['data'].map { |a| a['id'] }
         expect(area_ids).to include(nav_area.id)

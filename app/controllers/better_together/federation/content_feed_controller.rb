@@ -47,7 +47,10 @@ module BetterTogether
         @access_token_record ||= begin
           token = ::BetterTogether::FederationAccessToken.find_active_by_plaintext(bearer_token)
 
-          if token.present? && token.platform_connection.source_platform == Current.platform
+          # source_platform/target_platform reflect who initiated the connection,
+          # not who's local — use #involves? instead of assuming Current.platform
+          # is always source_platform. See PlatformConnection#involves?.
+          if token.present? && Current.platform.present? && token.platform_connection.involves?(Current.platform)
             token.touch_last_used!
             token
           end

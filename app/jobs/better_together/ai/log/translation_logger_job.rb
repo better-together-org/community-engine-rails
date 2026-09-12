@@ -11,7 +11,8 @@ module BetterTogether
         # rubocop:todo Metrics/ParameterLists
         def perform( # rubocop:todo Metrics/MethodLength, Metrics/ParameterLists
           request_content:, response_content:, prompt_tokens:, completion_tokens:,
-          start_time:, end_time:, model:, initiator:, source_locale:, target_locale:, estimated_cost:
+          start_time:, end_time:, model:, initiator:, source_locale:, target_locale:, estimated_cost:,
+          platform_id: nil
         )
           # rubocop:enable Metrics/ParameterLists
           tokens_used = prompt_tokens + completion_tokens
@@ -29,7 +30,10 @@ module BetterTogether
             status: response_content.present? ? 'success' : 'failure',
             initiator:,
             source_locale:, # Added source locale
-            target_locale: # Added target locale
+            target_locale:, # Added target locale
+            platform_id: # Explicit — the job runs async with no Current.platform, so
+            # PlatformScoped's own fallback can't see the request that
+            # triggered the translation; the bot captures it at enqueue time.
           )
         end
       end

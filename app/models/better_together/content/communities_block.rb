@@ -6,8 +6,10 @@ module BetterTogether
     class CommunitiesBlock < Block
       include ::BetterTogether::Content::ResourceBlockAttributes
 
-      def self.content_addable?
-        true
+      def self.content_addable?(actor: nil)
+        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
+      rescue KeyError
+        false
       end
     end
   end

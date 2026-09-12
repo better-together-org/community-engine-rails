@@ -1,6 +1,19 @@
 import { Controller } from '@hotwired/stimulus';
 import 'slim-select';
 
+// Opt-in "create a new record" rows for AJAX-backed selects (see the
+// createOptions key handled in initializeSlimSelect). A picked row whose value
+// starts with CREATE_SENTINEL is not a real selection: beforeChange cancels it
+// and dispatches better_together--slim-select:create for a sibling controller
+// (e.g. location_selector) to open an inline form. SIMPLE_SENTINEL is the
+// "use my typed text as-is" row. Nothing here runs unless createOptions is set.
+const CREATE_SENTINEL = '__ce_create__:';
+const SIMPLE_SENTINEL = '__ce_create__:simple';
+
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]
+));
+
 export default class extends Controller {
   static values = {
     options: Object
@@ -11,18 +24,18 @@ export default class extends Controller {
   connect() {
     // Store whether this was originally required for our custom validation
     this.wasRequired = this.element.hasAttribute('required');
-    
+
     // Remove the required attribute from the original select to prevent browser validation conflicts
     if (this.wasRequired) {
       this.element.removeAttribute('required');
     }
-    
+
     // Add form submission listener to validate SlimSelect before submit
     this.addFormValidationListener();
-    
+
     // Add form reset listener to properly reset SlimSelect
     this.addFormResetListener();
-    
+
     // Try to get options from data attribute directly if Stimulus value fails
     let optionsData = {};
     if (this.hasOptionsValue) {
@@ -33,7 +46,7 @@ export default class extends Controller {
                          this.element.dataset.betterTogetherSlimSelectOptionsValue ||
                          this.element.getAttribute('data-better-together--slim-select-options-value') ||
                          this.element.getAttribute('data-better_together--slim-select-options-value');
-      
+
       if (optionsAttr) {
         try {
           optionsData = JSON.parse(optionsAttr);
@@ -42,7 +55,60 @@ export default class extends Controller {
         }
       }
     }
-    
+
+    this.initializeSlimSelect(optionsData);
+
+    // createOptions selects let a sibling controller clear the picked value after
+    // it hands off to an inline "create" form. Listen once here rather than on
+    // every reinit.
+    if (optionsData && optionsData.createOptions) {
+      this.resetSelection = this.resetSelection.bind(this);
+      this.element.addEventListener('better_together--location-selector:reset-picker', this.resetSelection);
+    }
+
+    // Marks connect()'s own init as done so optionsValueChanged (below) can tell
+    // its pre-connect invocation apart from a genuine post-connect mutation.
+    this.hasInitialized = true;
+  }
+
+  // Clears the current selection in response to
+  // better_together--location-selector:reset-picker. Only wired for
+  // createOptions selects (see connect()).
+  resetSelection() {
+    try {
+      if (this.slimSelect && typeof this.slimSelect.setSelected === 'function') {
+        this.slimSelect.setSelected('');
+      }
+    } catch (e) {
+      console.warn('Unable to reset SlimSelect selection:', e);
+    }
+    this.element.value = '';
+    this.element.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // Reinitializes SlimSelect when the options value changes after the initial
+  // connect (e.g. a sibling radio-driven controller swaps the AJAX source URL
+  // for a new polymorphic type). Existing callers never mutate their options
+  // value post-connect, so this callback never fires a reinit for them.
+  //
+  // Stimulus invokes this callback once during setup, before connect() runs,
+  // with previousValue set to the Value type's default (e.g. `{}` for an
+  // Object value) rather than `undefined` — so `previousValue === undefined`
+  // never actually holds and can't be used to detect "this is the initial
+  // call". Guard on our own hasInitialized flag instead, set at the end of
+  // connect() once its own initializeSlimSelect call has run.
+  optionsValueChanged(value, previousValue) {
+    if (!this.hasInitialized) return // connect() hasn't run its own init yet
+
+    if (this.slimSelect) {
+      this.slimSelect.destroy();
+      this.slimSelect = null;
+    }
+
+    this.initializeSlimSelect(value || {});
+  }
+
+  initializeSlimSelect(optionsData) {
     const defaultOptions = {
       settings: {
         allowDeselect: true,
@@ -56,6 +122,10 @@ export default class extends Controller {
 
     // Merge with custom options from the element
     const options = { ...defaultOptions, ...optionsData };
+
+    // Kept for buildCreateRows / beforeChange, which need the createOptions config
+    // at search and selection time.
+    this.currentOptions = options;
 
     if (options.addable) {
       const existingEvents = options.events || {};
@@ -79,69 +149,93 @@ export default class extends Controller {
 
     // Handle AJAX configuration if present
     if (options.ajax) {
-      
+      const isMultiSelectJson = options.multiSelectJson === true;
+
       // Configure SlimSelect with proper AJAX settings
       options.settings.searchFilter = false; // Disable client-side filtering
-      
+
+      // For multiSelectJson mode, prevent closing after selection
+      if (isMultiSelectJson) {
+        options.settings.closeOnSelect = false;
+      }
+
       options.events = {
         search: (search, currentData) => {
           return new Promise((resolve, reject) => {
-            const url = new URL(options.ajax.url, window.location.origin);
-            
-            // Add cache-busting timestamp to prevent stale results
-            url.searchParams.append('_', Date.now().toString());
-            
-            // Add search parameter if search term is provided
-            if (search && search.trim().length > 0) {
-              url.searchParams.append('search', search.trim());
+            // Debounced: an AJAX source that fans out to multiple backing
+            // queries per request (e.g. the event location picker's mixed
+            // search across every Placeable type) turns "fetch on every
+            // keystroke" from one cheap query into several per keystroke.
+            // Only the last keystroke within the window actually fetches -
+            // earlier pending timers are cleared, and their promises are
+            // simply left unresolved (harmless: nothing awaits them once
+            // superseded).
+            if (this.searchDebounceTimer) {
+              clearTimeout(this.searchDebounceTimer);
             }
 
-            fetch(url.toString(), {
-              method: 'GET',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Cache-Control': 'no-cache'
+            this.searchDebounceTimer = setTimeout(() => {
+              const url = new URL(options.ajax.url, window.location.origin);
+
+              // Add cache-busting timestamp to prevent stale results
+              url.searchParams.append('_', Date.now().toString());
+
+              // Add search parameter if search term is provided
+              if (search && search.trim().length > 0) {
+                url.searchParams.append('search', search.trim());
               }
-            })
-            .then(response => response.json())
-            .then(data => {
-              resolve(data);
-            })
-            .catch(error => {
-              console.error('SlimSelect AJAX error:', error);
-              reject(error);
-            });
+
+              fetch(url.toString(), {
+                method: 'GET',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Cache-Control': 'no-cache'
+                }
+              })
+              .then(response => response.json())
+              .then(data => {
+                resolve(data);
+              })
+              .catch(error => {
+                console.error('SlimSelect AJAX error:', error);
+                reject(error);
+              });
+            }, 300);
           });
         },
         beforeOpen: () => {
           // Clear any previous validation errors when opening
           this.element.setCustomValidity('');
-          
-          // Reset the select to empty state
-          this.element.value = '';
-          
-          // Force refresh of data every time modal opens to ensure current membership state
-          // Clear existing options except prompt to force fresh data
-          const promptOption = this.element.querySelector('option[value=""]');
-          this.element.innerHTML = '';
-          if (promptOption) {
-            this.element.appendChild(promptOption.cloneNode(true));
-          } else {
-            // Create a prompt option if one doesn't exist
-            const newPromptOption = new Option('Search for people...', '', false, false);
-            this.element.appendChild(newPromptOption);
+
+          // For single-select AJAX (not multiSelectJson), reset and reload fresh data
+          // For multiSelectJson, preserve selected options and only reload to refresh the list
+          if (!isMultiSelectJson) {
+            // Reset the select to empty state
+            this.element.value = '';
+
+            // Force refresh of data every time modal opens to ensure current membership state
+            // Clear existing options except prompt to force fresh data
+            const promptOption = this.element.querySelector('option[value=""]');
+            this.element.innerHTML = '';
+            if (promptOption) {
+              this.element.appendChild(promptOption.cloneNode(true));
+            } else {
+              // Create a prompt option if one doesn't exist
+              const newPromptOption = new Option('Search for people...', '', false, false);
+              this.element.appendChild(newPromptOption);
+            }
+
+            // Reset SlimSelect to show the prompt
+            if (this.slimSelect && typeof this.slimSelect.set === 'function') {
+              this.slimSelect.set('');
+            }
+
+            // Reload fresh results
+            this.loadInitialResults(options.ajax.url);
           }
-          
-          // Reset SlimSelect to show the prompt
-          if (this.slimSelect && typeof this.slimSelect.set === 'function') {
-            this.slimSelect.set('');
-          }
-          
-          // Reload fresh results
-          this.loadInitialResults(options.ajax.url);
-          
+
           // Prevent modal focus trap from interfering
           if (this.isInsideModal()) {
             this.preventModalFocusTrap();
@@ -154,24 +248,111 @@ export default class extends Controller {
           }
         },
         afterChange: (newVal) => {
-          // Ensure the original select element is properly updated
-          if (newVal && newVal.length > 0) {
-            this.element.value = newVal[0].value;
-            // Clear any validation errors since we have a selection
-            this.element.setCustomValidity('');
-            // Trigger change event for form validation
-            this.element.dispatchEvent(new Event('change', { bubbles: true }));
-          } else {
-            this.element.value = '';
-            // Set custom validation message if this field was originally required
-            if (this.wasRequired) {
-              this.element.setCustomValidity('Please select a person.');
+          if (isMultiSelectJson) {
+            // For multiSelectJson mode: serialize all selected values as JSON to hidden field
+            const jsonFieldId = this.element.dataset.slimSelectJsonFieldId;
+            const jsonField = jsonFieldId ? document.getElementById(jsonFieldId) : null;
+
+            if (jsonField) {
+              const selectedValues = (newVal || []).map(opt => opt.value);
+              jsonField.value = JSON.stringify(selectedValues);
+              jsonField.dispatchEvent(new Event('change', { bubbles: true }));
             }
-            this.element.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // Clear validation errors if anything is selected
+            if (newVal && newVal.length > 0) {
+              this.element.setCustomValidity('');
+            }
+          } else {
+            // For single-select: update element value (existing behavior)
+            // Ensure the original select element is properly updated
+            if (newVal && newVal.length > 0) {
+              // AJAX search results are rendered by SlimSelect's own internal
+              // list and are never added as real <option>s on the native
+              // select (only the unfiltered initial list gets that, via
+              // loadInitialResults below) - setting .value below is a silent
+              // no-op without a matching <option>, so add one here first.
+              const hasMatchingOption = Array.from(this.element.options).some((option) => option.value === newVal[0].value);
+              if (!hasMatchingOption) {
+                this.element.add(new Option(newVal[0].text, newVal[0].value, false, false));
+              }
+
+              this.element.value = newVal[0].value;
+              // Clear any validation errors since we have a selection
+              this.element.setCustomValidity('');
+              // Trigger change event for form validation
+              this.element.dispatchEvent(new Event('change', { bubbles: true }));
+            } else {
+              this.element.value = '';
+              // Set custom validation message if this field was originally required
+              if (this.wasRequired) {
+                this.element.setCustomValidity('Please select a person.');
+              }
+              this.element.dispatchEvent(new Event('change', { bubbles: true }));
+            }
           }
         }
       };
     }
+
+    // Opt-in: append "Create new ..." rows to the AJAX results and intercept a
+    // pick of one. Purely additive - a select without createOptions is untouched.
+    if (options.createOptions && options.ajax) {
+      const innerSearch = options.events.search;
+      options.events.search = (search, currentData) => (
+        // Resolve to the AJAX results, or [] if that request fails - the
+        // "Create new ..." rows must still be offered when the location search
+        // is empty or erroring.
+        Promise.resolve(innerSearch(search, currentData))
+          .then((data) => (Array.isArray(data) ? data : []), () => [])
+          .then((results) => [...results, ...this.buildCreateRows(search, results)])
+      );
+
+      const innerBeforeChange = options.events.beforeChange;
+      options.events.beforeChange = (after, before) => {
+        const picked = Array.isArray(after) && after[0];
+        if (picked && typeof picked.value === 'string' && picked.value.startsWith(CREATE_SENTINEL)) {
+          const query = (picked.data && picked.data.ceQuery) || this.lastSearchTerm || '';
+
+          if (picked.value === SIMPLE_SENTINEL) {
+            // "Use my typed text" - rewrite the row into an ordinary free-text
+            // selection and let SlimSelect select it; afterChange's option-sync
+            // then routes it to the hidden simple-name field.
+            picked.value = query;
+            picked.text = query;
+            picked.html = '';
+            picked.class = '';
+            return innerBeforeChange ? innerBeforeChange(after, before) : true;
+          }
+
+          // "Create new <type>" - cancel the selection and hand off to the
+          // sibling controller to open the inline form. Queue the close BEFORE
+          // dispatching so that controller's focus() (queued from the event
+          // handler) runs after close()'s own refocus and wins.
+          const type = (picked.data && picked.data.ceCreate) || picked.value.slice(CREATE_SENTINEL.length);
+          setTimeout(() => {
+            try { if (this.slimSelect) this.slimSelect.close(); } catch (_) { /* noop */ }
+          }, 0);
+          this.element.dispatchEvent(new CustomEvent('better_together--slim-select:create', {
+            bubbles: true,
+            detail: { type, query }
+          }));
+          return false;
+        }
+        return innerBeforeChange ? innerBeforeChange(after, before) : true;
+      };
+    }
+
+    // Store multiSelectJson flag for later use in event handlers
+    this.isMultiSelectJson = optionsData.multiSelectJson === true;
+
+    // Capture the pre-selected value(s) BEFORE constructing SlimSelect — its
+    // constructor can clear the native <select>'s .selectedOptions, which
+    // would otherwise silently leave a `required` field blank and
+    // unsubmittable.
+    const preSelectedValues = this.isMultiSelectJson
+      ? null
+      : Array.from(this.element.selectedOptions).map(o => o.value);
 
     this.slimSelect = new SlimSelect({
       select: this.element,
@@ -182,9 +363,25 @@ export default class extends Controller {
     // (useful when Turbo or server-side rendering supplies selected attributes)
     try {
       if (this.slimSelect && typeof this.slimSelect.set === 'function') {
-        // Pass current selected values from the underlying select
-        const selected = Array.from(this.element.selectedOptions).map(o => o.value);
-        this.slimSelect.set(selected);
+        if (this.isMultiSelectJson) {
+          // For multiSelectJson: parse the hidden field to get pre-selected IDs
+          const jsonFieldId = this.element.dataset.slimSelectJsonFieldId;
+          const jsonField = jsonFieldId ? document.getElementById(jsonFieldId) : null;
+
+          if (jsonField && jsonField.value) {
+            try {
+              const selectedIds = JSON.parse(jsonField.value);
+              if (Array.isArray(selectedIds)) {
+                this.slimSelect.set(selectedIds);
+              }
+            } catch (e) {
+              console.warn('Unable to parse JSON field for pre-selection:', e);
+            }
+          }
+        } else {
+          // Restore the values captured before SlimSelect's constructor ran.
+          this.slimSelect.set(preSelectedValues);
+        }
       }
     } catch (e) {
       // Fail silently - SlimSelect might not support set() in some versions
@@ -192,12 +389,54 @@ export default class extends Controller {
     }
   }
 
+  // Builds the synthetic "Create new ..." rows appended to every AJAX result set
+  // when createOptions is configured. Always returns at least one row for a
+  // configured select, so SlimSelect's renderOptions never sees an empty array
+  // (which would suppress everything but the "no results" text). Also records the
+  // current search term for beforeChange to read back.
+  buildCreateRows(rawTerm, results) {
+    const term = (rawTerm || '').trim();
+    this.lastSearchTerm = term;
+
+    const config = (this.currentOptions && this.currentOptions.createOptions) || {};
+    const rows = [];
+
+    (config.types || []).forEach((type) => {
+      const label = term && type.labelWithQuery
+        ? type.labelWithQuery.replace('%{q}', term)
+        : type.label;
+      rows.push({
+        value: `${CREATE_SENTINEL}${type.type}`,
+        text: label,
+        html: `<span class="ss-create-option__label"><i class="fa-solid fa-plus" aria-hidden="true"></i> ${escapeHtml(label)}</span>`,
+        class: 'ss-create-option',
+        data: { ceCreate: type.type, ceQuery: term }
+      });
+    });
+
+    const hasExactMatch = term && results.some((row) => (
+      typeof row.text === 'string' && row.text.toLowerCase() === term.toLowerCase()
+    ));
+    if (config.simple && term && !hasExactMatch) {
+      const label = (config.simple.label || '').replace('%{q}', term);
+      rows.push({
+        value: SIMPLE_SENTINEL,
+        text: label,
+        html: `<span class="ss-create-option__label ss-create-option__label--simple">${escapeHtml(label)}</span>`,
+        class: 'ss-create-option ss-create-option--simple',
+        data: { ceCreate: 'simple', ceQuery: term }
+      });
+    }
+
+    return rows;
+  }
+
   loadInitialResults(url) {
     // Fetch initial results without search term to populate dropdown
     const fullUrl = new URL(url, window.location.origin);
     // Add timestamp to prevent caching
     fullUrl.searchParams.append('_', Date.now().toString());
-    
+
     return fetch(fullUrl.toString(), {
       method: 'GET',
       headers: {
@@ -245,9 +484,13 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (this.searchDebounceTimer) {
+      clearTimeout(this.searchDebounceTimer);
+    }
     if (this.slimSelect) {
       this.slimSelect.destroy();
     }
+    this.element.removeEventListener('better_together--location-selector:reset-picker', this.resetSelection);
   }
 
   // Helper method to check if element is inside a Bootstrap modal

@@ -16,11 +16,19 @@ module BetterTogether
     end
 
     # Pundit scope for PersonLink visibility.
+    # Scoped to the current platform's connections so agents cannot see links from
+    # unrelated platform federations even if they are a participant there too.
     class Scope < ApplicationPolicy::Scope
       def resolve
         return scope.none unless agent
 
-        scope.where(source_person_id: agent.id).or(scope.where(target_person_id: agent.id))
+        person_scope = scope.where(source_person_id: agent.id)
+                            .or(scope.where(target_person_id: agent.id))
+
+        platform = Current.platform || Current.host_platform
+        return person_scope unless platform
+
+        person_scope.for_platform(platform)
       end
     end
 

@@ -3,28 +3,31 @@
 module BetterTogether
   # A Schedulable Event
   # rubocop:disable Metrics/ClassLength
-  class Event < ApplicationRecord
+  class Event < PlatformRecord
     include Attachments::Images
     include Categorizable
-    include Citable
-    include Claimable
     include Creatable
+    include Federatable
     include FriendlySlug
     include Identifier
     include Geography::Geospatial::One
+
+    geocodes_self
     include Geography::Locatable::One
     include Invitable
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include RecurringSchedulable
+    include Reportable
     include Searchable
     include Seedable
+    include Shortlinkable
+    include SitemapRefreshable
     include TimezoneAttributeAliasing
     include TrackedActivity
 
     attachable_cover_image
-
-    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
@@ -36,21 +39,28 @@ module BetterTogether
     has_many :calendar_entries, class_name: 'BetterTogether::CalendarEntry', dependent: :destroy
     has_many :calendars, through: :calendar_entries
 
+    # Lazily-created per-occurrence overrides (attendance/comments/location-
+    # time-cancellation) for a recurring series — see EventOccurrence. Most
+    # occurrences of a series never get a row; find_or_create_occurrence_for
+    # below is the only intended write path.
+    has_many :event_occurrences, class_name: 'BetterTogether::EventOccurrence', dependent: :destroy
+
     categorizable(class_name: 'BetterTogether::EventCategory')
 
     has_many :event_hosts, dependent: :destroy
 
-    # belongs_to :address, -> { where(physical: true, primary_flag: true) }
-    # accepts_nested_attributes_for :address, allow_destroy: true, reject_if: :blank?
-    # delegate :geocoding_string, to: :address, allow_nil: true
-    # geocoded_by :geocoding_string
-
     translates :name, type: :string
     translates :description, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :name
+
+    # Explicit lifecycle status, orthogonal to the timing-derived scopes below
+    # (draft/scheduled/upcoming/ongoing/past): an event can be confirmed AND
+    # past, or cancelled AND upcoming. Prefixed accessors (status_draft?,
+    # Event.status_confirmed, ...) avoid colliding with the timing-based
+    # `draft` scope and `#draft?` predicate that other callers rely on.
+    STATUS_VALUES = { draft: 'draft', confirmed: 'confirmed', cancelled: 'cancelled' }.freeze
+    enum :status, STATUS_VALUES, prefix: :status
 
     searchable pg_search: {
       against: [:identifier],
@@ -74,8 +84,22 @@ module BetterTogether
     validates :platform_id, presence: true
     validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
     validate :ends_at_after_starts_at
+    validate :validate_recurrence_end_condition_present
+    validate :validate_recurrence_exception_dates_present
 
-    before_validation :assign_current_platform_if_available
+    # Transient, not persisted. Set by EventsController#process_recurrence_attributes
+    # when the submitted recurrence end_type ('until'/'count') is missing its
+    # paired ends_on/count value. Surfaced here (rather than relying on the
+    # nested Recurrence's own errors to bubble up) so the message reliably
+    # appears in the shared errors partial, which only reads @resource's own
+    # errors.full_messages.
+    attr_accessor :end_condition_error
+
+    # Transient, not persisted. Set when one or more submitted recurrence
+    # exception dates could not be parsed. Same rationale as
+    # end_condition_error above.
+    attr_accessor :exception_dates_error
+
     before_validation :set_host
     before_validation :set_default_duration
     before_validation :sync_time_duration_relationship
@@ -96,16 +120,6 @@ module BetterTogether
       return nil if ends_at.nil?
 
       ends_at.in_time_zone(timezone)
-    end
-
-    def as_indexed_json(_options = {})
-      {
-        id:,
-        name:,
-        slug:,
-        identifier:,
-        description: description.present? ? search_text_value(description) : nil
-      }.compact.as_json
     end
 
     # Returns starts_at in a specified timezone
@@ -142,9 +156,12 @@ module BetterTogether
       where(start_query)
     }
 
+    # Compares next_occurrence_at (denormalized, override- and recurrence-
+    # aware) rather than starts_at, so a recurring event whose original
+    # starts_at is long past still shows as upcoming for as long as it keeps
+    # recurring. See Event#refresh_next_occurrence_at!.
     scope :upcoming, lambda {
-      start_query = arel_table[:starts_at].gteq(Time.current)
-      where(start_query)
+      where(arel_table[:next_occurrence_at].gteq(Time.current))
     }
 
     scope :ongoing, lambda {
@@ -167,7 +184,9 @@ module BetterTogether
       calculated_end_in_future = ends.eq(nil)
                                      .and(duration.not_eq(nil))
                                      .and(
-                                       Arel.sql("starts_at + (duration_minutes * interval '1 minute')").gteq(now)
+                                       Arel.sql(
+                                         "#{table_name}.starts_at + (#{table_name}.duration_minutes * interval '1 minute')"
+                                       ).gteq(now)
                                      )
 
       where(started).where(has_explicit_end.or(calculated_end_in_future))
@@ -178,11 +197,15 @@ module BetterTogether
       starts = arel_table[:starts_at]
       ends = arel_table[:ends_at]
       duration = arel_table[:duration_minutes]
+      next_occurrence = arel_table[:next_occurrence_at]
 
-      # Events are past if they have ended:
-      # 1. Has explicit ends_at that is in the past (ends_at < now)
-      # 2. OR has no ends_at, no duration, but has started (legacy events)
-      # 3. OR has duration but calculated end time is in the past
+      # A recurring event is never "past" while it still has a future
+      # occurrence, no matter how stale its own original starts_at/ends_at
+      # are — gate the whole decision on next_occurrence_at first, then
+      # apply the existing ends_at/duration-based "has it truly ended" logic
+      # (unchanged for non-recurring events, where next_occurrence_at ==
+      # starts_at).
+      recurrence_exhausted_or_absent = next_occurrence.lt(now).or(next_occurrence.eq(nil))
 
       explicit_end_passed = ends.not_eq(nil).and(ends.lt(now))
       no_end_no_duration = ends.eq(nil).and(duration.eq(nil)).and(starts.lt(now))
@@ -191,15 +214,19 @@ module BetterTogether
       calculated_end_passed = ends.eq(nil)
                                   .and(duration.not_eq(nil))
                                   .and(
-                                    Arel.sql("starts_at + (duration_minutes * interval '1 minute')").lt(now)
+                                    Arel.sql(
+                                      "#{table_name}.starts_at + (#{table_name}.duration_minutes * interval '1 minute')"
+                                    ).lt(now)
                                   )
 
-      where(explicit_end_passed.or(no_end_no_duration).or(calculated_end_passed))
+      where(recurrence_exhausted_or_absent)
+        .where(explicit_end_passed.or(no_end_no_duration).or(calculated_end_passed))
     }
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        starts_at ends_at duration_minutes registration_url timezone
+        starts_at ends_at duration_minutes registration_url timezone status end_condition_error
+        exception_dates_error
       ] + [
         {
           location_attributes: BetterTogether::Geography::LocatableLocation.permitted_attributes(id: id,
@@ -217,26 +244,12 @@ module BetterTogether
       event_hosts.build(host: creator)
     end
 
-    def schedule_address_geocoding
-      return unless should_geocode?
-
-      BetterTogether::Geography::GeocodingJob.perform_later(self)
-    end
-
-    def should_geocode?
-      return false if geocoding_string.blank?
-
-      # space.reload # in case it has been geocoded since last load
-
-      (address_changed? or !geocoded?)
-    end
-
     def to_s
       name
     end
 
     def mirrored?
-      source_id.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.external?
     end
 
     def preserved_remote_uuid?
@@ -267,8 +280,54 @@ module BetterTogether
 
     # Callbacks for notifications and reminders
     after_update :send_update_notifications
-    after_update :schedule_reminder_notifications, if: :requires_reminder_scheduling?
+    after_update :schedule_reminder_notifications, if: :should_schedule_reminders_after_save?
     after_update :sync_calendar_entry_times, if: :saved_change_to_temporal_fields?
+    # after_save (not after_update): must run on initial create too, so a
+    # freshly-created event's next_occurrence_at is correct from the start
+    # rather than only after its first edit.
+    after_save :refresh_next_occurrence_at!, if: :saved_change_to_temporal_fields?
+
+    # Finds or lazily creates the EventOccurrence override row for one
+    # specific session of this recurring series. This is the only intended
+    # write path onto event_occurrences — call it when something needs to
+    # attach to a specific date (RSVP, comment, organizer override), never
+    # from a read/display path.
+    # @param date [Date] must be a date the recurrence rule actually produces
+    # @return [EventOccurrence]
+    def find_or_create_occurrence_for(date)
+      event_occurrences.find_or_create_by!(occurrence_date: date)
+    end
+
+    # Denormalized "when does this event next occur" scalar (see
+    # next_occurrence_at column), kept fresh here plus by
+    # EventNextOccurrenceRefreshScanJob for the passage of time itself.
+    # RecurringSchedulable#next_occurrence returns nil for non-recurring
+    # events (it doesn't fall back to starts_at) — branch explicitly rather
+    # than bare-delegating.
+    #
+    # Reloads the recurrence association first if it's already been loaded:
+    # a Recurrence is very often attached in a separate step after the Event
+    # itself is created/saved (a bare Recurrence.create!(schedulable: event),
+    # not through event.build_recurrence — this is the common factory/service
+    # pattern throughout the app), so an already-cached "no recurrence" read
+    # from an earlier call on this same in-memory Event would otherwise never
+    # see the recurrence that now exists.
+    def refresh_next_occurrence_at!
+      association(:recurrence).reload if association(:recurrence).loaded?
+
+      # .to_time: IceCube's Schedule#next_occurrence returns an
+      # IceCube::Occurrence — a SimpleDelegator around Time that spoofs
+      # class.name == "Time"/is_a?(Time) for compatibility, but isn't a
+      # literal ::Time instance. Every other caller of Recurrence#next_occurrence
+      # only ever calls further Time-ish methods on the result (harmless), but
+      # the Postgres adapter's strict type-check rejects it outright when
+      # persisting via update_column — coerce to a real Time here, the one
+      # place this value gets written to the database.
+      new_value = recurring? ? next_occurrence(after: Time.current)&.starts_at&.to_time : starts_at
+      return if next_occurrence_at == new_value
+
+      update_column(:next_occurrence_at, new_value) # rubocop:disable Rails/SkipsModelValidations
+    end
 
     # Get the host community for calendar functionality
     def host_community
@@ -335,22 +394,19 @@ module BetterTogether
     delegate :display_name, to: :location, prefix: true, allow_nil: true
     delegate :geocoding_string, to: :location, prefix: true, allow_nil: true
 
+    # Overrides Geospatial::One's default `geocoding_string` (which falls back to
+    # `to_s`, i.e. the event's name) so the shared geocoded_by/schedule_geocoding
+    # hooks geocode the event's actual structured location, not its title text.
+    def geocoding_string
+      location_geocoding_string
+    end
+
     # Public URL to this event for use in ICS export
     def url
       BetterTogether::Engine.routes.url_helpers.event_url(self, locale: I18n.locale)
     end
 
     private
-
-    def assign_current_platform_if_available
-      return unless has_attribute?(:platform_id)
-      return if platform_id.present?
-
-      resolved = Current.platform ||
-                 BetterTogether::Platform.find_by(host: true) ||
-                 BetterTogether::Platform.first
-      self.platform = resolved if resolved
-    end
 
     # Set default duration if not set and start time is present
     def set_default_duration
@@ -449,7 +505,7 @@ module BetterTogether
 
     # Check if we should schedule reminders after save (for updates)
     def should_schedule_reminders_after_save?
-      !new_record? && requires_reminder_scheduling?
+      saved_change_to_temporal_fields? && requires_reminder_scheduling?
     end
 
     # Check if we should schedule reminders after commit (for creates with attendees)
@@ -462,6 +518,23 @@ module BetterTogether
       return if ends_at > starts_at
 
       errors.add(:ends_at, I18n.t('errors.models.ends_at_before_starts_at'))
+    end
+
+    def validate_recurrence_end_condition_present
+      case end_condition_error
+      when :ends_on_blank
+        errors.add(:base, 'Recurrence end date must be set when "On date" is selected as the end type')
+      when :count_blank
+        errors.add(:base, 'Recurrence occurrence count must be set when "After occurrences" is selected as the end type')
+      when :ends_on_invalid
+        errors.add(:base, 'Recurrence end date is not a valid date')
+      end
+    end
+
+    def validate_recurrence_exception_dates_present
+      return unless exception_dates_error
+
+      errors.add(:base, 'One or more recurrence exception dates could not be understood')
     end
   end
   # rubocop:enable Metrics/ClassLength

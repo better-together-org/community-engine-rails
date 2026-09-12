@@ -47,6 +47,25 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
       end
     end
 
+    context 'platform isolation' do
+      it 'excludes an otherwise-matching offer on a different platform' do
+        other_platform = create(:better_together_platform)
+        request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open'))
+        offer = with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open',
+                                                                   platform: other_platform))
+
+        expect(described_class.match(request)).not_to include(offer)
+      end
+
+      it 'still matches an offer on the same platform as the request' do
+        request = with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open'))
+        offer = with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open',
+                                                                   platform: request.platform))
+
+        expect(described_class.match(request)).to include(offer)
+      end
+    end
+
     context 'target wildcard behavior' do
       let(:target_person) { create(:better_together_person) }
 

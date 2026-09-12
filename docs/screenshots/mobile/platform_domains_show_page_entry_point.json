@@ -1,0 +1,48 @@
+{
+  "name": "platform_domains_show_page_entry_point",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community",
+  "title": "Test Host Community | Platforms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_domains",
+  "flow": "platform_show_operations",
+  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "a[href='/en/host/platforms/test-host-community/platform_domains']",
+      "title": "Domains",
+      "bullets": [
+        "New entry point added alongside Manage storage / Feature access grants / Robots."
+      ],
+      "target": {
+        "x": 321.53125,
+        "y": 1167.953125,
+        "width": 79.625,
+        "height": 31.0,
+        "right": 401.15625,
+        "bottom": 1198.953125,
+        "center_x": 361.34375,
+        "center_y": 1183.453125
+      },
+      "avoid": {
+        "x": 321.53125,
+        "y": 1167.953125,
+        "width": 79.625,
+        "height": 31.0,
+        "right": 401.15625,
+        "bottom": 1198.953125,
+        "center_x": 361.34375,
+        "center_y": 1183.453125
+      },
+      "placement": {
+        "side": "above",
+        "x": 206.0,
+        "y": 937.95,
+        "width": 270.0,
+        "height": 210,
+        "score": 1167.953125
+      }
+    }
+  ]
+}

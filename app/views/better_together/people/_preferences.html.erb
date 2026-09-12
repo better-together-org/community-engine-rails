@@ -43,6 +43,11 @@
       <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :show_conversation_details} %>
       <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.show_conversation_details') %></small>
     </div>
+
+    <div class="mb-3">
+      <%= render partial: 'better_together/shared/fields/toggle_switch', locals: {form:, attr: :notify_on_comments} %>
+      <small class="form-text text-muted ms-4"><%= t('helpers.hint.person.notify_on_comments') %></small>
+    </div>
   </div>
 
   <!-- Messaging and Federation Preferences -->

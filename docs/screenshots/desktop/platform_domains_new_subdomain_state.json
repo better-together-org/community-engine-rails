@@ -1,0 +1,154 @@
+{
+  "name": "platform_domains_new_subdomain_state",
+  "device": "desktop",
+  "url": "/en/host/platforms/terrence_ankunding/platform_domains/new",
+  "title": "New Domain | Halvorson-Bosco",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_domains",
+  "flow": "platform_domains_new",
+  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_domain_kind_subdomain",
+      "title": "Use a subdomain of the host domain",
+      "bullets": [
+        "Selected by default — the common case for BTS-provisioned tenant platforms."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 220.0,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 88.0,
+        "bottom": 236.0,
+        "center_x": 80.0,
+        "center_y": 228.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 220.0,
+        "width": 16.0,
+        "height": 16.0,
+        "right": 88.0,
+        "bottom": 236.0,
+        "center_x": 80.0,
+        "center_y": 228.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 108.0,
+        "y": 120.0,
+        "width": 380,
+        "height": 216,
+        "score": 1352.0
+      }
+    },
+    {
+      "selector": "#platform-domain-subdomain-fields",
+      "title": "Subdomain label + live preview",
+      "bullets": [
+        "Enter just the label (e.g. \"tenant-a\") — the host domain suffix is appended automatically.",
+        "Updates the real Hostname field below as you type."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 282.0,
+        "width": 1296.0,
+        "height": 95.0,
+        "right": 1368.0,
+        "bottom": 377.0,
+        "center_x": 720.0,
+        "center_y": 329.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 282.0,
+        "width": 1296.0,
+        "height": 95.0,
+        "right": 1368.0,
+        "bottom": 377.0,
+        "center_x": 720.0,
+        "center_y": 329.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 397.0,
+        "width": 380,
+        "height": 268,
+        "score": 1084.0
+      }
+    },
+    {
+      "selector": "#platform_domain_hostname",
+      "title": "Hostname (submitted value)",
+      "bullets": [
+        "The actual value that gets saved — both picker paths write to this one field."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 425.0,
+        "width": 1296.0,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 463.0,
+        "center_x": 720.0,
+        "center_y": 444.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 425.0,
+        "width": 1296.0,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 463.0,
+        "center_x": 720.0,
+        "center_y": 444.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 1036,
+        "y": 24,
+        "width": 380,
+        "height": 190,
+        "score": 0
+      }
+    },
+    {
+      "selector": "#platform-domain-submit-btn",
+      "title": "Create Domain",
+      "bullets": [
+        "Saves the domain, validating uniqueness and primary/share-domain exclusivity."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 608.0,
+        "width": 218.90625,
+        "height": 38.0,
+        "right": 290.90625,
+        "bottom": 646.0,
+        "center_x": 181.453125,
+        "center_y": 627.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 608.0,
+        "width": 218.90625,
+        "height": 38.0,
+        "right": 290.90625,
+        "bottom": 646.0,
+        "center_x": 181.453125,
+        "center_y": 627.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 666.0,
+        "width": 380,
+        "height": 184,
+        "score": 815.0
+      }
+    }
+  ]
+}

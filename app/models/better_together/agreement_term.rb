@@ -2,7 +2,7 @@
 
 module BetterTogether
   # The terms of an agreement between participants
-  class AgreementTerm < ApplicationRecord
+  class AgreementTerm < PlatformRecord
     include Identifier
     include Positioned
     include Protected

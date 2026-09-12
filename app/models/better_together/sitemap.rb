@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'digest/md5'
+
 module BetterTogether
   # Stores the generated sitemap in Active Storage for serving via S3
   class Sitemap < ApplicationRecord
@@ -24,6 +26,23 @@ module BetterTogether
     # Available locale values (includes special 'index' locale)
     def self.available_locales(_record = nil)
       I18n.available_locales.map(&:to_s) + ['index']
+    end
+
+    def attach_file_if_changed?(io:, filename:, content_type:)
+      checksum = checksum_for(io)
+      return false if file.attached? && file.blob.checksum == checksum
+
+      reload if persisted?
+      io.rewind
+      file.attach(io: io, filename: filename, content_type: content_type)
+      true
+    end
+
+    private
+
+    def checksum_for(io)
+      io.rewind
+      Digest::MD5.base64digest(io.read).tap { io.rewind }
     end
   end
 end

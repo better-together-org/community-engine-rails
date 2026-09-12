@@ -23,10 +23,7 @@ module BetterTogether
 
           authorize page, :show?
 
-          blocks = page.page_blocks
-                       .includes(:block)
-                       .order(:position)
-                       .map { |pb| serialize_page_block(pb) }
+          blocks = visible_page_blocks(page).map { |pb| serialize_page_block(pb) }
 
           result = JSON.generate({ page_id: page.id, page_slug: page.slug_en, blocks: })
           log_invocation('list_page_blocks', { page_id: }, result.bytesize)
@@ -37,6 +34,15 @@ module BetterTogether
       end
 
       private
+
+      # Only blocks the caller may see (Content::BlockPolicy#show?). The page-level
+      # authorize above already confirmed access to the page itself.
+      def visible_page_blocks(page)
+        page.page_blocks
+            .includes(:block)
+            .order(:position)
+            .select { |page_block| policy(page_block.block).show? }
+      end
 
       def find_page(page_id) # rubocop:todo Metrics/MethodLength
         scope = policy_scope(BetterTogether::Page)

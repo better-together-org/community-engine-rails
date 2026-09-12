@@ -9,6 +9,8 @@ require 'rails_helper'
 #   POST /api/v1/messages — e2e_encrypted: true stores fields, message.e2e? is true
 
 RSpec.describe 'BetterTogether::Api::V1::Conversations E2E', :no_auth do
+  before { allow(BetterTogether).to receive(:e2ee_messaging_enabled?).and_return(true) }
+
   let(:user)         { create(:better_together_user, :confirmed) }
   let(:person)       { user.person }
   let(:other_user)   { create(:better_together_user, :confirmed) }

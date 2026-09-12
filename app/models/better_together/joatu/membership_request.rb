@@ -137,12 +137,13 @@ module BetterTogether
       end
 
       def create_community_membership!
-        target.person_community_memberships.find_or_create_by!(
+        membership = target.person_community_memberships.find_or_initialize_by(
           member: creator,
           role: default_community_role
-        ) do |membership|
-          membership.status = 'active'
-        end
+        )
+
+        membership.status = 'active' if membership.new_record? || membership.status == 'pending'
+        membership.save! if membership.new_record? || membership.changed?
       end
 
       def notify_reviewers_of_submission

@@ -1,14 +1,20 @@
 # Federation Privacy and Consent
 
-**Target Audience:** Platform organizers and network administrators  
-**Document Type:** Operational privacy guide  
-**Last Updated:** March 30, 2026
+**Target Audience:** Platform organizers, network administrators, and members
+**Document Type:** Operational privacy guide
+**Last Updated:** July 19, 2026
 
 ## Overview
 
 Federation lets one Community Engine platform establish a directed `PlatformConnection` with another platform for mirrored content and machine-to-machine application programming interface (API) access.
 
-This guide explains the current privacy and consent model as it exists in code today. It also documents the current safety boundary: federation controls are primarily platform-operator controls right now, not fully member-driven consent controls.
+This guide explains the current privacy and consent model as it exists in code today. Federation
+consent now has three layers: platform-operator controls (this document's original focus),
+a member's own global federation preference, and — as of the per-item consent work
+(`docs/plans/federation-item-consent.md`) — a per-item override any member can set on their own
+content. Identity/attribution consent (whether a person's *name*, not just their content,
+federates) is tracked separately in `docs/plans/federation-consent-identity.md` and is not yet
+complete.
 
 ## Current Reality
 
@@ -57,24 +63,47 @@ If federation authentication is enabled and the relevant scopes are allowed, a c
 
 The granted scopes are determined by the active directed connection and the connection's settings. Tokens are not general-purpose user tokens; they are connection-bound machine credentials.
 
-## Privacy and Consent Limits Today
+## Privacy and Consent Layers Today
 
-The most important limitation is this:
+Three independent layers now compose to decide whether a specific piece of content actually
+leaves a platform:
 
-**The current shipping federation model is still operator-configured, not person-consent-complete.**
+1. **Connection-level** (organizer-configured): per-connection, per-content-type toggles
+   (`share_posts`, `share_pages`, `share_events`) plus the scope toggles described above. A
+   content type must be enabled on the connection before anything of that type can be exported
+   to it at all.
+2. **Person-level** (`federate_content`, a member-facing preference under Settings → Privacy &
+   Federation, default off): a global switch for that member's own content. When off, none of a
+   member's public content is federated to any connection, regardless of the connection's
+   settings.
+3. **Item-level** (`federation_visibility` on individual posts, pages, and events — see
+   `docs/plans/federation-item-consent.md`): a per-item override next to that item's privacy
+   control, with three states:
+   - **Use platform default** (the default) — follows the member's global `federate_content`
+     preference, exactly as before this feature shipped.
+   - **Always federate** — this specific item is eligible for export even if the member's global
+     preference is off.
+   - **Never federate** — this specific item is excluded even if the member's global preference
+     is on and the connection allows the content type. This always wins.
 
-In practical terms:
+Members can also see a summary of their own content's federation status — counts by
+`federation_visibility` state and their most recently affected items — at `/federation-hub`,
+reachable from the main navigation for any signed-in person, not just platform organizers.
 
-- a platform organizer can configure what types of content are shared
-- a platform organizer can configure what machine scopes are allowed
-- the current implementation does **not** yet provide a completed per-person consent gate for federation export
-- the current implementation does **not** yet provide a completed member-facing consent workflow for "my content may leave this platform"
-
-This means platform-level permission to federate is more mature than person-level consent to federate.
+**What is still not covered:** federation currently has no per-connection selection at the item
+level — a member cannot say "federate this item to Platform A but not Platform B" (see the
+"Explicitly deferred" section of `docs/plans/federation-item-consent.md`). Identity/attribution
+consent — whether a federated item carries the author's name and profile, versus arriving as an
+anonymous/system item — is tracked separately in `docs/plans/federation-consent-identity.md` and
+is not yet complete; do not assume author identity is protected just because content-level
+consent is now member-controlled.
 
 ## Operational Safety Rule
 
-Until the planned person-level federation consent architecture is shipped, production hosts should treat federation activation as a high-trust operator feature and fail closed.
+Content- and item-level consent are now member-controlled (see above), but identity/attribution
+consent is not yet complete (`docs/plans/federation-consent-identity.md`). Until that ships,
+production hosts should still treat federation activation as a high-trust operator feature and
+fail closed.
 
 Recommended rule:
 
@@ -158,6 +187,8 @@ Use the smallest role set possible for these permissions. Not every platform org
 
 - [Security and Privacy Management](security_privacy.md)
 - [Platform Administration Guide](platform_administration.md)
+- [Safety and Federation Review Workflow](../developers/systems/safety_and_federation_review_workflow.md)
 - [Privacy-First Principles](../shared/privacy_principles.md)
 - [Federation Consent Gate + Person Identity Plan](../plans/federation-consent-identity.md)
+- [Federation Item Consent (Tri-State) + Federation Hub Plan](../plans/federation-item-consent.md)
 - [Federated Seed and Sync Handoff](../implementation/multi_tenancy/federated_seed_and_sync_handoff_2026-03-12.md)
