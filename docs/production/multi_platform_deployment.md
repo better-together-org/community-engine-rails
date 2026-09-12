@@ -48,9 +48,43 @@ Every request to Community Engine follows this flow:
 
 ## Step-by-Step Setup
 
+### 0. Recommended path: `TenantPlatformProvisioningService` (rake task or console)
+
+The raw `Community.create!` + `Platform.create!` steps in sections 1–2 below still work — they show what happens under the hood — but the **recommended, idempotent, transactional** path for creating any platform (host or tenant) is `BetterTogether::TenantPlatformProvisioningService`, exposed as a rake task:
+
+```bash
+# Signature (current tip of release/0.11.0-notes as of 2026-07-17):
+#   rails better_together:provision_tenant[name,host_url,time_zone,admin_email,admin_password,admin_name]
+#   time_zone defaults to 'UTC' if omitted; admin_* args are optional as a group.
+
+bin/dc-run bin/rails "better_together:provision_tenant[Tenant A,https://tenant-a.btsdev.ca,America/St_Johns,steward@tenant-a.example.com,SecurePass1!,Tenant Steward]"
+```
+
+Or from the console (`bin/dc-console`, or `bin/dc-run-dummy rails console`):
+
+```ruby
+result = BetterTogether::TenantPlatformProvisioningService.call(
+  name: 'Tenant A',
+  host_url: 'https://tenant-a.btsdev.ca',
+  time_zone: 'America/St_Johns',
+  admin: { email: 'steward@tenant-a.example.com', password: 'SecurePass1!', name: 'Tenant Steward' }
+)
+result.success?      # => true
+result.platform      # => Platform
+result.community     # => primary Community, auto-created via PrimaryCommunity concern
+result.domain        # => primary PlatformDomain, auto-created via sync_primary_platform_domain! callback
+result.admin_user    # => User with a platform_steward + community_governance_council role, if `admin:` was given
+```
+
+Pass `host: true` only for the single host/default platform — the model enforces exactly one `host: true` row.
+
+**⚠️ Pending breaking change:** open PR [`better-together-org/community-engine-rails#1581`](https://github.com/better-together-org/community-engine-rails/pull/1581) (Stripe billing foundation, not yet merged as of 2026-07-17) renames the `admin:` keyword to `steward:`, adds a `privacy:` keyword (defaulting to `'private'` instead of the current hard-coded `'public'`), and changes the default `time_zone` to `'America/St_Johns'`. If that PR has merged by the time you read this, use `steward:`/`privacy:` and check `lib/tasks/better_together/provision_tenant.rake` for the updated rake-arg order before running the command above verbatim.
+
+**Also as of PR #1581 (once merged):** platforms can additionally be self-serve provisioned by a paying community through `CommunityBillingsController#provision_platform` (UI at `/c/:community_id/billing/provision_platform`), gated behind an active hosted billing plan (`HostedEntitlementResolver#active?`). That path calls the same service under the hood but only exposes `name`, `host_url`, `time_zone`, `privacy` on the form — no steward is set at provisioning time (added afterward) and no subdomain/custom-domain picker exists there either (see the domain-type note in section 3 below).
+
 ### 1. Create Host Platform (First Time Only)
 
-When you deploy Community Engine for the first time, create the host platform:
+When you deploy Community Engine for the first time, create the host platform — either via section 0 above with `host: true`, or manually:
 
 ```ruby
 # Via Rails console (bin/dc-run-dummy rails console)
@@ -78,7 +112,7 @@ The `host: true` flag marks this as the default platform. Only ONE platform can 
 
 ### 2. Add a New Platform
 
-To add a second platform (tenant), create it similarly but with `host: false`:
+To add a second platform (tenant), create it similarly but with `host: false` — or, preferably, use section 0 above:
 
 ```ruby
 tenant_community = Community.create!(
@@ -102,21 +136,35 @@ tenant_platform = Platform.create!(
 # PlatformDomain.find_by(platform: tenant_platform, primary_flag: true)
 ```
 
-### 3. Add Domain Aliases (Optional)
+### 3. Subdomains of the host domain vs. fully custom domains
 
-If a platform should be accessible via multiple hostnames (e.g., www and non-www versions):
+**There is no code-level distinction between a subdomain and a custom domain** — both are just a `hostname` string on a `PlatformDomain` row. What differs operationally is DNS delegation and TLS certificate strategy (see sections 4–5 below), not anything in the Rails app:
+
+- **Subdomain of the host's own domain** (e.g. `tenant-a.btsdev.ca` where `btsdev.ca` is a domain BTS already controls): typically the platform's `host_url` at creation time already produces the correct primary `PlatformDomain` — no extra step needed. DNS is a single wildcard `A`/`CNAME` record (`*.btsdev.ca`) and one wildcard TLS cert covers every tenant subdomain.
+- **Fully custom domain** (e.g. a client's own `app.clientdomain.example`, which they control DNS for): attach it as an **additional** `PlatformDomain` on the existing platform — either as the platform's primary domain (if you want the custom domain to be canonical) or as a non-primary alias. DNS is a client-controlled `CNAME`/`A` record pointed at your edge (HAProxy), and it needs its own TLS certificate (SNI-selected — see section 5) since it's outside any wildcard you control.
 
 ```ruby
-# Add an alias domain pointing to the same platform
+# Add a custom domain to an existing tenant platform (does not change the primary/canonical domain):
 PlatformDomain.create!(
   platform: tenant_platform,
-  hostname: 'alias.example.com',
-  primary_flag: false,  # This is an alias, not primary
+  hostname: 'app.clientdomain.example',
+  primary_flag: false,   # not canonical — the original host_url subdomain stays primary
+  share_domain: false,
+  active: true
+)
+
+# Or add a same-host alias domain (e.g. www vs non-www of the same subdomain):
+PlatformDomain.create!(
+  platform: tenant_platform,
+  hostname: 'www.tenant-a.example.com',
+  primary_flag: false,
   active: true
 )
 ```
 
-The `primary_flag: true` domain is used in canonical links; aliases route to the same platform but links point back to the primary.
+The `primary_flag: true` domain is used in canonical links; aliases and custom domains route to the same platform but links point back to the primary. `share_domain` independently controls which domain is used for share URLs (defaults to the first domain created for a platform) — it and `primary_flag` are each single-record-per-platform, enforced by the model, not just convention.
+
+**Gap:** there is no in-app UI to attach or manage additional `PlatformDomain` records (console/rake only) — see the release-readiness assessment and implementation plan for this.
 
 ### 4. Configure HAProxy or Reverse Proxy
 
@@ -462,6 +510,31 @@ BetterTogether::Metrics::PageView.where(platform_id: tenant_a_platform.id).count
 BetterTogether::Page.for_platform(tenant_a_platform).count
 BetterTogether::PersonPlatformMembership.where(joinable: tenant_a_platform).count  # members
 ```
+
+---
+
+## Validated Provisioning Walkthrough (tested 2026-07-17)
+
+The flow below was actually executed against `release/0.11.0-notes` (commit `bb4158f23`) in a disposable worktree test database — not just read from source — via:
+
+```bash
+CE_SKIP_TEST_DB_PREP=1 bin/dc-run bash -c \
+  "cd spec/dummy && RAILS_ENV=test bundle exec rails runner ../../tmp/validate_platform_domain_flow.rb"
+```
+
+Steps and observed results:
+
+1. **Provision the host platform** via `TenantPlatformProvisioningService.call(name:, host_url: 'https://host.btsdev.ca', time_zone: 'UTC', host: true)` → succeeded, `host?` true.
+2. **Provision a tenant platform on a subdomain of the host domain** via the same service with `host_url: 'https://demo-tenant.btsdev.ca'` and an `admin:` steward → succeeded; `primary_platform_domain.hostname` was auto-set to `demo-tenant.btsdev.ca` and the steward user/role were created, confirming section 0/1 above.
+3. **Attach a fully custom domain to that same tenant** via `PlatformDomain.create!(platform:, hostname: 'app.customclientdomain.example', active: true, share_domain: false)` → succeeded, non-primary as expected.
+4. **Provision a second, unrelated tenant platform** (`https://other-tenant.btsdev.ca`) for an isolation control.
+5. **Resolved all three hostnames** via `PlatformDomain.resolve(hostname)` — the exact lookup `PlatformContextMiddleware` performs on every request:
+   - `demo-tenant.btsdev.ca` → tenant platform ✅
+   - `app.customclientdomain.example` → **same** tenant platform ✅ (confirms subdomain and custom domain both route correctly to one platform)
+   - `other-tenant.btsdev.ca` → the other, unrelated platform ✅ (confirms no cross-resolution)
+6. **Data isolation control:** created a `Page` on each of the two tenant platforms and queried `Page.for_platform(platform)` for each — each scope returned only its own platform's page, confirming `PlatformScoped`/`for_platform` isolation holds across two independently-provisioned tenants.
+
+All six steps passed with no manual intervention. This exercises the same code paths as sections 0, 2, and 3 above and the resolution flow documented in "Architecture Quick Reference."
 
 ---
 
