@@ -70,7 +70,7 @@ PATH
       rgeo-geojson
       rswag (>= 2.3.1, < 2.18.0)
       ruby-vips (~> 2.2)
-      ruby_llm
+      ruby_llm (= 2.0.0.rc4)
       sidekiq-scheduler
       simple_calendar
       sitemap_generator
@@ -821,17 +821,17 @@ GEM
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
-    ruby_llm (1.16.0)
+    ruby_llm (2.0.0.rc4)
       base64
       event_stream_parser (~> 1)
       faraday (>= 1.10.0)
       faraday-multipart (>= 1)
       faraday-net_http (>= 1)
       faraday-retry (>= 1)
-      marcel (~> 1)
-      ruby_llm-schema (~> 0)
+      json (< 3)
+      marcel (>= 1.0, < 3)
+      schematist (~> 1.1)
       zeitwerk (~> 2)
-    ruby_llm-schema (0.4.0)
     rubyzip (3.6.0)
     rufus-scheduler (3.9.2)
       fugit (~> 1.1, >= 1.11.1)
@@ -848,6 +848,7 @@ GEM
     sawyer (0.9.3)
       addressable (>= 2.3.5)
       faraday (>= 0.17.3, < 3)
+    schematist (1.1.0)
     securerandom (0.4.1)
     selenium-webdriver (4.44.0)
       base64 (~> 0.2)
