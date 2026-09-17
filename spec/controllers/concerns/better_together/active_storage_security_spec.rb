@@ -166,6 +166,118 @@ module BetterTogether
           expect(controller.send(:publicly_accessible?, community_block)).to be false
         end
       end
+
+      context 'when the record is a Sitemap' do
+        # belongs_to :platform enforces a real Platform instance, so a
+        # build_stubbed record (unpersisted but type-correct) is stubbed rather
+        # than doubled.
+        let(:platform) { build_stubbed(:better_together_platform) }
+        let(:sitemap) { BetterTogether::Sitemap.new(platform: platform, locale: 'en') }
+
+        context 'when the platform is locally-hosted and public' do
+          before do
+            allow(platform).to receive_messages(local_hosted?: true, privacy_public?: true)
+          end
+
+          it 'returns true' do
+            expect(controller.send(:publicly_accessible?, sitemap)).to be true
+          end
+        end
+
+        context 'when the platform is locally-hosted but not public' do
+          before do
+            allow(platform).to receive_messages(local_hosted?: true, privacy_public?: false)
+          end
+
+          it 'returns false' do
+            expect(controller.send(:publicly_accessible?, sitemap)).to be false
+          end
+        end
+
+        context 'when the platform is not locally-hosted' do
+          before do
+            allow(platform).to receive_messages(local_hosted?: false, privacy_public?: true)
+          end
+
+          it 'returns false' do
+            expect(controller.send(:publicly_accessible?, sitemap)).to be false
+          end
+        end
+      end
+
+      context 'when the record is a Settlement, Category, or other Privacy-including record' do
+        it 'returns true for a public settlement' do
+          settlement = instance_double(BetterTogether::Geography::Settlement, privacy_public?: true)
+          expect(controller.send(:publicly_accessible?, settlement)).to be true
+        end
+
+        it 'returns false for a private category' do
+          category = instance_double(BetterTogether::Category, privacy_public?: false)
+          expect(controller.send(:publicly_accessible?, category)).to be false
+        end
+      end
+    end
+
+    describe '#resolve_authorizable_record' do
+      include ActiveStorageSecuritySpecHelpers
+
+      context 'when the record is not an ActionText::RichText' do
+        it 'returns the record unchanged' do
+          record = instance_double(BetterTogether::Upload)
+          expect(controller.send(:resolve_authorizable_record, record)).to eq(record)
+        end
+
+        it 'passes nil through unchanged' do
+          expect(controller.send(:resolve_authorizable_record, nil)).to be_nil
+        end
+      end
+
+      context 'when the record is an ActionText::RichText embedded in a plain Privacy-including field' do
+        it "resolves to the rich text's owning record (e.g. Page#content)" do
+          page = create(:better_together_page, privacy: 'public', published_at: 1.day.ago)
+          rich_text = ActionText::RichText.new(record: page, name: 'content', body: '<img src="x">')
+
+          resolved = controller.send(:resolve_authorizable_record, rich_text)
+
+          expect(resolved).to eq(page)
+          expect(controller.send(:publicly_accessible?, resolved)).to be true
+        end
+      end
+
+      context 'when the record is an ActionText::RichText embedded in a Content::Block field' do
+        let(:published_public_page) { create(:better_together_page, privacy: 'public', published_at: 1.day.ago) }
+
+        it 'resolves to the block so BlockPolicy#show? governs it, not a bare privacy check' do
+          public_block = block_on(published_public_page, 'public')
+          rich_text = ActionText::RichText.new(record: public_block, name: 'content', body: '<img src="x">')
+
+          resolved = controller.send(:resolve_authorizable_record, rich_text)
+
+          expect(resolved).to eq(public_block)
+          expect(controller.send(:publicly_accessible?, resolved)).to be true
+        end
+      end
+
+      context 'when the ActionText::RichText is orphaned (its owning record was deleted)' do
+        it 'resolves to nil rather than raising' do
+          rich_text = ActionText::RichText.new(record: nil, name: 'content', body: '<img src="x">')
+
+          resolved = controller.send(:resolve_authorizable_record, rich_text)
+
+          expect(resolved).to be_nil
+          expect(controller.send(:publicly_accessible?, resolved)).to be false
+        end
+      end
+
+      context 'when resolving the record raises' do
+        it 'returns nil rather than propagating the error' do
+          record = instance_double(ActionText::RichText)
+          allow(record).to receive(:is_a?).with(ActionText::RichText).and_return(true)
+          allow(record).to receive(:record).and_raise(StandardError, 'db unavailable')
+
+          expect(controller.send(:resolve_authorizable_record, record)).to be_nil
+        end
+      end
     end
 
     describe '#enforce_download_policy!' do

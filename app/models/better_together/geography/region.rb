@@ -8,6 +8,7 @@ module BetterTogether
       geocodes_self
       include Identifier
       include Placeable
+      include Privacy
       include Protected
       include PrimaryCommunity
 
