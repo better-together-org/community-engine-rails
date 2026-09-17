@@ -39,11 +39,24 @@ module BetterTogether
 
       create_community(
         name:,
-        description: (respond_to?(:description) ? description : "#{name}'s primary community"),
+        description: primary_community_description,
         creator_id: (respond_to?(:creator_id) ? creator_id : nil),
         privacy: primary_community_privacy,
         **primary_community_extra_attrs
       )
+    end
+
+    # The auto-created primary community's description is a plain-text summary,
+    # not a copy of the host record's own rich formatting -- passing an
+    # ActionText::Content (or similar rich value) straight through as a
+    # description: kwarg on create_community doesn't coerce through Community's
+    # own action_text setter the way plain-string assignment does, and stores
+    # the wrong shape (the underlying rich-text-translation row itself).
+    def primary_community_description
+      return "#{name}'s primary community" unless respond_to?(:description)
+
+      value = description
+      value.respond_to?(:to_plain_text) ? value.to_plain_text : value
     end
 
     # A Platform's own primary Community — and that Community's ContactDetail,

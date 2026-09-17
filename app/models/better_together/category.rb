@@ -6,6 +6,7 @@ module BetterTogether
     include Identifier
     include Metrics::Viewable
     include Positioned
+    include Privacy
     include Protected
     include Translatable
 

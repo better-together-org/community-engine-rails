@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -297,8 +297,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
     t.string "type", default: "BetterTogether::Category", null: false
     t.string "icon", default: "fas fa-icons", null: false
     t.uuid "platform_id"
+    t.string "privacy", limit: 50, default: "public", null: false
     t.index ["identifier", "type", "platform_id"], name: "idx_bt_categories_on_identifier_type_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_categories_on_platform_id"
+    t.index ["privacy"], name: "by_better_together_categories_privacy"
   end
 
   create_table "better_together_categorizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -757,8 +759,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
     t.string "identifier", limit: 100, null: false
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
+    t.string "privacy", limit: 50, default: "public", null: false
     t.index ["community_id"], name: "by_geography_continent_community"
     t.index ["identifier"], name: "index_better_together_geography_continents_on_identifier", unique: true
+    t.index ["privacy"], name: "by_better_together_geography_continents_privacy"
   end
 
   create_table "better_together_geography_countries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -769,9 +773,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
     t.string "iso_code", limit: 2, null: false
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
+    t.string "privacy", limit: 50, default: "public", null: false
     t.index ["community_id"], name: "by_geography_country_community"
     t.index ["identifier"], name: "index_better_together_geography_countries_on_identifier", unique: true
     t.index ["iso_code"], name: "index_better_together_geography_countries_on_iso_code", unique: true
+    t.index ["privacy"], name: "by_better_together_geography_countries_privacy"
   end
 
   create_table "better_together_geography_country_continents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -865,9 +871,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
     t.uuid "country_id"
     t.uuid "state_id"
     t.string "type", default: "BetterTogether::Geography::Region", null: false
+    t.string "privacy", limit: 50, default: "public", null: false
     t.index ["community_id"], name: "by_geography_region_community"
     t.index ["country_id"], name: "index_better_together_geography_regions_on_country_id"
     t.index ["identifier"], name: "index_better_together_geography_regions_on_identifier", unique: true
+    t.index ["privacy"], name: "by_better_together_geography_regions_privacy"
     t.index ["state_id"], name: "index_better_together_geography_regions_on_state_id"
   end
 
@@ -880,9 +888,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
     t.uuid "community_id", null: false
     t.uuid "country_id"
     t.uuid "state_id"
+    t.string "privacy", limit: 50, default: "public", null: false
     t.index ["community_id"], name: "by_geography_settlement_community"
     t.index ["country_id"], name: "index_better_together_geography_settlements_on_country_id"
     t.index ["identifier"], name: "index_better_together_geography_settlements_on_identifier", unique: true
+    t.index ["privacy"], name: "by_better_together_geography_settlements_privacy"
     t.index ["state_id"], name: "index_better_together_geography_settlements_on_state_id"
   end
 
@@ -912,10 +922,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_03_151133) do
     t.boolean "protected", default: false, null: false
     t.uuid "community_id", null: false
     t.uuid "country_id"
+    t.string "privacy", limit: 50, default: "public", null: false
     t.index ["community_id"], name: "by_geography_state_community"
     t.index ["country_id"], name: "index_better_together_geography_states_on_country_id"
     t.index ["identifier"], name: "index_better_together_geography_states_on_identifier", unique: true
     t.index ["iso_code"], name: "index_better_together_geography_states_on_iso_code", unique: true
+    t.index ["privacy"], name: "by_better_together_geography_states_privacy"
   end
 
   create_table "better_together_identifications", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
