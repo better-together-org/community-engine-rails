@@ -28,6 +28,7 @@ erDiagram
     creator_id uuid
     platform_id uuid
     title string
+    sender_key_version integer
   }
 
   CONVERSATION_PARTICIPANTS {
@@ -40,7 +41,10 @@ erDiagram
     conversation_id uuid
     platform_id uuid
     sender_id uuid
+    e2e_protocol string
     content text
+    e2e_encrypted boolean
+    e2e_version integer
   }
 
   REPORTS {

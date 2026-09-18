@@ -33,8 +33,8 @@ classDiagram
       <<Model>>
       table: better_together_events
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, Categorizable, Creatable +23
-      weak refs: owner: seeds, owner: federation_content_grants, owner: slugs, owner: geospatial_space +16
+      concerns: Attachments::Images, BetterTogetherId, Categorizable, Creatable +21
+      weak refs: owner: seeds, owner: federation_content_grants, owner: slugs, owner: geospatial_space +15
     }
     class BetterTogether__EventAttendance["EventAttendance"] {
       <<Model>>
@@ -84,7 +84,6 @@ classDiagram
   BetterTogether__EventAttendance --> BetterTogether__Platform : platform
   BetterTogether__EventAttendance --> BetterTogether__Event : event
   BetterTogether__EventAttendance --> BetterTogether__Person : person
-  BetterTogether__EventAttendance --> BetterTogether__EventOccurrence : event_occurrence
   BetterTogether__EventCategory --> BetterTogether__Platform : platform
   BetterTogether__EventHost --> BetterTogether__Platform : platform
   BetterTogether__EventHost --> BetterTogether__Event : event

@@ -23,8 +23,11 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Federation idempotent mirror lookup + identifier conflict namespacing (#1405)
 - Federation member export consent controls for cross-platform sharing preferences (#1465)
 
-#### Removed
-- Signal Protocol E2E encrypted-messaging beta (prekey exchange, Double Ratchet, sender-key group rotation, passphrase key backup) pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings). Preserved intact on `feature/e2e-signal-protocol-messaging-01100notes` for future rework.
+#### End-to-End Encrypted Conversations
+- Signal Protocol E2E encryption beta for conversations: `EncryptedConversation` model, key exchange, sealed-sender delivery (#1357)
+- Disabled by default behind `BETTER_TOGETHER_E2EE_MESSAGING_ENABLED`; the E2EE bootstrap and send-form behaviors are mounted from conversation surfaces rather than the main application layout
+- Activation guidance for `0.11.0`: limit enablement to opted-in deployments and intended conversation surfaces while V9/V10 bundle follow-ups remain open in the security model
+- Encryption state stored per conversation; plaintext fallback remains available for legacy or not-yet-ready conversations
 
 #### CMS Block System
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)

@@ -2,7 +2,6 @@
 erDiagram
   EXT_PLATFORM o|--o{ ADDRESSES : "platform / platform_id"
   EXT_CONTACT_DETAIL o|--o{ ADDRESSES : "contact_detail / contact_detail_id"
-  EXT_PLATFORM o|--o{ MAPS : "platform / platform_id"
   EXT_PERSON o|--o{ MAPS : "creator / creator_id"
   EXT_COMMUNITY ||--o{ CONTINENTS : "community / community_id"
   EXT_COMMUNITY ||--o{ COUNTRIES : "community / community_id"
@@ -42,7 +41,6 @@ erDiagram
   MAPS {
     creator_id uuid
     mappable_id uuid
-    platform_id uuid
     identifier string
     locale string
     mappable_type string
@@ -50,6 +48,7 @@ erDiagram
     type string
     protected boolean
     zoom integer
+    metadata jsonb
   }
 
   CONTINENTS {
@@ -85,8 +84,6 @@ erDiagram
     locatable_type string
     location_type string
     name string
-    resolution_method string
-    resolved_at datetime
   }
 
   REGIONS {
@@ -117,7 +114,6 @@ erDiagram
     identifier string
     metadata jsonb
     properties jsonb
-    boundary geography
     elevation float
     latitude float
     longitude float

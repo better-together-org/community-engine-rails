@@ -28,6 +28,9 @@ erDiagram
   EXT_ADDRESS o|--o{ JOATU_OFFERS : "address / address_id"
   EXT_PLATFORM o|--o{ JOATU_RESPONSE_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ JOATU_RESPONSE_LINKS : "creator / creator_id"
+  EXT_PLATFORM o|--o{ JOATU_SETTLEMENTS : "platform / platform_id"
+  JOATU_AGREEMENTS ||--o{ JOATU_SETTLEMENTS : "agreement / agreement_id"
+  EXT_C3_TOKEN o|--o{ JOATU_SETTLEMENTS : "c3_token / c3_token_id"
   EXT_PERSON o|--o{ SEEDS : "creator / creator_id"
   EXT_PERSON o|--o{ SEED_PLANTINGS : "creator / creator_id"
   SEEDS o|--o{ SEED_PLANTINGS : "seed / seed_id"
@@ -130,12 +133,12 @@ erDiagram
     creator_id uuid
     platform_id uuid
     target_id uuid
+    c3_budget_currency string
     privacy string
     referral_source string
     requestor_email string
     requestor_name string
     status string
-    target_type string
   }
 
   JOATU_OFFERS {
@@ -143,10 +146,12 @@ erDiagram
     creator_id uuid
     platform_id uuid
     target_id uuid
+    c3_price_currency string
     privacy string
     status string
     target_type string
     urgency string
+    c3_price_millitokens integer
   }
 
   JOATU_RESPONSE_LINKS {
@@ -156,6 +161,19 @@ erDiagram
     source_id uuid
     response_type string
     source_type string
+  }
+
+  JOATU_SETTLEMENTS {
+    agreement_id uuid
+    c3_token_id uuid
+    payer_id uuid
+    platform_id uuid
+    recipient_id uuid
+    lock_ref string
+    payer_type string
+    recipient_type string
+    status string
+    c3_millitokens integer
   }
 
   SEEDS {
@@ -189,6 +207,10 @@ erDiagram
   }
 
   EXT_PERSON {
+    string export_ref
+  }
+
+  EXT_C3_TOKEN {
     string export_ref
   }
 
