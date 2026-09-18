@@ -1,8 +1,14 @@
 # Plan: Federation Consent Gate + Person Identity Architecture
 
-**Tracking issue:** better-together-org/community-engine-rails#1407
-**Target version:** v0.11.1 (blocks any PlatformConnection activation)
-**Status:** Consent/identity design complete; transport T1 implementation in progress
+**Tracking issue:** better-together-org/community-engine-rails#1407 (closed 2026-09-18,
+deliberately scoped/deferred to v0.11.1 — not abandoned)
+**Target version:** v0.11.1
+**Status:** Design complete (this document); not yet implemented. Content-level consent
+(`Person#federate_content`, default `false`) shipped in 0.11.0 and is the actual
+privacy-protecting gate today — federated content only ever leaves a platform with the
+author's explicit opt-in. What's still missing, targeted for v0.11.1, is *identity*
+consent: federated content currently arrives on the destination platform with no author
+attribution at all. See "Current Gap" below.
 
 ---
 
@@ -44,17 +50,29 @@ probing, or proxy routing.
 
 ---
 
-## Why No PlatformConnection May Be Activated Until v0.11.1
+## Current Gap: No Author Attribution On Federated Content
 
-The current `FederatedSeedAttributes` exports content with *no* author identity. On the
-destination, posts/pages/events arrive as authorless orphans:
+As of 0.11.0, `Person#federate_content` gates the export cursor — content only leaves a
+platform when its author has explicitly opted in (see `FederatedSeedAttributes`). That
+consent gate is real and shipped; the bullet that used to read "no consent — the author
+never agreed to their content leaving" is no longer accurate and has been removed from
+this section.
+
+What's still missing: even for opted-in content, `FederatedSeedAttributes` exports it
+with *no* author identity attached. On the destination, posts/pages/events arrive as
+authorless orphans:
 - No deletion path if the author deletes their account
 - No correction or update mechanism
-- No consent — the author never agreed to their content leaving
 - Violates ActivityPub's mandatory `attributedTo` requirement (industry consensus)
 
-This is a hard operational gate. Platform managers must not activate any connection until
-v0.11.1 is deployed.
+**Operational implication for 0.11.0:** a platform steward activating a `PlatformConnection`
+should understand that federated content will arrive without a byline until v0.11.1 ships
+this plan. `PlatformConnection` defaults to `pending` and requires explicit steward
+approval to activate (`PlatformConnectionsController#approve`) — no connection turns on
+automatically either way. Whether the missing-attribution state is acceptable for a given
+connection is an operator decision informed by this document, not a code-level
+restriction. Issue #1407 tracking this work is closed and deliberately scoped to v0.11.1;
+it is not an open blocker for the 0.11.0 release itself.
 
 ---
 
@@ -362,5 +380,5 @@ i18n keys: `better_together.federation.*` in en, fr, es, uk.
 | Name | Role |
 |------|------|
 | Rob Polowick | Product lead — privacy + identity design decisions |
-| Platform managers | Must not activate PlatformConnections until v0.11.1 deployed |
+| Platform managers | Should know federated content lacks author attribution until v0.11.1 ships this plan |
 | Community Engine users | People whose content and identity may be federated |

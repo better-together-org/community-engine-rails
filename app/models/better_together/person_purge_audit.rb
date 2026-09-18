@@ -23,6 +23,12 @@ module BetterTogether
                class_name: 'BetterTogether::Person',
                optional: true,
                inverse_of: :reviewed_person_purge_audits
+    # Deliberately not PlatformScoped: platform_id here is a permanent
+    # audit-trail snapshot, captured explicitly by the purge executor before
+    # the purged person's platform associations are nullified — it must never
+    # be silently reassigned to Current.platform on create/update the way
+    # PlatformScoped's auto-assignment would. Mirrors the reasoning on
+    # PersonLinkedSeed#source_platform.
     belongs_to :platform,
                class_name: 'BetterTogether::Platform',
                optional: true
