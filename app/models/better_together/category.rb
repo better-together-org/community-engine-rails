@@ -34,6 +34,19 @@ module BetterTogether
       ]
     end
 
+    # Category#privacy is only consumed by ActiveStorageSecurity's cover_image
+    # gate -- it isn't used anywhere to hide/show the category itself. Ceiling
+    # validation would otherwise cap it at the current platform's own privacy
+    # tier, which breaks CategoryBuilder's seed data: every fresh install's
+    # host platform is created with privacy: 'private' (see db/seeds.rb), so
+    # a freshly seeded Category (privacy defaults to 'public') would fail
+    # `better_together_categories`-`privacy` cannot be more open than the
+    # platform on every `db:seed`. Categories are shared structural taxonomy,
+    # not privacy-scoped content, so they don't need the ceiling at all.
+    def privacy_ceiling_exempt?
+      true
+    end
+
     # Distinct categories in use across a relation of categorizable records
     # (e.g. a policy-scoped Posts or Events relation), alphabetically sorted
     # by translated name. Centralizes the "in-use categories" sidebar query
