@@ -47,18 +47,6 @@ features:
     default_rollout: alpha
     owner_surface: ui
     category: automation
-  - key: profiling_enabled
-    name: Profiling
-    description: Enables rack-mini-profiler and performance profiling instrumentation. For development and authorised diagnostic use only; never enable on public production traffic.
-    default_rollout: alpha
-    owner_surface: both
-    category: debugging
-  - key: search_suggestions
-    name: Search Suggestions
-    description: Enables real-time search suggestion autocomplete UI. Disabled while the suggestion ranking model is under evaluation.
-    default_rollout: alpha
-    owner_surface: ui
-    category: search
   - key: message_requests
     name: Message Requests
     description: Allows members to send a message request with an explanatory note to people who have not granted them direct messaging permission. When accepted, opens a conversation and records an explicit messaging grant. Gated at alpha while the UX for the request inbox is stabilised.
