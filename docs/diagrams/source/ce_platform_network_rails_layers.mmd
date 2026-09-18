@@ -87,9 +87,9 @@ classDiagram
     class BetterTogether__Community["Community"] {
       <<Model>>
       table: better_together_communities
-      translates: description, description_html, name, slug
-      concerns: BetterTogetherId, Contactable, FriendlySlug, Geography::Mappable +20
-      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts +19
+      translates: description, name, slug
+      concerns: BetterTogetherId, Contactable, FriendlySlug, Geography::Mappable +21
+      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts +17
     }
     class BetterTogether__CommunityInvitation["CommunityInvitation"] {
       <<Model>>
@@ -122,7 +122,7 @@ classDiagram
       table: better_together_platforms
       translates: description, name, slug
       concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +18
-      weak refs: owner: seeds, owner: slugs, owner: views, owner: text_translations +3
+      weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +8
     }
     class BetterTogether__PlatformConnection["PlatformConnection"] {
       <<Model>>

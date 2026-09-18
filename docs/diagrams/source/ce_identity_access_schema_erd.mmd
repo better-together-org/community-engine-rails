@@ -143,16 +143,14 @@ erDiagram
   }
 
   PEOPLE {
-    registration_id integer
-    signed_prekey_id integer
     community_id uuid
     platform_id uuid
-    borgberry_did string
     identifier string
     privacy string
-    identity_key_public text
-    key_backup_blob text
-    key_backup_salt text
+    anonymized_at datetime
+    deleted_at datetime
+    notification_preferences jsonb
+    preferences jsonb
   }
 
   PERSON_ACCESS_GRANTS {

@@ -11,6 +11,7 @@ erDiagram
   EXT_PLATFORM o|--o{ EVENT_ATTENDANCES : "platform / platform_id"
   EVENTS ||--o{ EVENT_ATTENDANCES : "event / event_id"
   EXT_PERSON ||--o{ EVENT_ATTENDANCES : "person / person_id"
+  EXT_EVENT_OCCURRENCE o|--o{ EVENT_ATTENDANCES : "event_occurrence / event_occurrence_id"
   EXT_PLATFORM o|--o{ CATEGORIES : "platform / platform_id"
   EXT_PLATFORM o|--o{ EVENT_HOSTS : "platform / platform_id"
   EVENTS ||--o{ EVENT_HOSTS : "event / event_id"
@@ -55,6 +56,7 @@ erDiagram
 
   EVENT_ATTENDANCES {
     event_id uuid
+    event_occurrence_id uuid
     person_id uuid
     platform_id uuid
     status string
@@ -103,6 +105,10 @@ erDiagram
   }
 
   EXT_PERSON {
+    string export_ref
+  }
+
+  EXT_EVENT_OCCURRENCE {
     string export_ref
   }
 

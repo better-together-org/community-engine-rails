@@ -605,7 +605,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
     t.datetime "updated_at", null: false
     t.string "title", null: false
     t.uuid "creator_id", null: false
-    t.integer "sender_key_version", default: 0, null: false
     t.uuid "platform_id"
     t.index ["creator_id"], name: "index_better_together_conversations_on_creator_id"
     t.index ["platform_id"], name: "index_better_together_conversations_on_platform_id"
@@ -1226,12 +1225,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
     t.text "content"
     t.uuid "sender_id", null: false
     t.uuid "conversation_id", null: false
-    t.boolean "e2e_encrypted", default: false, null: false, comment: "True when message content is E2E encrypted by the client"
-    t.integer "e2e_version", comment: "E2E protocol version (1 = initial)"
-    t.string "e2e_protocol", comment: "Protocol identifier: signal_v1 (1:1) or sender_keys_v1 (group)"
     t.uuid "platform_id"
     t.index ["conversation_id"], name: "index_better_together_messages_on_conversation_id"
-    t.index ["e2e_encrypted"], name: "index_better_together_messages_on_e2e_encrypted"
     t.index ["platform_id"], name: "index_better_together_messages_on_platform_id"
     t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
   end
@@ -1513,19 +1508,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
     t.index ["uid"], name: "index_bt_oauth_apps_on_uid", unique: true
   end
 
-  create_table "better_together_one_time_prekeys", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "person_id"
-    t.integer "key_id", null: false, comment: "Signal prekey ID (scoped to person)"
-    t.text "public_key", null: false, comment: "Prekey public key (base64)"
-    t.boolean "consumed", default: false, null: false, comment: "True after this key has been served once"
-    t.index ["person_id", "consumed"], name: "idx_on_person_id_consumed_61c147a618"
-    t.index ["person_id", "key_id"], name: "index_better_together_one_time_prekeys_on_person_id_and_key_id", unique: true
-    t.index ["person_id"], name: "bt_one_time_prekeys_by_person"
-  end
-
   create_table "better_together_pages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -1567,14 +1549,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
     t.jsonb "preferences", default: {}, null: false
     t.string "privacy", limit: 50, default: "private", null: false
     t.jsonb "notification_preferences", default: {}, null: false
-    t.text "identity_key_public", comment: "Signal identity public key (base64)"
-    t.integer "signed_prekey_id", comment: "Current signed prekey ID"
-    t.text "signed_prekey_public", comment: "Signed prekey public key (base64)"
-    t.text "signed_prekey_sig", comment: "Signed prekey signature (base64)"
-    t.integer "registration_id", comment: "Signal registration ID"
-    t.text "key_backup_blob"
-    t.text "key_backup_salt"
-    t.datetime "key_backup_updated_at"
     t.datetime "deleted_at"
     t.datetime "anonymized_at"
     t.uuid "platform_id"
@@ -1582,7 +1556,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
     t.index ["identifier"], name: "index_better_together_people_on_identifier", unique: true
     t.index ["platform_id"], name: "index_better_together_people_on_platform_id"
     t.index ["privacy"], name: "by_better_together_people_privacy"
-    t.index ["registration_id"], name: "index_better_together_people_on_registration_id", unique: true, where: "(registration_id IS NOT NULL)"
   end
 
   create_table "better_together_person_access_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2673,7 +2646,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_17_190000) do
   add_foreign_key "better_together_oauth_access_tokens", "better_together_users", column: "resource_owner_id"
   add_foreign_key "better_together_oauth_applications", "better_together_people", column: "owner_id"
   add_foreign_key "better_together_oauth_applications", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_one_time_prekeys", "better_together_people", column: "person_id"
   add_foreign_key "better_together_pages", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
   add_foreign_key "better_together_pages", "better_together_people", column: "creator_id"
