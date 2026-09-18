@@ -29,12 +29,6 @@ features:
     default_rollout: stable
     owner_surface: both
     category: federation
-  - key: new_content_blocks
-    name: New Content Blocks (v0.11.0)
-    description: Enables all 13 new content block types in the page editor (Accordion, Alert, CallToAction, Checklist, Communities, Events, Iframe, Navigation, People, Posts, Quote, Statistics, Video).
-    default_rollout: alpha
-    owner_surface: ui
-    category: content
   - key: robot_api_access
     name: Robot API Access
     description: Allows authenticated API clients to query and invoke robot capabilities via the JSON API.

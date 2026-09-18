@@ -14,12 +14,6 @@ module BetterTogether
 
       validates :event_scope, inclusion: { in: EVENT_SCOPES }
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[event_scope]
       end
