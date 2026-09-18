@@ -33,9 +33,15 @@ module BetterTogether
         has_many :communities, relation_name: :member_communities
         has_many :person_community_memberships
         # TODO: Enable when corresponding resources are created
-        # has_many :conversations
         # has_many :person_blocks
         # has_many :blocked_people, class_name: 'Person'
+        # `has_many :conversations` (ConversationResource already exists) was tried and
+        # reverted: enabling it makes the relationships/related/include=conversations
+        # endpoints all return wrong data — conversation_participants join-row ids
+        # mislabeled as `conversations`, or empty resource objects — a pre-existing
+        # JSONAPI::Resources resolution bug for this has_many-through shape, not a
+        # config typo. Needs its own root-cause fix before re-enabling.
+        # has_many :conversations
 
         # Filters
         filter :privacy
