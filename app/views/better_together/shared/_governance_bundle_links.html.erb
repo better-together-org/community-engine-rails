@@ -1,0 +1,26 @@
+<%# locals: (record:, compact: false) %>
+<% return unless record.respond_to?(:citation_export_key) && record.citation_export_key.present? %>
+
+<div class="<%= compact ? 'small mt-2' : 'mt-3' %> governance-bundle-links">
+  <%= link_to better_together.citation_export_path(citeable_key: record.citation_export_key,
+                                                   id: record.to_param,
+                                                   locale: I18n.locale,
+                                                   style: 'bundle',
+                                                   include_provenance: true),
+              class: 'btn btn-outline-secondary btn-sm me-2',
+              target: '_blank',
+              rel: 'noopener noreferrer' do %>
+    <i class="fas fa-file-export me-1" aria-hidden="true"></i> Governance Bundle
+  <% end %>
+
+  <%= link_to better_together.citation_export_path(citeable_key: record.citation_export_key,
+                                                   id: record.to_param,
+                                                   locale: I18n.locale,
+                                                   style: 'csl',
+                                                   include_provenance: true),
+              class: 'btn btn-outline-secondary btn-sm',
+              target: '_blank',
+              rel: 'noopener noreferrer' do %>
+    <i class="fas fa-book me-1" aria-hidden="true"></i> CSL Export
+  <% end %>
+</div>

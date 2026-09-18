@@ -1,0 +1,109 @@
+<% citation_records = record.citations.to_a.presence || Array.new(3) { record.citations.build } %>
+<% importable_groups = record.respond_to?(:importable_linked_citation_groups) ? record.importable_linked_citation_groups : [] %>
+<%
+  signed_in_user = begin
+    current_user
+  rescue StandardError
+    nil
+  end
+%>
+<% github_import_url = signed_in_user.present? ? better_together.github_citation_imports_path(locale: I18n.locale, format: :json) : nil %>
+
+<div class="mt-4"
+     data-controller="better_together--citation-import"
+     data-better_together--citation-import-github-url-value="<%= github_import_url %>">
+  <h3 class="h5">Citations and Evidence</h3>
+  <p class="text-muted small">
+    Add structured citations for claims, images, stories, oral histories, datasets, policies, and other evidence.
+  </p>
+
+  <%= form.fields_for :citations, citation_records do |citation_fields| %>
+    <%= render 'better_together/shared/citation_fields', citation_fields: %>
+  <% end %>
+
+  <% if importable_groups.any? %>
+    <details class="mt-3">
+      <summary class="small fw-semibold">Import Linked Citation Into This Record</summary>
+      <div class="mt-3">
+        <p class="text-muted small">
+          Use this when a linked contribution citation should become part of this record's own bibliography for inline editor anchors and local publication exports.
+        </p>
+
+        <% importable_groups.each do |group| %>
+          <div class="mb-3">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <h4 class="h6 mb-0"><%= group[:label] %></h4>
+              <% if group[:record_type].present? %>
+                <span class="badge text-bg-light border"><%= group[:record_type] %></span>
+              <% end %>
+              <% if group[:contribution_role].present? %>
+                <span class="badge text-bg-info"><%= group[:contribution_role].humanize %></span>
+              <% end %>
+              <% if group[:contribution_type].present? %>
+                <span class="badge text-bg-warning"><%= group[:contribution_type].humanize %></span>
+              <% end %>
+            </div>
+
+            <div class="d-grid gap-2">
+              <% group[:citations].each do |citation| %>
+                <div class="border rounded p-2 bg-light-subtle">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                      <div class="fw-semibold"><%= citation[:reference_key] %>: <%= citation[:title] %></div>
+                      <div class="small text-muted">
+                        <%= [citation[:source_kind]&.humanize, citation[:source_author], citation[:publisher]].compact.join(' | ') %>
+                      </div>
+                    </div>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            data-action="click->better_together--citation-import#importCitation"
+                            data-citation-id="<%= citation[:id] %>"
+                            data-reference-key="<%= citation[:reference_key] %>"
+                            data-record-label="<%= group[:label] %>"
+                            data-record-type="<%= group[:record_type] %>"
+                            data-title="<%= citation[:title] %>"
+                            data-source-kind="<%= citation[:source_kind] %>"
+                            data-source-author="<%= citation[:source_author] %>"
+                            data-publisher="<%= citation[:publisher] %>"
+                            data-source-url="<%= citation[:source_url] %>"
+                            data-locator="<%= citation[:locator] %>"
+                            data-excerpt="<%= citation[:excerpt] %>">
+                      Import Citation
+                    </button>
+                  </div>
+                  <% if citation[:locator].present? %>
+                    <div class="small mt-2"><strong>Locator:</strong> <%= citation[:locator] %></div>
+                  <% end %>
+                  <% if citation[:excerpt].present? %>
+                    <div class="small mt-1"><strong>Excerpt:</strong> <%= truncate(citation[:excerpt], length: 180) %></div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+
+  <% if github_import_url.present? %>
+    <details class="mt-3" data-action="toggle->better_together--citation-import#loadGithubSources">
+      <summary class="small fw-semibold">Import GitHub Citation</summary>
+      <div class="mt-3" data-better_together--citation-import-target="githubPanel">
+        <p class="text-muted small">
+          Load repository, pull request, issue, and commit evidence from linked GitHub identities, then import them into this record's local bibliography.
+        </p>
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+          <button type="button"
+                  class="btn btn-sm btn-outline-dark"
+                  data-action="click->better_together--citation-import#loadGithubSources"
+                  data-better_together--citation-import-target="githubLoadButton">
+            Load GitHub Sources
+          </button>
+          <span class="small text-muted" data-better_together--citation-import-target="githubStatus"></span>
+        </div>
+        <div class="d-grid gap-3" data-better_together--citation-import-target="githubGroups"></div>
+      </div>
+    </details>
+  <% end %>
+</div>

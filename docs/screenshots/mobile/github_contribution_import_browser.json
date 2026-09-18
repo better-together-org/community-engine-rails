@@ -1,0 +1,11 @@
+{
+  "name": "github_contribution_import_browser",
+  "device": "mobile",
+  "url": "http://127.0.0.1:46757/en/host/pages/github-contribution-import-browser-a3dcb3cc/edit",
+  "title": "Edit Eaque corporis occaecati. | Pages | Test Host Community",
+  "captured_at": "2026-04-04T22:43:24Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "github_contribution_import_browser",
+  "source_spec": "./spec/docs_screenshots/better_together/github_contribution_import_browser_spec.rb"
+}
