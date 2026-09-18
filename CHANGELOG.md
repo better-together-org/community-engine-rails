@@ -148,6 +148,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Provider Gems:** Load provider extension gems as optional non-bundled extensions to keep the core engine bundle clean (#1596)
 - **Assets:** Restore Leaflet vendor assets for importmap compatibility
 - **RC Hardening:** Address 0.11.0 RC merge blockers — scope fixes, route cleanup, and compatibility patches (#1598)
+- **Error Reporting:** `BetterTogether::ApplicationJob` now routes background-job exceptions through the same `BetterTogether.report_error` adapter dispatch used by `ApplicationController#handle_error` — previously only request-level errors reached a host app's registered error reporter (e.g. the `:bts_local` structured-JSON reporter), so job failures across the ~27 jobs built on `ApplicationJob` had no coverage. Implemented as an `around_perform` rather than `rescue_from` so it doesn't shadow a subclass's own `retry_on`/`discard_on` handlers.
 - **Authoring:** Preload event associations and add pagination to reduce host-side metrics and content list load issues (#1034)
 - **Federation:** Narrow platform connection updates so host dashboards only mutate the intended fields (#1458)
 - **Messaging:** Scope conversation participants to the current platform (#1459)
