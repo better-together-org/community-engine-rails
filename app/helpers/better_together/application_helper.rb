@@ -94,6 +94,19 @@ module BetterTogether
       nil
     end
 
+    # Generates a short-lived Devise JWT for the current web-session user so that
+    # in-browser JavaScript can call Devise JWT-protected API endpoints (e.g.
+    # /api/v1/people/:id/key_backup) without re-authenticating via the API.
+    # Returns nil when no user is signed in or JWT generation fails.
+    def current_user_api_token
+      user = safe_current_user
+      return nil unless user
+
+      Warden::JWTAuth::UserEncoder.new.call(user, :api_user, nil).first
+    rescue StandardError
+      nil
+    end
+
     # Generates a short-lived, signed token proving the client actually rendered a page
     # from this app recently, embedded via a <meta> tag and attached by JS
     # (trix-extensions/richtext.js) to every ActiveStorage direct-upload request. Raises
@@ -106,6 +119,14 @@ module BetterTogether
       )
     rescue StandardError
       nil
+    end
+
+    def e2ee_messaging_enabled?
+      ::BetterTogether.e2ee_messaging_enabled? || feature_enabled?('e2ee_messaging')
+    end
+
+    def e2ee_messaging_enabled_for?(person = current_person)
+      e2ee_messaging_enabled? && person.present?
     end
 
     def default_url_options

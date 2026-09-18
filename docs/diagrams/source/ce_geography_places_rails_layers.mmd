@@ -6,22 +6,22 @@ classDiagram
     class BetterTogether__Address["Address"] {
       <<Model>>
       table: better_together_addresses
-      concerns: BetterTogetherId, Geography::Geospatial::One, Geography::Locatable::Many, Geography::Placeable +6
-      weak refs: owner: seeds, owner: geospatial_space, owner: locatable_locations
+      concerns: BetterTogetherId, Geography::Geospatial::One, Labelable, PlatformScoped +4
+      weak refs: owner: seeds, owner: geospatial_space
     }
     class BetterTogether__Geography__Continent["Geography::Continent"] {
       <<Model>>
       table: better_together_geography_continents
       translates: description, name, slug
       concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
-      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
+      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations +1
     }
     class BetterTogether__Geography__Country["Geography::Country"] {
       <<Model>>
       table: better_together_geography_countries
       translates: description, name, slug
       concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
-      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
+      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations +1
     }
     class BetterTogether__Geography__CountryContinent["Geography::CountryContinent"] {
       <<Model>>
@@ -44,17 +44,17 @@ classDiagram
     class BetterTogether__Geography__Map["Geography::Map\n(shared table family)"] {
       <<Model>>
       table: better_together_geography_maps
-      variants: Geography::CommunityCollectionMap, Geography::CommunityMap, Geography::EventCollectionMap, Geography::LocatableMap
+      variants: Geography::CommunityCollectionMap, Geography::CommunityMap
       translates: description, slug, title
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +7
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +6
       weak refs: target: mappable, owner: seeds, owner: slugs, owner: views +7
     }
     class BetterTogether__Geography__Region["Geography::Region"] {
       <<Model>>
       table: better_together_geography_regions
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Geography::Placeable +5
-      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
+      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
+      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations +1
     }
     class BetterTogether__Geography__RegionSettlement["Geography::RegionSettlement"] {
       <<Model>>
@@ -66,8 +66,8 @@ classDiagram
       <<Model>>
       table: better_together_geography_settlements
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Geography::Geospatial::One +7
-      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +7
+      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
+      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations +1
     }
     class BetterTogether__Geography__Space["Geography::Space"] {
       <<Model>>
@@ -81,7 +81,7 @@ classDiagram
       table: better_together_geography_states
       translates: description, name, slug
       concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
-      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
+      weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: text_translations +1
     }
     class BetterTogether__Place["Place"] {
       <<Model>>
@@ -100,7 +100,6 @@ classDiagram
   BetterTogether__Geography__CountryContinent --> BetterTogether__Geography__Continent : continent
   BetterTogether__Geography__GeospatialSpace --> BetterTogether__Geography__Space : space
   BetterTogether__Geography__LocatableLocation --> BetterTogether__Person : creator
-  BetterTogether__Geography__Map --> BetterTogether__Platform : platform
   BetterTogether__Geography__Map --> BetterTogether__Person : creator
   BetterTogether__Geography__Region --> BetterTogether__Community : community
   BetterTogether__Geography__Region --> BetterTogether__Geography__Country : country

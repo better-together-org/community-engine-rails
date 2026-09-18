@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T21:04:53Z",
+  "generated_at": "2026-07-29T13:41:18Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -756,12 +756,24 @@
           "table_name": "better_together_people",
           "columns": [
             [
+              "registration_id",
+              "integer FK"
+            ],
+            [
+              "signed_prekey_id",
+              "integer FK"
+            ],
+            [
               "community_id",
               "uuid FK"
             ],
             [
               "platform_id",
               "uuid FK"
+            ],
+            [
+              "borgberry_did",
+              "string"
             ],
             [
               "identifier",
@@ -772,20 +784,16 @@
               "string"
             ],
             [
-              "anonymized_at",
-              "datetime"
+              "identity_key_public",
+              "text"
             ],
             [
-              "deleted_at",
-              "datetime"
+              "key_backup_blob",
+              "text"
             ],
             [
-              "notification_preferences",
-              "jsonb"
-            ],
-            [
-              "preferences",
-              "jsonb"
+              "key_backup_salt",
+              "text"
             ]
           ],
           "validations": [
@@ -887,38 +895,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -953,6 +931,12 @@
             },
             {
               "direction": "has_many",
+              "name": "fleet_node_ownerships",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
               "name": "event_invitations",
               "as": "invitee",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -970,6 +954,42 @@
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
+              "direction": "has_many",
+              "name": "rich_text_translations",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_html",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_html_en",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_html_fr",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_html_es",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "rich_text_description_html_uk",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
               "direction": "has_one",
               "name": "profile_image_attachment",
               "as": "record",
@@ -984,6 +1004,7 @@
           ],
           "translated_attributes": [
             "description",
+            "description_html",
             "name",
             "slug"
           ],
@@ -3489,31 +3510,19 @@
           "source_subsystem": "geography_and_places"
         },
         {
-          "from": "BetterTogether::Place",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Geography::LocatableMap",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
           "from": "BetterTogether::Geography::CommunityMap",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "source_subsystem": "geography_and_places"
         },
         {
-          "from": "BetterTogether::Geography::EventCollectionMap",
+          "from": "BetterTogether::Geography::CommunityCollectionMap",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "source_subsystem": "geography_and_places"
         },
         {
-          "from": "BetterTogether::Geography::CommunityCollectionMap",
+          "from": "BetterTogether::Place",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "source_subsystem": "geography_and_places"
@@ -3687,6 +3696,12 @@
           "source_subsystem": "metrics_search_ai"
         },
         {
+          "from": "BetterTogether::OneTimePrekey",
+          "to": "BetterTogether::Person",
+          "label": "person (person_id)",
+          "source_subsystem": "metrics_search_ai"
+        },
+        {
           "from": "BetterTogether::Metrics::UserAccountReport",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
@@ -3721,6 +3736,12 @@
           "to": "BetterTogether::OauthApplication",
           "label": "oauth_application (oauth_application_id)",
           "source_subsystem": "integrations_webhooks"
+        },
+        {
+          "from": "BetterTogether::C3::TokenSeed",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::Infrastructure::Room",
@@ -3966,6 +3987,12 @@
             },
             {
               "direction": "has_many",
+              "name": "fleet_node_ownerships",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
               "name": "invitations",
               "as": "invitable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -3978,37 +4005,43 @@
             },
             {
               "direction": "has_many",
+              "name": "text_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
               "name": "rich_text_translations",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
               "direction": "has_one",
-              "name": "rich_text_description",
+              "name": "rich_text_description_html",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
               "direction": "has_one",
-              "name": "rich_text_description_en",
+              "name": "rich_text_description_html_en",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
               "direction": "has_one",
-              "name": "rich_text_description_fr",
+              "name": "rich_text_description_html_fr",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
               "direction": "has_one",
-              "name": "rich_text_description_es",
+              "name": "rich_text_description_html_es",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
               "direction": "has_one",
-              "name": "rich_text_description_uk",
+              "name": "rich_text_description_html_uk",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
@@ -4033,6 +4066,7 @@
           ],
           "translated_attributes": [
             "description",
+            "description_html",
             "name",
             "slug"
           ],
@@ -4059,7 +4093,6 @@
             "BetterTogether::Searchable",
             "BetterTogether::Seedable",
             "BetterTogether::Shortlinkable",
-            "BetterTogether::SitemapRefreshable",
             "BetterTogether::Translatable",
             "BetterTogether::Viewable"
           ],
@@ -4584,38 +4617,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -5448,9 +5451,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
+            "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: identifier",
-            "UniquenessValidator: identifier (scope=:wizard_id, case_sensitive=false)"
+            "PresenceValidator: identifier"
           ],
           "belongs_to": [
             {
@@ -5895,15 +5898,15 @@
           "included_by": [
             "StorageConfigurationsController",
             "SitemapsController",
+            "WizardStepsController",
             "WizardsController",
             "SettingsController",
             "PlatformInvitationsController",
-            "WizardStepsController",
             "MembershipRequestsController",
             "HubController",
             "HostDashboardController",
-            "SetupWizardController",
             "SetupWizardStepsController",
+            "SetupWizardController",
             "PlatformConnectionsController",
             "CommunityWebhookEndpointsController",
             "PlatformsController",
@@ -5929,15 +5932,15 @@
           "included_by": [
             "StorageConfigurationsController",
             "SitemapsController",
+            "WizardStepsController",
             "WizardsController",
             "SettingsController",
             "PlatformInvitationsController",
-            "WizardStepsController",
             "MembershipRequestsController",
             "HubController",
             "HostDashboardController",
-            "SetupWizardController",
             "SetupWizardStepsController",
+            "SetupWizardController",
             "PlatformConnectionsController",
             "CommunityWebhookEndpointsController",
             "PlatformsController",
@@ -5954,15 +5957,15 @@
           "included_by": [
             "StorageConfigurationsController",
             "SitemapsController",
+            "WizardStepsController",
             "WizardsController",
             "SettingsController",
             "PlatformInvitationsController",
-            "WizardStepsController",
             "MembershipRequestsController",
             "HubController",
             "HostDashboardController",
-            "SetupWizardController",
             "SetupWizardStepsController",
+            "SetupWizardController",
             "PlatformConnectionsController",
             "CommunityWebhookEndpointsController",
             "PlatformsController",
@@ -6240,15 +6243,6 @@
           ]
         },
         {
-          "name": "BetterTogether::SitemapRefreshable",
-          "label": "SitemapRefreshable",
-          "capability": "Sitemaprefreshable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Community"
-          ]
-        },
-        {
           "name": "BetterTogether::TimezoneAttributeAliasing",
           "label": "TimezoneAttributeAliasing",
           "capability": "Adds consistent timezone aliases and coercion for scheduler-facing models.",
@@ -6296,10 +6290,10 @@
           "capability": "Wizardmethods",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
-            "WizardsController",
             "WizardStepsController",
-            "SetupWizardController",
-            "SetupWizardStepsController"
+            "WizardsController",
+            "SetupWizardStepsController",
+            "SetupWizardController"
           ]
         }
       ],
@@ -6739,12 +6733,6 @@
           "source_subsystem": "geography_and_places"
         },
         {
-          "from": "BetterTogether::Geography::Map",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
           "from": "BetterTogether::Place",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -6758,30 +6746,6 @@
         },
         {
           "from": "BetterTogether::Address",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Geography::LocatableMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Geography::EventCollectionMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityCollectionMap",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "geography_and_places"
@@ -6907,6 +6871,12 @@
           "source_subsystem": "exchange_governance"
         },
         {
+          "from": "BetterTogether::Joatu::Settlement",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "exchange_governance"
+        },
+        {
           "from": "BetterTogether::Joatu::ResponseLink",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -7015,12 +6985,6 @@
           "source_subsystem": "metrics_search_ai"
         },
         {
-          "from": "BetterTogether::Ai::Log::Translation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "metrics_search_ai"
-        },
-        {
           "from": "BetterTogether::Metrics::UserAccountReport",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -7073,6 +7037,12 @@
           "to": "BetterTogether::Community",
           "label": "community (community_id)",
           "source_subsystem": "integrations_webhooks"
+        },
+        {
+          "from": "BetterTogether::C3::SettlementNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
@@ -7201,9 +7171,45 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::Fleet::Node",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::C3::BalanceLock",
+          "to": "BetterTogether::Platform",
+          "label": "source_platform (source_platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::C3::Balance",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::C3::Balance",
+          "to": "BetterTogether::Platform",
+          "label": "origin_platform (origin_platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::FederationContentGrant",
           "to": "BetterTogether::PlatformConnection",
           "label": "platform_connection (platform_connection_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::C3::Token",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::C3::Token",
+          "to": "BetterTogether::Platform",
+          "label": "origin_platform (origin_platform_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -11543,7 +11549,6 @@
             "BetterTogether::Searchable",
             "BetterTogether::Seedable",
             "BetterTogether::Shortlinkable",
-            "BetterTogether::SitemapRefreshable",
             "BetterTogether::TrackedActivity",
             "BetterTogether::Translatable",
             "BetterTogether::Viewable"
@@ -11845,7 +11850,6 @@
             "BetterTogether::Searchable",
             "BetterTogether::Seedable",
             "BetterTogether::Shortlinkable",
-            "BetterTogether::SitemapRefreshable",
             "BetterTogether::TrackedActivity",
             "BetterTogether::Translatable",
             "BetterTogether::Viewable"
@@ -12095,8 +12099,7 @@
             "BetterTogether::ChecksRequiredAgreements",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup",
-            "BetterTogether::PageBlockVisibility"
+            "BetterTogether::InvitationUserSetup"
           ]
         },
         {
@@ -12479,15 +12482,6 @@
           ]
         },
         {
-          "name": "BetterTogether::PageBlockVisibility",
-          "label": "PageBlockVisibility",
-          "capability": "Pageblockvisibility",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "PagesController"
-          ]
-        },
-        {
           "name": "BetterTogether::PlatformScoped",
           "label": "PlatformScoped",
           "capability": "Platformscoped",
@@ -12779,16 +12773,6 @@
           "name": "BetterTogether::Shortlinkable",
           "label": "Shortlinkable",
           "capability": "Shortlinkable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Page",
-            "Post"
-          ]
-        },
-        {
-          "name": "BetterTogether::SitemapRefreshable",
-          "label": "SitemapRefreshable",
-          "capability": "Sitemaprefreshable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Page",
@@ -13369,20 +13353,12 @@
               "name": "geospatial_space",
               "as": "geospatial",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "locatable_locations",
-              "as": "locatable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Geography::Geospatial::One",
-            "BetterTogether::Geography::Locatable::Many",
-            "BetterTogether::Geography::Placeable",
             "BetterTogether::Labelable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::PrimaryFlag",
@@ -13423,10 +13399,6 @@
               "uuid FK"
             ],
             [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
               "identifier",
               "string"
             ],
@@ -13453,25 +13425,23 @@
             [
               "zoom",
               "integer"
+            ],
+            [
+              "metadata",
+              "jsonb"
             ]
           ],
           "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "ExclusionValidator: friendly_id (in=dynamic)",
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
             {
               "name": "creator",
               "foreign_key": "creator_id",
@@ -13557,7 +13527,6 @@
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
-            "BetterTogether::PlatformScoped",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
@@ -13568,13 +13537,6 @@
           "concern_notes": [],
           "cross_subsystem_targets": [
             {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            },
-            {
               "name": "creator",
               "foreign_key": "creator_id",
               "target": "BetterTogether::Person",
@@ -13584,7 +13546,7 @@
           ],
           "shared_table_reference": "Geography::Map",
           "shared_table_reference_name": "BetterTogether::Geography::Map",
-          "shared_table_group_size": 5
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Geography::CommunityMap",
@@ -13601,10 +13563,6 @@
               "uuid FK"
             ],
             [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
               "identifier",
               "string"
             ],
@@ -13631,25 +13589,23 @@
             [
               "zoom",
               "integer"
+            ],
+            [
+              "metadata",
+              "jsonb"
             ]
           ],
           "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "ExclusionValidator: friendly_id (in=dynamic)",
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
             {
               "name": "creator",
               "foreign_key": "creator_id",
@@ -13735,7 +13691,6 @@
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
-            "BetterTogether::PlatformScoped",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
@@ -13746,13 +13701,6 @@
           "concern_notes": [],
           "cross_subsystem_targets": [
             {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            },
-            {
               "name": "creator",
               "foreign_key": "creator_id",
               "target": "BetterTogether::Person",
@@ -13762,7 +13710,7 @@
           ],
           "shared_table_reference": "Geography::Map",
           "shared_table_reference_name": "BetterTogether::Geography::Map",
-          "shared_table_group_size": 5
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Geography::Continent",
@@ -13822,38 +13770,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -13951,38 +13869,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -14066,184 +13954,6 @@
           ],
           "concern_notes": [],
           "cross_subsystem_targets": []
-        },
-        {
-          "name": "BetterTogether::Geography::EventCollectionMap",
-          "label": "Geography::EventCollectionMap",
-          "source_path": "app/models/better_together/geography/event_collection_map.rb",
-          "table_name": "better_together_geography_maps",
-          "columns": [
-            [
-              "creator_id",
-              "uuid FK"
-            ],
-            [
-              "mappable_id",
-              "uuid FK"
-            ],
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "identifier",
-              "string"
-            ],
-            [
-              "locale",
-              "string"
-            ],
-            [
-              "mappable_type",
-              "string"
-            ],
-            [
-              "privacy",
-              "string"
-            ],
-            [
-              "type",
-              "string"
-            ],
-            [
-              "protected",
-              "boolean"
-            ],
-            [
-              "zoom",
-              "integer"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "ExclusionValidator: friendly_id (in=dynamic)",
-            "PresenceValidator: slug",
-            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
-            "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
-            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
-            {
-              "name": "creator",
-              "foreign_key": "creator_id",
-              "target": "BetterTogether::Person",
-              "optional": true
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "belongs_to",
-              "name": "mappable",
-              "foreign_key": "mappable_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "slugs",
-              "as": "sluggable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "views",
-              "as": "pageable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "string_translations",
-              "as": "translatable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [
-            "description",
-            "slug",
-            "title"
-          ],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::Creatable",
-            "BetterTogether::FriendlySlug",
-            "BetterTogether::Identifier",
-            "BetterTogether::PlatformScoped",
-            "BetterTogether::Privacy",
-            "BetterTogether::PrivacyCeilingValidatable",
-            "BetterTogether::Protected",
-            "BetterTogether::Seedable",
-            "BetterTogether::Translatable",
-            "BetterTogether::Viewable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            },
-            {
-              "name": "creator",
-              "foreign_key": "creator_id",
-              "target": "BetterTogether::Person",
-              "optional": true,
-              "target_subsystem": "identity_access"
-            }
-          ],
-          "shared_table_reference": "Geography::Map",
-          "shared_table_reference_name": "BetterTogether::Geography::Map",
-          "shared_table_group_size": 5
         },
         {
           "name": "BetterTogether::Geography::GeospatialSpace",
@@ -14337,14 +14047,6 @@
             [
               "name",
               "string"
-            ],
-            [
-              "resolution_method",
-              "string"
-            ],
-            [
-              "resolved_at",
-              "datetime"
             ]
           ],
           "validations": [
@@ -14396,184 +14098,6 @@
           ]
         },
         {
-          "name": "BetterTogether::Geography::LocatableMap",
-          "label": "Geography::LocatableMap",
-          "source_path": "app/models/better_together/geography/locatable_map.rb",
-          "table_name": "better_together_geography_maps",
-          "columns": [
-            [
-              "creator_id",
-              "uuid FK"
-            ],
-            [
-              "mappable_id",
-              "uuid FK"
-            ],
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "identifier",
-              "string"
-            ],
-            [
-              "locale",
-              "string"
-            ],
-            [
-              "mappable_type",
-              "string"
-            ],
-            [
-              "privacy",
-              "string"
-            ],
-            [
-              "type",
-              "string"
-            ],
-            [
-              "protected",
-              "boolean"
-            ],
-            [
-              "zoom",
-              "integer"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "ExclusionValidator: friendly_id (in=dynamic)",
-            "PresenceValidator: slug",
-            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
-            "UniquenessValidator: slug (unless=dynamic)",
-            "UniquenessValidator: slug",
-            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
-            {
-              "name": "creator",
-              "foreign_key": "creator_id",
-              "target": "BetterTogether::Person",
-              "optional": true
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "belongs_to",
-              "name": "mappable",
-              "foreign_key": "mappable_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "slugs",
-              "as": "sluggable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "views",
-              "as": "pageable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "string_translations",
-              "as": "translatable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [
-            "description",
-            "slug",
-            "title"
-          ],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::Creatable",
-            "BetterTogether::FriendlySlug",
-            "BetterTogether::Identifier",
-            "BetterTogether::PlatformScoped",
-            "BetterTogether::Privacy",
-            "BetterTogether::PrivacyCeilingValidatable",
-            "BetterTogether::Protected",
-            "BetterTogether::Seedable",
-            "BetterTogether::Translatable",
-            "BetterTogether::Viewable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            },
-            {
-              "name": "creator",
-              "foreign_key": "creator_id",
-              "target": "BetterTogether::Person",
-              "optional": true,
-              "target_subsystem": "identity_access"
-            }
-          ],
-          "shared_table_reference": "Geography::Map",
-          "shared_table_reference_name": "BetterTogether::Geography::Map",
-          "shared_table_group_size": 5
-        },
-        {
           "name": "BetterTogether::Geography::Map",
           "label": "Geography::Map",
           "source_path": "app/models/better_together/geography/map.rb",
@@ -14588,10 +14112,6 @@
               "uuid FK"
             ],
             [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
               "identifier",
               "string"
             ],
@@ -14618,25 +14138,23 @@
             [
               "zoom",
               "integer"
+            ],
+            [
+              "metadata",
+              "jsonb"
             ]
           ],
           "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "ExclusionValidator: friendly_id (in=dynamic)",
             "PresenceValidator: slug",
             "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "PresenceValidator: privacy"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
             {
               "name": "creator",
               "foreign_key": "creator_id",
@@ -14722,7 +14240,6 @@
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
-            "BetterTogether::PlatformScoped",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
@@ -14733,13 +14250,6 @@
           "concern_notes": [],
           "cross_subsystem_targets": [
             {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            },
-            {
               "name": "creator",
               "foreign_key": "creator_id",
               "target": "BetterTogether::Person",
@@ -14749,18 +14259,14 @@
           ],
           "shared_table_variants": [
             "Geography::CommunityCollectionMap",
-            "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::LocatableMap"
+            "Geography::CommunityMap"
           ],
           "shared_table_family_names": [
             "BetterTogether::Geography::CommunityCollectionMap",
             "BetterTogether::Geography::CommunityMap",
-            "BetterTogether::Geography::EventCollectionMap",
-            "BetterTogether::Geography::LocatableMap",
             "BetterTogether::Geography::Map"
           ],
-          "shared_table_group_size": 5
+          "shared_table_group_size": 3
         },
         {
           "name": "BetterTogether::Geography::Region",
@@ -14844,38 +14350,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -14894,7 +14370,6 @@
             "BetterTogether::BetterTogetherId",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Geography::Geospatial::One",
-            "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Protected",
@@ -15040,44 +14515,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "cover_image_attachment",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -15093,15 +14532,12 @@
             "slug"
           ],
           "concerns": [
-            "BetterTogether::Attachments::Images",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Geography::Geospatial::One",
-            "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Protected",
-            "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
           ],
@@ -15137,10 +14573,6 @@
             [
               "properties",
               "jsonb"
-            ],
-            [
-              "boundary",
-              "geography"
             ],
             [
               "elevation",
@@ -15287,38 +14719,8 @@
             },
             {
               "direction": "has_many",
-              "name": "rich_text_translations",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_en",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_fr",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_es",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_uk",
-              "as": "record",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -15485,15 +14887,6 @@
       "controllers_inventory": [],
       "concerns_inventory": [
         {
-          "name": "BetterTogether::Attachments::Images",
-          "label": "Attachments::Images",
-          "capability": "Images",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Geography::Settlement"
-          ]
-        },
-        {
           "name": "BetterTogether::BetterTogetherId",
           "label": "BetterTogetherId",
           "capability": "Bettertogetherid",
@@ -15504,18 +14897,16 @@
             "Geography::LocatableLocation",
             "Geography::GeospatialSpace",
             "Geography::CountryContinent",
+            "Geography::Map",
             "Geography::Settlement",
             "Geography::Region",
             "Geography::State",
             "Geography::Country",
             "Geography::Continent",
-            "Geography::Map",
-            "Place",
-            "Address",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place",
+            "Address"
           ]
         },
         {
@@ -15536,11 +14927,9 @@
             "Geography::Space",
             "Geography::LocatableLocation",
             "Geography::Map",
-            "Place",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place"
           ]
         },
         {
@@ -15550,17 +14939,15 @@
           "risk": "Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved.",
           "included_by": [
             "Geography::Space",
+            "Geography::Map",
             "Geography::Settlement",
             "Geography::Region",
             "Geography::State",
             "Geography::Country",
             "Geography::Continent",
-            "Geography::Map",
-            "Place",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place"
           ]
         },
         {
@@ -15578,43 +14965,21 @@
           ]
         },
         {
-          "name": "BetterTogether::Geography::Locatable::Many",
-          "label": "Geography::Locatable::Many",
-          "capability": "Many",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Address"
-          ]
-        },
-        {
-          "name": "BetterTogether::Geography::Placeable",
-          "label": "Geography::Placeable",
-          "capability": "Placeable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Geography::Settlement",
-            "Geography::Region",
-            "Address"
-          ]
-        },
-        {
           "name": "BetterTogether::Identifier",
           "label": "Identifier",
           "capability": "Adds canonical identifiers and slug/lookup helpers used across APIs and UI.",
           "risk": "Identifier reuse across platforms or mirrors can blur provenance without explicit platform context.",
           "included_by": [
             "Geography::Space",
+            "Geography::Map",
             "Geography::Settlement",
             "Geography::Region",
             "Geography::State",
             "Geography::Country",
             "Geography::Continent",
-            "Geography::Map",
-            "Place",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place"
           ]
         },
         {
@@ -15632,13 +14997,8 @@
           "capability": "Platformscoped",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
-            "Geography::Map",
             "Place",
-            "Address",
-            "Geography::LocatableMap",
-            "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Address"
           ]
         },
         {
@@ -15680,12 +15040,10 @@
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
             "Geography::Map",
-            "Place",
-            "Address",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place",
+            "Address"
           ]
         },
         {
@@ -15695,12 +15053,10 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Geography::Map",
-            "Place",
-            "Address",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place",
+            "Address"
           ]
         },
         {
@@ -15709,25 +15065,14 @@
           "capability": "Adds protected-record safeguards for records that should resist accidental mutation/deletion.",
           "risk": "Protected status can be mistaken for an authorization model when it is only a lifecycle safeguard.",
           "included_by": [
+            "Geography::Map",
             "Geography::Settlement",
             "Geography::Region",
             "Geography::State",
             "Geography::Country",
             "Geography::Continent",
-            "Geography::Map",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
             "Geography::CommunityCollectionMap"
-          ]
-        },
-        {
-          "name": "BetterTogether::RemoveableAttachment",
-          "label": "RemoveableAttachment",
-          "capability": "Removeableattachment",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Geography::Settlement"
           ]
         },
         {
@@ -15741,18 +15086,16 @@
             "Geography::LocatableLocation",
             "Geography::GeospatialSpace",
             "Geography::CountryContinent",
+            "Geography::Map",
             "Geography::Settlement",
             "Geography::Region",
             "Geography::State",
             "Geography::Country",
             "Geography::Continent",
-            "Geography::Map",
-            "Place",
-            "Address",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place",
+            "Address"
           ]
         },
         {
@@ -15762,17 +15105,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Geography::Space",
+            "Geography::Map",
             "Geography::Settlement",
             "Geography::Region",
             "Geography::State",
             "Geography::Country",
             "Geography::Continent",
-            "Geography::Map",
-            "Place",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
-            "Geography::CommunityCollectionMap"
+            "Geography::CommunityCollectionMap",
+            "Place"
           ]
         },
         {
@@ -15782,9 +15123,7 @@
           "risk": "View analytics and cache helpers can become privacy-sensitive telemetry surfaces.",
           "included_by": [
             "Geography::Map",
-            "Geography::LocatableMap",
             "Geography::CommunityMap",
-            "Geography::EventCollectionMap",
             "Geography::CommunityCollectionMap"
           ]
         }
@@ -15798,6 +15137,12 @@
         },
         {
           "from": "BetterTogether::Geography::LocatableLocation",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Geography::Map",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
@@ -15833,13 +15178,13 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Geography::Map",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
+          "from": "BetterTogether::Geography::CommunityMap",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Geography::Map",
+          "from": "BetterTogether::Geography::CommunityCollectionMap",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
@@ -15873,54 +15218,6 @@
           "to": "BetterTogether::ContactDetail",
           "label": "contact_detail (contact_detail_id)",
           "target_subsystem": "shared_supporting"
-        },
-        {
-          "from": "BetterTogether::Geography::LocatableMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::LocatableMap",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityMap",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Geography::EventCollectionMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::EventCollectionMap",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityCollectionMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityCollectionMap",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
         }
       ],
       "inbound_references": [
@@ -16349,12 +15646,6 @@
             },
             {
               "direction": "has_one",
-              "name": "map",
-              "as": "mappable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
               "name": "location",
               "as": "locatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -16458,7 +15749,6 @@
             "BetterTogether::FriendlySlug",
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Geography::Locatable::One",
-            "BetterTogether::Geography::Mappable",
             "BetterTogether::Identifier",
             "BetterTogether::Invitable",
             "BetterTogether::Metrics::Shareable",
@@ -16472,7 +15762,6 @@
             "BetterTogether::Searchable",
             "BetterTogether::Seedable",
             "BetterTogether::Shortlinkable",
-            "BetterTogether::SitemapRefreshable",
             "BetterTogether::TimezoneAttributeAliasing",
             "BetterTogether::TrackedActivity",
             "BetterTogether::Translatable",
@@ -16509,10 +15798,6 @@
               "uuid FK"
             ],
             [
-              "event_occurrence_id",
-              "uuid FK"
-            ],
-            [
               "person_id",
               "uuid FK"
             ],
@@ -16528,7 +15813,7 @@
           "validations": [
             "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "InclusionValidator: status (in=[\"interested\", \"going\"])",
-            "UniquenessValidator: event_id (scope=[:person_id, :event_occurrence_id])"
+            "UniquenessValidator: event_id (scope=:person_id)"
           ],
           "belongs_to": [
             {
@@ -16548,12 +15833,6 @@
               "foreign_key": "person_id",
               "target": "BetterTogether::Person",
               "optional": false
-            },
-            {
-              "name": "event_occurrence",
-              "foreign_key": "event_occurrence_id",
-              "target": "BetterTogether::EventOccurrence",
-              "optional": true
             }
           ],
           "polymorphic": [
@@ -16585,13 +15864,6 @@
               "target": "BetterTogether::Person",
               "optional": false,
               "target_subsystem": "identity_access"
-            },
-            {
-              "name": "event_occurrence",
-              "foreign_key": "event_occurrence_id",
-              "target": "BetterTogether::EventOccurrence",
-              "optional": true,
-              "target_subsystem": "shared_supporting"
             }
           ]
         },
@@ -17136,15 +16408,6 @@
           ]
         },
         {
-          "name": "BetterTogether::Geography::Mappable",
-          "label": "Geography::Mappable",
-          "capability": "Mappable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Event"
-          ]
-        },
-        {
           "name": "BetterTogether::Identifier",
           "label": "Identifier",
           "capability": "Adds canonical identifiers and slug/lookup helpers used across APIs and UI.",
@@ -17348,15 +16611,6 @@
           ]
         },
         {
-          "name": "BetterTogether::SitemapRefreshable",
-          "label": "SitemapRefreshable",
-          "capability": "Sitemaprefreshable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Event"
-          ]
-        },
-        {
           "name": "BetterTogether::TimezoneAttributeAliasing",
           "label": "TimezoneAttributeAliasing",
           "capability": "Adds consistent timezone aliases and coercion for scheduler-facing models.",
@@ -17415,12 +16669,6 @@
           "to": "BetterTogether::Person",
           "label": "person (person_id)",
           "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::EventAttendance",
-          "to": "BetterTogether::EventOccurrence",
-          "label": "event_occurrence (event_occurrence_id)",
-          "target_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::CalendarEntry",
@@ -17483,14 +16731,7 @@
           "target_subsystem": "platform_network"
         }
       ],
-      "inbound_references": [
-        {
-          "from": "BetterTogether::EventOccurrence",
-          "to": "BetterTogether::Event",
-          "label": "event (event_id)",
-          "source_subsystem": "shared_supporting"
-        }
-      ]
+      "inbound_references": []
     },
     {
       "key": "conversations_safety",
@@ -17531,6 +16772,10 @@
             [
               "title",
               "string"
+            ],
+            [
+              "sender_key_version",
+              "integer"
             ]
           ],
           "validations": [
@@ -17676,8 +16921,20 @@
               "uuid FK"
             ],
             [
+              "e2e_protocol",
+              "string"
+            ],
+            [
               "content",
               "text"
+            ],
+            [
+              "e2e_encrypted",
+              "boolean"
+            ],
+            [
+              "e2e_version",
+              "integer"
             ]
           ],
           "validations": [
@@ -19568,7 +18825,7 @@
         {
           "name": "BetterTogether::Joatu::AgreementNotifier::Notification",
           "label": "Joatu::AgreementNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -19696,7 +18953,7 @@
         {
           "name": "BetterTogether::Joatu::AgreementStatusNotifier::Notification",
           "label": "Joatu::AgreementStatusNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -19937,6 +19194,10 @@
               "uuid FK"
             ],
             [
+              "c3_budget_currency",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -19954,10 +19215,6 @@
             ],
             [
               "status",
-              "string"
-            ],
-            [
-              "target_type",
               "string"
             ]
           ],
@@ -20232,7 +19489,7 @@
         {
           "name": "BetterTogether::Joatu::MatchNotifier::Notification",
           "label": "Joatu::MatchNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -20326,6 +19583,10 @@
               "uuid FK"
             ],
             [
+              "c3_budget_currency",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -20343,10 +19604,6 @@
             ],
             [
               "status",
-              "string"
-            ],
-            [
-              "target_type",
               "string"
             ]
           ],
@@ -20596,6 +19853,10 @@
               "uuid FK"
             ],
             [
+              "c3_price_currency",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -20610,6 +19871,10 @@
             [
               "urgency",
               "string"
+            ],
+            [
+              "c3_price_millitokens",
+              "integer"
             ]
           ],
           "validations": [
@@ -20855,6 +20120,10 @@
               "uuid FK"
             ],
             [
+              "c3_budget_currency",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -20872,10 +20141,6 @@
             ],
             [
               "status",
-              "string"
-            ],
-            [
-              "target_type",
               "string"
             ]
           ],
@@ -21125,6 +20390,10 @@
               "uuid FK"
             ],
             [
+              "c3_budget_currency",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -21142,10 +20411,6 @@
             ],
             [
               "status",
-              "string"
-            ],
-            [
-              "target_type",
               "string"
             ]
           ],
@@ -21395,6 +20660,10 @@
               "uuid FK"
             ],
             [
+              "c3_budget_currency",
+              "string"
+            ],
+            [
               "privacy",
               "string"
             ],
@@ -21412,10 +20681,6 @@
             ],
             [
               "status",
-              "string"
-            ],
-            [
-              "target_type",
               "string"
             ]
           ],
@@ -21748,6 +21013,124 @@
           ]
         },
         {
+          "name": "BetterTogether::Joatu::Settlement",
+          "label": "Joatu::Settlement",
+          "source_path": "app/models/better_together/joatu/settlement.rb",
+          "table_name": "better_together_joatu_settlements",
+          "columns": [
+            [
+              "agreement_id",
+              "uuid FK"
+            ],
+            [
+              "c3_token_id",
+              "uuid FK"
+            ],
+            [
+              "payer_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "recipient_id",
+              "uuid FK"
+            ],
+            [
+              "lock_ref",
+              "string"
+            ],
+            [
+              "payer_type",
+              "string"
+            ],
+            [
+              "recipient_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "c3_millitokens",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: status",
+            "InclusionValidator: status (in=[\"pending\", \"completed\", \"cancelled\"])",
+            "NumericalityValidator: c3_millitokens (greater_than_or_equal_to=0, less_than_or_equal_to=10000000)",
+            "UniquenessValidator: agreement_id (message=:already_settled)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "agreement",
+              "foreign_key": "agreement_id",
+              "target": "BetterTogether::Joatu::Agreement",
+              "optional": false
+            },
+            {
+              "name": "c3_token",
+              "foreign_key": "c3_token_id",
+              "target": "BetterTogether::C3::Token",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "payer",
+              "foreign_key": "payer_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "recipient",
+              "foreign_key": "recipient_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "c3_token",
+              "foreign_key": "c3_token_id",
+              "target": "BetterTogether::C3::Token",
+              "optional": true,
+              "target_subsystem": "shared_supporting"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Seed",
           "label": "Seed",
           "source_path": "app/models/better_together/seed.rb",
@@ -21990,8 +21373,7 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup",
-            "BetterTogether::PageBlockVisibility"
+            "BetterTogether::InvitationUserSetup"
           ]
         },
         {
@@ -22127,6 +21509,7 @@
           "included_by": [
             "SeedPlanting",
             "Seed",
+            "Joatu::Settlement",
             "Joatu::ResponseLink",
             "Joatu::Offer",
             "Joatu::Request",
@@ -22317,20 +21700,12 @@
           ]
         },
         {
-          "name": "BetterTogether::PageBlockVisibility",
-          "label": "PageBlockVisibility",
-          "capability": "Pageblockvisibility",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "AgreementsController"
-          ]
-        },
-        {
           "name": "BetterTogether::PlatformScoped",
           "label": "PlatformScoped",
           "capability": "Platformscoped",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Joatu::Settlement",
             "Joatu::ResponseLink",
             "Joatu::Offer",
             "Joatu::Request",
@@ -22458,6 +21833,7 @@
           "included_by": [
             "SeedPlanting",
             "Seed",
+            "Joatu::Settlement",
             "Joatu::ResponseLink",
             "Joatu::Offer",
             "Joatu::Request",
@@ -22549,6 +21925,18 @@
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::Settlement",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::Settlement",
+          "to": "BetterTogether::C3::Token",
+          "label": "c3_token (c3_token_id)",
+          "target_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::Joatu::ResponseLink",
@@ -22769,7 +22157,8 @@
       ],
       "models": [
         "BetterTogether::Links",
-        "BetterTogether::Notification"
+        "BetterTogether::Notification",
+        "BetterTogether::OneTimePrekey"
       ],
       "controllers": [
         "BetterTogether::HelpPreferencesController",
@@ -22828,18 +22217,11 @@
             ]
           ],
           "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
             "PresenceValidator: request, model, status",
             "NumericalityValidator: prompt_tokens, completion_tokens, tokens_used (only_integer=true, greater_than_or_equal_to=0)",
             "NumericalityValidator: estimated_cost (greater_than_or_equal_to=0)"
           ],
           "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
             {
               "name": "initiator",
               "foreign_key": "initiator_id",
@@ -22858,18 +22240,10 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
-            "BetterTogether::PlatformScoped",
             "BetterTogether::Seedable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            },
             {
               "name": "initiator",
               "foreign_key": "initiator_id",
@@ -23816,6 +23190,67 @@
               "target_subsystem": "identity_access"
             }
           ]
+        },
+        {
+          "name": "BetterTogether::OneTimePrekey",
+          "label": "OneTimePrekey",
+          "source_path": "app/models/better_together/one_time_prekey.rb",
+          "table_name": "better_together_one_time_prekeys",
+          "columns": [
+            [
+              "key_id",
+              "integer FK"
+            ],
+            [
+              "person_id",
+              "uuid FK"
+            ],
+            [
+              "public_key",
+              "text"
+            ],
+            [
+              "consumed",
+              "boolean"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: key_id",
+            "NumericalityValidator: key_id (only_integer=true, greater_than=0)",
+            "UniquenessValidator: key_id (scope=:person_id)",
+            "PresenceValidator: public_key"
+          ],
+          "belongs_to": [
+            {
+              "name": "person",
+              "foreign_key": "person_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "person",
+              "foreign_key": "person_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            }
+          ]
         }
       ],
       "controllers_inventory": [
@@ -23879,11 +23314,12 @@
           "capability": "Bettertogetherid",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Ai::Log::Translation",
             "Metrics::Share",
             "Metrics::RichTextLink",
             "Metrics::PageView",
             "Metrics::Download",
-            "Ai::Log::Translation",
+            "OneTimePrekey",
             "Metrics::UserAccountReport",
             "Metrics::ShortLinkVisit",
             "Metrics::SearchQuery",
@@ -23975,7 +23411,6 @@
           "capability": "Platformscoped",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
-            "Ai::Log::Translation",
             "Metrics::UserAccountReport",
             "Metrics::ShortLinkVisit",
             "Metrics::SearchQuery",
@@ -24000,11 +23435,12 @@
           "capability": "Adds seed/import/export helper behavior for reusable content and onboarding flows.",
           "risk": "Seed portability can carry stale permissions or provenance unless metadata stays explicit.",
           "included_by": [
+            "Ai::Log::Translation",
             "Metrics::Share",
             "Metrics::RichTextLink",
             "Metrics::PageView",
             "Metrics::Download",
-            "Ai::Log::Translation",
+            "OneTimePrekey",
             "Metrics::UserAccountReport",
             "Metrics::ShortLinkVisit",
             "Metrics::SearchQuery",
@@ -24016,6 +23452,12 @@
         }
       ],
       "outbound_relationships": [
+        {
+          "from": "BetterTogether::Ai::Log::Translation",
+          "to": "BetterTogether::Person",
+          "label": "initiator (initiator_id)",
+          "target_subsystem": "identity_access"
+        },
         {
           "from": "BetterTogether::Metrics::Share",
           "to": "BetterTogether::Platform",
@@ -24047,15 +23489,9 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Ai::Log::Translation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Ai::Log::Translation",
+          "from": "BetterTogether::OneTimePrekey",
           "to": "BetterTogether::Person",
-          "label": "initiator (initiator_id)",
+          "label": "person (person_id)",
           "target_subsystem": "identity_access"
         },
         {
@@ -24582,6 +24018,666 @@
           ]
         },
         {
+          "name": "BetterTogether::AgentJobResult",
+          "label": "AgentJobResult",
+          "source_path": "app/models/better_together/agent_job_result.rb",
+          "table_name": "better_together_agent_job_results",
+          "columns": [
+            [
+              "job_id",
+              "string FK"
+            ],
+            [
+              "node_id",
+              "string FK"
+            ],
+            [
+              "fleet_node_id",
+              "uuid FK"
+            ],
+            [
+              "submitter_id",
+              "uuid FK"
+            ],
+            [
+              "job_type",
+              "string"
+            ],
+            [
+              "source_system",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "submitter_type",
+              "string"
+            ],
+            [
+              "error_message",
+              "text"
+            ],
+            [
+              "elapsed_ms",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: job_id",
+            "UniquenessValidator: job_id",
+            "PresenceValidator: job_type, source_system",
+            "InclusionValidator: status (in=[\"pending\", \"running\", \"completed\", \"failed\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "fleet_node",
+              "foreign_key": "fleet_node_id",
+              "target": "BetterTogether::Fleet::Node",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "submitter",
+              "foreign_key": "submitter_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
+        },
+        {
+          "name": "BetterTogether::C3::Balance",
+          "label": "C3::Balance",
+          "source_path": "app/models/better_together/c3/balance.rb",
+          "table_name": "better_together_c3_balances",
+          "columns": [
+            [
+              "community_id",
+              "uuid FK"
+            ],
+            [
+              "holder_id",
+              "uuid FK"
+            ],
+            [
+              "origin_platform_id",
+              "uuid FK"
+            ],
+            [
+              "holder_type",
+              "string"
+            ],
+            [
+              "available_millitokens",
+              "integer"
+            ],
+            [
+              "lifetime_earned_millitokens",
+              "integer"
+            ],
+            [
+              "locked_millitokens",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "NumericalityValidator: locked_millitokens (greater_than_or_equal_to=0)",
+            "NumericalityValidator: available_millitokens, locked_millitokens, lifetime_earned_millitokens (greater_than_or_equal_to=0)",
+            "PresenceValidator: holder"
+          ],
+          "belongs_to": [
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": true
+            },
+            {
+              "name": "origin_platform",
+              "foreign_key": "origin_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "holder",
+              "foreign_key": "holder_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "origin_platform",
+              "foreign_key": "origin_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::C3::BalanceLock",
+          "label": "C3::BalanceLock",
+          "source_path": "app/models/better_together/c3/balance_lock.rb",
+          "table_name": "better_together_c3_balance_locks",
+          "columns": [
+            [
+              "balance_id",
+              "uuid FK"
+            ],
+            [
+              "source_platform_id",
+              "uuid FK"
+            ],
+            [
+              "agreement_ref",
+              "string"
+            ],
+            [
+              "lock_ref",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "millitokens",
+              "integer"
+            ],
+            [
+              "expires_at",
+              "datetime"
+            ],
+            [
+              "settled_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: lock_ref",
+            "UniquenessValidator: lock_ref",
+            "NumericalityValidator: millitokens (greater_than=0, less_than_or_equal_to=10000000)",
+            "PresenceValidator: expires_at",
+            "InclusionValidator: status (in=[\"pending\", \"settled\", \"released\", \"expired\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "balance",
+              "foreign_key": "balance_id",
+              "target": "BetterTogether::C3::Balance",
+              "optional": false
+            },
+            {
+              "name": "source_platform",
+              "foreign_key": "source_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "source_platform",
+              "foreign_key": "source_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::C3::ExchangeRate",
+          "label": "C3::ExchangeRate",
+          "source_path": "app/models/better_together/c3/exchange_rate.rb",
+          "table_name": "better_together_c3_exchange_rates",
+          "columns": [
+            [
+              "contribution_type_name",
+              "string"
+            ],
+            [
+              "source_system",
+              "string"
+            ],
+            [
+              "unit_label",
+              "string"
+            ],
+            [
+              "unit_name",
+              "string"
+            ],
+            [
+              "active",
+              "boolean"
+            ],
+            [
+              "contribution_type",
+              "integer"
+            ],
+            [
+              "rate",
+              "decimal"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: contribution_type, rate, unit_name, unit_label",
+            "NumericalityValidator: rate (greater_than=0)"
+          ],
+          "belongs_to": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
+        },
+        {
+          "name": "BetterTogether::C3::SettlementNotifier",
+          "label": "C3::SettlementNotifier",
+          "source_path": "app/notifiers/better_together/c3/settlement_notifier.rb",
+          "table_name": "noticed_events",
+          "columns": [
+            [
+              "record_id",
+              "uuid FK"
+            ],
+            [
+              "record_type",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "notifications_count",
+              "integer"
+            ],
+            [
+              "params",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: settlement, event_type"
+          ],
+          "belongs_to": [],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "record",
+              "foreign_key": "record_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [],
+          "concern_notes": [],
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommentAddedNotifier",
+          "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
+          "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::C3::SettlementNotifier::Notification",
+          "label": "C3::SettlementNotifier::Notification",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "table_name": "noticed_notifications",
+          "columns": [
+            [
+              "event_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "recipient_id",
+              "uuid FK"
+            ],
+            [
+              "recipient_type",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "read_at",
+              "datetime"
+            ],
+            [
+              "seen_at",
+              "datetime"
+            ]
+          ],
+          "validations": [],
+          "belongs_to": [
+            {
+              "name": "event",
+              "foreign_key": "event_id",
+              "target": "Noticed::Event",
+              "optional": false
+            },
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "recipient",
+              "foreign_key": "recipient_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ],
+          "shared_table_reference": "CommentAddedNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
+          "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::C3::Token",
+          "label": "C3::Token",
+          "source_path": "app/models/better_together/c3/token.rb",
+          "table_name": "better_together_c3_tokens",
+          "columns": [
+            [
+              "community_id",
+              "uuid FK"
+            ],
+            [
+              "earner_id",
+              "uuid FK"
+            ],
+            [
+              "origin_platform_id",
+              "uuid FK"
+            ],
+            [
+              "contribution_type_name",
+              "string"
+            ],
+            [
+              "earner_type",
+              "string"
+            ],
+            [
+              "source_ref",
+              "string"
+            ],
+            [
+              "source_system",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "federated",
+              "boolean"
+            ],
+            [
+              "c3_millitokens",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: earner, contribution_type, source_ref, source_system",
+            "UniquenessValidator: source_ref (scope=:source_system)",
+            "NumericalityValidator: c3_millitokens (greater_than_or_equal_to=0, less_than_or_equal_to=10000000)",
+            "InclusionValidator: status (in=[\"pending\", \"confirmed\", \"disputed\", \"settled\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": true
+            },
+            {
+              "name": "origin_platform",
+              "foreign_key": "origin_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "earner",
+              "foreign_key": "earner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "community",
+              "foreign_key": "community_id",
+              "target": "BetterTogether::Community",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "origin_platform",
+              "foreign_key": "origin_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::C3::TokenSeed",
+          "label": "C3::TokenSeed",
+          "source_path": "app/models/better_together/c3/token_seed.rb",
+          "table_name": "better_together_seeds",
+          "columns": [
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "seedable_id",
+              "uuid FK"
+            ],
+            [
+              "created_by",
+              "string"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "privacy",
+              "string"
+            ],
+            [
+              "seedable_type",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "version",
+              "string"
+            ],
+            [
+              "description",
+              "text"
+            ],
+            [
+              "seeded_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "ExclusionValidator: friendly_id (in=dynamic)",
+            "PresenceValidator: slug",
+            "UniquenessValidator: slug (if=dynamic, scope=:platform_id)",
+            "UniquenessValidator: slug (unless=dynamic)",
+            "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
+            "PresenceValidator: type, identifier, version, created_by, seeded_at, description, origin, payload",
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "seedable",
+              "foreign_key": "seedable_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "slugs",
+              "as": "sluggable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "yaml_file_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "slug"
+          ],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Creatable",
+            "BetterTogether::FriendlySlug",
+            "BetterTogether::Identifier",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Seedable",
+            "BetterTogether::Translatable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::CommentAddedNotifier",
           "label": "CommentAddedNotifier",
           "source_path": "app/notifiers/better_together/comment_added_notifier.rb",
@@ -24625,6 +24721,7 @@
           "concern_notes": [],
           "cross_subsystem_targets": [],
           "shared_table_variants": [
+            "C3::SettlementNotifier",
             "CommunityInvitationNotifier",
             "EventInvitationNotifier",
             "EventReminderNotifier",
@@ -24647,6 +24744,7 @@
             "SafetyReportSubmittedNotifier"
           ],
           "shared_table_family_names": [
+            "BetterTogether::C3::SettlementNotifier",
             "BetterTogether::CommentAddedNotifier",
             "BetterTogether::CommunityInvitationNotifier",
             "BetterTogether::EventInvitationNotifier",
@@ -24669,12 +24767,12 @@
             "BetterTogether::SafetyReportDigestNotifier",
             "BetterTogether::SafetyReportSubmittedNotifier"
           ],
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::CommentAddedNotifier::Notification",
           "label": "CommentAddedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -24742,6 +24840,7 @@
             }
           ],
           "shared_table_variants": [
+            "C3::SettlementNotifier::Notification",
             "CommunityInvitationNotifier::Notification",
             "EventInvitationNotifier::Notification",
             "EventReminderNotifier::Notification",
@@ -24764,6 +24863,7 @@
             "SafetyReportSubmittedNotifier::Notification"
           ],
           "shared_table_family_names": [
+            "BetterTogether::C3::SettlementNotifier::Notification",
             "BetterTogether::CommentAddedNotifier::Notification",
             "BetterTogether::CommunityInvitationNotifier::Notification",
             "BetterTogether::EventInvitationNotifier::Notification",
@@ -24786,7 +24886,7 @@
             "BetterTogether::SafetyReportDigestNotifier::Notification",
             "BetterTogether::SafetyReportSubmittedNotifier::Notification"
           ],
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::CommentConfig",
@@ -24880,12 +24980,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::CommunityInvitationNotifier::Notification",
           "label": "CommunityInvitationNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -24954,7 +25054,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::ContactDetail",
@@ -25563,12 +25663,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventInvitationNotifier::Notification",
           "label": "EventInvitationNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -25637,103 +25737,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
-        },
-        {
-          "name": "BetterTogether::EventOccurrence",
-          "label": "EventOccurrence",
-          "source_path": "app/models/better_together/event_occurrence.rb",
-          "table_name": "better_together_event_occurrences",
-          "columns": [
-            [
-              "event_id",
-              "uuid FK"
-            ],
-            [
-              "cancelled",
-              "boolean"
-            ],
-            [
-              "ends_at",
-              "datetime"
-            ],
-            [
-              "starts_at",
-              "datetime"
-            ],
-            [
-              "occurrence_date",
-              "date"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: occurrence_date",
-            "UniquenessValidator: occurrence_date (scope=:event_id)"
-          ],
-          "belongs_to": [
-            {
-              "name": "event",
-              "foreign_key": "event_id",
-              "target": "BetterTogether::Event",
-              "optional": false
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_many",
-              "name": "comments",
-              "as": "commentable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "comment_config",
-              "as": "commentable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "map",
-              "as": "mappable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "location",
-              "as": "locatable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            },
-            {
-              "direction": "has_one",
-              "name": "rich_text_description_override",
-              "as": "record",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::Commentable",
-            "BetterTogether::Geography::Locatable::One",
-            "BetterTogether::Geography::Mappable",
-            "BetterTogether::Seedable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "event",
-              "foreign_key": "event_id",
-              "target": "BetterTogether::Event",
-              "optional": false,
-              "target_subsystem": "events_calendar"
-            }
-          ]
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventReminderNotifier",
@@ -25780,12 +25784,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventReminderNotifier::Notification",
           "label": "EventReminderNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -25854,7 +25858,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventUpdateNotifier",
@@ -25899,12 +25903,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventUpdateNotifier::Notification",
           "label": "EventUpdateNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -25973,7 +25977,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::FeatureAccessGrant",
@@ -26189,12 +26193,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::FederationVisibilityStatusNotifier::Notification",
           "label": "FederationVisibilityStatusNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -26263,7 +26267,151 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::Fleet::Node",
+          "label": "Fleet::Node",
+          "source_path": "app/models/better_together/fleet/node.rb",
+          "table_name": "better_together_fleet_nodes",
+          "columns": [
+            [
+              "node_id",
+              "string FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "headscale_ip",
+              "string"
+            ],
+            [
+              "lan_ip",
+              "string"
+            ],
+            [
+              "node_category",
+              "string"
+            ],
+            [
+              "safety_tier",
+              "string"
+            ],
+            [
+              "online",
+              "boolean"
+            ],
+            [
+              "borgberry_port",
+              "integer"
+            ],
+            [
+              "last_seen_at",
+              "datetime"
+            ],
+            [
+              "registered_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: node_id",
+            "UniquenessValidator: node_id",
+            "PresenceValidator: node_category",
+            "InclusionValidator: node_category (in=[\"cat1\", \"cat2\", \"cat3\"])",
+            "InclusionValidator: safety_tier (in=[\"T0\", \"T1\", \"T2\", \"T3\"], allow_nil=true)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "c3_tokens",
+              "as": "earner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Fleet::NodeOwnership",
+          "label": "Fleet::NodeOwnership",
+          "source_path": "app/models/better_together/fleet/node_ownership.rb",
+          "table_name": "better_together_fleet_node_ownerships",
+          "columns": [
+            [
+              "node_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "owner_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "UniquenessValidator: node_id"
+          ],
+          "belongs_to": [
+            {
+              "name": "node",
+              "foreign_key": "node_id",
+              "target": "BetterTogether::Fleet::Node",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
         },
         {
           "name": "BetterTogether::InboundEmailMessage",
@@ -26327,7 +26475,7 @@
               "name": "inbound_email",
               "foreign_key": "inbound_email_id",
               "target": "ActionMailbox::InboundEmail",
-              "optional": true
+              "optional": false
             },
             {
               "name": "platform",
@@ -26580,8 +26728,8 @@
             },
             {
               "direction": "has_many",
-              "name": "locatable_locations",
-              "as": "locatable",
+              "name": "text_translations",
+              "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
@@ -26638,8 +26786,6 @@
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Geography::Geospatial::One",
-            "BetterTogether::Geography::Locatable::Many",
-            "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PlatformScoped",
             "BetterTogether::PrimaryCommunity",
@@ -26848,6 +26994,18 @@
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
+              "direction": "has_one",
+              "name": "geospatial_space",
+              "as": "geospatial",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "text_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
               "direction": "has_many",
               "name": "rich_text_translations",
               "as": "record",
@@ -26900,7 +27058,7 @@
             "BetterTogether::Contactable",
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
-            "BetterTogether::Geography::Placeable",
+            "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
@@ -27028,6 +27186,18 @@
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
+              "direction": "has_one",
+              "name": "geospatial_space",
+              "as": "geospatial",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "text_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
               "direction": "has_many",
               "name": "rich_text_translations",
               "as": "record",
@@ -27080,7 +27250,7 @@
             "BetterTogether::Contactable",
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
-            "BetterTogether::Geography::Placeable",
+            "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PlatformScoped",
             "BetterTogether::PrimaryCommunity",
@@ -27157,12 +27327,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::InvitationNotifierBase::Notification",
           "label": "InvitationNotifierBase::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -27231,7 +27401,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::JwtDenylist",
@@ -27333,12 +27503,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipCreatedNotifier::Notification",
           "label": "MembershipCreatedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -27407,7 +27577,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRemovedNotifier",
@@ -27452,12 +27622,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRemovedNotifier::Notification",
           "label": "MembershipRemovedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -27526,7 +27696,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDeclinedNotifier",
@@ -27573,12 +27743,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDeclinedNotifier::Notification",
           "label": "MembershipRequestDeclinedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -27647,7 +27817,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDigestNotifier",
@@ -27694,12 +27864,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDigestNotifier::Notification",
           "label": "MembershipRequestDigestNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -27768,7 +27938,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestSubmittedNotifier",
@@ -27815,12 +27985,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestSubmittedNotifier::Notification",
           "label": "MembershipRequestSubmittedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -27889,7 +28059,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipUpdatedNotifier",
@@ -27936,12 +28106,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipUpdatedNotifier::Notification",
           "label": "MembershipUpdatedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28010,7 +28180,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MessageRequest",
@@ -28152,12 +28322,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::NewMessageNotifier::Notification",
           "label": "NewMessageNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28226,7 +28396,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier",
@@ -28273,12 +28443,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier::Notification",
           "label": "PageAuthorshipNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28347,7 +28517,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PersonMessagingGrant",
@@ -28477,12 +28647,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification",
           "label": "PersonPlatformIntegrationCreatedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28551,7 +28721,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PhoneNumber",
@@ -28680,12 +28850,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionDigestNotifier::Notification",
           "label": "PlatformConnectionDigestNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28754,7 +28924,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionStatusNotifier",
@@ -28801,12 +28971,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionStatusNotifier::Notification",
           "label": "PlatformConnectionStatusNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28875,7 +29045,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionSubmittedNotifier",
@@ -28922,12 +29092,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
           "label": "PlatformConnectionSubmittedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -28996,7 +29166,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportDigestNotifier",
@@ -29043,12 +29213,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportDigestNotifier::Notification",
           "label": "SafetyReportDigestNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -29117,7 +29287,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportSubmittedNotifier",
@@ -29164,12 +29334,12 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
           "label": "SafetyReportSubmittedNotifier::Notification",
-          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "source_path": "../usr/local/bundle/ruby/3.4.0/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
           "table_name": "noticed_notifications",
           "columns": [
             [
@@ -29238,7 +29408,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::ShortLink",
@@ -29618,6 +29788,26 @@
           ]
         },
         {
+          "name": "BetterTogether::Api::V1::Borgberry::ProfileController",
+          "label": "Api::V1::Borgberry::ProfileController",
+          "source_path": "app/controllers/better_together/api/v1/borgberry/profile_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
+          "name": "BetterTogether::Api::V1::C3::ContributionsController",
+          "label": "Api::V1::C3::ContributionsController",
+          "source_path": "app/controllers/better_together/api/v1/c3/contributions_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
           "name": "BetterTogether::Api::V1::CommunitiesController",
           "label": "Api::V1::CommunitiesController",
           "source_path": "app/controllers/better_together/api/v1/communities_controller.rb",
@@ -29641,6 +29831,16 @@
           "name": "BetterTogether::Api::V1::EventsController",
           "label": "Api::V1::EventsController",
           "source_path": "app/controllers/better_together/api/v1/events_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
+          "name": "BetterTogether::Api::V1::Fleet::NodesController",
+          "label": "Api::V1::Fleet::NodesController",
+          "source_path": "app/controllers/better_together/api/v1/fleet/nodes_controller.rb",
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
@@ -29870,6 +30070,16 @@
           ]
         },
         {
+          "name": "BetterTogether::Api::V1::PrekeysController",
+          "label": "Api::V1::PrekeysController",
+          "source_path": "app/controllers/better_together/api/v1/prekeys_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
           "name": "BetterTogether::Api::V1::RobotsController",
           "label": "Api::V1::RobotsController",
           "source_path": "app/controllers/better_together/api/v1/robots_controller.rb",
@@ -29982,7 +30192,6 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::ActiveStorageSecurity",
-            "BetterTogether::ActiveStorageVariantErrorHandling",
             "BetterTogether::ContentSecurity::ActiveStorageGate"
           ]
         },
@@ -29994,23 +30203,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::ActiveStorageSecurity",
-            "BetterTogether::ActiveStorageVariantErrorHandling",
             "BetterTogether::ContentSecurity::ActiveStorageGate"
-          ]
-        },
-        {
-          "name": "BetterTogether::EventOccurrencesController",
-          "label": "EventOccurrencesController",
-          "source_path": "app/controllers/better_together/event_occurrences_controller.rb",
-          "superclass": "BetterTogether::ApplicationController",
-          "inferred_models": [
-            "BetterTogether::EventOccurrence"
-          ],
-          "concerns": [
-            "BetterTogether::ChecksRequiredAgreements",
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
           ]
         },
         {
@@ -30032,6 +30225,30 @@
           "label": "Federation::ApiController",
           "source_path": "app/controllers/better_together/federation/api_controller.rb",
           "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup"
+          ]
+        },
+        {
+          "name": "BetterTogether::Federation::C3LockRequestsController",
+          "label": "Federation::C3LockRequestsController",
+          "source_path": "app/controllers/better_together/federation/c3_lock_requests_controller.rb",
+          "superclass": "BetterTogether::Federation::ApiController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup"
+          ]
+        },
+        {
+          "name": "BetterTogether::Federation::C3TokenSeedsController",
+          "label": "Federation::C3TokenSeedsController",
+          "source_path": "app/controllers/better_together/federation/c3_token_seeds_controller.rb",
+          "superclass": "BetterTogether::Federation::ApiController",
           "inferred_models": [],
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
@@ -30410,31 +30627,6 @@
           ]
         },
         {
-          "name": "BetterTogether::NewPlatformSetupController",
-          "label": "NewPlatformSetupController",
-          "source_path": "app/controllers/better_together/new_platform_setup_controller.rb",
-          "superclass": "BetterTogether::ApplicationController",
-          "inferred_models": [],
-          "concerns": [
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
-          ]
-        },
-        {
-          "name": "BetterTogether::NewPlatformSetupStepsController",
-          "label": "NewPlatformSetupStepsController",
-          "source_path": "app/controllers/better_together/new_platform_setup_steps_controller.rb",
-          "superclass": "BetterTogether::WizardStepsController",
-          "inferred_models": [],
-          "concerns": [
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup",
-            "BetterTogether::WizardMethods"
-          ]
-        },
-        {
           "name": "BetterTogether::OmniauthCallbacksController",
           "label": "OmniauthCallbacksController",
           "source_path": "app/controllers/better_together/omniauth_callbacks_controller.rb",
@@ -30499,18 +30691,6 @@
           ]
         },
         {
-          "name": "BetterTogether::RobotsTxtController",
-          "label": "RobotsTxtController",
-          "source_path": "app/controllers/better_together/robots_txt_controller.rb",
-          "superclass": "BetterTogether::ApplicationController",
-          "inferred_models": [],
-          "concerns": [
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
-          ]
-        },
-        {
           "name": "BetterTogether::Safety::ActionsController",
           "label": "Safety::ActionsController",
           "source_path": "app/controllers/better_together/safety/actions_controller.rb",
@@ -30531,20 +30711,6 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [
             "BetterTogether::Safety::Agreement"
-          ],
-          "concerns": [
-            "BetterTogether::InvitationSessionManagement",
-            "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
-          ]
-        },
-        {
-          "name": "BetterTogether::SeedCatalogController",
-          "label": "SeedCatalogController",
-          "source_path": "app/controllers/better_together/seed_catalog_controller.rb",
-          "superclass": "BetterTogether::ApplicationController",
-          "inferred_models": [
-            "BetterTogether::SeedCatalog"
           ],
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
@@ -30670,16 +30836,6 @@
           ]
         },
         {
-          "name": "BetterTogether::ActiveStorageVariantErrorHandling",
-          "label": "ActiveStorageVariantErrorHandling",
-          "capability": "Activestoragevarianterrorhandling",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "ContentSecurity::ActiveStorage::Representations::ProxyController",
-            "ContentSecurity::ActiveStorage::Blobs::ProxyController"
-          ]
-        },
-        {
           "name": "BetterTogether::Api::Auth::RegistrationHelpers",
           "label": "Api::Auth::RegistrationHelpers",
           "capability": "Registrationhelpers",
@@ -30695,11 +30851,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Api::ApplicationController",
+            "Api::V1::Fleet::NodesController",
+            "Api::V1::C3::ContributionsController",
+            "Api::V1::Borgberry::ProfileController",
             "Api::V1::WebhookEndpointsController",
             "Api::V1::UploadsController",
             "Api::V1::ShortLinksController",
             "Api::V1::RolesController",
             "Api::V1::RobotsController",
+            "Api::V1::PrekeysController",
             "Api::V1::PersonDeletionRequestsController",
             "Api::V1::PersonDataExportsController",
             "Api::V1::PersonCommunityMembershipsController",
@@ -30736,9 +30896,16 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Infrastructure::BuildingConnection",
+            "Fleet::NodeOwnership",
+            "Fleet::Node",
+            "C3::BalanceLock",
+            "C3::Balance",
             "FederationContentGrant",
-            "EventOccurrence",
             "CommentConfig",
+            "AgentJobResult",
+            "C3::ExchangeRate",
+            "C3::Token",
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -30777,17 +30944,7 @@
           "capability": "Checksrequiredagreements",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
-            "EventOccurrencesController",
             "CommentsController"
-          ]
-        },
-        {
-          "name": "BetterTogether::Commentable",
-          "label": "Commentable",
-          "capability": "Commentable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "EventOccurrence"
           ]
         },
         {
@@ -30817,6 +30974,7 @@
           "capability": "Adds creator ownership hooks and creator-aware defaults.",
           "risk": "Creator fallback behavior can accidentally widen operational visibility.",
           "included_by": [
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -30847,6 +31005,7 @@
           "capability": "Adds translated/human-friendly slugs for routes and lookup.",
           "risk": "Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved.",
           "included_by": [
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building"
@@ -30856,42 +31015,6 @@
           "name": "BetterTogether::Geography::Geospatial::One",
           "label": "Geography::Geospatial::One",
           "capability": "One",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Infrastructure::Building"
-          ]
-        },
-        {
-          "name": "BetterTogether::Geography::Locatable::Many",
-          "label": "Geography::Locatable::Many",
-          "capability": "Many",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "Infrastructure::Building"
-          ]
-        },
-        {
-          "name": "BetterTogether::Geography::Locatable::One",
-          "label": "Geography::Locatable::One",
-          "capability": "One",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "EventOccurrence"
-          ]
-        },
-        {
-          "name": "BetterTogether::Geography::Mappable",
-          "label": "Geography::Mappable",
-          "capability": "Mappable",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "EventOccurrence"
-          ]
-        },
-        {
-          "name": "BetterTogether::Geography::Placeable",
-          "label": "Geography::Placeable",
-          "capability": "Placeable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Infrastructure::Room",
@@ -30905,6 +31028,7 @@
           "capability": "Adds canonical identifiers and slug/lookup helpers used across APIs and UI.",
           "risk": "Identifier reuse across platforms or mirrors can blur provenance without explicit platform context.",
           "included_by": [
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building"
@@ -30937,21 +31061,19 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "ShortLinkRedirectsController",
-            "SeedCatalogController",
-            "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
             "PlatformDomainsController",
-            "NewPlatformSetupController",
             "MessageRequestsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
-            "EventOccurrencesController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
             "Federation::LinkedSeedsController",
             "Federation::ContentFeedController",
+            "Federation::C3TokenSeedsController",
+            "Federation::C3LockRequestsController",
             "Users::UnlocksController",
             "Users::SessionsController",
             "Api::Auth::SessionsController",
@@ -30963,7 +31085,6 @@
             "Api::Auth::ConfirmationsController",
             "OmniauthCallbacksController",
             "Users::OmniauthCallbacksController",
-            "NewPlatformSetupStepsController",
             "ShortLinksController",
             "FriendlyResourceController",
             "Joatu::JoatuController",
@@ -31002,21 +31123,19 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "ShortLinkRedirectsController",
-            "SeedCatalogController",
-            "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
             "PlatformDomainsController",
-            "NewPlatformSetupController",
             "MessageRequestsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
-            "EventOccurrencesController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
             "Federation::LinkedSeedsController",
             "Federation::ContentFeedController",
+            "Federation::C3TokenSeedsController",
+            "Federation::C3LockRequestsController",
             "Users::UnlocksController",
             "Users::SessionsController",
             "Api::Auth::SessionsController",
@@ -31028,7 +31147,6 @@
             "Api::Auth::ConfirmationsController",
             "OmniauthCallbacksController",
             "Users::OmniauthCallbacksController",
-            "NewPlatformSetupStepsController",
             "ShortLinksController",
             "FriendlyResourceController",
             "Joatu::JoatuController",
@@ -31067,21 +31185,19 @@
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
             "ShortLinkRedirectsController",
-            "SeedCatalogController",
-            "RobotsTxtController",
             "RobotsController",
             "ReportFollowupsController",
             "PlatformDomainsController",
-            "NewPlatformSetupController",
             "MessageRequestsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
-            "EventOccurrencesController",
             "CommentsController",
             "ResourceController",
             "Federation::OauthTokensController",
             "Federation::LinkedSeedsController",
             "Federation::ContentFeedController",
+            "Federation::C3TokenSeedsController",
+            "Federation::C3LockRequestsController",
             "Users::UnlocksController",
             "Users::SessionsController",
             "Api::Auth::SessionsController",
@@ -31093,7 +31209,6 @@
             "Api::Auth::ConfirmationsController",
             "OmniauthCallbacksController",
             "Users::OmniauthCallbacksController",
-            "NewPlatformSetupStepsController",
             "ShortLinksController",
             "FriendlyResourceController",
             "Joatu::JoatuController",
@@ -31219,6 +31334,7 @@
           "capability": "Adds privacy enum helpers and shared visibility semantics.",
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -31234,6 +31350,7 @@
           "capability": "Privacyceilingvalidatable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -31250,9 +31367,16 @@
           "risk": "Seed portability can carry stale permissions or provenance unless metadata stays explicit.",
           "included_by": [
             "Infrastructure::BuildingConnection",
+            "Fleet::NodeOwnership",
+            "Fleet::Node",
+            "C3::BalanceLock",
+            "C3::Balance",
             "FederationContentGrant",
-            "EventOccurrence",
             "CommentConfig",
+            "AgentJobResult",
+            "C3::ExchangeRate",
+            "C3::Token",
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
@@ -31280,23 +31404,21 @@
           "capability": "Translatable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "C3::TokenSeed",
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
             "ShortLink"
           ]
-        },
-        {
-          "name": "BetterTogether::WizardMethods",
-          "label": "WizardMethods",
-          "capability": "Wizardmethods",
-          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
-          "included_by": [
-            "NewPlatformSetupStepsController"
-          ]
         }
       ],
       "outbound_relationships": [
+        {
+          "from": "BetterTogether::C3::SettlementNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
         {
           "from": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
           "to": "BetterTogether::Platform",
@@ -31424,16 +31546,52 @@
           "target_subsystem": "platform_network"
         },
         {
+          "from": "BetterTogether::Fleet::Node",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::C3::BalanceLock",
+          "to": "BetterTogether::Platform",
+          "label": "source_platform (source_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::C3::Balance",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::C3::Balance",
+          "to": "BetterTogether::Platform",
+          "label": "origin_platform (origin_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::FederationContentGrant",
           "to": "BetterTogether::PlatformConnection",
           "label": "platform_connection (platform_connection_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::EventOccurrence",
-          "to": "BetterTogether::Event",
-          "label": "event (event_id)",
-          "target_subsystem": "events_calendar"
+          "from": "BetterTogether::C3::Token",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::C3::Token",
+          "to": "BetterTogether::Platform",
+          "label": "origin_platform (origin_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::C3::TokenSeed",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
         },
         {
           "from": "BetterTogether::Infrastructure::Room",
@@ -31666,10 +31824,10 @@
           "source_subsystem": "geography_and_places"
         },
         {
-          "from": "BetterTogether::EventAttendance",
-          "to": "BetterTogether::EventOccurrence",
-          "label": "event_occurrence (event_occurrence_id)",
-          "source_subsystem": "events_calendar"
+          "from": "BetterTogether::Joatu::Settlement",
+          "to": "BetterTogether::C3::Token",
+          "label": "c3_token (c3_token_id)",
+          "source_subsystem": "exchange_governance"
         },
         {
           "from": "BetterTogether::Metrics::ShortLinkVisit",

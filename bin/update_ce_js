@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# bin/update_ce_js
+# Update the vendored @better-together/community-engine-js UMD artifact.
+#
+# Usage:
+#   bin/update_ce_js                 # install version from config/community_engine_js_version
+#   bin/update_ce_js 0.2.0           # install + pin a new version
+#
+# Set FORGEJO_NPM_TOKEN for authenticated Forgejo registry access.
+
+set -euo pipefail
+
+VERSION="${1:-}"
+
+if [[ -n "$VERSION" ]]; then
+  echo "Updating @better-together/community-engine-js to v${VERSION}…"
+  bundle exec rake "ce_js:update[${VERSION}]"
+else
+  echo "Installing @better-together/community-engine-js (pinned version)…"
+  bundle exec rake ce_js:install
+fi

@@ -6,7 +6,7 @@ classDiagram
     class BetterTogether__AgreementsController["AgreementsController"] {
       <<Controller>>
       models: Agreement
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, PageBlockVisibility
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__AgreementsStatusController["AgreementsStatusController"] {
       <<Controller>>
@@ -126,6 +126,12 @@ classDiagram
       concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
       weak refs: target: source, target: response, owner: seeds
     }
+    class BetterTogether__Joatu__Settlement["Joatu::Settlement"] {
+      <<Model>>
+      table: better_together_joatu_settlements
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: payer, target: recipient, owner: seeds
+    }
     class BetterTogether__Seed["Seed"] {
       <<Model>>
       table: better_together_seeds
@@ -190,6 +196,9 @@ classDiagram
   BetterTogether__Joatu__Request --> BetterTogether__Address : address
   BetterTogether__Joatu__ResponseLink --> BetterTogether__Platform : platform
   BetterTogether__Joatu__ResponseLink --> BetterTogether__Person : creator
+  BetterTogether__Joatu__Settlement --> BetterTogether__Platform : platform
+  BetterTogether__Joatu__Settlement --> BetterTogether__Joatu__Agreement : agreement
+  BetterTogether__Joatu__Settlement --> BetterTogether__C3__Token : c3_token
   BetterTogether__Seed --> BetterTogether__Person : creator
   BetterTogether__SeedPlanting --> BetterTogether__Person : creator
   BetterTogether__SeedPlanting --> BetterTogether__Seed : seed

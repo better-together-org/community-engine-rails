@@ -38,6 +38,14 @@ classDiagram
       <<Controller>>
       concerns: Api::OauthAuthorization
     }
+    class BetterTogether__Api__V1__Borgberry__ProfileController["Api::V1::Borgberry::ProfileController"] {
+      <<Controller>>
+      concerns: Api::OauthAuthorization
+    }
+    class BetterTogether__Api__V1__C3__ContributionsController["Api::V1::C3::ContributionsController"] {
+      <<Controller>>
+      concerns: Api::OauthAuthorization
+    }
     class BetterTogether__Api__V1__CommunitiesController["Api::V1::CommunitiesController"] {
       <<Controller>>
       concerns: Api::OauthAuthorization
@@ -47,6 +55,10 @@ classDiagram
       concerns: Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__EventsController["Api::V1::EventsController"] {
+      <<Controller>>
+      concerns: Api::OauthAuthorization
+    }
+    class BetterTogether__Api__V1__Fleet__NodesController["Api::V1::Fleet::NodesController"] {
       <<Controller>>
       concerns: Api::OauthAuthorization
     }
@@ -138,6 +150,10 @@ classDiagram
       <<Controller>>
       concerns: Api::OauthAuthorization
     }
+    class BetterTogether__Api__V1__PrekeysController["Api::V1::PrekeysController"] {
+      <<Controller>>
+      concerns: Api::OauthAuthorization
+    }
     class BetterTogether__Api__V1__RobotsController["Api::V1::RobotsController"] {
       <<Controller>>
       concerns: Api::OauthAuthorization
@@ -176,16 +192,11 @@ classDiagram
     }
     class BetterTogether__ContentSecurity__ActiveStorage__Blobs__ProxyController["ContentSecurity::ActiveStorage::Blobs::ProxyController"] {
       <<Controller>>
-      concerns: ActiveStorageSecurity, ActiveStorageVariantErrorHandling, ContentSecurity::ActiveStorageGate
+      concerns: ActiveStorageSecurity, ContentSecurity::ActiveStorageGate
     }
     class BetterTogether__ContentSecurity__ActiveStorage__Representations__ProxyController["ContentSecurity::ActiveStorage::Representations::ProxyController"] {
       <<Controller>>
-      concerns: ActiveStorageSecurity, ActiveStorageVariantErrorHandling, ContentSecurity::ActiveStorageGate
-    }
-    class BetterTogether__EventOccurrencesController["EventOccurrencesController"] {
-      <<Controller>>
-      models: EventOccurrence
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: ActiveStorageSecurity, ContentSecurity::ActiveStorageGate
     }
     class BetterTogether__FeatureAccessGrantsController["FeatureAccessGrantsController"] {
       <<Controller>>
@@ -193,6 +204,14 @@ classDiagram
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__Federation__ApiController["Federation::ApiController"] {
+      <<Controller>>
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+    }
+    class BetterTogether__Federation__C3LockRequestsController["Federation::C3LockRequestsController"] {
+      <<Controller>>
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+    }
+    class BetterTogether__Federation__C3TokenSeedsController["Federation::C3TokenSeedsController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
@@ -304,14 +323,6 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
     }
-    class BetterTogether__NewPlatformSetupController["NewPlatformSetupController"] {
-      <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
-    }
-    class BetterTogether__NewPlatformSetupStepsController["NewPlatformSetupStepsController"] {
-      <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, WizardMethods
-    }
     class BetterTogether__OmniauthCallbacksController["OmniauthCallbacksController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
@@ -332,19 +343,11 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
-    class BetterTogether__RobotsTxtController["RobotsTxtController"] {
-      <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
-    }
     class BetterTogether__Safety__ActionsController["Safety::ActionsController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__Safety__AgreementsController["Safety::AgreementsController"] {
-      <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
-    }
-    class BetterTogether__SeedCatalogController["SeedCatalogController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
@@ -390,16 +393,53 @@ classDiagram
       concerns: PlatformScoped
       weak refs: target: trackable, target: owner, target: recipient
     }
+    class BetterTogether__AgentJobResult["AgentJobResult"] {
+      <<Model>>
+      table: better_together_agent_job_results
+      concerns: BetterTogetherId, Seedable
+      weak refs: target: submitter, owner: seeds
+    }
+    class BetterTogether__C3__Balance["C3::Balance"] {
+      <<Model>>
+      table: better_together_c3_balances
+      concerns: BetterTogetherId, Seedable
+      weak refs: target: holder, owner: seeds
+    }
+    class BetterTogether__C3__BalanceLock["C3::BalanceLock"] {
+      <<Model>>
+      table: better_together_c3_balance_locks
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__C3__ExchangeRate["C3::ExchangeRate"] {
+      <<Model>>
+      table: better_together_c3_exchange_rates
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__C3__Token["C3::Token"] {
+      <<Model>>
+      table: better_together_c3_tokens
+      concerns: BetterTogetherId, Seedable
+      weak refs: target: earner, owner: seeds
+    }
+    class BetterTogether__C3__TokenSeed["C3::TokenSeed"] {
+      <<Model>>
+      table: better_together_seeds
+      translates: slug
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +4
+      weak refs: target: seedable, owner: seeds, owner: slugs, owner: string_translations +1
+    }
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
       table: noticed_events
-      variants: CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier, FederationVisibilityStatusNotifier +15
+      variants: C3::SettlementNotifier, CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier +16
       weak refs: target: record
     }
     class BetterTogether__CommentAddedNotifier__Notification["CommentAddedNotifier::Notification\n(shared table family)"] {
       <<Model>>
       table: noticed_notifications
-      variants: CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification, FederationVisibilityStatusNotifier::Notification +15
+      variants: C3::SettlementNotifier::Notification, CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification +16
       weak refs: target: recipient
     }
     class BetterTogether__CommentConfig["CommentConfig"] {
@@ -444,12 +484,6 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
-    class BetterTogether__EventOccurrence["EventOccurrence"] {
-      <<Model>>
-      table: better_together_event_occurrences
-      concerns: BetterTogetherId, Commentable, Geography::Locatable::One, Geography::Mappable +1
-      weak refs: owner: seeds, owner: comments, owner: comment_config, owner: map +2
-    }
     class BetterTogether__FeatureAccessGrant["FeatureAccessGrant"] {
       <<Model>>
       table: better_together_feature_access_grants
@@ -461,6 +495,18 @@ classDiagram
       table: better_together_federation_content_grants
       concerns: BetterTogetherId, Seedable
       weak refs: target: federatable, owner: seeds
+    }
+    class BetterTogether__Fleet__Node["Fleet::Node"] {
+      <<Model>>
+      table: better_together_fleet_nodes
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds, owner: c3_tokens
+    }
+    class BetterTogether__Fleet__NodeOwnership["Fleet::NodeOwnership"] {
+      <<Model>>
+      table: better_together_fleet_node_ownerships
+      concerns: BetterTogetherId, Seedable
+      weak refs: target: owner, owner: seeds
     }
     class BetterTogether__InboundEmailMessage["InboundEmailMessage"] {
       <<Model>>
@@ -478,7 +524,7 @@ classDiagram
       <<Model>>
       table: better_together_infrastructure_buildings
       translates: description, name, slug
-      concerns: BetterTogetherId, Contactable, Creatable, FriendlySlug +10
+      concerns: BetterTogetherId, Contactable, Creatable, FriendlySlug +8
       weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: slugs +9
     }
     class BetterTogether__Infrastructure__BuildingConnection["Infrastructure::BuildingConnection"] {
@@ -492,14 +538,14 @@ classDiagram
       table: better_together_infrastructure_floors
       translates: description, name, slug
       concerns: BetterTogetherId, Contactable, Creatable, FriendlySlug +9
-      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: slugs +7
+      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: slugs +9
     }
     class BetterTogether__Infrastructure__Room["Infrastructure::Room"] {
       <<Model>>
       table: better_together_infrastructure_rooms
       translates: description, name, slug
       concerns: BetterTogetherId, Contactable, Creatable, FriendlySlug +8
-      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: slugs +7
+      weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: slugs +9
     }
     class BetterTogether__JwtDenylist["JwtDenylist"] {
       <<Model>>
@@ -565,9 +611,12 @@ classDiagram
   BetterTogether__Api__Oauth__ApplicationsController --|> BetterTogether__ApplicationController
   BetterTogether__Api__V1__AuthorshipsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__BlocksController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__Borgberry__ProfileController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__C3__ContributionsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__CommunitiesController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__ConversationsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__EventsController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__Fleet__NodesController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__GeographyContinentsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__GeographyCountriesController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__GeographyRegionsController --|> BetterTogether__Api__ApplicationController
@@ -590,6 +639,7 @@ classDiagram
   BetterTogether__Api__V1__PersonCommunityMembershipsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__PersonDataExportsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__PersonDeletionRequestsController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__PrekeysController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__RobotsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__RolesController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__ShortLinksController --|> BetterTogether__Api__ApplicationController
@@ -598,11 +648,11 @@ classDiagram
   BetterTogether__BotDefense__ChallengesController --|> BetterTogether__ApplicationController
   BetterTogether__CommentsController --|> BetterTogether__ApplicationController
   BetterTogether__Content__PageBlocksController --|> BetterTogether__ApplicationController
-  BetterTogether__EventOccurrencesController ..> BetterTogether__EventOccurrence : manages
-  BetterTogether__EventOccurrencesController --|> BetterTogether__ApplicationController
   BetterTogether__FeatureAccessGrantsController ..> BetterTogether__FeatureAccessGrant : manages
   BetterTogether__FeatureAccessGrantsController --|> BetterTogether__ApplicationController
   BetterTogether__Federation__ApiController --|> BetterTogether__ApplicationController
+  BetterTogether__Federation__C3LockRequestsController --|> BetterTogether__Federation__ApiController
+  BetterTogether__Federation__C3TokenSeedsController --|> BetterTogether__Federation__ApiController
   BetterTogether__Federation__ContentFeedController --|> BetterTogether__Federation__ApiController
   BetterTogether__Federation__LinkedSeedsController --|> BetterTogether__Federation__ApiController
   BetterTogether__Federation__OauthTokensController --|> BetterTogether__Federation__ApiController
@@ -630,21 +680,25 @@ classDiagram
   BetterTogether__Metrics__SearchQueriesController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__SharesController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__UserAccountReportsController --|> BetterTogether__ApplicationController
-  BetterTogether__NewPlatformSetupController --|> BetterTogether__ApplicationController
-  BetterTogether__NewPlatformSetupStepsController --|> BetterTogether__WizardStepsController
   BetterTogether__PlatformDomainsController --|> BetterTogether__ApplicationController
   BetterTogether__ReportFollowupsController --|> BetterTogether__ApplicationController
   BetterTogether__ResourceController --|> BetterTogether__ApplicationController
   BetterTogether__RobotsController --|> BetterTogether__ApplicationController
-  BetterTogether__RobotsTxtController --|> BetterTogether__ApplicationController
   BetterTogether__Safety__ActionsController --|> BetterTogether__ApplicationController
   BetterTogether__Safety__AgreementsController --|> BetterTogether__ApplicationController
-  BetterTogether__SeedCatalogController --|> BetterTogether__ApplicationController
   BetterTogether__ShortLinkRedirectsController --|> BetterTogether__ApplicationController
   BetterTogether__ShortLinksController ..> BetterTogether__ShortLink : manages
   BetterTogether__ShortLinksController --|> BetterTogether__ResourceController
   BetterTogether__Users__OmniauthCallbacksController --|> BetterTogether__OmniauthCallbacksController
   BetterTogether__Activity --> BetterTogether__Platform : platform
+  BetterTogether__AgentJobResult --> BetterTogether__Fleet__Node : fleet_node
+  BetterTogether__C3__Balance --> BetterTogether__Community : community
+  BetterTogether__C3__Balance --> BetterTogether__Platform : origin_platform
+  BetterTogether__C3__BalanceLock --> BetterTogether__C3__Balance : balance
+  BetterTogether__C3__BalanceLock --> BetterTogether__Platform : source_platform
+  BetterTogether__C3__Token --> BetterTogether__Community : community
+  BetterTogether__C3__Token --> BetterTogether__Platform : origin_platform
+  BetterTogether__C3__TokenSeed --> BetterTogether__Person : creator
   BetterTogether__CommentAddedNotifier__Notification --> Noticed__Event : event
   BetterTogether__CommentAddedNotifier__Notification --> BetterTogether__Platform : platform
   BetterTogether__ContactDetail --> BetterTogether__Platform : platform
@@ -661,11 +715,12 @@ classDiagram
   BetterTogether__ContentSecurity__Subject --> ActiveStorage__Blob : active_storage_blob
   BetterTogether__EmailAddress --> BetterTogether__Platform : platform
   BetterTogether__EmailAddress --> BetterTogether__ContactDetail : contact_detail
-  BetterTogether__EventOccurrence --> BetterTogether__Event : event
   BetterTogether__FeatureAccessGrant --> BetterTogether__Platform : platform
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : person
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : granted_by_person
   BetterTogether__FederationContentGrant --> BetterTogether__PlatformConnection : platform_connection
+  BetterTogether__Fleet__Node --> BetterTogether__Platform : platform
+  BetterTogether__Fleet__NodeOwnership --> BetterTogether__Fleet__Node : node
   BetterTogether__InboundEmailMessage --> ActionMailbox__InboundEmail : inbound_email
   BetterTogether__InboundEmailMessage --> BetterTogether__Platform : platform
   BetterTogether__InboundEmailReplyToken --> BetterTogether__Person : recipient

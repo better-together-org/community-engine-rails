@@ -36,9 +36,22 @@ RSpec.describe 'better_together/conversations/_conversation_content' do
            locals: { conversation: conversation, messages: messages, message: message }
   end
 
-  it 'renders the conversation content' do
+  it 'does not render the E2EE session bootstrap when the feature flag is disabled' do
+    allow(BetterTogether).to receive(:e2ee_messaging_enabled?).and_return(false)
+
     render_partial
 
-    expect(rendered).to include('card-footer')
+    expect(rendered).not_to include('better-together--e2e-session')
+    expect(rendered).not_to include('e2ePassphraseModal')
+  end
+
+  it 'renders the E2EE session bootstrap next to the conversation UI when enabled' do
+    allow(BetterTogether).to receive(:e2ee_messaging_enabled?).and_return(true)
+
+    render_partial
+
+    expect(rendered).to include('better-together--e2e-session')
+    expect(rendered).to include('data-e2e-session-state="initializing"')
+    expect(rendered).to include('e2ePassphraseModal')
   end
 end

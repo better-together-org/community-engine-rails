@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::ConversationParticipant do
+  # Stub Turbo broadcasts globally: the after_create_commit / after_destroy_commit callbacks
+  # on ConversationParticipant call broadcast_replace_to, which tries to render a partial
+  # that may not be available in the test environment.
+  before { allow(Turbo::StreamsChannel).to receive(:broadcast_replace_to) }
+
   describe 'factory' do
     it 'creates a valid conversation participant' do
       participant = build(:conversation_participant)
@@ -62,6 +67,50 @@ RSpec.describe BetterTogether::ConversationParticipant do
 
       expect(participant1).to be_persisted
       expect(participant2).to be_valid
+    end
+  end
+
+  describe 'E2E sender key callbacks' do
+    # Use let! so both are created before each example's change block measures the before-value.
+    let!(:conversation) { create(:conversation) }
+    let!(:new_person)   { create(:person) }
+
+    describe 'after_create_commit' do
+      it 'increments conversation.sender_key_version by 1' do
+        expect do
+          create(:conversation_participant, conversation: conversation, person: new_person)
+        end.to change { conversation.reload.sender_key_version }.by(1)
+      end
+
+      it 'broadcasts a Turbo Stream replace to e2e_message_form_<id>' do
+        create(:conversation_participant, conversation: conversation, person: new_person)
+        expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
+          anything,
+          hash_including(target: "e2e_message_form_#{conversation.id}")
+        ).at_least(:once)
+      end
+    end
+
+    describe 'after_destroy_commit' do
+      let!(:participant) do
+        create(:conversation_participant, conversation: conversation, person: new_person)
+      end
+
+      before { conversation.reload }
+
+      it 'increments conversation.sender_key_version by 1' do
+        expect do
+          participant.destroy!
+        end.to change { conversation.reload.sender_key_version }.by(1)
+      end
+
+      it 'broadcasts a Turbo Stream replace to e2e_message_form_<id>' do
+        participant.destroy!
+        expect(Turbo::StreamsChannel).to have_received(:broadcast_replace_to).with(
+          anything,
+          hash_including(target: "e2e_message_form_#{conversation.id}")
+        ).at_least(:once)
+      end
     end
   end
 end

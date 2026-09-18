@@ -36,6 +36,15 @@ RSpec.describe BetterTogether::PersonDeletionAnonymizer, type: :service do
       end
     end
 
+    it 'clears cryptographic key fields' do
+      described_class.call(person: person)
+      reloaded = person.reload
+      expect(reloaded.identity_key_public).to be_nil
+      expect(reloaded.signed_prekey_public).to be_nil
+      expect(reloaded.registration_id).to be_nil
+      expect(reloaded.key_backup_blob).to be_nil
+    end
+
     it 'sets default notification preferences disabling email' do
       described_class.call(person: person)
       prefs = person.reload.notification_preferences
