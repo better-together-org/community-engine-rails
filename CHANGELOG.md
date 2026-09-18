@@ -25,6 +25,8 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 #### Removed
 - Signal Protocol E2E encrypted-messaging beta (prekey exchange, Double Ratchet, sender-key group rotation, passphrase key backup) pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings). Preserved intact on `feature/e2e-signal-protocol-messaging-01100notes` for future rework.
+- C3 Tree Seeds community contribution token system, including the Borgberry fleet-compute integration and fleet-node authorization, relocated to a standalone extension gem rather than shipping in core 0.11.0.
+- Claim/Citation/Evidence governance foundation pulled from the 0.11.0 release. Reintegration tracked as draft PR #1797, not part of this release.
 
 #### CMS Block System
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)
@@ -115,17 +117,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Provider adapter architecture scaffold for pluggable AI and service backends (#1491)
 - Robot configuration system documentation and resolution-flow artefacts for persisted AI-capable robot records (#1493)
 
-#### C3 Tree Seeds — Community Contribution Token System
-- `BetterTogether::C3::Token` model for recording community contribution credits with platform scoping and cross-platform federation support
-- `BetterTogether::C3::TokenSeed` STI type for federated token-seed distribution via the federation API (`/api/v1/c3/token_seeds`)
-- `BetterTogether::Joatu::Settlement` model + `Agreement#fulfill!` lifecycle method to complete the C3 spending chain
-- Balance locking with decimal-precision arithmetic via `C3::BalanceLock`; `ExpireBalanceLocksJob` handles automatic expiry of stale locks
-- Borgberry fleet integration: migrations, models, and API endpoints for fleet-node contribution tracking and autonomous earning
-- Operator-owned settlement notifications via `C3::SettlementMailer` and `C3::SettlementNotifier`
-- `PlatformConnection` C3 scope + token-origin tracking as federation prerequisites for cross-platform token exchange
-- i18n coverage: C3 and settlement locale keys for English, Spanish, French, and Ukrainian
-- Architecture documentation: `docs/c3/` (what-is-c3, data-model, flows, network-and-security, regulatory considerations), `docs/borgberry-ce-integration.md`, `docs/c3-federation-design.md`
-
 #### Short Links & Share Domain
 - `BetterTogether::ShortLink` model with configurable slug, polymorphic target, optional expiry, and click tracking (#1594)
 - `Shortlinkable` concern: attach a managed share URL to any model with one line
@@ -134,9 +125,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Public redirect endpoint at `GET /r/:slug`
 - Stable `dom_id`/`dom_class` DOM identifiers on all new short-link views per the View DOM Identifier Standard
 
-#### Fleet Node Authorization
-- `FleetNodePolicy` + Pundit authorization on `NodesController` to prevent unauthorized fleet-node management via the fleet API
-
 ### Fixed
 - **Content Blocks / Hero images:** two bugs kept a hero/background image from displaying for anonymous visitors. (1) `block_styles` emitted `background-image: url(<proxy-url>)` **unquoted**; ActiveStorage appends the blob filename as the last path segment, so any file with `(`, `)`, a space or a comma in its name (e.g. `photo(1).jpg`) produced a CSS syntax error and the whole declaration was dropped -- now quoted (`url("...")`). (2) `Content::Block#privacy` defaults to `'private'` and nothing syncs it from the page, so blocks predating the 0.11.0 `authorize_blob_access` gate (#1392) had their images return 401 even on a public homepage -- new backfill migration `20260902190000` makes visible blocks on published public pages `public` (raw SQL, mirroring `20251219191929` for navigation items).
 - **Migrations / Platform scoping:** `20260321000003_backfill_content_platform_id` and the phase backfills resolve their target platform as "the row `WHERE host = TRUE`" at migration time. During the federation bootstrap the host flag briefly sits on a seed `community-engine` platform that is then demoted to `external = TRUE`, so content stamped in that window ends up scoped to a platform that `PlatformRecordPolicy::Scope` now hides from every request — on host apps this silently replaced the homepage with the generic Community Engine page and 404'd the other static pages (observed on `newfoundlandlabrador.online`: 11 pages incl. the homepage). New idempotent repair migration `20260902180000_repair_local_content_scoped_to_external_platforms` moves locally-authored content (`source_id IS NULL`) — pages, posts, events, navigation, content blocks, and mis-scoped `community_id` — off `external = TRUE` platforms back to the host platform, collision-guarded on `(identifier, platform_id)` and a no-op on a correctly-scoped instance.
@@ -144,7 +132,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Content Blocks:** Production readiness fixes for markdown, video, and iframe blocks; restored `content_addable? = true` on 11 regressed block types; all blocks enabled and PR #1492 review findings resolved
 - **Uploads:** Honor upload content-security state toggles; align upload download authorization to the content-security review state
 - **Federation:** Namespace mirrored content imports to prevent cross-tenant identifier collisions (#1597); add idempotent repair migration for federated mirrored identifier backfill; localize federation remediation messages (es/fr/uk)
-- **C3:** Rename `BalanceLocking#lock!` → `lock_c3!` to stop shadowing `ActiveRecord` pessimistic locking; qualify error constant namespacing; validate `lock_ref` upfront before lock acquisition
 - **Provider Gems:** Load provider extension gems as optional non-bundled extensions to keep the core engine bundle clean (#1596)
 - **Assets:** Restore Leaflet vendor assets for importmap compatibility
 - **RC Hardening:** Address 0.11.0 RC merge blockers — scope fixes, route cleanup, and compatibility patches (#1598)
@@ -193,16 +180,9 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 ### Known Limitations & Deferred Surfaces
 
 The following subsystems shipped their backend model, API, and migration foundations in
-0.11.0 but do **not** yet include organizer or end-user CE UI. They are accessible via
-the JSON:API or Borgberry agent runtime only. Organizer UI is planned for 0.11.x patches.
+0.11.0 but do **not** yet include organizer or end-user CE UI. Organizer UI is planned
+for 0.11.x patches.
 
-- **Fleet Nodes (`BetterTogether::Fleet::Node`):** API-only in 0.11.0. No CE admin or
-  organizer views exist for inspecting or managing fleet nodes registered with a platform.
-  Fleet node management operates exclusively through the Borgberry agent runtime.
-- **C3 Token Ledger — Organizer View:** `C3::Token`, `C3::Balance`, and `C3::ExchangeRate`
-  have full API support but no organizer-facing CE UI for inspecting or managing community
-  token balances. Organizers receive C3 activity indirectly through JOATU settlement
-  notifications.
 - **Inbound Mail — Admin Inspection:** The Action Mailbox MVP provides routing and
   persisted inbound message records but no organizer UI for inspecting routing failures or
   reviewing delivered messages. This is intentionally a documentation-first runtime
