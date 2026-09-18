@@ -63,6 +63,10 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Public JSONAPI endpoint: `POST /api/v1/membership_requests`
 - Pundit policy enforcement; 404-not-403 leak prevention
 
+#### Messaging
+- `MessageRequest` model/policy/controller: lets a member send a messaging-permission request with an explanatory note to someone who hasn't granted them direct-messaging access; accepting opens a conversation and records an explicit `PersonMessagingGrant`
+- Gated behind the `message_requests` feature (alpha rollout — see `config/feature_gates.yml`), enforced server-side in `MessageRequestPolicy` (not just hidden in the UI)
+
 #### Access Modes & Review Flow
 - Community access-mode surfaces now distinguish open-join and request-to-join states consistently across public community pages, registration interstitials, and organizer review flows (#1500)
 - Membership request review queue/detail evidence and related docs/diagrams now reflect the shipped organizer moderation path instead of leaving that flow implicit (#1500)
