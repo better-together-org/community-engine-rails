@@ -5,6 +5,9 @@ require 'storext'
 module BetterTogether
   module Content
     # Base class from which all other content blocks types inherit
+    # rubocop:todo Metrics/ClassLength -- grew past the limit on reverting the
+    # Evidence-foundation removal; split evidence-related concerns out as part
+    # of reintegration.
     class Block < PlatformRecord
       include ::BetterTogether::Content::BlockAttributes
       include ::BetterTogether::Reportable
@@ -125,6 +128,23 @@ module BetterTogether
                            end}"
       end
 
+      def citation_target_key
+        [block_name, identifier.presence || id].join(':')
+      end
+
+      def evidence_selector
+        "block:#{citation_target_key}"
+      end
+
+      def evidence_selector_options
+        [
+          {
+            value: evidence_selector,
+            label: "Block: #{self}"
+          }
+        ]
+      end
+
       # Method to return the content used for cached search payloads
       def cached_content
         {
@@ -160,5 +180,6 @@ module BetterTogether
         end
       end
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

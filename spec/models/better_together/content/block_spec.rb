@@ -97,6 +97,16 @@ module BetterTogether # :nodoc:
           end
         end
 
+        describe '#evidence_selector_options' do
+          it 'includes the base block selector' do
+            block = create(:better_together_content_html, identifier: 'intro-block')
+
+            expect(block.evidence_selector_options).to include(
+              include(value: 'block:html:intro-block')
+            )
+          end
+        end
+
         describe '#cached_content' do
           it 'returns a hash with id, type, content, and translations' do
             block = create(:better_together_content_html, content: '<p>Test</p>')

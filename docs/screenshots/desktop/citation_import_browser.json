@@ -1,0 +1,11 @@
+{
+  "name": "citation_import_browser",
+  "device": "desktop",
+  "url": "http://127.0.0.1:37731/en/host/pages/citation-import-browser-ce4affe1/edit",
+  "title": "Edit Ut quas qui. | Pages | Test Host Community",
+  "captured_at": "2026-04-04T21:27:05Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "flow": "citation_import_browser",
+  "source_spec": "./spec/docs_screenshots/better_together/citation_import_browser_spec.rb"
+}

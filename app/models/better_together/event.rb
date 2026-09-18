@@ -6,6 +6,8 @@ module BetterTogether
   class Event < PlatformRecord
     include Attachments::Images
     include Categorizable
+    include Citable
+    include Claimable
     include Creatable
     include Federatable
     include FriendlySlug

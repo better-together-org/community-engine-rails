@@ -20,10 +20,21 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
   end
 
   describe 'GET /index' do
-    it 'returns success' do
-      offer
+    it 'returns success without contribution and evidence summaries' do
+      offer.add_governed_contributor(person, role: 'reviewer')
+      offer.contributions.first.update!(details: {
+                                          'github_handle' => 'joatu-offer-reviewer',
+                                          'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                        })
+      create(:claim, claimable: offer, statement: 'Offers can carry evidence summaries in list views.')
+      create(:citation, citeable: offer, reference_key: 'joatu_offer_summary', title: 'JOATU Offer Summary')
+
       get better_together.joatu_offers_path(locale: I18n.locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Evidence:')
+      expect(response.body).not_to include('Governance Bundle')
     end
   end
 
@@ -75,9 +86,23 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
   end
 
   describe 'GET /show' do
-    it 'returns success' do
+    it 'returns success without contribution and evidence references' do
+      citation = create(:citation, citeable: offer, title: 'JOATU Offer Notes', reference_key: 'joatu-offer-notes')
+      claim = create(:claim, claimable: offer, statement: 'This offer is backed by review notes.')
+      create(:evidence_link, claim:, citation:, relation_type: 'supports')
+      offer.add_governed_contributor(person, role: 'reviewer')
+      offer.contributions.first.update!(details: {
+                                          'github_handle' => 'joatu-offer-reviewer',
+                                          'github_sources' => [{ 'reference_key' => 'pull_request_1494' }]
+                                        })
+
       get better_together.joatu_offer_path(offer, locale: I18n.locale)
       expect(response).to be_successful
+      expect(response.body).not_to include('Contributors:')
+      expect(response.body).not_to include('GitHub-linked')
+      expect(response.body).not_to include('Claims and Supporting Evidence')
+      expect(response.body).not_to include('Evidence and Citations')
+      expect(response.body).not_to include('JOATU Offer Notes')
     end
   end
 

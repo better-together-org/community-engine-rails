@@ -37,6 +37,8 @@ module BetterTogether
                          .includes(
                            :string_translations,
                            :contributions,
+                           :citations,
+                           :claims,
                            blocks: { background_image_file_attachment: :blob }
                          )
       load_community_posts
