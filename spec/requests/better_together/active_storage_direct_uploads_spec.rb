@@ -2,13 +2,12 @@
 
 require 'rails_helper'
 
-RSpec.describe 'ActiveStorage direct uploads', :no_auth do
-  # rails_helper.rb includes BetterTogether::Engine.routes.url_helpers after
-  # Rails.application.routes.url_helpers for request specs (module include order:
-  # later wins), and the engine's url_helpers module falls back to a generic,
-  # wrong url_for(controller:, action:) resolution for any route name it doesn't
-  # itself define -- including this Rails-core one. Call it fully-qualified to
-  # bypass the shadowing.
+RSpec.describe 'ActiveStorage direct uploads' do
+  # RequestSpecHelper includes BetterTogether::Engine.routes.url_helpers after
+  # Rails.application.routes.url_helpers (module include order: later wins), and the
+  # engine's url_helpers module falls back to a generic, wrong url_for(controller:,
+  # action:) resolution for any route name it doesn't itself define -- including this
+  # Rails-core one. Call it fully-qualified to bypass the shadowing.
   let(:direct_uploads_path) { Rails.application.routes.url_helpers.rails_direct_uploads_path }
 
   let(:blob_params) do
