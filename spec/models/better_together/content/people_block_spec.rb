@@ -15,11 +15,7 @@ module BetterTogether
         expect(described_class.ancestors).to include(BetterTogether::Content::ResourceBlockAttributes)
       end
 
-      it 'is content_addable for an alpha-entitled actor' do
-        # new_content_blocks defaults to alpha rollout — content_addable? delegates
-        # to FeatureGate, which requires alpha access for an actor to see true.
-        allow(BetterTogether::FeatureGate).to receive(:enabled?).with('new_content_blocks', anything).and_return(true)
-
+      it 'is content_addable (0.11.0 content blocks ship unconditionally, not gated)' do
         expect(described_class.content_addable?).to be true
       end
 

@@ -22,12 +22,6 @@ module BetterTogether
         dismissible == 'true'
       end
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[alert_level heading body_text dismissible]
       end
