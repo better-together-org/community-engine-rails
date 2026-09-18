@@ -84,27 +84,6 @@ Table "better_together_addresses" {
   "primary_flag" boolean
 }
 
-Table "better_together_agent_job_results" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "job_id" string
-  "job_type" string
-  "source_system" string
-  "node_id" string
-  "fleet_node_id" uuid
-  "submitter_type" string
-  "submitter_id" uuid
-  "result_payload" jsonb
-  "steps" jsonb
-  "elapsed_ms" integer
-  "status" string
-  "started_at" datetime
-  "completed_at" datetime
-  "error_message" text
-}
-
 Table "better_together_agreement_participants" {
   "id" varchar
   "lock_version" integer
@@ -188,72 +167,6 @@ Table "better_together_authorships" {
   "role" string
   "contribution_type" string
   "details" jsonb
-}
-
-Table "better_together_c3_balance_locks" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "balance_id" uuid
-  "lock_ref" string
-  "millitokens" bigint
-  "agreement_ref" string
-  "source_platform_id" uuid
-  "status" string
-  "expires_at" datetime
-  "settled_at" datetime
-}
-
-Table "better_together_c3_balances" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "holder_type" string
-  "holder_id" uuid
-  "community_id" uuid
-  "available_millitokens" bigint
-  "locked_millitokens" bigint
-  "lifetime_earned_millitokens" bigint
-  "origin_platform_id" uuid
-}
-
-Table "better_together_c3_exchange_rates" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "contribution_type" integer
-  "contribution_type_name" string
-  "rate" decimal
-  "unit_name" string
-  "unit_label" string
-  "source_system" string
-  "active" boolean
-}
-
-Table "better_together_c3_tokens" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "earner_type" string
-  "earner_id" uuid
-  "community_id" uuid
-  "contribution_type" integer
-  "contribution_type_name" string
-  "c3_millitokens" bigint
-  "source_ref" string
-  "source_system" string
-  "units" decimal
-  "duration_s" decimal
-  "metadata" jsonb
-  "status" string
-  "emitted_at" datetime
-  "confirmed_at" datetime
-  "origin_platform_id" uuid
-  "federated" boolean
 }
 
 Table "better_together_calendar_entries" {
@@ -347,43 +260,6 @@ Table "better_together_checklists" {
   "protected" boolean
   "privacy" string
   "directional" boolean
-}
-
-Table "better_together_citations" {
-  "id" varchar
-  "citeable_type" string
-  "citeable_id" uuid
-  "creator_id" uuid
-  "position" integer
-  "reference_key" string
-  "source_kind" string
-  "title" string
-  "source_author" string
-  "publisher" string
-  "source_url" string
-  "locator" string
-  "published_on" date
-  "accessed_on" date
-  "excerpt" text
-  "rights_notes" text
-  "metadata" jsonb
-  "created_at" datetime
-  "updated_at" datetime
-}
-
-Table "better_together_claims" {
-  "id" varchar
-  "claimable_type" string
-  "claimable_id" uuid
-  "creator_id" uuid
-  "position" integer
-  "claim_key" string
-  "statement" text
-  "selector" text
-  "review_status" string
-  "metadata" jsonb
-  "created_at" datetime
-  "updated_at" datetime
 }
 
 Table "better_together_comments" {
@@ -576,7 +452,6 @@ Table "better_together_conversations" {
   "updated_at" datetime
   "title" string
   "creator_id" uuid
-  "sender_key_version" integer
 }
 
 Table "better_together_email_addresses" {
@@ -631,22 +506,6 @@ Table "better_together_events" {
   "last_synced_at" datetime
 }
 
-Table "better_together_evidence_links" {
-  "id" varchar
-  "claim_id" uuid
-  "citation_id" uuid
-  "creator_id" uuid
-  "position" integer
-  "relation_type" string
-  "locator" string
-  "quoted_text" text
-  "editor_note" text
-  "review_status" string
-  "metadata" jsonb
-  "created_at" datetime
-  "updated_at" datetime
-}
-
 Table "better_together_feature_access_grants" {
   "id" varchar
   "lock_version" integer
@@ -673,36 +532,6 @@ Table "better_together_federation_access_tokens" {
   "expires_at" datetime
   "revoked_at" datetime
   "last_used_at" datetime
-}
-
-Table "better_together_fleet_node_ownerships" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "node_id" uuid
-  "owner_type" string
-  "owner_id" uuid
-}
-
-Table "better_together_fleet_nodes" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "node_id" string
-  "node_category" string
-  "headscale_ip" string
-  "lan_ip" string
-  "borgberry_port" integer
-  "hardware" jsonb
-  "compute" jsonb
-  "services" jsonb
-  "safety_tier" string
-  "online" boolean
-  "last_seen_at" datetime
-  "registered_at" datetime
-  "platform_id" uuid
 }
 
 Table "better_together_geography_continents" {
@@ -981,8 +810,6 @@ Table "better_together_joatu_offers" {
   "urgency" string
   "address_id" uuid
   "privacy" string
-  "c3_price_millitokens" bigint
-  "c3_price_currency" string
 }
 
 Table "better_together_joatu_requests" {
@@ -1001,8 +828,6 @@ Table "better_together_joatu_requests" {
   "requestor_email" string
   "referral_source" string
   "privacy" string
-  "c3_budget_millitokens" bigint
-  "c3_budget_currency" string
 }
 
 Table "better_together_joatu_response_links" {
@@ -1015,23 +840,6 @@ Table "better_together_joatu_response_links" {
   "response_type" string
   "response_id" uuid
   "creator_id" uuid
-}
-
-Table "better_together_joatu_settlements" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "agreement_id" uuid
-  "payer_type" string
-  "payer_id" uuid
-  "recipient_type" string
-  "recipient_id" uuid
-  "c3_token_id" uuid
-  "c3_millitokens" bigint
-  "status" string
-  "completed_at" datetime
-  "lock_ref" string
 }
 
 Table "better_together_jwt_denylists" {
@@ -1284,17 +1092,6 @@ Table "better_together_oauth_applications" {
   "owner_id" uuid
 }
 
-Table "better_together_one_time_prekeys" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "person_id" uuid
-  "key_id" integer
-  "public_key" text
-  "consumed" boolean
-}
-
 Table "better_together_pages" {
   "id" varchar
   "lock_version" integer
@@ -1328,17 +1125,8 @@ Table "better_together_people" {
   "community_id" uuid
   "preferences" jsonb
   "notification_preferences" jsonb
-  "identity_key_public" text
-  "signed_prekey_id" integer
-  "signed_prekey_public" text
-  "signed_prekey_sig" text
-  "registration_id" integer
-  "key_backup_blob" text
-  "key_backup_salt" text
-  "key_backup_updated_at" datetime
   "deleted_at" datetime
   "anonymized_at" datetime
-  "borgberry_did" string
 }
 
 Table "better_together_person_access_grants" {
@@ -2048,8 +1836,6 @@ Ref "fk_rails_active_storage_variant_records_active_storage_blobs":"active_stora
 
 Ref "fk_rails_better_together_addresses_better_together_contact_details":"better_together_addresses"."contact_detail_id" - "better_together_contact_details"."id"
 
-Ref "fk_rails_better_together_agent_job_results_better_together_fleet_nodes":"better_together_agent_job_results"."fleet_node_id" - "better_together_fleet_nodes"."id"
-
 Ref "fk_rails_better_together_agreement_participants_better_together_agreements":"better_together_agreement_participants"."agreement_id" - "better_together_agreements"."id"
 
 Ref "fk_rails_better_together_agreement_participants_better_together_people":"better_together_agreement_participants"."person_id" - "better_together_people"."id"
@@ -2061,18 +1847,6 @@ Ref "fk_rails_better_together_agreements_better_together_pages":"better_together
 Ref "fk_rails_better_together_agreements_better_together_people":"better_together_agreements"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_ai_log_translations_better_together_people":"better_together_ai_log_translations"."initiator_id" - "better_together_people"."id"
-
-Ref "fk_rails_better_together_c3_balance_locks_better_together_c3_balances":"better_together_c3_balance_locks"."balance_id" - "better_together_c3_balances"."id" [delete: cascade]
-
-Ref "fk_rails_better_together_c3_balance_locks_better_together_platforms":"better_together_c3_balance_locks"."source_platform_id" - "better_together_platforms"."id"
-
-Ref "fk_rails_better_together_c3_balances_better_together_communities":"better_together_c3_balances"."community_id" - "better_together_communities"."id"
-
-Ref "fk_rails_better_together_c3_balances_better_together_platforms":"better_together_c3_balances"."origin_platform_id" - "better_together_platforms"."id"
-
-Ref "fk_rails_better_together_c3_tokens_better_together_communities":"better_together_c3_tokens"."community_id" - "better_together_communities"."id"
-
-Ref "fk_rails_better_together_c3_tokens_better_together_platforms":"better_together_c3_tokens"."origin_platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_calendar_entries_better_together_calendars":"better_together_calendar_entries"."calendar_id" - "better_together_calendars"."id"
 
@@ -2091,10 +1865,6 @@ Ref "fk_rails_better_together_checklist_items_better_together_checklists":"bette
 Ref "fk_rails_better_together_checklist_items_better_together_people":"better_together_checklist_items"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_checklists_better_together_people":"better_together_checklists"."creator_id" - "better_together_people"."id"
-
-Ref "fk_rails_better_together_citations_better_together_people":"better_together_citations"."creator_id" - "better_together_people"."id"
-
-Ref "fk_rails_better_together_claims_better_together_people":"better_together_claims"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_comments_better_together_people":"better_together_comments"."creator_id" - "better_together_people"."id"
 
@@ -2142,12 +1912,6 @@ Ref "fk_rails_better_together_events_better_together_people":"better_together_ev
 
 Ref "fk_rails_better_together_events_better_together_platforms":"better_together_events"."platform_id" - "better_together_platforms"."id"
 
-Ref "fk_rails_better_together_evidence_links_better_together_citations":"better_together_evidence_links"."citation_id" - "better_together_citations"."id"
-
-Ref "fk_rails_better_together_evidence_links_better_together_claims":"better_together_evidence_links"."claim_id" - "better_together_claims"."id"
-
-Ref "fk_rails_better_together_evidence_links_better_together_people":"better_together_evidence_links"."creator_id" - "better_together_people"."id"
-
 Ref "fk_rails_better_together_feature_access_grants_better_together_people":"better_together_feature_access_grants"."granted_by_person_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_feature_access_grants_better_together_people":"better_together_feature_access_grants"."person_id" - "better_together_people"."id"
@@ -2155,10 +1919,6 @@ Ref "fk_rails_better_together_feature_access_grants_better_together_people":"bet
 Ref "fk_rails_better_together_feature_access_grants_better_together_platforms":"better_together_feature_access_grants"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_federation_access_tokens_better_together_platform_connections":"better_together_federation_access_tokens"."platform_connection_id" - "better_together_platform_connections"."id"
-
-Ref "fk_rails_better_together_fleet_node_ownerships_better_together_fleet_nodes":"better_together_fleet_node_ownerships"."node_id" - "better_together_fleet_nodes"."id" [delete: cascade]
-
-Ref "fk_rails_better_together_fleet_nodes_better_together_platforms":"better_together_fleet_nodes"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_geography_continents_better_together_communities":"better_together_geography_continents"."community_id" - "better_together_communities"."id"
 
@@ -2238,10 +1998,6 @@ Ref "fk_rails_better_together_joatu_requests_better_together_people":"better_tog
 
 Ref "fk_rails_better_together_joatu_response_links_better_together_people":"better_together_joatu_response_links"."creator_id" - "better_together_people"."id"
 
-Ref "fk_rails_better_together_joatu_settlements_better_together_c3_tokens":"better_together_joatu_settlements"."c3_token_id" - "better_together_c3_tokens"."id"
-
-Ref "fk_rails_better_together_joatu_settlements_better_together_joatu_agreements":"better_together_joatu_settlements"."agreement_id" - "better_together_joatu_agreements"."id" [delete: restrict]
-
 Ref "fk_rails_better_together_messages_better_together_conversations":"better_together_messages"."conversation_id" - "better_together_conversations"."id"
 
 Ref "fk_rails_better_together_messages_better_together_people":"better_together_messages"."sender_id" - "better_together_people"."id"
@@ -2289,8 +2045,6 @@ Ref "fk_rails_better_together_oauth_access_tokens_better_together_oauth_applicat
 Ref "fk_rails_better_together_oauth_access_tokens_better_together_users":"better_together_oauth_access_tokens"."resource_owner_id" - "better_together_users"."id"
 
 Ref "fk_rails_better_together_oauth_applications_better_together_people":"better_together_oauth_applications"."owner_id" - "better_together_people"."id"
-
-Ref "fk_rails_better_together_one_time_prekeys_better_together_people":"better_together_one_time_prekeys"."person_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_pages_better_together_communities":"better_together_pages"."community_id" - "better_together_communities"."id"
 
