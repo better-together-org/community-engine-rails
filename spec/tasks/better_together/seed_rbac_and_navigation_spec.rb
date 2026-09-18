@@ -135,6 +135,23 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(dashboard_nav_item.visibility_strategy).to eq('permission')
     expect(dashboard_nav_item.privacy).to eq('private')
 
+    membership_review_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard-membership-review')
+    expect(membership_review_nav_item.permission_identifier).to eq('manage_platform')
+    expect(membership_review_nav_item.visibility_strategy).to eq('permission')
+    expect(membership_review_nav_item.privacy).to eq('private')
+
+    federation_review_nav_item = BetterTogether::NavigationItem.find_by(
+      identifier: 'host-dashboard-platform-connection-review'
+    )
+    expect(federation_review_nav_item.permission_identifier).to eq('manage_network_connections')
+    expect(federation_review_nav_item.visibility_strategy).to eq('permission')
+    expect(federation_review_nav_item.privacy).to eq('private')
+
+    safety_review_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard-safety-review')
+    expect(safety_review_nav_item.permission_identifier).to eq('manage_platform_safety')
+    expect(safety_review_nav_item.visibility_strategy).to eq('permission')
+    expect(safety_review_nav_item.privacy).to eq('private')
+
     legacy_permission = BetterTogether::ResourcePermission.find_by(identifier: 'view_platform_analytics')
     expect(legacy_permission).to be_nil
 

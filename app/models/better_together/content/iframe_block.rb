@@ -8,10 +8,9 @@ module BetterTogether
 
       ASPECT_RATIOS = %w[16x9 4x3 1x1 21x9].freeze
 
-      translates :title, :caption, type: :string
+      translates :title, :caption, :iframe_url, type: :string
 
       store_attributes :content_data do
-        iframe_url String, default: ''
         aspect_ratio String, default: '16x9'
       end
 
@@ -27,10 +26,6 @@ module BetterTogether
         title.presence || I18n.t('better_together.content.blocks.iframe_block.default_title')
       end
 
-      def self.content_addable?
-        true
-      end
-
       def self.extra_permitted_attributes
         super + %i[iframe_url aspect_ratio title caption]
       end
@@ -41,7 +36,7 @@ module BetterTogether
         return if iframe_url.blank?
         return if BetterTogether::ContentSecurityPolicySources.origin_for_url(iframe_url).present?
 
-        errors.add(:iframe_url, :invalid)
+        errors.add(:iframe_url, :csp_not_allowed)
       end
     end
   end

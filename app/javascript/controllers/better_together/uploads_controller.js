@@ -1,14 +1,21 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["search", "sort", "list", "item"]
+  static targets = ["search", "sort", "list", "item", "filterButton"]
+
+  connect() {
+    this.statusFilter = "all"
+    this.updateFilterButtons()
+  }
 
   filter() {
-    const query = this.searchTarget.value.toLowerCase()
-    this.itemTargets.forEach((item) => {
-      const name = item.dataset.name.toLowerCase()
-      item.classList.toggle("d-none", !name.includes(query))
-    })
+    this.applyFilters()
+  }
+
+  filterByStatus(event) {
+    this.statusFilter = event.currentTarget.dataset.statusFilter || "all"
+    this.updateFilterButtons()
+    this.applyFilters()
   }
 
   sort() {
@@ -33,5 +40,27 @@ export default class extends Controller {
   insert(event) {
     const signedId = event.currentTarget.dataset.signedId
     this.dispatch("insert", { detail: { signedId } })
+  }
+
+  applyFilters() {
+    const query = this.searchTarget.value.toLowerCase()
+
+    this.itemTargets.forEach((item) => {
+      const name = item.dataset.name.toLowerCase()
+      const matchesSearch = name.includes(query)
+      const matchesStatus = this.statusFilter === "all" || item.dataset.reviewState === this.statusFilter
+
+      item.classList.toggle("d-none", !(matchesSearch && matchesStatus))
+    })
+  }
+
+  updateFilterButtons() {
+    if (!this.hasFilterButtonTarget) return
+
+    this.filterButtonTargets.forEach((button) => {
+      const active = button.dataset.statusFilter === this.statusFilter
+      button.classList.toggle("active", active)
+      button.setAttribute("aria-pressed", active ? "true" : "false")
+    })
   }
 }

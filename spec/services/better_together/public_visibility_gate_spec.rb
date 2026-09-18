@@ -51,5 +51,23 @@ RSpec.describe BetterTogether::PublicVisibilityGate do
 
       expect(result.allowed?).to be(true)
     end
+
+    it 'denies community visibility when the actor has not accepted the agreement' do
+      result = described_class.evaluate(record: build(:better_together_page, privacy: 'community'), actor: person, target_privacy: 'community')
+
+      expect(result.allowed?).to be(false)
+      expect(result.reasons).to include(:missing_publishing_agreement)
+    end
+
+    it 'allows community visibility after agreement acceptance' do
+      create(:better_together_agreement_participant,
+             agreement: publishing_agreement,
+             participant: person,
+             accepted_at: Time.current)
+
+      result = described_class.evaluate(record: build(:better_together_page, privacy: 'community'), actor: person, target_privacy: 'community')
+
+      expect(result.allowed?).to be(true)
+    end
   end
 end

@@ -29,7 +29,20 @@ module BetterTogether
         filter :privacy
         filter :protected
         filter :host
+        filter :slug, apply: lambda { |records, value, _options|
+          matching_ids = records.i18n.where(slug: Array(value)).pluck(:id)
+          records.where(id: matching_ids)
+        }
         filter :creator_id
+
+        # ActionText returns an ActionText::RichText object; serialize as plain text for JSON consumers.
+        def description
+          @model.description&.to_plain_text.to_s
+        end
+
+        def description=(value)
+          @model.description = value
+        end
 
         # Custom attribute methods
         def profile_image_url

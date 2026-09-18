@@ -3,28 +3,28 @@
 FactoryBot.define do
   factory :social_media_account, class: 'BetterTogether::SocialMediaAccount' do
     contact_detail { association :contact_detail }
-    platform { 'Facebook' }
+    platform_name { 'Facebook' }
     handle { Faker::Internet.username(specifier: 5..15, separators: %w[.]) }
     privacy { 'public' }
 
     trait :instagram do
-      platform { 'Instagram' }
+      platform_name { 'Instagram' }
     end
 
     trait :linkedin do
-      platform { 'LinkedIn' }
+      platform_name { 'LinkedIn' }
     end
 
     trait :youtube do
-      platform { 'YouTube' }
+      platform_name { 'YouTube' }
     end
 
     trait :tiktok do
-      platform { 'TikTok' }
+      platform_name { 'TikTok' }
     end
 
     trait :reddit do
-      platform { 'Reddit' }
+      platform_name { 'Reddit' }
     end
 
     trait :with_url do

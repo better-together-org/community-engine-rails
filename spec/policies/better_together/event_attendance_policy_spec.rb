@@ -7,7 +7,7 @@ RSpec.describe BetterTogether::EventAttendancePolicy, type: :policy do
   let(:other_person) { create(:better_together_person) }
   let(:creator_user)   { create(:better_together_user, person: event_creator) }
   let(:other_user) { create(:better_together_user, person: other_person) }
-  let(:event) { BetterTogether::Event.create!(name: 'Policy Event', starts_at: 1.day.from_now, identifier: SecureRandom.uuid) }
+  let(:event) { create(:better_together_event, creator: event_creator) }
 
   describe '#create?' do
     it 'permits any logged in user' do

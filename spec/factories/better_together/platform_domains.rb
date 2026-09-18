@@ -6,11 +6,11 @@ FactoryBot.define do
           aliases: %i[better_together_platform_domain platform_domain] do
     association :platform, factory: :'better_together/platform'
     hostname { "platform-#{SecureRandom.hex(6)}.test" }
-    primary { false }
+    primary_flag { false }
     active { true }
 
     trait :primary do
-      primary { true }
+      primary_flag { true }
     end
   end
 end

@@ -3,7 +3,7 @@
 module BetterTogether
   module Joatu
     # AgreementsController manages offer-request agreements
-    class AgreementsController < JoatuController
+    class AgreementsController < JoatuController # rubocop:todo Metrics/ClassLength
       # POST /joatu/requests/:request_id/agreements
       def create # rubocop:todo Metrics/MethodLength
         resource_instance(resource_params)
@@ -81,6 +81,34 @@ module BetterTogether
         @joatu_agreement.reject!
         redirect_to joatu_agreement_path(@joatu_agreement),
                     notice: t('flash.joatu.agreement.rejected')
+      end
+
+      # POST /joatu/agreements/:id/fulfill
+      def fulfill
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        begin
+          @joatu_agreement.fulfill!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.fulfilled', default: 'Agreement fulfilled.')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to fulfill agreement'
+        end
+      end
+
+      # POST /joatu/agreements/:id/cancel
+      def cancel
+        @joatu_agreement = set_resource_instance
+        authorize @joatu_agreement
+        begin
+          @joatu_agreement.cancel!
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      notice: t('flash.joatu.agreement.cancelled', default: 'Agreement cancelled.')
+        rescue ActiveRecord::RecordInvalid => e
+          redirect_to joatu_agreement_path(@joatu_agreement),
+                      alert: e.record.errors.full_messages.to_sentence.presence || 'Unable to cancel agreement'
+        end
       end
 
       private

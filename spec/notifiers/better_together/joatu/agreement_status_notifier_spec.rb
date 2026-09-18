@@ -6,7 +6,7 @@ module BetterTogether # :nodoc:
   module Joatu # :nodoc:
     # rubocop:disable Metrics/BlockLength
     RSpec.describe AgreementStatusNotifier do
-      let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
+      let(:recipient) { double('Person', locale: nil) } # rubocop:todo RSpec/VerifiedDoubles
       let(:offer) { double('Offer', name: 'Offer') } # rubocop:todo RSpec/VerifiedDoubles
       let(:request) { double('Request', name: 'Request') } # rubocop:todo RSpec/VerifiedDoubles
       let(:agreement_class) do

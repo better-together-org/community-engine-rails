@@ -14,14 +14,37 @@ module BetterTogether
         seed_region_settlements
       end
 
+      # Whether geography reference data has already been installed. Used to make
+      # repeatable/admin-triggered call sites (rake tasks, a future seed-catalog UI)
+      # safe to invoke more than once without erroring on duplicate `create!` or
+      # destructively wiping already-resolved hierarchy placements the way
+      # `build(clear: true)` would.
+      def seeded?
+        ::BetterTogether::Geography::Continent.exists?
+      end
+
+      # Safe, idempotent entrypoint for anything other than a deliberate manual reset:
+      # no-ops if geography data already exists, otherwise seeds it (without clearing).
+      def build_if_missing
+        return if seeded?
+
+        build
+      end
+
+      # Settlement/Region/State/Country/Continent each auto-create an associated
+      # Community via PrimaryCommunity#has_community (dependent: :destroy). delete_all
+      # skips instance callbacks entirely, so it would orphan those Community rows
+      # instead of cleaning them up — leaving them to accumulate as duplicates on
+      # every re-seed. destroy_all runs each record's own #destroy so the community
+      # dependent-destroy callback actually fires.
       def clear_existing
-        ::BetterTogether::Geography::RegionSettlement.delete_all
-        ::BetterTogether::Geography::Settlement.delete_all
-        ::BetterTogether::Geography::Region.delete_all
-        ::BetterTogether::Geography::CountryContinent.delete_all
-        ::BetterTogether::Geography::State.delete_all
-        ::BetterTogether::Geography::Country.delete_all
-        ::BetterTogether::Geography::Continent.delete_all
+        ::BetterTogether::Geography::RegionSettlement.destroy_all
+        ::BetterTogether::Geography::Settlement.destroy_all
+        ::BetterTogether::Geography::Region.destroy_all
+        ::BetterTogether::Geography::CountryContinent.destroy_all
+        ::BetterTogether::Geography::State.destroy_all
+        ::BetterTogether::Geography::Country.destroy_all
+        ::BetterTogether::Geography::Continent.destroy_all
       end
 
       def seed_continents
@@ -32,7 +55,7 @@ module BetterTogether
             description: continent[:description],
             slug: continent[:name].parameterize,
             protected: true
-          }
+          }.merge(space_attrs_for(:continents, continent[:name]))
         end
 
         ::BetterTogether::Geography::Continent.create!(continent_records)
@@ -47,7 +70,7 @@ module BetterTogether
             iso_code: country[:iso_code],
             slug: country[:name].parameterize,
             protected: true
-          }
+          }.merge(space_attrs_for(:countries, country[:name]))
         end
 
         ::BetterTogether::Geography::Country.create!(country_records)
@@ -80,7 +103,7 @@ module BetterTogether
             slug: province[:name].parameterize,
             country_id: canada.id,
             protected: true
-          }
+          }.merge(space_attrs_for(:provinces, province[:name]))
         end
 
         ::BetterTogether::Geography::State.create!(province_records)
@@ -94,7 +117,7 @@ module BetterTogether
             description: region[:description],
             slug: region[:name].parameterize,
             protected: true
-          }
+          }.merge(space_attrs_for(:regions, region[:name]))
         end
 
         ::BetterTogether::Geography::Region.create!(region_records)
@@ -113,7 +136,7 @@ module BetterTogether
         ::BetterTogether::Geography::RegionSettlement.create!(region_settlement_records)
       end
 
-      def seed_settlements # rubocop:todo Metrics/MethodLength
+      def seed_settlements # rubocop:todo Metrics/MethodLength, Metrics/AbcSize
         settlement_records = settlements.flat_map do |settlement|
           state = ::BetterTogether::Geography::State.find_by(identifier: settlement[:state_identifier])
           country = state.country
@@ -125,13 +148,37 @@ module BetterTogether
             state_id: state.id,
             country_id: country.id,
             protected: true
-          }
+          }.merge(space_attrs_for(:settlements, settlement[:name]))
         end
 
         ::BetterTogether::Geography::Settlement.create!(settlement_records)
       end
 
       private
+
+      # Pre-geocoded coordinates for the static seed-source data below, committed to the repo and
+      # generated once via `better_together:geography:generate_seed_coordinates` (see
+      # BetterTogether::Geography::SeedCoordinatesGenerator) — never geocoded live at seed time.
+      # A missing packet or missing entry is a safe degraded case, not an error: the record is
+      # simply created ungeocoded, same as before this packet existed, backfillable later via
+      # `better_together:geography:import_geocodes`.
+      def space_attrs_for(category, name)
+        coordinates = seed_coordinates_packet.dig(category.to_s, name.parameterize)
+        return {} unless coordinates
+
+        { space_attributes: { latitude: coordinates['latitude'], longitude: coordinates['longitude'] } }
+      end
+
+      def seed_coordinates_packet
+        @seed_coordinates_packet ||= load_seed_coordinates_packet
+      end
+
+      def load_seed_coordinates_packet
+        path = BetterTogether::Geography::SeedCoordinatesGenerator::PACKET_PATH
+        return {} unless File.exist?(path)
+
+        YAML.safe_load_file(path) || {}
+      end
 
       def continents # rubocop:todo Metrics/MethodLength
         [

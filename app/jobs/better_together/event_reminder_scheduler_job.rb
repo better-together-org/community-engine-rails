@@ -3,6 +3,8 @@
 module BetterTogether
   # Job to schedule event reminders when events are created or updated
   class EventReminderSchedulerJob < ApplicationJob
+    REMINDER_CACHE_NAMESPACE = 'better_together/event_reminders/scheduled'
+
     queue_as :notifications
 
     retry_on StandardError, wait: :polynomially_longer, attempts: 5
@@ -43,9 +45,9 @@ module BetterTogether
     end
 
     def schedule_reminders(event)
-      schedule_24_hour_reminder(event) if should_schedule_24_hour_reminder?(event)
-      schedule_1_hour_reminder(event) if should_schedule_1_hour_reminder?(event)
-      schedule_start_time_reminder(event) if should_schedule_start_time_reminder?(event)
+      schedule_future_reminder?(event, '24_hours', event.local_starts_at - 24.hours) if should_schedule_24_hour_reminder?(event)
+      schedule_future_reminder?(event, '1_hour', event.local_starts_at - 1.hour) if should_schedule_1_hour_reminder?(event)
+      schedule_future_reminder?(event, 'start_time', event.local_starts_at) if should_schedule_start_time_reminder?(event)
     end
 
     def should_schedule_24_hour_reminder?(event)
@@ -63,26 +65,6 @@ module BetterTogether
       event.local_starts_at > Time.current
     end
 
-    def schedule_24_hour_reminder(event)
-      # Calculate reminder time in event's local timezone
-      reminder_time = event.local_starts_at - 24.hours
-      EventReminderJob.set(wait_until: reminder_time)
-                      .perform_later(event.id)
-    end
-
-    def schedule_1_hour_reminder(event)
-      # Calculate reminder time in event's local timezone
-      reminder_time = event.local_starts_at - 1.hour
-      EventReminderJob.set(wait_until: reminder_time)
-                      .perform_later(event.id)
-    end
-
-    def schedule_start_time_reminder(event)
-      # Use event's local start time
-      EventReminderJob.set(wait_until: event.local_starts_at)
-                      .perform_later(event.id)
-    end
-
     def log_completion(event)
       Rails.logger.info "Scheduled reminders for event #{event.identifier}"
     end
@@ -91,19 +73,46 @@ module BetterTogether
       [24.hours, 1.hour, 0.seconds]
     end
 
-    def schedule_future_reminder?(event_id, reminder_time)
+    def schedule_future_reminder?(event, reminder_type, reminder_time)
       return false if reminder_time <= Time.current
+      return false unless remember_scheduled_reminder(event, reminder_type, reminder_time)
 
       EventReminderJob.set(wait_until: reminder_time)
-                      .perform_later(event_id)
+                      .perform_later(event.id, reminder_type, reminder_time.iso8601)
       true
     end
 
     def cancel_existing_reminders(event)
-      # Find and cancel existing reminder jobs for this event
-      # This is a simplified approach - in production you might want to use
-      # a more sophisticated job management system like sidekiq-cron
-      Rails.logger.info "Rescheduling reminders for event #{event.identifier}"
+      # Existing queued jobs may already exist for prior schedules. We rely on a
+      # cache-backed scheduling key plus send-time stale checks in
+      # EventReminderJob to keep reruns idempotent without queue introspection.
+      Rails.logger.info "Ensuring reminder idempotency for event #{event.identifier}"
+    end
+
+    def remember_scheduled_reminder(event, reminder_type, reminder_time)
+      reminder_cache.write(
+        scheduled_reminder_cache_key(event, reminder_type, reminder_time),
+        true,
+        expires_in: scheduled_reminder_cache_ttl(event),
+        unless_exist: true
+      )
+    end
+
+    def scheduled_reminder_cache_key(event, reminder_type, reminder_time)
+      "#{REMINDER_CACHE_NAMESPACE}/#{event.id}/#{reminder_type}/#{reminder_time.to_i}"
+    end
+
+    def scheduled_reminder_cache_ttl(event)
+      ttl = event.local_starts_at - Time.current + 2.days
+      ttl.positive? ? ttl : 1.hour
+    end
+
+    def reminder_cache
+      @reminder_cache ||= if Rails.cache.is_a?(ActiveSupport::Cache::NullStore)
+                            ActiveSupport::Cache::MemoryStore.new
+                          else
+                            Rails.cache
+                          end
     end
   end
 end

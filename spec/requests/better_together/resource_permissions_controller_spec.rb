@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_manager do
   let(:locale) { I18n.default_locale }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
 
   describe 'GET /:locale/.../host/permissions' do
     it 'renders index' do
@@ -35,7 +36,7 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
 
     it 'renders table view when preference is set' do
       post better_together.view_preferences_path(locale:), params: {
-        key: 'resource_permissions_index',
+        key: 'index_view',
         view_type: 'table',
         allowed: %w[card table]
       }
@@ -57,6 +58,14 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
                view: I18n.t('better_together.view_switcher.types.table'))
       )
       expect(response.body).to include('data-turbo-prefetch="false"')
+    end
+
+    it 'redirects signed-in non-managers away from index' do
+      sign_in regular_user
+
+      get better_together.resource_permissions_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
     end
 
     it 'renders show for a permission' do
@@ -82,6 +91,15 @@ RSpec.describe 'BetterTogether::ResourcePermissionsController', :as_platform_man
         'Platform Manager',
         I18n.t('better_together.resource_permissions.roles.count', count: 1)
       )
+    end
+
+    it 'redirects signed-in non-managers away from show' do
+      permission = create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform')
+      sign_in regular_user
+
+      get better_together.resource_permission_path(locale:, id: permission.slug)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 end

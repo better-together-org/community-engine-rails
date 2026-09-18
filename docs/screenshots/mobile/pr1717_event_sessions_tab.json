@@ -1,0 +1,83 @@
+{
+  "name": "pr1717_event_sessions_tab",
+  "device": "mobile",
+  "url": "/en/events/3b02df38-c276-4f87-bdd6-1bba04326da5",
+  "title": "Weekly Harbourside Trivia Night | Events | Community Engine",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_occurrences_ux",
+  "flow": "event_show_sessions_tab",
+  "source_spec": "./spec/docs_screenshots/better_together/event_occurrences_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#sessions-tab",
+      "title": "Sessions tab",
+      "bullets": [
+        "Only shown for recurring events — links to the upcoming-occurrences list."
+      ],
+      "target": {
+        "x": 245.4375,
+        "y": 704.78125,
+        "width": 103.390625,
+        "height": 42.0,
+        "right": 348.828125,
+        "bottom": 746.78125,
+        "center_x": 297.1328125,
+        "center_y": 725.78125
+      },
+      "avoid": {
+        "x": 245.4375,
+        "y": 704.78125,
+        "width": 103.390625,
+        "height": 42.0,
+        "right": 348.828125,
+        "bottom": 746.78125,
+        "center_x": 297.1328125,
+        "center_y": 725.78125
+      },
+      "placement": {
+        "side": "above",
+        "x": 162.13,
+        "y": 474.78,
+        "width": 270.0,
+        "height": 210,
+        "score": 704.78125
+      }
+    },
+    {
+      "selector": "#event-upcoming-sessions",
+      "title": "Upcoming sessions list",
+      "bullets": [
+        "Computed on demand via Event#occurrences_between — no EventOccurrence row exists for any of these dates until someone actually RSVPs, comments, or an organizer overrides one."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 785.96875,
+        "width": 427.0,
+        "height": 120.0,
+        "right": 456.0,
+        "bottom": 905.96875,
+        "center_x": 242.5,
+        "center_y": 845.96875
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 785.96875,
+        "width": 427.0,
+        "height": 120.0,
+        "right": 456.0,
+        "bottom": 905.96875,
+        "center_x": 242.5,
+        "center_y": 845.96875
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 372,
+        "score": 0
+      }
+    }
+  ]
+}

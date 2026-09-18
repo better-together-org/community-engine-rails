@@ -4,6 +4,11 @@ Every `Content::Block` STI subclass in the CE gem must have all items below to b
 production-complete. This document is the canonical reference — use it when adding new block
 types or auditing existing ones.
 
+For the 0.11.0 release lane, the new structured block families remain implemented in code for
+review, but their page-builder rollout is deferred. They should stay excluded from the `Add Block`
+chooser until a 0.11.x patch review confirms the form UX, render behavior, icons, and any required
+Stimulus interactions are ready.
+
 ---
 
 ## Checklist

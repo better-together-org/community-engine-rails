@@ -92,7 +92,7 @@ module BetterTogether
       ensure_authenticated!
       return if performed?
 
-      person = helpers.current_person
+      person = current_user&.person || helpers.current_person
       return unless invitee_authorized?(person)
 
       process_invitation_acceptance(person)
@@ -156,7 +156,8 @@ module BetterTogether
       allowed = BetterTogether::Invitable.included_in_models.map(&:name)
       invitable_class = BetterTogether::SafeClassResolver.resolve!(
         "BetterTogether::#{invitable_type}",
-        allowed: allowed
+        allowed: allowed,
+        error_class: NameError
       )
 
       @invitable_resource = if invitable_class.respond_to?(:friendly)

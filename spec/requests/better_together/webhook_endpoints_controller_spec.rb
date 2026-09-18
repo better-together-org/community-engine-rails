@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::WebhookEndpointsController' do
   let(:locale) { I18n.default_locale }
   let(:platform_manager) { BetterTogether::User.find_by(email: 'manager@example.test') }
+  let(:regular_user) { create(:better_together_user, :confirmed) }
 
   describe 'GET /host/webhook_endpoints (index)', :as_platform_manager do
     let!(:endpoint) do
@@ -26,6 +27,14 @@ RSpec.describe 'BetterTogether::WebhookEndpointsController' do
     it 'includes a link to create a new webhook' do
       get better_together.webhook_endpoints_path(locale:)
       expect(response.body).to include(better_together.new_webhook_endpoint_path(locale:))
+    end
+
+    it 'returns not found for signed-in non-managers' do
+      sign_in regular_user
+
+      get better_together.webhook_endpoints_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
@@ -49,6 +58,14 @@ RSpec.describe 'BetterTogether::WebhookEndpointsController' do
     it 'displays the endpoint URL' do
       get better_together.webhook_endpoint_path(locale:, id: endpoint.id)
       expect_html_content(endpoint.url)
+    end
+
+    it 'returns not found for signed-in non-owners without platform access' do
+      sign_in regular_user
+
+      get better_together.webhook_endpoint_path(locale:, id: endpoint.id)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 

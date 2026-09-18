@@ -1,9 +1,6 @@
 <div class="container mt-5">
   <%= render @calendar %>
 
-  <%= render 'better_together/shared/claims_and_evidence', record: @calendar %>
-  <%= render 'better_together/shared/bibliography', record: @calendar %>
-  <%= render 'better_together/shared/governance_bundle_links', record: @calendar if @calendar.bibliography_entries.any? || @calendar.claims.any? %>
 
   <div class="my-3 d-flex justify-content-between">
     <%= link_to "Edit this calendar", edit_calendar_path(@calendar), class: "btn btn-primary" %>
@@ -24,17 +21,53 @@
   </ul>
   <div class="tab-content" id="calendarTabContent">
     <turbo-frame class="tab-pane fade show active" id="monthly" role="tabpanel" aria-labelledby="monthly-tab">
-      <%= month_calendar do |date| %>
+      <%= month_calendar events: @calendar_events, attribute: :starts_at, end_attribute: :ends_at do |date, day_events| %>
+        <%= render 'calendar_day_events', date: date, day_events: day_events %>
       <% end %>
     </turbo-frame>
     <turbo-frame class="tab-pane fade" id="weekly" role="tabpanel" aria-labelledby="weekly-tab">
-      <%= week_calendar do |date| %>
+      <%= week_calendar events: @calendar_events, attribute: :starts_at, end_attribute: :ends_at do |date, day_events| %>
+        <%= render 'calendar_day_events', date: date, day_events: day_events %>
       <% end %>
     </turbo-frame>
     <turbo-frame class="tab-pane fade" id="daily" role="tabpanel" aria-labelledby="daily-tab">
-      <%= calendar(number_of_days: 1) do |date| %>
+      <%= calendar(number_of_days: 1, events: @calendar_events, attribute: :starts_at, end_attribute: :ends_at) do |date, day_events| %>
         <%= date %>
+        <%= render 'calendar_day_events', date: date, day_events: day_events %>
       <% end %>
     </turbo-frame>
+  </div>
+
+  <div class="row mt-4" id="calendar-event-lists">
+    <div class="col-md-6" id="calendar-upcoming-events">
+      <h5><%= t('better_together.calendars.upcoming_events') %></h5>
+      <% if @upcoming_events.any? %>
+        <ul class="list-unstyled" id="calendar-upcoming-events-list">
+          <% @upcoming_events.each do |event| %>
+            <li id="<%= dom_id(event, :upcoming) %>">
+              <%= link_to event.name, better_together.event_path(event) %>
+              <small class="text-muted"><%= l(event.next_occurrence_at || event.starts_at, format: :long) %></small>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted" id="calendar-upcoming-events-empty"><%= t('better_together.calendars.no_events') %></p>
+      <% end %>
+    </div>
+    <div class="col-md-6" id="calendar-past-events">
+      <h5><%= t('better_together.calendars.past_events') %></h5>
+      <% if @past_events.any? %>
+        <ul class="list-unstyled" id="calendar-past-events-list">
+          <% @past_events.each do |event| %>
+            <li id="<%= dom_id(event, :past) %>">
+              <%= link_to event.name, better_together.event_path(event) %>
+              <small class="text-muted"><%= l(event.starts_at, format: :long) %></small>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted" id="calendar-past-events-empty"><%= t('better_together.calendars.no_events') %></p>
+      <% end %>
+    </div>
   </div>
 </div>

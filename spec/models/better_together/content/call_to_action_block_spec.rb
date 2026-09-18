@@ -11,7 +11,7 @@ module BetterTogether
         expect(described_class.superclass).to eq(BetterTogether::Content::Block)
       end
 
-      it 'is content_addable' do
+      it 'is content_addable (0.11.0 content blocks ship unconditionally, not gated)' do
         expect(described_class.content_addable?).to be true
       end
 
@@ -20,8 +20,8 @@ module BetterTogether
           expect(described_class.new.layout).to eq('centered')
         end
 
-        it 'defaults heading to empty string' do
-          expect(described_class.new.heading).to eq('')
+        it 'defaults heading to nil (Mobility translated attributes have no built-in default)' do
+          expect(described_class.new.heading).to be_nil
         end
       end
 

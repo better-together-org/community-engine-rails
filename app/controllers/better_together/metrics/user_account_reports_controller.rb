@@ -40,7 +40,8 @@ module BetterTogether
           from_date: params.dig(:metrics_user_account_report, :filters, :from_date),
           to_date: params.dig(:metrics_user_account_report, :filters, :to_date),
           file_format: params.dig(:metrics_user_account_report, :file_format) || 'csv',
-          creator: helpers.current_person
+          creator: helpers.current_person,
+          platform: metrics_platform
         }
 
         @user_account_report = BetterTogether::Metrics::UserAccountReport.create_and_generate!(**opts)

@@ -86,7 +86,13 @@ module BetterTogether
         initiator:,
         source_locale:, # Pass source locale
         target_locale:, # Pass target locale
-        estimated_cost: # Pass estimated cost
+        estimated_cost:, # Pass estimated cost
+        # Captured here (request/robot context) since the job itself runs async
+        # with no Current.platform to fall back on. robot&.platform_id first —
+        # the bot was resolved for a specific platform via Robot.resolve, same
+        # signal #robot_metadata already uses — falling back to Current.platform
+        # only if the resolved robot is a platform-agnostic global fallback.
+        platform_id: robot&.platform_id || ::Current.platform&.id
       )
     end
     # rubocop:enable Metrics/MethodLength

@@ -1,0 +1,16 @@
+<% if form_object.errors.any? %>
+  <div
+    id="wizard-step-errors"
+    class="alert alert-danger"
+    role="alert"
+    tabindex="-1"
+    data-controller="better_together--wizard-step-errors"
+  >
+    <h4><%= t('.header_plural', count: form_object.errors.count, default: "#{form_object.errors.count} errors prevented this from being saved:") %></h4>
+    <ul>
+      <% form_object.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

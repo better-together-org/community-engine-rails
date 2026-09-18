@@ -3,9 +3,8 @@
 # app/models/better_together/metrics/link_click.rb
 module BetterTogether
   module Metrics
-    class LinkClick < ApplicationRecord # rubocop:todo Style/Documentation
+    class LinkClick < PlatformRecord # rubocop:todo Style/Documentation
       include Utf8UrlHandler
-      include PlatformScoped
 
       # Validations
       VALID_URL_SCHEMES = %w[http https tel mailto].freeze

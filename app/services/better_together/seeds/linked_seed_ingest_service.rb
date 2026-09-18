@@ -41,7 +41,7 @@ module BetterTogether
         linked_seeds = []
         unsupported_seeds = []
 
-        Current.set(platform: connection.target_platform) do
+        Current.set(platform: local_platform) do
           seeds.each do |seed_data|
             ingest_result = ::BetterTogether::Seeds::Ingest.call(seed_data: seed_data, connection: connection)
             seed = ingest_result.seed_record
@@ -81,6 +81,17 @@ module BetterTogether
 
       attr_reader :connection, :recipient_person, :seeds
 
+      # source_platform/target_platform reflect who initiated the connection,
+      # not who's local — Current.platform during ingest must be the
+      # platform actually receiving this content.
+      def local_platform
+        connection.local_platform || connection.target_platform
+      end
+
+      def remote_platform
+        connection.remote_platform || connection.source_platform
+      end
+
       def cache_linked_seed(seed) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
         return unless seed.private_linked?
 
@@ -95,7 +106,7 @@ module BetterTogether
         cache_result = ::BetterTogether::Seeds::PersonLinkedSeedCacheService.call(
           person_access_grant: grant,
           recipient_person:,
-          source_platform: connection.source_platform,
+          source_platform: remote_platform,
           seed_attributes: {
             identifier: seed.identifier,
             seed_type: payload[:type],
@@ -133,7 +144,7 @@ module BetterTogether
       def create_planting!
         ::BetterTogether::SeedPlanting.create!(
           planting_type: :federated_tending,
-          source: connection.source_platform.resolved_host_url,
+          source: remote_platform.resolved_host_url,
           privacy: 'private',
           metadata: {
             'source_platform_id' => connection.source_platform.id,

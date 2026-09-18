@@ -8,17 +8,43 @@
   <%= hidden_field_tag "#{scope}[type]", block.class.name %>
   <%= hidden_field_tag "#{scope}[creator_id]", current_person&.id %>
 
-  <!-- Identifier text field -->
-  <div class="mb-3">
-    <%= label_tag "#{scope}[identifier]", "Identifier" %>
-    <%= text_field_tag "#{scope}[identifier]", block.identifier, class: "form-control#{' is-invalid' if block.errors[:identifier].any?}", maxlength: 100, placeholder: '(optional)' %>
+  <%# Identifier + Privacy: both columns are available on every block type %>
+  <%- block_platform = block.try(:platform) %>
+  <%- block_privacy_ceiling = max_allowed_privacy(platform: block_platform, community: nil) %>
+  <div class="row mb-3">
+    <div class="col-12 col-md-6">
+      <%= label_tag "#{scope}[identifier]", BetterTogether::Content::Block.human_attribute_name(:identifier), class: 'form-label' %>
+      <%= text_field_tag "#{scope}[identifier]", block.identifier,
+                         class: "form-control#{' is-invalid' if block.errors[:identifier].any?}",
+                         maxlength: 100,
+                         placeholder: t('better_together.content.blocks.fields.block.identifier_placeholder') %>
 
-    <% if block.errors[:identifier].any? %>
-      <div class="invalid-feedback">
-        <%= block.errors[:identifier].join(", ") %>
-      </div>
-    <% end %>
-    <small class="form-text text-muted mt-2">You can enter an optional identifier to make it easier to identify the block later. Should be not contain spaces and should be under 100 characters.</small>
+      <% if block.errors[:identifier].any? %>
+        <div class="invalid-feedback">
+          <%= block.errors[:identifier].join(", ") %>
+        </div>
+      <% end %>
+      <small class="form-text text-muted mt-2"><%= t('better_together.content.blocks.fields.block.identifier_hint') %></small>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <%= fields_for scope, block, include_id: false do |block_form| %>
+        <%= block_form.label :privacy, class: 'form-label' %>
+        <%= privacy_field(form: block_form, klass: block.class, max_privacy: block_privacy_ceiling,
+                          html_options: { class: ('is-invalid' if block.errors[:privacy].any?) }) %>
+      <% end %>
+
+      <% if block.errors[:privacy].any? %>
+        <div class="invalid-feedback d-block">
+          <%= block.errors[:privacy].join(", ") %>
+        </div>
+      <% end %>
+      <% if (privacy_hint = privacy_constraint_hint(platform: block_platform, community: nil)) %>
+        <small class="form-text text-muted mt-2"><%= privacy_hint %></small>
+      <% else %>
+        <small class="form-text text-muted mt-2"><%= t('better_together.content.blocks.fields.block.privacy_hint') %></small>
+      <% end %>
+    </div>
   </div>
 
   <%= render partial: 'better_together/content/blocks/fields/shared/style', locals: { block:, scope:, temp_id: } unless block.general_styling_enabled == 'false' %>

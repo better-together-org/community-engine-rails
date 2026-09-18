@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for calendars
-  class CalendarPolicy < ApplicationPolicy
+  class CalendarPolicy < PlatformRecordPolicy
     def index?
       user.present?
     end
@@ -27,8 +27,9 @@ module BetterTogether
 
     private
 
-    def platform_calendar_manager?
-      permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+    def platform_calendar_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
 
     def can_view_calendar?
@@ -43,7 +44,7 @@ module BetterTogether
     end
 
     # Filtering and sorting for calendars according to permissions and context
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
     end
   end
 end

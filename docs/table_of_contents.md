@@ -35,7 +35,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
 - [README](platform_organizers/README.md) - Platform administration guide
-- [End-to-End Encryption Rollout](platform_organizers/e2e_encryption_rollout.md) - Encrypted-conversation rollout and support guide
 - [Embedded Content & CSP Controls](platform_organizers/embedded_content_and_csp.md) - Trusted iframe/video origin management
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
@@ -50,12 +49,10 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Accounts and Invitations](developers/systems/accounts_and_invitations.md) - User account management
 - [Actor-Safe Creator and Authorship Migration Plan](developers/systems/actor_safe_creator_authorship_migration_plan.md) - Phased path toward governed-agent-safe creator and authorship models
 - [Caching Performance System](developers/systems/caching_performance_system.md) - Performance optimization
-- [Citation and Evidence Chain System](developers/systems/citation_evidence_chain_system.md) - Structured citations, claims, and evidence linking
 - [Community Action Network Governance System](developers/systems/community_action_network_governance_system.md) - Constitutional governance model for people, bots, and shared resources
 - [Contribution Attribution System](developers/systems/contribution_attribution_system.md) - Governed contributor roles, contribution types, and structured attribution details
 - [Public Publishing Agreement Gate System](developers/systems/public_publishing_agreement_gate_system.md) - Enforced agreement acceptance before governed public visibility
 - [PR 1494 Scope Consolidation](developers/systems/pr_1494_scope_consolidation.md) - Cut line for governed publishing, contribution, and evidence scope in PR 1494
-- [Release Package Publishing System](developers/systems/release_package_publishing_system.md) - Proposed CE-native workflow for governed release packages
 - [Robot Author Identity System](developers/systems/robot_author_identity_system.md) - Proposed model for truthful robot authorship on governed content
 - [Community Social System](developers/systems/community_social_system.md) - Social features
 - [Content Management](developers/systems/content_management.md) - Content creation and management
@@ -145,7 +142,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [Content Flow](diagrams/source/content_flow.mmd)
 - [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
-- [E2E Encrypted Conversation Flow](diagrams/source/e2e_encrypted_conversation_flow.mmd)
 - [Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
 - [Events Flow](diagrams/source/events_flow.mmd)
 - [Exchange Flow](diagrams/source/exchange_flow.mmd)
@@ -180,6 +176,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Production** - [`production/`](production/)
 *Deployment and production environment documentation*
 - [Deployment (Dokku)](production/deployment-dokku.md) - Production deployment guide
+- [Multi-Platform Deployment](production/multi_platform_deployment.md) - Running multiple platforms on a single instance
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
 

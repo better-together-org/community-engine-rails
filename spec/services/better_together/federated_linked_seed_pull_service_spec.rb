@@ -49,5 +49,39 @@ RSpec.describe BetterTogether::FederatedLinkedSeedPullService do
       expect(result.seeds.length).to eq(1)
       expect(result.next_cursor).to eq('linked-2')
     end
+
+    context 'when the local platform is source_platform on the connection, not target_platform' do
+      let(:source_platform) { create(:better_together_platform) }
+      let(:target_platform) { create(:better_together_platform, :community_engine_peer, host_url: peer_host, oauth_issuer_url: peer_host) }
+
+      it 'still pulls from the actual remote peer, not the local platform' do
+        stub_request(:post, "#{peer_host}/en/federation/oauth/token")
+          .to_return(
+            status: 200,
+            body: {
+              access_token: 'oauth-linked-token',
+              token_type: 'Bearer',
+              expires_in: 900,
+              scope: 'linked_content.read'
+            }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+
+        stub_request(:get, "#{peer_host}/en/federation/linked_seeds?limit=50&recipient_identifier=recipient-123")
+          .with(headers: { 'Authorization' => 'Bearer oauth-linked-token' })
+          .to_return(
+            status: 200,
+            body: {
+              seeds: [{ 'better_together' => { 'seed' => { 'origin' => { 'lane' => 'private_linked' } },
+                                               'payload' => { 'type' => 'post', 'id' => SecureRandom.uuid } } }], next_cursor: 'linked-2'
+            }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+
+        result = described_class.call(connection:, recipient_identifier: 'recipient-123')
+
+        expect(result.seeds.length).to eq(1)
+      end
+    end
   end
 end

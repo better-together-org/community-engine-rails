@@ -16,6 +16,14 @@ RSpec.describe BetterTogether::Message do
     end
   end
 
+  describe 'broadcasts' do
+    it 'appends to the conversation stream on create, via the shared Broadcastable concern' do
+      message = build(:message)
+      expect(message).to receive(:broadcast_append_later_to).with(message.conversation, target: 'conversation_messages')
+      message.save!(validate: false)
+    end
+  end
+
   describe 'Associations' do
     it { is_expected.to belong_to(:conversation).touch(true) }
     it { is_expected.to belong_to(:sender).class_name('BetterTogether::Person') }
@@ -52,8 +60,10 @@ RSpec.describe BetterTogether::Message do
   describe 'Class Methods' do
     describe '.permitted_attributes' do
       it 'returns an array with expected attributes' do
-        expect(described_class.permitted_attributes).to match_array(%i[id content e2e_encrypted e2e_protocol e2e_version _destroy])
+        expect(described_class.permitted_attributes).to match_array(%i[id content _destroy])
       end
     end
   end
+
+  it_behaves_like 'platform scoped', factory: :message
 end

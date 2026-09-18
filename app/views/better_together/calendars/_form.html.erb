@@ -23,8 +23,7 @@
              locals: {
                model: better_together_calendar,
                form: form,
-               attribute: 'description',
-               citation_options: better_together_calendar.citation_reference_options
+               attribute: 'description'
              } %>
 </div>
 
@@ -36,9 +35,6 @@
   <%= required_label form, :privacy, class: "form-label" %>
   <%= privacy_field(form:, klass: resource_class) %>
 </div>
-
-<%= render 'better_together/shared/citation_fields_section', form:, record: better_together_calendar %>
-<%= render 'better_together/shared/claim_fields_section', form:, record: better_together_calendar %>
 
   <div>
     <%= form.submit %>

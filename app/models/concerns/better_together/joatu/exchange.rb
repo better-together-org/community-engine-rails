@@ -21,8 +21,6 @@ module BetterTogether
 
       included do # rubocop:todo Metrics/BlockLength
         include BetterTogether::Categorizable
-        include BetterTogether::Citable
-        include BetterTogether::Claimable
         include BetterTogether::Translatable
         include BetterTogether::FriendlySlug
         include BetterTogether::Privacy
@@ -58,7 +56,7 @@ module BetterTogether
       end
 
       class_methods do
-        def permitted_attributes(id: false, destroy: false)
+        def permitted_attributes(id: false, destroy: false, exclude_extra: false)
           super +
             %i[target_type target_id address_id status urgency privacy] +
             [{ address_attributes: BetterTogether::Address.permitted_attributes(id: true, destroy: true) }]
@@ -66,9 +64,10 @@ module BetterTogether
       end
 
       def self.included_in_models
-        included_module = self
-        Rails.application.eager_load! unless Rails.env.production? # Ensure all models are loaded
-        ActiveRecord::Base.descendants.select { |model| model.include?(included_module) }
+        @included_in_models ||= begin
+          Rails.application.eager_load! unless Rails.env.production?
+          ActiveRecord::Base.descendants.select { |model| model.include?(self) }
+        end
       end
 
       # Return matching counterpart records (requests for offers, offers for requests)
@@ -79,7 +78,7 @@ module BetterTogether
       private
 
       def add_creator_as_exchange_contributor
-        add_governed_contributor(
+        add_contributor(
           creator,
           role: BetterTogether::Authorship::EXCHANGE_INITIATOR_ROLE,
           contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
@@ -98,7 +97,7 @@ module BetterTogether
           recipients = [creator, other&.creator].compact
           next if recipients.empty?
 
-          notifier = BetterTogether::Joatu::MatchNotifier.with(offer: offer_rec, request: request_rec)
+          notifier = BetterTogether::Joatu::MatchNotifier.with(offer: offer_rec, request: request_rec, record: offer_rec)
           notifier.deliver_later(recipients)
         end
       end

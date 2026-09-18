@@ -1,0 +1,37 @@
+flowchart TD
+  PERSON[Person]
+
+  subgraph PLATFORM["Platform authority"]
+    PSP[Active platform membership<br>platform steward]
+    PNA[Active platform membership<br>network admin]
+    PENDP[Pending platform membership<br>not yet effective]
+  end
+
+  subgraph COMMUNITY["Community authority"]
+    CORG[Active community membership<br>community organizer]
+    CCOORD[Active community membership<br>community coordinator]
+    PENDC[Pending community membership<br>not yet effective]
+  end
+
+  PERSON --> PSP
+  PERSON --> PNA
+  PERSON --> PENDP
+  PERSON --> CORG
+  PERSON --> CCOORD
+  PERSON --> PENDC
+
+  PSP --> PPERMS[Platform steward permissions]
+  PNA --> NPERMS[Network administration permissions]
+  CORG --> COPERMS[Community organizer permissions]
+  CCOORD --> CCPERMS[Community coordinator permissions]
+
+  PENDP -.pending rows excluded.-> BLOCKP[No authority until active]
+  PENDC -.pending rows excluded.-> BLOCKC[No authority until active]
+
+  PPERMS --> PUNION[Effective platform permissions<br>= union of active platform roles]
+  NPERMS --> PUNION
+  COPERMS --> CUNION[Effective community permissions<br>= union of active community roles]
+  CCPERMS --> CUNION
+
+  PUNION --> OUT1[One person can steward the platform and the network at the same time]
+  CUNION --> OUT2[One person can hold multiple community responsibilities without collapsing them into one role]

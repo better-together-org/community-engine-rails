@@ -1,0 +1,9 @@
+# Brakeman configuration
+# https://brakemanscanner.org/docs/configuration/
+
+# Skip directories that contain old branch checkouts and worktrees.
+# Without this, Brakeman scans every app/ found under tmp/ and worktrees/,
+# producing duplicate warnings from stale code.
+skip_files:
+  - "tmp/"
+  - "worktrees/"

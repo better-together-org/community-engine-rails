@@ -3,6 +3,36 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Address do
+  describe 'Labelable (select_label/text_label mass-assignment)' do
+    # Forms submit select_label before text_label (matching field order in
+    # _address_fields.html.erb). text_label is always present in the submitted
+    # params (even when the "Other" field was never shown/touched), so its
+    # writer must not clobber a label already set by select_label=.
+    it 'keeps the selected label when text_label is submitted blank alongside it' do
+      address = described_class.new(select_label: 'main', text_label: '')
+      expect(address.label).to eq('main')
+    end
+
+    it 'sets a custom label from text_label when select_label is "other"' do
+      address = described_class.new(select_label: 'other', text_label: 'Cottage')
+      expect(address.label).to eq('Cottage')
+    end
+
+    it 'leaves label untouched when both are submitted blank' do
+      address = described_class.new(select_label: '', text_label: '')
+      expect(address.label).to be_blank
+    end
+
+    it 'clears a stale custom label when the "Other" field is cleared while still on "other"' do
+      address = described_class.new(select_label: 'other', text_label: 'Cottage')
+      expect(address.label).to eq('Cottage')
+
+      address.assign_attributes(select_label: 'other', text_label: '')
+
+      expect(address.label).to be_blank
+    end
+  end
+
   describe 'factory' do
     it 'creates a valid address' do
       person = create(:person)
@@ -179,6 +209,20 @@ RSpec.describe BetterTogether::Address do
       expect(short).to include('62 Broadway')
       expect(short).not_to include('Suite 100') # line2 excluded in short format
     end
+
+    it 'builds a select option title from the label and short address' do
+      person = create(:person)
+      contact_detail = create(:contact_detail, contactable: person)
+      address = create(:address,
+                       contact_detail: contact_detail,
+                       label: 'main',
+                       line1: '62 Broadway',
+                       line2: 'Suite 100',
+                       city_name: 'Corner Brook',
+                       state_province_name: 'NL')
+
+      expect(address.select_option_title).to eq('Main — 62 Broadway, Corner Brook, NL, A2H 4C2, Canada')
+    end
   end
 
   describe 'permitted_attributes' do
@@ -186,6 +230,32 @@ RSpec.describe BetterTogether::Address do
       attrs = described_class.permitted_attributes
       expect(attrs).to include(:physical, :postal, :line1, :line2, :city_name,
                                :state_province_name, :postal_code, :country_name, :primary_flag)
+    end
+  end
+
+  describe 'geocoding callbacks' do
+    it 'enqueues geocoding when a new address can be geocoded' do
+      allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
+
+      create(:address,
+             line1: '62 Broadway',
+             city_name: 'Corner Brook',
+             state_province_name: 'NL',
+             country_name: 'Canada')
+
+      expect(BetterTogether::Geography::GeocodingJob).to have_received(:perform_later).with(instance_of(described_class))
+    end
+
+    it 'does not geocode when there is no address content' do
+      address = build(:address,
+                      line1: nil,
+                      line2: nil,
+                      city_name: nil,
+                      state_province_name: nil,
+                      postal_code: nil,
+                      country_name: nil)
+
+      expect(address.should_geocode?).to be(false)
     end
   end
 end

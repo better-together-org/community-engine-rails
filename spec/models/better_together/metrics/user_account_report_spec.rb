@@ -16,6 +16,29 @@ module BetterTogether # :nodoc:
         it { is_expected.to validate_inclusion_of(:file_format).in_array(%w[csv]) }
       end
 
+      describe '.create_and_generate!' do
+        it 'accepts and persists an explicit creator and platform' do
+          federated_platform = create(:better_together_platform, :public, host: false)
+          creator = create(:better_together_person)
+
+          report = described_class.create_and_generate!(creator: creator, platform: federated_platform,
+                                                        from_date: 7.days.ago.to_date, to_date: Date.current)
+
+          expect(report.creator).to eq(creator)
+          expect(report.platform).to eq(federated_platform)
+        end
+
+        it 'falls back to the host platform when no platform is given' do
+          host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+          creator = create(:better_together_person)
+
+          report = described_class.create_and_generate!(creator: creator, from_date: 7.days.ago.to_date,
+                                                        to_date: Date.current)
+
+          expect(report.platform).to eq(host_platform)
+        end
+      end
+
       describe '#generate!' do
         let!(:confirmed_user) { create(:user, created_at: 3.days.ago, confirmed_at: 2.days.ago) }
         let!(:unconfirmed_user) { create(:user, created_at: 1.day.ago, confirmed_at: nil) }

@@ -46,6 +46,30 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
     end
   end
 
+  def registration_params(user_params: valid_user_params, invitation_code: nil, with_agreements: true)
+    params = { user: user_params }
+    if with_agreements
+      params[:terms_of_service_agreement] = '1'
+      params[:privacy_policy_agreement] = '1'
+      params[:code_of_conduct_agreement] = '1'
+    end
+    params[:invitation_code] = invitation_code if invitation_code.present?
+    params.merge(bot_defense_payload)
+  end
+
+  def bot_defense_payload(form_id = :registration)
+    challenge = travel_to(3.seconds.ago) do
+      BetterTogether::BotDefense::Challenge.issue(form_id:)
+    end
+
+    {
+      bot_defense: {
+        token: challenge.token,
+        trap_values: { challenge.trap_field => '' }
+      }
+    }
+  end
+
   describe 'Community Invitation Registration' do
     let!(:community) { create(:better_together_community, identifier: "test-community-#{SecureRandom.hex(4)}") }
     let!(:invitation) do
@@ -59,13 +83,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       expect(invitation.reload.status).to eq('pending')
 
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: invitation.token
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
@@ -91,13 +109,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       invitation.update!(invitee: existing_person)
 
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: invitation.token
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
       end.to change(BetterTogether::User, :count).by(1)
 
       user = BetterTogether::User.find_by(email: invitee_email)
@@ -122,13 +134,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       expect(invitation.reload.status).to eq('pending')
 
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: invitation.token
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
                                                  .and change(BetterTogether::EventAttendance, :count).by(1)
@@ -162,13 +168,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       expect(invitation.reload.status).to eq('pending')
 
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: invitation.token
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
@@ -193,8 +193,8 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       regular_identifier = "regular-user-#{regular_suffix}"
 
       expect do
-        post '/en/users', params: {
-          user: {
+        post '/en/users', params: registration_params(
+          user_params: {
             email: regular_email,
             password: 'SecureTest123!@#',
             password_confirmation: 'SecureTest123!@#',
@@ -202,11 +202,8 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
               name: 'Regular User',
               identifier: regular_identifier
             }
-          },
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1'
-        }
+          }
+        )
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 
@@ -230,11 +227,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
 
       # Try to create user without required agreements
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          invitation_code: invitation.token
-          # No agreement checkboxes
-        }
+        post '/en/users', params: registration_params(invitation_code: invitation.token, with_agreements: false)
       end.not_to change(BetterTogether::User, :count)
 
       # Invitation should remain pending
@@ -269,13 +262,7 @@ RSpec.describe 'Invitation-based User Registration', :no_auth, :skip_host_setup 
       # In real usage, the registration controller would need to handle multiple
       # invitation codes from session
       expect do
-        post '/en/users', params: {
-          user: valid_user_params,
-          terms_of_service_agreement: '1',
-          privacy_policy_agreement: '1',
-          code_of_conduct_agreement: '1',
-          invitation_code: community_invitation.token # Primary invitation
-        }
+        post '/en/users', params: registration_params(invitation_code: community_invitation.token)
       end.to change(BetterTogether::User, :count).by(1)
                                                  .and change(BetterTogether::Person, :count).by(1)
 

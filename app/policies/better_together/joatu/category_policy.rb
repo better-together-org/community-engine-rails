@@ -5,15 +5,15 @@ module BetterTogether
     # Access control for Joatu::Offer
     class CategoryPolicy < BetterTogether::CategoryPolicy
       def index?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
       end
 
       def show?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
       end
 
       def create?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform')
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
       end
       alias new? create?
 
