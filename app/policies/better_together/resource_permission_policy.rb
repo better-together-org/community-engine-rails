@@ -36,15 +36,15 @@ module BetterTogether
       def resolve
         return scope.none unless user.present?
 
-        return platform_scoped.positioned if can_manage_any_roles?
+        return platform_scoped.positioned if can_manage_any_roles?(current_platform)
 
         scope.none
       end
 
       private
 
-      def can_manage_any_roles?
-        permitted_to?('manage_platform_roles') || permitted_to?('manage_community_roles')
+      def can_manage_any_roles?(target)
+        permitted_to?('manage_platform_roles', target) || permitted_to?('manage_community_roles', target)
       end
     end
 
@@ -54,18 +54,20 @@ module BetterTogether
       # When called with the class (e.g. policy(ResourcePermission).create?), fall back to any-role check
       return can_manage_any_roles? if record.is_a?(Class)
 
+      target = record.platform
+
       case record.resource_type
       when 'BetterTogether::Platform'
-        permitted_to?('manage_platform_roles')
+        permitted_to?('manage_platform_roles', target)
       when 'BetterTogether::Community'
-        permitted_to?('manage_community_roles')
+        permitted_to?('manage_community_roles', target)
       else
-        can_manage_any_roles?
+        can_manage_any_roles?(target)
       end
     end
 
-    def can_manage_any_roles?
-      permitted_to?('manage_platform_roles') || permitted_to?('manage_community_roles')
+    def can_manage_any_roles?(target = current_platform)
+      permitted_to?('manage_platform_roles', target) || permitted_to?('manage_community_roles', target)
     end
   end
 end

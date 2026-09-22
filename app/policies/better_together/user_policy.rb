@@ -3,11 +3,11 @@
 module BetterTogether
   class UserPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
-      can_manage_user_accounts?
+      can_manage_user_accounts?(current_platform)
     end
 
     def show?
-      user.present? && (record == user || can_manage_user_accounts?)
+      user.present? && (record == user || can_manage_user_accounts?(record.platform || current_platform))
     end
 
     def create?
@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      can_manage_user_accounts?
+      can_manage_user_accounts?(record.platform || current_platform)
     end
 
     def edit?
@@ -39,7 +39,7 @@ module BetterTogether
         return scope.none unless current_platform
 
         base = platform_scoped
-        return base.where(id: user.id) unless permitted_to?('manage_platform_users')
+        return base.where(id: user.id) unless permitted_to?('manage_platform_users', current_platform)
 
         base.order(created_at: :desc)
       end

@@ -17,40 +17,40 @@ module BetterTogether
       def show?
         return true if user.present? && agent.present? && record.creator_id == agent.id
 
-        permitted_to?('manage_platform') || community_manager?
+        permitted_to?('manage_platform', record.platform) || community_manager?
       end
 
       def update?
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
-        permitted_to?('manage_platform') || community_manager?
+        permitted_to?('manage_platform', record.platform) || community_manager?
       end
       alias edit? update?
 
       def destroy?
         return false if record.respond_to?(:agreements) && record.agreements.exists?
 
-        permitted_to?('manage_platform') || community_manager?
+        permitted_to?('manage_platform', record.platform) || community_manager?
       end
 
       # Platform managers and community managers may approve open requests.
       def approve?
         return false unless record.status_open?
 
-        permitted_to?('manage_platform') || community_manager?
+        permitted_to?('manage_platform', record.platform) || community_manager?
       end
 
       # Platform managers and community managers may decline open requests.
       def decline?
         return false unless record.status_open?
 
-        permitted_to?('manage_platform') || community_manager?
+        permitted_to?('manage_platform', record.platform) || community_manager?
       end
 
       class Scope < RequestPolicy::Scope # rubocop:todo Style/Documentation
         def resolve
           membership_request_scope = scope.where(type: 'BetterTogether::Joatu::MembershipRequest')
-          return membership_request_scope if permitted_to?('manage_platform')
+          return membership_request_scope if permitted_to?('manage_platform', current_platform)
           return scope.none unless user.present?
 
           community_manager_scope(membership_request_scope) ||

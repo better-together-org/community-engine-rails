@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::PersonPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   # rubocop:disable Metrics/AbcSize
   def grant_platform_permission(user, permission_identifier)
     BetterTogether::AccessControlBuilder.seed_data
@@ -81,6 +90,35 @@ RSpec.describe BetterTogether::PersonPolicy do
     expect(described_class.new(people_reviewer, private_person).show?).to be true
   end
 
+  describe 'cross-tenant isolation' do
+    let(:tenant_platform) { create(:better_together_platform, :public) }
+    let(:tenant_admin) { create(:better_together_user, :confirmed) }
+    let(:tenant_person) { create(:better_together_person, platform: tenant_platform) }
+
+    before do
+      membership = tenant_platform.person_platform_memberships.find_or_initialize_by(member: tenant_admin.person)
+      membership.role ||= create(:better_together_role, :platform_role)
+      membership.role.assign_resource_permissions(%w[update_person delete_person])
+      membership.status = :active
+      membership.save!
+    end
+
+    it 'denies updating or destroying a person belonging to a different platform' do
+      other_platform_person = create(:better_together_person, platform: BetterTogether::Platform.find_by(host: true))
+      policy = described_class.new(tenant_admin, other_platform_person)
+
+      expect(policy.update?).to be false
+      expect(policy.destroy?).to be false
+    end
+
+    it 'allows managing a person belonging to their own platform' do
+      policy = described_class.new(tenant_admin, tenant_person)
+
+      expect(policy.update?).to be true
+      expect(policy.destroy?).to be true
+    end
+  end
+
   describe 'Scope' do
     let(:scope) { BetterTogether::Person }
 
@@ -97,6 +135,22 @@ RSpec.describe BetterTogether::PersonPolicy do
       resolved = described_class::Scope.new(people_reviewer, scope).resolve
 
       expect(resolved).to include(people_reviewer.person, public_person, private_person)
+    end
+  end
+
+  describe 'cross-tenant isolation (platform steward boundaries)' do
+    let(:platform_a) { create(:better_together_platform) }
+    let(:platform_b) { create(:better_together_platform) }
+    let(:platform_b_person) { create(:better_together_person, platform: platform_b) }
+
+    it 'denies a steward of platform A from updating a person on platform B' do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_person).update?).to be false
+    end
+
+    it 'allows a steward of platform B to update a person on platform B' do
+      steward_b = steward_of(platform_b)
+      expect(described_class.new(steward_b, platform_b_person).update?).to be true
     end
   end
 end

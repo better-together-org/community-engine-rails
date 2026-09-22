@@ -36,8 +36,9 @@ module BetterTogether
       record.respond_to?(:owner_id) && record.owner_id == user.person.id
     end
 
-    def platform_manager?
-      user&.person&.permitted_to?('manage_platform')
+    def platform_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      user&.person&.permitted_to?('manage_platform', platform)
     end
 
     # Scope: platform managers see all, others see their own
@@ -53,7 +54,7 @@ module BetterTogether
       private
 
       def platform_manager?
-        user&.person&.permitted_to?('manage_platform')
+        user&.person&.permitted_to?('manage_platform', current_platform)
       end
     end
   end

@@ -13,9 +13,10 @@ module BetterTogether
       csp_connect_src_text: 'csp_connect_src'
     }.freeze
 
-    DEFAULT_LOCAL_CSP_IMG_SOURCES = [
-      'https://*.tile.openstreetmap.org'
-    ].freeze
+    # Single source of truth is ContentSecurityPolicySources::DEFAULT_MAP_TILE_IMG_SOURCES —
+    # keeping one shared constant instead of a second literal here prevents the two lists
+    # from drifting apart the way they already have in production.
+    DEFAULT_LOCAL_CSP_IMG_SOURCES = BetterTogether::ContentSecurityPolicySources::DEFAULT_MAP_TILE_IMG_SOURCES
 
     attr_writer :csp_frame_ancestors_text, :csp_frame_src_text, :csp_img_src_text,
                 :csp_script_src_text, :csp_connect_src_text

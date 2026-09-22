@@ -143,9 +143,20 @@ module BetterTogether
         expect(local_platform.csp_img_src).to include('https://*.tile.openstreetmap.org')
       end
 
+      it 'seeds the bare OpenStreetMap host and the ArcGIS/Esri satellite tile origin' do
+        local_platform = create(:better_together_platform)
+        # map_controller.js hardcodes both OpenStreetMap.Mapnik (resolves to the bare
+        # host, which the wildcard origin above does not cover) and Esri.WorldImagery
+        # (server.arcgisonline.com) as base layers on every map instance.
+        expect(local_platform.csp_img_src).to include('https://tile.openstreetmap.org',
+                                                      'https://server.arcgisonline.com')
+      end
+
       it 'does not seed Leaflet tile origins for external platforms' do
         external_platform = create(:better_together_platform, :external)
-        expect(external_platform.csp_img_src).not_to include('https://*.tile.openstreetmap.org')
+        expect(external_platform.csp_img_src).not_to include('https://*.tile.openstreetmap.org',
+                                                             'https://tile.openstreetmap.org',
+                                                             'https://server.arcgisonline.com')
       end
 
       it 'merges with any csp_img_src already set at create time' do

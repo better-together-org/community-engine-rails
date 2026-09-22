@@ -15,7 +15,7 @@ module BetterTogether
     include CreatedRecords
     include FriendlySlug
     include GovernanceParticipant
-    include GovernedAgent
+    include Agentic
     include HostsEvents
     include Identifier
     include Identity
@@ -37,7 +37,6 @@ module BetterTogether
     member joinable_type: 'community', member_type: 'person', dependent: :destroy
 
     has_many :conversation_participants, dependent: :destroy
-    has_many :one_time_prekeys, dependent: :destroy, class_name: 'BetterTogether::OneTimePrekey'
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations,
              foreign_key: :creator_id,
@@ -101,15 +100,6 @@ module BetterTogether
              foreign_key: :owner_id,
              dependent: :destroy,
              inverse_of: :owner
-    has_many :fleet_node_ownerships,
-             as: :owner,
-             class_name: 'BetterTogether::Fleet::NodeOwnership',
-             dependent: :destroy,
-             inverse_of: :owner
-    has_many :fleet_nodes,
-             through: :fleet_node_ownerships,
-             source: :node
-
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
@@ -208,17 +198,6 @@ module BetterTogether
       notify_on_comments Boolean, default: true
     end
 
-    # Borgberry fleet identity — portable person identity used across fleets.
-    # Fleet node ownership is tracked separately through BetterTogether::Fleet::NodeOwnership.
-    # borgberry_did: W3C DID derived from operator GPG key (e.g. did:key:z6Mk...)
-    #
-    # Deterministic encryption preserves find_by(borgberry_did:) lookups while
-    # preventing the plaintext DID from being exposed in a database extract.
-    # After adding this declaration, existing plaintext values must be re-encrypted
-    # via migration 20260415050000_reencrypt_person_borgberry_did.rb.
-    encrypts :borgberry_did, deterministic: true
-    attr_accessor :borgberry_did_raw # used during enrollment only
-
     # Ensure proper coercion and persistence for preferences store attributes
     def locale=(value)
       prefs = (preferences || {}).dup
@@ -268,8 +247,6 @@ module BetterTogether
     validates :locale,
               inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
               allow_nil: true
-
-    translates :description_html, backend: :action_text
 
     # Return email from user if available, otherwise from contact details
     def email
@@ -325,10 +302,6 @@ module BetterTogether
       else
         cover_image.variant(:optimized_jpeg)
       end
-    end
-
-    def description_html(locale: I18n.locale)
-      super || description
     end
 
     def valid_event_host_ids

@@ -5,8 +5,6 @@ require 'digest'
 module BetterTogether
   # Statements agreed upon by its participants
   class Agreement < PlatformRecord # rubocop:todo Metrics/ClassLength
-    include Citable
-    include Claimable
     include Creatable
     include Identifier
     include Privacy

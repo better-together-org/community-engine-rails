@@ -35,8 +35,15 @@ module BetterTogether
     # bare `before_action :build_event_hosts, only: :new` would authorize an
     # empty event_hosts collection, making self-service host authorization
     # (EventPolicy#event_host_member?) always fail on GET .../events/new.
-    before_action :process_recurrence_attributes, only: %i[create update]
+    # convert_datetime_params_to_event_timezone must run BEFORE
+    # process_recurrence_attributes: the recurrence schedule's anchor time is
+    # built from params[:event][:starts_at], and that value must already be
+    # converted into the event's own timezone (a Time object) rather than a
+    # raw string parsed in the ambient Time.zone — otherwise recurring
+    # occurrences anchor to the wrong wall-clock time for any event whose
+    # timezone differs from the app default.
     before_action :convert_datetime_params_to_event_timezone, only: %i[create update]
+    before_action :process_recurrence_attributes, only: %i[create update]
 
     skip_before_action :resource_collection, only: :index
 
@@ -102,6 +109,57 @@ module BetterTogether
       end
 
       render json: options
+    end
+
+    # Number of results returned per Placeable type when no location_type is
+    # given (the mixed-search path) - keeps the merged result set scannable
+    # rather than one type crowding out the others.
+    MIXED_LOCATION_RESULTS_PER_TYPE = 5
+
+    # Returns available locations for the event location picker. With
+    # location_type given, returns bare-id options scoped to that one
+    # Placeable type (the original single-type picker). Without it, searches
+    # every Placeable type at once and returns composite "ClassName:id"
+    # values so a single field can hold results across types - see
+    # #location_attributes_for_picker in location_selector_controller.js for
+    # how the composite value gets split back into location_type/location_id
+    # before submit.
+    def available_locations # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      authorize BetterTogether::Event, :available_locations?
+
+      return render(json: mixed_location_options) if params[:location_type].blank?
+
+      klass = BetterTogether::Geography::Placeable.included_in_models.find do |allowed_klass|
+        allowed_klass.name == params[:location_type]
+      end
+
+      unless klass
+        render json: { error: 'Invalid location type' }, status: :unprocessable_entity
+        return
+      end
+
+      scope = location_scope_for(klass)
+
+      unless scope
+        render json: { error: 'Invalid location type' }, status: :unprocessable_entity
+        return
+      end
+
+      render json: location_options(scope)
+    end
+
+    # Renders a preview of the next few occurrences for the recurrence fields
+    # currently filled into the event form, before the event is saved. Called
+    # by the recurrence Stimulus controller on every field change.
+    def recurrence_preview
+      authorize BetterTogether::Event, :recurrence_preview?
+
+      attrs = params.permit(:frequency, :interval, :end_type, :ends_on, :count, :month_option,
+                            weekdays: []).to_h.symbolize_keys
+      occurrences, errors = recurrence_preview_occurrences(attrs)
+
+      render partial: 'better_together/events/recurrence_preview',
+             locals: { occurrences: occurrences, errors: errors, summary: helpers.recurrence_attrs_summary(attrs) }
     end
 
     # RSVP actions
@@ -224,8 +282,48 @@ module BetterTogether
     def filter_params
       # :status is permitted both as a scalar (?status=draft) and as an
       # array (?status[]=draft&status[]=confirmed) for union filtering.
-      params.permit(:q, :order_by, :per_page, :page, :past, :status,
+      params.permit(:q, :order_by, :per_page, :page, :past, :status, :recurring,
                     category_ids: [], status: [])
+    end
+
+    # Dispatches to the existing, already-scoped LocatableLocation lookup methods —
+    # Address/Building are Pundit-policy-scoped to current_person; Settlement/Region
+    # are unscoped curated reference data (see LocatableLocation.available_*_for).
+    #
+    # Derives the method name from klass itself (matching the same
+    # klass.name.demodulize.underscore convention the view's location_type_map already
+    # uses) instead of a hardcoded case/when, so a future Geography::Placeable includer
+    # only needs a matching LocatableLocation.available_<type>_for method defined —
+    # no controller change required. Returns nil (handled by the caller) rather than
+    # raising when that scope method doesn't exist yet.
+    def location_scope_for(klass)
+      method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
+      return unless BetterTogether::Geography::LocatableLocation.respond_to?(method_name)
+
+      BetterTogether::Geography::LocatableLocation.public_send(method_name, helpers.current_person, search: params[:search])
+    end
+
+    def location_options(scope)
+      scope.map do |record|
+        text = record.respond_to?(:to_formatted_s) ? record.to_formatted_s : record.to_s
+        { value: record.id, text: text }
+      end
+    end
+
+    # Searches every Placeable type via the same location_scope_for each
+    # single-type request already uses (so search/privacy scoping never
+    # drifts between the two modes), capping each type's contribution so no
+    # single type crowds out the rest of the merged list.
+    def mixed_location_options
+      BetterTogether::Geography::Placeable.included_in_models.flat_map do |klass|
+        scope = location_scope_for(klass)
+        next [] unless scope
+
+        scope.limit(MIXED_LOCATION_RESULTS_PER_TYPE).map do |record|
+          text = record.respond_to?(:to_formatted_s) ? record.to_formatted_s : record.to_s
+          { value: "#{klass.name}:#{record.id}", text: "#{text} (#{klass.model_name.human})" }
+        end
+      end
     end
 
     # index skips the :resource_collection before_action (see
@@ -468,35 +566,76 @@ module BetterTogether
         return
       end
 
-      # Build IceCube schedule from form parameters
-      schedule = build_schedule_from_params(recurrence_attrs)
+      result = BetterTogether::RecurrenceScheduleBuilder.new(
+        start_time: recurrence_start_time, attrs: recurrence_attrs
+      ).build
 
-      # Convert schedule to YAML and update params
-      params[:event][:recurrence_attributes][:rule] = schedule.to_yaml
+      if result.valid?
+        params[:event][:recurrence_attributes][:rule] = result.schedule.to_yaml
+        Rails.logger.debug { "[RECURRENCE] Generated rule YAML: #{result.schedule.to_yaml}" } if Rails.env.test?
+      else
+        # Leave :rule unset so Recurrence's own presence validation also
+        # blocks the save (defense in depth), and set the transient error at
+        # both levels: on the nested recurrence (for anything building a
+        # Recurrence directly) and on the top-level event params (so the
+        # message reliably surfaces via @resource.errors.full_messages,
+        # which the shared errors partial reads — nested association errors
+        # don't automatically bubble up to the parent's own error messages).
+        params[:event][:recurrence_attributes][:end_condition_error] = result.errors.first
+        params[:event][:end_condition_error] = result.errors.first
+      end
 
-      # Log the generated rule in test environment
-      Rails.logger.debug "[RECURRENCE] Generated rule YAML: #{schedule.to_yaml}" if Rails.env.test?
+      # Process exception_dates: the form submits an Array (one native date
+      # input per exception row) — a comma-separated String is also accepted
+      # for any client still on the legacy single-textarea format. Unlike
+      # the old textarea, an unparseable entry now blocks the save with a
+      # real error instead of being silently dropped.
+      if recurrence_attrs.key?(:exception_dates)
+        raw_values = recurrence_attrs[:exception_dates]
+        raw_values = raw_values.split(',') if raw_values.is_a?(String)
+        raw_values = Array(raw_values).map(&:to_s).map(&:strip).reject(&:blank?)
+        parsed_dates = raw_values.map { |value| safe_parse_date(value) }
 
-      # Process exception_dates from comma-separated string to array
-      if recurrence_attrs[:exception_dates].present?
-        dates = recurrence_attrs[:exception_dates]
-                .split(',')
-                .map(&:strip)
-                .reject(&:blank?)
-                .map do |d|
-                  Date.parse(d)
-                rescue StandardError
-                  nil
-                end
-                .compact
-
-        params[:event][:recurrence_attributes][:exception_dates] = dates
+        if parsed_dates.include?(nil)
+          params[:event][:recurrence_attributes][:exception_dates_error] = true
+          params[:event][:exception_dates_error] = true
+        else
+          params[:event][:recurrence_attributes][:exception_dates] = parsed_dates
+        end
       end
 
       # Clean up form-specific params that aren't database columns
-      %i[frequency interval end_type count weekdays].each do |key|
+      %i[frequency interval end_type count weekdays month_option].each do |key|
         params[:event][:recurrence_attributes].delete(key)
       end
+    end
+
+    # The recurrence schedule's anchor time must reflect what was actually
+    # submitted in this request (already converted to the event's timezone by
+    # convert_datetime_params_to_event_timezone, which runs first) — not the
+    # stale, pre-update value on @resource. Falling back to @resource is only
+    # for the (normally unreachable) case where starts_at wasn't submitted.
+    def recurrence_start_time
+      submitted = params.dig(:event, :starts_at)
+      return submitted.is_a?(String) ? Time.zone.parse(submitted) : submitted if submitted.present?
+      return @resource.starts_at if @resource&.starts_at
+
+      Time.current
+    end
+
+    def safe_parse_date(value)
+      Date.parse(value)
+    rescue ArgumentError, TypeError
+      nil
+    end
+
+    def recurrence_preview_occurrences(attrs)
+      return [[], []] if attrs[:frequency].blank?
+
+      result = BetterTogether::RecurrenceScheduleBuilder.new(start_time: Time.current, attrs: attrs).build
+      return [[], result.errors] unless result.valid?
+
+      [result.schedule.occurrences_between(Time.current, 1.year.from_now).first(5), []]
     end
 
     # Convert datetime parameters from event timezone to UTC for storage

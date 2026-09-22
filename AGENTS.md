@@ -11,7 +11,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 > **Note**: This file complements `.github/copilot-instructions.md`. While that file focuses on *what* to build and *how* to structure code, this file focuses on *how* to run, test, and validate your changes.
 
 ## Project
-- Ruby: 3.4.4 (installed via rbenv in setup)
+- Ruby: 3.4.10 (installed via rbenv in setup)
 - Rails: 7.2
 - Node: 20
 - DB: PostgreSQL + PostGIS
@@ -19,7 +19,8 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Test app: `spec/dummy`
 
 ## Setup
-- Environment runs a setup script that installs Ruby 3.4.4, Node 20, Postgres + PostGIS, and ES7, then prepares databases.
+- Environment runs a setup script that installs Ruby 3.4.10, Node 20, Postgres + PostGIS, and ES7, then prepares databases.
+- **Host Ruby**: `bin/install-ruby-version` bootstraps the host toolchain — rbenv, the `ruby-build` and `rbenv-gemset` plugins, and the Ruby pinned in `.ruby-version` (refreshing the `ruby-build` definition list if needed). Idempotent; run it if `ruby`/`bundle` on the host error with `rbenv: version '...' is not installed`.
 - **Docker Environment**: All commands requiring database access must use `bin/dc-run` to execute within the containerized environment.
 - **Dummy App Commands**: Use `bin/dc-run-dummy` for Rails commands that need the dummy app context (e.g., `bin/dc-run-dummy rails console`, `bin/dc-run-dummy rails db:migrate`).
 - Databases:

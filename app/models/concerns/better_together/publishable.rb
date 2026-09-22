@@ -51,10 +51,13 @@ module BetterTogether
       return unless new_record? || will_save_change_to_published_at?
       return if published_at.blank?
       return unless publication_privacy_requires_agreement?
+      # Federated mirrors carry the origin's publication decision; the origin
+      # already ran this gate. See PrivacyCeilingValidatable.
+      return if respond_to?(:mirrored?) && mirrored?
 
       BetterTogether::PublicVisibilityGate.allow!(
         record: self,
-        actor: Current.governed_agent,
+        actor: Current.agent,
         target_published_at: published_at
       )
     end

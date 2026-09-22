@@ -11,12 +11,6 @@ module BetterTogether
 
       validates :quote_text, presence: true
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[quote_text attribution_name attribution_title attribution_organization]
       end

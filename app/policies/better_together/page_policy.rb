@@ -89,7 +89,7 @@ module BetterTogether
       # Scope-level check uses host_community because there is no specific record in scope context.
       # Compare with PagePolicy#platform_content_manager? (below) which checks record.community.
       def platform_content_manager?
-        permitted_to?('manage_platform_settings') || permitted_to?('manage_platform') ||
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform) ||
           permitted_to?('manage_community_content', host_community)
       end
 

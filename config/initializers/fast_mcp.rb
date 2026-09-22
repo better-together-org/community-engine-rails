@@ -27,6 +27,13 @@ if defined?(Rails)
   skip_for_db_tasks = defined?(Rake) && Rake.application.top_level_tasks.any? { |t| t.start_with?('db:') }
 
   if mcp_enabled && !skip_for_db_tasks
+    # Global concurrent-SSE-connection cap (see the module doc for why this is
+    # global-only, not per-IP). AuthenticatedRackTransport < RackTransport and
+    # does not override handle_sse_request, so prepending the base class
+    # covers both transports.
+    require 'better_together/mcp/sse_concurrency_guard'
+    FastMcp::Transports::RackTransport.prepend(BetterTogether::Mcp::SseConcurrencyGuard)
+
     mcp_path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
 
     # In development/test, allow connections from localhost and private network ranges

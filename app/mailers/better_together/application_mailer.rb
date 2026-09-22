@@ -25,8 +25,11 @@ module BetterTogether
     #   1. Explicit @platform ivar set by the child mailer (e.g. PlatformInvitationMailer)
     #   2. Current.platform set by Rack middleware (web/API requests)
     #   3. Global BetterTogether.base_url env fallback (background jobs with no request context)
+    # Uses Platform#resolved_host_url (not the raw url/host_url column) so mail links
+    # respect a platform's active PlatformDomain rather than a stale host_url value.
     def default_url_options
-      raw = @platform&.url || ::Current.platform&.url || BetterTogether.base_url
+      effective_platform = @platform || ::Current.platform
+      raw = effective_platform&.resolved_host_url || BetterTogether.base_url
       options = super.merge(locale:, **resolve_url_options(raw.to_s))
       ActiveStorage::Current.url_options = options
       options

@@ -1,0 +1,85 @@
+{
+  "name": "seed_catalog_index_partially_planted",
+  "device": "mobile",
+  "url": "/en/host/seeds/catalog",
+  "title": "Funk, Altenwerth and Bruen",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog",
+  "flow": "seed_catalog_index",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_spec.rb",
+  "callouts": [
+    {
+      "selector": ".continents-status-badge",
+      "title": "Planted",
+      "bullets": [
+        "Green once the category has at least one record.",
+        "The Plant button for this category becomes disabled -- clicking again is a no-op either way."
+      ],
+      "target": {
+        "x": 189.71875,
+        "y": 417.203125,
+        "width": 67.609375,
+        "height": 20.375,
+        "right": 257.328125,
+        "bottom": 437.578125,
+        "center_x": 223.5234375,
+        "center_y": 427.390625
+      },
+      "avoid": {
+        "x": 189.71875,
+        "y": 417.203125,
+        "width": 67.609375,
+        "height": 20.375,
+        "right": 257.328125,
+        "bottom": 437.578125,
+        "center_x": 223.5234375,
+        "center_y": 427.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 88.52,
+        "y": 457.58,
+        "width": 270.0,
+        "height": 288,
+        "score": 823.421875
+      }
+    },
+    {
+      "selector": ".countries-status-badge",
+      "title": "Still not planted",
+      "bullets": [
+        "Categories are independent -- planting Continents does not auto-plant Countries.",
+        "The country<->continent join table only populates once both sides are planted."
+      ],
+      "target": {
+        "x": 189.71875,
+        "y": 465.203125,
+        "width": 95.609375,
+        "height": 20.375,
+        "right": 285.328125,
+        "bottom": 485.578125,
+        "center_x": 237.5234375,
+        "center_y": 475.390625
+      },
+      "avoid": {
+        "x": 189.71875,
+        "y": 465.203125,
+        "width": 95.609375,
+        "height": 20.375,
+        "right": 285.328125,
+        "bottom": 485.578125,
+        "center_x": 237.5234375,
+        "center_y": 475.390625
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 340,
+        "score": 0
+      }
+    }
+  ]
+}

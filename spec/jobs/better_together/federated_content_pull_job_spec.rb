@@ -49,7 +49,7 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       expect do
         described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-4')
       end.to have_enqueued_job(described_class)
-        .with(platform_connection_id: connection.id, cursor: 'cursor-5', limit: anything)
+        .with(platform_connection_id: connection.id, cursor: 'cursor-5', limit: anything, page: 2)
         .on_queue('platform_sync')
     end
 
@@ -96,6 +96,129 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
 
       expect(BetterTogether::Federation::Transport::DirectAdapter).to have_received(:call)
       expect(BetterTogether::Federation::Transport::HttpAdapter).not_to have_received(:call)
+    end
+
+    context 'when the remote rate-limits the pull' do
+      let(:rate_limit_error) do
+        BetterTogether::Federation::Transport::HttpAdapter::RateLimitedError.new(
+          'feed rate-limited', retry_after: 600
+        )
+      end
+
+      before do
+        allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+        allow(BetterTogether::FederatedContentPullService).to receive(:call).and_raise(rate_limit_error)
+      end
+
+      it 'marks the connection failed with a Retry-After-aware backoff and does not retry the job' do
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-1')
+        end.not_to have_enqueued_job(described_class)
+
+        connection.reload
+        expect(connection).to be_sync_failed
+        expect(Time.zone.parse(connection.sync_backoff_until)).to be > 500.seconds.from_now
+      end
+    end
+
+    it 'does not clear an existing failure streak on an intermediate (non-final) page' do
+      connection.mark_sync_failed!(message: 'earlier failure')
+      connection.mark_sync_failed!(message: 'earlier failure')
+      streak_before = connection.reload.sync_failure_streak.to_i
+
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+      allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(pull_result) # next_cursor present
+      allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(ingest_result)
+
+      described_class.perform_now(platform_connection_id: connection.id)
+
+      connection.reload
+      expect(connection).to be_sync_succeeded
+      expect(connection.sync_failure_streak.to_i).to eq(streak_before)
+    end
+
+    it 'clears the failure streak when the final page completes' do
+      connection.mark_sync_failed!(message: 'earlier failure')
+      final_result = BetterTogether::FederatedContentPullService::Result.new(connection:, seeds: [], next_cursor: nil)
+
+      allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+      allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(final_result)
+
+      described_class.perform_now(platform_connection_id: connection.id)
+
+      expect(connection.reload.sync_failure_streak.to_i).to eq(0)
+    end
+
+    describe 'defense-in-depth guards against a runaway pagination chain (2026-09 regression)' do
+      before do
+        allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+        allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(pull_result)
+        allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(ingest_result)
+      end
+
+      it 'does not enqueue another page once MAX_PAGES_PER_DISPATCH is reached, even with a cursor still present' do
+        expect do
+          described_class.perform_now(
+            platform_connection_id: connection.id,
+            page: described_class::MAX_PAGES_PER_DISPATCH
+          )
+        end.not_to have_enqueued_job(described_class)
+      end
+
+      it 'does not enqueue the next page if the connection was suspended mid-chain by another process' do
+        allow_any_instance_of(BetterTogether::PlatformConnection) # rubocop:disable RSpec/AnyInstance
+          .to receive(:active?).and_return(false)
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.not_to have_enqueued_job(described_class)
+      end
+
+      it 'does not enqueue the next page if the connection picked up an active backoff mid-chain' do
+        connection.update_columns(settings: connection.settings.merge('sync_backoff_until' => 1.hour.from_now.iso8601))
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.not_to have_enqueued_job(described_class)
+      end
+    end
+
+    describe 'circuit breaker on repeated failure (2026-09 regression - Sentry saw a 690-count job error ' \
+             'because every retry re-raised and Sidekiq kept scheduling more)' do
+      before do
+        allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+        allow(BetterTogether::FederatedContentPullService).to receive(:call).and_raise(StandardError, 'token request failed')
+      end
+
+      it 'keeps raising (letting Sidekiq retry) below the suspend threshold' do
+        # Pre-seed the streak so the job's own failure lands one short of the
+        # threshold (e.g. threshold 20: 18 pre-seeded + this job's own = 19).
+        (BetterTogether::PlatformConnectionSyncTracking::SYNC_FAILURE_SUSPEND_THRESHOLD - 2).times do
+          connection.mark_sync_failed!(message: 'earlier failure')
+        end
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.to raise_error(StandardError, 'token request failed')
+
+        expect(connection.reload).to be_active
+      end
+
+      it 'suspends the connection and stops raising once the streak crosses the threshold' do
+        # Pre-seed one short of the threshold so the job's own failure is the
+        # one that crosses it (e.g. threshold 20: 19 pre-seeded + this job's
+        # own = 20, the trip point).
+        (BetterTogether::PlatformConnectionSyncTracking::SYNC_FAILURE_SUSPEND_THRESHOLD - 1).times do
+          connection.mark_sync_failed!(message: 'earlier failure')
+        end
+        expect(connection.reload).to be_active # not tripped yet - the job's own failure below is what trips it
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.not_to raise_error
+
+        expect(connection.reload).to be_suspended
+      end
     end
 
     it 'records a sync summary when ingest completed with mirrored content conflicts' do

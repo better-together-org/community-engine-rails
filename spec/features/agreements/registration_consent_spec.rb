@@ -24,7 +24,7 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
     fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
     fill_in 'user[person_attributes][identifier]', with: test_identifier
-    fill_in 'user[person_attributes][description]', with: 'Tester'
+    fill_in_trix_field 'user[person_attributes][description]', with: 'Tester'
 
     click_button 'Sign Up'
 
@@ -41,7 +41,7 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
     fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
     fill_in 'user[person_attributes][identifier]', with: test_identifier
-    fill_in 'user[person_attributes][description]', with: 'Tester'
+    fill_in_trix_field 'user[person_attributes][description]', with: 'Tester'
 
     check 'terms_of_service_agreement'
     check 'privacy_policy_agreement'

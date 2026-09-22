@@ -98,7 +98,8 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
         end
       end
 
-      expect(sources).to include('https://*.tile.openstreetmap.org', 'https://images.example.com')
+      expect(sources).to include('https://*.tile.openstreetmap.org', 'https://tile.openstreetmap.org',
+                                 'https://server.arcgisonline.com', 'https://images.example.com')
       expect(sources).not_to include('https://unpkg.com')
     end
   end

@@ -18,12 +18,6 @@ module BetterTogether
 
       validates :layout, inclusion: { in: LAYOUTS }
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[heading subheading body_text primary_button_label primary_button_url
                    secondary_button_label secondary_button_url layout]

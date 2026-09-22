@@ -4,6 +4,14 @@ require 'rails_helper'
 
 # @hermetic
 RSpec.describe BetterTogether::TenantPlatformProvisioningService do
+  def build_steward_user(email:)
+    BetterTogether::User.new(
+      email:,
+      password: 'Secur3Pass!wordXYZ',
+      person_attributes: { identifier: "steward-#{SecureRandom.hex(4)}", name: 'New Steward' }
+    )
+  end
+
   let(:base_params) do
     {
       name: 'Test Tenant',
@@ -79,6 +87,47 @@ RSpec.describe BetterTogether::TenantPlatformProvisioningService do
         expect(result).not_to be_success
         expect(result.errors).to be_present
       end
+    end
+  end
+
+  describe '.provision_steward_for_existing_platform!' do
+    let(:platform_result) { described_class.call(**base_params) }
+    let(:platform) { platform_result.platform }
+    let(:steward_email) { "steward-#{SecureRandom.hex(4)}@example.com" }
+
+    it 'saves the user and grants platform_steward + community_governance_council roles' do
+      user = described_class.provision_steward_for_existing_platform!(
+        platform:, user: build_steward_user(email: steward_email)
+      )
+
+      expect(user).to be_persisted
+      person = user.person
+      expect(person.person_platform_memberships.joins(:role)
+        .where(better_together_roles: { identifier: 'platform_steward' })
+        .where(joinable: platform)).to exist
+      expect(person.person_community_memberships.joins(:role)
+        .where(better_together_roles: { identifier: 'community_governance_council' })
+        .where(joinable: platform.primary_community)).to exist
+    end
+
+    it 'sets the steward as the primary community creator when unset' do
+      user = described_class.provision_steward_for_existing_platform!(
+        platform:, user: build_steward_user(email: steward_email)
+      )
+
+      expect(platform.primary_community.reload.creator).to eq(user.person)
+    end
+
+    it 'is idempotent — calling twice for the same person does not duplicate memberships' do
+      user = build_steward_user(email: steward_email)
+      described_class.provision_steward_for_existing_platform!(platform:, user:)
+
+      persisted_user = BetterTogether::User.find_by(email: steward_email)
+      expect do
+        described_class.provision_steward_for_existing_platform!(platform:, user: persisted_user)
+      end.not_to(change do
+        persisted_user.person.person_platform_memberships.where(joinable: platform).count
+      end)
     end
   end
 end

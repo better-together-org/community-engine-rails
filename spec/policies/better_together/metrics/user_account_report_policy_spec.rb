@@ -51,4 +51,18 @@ RSpec.describe BetterTogether::Metrics::UserAccountReportPolicy, type: :policy d
     expect(described_class.new(report_creator, record).destroy?).to be(true)
     expect(described_class.new(manage_only_user, record).destroy?).to be(false)
   end
+
+  it 'allows a tenant (non-host) platform steward with dashboard permission on their own platform' do
+    tenant_platform = create(:better_together_platform)
+    tenant_viewer = create(:user)
+    role = create(:better_together_role, :platform_role)
+    permission = BetterTogether::ResourcePermission.find_by!(identifier: 'view_metrics_dashboard')
+    role.assign_resource_permissions([permission.identifier])
+    tenant_platform.person_platform_memberships.create!(member: tenant_viewer.person, role:, status: 'active')
+
+    Current.platform = tenant_platform
+    expect(described_class.new(tenant_viewer, record).index?).to be(true)
+  ensure
+    Current.platform = nil
+  end
 end

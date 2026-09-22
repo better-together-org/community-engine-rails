@@ -71,14 +71,6 @@ entries:
     foreign_key: person_id
     action: destroy
 
-  - key: BetterTogether::OneTimePrekey#person
-    kind: model_reference
-    owner: person
-    model: BetterTogether::OneTimePrekey
-    association: person
-    foreign_key: person_id
-    action: destroy
-
   - key: BetterTogether::PersonBlock#blocker
     kind: model_reference
     owner: person
@@ -437,6 +429,14 @@ entries:
     foreign_key: recipient_id
     action: destroy
     reverse_association: received_message_requests
+
+  - key: BetterTogether::InboundEmailReplyToken#recipient
+    kind: model_reference
+    owner: person
+    model: BetterTogether::InboundEmailReplyToken
+    association: recipient
+    foreign_key: recipient_id
+    action: destroy
 
   - key: BetterTogether::Creatable#creator
     kind: creatable_creator_reference

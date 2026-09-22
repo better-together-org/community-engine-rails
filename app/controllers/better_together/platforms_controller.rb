@@ -254,7 +254,7 @@ module BetterTogether
     end
 
     def show_safety_review?
-      @platform.host? && policy(::BetterTogether::Safety::Case).index?
+      policy(::BetterTogether::Safety::Case).index?
     end
 
     def load_safety_review_summary

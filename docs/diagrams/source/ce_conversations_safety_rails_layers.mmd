@@ -16,7 +16,7 @@ classDiagram
     class BetterTogether__ReportsController["ReportsController"] {
       <<Controller>>
       models: Report
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: BotProtectedSubmissions, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__Safety__CasesController["Safety::CasesController"] {
       <<Controller>>
@@ -34,49 +34,49 @@ classDiagram
     class BetterTogether__Conversation["Conversation"] {
       <<Model>>
       table: better_together_conversations
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__ConversationParticipant["ConversationParticipant"] {
       <<Model>>
       table: better_together_conversation_participants
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Message["Message"] {
       <<Model>>
       table: better_together_messages
-      concerns: BetterTogetherId, Seedable
-      weak refs: owner: seeds, owner: rich_text_content
+      concerns: BetterTogetherId, Broadcastable, PlatformScoped, Reportable +1
+      weak refs: owner: seeds, owner: reports_received, owner: rich_text_content
     }
     class BetterTogether__Report["Report"] {
       <<Model>>
       table: better_together_reports
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: reportable, owner: seeds
     }
     class BetterTogether__Safety__Action["Safety::Action"] {
       <<Model>>
       table: better_together_safety_actions
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Safety__Agreement["Safety::Agreement"] {
       <<Model>>
       table: better_together_safety_agreements
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Safety__Case["Safety::Case"] {
       <<Model>>
       table: better_together_safety_cases
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
     class BetterTogether__Safety__Note["Safety::Note"] {
       <<Model>>
       table: better_together_safety_notes
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
   }
@@ -91,18 +91,26 @@ classDiagram
   BetterTogether__Safety__CasesController --|> BetterTogether__ApplicationController
   BetterTogether__Safety__NotesController ..> BetterTogether__Safety__Note : manages
   BetterTogether__Safety__NotesController --|> BetterTogether__ApplicationController
+  BetterTogether__Conversation --> BetterTogether__Platform : platform
   BetterTogether__Conversation --> BetterTogether__Person : creator
+  BetterTogether__ConversationParticipant --> BetterTogether__Platform : platform
   BetterTogether__ConversationParticipant --> BetterTogether__Conversation : conversation
   BetterTogether__ConversationParticipant --> BetterTogether__Person : person
+  BetterTogether__Message --> BetterTogether__Platform : platform
   BetterTogether__Message --> BetterTogether__Conversation : conversation
   BetterTogether__Message --> BetterTogether__Person : sender
+  BetterTogether__Report --> BetterTogether__Platform : platform
   BetterTogether__Report --> BetterTogether__Person : reporter
+  BetterTogether__Safety__Action --> BetterTogether__Platform : platform
   BetterTogether__Safety__Action --> BetterTogether__Safety__Case : safety_case
   BetterTogether__Safety__Action --> BetterTogether__Person : actor
   BetterTogether__Safety__Action --> BetterTogether__Person : approved_by
+  BetterTogether__Safety__Agreement --> BetterTogether__Platform : platform
   BetterTogether__Safety__Agreement --> BetterTogether__Safety__Case : safety_case
   BetterTogether__Safety__Agreement --> BetterTogether__Person : created_by
+  BetterTogether__Safety__Case --> BetterTogether__Platform : platform
   BetterTogether__Safety__Case --> BetterTogether__Report : report
   BetterTogether__Safety__Case --> BetterTogether__Person : assigned_reviewer
+  BetterTogether__Safety__Note --> BetterTogether__Platform : platform
   BetterTogether__Safety__Note --> BetterTogether__Safety__Case : safety_case
   BetterTogether__Safety__Note --> BetterTogether__Person : author

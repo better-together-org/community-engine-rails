@@ -3,6 +3,15 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::EventPolicy do
+  def steward_of(platform)
+    user = create(:better_together_user, :confirmed)
+    BetterTogether::PersonPlatformMembership.create!(
+      joinable: platform, member: user.person,
+      role: BetterTogether::Role.find_by(identifier: 'platform_steward'), status: 'active'
+    )
+    user
+  end
+
   describe '#show?' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
     let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
@@ -91,6 +100,28 @@ RSpec.describe BetterTogether::EventPolicy do
     end
   end
 
+  describe '#recurrence_preview?' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let(:host_community) { host_platform.community }
+    let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
+
+    it 'allows a user eligible to create/edit events' do
+      user = create(:better_together_user)
+      BetterTogether::PersonCommunityMembership.create!(
+        joinable: host_community,
+        member: user.person,
+        role: community_member_role,
+        status: 'active'
+      )
+
+      expect(described_class.new(user, BetterTogether::Event).recurrence_preview?).to be true
+    end
+
+    it 'denies unauthenticated users' do
+      expect(described_class.new(nil, BetterTogether::Event).recurrence_preview?).to be false
+    end
+  end
+
   describe 'Scope' do
     let(:scoped_community) { create(:better_together_community, privacy: 'public') }
     let(:scoped_platform) { create(:better_together_platform, community: scoped_community) }
@@ -128,6 +159,23 @@ RSpec.describe BetterTogether::EventPolicy do
 
       expect(resolved).to include(public_event)
       expect(resolved).not_to include(community_event)
+    end
+  end
+
+  describe 'cross-tenant isolation' do
+    let(:platform_a) { create(:better_together_platform, :public) }
+    let(:platform_b) { create(:better_together_platform, :public) }
+    let(:platform_a_event) { create(:better_together_event, platform: platform_a) }
+    let(:platform_b_event) { create(:better_together_event, platform: platform_b) }
+
+    it "denies a steward of platform A from updating platform B's event" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_b_event).update?).to be false
+    end
+
+    it "allows a steward of platform A to update platform A's own event" do
+      steward_a = steward_of(platform_a)
+      expect(described_class.new(steward_a, platform_a_event).update?).to be true
     end
   end
 end

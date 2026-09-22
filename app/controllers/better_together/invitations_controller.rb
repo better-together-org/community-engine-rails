@@ -156,7 +156,8 @@ module BetterTogether
       allowed = BetterTogether::Invitable.included_in_models.map(&:name)
       invitable_class = BetterTogether::SafeClassResolver.resolve!(
         "BetterTogether::#{invitable_type}",
-        allowed: allowed
+        allowed: allowed,
+        error_class: NameError
       )
 
       @invitable_resource = if invitable_class.respond_to?(:friendly)

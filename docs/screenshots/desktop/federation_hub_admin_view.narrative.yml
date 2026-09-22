@@ -1,0 +1,17 @@
+---
+title: Federation Hub -- Admin Connection Health
+audience:
+- platform_manager
+- developer
+journey_step: As a network admin, I check the Federation Hub for an at-a-glance view
+  of connection health before drilling into the full review queue.
+callouts:
+- :id: connection_badges
+  :title: Connection health at a glance
+  :description: Summary counts only -- the detailed table stays on the Host Dashboard.
+- :id: review_link
+  :title: Review connections
+  :description: Deep link to the full review workflow.
+accessibility_notes: Badges are pill-shaped with text labels, not color-only indicators.
+slug: federation_hub_admin_view
+device: desktop

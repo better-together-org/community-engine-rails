@@ -48,6 +48,31 @@ RSpec.describe 'BetterTogether::Safety::Cases' do
     expect(assigns(:local_review_snapshot)[:content_review_items_count]).to eq(1)
   end
 
+  it "does not leak another platform's case counts or review items into the snapshot" do
+    other_platform = create(:better_together_platform, :public)
+    other_report = Current.set(platform: other_platform) do
+      create(:report, harm_level: 'urgent')
+    end
+    other_case = other_report.safety_case
+    other_upload = Current.set(platform: other_platform) do
+      upload = create(:better_together_upload, creator: other_case.report.reporter, name: 'Other platform upload',
+                                               platform: other_platform)
+      upload.file.attach(io: StringIO.new('other platform upload'), filename: 'other.txt', content_type: 'text/plain')
+      upload.save!
+      upload
+    end
+
+    get better_together.safety_cases_path(locale:)
+
+    expect(response).to have_http_status(:ok)
+    expect(assigns(:local_review_snapshot)[:open_cases_count]).to eq(1)
+    expect(assigns(:local_review_snapshot)[:urgent_open_cases_count]).to eq(0)
+    expect(assigns(:content_security_review_items)).not_to include(
+      have_attributes(id: BetterTogether::ContentSecurity::Subject.find_by(subject: other_upload)&.id)
+    )
+    expect(response.body).not_to include('other.txt')
+  end
+
   it 'allows a platform manager to update the case status' do
     patch better_together.safety_case_path(locale:, id: safety_case.id), params: {
       safety_case: {

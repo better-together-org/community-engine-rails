@@ -5,7 +5,7 @@
 # Pin everything under app/javascript as a fallback
 pin_all_from File.expand_path('../app/javascript/better_together', __dir__),
              under: 'better_together'
-pin_all_from File.expand_path('../app/javascript/better_together/trix_extensions', __dir__),
+pin_all_from File.expand_path('../app/javascript/better_together/trix-extensions', __dir__),
              under: 'better_together/trix-extensions'
 pin_all_from File.expand_path('../app/javascript/channels/better_together', __dir__),
              under: 'channels/better_together'
@@ -48,10 +48,3 @@ pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es
 
 # Application entry point
 pin 'application', preload: true
-
-# The UMD bundle populates globalThis.CommunityEngine when loaded.
-# It must be pinned under a distinct name so it loads and runs before the shim.
-pin 'community_engine_js_umd', to: 'community-engine.umd.js',
-                               integrity: 'sha384-nBGUV8c8f2uCS8r5d2F/RyIN//oOr/E7f6hcZ3JpaHUCti6zhdNZagRbyZgv7duj'
-# The shim re-exports named symbols from the UMD global as ESM named exports.
-pin 'community_engine_js', to: 'community_engine_js_shim.js'

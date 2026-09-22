@@ -16,11 +16,21 @@ module BetterTogether
 
     STYLE_SOURCES = %i[self unsafe_inline].freeze
 
+    # Bundled Leaflet map controller (app/javascript/controllers/better_together/map_controller.js)
+    # loads these two tile providers unconditionally on every map instance via leaflet-providers:
+    # OpenStreetMap.Mapnik resolves to the bare host (CSP wildcard subdomains do not match it),
+    # and Esri.WorldImagery (the satellite toggle) resolves to server.arcgisonline.com.
+    DEFAULT_MAP_TILE_IMG_SOURCES = [
+      'https://*.tile.openstreetmap.org',
+      'https://tile.openstreetmap.org',
+      'https://server.arcgisonline.com'
+    ].freeze
+
     IMG_SOURCES = [
       :self,
       :data,
       :blob,
-      'https://*.tile.openstreetmap.org'
+      *DEFAULT_MAP_TILE_IMG_SOURCES
     ].freeze
 
     FONT_SOURCES = %i[self data].freeze

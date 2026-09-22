@@ -21,6 +21,7 @@ module BetterTogether
       content_blocks: 'content_blocks_url',
       communities: 'communities_url',
       events: 'events_url',
+      federation_hub: 'federation_hub_url',
       geography_continents: 'geography_continents_url',
       geography_countries: 'geography_countries_url',
       geography_maps: 'geography_maps_url',
@@ -105,7 +106,6 @@ module BetterTogether
     validate :permission_identifier_requires_non_public_privacy
 
     before_validation :set_default_visibility_strategy
-    before_validation :set_default_privacy
 
     # Scope to return top-level navigation items
     scope :top_level, -> { where(parent_id: nil) }
@@ -151,6 +151,8 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
+          # Built-in seeded pages only -- see Page#seed_privacy_ceiling_exempt.
+          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end
@@ -169,6 +171,8 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
+          # Built-in seeded pages only -- see Page#seed_privacy_ceiling_exempt.
+          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end
@@ -214,16 +218,6 @@ module BetterTogether
 
     def set_default_visibility_strategy
       self.visibility_strategy ||= 'authenticated'
-    end
-
-    # Defaults to the most open privacy level allowed by the platform's own
-    # ceiling (see PrivacyCeilingValidatable, mixed in via Privacy), falling
-    # back to 'public' only if no ceiling can be resolved (e.g. platform not
-    # yet set). Previously hardcoded to 'public' unconditionally, which broke
-    # the moment PrivacyCeilingValidatable became active on every Privacy
-    # model — a private/community platform would reject its own default.
-    def set_default_privacy
-      self.privacy ||= privacy_ceiling || 'public'
     end
 
     def title(options = {})
@@ -320,6 +314,18 @@ module BetterTogether
 
     def visible?
       visible
+    end
+
+    # Transient (non-persisted) flag, same pattern and rationale as
+    # Page#seed_privacy_ceiling_exempt: builder/seed code sets this on a
+    # nav item linking to a built-in public page (About, FAQ, legal/policy
+    # pages, contributor agreements) so it isn't rejected by the platform's
+    # privacy ceiling. Deliberately not tied to `protected?`, which is
+    # reused for unrelated purposes elsewhere.
+    attr_accessor :seed_privacy_ceiling_exempt
+
+    def privacy_ceiling_exempt?
+      super || seed_privacy_ceiling_exempt
     end
 
     private

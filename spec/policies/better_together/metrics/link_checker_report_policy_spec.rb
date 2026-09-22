@@ -61,6 +61,28 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
         expect(policy.index?).to be false
       end
     end
+
+    context 'when user is a tenant (non-host) platform steward' do
+      let(:tenant_platform) { create(:better_together_platform) }
+
+      before do
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+               BetterTogether::Role.find_by(identifier: 'platform_manager')
+        BetterTogether::PersonPlatformMembership.create!(
+          joinable: tenant_platform,
+          member: user.person,
+          role: role,
+          status: 'active'
+        )
+        Current.platform = tenant_platform
+      end
+
+      after { Current.platform = nil }
+
+      it 'allows access on their own tenant platform' do
+        expect(policy.index?).to be true
+      end
+    end
   end
 
   describe '#show?' do

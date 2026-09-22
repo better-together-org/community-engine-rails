@@ -17,6 +17,7 @@
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
+    <%= tag.meta name: "direct-upload-token", content: direct_upload_authorization_token %>
     <%= csp_meta_tag %>
     <%= content_for?(:hreflang_links) ? yield(:hreflang_links) : hreflang_links %>
     <%= tag.meta name: "stimulus-debug", content: stimulus_debug_enabled?.to_s %>

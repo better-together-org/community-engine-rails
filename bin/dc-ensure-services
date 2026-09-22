@@ -12,6 +12,13 @@ services=(db redis redis-rack-attack)
 
 ./bin/dc up -d "${services[@]}" >/dev/null
 
+# Probe a TCP endpoint using only Bash built-ins. The Dockerized workflow must not
+# depend on a working host Ruby/nc; /dev/tcp is available on all supported dev
+# platforms (Linux + macOS bash). The subshell auto-closes the fd on exit.
+tcp_probe() {
+  (exec 3<>"/dev/tcp/$1/$2") 2>/dev/null
+}
+
 wait_for_tcp() {
   local host="$1"
   local port="$2"
@@ -19,7 +26,7 @@ wait_for_tcp() {
   local timeout="${4:-30}"
   local deadline=$((SECONDS + timeout))
 
-  until ruby -rsocket -e "s=TCPSocket.new(ARGV[0], Integer(ARGV[1])); s.close" "$host" "$port" >/dev/null 2>&1; do
+  until tcp_probe "$host" "$port"; do
     if (( SECONDS >= deadline )); then
       echo "Timed out waiting for ${label} at ${host}:${port}" >&2
       return 1

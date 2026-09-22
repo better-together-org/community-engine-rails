@@ -33,23 +33,6 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Conversations
   jsonapi_resources :conversations, only: %i[index show create update]
 
-  # E2E encryption: prekey management + encrypted key backup
-  resources :people, only: [] do
-    member do
-      get  :prekey_bundle,    to: 'prekeys#prekey_bundle'
-      put  :register_prekeys, to: 'prekeys#register_prekeys'
-      get  :key_backup,       to: 'prekeys#key_backup'
-      put  :key_backup,       to: 'prekeys#save_key_backup'
-    end
-  end
-
-  # E2E encryption: conversation-scoped participant prekey bundles
-  resources :conversations, only: [] do
-    member do
-      get :participant_prekey_bundles, to: 'conversations#participant_prekey_bundles'
-    end
-  end
-
   # Messages (create-only for sending, index/show for reading)
   jsonapi_resources :messages, only: %i[index show create]
 
@@ -102,28 +85,6 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
 
   # Membership requests — create is public (unauthenticated); read/manage require auth
   jsonapi_resources :membership_requests, only: %i[index show create destroy]
-
-  # C3 Community Contribution Token (borgberry fleet integration)
-  namespace :c3 do
-    post 'contributions',   to: 'contributions#create'
-    get  'contributions',   to: 'contributions#index'
-    get  'balance',         to: 'contributions#balance'
-    get  'network_balance', to: 'contributions#network_balance'
-  end
-
-  # Borgberry identity — returns this node's borgberry DID and person identity
-  namespace :borgberry do
-    get 'profile', to: 'profile#show'
-  end
-
-  # Fleet node registry (borgberry fleet agent registration + heartbeat)
-  namespace :fleet do
-    resources :nodes, param: :node_id, only: %i[index show create] do
-      member do
-        post :heartbeat
-      end
-    end
-  end
 
   # Webhook management (outbound subscriptions)
   jsonapi_resources :webhook_endpoints

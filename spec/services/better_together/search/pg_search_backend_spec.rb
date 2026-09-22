@@ -86,6 +86,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
         {
           block_attributes: {
             type: 'BetterTogether::Content::Markdown',
+            privacy: 'public',
             markdown_source: "This page only mentions #{token} in markdown."
           }
         }

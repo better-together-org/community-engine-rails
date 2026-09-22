@@ -8,12 +8,11 @@ module BetterTogether
     include Attachments::Images
     include Authorable
     include BlockFilterable
-    include Claimable
     include FriendlySlug
     include Categorizable
-    include Citable
     include Commentable
     include Creatable
+    include Federatable
     include Identifier
     include Metrics::Shareable
     include Metrics::Viewable
@@ -23,6 +22,7 @@ module BetterTogether
     include Searchable
     include Seedable
     include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
     include ::Storext.model
     include CommunityAssignable
@@ -103,7 +103,7 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.external?
     end
 
     def preserved_remote_uuid?

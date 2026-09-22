@@ -18,7 +18,7 @@
 ## Development Tools
 
 ### Required Tools
-- Ruby 3.4.4 via rbenv
+- Ruby 3.4.10 via rbenv
 - Node.js 20.x
 - PostgreSQL 14+ with PostGIS
 - Redis (for caching and Sidekiq)

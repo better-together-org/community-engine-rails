@@ -1,0 +1,13 @@
+flowchart TD
+  A[Content export cursor runs for a specific PlatformConnection] --> B{Connection allows this content type?}
+  B -->|No, e.g. share_posts is false| Z[Excluded -- never reaches grant or tri-state check]
+  B -->|Yes| C{Item federation_visibility}
+  C -->|no_federate| D[Excluded -- hard opt-out always wins, no grant can override this]
+  C -->|federate or platform_default| E{FederationContentGrant for THIS connection?}
+  E -->|status: denied| F[Excluded -- per-connection override wins over tri-state and creator preference]
+  E -->|status: allowed| G[Included -- per-connection override wins even if tri-state/creator preference would exclude it]
+  E -->|no grant row for this connection| H{federation_visibility}
+  H -->|federate| I[Included -- bypasses creator's global preference]
+  H -->|platform_default| J{Creator federate_content?}
+  J -->|true, or creator is nil / system-owned| K[Included -- unchanged existing behavior]
+  J -->|false| L[Excluded -- unchanged existing behavior]

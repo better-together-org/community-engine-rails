@@ -79,7 +79,7 @@ module BetterTogether
     # and the author(s) are who this feature is meant to reach.
     def notify_commentable_owners(comment)
       commentable = comment.commentable
-      recipients = commentable.respond_to?(:governed_authors) ? commentable.governed_authors : [commentable.try(:creator)]
+      recipients = commentable.respond_to?(:agent_authors) ? commentable.agent_authors : [commentable.try(:creator)]
       recipients = recipients.compact.uniq - [comment.creator]
       return if recipients.empty?
 

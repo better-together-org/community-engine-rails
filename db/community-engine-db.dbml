@@ -1,6 +1,3 @@
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
-
 Table "action_mailbox_inbound_emails" {
   "id" varchar
   "status" integer
@@ -63,6 +60,7 @@ Table "better_together_activities" {
   "recipient_type" string
   "recipient_id" uuid
   "privacy" string
+  "platform_id" uuid
 }
 
 Table "better_together_addresses" {
@@ -82,27 +80,7 @@ Table "better_together_addresses" {
   "privacy" string
   "contact_detail_id" uuid
   "primary_flag" boolean
-}
-
-Table "better_together_agent_job_results" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "job_id" string
-  "job_type" string
-  "source_system" string
-  "node_id" string
-  "fleet_node_id" uuid
-  "submitter_type" string
-  "submitter_id" uuid
-  "result_payload" jsonb
-  "steps" jsonb
-  "elapsed_ms" integer
-  "status" string
-  "started_at" datetime
-  "completed_at" datetime
-  "error_message" text
+  "platform_id" uuid
 }
 
 Table "better_together_agreement_participants" {
@@ -122,6 +100,7 @@ Table "better_together_agreement_participants" {
   "audit_context" jsonb
   "participant_type" string
   "participant_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_agreement_terms" {
@@ -133,6 +112,7 @@ Table "better_together_agreement_terms" {
   "position" integer
   "protected" boolean
   "agreement_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_agreements" {
@@ -152,6 +132,7 @@ Table "better_together_agreements" {
   "lifecycle_state" string
   "requires_reacceptance" boolean
   "change_summary" text
+  "platform_id" uuid
 }
 
 Table "better_together_ai_log_translations" {
@@ -172,6 +153,7 @@ Table "better_together_ai_log_translations" {
   "initiator_id" uuid
   "source_locale" string
   "target_locale" string
+  "platform_id" uuid
 }
 
 Table "better_together_authorships" {
@@ -188,72 +170,7 @@ Table "better_together_authorships" {
   "role" string
   "contribution_type" string
   "details" jsonb
-}
-
-Table "better_together_c3_balance_locks" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "balance_id" uuid
-  "lock_ref" string
-  "millitokens" bigint
-  "agreement_ref" string
-  "source_platform_id" uuid
-  "status" string
-  "expires_at" datetime
-  "settled_at" datetime
-}
-
-Table "better_together_c3_balances" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "holder_type" string
-  "holder_id" uuid
-  "community_id" uuid
-  "available_millitokens" bigint
-  "locked_millitokens" bigint
-  "lifetime_earned_millitokens" bigint
-  "origin_platform_id" uuid
-}
-
-Table "better_together_c3_exchange_rates" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "contribution_type" integer
-  "contribution_type_name" string
-  "rate" decimal
-  "unit_name" string
-  "unit_label" string
-  "source_system" string
-  "active" boolean
-}
-
-Table "better_together_c3_tokens" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "earner_type" string
-  "earner_id" uuid
-  "community_id" uuid
-  "contribution_type" integer
-  "contribution_type_name" string
-  "c3_millitokens" bigint
-  "source_ref" string
-  "source_system" string
-  "units" decimal
-  "duration_s" decimal
-  "metadata" jsonb
-  "status" string
-  "emitted_at" datetime
-  "confirmed_at" datetime
-  "origin_platform_id" uuid
-  "federated" boolean
+  "platform_id" uuid
 }
 
 Table "better_together_calendar_entries" {
@@ -268,6 +185,7 @@ Table "better_together_calendar_entries" {
   "ends_at" datetime
   "duration_minutes" decimal
   "event_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_calendars" {
@@ -282,6 +200,7 @@ Table "better_together_calendars" {
   "privacy" string
   "protected" boolean
   "subscription_token" string
+  "platform_id" uuid
 }
 
 Table "better_together_calls_for_interest" {
@@ -297,6 +216,7 @@ Table "better_together_calls_for_interest" {
   "interestable_id" uuid
   "starts_at" datetime
   "ends_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_categories" {
@@ -309,6 +229,8 @@ Table "better_together_categories" {
   "protected" boolean
   "type" string
   "icon" string
+  "platform_id" uuid
+  "privacy" string
 }
 
 Table "better_together_categorizations" {
@@ -320,6 +242,7 @@ Table "better_together_categorizations" {
   "category_id" uuid
   "categorizable_type" string
   "categorizable_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_checklist_items" {
@@ -335,6 +258,7 @@ Table "better_together_checklist_items" {
   "position" integer
   "parent_id" uuid
   "children_count" integer
+  "platform_id" uuid
 }
 
 Table "better_together_checklists" {
@@ -347,43 +271,18 @@ Table "better_together_checklists" {
   "protected" boolean
   "privacy" string
   "directional" boolean
+  "platform_id" uuid
 }
 
-Table "better_together_citations" {
+Table "better_together_comment_configs" {
   "id" varchar
-  "citeable_type" string
-  "citeable_id" uuid
-  "creator_id" uuid
-  "position" integer
-  "reference_key" string
-  "source_kind" string
-  "title" string
-  "source_author" string
-  "publisher" string
-  "source_url" string
-  "locator" string
-  "published_on" date
-  "accessed_on" date
-  "excerpt" text
-  "rights_notes" text
-  "metadata" jsonb
+  "lock_version" integer
   "created_at" datetime
   "updated_at" datetime
-}
-
-Table "better_together_claims" {
-  "id" varchar
-  "claimable_type" string
-  "claimable_id" uuid
-  "creator_id" uuid
-  "position" integer
-  "claim_key" string
-  "statement" text
-  "selector" text
-  "review_status" string
-  "metadata" jsonb
-  "created_at" datetime
-  "updated_at" datetime
+  "commentable_type" string
+  "commentable_id" uuid
+  "permission" string
+  "visibility" string
 }
 
 Table "better_together_comments" {
@@ -395,6 +294,7 @@ Table "better_together_comments" {
   "commentable_id" uuid
   "creator_id" uuid
   "content" text
+  "platform_id" uuid
 }
 
 Table "better_together_communities" {
@@ -411,6 +311,7 @@ Table "better_together_communities" {
   "allow_membership_requests" boolean
   "requires_invitation" boolean
   "settings" jsonb
+  "platform_id" uuid
 }
 
 Table "better_together_contact_details" {
@@ -423,6 +324,7 @@ Table "better_together_contact_details" {
   "type" string
   "name" string
   "role" string
+  "platform_id" uuid
 }
 
 Table "better_together_content_blocks" {
@@ -445,6 +347,7 @@ Table "better_together_content_blocks" {
   "content_area_settings" jsonb
   "content_data" jsonb
   "protected" boolean
+  "platform_id" uuid
 }
 
 Table "better_together_content_links" {
@@ -499,6 +402,7 @@ Table "better_together_content_security_findings" {
   "evidence_summary" text
   "detected_at" datetime
   "metadata" jsonb
+  "platform_id" uuid
 }
 
 Table "better_together_content_security_items" {
@@ -520,6 +424,7 @@ Table "better_together_content_security_items" {
   "last_error_class" string
   "last_error_summary" text
   "metadata" jsonb
+  "platform_id" uuid
 }
 
 Table "better_together_content_security_scan_events" {
@@ -539,6 +444,7 @@ Table "better_together_content_security_scan_events" {
   "started_at" datetime
   "finished_at" datetime
   "metadata" jsonb
+  "platform_id" uuid
 }
 
 Table "better_together_content_security_subjects" {
@@ -558,6 +464,7 @@ Table "better_together_content_security_subjects" {
   "released_at" datetime
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_conversation_participants" {
@@ -567,6 +474,7 @@ Table "better_together_conversation_participants" {
   "updated_at" datetime
   "conversation_id" uuid
   "person_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_conversations" {
@@ -576,7 +484,7 @@ Table "better_together_conversations" {
   "updated_at" datetime
   "title" string
   "creator_id" uuid
-  "sender_key_version" integer
+  "platform_id" uuid
 }
 
 Table "better_together_email_addresses" {
@@ -589,6 +497,7 @@ Table "better_together_email_addresses" {
   "privacy" string
   "contact_detail_id" uuid
   "primary_flag" boolean
+  "platform_id" uuid
 }
 
 Table "better_together_event_attendances" {
@@ -599,6 +508,8 @@ Table "better_together_event_attendances" {
   "event_id" uuid
   "person_id" uuid
   "status" string
+  "platform_id" uuid
+  "event_occurrence_id" uuid
 }
 
 Table "better_together_event_hosts" {
@@ -609,6 +520,19 @@ Table "better_together_event_hosts" {
   "event_id" uuid
   "host_type" string
   "host_id" uuid
+  "platform_id" uuid
+}
+
+Table "better_together_event_occurrences" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "event_id" uuid
+  "occurrence_date" date
+  "starts_at" datetime
+  "ends_at" datetime
+  "cancelled" boolean
 }
 
 Table "better_together_events" {
@@ -629,22 +553,9 @@ Table "better_together_events" {
   "source_id" string
   "source_updated_at" datetime
   "last_synced_at" datetime
-}
-
-Table "better_together_evidence_links" {
-  "id" varchar
-  "claim_id" uuid
-  "citation_id" uuid
-  "creator_id" uuid
-  "position" integer
-  "relation_type" string
-  "locator" string
-  "quoted_text" text
-  "editor_note" text
-  "review_status" string
-  "metadata" jsonb
-  "created_at" datetime
-  "updated_at" datetime
+  "status" string
+  "federation_visibility" string
+  "next_occurrence_at" datetime
 }
 
 Table "better_together_feature_access_grants" {
@@ -675,34 +586,15 @@ Table "better_together_federation_access_tokens" {
   "last_used_at" datetime
 }
 
-Table "better_together_fleet_node_ownerships" {
+Table "better_together_federation_content_grants" {
   "id" varchar
   "lock_version" integer
   "created_at" datetime
   "updated_at" datetime
-  "node_id" uuid
-  "owner_type" string
-  "owner_id" uuid
-}
-
-Table "better_together_fleet_nodes" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "node_id" string
-  "node_category" string
-  "headscale_ip" string
-  "lan_ip" string
-  "borgberry_port" integer
-  "hardware" jsonb
-  "compute" jsonb
-  "services" jsonb
-  "safety_tier" string
-  "online" boolean
-  "last_seen_at" datetime
-  "registered_at" datetime
-  "platform_id" uuid
+  "federatable_type" string
+  "federatable_id" uuid
+  "platform_connection_id" uuid
+  "status" string
 }
 
 Table "better_together_geography_continents" {
@@ -713,6 +605,7 @@ Table "better_together_geography_continents" {
   "identifier" string
   "protected" boolean
   "community_id" uuid
+  "privacy" string
 }
 
 Table "better_together_geography_countries" {
@@ -724,6 +617,7 @@ Table "better_together_geography_countries" {
   "iso_code" string
   "protected" boolean
   "community_id" uuid
+  "privacy" string
 }
 
 Table "better_together_geography_country_continents" {
@@ -758,6 +652,8 @@ Table "better_together_geography_locatable_locations" {
   "locatable_type" string
   "locatable_id" uuid
   "name" string
+  "resolution_method" string
+  "resolved_at" datetime
 }
 
 Table "better_together_geography_maps" {
@@ -777,6 +673,7 @@ Table "better_together_geography_maps" {
   "mappable_type" string
   "mappable_id" uuid
   "type" string
+  "platform_id" uuid
 }
 
 Table "better_together_geography_region_settlements" {
@@ -800,6 +697,7 @@ Table "better_together_geography_regions" {
   "country_id" uuid
   "state_id" uuid
   "type" string
+  "privacy" string
 }
 
 Table "better_together_geography_settlements" {
@@ -812,6 +710,7 @@ Table "better_together_geography_settlements" {
   "community_id" uuid
   "country_id" uuid
   "state_id" uuid
+  "privacy" string
 }
 
 Table "better_together_geography_spaces" {
@@ -826,6 +725,7 @@ Table "better_together_geography_spaces" {
   "longitude" float
   "properties" jsonb
   "metadata" jsonb
+  "boundary" geography(multipolygon,4326)
 }
 
 Table "better_together_geography_states" {
@@ -838,6 +738,7 @@ Table "better_together_geography_states" {
   "protected" boolean
   "community_id" uuid
   "country_id" uuid
+  "privacy" string
 }
 
 Table "better_together_identifications" {
@@ -850,6 +751,7 @@ Table "better_together_identifications" {
   "identity_id" uuid
   "agent_type" string
   "agent_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_inbound_email_messages" {
@@ -878,6 +780,20 @@ Table "better_together_inbound_email_messages" {
   "content_security_records_json" text
 }
 
+Table "better_together_inbound_email_reply_tokens" {
+  "id" varchar
+  "token" string
+  "recipient_id" uuid
+  "repliable_type" string
+  "repliable_id" uuid
+  "platform_id" uuid
+  "notification_type" string
+  "expires_at" datetime
+  "consumed_at" datetime
+  "created_at" datetime
+  "updated_at" datetime
+}
+
 Table "better_together_infrastructure_building_connections" {
   "id" varchar
   "lock_version" integer
@@ -903,6 +819,7 @@ Table "better_together_infrastructure_buildings" {
   "floors_count" integer
   "rooms_count" integer
   "address_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_infrastructure_floors" {
@@ -918,6 +835,7 @@ Table "better_together_infrastructure_floors" {
   "position" integer
   "level" integer
   "rooms_count" integer
+  "platform_id" uuid
 }
 
 Table "better_together_infrastructure_rooms" {
@@ -930,6 +848,7 @@ Table "better_together_infrastructure_rooms" {
   "creator_id" uuid
   "identifier" string
   "privacy" string
+  "platform_id" uuid
 }
 
 Table "better_together_invitations" {
@@ -954,6 +873,7 @@ Table "better_together_invitations" {
   "invitee_email" string
   "role_id" uuid
   "creator_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_joatu_agreements" {
@@ -967,6 +887,7 @@ Table "better_together_joatu_agreements" {
   "value" string
   "status" string
   "privacy" string
+  "platform_id" uuid
 }
 
 Table "better_together_joatu_offers" {
@@ -981,8 +902,7 @@ Table "better_together_joatu_offers" {
   "urgency" string
   "address_id" uuid
   "privacy" string
-  "c3_price_millitokens" bigint
-  "c3_price_currency" string
+  "platform_id" uuid
 }
 
 Table "better_together_joatu_requests" {
@@ -1001,8 +921,7 @@ Table "better_together_joatu_requests" {
   "requestor_email" string
   "referral_source" string
   "privacy" string
-  "c3_budget_millitokens" bigint
-  "c3_budget_currency" string
+  "platform_id" uuid
 }
 
 Table "better_together_joatu_response_links" {
@@ -1015,23 +934,7 @@ Table "better_together_joatu_response_links" {
   "response_type" string
   "response_id" uuid
   "creator_id" uuid
-}
-
-Table "better_together_joatu_settlements" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "agreement_id" uuid
-  "payer_type" string
-  "payer_id" uuid
-  "recipient_type" string
-  "recipient_id" uuid
-  "c3_token_id" uuid
-  "c3_millitokens" bigint
-  "status" string
-  "completed_at" datetime
-  "lock_ref" string
+  "platform_id" uuid
 }
 
 Table "better_together_jwt_denylists" {
@@ -1041,6 +944,20 @@ Table "better_together_jwt_denylists" {
   "updated_at" datetime
   "jti" string
   "exp" datetime
+  "platform_id" uuid
+}
+
+Table "better_together_message_requests" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "sender_id" uuid
+  "recipient_id" uuid
+  "platform_id" uuid
+  "note" text
+  "status" string
+  "responded_at" datetime
 }
 
 Table "better_together_messages" {
@@ -1054,6 +971,7 @@ Table "better_together_messages" {
   "e2e_encrypted" boolean
   "e2e_version" integer
   "e2e_protocol" string
+  "platform_id" uuid
 }
 
 Table "better_together_metrics_downloads" {
@@ -1081,6 +999,7 @@ Table "better_together_metrics_link_checker_reports" {
   "file_format" string
   "report_data" jsonb
   "creator_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_metrics_link_click_reports" {
@@ -1148,6 +1067,7 @@ Table "better_together_metrics_rich_text_links" {
   "rich_text_record_id" uuid
   "position" integer
   "locale" string
+  "platform_id" uuid
 }
 
 Table "better_together_metrics_search_queries" {
@@ -1176,6 +1096,7 @@ Table "better_together_metrics_shares" {
   "shareable_id" uuid
   "platform_id" uuid
   "logged_in" boolean
+  "platform_name" string
 }
 
 Table "better_together_metrics_short_link_visits" {
@@ -1202,6 +1123,7 @@ Table "better_together_metrics_user_account_reports" {
   "file_format" string
   "report_data" jsonb
   "creator_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_navigation_areas" {
@@ -1216,6 +1138,7 @@ Table "better_together_navigation_areas" {
   "style" string
   "navigable_type" string
   "navigable_id" bigint
+  "platform_id" uuid
 }
 
 Table "better_together_navigation_items" {
@@ -1239,6 +1162,7 @@ Table "better_together_navigation_items" {
   "privacy" string
   "permission_identifier" string
   "visibility_strategy" string
+  "platform_id" uuid
 }
 
 Table "better_together_oauth_access_grants" {
@@ -1253,6 +1177,7 @@ Table "better_together_oauth_access_grants" {
   "redirect_uri" text
   "scopes" string
   "revoked_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_oauth_access_tokens" {
@@ -1268,6 +1193,7 @@ Table "better_together_oauth_access_tokens" {
   "scopes" string
   "revoked_at" datetime
   "previous_refresh_token" string
+  "platform_id" uuid
 }
 
 Table "better_together_oauth_applications" {
@@ -1282,17 +1208,7 @@ Table "better_together_oauth_applications" {
   "scopes" string
   "confidential" boolean
   "owner_id" uuid
-}
-
-Table "better_together_one_time_prekeys" {
-  "id" varchar
-  "lock_version" integer
-  "created_at" datetime
-  "updated_at" datetime
-  "person_id" uuid
-  "key_id" integer
-  "public_key" text
-  "consumed" boolean
+  "platform_id" uuid
 }
 
 Table "better_together_pages" {
@@ -1316,6 +1232,7 @@ Table "better_together_pages" {
   "source_id" string
   "source_updated_at" datetime
   "last_synced_at" datetime
+  "federation_visibility" string
 }
 
 Table "better_together_people" {
@@ -1328,17 +1245,9 @@ Table "better_together_people" {
   "community_id" uuid
   "preferences" jsonb
   "notification_preferences" jsonb
-  "identity_key_public" text
-  "signed_prekey_id" integer
-  "signed_prekey_public" text
-  "signed_prekey_sig" text
-  "registration_id" integer
-  "key_backup_blob" text
-  "key_backup_salt" text
-  "key_backup_updated_at" datetime
   "deleted_at" datetime
   "anonymized_at" datetime
-  "borgberry_did" string
+  "platform_id" uuid
 }
 
 Table "better_together_person_access_grants" {
@@ -1366,6 +1275,7 @@ Table "better_together_person_blocks" {
   "updated_at" datetime
   "blocker_id" uuid
   "blocked_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_person_checklist_items" {
@@ -1378,6 +1288,7 @@ Table "better_together_person_checklist_items" {
   "checklist_item_id" uuid
   "completed_at" datetime
   "notes" text
+  "platform_id" uuid
 }
 
 Table "better_together_person_community_memberships" {
@@ -1389,6 +1300,7 @@ Table "better_together_person_community_memberships" {
   "joinable_id" uuid
   "role_id" uuid
   "status" string
+  "platform_id" uuid
 }
 
 Table "better_together_person_data_exports" {
@@ -1402,6 +1314,7 @@ Table "better_together_person_data_exports" {
   "error_message" text
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_person_deletion_requests" {
@@ -1415,6 +1328,7 @@ Table "better_together_person_deletion_requests" {
   "reviewer_notes" text
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_person_linked_seeds" {
@@ -1451,6 +1365,16 @@ Table "better_together_person_links" {
   "verified_at" datetime
   "revoked_at" datetime
   "settings" jsonb
+}
+
+Table "better_together_person_messaging_grants" {
+  "id" varchar
+  "lock_version" integer
+  "created_at" datetime
+  "updated_at" datetime
+  "grantor_id" uuid
+  "grantee_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_person_platform_integrations" {
@@ -1506,6 +1430,7 @@ Table "better_together_person_purge_audits" {
   "failed_at" datetime
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_phone_numbers" {
@@ -1518,6 +1443,7 @@ Table "better_together_phone_numbers" {
   "privacy" string
   "contact_detail_id" uuid
   "primary_flag" boolean
+  "platform_id" uuid
 }
 
 Table "better_together_places" {
@@ -1530,6 +1456,7 @@ Table "better_together_places" {
   "identifier" string
   "space_id" uuid
   "privacy" string
+  "platform_id" uuid
 }
 
 Table "better_together_platform_connections" {
@@ -1620,6 +1547,8 @@ Table "better_together_posts" {
   "source_updated_at" datetime
   "last_synced_at" datetime
   "display_settings" jsonb
+  "community_id" uuid
+  "federation_visibility" string
 }
 
 Table "better_together_recurrences" {
@@ -1651,6 +1580,7 @@ Table "better_together_reports" {
   "consent_to_contact" boolean
   "consent_to_restorative_process" boolean
   "retaliation_risk" boolean
+  "platform_id" uuid
 }
 
 Table "better_together_resource_permissions" {
@@ -1664,6 +1594,7 @@ Table "better_together_resource_permissions" {
   "resource_type" string
   "action" string
   "target" string
+  "platform_id" uuid
 }
 
 Table "better_together_robots" {
@@ -1690,6 +1621,7 @@ Table "better_together_role_resource_permissions" {
   "updated_at" datetime
   "role_id" uuid
   "resource_permission_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_roles" {
@@ -1702,6 +1634,7 @@ Table "better_together_roles" {
   "position" integer
   "resource_type" string
   "type" string
+  "platform_id" uuid
 }
 
 Table "better_together_safety_actions" {
@@ -1725,6 +1658,7 @@ Table "better_together_safety_actions" {
   "resolved_at" datetime
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_safety_agreements" {
@@ -1741,6 +1675,7 @@ Table "better_together_safety_agreements" {
   "completed_at" datetime
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_safety_cases" {
@@ -1762,6 +1697,7 @@ Table "better_together_safety_cases" {
   "resolved_at" datetime
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_safety_notes" {
@@ -1773,6 +1709,7 @@ Table "better_together_safety_notes" {
   "body" text
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_seed_plantings" {
@@ -1791,6 +1728,7 @@ Table "better_together_seed_plantings" {
   "privacy" string
   "created_at" datetime
   "updated_at" datetime
+  "platform_id" uuid
 }
 
 Table "better_together_seeds" {
@@ -1847,6 +1785,8 @@ Table "better_together_social_media_accounts" {
   "url" string
   "privacy" string
   "contact_detail_id" uuid
+  "platform_name" string
+  "platform_id" uuid
 }
 
 Table "better_together_storage_configurations" {
@@ -1873,6 +1813,7 @@ Table "better_together_uploads" {
   "identifier" string
   "privacy" string
   "type" string
+  "platform_id" uuid
 }
 
 Table "better_together_users" {
@@ -1898,6 +1839,7 @@ Table "better_together_users" {
   "unlock_token" string
   "locked_at" datetime
   "type" string
+  "platform_id" uuid
 }
 
 Table "better_together_webhook_deliveries" {
@@ -1913,6 +1855,7 @@ Table "better_together_webhook_deliveries" {
   "delivered_at" datetime
   "attempts" integer
   "status" string
+  "platform_id" uuid
 }
 
 Table "better_together_webhook_endpoints" {
@@ -1929,6 +1872,7 @@ Table "better_together_webhook_endpoints" {
   "person_id" uuid
   "oauth_application_id" uuid
   "community_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_website_links" {
@@ -1940,6 +1884,7 @@ Table "better_together_website_links" {
   "label" string
   "privacy" string
   "contact_detail_id" uuid
+  "platform_id" uuid
 }
 
 Table "better_together_wizard_step_definitions" {
@@ -1954,6 +1899,7 @@ Table "better_together_wizard_step_definitions" {
   "form_class" string
   "message" string
   "step_number" integer
+  "platform_id" uuid
 }
 
 Table "better_together_wizard_steps" {
@@ -1967,6 +1913,7 @@ Table "better_together_wizard_steps" {
   "identifier" string
   "completed" boolean
   "step_number" integer
+  "platform_id" uuid
 }
 
 Table "better_together_wizards" {
@@ -1982,6 +1929,7 @@ Table "better_together_wizards" {
   "last_completed_at" datetime
   "success_message" text
   "success_path" string
+  "platform_id" uuid
 }
 
 Table "friendly_id_slugs" {
@@ -2046,43 +1994,53 @@ Ref "fk_rails_active_storage_attachments_active_storage_blobs":"active_storage_a
 
 Ref "fk_rails_active_storage_variant_records_active_storage_blobs":"active_storage_variant_records"."blob_id" - "active_storage_blobs"."id"
 
+Ref "fk_rails_better_together_activities_better_together_platforms":"better_together_activities"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_addresses_better_together_contact_details":"better_together_addresses"."contact_detail_id" - "better_together_contact_details"."id"
 
-Ref "fk_rails_better_together_agent_job_results_better_together_fleet_nodes":"better_together_agent_job_results"."fleet_node_id" - "better_together_fleet_nodes"."id"
+Ref "fk_rails_better_together_addresses_better_together_platforms":"better_together_addresses"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_agreement_participants_better_together_agreements":"better_together_agreement_participants"."agreement_id" - "better_together_agreements"."id"
 
 Ref "fk_rails_better_together_agreement_participants_better_together_people":"better_together_agreement_participants"."person_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_agreement_participants_better_together_platforms":"better_together_agreement_participants"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_agreement_terms_better_together_agreements":"better_together_agreement_terms"."agreement_id" - "better_together_agreements"."id"
+
+Ref "fk_rails_better_together_agreement_terms_better_together_platforms":"better_together_agreement_terms"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_agreements_better_together_pages":"better_together_agreements"."page_id" - "better_together_pages"."id"
 
 Ref "fk_rails_better_together_agreements_better_together_people":"better_together_agreements"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_agreements_better_together_platforms":"better_together_agreements"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_ai_log_translations_better_together_people":"better_together_ai_log_translations"."initiator_id" - "better_together_people"."id"
 
-Ref "fk_rails_better_together_c3_balance_locks_better_together_c3_balances":"better_together_c3_balance_locks"."balance_id" - "better_together_c3_balances"."id" [delete: cascade]
+Ref "fk_rails_better_together_ai_log_translations_better_together_platforms":"better_together_ai_log_translations"."platform_id" - "better_together_platforms"."id"
 
-Ref "fk_rails_better_together_c3_balance_locks_better_together_platforms":"better_together_c3_balance_locks"."source_platform_id" - "better_together_platforms"."id"
-
-Ref "fk_rails_better_together_c3_balances_better_together_communities":"better_together_c3_balances"."community_id" - "better_together_communities"."id"
-
-Ref "fk_rails_better_together_c3_balances_better_together_platforms":"better_together_c3_balances"."origin_platform_id" - "better_together_platforms"."id"
-
-Ref "fk_rails_better_together_c3_tokens_better_together_communities":"better_together_c3_tokens"."community_id" - "better_together_communities"."id"
-
-Ref "fk_rails_better_together_c3_tokens_better_together_platforms":"better_together_c3_tokens"."origin_platform_id" - "better_together_platforms"."id"
+Ref "fk_rails_better_together_authorships_better_together_platforms":"better_together_authorships"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_calendar_entries_better_together_calendars":"better_together_calendar_entries"."calendar_id" - "better_together_calendars"."id"
 
 Ref "fk_rails_better_together_calendar_entries_better_together_events":"better_together_calendar_entries"."event_id" - "better_together_events"."id"
 
+Ref "fk_rails_better_together_calendar_entries_better_together_platforms":"better_together_calendar_entries"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_calendars_better_together_communities":"better_together_calendars"."community_id" - "better_together_communities"."id"
 
 Ref "fk_rails_better_together_calendars_better_together_people":"better_together_calendars"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_calendars_better_together_platforms":"better_together_calendars"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_calls_for_interest_better_together_people":"better_together_calls_for_interest"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_calls_for_interest_better_together_platforms":"better_together_calls_for_interest"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_categories_better_together_platforms":"better_together_categories"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_categorizations_better_together_platforms":"better_together_categorizations"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_checklist_items_better_together_checklist_items":"better_together_checklist_items"."parent_id" - "better_together_checklist_items"."id"
 
@@ -2090,17 +2048,25 @@ Ref "fk_rails_better_together_checklist_items_better_together_checklists":"bette
 
 Ref "fk_rails_better_together_checklist_items_better_together_people":"better_together_checklist_items"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_checklist_items_better_together_platforms":"better_together_checklist_items"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_checklists_better_together_people":"better_together_checklists"."creator_id" - "better_together_people"."id"
 
-Ref "fk_rails_better_together_citations_better_together_people":"better_together_citations"."creator_id" - "better_together_people"."id"
-
-Ref "fk_rails_better_together_claims_better_together_people":"better_together_claims"."creator_id" - "better_together_people"."id"
+Ref "fk_rails_better_together_checklists_better_together_platforms":"better_together_checklists"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_comments_better_together_people":"better_together_comments"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_comments_better_together_platforms":"better_together_comments"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_communities_better_together_people":"better_together_communities"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_communities_better_together_platforms":"better_together_communities"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_contact_details_better_together_platforms":"better_together_contact_details"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_content_blocks_better_together_people":"better_together_content_blocks"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_content_blocks_better_together_platforms":"better_together_content_blocks"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_content_page_blocks_better_together_content_blocks":"better_together_content_page_blocks"."block_id" - "better_together_content_blocks"."id"
 
@@ -2114,39 +2080,55 @@ Ref "fk_rails_better_together_content_security_findings_better_together_content_
 
 Ref "fk_rails_better_together_content_security_findings_better_together_content_security_scan_events":"better_together_content_security_findings"."scan_event_id" - "better_together_content_security_scan_events"."id"
 
+Ref "fk_rails_better_together_content_security_findings_better_together_platforms":"better_together_content_security_findings"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_content_security_findings_better_together_safety_cases":"better_together_content_security_findings"."safety_case_id" - "better_together_safety_cases"."id"
 
 Ref "fk_rails_better_together_content_security_items_active_storage_blobs":"better_together_content_security_items"."blob_id" - "active_storage_blobs"."id"
+
+Ref "fk_rails_better_together_content_security_items_better_together_platforms":"better_together_content_security_items"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_content_security_items_better_together_safety_cases":"better_together_content_security_items"."safety_case_id" - "better_together_safety_cases"."id"
 
 Ref "fk_rails_better_together_content_security_scan_events_better_together_content_security_items":"better_together_content_security_scan_events"."item_id" - "better_together_content_security_items"."id"
 
+Ref "fk_rails_better_together_content_security_scan_events_better_together_platforms":"better_together_content_security_scan_events"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_content_security_subjects_active_storage_blobs":"better_together_content_security_subjects"."active_storage_blob_id" - "active_storage_blobs"."id"
+
+Ref "fk_rails_better_together_content_security_subjects_better_together_platforms":"better_together_content_security_subjects"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_conversation_participants_better_together_conversations":"better_together_conversation_participants"."conversation_id" - "better_together_conversations"."id"
 
 Ref "fk_rails_better_together_conversation_participants_better_together_people":"better_together_conversation_participants"."person_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_conversation_participants_better_together_platforms":"better_together_conversation_participants"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_conversations_better_together_people":"better_together_conversations"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_conversations_better_together_platforms":"better_together_conversations"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_email_addresses_better_together_contact_details":"better_together_email_addresses"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_email_addresses_better_together_platforms":"better_together_email_addresses"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_event_attendances_better_together_event_occurrences":"better_together_event_attendances"."event_occurrence_id" - "better_together_event_occurrences"."id"
 
 Ref "fk_rails_better_together_event_attendances_better_together_events":"better_together_event_attendances"."event_id" - "better_together_events"."id"
 
 Ref "fk_rails_better_together_event_attendances_better_together_people":"better_together_event_attendances"."person_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_event_attendances_better_together_platforms":"better_together_event_attendances"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_event_hosts_better_together_events":"better_together_event_hosts"."event_id" - "better_together_events"."id"
+
+Ref "fk_rails_better_together_event_hosts_better_together_platforms":"better_together_event_hosts"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_event_occurrences_better_together_events":"better_together_event_occurrences"."event_id" - "better_together_events"."id"
 
 Ref "fk_rails_better_together_events_better_together_people":"better_together_events"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_events_better_together_platforms":"better_together_events"."platform_id" - "better_together_platforms"."id"
-
-Ref "fk_rails_better_together_evidence_links_better_together_citations":"better_together_evidence_links"."citation_id" - "better_together_citations"."id"
-
-Ref "fk_rails_better_together_evidence_links_better_together_claims":"better_together_evidence_links"."claim_id" - "better_together_claims"."id"
-
-Ref "fk_rails_better_together_evidence_links_better_together_people":"better_together_evidence_links"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_feature_access_grants_better_together_people":"better_together_feature_access_grants"."granted_by_person_id" - "better_together_people"."id"
 
@@ -2156,9 +2138,7 @@ Ref "fk_rails_better_together_feature_access_grants_better_together_platforms":"
 
 Ref "fk_rails_better_together_federation_access_tokens_better_together_platform_connections":"better_together_federation_access_tokens"."platform_connection_id" - "better_together_platform_connections"."id"
 
-Ref "fk_rails_better_together_fleet_node_ownerships_better_together_fleet_nodes":"better_together_fleet_node_ownerships"."node_id" - "better_together_fleet_nodes"."id" [delete: cascade]
-
-Ref "fk_rails_better_together_fleet_nodes_better_together_platforms":"better_together_fleet_nodes"."platform_id" - "better_together_platforms"."id"
+Ref "fk_rails_better_together_federation_content_grants_better_together_platform_connections":"better_together_federation_content_grants"."platform_connection_id" - "better_together_platform_connections"."id"
 
 Ref "fk_rails_better_together_geography_continents_better_together_communities":"better_together_geography_continents"."community_id" - "better_together_communities"."id"
 
@@ -2173,6 +2153,8 @@ Ref "fk_rails_better_together_geography_geospatial_spaces_better_together_geogra
 Ref "fk_rails_better_together_geography_locatable_locations_better_together_people":"better_together_geography_locatable_locations"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_geography_maps_better_together_people":"better_together_geography_maps"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_geography_maps_better_together_platforms":"better_together_geography_maps"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_geography_region_settlements_better_together_geography_regions":"better_together_geography_region_settlements"."region_id" - "better_together_geography_regions"."id"
 
@@ -2196,9 +2178,15 @@ Ref "fk_rails_better_together_geography_states_better_together_communities":"bet
 
 Ref "fk_rails_better_together_geography_states_better_together_geography_countries":"better_together_geography_states"."country_id" - "better_together_geography_countries"."id"
 
+Ref "fk_rails_better_together_identifications_better_together_platforms":"better_together_identifications"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_inbound_email_messages_action_mailbox_inbound_emails":"better_together_inbound_email_messages"."inbound_email_id" - "action_mailbox_inbound_emails"."id"
 
 Ref "fk_rails_better_together_inbound_email_messages_better_together_platforms":"better_together_inbound_email_messages"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_inbound_email_reply_tokens_better_together_people":"better_together_inbound_email_reply_tokens"."recipient_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_inbound_email_reply_tokens_better_together_platforms":"better_together_inbound_email_reply_tokens"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_infrastructure_building_connections_better_together_infrastructure_buildings":"better_together_infrastructure_building_connections"."building_id" - "better_together_infrastructure_buildings"."id"
 
@@ -2208,11 +2196,15 @@ Ref "fk_rails_better_together_infrastructure_buildings_better_together_communiti
 
 Ref "fk_rails_better_together_infrastructure_buildings_better_together_people":"better_together_infrastructure_buildings"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_infrastructure_buildings_better_together_platforms":"better_together_infrastructure_buildings"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_infrastructure_floors_better_together_communities":"better_together_infrastructure_floors"."community_id" - "better_together_communities"."id"
 
 Ref "fk_rails_better_together_infrastructure_floors_better_together_infrastructure_buildings":"better_together_infrastructure_floors"."building_id" - "better_together_infrastructure_buildings"."id"
 
 Ref "fk_rails_better_together_infrastructure_floors_better_together_people":"better_together_infrastructure_floors"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_infrastructure_floors_better_together_platforms":"better_together_infrastructure_floors"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_infrastructure_rooms_better_together_communities":"better_together_infrastructure_rooms"."community_id" - "better_together_communities"."id"
 
@@ -2220,7 +2212,11 @@ Ref "fk_rails_better_together_infrastructure_rooms_better_together_infrastructur
 
 Ref "fk_rails_better_together_infrastructure_rooms_better_together_people":"better_together_infrastructure_rooms"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_infrastructure_rooms_better_together_platforms":"better_together_infrastructure_rooms"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_invitations_better_together_people":"better_together_invitations"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_invitations_better_together_platforms":"better_together_invitations"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_invitations_better_together_roles":"better_together_invitations"."role_id" - "better_together_roles"."id"
 
@@ -2228,27 +2224,43 @@ Ref "fk_rails_better_together_joatu_agreements_better_together_joatu_offers":"be
 
 Ref "fk_rails_better_together_joatu_agreements_better_together_joatu_requests":"better_together_joatu_agreements"."request_id" - "better_together_joatu_requests"."id"
 
+Ref "fk_rails_better_together_joatu_agreements_better_together_platforms":"better_together_joatu_agreements"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_joatu_offers_better_together_addresses":"better_together_joatu_offers"."address_id" - "better_together_addresses"."id"
 
 Ref "fk_rails_better_together_joatu_offers_better_together_people":"better_together_joatu_offers"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_joatu_offers_better_together_platforms":"better_together_joatu_offers"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_joatu_requests_better_together_addresses":"better_together_joatu_requests"."address_id" - "better_together_addresses"."id"
 
 Ref "fk_rails_better_together_joatu_requests_better_together_people":"better_together_joatu_requests"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_joatu_requests_better_together_platforms":"better_together_joatu_requests"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_joatu_response_links_better_together_people":"better_together_joatu_response_links"."creator_id" - "better_together_people"."id"
 
-Ref "fk_rails_better_together_joatu_settlements_better_together_c3_tokens":"better_together_joatu_settlements"."c3_token_id" - "better_together_c3_tokens"."id"
+Ref "fk_rails_better_together_joatu_response_links_better_together_platforms":"better_together_joatu_response_links"."platform_id" - "better_together_platforms"."id"
 
-Ref "fk_rails_better_together_joatu_settlements_better_together_joatu_agreements":"better_together_joatu_settlements"."agreement_id" - "better_together_joatu_agreements"."id" [delete: restrict]
+Ref "fk_rails_better_together_jwt_denylists_better_together_platforms":"better_together_jwt_denylists"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_message_requests_better_together_people":"better_together_message_requests"."recipient_id" - "better_together_people"."id" [delete: cascade]
+
+Ref "fk_rails_better_together_message_requests_better_together_people":"better_together_message_requests"."sender_id" - "better_together_people"."id" [delete: cascade]
+
+Ref "fk_rails_better_together_message_requests_better_together_platforms":"better_together_message_requests"."platform_id" - "better_together_platforms"."id" [delete: cascade]
 
 Ref "fk_rails_better_together_messages_better_together_conversations":"better_together_messages"."conversation_id" - "better_together_conversations"."id"
 
 Ref "fk_rails_better_together_messages_better_together_people":"better_together_messages"."sender_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_messages_better_together_platforms":"better_together_messages"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_metrics_downloads_better_together_platforms":"better_together_metrics_downloads"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_metrics_link_checker_reports_better_together_people":"better_together_metrics_link_checker_reports"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_metrics_link_checker_reports_better_together_platforms":"better_together_metrics_link_checker_reports"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_metrics_link_click_reports_better_together_people":"better_together_metrics_link_click_reports"."creator_id" - "better_together_people"."id"
 
@@ -2266,6 +2278,8 @@ Ref "fk_rails_better_together_metrics_rich_text_links_action_text_rich_texts":"b
 
 Ref "fk_rails_better_together_metrics_rich_text_links_better_together_content_links":"better_together_metrics_rich_text_links"."link_id" - "better_together_content_links"."id"
 
+Ref "fk_rails_better_together_metrics_rich_text_links_better_together_platforms":"better_together_metrics_rich_text_links"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_metrics_search_queries_better_together_platforms":"better_together_metrics_search_queries"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_metrics_shares_better_together_platforms":"better_together_metrics_shares"."platform_id" - "better_together_platforms"."id"
@@ -2276,21 +2290,31 @@ Ref "fk_rails_better_together_metrics_short_link_visits_better_together_short_li
 
 Ref "fk_rails_better_together_metrics_user_account_reports_better_together_people":"better_together_metrics_user_account_reports"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_metrics_user_account_reports_better_together_platforms":"better_together_metrics_user_account_reports"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_navigation_areas_better_together_platforms":"better_together_navigation_areas"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_navigation_items_better_together_navigation_areas":"better_together_navigation_items"."navigation_area_id" - "better_together_navigation_areas"."id"
 
 Ref "fk_rails_better_together_navigation_items_better_together_navigation_items":"better_together_navigation_items"."parent_id" - "better_together_navigation_items"."id"
 
+Ref "fk_rails_better_together_navigation_items_better_together_platforms":"better_together_navigation_items"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_oauth_access_grants_better_together_oauth_applications":"better_together_oauth_access_grants"."application_id" - "better_together_oauth_applications"."id"
+
+Ref "fk_rails_better_together_oauth_access_grants_better_together_platforms":"better_together_oauth_access_grants"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_oauth_access_grants_better_together_users":"better_together_oauth_access_grants"."resource_owner_id" - "better_together_users"."id"
 
 Ref "fk_rails_better_together_oauth_access_tokens_better_together_oauth_applications":"better_together_oauth_access_tokens"."application_id" - "better_together_oauth_applications"."id"
 
+Ref "fk_rails_better_together_oauth_access_tokens_better_together_platforms":"better_together_oauth_access_tokens"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_oauth_access_tokens_better_together_users":"better_together_oauth_access_tokens"."resource_owner_id" - "better_together_users"."id"
 
 Ref "fk_rails_better_together_oauth_applications_better_together_people":"better_together_oauth_applications"."owner_id" - "better_together_people"."id"
 
-Ref "fk_rails_better_together_one_time_prekeys_better_together_people":"better_together_one_time_prekeys"."person_id" - "better_together_people"."id"
+Ref "fk_rails_better_together_oauth_applications_better_together_platforms":"better_together_oauth_applications"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_pages_better_together_communities":"better_together_pages"."community_id" - "better_together_communities"."id"
 
@@ -2302,6 +2326,8 @@ Ref "fk_rails_better_together_pages_better_together_platforms":"better_together_
 
 Ref "fk_rails_better_together_people_better_together_communities":"better_together_people"."community_id" - "better_together_communities"."id"
 
+Ref "fk_rails_better_together_people_better_together_platforms":"better_together_people"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_person_access_grants_better_together_people":"better_together_person_access_grants"."grantee_person_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_person_access_grants_better_together_people":"better_together_person_access_grants"."grantor_person_id" - "better_together_people"."id"
@@ -2312,23 +2338,33 @@ Ref "fk_rails_better_together_person_blocks_better_together_people":"better_toge
 
 Ref "fk_rails_better_together_person_blocks_better_together_people":"better_together_person_blocks"."blocker_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_person_blocks_better_together_platforms":"better_together_person_blocks"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_person_checklist_items_better_together_checklist_items":"better_together_person_checklist_items"."checklist_item_id" - "better_together_checklist_items"."id"
 
 Ref "fk_rails_better_together_person_checklist_items_better_together_checklists":"better_together_person_checklist_items"."checklist_id" - "better_together_checklists"."id"
 
 Ref "fk_rails_better_together_person_checklist_items_better_together_people":"better_together_person_checklist_items"."person_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_person_checklist_items_better_together_platforms":"better_together_person_checklist_items"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_person_community_memberships_better_together_communities":"better_together_person_community_memberships"."joinable_id" - "better_together_communities"."id"
 
 Ref "fk_rails_better_together_person_community_memberships_better_together_people":"better_together_person_community_memberships"."member_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_person_community_memberships_better_together_platforms":"better_together_person_community_memberships"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_person_community_memberships_better_together_roles":"better_together_person_community_memberships"."role_id" - "better_together_roles"."id"
 
 Ref "fk_rails_better_together_person_data_exports_better_together_people":"better_together_person_data_exports"."person_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_person_data_exports_better_together_platforms":"better_together_person_data_exports"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_person_deletion_requests_better_together_people":"better_together_person_deletion_requests"."person_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_person_deletion_requests_better_together_people":"better_together_person_deletion_requests"."reviewed_by_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_person_deletion_requests_better_together_platforms":"better_together_person_deletion_requests"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_person_linked_seeds_better_together_people":"better_together_person_linked_seeds"."recipient_person_id" - "better_together_people"."id"
 
@@ -2341,6 +2377,12 @@ Ref "fk_rails_better_together_person_links_better_together_people":"better_toget
 Ref "fk_rails_better_together_person_links_better_together_people":"better_together_person_links"."target_person_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_person_links_better_together_platform_connections":"better_together_person_links"."platform_connection_id" - "better_together_platform_connections"."id"
+
+Ref "fk_rails_better_together_person_messaging_grants_better_together_people":"better_together_person_messaging_grants"."grantee_id" - "better_together_people"."id" [delete: cascade]
+
+Ref "fk_rails_better_together_person_messaging_grants_better_together_people":"better_together_person_messaging_grants"."grantor_id" - "better_together_people"."id" [delete: cascade]
+
+Ref "fk_rails_better_together_person_messaging_grants_better_together_platforms":"better_together_person_messaging_grants"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_person_platform_integrations_better_together_people":"better_together_person_platform_integrations"."person_id" - "better_together_people"."id"
 
@@ -2360,13 +2402,19 @@ Ref "fk_rails_better_together_person_purge_audits_better_together_people":"bette
 
 Ref "fk_rails_better_together_person_purge_audits_better_together_person_deletion_requests":"better_together_person_purge_audits"."person_deletion_request_id" - "better_together_person_deletion_requests"."id"
 
+Ref "fk_rails_better_together_person_purge_audits_better_together_platforms":"better_together_person_purge_audits"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_phone_numbers_better_together_contact_details":"better_together_phone_numbers"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_phone_numbers_better_together_platforms":"better_together_phone_numbers"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_places_better_together_communities":"better_together_places"."community_id" - "better_together_communities"."id"
 
 Ref "fk_rails_better_together_places_better_together_geography_spaces":"better_together_places"."space_id" - "better_together_geography_spaces"."id"
 
 Ref "fk_rails_better_together_places_better_together_people":"better_together_places"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_places_better_together_platforms":"better_together_places"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_platform_connections_better_together_platforms":"better_together_platform_connections"."source_platform_id" - "better_together_platforms"."id"
 
@@ -2390,35 +2438,55 @@ Ref "fk_rails_better_together_platforms_better_together_people":"better_together
 
 Ref "fk_rails_better_together_platforms_better_together_storage_configurations":"better_together_platforms"."storage_configuration_id" - "better_together_storage_configurations"."id"
 
+Ref "fk_rails_better_together_posts_better_together_communities":"better_together_posts"."community_id" - "better_together_communities"."id"
+
 Ref "fk_rails_better_together_posts_better_together_people":"better_together_posts"."creator_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_posts_better_together_platforms":"better_together_posts"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_reports_better_together_people":"better_together_reports"."reporter_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_reports_better_together_platforms":"better_together_reports"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_resource_permissions_better_together_platforms":"better_together_resource_permissions"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_robots_better_together_platforms":"better_together_robots"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_role_resource_permissions_better_together_platforms":"better_together_role_resource_permissions"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_role_resource_permissions_better_together_resource_permissions":"better_together_role_resource_permissions"."resource_permission_id" - "better_together_resource_permissions"."id"
 
 Ref "fk_rails_better_together_role_resource_permissions_better_together_roles":"better_together_role_resource_permissions"."role_id" - "better_together_roles"."id"
 
+Ref "fk_rails_better_together_roles_better_together_platforms":"better_together_roles"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_safety_actions_better_together_people":"better_together_safety_actions"."actor_id" - "better_together_people"."id"
 
 Ref "fk_rails_better_together_safety_actions_better_together_people":"better_together_safety_actions"."approved_by_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_safety_actions_better_together_platforms":"better_together_safety_actions"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_safety_actions_better_together_safety_cases":"better_together_safety_actions"."safety_case_id" - "better_together_safety_cases"."id"
 
 Ref "fk_rails_better_together_safety_agreements_better_together_people":"better_together_safety_agreements"."created_by_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_safety_agreements_better_together_platforms":"better_together_safety_agreements"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_safety_agreements_better_together_safety_cases":"better_together_safety_agreements"."safety_case_id" - "better_together_safety_cases"."id"
 
 Ref "fk_rails_better_together_safety_cases_better_together_people":"better_together_safety_cases"."assigned_reviewer_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_safety_cases_better_together_platforms":"better_together_safety_cases"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_safety_cases_better_together_reports":"better_together_safety_cases"."report_id" - "better_together_reports"."id"
 
 Ref "fk_rails_better_together_safety_notes_better_together_people":"better_together_safety_notes"."author_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_safety_notes_better_together_platforms":"better_together_safety_notes"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_safety_notes_better_together_safety_cases":"better_together_safety_notes"."safety_case_id" - "better_together_safety_cases"."id"
+
+Ref "fk_rails_better_together_seed_plantings_better_together_platforms":"better_together_seed_plantings"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_short_links_better_together_platforms":"better_together_short_links"."platform_id" - "better_together_platforms"."id"
 
@@ -2426,9 +2494,17 @@ Ref "fk_rails_better_together_sitemaps_better_together_platforms":"better_togeth
 
 Ref "fk_rails_better_together_social_media_accounts_better_together_contact_details":"better_together_social_media_accounts"."contact_detail_id" - "better_together_contact_details"."id"
 
+Ref "fk_rails_better_together_social_media_accounts_better_together_platforms":"better_together_social_media_accounts"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_storage_configurations_better_together_platforms":"better_together_storage_configurations"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_uploads_better_together_people":"better_together_uploads"."creator_id" - "better_together_people"."id"
+
+Ref "fk_rails_better_together_uploads_better_together_platforms":"better_together_uploads"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_users_better_together_platforms":"better_together_users"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_webhook_deliveries_better_together_platforms":"better_together_webhook_deliveries"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_webhook_deliveries_better_together_webhook_endpoints":"better_together_webhook_deliveries"."webhook_endpoint_id" - "better_together_webhook_endpoints"."id"
 
@@ -2438,14 +2514,24 @@ Ref "fk_rails_better_together_webhook_endpoints_better_together_oauth_applicatio
 
 Ref "fk_rails_better_together_webhook_endpoints_better_together_people":"better_together_webhook_endpoints"."person_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_webhook_endpoints_better_together_platforms":"better_together_webhook_endpoints"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_website_links_better_together_contact_details":"better_together_website_links"."contact_detail_id" - "better_together_contact_details"."id"
+
+Ref "fk_rails_better_together_website_links_better_together_platforms":"better_together_website_links"."platform_id" - "better_together_platforms"."id"
+
+Ref "fk_rails_better_together_wizard_step_definitions_better_together_platforms":"better_together_wizard_step_definitions"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_better_together_wizard_step_definitions_better_together_wizards":"better_together_wizard_step_definitions"."wizard_id" - "better_together_wizards"."id"
 
 Ref "fk_rails_better_together_wizard_steps_better_together_people":"better_together_wizard_steps"."creator_id" - "better_together_people"."id"
 
+Ref "fk_rails_better_together_wizard_steps_better_together_platforms":"better_together_wizard_steps"."platform_id" - "better_together_platforms"."id"
+
 Ref "fk_rails_better_together_wizard_steps_better_together_wizard_step_definitions":"better_together_wizard_steps"."wizard_step_definition_id" - "better_together_wizard_step_definitions"."id"
 
 Ref "fk_rails_better_together_wizard_steps_better_together_wizards":"better_together_wizard_steps"."wizard_id" - "better_together_wizards"."id"
+
+Ref "fk_rails_better_together_wizards_better_together_platforms":"better_together_wizards"."platform_id" - "better_together_platforms"."id"
 
 Ref "fk_rails_noticed_notifications_better_together_platforms":"noticed_notifications"."platform_id" - "better_together_platforms"."id"

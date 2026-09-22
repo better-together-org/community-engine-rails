@@ -44,14 +44,15 @@ module BetterTogether
     end
 
     def platform_manager?
-      can_manage_webhook_endpoints?
+      platform = (record.respond_to?(:platform) ? record.platform : nil) || current_platform
+      can_manage_webhook_endpoints?(platform)
     end
 
     # Scope: platform managers see all, others see their own + community endpoints they admin
     class Scope < PlatformRecordPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        if user&.person&.permitted_to?('manage_platform_api')
+        if user&.person&.permitted_to?('manage_platform_api', current_platform)
           platform_scoped
         elsif user&.person
           platform_scoped.where(person: user.person)

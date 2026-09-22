@@ -40,8 +40,8 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
   end
 
   # Helper to build IceCube rule YAML for test setup
-  def build_test_rule(frequency:, interval: 1, count: nil, until_date: nil) # rubocop:disable Metrics/MethodLength
-    start_time = Time.zone.parse('2026-02-22 10:00:00') # Explicit time
+  def build_test_rule(frequency:, interval: 1, count: nil, until_date: nil, weekdays: nil, start_time: nil) # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists, Metrics/AbcSize, Metrics/CyclomaticComplexity
+    start_time ||= Time.zone.parse('2026-02-22 10:00:00') # Explicit time
     schedule = IceCube::Schedule.new(start_time)
 
     rule = case frequency
@@ -55,6 +55,7 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
              IceCube::Rule.yearly(interval)
            end
 
+    Array(weekdays).each { |day| rule = rule.day(day) }
     rule = rule.count(count) if count
     rule = rule.until(until_date) if until_date
 
@@ -109,6 +110,31 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
       end
     end
 
+    context 'when creating a monthly event with the same-weekday-position option' do
+      it 'creates a recurrence that repeats on the same weekday position, not the same day-of-month', :aggregate_failures do
+        post better_together.events_path(locale:), params: {
+          event: event_params.merge(
+            recurrence_attributes: {
+              frequency: 'monthly',
+              interval: 1,
+              month_option: 'day_of_week',
+              end_type: 'count',
+              count: 3
+            }
+          )
+        }
+
+        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+
+        event = BetterTogether::Event.last
+        expect(event.recurrence).to be_present
+        expect(event.recurrence.month_option).to eq('day_of_week')
+
+        occurrences = event.recurrence.occurrences_between(starts_at, 1.year.from_now)
+        expect(occurrences).to all(have_attributes(wday: starts_at.wday))
+      end
+    end
+
     context 'when creating an event without recurrence' do
       it 'creates event without recurrence' do
         post better_together.events_path(locale:), params: {
@@ -146,6 +172,49 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
         event = BetterTogether::Event.last
         expect(event.recurrence).to be_present
         expect(event.recurrence.exception_dates.size).to eq(2)
+      end
+    end
+
+    context 'when creating a daily event with exception dates submitted as an array (current form UI)' do
+      it 'creates event with exception dates', :aggregate_failures do
+        post better_together.events_path(locale:), params: {
+          event: event_params.merge(
+            recurrence_attributes: {
+              frequency: 'daily',
+              interval: 1,
+              end_type: 'count',
+              count: 30,
+              exception_dates: %w[2026-02-22 2026-03-01]
+            }
+          )
+        }
+
+        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+
+        event = BetterTogether::Event.last
+        expect(event.recurrence).to be_present
+        expect(event.recurrence.exception_dates).to contain_exactly(Date.parse('2026-02-22'), Date.parse('2026-03-01'))
+      end
+    end
+
+    context 'when an exception date cannot be parsed' do
+      it 'does not silently drop it — it blocks the save with a validation error' do
+        expect do
+          post better_together.events_path(locale:), params: {
+            event: event_params.merge(
+              recurrence_attributes: {
+                frequency: 'daily',
+                interval: 1,
+                end_type: 'count',
+                count: 30,
+                exception_dates: %w[2026-02-22 not-a-real-date]
+              }
+            )
+          }
+        end.not_to change(BetterTogether::Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect_html_content('could not be understood')
       end
     end
   end
@@ -285,5 +354,197 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
         expect_html_content('Weekly')
       end
     end
+
+    context 'when event has a weekly recurrence with specific weekdays' do
+      before do
+        # Monday and Wednesday, matching build_test_rule's default anchor of
+        # 2026-02-22 (a Sunday) so the rule genuinely restricts to those days
+        # rather than defaulting to the anchor's own weekday.
+        event.create_recurrence!(rule: build_test_rule(frequency: 'weekly', weekdays: %i[monday wednesday]))
+        event.reload
+      end
+
+      it 'pre-checks exactly the weekdays the recurrence actually has configured' do
+        # Regression test for the Symbol-vs-Integer mismatch: Recurrence#weekdays
+        # returns Symbols, but the edit form's checkboxes compare against
+        # Integer indices — previously this meant every checkbox rendered
+        # unchecked regardless of what was actually saved.
+        get better_together.edit_event_path(event, locale:)
+
+        expect(response).to have_http_status(:success)
+        fragment = Nokogiri::HTML::DocumentFragment.parse(response.body)
+        checked_values = fragment.css('input[type="checkbox"][name="event[recurrence_attributes][weekdays][]"][checked]')
+                                 .map { |node| node['value'] }
+
+        expect(checked_values).to contain_exactly('1', '3') # Monday, Wednesday
+      end
+    end
+  end
+
+  describe 'end_type selected without its paired value' do
+    context 'when end_type is "until" but ends_on is blank' do
+      it 'does not silently save as never-ending — it reports a validation error' do
+        expect do
+          post better_together.events_path(locale:), params: {
+            event: event_params.merge(
+              recurrence_attributes: {
+                frequency: 'weekly',
+                interval: 1,
+                end_type: 'until',
+                ends_on: ''
+              }
+            )
+          }
+        end.not_to change(BetterTogether::Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect_html_content('must be set when "On date" is selected')
+      end
+    end
+
+    context 'when end_type is "count" but count is blank' do
+      it 'does not silently save as never-ending — it reports a validation error' do
+        expect do
+          post better_together.events_path(locale:), params: {
+            event: event_params.merge(
+              recurrence_attributes: {
+                frequency: 'weekly',
+                interval: 1,
+                end_type: 'count',
+                count: ''
+              }
+            )
+          }
+        end.not_to change(BetterTogether::Event, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect_html_content('must be set when "After occurrences" is selected')
+      end
+    end
+  end
+
+  describe 'recurrence anchor timezone correctness' do
+    context 'when creating an event with a non-UTC timezone and a recurrence in the same request' do
+      it 'anchors the recurrence to the event-timezone-correct start time, not a UTC misparse' do
+        # America/St_Johns is UTC-03:30 (NDT) — chosen because a naive
+        # Time.zone.parse (ignoring the submitted timezone) would anchor the
+        # schedule 3.5 hours off from the event's actual local start time.
+        post better_together.events_path(locale:), params: {
+          event: event_params.merge(
+            timezone: 'America/St_Johns',
+            starts_at: '2026-03-02T09:00:00',
+            recurrence_attributes: {
+              frequency: 'weekly',
+              interval: 1,
+              end_type: 'count',
+              count: 4
+            }
+          )
+        }
+
+        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+
+        event = BetterTogether::Event.last
+        expected_start = ActiveSupport::TimeZone['America/St_Johns'].parse('2026-03-02T09:00:00')
+
+        expect(event.recurrence.schedule.start_time).to eq(expected_start)
+      end
+    end
+
+    context 'when updating both starts_at and recurrence in the same request' do
+      let!(:event) do
+        create(:better_together_event,
+               creator: user.person,
+               timezone: 'America/St_Johns',
+               starts_at: Time.zone.parse('2026-02-22 10:00:00'),
+               ends_at: Time.zone.parse('2026-02-22 12:00:00'))
+      end
+
+      before { event.event_hosts.create!(host: community) }
+
+      it 'anchors the recurrence to the newly submitted starts_at, not the stale persisted one' do
+        new_start = '2026-03-09T15:00:00'
+
+        patch better_together.event_path(event, locale:), params: {
+          event: {
+            starts_at: new_start,
+            timezone: 'America/St_Johns',
+            recurrence_attributes: {
+              frequency: 'weekly',
+              interval: 1,
+              end_type: 'never'
+            }
+          }
+        }
+
+        expect(response).to redirect_to(better_together.edit_event_path(event, locale:))
+
+        event.reload
+        expected_start = ActiveSupport::TimeZone['America/St_Johns'].parse(new_start)
+        expect(event.recurrence.schedule.start_time).to eq(expected_start)
+      end
+    end
+  end
+
+  describe 'GET /events/recurrence_preview' do
+    it 'renders upcoming occurrences for a valid, complete set of params' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'weekly', interval: 1, end_type: 'count', count: 3
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-occurrences li', 3)
+    end
+
+    it 'reflects the same-weekday-position choice in the summary for monthly recurrence' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'monthly', interval: 1, month_option: 'day_of_week', end_type: 'count', count: 2
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_html_content('same weekday each month')
+    end
+
+    it 'reports an error instead of a false-empty result when end_type is selected without its paired value' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'weekly', interval: 1, end_type: 'until', ends_on: ''
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-error', 1)
+      expect_element_count('#recurrence-preview-occurrences', 0)
+    end
+
+    it 'renders the empty state when no frequency is selected yet' do
+      get better_together.recurrence_preview_events_path(locale:, frequency: '')
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-empty', 1)
+    end
+
+    it 'includes a plain-English summary of the whole rule alongside the occurrence dates' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'weekly', interval: 2, weekdays: %w[1 3], end_type: 'count', count: 3
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-summary', 1)
+      expect_html_contents('Every 2 week(s) on Monday, Wednesday', '3 occurrences')
+    end
+
+    it 'omits the summary when the config is invalid rather than showing a misleading partial one' do
+      get better_together.recurrence_preview_events_path(
+        locale:, frequency: 'weekly', interval: 1, end_type: 'count', count: ''
+      )
+
+      expect(response).to have_http_status(:success)
+      expect_element_count('#recurrence-preview-summary', 0)
+    end
+
+    # Authentication/authorization denial for this endpoint is covered at the
+    # policy layer (EventPolicy#recurrence_preview? spec) rather than here —
+    # this file's own top-level `before` block always logs in, and the
+    # platform's privacy-gate behavior for anonymous requests is orthogonal
+    # to what this endpoint itself needs to guarantee.
   end
 end

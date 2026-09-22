@@ -41,10 +41,13 @@ module BetterTogether
       def authorized_connection
         return if Current.platform.blank?
 
-        candidate = ::BetterTogether::PlatformConnection.active.find_by(
-          source_platform: Current.platform,
-          oauth_client_id: params[:client_id].to_s
-        )
+        # Current.platform can be either side of the connection (source_platform reflects
+        # who initiated the federation link, not who's local) — use for_platform, not a
+        # direct source_platform lookup, or requests fail invalid_client whenever the local
+        # platform happens to be target_platform on this row.
+        candidate = ::BetterTogether::PlatformConnection.active
+                                                        .for_platform(Current.platform)
+                                                        .find_by(oauth_client_id: params[:client_id].to_s)
         return unless candidate&.authenticate_oauth_secret(params[:client_secret].to_s)
 
         candidate

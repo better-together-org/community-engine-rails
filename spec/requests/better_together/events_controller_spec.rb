@@ -168,21 +168,27 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
     end
 
-    context 'with evidence records', :as_user do
+    context 'with a geocoded structured location' do
+      let(:event) { create(:better_together_event, :with_address_location, creator: manager_user.person) }
+
       before do
-        citation = create(:citation, citeable: event, title: 'Event agenda', reference_key: 'agenda-1')
-        claim = create(:claim, claimable: event, statement: 'This event is community-led.')
-        create(:evidence_link, claim:, citation:, relation_type: 'supports')
+        create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
       end
 
-      it 'keeps claims and bibliography out of the public show page' do
+      it 'renders a Leaflet map for the event location' do # rubocop:todo RSpec/MultipleExpectations
         get better_together.event_path(event, locale:)
 
         expect(response).to have_http_status(:ok)
-        expect(response.body).not_to include('Claims and Supporting Evidence')
-        expect(response.body).not_to include('Evidence and Citations')
-        expect(response.body).not_to include('This event is community-led.')
-        expect(response.body).not_to include('Event agenda')
+        expect(response.body).to include('data-controller="better_together--map"')
+      end
+    end
+
+    context 'without a geocoded location' do
+      it 'does not render a Leaflet map' do # rubocop:todo RSpec/MultipleExpectations
+        get better_together.event_path(event, locale:)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).not_to include('data-controller="better_together--map"')
       end
     end
   end
@@ -298,6 +304,47 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a brand-new inline Address' do # rubocop:todo RSpec/MultipleExpectations, RSpec/ExampleLength
+        # rubocop:enable RSpec/MultipleExpectations
+        # The picker's "Create new address" flow submits nested
+        # location_attributes[location_attributes][...]; the browser flow has
+        # coverage in spec/features/events/location_selector_spec.rb, this guards
+        # the params -> LocatableLocation#location_attributes= -> Address build +
+        # autosave path.
+        params = {
+          event: {
+            name: 'Inline Address Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_type: 'BetterTogether::Address',
+              location_attributes: {
+                label: 'main',
+                privacy: 'public',
+                physical: '1',
+                postal: '0',
+                line1: '9 New Street',
+                city_name: 'Newville',
+                postal_code: 'N3W 1AB'
+              }
+            }
+          },
+          locale: locale
+        }
+
+        expect do
+          post better_together.events_path(locale: locale), params: params
+        end.to change(BetterTogether::Address, :count).by(1)
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event.location.location).to be_a(BetterTogether::Address)
+        expect(event.location.location.line1).to eq('9 New Street')
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
       it 'creates an event with an Address location' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         address = create(:better_together_address, privacy: 'public')
@@ -360,6 +407,66 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Settlement location' do # rubocop:todo RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        settlement = create(:geography_settlement)
+
+        params = {
+          event: {
+            name: 'Settlement Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_id: settlement.id,
+              location_type: 'BetterTogether::Geography::Settlement'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Geography::Settlement')
+        expect(event.location.settlement).to eq(settlement)
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
+      it 'creates an event with a Region location' do # rubocop:todo RSpec/MultipleExpectations
+        # rubocop:enable RSpec/MultipleExpectations
+        region = create(:geography_region)
+
+        params = {
+          event: {
+            name: 'Region Location Event',
+            starts_at: 1.day.from_now.iso8601,
+            identifier: SecureRandom.uuid,
+            privacy: 'public',
+            creator_id: manager_user.person.id,
+            location_attributes: {
+              location_id: region.id,
+              location_type: 'BetterTogether::Geography::Region'
+            }
+          },
+          locale: locale
+        }
+
+        post better_together.events_path(locale: locale), params: params
+
+        expect(response).to have_http_status(:found)
+        event = BetterTogether::Event.order(:created_at).last
+        expect(event).to be_present
+        expect(event.location).to be_present
+        expect(event.location.location_type).to eq('BetterTogether::Geography::Region')
+        expect(event.location.region).to eq(region)
+      end
+
+      # rubocop:todo RSpec/MultipleExpectations
       it 'creates a draft event with no location assigned' do # rubocop:todo RSpec/MultipleExpectations
         # rubocop:enable RSpec/MultipleExpectations
         params = {
@@ -398,6 +505,30 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
+      it 'flags the location picker invalid and renders the alert when the inline address fails' do # rubocop:todo RSpec/MultipleExpectations, RSpec/ExampleLength
+        expect do
+          post better_together.events_path(locale: locale), params: {
+            event: {
+              name: 'Event with a broken inline address',
+              starts_at: 1.day.from_now.iso8601,
+              identifier: SecureRandom.uuid,
+              privacy: 'public',
+              creator_id: manager_user.person.id,
+              location_attributes: {
+                location_type: 'BetterTogether::Address',
+                location_attributes: { label: 'main', privacy: 'public', physical: '0', postal: '0', city_name: 'Nowhere' }
+              }
+            }
+          }
+        end.not_to change(BetterTogether::Address, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        body = CGI.unescapeHTML(response.body)
+        expect(body).to include('id="event_location_picker_error"')
+        expect(body).to include('role="alert"')
+        expect(body).to match(/id="event_location_picker"[^>]*aria-invalid="true"/)
+      end
+
       it 'updates an existing event', :aggregate_failures do
         event = create(:better_together_event,
                        creator: manager_user.person,
@@ -413,6 +544,62 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         expect(response).to be_redirect
         expect(event.reload.name).to eq('Updated Coverage Event')
+      end
+
+      it 'renders the federation_visibility field on edit', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('event[federation_visibility]')
+      end
+
+      it 'renders a per-connection grant row for each active connection allowing events', :aggregate_failures do
+        event = create(:better_together_event, creator: manager_user.person, privacy: 'private')
+        connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_events: true)
+
+        get better_together.edit_event_path(event, locale: locale)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("event[federation_content_grants_by_connection][#{connection.id}]")
+      end
+
+      it 'persists an explicit federation_visibility override on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Coverage Event')
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_visibility: 'no_federate'
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload).to be_federation_visibility_no_federate
+      end
+
+      it 'persists a per-connection federation grant on update', :aggregate_failures do
+        event = create(:better_together_event,
+                       creator: manager_user.person,
+                       privacy: 'private',
+                       name: 'Federation Grant Coverage Event')
+        connection = create(:better_together_platform_connection, :active, :sharing_enabled, share_events: true)
+
+        patch better_together.event_path(event, locale: locale), params: {
+          event: {
+            name: event.name,
+            privacy: 'private',
+            federation_content_grants_by_connection: { connection.id => 'denied' }
+          }
+        }
+
+        expect(response).to be_redirect
+        expect(event.reload.federation_grant_status_for(connection)).to eq('denied')
       end
 
       it 'destroys an unprotected event', :aggregate_failures do
@@ -604,6 +791,16 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       expect(response).to have_http_status(:ok)
       expect(assigns(:events).current_page).to eq(1)
       expect(assigns(:events).limit_value).to eq(10)
+    end
+
+    it 'renders a Leaflet map when at least one event has a geocoded location' do # rubocop:todo RSpec/MultipleExpectations
+      event = create(:event, :with_address_location)
+      create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
+
+      get better_together.events_path(locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('data-controller="better_together--map"')
     end
   end
 end

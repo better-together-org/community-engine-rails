@@ -251,14 +251,15 @@ module BetterTogether
                BetterTogether::Page.i18n.find_by(slug:) ||
                BetterTogether::Page.i18n.find_by(title:)
 
-        page ||= BetterTogether::Page.new(identifier:)
+        # New agreement pages seed public; an existing page keeps a host's
+        # customized privacy (this builder is re-run on every seed).
+        page ||= BetterTogether::Page.new(identifier:, privacy: 'public', seed_privacy_ceiling_exempt: true)
 
         page.assign_attributes(
           platform: Current.platform || BetterTogether::Platform.find_by(host: true) || BetterTogether::Platform.first,
           title:,
           slug:,
           published_at: Time.zone.now,
-          privacy: 'public',
           protected: true,
           show_title: false
         )
@@ -275,6 +276,8 @@ module BetterTogether
         page.page_blocks.create!(
           block: BetterTogether::Content::Template.create!(
             template_path:,
+            privacy: 'public',
+            seed_privacy_ceiling_exempt: true,
             css_settings: { container_class: '', css_classes: 'my-4' }
           )
         )

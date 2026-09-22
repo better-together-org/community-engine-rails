@@ -106,7 +106,7 @@
               <!-- Description Field -->
               <div id="description-field-group" class="mb-3 form-field-group">
                 <%= person_form.label :description, t('.person.description'), class: 'form-label', for: 'user_person_attributes_description' %>
-                <%= person_form.text_area :description, class: "form-control", id: 'user_person_attributes_description' %>
+                <%= person_form.rich_text_area :description, class: "form-control", id: 'user_person_attributes_description', 'aria-label': t('.person.description') %>
                 <small id="description-help-text" class="form-text text-muted"><%= t('.person.description_hint') %></small>
           </div>
         <% end %>

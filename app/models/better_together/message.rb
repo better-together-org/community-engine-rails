@@ -18,13 +18,7 @@ module BetterTogether
     # Attributes permitted for strong parameters
     def self.permitted_attributes
       # include id and _destroy for nested attributes handling
-      %i[id content e2e_encrypted e2e_version e2e_protocol _destroy]
-    end
-
-    # True when this message was encrypted client-side with Signal Protocol.
-    # The server stores the ciphertext but cannot decrypt it.
-    def e2e?
-      e2e_encrypted?
+      %i[id content _destroy]
     end
   end
 end

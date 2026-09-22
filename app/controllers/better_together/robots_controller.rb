@@ -4,6 +4,7 @@ module BetterTogether
   # Platform-scoped HTML CRUD for LLM-capable robots.
   class RobotsController < ApplicationController
     before_action :set_platform
+    before_action :ensure_robot_configuration_ui_enabled!
     before_action :set_robot, only: %i[edit update destroy]
     after_action :verify_authorized
 
@@ -69,6 +70,14 @@ module BetterTogether
 
     def set_platform
       @platform = Platform.friendly.find(params[:platform_id])
+    end
+
+    # Robot management is a gated UI surface (config/feature_gates.yml: robot_configuration_ui,
+    # default_rollout: alpha) — closed by default until an organiser is explicitly granted access.
+    def ensure_robot_configuration_ui_enabled!
+      return if BetterTogether::FeatureGate.enabled?('robot_configuration_ui', actor: current_user, platform: @platform)
+
+      raise Pundit::NotAuthorizedError
     end
 
     def set_robot

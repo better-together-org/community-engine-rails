@@ -5,7 +5,6 @@ module BetterTogether
   # These methods facilitate access to common resources like the current user,
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
-    include C3Helper
     include MetricsHelper
     include StructuredDataHelper
 
@@ -95,25 +94,18 @@ module BetterTogether
       nil
     end
 
-    # Generates a short-lived Devise JWT for the current web-session user so that
-    # in-browser JavaScript can call Devise JWT-protected API endpoints (e.g.
-    # /api/v1/people/:id/key_backup) without re-authenticating via the API.
-    # Returns nil when no user is signed in or JWT generation fails.
-    def current_user_api_token
-      user = safe_current_user
-      return nil unless user
-
-      Warden::JWTAuth::UserEncoder.new.call(user, :api_user, nil).first
+    # Generates a short-lived, signed token proving the client actually rendered a page
+    # from this app recently, embedded via a <meta> tag and attached by JS
+    # (trix-extensions/richtext.js) to every ActiveStorage direct-upload request. Raises
+    # the bar above bare CSRF (which only proves *some* page was rendered, not
+    # specifically an upload-capable one) without requiring authentication, since this
+    # endpoint is used from pre-auth pages (sign-up, host-setup wizard) by design.
+    def direct_upload_authorization_token
+      Rails.application.message_verifier(:direct_upload).generate(
+        { path: request.path, iat: Time.current.to_i }, expires_in: 30.minutes
+      )
     rescue StandardError
       nil
-    end
-
-    def e2ee_messaging_enabled?
-      ::BetterTogether.e2ee_messaging_enabled? || feature_enabled?('e2ee_messaging')
-    end
-
-    def e2ee_messaging_enabled_for?(person = current_person)
-      e2ee_messaging_enabled? && person.present?
     end
 
     def default_url_options
@@ -134,11 +126,8 @@ module BetterTogether
 
     def contributor_display_visible_for?(record)
       return false unless record.respond_to?(:contributors_display_visible?)
-      return true if record.contributors_display_visible?
 
-      policy(record).edit?
-    rescue Pundit::NotDefinedError, NoMethodError
-      false
+      record.contributors_display_visible?
     end
 
     def help_banner_hidden?(banner_id)

@@ -30,7 +30,7 @@ module BetterTogether # :nodoc:
         }
       end
 
-      it 'uses source_id when the target platform is local hosted' do
+      it 'preserves the remote UUID for genuine cross-instance federation (external source, local target)' do
         remote_id = SecureRandom.uuid
 
         event = described_class.new(
@@ -40,11 +40,34 @@ module BetterTogether # :nodoc:
           preserve_remote_uuid: true
         ).call
 
-        expect(event.id).not_to eq(remote_id)
+        expect(event.id).to eq(remote_id)
         expect(event.platform).to eq(target_platform)
-        expect(event.source_id).to eq(remote_id)
+        expect(event.source_id).to be_nil
         expect(event.last_synced_at).to be_present
         expect(event.event_hosts.map(&:host)).to include(source_platform)
+      end
+
+      it 'uses source_id instead of the remote UUID for a same-instance connection (both sides local)' do
+        local_peer = create(:better_together_platform, :public)
+        same_instance_connection = create(
+          :better_together_platform_connection,
+          :active,
+          source_platform: target_platform,
+          target_platform: local_peer,
+          content_sharing_policy: 'mirror_network_feed',
+          share_events: true
+        )
+        remote_id = SecureRandom.uuid
+
+        event = described_class.new(
+          connection: same_instance_connection,
+          remote_attributes:,
+          remote_id:,
+          preserve_remote_uuid: true
+        ).call
+
+        expect(event.id).not_to eq(remote_id)
+        expect(event.source_id).to eq(remote_id)
       end
 
       it 'preserves the remote UUID when the target platform is external' do

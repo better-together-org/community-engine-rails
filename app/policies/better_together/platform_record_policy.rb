@@ -8,11 +8,27 @@ module BetterTogether
   # resolve and call platform_scoped as their starting point.
   class PlatformRecordPolicy < ApplicationPolicy
     def current_platform
-      Current.platform || Current.host_platform
+      self.class.resolve_current_platform
     end
 
     def record_on_current_platform?
       current_platform.present? && record.platform_id == current_platform.id
+    end
+
+    class << self
+      # Some controllers (e.g. EventsController, CommunitiesController) use
+      # prepend_before_action to set their resource instance before Pundit
+      # authorization runs — in Rails, prepend_before_action jumps ahead of an
+      # inherited around_action's setup phase regardless of class hierarchy, so
+      # ApplicationController's around_action :with_current_platform_context may
+      # not have populated Current.platform / Current.host_platform yet. Falling
+      # back to a direct query (same fallback ApplicationHelper#host_platform and
+      # EventsController#platform_scoped_event_ignoring_privacy already use)
+      # keeps policy scoping correct regardless of callback ordering, instead of
+      # silently resolving to scope.none for every request that hits this window.
+      def resolve_current_platform
+        Current.platform || Current.host_platform || BetterTogether::Platform.find_by(host: true)
+      end
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
@@ -31,7 +47,7 @@ module BetterTogether
       end
 
       def current_platform
-        Current.platform || Current.host_platform
+        PlatformRecordPolicy.resolve_current_platform
       end
     end
   end

@@ -54,5 +54,13 @@ RSpec.describe BetterTogether::Ai::Log::TranslationLoggerJob do
       expect(log.source_locale).to eq('en')
       expect(log.target_locale).to eq('fr')
     end
+
+    it 'stores the explicit platform_id rather than falling back to PlatformScoped defaults' do
+      platform = create(:better_together_platform)
+
+      job.perform(**base_params, platform_id: platform.id)
+
+      expect(BetterTogether::Ai::Log::Translation.last.platform_id).to eq(platform.id)
+    end
   end
 end

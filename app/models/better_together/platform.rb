@@ -49,6 +49,11 @@ module BetterTogether
     store_attributes :settings do
       requires_invitation Boolean, default: true
       allow_membership_requests Boolean, default: false
+      # Master gate for the whole inbound-mail alias surface (community+/agent+/requests+).
+      # Defaults true to preserve existing behavior for platforms already relying on it;
+      # requests+ is additionally gated by allow_membership_requests via
+      # Community#membership_requests_enabled?.
+      allow_inbound_mail Boolean, default: true
       contributors_display_visibility String, default: 'on'
       software_variant String
       network_visibility String, default: 'private'
@@ -109,7 +114,8 @@ module BetterTogether
     has_one_attached :profile_image
     has_one_attached :cover_image
 
-    has_one :sitemap, class_name: '::BetterTogether::Sitemap', dependent: :destroy
+    # One Sitemap row per locale plus one 'index' row (see BetterTogether::Sitemap).
+    has_many :sitemaps, class_name: '::BetterTogether::Sitemap', dependent: :destroy
 
     has_many :platform_blocks, dependent: :destroy, class_name: 'BetterTogether::Content::PlatformBlock'
     has_many :blocks, through: :platform_blocks
@@ -176,7 +182,16 @@ module BetterTogether
     end
 
     def primary_community_extra_attrs
-      { host:, protected: }
+      # bootstrapping_primary_community: true only here, not in the shared
+      # PrimaryCommunity concern -- Person also has_community, and its own
+      # primary community correctly relies on normal ambient-platform
+      # resolution (the "current platform" when a Person signs up IS the
+      # right scope for their community). Only a Platform's own primary
+      # community needs to self-reference instead -- see
+      # PrimaryCommunity#backfill_primary_community_platform, which is
+      # itself guarded to is_a?(BetterTogether::Platform) and is the only
+      # thing that corrects this flag's platform_id afterward.
+      { host:, protected:, bootstrapping_primary_community: true }
     end
 
     # External platforms (OAuth identity providers like GitHub) always get a
@@ -245,7 +260,7 @@ module BetterTogether
 
       BetterTogether::PublicVisibilityGate.allow!(
         record: self,
-        actor: Current.governed_agent,
+        actor: Current.agent,
         target_network_visibility: network_visibility
       )
     end

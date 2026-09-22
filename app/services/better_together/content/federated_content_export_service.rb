@@ -10,7 +10,8 @@ module BetterTogether
       Result = Struct.new(
         :connection,
         :seeds,
-        :next_cursor
+        :next_cursor,
+        :skipped_count
       ) do
         def items
           seeds
@@ -31,7 +32,8 @@ module BetterTogether
         Result.new(
           connection:,
           seeds: serialized_seeds,
-          next_cursor: next_cursor
+          next_cursor: next_cursor,
+          skipped_count: skipped_records.size
         )
       end
 
@@ -40,15 +42,38 @@ module BetterTogether
       attr_reader :connection, :cursor, :limit
 
       def serialized_seeds
-        @serialized_seeds ||= selected_records.map do |record|
-          ::BetterTogether::Seeds::Builder.call(
-            subject: record,
-            profile: :platform_shared,
-            context: { connection: connection, sync_depth: connection.sync_depth },
-            lane: 'platform_shared',
-            persist: false
-          ).seed_hash
-        end
+        @serialized_seeds ||= selected_records.filter_map { |record| build_seed(record) }
+      end
+
+      # One record's own content must never take the whole feed page down --
+      # e.g. a pathologically-nested rich text body that blows the Ruby call
+      # stack (SystemStackError isn't a StandardError, so it needs its own
+      # rescue class; Ruby reserves stack headroom for the rescue clause
+      # itself, so this is safe to catch). Skip that record and keep exporting
+      # the rest of the connection's eligible records.
+      def build_seed(record)
+        ::BetterTogether::Seeds::Builder.call(
+          subject: record,
+          profile: :platform_shared,
+          context: { connection: connection, sync_depth: connection.sync_depth },
+          lane: 'platform_shared',
+          persist: false
+        ).seed_hash
+      rescue StandardError, SystemStackError => e
+        skipped_records << record
+        log_export_skip(record, e)
+        nil
+      end
+
+      def skipped_records
+        @skipped_records ||= []
+      end
+
+      def log_export_skip(record, error)
+        Rails.logger.warn(
+          "[BetterTogether::Federation] skipped exporting #{record.class.name} #{record.id} " \
+          "for connection #{connection.id}: #{error.class}: #{error.message.to_s.truncate(200)}"
+        )
       end
 
       def selected_records
@@ -65,10 +90,10 @@ module BetterTogether
 
       def exportable_posts
         apply_cursor(
-          consent_scoped(
+          federation_consent_scoped(
             ::BetterTogether::Post
               .with_translations
-              .where(platform: connection.source_platform, privacy: 'public')
+              .where(platform: connection.local_platform, privacy: 'public')
               .where(source_id: nil)
               .where.not(published_at: nil)
               .where(::BetterTogether::Post.arel_table[:published_at].lteq(Time.current))
@@ -78,10 +103,10 @@ module BetterTogether
 
       def exportable_pages
         apply_cursor(
-          consent_scoped(
+          federation_consent_scoped(
             ::BetterTogether::Page
               .with_translations
-              .where(platform: connection.source_platform, privacy: 'public')
+              .where(platform: connection.local_platform, privacy: 'public')
               .where(source_id: nil)
               .where.not(published_at: nil)
               .where(::BetterTogether::Page.arel_table[:published_at].lteq(Time.current))
@@ -91,29 +116,61 @@ module BetterTogether
 
       def exportable_events
         apply_cursor(
-          consent_scoped(
+          federation_consent_scoped(
             ::BetterTogether::Event
               .with_translations
-              .where(platform: connection.source_platform, privacy: 'public')
+              .where(platform: connection.local_platform, privacy: 'public')
               .where(source_id: nil)
               .where.not(starts_at: nil)
           )
         ).order(updated_at: :asc, id: :asc).limit(limit)
       end
 
-      def consent_scoped(query)
-        return query unless query.klass.column_names.include?('creator_id')
+      # Layers the per-item federation_visibility tri-state, and then any
+      # explicit per-connection FederationContentGrant, on top of the
+      # creator's global federate_content preference. Precedence (highest to
+      # lowest; connection-level allows_content_type? is already checked one
+      # layer up in eligible_records):
+      #   1. federation_visibility == no_federate -- hard exclude, always wins.
+      #   2. An explicit grant for THIS connection -- 'denied' excludes,
+      #      'allowed' includes (bypassing the creator's global preference for
+      #      this connection only).
+      #   3. No grant for this connection -- falls through to:
+      #      federate (bypasses creator preference) / platform_default
+      #      (creator's global federate_content preference, current behavior).
+      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      def federation_consent_scoped(query)
+        model_table = query.klass.quoted_table_name
+        scoped = query.where.not(federation_visibility: 'no_federate')
+
+        denied_ids = connection_grant_ids(query.klass, 'denied')
+        scoped = scoped.where.not(id: denied_ids) if denied_ids.any?
+
+        return scoped unless query.klass.column_names.include?('creator_id')
 
         creator_table = ::BetterTogether::Person.quoted_table_name
-        model_table = query.klass.quoted_table_name
-        # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator requires a left join predicate
-        query.left_joins(:creator).where(
+        scoped_with_creator = scoped.left_joins(:creator)
+        # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB preference match on optional creator, OR'd with an explicit per-item opt-in override, requires a raw predicate
+        preference_scoped = scoped_with_creator.where(
           Arel.sql(
+            "#{model_table}.federation_visibility = 'federate' OR " \
             "#{model_table}.creator_id IS NULL OR " \
             "(#{creator_table}.preferences @> '{\"federate_content\": true}')"
           )
         )
         # rubocop:enable BetterTogether/NoRawSqlInQueries
+
+        allowed_ids = connection_grant_ids(query.klass, 'allowed')
+        return preference_scoped if allowed_ids.empty?
+
+        preference_scoped.or(scoped_with_creator.where(id: allowed_ids))
+      end
+      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+      def connection_grant_ids(klass, status)
+        ::BetterTogether::FederationContentGrant
+          .where(federatable_type: klass.name, platform_connection_id: connection.id, status:)
+          .pluck(:federatable_id)
       end
 
       def apply_cursor(query)
@@ -132,7 +189,16 @@ module BetterTogether
         last_record = selected_records.last
         return if last_record.nil?
 
-        [last_record.updated_at.iso8601, last_record.id].join('|')
+        # Full microsecond precision on both sides of the round-trip is required.
+        # `iso8601` (no arg) truncates to whole seconds; `apply_cursor` compares
+        # against the microsecond-precision DB column. A record with a sub-second
+        # updated_at then satisfies `updated_at > cursor` against its own
+        # truncated cursor forever -- a permanent fixpoint that reproduces the
+        # same page (and the same next_cursor) on every subsequent pull,
+        # confirmed as the root cause of the 2026-09 NLO<->CE federation
+        # runaway (BetterTogether::FederatedContentPullJob re-enqueuing the
+        # same cursor indefinitely, sync_failure_streak into the hundreds).
+        [last_record.updated_at.iso8601(6), last_record.id].join('|')
       end
 
       def parse_cursor(cursor_value)

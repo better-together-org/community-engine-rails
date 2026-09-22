@@ -1,0 +1,47 @@
+flowchart TD
+
+  %% Entry points - three ways a specific session gets touched
+  RSVP[Attendee RSVPs to\none specific session] --> LOOKUP
+  COMMENT[Attendee comments on\none specific session] --> LOOKUP
+  OVERRIDE[Organizer overrides time/\nlocation/description, or cancels] --> LOOKUP
+
+  LOOKUP{EventOccurrence row\nexists for this event+date?}
+  LOOKUP -->|yes| EXISTING[Use existing row]
+  LOOKUP -->|no| VALIDATE{Date is a real\noccurrence per\nRecurrence#schedule?}
+  VALIDATE -->|no| REJECT[Reject - not a real\nsession of this series]
+  VALIDATE -->|yes| CREATE[find_or_create_occurrence_for date\ncreates EventOccurrence row]
+
+  CREATE --> EXISTING
+  EXISTING --> ATTACH{What triggered this?}
+
+  ATTACH -->|RSVP| ATT[EventAttendance\nevent_occurrence_id set\nseries-wide attendance untouched]
+  ATTACH -->|Comment| CMT[Comment via Commentable\ncommentable = EventOccurrence]
+  ATTACH -->|Override| OVR[Set starts_at/ends_at/location/\ndescription_override or cancelled]
+
+  OVR --> SYNC[after_commit: refresh parent\nEvent#next_occurrence_at\nif this is the nearest occurrence]
+
+  %% Authorization - delegates to parent, never duplicates hosts
+  ATTACH -.->|every write path| AUTHZ[EventOccurrencePolicy\ndelegates to record.event.event_hosts\nvia shared EventHostAuthorizable concern\nNO EventHost duplication]
+
+  %% Read path - the other 95%+ of occurrences that were never touched
+  subgraph READ [Read path - most occurrences never get a row]
+    INDEX[Events index] --> NOA["Event.next_occurrence_at\n(SQL column, hourly-refreshed)"]
+    CAL[Calendar grid] --> EXPAND["CalendarOccurrenceExpander\nRecurrence#occurrences_between window"]
+    EXPAND --> MERGE{EventOccurrence exists\nfor this computed date?}
+    MERGE -->|yes| EFFECTIVE["Use effective_starts_at / effective_location /\neffective_description, show cancelled badge"]
+    MERGE -->|no| VIRTUAL["Purely virtual Occurrence PORO\nno row created just by viewing"]
+  end
+
+  EXISTING -.->|read-only lookup, no write| MERGE
+
+  classDef entry fill:#e3f2fd
+  classDef decision fill:#fff3e0
+  classDef write fill:#ffebee
+  classDef read fill:#e8f5e8
+  classDef authz fill:#f3e5f5
+
+  class RSVP,COMMENT,OVERRIDE entry
+  class LOOKUP,VALIDATE,ATTACH,MERGE decision
+  class CREATE,EXISTING,ATT,CMT,OVR,SYNC,REJECT write
+  class INDEX,CAL,NOA,EXPAND,EFFECTIVE,VIRTUAL read
+  class AUTHZ authz

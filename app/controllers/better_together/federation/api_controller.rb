@@ -41,7 +41,10 @@ module BetterTogether
         return unless token.present? && token.includes_scope?(required_scope)
 
         connection = token.platform_connection
-        return unless connection.target_platform == Current.platform
+        # source_platform/target_platform reflect who initiated the connection,
+        # not who's local — use #involves? instead of assuming Current.platform
+        # is always target_platform. See PlatformConnection#involves?.
+        return unless Current.platform.present? && connection.involves?(Current.platform)
 
         token.touch_last_used!
         connection

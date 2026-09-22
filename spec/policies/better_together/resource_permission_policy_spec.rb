@@ -54,6 +54,23 @@ RSpec.describe BetterTogether::ResourcePermissionPolicy, type: :policy do
     end
   end
 
+  describe 'cross-tenant isolation' do
+    let(:tenant_platform) { create(:better_together_platform, :public) }
+    let(:tenant_permission) do
+      create(:better_together_resource_permission, resource_type: 'BetterTogether::Platform',
+                                                   platform: tenant_platform)
+    end
+
+    it "denies role managers from another platform managing this platform's permission catalog" do
+      policy = described_class.new(role_manager, tenant_permission)
+
+      expect(policy.show?).to be false
+      expect(policy.update?).to be false
+      allow(tenant_permission).to receive(:protected?).and_return(false)
+      expect(policy.destroy?).to be false
+    end
+  end
+
   describe '#destroy?' do
     it 'allows role managers to destroy unprotected permissions' do
       permission = platform_permission

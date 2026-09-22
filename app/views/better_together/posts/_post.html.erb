@@ -4,11 +4,11 @@
     <%= categories_badge(post) %>
   </div>
 
-  <% if contributor_display_visible_for?(post) && post.governed_authors.any? %>
+  <% if contributor_display_visible_for?(post) && post.agent_authors.any? %>
     <div class="mb-3">
       <div class="d-flex align-items-center flex-wrap">
-        <%= render 'better_together/shared/governed_authors',
-                   authors: post.governed_authors,
+        <%= render 'better_together/shared/agent_authors',
+                   authors: post.agent_authors,
                    flex_layout: 'flex-row',
                    flex_align_items: 'center' %>
       </div>

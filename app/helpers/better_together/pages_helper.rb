@@ -8,10 +8,10 @@ module BetterTogether
         ['page_content', page.cache_key_with_version,
          page.page_blocks.maximum(:updated_at),
          page.blocks.maximum(:updated_at),
-         I18n.locale, page_visibility_cache_context, 'v2'],
+         I18n.locale, page_visibility_cache_context, 'v3'],
         expires_in: 1.minute
       ) do
-        render page.content_blocks
+        render policy_scope(page.content_blocks)
       end
     end
 
@@ -64,10 +64,11 @@ module BetterTogether
         page.updated_at,
         page.page_blocks.maximum(:updated_at),
         page.blocks.maximum(:updated_at),
+        page.contributions.maximum(:updated_at),
         page.sidebar_nav&.cache_key_with_version,
         page_visibility_cache_context,
         I18n.locale,
-        'v2'
+        'v4'
       ]
     end
 

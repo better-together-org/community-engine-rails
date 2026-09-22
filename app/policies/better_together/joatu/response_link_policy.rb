@@ -16,20 +16,21 @@ module BetterTogether
         return false unless user.present?
 
         record.creator_id == agent&.id ||
-          permitted_to?('manage_platform') ||
-          permitted_to?('manage_platform_settings')
+          permitted_to?('manage_platform', record.platform) ||
+          permitted_to?('manage_platform_settings', record.platform)
       end
 
       def destroy?
         return false unless user.present?
 
-        permitted_to?('manage_platform') || permitted_to?('manage_platform_settings')
+        permitted_to?('manage_platform', record.platform) || permitted_to?('manage_platform_settings', record.platform)
       end
 
       class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
         def resolve
           return scope.none unless user.present?
-          return platform_scoped if permitted_to?('manage_platform') || permitted_to?('manage_platform_settings')
+          return platform_scoped if permitted_to?('manage_platform', current_platform) ||
+                                    permitted_to?('manage_platform_settings', current_platform)
 
           platform_scoped.where(creator_id: agent&.id)
         end

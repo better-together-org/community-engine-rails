@@ -18,7 +18,7 @@ module BetterTogether
                                            assume_model_exists: options[:assume_model_exists]))
         chat = chat.with_instructions(options[:system_prompt]) if options[:system_prompt].present?
         chat = chat.with_temperature(options[:temperature]) unless options[:temperature].nil?
-        chat = chat.with_params(max_tokens: options[:max_tokens]) if options[:max_tokens].present?
+        chat = chat.with_max_output_tokens(options[:max_tokens]) if options[:max_tokens].present?
         chat
       end
 
@@ -32,9 +32,9 @@ module BetterTogether
       def serialize_response(response, model:, provider:)
         {
           content: response.content,
-          model: response.model_id || model,
-          prompt_tokens: response.input_tokens.to_i,
-          completion_tokens: response.output_tokens.to_i,
+          model: response.model || model,
+          prompt_tokens: response.tokens.input.to_i,
+          completion_tokens: response.tokens.output.to_i,
           provider: provider&.to_s,
           raw_response: response
         }

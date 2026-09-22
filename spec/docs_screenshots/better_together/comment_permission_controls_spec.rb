@@ -242,7 +242,7 @@ RSpec.describe 'Documentation screenshots for comment permission controls',
           selector: "##{ActionView::RecordIdentifier.dom_id(notification)}",
           title: 'In-app notification for a new comment',
           bullets: [
-            'Delivered to the post\'s credited author(s) via governed_authors, not just its DB-row creator.',
+            'Delivered to the post\'s credited author(s) via agent_authors, not just its DB-row creator.',
             'Only sent if the recipient has not turned off "notify_on_comments" in their preferences — the same check gates the email below.',
             'Links straight to the comment via its dom_id anchor on the post.'
           ]

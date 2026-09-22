@@ -76,9 +76,8 @@ module BetterTogether
       last_sync_error_at String, default: ''
       last_sync_error_message String, default: ''
       last_sync_item_count Integer, default: 0
-      # C3 community contribution token exchange (borgberry federation)
-      allow_c3_exchange Boolean, default: false
-      c3_exchange_rate String, default: '1.0' # bilateral rate string, e.g. '1.5' = 1 C3 here = 1.5 C3 there
+      sync_failure_streak Integer, default: 0
+      sync_backoff_until String, default: ''
     end
 
     enum :status, STATUS_VALUES, default: :pending, validate: true
@@ -123,12 +122,19 @@ module BetterTogether
       # rubocop:disable BetterTogether/NoRawSqlInQueries -- JSONB interval arithmetic has no Arel equivalent
       tbl = quoted_table_name
       where(Arel.sql(<<~SQL.squish))
-        (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
-        OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
-        OR (#{tbl}.settings->>'last_synced_at') = ''
-        OR (#{tbl}.settings->>'last_synced_at')::timestamptz
-             + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
-             <= NOW()
+        (
+          (#{tbl}.settings->>'min_sync_interval_seconds') IS NULL
+          OR (#{tbl}.settings->>'min_sync_interval_seconds')::integer = 0
+          OR (#{tbl}.settings->>'last_synced_at') = ''
+          OR (#{tbl}.settings->>'last_synced_at')::timestamptz
+               + make_interval(secs => (#{tbl}.settings->>'min_sync_interval_seconds')::integer)
+               <= NOW()
+        )
+        AND (
+          (#{tbl}.settings->>'sync_backoff_until') IS NULL
+          OR (#{tbl}.settings->>'sync_backoff_until') = ''
+          OR (#{tbl}.settings->>'sync_backoff_until')::timestamptz <= NOW()
+        )
       SQL
       # rubocop:enable BetterTogether/NoRawSqlInQueries
     }
@@ -137,11 +143,32 @@ module BetterTogether
       source_platform_id == platform.id || target_platform_id == platform.id
     end
 
+    # source_platform/target_platform reflect who initiated the connection, not
+    # who's local — code that needs "which side is actually this install" must
+    # resolve it via external_peer?, not assume it's always target_platform (or
+    # always source_platform). Mirrors HttpAdapter's original remote_platform
+    # resolution, promoted here so every federation service shares one
+    # definition instead of re-deriving (and re-breaking) it independently.
+    def local_platform
+      [source_platform, target_platform].find(&:local_hosted?)
+    end
+
+    def remote_platform
+      [source_platform, target_platform].find(&:external_peer?)
+    end
+
     def peer_for(platform)
       return target_platform if source_platform_id == platform.id
       return source_platform if target_platform_id == platform.id
 
       nil
+    end
+
+    # Without this, generic trackable-rendering helpers (e.g. the Federation
+    # Hub activity feed's link_to_trackable) fall back to Ruby's default
+    # Object#to_s ("#<BetterTogether::PlatformConnection:0x...>") as link text.
+    def to_s
+      "#{source_platform&.name} → #{target_platform&.name}"
     end
 
     private

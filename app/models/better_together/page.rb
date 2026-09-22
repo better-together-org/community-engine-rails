@@ -6,14 +6,13 @@ module BetterTogether
   # An informational document used to display custom content to the user
   class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
     include Authorable
-    include Claimable
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
-    include Citable
     include CommunityAssignable
     include Creatable
+    include Federatable
     include Identifier
     include Metrics::Shareable
     include Metrics::Viewable
@@ -24,6 +23,7 @@ module BetterTogether
     include Searchable
     include Seedable
     include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
     include ::Storext.model
 
@@ -103,8 +103,6 @@ module BetterTogether
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
-    after_commit :refresh_sitemap, on: %i[create update destroy]
-
     def hero_block
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
     end
@@ -120,14 +118,17 @@ module BetterTogether
     # Payload for search indexing (database fallback and future external backends).
     # Includes block content so full-text search can match text that only lives
     # inside a block (e.g. markdown source) rather than a direct Page column.
+    # Only publicly-visible block text is indexed (blocks and template blocks
+    # alike): a non-public block must not make its page a search hit for people
+    # who could not see that block (mirrors Content::BlockPolicy).
     def as_indexed_json
       {
         title: title,
         meta_description: meta_description,
         keywords: keywords,
         content: content&.to_plain_text,
-        blocks: content_blocks.filter_map { |block| indexed_block_text(block) },
-        template_blocks: template_blocks.map { |block| indexed_template_block(block) }
+        blocks: indexed_blocks,
+        template_blocks: indexed_template_blocks
       }.with_indifferent_access
     end
 
@@ -148,7 +149,7 @@ module BetterTogether
     end
 
     def mirrored?
-      source_id.present? || platform&.external?
+      source_id.present? || last_synced_at.present? || platform&.external?
     end
 
     def preserved_remote_uuid?
@@ -170,13 +171,51 @@ module BetterTogether
       mirrored? && !local_to_platform?(local_platform)
     end
 
+    # Transient (non-persisted) flag: builder/seed code (NavigationBuilder,
+    # AgreementBuilder) sets this on a brand-new built-in page (About, FAQ,
+    # legal/policy pages, contributor agreements) that must render for
+    # guests regardless of the platform's own privacy ceiling -- the same
+    # reasoning Agreement already gets its own exemption for. Deliberately
+    # NOT tied to `protected?` -- that flag is reused across many contexts
+    # (including page_spec.rb's own privacy-ceiling coverage, via the page
+    # factory's randomized `protected` value) that have nothing to do with
+    # this exemption. Mirrors Community#bootstrapping_primary_community's
+    # transient-flag pattern. Only matters at creation: the ceiling
+    # validation only fires when privacy is new or changing (see
+    # PrivacyCeilingValidatable), so a later, unrelated save of an
+    # already-seeded page is never affected by this flag's absence.
+    attr_accessor :seed_privacy_ceiling_exempt
+
+    def privacy_ceiling_exempt?
+      super || seed_privacy_ceiling_exempt
+    end
+
     private
+
+    def indexed_blocks
+      content_blocks.select { |block| publicly_indexable_block?(block) }
+                    .filter_map { |block| indexed_block_text(block) }
+    end
+
+    def indexed_template_blocks
+      template_blocks.select { |block| publicly_indexable_block?(block) }
+                     .map { |block| indexed_template_block(block) }
+    end
 
     def indexed_block_text(block)
       return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
       return block.content if block.respond_to?(:content) && block.content.is_a?(String)
 
       nil
+    end
+
+    # A block's text is indexed only when it is both visible and public. Blocks
+    # that predate the privacy column, or lack it, fall back to "index it".
+    def publicly_indexable_block?(block)
+      return true unless block.respond_to?(:privacy_public?)
+
+      visible = block.respond_to?(:visible?) ? block.visible? : true
+      visible && block.privacy_public?
     end
 
     # Template blocks render their content from a file rather than storing it directly,
@@ -186,12 +225,6 @@ module BetterTogether
         template_path: block.template_path,
         indexed_localized_content: block.indexed_localized_content
       }
-    end
-
-    def refresh_sitemap
-      return if Rails.env.test?
-
-      SitemapRefreshJob.enqueue_unless_pending
     end
 
     def sync_name_and_title

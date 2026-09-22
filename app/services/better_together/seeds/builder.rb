@@ -91,12 +91,20 @@ module BetterTogether
 
       def federated_origin_attributes
         connection = required_connection
+        # This seed's origin is whichever side is actually exporting it (the
+        # local platform), not connection.source_platform — source/target
+        # reflect who initiated the connection, not who's local.
+        origin_platform = connection.local_platform || connection.source_platform
 
         {
-          source_platform_id: connection.source_platform.id,
-          source_platform_identifier: connection.source_platform.identifier,
-          source_platform_url: connection.source_platform.resolved_host_url,
-          visibility: serialized_attributes[:privacy],
+          source_platform_id: origin_platform.id,
+          source_platform_identifier: origin_platform.identifier,
+          source_platform_url: origin_platform.resolved_host_url,
+          # Read directly rather than via #serialized_attributes -- Post/Page/
+          # Event all expose privacy as a plain attribute, so there's no need
+          # to round-trip through FederatedSeedAttributes (which also reads
+          # the content body) a second time just for this one field.
+          visibility: subject.privacy,
           content_type: serialized_type
         }.merge(context[:origin_metadata] || {})
       end
@@ -120,8 +128,9 @@ module BetterTogether
 
       def federated_identifier
         connection = required_connection
+        origin_platform = connection.local_platform || connection.source_platform
         digest = Digest::SHA256.hexdigest(
-          [connection.source_platform.id, subject.class.name, subject.id, lane].join(':')
+          [origin_platform.id, subject.class.name, subject.id, lane].join(':')
         )
         "seed-#{serialized_type}-#{digest.first(24)}"
       end

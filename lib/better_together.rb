@@ -29,6 +29,10 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
   #   end
   mattr_accessor :api_v1_routes_extension
 
+  # Host app extension: proc evaluated inside `namespace :federation do` in the
+  # engine routes. Same usage pattern as api_v1_routes_extension above.
+  mattr_accessor :federation_routes_extension
+
   # Additional OpenAPI/Swagger endpoints to register in the rswag UI.
   # Usage: BetterTogether.swagger_additional_endpoints << ['/my-app/api/docs/v1/swagger.yaml', 'My App API V1']
   mattr_accessor :swagger_additional_endpoints
@@ -149,10 +153,6 @@ module BetterTogether # rubocop:disable Metrics/ModuleLength
 
     def translation_available?(platform: Current.platform)
       llm_available?(identifier: 'translation', platform:)
-    end
-
-    def e2ee_messaging_enabled?
-      ActiveModel::Type::Boolean.new.cast(ENV.fetch('BETTER_TOGETHER_E2EE_MESSAGING_ENABLED', nil)) == true
     end
 
     def inbound_email_password

@@ -48,13 +48,16 @@ RSpec.describe BetterTogether::SafetyReportNotificationService do
 
   describe '#notify_submission' do
     it 'delivers an in-app notification to safety reviewers' do
+      # +1 for the explicitly-granted safety_reviewer, +1 for the suite's autouse
+      # manager@example.test host platform_steward, who now also holds
+      # manage_platform_safety by default (see access_control_builder.rb).
       expect do
         service.notify_submission
-      end.to change(Noticed::Notification, :count).by(1)
+      end.to change(Noticed::Notification, :count).by(2)
 
-      notification = Noticed::Notification.last
-      expect(notification.recipient).to eq(safety_reviewer)
-      expect(notification.event.type).to eq('BetterTogether::SafetyReportSubmittedNotifier')
+      notifications = Noticed::Notification.includes(:event).where(recipient: safety_reviewer)
+      expect(notifications).to be_present
+      expect(notifications.map { |n| n.event.type }).to all(eq('BetterTogether::SafetyReportSubmittedNotifier'))
     end
 
     it 'does not duplicate the same reviewer notification for the same report' do
@@ -69,16 +72,15 @@ RSpec.describe BetterTogether::SafetyReportNotificationService do
       create_list(:report, 2)
       Noticed::Notification.destroy_all
 
+      # +1 for the explicitly-granted safety_reviewer, +1 for the suite's autouse
+      # manager@example.test host platform_steward, who now also holds
+      # manage_platform_safety by default (see access_control_builder.rb).
       expect do
         service.notify_submission
-      end.to change(Noticed::Notification, :count).by(1)
+      end.to change(Noticed::Notification, :count).by(2)
 
-      notification = Noticed::Notification.last
-      expect(notification.recipient).to eq(safety_reviewer)
-      expect(notification.event.type).to eq('BetterTogether::SafetyReportDigestNotifier')
-      expect(
-        Noticed::Notification.includes(:event).where(recipient: safety_reviewer).map { |item| item.event.type }
-      ).not_to include('BetterTogether::SafetyReportSubmittedNotifier')
+      reviewer_notifications = Noticed::Notification.includes(:event).where(recipient: safety_reviewer)
+      expect(reviewer_notifications.map { |item| item.event.type }).to eq(['BetterTogether::SafetyReportDigestNotifier'])
     end
 
     it 'suppresses repeat digest notifications during the cooldown window' do

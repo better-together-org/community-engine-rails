@@ -1,0 +1,19 @@
+---
+title: Event Show — Location Map
+audience:
+- event_organizer
+- community_organizer
+- developer
+journey_step: As an event organizer, I see exactly where the event is on an interactive
+  map, not just as a text address.
+callouts:
+- :id: event_map
+  :title: Leaflet map for the assigned location
+  :description: 'New in this PR: BetterTogether::Geography::Locatable::One now includes
+    Mappable and provides leaflet_points/spaces, so any Locatable::One-including model
+    (Event today; Joatu Offer/Request once they adopt the same concern) gets this
+    map for free — no per-model map code required.'
+accessibility_notes: The map controls (layer toggle, geolocation) are real buttons
+  with visible focus state and accessible labels.
+slug: event_map_show
+device: desktop

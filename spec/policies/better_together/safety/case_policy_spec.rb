@@ -31,10 +31,10 @@ RSpec.describe BetterTogether::Safety::CasePolicy do
     expect(policy.update?).to be true
   end
 
-  it 'denies default platform managers without explicit safety authority' do
+  it 'allows default platform managers/stewards (manage_platform_safety is now a default grant)' do
     policy = described_class.new(platform_manager, safety_case)
-    expect(policy.show?).to be false
-    expect(policy.update?).to be false
+    expect(policy.show?).to be true
+    expect(policy.update?).to be true
   end
 
   it 'denies reporters from viewing their own case' do

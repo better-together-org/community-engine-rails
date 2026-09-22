@@ -1,0 +1,22 @@
+---
+title: New Platform Setup — Review and Launch
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I review everything I entered across all five
+  prior steps, each with its own edit link back to that step, then confirm launch.
+callouts:
+- :id: edit_platform_identity
+  :title: Platform Identity recap
+  :description: Name, description, host_url, privacy, time_zone.
+- :id: edit_steward_account
+  :title: Steward Account recap
+  :description: Name + email summary.
+- :id: launch_btn
+  :title: Launch
+  :description: POSTs to the launch_platform step action.
+accessibility_notes: Each recap section is aria-labelledby its own heading id; edit
+  links have distinct accessible names (verified in new_platform_setup_wizard_accessibility_spec.rb).
+slug: new_platform_setup_review_and_launch
+device: desktop

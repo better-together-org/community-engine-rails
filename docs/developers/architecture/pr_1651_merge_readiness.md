@@ -18,7 +18,7 @@ tracked alongside this file.
 |---|----------|----------|---------|--------|----------|
 | 1 | CRITICAL | `comment.rb` | Comment deletion cascaded to destroy `Report`/`Safety::Case` | **RESOLVED** (`fc579296f`) | `reports_received` no longer declares `dependent: :destroy`; `Reportable` concern's base association has no `dependent:` |
 | 2 | HIGH | `person.rb` | `notify_on_comments` had no reachable write path | **RESOLVED** (`9dbf547f5`) | Field present in `_preferences.html.erb:46-49` and `_preferences_self_contained.html.erb:36-39`; both controllers permit it |
-| 3 | HIGH | `comments_controller.rb` | Notifications routed to `creator`, not credited `author`(s) | **RESOLVED** (`d4bd2733e`) | `notify_commentable_owners` now prefers `governed_authors`, falls back to `creator` |
+| 3 | HIGH | `comments_controller.rb` | Notifications routed to `creator`, not credited `author`(s) | **RESOLVED** (`d4bd2733e`) | `notify_commentable_owners` now prefers `agent_authors`, falls back to `creator` |
 | 4 | MEDIUM | `_comments_section.html.erb` | N+1 on `comment.creator` | **RESOLVED** (`dc3ff3ee3`) | `CommentPolicy::Scope#resolve` chains `.include_creator` |
 | 5 | MEDIUM | `comment_policy.rb` | Reimplemented `SelfServicePublishablePolicy` instead of including it | **RESOLVED** (`dc3ff3ee3`), **verified intact** after the later CommentConfig rewrite | Current file (`comment_policy.rb:6`) still `include SelfServicePublishablePolicy`, uses `creator_of?(record)` |
 | 6 | MEDIUM | `comments_controller.rb` | No failure branch on `@comment.save == false` | **RESOLVED** (`cc1371ff9`) | `save_comment_and_notify` branches on save result; `_form.html.erb:9-20` renders `comment.errors` |
@@ -79,7 +79,7 @@ Two distinct parts were bundled in this suggestion:
 | Finding | Status | Notes |
 |---------|--------|-------|
 | `set_comment` uses `policy_scope(Comment).find` for `destroy` — a moderator who has personally blocked the comment's author gets `RecordNotFound` even though `community_content_manager?`/`platform_manager?` would authorize the destroy | **RESOLVED** | `comments_controller.rb`'s `set_comment` now uses a plain `Comment.find(params[:id])`; `authorize @comment` (already present in `destroy`) does the actual permission check. New request spec: "allows a platform manager to delete a comment from someone they have personally blocked" |
-| `blocked_by_commentable_creator?`/notification recipient divergence for creator ≠ author | **Partially addressed** | Notification routing now prefers `governed_authors` (finding #3 above), but `blocked_by_commentable_creator?` still checks only `creator_id`, not `governed_authors`. Documented in the original review as "worth a decision either way, even if it's just documenting this as a known MVP limitation" — acceptable to ship as-is, but should be called out explicitly in the PR description as a known limitation rather than left implicit |
+| `blocked_by_commentable_creator?`/notification recipient divergence for creator ≠ author | **Partially addressed** | Notification routing now prefers `agent_authors` (finding #3 above), but `blocked_by_commentable_creator?` still checks only `creator_id`, not `agent_authors`. Documented in the original review as "worth a decision either way, even if it's just documenting this as a known MVP limitation" — acceptable to ship as-is, but should be called out explicitly in the PR description as a known limitation rather than left implicit |
 | `Comment#content` has no max-length validation | **RESOLVED** | `comment.rb` now `validates :content, presence: true, length: { maximum: 10_000 }`. New model specs cover both the over-limit rejection and the at-limit acceptance |
 | `comment_added_notifier_spec.rb` missing the preference-off path | **RESOLVED** | `spec/notifiers/better_together/comment_added_notifier_spec.rb:68-83` now covers both `recipient_allows_comment_notifications?` true/false paths |
 | `CommentPolicy#destroy?` RBAC lookup not memoized per-comment (N+1-shaped, not a query N+1) | **OPEN — explicitly deferred in the original review** | "Considered and deferred... not worth building yet since `CommentPolicy` is the only consumer today" — no action needed |
@@ -99,7 +99,7 @@ Ranked by whether they block merge:
 
 **Acceptable to ship as documented MVP limitations (no code change required, but should be
 stated explicitly in the PR description):**
-4. `blocked_by_commentable_creator?` keys off `creator_id` only, not `governed_authors` — a
+4. `blocked_by_commentable_creator?` keys off `creator_id` only, not `agent_authors` — a
    blocked staff-creator doesn't propagate the block to co-authored content.
 5. `render_invalid_commentable`'s silent `head :not_found` for a mid-session invalid commentable.
 

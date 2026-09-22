@@ -73,13 +73,13 @@ RSpec.describe BetterTogether::Person do
   end
 
   describe 'community action network identity helpers' do
-    it 'exposes governed agent metadata for people' do
-      expect(person.governed_agent?).to be(true)
-      expect(person.governed_agent_type).to eq('person')
-      expect(person.governed_agent_identifier).to eq(person.identifier)
-      expect(person.governed_agent_display_name).to eq(person.name)
-      expect(person.governed_agent_key).to eq("person:#{person.identifier}")
-      expect(person.governed_agent_label).to eq("#{person.name} (person)")
+    it 'exposes agent identity metadata for people' do
+      expect(person.agent?).to be(true)
+      expect(person.agent_type).to eq('person')
+      expect(person.agent_identifier).to eq(person.identifier)
+      expect(person.agent_display_name).to eq(person.name)
+      expect(person.agent_key).to eq("person:#{person.identifier}")
+      expect(person.agent_label).to eq("#{person.name} (person)")
     end
   end
 

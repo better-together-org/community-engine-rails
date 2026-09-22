@@ -2,7 +2,7 @@
 
 **Target Audience:** Developers and maintainers  
 **Document Type:** System documentation  
-**Last Updated:** March 30, 2026
+**Last Updated:** July 19, 2026
 
 ## Overview
 
@@ -115,36 +115,70 @@ High-level flow:
 
 The sync queue is `platform_sync`.
 
-## Privacy Boundary: Current Limitation
+## Privacy Boundary: Consent Layers
 
-The current implementation is stronger at **operator-configured platform trust** than at **person-level federation consent**.
+Three independent layers gate whether a specific content item is actually exported, all enforced
+in `FederatedContentExportService#federation_consent_scoped`
+(`app/services/better_together/content/federated_content_export_service.rb`):
 
-Today:
+1. **Connection-level** — `PlatformConnection#allows_content_type?` (from
+   `PlatformConnectionFederationPolicy`) must return true for the item's content type. Checked in
+   `eligible_records`, one layer above `federation_consent_scoped`.
+2. **Person-level** — `Person#federate_content` (a Storext boolean, default `false`). The
+   creator's global opt-in/opt-out, checked via a JSONB `preferences` predicate inside
+   `federation_consent_scoped`.
+3. **Item-level** — `federation_visibility` (`platform_default`/`federate`/`no_federate`),
+   added by the `BetterTogether::Federatable` concern
+   (`app/models/concerns/better_together/federatable.rb`, included in `Post`, `Page`, `Event`;
+   `Content::Block` is out of scope). `no_federate` is excluded unconditionally by a leading
+   `.where.not(federation_visibility: 'no_federate')`; `federate` satisfies the OR'd consent
+   clause regardless of the creator's global preference; `platform_default` falls through to
+   layer 2 unchanged.
 
-- platform operators can decide what a connection may share
-- content and scope settings are explicit and fail closed when disabled
-- there is not yet a completed person-level consent gate that prevents a member's content from being exported unless they explicitly opt in
+`FederationScopeAuthorizer` and `Content::FederatedContentAuthorizer` remain connection/scope-level
+only — neither was changed by the item-level work, since item consent is deliberately a lower
+layer only the export service needs to know about.
 
-Because of that gap, production activation should remain conservative until the planned consent architecture is complete.
+Design and acceptance criteria: `docs/plans/federation-item-consent.md`.
 
-## Planned Consent Architecture
+## Planned (Not Yet Shipped): Identity/Attribution Consent
 
-The current plan is documented in [Federation Consent Gate + Person Identity Plan](../../plans/federation-consent-identity.md).
+Content-level consent (above) is complete. **Identity consent — whether a federated item carries
+the author's name/profile, or arrives as an anonymous/system item — is not.** That work is
+tracked separately in [Federation Consent Gate + Person Identity Plan](../../plans/federation-consent-identity.md),
+which introduces:
 
-That plan introduces:
-
-- person-level `federate_content` consent
-- export gating based on that consent
-- federated person stubs
+- federated person stubs (UUID-preserved minimal `Person` records on the destination platform)
 - person-link claim and merge flows
+- profile-change propagation
 
-This is planned architecture, not the completed current runtime.
+`FederatedSeedAttributes` (`app/services/better_together/seeds/federated_seed_attributes.rb`)
+still exports posts/pages/events with no creator/author field — this is the specific gap that
+plan closes. Do not assume author identity is protected just because content-level consent is
+now member-controlled.
+
+## Federation Hub
+
+Members (not just platform managers) can see a summary of their own content's federation status
+— counts by `federation_visibility` and recent items — at `/federation-hub`
+(`app/controllers/better_together/federation_hub_controller.rb`), a top-level nav destination
+alongside the Community/Exchange Hub, not a Host Dashboard tab. Platform managers additionally see
+a connection-health summary card and a paginated activity feed
+(`app/services/better_together/federation_hub/activity_feed_service.rb`), which queries
+`BetterTogether::Activity` directly rather than the generic `ActivityPolicy::Scope` — that scope
+hard-filters to public-privacy activities, which is wrong for connection audit activity that must
+stay restricted to permission-holders.
 
 ## Related Files
 
 - `app/models/better_together/platform_connection.rb`
 - `app/models/concerns/better_together/platform_connection_federation_policy.rb`
+- `app/models/concerns/better_together/federatable.rb`
+- `app/models/concerns/better_together/platform_connection_sync_tracking.rb`
 - `app/services/better_together/federation_scope_authorizer.rb`
 - `app/services/better_together/content/federated_content_authorizer.rb`
+- `app/services/better_together/content/federated_content_export_service.rb`
+- `app/services/better_together/federation_hub/`
+- `app/controllers/better_together/federation_hub_controller.rb`
 - `app/controllers/better_together/federation/oauth_tokens_controller.rb`
 - `app/jobs/better_together/federated_content_pull_job.rb`

@@ -387,6 +387,66 @@ module BetterTogether # :nodoc:
         end
       end
 
+      describe '#leaflet_points' do
+        it 'returns an empty array when there is no location' do
+          event = build(:event)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns an empty array for a simple free-text location' do
+          event = build(:event, :with_simple_location)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns an empty array when the structured location has no geocoded space' do
+          event = create(:event, :with_address_location)
+          expect(event.leaflet_points).to eq([])
+        end
+
+        it 'returns a single leaflet point for a geocoded structured location' do
+          event = create(:event, :with_address_location)
+          address = event.location.location
+          create(:geography_geospatial_space, geospatial: address, space: create(:geography_space))
+          address.reload
+
+          points = event.leaflet_points
+
+          expect(points.size).to eq(1)
+          expect(points.first).to include(lat: 47.5615, lng: -52.7126)
+          expect(points.first[:popup_html]).to include(event.location.display_name)
+        end
+
+        it 'HTML-escapes the event name in the popup so it cannot inject markup/script content' do
+          malicious_name = "<img src=x onerror=alert('xss')>"
+          event = create(:event, :with_address_location, name: malicious_name)
+          address = event.location.location
+          create(:geography_geospatial_space, geospatial: address, space: create(:geography_space))
+          address.reload
+
+          popup_html = event.leaflet_points.first[:popup_html]
+
+          expect(popup_html).not_to include(malicious_name)
+          expect(popup_html).to include(ERB::Util.html_escape(malicious_name))
+        end
+      end
+
+      describe '#spaces' do
+        it 'returns an empty array when there is no location' do
+          event = build(:event)
+          expect(event.spaces).to eq([])
+        end
+
+        it 'returns the geocoded space for a structured location' do
+          event = create(:event, :with_address_location)
+          address = event.location.location
+          space = create(:geography_space)
+          create(:geography_geospatial_space, geospatial: address, space: space)
+          address.reload
+
+          expect(event.spaces).to eq([space])
+        end
+      end
+
       describe '#requires_reminder_scheduling?' do
         let(:event_with_attendees) { create(:event, :upcoming, :with_attendees) }
 
@@ -509,6 +569,34 @@ module BetterTogether # :nodoc:
         expect(mirrored_event).to be_preserved_remote_uuid
         expect(mirrored_event.source_identifier).to eq(mirrored_event.id)
       end
+
+      it 'treats a synced event stored under the local platform as mirrored' do
+        mirrored_event = build(
+          :event,
+          platform: local_platform,
+          source_id: nil,
+          last_synced_at: Time.current
+        )
+
+        expect(mirrored_event).to be_mirrored
+      end
+    end
+
+    describe 'federation_visibility (Federatable)' do
+      it 'defaults to platform_default' do
+        expect(create(:event).federation_visibility).to eq('platform_default')
+      end
+
+      it 'accepts the federate and no_federate overrides' do
+        expect(create(:event, federation_visibility: 'federate')).to be_federation_visibility_federate
+        expect(create(:event, federation_visibility: 'no_federate')).to be_federation_visibility_no_federate
+      end
+
+      it 'reports an override only for federate/no_federate' do
+        expect(create(:event, federation_visibility: 'platform_default').federation_visibility_override?).to be false
+        expect(create(:event, federation_visibility: 'federate').federation_visibility_override?).to be true
+        expect(create(:event, federation_visibility: 'no_federate').federation_visibility_override?).to be true
+      end
     end
 
     describe 'delegation' do
@@ -613,6 +701,15 @@ module BetterTogether # :nodoc:
         event = create(:event, platform: public_platform, privacy: 'public')
         event.name = 'Updated name'
         expect(event).to be_valid
+      end
+
+      context 'federated mirror (last_synced_at present)' do
+        it 'allows public privacy even under a private platform' do
+          event = event_for.call(platform: private_platform, privacy: 'public')
+          event.last_synced_at = Time.current
+
+          expect(event).to be_valid
+        end
       end
     end
   end

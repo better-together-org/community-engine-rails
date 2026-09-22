@@ -28,7 +28,7 @@ RSpec.describe BetterTogether::Safety::AgreementPolicy do
     expect(described_class.new(safety_reviewer, agreement_record).create?).to be true
   end
 
-  it 'denies default platform managers without explicit safety authority' do
-    expect(described_class.new(platform_manager, agreement_record).create?).to be false
+  it 'allows default platform managers/stewards (manage_platform_safety is now a default grant)' do
+    expect(described_class.new(platform_manager, agreement_record).create?).to be true
   end
 end

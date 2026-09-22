@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def show?
-      user.present? && (record.reporter == agent || can_review_safety_disclosures?)
+      user.present? && (record.reporter == agent || can_review_safety_disclosures?(record.platform || current_platform))
     end
 
     def new?
@@ -26,7 +26,7 @@ module BetterTogether
     # Restricts report visibility to the reporting person and platform managers.
     class Scope < PlatformRecordPolicy::Scope
       def resolve
-        return platform_scoped if permitted_to?('manage_platform_safety')
+        return platform_scoped if permitted_to?('manage_platform_safety', current_platform)
         return scope.none unless agent
 
         platform_scoped.where(reporter: agent).order(created_at: :desc)
