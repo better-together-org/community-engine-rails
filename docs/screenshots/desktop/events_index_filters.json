@@ -1,0 +1,155 @@
+{
+  "name": "events_index_filters",
+  "device": "desktop",
+  "url": "/en/events",
+  "title": "Events | Community Engine",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "events_index_filters",
+  "flow": "events_index_default",
+  "source_spec": "./spec/docs_screenshots/better_together/events_index_filter_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-event-btn",
+      "title": "Add New Event",
+      "bullets": [
+        "Shown only to people who can create events (policy-gated)."
+      ],
+      "target": {
+        "x": 1229.59375,
+        "y": 125.0,
+        "width": 130.90625,
+        "height": 38.0,
+        "right": 1360.5,
+        "bottom": 163.0,
+        "center_x": 1295.046875,
+        "center_y": 144.0
+      },
+      "avoid": {
+        "x": 1229.59375,
+        "y": 125.0,
+        "width": 130.90625,
+        "height": 38.0,
+        "right": 1360.5,
+        "bottom": 163.0,
+        "center_x": 1295.046875,
+        "center_y": 144.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 183.0,
+        "width": 380,
+        "height": 158,
+        "score": 1298.0
+      }
+    },
+    {
+      "selector": "#events-filter-sidebar",
+      "title": "Filter sidebar",
+      "bullets": [
+        "Text search over event name + description (ILIKE, locale-aware).",
+        "Category multi-select, status (All/Draft/Confirmed/Cancelled),",
+        "order (Soonest/Latest/Newest/Oldest), per-page (10/20/50), past-events toggle."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 297.0,
+        "width": 306.0,
+        "height": 540.0,
+        "right": 370.5,
+        "bottom": 837.0,
+        "center_x": 217.5,
+        "center_y": 567.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 297.0,
+        "width": 306.0,
+        "height": 540.0,
+        "right": 370.5,
+        "bottom": 837.0,
+        "center_x": 217.5,
+        "center_y": 567.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 390.5,
+        "y": 397.0,
+        "width": 380,
+        "height": 340,
+        "score": 1069.5
+      }
+    },
+    {
+      "selector": "#events-result-count",
+      "title": "Result count",
+      "bullets": [
+        "Total matching events across all pages (Kaminari total_count)."
+      ],
+      "target": {
+        "x": 394.5,
+        "y": 382.0,
+        "width": 966.0,
+        "height": 24.0,
+        "right": 1360.5,
+        "bottom": 406.0,
+        "center_x": 877.5,
+        "center_y": 394.0
+      },
+      "avoid": {
+        "x": 394.5,
+        "y": 382.0,
+        "width": 966.0,
+        "height": 24.0,
+        "right": 1360.5,
+        "bottom": 406.0,
+        "center_x": 877.5,
+        "center_y": 394.0
+      },
+      "placement": {
+        "side": "left",
+        "x": 24,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    },
+    {
+      "selector": "#events-pagination",
+      "title": "Pagination",
+      "bullets": [
+        "Default 20 per page; rendered above and below the results."
+      ],
+      "target": {
+        "x": 394.5,
+        "y": 297.0,
+        "width": 966.0,
+        "height": 85.0,
+        "right": 1360.5,
+        "bottom": 382.0,
+        "center_x": 877.5,
+        "center_y": 339.5
+      },
+      "avoid": {
+        "x": 394.5,
+        "y": 297.0,
+        "width": 966.0,
+        "height": 85.0,
+        "right": 1360.5,
+        "bottom": 382.0,
+        "center_x": 877.5,
+        "center_y": 339.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 530,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}

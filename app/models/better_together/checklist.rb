@@ -1,20 +1,33 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class Checklist < ApplicationRecord # rubocop:todo Style/Documentation
+  class Checklist < PlatformRecord # rubocop:todo Style/Documentation
     include Identifier
     include Creatable
     include FriendlySlug
     include Metrics::Viewable
     include Protected
     include Privacy
+    include Searchable
 
     has_many :checklist_items, -> { positioned }, class_name: '::BetterTogether::ChecklistItem', dependent: :destroy
     has_many :person_checklist_items, class_name: '::BetterTogether::PersonChecklistItem', dependent: :destroy
 
     translates :title, type: :string
 
-    slugged :title
+    # slug_uniqueness: false — Identifier (included above) already declares a
+    # platform-scoped `validates :slug, uniqueness: { scope: :platform_id }`.
+    slugged :title, slug_uniqueness: false
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :title, presence: true
 
@@ -41,6 +54,15 @@ module BetterTogether
 
     def to_param
       slug
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        identifier: identifier,
+        items: checklist_items.map(&:label)
+      }
     end
   end
 end

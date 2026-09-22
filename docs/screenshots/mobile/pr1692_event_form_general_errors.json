@@ -1,0 +1,48 @@
+{
+  "name": "pr1692_event_form_general_errors",
+  "device": "mobile",
+  "url": "/en/events/new",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "recurrence_calendar_ux",
+  "flow": "event_form_errors",
+  "source_spec": "./spec/docs_screenshots/better_together/recurrence_calendar_ux_spec.rb",
+  "callouts": [
+    {
+      "selector": "#form_errors",
+      "title": "General form errors block",
+      "bullets": [
+        "Rendered inline inside turbo_frame_tag 'form_errors' so the plain format.html fallback (Turbo disabled / no JS) is never silently blank. When Turbo Drive is active, the controller's own turbo_stream.update overwrites this frame with the shared errors partial — same frame, one final element, never both at once."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 267.390625,
+        "width": 461.0,
+        "height": 204.28125,
+        "right": 473.0,
+        "bottom": 471.671875,
+        "center_x": 242.5,
+        "center_y": 369.53125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 267.390625,
+        "width": 461.0,
+        "height": 204.28125,
+        "right": 473.0,
+        "bottom": 471.671875,
+        "center_x": 242.5,
+        "center_y": 369.53125
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 491.67,
+        "width": 270.0,
+        "height": 606,
+        "score": 789.328125
+      }
+    }
+  ]
+}

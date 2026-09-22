@@ -1,64 +1,142 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # Represents a blog post
-  class Post < ApplicationRecord
+  class Post < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Attachments::Images
     include Authorable
     include BlockFilterable
     include FriendlySlug
     include Categorizable
+    include Commentable
     include Creatable
+    include Federatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
+    include Seedable
+    include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
+    include ::Storext.model
+    include CommunityAssignable
+
+    belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     attachable_cover_image
 
     categorizable
 
+    store_attributes :display_settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
+
     translates :title, type: :string
     alias name title
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
     slugged :title
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     validates :title,
               presence: true
 
     validates :content,
               presence: true
+    validates :platform_id, presence: true
+    validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
-    # Automatically grant the post creator an authorship record
-    after_create :add_creator_as_author
+    scope :latest_first, lambda {
+      order(
+        Arel.sql('COALESCE(better_together_posts.published_at, better_together_posts.created_at) DESC'),
+        arel_table[:created_at].desc
+      )
+    }
+
+    def self.card_render_includes
+      includes = [
+        :string_translations,
+        { cover_image_attachment: :blob },
+        { contributions: :author },
+        { categories: { cover_image_attachment: :blob } }
+      ]
+
+      rich_text_association = reflect_on_association(:rich_text_content)&.name
+      includes << rich_text_association if rich_text_association
+
+      includes
+    end
+
+    # Automatically grant the post creator an authorship record only when no
+    # explicit human or robot authors were selected during creation.
+    after_commit :add_creator_as_author, on: :create
+
+    def self.extra_permitted_attributes
+      super + %i[contributors_display_visibility]
+    end
+
+    def self.permitted_attributes(id: false, destroy: false)
+      super + [
+        { comment_config_attributes: BetterTogether::CommentConfig.permitted_attributes(id:, destroy:) }
+      ]
+    end
 
     def to_s
       title
     end
 
-    configure_attachment_cleanup
-
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {})
-      as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
-          a.starts_with?('title' || a.starts_with?('slug') || a.starts_with?('content'))
-        end]
-      )
+    def mirrored?
+      source_id.present? || last_synced_at.present? || platform&.external?
     end
 
-    private
+    def preserved_remote_uuid?
+      source_id.blank? && platform&.external?
+    end
 
-    def add_creator_as_author
-      return unless respond_to?(:creator_id) && creator_id.present?
+    def source_identifier
+      source_id.presence || id
+    end
 
-      authorships.find_or_create_by(author_id: creator_id)
+    def local_to_platform?(local_platform = Current.platform)
+      return true if platform_id.blank?
+      return false unless local_platform
+
+      platform_id == local_platform.id
+    end
+
+    def remote_to_platform?(local_platform = Current.platform)
+      mirrored? && !local_to_platform?(local_platform)
+    end
+
+    configure_attachment_cleanup
+
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.post_url(self, locale: I18n.locale)
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    def as_indexed_json
+      {
+        title: title,
+        content: content&.to_plain_text
+      }
     end
   end
 end

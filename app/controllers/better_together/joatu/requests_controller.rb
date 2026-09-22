@@ -105,6 +105,7 @@ module BetterTogether
         end
 
         apply_source_prefill(resource_instance)
+        apply_target_prefill(resource_instance)
       end
 
       private
@@ -154,7 +155,7 @@ module BetterTogether
       # commonly accessed associations (categories, address) and the
       # creator's string translations to avoid N+1 queries in views.
       def resource_collection
-        @resources ||= policy_scope(resource_class.with_translations)
+        @resources ||= (index_action? ? policy_scope(resource_class.with_translations) : single_record_scope)
                        .includes(:address,
                                  { categories: :string_translations },
                                  { creator: %i[string_translations profile_image_attachment profile_image_blob] })
@@ -162,10 +163,109 @@ module BetterTogether
         instance_variable_set("@#{resource_name(plural: true)}", @resources)
       end
 
+      def index_action?
+        action_name == 'index'
+      end
+
+      # RequestPolicy::Scope deliberately excludes the MembershipRequest and
+      # ConnectionRequest STI subtypes from the general listing scope (each has
+      # its own dedicated policy Scope — see RequestPolicy::Scope::PRIVATE_REQUEST_TYPES).
+      # That exclusion is correct for #index, but for single-record lookups
+      # (show/edit/update/destroy/matches/respond_with_offer) it incorrectly
+      # 404s access that the subtype's own policy would actually permit (e.g. a
+      # platform manager viewing a MembershipRequest via the generic
+      # /exchange/requests/:id path). Fold in the ids each subtype's own policy
+      # scope makes visible so Pundit's per-instance #authorize (which resolves
+      # the correct STI policy) gets a chance to run instead of being pre-empted.
+      def single_record_scope
+        visible_ids = policy_scope(resource_class).pluck(:id)
+        visible_ids |= policy_scope(::BetterTogether::Joatu::MembershipRequest).pluck(:id)
+        visible_ids |= policy_scope(::BetterTogether::Joatu::ConnectionRequest).pluck(:id)
+
+        resource_class.with_translations.where(id: visible_ids)
+      end
+
+      # A private (standalone) Request that's excluded from the policy-scoped
+      # resource_collection still exists on this platform — for an
+      # unauthenticated visitor that reads as "please sign in", not a blanket
+      # 404 (which would also incorrectly apply to genuinely missing requests /
+      # requests on another platform).
+      def handle_resource_not_found
+        return super if current_user.present? || current_robot.present?
+
+        request_record = platform_scoped_record_ignoring_privacy
+        return super unless request_record
+
+        redirect_to new_user_session_path(locale: I18n.locale)
+      end
+
+      def platform_scoped_record_ignoring_privacy
+        platform = Current.platform || Current.host_platform
+        return nil unless platform
+
+        resource_class.where(platform_id: platform.id).friendly.find(id_param)
+      rescue ActiveRecord::RecordNotFound, StandardError
+        nil
+      end
+
       def resource_params
         rp = super
         rp[:creator_id] ||= helpers.current_person&.id
+        rp[:type] ||= requested_request_type if requested_resource_class.present?
         rp
+      end
+
+      def resource_instance(attrs = {})
+        @resource ||= (requested_resource_class || resource_class).new(attrs)
+
+        instance_variable_set("@#{resource_name}", @resource)
+      end
+
+      def requested_request_type
+        @requested_request_type ||= params[:type].presence ||
+                                    params.dig(:joatu_request, :type).presence ||
+                                    params.dig(:better_together_joatu_connection_request, :type).presence
+      end
+
+      def requested_resource_class
+        @requested_resource_class ||= if requested_request_type.present?
+                                        allowed_request_classes.fetch(requested_request_type, nil)
+                                      end
+      end
+
+      def allowed_request_classes
+        {
+          'BetterTogether::Joatu::Request' => ::BetterTogether::Joatu::Request,
+          'BetterTogether::Joatu::ConnectionRequest' => ::BetterTogether::Joatu::ConnectionRequest
+        }
+      end
+
+      def apply_target_prefill(request)
+        return unless request.is_a?(::BetterTogether::Joatu::ConnectionRequest)
+        return unless platform_target_params_present?
+
+        @target = ::BetterTogether::Platform.find_by(id: prefill_target_id)
+        return unless @target
+
+        assign_target_to_request(request, @target)
+      end
+
+      def platform_target_params_present?
+        prefill_target_type == 'BetterTogether::Platform' && prefill_target_id.present?
+      end
+
+      def prefill_target_type
+        params[:target_type].presence || params.dig(resource_name.to_sym, :target_type).presence
+      end
+
+      def prefill_target_id
+        params[:target_id].presence || params.dig(resource_name.to_sym, :target_id).presence
+      end
+
+      def assign_target_to_request(request, target)
+        request.target ||= target
+        request.target_type ||= target.class.to_s
+        request.target_id ||= target.id
       end
     end
   end

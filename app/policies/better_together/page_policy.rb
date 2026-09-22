@@ -3,18 +3,23 @@
 # app/policies/better_together/role_policy.rb
 
 module BetterTogether
-  class PagePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PagePolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
-      permitted_to?('manage_platform') || (agent.present? && agent.authored_pages.any?)
+      platform_content_manager? || (agent.present? && (agent.authored_pages.any? || agent.contributed_pages.any?))
     end
 
     def show?
-      # Anyone can view published public pages; editors (managers or authors) can view private/unpublished pages
-      (record.published? && record.privacy_public?) || update?
+      # Community visibility is limited to members of the page's scoped community.
+      # Editors can still view private/unpublished pages.
+      (record.published? && public_or_member_scoped_community?(record)) || update?
     end
 
     def create?
-      permitted_to?('manage_platform')
+      return false unless user.present?
+
+      platform_content_manager? || self_service_content_creator?
     end
 
     def new?
@@ -22,7 +27,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform') || (agent.present? && record.authors.include?(agent))
+      platform_content_manager? || (agent.present? && record.editable_contributors.include?(agent))
     end
 
     def edit?
@@ -30,45 +35,76 @@ module BetterTogether
     end
 
     def destroy?
-      permitted_to?('manage_platform') && !record.protected?
+      platform_content_manager? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
         # Preload title translations and block images for page cards
-        base = scope.with_translations
+        base = platform_scoped(scope.with_translations
                     .includes(
                       blocks: { background_image_file_attachment: :blob }
-                    )
+                    ))
+        pt = BetterTogether::Page.arel_table
 
-        if permitted_to?('manage_platform')
-          # Managers see all pages
+        if platform_content_manager?
+          # Platform stewards and host-community content managers see all pages
           base.order(:identifier)
+        elsif robot.present?
+          page_query = visible_privacy_query(pt).and(pt[:published_at].lteq(Time.current))
+          base.where(page_query)
         elsif agent.present?
-          # Authors see their own pages (private or unpublished) plus published public pages
-          pt = BetterTogether::Page.arel_table
+          # Contributors see their own pages (private or unpublished) plus published public pages
           at = BetterTogether::Authorship.arel_table
 
-          # Subquery for pages authored by this agent
+          # Subquery for pages with author/editor contributions by this agent
           authored_subquery = at
                               .project(at[:authorable_id])
                               .where(
-                                at[:author_id].eq(agent.id)
+                                at[:author_type].eq(agent.class.name)
+                                  .and(at[:author_id].eq(agent.id))
+                                  .and(at[:role].in([
+                                                      BetterTogether::Authorship::AUTHOR_ROLE,
+                                                      BetterTogether::Authorship::EDITOR_ROLE
+                                                    ]))
                                   .and(at[:authorable_type].eq('BetterTogether::Page'))
                               )
 
-          # Predicate for published public pages
+          visible_privacy = visible_privacy_query(pt)
+
+          # Predicate for published pages visible to this audience
           published_pub = pt[:published_at].lteq(Time.current)
-                                           .and(pt[:privacy].eq('public'))
+                                           .and(visible_privacy)
 
           # Combine predicates: either published public or authored
           base.where(published_pub.or(pt[:id].in(authored_subquery)))
         else
-          # Regular users only see published public pages
-          base.published
-              .privacy_public
+          # Guests only see published public pages
+          base.published.privacy_public
         end
       end
+
+      private
+
+      # Scope-level check uses host_community because there is no specific record in scope context.
+      # Compare with PagePolicy#platform_content_manager? (below) which checks record.community.
+      def platform_content_manager?
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform) ||
+          permitted_to?('manage_community_content', host_community)
+      end
+
+      def host_community
+        @host_community ||= BetterTogether::Community.find_by(host: true)
+      end
+    end
+
+    private
+
+    # Record-level check: uses the page's own community so that community-content-managers
+    # of that specific community can edit/destroy the page. This intentionally differs from
+    # Scope#platform_content_manager? which falls back to the host community for list queries.
+    def platform_content_manager?
+      platform_manager? || permitted_to?('manage_community_content', record.community)
     end
   end
 end

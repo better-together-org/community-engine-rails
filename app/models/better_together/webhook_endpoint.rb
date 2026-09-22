@@ -12,7 +12,7 @@ module BetterTogether
   # all events are delivered.
   #
   # Outbound payloads are signed with HMAC-SHA256 using the endpoint's `secret`.
-  class WebhookEndpoint < ApplicationRecord
+  class WebhookEndpoint < PlatformRecord
     self.table_name = 'better_together_webhook_endpoints'
 
     # Encrypt webhook signing secret at rest using Active Record Encryption

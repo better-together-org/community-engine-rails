@@ -1,0 +1,74 @@
+<% return unless @show_safety_review_section %>
+
+<section aria-labelledby="safety-review-heading" class="card shadow-sm mt-4">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mb-3">
+      <div>
+        <h2 id="safety-review-heading" class="h4 mb-2">
+          <%= t('host_dashboard.safety_review.heading') %>
+        </h2>
+        <p class="text-muted mb-0">
+          <%= t('host_dashboard.safety_review.description',
+                open_cases: @safety_review_snapshot[:open_cases_count],
+                visible_reports: @safety_review_report_count) %>
+        </p>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <div class="d-flex flex-wrap gap-2" aria-label="<%= t('host_dashboard.safety_review.summary_label') %>">
+          <span class="badge rounded-pill text-bg-primary fs-6">
+            <%= t('host_dashboard.safety_review.open_cases_badge', count: @safety_review_snapshot[:open_cases_count]) %>
+          </span>
+          <span class="badge rounded-pill text-bg-warning fs-6">
+            <%= t('host_dashboard.safety_review.urgent_cases_badge', count: @safety_review_snapshot[:urgent_open_cases_count]) %>
+          </span>
+          <span class="badge rounded-pill text-bg-secondary fs-6">
+            <%= t('host_dashboard.safety_review.visible_reports_badge', count: @safety_review_report_count) %>
+          </span>
+        </div>
+
+        <%= link_to t('host_dashboard.safety_review.review_queue_link'),
+                    safety_cases_path,
+                    class: 'btn btn-primary btn-sm' %>
+        <%= link_to t('host_dashboard.safety_review.view_reports_link'),
+                    reports_path,
+                    class: 'btn btn-outline-primary btn-sm' %>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-3">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('host_dashboard.safety_review.summary.unassigned_cases') %></div>
+            <div class="fs-4 fw-bold"><%= @safety_review_snapshot[:unassigned_open_cases_count] %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('host_dashboard.safety_review.summary.participant_updates') %></div>
+            <div class="fs-4 fw-bold"><%= @safety_review_snapshot[:participant_visible_notes_count] %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('host_dashboard.safety_review.summary.content_review_items') %></div>
+            <div class="fs-4 fw-bold"><%= @safety_review_snapshot[:content_review_items_count] %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('host_dashboard.safety_review.summary.retaliation_risk') %></div>
+            <div class="fs-4 fw-bold"><%= @safety_review_snapshot[:retaliation_risk_open_cases_count] %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

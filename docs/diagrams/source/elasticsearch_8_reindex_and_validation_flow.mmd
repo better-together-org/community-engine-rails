@@ -1,0 +1,18 @@
+        flowchart TD
+            EnvVars[Elasticsearch env vars] --> ClientOptions[ElasticsearchClientOptions.build]
+            ClientOptions --> Client[Elasticsearch::Client]
+            Client --> Backend[Search backend]
+
+            Backend --> AuditTask[rake better_together:search:audit]
+            AuditTask --> AuditService[AuditService]
+            AuditService --> Health[Backend status]
+            AuditService --> Drift[DB to index drift report]
+
+            Backend --> ReindexAll[rake better_together:search:reindex_all]
+            Backend --> Refresh[rake better_together:search:refresh]
+            Backend --> Recreate[rake better_together:search:recreate_indices]
+
+            Registry[Search::Registry
+Page + Post] --> ReindexAll
+            Registry --> Refresh
+            Registry --> Recreate

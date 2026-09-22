@@ -1,0 +1,49 @@
+{
+  "name": "content_reporting_actions_page_feedback_bar",
+  "device": "mobile",
+  "url": "/en/shared-kitchen-guide",
+  "title": "Shared Kitchen Guide | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "page_feedback_bar",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": ".bt-page-feedback-bar",
+      "title": "Pages now add a separate bottom feedback bar below sharing",
+      "bullets": [
+        "The page-specific feedback entry sits beside the existing share pattern instead of above the content.",
+        "The report action stays explicit and accessible without changing the legacy ellipsis menus elsewhere."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 440.875,
+        "width": 476.0,
+        "height": 91.0,
+        "right": 488.0,
+        "bottom": 531.875,
+        "center_x": 250.0,
+        "center_y": 486.375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 440.875,
+        "width": 476.0,
+        "height": 91.0,
+        "right": 488.0,
+        "bottom": 531.875,
+        "center_x": 250.0,
+        "center_y": 486.375
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 551.88,
+        "width": 270.0,
+        "height": 488,
+        "score": 729.125
+      }
+    }
+  ]
+}

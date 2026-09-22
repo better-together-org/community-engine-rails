@@ -1,0 +1,11 @@
+<%# locals: (recipient:) -%>
+<%= form_with model: BetterTogether::MessageRequest.new, url: message_requests_path do |f| %>
+  <%= f.hidden_field :recipient_id, value: recipient.id %>
+  <div class="mb-3">
+    <%= f.label :note, t('better_together.message_requests.note_label'), class: 'form-label' %>
+    <%= f.text_area :note, rows: 4, class: 'form-control',
+                    placeholder: t('better_together.message_requests.note_placeholder'),
+                    maxlength: 1000 %>
+  </div>
+  <%= f.submit t('better_together.message_requests.send_request_btn'), class: 'btn btn-primary' %>
+<% end %>

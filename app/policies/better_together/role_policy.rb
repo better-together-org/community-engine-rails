@@ -3,7 +3,7 @@
 # app/policies/better_together/role_policy.rb
 
 module BetterTogether
-  class RolePolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class RolePolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       user.present?
     end
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform')
+      user.present? && can_manage_role_resource_type?
     end
 
     def edit?
@@ -29,13 +29,38 @@ module BetterTogether
     end
 
     def destroy?
-      permitted_to?('manage_platform') && !record.protected?
+      user.present? && can_manage_role_resource_type? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.positioned
+        return scope.none unless user.present?
+
+        platform_scoped.positioned
       end
+    end
+
+    private
+
+    def can_manage_role_resource_type?
+      # When called with the class (e.g. policy(Role).create?), fall back to any-role check
+      return can_manage_any_roles? if record.is_a?(Class)
+
+      target = record.platform
+
+      case record.resource_type
+      when 'BetterTogether::Platform'
+        permitted_to?('manage_platform_roles', target)
+      when 'BetterTogether::Community'
+        permitted_to?('manage_community_roles', target)
+      else
+        # For other resource types (Person, Metrics, etc.), require any role management permission
+        can_manage_any_roles?(target)
+      end
+    end
+
+    def can_manage_any_roles?(target = current_platform)
+      permitted_to?('manage_platform_roles', target) || permitted_to?('manage_community_roles', target)
     end
   end
 end

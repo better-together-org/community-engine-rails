@@ -1,0 +1,106 @@
+<%
+  feature_options = BetterTogether::FeatureRegistry.all.values.map { |gate| [gate[:name], gate[:key]] }
+  if feature_access_grant.feature_key.present? && BetterTogether::FeatureRegistry.find(feature_access_grant.feature_key).nil?
+    feature_options.unshift([BetterTogether::FeatureRegistry.name_for(feature_access_grant.feature_key),
+                             feature_access_grant.feature_key])
+  end
+%>
+
+<%= form_with model: [platform, feature_access_grant], local: true do |form| %>
+  <%= render 'layouts/better_together/errors', object: feature_access_grant %>
+
+  <% if feature_access_grant.persisted? %>
+    <div class="mb-3">
+      <label class="form-label"><%= t('better_together.feature_access_grants.form.person', default: 'Person') %></label>
+      <div class="form-control-plaintext"><%= feature_access_grant.person.select_option_title %></div>
+    </div>
+  <% else %>
+    <div class="mb-3">
+      <%= form.label :person_id,
+                     t('better_together.feature_access_grants.form.person', default: 'Person'),
+                     class: 'form-label' %>
+      <%= form.select :person_id,
+                      feature_access_grant.person.present? ? [[feature_access_grant.person.select_option_title, feature_access_grant.person_id]] : [],
+                      { prompt: t('better_together.feature_access_grants.form.person_prompt', default: 'Search for a person') },
+                      {
+                        class: 'form-select',
+                        required: true,
+                        data: {
+                          controller: 'better_together--slim-select',
+                          'better_together--slim-select-options-value': {
+                            ajax: {
+                              url: available_people_platform_path(platform)
+                            },
+                            settings: {
+                              searchPlaceholder: t('better_together.feature_access_grants.form.person_prompt',
+                                                   default: 'Search for a person'),
+                              searchHighlight: true,
+                              closeOnSelect: true,
+                              allowDeselect: true,
+                              openPosition: 'down'
+                            }
+                          }.to_json
+                        }
+                      } %>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= form.label :feature_key,
+                     t('better_together.feature_access_grants.form.feature', default: 'Feature'),
+                     class: 'form-label' %>
+      <%= form.select :feature_key,
+                      options_for_select(feature_options, feature_access_grant.feature_key),
+                      {},
+                      class: 'form-select', required: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :access_level,
+                     t('better_together.feature_access_grants.form.access_level', default: 'Access level'),
+                     class: 'form-label' %>
+      <%= form.select :access_level,
+                      options_for_select(BetterTogether::FeatureAccessGrant::ACCESS_LEVELS.keys.map { |level| [level.to_s.humanize, level] },
+                                         feature_access_grant.access_level),
+                      {},
+                      class: 'form-select', required: true %>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-6">
+      <%= form.label :expires_at,
+                     t('better_together.feature_access_grants.form.expires_at', default: 'Expires at'),
+                     class: 'form-label' %>
+      <%= form.datetime_local_field :expires_at, class: 'form-control' %>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label"><%= t('better_together.feature_access_grants.form.current_rollout', default: 'Current rollout') %></label>
+      <div class="form-control-plaintext">
+        <% current_feature_key = feature_access_grant.feature_key.presence || BetterTogether::FeatureRegistry.keys.first %>
+        <% if BetterTogether::FeatureRegistry.find(current_feature_key).present? %>
+          <%= platform.feature_rollout_for(current_feature_key).humanize %>
+        <% else %>
+          <%= t('better_together.feature_access_grants.form.unknown_rollout',
+                default: 'Unknown / retired feature') %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <%= form.label :notes,
+                   t('better_together.feature_access_grants.form.notes', default: 'Notes'),
+                   class: 'form-label' %>
+    <%= form.text_area :notes, rows: 4, class: 'form-control' %>
+  </div>
+
+  <div class="d-flex gap-2 mt-4">
+    <%= form.submit class: 'btn btn-primary' %>
+    <%= link_to t('globals.cancel', default: 'Cancel'),
+                platform_feature_access_grants_path(platform),
+                class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

@@ -1,0 +1,30 @@
+flowchart TD
+    A[Governed agent attempts visibility change] --> B{Target becomes public?}
+    B -- No --> C[Allow private or internal save]
+    B -- Yes --> D[Resolve acting governed agent]
+    D --> E{Agreement accepted?}
+    E -- No --> F[Block transition with publishing agreement error]
+    E -- Yes --> G{Authorization still valid?}
+    G -- No --> H[Block transition with authorization error]
+    G -- Yes --> I[Persist public visibility state]
+    I --> J[Public discovery surfaces can read record]
+
+    subgraph Actors
+      P[Person]
+      R[Robot]
+    end
+
+    P --> D
+    R --> D
+
+    subgraph Enforcement Points
+      V[Privacy validation]
+      U[Publishable validation]
+      N[Platform network visibility validation]
+      T[MCP and request context]
+    end
+
+    D --> V
+    D --> U
+    D --> N
+    D --> T

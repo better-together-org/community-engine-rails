@@ -1,0 +1,9 @@
+{
+  "name": "release_0_11_0_person_platform_integrations",
+  "device": "mobile",
+  "url": "/en/person_platform_integrations",
+  "title": "Connected Accounts | Community Engine Host",
+  "locale": "en",
+  "feature_set": "release_0_11_0_federation_platform",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
+}

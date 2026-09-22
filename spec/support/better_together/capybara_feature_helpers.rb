@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
-  module CapybaraFeatureHelpers
+# Capybara feature test helpers.
+module BetterTogether # :nodoc:
+  # Capybara helpers for BetterTogether feature specs.
+  module CapybaraFeatureHelpers # :nodoc:
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
     include BetterTogether::Engine.routes.url_helpers
 
-    # Setup or update a single host platform and return a platform_manager user
+    # Setup or update a single host platform and return a platform-steward user
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def configure_host_platform
       # Reuse existing host platform if present, don't try to create a new one
@@ -49,11 +52,11 @@ module BetterTogether
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
 
-      platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+      platform_steward = BetterTogether::User.find_by(email: 'manager@example.test')
 
-      unless platform_manager
+      unless platform_steward
         create(
-          :user, :confirmed, :platform_manager,
+          :user, :confirmed, :platform_steward,
           email: 'manager@example.test',
           password: 'SecureTest123!@#'
         )
@@ -63,8 +66,12 @@ module BetterTogether
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-    def capybara_login_as_platform_manager
+    def capybara_login_as_platform_steward
       capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')
+    end
+
+    def capybara_login_as_platform_manager
+      capybara_login_as_platform_steward
     end
 
     def capybara_login_as_user
@@ -119,9 +126,72 @@ module BetterTogether
     end
 
     # Legacy method names for backward compatibility
+    alias login_as_platform_steward capybara_login_as_platform_steward
     alias login_as_platform_manager capybara_login_as_platform_manager
     alias sign_in_user capybara_sign_in_user
     alias sign_out_current_user capybara_sign_out_current_user
+
+    # Fills a Trix-backed rich text field — Capybara's plain `fill_in` can't
+    # target the custom <trix-editor> element Trix pairs with a hidden input.
+    # `locator` may be either the trix-editor's own explicit `id` (when the
+    # rich_text_area call was given an `id:` option, which lands on the
+    # <trix-editor> tag itself, not the hidden input — e.g. the setup
+    # wizards' description fields) or the hidden input's `name` attribute
+    # (when no explicit id was set — resolved via the input's `id` <->
+    # trix-editor's `input` attribute link). Content is set via the same JS
+    # activation approach already used for conversation Trix fields — see
+    # conversation_helpers.rb.
+    def fill_in_trix_field(locator, with:)
+      # Normalize to plain text upfront — if `with` is a rich-text object
+      # (e.g. some_record.description), `.to_s` would be raw HTML, which
+      # would never match the have_selector `text:` assertion below (that
+      # matcher checks rendered text, not HTML source).
+      plain_text = with.respond_to?(:to_plain_text) ? with.to_plain_text : with.to_s
+
+      editor_selector = if page.has_selector?("trix-editor##{locator}", visible: :all, wait: 0)
+                          "trix-editor##{locator}"
+                        else
+                          input_id = find("input[name='#{locator}']", visible: :all)[:id]
+                          "trix-editor[input=\"#{input_id}\"]"
+                        end
+
+      begin
+        activate_trix_editor(editor_selector, plain_text)
+      rescue Capybara::NotSupportedByDriverError
+        # Non-JS driver (e.g. rack_test) — Trix never activates/renders at all in this
+        # context, so there's no editor to script. Set the hidden input Trix would
+        # otherwise populate directly; this is exactly what the controller receives
+        # regardless of driver.
+        hidden_input_for_trix_editor(editor_selector, locator).set(plain_text)
+      end
+    end
+
+    def hidden_input_for_trix_editor(editor_selector, locator)
+      if page.has_selector?(editor_selector, visible: :all, wait: 0)
+        input_id = find(editor_selector, visible: :all)[:input]
+        find("input##{input_id}", visible: :all)
+      else
+        find("input[name='#{locator}']", visible: :all)
+      end
+    end
+
+    def activate_trix_editor(editor_selector, plain_text)
+      page.execute_script(<<~JS)
+        (function(){
+          var editor = document.querySelector(#{editor_selector.to_json});
+          if (!editor) return;
+          if (editor.editor && typeof editor.editor.loadHTML === 'function') {
+            editor.editor.loadHTML(#{plain_text.to_json});
+          } else {
+            editor.innerHTML = #{plain_text.to_json};
+          }
+          editor.dispatchEvent(new Event('input', { bubbles: true }));
+          editor.dispatchEvent(new Event('change', { bubbles: true }));
+        })();
+      JS
+
+      expect(page).to have_selector(editor_selector, text: plain_text, wait: 2)
+    end
 
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/PerceivedComplexity
@@ -134,7 +204,7 @@ module BetterTogether
       fill_in 'user[password_confirmation]', with: password
       fill_in 'user[person_attributes][name]', with: person.name
       fill_in 'user[person_attributes][identifier]', with: person.identifier
-      fill_in 'user[person_attributes][description]', with: person.description
+      fill_in_trix_field 'user[person_attributes][description]', with: person.description
 
       # Check agreement checkboxes. The view renders checkbox ids/names as
       # `terms_of_service_agreement` and `privacy_policy_agreement`. Older
@@ -158,7 +228,8 @@ module BetterTogether
         check 'user_accept_code_of_conduct'
       end
 
-      click_button 'Sign Up'
+      satisfy_bot_defense_minimum_wait(:registration)
+      click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm

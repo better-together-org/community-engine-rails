@@ -1,0 +1,20 @@
+<p><%= t('.greeting', name: @recipient_name) %></p>
+
+<p><%= t('.message', requestor_name: @requestor_name, community_name: @community_name) %></p>
+
+<% if @requestor_email.present? %>
+  <p><strong><%= t('.requestor_email_label') %></strong> <%= @requestor_email %></p>
+<% end %>
+
+<% if @request_description.present? %>
+  <p><strong><%= t('.request_message_label') %></strong></p>
+  <p><%= simple_format(@request_description) %></p>
+<% end %>
+
+<% if @review_url.present? %>
+  <p>
+    <%= link_to t('.review_request'), @review_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>
+
+<p><%= t('.signature_html', community_name: @community_name) %></p>

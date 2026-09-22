@@ -48,7 +48,7 @@ module BetterTogether
     end
 
     def email_params(_notification)
-      { person_platform_integration: integration, recipient: person }
+      { person_platform_integration: integration, recipient: person, platform: integration&.platform }
     end
 
     notification_methods do

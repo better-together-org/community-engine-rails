@@ -5,6 +5,13 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Mcp::PublishPostTool, type: :model do
   let(:manager_user) { create(:user, :platform_manager) }
   let(:regular_user) { create(:user) }
+  let!(:publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |agreement|
+      agreement.title = 'Content Publishing Agreement'
+      agreement.privacy = 'public'
+      agreement.protected = true
+    end
+  end
   let!(:draft_post) do
     create(:post,
            title: 'Draft Post',
@@ -30,7 +37,13 @@ RSpec.describe BetterTogether::Mcp::PublishPostTool, type: :model do
 
   describe '#call' do
     context 'when authenticated with update permissions' do
-      before { stub_mcp_request_for(described_class, user: manager_user) }
+      before do
+        stub_mcp_request_for(described_class, user: manager_user)
+        create(:better_together_agreement_participant,
+               agreement: publishing_agreement,
+               participant: manager_user.person,
+               accepted_at: Time.current)
+      end
 
       it 'publishes a draft post' do
         tool = described_class.new
@@ -84,6 +97,18 @@ RSpec.describe BetterTogether::Mcp::PublishPostTool, type: :model do
         result = JSON.parse(tool.call(post_id: draft_post.id, publish: true))
 
         expect(result['error']).to include('Not authorized')
+      end
+    end
+
+    context 'when the publishing agreement has not been accepted' do
+      before { stub_mcp_request_for(described_class, user: manager_user) }
+
+      it 'blocks publication to the public internet' do
+        tool = described_class.new
+        result = JSON.parse(tool.call(post_id: draft_post.id, publish: true))
+
+        expect(result['error']).to eq('Validation failed')
+        expect(result['details']).to include(a_string_including('publishing agreement'))
       end
     end
   end

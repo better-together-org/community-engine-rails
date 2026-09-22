@@ -1,0 +1,57 @@
+<%# locals: (record:, action_items: nil, icon_only: true, menu_alignment: 'end', trigger_classes: nil, container_classes: nil) %>
+<% items = content_actions_items_for(record, action_items:) %>
+<% return if items.empty? %>
+
+<%
+  summary_classes = [
+    'bt-content-actions__trigger',
+    trigger_classes.presence || 'btn btn-outline-secondary btn-sm'
+  ].compact.join(' ')
+  menu_classes = [
+    'bt-content-actions__menu',
+    ('bt-content-actions__menu--align-start' if menu_alignment == 'start')
+  ].compact.join(' ')
+%>
+
+<details class="<%= ['bt-content-actions', container_classes].compact.join(' ') %>"
+         data-controller="better_together--content-actions"
+         data-action="toggle->better_together--content-actions#sync keydown->better_together--content-actions#handleKeydown">
+  <summary class="<%= summary_classes %>"
+           data-better_together--content-actions-target="summary"
+           aria-haspopup="menu"
+           aria-expanded="false"
+           aria-label="<%= content_actions_trigger_label(record) %>">
+    <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+    <% unless icon_only %>
+      <span class="ms-1"><%= t('better_together.content_actions.trigger_text', default: 'Actions') %></span>
+    <% end %>
+    <span class="visually-hidden"><%= content_actions_trigger_label(record) %></span>
+  </summary>
+
+  <div class="<%= menu_classes %>"
+       data-better_together--content-actions-target="panel"
+       role="menu"
+       aria-label="<%= content_actions_menu_label(record) %>">
+    <div class="list-group list-group-flush">
+      <% items.each do |item| %>
+        <%= link_to item[:href],
+                    class: 'list-group-item list-group-item-action d-flex gap-3 align-items-start',
+                    role: 'menuitem',
+                    data: item[:data] do %>
+          <span class="text-danger mt-1" aria-hidden="true">
+            <i class="fas <%= item[:icon] %>"></i>
+          </span>
+          <span>
+            <span class="d-block fw-semibold"><%= item[:label] %></span>
+            <% if item[:description].present? %>
+              <span class="d-block small text-muted"><%= item[:description] %></span>
+            <% end %>
+          </span>
+        <% end %>
+      <% end %>
+
+      <div class="bt-content-actions__extensions"
+           data-better_together--content-actions-target="extensions"></div>
+    </div>
+  </div>
+</details>

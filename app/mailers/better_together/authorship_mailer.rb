@@ -6,7 +6,6 @@ module BetterTogether
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     def authorship_changed_notification # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
-      @platform = BetterTogether::Platform.find_by(host: true)
       @page = params[:page]
       @recipient = params[:recipient]
       @action = params[:action]

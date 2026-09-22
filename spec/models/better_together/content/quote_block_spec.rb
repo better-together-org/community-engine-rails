@@ -11,7 +11,7 @@ module BetterTogether
         expect(described_class.superclass).to eq(BetterTogether::Content::Block)
       end
 
-      it 'is content_addable' do
+      it 'is content_addable (0.11.0 content blocks ship unconditionally, not gated)' do
         expect(described_class.content_addable?).to be true
       end
 
@@ -28,10 +28,10 @@ module BetterTogether
       end
 
       describe 'defaults' do
-        it 'defaults attribution fields to empty string' do
-          expect(described_class.new.attribution_name).to eq('')
-          expect(described_class.new.attribution_title).to eq('')
-          expect(described_class.new.attribution_organization).to eq('')
+        it 'defaults attribution fields to nil (Mobility translated attributes have no built-in default)' do
+          expect(described_class.new.attribution_name).to be_nil
+          expect(described_class.new.attribution_title).to be_nil
+          expect(described_class.new.attribution_organization).to be_nil
         end
       end
 

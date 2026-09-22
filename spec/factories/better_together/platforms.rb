@@ -27,6 +27,9 @@ FactoryBot.define do
     trait :external do
       external { true }
       host { false }
+      software_variant { 'generic' }
+      federation_protocol { nil }
+      oauth_issuer_url { nil }
     end
 
     trait :oauth_provider do
@@ -38,6 +41,18 @@ FactoryBot.define do
 
     trait :public do
       privacy { 'public' }
+    end
+
+    trait :membership_requests_enabled do
+      allow_membership_requests { true }
+    end
+
+    trait :community_engine_peer do
+      external { true }
+      host { false }
+      software_variant { 'community_engine' }
+      federation_protocol { 'ce_oauth' }
+      oauth_issuer_url { host_url }
     end
   end
 end

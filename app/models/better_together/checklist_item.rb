@@ -2,7 +2,7 @@
 
 module BetterTogether
   # An item belonging to a Checklist. Translated label and description.
-  class ChecklistItem < ApplicationRecord
+  class ChecklistItem < PlatformRecord
     include Identifier
     include Creatable
     include FriendlySlug

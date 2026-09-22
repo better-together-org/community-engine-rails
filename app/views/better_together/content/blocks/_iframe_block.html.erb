@@ -1,0 +1,16 @@
+<%= cache iframe_embed_cache_key(iframe_block, iframe_block.embed_url) do %>
+  <%= render layout: 'better_together/content/blocks/block', locals: { block: iframe_block } do %>
+    <% if iframe_block.iframe_url.present? %>
+      <%= render partial: 'better_together/content/blocks/iframe_embed',
+                 locals: {
+                   block: iframe_block,
+                   iframe_url: iframe_block.embed_url,
+                   aspect_ratio: iframe_block.aspect_ratio,
+                   title: iframe_block.embed_title,
+                   caption: iframe_block.caption
+                 } %>
+    <% else %>
+      <p class="text-muted"><%= t('better_together.content.blocks.iframe_block.missing_url') %></p>
+    <% end %>
+  <% end %>
+<% end %>

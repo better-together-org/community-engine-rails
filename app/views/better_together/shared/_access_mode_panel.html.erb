@@ -1,0 +1,67 @@
+<% heading_id = dom_id(resource, :access_mode_heading) %>
+<% memberships = Array(local_assigns[:memberships]).compact %>
+<% effective_membership = memberships.find(&:active?) || memberships.first || local_assigns[:membership] %>
+
+<section class="card shadow-sm border-0 mb-4" aria-labelledby="<%= heading_id %>">
+  <div class="card-body">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+      <div>
+        <h2 class="h5 mb-2" id="<%= heading_id %>">
+          <%= t('better_together.access_modes.heading', default: 'How people join') %>
+        </h2>
+        <p class="mb-2">
+          <span class="badge <%= access_mode_badge_class(resource) %>"><%= access_mode_label(resource) %></span>
+        </p>
+        <p class="text-muted mb-0"><%= access_mode_description(resource) %></p>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-start gap-2">
+        <% if effective_membership.present? %>
+          <% status_class = effective_membership.active? ? 'text-bg-success' : 'text-bg-info' %>
+          <% status_text = if effective_membership.active?
+                             t('better_together.access_modes.current_status.active',
+                               default: 'You are already a member.')
+                           else
+                             t('better_together.access_modes.current_status.pending',
+                               default: 'Your request is pending review.')
+                           end %>
+          <span class="badge <%= status_class %>"><%= status_text %></span>
+        <% elsif resource.is_a?(BetterTogether::Community) %>
+          <% if current_person.present? && resource.supports_self_service_membership? %>
+            <% if resource.request_to_join_only? %>
+              <%= button_to t('better_together.access_modes.actions.request_to_join', default: 'Request to join'),
+                            community_person_community_memberships_path(resource, locale: I18n.locale),
+                            params: { person_community_membership: { self_service: '1' } },
+                            class: 'btn btn-primary',
+                            form: { data: { turbo: false } } %>
+            <% elsif resource.allows_direct_join? %>
+              <%= button_to t('better_together.access_modes.actions.join_now', default: 'Join now'),
+                            community_person_community_memberships_path(resource, locale: I18n.locale),
+                            params: { person_community_membership: { self_service: '1' } },
+                            class: 'btn btn-primary',
+                            form: { data: { turbo: false } } %>
+            <% end %>
+          <% elsif current_user.blank? %>
+            <%= link_to t('better_together.access_modes.actions.sign_in', default: 'Sign in'),
+                        new_user_session_path(locale: I18n.locale),
+                        class: 'btn btn-outline-primary' %>
+            <% unless host_platform&.invitation_only? %>
+              <%= link_to t('better_together.access_modes.actions.create_account', default: 'Create account'),
+                          new_user_registration_path(locale: I18n.locale),
+                          class: 'btn btn-primary' %>
+            <% end %>
+          <% end %>
+        <% elsif resource.is_a?(BetterTogether::Platform) && current_user.blank? %>
+          <%= link_to t('better_together.access_modes.actions.sign_in', default: 'Sign in'),
+                      new_user_session_path(locale: I18n.locale),
+                      class: 'btn btn-outline-primary' %>
+          <% unless resource.invitation_only? %>
+            <%= link_to t('better_together.access_modes.actions.create_account', default: 'Create account'),
+                        new_user_registration_path(locale: I18n.locale),
+                        class: 'btn btn-primary' %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>

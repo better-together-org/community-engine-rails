@@ -1,0 +1,23 @@
+<% if day_events.any? %>
+  <ul class="list-unstyled mb-0 calendar-day-events" id="calendar-day-<%= date.iso8601 %>-events">
+    <%# day_events may hold plain Event rows (non-recurring) or Occurrence value %>
+    <%# objects (recurring, from CalendarOccurrenceExpander). dom_id/event_path %>
+    <%# need the underlying Event record — Occurrence's own `.class` isn't an %>
+    <%# ActiveModel, so dom_id would raise if handed the Occurrence directly. %>
+    <% day_events.each do |event| %>
+      <% record = event.respond_to?(:parent) ? event.parent : event %>
+      <li id="<%= dom_id(record, "calendar-day-#{date.iso8601}") %>" class="calendar-day-event small">
+        <%# turbo_frame: '_top' — the month/week/day tabs on the calendar show %>
+        <%# page are each wrapped in a <turbo-frame>; without this, Turbo Drive %>
+        <%# scopes the click to that frame, and since the event show page has %>
+        <%# no matching frame in its response, the navigation silently no-ops %>
+        <%# and the browser never leaves the calendar page. %>
+        <%= link_to record.name, better_together.event_path(record),
+                     class: 'calendar-event-link', data: { turbo_frame: '_top' } %>
+        <% if event.respond_to?(:cancelled?) && event.cancelled? %>
+          <span class="badge text-bg-secondary event-session-cancelled-badge ms-2"><%= t('better_together.events.occurrences.cancelled_badge') %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

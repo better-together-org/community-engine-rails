@@ -1,199 +1,87 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <h1 class="display-5 mb-4">Community Engine</h1>
 
-<% ce_url = Rails.env.production? ? "https://communityengine.app/en" : "" %>
-<!-- Hero Section with Carousel -->
-<div class="carousel-container" style="position: relative">
-  <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-    <div class="carousel-inner">
-      <div class="carousel-item active" style="background: url(<%= asset_path('better_together/unsplash-community-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
-        <div class="overlay"></div>
-        <!-- Placeholder Attribution -->
-        <div class="attribution text-white">
-          Photo by <a href="https://unsplash.com/@hannahbusing?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Hannah Busing</a> on <a href="https://unsplash.com/photos/person-in-red-sweater-holding-babys-hand-Zyx1bK9mqmA?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
-        </div>
-      </div>
-      <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
-        <div class="overlay"></div>
-        <!-- Placeholder Attribution -->
-        <div class="attribution text-white">
-          Photo by <a href="https://unsplash.com/@charlesdeluvio?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">charlesdeluvio</a> on <a href="https://unsplash.com/photos/man-using-macbook-Lks7vei-eAg?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
-        </div>
-      </div>
-      <div class="carousel-item" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover; height: 80vh;">
-        <div class="overlay"></div>
-        <!-- Placeholder Attribution -->
-        <div class="attribution text-white">
-          Photo by <a href="https://unsplash.com/@rodlong?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Rod Long</a> on <a href="https://unsplash.com/photos/selective-focus-photography-of-you-are-loved-book-TzgZrZQFVPc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
-        </div>
-      </div>
-    </div>
-    <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </a>
-  </div>
+      <p class="lead">Community Engine is an open-source community platform toolkit for hosts who want to launch durable, values-aligned spaces without starting from scratch.</p>
 
-  <!-- Fixed Content -->
-  <div class="carousel-content text-white">
-    <div class="container py-5 my-5 text-center">
-      <div class="row py-lg-5">
-        <div class="col-lg-8 mx-auto">
-          <h1 class="display-4 fw-bold">Better Together<br /> Community Engine</h1>
-          <p class="lead">
-            Enhancing community engagement and collaboration.
-          </p>
-          <p class="lead">
-            A revolutionary open-source platform built to connect, share, and collaborate effectively within communities.
-          </p>
-          <p>
-            <a href="<%= ce_url %>/contact" class="btn btn-primary my-2">Join the Community</a>
-            <a href="<%= ce_url %>/about" class="btn btn-secondary my-2">Learn More</a>
-          </p>
+      <div class="alert alert-secondary" role="alert">
+        <strong>Seed content note.</strong> This page is intended as starter content for new Community Engine platforms. Replace or extend it with your own introduction, governance story, onboarding links, and support contacts.
+      </div>
+
+      <h2 class="h4 mt-5">What It Is</h2>
+      <p>Community Engine combines reusable social, publishing, governance, and collaboration building blocks into one adaptable platform. It is designed for communities that want a coherent foundation for participation and stewardship, not just a CMS or message board with add-ons.</p>
+
+      <h2 class="h4 mt-4">Design Intent</h2>
+      <ul>
+        <li>Accelerate onboarding for new platforms with reusable seed content, starter policies, and predictable defaults.</li>
+        <li>Preserve operator control over hosting, governance, integrations, and community rules.</li>
+        <li>Keep the repo self-contained enough that a new platform can understand the philosophy, architecture, and expected adaptations without needing hidden context.</li>
+        <li>Favor modular extensions over tightly coupled bespoke code.</li>
+        <li>Support community growth without defaulting to surveillance-style analytics or extractive engagement patterns.</li>
+      </ul>
+
+      <h2 class="h4 mt-4">Core Building Blocks</h2>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="h5">Content and Publishing</h3>
+              <p class="mb-0">Pages, posts, events, rich content blocks, translations, and privacy-aware publishing controls.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="h5">Communities and Participation</h3>
+              <p class="mb-0">Communities, memberships, invitations, moderation, and shared participation workflows.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="h5">Discovery and Coordination</h3>
+              <p class="mb-0">Search, navigation, events, resource discovery, and collaborative coordination across community spaces.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <h3 class="h5">Governance and Trust</h3>
+              <p class="mb-0">Starter policies, agreements, code of conduct, role-based access, and operator-extensible public documentation.</p>
+            </div>
+          </div>
         </div>
       </div>
+
+      <h2 class="h4 mt-5">What Hosts Should Customize</h2>
+      <ul>
+        <li>Operator identity, contact details, and governance information.</li>
+        <li>Privacy, cookie, storage, and subprocessor disclosures for the actual deployment.</li>
+        <li>Community values, participation guidelines, and moderation pathways.</li>
+        <li>Any external services or provider integrations added beyond the default engine baseline.</li>
+      </ul>
+
+      <h2 class="h4 mt-4">Source of Truth Expectations</h2>
+      <p>The Community Engine repository should remain a usable source of truth for:</p>
+      <ul>
+        <li>Design philosophy and values.</li>
+        <li>System architecture and extension points.</li>
+        <li>Operational intent and privacy defaults.</li>
+        <li>Seed content for new platforms.</li>
+        <li>Historical lessons and documented best practices that help new communities onboard well.</li>
+      </ul>
+
+      <h2 class="h4 mt-4">Recommended First Steps for a New Platform</h2>
+      <ol>
+        <li>Publish your operator contact, moderation path, and legal disclosures.</li>
+        <li>Review the built-in static pages and adapt them to your community's purpose.</li>
+        <li>Decide which integrations are truly necessary before enabling them.</li>
+        <li>Keep your public onboarding pages aligned with your actual hosting, governance, and privacy choices.</li>
+      </ol>
     </div>
   </div>
 </div>
-
-<!-- Features Section -->
-<section class="py-5 bg-light">
-  <div class="container">
-    <h2 class="fw-light text-center">Key Features</h2>
-    <div class="row">
-      <!-- Feature 1 -->
-      <div class="col-md-4">
-        <div class="card hover-effect mb-4 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Collaborative Tools</h5>
-            <p class="card-text">
-              Tools designed for maximum productivity, enabling seamless collaboration among community members. Share documents, communicate in real-time, and manage projects with ease.
-            </p>
-            <a href="<%= ce_url %>/about" class="btn btn-primary">Discover More</a>
-          </div>
-        </div>
-      </div>
-      <!-- Feature 2 -->
-      <div class="col-md-4">
-        <div class="card hover-effect mb-4 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Open Source</h5>
-            <p class="card-text">
-              Built with transparency and adaptability, promoting community-driven growth and development. Contribute to the codebase, customize features, and join our community of developers.
-            </p>
-            <a href="https://github.com/better-together-org" class="btn btn-primary">Get Involved</a>
-          </div>
-        </div>
-      </div>
-      <!-- Feature 3 -->
-      <div class="col-md-4">
-        <div class="card hover-effect mb-4 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Inclusive Environment</h5>
-            <p class="card-text">
-              A safe, welcoming space for all members to share, learn, and grow, ensuring accessibility for everyone. Participate in workshops, events, and discussions that foster inclusivity.
-            </p>
-            <a href="<%= ce_url %>/code-of-conduct" class="btn btn-primary">Read our Code of Conduct</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Interspersed Hero Images and Content Sections -->
-<!-- Section with Background Image -->
-<section class="text-center banner-section" style="background: url(<%= asset_path('better_together/unsplash-collaborate-1.jpeg') %>) no-repeat center center; background-size: cover;">
-  <div class="overlay"></div>
-  <div class="container py-5 my-5 text-white">
-    <h2>Collaborate Effectively</h2>
-    <p>Join projects, share ideas, and collaborate in real-time with community tools that empower you to make a difference.</p>
-    <a href="<%= ce_url %>/contact" class="btn btn-primary">Start Collaborating</a>
-    <!-- Placeholder Attribution -->
-    <div class="attribution text-white">
-      Photo by <a href="https://unsplash.com/@charlesdeluvio?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">charlesdeluvio</a> on <a href="https://unsplash.com/photos/man-using-macbook-Lks7vei-eAg?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
-    </div>
-  </div>
-</section>
-
-<!-- Additional Info Section -->
-<section class="py-5">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <h2 class="text-center">Community Impact</h2>
-        <p class="lead">See how our community is making a real-world impact and driving change. Our projects span environmental conservation, social justice, education, and more.</p>
-        <p>Join our efforts to create a positive impact. Whether it's organizing local events, participating in global initiatives, or supporting grassroots movements, there's a place for you.</p>
-        <a href="<%= ce_url %>/about" class="btn btn-primary">Learn About Our Impact</a>
-      </div>
-      <div class="col-md-6 text-center">
-        <%= image_tag 'better_together/helena-lopes-PGnqT0rXWLs-unsplash.jpg', alt: 'Community Impact', class: 'img-fluid has-attribution' %>
-        <!-- Specific Attribution -->
-        <div class="attribution text-white">
-          Photo by <a href="https://unsplash.com/@wildlittlethingsphoto?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Helena Lopes</a> on <a href="https://unsplash.com/photos/four-person-hands-wrap-around-shoulders-while-looking-at-sunset-PGnqT0rXWLs?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Another Interspersed Image Section with CSS Class for Overlay -->
-<section class="text-center banner-section" style="background: url(<%= asset_path('better_together/unsplash-community-2.jpeg') %>) no-repeat center center; background-size: cover;">
-  <div class="overlay"></div>
-  <div class="container py-5 my-5 text-white">
-    <h2>Innovate Together</h2>
-    <p>Explore new possibilities and innovations sparked by community-driven initiatives. Share your ideas and collaborate with others to bring them to life.</p>
-    <a href="<%= ce_url %>/contact" class="btn btn-primary">Join the Innovation</a>
-    <!-- Placeholder Attribution -->
-    <div class="attribution text-white">
-      Photo by <a href="https://unsplash.com/@rodlong?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Rod Long</a> on <a href="https://unsplash.com/photos/selective-focus-photography-of-you-are-loved-book-TzgZrZQFVPc?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash" class="text-white">Unsplash</a>
-    </div>
-  </div>
-</section>
-
-<!-- Custom CSS for Carousel Content Positioning and Overlays -->
-<style>
-.carousel-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  padding: 0 15px;
-}
-.carousel-inner {
-  height: 80vh;
-  position: relative;
-}
-.carousel-item {
-  height: 80vh;
-  position: relative;
-}
-.overlay {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Adjust opacity as needed */
-}
-.banner-section {
-  min-height: 50vh; /* Set a scalable minimum height */
-  position: relative;
-}
-.attribution {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  font-size: 0.8rem;
-  text-align: right;
-}
-
-img.has-attribution + .attribution {
-  position: relative;
-  bottom: 20px;
-  right: 20px;
-}
-</style>

@@ -5,6 +5,9 @@ require 'swagger_helper'
 RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/DescribeClass
   let(:user) { create(:better_together_user, :confirmed) }
   let(:Authorization) { "Bearer #{api_sign_in_and_get_token(user)}" } # rubocop:disable RSpec/VariableName
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   path '/api/v1/posts' do
     get 'List posts' do
@@ -66,6 +69,14 @@ RSpec.describe 'Posts API', :no_auth, type: :request do # rubocop:disable RSpec/
         let(:body) do
           { data: { type: 'posts', attributes: { title: 'Test Post', content: 'Content', privacy: 'public' } } }
         end
+
+        before do
+          create(:better_together_agreement_participant,
+                 agreement: content_publishing_agreement,
+                 participant: pm_user.person,
+                 accepted_at: Time.current)
+        end
+
         run_test!
       end
     end

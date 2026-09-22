@@ -3,14 +3,10 @@
 module BetterTogether
   # Base invitation policy class providing common authorization logic for invitation-related resources
   # This class defines standard invitation operations and delegates invitable-specific logic to subclasses
-  class InvitationPolicy < ApplicationPolicy
+  class InvitationPolicy < PlatformRecordPolicy
     def create?
       return false unless user.present?
 
-      # Platform managers may create any invitation regardless of invitable type
-      return true if permitted_to?('manage_platform')
-
-      # Delegate to the concrete invitable-specific check
       allowed_on_invitable?
     end
 
@@ -26,13 +22,12 @@ module BetterTogether
     end
 
     # Base scope class for invitation policies providing common filtering logic
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       def resolve
         return scope.none unless user.present?
-        return scope.all if permitted_to?('manage_platform')
 
         # Users see invitations for resources they can manage
-        filtered_invitations_scope
+        platform_scoped(filtered_invitations_scope)
       end
 
       protected
@@ -44,16 +39,49 @@ module BetterTogether
 
       # Helper method for building invitable type conditions
       def invitable_type_condition(type_class)
-        scope.joins(:invitable)
-             .where(better_together_invitations: { invitable_type: type_class.name })
+        scope.where(invitable_type: type_class.name)
       end
     end
 
     protected
 
-    # Template method to be implemented by subclasses
     def allowed_on_invitable?
-      raise NotImplementedError, "#{self.class} must implement #allowed_on_invitable?"
+      invitable = resolved_invitable
+      return false unless invitable
+
+      community_invitable_allowed?(invitable) || event_invitable_allowed?(invitable)
+    end
+
+    def resolved_invitable
+      return record.invitable if record.respond_to?(:invitable) && record.invitable.present?
+
+      invitable_type = record.try(:invitable_type)
+      invitable_id = record.try(:invitable_id)
+      return nil if invitable_type.blank? || invitable_id.blank?
+
+      invitable_type.constantize.find_by(id: invitable_id)
+    rescue NameError
+      nil
+    end
+
+    def event_host_match?(event)
+      return false unless agent&.valid_event_host_ids&.any?
+
+      event.event_hosts.where(host_id: agent.valid_event_host_ids).exists?
+    end
+
+    def community_invitable_allowed?(invitable)
+      return false unless invitable.is_a?(BetterTogether::Community)
+
+      permitted_to?('invite_community_members', invitable) ||
+        permitted_to?('manage_community_members', invitable) ||
+        permitted_to?('manage_community_roles', invitable)
+    end
+
+    def event_invitable_allowed?(invitable)
+      return false unless invitable.is_a?(BetterTogether::Event) && agent.present?
+
+      invitable.creator == agent || event_host_match?(invitable)
     end
   end
 end

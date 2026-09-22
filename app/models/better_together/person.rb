@@ -4,20 +4,27 @@ require 'storext'
 
 module BetterTogether
   # A human being
-  class Person < ApplicationRecord # rubocop:todo Metrics/ClassLength
+  class Person < PlatformRecord # rubocop:todo Metrics/ClassLength
     def self.primary_community_delegation_attrs
       []
     end
 
     include Author
+    include Communicator
     include Contactable
+    include CreatedRecords
     include FriendlySlug
+    include GovernanceParticipant
+    include Agentic
     include HostsEvents
     include Identifier
     include Identity
+    include InvitationParticipant
     include Member
     include PrimaryCommunity
     include Privacy
+    include Reportable
+    include Seedable
     include TimezoneAttributeAliasing
     include Viewable
     include Metrics::Viewable
@@ -31,9 +38,13 @@ module BetterTogether
 
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
-    has_many :created_conversations, as: :creator, class_name: 'BetterTogether::Conversation', dependent: :destroy
+    has_many :created_conversations,
+             foreign_key: :creator_id,
+             class_name: 'BetterTogether::Conversation',
+             dependent: :destroy,
+             inverse_of: :creator
 
-    has_many :agreement_participants, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
+    has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 
     has_many :person_blocks, foreign_key: :blocker_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
@@ -42,6 +53,8 @@ module BetterTogether
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
 
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
+    # Overrides Reportable's default (no dependent:) to preserve this model's pre-existing
+    # cascade-delete behavior for reports filed against a person.
     has_many :reports_received, as: :reportable, class_name: 'BetterTogether::Report', dependent: :destroy
 
     # Metrics reports created by this person
@@ -59,6 +72,25 @@ module BetterTogether
 
     has_many :person_platform_integrations, dependent: :destroy
 
+    has_many :source_person_links, foreign_key: :source_person_id, dependent: :destroy,
+                                   class_name: 'BetterTogether::PersonLink', inverse_of: :source_person
+    has_many :target_person_links, foreign_key: :target_person_id, dependent: :destroy,
+                                   class_name: 'BetterTogether::PersonLink', inverse_of: :target_person
+    has_many :granted_person_access_grants, foreign_key: :grantor_person_id, dependent: :destroy,
+                                            class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantor_person
+    has_many :received_person_access_grants, foreign_key: :grantee_person_id, dependent: :destroy,
+                                             class_name: 'BetterTogether::PersonAccessGrant', inverse_of: :grantee_person
+    has_many :feature_access_grants,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :destroy,
+             inverse_of: :person
+    has_many :granted_feature_access_grants,
+             foreign_key: :granted_by_person_id,
+             class_name: 'BetterTogether::FeatureAccessGrant',
+             dependent: :nullify,
+             inverse_of: :granted_by_person
+    has_many :person_linked_seeds, foreign_key: :recipient_person_id, dependent: :destroy,
+                                   class_name: 'BetterTogether::PersonLinkedSeed', inverse_of: :recipient_person
     has_many :webhook_endpoints,
              class_name: 'BetterTogether::WebhookEndpoint',
              dependent: :destroy
@@ -68,11 +100,44 @@ module BetterTogether
              foreign_key: :owner_id,
              dependent: :destroy,
              inverse_of: :owner
-
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
     has_many :event_invitations, class_name: 'BetterTogether::EventInvitation', as: :invitee, dependent: :destroy
+
+    has_many :messaging_grants_given,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantor_id,
+             dependent: :destroy,
+             inverse_of: :grantor
+    has_many :messaging_grants_received,
+             class_name: 'BetterTogether::PersonMessagingGrant',
+             foreign_key: :grantee_id,
+             dependent: :destroy,
+             inverse_of: :grantee
+    has_many :sent_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :sender_id,
+             dependent: :destroy,
+             inverse_of: :sender
+    has_many :received_message_requests,
+             class_name: 'BetterTogether::MessageRequest',
+             foreign_key: :recipient_id,
+             dependent: :destroy,
+             inverse_of: :recipient
+
+    has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
+    has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
+    has_many :person_purge_audits,
+             class_name: 'BetterTogether::PersonPurgeAudit',
+             dependent: :nullify,
+             inverse_of: :person
+    has_many :person_checklist_items, class_name: 'BetterTogether::PersonChecklistItem', dependent: :destroy, inverse_of: :person
+    has_many :ai_translation_logs,
+             class_name: 'BetterTogether::Ai::Log::Translation',
+             foreign_key: :initiator_id,
+             inverse_of: :initiator,
+             dependent: :destroy
 
     has_one :user_identification,
             lambda {
@@ -88,6 +153,18 @@ module BetterTogether
     # @return [ActiveRecord::Relation<BetterTogether::Agreement>] unaccepted required agreements
     def unaccepted_required_agreements
       BetterTogether::ChecksRequiredAgreements.unaccepted_required_agreements(self)
+    end
+
+    def accepted_agreement_participants
+      agreement_participants.accepted.includes(:agreement).order(accepted_at: :desc)
+    end
+
+    def current_agreement_participants
+      accepted_agreement_participants.select(&:current_for_agreement?)
+    end
+
+    def stale_agreement_participants
+      accepted_agreement_participants.select(&:stale_for_agreement?)
     end
 
     # Returns true if this person has unaccepted required agreements
@@ -112,11 +189,13 @@ module BetterTogether
       locale String, default: I18n.default_locale.to_s
       time_zone String, default: ENV.fetch('APP_TIME_ZONE', 'America/St_Johns')
       receive_messages_from_members Boolean, default: false
+      federate_content Boolean, default: false
     end
 
     store_attributes :notification_preferences do
       notify_by_email Boolean, default: true
       show_conversation_details Boolean, default: false
+      notify_on_comments Boolean, default: true
     end
 
     # Ensure proper coercion and persistence for preferences store attributes
@@ -138,6 +217,12 @@ module BetterTogether
       self.preferences = prefs
     end
 
+    def federate_content=(value)
+      prefs = (preferences || {}).dup
+      prefs['federate_content'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.preferences = prefs
+    end
+
     # Ensure boolean coercion for form submissions ("0"/"1"), regardless of underlying store casting
     def notify_by_email=(value)
       prefs = (notification_preferences || {}).dup
@@ -151,13 +236,17 @@ module BetterTogether
       self.notification_preferences = prefs
     end
 
+    def notify_on_comments=(value)
+      prefs = (notification_preferences || {}).dup
+      prefs['notify_on_comments'] = ActiveModel::Type::Boolean.new.cast(value)
+      self.notification_preferences = prefs
+    end
+
     validates :name,
               presence: true
     validates :locale,
               inclusion: { in: -> { I18n.available_locales.map(&:to_s) } },
               allow_nil: true
-
-    translates :description_html, backend: :action_text
 
     # Return email from user if available, otherwise from contact details
     def email
@@ -168,39 +257,75 @@ module BetterTogether
     end
 
     has_one_attached :profile_image
-    has_one_attached :cover_image
+    has_one_attached :cover_image do |attachable|
+      attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600], preprocessed: true
+      attachable.variant :optimized_png, resize_to_limit: [2400, 600], preprocessed: true
+    end
+
+    scope :anonymized, -> { where.not(anonymized_at: nil) }
 
     # Resize the profile image before rendering (non-blocking version)
     def profile_image_variant(size)
+      return profile_image if profile_image.content_type == 'image/svg+xml'
       return profile_image.variant(resize_to_fill: [size, size]) unless Rails.env.production?
 
       # In production, avoid blocking .processed calls
       profile_image.variant(resize_to_fill: [size, size])
     end
 
-    # Get optimized profile image variant without blocking rendering
+    # Return a same-origin proxy path so image requests stay compatible with CSP.
     def profile_image_url(size: 300)
       return nil unless profile_image.attached?
 
-      variant = profile_image.variant(resize_to_fill: [size, size])
+      variant = if profile_image.content_type == 'image/svg+xml'
+                  profile_image
+                else
+                  profile_image.variant(resize_to_fill: [size, size])
+                end
 
-      # For better performance, use Rails URL helpers for variant
-      Rails.application.routes.url_helpers.url_for(variant)
+      BetterTogether::MediaUrlBuilder.proxy_path_for(variant)
     rescue ActiveStorage::FileNotFoundError
       nil
     end
 
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
     end
 
-    def description_html(locale: I18n.locale)
-      super || description
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        # If SVG, return the original without transformation
+        cover_image
+      elsif cover_image.content_type == 'image/png'
+        cover_image.variant(:optimized_png)
+      else
+        cover_image.variant(:optimized_jpeg)
+      end
     end
 
     def valid_event_host_ids
       [id] + member_communities.pluck(:id)
+    end
+
+    def github_integrations
+      person_platform_integrations.github
+    end
+
+    def github_handles
+      github_integrations.order(:handle).pluck(:handle).compact_blank.uniq
+    end
+
+    def github_profile_urls
+      github_integrations.order(:handle).pluck(:profile_url).compact_blank.uniq
+    end
+
+    def contribution_records
+      contributions.includes(:authorable).order(created_at: :desc)
+    end
+
+    def content_contribution_records
+      contribution_records.where(authorable_type: ['BetterTogether::Page', 'BetterTogether::Post'])
     end
 
     def handle
@@ -220,21 +345,28 @@ module BetterTogether
     end
 
     def primary_calendar
-      @primary_calendar ||= calendars.find_or_create_by(
-        identifier: "#{identifier}-personal-calendar",
-        community:
-      ) do |calendar|
-        calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
-        calendar.privacy = 'private'
-        calendar.protected = true
+      @primary_calendar ||= begin
+        calendar_identifier = "#{identifier}-personal-calendar"
+
+        calendars.find_or_create_by!(
+          identifier: calendar_identifier,
+          community:
+        ) do |calendar|
+          calendar.name = I18n.t('better_together.calendars.personal_calendar_name', name: name)
+          calendar.privacy = 'private'
+          calendar.protected = true
+        end
+      rescue ActiveRecord::RecordNotUnique
+        calendars.find_by!(identifier: calendar_identifier, community:)
       end
     end
 
     def after_record_created
       return unless community
 
-      community.reload
-      community.update!(creator_id: id)
+      BetterTogether::Community.where(id: community_id)
+                               .where.not(creator_id: id)
+                               .update_all(creator_id: id, updated_at: Time.current)
     end
 
     # Returns all events relevant to this person's calendar view

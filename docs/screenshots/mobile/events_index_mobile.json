@@ -1,0 +1,48 @@
+{
+  "name": "events_index_mobile",
+  "device": "mobile",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "events_index_filters",
+  "flow": "events_index_mobile",
+  "source_spec": "./spec/docs_screenshots/better_together/events_index_filter_spec.rb",
+  "callouts": [
+    {
+      "selector": "#events-filter-toggle",
+      "title": "Filters toggle",
+      "bullets": [
+        "Below the lg breakpoint the sidebar collapses behind this Bootstrap toggle."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 380.390625,
+        "width": 95.046875,
+        "height": 38.0,
+        "right": 107.046875,
+        "bottom": 418.390625,
+        "center_x": 59.5234375,
+        "center_y": 399.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 380.390625,
+        "width": 95.046875,
+        "height": 38.0,
+        "right": 107.046875,
+        "bottom": 418.390625,
+        "center_x": 59.5234375,
+        "center_y": 399.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 438.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 842.609375
+      }
+    }
+  ]
+}

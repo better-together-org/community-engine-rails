@@ -3,10 +3,10 @@
 # app/models/better_together/wizard_step.rb
 module BetterTogether
   # Tracks the user's progression through the wizard
-  class WizardStep < ApplicationRecord
+  class WizardStep < PlatformRecord
     belongs_to :wizard
     belongs_to :wizard_step_definition
-    belongs_to :creator, class_name: '::BetterTogether::Person', optional: true
+    belongs_to :creator, class_name: '::BetterTogether::Person', optional: true, inverse_of: :created_wizard_steps
 
     # Delegate success_message and success_path to the wizard_step_definition
     delegate :message, to: :wizard_step_definition

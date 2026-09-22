@@ -17,15 +17,16 @@
     <%- I18n.available_locales.each do |locale| %>
       <% locale_attribute = "#{attribute}_#{locale}" %>
       <% unique_locale_attribute = "#{locale_attribute}_#{temp_id}" %>
+      <% field_id = "#{dom_id(model)}-#{locale_attribute}" %>
       <div class="tab-pane fade <%= 'show active' if locale.to_s == I18n.locale.to_s %>"
           id="<%= "#{unique_locale_attribute}-field" %>"
           role="tabpanel"
           aria-labelledby="<%= "#{unique_locale_attribute}-tab" %>"
           data-locale="<%= locale %>"
           data-better_together--translation-target="tabContent">
-        <%= required_label form, locale_attribute, class: 'form-label', locale: locale %>
+        <%= required_label form, locale_attribute, class: 'form-label', locale: locale, for: field_id %>
         <%= form.text_field locale_attribute,
-            id: "#{dom_id(model)}-#{locale_attribute}",
+            id: field_id,
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
             data: {action: "input->better_together--translation#updateTranslationStatus" },
             'data-better_together-translation-target' => "input" %>

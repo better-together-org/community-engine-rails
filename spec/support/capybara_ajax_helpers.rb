@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module CapybaraAjaxHelpers
+# Capybara helpers for waiting on AJAX requests in feature specs.
+module CapybaraAjaxHelpers # :nodoc:
   # Wait for all pending AJAX requests to complete
   # Note: This assumes Fetch API or other async operations
   def wait_for_ajax(timeout: Capybara.default_max_wait_time)

@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Operational case opened from a user safety report.
-    class Case < ApplicationRecord
+    class Case < PlatformRecord
       self.table_name = 'better_together_safety_cases'
 
       enum :status, {
@@ -19,7 +19,8 @@ module BetterTogether
       enum :lane, {
         restorative: 'restorative',
         immediate_safety: 'immediate_safety',
-        administrative: 'administrative'
+        administrative: 'administrative',
+        technical_security: 'technical_security'
       }, prefix: true
 
       enum :closure_type, {
@@ -66,7 +67,9 @@ module BetterTogether
       private
 
       def set_default_lane
-        self.lane = if urgent? || retaliation_risk?
+        self.lane = if %w[malware_detected scan_failure].include?(category)
+                      'technical_security'
+                    elsif urgent? || retaliation_risk?
                       'immediate_safety'
                     elsif %w[spam_or_scam fraud impersonation misinformation].include?(category)
                       'administrative'

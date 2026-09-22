@@ -13,6 +13,8 @@ RSpec.describe 'Enhanced Event Invitation System' do
       starts_at: 1.week.from_now,
       identifier: SecureRandom.uuid,
       privacy: 'public',
+      status: 'confirmed', # status defaults to 'draft', which EventPolicy::Scope hides from
+      # unconnected/unauthenticated visitors regardless of privacy
       creator: manager_user.person
     )
   end

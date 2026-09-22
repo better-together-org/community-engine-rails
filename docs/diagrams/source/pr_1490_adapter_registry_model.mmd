@@ -1,0 +1,34 @@
+classDiagram
+    class ApplicationController {
+      +handle_error(exception)
+      +error_reporting(exception)
+      +error_reporting_context()
+    }
+
+    class BetterTogether {
+      +register_adapter(group, name, adapter)
+      +dispatch_to_adapters(group, *args, **kwargs)
+      +register_error_reporter(name, reporter)
+      +report_error(exception, context)
+    }
+
+    class AdapterRegistry {
+      +register(group, name, adapter)
+      +dispatch(group, *args, **kwargs)
+      +clear!(group)
+    }
+
+    class DispatchError {
+      +group
+      +failures
+    }
+
+    class ErrorReporterAdapter {
+      <<callable>>
+    }
+
+    ApplicationController --> BetterTogether : report_error
+    BetterTogether --> AdapterRegistry : delegates
+    AdapterRegistry --> ErrorReporterAdapter : dispatches to many
+    AdapterRegistry --> DispatchError : raises after fan-out failures
+

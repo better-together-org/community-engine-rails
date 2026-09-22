@@ -1,0 +1,26 @@
+flowchart LR
+    subgraph GDPR Self-Service
+      A[PersonDataExportsController#create]
+      B[GeneratePersonDataExportJob]
+      C[PersonDataExportService]
+      D[Seeds::Builder]
+      E[BetterTogether::Seed]
+      F[PersonDataExport export_file]
+    end
+
+    subgraph Shared Seed Architecture
+      G[FederatedContentExportService]
+      H[LinkedSeedExportService]
+      I[Seeds::Ingest]
+      J[FederatedContentIngestService]
+      K[LinkedSeedIngestService]
+    end
+
+    A --> B --> C --> D
+    D --> E
+    D --> F
+    G --> D
+    H --> D
+    E --> I
+    I --> J
+    I --> K

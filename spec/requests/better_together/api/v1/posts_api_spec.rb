@@ -11,6 +11,13 @@ RSpec.describe 'BetterTogether::Api::V1::Posts', :no_auth do
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
   let(:platform_manager_headers) { api_auth_headers(platform_manager_user, token: platform_manager_token) }
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
+  let!(:publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |agreement|
+      agreement.title = 'Content Publishing Agreement'
+      agreement.privacy = 'public'
+      agreement.protected = true
+    end
+  end
 
   describe 'GET /api/v1/posts' do
     let(:url) { '/api/v1/posts' }
@@ -95,15 +102,22 @@ RSpec.describe 'BetterTogether::Api::V1::Posts', :no_auth do
     end
 
     context 'when authenticated as platform manager' do
-      before { post url, params: valid_params.to_json, headers: platform_manager_headers }
+      it 'blocks public creation until the publishing agreement is accepted' do
+        post url, params: valid_params.to_json, headers: platform_manager_headers
 
-      it 'creates the post' do
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it 'returns the created post' do
-        json = JSON.parse(response.body)
+      it 'creates the post after publishing agreement acceptance' do
+        create(:better_together_agreement_participant,
+               agreement: publishing_agreement,
+               participant: platform_manager_user.person,
+               accepted_at: Time.current)
 
+        post url, params: valid_params.to_json, headers: platform_manager_headers
+
+        expect(response).to have_http_status(:created)
+        json = JSON.parse(response.body)
         expect(json['data']['attributes']['title']).to eq('Test Post')
       end
     end

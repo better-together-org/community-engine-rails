@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe Role do
     let(:role) { build(:better_together_role) }
 

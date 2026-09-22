@@ -1,0 +1,49 @@
+{
+  "name": "comment_permission_controls_community_required",
+  "device": "desktop",
+  "url": "/en/posts/sample-post-6",
+  "title": "Members-Only Planning Notes | Posts | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "comment_permission_controls",
+  "flow": "comment_thread_community_required",
+  "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
+  "callouts": [
+    {
+      "selector": "#comments-community-required",
+      "title": "Community-members-only denial message",
+      "bullets": [
+        "The viewer can see this post (visibility stayed at the default \"inherit\") but is not an active member of Neighbours Only Circle.",
+        "comment_permission: \"community\" lets the post stay publicly visible while restricting who is allowed to add new comments."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 1105.578125,
+        "width": 1296.0,
+        "height": 21.0,
+        "right": 1368.0,
+        "bottom": 1126.578125,
+        "center_x": 720.0,
+        "center_y": 1116.078125
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 1105.578125,
+        "width": 1296.0,
+        "height": 21.0,
+        "right": 1368.0,
+        "bottom": 1126.578125,
+        "center_x": 720.0,
+        "center_y": 1116.078125
+      },
+      "placement": {
+        "side": "above",
+        "x": 530.0,
+        "y": 713.58,
+        "width": 380,
+        "height": 372,
+        "score": 1105.578125
+      }
+    }
+  ]
+}

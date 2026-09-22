@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_person_deletion_request",
+  "device": "desktop",
+  "url": "http://127.0.0.1:34993/en/users/edit",
+  "title": "Edit User | Test Host Community",
+  "captured_at": "2026-04-03T19:36:17Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}

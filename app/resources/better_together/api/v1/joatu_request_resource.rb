@@ -12,20 +12,21 @@ module BetterTogether
 
         translatable_attribute :name
 
-        attributes :slug, :status, :urgency
+        attributes :slug, :status, :urgency, :privacy
 
         has_one :creator, class_name: 'Person'
         has_many :agreements, class_name: 'JoatuAgreement'
 
         filter :status
         filter :urgency
+        filter :privacy
 
         def self.creatable_fields(_context)
-          %i[name status urgency]
+          %i[name status urgency privacy]
         end
 
         def self.updatable_fields(_context)
-          %i[name status urgency]
+          %i[name status urgency privacy]
         end
       end
     end

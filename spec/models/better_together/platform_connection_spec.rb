@@ -1,0 +1,401 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe BetterTogether::PlatformConnection do
+  it 'has a valid factory' do
+    connection = build(:better_together_platform_connection)
+
+    expect(connection).to be_valid
+  end
+
+  describe 'validations' do
+    it 'requires source and target platforms to differ' do
+      platform = create(:better_together_platform)
+      connection = build(:better_together_platform_connection, source_platform: platform, target_platform: platform)
+
+      expect(connection).not_to be_valid
+      expect(connection.errors[:target_platform_id]).to include('must differ from source platform')
+    end
+
+    it 'does not allow duplicate directed edges' do
+      source_platform = create(:better_together_platform)
+      target_platform = create(:better_together_platform)
+      create(:better_together_platform_connection, source_platform:, target_platform:)
+
+      duplicate = build(:better_together_platform_connection, source_platform:, target_platform:)
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:source_platform_id]).to be_present
+    end
+  end
+
+  describe '#peer_for' do
+    it 'returns the opposite platform for the source platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.peer_for(connection.source_platform)).to eq(connection.target_platform)
+    end
+
+    it 'returns the opposite platform for the target platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.peer_for(connection.target_platform)).to eq(connection.source_platform)
+    end
+  end
+
+  describe '#involves?' do
+    it 'returns true for the source platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.involves?(connection.source_platform)).to be(true)
+    end
+
+    it 'returns true for the target platform' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.involves?(connection.target_platform)).to be(true)
+    end
+
+    it 'returns false for an unrelated platform' do
+      connection = create(:better_together_platform_connection)
+      unrelated = create(:better_together_platform)
+
+      expect(connection.involves?(unrelated)).to be(false)
+    end
+  end
+
+  describe '#local_platform and #remote_platform' do
+    it 'resolves local/remote correctly when source_platform is the local platform' do
+      local = create(:better_together_platform, external: false)
+      remote = create(:better_together_platform, :community_engine_peer)
+      connection = create(:better_together_platform_connection, source_platform: local, target_platform: remote)
+
+      expect(connection.local_platform).to eq(local)
+      expect(connection.remote_platform).to eq(remote)
+    end
+
+    it 'resolves local/remote correctly when target_platform is the local platform' do
+      local = create(:better_together_platform, external: false)
+      remote = create(:better_together_platform, :community_engine_peer)
+      connection = create(:better_together_platform_connection, source_platform: remote, target_platform: local)
+
+      expect(connection.local_platform).to eq(local)
+      expect(connection.remote_platform).to eq(remote)
+    end
+  end
+
+  describe '#to_s' do
+    it 'includes both platform names, not the default Object#to_s' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.to_s).to include(connection.source_platform.name)
+      expect(connection.to_s).to include(connection.target_platform.name)
+      expect(connection.to_s).not_to include('#<BetterTogether::PlatformConnection')
+    end
+  end
+
+  describe '.for_platform' do
+    it 'returns incoming and outgoing connections for a platform' do
+      platform = create(:better_together_platform)
+      outgoing = create(:better_together_platform_connection, source_platform: platform)
+      incoming = create(:better_together_platform_connection, target_platform: platform)
+      create(:better_together_platform_connection)
+
+      expect(described_class.for_platform(platform)).to contain_exactly(outgoing, incoming)
+    end
+  end
+
+  describe '.due_for_sync' do
+    it 'excludes a connection whose backoff window has not yet elapsed' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.current)
+
+      expect(described_class.due_for_sync).not_to include(connection)
+    end
+
+    it 'includes a connection once its backoff window has elapsed' do
+      connection = create(:better_together_platform_connection)
+      # first failure backs off 5 minutes, well within the elapsed hour below
+      connection.mark_sync_failed!(message: 'timeout', failed_at: 1.hour.ago)
+
+      expect(described_class.due_for_sync).to include(connection)
+    end
+
+    it 'includes a connection with no backoff state (never failed)' do
+      connection = create(:better_together_platform_connection)
+
+      expect(described_class.due_for_sync).to include(connection)
+    end
+  end
+
+  describe 'policy settings' do
+    it 'derives compatibility booleans from explicit policy modes' do
+      connection = create(
+        :better_together_platform_connection,
+        content_sharing_policy: 'mirror_network_feed',
+        federation_auth_policy: 'api_read',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+
+      expect(connection.content_sharing_enabled).to be true
+      expect(connection.federation_auth_enabled).to be true
+      expect(connection.shared_content_types).to include('posts')
+      expect(connection.federation_scope_types).to include('identity', 'content_read')
+      expect(connection.oauth_client_id).to be_present
+      expect(connection.oauth_client_secret).to be_present
+    end
+
+    it 'clears scoped flags when the policy mode is none' do
+      connection = create(
+        :better_together_platform_connection,
+        content_sharing_policy: 'none',
+        federation_auth_policy: 'none',
+        share_posts: true,
+        allow_identity_scope: true
+      )
+
+      expect(connection.content_sharing_enabled).to be false
+      expect(connection.federation_auth_enabled).to be false
+      expect(connection.shared_content_types).to be_empty
+      expect(connection.federation_scope_types).to be_empty
+    end
+
+    it 'exposes explicit runtime capability helpers for sync and auth' do
+      connection = create(
+        :better_together_platform_connection,
+        content_sharing_policy: 'mirrored_publish_back',
+        federation_auth_policy: 'api_write',
+        share_posts: true,
+        share_events: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true,
+        allow_linked_content_read_scope: true,
+        allow_content_write_scope: true
+      )
+
+      expect(connection.allows_content_type?('posts')).to be true
+      expect(connection.allows_content_type?(:events)).to be true
+      expect(connection.allows_content_type?(:pages)).to be false
+      expect(connection.allows_federation_scope?('identity')).to be true
+      expect(connection.allows_federation_scope?(:content_write)).to be true
+      expect(connection.allows_federation_scope?(:linked_content_read)).to be true
+      expect(connection.mirrored_content_enabled?).to be true
+      expect(connection.publish_back_enabled?).to be true
+      expect(connection.login_enabled?).to be true
+      expect(connection.api_read_enabled?).to be true
+      expect(connection.linked_content_read_enabled?).to be true
+      expect(connection.api_write_enabled?).to be true
+    end
+
+    it 'tracks sync lifecycle state in settings' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_started!(cursor: 'cursor-1', started_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+      expect(connection.reload).to be_sync_running
+      expect(connection.sync_cursor).to eq('cursor-1')
+      expect(connection.last_sync_started_at_time).to be_present
+
+      connection.mark_sync_succeeded!(cursor: 'cursor-2', item_count: 3, synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'))
+      expect(connection.reload).to be_sync_succeeded
+      expect(connection.sync_cursor).to eq('cursor-2')
+      expect(connection.last_sync_item_count).to eq(3)
+      expect(connection.last_synced_at_time).to be_present
+      expect(connection.last_sync_error_message).to be_blank
+    end
+
+    it 'records sync failures without clearing the last successful completion' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_succeeded!(item_count: 1, synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'))
+
+      connection.mark_sync_failed!(message: 'Remote timeout', cursor: 'cursor-3', failed_at: Time.zone.parse('2026-03-12 12:10:00 UTC'))
+
+      expect(connection.reload).to be_sync_failed
+      expect(connection.sync_cursor).to eq('cursor-3')
+      expect(connection.last_sync_error_message).to eq('Remote timeout')
+      expect(connection.last_sync_error_at_time).to be_present
+      expect(connection.last_synced_at_time).to be_present
+    end
+
+    it 'escalates a backoff window on consecutive failures and resets it on success' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(1)
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 5.minutes)
+
+      connection.mark_sync_failed!(message: 'timeout again', failed_at: Time.zone.parse('2026-03-12 12:10:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(2)
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:10:00 UTC') + 10.minutes)
+
+      connection.mark_sync_succeeded!(synced_at: Time.zone.parse('2026-03-12 12:20:00 UTC'))
+      connection.reload
+      expect(connection.sync_failure_streak).to eq(0)
+      expect(connection.sync_backoff_until).to be_blank
+    end
+
+    it 'caps the backoff window at 6 hours regardless of how long the failure streak runs' do
+      connection = create(:better_together_platform_connection)
+
+      10.times { |n| connection.mark_sync_failed!(message: "failure #{n}", failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC')) }
+      connection.reload
+
+      expect(connection.sync_failure_streak).to eq(10)
+      expect(Time.zone.parse(connection.sync_backoff_until)).to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 6.hours)
+    end
+
+    it 'keeps the failure streak and backoff on a non-final (paginated) success' do
+      connection = create(:better_together_platform_connection)
+      connection.mark_sync_failed!(message: 'timeout', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'))
+
+      connection.mark_sync_succeeded!(synced_at: Time.zone.parse('2026-03-12 12:05:00 UTC'), final: false)
+      connection.reload
+
+      expect(connection.sync_failure_streak).to eq(1)
+      expect(connection.sync_backoff_until).to be_present
+    end
+
+    it 'uses the longer of the exponential window and the remote Retry-After' do
+      connection = create(:better_together_platform_connection)
+
+      connection.mark_sync_failed!(message: 'rate limited', failed_at: Time.zone.parse('2026-03-12 12:00:00 UTC'),
+                                   retry_after: 1800)
+      connection.reload
+
+      # streak 1 exponential window is 5 minutes; Retry-After of 1800s wins
+      expect(Time.zone.parse(connection.sync_backoff_until))
+        .to eq(Time.zone.parse('2026-03-12 12:00:00 UTC') + 1800.seconds)
+    end
+
+    it 'records an Activity for each sync lifecycle transition' do
+      connection = create(:better_together_platform_connection)
+      own_activities = -> { BetterTogether::Activity.where(trackable: connection) }
+
+      connection.mark_sync_started!(cursor: 'cursor-1')
+      expect(own_activities.call.pluck(:key)).to contain_exactly('platform_connection.sync_started')
+
+      connection.mark_sync_succeeded!(cursor: 'cursor-2', item_count: 3)
+      succeeded = own_activities.call.find_by(key: 'platform_connection.sync_succeeded')
+      expect(succeeded.parameters).to eq('item_count' => 3)
+
+      connection.mark_sync_failed!(message: 'Remote timeout', cursor: 'cursor-3')
+      failed = own_activities.call.find_by(key: 'platform_connection.sync_failed')
+      expect(failed.parameters).to eq('message' => 'Remote timeout')
+
+      expect(own_activities.call.count).to eq(3)
+    end
+
+    it 'does not bump lock_version on routine sync bookkeeping (2026-09 regression guard - one production ' \
+       'connection reached lock_version 7,270,509 over ~5 months of a runaway federation loop)' do
+      connection = create(:better_together_platform_connection)
+      starting_lock_version = connection.lock_version
+
+      connection.mark_sync_started!(cursor: 'cursor-1')
+      connection.mark_sync_succeeded!(cursor: 'cursor-2', item_count: 1, final: false)
+      connection.mark_sync_failed!(message: 'timeout')
+
+      expect(connection.reload.lock_version).to eq(starting_lock_version)
+    end
+
+    it 'trips the circuit breaker and suspends an active connection once the failure streak crosses ' \
+       'SYNC_FAILURE_SUSPEND_THRESHOLD, notifying reviewers via the normal status-change path' do
+      connection = create(:better_together_platform_connection, :active)
+      threshold = described_class::SYNC_FAILURE_SUSPEND_THRESHOLD
+
+      notification_service = instance_double(BetterTogether::PlatformConnectionNotificationService,
+                                             notify_status_change: true)
+      allow(BetterTogether::PlatformConnectionNotificationService).to receive(:new).and_return(notification_service)
+
+      tripped = nil
+      threshold.times { tripped = connection.mark_sync_failed!(message: 'token request failed') }
+
+      expect(tripped).to be(true)
+      expect(connection.reload).to be_suspended
+      expect(BetterTogether::PlatformConnectionNotificationService).to have_received(:new).with(connection)
+    end
+
+    it 'does not trip the circuit breaker below the threshold' do
+      connection = create(:better_together_platform_connection, :active)
+      threshold = described_class::SYNC_FAILURE_SUSPEND_THRESHOLD
+
+      tripped = nil
+      (threshold - 1).times { tripped = connection.mark_sync_failed!(message: 'timeout') }
+
+      expect(tripped).to be(false)
+      expect(connection.reload).to be_active
+    end
+  end
+
+  describe 'oauth credentials encryption' do
+    it 'stores oauth_client_secret encrypted at rest' do
+      connection = create(:better_together_platform_connection)
+      plaintext_secret = connection.oauth_client_secret
+
+      raw = described_class.connection
+                           .select_one("SELECT oauth_client_secret FROM better_together_platform_connections WHERE id='#{connection.id}'")
+
+      # AR::Encryption stores JSON ciphertext in the same column — never plaintext
+      expect(raw['oauth_client_secret']).not_to eq(plaintext_secret)
+      expect(raw['oauth_client_secret']).to match(/\A\{.*"p"/)
+
+      # Model decrypts transparently
+      expect(connection.reload.oauth_client_secret).to eq(plaintext_secret)
+    end
+
+    it 'stores a BCrypt digest for inbound verification' do
+      connection = create(:better_together_platform_connection)
+
+      expect(connection.oauth_client_secret_digest).to be_present
+      # BCrypt digest format: $2a$12$...
+      expect(connection.oauth_client_secret_digest).to match(/\A\$2[aby]\$/)
+    end
+
+    it 'authenticates a correct secret and rejects an incorrect one' do
+      connection = create(:better_together_platform_connection)
+      good = connection.oauth_client_secret
+
+      expect(connection.authenticate_oauth_secret(good)).to be true
+      expect(connection.authenticate_oauth_secret('wrong-secret')).to be false
+    end
+
+    it 'authenticates via BCrypt digest when digest is present' do
+      connection = create(:better_together_platform_connection)
+      good = connection.oauth_client_secret
+
+      # Verify it takes the BCrypt path (digest present)
+      expect(connection.oauth_client_secret_digest).to be_present
+      expect(connection.authenticate_oauth_secret(good)).to be true
+      expect(connection.authenticate_oauth_secret('bad')).to be false
+    end
+
+    it 'falls back to SHA-256 comparison when digest is absent' do
+      connection = create(:better_together_platform_connection)
+      good = connection.oauth_client_secret
+      connection.update_column(:oauth_client_secret_digest, nil)
+
+      expect(connection.authenticate_oauth_secret(good)).to be true
+      expect(connection.authenticate_oauth_secret('bad')).to be false
+    end
+
+    it 'rotates the client secret and updates the BCrypt digest' do
+      connection = create(:better_together_platform_connection)
+      old_id     = connection.oauth_client_id
+      old_secret = connection.oauth_client_secret
+
+      connection.rotate_oauth_client_secret!
+      connection.reload
+
+      expect(connection.oauth_client_id).to eq(old_id)
+      expect(connection.oauth_client_secret).not_to eq(old_secret)
+      expect(connection.oauth_client_secret_digest).to be_present
+      expect(connection.authenticate_oauth_secret(old_secret)).to be false
+      expect(connection.authenticate_oauth_secret(connection.oauth_client_secret)).to be true
+    end
+  end
+end

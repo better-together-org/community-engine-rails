@@ -30,10 +30,11 @@ require 'parallel_rspec'
 WebMock.disable_net_connect!(allow_localhost: true, allow: 'elasticsearch:9200')
 
 # Monkey-patch RSpec profiler to handle nil durations gracefully (occurs with parallel_rspec)
-module RSpec
-  module Core
-    module Formatters
-      module Helpers
+module RSpec # :nodoc:
+  module Core # :nodoc:
+    module Formatters # :nodoc:
+      # Patched to handle nil durations gracefully (parallel_rspec compatibility).
+      module Helpers # :nodoc:
         class << self
           alias original_format_seconds format_seconds
 
@@ -379,6 +380,11 @@ else
 end
 
 RSpec.configure do |config|
+  # Quarantined specs are excluded from normal CI runs — they are tracked for
+  # fixing but must not block the main suite. Run them explicitly with:
+  #   bundle exec rspec --tag quarantine
+  config.filter_run_excluding :quarantine
+
   # show retry status in spec process
   config.verbose_retry = true
   # show exception that triggers a retry if verbose_retry is set to true

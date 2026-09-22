@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe TranslationsController, :as_user do # rubocop:disable Metrics/BlockLength
     describe 'POST #translate' do # rubocop:disable Metrics/BlockLength
       let(:person) { BetterTogether::User.find_by(email: 'user@example.test')&.person }
@@ -24,6 +24,19 @@ module BetterTogether
       before do
         # Stub TranslationBot.new to return our mock instance
         allow(BetterTogether::TranslationBot).to receive(:new).and_return(translation_bot)
+        allow(BetterTogether).to receive(:translation_available?).and_return(true)
+      end
+
+      context 'when unauthenticated' do
+        it 'returns 404 because the route is constrained to authenticated users' do
+          logout
+
+          expect do
+            post better_together.ai_translate_path(locale: I18n.default_locale),
+                 params: valid_params
+          end.to raise_error(ActionController::RoutingError)
+          expect(BetterTogether::TranslationBot).not_to have_received(:new)
+        end
       end
 
       context 'with successful translation' do
@@ -44,7 +57,7 @@ module BetterTogether
         end
 
         it 'returns translated content as JSON' do
-          expect(response.content_type).to match(%r{application/json})
+          expect(response.content_type).to include('application/json')
           json_response = JSON.parse(response.body)
           expect(json_response['translation']).to eq(translated_content)
         end
@@ -263,6 +276,22 @@ module BetterTogether
       context 'when current_person is nil' do
         it 'handles nil initiator and returns successful translation' do
           skip 'Route requires authentication, so current_person cannot be nil in practice'
+        end
+      end
+
+      context 'when translation is unavailable for the current platform' do
+        before do
+          allow(BetterTogether).to receive(:translation_available?).and_return(false)
+        end
+
+        it 'returns service_unavailable without instantiating the bot' do
+          post better_together.ai_translate_path(locale: I18n.default_locale),
+               params: valid_params
+
+          expect(response).to have_http_status(:service_unavailable)
+          json_response = JSON.parse(response.body)
+          expect(json_response['error']).to eq(I18n.t('better_together.translations.errors.translation_unavailable'))
+          expect(BetterTogether::TranslationBot).not_to have_received(:new)
         end
       end
 

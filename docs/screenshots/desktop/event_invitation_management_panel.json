@@ -1,0 +1,11 @@
+{
+  "name": "event_invitation_management_panel",
+  "device": "desktop",
+  "url": "/en/events/e9c602f1-06aa-452a-afc0-9fa70dbfe593",
+  "title": "Organizer Invitation Review Session | Events | Test Host Community",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_invitation_workflow",
+  "flow": "event_invitation_management",
+  "source_spec": "./spec/docs_screenshots/better_together/event_invitation_workflow_spec.rb"
+}

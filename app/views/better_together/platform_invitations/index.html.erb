@@ -382,7 +382,7 @@
   <% end %>
 <% end %>
 
-<script type="text/javascript">
+<%= javascript_tag nonce: true do %>
   // Define a function to replace 'better-together' with 'better_together'
   function replaceBetterTogetherAttributes() {
     // Select all elements with data attributes starting with 'data-better-together--'
@@ -412,4 +412,4 @@
 
   document.addEventListener('DOMContentLoaded', initializeAttributeReplacement);
   document.addEventListener('turbo:load', initializeAttributeReplacement);
-</script>
+<% end %>

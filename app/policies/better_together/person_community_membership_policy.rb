@@ -1,87 +1,89 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonCommunityMembershipPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PersonCommunityMembershipPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present? && can_manage_memberships?
+      user.present? && can_manage_any_community_members?
     end
 
     def show?
-      user.present? && (me? || can_manage_memberships?)
+      user.present? && (me? || can_manage_community_members?)
     end
 
     def create?
-      user.present? && can_manage_memberships?
+      user.present? && (can_manage_community_members? || self_service_membership_create?)
     end
 
     def edit?
-      update?
-    end
-
-    def update?
-      user.present? && can_manage_memberships?
+      user.present? && can_manage_community_members?
     end
 
     def destroy?
-      user.present? && !me? && can_manage_memberships? && !record.member.permitted_to?('manage_platform')
+      user.present? && !me? && can_manage_community_members? &&
+        !record.member.permitted_to?('manage_community_roles', record.joinable)
     end
 
-    class Scope < Scope # rubocop:todo Style/Documentation
-      # rubocop:todo Metrics/PerceivedComplexity
-      # rubocop:todo Metrics/AbcSize
-      # rubocop:todo Lint/CopDirectiveSyntax
-      def resolve # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
-        # rubocop:enable Lint/CopDirectiveSyntax
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
+      def resolve
         return scope.none unless user.present?
 
-        # Check if we have a community context (viewing community members)
-        if context && context[:community_id].present?
-          return scope.none unless can_view_community_members?
-
-          return scope.where(joinable_id: context[:community_id], joinable_type: 'BetterTogether::Community')
-        end
-
-        # Check if we have a person context (viewing person's memberships)
-        if context && context[:person_id].present?
-          # Users can view their own memberships, platform managers can view any
-          return scope.none unless context[:person_id] == agent.id.to_s || can_manage_memberships?
-
-          return scope.where(member_id: context[:person_id])
-        end
-
-        # Default: show user's own memberships
-        return scope.all if can_manage_memberships?
-
-        scope.where(member_id: agent.id)
+        platform_scoped(own_memberships.or(manageable_memberships).distinct)
       end
-      # rubocop:enable Metrics/AbcSize
-      # rubocop:enable Metrics/PerceivedComplexity
 
       private
 
-      def can_view_community_members?
-        # Anyone can view public community members (filtered by community privacy in separate concern)
-        # Platform managers and community organizers can view all members
-        can_manage_memberships?
+      def own_memberships
+        scope.where(member_id: agent.id)
       end
 
-      def can_manage_memberships?
-        permitted_to?('update_community') || permitted_to?('manage_platform')
+      def manageable_memberships
+        scope.where(joinable_id: manageable_community_ids)
       end
 
-      def context
-        @context ||= options[:context]
+      def manageable_community_ids
+        BetterTogether::PersonCommunityMembership
+          .joins(role: { role_resource_permissions: :resource_permission })
+          .where(member_id: agent.id)
+          .where(better_together_resource_permissions: { identifier: %w[manage_community_members manage_community_roles] })
+          .select(:joinable_id)
       end
     end
 
     protected
 
     def me?
-      record.member == agent
+      record.respond_to?(:member) && record.member == agent
     end
 
-    def can_manage_memberships?
-      permitted_to?('update_community') || permitted_to?('manage_platform')
+    def can_manage_community_members?
+      community = record.try(:joinable)
+      return false unless community
+
+      creator_of_community?(community) ||
+        permitted_to?('manage_community_members', community) ||
+        permitted_to?('manage_community_roles', community)
+    end
+
+    def creator_of_community?(community)
+      community.respond_to?(:creator_id) && agent.present? && community.creator_id == agent.id
+    end
+
+    def self_service_membership_create?
+      return false unless me?
+      return false unless record.joinable.respond_to?(:supports_self_service_membership?)
+
+      joinable = record.joinable
+      joinable.supports_self_service_membership? && (joinable.allows_direct_join? || joinable.membership_requests_enabled?)
+    end
+
+    def can_manage_any_community_members?
+      return false unless agent
+
+      BetterTogether::PersonCommunityMembership
+        .joins(role: { role_resource_permissions: :resource_permission })
+        .where(member_id: agent.id)
+        .where(better_together_resource_permissions: { identifier: %w[manage_community_members manage_community_roles] })
+        .exists?
     end
   end
 end

@@ -19,7 +19,7 @@ module Rack
 
     # Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
     if rack_attack_redis
-      # ActiveSupport 8.0.3 still initializes ConnectionPool with a positional Hash,
+      # ActiveSupport 8.0 still initializes ConnectionPool with a positional Hash,
       # which breaks with connection_pool 3.x keyword-only initialization.
       rack_attack_redis_pool = ConnectionPool.new(
         size: rack_attack_pool_size,
@@ -35,16 +35,13 @@ module Rack
     end
 
     safelist('allow monitors') do |req|
-      allowed_user_agents = [
-        # rubocop:todo Layout/LineLength
-        'Better Stack Better Uptime Bot Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-        # rubocop:enable Layout/LineLength
-        # rubocop:todo Layout/LineLength
-        'Better Uptime Bot Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36'
-        # rubocop:enable Layout/LineLength
-      ]
-      # Requests are allowed if the return value is truthy
-      allowed_user_agents.include?(req.user_agent)
+      # Substring match on the stable "Better Uptime Bot" token, not the full
+      # UA string: BetterStack's own Chrome-version suffix drifts over time
+      # (130.0.0.0 vs 74.0.3729.169 above are two real values already seen),
+      # and an exact-string safelist silently stops matching on the next
+      # drift -- resurrecting the nlvenues-style "we throttled our own
+      # uptime monitor" regression.
+      req.user_agent.to_s.include?('Better Uptime Bot')
     end
 
     ### Throttle Spammy Clients ###
@@ -72,8 +69,28 @@ module Rack
       req.ip if req.path.start_with?('/mcp')
     end
 
-    # Throttle MCP tool call POSTs more aggressively (30 per minute)
-    throttle('mcp/tool-calls/ip', limit: 30, period: 1.minute) do |req|
+    # A /mcp/sse GET opens a Server-Sent Events stream that holds a web-server
+    # thread for the life of the connection. A well-behaved MCP client opens one
+    # and keeps it; a client that reconnects every few seconds can exhaust the
+    # thread pool and take the app down (INC 2026-08-27, communityengine.app
+    # flapping). Cap new SSE stream opens hard, below the general mcp/ip limit.
+    # 5/min still allowed a reconnect loop to hold multiple concurrent threads
+    # before tripping; 2/min closes that gap while still allowing one open +
+    # one legitimate reconnect per minute.
+    throttle('mcp/sse/ip', limit: 2, period: 1.minute) do |req|
+      req.ip if req.get? && req.path == '/mcp/sse'
+    end
+
+    # Challenge issuance is lightweight but public. Keep it available while preventing
+    # challenge-spam from becoming a cache amplification path.
+    throttle('bot_defense/challenges/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.path.include?('/bot-defense/challenges/') && req.get?
+    end
+
+    # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
+    # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
+    # single-agent tool-call sequence rarely needs more than a few calls/min).
+    throttle('mcp/tool-calls/ip', limit: 10, period: 1.minute) do |req|
       req.ip if req.path == '/mcp/messages' && req.post?
     end
 
@@ -117,9 +134,54 @@ module Rack
       req.ip if req.path.include?('/api/auth/password') && req.post?
     end
 
+    # Throttle public membership request submissions by IP (5 requests per minute).
+    # This endpoint is intentionally unauthenticated, so it needs a dedicated guard
+    # even when host apps do not wire captcha enforcement yet.
+    throttle('api_membership_requests/ip', limit: 5, period: 1.minute) do |req|
+      req.ip if req.path.include?('/api/v1/membership_requests') && req.post?
+    end
+
+    # Throttle ActiveStorage direct-upload blob creation by IP (10 requests per minute).
+    # This Rails-core endpoint has no auth of its own (ActiveStorage::DirectUploadsController
+    # inherits from ActiveStorage::BaseController, not this app's ApplicationController) and
+    # is intentionally reachable anonymously (e.g. Trix image attachments on the sign-up
+    # form), so it needs its own dedicated guard against being used to spam free writes to
+    # storage. 10/min accommodates attaching several images in one sign-up/edit session.
+    throttle('direct_uploads/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.path == '/rails/active_storage/direct_uploads' && req.post?
+    end
+
     # Throttle OAuth token endpoint by IP (10 requests per minute)
     throttle('oauth/token/ip', limit: 10, period: 1.minute) do |req|
       req.ip if req.path.include?('/oauth/token') && req.post?
+    end
+
+    # Throttle federation OAuth token endpoint by client_id (10 per minute per client).
+    # Complements the IP-based throttle — prevents a single compromised or abusive
+    # federation client from exhausting the token endpoint even across multiple IPs.
+    throttle('oauth/token/client_id', limit: 10, period: 1.minute) do |req|
+      req.params['client_id'].presence if req.path.include?('/oauth/token') && req.post?
+    end
+
+    ### Federation Content Feed Throttling ###
+
+    # Throttle the federation content feed by Bearer token prefix (120 req/min per client).
+    # Legitimate pull jobs fetch at most a few pages per minute; this stops a
+    # misconfigured or hostile peer from hammering the export endpoint.
+    throttle('federation/feed/token', limit: 120, period: 1.minute) do |req|
+      if req.path.include?('/federation/content_feed')
+        req.env['HTTP_AUTHORIZATION']&.sub(/^Bearer\s+/i, '')&.first(32)
+      end
+    end
+
+    # Secondary IP-based guard for the federation feed (6 req/min per IP --
+    # tightened from 60 as part of the 2026-09 federation hardening; a
+    # ~7.5/min stuck-cursor pull loop tripped this same limit at 60 but not
+    # early enough to matter. Legitimate peers paginate a few pages/min at
+    # most; bulk sync goes through the authenticated federation/feed/token
+    # throttle at 120/min instead).
+    throttle('federation/feed/ip', limit: 6, period: 1.minute) do |req|
+      req.ip if req.path.include?('/federation/content_feed')
     end
 
     # Throttle POST requests to /users/sign-in by email param
@@ -209,15 +271,26 @@ module Rack
 
     ### Custom Throttle Response ###
 
-    # By default, Rack::Attack returns an HTTP 429 for throttled responses,
-    # which is just fine.
-    #
-    # If you want to return 503 so that the attacker might be fooled into
-    # believing that they've successfully broken your app (or you just want to
-    # customize the response), then uncomment these lines.
-    self.throttled_responder = lambda do |_env|
+    # Deliberately 503, not 429 (revisited 2026-09-11 during the federation/MCP
+    # hardening and kept as-is): a 429 confirms to a probing client that a
+    # per-client rate limit exists and is individually tracked here -- an
+    # enumeration signal we don't want to hand out. A 503 gives no such
+    # confirmation. `Retry-After` is valid on a 503 too (RFC 9110), so it
+    # still gives a well-behaved client (including our own federation pull
+    # job) a concrete backoff hint without changing the status code.
+    self.throttled_responder = lambda do |req|
+      # The gem calls this with a Rack::Attack::Request (a Rack::Request
+      # subclass), not the raw env hash -- match its own DEFAULT_THROTTLED_RESPONDER
+      # (rack-attack lib/rack/attack/configuration.rb) access pattern: req.env[...],
+      # not req[...] (Rack::Request does not support #[] env access).
+      match_data = req.env['rack.attack.match_data'] || {}
+      period = match_data[:period].to_i
+      epoch = match_data[:epoch_time].to_i
+
+      retry_after = period.positive? && epoch.positive? ? period - (epoch % period) : 60
+
       [503, # status
-       {},   # headers
+       { 'Retry-After' => retry_after.to_s }, # headers
        ['']] # body
     end
 

@@ -1,0 +1,11 @@
+{
+  "name": "report_detail",
+  "device": "mobile",
+  "url": "http://127.0.0.1:38459/en/reports/d8e8e7cd-0632-49ed-aae5-fbcc1000b4fd",
+  "title": "Safety report | Schinner, Langworth and Hintz",
+  "captured_at": "2026-03-09T03:53:29Z",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "safety",
+  "source_spec": "./spec/docs_screenshots/better_together/safety_docs_spec.rb"
+}

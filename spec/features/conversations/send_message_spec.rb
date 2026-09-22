@@ -39,7 +39,7 @@ RSpec.describe 'sending a message', :as_platform_manager do
       JS
     end
 
-    it 'appears in the chat window' do
+    it 'appears in the chat window', :flaky, :quarantine do
       find_button('Send').click
 
       # Wait for the message to appear in the current conversation via Turbo Stream

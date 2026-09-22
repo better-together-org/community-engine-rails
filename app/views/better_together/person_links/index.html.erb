@@ -1,0 +1,29 @@
+<section class="container py-4">
+  <header class="mb-4">
+    <h1><%= t('better_together.person_links.index.title') %></h1>
+    <p class="text-muted mb-0">
+      <%= t('better_together.person_links.index.description') %>
+    </p>
+  </header>
+
+  <% if @person_links.any? %>
+    <div class="list-group">
+      <% @person_links.each do |person_link| %>
+        <% other_person = person_link.source_person == current_person ? person_link.target_person : person_link.source_person %>
+        <% display_name = other_person&.name || person_link.remote_target_name || person_link.remote_target_identifier || person_link.id %>
+        <%= link_to person_link_path(person_link), class: 'list-group-item list-group-item-action' do %>
+          <div class="d-flex w-100 justify-content-between align-items-start gap-3">
+            <div>
+              <h2 class="h6 mb-1"><%= display_name %></h2>
+              <p class="mb-1 text-muted"><%= person_link.platform_connection.target_platform.name %></p>
+              <small class="text-muted"><%= t("better_together.enums.person_link.status.#{person_link.status}") %></small>
+            </div>
+            <small class="text-muted"><%= l(person_link.updated_at, format: :short) %></small>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.person_links.index.empty') %></p>
+  <% end %>
+</section>

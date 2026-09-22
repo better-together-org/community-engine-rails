@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PersonPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
+    include SelfServicePublishablePolicy
+
     def index?
-      user.present? && permitted_to?('list_person')
+      user.present?
     end
 
     def show?
-      user.present? && (me? || permitted_to?('read_person'))
+      me? || can_read_private_people? || visible_in_scope?
     end
 
     def create?
-      user.present? && permitted_to?('create_person')
+      user.present? && (permitted_to?('create_person', current_platform) || platform_manager?)
     end
 
     def new?
@@ -19,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present? && (me? || permitted_to?('update_person'))
+      user.present? && (me? || permitted_to?('update_person', record.platform) || platform_manager?)
     end
 
     def edit?
@@ -27,19 +29,24 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && permitted_to?('delete_person')
+      user.present? && permitted_to?('delete_person', record.platform)
     end
 
     def me?
-      record === user.person # rubocop:todo Style/CaseEquality
+      user.present? && record === user.person # rubocop:todo Style/CaseEquality
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
-      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
+      def resolve # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
         base_scope = scope.with_translations
 
-        # Platform managers can see all people
-        return base_scope if permitted_to?('manage_platform')
+        # Platform isolation: all people must belong to current platform
+        return base_scope.none unless current_platform
+
+        base_scope = platform_scoped(base_scope)
+
+        # Explicit directory access can still see all people within platform.
+        return base_scope if permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles
         return base_scope.privacy_public unless agent
@@ -85,9 +92,10 @@ module BetterTogether
 
         @shared_community_member_ids = if agent.present?
                                          # Get people who are members of communities that the current person is also a member of # rubocop:disable Layout/LineLength
-                                         agent_community_ids = agent.person_community_memberships.pluck(:joinable_id)
+                                         agent_community_ids = agent.person_community_memberships.active.pluck(:joinable_id)
                                          if agent_community_ids.any?
                                            BetterTogether::PersonCommunityMembership
+                                             .active
                                              .where(joinable_id: agent_community_ids)
                                              .where.not(member_id: agent.id)
                                              .pluck(:member_id)
@@ -125,6 +133,12 @@ module BetterTogether
                                     []
                                   end
       end
+    end
+
+    private
+
+    def visible_in_scope?
+      self.class::Scope.new(user, BetterTogether::Person).resolve.where(id: record.id).exists?
     end
   end
 end

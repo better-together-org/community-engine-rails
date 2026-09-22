@@ -5,6 +5,8 @@ module BetterTogether
     # Controller for creating and downloading User Account reports
     # rubocop:disable Metrics/ClassLength
     class UserAccountReportsController < ApplicationController
+      include PlatformContext
+
       before_action :set_report, only: %i[download destroy]
 
       def index
@@ -38,7 +40,8 @@ module BetterTogether
           from_date: params.dig(:metrics_user_account_report, :filters, :from_date),
           to_date: params.dig(:metrics_user_account_report, :filters, :to_date),
           file_format: params.dig(:metrics_user_account_report, :file_format) || 'csv',
-          creator: helpers.current_person
+          creator: helpers.current_person,
+          platform: metrics_platform
         }
 
         @user_account_report = BetterTogether::Metrics::UserAccountReport.create_and_generate!(**opts)
@@ -117,7 +120,9 @@ module BetterTogether
             @user_account_report.report_file.filename.to_s,
             @user_account_report.report_file.content_type,
             @user_account_report.report_file.byte_size,
-            I18n.locale.to_s
+            I18n.locale.to_s,
+            metrics_platform.id,
+            metrics_logged_in?
           )
 
           send_data @user_account_report.report_file.download,

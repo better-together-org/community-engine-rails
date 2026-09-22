@@ -1,0 +1,98 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe BetterTogether::Message do
+  before do
+    # Malware scanning is disabled by default (ENV-gated) — this spec exercises
+    # the content-security-aware rich-text attachment rendering, so it must be enabled.
+    allow(BetterTogether::ContentSecurity::Configuration).to receive(:enabled?).and_return(true)
+  end
+
+  let(:png_data) do
+    # rubocop:disable Layout/LineLength
+    "\x89PNG\r\n\x1A\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\b\x06\x00\x00\x00\x1F\x15\xC4\x89\x00\x00\x00\nIDATx\x9Cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xB4\x00\x00\x00\x00IEND\xAEB`\x82"
+    # rubocop:enable Layout/LineLength
+  end
+
+  let(:blob) do
+    ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(png_data),
+      filename: 'rendered.png',
+      content_type: 'image/png'
+    )
+  end
+  let(:attachment_html) { ActionText::Attachment.from_attachable(blob).to_html }
+  let(:message) do
+    described_class.create!(
+      conversation: create(:conversation),
+      sender: create(:person),
+      content: "<p>hello</p>#{attachment_html}"
+    )
+  end
+
+  it 'replaces pending embedded attachments with an accessible review placeholder' do
+    rendered = Capybara.string(message.reload.content.to_s)
+
+    expect(rendered).to have_text('hello')
+    expect(rendered).to have_css('figure.attachment--held-review')
+    expect(rendered).to have_text('Attachment under review')
+    expect(rendered).not_to have_css('img')
+  end
+
+  it 'renders released public embedded attachments through the content-security proxy' do
+    BetterTogether::ContentSecurity::Subject.find_by!(subject: message, attachment_name: "content:embed:#{blob.id}").update!(
+      lifecycle_state: 'approved_public',
+      aggregate_verdict: 'clean',
+      current_visibility_state: 'public',
+      current_ai_ingestion_state: 'eligible',
+      released_at: Time.current
+    )
+
+    rendered = Capybara.string(message.reload.content.to_s)
+
+    expect(rendered).to have_css("img[src*='/content-security/active-storage/representations/proxy/']")
+  end
+
+  it 'keeps the content-security proxy src same-origin even when an asset host CDN is configured' do
+    # Regression test: config.action_controller.asset_host (e.g. a CDN fronting the
+    # S3 bucket directly) must never be applied to this src. The content-security
+    # proxy route only exists in the Rails app (it checks the scan verdict before
+    # serving), not as an object in the CDN's S3 origin — an asset-host-rewritten src
+    # 403s there instead of reaching the app.
+    original_asset_host = ActionController::Base.asset_host
+    ActionController::Base.asset_host = 'https://cdn-assets.communityengine.app'
+
+    BetterTogether::ContentSecurity::Subject.find_by!(subject: message, attachment_name: "content:embed:#{blob.id}").update!(
+      lifecycle_state: 'approved_public',
+      aggregate_verdict: 'clean',
+      current_visibility_state: 'public',
+      current_ai_ingestion_state: 'eligible',
+      released_at: Time.current
+    )
+
+    rendered = Capybara.string(message.reload.content.to_s)
+    img_src = rendered.find('img')['src']
+
+    expect(img_src).to start_with('/content-security/active-storage/representations/proxy/')
+    expect(img_src).not_to start_with('https://cdn-assets.communityengine.app')
+  ensure
+    ActionController::Base.asset_host = original_asset_host
+  end
+
+  it 'renders blocked embedded attachments with a restricted placeholder' do
+    BetterTogether::ContentSecurity::Subject.find_by!(subject: message, attachment_name: "content:embed:#{blob.id}").update!(
+      lifecycle_state: 'blocked_rejected',
+      aggregate_verdict: 'blocked',
+      current_visibility_state: 'private',
+      current_ai_ingestion_state: 'excluded',
+      released_at: nil
+    )
+
+    rendered = Capybara.string(message.reload.content.to_s)
+
+    expect(rendered).to have_css('figure.attachment--content-restricted')
+    expect(rendered).to have_text('Attachment restricted')
+    expect(rendered).not_to have_css('img')
+  end
+end

@@ -23,10 +23,10 @@ Bar or Pie Chart: Display demographic information (e.g., age, location) of activ
 Cohort Analysis: Show user retention and engagement over time, helping to identify how long users stay active after joining.
 Tools for Implementation
 Chart.js or D3.js: Use these JavaScript libraries for creating interactive and customizable charts.
-Google Charts: Offers easy-to-use tools for integrating basic charts and graphs.
+Chartkick or similar Rails helpers: Use Rails-friendly charting tools to simplify data aggregation and presentation.
 Rails Gems: Consider using gems like chartkick or groupdate to simplify data aggregation and chart generation in a Rails application.
 Data Collection and Analysis
-Track Events: Use tools like Google Analytics, Matomo, or custom tracking to collect data on user interactions and resource engagement.
+Track Events: Use the built-in metrics system or host-approved telemetry integrations to collect data on user interactions and resource engagement.
 Data Aggregation: Store and aggregate data using background jobs (e.g., Sidekiq) to periodically update charts with the latest information.
 Dashboard Integration
 Admin Dashboard: Create an admin or manager dashboard where these charts are displayed, providing real-time insights into platform usage and engagement.

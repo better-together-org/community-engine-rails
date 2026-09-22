@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require 'storext'
+
 module BetterTogether
   # A gathering
-  class Community < ApplicationRecord
+  class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Contactable
     include HostsEvents
     include Identifier
@@ -13,14 +15,63 @@ module BetterTogether
     include PlatformHost
     include Protected
     include Privacy
+    include Metrics::Shareable
     include Metrics::Viewable
+    include Reportable
+    include Searchable
+    include Shortlinkable
+    include SitemapRefreshable
+    include ::Storext.model
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
-               optional: true
+               optional: true,
+               inverse_of: :created_communities
+    has_one :primary_platform,
+            class_name: '::BetterTogether::Platform',
+            foreign_key: :community_id,
+            inverse_of: :community,
+            dependent: :nullify
+
+    # Transient (non-persisted) flag: set by PrimaryCommunity#create_primary_community
+    # when this Community is being created as some Platform's own primary
+    # community, so it doesn't try to resolve the generic ambient platform
+    # (Current.platform / host platform / Platform.first) for a platform_id
+    # that PrimaryCommunity#backfill_primary_community_platform is going to
+    # overwrite anyway once the owning platform has a persisted id. Without
+    # this, any platform after the very first ends up with its own primary
+    # community silently scoped under whatever the ambient platform happens
+    # to be (typically the host platform) instead of itself — which as of
+    # PrivacyCeilingValidatable actively breaks community creation whenever
+    # that ambient platform is more restrictive than the community being
+    # bootstrapped.
+    attr_accessor :bootstrapping_primary_community
+
+    # The very first Platform ever created has no platform yet for its own host
+    # community to reference — PrimaryCommunity#create_primary_community creates
+    # this community first (better_together_communities.platform_id is
+    # nullable), then Platform saves referencing it (community_id is NOT NULL,
+    # so Platform must reference an already-persisted community), then
+    # backfill_primary_community_platform sets this platform_id once the
+    # platform itself has a persisted id. Overrides
+    # PlatformScoped#platform_presence_optional? — see that concern for why
+    # this is a hook method rather than a redeclared belongs_to.
+    def platform_presence_optional?
+      bootstrapping_host_community? || bootstrapping_primary_community
+    end
+
+    def bootstrapping_host_community?
+      host? && !BetterTogether::Platform.exists?(host: true)
+    end
 
     has_many :calendars, class_name: 'BetterTogether::Calendar', dependent: :destroy
     has_one :default_calendar, -> { where(name: 'Default') }, class_name: 'BetterTogether::Calendar'
+    has_many :pages, class_name: 'BetterTogether::Page', dependent: :nullify
+    has_many :posts, class_name: 'BetterTogether::Post', dependent: :nullify
+
+    store_attributes :settings do
+      contributors_display_visibility String, default: 'inherit'
+    end
 
     # Community invitations
     has_many :invitations, -> { where(invitable_type: 'BetterTogether::Community') },
@@ -34,34 +85,57 @@ module BetterTogether
     slugged :name
 
     translates :name, type: :string
-    translates :description, type: :text
-    translates :description_html, backend: :action_text
+    translates :description, backend: :action_text
+
+    searchable pg_search: {
+      against: [:identifier],
+      using: {
+        tsearch: {
+          prefix: true,
+          dictionary: 'simple'
+        }
+      }
+    }
 
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     has_one_attached :cover_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [2400, 600],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [2400, 600],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
+
+    alias card_image cover_image
 
     has_one_attached :logo do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
-                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 }, format: 'jpg'
+                                          saver: { strip: true, quality: 90, interlace: true, optimize_coding: true, trellis_quant: true, quant_table: 3 },
+                                          format: 'jpg',
+                                          preprocessed: true
       # rubocop:enable Layout/LineLength
       attachable.variant :optimized_png, resize_to_limit: [200, 200],
-                                         saver: { strip: true, quality: 90, optimize_coding: true }, format: 'png'
+                                         saver: { strip: true, quality: 90, optimize_coding: true },
+                                         format: 'png',
+                                         preprocessed: true
     end
 
     # Virtual attributes to track removal
@@ -72,17 +146,53 @@ module BetterTogether
     before_save :purge_cover_image, if: -> { remove_cover_image == '1' }
     before_save :purge_logo, if: -> { remove_logo == '1' }
     after_create :create_default_calendar
+    after_commit :clear_host_community_cache, if: -> { saved_change_to_attribute?(:host) }
 
     validates :name, presence: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
+
+    def self.extra_permitted_attributes
+      super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
+    end
+
+    def self.host_community
+      @host_community ||= find_by(host: true)
+    end
+
+    def self.reset_host_community_cache!
+      @host_community = nil
+    end
 
     def as_community
       becomes(self.class.base_class)
     end
 
+    def clear_host_community_cache
+      self.class.reset_host_community_cache!
+    end
+
+    def membership_requests_enabled?(platform: primary_platform || ::BetterTogether::Platform.find_by(host: true))
+      ActiveModel::Type::Boolean.new.cast(self[:allow_membership_requests]) &&
+        ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
+    end
+
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
-      cover_image.variant(resize_to_fill: [width, height]).processed
+      cover_image.variant(resize_to_fill: [width, height])
     end
+
+    def optimized_cover_image
+      if cover_image.content_type == 'image/svg+xml'
+        cover_image
+      elsif cover_image.content_type == 'image/png'
+        cover_image.variant(:optimized_png)
+      else
+        cover_image.variant(:optimized_jpeg)
+      end
+    end
+
+    alias optimized_card_image optimized_cover_image
 
     def optimized_logo
       if logo.content_type == 'image/svg+xml'
@@ -92,10 +202,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif logo.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        logo.variant(:optimized_png).processed
+        logo.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        logo.variant(:optimized_jpeg).processed
+        logo.variant(:optimized_jpeg)
       end
     end
 
@@ -107,10 +217,10 @@ module BetterTogether
       # For other formats, analyze to determine transparency
       elsif profile_image.content_type == 'image/png'
         # If PNG with transparency, return the optimized PNG variant
-        profile_image.variant(:optimized_png).processed
+        profile_image.variant(:optimized_png)
       else
         # Otherwise, use the optimized JPG variant
-        profile_image.variant(:optimized_jpeg).processed
+        profile_image.variant(:optimized_jpeg)
       end
     end
 
@@ -124,16 +234,42 @@ module BetterTogether
       (invited_ids + existing_member_ids).uniq
     end
 
+    def short_link_target_url
+      BetterTogether::Engine.routes.url_helpers.community_url(self, locale: I18n.locale)
+    end
+
     private
 
     def create_default_calendar
-      # Ensure identifiers remain unique across calendars by namespacing with the community identifier
-      calendars.create!(
-        identifier: "default-#{identifier}",
-        name: 'Default',
-        description: I18n.t('better_together.calendars.default_description',
-                            community_name: name,
-                            default: 'Default calendar for %<community_name>s')
+      calendar_identifier = "default-#{identifier}"
+      calendar = build_default_calendar(calendar_identifier)
+      calendar.save! if calendar.new_record? || calendar.changed?
+    rescue ActiveRecord::RecordInvalid => e
+      log_default_calendar_seed_error(e.record, calendar_identifier)
+      raise
+    end
+
+    def build_default_calendar(calendar_identifier)
+      calendars.find_or_initialize_by(identifier: calendar_identifier).tap do |calendar|
+        # Calendar slugs are globally unique, so the default calendar also needs
+        # a deterministic unique slug rather than the shared "default" slug.
+        calendar.slug = calendar_identifier if calendar.slug.blank?
+        calendar.name = 'Default' if calendar.name.blank?
+        calendar.description = I18n.t(
+          'better_together.calendars.default_description',
+          community_name: name,
+          default: 'Default calendar for %<community_name>s'
+        )
+      end
+    end
+
+    def log_default_calendar_seed_error(record, calendar_identifier)
+      Rails.logger.error(
+        '[BetterTogether::Community#create_default_calendar] ' \
+        "community_id=#{id} identifier=#{identifier} " \
+        "calendar_identifier=#{calendar_identifier} errors=#{record.errors.full_messages.join(' | ')} " \
+        "attrs=#{record.attributes.slice('id', 'community_id', 'identifier', 'locale', 'privacy', 'protected').inspect} " \
+        "slug=#{record.try(:slug).inspect} name=#{record.try(:name).inspect}"
       )
     end
 

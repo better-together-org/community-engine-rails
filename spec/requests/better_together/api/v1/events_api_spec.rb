@@ -11,6 +11,9 @@ RSpec.describe 'BetterTogether::Api::V1::Events', :no_auth do
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
   let(:platform_manager_headers) { api_auth_headers(platform_manager_user, token: platform_manager_token) }
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'GET /api/v1/events' do
     let(:url) { '/api/v1/events' }
@@ -59,6 +62,80 @@ RSpec.describe 'BetterTogether::Api::V1::Events', :no_auth do
 
       it 'returns unauthorized status' do
         expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'when a public event is a draft' do
+      let(:event_creator_user) { create(:better_together_user, :confirmed) }
+      let!(:draft_public_event) do
+        create(:event, privacy: 'public', status: 'draft', creator: event_creator_user.person,
+                       starts_at: 1.week.from_now, ends_at: 1.week.from_now + 2.hours)
+      end
+
+      it 'excludes it for an unconnected authenticated person' do
+        get url, headers: auth_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).not_to include(draft_public_event.id)
+      end
+
+      it 'includes it for the creator' do
+        creator_token = api_sign_in_and_get_token(event_creator_user)
+        creator_headers = api_auth_headers(event_creator_user, token: creator_token)
+
+        get url, headers: creator_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(draft_public_event.id)
+      end
+
+      it 'includes it for a platform event manager' do
+        get url, headers: platform_manager_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(draft_public_event.id)
+      end
+
+      it 'includes it for a connected event host' do
+        host_person = person
+        create(:better_together_event_host, event: draft_public_event, host: host_person)
+
+        get url, headers: auth_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(draft_public_event.id)
+      end
+    end
+
+    context 'when a private event exists' do
+      let(:event_creator_user) { create(:better_together_user, :confirmed) }
+      let!(:private_event) do
+        create(:event, privacy: 'private', creator: event_creator_user.person,
+                       starts_at: 1.week.from_now, ends_at: 1.week.from_now + 2.hours)
+      end
+
+      it 'excludes it for an unconnected authenticated person' do
+        get url, headers: auth_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).not_to include(private_event.id)
+      end
+
+      it 'includes it for a platform event manager (matches the HTML index policy scope)' do
+        get url, headers: platform_manager_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(private_event.id)
+      end
+
+      it 'includes it for a connected event host even though it is private (matches the HTML index policy scope)' do
+        host_person = person
+        create(:better_together_event_host, event: private_event, host: host_person)
+
+        get url, headers: auth_headers
+        event_ids = JSON.parse(response.body)['data'].map { |e| e['id'] }
+
+        expect(event_ids).to include(private_event.id)
       end
     end
   end
@@ -133,7 +210,14 @@ RSpec.describe 'BetterTogether::Api::V1::Events', :no_auth do
     end
 
     context 'when authenticated as platform manager' do
-      before { post url, params: valid_params.to_json, headers: platform_manager_headers }
+      before do
+        create(:better_together_agreement_participant,
+               agreement: content_publishing_agreement,
+               participant: platform_manager_user.person,
+               accepted_at: Time.current)
+
+        post url, params: valid_params.to_json, headers: platform_manager_headers
+      end
 
       it 'creates the event' do
         expect(response).to have_http_status(:created)

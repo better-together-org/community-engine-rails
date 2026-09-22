@@ -12,10 +12,11 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe Metrics::ReportsHelper do
-    it 'exists' do
-      expect(described_class).to be # rubocop:todo RSpec/Be
+    it 'includes search health tab styles' do
+      expect(helper.metrics_tab_styles).to include(:searchhealth)
+      expect(helper.metrics_tab_styles[:searchhealth]).to include(:icon, :accent)
     end
   end
 end

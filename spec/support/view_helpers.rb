@@ -2,7 +2,7 @@
 
 # Provide a minimal `current_person` helper for view specs so they can be
 # stubbed with `allow(view).to receive(:current_person).and_return(person)`.
-module ViewSpecHelpers
+module ViewSpecHelpers # :nodoc:
   def current_person
     nil
   end
@@ -25,6 +25,13 @@ RSpec.configure do |config|
     # Make application-level helpers available on the view (e.g., `iana_time_zone_select`)
     if defined?(BetterTogether::ApplicationHelper)
       view.extend(BetterTogether::ApplicationHelper)
+    end
+
+    # Make person-related helpers available on the view (e.g., `mention_profile_path`),
+    # needed by shared partials like _agent_authors that render person mentions
+    # outside a people/ controller context.
+    if defined?(BetterTogether::PeopleHelper)
+      view.extend(BetterTogether::PeopleHelper)
     end
   end
 end

@@ -3,7 +3,7 @@
 # app/models/better_together/metrics/link_click.rb
 module BetterTogether
   module Metrics
-    class LinkClick < ApplicationRecord # rubocop:todo Style/Documentation
+    class LinkClick < PlatformRecord # rubocop:todo Style/Documentation
       include Utf8UrlHandler
 
       # Validations
@@ -14,6 +14,7 @@ module BetterTogether
       validates :locale, presence: true, inclusion: { in: I18n.available_locales.map(&:to_s) }
       validates :clicked_at, presence: true
       validates :internal, inclusion: { in: [true, false] }
+      validates :logged_in, inclusion: { in: [true, false] }
 
       # Custom validation for UTF-8 URL support
       validate :url_must_be_valid

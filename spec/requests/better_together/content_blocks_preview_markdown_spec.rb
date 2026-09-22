@@ -14,7 +14,7 @@ RSpec.describe 'Content Blocks Markdown Preview', :as_user do
              as: :json
 
         expect(response).to have_http_status(:ok)
-        expect(response.content_type).to match(%r{application/json})
+        expect(response.content_type).to include('application/json')
 
         json_response = JSON.parse(response.body)
         expect(json_response['html']).to include('<h1 id="hello-world">Hello World</h1>')

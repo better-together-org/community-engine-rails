@@ -1,0 +1,22 @@
+flowchart TD
+    A[Searchable model] --> B{Includes BetterTogether::Searchable?}
+    B -- No --> X[Not surfaced in registry or search results]
+    B -- Yes --> C[Registered through Search::Registry]
+    C --> D[Shared Searchable contract]
+    D --> E[Elasticsearch callbacks and index hooks]
+    D --> F{pg_search config present?}
+    D --> G[as_indexed_json plain-text payload]
+    F -- Yes --> H[Normalize pg_search options]
+    F -- No --> I[Use database-compatible fallback in PgSearch adapter]
+    H --> J[Keep only real table columns in against:]
+    H --> K[Auto-merge translation associations]
+    K --> K1[string_translations:value]
+    K --> K2[text_translations:value]
+    K --> K3[rich_text_translations:body]
+    J --> L[Native pg_search scope]
+    I --> M[Fallback scoring from indexed payload]
+    G --> M
+    L --> N[PgSearch backend can return model]
+    M --> N
+    E --> O[Elasticsearch backend can return model]
+

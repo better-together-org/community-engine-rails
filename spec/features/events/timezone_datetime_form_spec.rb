@@ -4,6 +4,10 @@ require 'rails_helper'
 
 RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manager, :js, retry: 0 do
   let(:locale) { I18n.default_locale }
+  let(:manager_person) { BetterTogether::User.find_by(email: 'manager@example.test').person }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   # Helper to submit event form via JavaScript (more reliable than button click in tests)
   def submit_event_form
@@ -11,10 +15,39 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     sleep 1 # Allow submission to process
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def choose_event_timezone(timezone)
+    timezone_select = find("select[name='event[timezone]']", visible: false)
+    option_label = timezone_select.find("option[value='#{timezone}']", visible: false).text
+    slim_select_id = timezone_select['data-id']
+
+    find("div.ss-main[data-id='#{slim_select_id}']", visible: :all).click
+    within("div.ss-content[data-id='#{slim_select_id}']", visible: :all) do
+      find('.ss-option', text: option_label, match: :first).click
+    end
+
+    page.execute_script(<<~JS)
+      const select = document.querySelector("select[name='event[timezone]']");
+      for (const option of select.options) {
+        option.selected = option.value === #{timezone.to_json};
+      }
+      select.value = #{timezone.to_json};
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    JS
+  end
+  # rubocop:enable Metrics/MethodLength
+
   before do
     # Ensure clean session state to prevent parallel test pollution
     visit better_together.destroy_user_session_path(locale: locale)
     capybara_login_as_platform_manager
+    BetterTogether::AgreementParticipant.find_or_create_by!(
+      participant: manager_person,
+      agreement: content_publishing_agreement
+    ) do |participant|
+      participant.person = manager_person
+      participant.accepted_at = Time.current
+    end
   end
 
   scenario 'creating an event with datetime values respects event timezone' do
@@ -35,11 +68,7 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     expect(page).to have_css('select[name="event[timezone]"]', visible: :all, wait: 10)
     expect(page).to have_css('.ss-main', wait: 5)
 
-    # Select Eastern timezone
-    find('.ss-main', match: :first).click
-    within('.ss-content') do
-      find('.ss-option', text: /Eastern Time/, match: :first).click
-    end
+    choose_event_timezone('America/New_York')
 
     # Fill in datetime fields - wait for them to be present first
     expect(page).to have_field('event_starts_at', wait: 5)
@@ -167,21 +196,7 @@ RSpec.describe 'Event form timezone-aware datetime handling', :as_platform_manag
     expect(find_field('event_ends_at').value).to eq('2026-06-10T16:00')
 
     # Change timezone to Mountain time
-    expect(page).to have_css('.ss-main', wait: 5)
-    find('.ss-main', match: :first).click
-
-    # Search for Mountain timezone option
-    within('.ss-content') do
-      # Try different patterns that might match Mountain time
-      # The display might be "Mountain Time (US & Canada)" or include "Denver"
-      option = all('.ss-option').find { |opt| opt.text.match?(/Mountain|Denver/i) }
-      if option
-        option.click
-      else
-        # Fallback: scroll through options to find it
-        find('.ss-option', text: /Mountain/, match: :first).click
-      end
-    end
+    choose_event_timezone('America/Denver')
 
     # Enter new times (should be interpreted as Mountain time now)
     page.execute_script("document.getElementById('event_starts_at').value = '2026-06-10T15:00'")

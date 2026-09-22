@@ -11,6 +11,9 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
   let(:platform_manager_token) { api_sign_in_and_get_token(platform_manager_user) }
   let(:platform_manager_headers) { api_auth_headers(platform_manager_user, token: platform_manager_token) }
   let(:jsonapi_headers) { { 'Content-Type' => 'application/vnd.api+json', 'Accept' => 'application/vnd.api+json' } }
+  let!(:content_publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+  end
 
   describe 'GET /api/v1/communities' do
     let(:url) { '/api/v1/communities' }
@@ -124,18 +127,26 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     end
 
     context 'when authenticated with permission' do
-      before { post url, params: valid_params.to_json, headers: platform_manager_headers }
+      before do
+        create(:better_together_agreement_participant,
+               agreement: content_publishing_agreement,
+               participant: platform_manager_user.person,
+               accepted_at: Time.current)
+
+        post url, params: valid_params.to_json, headers: platform_manager_headers
+      end
 
       it 'verifies platform manager permissions' do
         expect(platform_manager_token).to be_present
         expect(platform_manager_user.permitted_to?('manage_platform')).to be(true)
 
-        platform_manager_role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        expect(platform_manager_role).to be_present
+        platform_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                        BetterTogether::Role.find_by(identifier: 'platform_manager')
+        expect(platform_role).to be_present
         expect(
           BetterTogether::PersonPlatformMembership.exists?(
             member: platform_manager_user.person,
-            role: platform_manager_role
+            role: platform_role
           )
         ).to be(true)
 
@@ -252,7 +263,9 @@ RSpec.describe 'BetterTogether::Api::V1::Communities', :no_auth do
     end
 
     context 'when deleting protected community' do
-      let(:protected_community) { create(:better_together_community, protected: true, creator: platform_manager_user.person) }
+      let(:protected_community) do
+        create(:better_together_community, protected: true, creator: platform_manager_user.person)
+      end
       let(:url) { "/api/v1/communities/#{protected_community.id}" }
 
       before { delete url, headers: platform_manager_headers }

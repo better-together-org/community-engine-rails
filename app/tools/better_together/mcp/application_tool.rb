@@ -29,6 +29,17 @@ module BetterTogether
 
       protected
 
+      def with_current_agent(actor = current_user&.person)
+        previous_person = Current.person
+        previous_agent = Current.agent
+        Current.person = actor if actor.is_a?(BetterTogether::Person)
+        Current.agent = actor
+        yield
+      ensure
+        Current.person = previous_person
+        Current.agent = previous_agent
+      end
+
       # Escape LIKE metacharacters (%, _) in user-supplied search queries
       # to prevent unintended pattern matching.
       # @param query [String] Raw user input

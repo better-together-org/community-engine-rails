@@ -51,6 +51,12 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link bt-tab-control <%= metrics_tab_styles[:searchhealth][:accent] %>" id="searchhealth-tab" data-bs-toggle="tab" data-bs-target="#searchhealth" href="#searchhealth" role="tab" aria-controls="searchhealth" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="<%= metrics_tab_styles[:searchhealth][:icon] %> bt-tab-icon" aria-hidden="true"></i>
+          <span><%= t('better_together.metrics.reports.tabs.search_health', default: 'Search Health') %></span>
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link bt-tab-control <%= metrics_tab_styles[:users][:accent] %>" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" href="#users" role="tab" aria-controls="users" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="<%= metrics_tab_styles[:users][:icon] %> bt-tab-icon" aria-hidden="true"></i>
           <span><%= t('better_together.metrics.reports.tabs.users') %></span>
@@ -66,6 +72,15 @@
       <%= render 'shares_contents' %>
       <%= render 'link_checker_contents' %>
       <%= render 'search_queries_contents' %>
+      <div class="tab-pane fade nav-tab-pane bt-tab-pane bt-tab-pane--resource <%= metrics_tab_styles[:searchhealth][:accent] %>" id="searchhealth" role="tabpanel" aria-labelledby="searchhealth-tab">
+        <%= turbo_frame_tag 'search_health_panel',
+                            src: search_health_panel_metrics_reports_path(locale: I18n.locale),
+                            loading: :lazy do %>
+          <div class="py-4 text-muted">
+            <%= t('better_together.metrics.reports.loading', default: 'Loading...') %>
+          </div>
+        <% end %>
+      </div>
       <%= render 'users_contents' %>
     </div>
   </div>

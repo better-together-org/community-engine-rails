@@ -1,0 +1,21 @@
+---
+title: Post Editor -- Per-Connection Federation Grants
+audience:
+- member
+- developer
+journey_step: As a member, I want this post to federate everywhere except Neighbourhood
+  Commons, so I set that one connection to "Never federate" without changing my overall
+  federation setting.
+callouts:
+- :id: grants_section
+  :title: Per-connection selection matrix
+  :description: A row per eligible connection, each an independent allowed/denied/platform_default
+    select tied to a FederationContentGrant record.
+- :id: denied_row
+  :title: Per-connection override in effect
+  :description: FederationContentGrant#status == "denied" for this connection wins
+    over the item's tri-state and the creator's global preference.
+accessibility_notes: Each select is paired with an explicit <label for=...>; the section
+  has a visible heading and hint text below it.
+slug: post_federation_content_grants_field
+device: desktop

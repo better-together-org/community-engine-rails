@@ -7,6 +7,8 @@ The Better Together Community Engine includes a comprehensive agreements system 
 1. **Platform Agreements** - Legal agreements that users accept when using the platform (privacy policy, terms of service, code of conduct)
 2. **Exchange Agreements** - Specific agreements between users for resource exchange through the Joatu system
 
+The current implementation is still primarily **person-bound**. Platform agreement participation is recorded through `AgreementParticipant`, which joins agreements to `BetterTogether::Person`. The broader community action network governance direction extends this toward a future governed-agent model, but that migration is not yet implemented in schema or runtime behavior.
+
 ## Process Flow Diagram
 
 ```mermaid
@@ -117,6 +119,24 @@ The diagram uses color coding to distinguish different types of operations:
 - 🟢 **Green**: Decision points and conditional logic
 
 ## System Architecture
+
+## Current Limitation And Migration Direction
+
+The agreements system already carries useful audit information, especially after the acceptance-audit work added snapshots and digests to `AgreementParticipant`.
+
+Two important constraints remain:
+
+1. platform agreement participation is still modeled only for people
+2. safety and JOATU agreements use adjacent but not yet unified lifecycle models
+
+The emerging migration direction is:
+
+- keep current person-bound behavior stable
+- introduce shared governed-agent identity seams first
+- then evaluate a safe migration path for broader participant types
+- only after that unify agreement lifecycle and UI surfaces across onboarding, safety, JOATU, and robot-operation agreements
+
+That sequencing avoids a premature polymorphic rewrite of agreements before actor identity, rights, and consent semantics are clear.
 
 ### Core Models
 

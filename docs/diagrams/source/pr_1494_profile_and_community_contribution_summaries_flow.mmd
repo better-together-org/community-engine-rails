@@ -1,0 +1,15 @@
+flowchart TD
+    A[Governed contribution records on page/post] --> B[Shared record contribution summary]
+    A --> C[Shared record evidence summary]
+
+    B --> D1[Profile contribution cards]
+    B --> D2[Community page cards]
+    C --> D1
+    C --> D2
+    C --> D3[Community event cards]
+
+    D1 --> E[Governance bundle and CSL links visible during browsing]
+    D2 --> E
+    D3 --> E
+
+    E --> F[Readers can assess contributor counts, GitHub-backed sources, and evidence density before opening the full record]

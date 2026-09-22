@@ -1,0 +1,7 @@
+<%# app/views/better_together/membership_requests/_status_badge.html.erb %>
+<%# locals: (membership_request:) -%>
+
+<span id="<%= dom_id(membership_request, :status) %>"
+      class="badge bg-<%= membership_request_status_badge(membership_request.status) %>">
+  <%= membership_request.status %>
+</span>

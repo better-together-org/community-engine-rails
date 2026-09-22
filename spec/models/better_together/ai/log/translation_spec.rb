@@ -2,10 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe Ai::Log::Translation do
-    it 'exists' do
-      expect(described_class).to be # rubocop:todo RSpec/Be
-    end
+RSpec.describe BetterTogether::Ai::Log::Translation do
+  it 'exists' do
+    expect(described_class).to be # rubocop:todo RSpec/Be
   end
 end

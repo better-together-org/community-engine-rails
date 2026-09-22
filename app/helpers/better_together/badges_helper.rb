@@ -65,18 +65,66 @@ module BetterTogether
       privacy_style_map[privacy_key] || 'primary'
     end
 
+    # EVENT_STATUS BADGE TO SHOW DRAFT OR CANCELED STATUS
+    # rubocop:disable Metrics/MethodLength
+    def event_status_badge(event, rounded: true, style: nil) # rubocop:disable Metrics/MethodLength
+      return unless event.respond_to?(:status) && event.status.present?
+
+      event_status_key = event.status.to_s.downcase
+      # Map event status values to Bootstrap text-bg-* styles. Consumers can override by passing `style:`.
+      event_status_style_map = {
+        'draft' => 'warning',
+        'cancelled' => 'danger'
+      }
+
+      chosen_style = style || event_status_style_map[event_status_key] || 'primary'
+      event_status_label = t("better_together.events.statuses.#{event_status_key}")
+      tooltip_text = t('better_together.shared.event_status_tooltip', status: event_status_label)
+
+      create_badge(
+        event_status_label,
+        rounded: rounded,
+        style: chosen_style,
+        tooltip: tooltip_text,
+        aria_label: t('better_together.shared.event_status_level', status: event_status_label)
+      )
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    # Render a "Repeats" badge for a recurring entity (e.g. Event). Visible
+    # text label, never color-only — the tooltip/aria-label carries the full
+    # human-readable recurrence summary (via RecurrenceHelper#format_recurrence_rule)
+    # so the badge and any displayed next-occurrence date can never contradict
+    # each other silently.
+    def recurring_badge(entity, rounded: true, style: 'info')
+      return unless entity.respond_to?(:recurring?) && entity.recurring?
+
+      summary = format_recurrence_rule(entity.recurrence)
+
+      create_badge(
+        t('better_together.shared.recurring_badge_label'),
+        rounded: rounded,
+        style: style,
+        tooltip: summary,
+        aria_label: t('better_together.shared.recurring_badge_aria_label', summary: summary),
+        extra_class: 'event-recurring-badge'
+      )
+    end
+
     private
 
-    def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil)
+    # rubocop:disable Metrics/ParameterLists
+    def create_badge(label, rounded: true, style: 'primary', tooltip: nil, aria_label: nil, extra_class: nil)
       rounded_class = rounded ? 'rounded-pill' : ''
       style_class = "text-bg-#{style}"
 
-      options = { class: "badge #{rounded_class} #{style_class} icon-above-stretched-link" }
+      options = { class: "badge #{rounded_class} #{style_class} icon-above-stretched-link #{extra_class}".strip }
       options['data-bs-toggle'] = 'tooltip' if tooltip
       options[:title] = tooltip if tooltip
       options['aria-label'] = aria_label if aria_label
 
       content_tag :span, label, options
     end
+    # rubocop:enable Metrics/ParameterLists
   end
 end

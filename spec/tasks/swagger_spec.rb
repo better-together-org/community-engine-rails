@@ -129,7 +129,7 @@ RSpec.describe 'swagger rake tasks', type: :task do
             SystemExit
           end
           expect(output).to match(/Expected URL: #{Regexp.escape(current_base_url)}/)
-          expect(output).to match(%r{Found URLs: http://old-server\.example\.com})
+          expect(output).to include('Found URLs: http://old-server.example.com')
         end
 
         it 'suggests running generation task' do

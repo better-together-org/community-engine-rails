@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
-  module Ics
+module BetterTogether # :nodoc:
+  module Ics # :nodoc:
     RSpec.describe Generator do
       include ActiveSupport::Testing::TimeHelpers
 
@@ -101,12 +101,12 @@ module BetterTogether
 
           it 'includes DTSTART' do
             result = generator.generate
-            expect(result).to match(/DTSTART/)
+            expect(result).to include('DTSTART')
           end
 
           it 'includes DTEND' do
             result = generator.generate
-            expect(result).to match(/DTEND/)
+            expect(result).to include('DTEND')
           end
 
           it 'includes UID' do

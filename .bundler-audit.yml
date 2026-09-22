@@ -1,0 +1,15 @@
+# bundler-audit advisory ignore list
+#
+# Advisories listed here are pre-existing in the codebase and tracked
+# separately for remediation. They are NOT introduced by the current branch.
+#
+# To remediate: upgrade to the resolved version and address any breaking changes.
+
+ignore:
+  # GHSA-57hq-95w6-v4fc — Devise confirmable "change email" race condition
+  # Permits a user to confirm an email they no longer own.
+  # Resolve: upgrade devise >= 5.0.3
+  # Blocked: Devise 5 drops several deprecated APIs — requires dedicated
+  # migration effort (devise_error_messages!, old sign_in scope syntax, etc.)
+  # Tracked: https://github.com/better-together-org/community-engine-rails/issues
+  - GHSA-57hq-95w6-v4fc

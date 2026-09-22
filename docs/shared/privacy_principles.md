@@ -16,11 +16,11 @@ The Community Engine is designed with privacy as a first principle. Features, de
 - Search queries capture: the query string, count of results, timestamp, and locale.
 
 ## No Third‑Party Tracking by Default
-- By default, the platform ships without Google Analytics or similar trackers. Error reporting is kept minimal and server‑side.
-- Platform Managers may integrate additional tooling (e.g., Google Analytics, Sentry, Hotjar) per their own privacy policy and consent framework. Hosts are responsible for:
-  - Updating privacy notices and cookie banners.
+- By default, the platform ships without third-party analytics trackers, advertising pixels, or similar browser-based telemetry.
+- Hosts may add external services to their own deployment, but those services are outside the default Community Engine privacy model. Hosts that do so are responsible for:
+  - Updating privacy notices and cookie disclosures.
   - Obtaining consent where required.
-  - Configuring data retention and IP anonymization as applicable.
+  - Configuring retention, minimization, and any provider-specific privacy controls.
 
 ## Data Minimization & Retention
 - Collect only attributes necessary for aggregate insights (counts, trends, breakdowns by locale/page).

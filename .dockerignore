@@ -1,1 +1,13 @@
 docker-env.conf
+.env
+.env.*
+tmp/
+log/
+.git/
+spec/dummy/tmp/
+spec/dummy/log/
+spec/dummy/storage/
+rails-test-log-*/
+node_modules/
+coverage/
+.bundle/

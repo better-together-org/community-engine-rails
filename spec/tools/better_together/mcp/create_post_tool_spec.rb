@@ -5,6 +5,13 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Mcp::CreatePostTool, type: :model do
   let(:user) { create(:user) }
   let(:manager_user) { create(:user, :platform_manager) }
+  let!(:publishing_agreement) do
+    BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |agreement|
+      agreement.title = 'Content Publishing Agreement'
+      agreement.privacy = 'public'
+      agreement.protected = true
+    end
+  end
 
   before do
     configure_host_platform
@@ -34,11 +41,16 @@ RSpec.describe BetterTogether::Mcp::CreatePostTool, type: :model do
         expect(result).to have_key('id')
         expect(result['status']).to eq('draft')
         expect(result['title']).to eq('My New Post')
+        expect(result['privacy']).to eq('private')
       end
 
       it 'creates a published post when publish is true' do
+        create(:better_together_agreement_participant,
+               agreement: publishing_agreement,
+               participant: manager_user.person,
+               accepted_at: Time.current)
         tool = described_class.new
-        result = JSON.parse(tool.call(**valid_params, publish: true))
+        result = JSON.parse(tool.call(**valid_params, privacy: 'public', publish: true))
 
         expect(result).to have_key('id')
         expect(result['status']).to eq('published')
@@ -57,6 +69,14 @@ RSpec.describe BetterTogether::Mcp::CreatePostTool, type: :model do
         result = JSON.parse(tool.call(**valid_params, privacy: 'private'))
 
         expect(result['privacy']).to eq('private')
+      end
+
+      it 'blocks public creation until the publishing agreement is accepted' do
+        tool = described_class.new
+        result = JSON.parse(tool.call(**valid_params, privacy: 'public'))
+
+        expect(result['error']).to eq('Validation failed')
+        expect(result['details']).to include(a_string_including('publishing agreement'))
       end
 
       it 'creates a new post record' do

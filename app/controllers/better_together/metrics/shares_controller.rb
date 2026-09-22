@@ -4,20 +4,30 @@
 module BetterTogether
   module Metrics
     class SharesController < ApplicationController # rubocop:todo Style/Documentation
-      def create # rubocop:todo Metrics/AbcSize
-        platform = params[:platform]
+      include PlatformContext
+
+      def create # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        platform_name = params[:platform]
         url = params[:url]
         shareable_type = params[:shareable_type]
         shareable_id = params[:shareable_id]
         locale = I18n.locale.to_s
 
         # Validate platform and URL
-        unless valid_platform?(platform) && valid_url?(url)
+        unless valid_platform?(platform_name) && valid_url?(url)
           render json: { error: I18n.t('metrics.shares.invalid_parameters') }, status: :unprocessable_content and return
         end
 
         # Enqueue the TrackShareJob
-        BetterTogether::Metrics::TrackShareJob.perform_later(platform, url, locale, shareable_type, shareable_id)
+        BetterTogether::Metrics::TrackShareJob.perform_later(
+          platform_name,
+          url,
+          locale,
+          shareable_type,
+          shareable_id,
+          metrics_platform.id,
+          metrics_logged_in?
+        )
 
         # Respond with success
         render json: { success: true }, status: :ok
@@ -25,8 +35,8 @@ module BetterTogether
 
       private
 
-      def valid_platform?(platform)
-        Share::SHAREABLE_PLATFORMS.include?(platform)
+      def valid_platform?(platform_name)
+        Share::SHAREABLE_PLATFORMS.include?(platform_name)
       end
 
       def valid_url?(url)

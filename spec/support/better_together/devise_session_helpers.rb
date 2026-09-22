@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
-module BetterTogether
-  module CapybaraFeatureHelpers # rubocop:todo Metrics/ModuleLength
+# Test helper modules for BetterTogether Devise/Capybara session specs.
+module BetterTogether # :nodoc:
+  # Devise session helpers for BetterTogether feature specs.
+  module CapybaraFeatureHelpers # :nodoc:
     include FactoryBot::Syntax::Methods
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
     include BetterTogether::Engine.routes.url_helpers
 
-    # Setup or update a single host platform and return a platform_manager user
+    # Setup or update a single host platform and return a platform-steward user
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def configure_host_platform
       # Reuse existing host platform if present, don't try to create a new one
@@ -48,22 +51,37 @@ module BetterTogether
       wizard = BetterTogether::Wizard.find_or_create_by(identifier: 'host_setup')
       wizard.mark_completed
 
-      platform_manager = BetterTogether::User.find_by(email: 'manager@example.test')
+      platform_steward = BetterTogether::User.find_or_initialize_by(email: 'manager@example.test')
+      platform_steward.password = 'SecureTest123!@#' if platform_steward.new_record?
+      platform_steward.confirmed_at ||= Time.zone.now
+      platform_steward.confirmation_sent_at ||= Time.zone.now
+      platform_steward.build_person(name: 'Platform Steward', identifier: 'manager-example-test') unless platform_steward.person
+      platform_steward.save! if platform_steward.new_record? || platform_steward.changed? || platform_steward.person&.changed?
 
-      unless platform_manager
-        create(
-          :user, :confirmed, :platform_manager,
-          email: 'manager@example.test',
-          password: 'SecureTest123!@#'
-        )
+      platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward')
+      unless platform_steward_role
+        BetterTogether::AccessControlBuilder.seed_data
+        platform_steward_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                                BetterTogether::Role.find_by(identifier: 'platform_manager')
+      end
+
+      if platform_steward_role
+        membership = host_platform.person_platform_memberships.find_or_initialize_by(member: platform_steward.person)
+        membership.role ||= platform_steward_role
+        membership.status = 'active'
+        membership.save! if membership.new_record? || membership.changed?
       end
 
       host_platform
     end
     # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-    def capybara_login_as_platform_manager
+    def capybara_login_as_platform_steward
       capybara_sign_in_user('manager@example.test', 'SecureTest123!@#')
+    end
+
+    def capybara_login_as_platform_manager
+      capybara_login_as_platform_steward
     end
 
     def capybara_login_as_user
@@ -106,6 +124,7 @@ module BetterTogether
     end
 
     # Legacy method names for backward compatibility
+    alias login_as_platform_steward capybara_login_as_platform_steward
     alias login_as_platform_manager capybara_login_as_platform_manager
     alias sign_in_user capybara_sign_in_user
     alias sign_out_current_user capybara_sign_out_current_user
@@ -145,7 +164,8 @@ module BetterTogether
         check 'user_accept_code_of_conduct'
       end
 
-      click_button 'Sign Up'
+      satisfy_bot_defense_minimum_wait(:registration)
+      click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)
       created_user.confirm

@@ -93,6 +93,15 @@ module BetterTogether
       string :privacy, null: false, default:, limit: 50, index: { name: "by_#{table_name}_privacy" }
     end
 
+    # Adds 'federation_visibility' column giving a content item a per-item
+    # override (platform_default/federate/no_federate) on top of the
+    # connection-level and creator-level federation consent gates.
+    def bt_federation_visibility(table_name = nil, default: 'platform_default')
+      table_name ||= name
+      string :federation_visibility, null: false, default:, limit: 50,
+                                     index: { name: "by_#{table_name}_federation_visibility" }
+    end
+
     # Adds 'resource_type' column to give ability to manage record resource_type
     def bt_resource_type
       # Adding resource_type column

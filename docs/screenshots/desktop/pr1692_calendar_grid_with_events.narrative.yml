@@ -1,0 +1,21 @@
+---
+title: Calendar — month grid with real events
+audience:
+- community_organizer
+- platform_manager
+- developer
+journey_step: As a community member, I open a calendar to see what is scheduled this
+  month.
+callouts:
+- :id: day_cell_event
+  :title: Event now visible in its day cell
+  :description: simple_calendar yields (date, day_events) per cell; the view previously
+    only declared |date| and never rendered day_events at all.
+- :id: upcoming_list
+  :title: Upcoming events list
+  :description: "@upcoming_events/@past_events were computed by the controller but
+    never referenced anywhere in the view before this fix."
+accessibility_notes: Day-cell event links and the upcoming/past lists use plain anchor
+  tags with the event name as their accessible text.
+slug: pr1692_calendar_grid_with_events
+device: desktop

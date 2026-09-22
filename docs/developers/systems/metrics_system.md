@@ -57,7 +57,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
   - We record what happened, not who did it. No user identifiers are stored in metrics events.
   - Page view URLs strip query parameters and are sanitized to remove sensitive keys; persisted `page_url` is the path only.
   - Search query tracking stores the query string, count of results, timestamp, and locale.
-  - Platform managers may add third‑party tools (e.g., GA, Sentry) per their own privacy policy and consent practices.
+  - Platform managers may add third‑party services outside the default metrics system, but those integrations must be documented and governed separately by the host.
 - Locale: all metrics record `locale` for reporting.
 - Performance: reports aggregate via grouped database queries and only touch filtered subsets.
 - Storage: exported CSVs are attached via Active Storage and purged on report destroy.

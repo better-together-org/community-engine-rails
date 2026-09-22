@@ -3,9 +3,10 @@
 module BetterTogether
   module Safety
     # Authorization policy for safety notes.
-    class NotePolicy < ApplicationPolicy
+    class NotePolicy < PlatformRecordPolicy
       def create?
-        agent&.permitted_to?('manage_platform')
+        platform = (record.respond_to?(:platform) ? record.platform : nil) || current_platform
+        can_review_safety_disclosures?(platform)
       end
     end
   end

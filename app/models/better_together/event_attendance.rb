@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Tracks a person's RSVP to an event
-  class EventAttendance < ApplicationRecord
+  class EventAttendance < PlatformRecord
     STATUS = {
       interested: 'interested',
       going: 'going'
@@ -10,9 +10,12 @@ module BetterTogether
 
     belongs_to :event, class_name: 'BetterTogether::Event'
     belongs_to :person, class_name: 'BetterTogether::Person'
+    # nil == series-wide attendance (today's only behavior); present == this
+    # specific session, independent of the series and any other session.
+    belongs_to :event_occurrence, class_name: 'BetterTogether::EventOccurrence', optional: true
 
     validates :status, inclusion: { in: STATUS.values }
-    validates :event_id, uniqueness: { scope: :person_id }
+    validates :event_id, uniqueness: { scope: %i[person_id event_occurrence_id] }
     validate :event_must_be_scheduled
 
     after_save :manage_calendar_entry
