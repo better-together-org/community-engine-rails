@@ -15,7 +15,9 @@ module BetterTogether
 
     def expire_notification_caches
       # Use the helper methods to expire relevant fragments
-      ApplicationController.helpers.expire_notification_fragments(self) if respond_to_cache_methods?
+      ::BetterTogether::ApplicationController.helpers.expire_notification_fragments(self) if respond_to_cache_methods?
+    rescue StandardError => e
+      Rails.logger.error("NotificationCacheManagement: failed to expire caches - #{e.message}")
     end
 
     def should_expire_caches?
@@ -24,7 +26,7 @@ module BetterTogether
     end
 
     def respond_to_cache_methods?
-      ApplicationController.helpers.respond_to?(:expire_notification_fragments)
+      ::BetterTogether::ApplicationController.helpers.respond_to?(:expire_notification_fragments)
     rescue StandardError
       false
     end

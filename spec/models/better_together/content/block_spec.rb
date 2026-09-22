@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Content # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
+  module Content # :nodoc:
     RSpec.describe Block do
       # Block is an abstract base class - test through concrete subclasses
       # We use Html as the default concrete implementation for most tests
@@ -238,6 +238,8 @@ module BetterTogether
           expect(BetterTogether::Content::Image.superclass).to eq(described_class)
         end
       end
+
+      it_behaves_like 'platform scoped', factory: :content_markdown
     end
   end
 end

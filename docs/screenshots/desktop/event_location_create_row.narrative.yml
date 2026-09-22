@@ -1,0 +1,21 @@
+---
+title: Event Form — Create From the Search Results
+audience:
+- event_organizer
+- community_organizer
+- developer
+journey_step: As an event organizer, when nothing in the list is my venue, I create
+  it right from the same search rather than reaching for a separate button.
+callouts:
+- :id: create_row
+  :title: Synthetic action rows
+  :description: slim_select_controller.js (opt-in createOptions) appends "Create new
+    address" and, when the typed text has no exact match, a "use as a custom name"
+    row to every AJAX result set. Picking one is intercepted by beforeChange and dispatched
+    as better_together--slim-select:create rather than selected. Only Address is inline-creatable;
+    Building, Settlement, and Region are chosen from the existing set only.
+accessibility_notes: The action rows are real listbox options (role="option"), reachable
+  by the same arrow-key / Enter interaction as any search result, and their visible
+  text matches their accessible name.
+slug: event_location_create_row
+device: desktop

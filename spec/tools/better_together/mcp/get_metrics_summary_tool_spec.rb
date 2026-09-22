@@ -5,10 +5,8 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Mcp::GetMetricsSummaryTool, type: :model do
   let(:manager_user) { create(:user, :platform_manager) }
   let(:regular_user) { create(:user) }
-
-  before do
-    configure_host_platform
-  end
+  let!(:host_platform) { configure_host_platform }
+  let!(:other_platform) { create(:better_together_platform) }
 
   describe '.description' do
     it 'has a helpful description' do
@@ -24,9 +22,18 @@ RSpec.describe BetterTogether::Mcp::GetMetricsSummaryTool, type: :model do
           BetterTogether::Metrics::PageView.create!(
             page_url: "/test-page-#{i}",
             locale: 'en',
-            viewed_at: Time.current
+            viewed_at: Time.current,
+            platform: host_platform,
+            logged_in: i < 2
           )
         end
+        BetterTogether::Metrics::PageView.create!(
+          page_url: '/other-platform-page',
+          locale: 'en',
+          viewed_at: Time.current,
+          platform: other_platform,
+          logged_in: true
+        )
       end
 
       it 'returns metrics summary' do
@@ -34,7 +41,7 @@ RSpec.describe BetterTogether::Mcp::GetMetricsSummaryTool, type: :model do
         result = JSON.parse(tool.call)
 
         expect(result).to have_key('total_page_views')
-        expect(result['total_page_views']).to be >= 3
+        expect(result['total_page_views']).to eq(3)
       end
 
       it 'includes unique pages count' do
@@ -50,6 +57,16 @@ RSpec.describe BetterTogether::Mcp::GetMetricsSummaryTool, type: :model do
 
         expect(result).to have_key('views_by_locale')
         expect(result['views_by_locale']).to be_a(Hash)
+      end
+
+      it 'includes views by logged-in state' do
+        tool = described_class.new
+        result = JSON.parse(tool.call)
+
+        expect(result['views_by_logged_in_state']).to eq(
+          'logged_in' => 2,
+          'anonymous' => 1
+        )
       end
 
       it 'includes top pages' do

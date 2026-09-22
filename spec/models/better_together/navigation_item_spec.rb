@@ -58,7 +58,7 @@ end
 
 # spec/models/better_together/navigation_item_spec.rb
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   RSpec.describe NavigationItem do
     subject(:navigation_item) { build(:better_together_navigation_item) }
     let!(:existing_navigation_item) { create(:better_together_navigation_item) }
@@ -191,6 +191,16 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
       it { is_expected.to respond_to(:privacy) }
       it { is_expected.to respond_to(:visibility_strategy) }
       it { is_expected.to respond_to(:permission_identifier) }
+    end
+
+    describe '.route_names' do
+      it 'includes review and federation surfaces added in the 0.11.0 operations flow' do
+        expect(described_class.route_names).to include(
+          platform_connections: 'platform_connections_url',
+          reports: 'reports_url',
+          safety_cases: 'safety_cases_url'
+        )
+      end
     end
 
     describe 'Scopes' do
@@ -445,5 +455,7 @@ module BetterTogether # rubocop:todo Metrics/ModuleLength
         expect(navigation_area.reload.updated_at).to be > original_updated_at
       end
     end
+
+    it_behaves_like 'platform scoped identifier', factory: :better_together_navigation_item
   end
 end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonChecklistItem < ApplicationRecord # rubocop:todo Style/Documentation
+  class PersonChecklistItem < PlatformRecord # rubocop:todo Style/Documentation
     include Creatable
 
-    belongs_to :person, class_name: 'BetterTogether::Person'
+    belongs_to :person, class_name: 'BetterTogether::Person', inverse_of: :person_checklist_items
     belongs_to :checklist, class_name: 'BetterTogether::Checklist'
     belongs_to :checklist_item, class_name: 'BetterTogether::ChecklistItem'
 

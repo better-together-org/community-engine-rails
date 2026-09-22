@@ -34,7 +34,7 @@
 
     <div class="mb-3">
       <%= form.label :privacy %>
-      <%= form.select :privacy, options_for_select([['Public', 'public'], ['Private', 'private']], @checklist.privacy), {}, class: 'form-select' %>
+      <%= privacy_field(form:, klass: @checklist.class) %>
     </div>
 
     <%= yield :action_toolbar %>

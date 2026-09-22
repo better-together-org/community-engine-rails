@@ -6,16 +6,45 @@ module BetterTogether
   # platform configurations, and navigation items.
   module ApplicationHelper # rubocop:todo Metrics/ModuleLength
     include MetricsHelper
+    include StructuredDataHelper
+
+    # Returns the page title for the current page, combining any page-specific title with the platform name
+    def page_title(title = nil)
+      title_parts = []
+      title_parts << title if title.present?
+      title_parts << host_platform.name if host_platform.present? && !turbo_native_app?
+      title_parts.compact.join(' | ')
+    end
 
     # Returns the base URL configured for BetterTogether.
     def base_url
-      ::BetterTogether.base_url
+      current_platform_base_url
     end
 
     # Returns the base URL configured for BetterTogether.
     def base_url_with_locale
-      ::BetterTogether.base_url_with_locale
+      build_url_for_path(base_url, "/#{I18n.locale}")
     end
+
+    # rubocop:disable Style/ArgumentsForwarding
+    def storage_proxy_url_for(attachment, **options)
+      return unless attachment.present?
+
+      media_url_options = default_url_options.except(:locale, 'locale')
+      request_base_url = request&.base_url
+
+      url_builder_options = {
+        url_options: media_url_options,
+        **options
+      }
+      url_builder_options[:base_url] = request_base_url if request_base_url.present?
+
+      BetterTogether::MediaUrlBuilder.proxy_url_for(
+        attachment,
+        **url_builder_options
+      )
+    end
+    # rubocop:enable Style/ArgumentsForwarding
 
     # Returns the base path configured for BetterTogether.
     def base_path
@@ -30,7 +59,7 @@ module BetterTogether
     # Returns the current active identity for the user.
     # This is a placeholder and should be updated to support active identity features.
     def current_identity
-      @current_identity ||= current_person
+      @current_identity ||= current_person || (respond_to?(:current_robot) ? current_robot : nil)
     end
 
     # Retrieves the current person associated with the signed-in user.
@@ -41,14 +70,64 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    # current_user/user_signed_in? need Warden, which isn't present in two render
+    # contexts this engine actually uses: Comment/Message's broadcast_append_later_to
+    # (a bare renderer, no request/session) and Devise-less view/helper specs. Every
+    # helper that needed to tolerate that used to add its own
+    # `rescue Devise::MissingWarden` — ContentActionsHelper, CommentsHelper,
+    # PeopleHelper, and this method's own former version all duplicated it
+    # independently. Centralized here so call sites just use the safe accessor and
+    # never need their own rescue for this specific case.
+    def safe_current_user
+      return nil unless respond_to?(:user_signed_in?)
+
+      current_user if user_signed_in?
+    rescue Devise::MissingWarden
+      nil
+    end
+
+    def safe_current_person
+      return nil unless respond_to?(:user_signed_in?)
+
+      current_person
+    rescue Devise::MissingWarden
+      nil
+    end
+
+    # Generates a short-lived, signed token proving the client actually rendered a page
+    # from this app recently, embedded via a <meta> tag and attached by JS
+    # (trix-extensions/richtext.js) to every ActiveStorage direct-upload request. Raises
+    # the bar above bare CSRF (which only proves *some* page was rendered, not
+    # specifically an upload-capable one) without requiring authentication, since this
+    # endpoint is used from pre-auth pages (sign-up, host-setup wizard) by design.
+    def direct_upload_authorization_token
+      Rails.application.message_verifier(:direct_upload).generate(
+        { path: request.path, iat: Time.current.to_i }, expires_in: 30.minutes
+      )
+    rescue StandardError
+      nil
+    end
+
     def default_url_options
-      super.merge(locale: I18n.locale)
+      super.merge(resolved_url_options).merge(locale: I18n.locale)
     end
 
     def permitted_to?(permission_identifier)
       return false unless current_person.present?
 
       current_person.permitted_to?(permission_identifier)
+    end
+
+    def feature_enabled?(feature_key, actor: current_person || current_robot, platform: Current.platform, record: nil)
+      BetterTogether::FeatureGate.enabled?(feature_key, actor:, platform:, record:)
+    rescue KeyError
+      false
+    end
+
+    def contributor_display_visible_for?(record)
+      return false unless record.respond_to?(:contributors_display_visible?)
+
+      record.contributors_display_visible?
     end
 
     def help_banner_hidden?(banner_id)
@@ -66,21 +145,60 @@ module BetterTogether
       render('better_together/shared/help_banner', id:, i18n_key:, text:, **)
     end
 
+    def agreement_lifecycle_badge_class(agreement)
+      return 'bg-secondary' unless agreement.respond_to?(:lifecycle_state)
+
+      case agreement.lifecycle_state
+      when 'draft' then 'bg-warning text-dark'
+      when 'retired' then 'bg-secondary'
+      else 'bg-success'
+      end
+    end
+
+    def agreement_acceptance_badge_class(agreement_participant)
+      return 'bg-secondary' unless agreement_participant.present?
+      return 'bg-warning text-dark' if agreement_participant.stale_for_agreement?
+
+      'bg-success'
+    end
+
+    def agreement_acceptance_state_label(agreement_participant)
+      return 'Pending' unless agreement_participant.present?
+      return 'Needs review' if agreement_participant.stale_for_agreement?
+
+      'Accepted'
+    end
+
     # Finds the platform marked as host or returns a new default host platform instance.
     # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
     # check_platform_privacy, SEO helpers, and layout partials on every request).
     def host_platform
-      @host_platform ||= ::BetterTogether::Platform.find_by(host: true) ||
-                         ::BetterTogether::Platform.new(name: 'Better Together Community Engine',
-                                                        url: base_url, privacy: 'private')
+      @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
+                         ::BetterTogether::Platform.new(
+                           name: 'Better Together Community Engine',
+                           url: ::BetterTogether.base_url,
+                           privacy: 'private'
+                         )
     end
 
     # Finds the community marked as host or returns a new default host community instance.
     def host_community
-      # rubocop:todo Layout/LineLength
-      @host_community ||= ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
+      @host_community ||= host_platform.community ||
+                          # rubocop:todo Layout/LineLength
+                          ::BetterTogether::Community.includes(contact_detail: [:social_media_accounts]).find_by(host: true) ||
                           # rubocop:enable Layout/LineLength
                           ::BetterTogether::Community.new(name: 'Better Together')
+    end
+
+    # Returns the preferred public email for the host community, if any.
+    def host_community_primary_email
+      contact_detail = host_community.contact_detail
+      return unless contact_detail
+
+      public_emails = contact_detail.email_addresses.privacy_public.to_a
+      primary = public_emails.find(&:primary_flag?)
+
+      primary&.email || public_emails.first&.email
     end
 
     # Returns the proxied URL for the host community logo if attached.
@@ -93,7 +211,18 @@ module BetterTogether
                      host_community.logo
                    end
 
-      rails_storage_proxy_url(attachment)
+      storage_proxy_url_for(attachment)
+    end
+
+    # Sets a translated meta description for the current view. Provide the
+    # translation scope without the `meta.descriptions` prefix.
+    #
+    #   set_meta_description('communities.show', community_name: @resource.name)
+    #
+    # @param scope [String] translation scope under meta.descriptions
+    # @param options [Hash] interpolation values for the translation
+    def set_meta_description(scope, **)
+      content_for(:meta_description, t("meta.descriptions.#{scope}", **))
     end
 
     # Builds SEO-friendly meta tags for the current view. Defaults are derived
@@ -101,7 +230,7 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     def seo_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       description = if content_for?(:meta_description)
-                content_for(:meta_description) # rubocop:todo Layout/IndentationWidth
+                      content_for(:meta_description)
                     elsif content_for?(:og_description)
                       content_for(:og_description)
                     else
@@ -130,13 +259,22 @@ module BetterTogether
       tag.meta(name: 'robots', content: meta_content)
     end
 
+    def render_provider_head_tags
+      fragments = ::BetterTogether.head_tag_providers.values.filter_map do |provider|
+        fragment = provider.call(self)
+        fragment.presence
+      end
+
+      safe_join(fragments, "\n")
+    end
+
     # Builds Open Graph meta tags for the current view using content blocks when
     # provided. Falls back to localized defaults and the host community logo.
     # rubocop:todo Metrics/PerceivedComplexity
     # rubocop:todo Metrics/MethodLength
     def open_graph_meta_tags # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
       og_title = if content_for?(:og_title)
-             content_for(:og_title) # rubocop:todo Layout/IndentationWidth
+                   content_for(:og_title)
                  elsif content_for?(:page_title)
                    t('og.page.title', title: content_for(:page_title), platform_name: host_platform.name)
                  else
@@ -149,7 +287,7 @@ module BetterTogether
                          t('og.default_description', platform_name: host_platform.name)
                        end
 
-      og_url = content_for?(:og_url) ? content_for(:og_url) : request.original_url
+      og_url = content_for?(:og_url) ? canonicalize_url(content_for(:og_url)) : canonical_current_url
 
       og_image = content_for?(:og_image) ? content_for(:og_image) : host_community_logo_url
 
@@ -172,15 +310,10 @@ module BetterTogether
     # the host and locale are ensured by prefixing with `base_url_with_locale`.
     def canonical_link_tag
       canonical_url = if content_for?(:canonical_url)
-                        content_for(:canonical_url)
+                        explicit_or_canonical_url(content_for(:canonical_url))
                       else
-                        request.original_url
+                        canonical_current_url
                       end
-
-      unless canonical_url.starts_with?('http://', 'https://')
-        path = canonical_url.sub(%r{^/#{I18n.locale}}, '')
-        canonical_url = "#{base_url_with_locale}#{path}"
-      end
 
       tag.link(rel: 'canonical', href: canonical_url)
     end
@@ -208,9 +341,9 @@ module BetterTogether
     def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
         if args.any? && args.first.is_a?(Hash)
-          args = [args.first.merge(ApplicationController.default_url_options)]
+          args = [args.first.merge(default_url_options)]
         else
-          args << ApplicationController.default_url_options
+          args << default_url_options
         end
         BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
       elsif main_app_url_helper?(method)
@@ -241,6 +374,48 @@ module BetterTogether
       else
         false
       end
+    end
+
+    def current_platform_domain
+      Current.platform_domain ||
+        Current.platform&.primary_platform_domain ||
+        ::BetterTogether::Platform.find_by(host: true)&.primary_platform_domain
+    end
+
+    def canonical_current_url
+      canonicalize_url(request.original_url)
+    end
+
+    def canonicalize_url(url)
+      return url if url.blank?
+
+      uri = URI.parse(url.to_s)
+      path = extract_canonical_path(uri, url)
+      build_url_for_path(base_url, path) + uri_query_string(uri) + uri_fragment_string(uri)
+    rescue URI::InvalidURIError
+      build_url_for_path(base_url_with_locale, normalize_relative_path(url.to_s))
+    end
+
+    def uri_query_string(uri)
+      uri.query.present? ? "?#{uri.query}" : ''
+    end
+
+    def uri_fragment_string(uri)
+      uri.fragment.present? ? "##{uri.fragment}" : ''
+    end
+
+    def extract_canonical_path(uri, _original_url)
+      if uri.host.present?
+        uri.path.presence || '/'
+      else
+        normalize_relative_path(uri.path.presence || '/')
+      end
+    end
+
+    def explicit_or_canonical_url(url)
+      return url if url.to_s.start_with?('http://', 'https://')
+
+      canonicalize_url(url)
     end
 
     # Most commonly used timezones across different continents and regions
@@ -444,6 +619,33 @@ module BetterTogether
 
     private
 
+    def current_platform_base_url
+      Current.platform&.resolved_host_url ||
+        current_platform_domain&.url ||
+        ::BetterTogether::Platform.find_by(host: true)&.resolved_host_url ||
+        ::BetterTogether.base_url
+    end
+
+    def build_url_for_path(root_url, path)
+      root = root_url.to_s.chomp('/')
+      normalized_path = normalize_relative_path(path)
+      "#{root}#{normalized_path}"
+    end
+
+    def normalize_relative_path(path)
+      normalized = path.to_s
+      normalized = "/#{normalized}" unless normalized.start_with?('/')
+      normalized
+    end
+
+    def resolved_url_options
+      uri = URI.parse(base_url)
+      options = { host: uri.host }
+      options[:protocol] = uri.scheme if uri.scheme.present?
+      options[:port] = uri.port if uri.port.present? && ![80, 443].include?(uri.port)
+      options
+    end
+
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def main_app_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && main_app.respond_to?(method)
@@ -452,6 +654,10 @@ module BetterTogether
     # Checks if a method name corresponds to a missing URL or path helper for BetterTogether.
     def better_together_url_helper?(method)
       method.to_s.end_with?('_path', '_url') && BetterTogether::Engine.routes.url_helpers.respond_to?(method)
+    end
+
+    def turbo_native_app?
+      request.user_agent.to_s.include?('Turbo Native')
     end
 
     # Returns the appropriate icon and color for an event based on the person's relationship to it

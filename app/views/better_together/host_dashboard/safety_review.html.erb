@@ -1,0 +1,7 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('host_dashboard.safety_review.page_title', default: t('host_dashboard.safety_review.heading')) %>
+  <% end %>
+
+  <%= render partial: 'content_frame', locals: { content_partial: 'safety_review_tab' } %>
+<% end %>

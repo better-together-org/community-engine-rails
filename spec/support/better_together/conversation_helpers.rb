@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
-module BetterTogether
-  module ConversationHelpers
+# Test helper modules for BetterTogether conversation specs.
+module BetterTogether # :nodoc:
+  # Test helpers for conversation-related specs.
+  module ConversationHelpers # :nodoc:
     include Rails.application.routes.url_helpers
+    include Rails.application.routes.mounted_helpers
     include BetterTogether::Engine.routes.url_helpers
 
     # participants - array of Person-like objects (respond_to? :slug)

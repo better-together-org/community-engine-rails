@@ -4,12 +4,15 @@ module BetterTogether
   module Content
     # Renders a Bootstrap-styled alert panel for announcements and notices.
     class AlertBlock < Block
+      include Translatable
+
       ALERT_LEVELS = %w[info warning success danger].freeze
+
+      translates :heading, type: :string
+      translates :body_text, type: :text
 
       store_attributes :content_data do
         alert_level  String, default: 'info'
-        heading      String, default: ''
-        body_text    String, default: ''
         dismissible  String, default: 'false'
       end
 
@@ -17,10 +20,6 @@ module BetterTogether
 
       def dismissible?
         dismissible == 'true'
-      end
-
-      def self.content_addable?
-        true
       end
 
       def self.extra_permitted_attributes

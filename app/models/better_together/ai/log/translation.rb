@@ -3,8 +3,8 @@
 module BetterTogether
   module Ai
     module Log
-      class Translation < ApplicationRecord # rubocop:todo Style/Documentation
-        belongs_to :initiator, class_name: 'BetterTogether::Person', optional: true
+      class Translation < PlatformRecord # rubocop:todo Style/Documentation
+        belongs_to :initiator, class_name: 'BetterTogether::Person', optional: true, inverse_of: :ai_translation_logs
         validates :request, :model, :status, presence: true
         validates :prompt_tokens, :completion_tokens, :tokens_used,
                   numericality: { only_integer: true, greater_than_or_equal_to: 0 }

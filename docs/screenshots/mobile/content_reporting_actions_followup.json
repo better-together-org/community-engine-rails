@@ -1,0 +1,49 @@
+{
+  "name": "content_reporting_actions_followup",
+  "device": "mobile",
+  "url": "/en/reports/41ea4291-bbe0-4d2a-9d0f-11552d4d65fb",
+  "title": "Safety report | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "report_followup",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": "#report-followup-help",
+      "title": "People can add follow-up evidence or appeal context in place",
+      "bullets": [
+        "Participant-visible notes preserve the conversation history on the report itself.",
+        "Authenticated follow-up gives affected people a supported path to contest or clarify a decision."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 1146.0,
+        "width": 429.0,
+        "height": 42.0,
+        "right": 457.0,
+        "bottom": 1188.0,
+        "center_x": 242.5,
+        "center_y": 1167.0
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 701.0,
+        "width": 461.0,
+        "height": 557.0,
+        "right": 473.0,
+        "bottom": 1258.0,
+        "center_x": 242.5,
+        "center_y": 979.5
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 193.0,
+        "width": 270.0,
+        "height": 488,
+        "score": 701.0
+      }
+    }
+  ]
+}

@@ -77,6 +77,31 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
     @request.env['devise.mapping'] = devise_mapping # rubocop:todo RSpec/InstanceVariable
   end
 
+  describe '#after_omniauth_failure_path_for' do
+    it 'uses the host router context for generic devise session paths' do
+      I18n.with_locale(:en) do
+        expect(controller.send(:new_session_path, :user)).to eq(new_user_session_path(locale: :en))
+      end
+    end
+
+    it 'returns the localized sign-in path' do
+      I18n.with_locale(:en) do
+        expect(controller.send(:after_omniauth_failure_path_for, :user)).to eq(new_user_session_path(locale: :en))
+      end
+    end
+  end
+
+  describe '#failure' do
+    it 'redirects to the localized sign-in path' do
+      I18n.with_locale(:en) do
+        get :failure
+
+        expect(flash[:error]).to eq('There was a problem signing you in. Please register or try signing in later.')
+        expect(response).to redirect_to(new_user_session_path(locale: :en))
+      end
+    end
+  end
+
   describe 'GitHub OAuth callback', :no_auth do
     let(:oauth_email) { unique_email }
     let(:oauth_uid) { unique_oauth_uid }
@@ -263,7 +288,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
         let(:invitation) do
           create(:better_together_platform_invitation,
                  invitable: platform,
-                 invitee_email: 'test@example.com',
+                 invitee_email: oauth_email,
                  status: 'pending')
         end
 
@@ -315,7 +340,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
         let(:invitation) do
           create(:better_together_platform_invitation,
                  invitable: platform,
-                 invitee_email: 'test@example.com',
+                 invitee_email: oauth_email,
                  status: 'pending')
         end
 
@@ -345,7 +370,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
       end
 
       context 'when existing authenticated user connects OAuth' do
-        let(:existing_user) { create(:user, :confirmed, email: 'test@example.com') }
+        let(:existing_user) { create(:user, :confirmed, email: oauth_email) }
 
         before do
           sign_in existing_user
@@ -394,7 +419,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
       end
 
       context 'when user exists by email but has no OAuth integration' do
-        let!(:existing_user) { create(:user, email: 'test@example.com') }
+        let!(:existing_user) { create(:user, email: oauth_email) }
 
         it 'requires invitation to link new OAuth to existing user account' do
           get :github
@@ -460,7 +485,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
       let(:incomplete_auth_hash) do
         OmniAuth::AuthHash.new({
                                  provider: 'github',
-                                 uid: '123456',
+                                 uid: unique_oauth_uid,
                                  info: {
                                    # Missing email
                                    name: 'Test User'
@@ -484,11 +509,14 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
   end
 
   describe 'private methods', :no_auth do
+    let(:private_oauth_email) { unique_email }
+    let(:private_oauth_uid) { unique_oauth_uid }
+
     let(:github_auth_hash) do
       OmniAuth::AuthHash.new({
                                provider: 'github',
-                               uid: '123456',
-                               info: { email: 'test@example.com' },
+                               uid: private_oauth_uid,
+                               info: { email: private_oauth_email },
                                credentials: { token: 'token123' }
                              })
     end
@@ -509,7 +537,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
     describe '#set_person_platform_integration' do
       context 'when integration exists' do # rubocop:todo RSpec/NestedGroups
         let!(:existing_integration) do
-          create(:person_platform_integration, provider: 'github', uid: '123456')
+          create(:person_platform_integration, provider: 'github', uid: private_oauth_uid)
         end
 
         it 'finds and sets the existing integration' do
@@ -555,11 +583,14 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
   end
 
   describe 'before_actions' do
+    let(:before_action_oauth_email) { unique_email }
+    let(:before_action_oauth_uid) { unique_oauth_uid }
+
     let(:github_auth_hash) do
       OmniAuth::AuthHash.new({
                                provider: 'github',
-                               uid: '123456',
-                               info: { email: 'test@example.com' },
+                               uid: before_action_oauth_uid,
+                               info: { email: before_action_oauth_email },
                                credentials: { token: 'token123' }
                              })
     end

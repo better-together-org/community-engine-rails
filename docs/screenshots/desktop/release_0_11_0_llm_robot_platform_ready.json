@@ -1,0 +1,11 @@
+{
+  "name": "release_0_11_0_llm_robot_platform_ready",
+  "device": "desktop",
+  "url": "/en/platforms/marlin-frami",
+  "title": "Heathcote, Lynch and Beatty | Platforms | Heathcote, Lynch and Beatty",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "release_0_11_0_llm_robot_management",
+  "flow": "platform_ready",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_llm_robot_management_spec.rb"
+}

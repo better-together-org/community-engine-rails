@@ -92,7 +92,9 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     task.invoke
 
     analytics_role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+    canonical_analytics_role = BetterTogether::Role.find_by(identifier: 'analytics_viewer')
     expect(analytics_role).to be_present
+    expect(canonical_analytics_role).to be_present
 
     view_permission = BetterTogether::ResourcePermission.find_by(identifier: 'view_metrics_dashboard')
     create_permission = BetterTogether::ResourcePermission.find_by(identifier: 'create_metrics_reports')
@@ -103,8 +105,15 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(download_permission).to be_present
 
     platform_manager = BetterTogether::Role.find_by(identifier: 'platform_manager')
+    platform_steward = BetterTogether::Role.find_by(identifier: 'platform_steward')
     expect(platform_manager).to be_present
+    expect(platform_steward).to be_present
     expect(platform_manager.resource_permissions.map(&:identifier)).to include(
+      'view_metrics_dashboard',
+      'create_metrics_reports',
+      'download_metrics_reports'
+    )
+    expect(platform_steward.resource_permissions.map(&:identifier)).to include(
       'view_metrics_dashboard',
       'create_metrics_reports',
       'download_metrics_reports'
@@ -125,6 +134,23 @@ RSpec.describe 'better_together:seed:rbac_and_navigation', type: :task do
     expect(dashboard_nav_item.permission_identifier).to eq('manage_platform')
     expect(dashboard_nav_item.visibility_strategy).to eq('permission')
     expect(dashboard_nav_item.privacy).to eq('private')
+
+    membership_review_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard-membership-review')
+    expect(membership_review_nav_item.permission_identifier).to eq('manage_platform')
+    expect(membership_review_nav_item.visibility_strategy).to eq('permission')
+    expect(membership_review_nav_item.privacy).to eq('private')
+
+    federation_review_nav_item = BetterTogether::NavigationItem.find_by(
+      identifier: 'host-dashboard-platform-connection-review'
+    )
+    expect(federation_review_nav_item.permission_identifier).to eq('manage_network_connections')
+    expect(federation_review_nav_item.visibility_strategy).to eq('permission')
+    expect(federation_review_nav_item.privacy).to eq('private')
+
+    safety_review_nav_item = BetterTogether::NavigationItem.find_by(identifier: 'host-dashboard-safety-review')
+    expect(safety_review_nav_item.permission_identifier).to eq('manage_platform_safety')
+    expect(safety_review_nav_item.visibility_strategy).to eq('permission')
+    expect(safety_review_nav_item.privacy).to eq('private')
 
     legacy_permission = BetterTogether::ResourcePermission.find_by(identifier: 'view_platform_analytics')
     expect(legacy_permission).to be_nil

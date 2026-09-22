@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_item_policy.rb
 
 module BetterTogether
-  class NavigationItemPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class NavigationItemPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true
     end
@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_navigation_manager?
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform')
+      platform_navigation_manager?
     end
 
     def edit?
@@ -29,17 +29,32 @@ module BetterTogether
     end
 
     def destroy?
-      permitted_to?('manage_platform') && !record.protected?
+      platform_navigation_manager? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        if user.present?
-          scope.all
+        if platform_navigation_manager?
+          platform_scoped
+        elsif user.present?
+          platform_scoped.where(visibility_strategy: %w[public authenticated]).top_level.positioned.includes(:children)
         else
-          scope.visible.top_level.ordered.includes(:children)
+          platform_scoped.visible.top_level.positioned.includes(:children).where(visibility_strategy: 'public')
         end
       end
+
+      private
+
+      def platform_navigation_manager?
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
+      end
+    end
+
+    private
+
+    def platform_navigation_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
   end
 end

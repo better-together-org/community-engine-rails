@@ -1,0 +1,12 @@
+<div class="bt-empty-state card text-center w-100 py-4">
+  <div class="card-body">
+    <h3 class="card-title"><%= title %></h3>
+    <p class="card-text text-muted mb-3"><%= description %></p>
+
+    <% if local_assigns[:action].present? %>
+      <div class="bt-empty-state-actions">
+        <%= action %>
+      </div>
+    <% end %>
+  </div>
+</div>

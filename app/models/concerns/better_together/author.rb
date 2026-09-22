@@ -1,19 +1,53 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # When included, designates a class as Author
+  # Transitional contributor concern backed by BetterTogether::Authorship records.
   module Author
     extend ActiveSupport::Concern
 
-    included do
+    included do # rubocop:todo Metrics/BlockLength
+      has_many :contributions,
+               as: :author,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
       has_many :authorships,
-               foreign_key: :author_id
+               as: :author,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
+      has_many :page_contributions,
+               -> { where(authorable_type: 'BetterTogether::Page') },
+               as: :author,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
+      has_many :post_contributions,
+               -> { where(authorable_type: 'BetterTogether::Post') },
+               as: :author,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
+      has_many :page_authorships,
+               -> { where(authorable_type: 'BetterTogether::Page', role: BetterTogether::Authorship::AUTHOR_ROLE) },
+               as: :author,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
+      has_many :post_authorships,
+               -> { where(authorable_type: 'BetterTogether::Post', role: BetterTogether::Authorship::AUTHOR_ROLE) },
+               as: :author,
+               class_name: 'BetterTogether::Authorship',
+               inverse_of: :author
       has_many :authored_pages,
-               through: :authorships,
+               through: :page_authorships,
                source: :authorable,
                source_type: 'BetterTogether::Page'
       has_many :authored_posts,
-               through: :authorships,
+               through: :post_authorships,
+               source: :authorable,
+               source_type: 'BetterTogether::Post'
+      has_many :contributed_pages,
+               through: :page_contributions,
+               source: :authorable,
+               source_type: 'BetterTogether::Page'
+      has_many :contributed_posts,
+               through: :post_contributions,
                source: :authorable,
                source_type: 'BetterTogether::Post'
     end

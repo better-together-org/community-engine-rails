@@ -6,13 +6,16 @@ module BetterTogether
     # Manage LinkClickReport records tracking instances of reports run against the BetterTogether::Metrics::LinkClick records
     # rubocop:enable Layout/LineLength
     class LinkClickReportsController < ApplicationController
+      include PlatformContext
+
       before_action :set_link_click_report, only: [:download]
 
       # GET /metrics/link_click_reports
       def index
         authorize %i[metrics link_click_report], :index?,
                   policy_class: BetterTogether::Metrics::LinkClickReportPolicy
-        @link_click_reports = BetterTogether::Metrics::LinkClickReport.with_attached_report_file
+        @link_click_reports = BetterTogether::Metrics::LinkClickReport.for_platform(metrics_platform)
+                                                                      .with_attached_report_file
                                                                       .order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/link_click_reports/index',
@@ -26,7 +29,7 @@ module BetterTogether
       def new
         authorize %i[metrics link_click_report], :create?,
                   policy_class: BetterTogether::Metrics::LinkClickReportPolicy
-        @link_click_report = BetterTogether::Metrics::LinkClickReport.new
+        @link_click_report = BetterTogether::Metrics::LinkClickReport.new(platform: metrics_platform)
         # For LinkClick reports, you might want to let users filter by internal or external clicks.
         # For example, providing a selection list for internal (true) or external (false) clicks.
         @internal_options = [true, false]
@@ -38,6 +41,7 @@ module BetterTogether
                   policy_class: BetterTogether::Metrics::LinkClickReportPolicy
 
         opts = {
+          platform: metrics_platform,
           from_date: link_click_report_params.dig(:filters, :from_date),
           to_date: link_click_report_params.dig(:filters, :to_date),
           filter_internal: link_click_report_params.dig(:filters, :filter_internal),
@@ -92,7 +96,9 @@ module BetterTogether
             report.report_file.filename.to_s,         # Filename
             report.report_file.content_type,          # Content type
             report.report_file.byte_size,             # File size
-            I18n.locale.to_s                          # Locale
+            I18n.locale.to_s,                         # Locale
+            metrics_platform.id,
+            metrics_logged_in?
           )
 
           send_data report.report_file.download,
@@ -108,7 +114,7 @@ module BetterTogether
       private
 
       def set_link_click_report
-        @link_click_report = BetterTogether::Metrics::LinkClickReport.find(params[:id])
+        @link_click_report = BetterTogether::Metrics::LinkClickReport.for_platform(metrics_platform).find(params[:id])
       end
 
       def link_click_report_params

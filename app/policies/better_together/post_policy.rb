@@ -2,49 +2,53 @@
 
 module BetterTogether
   # Access control for posts
-  class PostPolicy < ApplicationPolicy
+  class PostPolicy < PlatformRecordPolicy
+    include SelfServicePublishablePolicy
+
     def index?
       true
     end
 
     def show?
-      # Always allow creator and platform managers
-      return true if record.creator == agent || permitted_to?('manage_platform')
+      # Always allow the creator and platform stewards
+      return true if creator_or_platform_steward? || community_content_manager?
 
       # Deny if author is blocked
       return false if blocked_author?
 
-      # Allow if published and public
-      record.published? && record.privacy_public?
+      # Community visibility is limited to members of the platform's primary community.
+      record.published? && public_or_member_scoped_community?(record)
     end
 
     def create?
-      permitted_to?('manage_platform')
+      return false unless user.present?
+
+      platform_manager? || community_content_manager? || self_service_content_creator?
     end
     alias new? create?
 
     def update?
-      permitted_to?('manage_platform')
+      creator_platform_steward_or_editor? || community_content_manager?
     end
     alias edit? update?
 
     def destroy?
-      permitted_to?('manage_platform')
+      creator_or_platform_steward? || community_content_manager?
     end
 
     # Scope for resolving visible posts
-    class Scope < ApplicationPolicy::Scope
+    class Scope < PlatformRecordPolicy::Scope
       # rubocop:disable Metrics/AbcSize
       def resolve
-        return scope.all if permitted_to?('manage_platform')
+        return platform_scoped.latest_first if platform_content_manager?
 
-        base = scope.published
+        base = platform_scoped.published.latest_first
         base = base.excluding_blocked_for(agent) if agent
-        public_posts = posts_table[:privacy].eq('public')
-        return base.where(public_posts) unless agent
+        visible_posts = visible_privacy_query(posts_table)
+        return base.where(visible_posts) unless agent
 
         creator_posts = posts_table[:creator_id].eq(agent.id)
-        base.where(public_posts.or(creator_posts))
+        base.where(visible_posts.or(creator_posts))
       end
       # rubocop:enable Metrics/AbcSize
 
@@ -53,15 +57,43 @@ module BetterTogether
       def posts_table
         ::BetterTogether::Post.arel_table
       end
+
+      def platform_content_manager?
+        permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
+      end
     end
 
     private
 
+    def community_content_manager?
+      target_community = if record.is_a?(Class)
+                           Current.platform&.community
+                         else
+                           record.community || record.platform&.community
+                         end
+      return false unless target_community
+
+      permitted_to?('manage_community_content', target_community)
+    end
+
+    def creator_or_platform_steward?
+      creator_of?(record) || platform_manager?
+    end
+
+    def creator_platform_steward_or_editor?
+      creator_or_platform_steward? || (agent.present? && record.editable_contributors.include?(agent))
+    end
+
     def post_author_ids
       @post_author_ids ||= if record.authorships.loaded?
-                             record.authorships.map(&:author_id)
+                             record.authorships.select do |authorship|
+                               authorship.author_type == 'BetterTogether::Person' &&
+                                 authorship.role == BetterTogether::Authorship::AUTHOR_ROLE
+                             end
+                                               .map(&:author_id)
                            else
-                             record.authorships.pluck(:author_id)
+                             record.authorships.where(author_type: 'BetterTogether::Person',
+                                                      role: BetterTogether::Authorship::AUTHOR_ROLE).pluck(:author_id)
                            end
     end
 

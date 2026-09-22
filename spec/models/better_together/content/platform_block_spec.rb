@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Content
+module BetterTogether # :nodoc:
+  module Content # :nodoc:
     RSpec.describe PlatformBlock do
       describe 'Associations' do
         it { is_expected.to belong_to(:platform).class_name('BetterTogether::Platform').touch(true) }

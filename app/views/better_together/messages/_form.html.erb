@@ -1,9 +1,22 @@
 <!-- app/views/messages/_form.html.erb -->
-<%= form_with(model: [conversation, message], local: false, html: { id: "new_message", data: { controller: "better_together--message-form" } }) do |form| %>
-  <div class="message-box d-flex flex-column">
-    <%= form.rich_text_area :content, class: 'form-control', rows: 1, placeholder: t('better_together.messages.form.placeholder'), required: true, "data-better_together--message-form-target": "content" %>
-    <button class="btn btn-primary ms-auto mt-2" type="submit">
-      <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
-    </button>
-  </div>
-<% end %>
+<%# When rendered from an ActionCable broadcast:
+    - current_user_person_id is passed as nil (no Warden in renderer context)
+    - form_action_url is pre-computed via engine routes (renderer lacks engine route helpers,
+      so polymorphic routing on [conversation, message] would raise NoMethodError)
+    Normal request renders omit both locals and fall back to the live helpers. %>
+<% form_url = local_assigns.key?(:form_action_url) ? local_assigns[:form_action_url] : [conversation, message] %>
+<div id="message_form_<%= conversation.id %>">
+  <%= form_with(model: message, url: form_url, local: false, html: { id: "new_message", data: { controller: 'better_together--message-form' } }) do |form| %>
+    <div class="message-box d-flex flex-column">
+      <%= form.rich_text_area :content, class: 'form-control', rows: 1,
+          placeholder: t('better_together.messages.form.placeholder'),
+          required: true,
+          "data-better_together--message-form-target": "content" %>
+      <div class="d-flex align-items-center mt-2">
+        <%= button_tag type: 'submit', class: 'btn btn-primary ms-2' do %>
+          <%= t('better_together.messages.form.send') %> <i class="fas fa-paper-plane"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

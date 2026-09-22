@@ -1,0 +1,26 @@
+flowchart TD
+  A[Remote platform exports seeds] --> B[FederatedContentPullJob]
+  B --> C[Mark PlatformConnection sync started]
+  C --> D[FederatedContentPullService fetches paginated batch]
+  D --> D1{Feed response 401?}
+  D1 -->|No| E[FederatedContentIngestService]
+  D1 -->|Yes| D2[Invalidate cached OAuth token]
+  D2 --> D3[Retry feed request once with fresh token]
+  D3 --> D4{Still 401?}
+  D4 -->|No| E
+  D4 -->|Yes| D5[Raise federation error with connection + host context]
+  D5 --> Q[Mark PlatformConnection sync failed]
+  E --> F[Set Current.platform to target platform]
+  F --> G[FederatedSeedIngestor]
+  G --> H{Seed type}
+  H -->|post| I[FederatedPostMirrorService]
+  H -->|page| J[FederatedPageMirrorService]
+  H -->|event| K[FederatedEventMirrorService]
+  I --> L[Create or update mirrored record]
+  J --> L
+  K --> L
+  L --> M[Record processed count and sync cursor]
+  M --> N{next_cursor present?}
+  N -->|Yes| O[Enqueue next pull job]
+  N -->|No| P[Mark sync succeeded]
+

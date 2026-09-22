@@ -46,8 +46,12 @@ unless FactoryBot.factories.registered?(:better_together_invitation)
         end
       end
 
+      trait :with_community_organizer_role do
+        role { BetterTogether::Role.find_by(identifier: 'community_organizer') }
+      end
+
       trait :with_coordinator_role do
-        role { BetterTogether::Role.find_by(identifier: 'community_coordinator') }
+        role { BetterTogether::Role.find_by(identifier: 'community_organizer') || BetterTogether::Role.find_by(identifier: 'community_coordinator') }
       end
     end
   end

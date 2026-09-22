@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module Infrastructure
+# Infrastructure namespace for CE dummy app.
+module Infrastructure # :nodoc:
   def self.table_name_prefix
     'infrastructure_'
   end

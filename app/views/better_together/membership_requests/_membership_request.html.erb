@@ -1,0 +1,28 @@
+<%# app/views/better_together/membership_requests/_membership_request.html.erb %>
+<%# locals: (membership_request:) -%>
+
+<tr id="<%= dom_id(membership_request) %>" class="membership-request">
+  <td><%= membership_request.requestor_name.presence || membership_request.creator&.name || t('globals.unknown', default: 'Unknown') %></td>
+  <td>
+    <% email = membership_request.requestor_email.presence || membership_request.creator&.email %>
+    <% if email %>
+      <%= mail_to email, email, class: 'text-decoration-none' %>
+    <% else %>
+      <span class="text-muted">—</span>
+    <% end %>
+  </td>
+  <td>
+    <% if membership_request.target.present? %>
+      <%= link_to membership_request.target.name, membership_request.target, class: 'text-decoration-none' %>
+    <% else %>
+      <span class="text-muted">—</span>
+    <% end %>
+  </td>
+  <td><%= membership_request.referral_source.presence || '—' %></td>
+  <td><%= render 'status_badge', membership_request: %></td>
+  <td><%= time_ago_in_words(membership_request.created_at) %> <%= t('globals.ago', default: 'ago') %></td>
+  <td class="text-end">
+    <%= render 'row_actions', membership_request: %>
+  </td>
+</tr>
+

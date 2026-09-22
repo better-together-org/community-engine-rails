@@ -19,11 +19,23 @@ module BetterTogether
     def unread_notification_count
       return unless current_person
 
-      current_person.notifications.unread.size
+      platform_notifications.unread.size
     end
 
     def recent_notifications
-      current_person.notifications.joins(:event).order(created_at: :desc).limit(5)
+      platform_notifications.joins(:event).order(created_at: :desc).limit(5)
+    end
+
+    # Scopes notifications to those belonging to the current platform (or
+    # unscoped when no platform is active). When Current.platform is nil
+    # (host-only instance with no platform context), returns all notifications
+    # so nothing is silently hidden.
+    def platform_notifications
+      scope = current_person.notifications
+      platform_id = Current.platform&.id
+      return scope if platform_id.blank?
+
+      scope.where(platform_id: [platform_id, nil])
     end
 
     # Fragment cache key for notification types
@@ -63,11 +75,11 @@ module BetterTogether
 
     # Cache expiration utilities for notifications
     def expire_notification_fragments(notification)
-      # Expire all fragments related to this notification
+      # Use expire_fragment so Rails applies the same view-key namespacing/digesting
+      # as the cache helper — raw Rails.cache.delete bypasses that and misses the fragment.
       expire_fragment(notification_fragment_cache_key(notification))
       expire_fragment(notification_type_fragment_cache_key(notification))
 
-      # Expire header/content/footer fragments
       expire_fragment(['notification_header', notification.cache_key_with_version])
       expire_fragment(['notification_content', notification.cache_key_with_version])
       expire_fragment(['notification_footer', notification.cache_key_with_version])

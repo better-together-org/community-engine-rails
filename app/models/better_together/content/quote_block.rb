@@ -4,18 +4,12 @@ module BetterTogether
   module Content
     # Renders a highlighted pull quote or testimonial with attribution.
     class QuoteBlock < Block
-      store_attributes :content_data do
-        quote_text               String, default: ''
-        attribution_name         String, default: ''
-        attribution_title        String, default: ''
-        attribution_organization String, default: ''
-      end
+      include Translatable
+
+      translates :attribution_name, :attribution_title, :attribution_organization, type: :string
+      translates :quote_text, type: :text
 
       validates :quote_text, presence: true
-
-      def self.content_addable?
-        true
-      end
 
       def self.extra_permitted_attributes
         super + %i[quote_text attribution_name attribution_title attribution_organization]

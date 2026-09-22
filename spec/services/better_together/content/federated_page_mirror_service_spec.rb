@@ -1,0 +1,218 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+module BetterTogether # :nodoc:
+  RSpec.describe Content::FederatedPageMirrorService do
+    describe '#call' do
+      let(:source_platform) { create(:better_together_platform, :community_engine_peer) }
+      let(:target_platform) { create(:better_together_platform, :public) }
+      let(:connection) do
+        create(
+          :better_together_platform_connection,
+          :active,
+          source_platform:,
+          target_platform:,
+          content_sharing_policy: 'mirror_network_feed',
+          share_pages: true
+        )
+      end
+      let(:remote_attributes) do
+        {
+          title: 'Remote Page',
+          content: 'Remote page content',
+          identifier: 'remote-page',
+          privacy: 'public',
+          published_at: 1.day.ago,
+          meta_description: 'Remote page description',
+          keywords: 'remote,page'
+        }
+      end
+
+      it 'preserves the remote UUID for genuine cross-instance federation (external source, local target)' do
+        remote_id = SecureRandom.uuid
+
+        page = described_class.new(
+          connection:,
+          remote_attributes:,
+          remote_id:,
+          preserve_remote_uuid: true
+        ).call
+
+        expect(page.id).to eq(remote_id)
+        expect(page.platform).to eq(target_platform)
+        expect(page.source_id).to be_nil
+        expect(page.last_synced_at).to be_present
+      end
+
+      it 'uses source_id instead of the remote UUID for a same-instance connection (both sides local)' do
+        local_peer = create(:better_together_platform, :public)
+        same_instance_connection = create(
+          :better_together_platform_connection,
+          :active,
+          source_platform: target_platform,
+          target_platform: local_peer,
+          content_sharing_policy: 'mirror_network_feed',
+          share_pages: true
+        )
+        remote_id = SecureRandom.uuid
+
+        page = described_class.new(
+          connection: same_instance_connection,
+          remote_attributes:,
+          remote_id:,
+          preserve_remote_uuid: true
+        ).call
+
+        expect(page.id).not_to eq(remote_id)
+        expect(page.source_id).to eq(remote_id)
+      end
+
+      it 'preserves the remote UUID when the target platform is external' do
+        remote_id = SecureRandom.uuid
+        external_target = create(:better_together_platform, :community_engine_peer)
+        external_connection = create(
+          :better_together_platform_connection,
+          :active,
+          source_platform:,
+          target_platform: external_target,
+          content_sharing_policy: 'mirror_network_feed',
+          share_pages: true
+        )
+
+        page = described_class.new(
+          connection: external_connection,
+          remote_attributes:,
+          remote_id:,
+          preserve_remote_uuid: true
+        ).call
+
+        expect(page.id).to eq(remote_id)
+        expect(page.source_id).to be_nil
+        expect(page.platform).to eq(external_target)
+        expect(page.identifier).to eq("#{source_platform.identifier}--remote-page")
+        expect(page.last_synced_at).to be_present
+      end
+
+      it 'falls back to source_id for non-UUID remote identifiers' do
+        page = described_class.new(
+          connection:,
+          remote_attributes:,
+          remote_id: 'legacy-page-42',
+          preserve_remote_uuid: false
+        ).call
+
+        expect(page.id).not_to eq('legacy-page-42')
+        expect(page.source_id).to eq('legacy-page-42')
+        expect(page.platform).to eq(target_platform)
+        expect(page.identifier).to eq("#{source_platform.identifier}--remote-page")
+      end
+
+      it 'updates an existing mirrored page on repeat import' do
+        existing = described_class.new(
+          connection:,
+          remote_attributes:,
+          remote_id: 'legacy-page-42'
+        ).call
+
+        updated = described_class.new(
+          connection:,
+          remote_attributes: remote_attributes.merge(title: 'Updated Remote Page'),
+          remote_id: 'legacy-page-42'
+        ).call
+
+        expect(updated.id).to eq(existing.id)
+        expect(updated.title).to eq('Updated Remote Page')
+        expect(updated.identifier).to eq("#{source_platform.identifier}--remote-page")
+      end
+
+      context 'when a concurrent INSERT wins the UUID primary-key race (TOCTOU)' do
+        it 'reloads the winning record and applies current attributes to it' do
+          remote_id = SecureRandom.uuid
+          external_target = create(:better_together_platform, :community_engine_peer)
+          external_connection = create(
+            :better_together_platform_connection,
+            :active,
+            source_platform:,
+            target_platform: external_target,
+            content_sharing_policy: 'mirror_network_feed',
+            share_pages: true
+          )
+          winning_page = create(:better_together_page, id: remote_id, platform: external_target)
+
+          service = described_class.new(
+            connection: external_connection,
+            remote_attributes:,
+            remote_id:,
+            preserve_remote_uuid: true
+          )
+
+          # Simulate the TOCTOU gap: the pre-check saw nothing, so find_or_initialize_page
+          # returns a new unsaved record with the same UUID. By the time save! runs,
+          # winning_page already holds that primary key.
+          allow(service).to receive(:find_or_initialize_page) # rubocop:todo RSpec/MessageSpies
+            .and_return(BetterTogether::Page.new(id: remote_id))
+
+          result = service.call
+
+          expect(result.id).to eq(remote_id)
+          expect(result.title).to eq(remote_attributes[:title])
+          expect(result.platform).to eq(external_target)
+          expect(result).to be_persisted
+          expect(result.id).to eq(winning_page.id)
+        end
+      end
+
+      context 'when a UUID collision exists under a different platform' do
+        it 'raises RecordInvalid with identifier:taken so the ingest service logs a conflict' do
+          remote_id = SecureRandom.uuid
+          external_target = create(:better_together_platform, :community_engine_peer)
+          other_platform  = create(:better_together_platform, :community_engine_peer)
+          external_connection = create(
+            :better_together_platform_connection,
+            :active,
+            source_platform:,
+            target_platform: external_target,
+            content_sharing_policy: 'mirror_network_feed',
+            share_pages: true
+          )
+          # Same UUID exists on a *different* platform — not the target
+          create(:better_together_page, id: remote_id, platform: other_platform)
+
+          service = described_class.new(
+            connection: external_connection,
+            remote_attributes:,
+            remote_id:,
+            preserve_remote_uuid: true
+          )
+          allow(service).to receive(:find_or_initialize_page) # rubocop:todo RSpec/MessageSpies
+            .and_return(BetterTogether::Page.new(id: remote_id))
+
+          expect { service.call }.to raise_error(ActiveRecord::RecordInvalid) do |e|
+            expect(e.record.errors.details[:identifier]).to include(hash_including(error: :taken))
+          end
+        end
+      end
+
+      it 'rejects mirroring when the connection policy does not allow pages' do
+        connection.update!(content_sharing_policy: 'none')
+
+        expect do
+          described_class.new(
+            connection:,
+            remote_attributes:,
+            remote_id: SecureRandom.uuid,
+            preserve_remote_uuid: true
+          ).call
+        end.to raise_error(
+          ArgumentError,
+          I18n.t(
+            'better_together.federation.mirroring.errors.not_authorized',
+            content_type: I18n.t('better_together.federation.mirroring.content_types.page'),
+            reason: 'content mirroring not enabled for type'
+          )
+        )
+      end
+    end
+  end
+end

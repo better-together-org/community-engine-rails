@@ -1,0 +1,21 @@
+---
+title: Event show page — Sessions tab
+audience:
+- event_attendee
+- event_organizer
+- developer
+journey_step: As an attendee, I open a recurring event and see its next several sessions
+  listed by date, so I know which dates I could RSVP or comment on individually.
+callouts:
+- :id: sessions_tab
+  :title: Sessions tab
+  :description: app/views/better_together/events/show.html.erb — gated on event.recurring?.
+- :id: sessions_list
+  :title: Upcoming sessions list
+  :description: RecurrenceHelper#next_occurrences_list — the overwhelming majority
+    of occurrences are never touched, so this never creates a database row just from
+    being viewed.
+accessibility_notes: Tab uses standard Bootstrap nav/tab-pane ARIA roles (role="tab"/"tabpanel",
+  aria-controls, aria-selected).
+slug: pr1717_event_sessions_tab
+device: desktop

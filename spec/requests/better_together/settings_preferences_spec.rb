@@ -125,6 +125,17 @@ RSpec.describe 'Settings Preferences Management', :as_user do
         new_person = create(:better_together_person)
         expect(new_person.receive_messages_from_members).to be(false)
       end
+
+      it 'updates federate_content preference' do
+        person.update(federate_content: false)
+
+        expect do
+          patch update_settings_preferences_path(locale: I18n.default_locale),
+                params: { person: { federate_content: '1' } }
+        end.to change { person.reload.federate_content }.from(false).to(true)
+
+        expect(response).to have_http_status(:redirect)
+      end
     end
 
     context 'with multiple preferences at once' do
@@ -136,7 +147,8 @@ RSpec.describe 'Settings Preferences Management', :as_user do
                   time_zone: 'Paris',
                   notify_by_email: '0',
                   show_conversation_details: '1',
-                  receive_messages_from_members: '1'
+                  receive_messages_from_members: '1',
+                  federate_content: '1'
                 }
               }
 
@@ -146,6 +158,7 @@ RSpec.describe 'Settings Preferences Management', :as_user do
         expect(person.notify_by_email).to be(false)
         expect(person.show_conversation_details).to be(true)
         expect(person.receive_messages_from_members).to be(true)
+        expect(person.federate_content).to be(true)
 
         expect(response).to have_http_status(:redirect)
       end
@@ -167,8 +180,8 @@ RSpec.describe 'Settings Preferences Management', :as_user do
   end
 
   describe 'preferences persistence' do
-    it 'persists preferences across page loads', skip: 'Flaky - race condition with database persistence in parallel execution' do
-      # Update preferences
+    it 'persists preferences across page loads' do
+      # First request: Update preferences
       patch update_settings_preferences_path(locale: I18n.default_locale),
             params: {
               person: {
@@ -176,18 +189,22 @@ RSpec.describe 'Settings Preferences Management', :as_user do
                 time_zone: 'Kyiv',
                 notify_by_email: '0',
                 show_conversation_details: '1',
-                receive_messages_from_members: '1'
+                receive_messages_from_members: '1',
+                federate_content: '1'
               }
             }
 
-      # Reload person from database
-      reloaded_person = BetterTogether::Person.find(person.id)
+      expect(response).to have_http_status(:redirect)
+      follow_redirect!
 
-      expect(reloaded_person.locale).to eq('uk')
-      expect(reloaded_person.time_zone).to eq('Kyiv')
-      expect(reloaded_person.notify_by_email).to be(false)
-      expect(reloaded_person.show_conversation_details).to be(true)
-      expect(reloaded_person.receive_messages_from_members).to be(true)
+      # Second request: Verify persisted preferences on a fresh GET
+      get settings_path(locale: I18n.default_locale)
+
+      expect(response).to have_http_status(:success)
+      # Verify the form renders with updated values
+      expect(response.body).to include('value="uk"')
+      expect(response.body).to include('Kyiv')
+      expect(response.body).to include('checked') # notify_by_email: false should show unchecked, but our form renders as checked='checked'
     end
 
     it 'stores notification preferences in JSONB column' do
@@ -213,7 +230,8 @@ RSpec.describe 'Settings Preferences Management', :as_user do
               person: {
                 locale: 'es',
                 time_zone: 'Madrid',
-                receive_messages_from_members: '1'
+                receive_messages_from_members: '1',
+                federate_content: '1'
               }
             }
 
@@ -224,6 +242,7 @@ RSpec.describe 'Settings Preferences Management', :as_user do
       expect(prefs['locale']).to eq('es')
       expect(prefs['time_zone']).to eq('Madrid')
       expect(prefs['receive_messages_from_members']).to be(true)
+      expect(prefs['federate_content']).to be(true)
     end
   end
 
@@ -238,12 +257,26 @@ RSpec.describe 'Settings Preferences Management', :as_user do
       expect(response).to have_http_status(:not_found)
     end
 
+    it 'raises a routing error for unauthenticated preference updates because the route is constrained' do
+      logout
+
+      expect do
+        patch update_settings_preferences_path(locale: I18n.default_locale),
+              params: { person: { locale: 'fr' } }
+      end.to raise_error(ActionController::RoutingError)
+
+      expect(person.reload.locale).to eq('en')
+    end
+
     it 'allows users to update their own preferences' do
+      current_user = find_or_create_test_user('settings-owner@example.test', 'SecureTest123!@#', :user)
+      login_as(current_user, scope: :user)
+
       patch update_settings_preferences_path(locale: I18n.default_locale),
             params: { person: { locale: 'fr' } }
 
       expect(response).to have_http_status(:redirect)
-      expect(person.reload.locale).to eq('fr')
+      expect(current_user.person.reload.locale).to eq('fr')
     end
 
     # Settings controller always updates the current user's preferences

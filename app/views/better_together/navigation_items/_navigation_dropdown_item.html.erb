@@ -4,6 +4,9 @@
 
 <% if navigation_item_visible_for?(navigation_item) %>
   <li id="<%= dom_id(navigation_item) %>">
-    <%= link_to navigation_item.title, sanitize_url(navigation_item.url), class: "dropdown-item", data: { identifier: navigation_item.identifier } %>
+    <%= link_to navigation_item.title,
+                sanitize_url(navigation_item.url),
+                class: 'dropdown-item',
+                data: dropdown_data_attributes(navigation_item) %>
   </li>
 <% end %>

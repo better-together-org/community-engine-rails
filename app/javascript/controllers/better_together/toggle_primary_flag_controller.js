@@ -6,18 +6,21 @@ export default class extends Controller {
   connect() {
     // Find all checkboxes within the same container
     const container = this.element.closest('[data-better_together--dynamic-fields-target="container"]')
-    const allCheckboxes = container.querySelectorAll('input[type="checkbox"].primary-switch')
 
-    // Exclude the current checkbox
-    const otherCheckboxes = Array.from(allCheckboxes).filter(checkbox => checkbox !== this.checkboxTarget)
-    const anyOtherChecked = otherCheckboxes.some(checkbox => checkbox.checked)
+    if (container) {
+      const allCheckboxes = container.querySelectorAll('input[type="checkbox"].primary-switch')
 
-    if (anyOtherChecked) {
-      // Another checkbox is checked; uncheck this one
-      this.checkboxTarget.checked = false
-    } else {
-      // No other checkboxes checked; ensure this one is checked
-      this.checkboxTarget.checked = true
+      // Exclude the current checkbox
+      const otherCheckboxes = Array.from(allCheckboxes).filter(checkbox => checkbox !== this.checkboxTarget)
+      const anyOtherChecked = otherCheckboxes.some(checkbox => checkbox.checked)
+
+      if (anyOtherChecked) {
+        // Another checkbox is checked; uncheck this one
+        this.checkboxTarget.checked = false
+      } else {
+        // No other checkboxes checked; ensure this one is checked
+        this.checkboxTarget.checked = true
+      }
     }
   }
 

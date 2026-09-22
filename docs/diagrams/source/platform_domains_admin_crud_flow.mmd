@@ -1,0 +1,28 @@
+flowchart TD
+  A[Platform manager opens host platform_domains route] --> B{Route-level Devise constraint: manage_platform?}
+  B -->|No, unauthenticated or lacks global manage_platform| C[404 Not Found — route never matches controller]
+  B -->|Yes| D[PlatformDomainsController action runs]
+
+  D --> E{PlatformDomainPolicy: manage_platform or manage_platform_settings on THIS platform?}
+  E -->|No — manager of a different platform| F[404 Not Found — Pundit::NotAuthorizedError]
+  E -->|Yes| G[Action proceeds]
+
+  G --> H[index: list domains ordered primary-first]
+  G --> I[new / create: build + validate PlatformDomain]
+  G --> J[edit / update: modify existing PlatformDomain]
+  G --> K[destroy: remove non-primary PlatformDomain]
+
+  I --> L{Hostname unique + primary/share exclusivity valid?}
+  L -->|No| M[Re-render form, 422 Unprocessable]
+  L -->|Yes| N[201 saved, redirect to index]
+
+  K --> O{Target is the primary domain?}
+  O -->|Yes| P[Blocked — cannot delete primary, redirect with alert]
+  O -->|No| Q[Destroyed, redirect with notice]
+
+  classDef deny fill:#fce8e6,stroke:#b3261e,color:#5f2120;
+  classDef allow fill:#e6f4ea,stroke:#137333,color:#0d652d;
+  classDef guard fill:#fff8e1,stroke:#8a6d00,color:#5f4b00;
+  class C,F,M,P deny;
+  class D,G,H,I,J,K,N,Q allow;
+  class B,E,L,O guard;

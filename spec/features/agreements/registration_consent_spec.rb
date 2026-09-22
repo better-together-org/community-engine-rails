@@ -24,7 +24,7 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
     fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
     fill_in 'user[person_attributes][identifier]', with: test_identifier
-    fill_in 'user[person_attributes][description]', with: 'Tester'
+    fill_in_trix_field 'user[person_attributes][description]', with: 'Tester'
 
     click_button 'Sign Up'
 
@@ -41,16 +41,25 @@ RSpec.describe 'User registration agreements', :no_auth, :user_registration do
     fill_in 'user[password_confirmation]', with: 'SecureTest123!@#'
     fill_in 'user[person_attributes][name]', with: 'Test User'
     fill_in 'user[person_attributes][identifier]', with: test_identifier
-    fill_in 'user[person_attributes][description]', with: 'Tester'
+    fill_in_trix_field 'user[person_attributes][description]', with: 'Tester'
 
     check 'terms_of_service_agreement'
     check 'privacy_policy_agreement'
     check 'code_of_conduct_agreement'
 
+    satisfy_bot_defense_minimum_wait(:registration)
     click_button 'Sign Up'
 
     user = BetterTogether::User.find_by(email: test_email)
     expect(user).to be_present
     expect(user.person.agreement_participants.count).to eq(3)
+
+    participant = user.person.agreement_participants.find_by!(agreement: privacy_agreement)
+    expect(participant.acceptance_method).to eq('sign_up')
+    expect(participant.agreement_identifier_snapshot).to eq('privacy_policy')
+    expect(participant.audit_context).to include(
+      'locale' => I18n.default_locale.to_s,
+      'source_path' => user_registration_path(locale: I18n.default_locale)
+    )
   end
 end

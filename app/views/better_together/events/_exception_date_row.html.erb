@@ -1,0 +1,13 @@
+<%# locals: (value:, id_suffix:) %>
+<div class="exception-date-row d-flex align-items-center gap-2 mb-2" data-better-together--exception-dates-target="row">
+  <%= date_field_tag 'event[recurrence_attributes][exception_dates][]', value,
+      id: "exception_date_#{id_suffix}",
+      class: 'form-control exception-date-input',
+      style: 'max-width: 12rem;',
+      'aria-label': t('better_together.events.recurrence.labels.exception_date_single') %>
+  <button type="button" class="btn btn-outline-danger btn-sm"
+          data-action="click->better-together--exception-dates#remove"
+          aria-label="<%= t('better_together.events.recurrence.actions.remove_exception_date') %>">
+    &times;
+  </button>
+</div>

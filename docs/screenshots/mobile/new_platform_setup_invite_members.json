@@ -1,0 +1,83 @@
+{
+  "name": "new_platform_setup_invite_members",
+  "device": "mobile",
+  "url": "/en/w/new_platform_setup/new-platform-3eec94fa95e3/invite_members",
+  "title": "Invite Members (Optional) | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "new_platform_setup",
+  "flow": "new_platform_setup_invite_members",
+  "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-platform-setup-invite-members-skip-btn",
+      "title": "Continue",
+      "bullets": [
+        "Advances to review_and_launch — sending zero, one, or many invitations is all valid."
+      ],
+      "target": {
+        "x": 136.28125,
+        "y": 600.546875,
+        "width": 97.953125,
+        "height": 38.0,
+        "right": 234.234375,
+        "bottom": 638.546875,
+        "center_x": 185.2578125,
+        "center_y": 619.546875
+      },
+      "avoid": {
+        "x": 136.28125,
+        "y": 600.546875,
+        "width": 97.953125,
+        "height": 38.0,
+        "right": 234.234375,
+        "bottom": 638.546875,
+        "center_x": 185.2578125,
+        "center_y": 619.546875
+      },
+      "placement": {
+        "side": "below",
+        "x": 50.26,
+        "y": 658.55,
+        "width": 270.0,
+        "height": 210,
+        "score": 622.453125
+      }
+    },
+    {
+      "selector": "#new_platform_invitation_invitee_email",
+      "title": "Invitee email",
+      "bullets": [
+        "Sends a PlatformInvitation via the existing admin invitation flow."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 498.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 536.546875,
+        "center_x": 250.0,
+        "center_y": 517.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 498.546875,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 536.546875,
+        "center_x": 250.0,
+        "center_y": 517.546875
+      },
+      "placement": {
+        "side": "above",
+        "x": 115.0,
+        "y": 268.55,
+        "width": 270.0,
+        "height": 210,
+        "score": 498.546875
+      }
+    }
+  ]
+}

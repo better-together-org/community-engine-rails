@@ -1,0 +1,70 @@
+<div class="mb-4"
+     data-controller="better_together--contribution-assignments"
+     data-better_together--contribution-assignments-person-options-value="<%= contribution_options_json(person_options) %>"
+     data-better_together--contribution-assignments-robot-options-value="<%= contribution_options_json(robot_options) %>"
+     data-better_together--contribution-assignments-select-placeholder-value="<%= t('better_together.contributions.form.select_contributor', default: 'Select contributor') %>">
+  <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+    <div>
+      <h5 class="mb-1"><%= t('better_together.contributions.form.heading', default: 'Contributors') %></h5>
+      <p class="text-muted small mb-0">
+        <%= t('better_together.contributions.form.description', default: 'Assign people or robots to this record with explicit contribution roles.') %>
+      </p>
+    </div>
+
+    <button type="button"
+            class="btn btn-outline-primary btn-sm"
+            data-action="click->better_together--contribution-assignments#add">
+      <i class="fas fa-plus" aria-hidden="true"></i>
+      <%= t('better_together.contributions.form.add', default: 'Add contributor') %>
+    </button>
+  </div>
+
+  <% if record.agent_authors.any? %>
+    <div class="accordion accordion-flush mb-3" id="<%= dom_id(record, :contributor_preview) %>">
+      <div class="accordion-item">
+        <h6 class="accordion-header" id="<%= dom_id(record, :contributor_preview_heading) %>">
+          <button class="accordion-button collapsed" type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#<%= dom_id(record, :contributor_preview_body) %>"
+                  aria-expanded="false"
+                  aria-controls="<%= dom_id(record, :contributor_preview_body) %>">
+            <%= t('better_together.contributions.form.preview_heading', default: 'Preview contributor attribution') %>
+          </button>
+        </h6>
+        <div id="<%= dom_id(record, :contributor_preview_body) %>"
+             class="accordion-collapse collapse"
+             aria-labelledby="<%= dom_id(record, :contributor_preview_heading) %>">
+          <div class="accordion-body">
+            <p class="text-muted small">
+              <%= t('better_together.contributions.form.preview_hint',
+                    default: 'This is how the contributor byline will appear when contributor display is on. It reflects your last save, not unsaved changes below.') %>
+            </p>
+            <%= render 'better_together/shared/agent_authors', authors: record.agent_authors %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row g-3" data-better_together--contribution-assignments-target="container">
+    <% contribution_records.each do |contribution| %>
+      <%= form.fields_for :contributions, contribution do |contribution_form| %>
+        <%= render 'better_together/shared/contribution_fields',
+                   form: contribution_form,
+                   role_options:,
+                   person_options:,
+                   robot_options: %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <template data-better_together--contribution-assignments-target="template">
+    <%= form.fields_for :contributions, new_contribution, child_index: 'NEW_RECORD' do |contribution_form| %>
+      <%= render 'better_together/shared/contribution_fields',
+                 form: contribution_form,
+                 role_options:,
+                 person_options:,
+                 robot_options: %>
+    <% end %>
+  </template>
+</div>

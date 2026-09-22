@@ -5,8 +5,17 @@
 namespace :v1 do # rubocop:disable Metrics/BlockLength
   # People
   get 'people/me', to: 'people#me'
+  get 'me/data_exports', to: 'person_data_exports#index'
+  post 'me/data_exports', to: 'person_data_exports#create'
+  get 'me/data_exports/:id', to: 'person_data_exports#show'
+  get 'me/deletion_requests', to: 'person_deletion_requests#index'
+  post 'me/deletion_requests', to: 'person_deletion_requests#create'
+  delete 'me/deletion_requests/:id', to: 'person_deletion_requests#destroy'
   jsonapi_resources :people
   # NOTE: Relationship routes omitted until all related resources exist
+
+  # Short Links
+  jsonapi_resources :short_links
 
   # Communities
   jsonapi_resources :communities
@@ -43,12 +52,18 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Metrics (custom summary endpoint, read-only)
   get 'metrics/summary', to: 'metrics_summary#show'
 
-  # Pages
+  # Pages and Content Blocks
   jsonapi_resources :pages
+  jsonapi_resources :authorships
+  jsonapi_resources :page_blocks
+
+  # Content Blocks (all STI types — filter by page_id or type)
+  jsonapi_resources :blocks
 
   # Navigation
   jsonapi_resources :navigation_areas, only: %i[index show create update]
   jsonapi_resources :navigation_items
+  jsonapi_resources :robots, only: %i[index show create update]
 
   # Geography (read-only)
   jsonapi_resources :geography_continents, only: %i[index show]
@@ -65,7 +80,11 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   jsonapi_resources :joatu_requests
   jsonapi_resources :joatu_agreements, only: %i[index show create update]
   post 'joatu_agreements/:id/accept', to: 'joatu_agreements#accept'
+  post 'joatu_agreements/:id/cancel', to: 'joatu_agreements#cancel'
   post 'joatu_agreements/:id/reject', to: 'joatu_agreements#reject'
+
+  # Membership requests — create is public (unauthenticated); read/manage require auth
+  jsonapi_resources :membership_requests, only: %i[index show create destroy]
 
   # Webhook management (outbound subscriptions)
   jsonapi_resources :webhook_endpoints

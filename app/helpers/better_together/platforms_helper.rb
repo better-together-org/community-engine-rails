@@ -31,5 +31,15 @@ module BetterTogether
 
       nil
     end
+
+    def feature_gate_rollout_options
+      BetterTogether::FeatureRegistry::VALID_ROLLOUTS.map do |rollout|
+        [rollout.humanize, rollout]
+      end
+    end
+
+    def feature_gate_catalog
+      BetterTogether::FeatureRegistry.all.values
+    end
   end
 end

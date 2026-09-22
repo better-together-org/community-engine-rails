@@ -10,6 +10,9 @@
       <tr>
         <th>#</th>
         <th>Title</th>
+        <th>Lifecycle</th>
+        <th>Required In</th>
+        <th>Participants</th>
         <th>Description</th>
         <th>Actions</th>
       </tr>
@@ -19,7 +22,21 @@
         <tr>
           <td><%= index + 1 %></td>
           <td><%= agreement.title %></td>
-          <td><%= agreement.description&.to_plain_text&.truncate(150) %></td>
+          <td>
+            <span class="badge <%= agreement_lifecycle_badge_class(agreement) %>">
+              <%= agreement.lifecycle_display_name %>
+            </span>
+          </td>
+          <td><%= agreement.required_for_display_name %></td>
+          <td><%= agreement.accepted_participants.count %></td>
+          <td>
+            <%= agreement.description&.to_plain_text&.truncate(150) %>
+            <% if agreement.change_summary.present? %>
+              <div class="text-muted small mt-1"><strong>Update:</strong> <%= agreement.change_summary %></div>
+            <% end %>
+            <div class="mt-2">
+            </div>
+          </td>
           <td>
             <%= link_to t('better_together.agreements.view', default: 'View'), agreement_path(agreement, locale: I18n.locale), class: 'btn btn-sm btn-info agreement-modal-link', role: 'button', title: "View #{agreement.title}", aria: { label: "View agreement: #{agreement.title}" } %>
             <%= link_to 'Edit', edit_agreement_path(agreement), class: 'btn btn-sm btn-warning ms-1' %>

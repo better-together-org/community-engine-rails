@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Mermaid diagram rendering' do
+RSpec.describe 'Mermaid diagram rendering', :no_auth do
   let(:page) do
     create(
       :better_together_page,

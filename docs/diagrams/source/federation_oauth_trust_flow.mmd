@@ -1,0 +1,18 @@
+sequenceDiagram
+  participant Remote as Remote platform
+  participant CE as Federation::OauthTokensController
+  participant Conn as PlatformConnection
+  participant Issuer as FederationAccessTokenIssuer
+  participant Feed as Federation::ContentFeedController
+
+  Remote->>CE: POST /federation/oauth/token\nclient_credentials + scopes
+  CE->>Conn: Find active connection by Current.platform + client_id
+  CE->>Conn: Authenticate oauth client secret
+  CE->>Issuer: Authorize scopes and issue short-lived token
+  Issuer-->>CE: bearer token + scopes + expiry
+  CE-->>Remote: access_token response
+  Remote->>Feed: GET /federation/content_feed\nAuthorization: Bearer token
+  Feed->>Conn: Resolve token to platform_connection
+  Feed->>Feed: Enforce content.feed.read scope
+  Feed-->>Remote: seeds + next_cursor
+

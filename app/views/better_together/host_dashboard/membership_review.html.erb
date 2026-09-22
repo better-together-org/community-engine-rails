@@ -1,0 +1,7 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('host_dashboard.membership_review.page_title') %>
+  <% end %>
+
+  <%= render partial: 'content_frame', locals: { content_partial: 'membership_review_tab' } %>
+<% end %>

@@ -7,7 +7,10 @@ RSpec.describe BetterTogether::User do
     subject(:user) { create(:better_together_user, :confirmed, :platform_manager) }
 
     let(:person) { user.person }
-    let(:platform_manager_role) { BetterTogether::Role.find_by(identifier: 'platform_manager') }
+    let(:platform_manager_role) do
+      BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+        BetterTogether::Role.find_by(identifier: 'platform_manager')
+    end
 
     it 'assigns the platform_manager role membership' do
       expect(platform_manager_role).to be_present
@@ -22,6 +25,15 @@ RSpec.describe BetterTogether::User do
 
     it 'grants platform permissions' do
       expect(user.permitted_to?('manage_platform')).to be(true)
+    end
+
+    it 'does not grant sensitive directory access by default' do
+      expect(user.permitted_to?('read_person')).to be(false)
+      expect(user.permitted_to?('list_person')).to be(false)
+    end
+
+    it 'does not grant user-account administration by default' do
+      expect(user.permitted_to?('manage_platform_users')).to be(false)
     end
   end
 

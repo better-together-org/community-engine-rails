@@ -1,3 +1,27 @@
 #!/usr/bin/env bash
 
-./bin/dc run --rm --no-deps app "$@"
+set -euo pipefail
+
+# shellcheck source=./docker-compose-env.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/docker-compose-env.sh"
+
+./bin/dc-ensure-services
+./bin/dc-ensure-worktree-writable-paths
+trap './bin/dc-ensure-worktree-writable-paths >/dev/null 2>&1 || true' EXIT
+
+joined_args=" $* "
+if [[ -n "${CE_WORKTREE_DB_SUFFIX:-}" ]] && [[ "$joined_args" == *" rspec "* || "$joined_args" == *" prspec "* || "$joined_args" == *" RAILS_ENV=test "* ]]; then
+  ./bin/dc-prepare-worktree-test-dbs
+fi
+
+if [[ "${1:-}" == "bundle" && "${2:-}" == "exec" && ( "${3:-}" == "rails" || "${3:-}" == "rake" ) ]]; then
+  set -- ./bin/dummy "$@"
+elif [[ "${1:-}" == "bin/rails" || "${1:-}" == "./bin/rails" || "${1:-}" == "bin/rake" || "${1:-}" == "./bin/rake" ]]; then
+  set -- ./bin/dummy "$@"
+fi
+
+if [ -t 1 ]; then
+  ./bin/dc run --rm --no-deps app "$@"
+else
+  ./bin/dc run --rm --no-deps -T app "$@"
+fi

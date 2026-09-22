@@ -1,0 +1,56 @@
+%% PR #1651 — MVP comment system + CommentConfig permission/visibility controls. Entity/schema view.
+erDiagram
+  EXT_PERSON o|--o{ COMMENTS : "creator / creator_id"
+  EXT_POST ||--o{ COMMENTS : "commentable / commentable_id (dynamic via Commentable.included_in_models)"
+  EXT_POST ||--o| COMMENT_CONFIGS : "commentable / commentable_id (polymorphic, unique per commentable)"
+  EXT_PERSON o|--o{ REPORTS : "reporter / reporter_id"
+  COMMENTS o|--o{ REPORTS : "reportable / reportable_id (no dependent — survives comment delete)"
+  REPORTS ||--o| SAFETY_CASES : "report / report_id"
+
+  COMMENTS {
+    uuid id PK
+    string commentable_type "dynamic extension point: any model including BetterTogether::Commentable"
+    uuid commentable_id FK
+    uuid creator_id FK "nullable"
+    text content
+    uuid platform_id FK
+  }
+
+  COMMENT_CONFIGS {
+    uuid id PK
+    string commentable_type "same dynamic extension point as COMMENTS"
+    uuid commentable_id FK "unique composite index on (commentable_type, commentable_id) — one row max per commentable"
+    string permission "inherit | community | disabled, default inherit"
+    string visibility "inherit | community, default inherit"
+  }
+
+  %% No row required for default behavior: Commentable#comment_permission/#comment_visibility
+  %% fall back to 'inherit' when no COMMENT_CONFIGS row exists yet — no backfill migration needed.
+
+  EXT_PERSON {
+    uuid id PK
+    jsonb notification_preferences "notify_by_email, show_conversation_details, notify_on_comments"
+  }
+
+  EXT_POST {
+    uuid id PK
+    uuid creator_id FK "Creatable — may differ from credited author"
+    string privacy
+  }
+
+  REPORTS {
+    uuid id PK
+    uuid reporter_id FK
+    string reportable_type "polymorphic, no DB FK constraint"
+    uuid reportable_id "orphaned pointer once a Comment is deleted"
+    string category
+    string harm_level
+  }
+
+  SAFETY_CASES {
+    uuid id PK
+    uuid report_id FK
+    string status
+    string lane
+    text closure_summary
+  }

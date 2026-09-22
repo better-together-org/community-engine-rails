@@ -1,0 +1,51 @@
+{
+  "name": "host_dashboard_review_overview",
+  "device": "mobile",
+  "url": "/en/host",
+  "title": "Host Dashboard | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "safety_and_federation_review_operations",
+  "flow": "host_dashboard_review_overview",
+  "source_spec": "./spec/docs_screenshots/better_together/review_operations_access_spec.rb",
+  "callouts": [
+    {
+      "selector": "turbo-frame#host-dashboard-tab-content",
+      "title": "The dashboard overview stays focused on the shared host workspace",
+      "bullets": [
+        "The overview remains focused on shared host operations instead of mixing in review queues.",
+        "Membership, federation, and safety review now live in dedicated host navigation entries instead of stretching the overview page.",
+        "Selecting a review nav item swaps the frame content without leaving the host dashboard shell.",
+        "This keeps the host sidebar stable while the review surface changes.",
+        "The same permission rules apply to both the sidebar and dropdown navigation."
+      ],
+      "target": {
+        "x": 24.0,
+        "y": 216.0,
+        "width": 437.0,
+        "height": 1045.0,
+        "right": 461.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 738.5
+      },
+      "avoid": {
+        "x": 24.0,
+        "y": 216.0,
+        "width": 437.0,
+        "height": 1045.0,
+        "right": 461.0,
+        "bottom": 1261.0,
+        "center_x": 242.5,
+        "center_y": 738.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 206.0,
+        "y": 275,
+        "width": 270.0,
+        "height": 962
+      }
+    }
+  ]
+}

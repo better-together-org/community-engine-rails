@@ -19,6 +19,14 @@ module BetterTogether
     encrypts :refresh_token
 
     belongs_to :person
+    # Not PlatformScoped: isolation here is by person/user ownership, not by
+    # platform — a person's OAuth integrations are theirs regardless of which
+    # tenant they're viewing from. PersonPlatformIntegrationPolicy's index/show
+    # scope by `user_id == current user`, not by Current.platform. `platform`
+    # instead identifies the external OAuth provider itself (a `Platform`
+    # record with `external: true`, e.g. "Github") or, for the omniauth
+    # callback lookup, is bypassed entirely via `find_by(provider:, uid:)`
+    # since a `uid`+`provider` pair identifies an external identity globally.
     belongs_to :platform
     belongs_to :user
 
@@ -207,8 +215,9 @@ module BetterTogether
     # Clear notification dropdown cache when integration is destroyed
     # This ensures deleted notifications are immediately reflected in the UI
     def clear_notification_caches
-      # Clear the dropdown cache for this person
-      # Using delete_matched to clear all cache entries for this person's notifications
+      # Clear dropdown caches for this person across all platforms.
+      # Key format: notifications_dropdown/#{person_id}/#{platform_id}/... — person-first
+      # so the prefix is exact (no leading wildcard).
       Rails.cache.delete_matched("notifications_dropdown/#{person.id}/*")
     end
   end

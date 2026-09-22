@@ -13,11 +13,11 @@ module BetterTogether
       included do
         def self.attachable_cover_image # rubocop:todo Metrics/MethodLength
           has_one_attached :cover_image do |attachable|
-            attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200]
-            attachable.variant :optimized_png, resize_to_limit: [2400, 1200]
+            attachable.variant :optimized_jpeg, resize_to_limit: [2400, 1200], preprocessed: true
+            attachable.variant :optimized_png, resize_to_limit: [2400, 1200], preprocessed: true
 
-            attachable.variant :optimized_card_jpeg, resize_to_limit: [1200, 300]
-            attachable.variant :optimized_card_png, resize_to_limit: [1200, 300]
+            attachable.variant :optimized_card_jpeg, resize_to_limit: [1200, 300], preprocessed: true
+            attachable.variant :optimized_card_png, resize_to_limit: [1200, 300], preprocessed: true
           end
 
           validates :cover_image,
@@ -46,10 +46,10 @@ module BetterTogether
         # For other formats, analyze to determine transparency
         elsif card_image.content_type == 'image/png'
           # If PNG with transparency, return the optimized PNG variant
-          card_image.variant(:optimized_card_png).processed
+          card_image.variant(:optimized_card_png)
         else
           # Otherwise, use the optimized JPG variant
-          card_image.variant(:optimized_card_jpeg).processed
+          card_image.variant(:optimized_card_jpeg)
         end
       end
 
@@ -61,10 +61,10 @@ module BetterTogether
         # For other formats, analyze to determine transparency
         elsif cover_image.content_type == 'image/png'
           # If PNG with transparency, return the optimized PNG variant
-          cover_image.variant(:optimized_png).processed
+          cover_image.variant(:optimized_png)
         else
           # Otherwise, use the optimized JPG variant
-          cover_image.variant(:optimized_jpeg).processed
+          cover_image.variant(:optimized_jpeg)
         end
       end
     end

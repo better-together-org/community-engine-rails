@@ -3,14 +3,27 @@
 require 'rails_helper'
 
 # rubocop:disable Metrics/ModuleLength
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe NavigationBuilder, type: :builder do
     before do
+      # seed_data creates Pages that require a platform; set Current.platform so
+      # Page#assign_current_platform_if_available resolves correctly.
+      Current.platform = BetterTogether::Platform.find_by(host: true)
       # Clean up existing navigation data before each test
       described_class.clear_existing
     end
 
+    after do
+      Current.platform = nil
+    end
+
     describe '.reset_navigation_areas' do
+      it 'uses a seed platform context while rebuilding all areas' do
+        expect(described_class).to receive(:with_seed_platform_context).and_call_original
+
+        described_class.reset_navigation_areas
+      end
+
       it 'deletes all navigation items' do
         # Create some test navigation areas and items first
         area = create(:better_together_navigation_area)
@@ -105,6 +118,12 @@ module BetterTogether
           footer = BetterTogether::NavigationArea.i18n.find_by(slug: 'platform-footer')
           expect(footer).to be_present
           expect(footer.navigation_items.count).to be > 0
+        end
+
+        it 'uses a seed platform context while rebuilding a specific area' do
+          expect(described_class).to receive(:with_seed_platform_context).and_call_original
+
+          described_class.reset_navigation_area('platform-footer')
         end
 
         it 'works for documentation' do
@@ -243,6 +262,42 @@ module BetterTogether
             .and change(NavigationItem, :count).by_at_least(1)
             .and change(Page, :count).by_at_least(1)
         end
+
+        it 'uses a seed platform context while seeding' do
+          expect(described_class).to receive(:with_seed_platform_context).and_call_original
+
+          described_class.seed_data
+        end
+      end
+
+      describe '.with_seed_platform_context' do
+        it 'sets and restores Current.platform around the yield' do
+          previous_platform = create(
+            :better_together_platform,
+            community: create(:better_together_community)
+          )
+          host_platform = BetterTogether::Platform.find_by(host: true) || create(
+            :better_together_platform, :host,
+            community: create(:better_together_community, :host)
+          )
+
+          Current.platform = previous_platform
+          allow(described_class).to receive(:ensure_host_platform_for_seeds).and_return(host_platform)
+
+          yielded_platform = nil
+          described_class.send(:with_seed_platform_context) do
+            yielded_platform = Current.platform
+          end
+
+          expect(yielded_platform).to eq(host_platform)
+          expect(Current.platform).to eq(previous_platform)
+        end
+      end
+
+      describe '.seed_host_url' do
+        it 'uses the Rails test host URL during specs' do
+          expect(described_class.send(:seed_host_url)).to eq('http://www.example.com')
+        end
       end
 
       describe '.build_header' do
@@ -262,6 +317,8 @@ module BetterTogether
           page = Page.find_by(identifier: 'about')
           expect(page).to be_present
           expect(page.title_en).to eq('About')
+          # Seeded informational pages are created public so guests can see them
+          # (the DB column default is 'private').
           expect(page.privacy).to eq('public')
           expect(page.protected).to be true
         end
@@ -278,7 +335,7 @@ module BetterTogether
           expect(posts_item.position).to eq(1)
           expect(posts_item.item_type).to eq('link')
           expect(posts_item.visible).to be true
-          expect(posts_item.privacy).to eq('public')
+          expect(posts_item.privacy).to eq('private')
         end
 
         it 'creates events navigation item' do
@@ -485,6 +542,20 @@ module BetterTogether
           expect(code_page).to be_present
           expect(accessibility_page).to be_present
           expect(contact_page).to be_present
+        end
+
+        it "does not stomp an already-seeded contributor agreement page's customized privacy on rebuild" do
+          described_class.build_footer
+          agreement_page = Page.find_by(identifier: 'code_contributor_agreement')
+          agreement_page.update!(privacy: 'private')
+
+          # build_footer is designed to be re-run idempotently (see comment at its
+          # call site) — ensure_static_page! must find the existing page by
+          # identifier and leave its customized privacy alone rather than
+          # resetting it back to a hardcoded default.
+          described_class.build_footer
+
+          expect(agreement_page.reload.privacy).to eq('private')
         end
       end
 

@@ -10,6 +10,7 @@ module BetterTogether
     def create
       @message = @conversation.messages.build(message_params)
       @message.sender = helpers.current_person
+      authorize @message
       return unless @message.save
 
       # Noticed notification

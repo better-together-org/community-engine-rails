@@ -1,24 +1,28 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class CategoryPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class CategoryPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     def create?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     def update?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
     def show?
-      permitted_to?('manage_platform')
+      platform_taxonomy_manager?
     end
 
-    class Scope < ApplicationPolicy::Scope
+    private
+
+    def platform_taxonomy_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
   end
 end

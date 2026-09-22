@@ -27,7 +27,11 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
   #   :authenticated → visible to signed-in users (hidden from guests)
   #   :admin         → visible only to users with manage_platform permission
   describe 'tool RBAC tag classification' do
-    let(:all_tools) { described_class.descendants }
+    let(:all_tools) do
+      described_class.descendants.select do |tool_class|
+        tool_class.name.present? && tool_class.name.start_with?('BetterTogether::Mcp::')
+      end
+    end
 
     before { Rails.application.eager_load! }
 
@@ -82,7 +86,6 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
           BetterTogether::Mcp::SearchGeographyTool,
           BetterTogether::Mcp::SearchPeopleTool,
           BetterTogether::Mcp::ListPagesTool,
-          BetterTogether::Mcp::SearchPagesTool,
           BetterTogether::Mcp::ListOffersTool,
           BetterTogether::Mcp::ListRequestsTool,
           BetterTogether::Mcp::ManageNavigationTool
@@ -238,6 +241,7 @@ RSpec.describe BetterTogether::Mcp::ApplicationTool, type: :model do
         platform_manager_role.role_resource_permissions.find_or_create_by!(resource_permission: platform_manager_permission)
         host_platform.person_platform_memberships.find_or_create_by!(member: user.person) do |member|
           member.role = platform_manager_role
+          member.status = 'active'
         end
       end
 

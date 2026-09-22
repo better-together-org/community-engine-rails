@@ -31,7 +31,7 @@
 #   expect(response_text).to include("O'Brien")
 #   expect(parsed_response.css('.member').count).to eq(5)
 #
-module HtmlAssertionHelpers
+module HtmlAssertionHelpers # :nodoc:
   # Parse response HTML once and cache for reuse within the same test
   #
   # @return [Nokogiri::HTML::Document] Parsed HTML document

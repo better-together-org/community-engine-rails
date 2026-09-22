@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
+  let!(:host_platform) { configure_host_platform }
+  let!(:other_platform) { create(:better_together_platform) }
   let(:manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:manager_token) { api_sign_in_and_get_token(manager_user) }
   let(:manager_headers) { api_auth_headers(manager_user, token: manager_token) }
@@ -18,13 +20,29 @@ RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
     context 'when authenticated as platform manager' do
       before do
         # Create some page views for metrics
-        3.times do |i|
+        2.times do |i|
           BetterTogether::Metrics::PageView.create!(
             page_url: "/page-#{i}",
             locale: 'en',
-            viewed_at: Time.current
+            viewed_at: Time.current,
+            platform: host_platform,
+            logged_in: true
           )
         end
+        BetterTogether::Metrics::PageView.create!(
+          page_url: '/anonymous-page',
+          locale: 'en',
+          viewed_at: Time.current,
+          platform: host_platform,
+          logged_in: false
+        )
+        BetterTogether::Metrics::PageView.create!(
+          page_url: '/other-platform-page',
+          locale: 'en',
+          viewed_at: Time.current,
+          platform: other_platform,
+          logged_in: true
+        )
 
         get url, headers: manager_headers
       end
@@ -44,7 +62,7 @@ RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
         attrs = json['data']['attributes']
 
         expect(attrs).to have_key('total_page_views')
-        expect(attrs['total_page_views']).to be >= 3
+        expect(attrs['total_page_views']).to eq(3)
       end
 
       it 'includes unique pages count' do
@@ -52,7 +70,7 @@ RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
         attrs = json['data']['attributes']
 
         expect(attrs).to have_key('unique_pages')
-        expect(attrs['unique_pages']).to be >= 3
+        expect(attrs['unique_pages']).to eq(3)
       end
 
       it 'includes views by locale' do
@@ -61,6 +79,16 @@ RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
 
         expect(attrs).to have_key('views_by_locale')
         expect(attrs['views_by_locale']).to be_a(Hash)
+      end
+
+      it 'includes views by logged-in state' do
+        json = JSON.parse(response.body)
+        attrs = json['data']['attributes']
+
+        expect(attrs['views_by_logged_in_state']).to eq(
+          'logged_in' => 2,
+          'anonymous' => 1
+        )
       end
 
       it 'includes top pages' do
@@ -93,12 +121,16 @@ RSpec.describe 'BetterTogether::Api::V1::MetricsSummary', :no_auth do
         BetterTogether::Metrics::PageView.create!(
           page_url: '/recent-page',
           locale: 'en',
-          viewed_at: 1.day.ago
+          viewed_at: 1.day.ago,
+          platform: host_platform,
+          logged_in: true
         )
         BetterTogether::Metrics::PageView.create!(
           page_url: '/old-page',
           locale: 'en',
-          viewed_at: 30.days.ago
+          viewed_at: 30.days.ago,
+          platform: host_platform,
+          logged_in: false
         )
 
         get "#{url}?from_date=#{7.days.ago.to_date}&to_date=#{Date.current}", headers: manager_headers

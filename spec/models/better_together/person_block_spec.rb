@@ -19,10 +19,38 @@ RSpec.describe BetterTogether::PersonBlock do
     role = BetterTogether::Role.find_by(identifier: 'platform_manager', resource_type: 'BetterTogether::Platform') ||
            create(:better_together_role, identifier: 'platform_manager', resource_type: 'BetterTogether::Platform',
                                          name: 'Platform Manager')
-    BetterTogether::PersonPlatformMembership.create!(member: blocked, joinable: platform, role:)
+    BetterTogether::PersonPlatformMembership.create!(member: blocked, joinable: platform, role:, status: 'active')
 
     block = described_class.new(blocker:, blocked:)
     expect(block).not_to be_valid
     expect(block.errors[:blocked]).to include('cannot be a platform manager')
   end
+
+  describe 'per-platform blocking' do
+    let(:primary_platform) { create(:better_together_platform, host: false) }
+    let(:secondary_platform) { create(:better_together_platform, host: false) }
+    let(:blocker) { create(:better_together_person) }
+    let(:blocked) { create(:better_together_person) }
+
+    it 'allows blocking the same person on a different platform' do
+      create(:person_block, blocker:, blocked:, platform: primary_platform)
+      cross = build(:person_block, blocker:, blocked:, platform: secondary_platform)
+      expect(cross).to be_valid
+    end
+
+    it 'rejects blocking the same person twice on the same platform' do
+      create(:person_block, blocker:, blocked:, platform: primary_platform)
+      dup = build(:person_block, blocker:, blocked:, platform: primary_platform)
+      expect(dup).not_to be_valid
+    end
+
+    it 'records error on blocked_id for duplicate block on same platform' do
+      create(:person_block, blocker:, blocked:, platform: primary_platform)
+      dup = build(:person_block, blocker:, blocked:, platform: primary_platform)
+      dup.valid?
+      expect(dup.errors[:blocked_id]).to be_present
+    end
+  end
+
+  it_behaves_like 'platform scoped', factory: :person_block
 end

@@ -1,0 +1,70 @@
+<% content_for :page_title do %>
+  <%= @short_link.title.presence || @short_link.code %> | <%= t('.page_title', default: 'Short Link') %>
+<% end %>
+
+<div class="container my-3" id="<%= dom_id(@short_link) %>">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= @short_link.title.presence || @short_link.code %></h1>
+    <div class="btn-group" id="short-link-actions">
+      <%= link_to edit_short_link_path(@short_link), class: 'btn btn-outline-secondary' do %>
+        <i class="fas fa-edit" aria-hidden="true"></i> <%= t('.edit', default: 'Edit') %>
+      <% end %>
+      <%= button_to short_link_path(@short_link), method: :delete, class: 'btn btn-outline-danger',
+                    form: { data: { turbo_confirm: t('globals.confirm_delete') } } do %>
+        <i class="fas fa-trash" aria-hidden="true"></i> <%= t('.delete', default: 'Delete') %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label fw-bold" for="short-link-url"><%= t('.short_url', default: 'Short URL') %></label>
+        <div data-controller="better_together--clipboard"
+             data-better_together--clipboard-url-value="<%= @short_link.url %>">
+          <div class="input-group">
+            <input type="text" id="short-link-url" class="form-control font-monospace"
+                   value="<%= @short_link.url %>" readonly>
+            <button class="btn btn-outline-secondary"
+                    data-action="click->better_together--clipboard#copy"
+                    data-better_together--clipboard-target="button"
+                    aria-label="<%= t('.copy', default: 'Copy') %>"
+                    title="<%= t('.copy', default: 'Copy') %>">
+              <i class="fas fa-copy icon" aria-hidden="true"></i>
+              <%= t('.copy', default: 'Copy') %>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <dl class="row" id="short-link-details">
+        <dt class="col-sm-3"><%= t('.target_url', default: 'Target URL') %></dt>
+        <dd class="col-sm-9" id="short-link-target-url">
+          <%= link_to @short_link.target_url, @short_link.target_url, target: '_blank', rel: 'noopener noreferrer' %>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('.status', default: 'Status') %></dt>
+        <dd class="col-sm-9" id="short-link-status">
+          <span class="badge short-link-status-badge bg-<%= @short_link.status_active? ? 'success' : (@short_link.status_expired? ? 'secondary' : 'warning') %>">
+            <%= @short_link.status %>
+          </span>
+        </dd>
+
+        <dt class="col-sm-3"><%= t('.clicks', default: 'Total Clicks') %></dt>
+        <dd class="col-sm-9" id="short-link-click-count"><%= @short_link.click_count %></dd>
+
+        <% if @short_link.expires_at.present? %>
+          <dt class="col-sm-3"><%= t('.expires_at', default: 'Expires At') %></dt>
+          <dd class="col-sm-9" id="short-link-expires-at"><%= l(@short_link.expires_at, format: :long) %></dd>
+        <% end %>
+
+        <dt class="col-sm-3"><%= t('.created_at', default: 'Created') %></dt>
+        <dd class="col-sm-9" id="short-link-created-at"><%= l(@short_link.created_at.to_date, format: :long) %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <%= link_to short_links_path, class: 'btn btn-secondary' do %>
+    <i class="fas fa-arrow-left" aria-hidden="true"></i> <%= t('.back', default: 'Back to Short Links') %>
+  <% end %>
+</div>

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+bin/dc-run-dummy bundle exec rails runner export_subsystem_diagrams.rb
+bin/render_diagrams "$@"

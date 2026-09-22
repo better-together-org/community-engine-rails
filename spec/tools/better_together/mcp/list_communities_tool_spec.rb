@@ -84,6 +84,7 @@ RSpec.describe BetterTogether::Mcp::ListCommunitiesTool, type: :model do
         platform_manager_role.role_resource_permissions.find_or_create_by!(resource_permission: platform_manager_permission)
         host_platform.person_platform_memberships.find_or_create_by!(member: user.person) do |member|
           member.role = platform_manager_role
+          member.status = 'active'
         end
       end
 

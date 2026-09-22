@@ -2,39 +2,42 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Joatu
-    RSpec.describe AgreementNotifier do
-      let(:offer_user) { create(:user) }
-      let(:request_user) { create(:user) }
-      let(:offer) { create(:joatu_offer, creator: offer_user.person) }
-      let(:request) { create(:joatu_request, creator: request_user.person) }
+RSpec.describe BetterTogether::Joatu::AgreementNotifier do
+  let(:offer_user) { create(:user) }
+  let(:request_user) { create(:user) }
+  let(:offer) { create(:joatu_offer, creator: offer_user.person) }
+  let(:request) { create(:joatu_request, creator: request_user.person) }
 
-      it 'notifies both offer and request creators when agreement is created' do
-        # rubocop:enable RSpec/MultipleExpectations
-        expect do
-          create(:joatu_agreement, offer:, request:)
-        end.to change(Noticed::Notification, :count).by(2)
+  it 'notifies both offer and request creators when agreement is created' do
+    # rubocop:enable RSpec/MultipleExpectations
+    agreement = nil
 
-        recipients = Noticed::Notification.last(2).map(&:recipient)
-        expect(recipients).to contain_exactly(offer_user.person, request_user.person)
-      end
+    expect do
+      agreement = create(:joatu_agreement, offer:, request:)
+    end.to change(Noticed::Notification, :count).by(2)
 
-      # rubocop:todo RSpec/MultipleExpectations
-      it 'builds message with offer and request names' do # rubocop:todo RSpec/MultipleExpectations
-        # rubocop:enable RSpec/MultipleExpectations
-        agreement = build(:joatu_agreement, offer:, request:)
-        notifier = described_class.new(record: agreement)
+    # Scope to the event created for this specific agreement rather than the
+    # global `.last(2)` notifications, since the shared test database is not
+    # truncated between isolated spec runs and may contain unrelated leftovers.
+    event = Noticed::Event.find_by(record_type: agreement.class.name, record_id: agreement.id)
+    expect(event).to be_present
+    recipients = event.notifications.map(&:recipient)
+    expect(recipients).to contain_exactly(offer_user.person, request_user.person)
+  end
 
-        expect(notifier.title).to eq(
-          I18n.t('better_together.notifications.joatu.agreement_created.title')
-        )
-        expect(notifier.body).to eq(
-          I18n.t('better_together.notifications.joatu.agreement_created.content',
-                 offer: offer.name,
-                 request: request.name)
-        )
-      end
-    end
+  # rubocop:todo RSpec/MultipleExpectations
+  it 'builds message with offer and request names' do # rubocop:todo RSpec/MultipleExpectations
+    # rubocop:enable RSpec/MultipleExpectations
+    agreement = build(:joatu_agreement, offer:, request:)
+    notifier = described_class.new(record: agreement)
+
+    expect(notifier.title).to eq(
+      I18n.t('better_together.notifications.joatu.agreement_created.title')
+    )
+    expect(notifier.body).to eq(
+      I18n.t('better_together.notifications.joatu.agreement_created.content',
+             offer: offer.name,
+             request: request.name)
+    )
   end
 end

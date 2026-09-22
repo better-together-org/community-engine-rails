@@ -2,10 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe Content::PageBlock do
-    it 'exists' do
-      expect(described_class).to be # rubocop:todo RSpec/Be
-    end
+RSpec.describe BetterTogether::Content::PageBlock do
+  it 'exists' do
+    expect(described_class).to be # rubocop:todo RSpec/Be
   end
 end

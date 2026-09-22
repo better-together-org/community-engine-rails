@@ -6,12 +6,15 @@ module BetterTogether
     # Manage PageViewReport records tracking instances of reports run against the BetterTogether::Metrics::PageView records
     # rubocop:enable Layout/LineLength
     class PageViewReportsController < ApplicationController
+      include PlatformContext
+
       before_action :set_page_view_report, only: [:download]
 
       # GET /metrics/page_view_reports
       def index
         authorize %i[metrics page_view_report], :index?, policy_class: BetterTogether::Metrics::PageViewReportPolicy
-        @page_view_reports = BetterTogether::Metrics::PageViewReport.with_attached_report_file
+        @page_view_reports = BetterTogether::Metrics::PageViewReport.for_platform(metrics_platform)
+                                                                    .with_attached_report_file
                                                                     .order(created_at: :desc)
         if request.headers['Turbo-Frame'].present?
           render partial: 'better_together/metrics/page_view_reports/index',
@@ -25,8 +28,8 @@ module BetterTogether
       def new
         authorize %i[metrics page_view_report], :create?,
                   policy_class: BetterTogether::Metrics::PageViewReportPolicy
-        @page_view_report = BetterTogether::Metrics::PageViewReport.new
-        @pageable_types = BetterTogether::Metrics::PageView.distinct.pluck(:pageable_type).sort
+        @page_view_report = BetterTogether::Metrics::PageViewReport.new(platform: metrics_platform)
+        @pageable_types = BetterTogether::Metrics::PageView.for_platform(metrics_platform).distinct.pluck(:pageable_type).sort
       end
 
       # POST /metrics/page_view_reports
@@ -35,6 +38,7 @@ module BetterTogether
                   policy_class: BetterTogether::Metrics::PageViewReportPolicy
 
         opts = {
+          platform: metrics_platform,
           from_date: page_view_report_params.dig(:filters, :from_date),
           to_date: page_view_report_params.dig(:filters, :to_date),
           filter_pageable_type: page_view_report_params.dig(:filters, :filter_pageable_type),
@@ -90,7 +94,9 @@ module BetterTogether
             report.report_file.filename.to_s,              # Filename
             report.report_file.content_type,               # Content type
             report.report_file.byte_size,                  # File size
-            I18n.locale.to_s # Locale
+            I18n.locale.to_s, # Locale
+            metrics_platform.id,
+            metrics_logged_in?
           )
 
           send_data report.report_file.download,
@@ -105,7 +111,7 @@ module BetterTogether
       private
 
       def set_page_view_report
-        @page_view_report = BetterTogether::Metrics::PageViewReport.find(params[:id])
+        @page_view_report = BetterTogether::Metrics::PageViewReport.for_platform(metrics_platform).find(params[:id])
       end
 
       def page_view_report_params

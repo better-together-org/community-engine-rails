@@ -1,0 +1,49 @@
+{
+  "name": "safety_review_host_platform_panel",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community",
+  "title": "Test Host Community | Platforms | Test Host Community",
+  "locale": "en",
+  "role": "safety_reviewer",
+  "feature_set": "safety_and_federation_review_operations",
+  "flow": "host_platform_profile",
+  "source_spec": "./spec/docs_screenshots/better_together/review_operations_access_spec.rb",
+  "callouts": [
+    {
+      "selector": "#safety",
+      "title": "Safety reviewers now have a visible operational workspace",
+      "bullets": [
+        "The host platform profile exposes the Safety tab with queue-level counts and direct actions.",
+        "Reviewers can jump straight to the safety-case queue or submitted reports from the same surface.",
+        "Urgent, retaliation-risk, and participant-update counts stay visible without exposing reporter detail broadly."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 330.5625,
+        "width": 429.0,
+        "height": 781.03125,
+        "right": 457.0,
+        "bottom": 1111.59375,
+        "center_x": 242.5,
+        "center_y": 721.078125
+      },
+      "avoid": {
+        "x": 28.0,
+        "y": 330.5625,
+        "width": 429.0,
+        "height": 781.03125,
+        "right": 457.0,
+        "bottom": 1111.59375,
+        "center_x": 242.5,
+        "center_y": 721.078125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 206.0,
+        "y": 567,
+        "width": 270.0,
+        "height": 670
+      }
+    }
+  ]
+}
