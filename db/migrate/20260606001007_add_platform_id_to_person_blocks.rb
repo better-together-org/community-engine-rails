@@ -7,6 +7,8 @@
 # a compound (blocker_id, blocked_id, platform_id) unique index.
 class AddPlatformIdToPersonBlocks < ActiveRecord::Migration[7.2]
   def up
+    return if column_exists?(:better_together_person_blocks, :platform_id)
+
     add_reference :better_together_person_blocks, :platform,
                   type: :uuid,
                   null: true,

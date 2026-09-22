@@ -11,6 +11,8 @@
 # Nullable; backfill assigns host platform to pre-existing records.
 class AddPlatformIdToContentBlocks < ActiveRecord::Migration[7.2]
   def up
+    return if column_exists?(:better_together_content_blocks, :platform_id)
+
     add_reference :better_together_content_blocks, :platform,
                   type: :uuid,
                   null: true,
