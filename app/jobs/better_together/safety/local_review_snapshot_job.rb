@@ -8,9 +8,19 @@ module BetterTogether
       queue_as :default
 
       def perform
+        BetterTogether::Platform.find_each { |platform| refresh_snapshot_for(platform) }
+      end
+
+      private
+
+      def refresh_snapshot_for(platform)
         Rails.cache.write(
-          BetterTogether::Safety::LocalReviewSnapshotService::CACHE_KEY,
-          BetterTogether::Safety::LocalReviewSnapshotService.new.call,
+          BetterTogether::Safety::LocalReviewSnapshotService.cache_key_for(platform),
+          BetterTogether::Safety::LocalReviewSnapshotService.new(
+            case_scope: BetterTogether::Safety::Case.for_platform(platform),
+            report_scope: BetterTogether::Report.for_platform(platform),
+            content_security_subject_scope: BetterTogether::ContentSecurity::Subject.for_platform(platform)
+          ).call,
           expires_in: 15.minutes
         )
       end

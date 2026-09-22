@@ -33,6 +33,11 @@
           field_type: :toggle,
           label: t('activerecord.attributes.better_together/person.show_conversation_details'),
           hint: t('helpers.hint.person.show_conversation_details')) %>
+
+    <%= preference_field(person, :notify_on_comments,
+          field_type: :toggle,
+          label: t('activerecord.attributes.better_together/person.notify_on_comments'),
+          hint: t('helpers.hint.person.notify_on_comments')) %>
   </div>
 
   <!-- Messaging and Federation Preferences -->

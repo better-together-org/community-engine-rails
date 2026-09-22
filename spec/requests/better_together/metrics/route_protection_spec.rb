@@ -39,7 +39,8 @@ RSpec.describe 'Metrics Route Protection' do
       BetterTogether::PersonPlatformMembership.create!(
         joinable: platform,
         member: analytics_viewer_user.person,
-        role: analytics_viewer_role
+        role: analytics_viewer_role,
+        status: 'active'
       )
 
       login('analytics@example.test', 'SecureTest123!@#')

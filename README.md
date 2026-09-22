@@ -102,20 +102,26 @@ bin/dc build
 Bundle the gems:
 
 ```bash
-bin/dc-run app bundle
+bin/dc-run bundle
 ```
 
 Setup the database:
 
 ```bash
-bin/dc-run app rails db:setup
+bin/dc-run rails db:setup
 ```
 
 Run the RSpec tests:
 
 ```bash
-bin/dc-run app rspec
+bin/dc-run rspec
 ```
+
+Troubleshooting:
+
+- `bin/dc-run rails db:create` only creates the databases. It does not load schema or run migrations.
+- If you have already run `db:create`, run `bin/dc-run rails db:migrate` or `bin/dc-run rails db:setup` before `bin/dc-run rails db:seed`.
+- Fresh worktrees may not include ignored files such as `spec/dummy/config/master.key`, so local setup must not depend on that file being present.
 
 ## Contributing
 

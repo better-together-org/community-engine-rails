@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for conversations
-  class ConversationPolicy < ApplicationPolicy
+  class ConversationPolicy < PlatformRecordPolicy
     def index?
       user.present? && agent.present?
     end
@@ -40,23 +40,25 @@ module BetterTogether
       show? # Delegates to participant check
     end
 
-    # Returns the people that the agent is permitted to message
+    # Returns the people that the agent is permitted to message.
+    # Includes platform stewards, people who opted in globally, and people who
+    # have explicitly granted the current agent a messaging permission.
     def permitted_participants
-      admin_and_opted_in_participants
+      admin_and_opted_in_participants.or(explicitly_granted_participants)
     end
 
     def new?
       user.present? && agent.present?
     end
 
-    # Authorization scope for conversations
-    class Scope < ApplicationPolicy::Scope
+    # Authorization scope for conversations — scoped to current platform.
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.includes(participants: [
-                         :string_translations,
-                         :contact_detail,
-                         { profile_image_attachment: :blob }
-                       ])
+        platform_scoped.includes(participants: [
+                                   :string_translations,
+                                   :contact_detail,
+                                   { profile_image_attachment: :blob }
+                                 ])
       end
     end
 
@@ -65,7 +67,7 @@ module BetterTogether
     def platform_steward_ids
       BetterTogether::PersonPlatformMembership
         .active
-        .where(joinable: platform)
+        .where(joinable: current_platform)
         .joins(role: { role_resource_permissions: :resource_permission })
         .where(better_together_resource_permissions: {
                  identifier: %w[manage_platform_members manage_platform_settings manage_platform]
@@ -87,8 +89,11 @@ module BetterTogether
         .distinct
     end
 
-    def platform
-      Current.platform || BetterTogether::Platform.find_by(host: true)
+    def explicitly_granted_participants
+      granted_grantor_ids = BetterTogether::PersonMessagingGrant
+                            .where(grantee: agent)
+                            .pluck(:grantor_id)
+      platform_people.where(id: granted_grantor_ids)
     end
 
     def platform_people
@@ -101,13 +106,14 @@ module BetterTogether
     def current_platform_person_ids
       ids = BetterTogether::PersonPlatformMembership
             .active
-            .where(joinable: platform)
+            .where(joinable: current_platform)
             .pluck(:member_id)
 
-      return ids unless platform&.host? && platform.community.present?
+      return ids unless current_platform&.host? && current_platform.community.present?
 
       host_community_ids = BetterTogether::PersonCommunityMembership
-                           .where(joinable: platform.community)
+                           .active
+                           .where(joinable: current_platform.community)
                            .pluck(:member_id)
 
       ids | host_community_ids

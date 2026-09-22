@@ -20,7 +20,7 @@ module BetterTogether
       def call(**params)
         return auth_required_response unless current_user
 
-        with_current_governed_agent do
+        with_current_agent do
           with_timezone_scope do
             post = build_post(params)
             authorize post, :create?

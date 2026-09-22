@@ -29,15 +29,15 @@ module BetterTogether
 
       protected
 
-      def with_current_governed_agent(actor = current_user&.person)
+      def with_current_agent(actor = current_user&.person)
         previous_person = Current.person
-        previous_governed_agent = Current.governed_agent
+        previous_agent = Current.agent
         Current.person = actor if actor.is_a?(BetterTogether::Person)
-        Current.governed_agent = actor
+        Current.agent = actor
         yield
       ensure
         Current.person = previous_person
-        Current.governed_agent = previous_governed_agent
+        Current.agent = previous_agent
       end
 
       # Escape LIKE metacharacters (%, _) in user-supplied search queries

@@ -12,29 +12,29 @@ RSpec.describe 'Documentation screenshots for reduced platform-manager access',
 
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let!(:host_platform) { configure_host_platform }
-  let!(:other_platform) { create(:better_together_platform) }
-  let!(:dashboard_manager) do
+  let(:host_platform) { configure_host_platform }
+  let(:other_platform) { create(:better_together_platform) }
+  let(:dashboard_manager) do
     find_or_create_test_user("dashboard-manager-#{SecureRandom.hex(4)}@example.test", password, :platform_manager)
   end
-  let!(:conversation_manager) do
+  let(:conversation_manager) do
     create(:user, :confirmed,
            email: "conversation-manager-#{SecureRandom.hex(4)}@example.test",
            password:,
            person_attributes: { name: 'Platform Steward' })
   end
-  let!(:regular_user) do
+  let(:regular_user) do
     create(:user, :confirmed, email: "reduced-access-member-#{SecureRandom.hex(4)}@example.test", password:,
                               person_attributes: { name: 'Regular Member' })
   end
-  let!(:opted_in_person) do
+  let(:opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: "Opted In O'Reilly")
   end
-  let!(:non_opted_person) { create(:better_together_person, name: "Non Opted O'Neil") }
-  let!(:other_platform_opted_in_person) do
+  let(:non_opted_person) { create(:better_together_person, name: "Non Opted O'Neil") }
+  let(:other_platform_opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Other Platform Person')
   end
-  let!(:host_only_opted_in_person) do
+  let(:host_only_opted_in_person) do
     create(:better_together_person, preferences: { receive_messages_from_members: true }, name: 'Host Community Person')
   end
 

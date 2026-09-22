@@ -6,6 +6,26 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   let(:locale) { I18n.default_locale }
   let(:base_path) { "/#{locale}/host/metrics/reports" }
 
+  # Content::Link rows are shared/deduplicated by URL across platforms - a
+  # link only shows up in a given platform's link-checker dashboard once
+  # something on that platform's rich content actually references it via
+  # Metrics::RichTextLink (see rich_text_link_spec.rb for the same pattern).
+  def create_platform_scoped_link(platform, link_attrs = {})
+    link = create(:content_link, **link_attrs)
+    sender = create(:better_together_person)
+    conversation = BetterTogether::Conversation.create!(
+      creator: sender, platform: platform, title: '', participant_ids: [sender.id]
+    )
+    message = BetterTogether::Message.create!(
+      conversation: conversation, sender: sender, platform: platform, content: "See #{link.url} for details"
+    )
+    rich_text = ActionText::RichText.find_by!(record_type: 'BetterTogether::Message', record_id: message.id,
+                                              name: 'content')
+    BetterTogether::Metrics::RichTextLink.create!(link: link, rich_text: rich_text, rich_text_record: message,
+                                                  position: 0, platform: platform)
+    link
+  end
+
   describe 'GET /page_views_by_url_data' do
     context 'with default date range (last 30 days)' do
       it 'returns filtered page views by URL' do
@@ -152,8 +172,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /shares_by_platform_data' do
-    let!(:old_share) { create(:metrics_share, platform: 'facebook', shared_at: 60.days.ago) }
-    let!(:recent_share) { create(:metrics_share, platform: 'linkedin', shared_at: 5.days.ago) }
+    let!(:old_share) { create(:metrics_share, platform_name: 'facebook', shared_at: 60.days.ago) }
+    let!(:recent_share) { create(:metrics_share, platform_name: 'linkedin', shared_at: 5.days.ago) }
 
     it 'returns filtered shares by platform with datasets structure' do
       get "#{base_path}/shares_by_platform_data", headers: { 'Accept' => 'application/json' }
@@ -173,8 +193,8 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /shares_by_url_and_platform_data' do
-    let!(:facebook_share) { create(:metrics_share, url: 'https://example.com/article', platform: 'facebook', shared_at: 5.days.ago) }
-    let!(:linkedin_share) { create(:metrics_share, url: 'https://example.com/article', platform: 'linkedin', shared_at: 3.days.ago) }
+    let!(:facebook_share) { create(:metrics_share, url: 'https://example.com/article', platform_name: 'facebook', shared_at: 5.days.ago) }
+    let!(:linkedin_share) { create(:metrics_share, url: 'https://example.com/article', platform_name: 'linkedin', shared_at: 3.days.ago) }
 
     it 'returns shares grouped by URL and platform with datasets' do
       get "#{base_path}/shares_by_url_and_platform_data", headers: { 'Accept' => 'application/json' }
@@ -191,8 +211,13 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
   end
 
   describe 'GET /links_by_host_data' do
-    let!(:old_link) { create(:content_link, host: 'old.example.com', created_at: 60.days.ago) }
-    let!(:recent_link) { create(:content_link, host: 'example.com', created_at: 5.days.ago) }
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let!(:old_link) do
+      create_platform_scoped_link(host_platform, host: 'old.example.com', created_at: 60.days.ago)
+    end
+    let!(:recent_link) do
+      create_platform_scoped_link(host_platform, host: 'example.com', created_at: 5.days.ago)
+    end
 
     it 'returns filtered links by host' do
       get "#{base_path}/links_by_host_data", headers: { 'Accept' => 'application/json' }
@@ -200,13 +225,28 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
 
-      expect(json['labels']).to be_an(Array)
+      expect(json['labels']).to include('example.com')
       expect(json['values']).to be_an(Array)
+    end
+
+    it "does not include another platform's links" do
+      other_platform = create(:better_together_platform, :public)
+      create_platform_scoped_link(other_platform, host: 'other-tenant.example.com', created_at: 5.days.ago)
+
+      get "#{base_path}/links_by_host_data", headers: { 'Accept' => 'application/json' }
+
+      expect(response).to have_http_status(:success)
+      json = JSON.parse(response.body)
+
+      expect(json['labels']).not_to include('other-tenant.example.com')
     end
   end
 
   describe 'GET /invalid_by_host_data' do
-    let!(:invalid_link) { create(:content_link, host: 'broken.com', valid_link: false, created_at: 5.days.ago) }
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let!(:invalid_link) do
+      create_platform_scoped_link(host_platform, host: 'broken.com', valid_link: false, created_at: 5.days.ago)
+    end
 
     it 'returns invalid links grouped by host' do
       get "#{base_path}/invalid_by_host_data", headers: { 'Accept' => 'application/json' }
@@ -214,8 +254,21 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
       expect(response).to have_http_status(:success)
       json = JSON.parse(response.body)
 
-      expect(json['labels']).to be_an(Array)
+      expect(json['labels']).to include('broken.com')
       expect(json['values']).to be_an(Array)
+    end
+
+    it "does not include another platform's invalid links" do
+      other_platform = create(:better_together_platform, :public)
+      create_platform_scoped_link(other_platform, host: 'other-broken.com', valid_link: false,
+                                                  created_at: 5.days.ago)
+
+      get "#{base_path}/invalid_by_host_data", headers: { 'Accept' => 'application/json' }
+
+      expect(response).to have_http_status(:success)
+      json = JSON.parse(response.body)
+
+      expect(json['labels']).not_to include('other-broken.com')
     end
   end
 
@@ -228,14 +281,27 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
         status: :ok,
         generated_at: Time.current,
         unmanaged_model_names: [],
+        report_labels: {
+          collection: 'Indices',
+          identifier: 'Index',
+          documents: 'Indexed Documents',
+          size: 'Store Size'
+        },
+        capabilities: {
+          store_size: true,
+          existence_checks: true
+        },
         entry_results: [
           BetterTogether::Search::AuditService::EntryResult.new(
             model_name: 'BetterTogether::Page',
+            store_identifier: 'better_together-pages',
             index_name: 'better_together-pages',
             db_count: 2,
             document_count: 2,
             drift_count: 0,
             status: :healthy,
+            search_mode: 'elasticsearch',
+            store_exists: true,
             index_exists: true,
             primary_shards: nil,
             replica_shards: nil,
@@ -243,11 +309,14 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
           ),
           BetterTogether::Search::AuditService::EntryResult.new(
             model_name: 'BetterTogether::Post',
+            store_identifier: 'better_together-posts',
             index_name: 'better_together-posts',
             db_count: 3,
             document_count: 2,
             drift_count: 1,
             status: :drifted,
+            search_mode: 'elasticsearch',
+            store_exists: true,
             index_exists: true,
             primary_shards: nil,
             replica_shards: nil,
@@ -270,11 +339,24 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
       expect(json['values']).to eq([0, 1])
       expect(json['backend']).to eq('elasticsearch')
       expect(json['status']).to eq('ok')
+      expect(json['report_labels']).to eq(
+        'collection' => 'Indices',
+        'identifier' => 'Index',
+        'documents' => 'Indexed Documents',
+        'size' => 'Store Size'
+      )
+      expect(json['capabilities']).to eq(
+        'store_size' => true,
+        'existence_checks' => true
+      )
     end
   end
 
   describe 'GET /failures_daily_data' do
-    let!(:failure) { create(:content_link, valid_link: false, last_checked_at: 5.days.ago) }
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let!(:failure) do
+      create_platform_scoped_link(host_platform, valid_link: false, last_checked_at: 5.days.ago)
+    end
 
     it 'returns daily invalid link counts' do
       get "#{base_path}/failures_daily_data", headers: { 'Accept' => 'application/json' }
@@ -283,7 +365,63 @@ RSpec.describe 'BetterTogether::Metrics::Reports Data Endpoints', :as_platform_m
       json = JSON.parse(response.body)
 
       expect(json['labels']).to be_an(Array)
-      expect(json['values']).to be_an(Array)
+      expect(json['values'].sum).to be >= 1
+    end
+
+    it "does not count another platform's failures" do
+      other_platform = create(:better_together_platform, :public)
+      create_platform_scoped_link(other_platform, valid_link: false, last_checked_at: 5.days.ago)
+
+      get "#{base_path}/failures_daily_data", headers: { 'Accept' => 'application/json' }
+
+      expect(response).to have_http_status(:success)
+      json = JSON.parse(response.body)
+
+      expect(json['values'].sum).to eq(1)
+    end
+  end
+
+  describe 'user account endpoints' do
+    let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+    let!(:host_scoped_count) { BetterTogether::User.for_platform(host_platform).count }
+    let!(:other_platform) { create(:better_together_platform, :public) }
+    let!(:other_platform_user) do
+      Current.set(platform: other_platform) { create(:better_together_user, :confirmed) }
+    end
+
+    describe 'GET /user_accounts_daily_data' do
+      it "excludes another platform's user accounts from the daily totals" do
+        get "#{base_path}/user_accounts_daily_data", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+        created_dataset = json['datasets'].find { |d| d['label'] == I18n.t('better_together.metrics.reports.charts.accounts_created') }
+
+        expect(created_dataset['data'].sum).to eq(host_scoped_count)
+        expect(created_dataset['data'].sum).to be < BetterTogether::User.count
+      end
+    end
+
+    describe 'GET /user_registration_sources_data' do
+      it "does not count another platform's users in registration source totals" do
+        get "#{base_path}/user_registration_sources_data", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['values'].sum).to eq(host_scoped_count)
+      end
+    end
+
+    describe 'GET /user_cumulative_growth_data' do
+      it "does not include another platform's users in cumulative growth" do
+        get "#{base_path}/user_cumulative_growth_data", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:success)
+        json = JSON.parse(response.body)
+
+        expect(json['values'].last).to eq(host_scoped_count)
+      end
     end
   end
 

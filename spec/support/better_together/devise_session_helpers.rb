@@ -68,6 +68,7 @@ module BetterTogether # :nodoc:
       if platform_steward_role
         membership = host_platform.person_platform_memberships.find_or_initialize_by(member: platform_steward.person)
         membership.role ||= platform_steward_role
+        membership.status = 'active'
         membership.save! if membership.new_record? || membership.changed?
       end
 
@@ -163,6 +164,7 @@ module BetterTogether # :nodoc:
         check 'user_accept_code_of_conduct'
       end
 
+      satisfy_bot_defense_minimum_wait(:registration)
       click_button 'registration-submit-btn'
 
       created_user = BetterTogether::User.find_by(email: email)

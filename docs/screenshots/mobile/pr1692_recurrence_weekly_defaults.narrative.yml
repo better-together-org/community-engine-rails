@@ -1,0 +1,20 @@
+---
+title: Recurrence form — weekly frequency defaults
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer, I pick Weekly and immediately see a sensible default
+  day plus one-click shortcuts, instead of an all-unchecked set of boxes.
+callouts:
+- :id: weekday_shortcuts
+  :title: Weekday shortcut buttons
+  :description: Calls RecurrenceController#selectWeekdaysMonToFri/#selectAllWeekdays/#clearWeekdays.
+- :id: default_weekday
+  :title: Default weekday pre-checked
+  :description: Previously every checkbox rendered unchecked on edit too, due to a
+    Symbol/Integer mismatch in Recurrence#weekdays — fixed earlier in this PR.
+accessibility_notes: Weekday checkbox ids no longer contain literal [ ] characters
+  from form.object_name, which previously broke label association entirely.
+slug: pr1692_recurrence_weekly_defaults
+device: mobile

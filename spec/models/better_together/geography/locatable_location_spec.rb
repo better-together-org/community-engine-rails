@@ -200,9 +200,149 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
         expect(simple_location.building?).to be false
       end
     end
+
+    describe '#settlement' do
+      it 'returns the location when location_type is Settlement' do
+        settlement_location = build(:locatable_location, :with_settlement)
+        expect(settlement_location.settlement).to eq(settlement_location.location)
+      end
+
+      it 'returns nil when location_type is not Settlement' do
+        address_location = build(:locatable_location, :with_address)
+        expect(address_location.settlement).to be_nil
+      end
+    end
+
+    describe '#region' do
+      it 'returns the location when location_type is Region' do
+        region_location = build(:locatable_location, :with_region)
+        expect(region_location.region).to eq(region_location.location)
+      end
+
+      it 'returns nil when location_type is not Region' do
+        address_location = build(:locatable_location, :with_address)
+        expect(address_location.region).to be_nil
+      end
+    end
+
+    describe '#settlement?/#region?' do
+      it 'returns true only for the matching type' do
+        settlement_location = build(:locatable_location, :with_settlement)
+        region_location = build(:locatable_location, :with_region)
+
+        expect(settlement_location.settlement?).to be true
+        expect(settlement_location.region?).to be false
+        expect(region_location.region?).to be true
+        expect(region_location.settlement?).to be false
+      end
+    end
+  end
+
+  describe 'settlement/region as structured locations' do
+    context 'when settlement location' do
+      subject(:settlement_location) { build(:locatable_location, :with_settlement) }
+
+      it { is_expected.to be_valid }
+
+      it 'does not require name' do
+        settlement_location.name = nil
+        expect(settlement_location).to be_valid
+      end
+    end
+
+    context 'when region location' do
+      subject(:region_location) { build(:locatable_location, :with_region) }
+
+      it { is_expected.to be_valid }
+
+      it 'does not require name' do
+        region_location.name = nil
+        expect(region_location).to be_valid
+      end
+    end
+  end
+
+  describe '#location_attributes=' do
+    it 'assigns an existing Settlement (lookup-only, never builds a new one)' do
+      settlement = create(:geography_settlement)
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Geography::Settlement',
+                                                 location_id: settlement.id }
+
+      expect(locatable_location.location).to eq(settlement)
+    end
+
+    it 'assigns an existing Region (lookup-only)' do
+      region = create(:geography_region)
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Geography::Region',
+                                                 location_id: region.id }
+
+      expect(locatable_location.location).to eq(region)
+    end
+
+    it 'falls back to the simple name when location_type is not a Placeable model' do
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Person', name: 'Somewhere' }
+
+      expect(locatable_location.location).to be_nil
+      expect(locatable_location.name).to eq('Somewhere')
+    end
+
+    it 'builds a new Address when location_type is Address' do
+      locatable_location.location_attributes = { location_type: 'BetterTogether::Address', line1: '1 Main St' }
+
+      expect(locatable_location.location).to be_a(BetterTogether::Address)
+      expect(locatable_location.location.line1).to eq('1 Main St')
+    end
+
+    it 'looks up an existing record by id across allowed types when only id is given' do
+      settlement = create(:geography_settlement)
+      locatable_location.location_attributes = { id: settlement.id }
+
+      expect(locatable_location.location).to eq(settlement)
+    end
+
+    # The event location picker submits an existing pick as location_id (not the
+    # top-level id), alongside other LocatableLocation-only keys like name — these
+    # must not reach Address.new/Building.new and must not build a duplicate record.
+    it 'reuses an existing Address selected via location_id instead of building a duplicate' do
+      existing_address = create(:better_together_address)
+      locatable_location.location_attributes = {
+        location_type: 'BetterTogether::Address', location_id: existing_address.id, name: ''
+      }
+
+      expect(locatable_location.location).to eq(existing_address)
+      expect(BetterTogether::Address.count).to eq(1)
+    end
+
+    it 'reuses an existing Building selected via location_id instead of building a duplicate' do
+      existing_building = create(:better_together_infrastructure_building)
+      locatable_location.location_attributes = {
+        location_type: 'BetterTogether::Infrastructure::Building', location_id: existing_building.id, name: ''
+      }
+
+      expect(locatable_location.location).to eq(existing_building)
+      expect(BetterTogether::Infrastructure::Building.count).to eq(1)
+    end
   end
 
   describe 'class methods' do
+    # Regression guard: EventsController#location_scope_for derives
+    # "available_#{klass.name.demodulize.underscore.pluralize}_for" by naming
+    # convention from Placeable.included_in_models and 422s ("Invalid location
+    # type") if the derived method doesn't exist here. All 6 current Placeable
+    # includers happen to have one today, but nothing enforces that a *future*
+    # Placeable includer gets one too - this fails CI instead of only surfacing
+    # as a silent runtime 422 on the picker's AJAX request.
+    describe 'available_*_for parity with Geography::Placeable.included_in_models' do
+      it 'defines an available_*_for class method for every current Placeable includer' do
+        missing = BetterTogether::Geography::Placeable.included_in_models.reject do |klass|
+          method_name = "available_#{klass.name.demodulize.underscore.pluralize}_for"
+          described_class.respond_to?(method_name)
+        end
+
+        expect(missing).to eq([])
+      end
+    end
+
     describe '.available_addresses_for' do
       let(:user) { create(:better_together_user, :confirmed) }
       let(:person) { user.person }
@@ -276,6 +416,28 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
           expect(result).not_to include(private_address)
         end
       end
+
+      context 'with a search term' do
+        let!(:matching_address) do
+          create(:better_together_address, privacy: 'public', line1: '123 Distinctive Court', city_name: 'Searchtown')
+        end
+        let!(:other_public_address) do
+          create(:better_together_address, privacy: 'public', line1: '456 Other Street', city_name: 'Elsewhere')
+        end
+
+        it 'filters to addresses matching the search term across component fields' do
+          result = described_class.available_addresses_for('unsupported', search: 'Searchtown')
+
+          expect(result).to include(matching_address)
+          expect(result).not_to include(other_public_address)
+        end
+
+        it 'is case-insensitive' do
+          result = described_class.available_addresses_for('unsupported', search: 'distinctive')
+
+          expect(result).to include(matching_address)
+        end
+      end
     end
 
     describe '.available_buildings_for' do
@@ -342,12 +504,106 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
           expect(result).to eq(BetterTogether::Infrastructure::Building.none)
         end
       end
+
+      context 'with a search term' do
+        let!(:matching_building) do
+          create(:better_together_infrastructure_building, privacy: 'public', name: 'Distinctive Tower')
+        end
+        let!(:other_public_building) do
+          create(:better_together_infrastructure_building, privacy: 'public', name: 'Unrelated Hall')
+        end
+
+        it 'filters to buildings whose name matches the search term' do
+          result = described_class.available_buildings_for(community, search: 'Distinctive')
+
+          expect(result).to include(matching_building)
+          expect(result).not_to include(other_public_building)
+        end
+      end
+    end
+
+    describe '.available_floors_for' do
+      let(:community) { create(:better_together_community) }
+      let!(:public_building) { create(:better_together_infrastructure_building, privacy: 'public') }
+      let!(:private_building) { create(:better_together_infrastructure_building, privacy: 'private') }
+
+      it 'composes on available_buildings_for, scoping floors to available buildings' do
+        result = described_class.available_floors_for(community)
+
+        expect(result).to include(*public_building.floors)
+        expect(result).not_to include(*private_building.floors)
+      end
+
+      it 'returns an empty scope when context is nil, matching available_buildings_for' do
+        expect(described_class.available_floors_for(nil)).to be_empty
+      end
+    end
+
+    describe '.available_rooms_for' do
+      let(:community) { create(:better_together_community) }
+      let!(:public_building) { create(:better_together_infrastructure_building, privacy: 'public') }
+      let!(:private_building) { create(:better_together_infrastructure_building, privacy: 'private') }
+
+      it 'composes on available_floors_for, scoping rooms to available floors' do
+        result = described_class.available_rooms_for(community)
+
+        expect(result).to include(*public_building.rooms)
+        expect(result).not_to include(*private_building.rooms)
+      end
+
+      it 'returns an empty scope when context is nil, matching available_buildings_for' do
+        expect(described_class.available_rooms_for(nil)).to be_empty
+      end
+    end
+
+    describe '.available_settlements_for' do
+      let!(:settlement_a) { create(:geography_settlement, name: 'Zeta Settlement') }
+      let!(:settlement_b) { create(:geography_settlement, name: 'Alpha Settlement') }
+
+      it 'returns all settlements ordered by name, ignoring context' do
+        result = described_class.available_settlements_for(nil)
+
+        expect(result.to_a).to eq([settlement_b, settlement_a])
+      end
+
+      it 'filters to settlements matching the search term when provided' do
+        result = described_class.available_settlements_for(nil, search: 'Zeta')
+
+        expect(result).to include(settlement_a)
+        expect(result).not_to include(settlement_b)
+      end
+    end
+
+    describe '.available_regions_for' do
+      let!(:region_a) { create(:geography_region, name: 'Zeta Region') }
+      let!(:region_b) { create(:geography_region, name: 'Alpha Region') }
+
+      it 'returns all regions ordered by name, ignoring context' do
+        result = described_class.available_regions_for(nil)
+
+        expect(result.to_a).to eq([region_b, region_a])
+      end
+
+      it 'filters to regions matching the search term when provided' do
+        result = described_class.available_regions_for(nil, search: 'Zeta')
+
+        expect(result).to include(region_a)
+        expect(result).not_to include(region_b)
+      end
     end
 
     describe '.permitted_attributes' do
       it 'includes location-specific attributes' do
         expected_attrs = %i[name locatable_id locatable_type location_id location_type]
         expect(described_class.permitted_attributes).to include(*expected_attrs)
+      end
+
+      it 'merges nested attributes dynamically across every Placeable model' do
+        nested = described_class.permitted_attributes.find { |a| a.is_a?(Hash) && a.key?(:location_attributes) }
+        location_attrs = nested[:location_attributes]
+
+        expect(location_attrs).to include(:line1) # bare Address attribute
+        expect(location_attrs.any? { |a| a.is_a?(Hash) && a.key?(:address_attributes) }).to be(true) # nested under Building
       end
     end
   end

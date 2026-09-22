@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Authorization policy for safety cases.
-    class CasePolicy < ApplicationPolicy
+    class CasePolicy < PlatformRecordPolicy
       def index?
         safety_reviewer?
       end
@@ -17,9 +17,9 @@ module BetterTogether
       end
 
       # Limits case visibility to platform managers.
-      class Scope < ApplicationPolicy::Scope
+      class Scope < PlatformRecordPolicy::Scope
         def resolve
-          return scope.all if permitted_to?('manage_platform_safety')
+          return platform_scoped if permitted_to?('manage_platform_safety', current_platform)
 
           scope.none
         end
@@ -28,7 +28,8 @@ module BetterTogether
       private
 
       def safety_reviewer?
-        can_review_safety_disclosures?
+        platform = (record.respond_to?(:platform) ? record.platform : nil) || current_platform
+        can_review_safety_disclosures?(platform)
       end
     end
   end

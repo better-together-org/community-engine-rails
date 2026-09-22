@@ -1,0 +1,54 @@
+<% content_for :page_title do %>
+  <%= t('.page_title', default: 'Federation Activity') %>
+<% end %>
+
+<div class="container my-3" id="federation-hub-activity">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h1 class="mb-0"><%= t('.page_title', default: 'Federation Activity') %></h1>
+    <%= link_to t('.back_to_hub', default: 'Back to Federation Hub'), federation_hub_path, class: 'small' %>
+  </div>
+
+  <%= form_with url: federation_hub_activity_path, method: :get, local: true, class: 'row g-2 mb-4',
+                id: 'federation-hub-activity-filters' do |form| %>
+    <div class="col-auto">
+      <%= form.label :content_type, t('.filters.content_type', default: 'Content type'), class: 'visually-hidden' %>
+      <%= form.select :content_type,
+            options_for_select(
+              [['post', 'post'], ['page', 'page'], ['event', 'event']],
+              params[:content_type]
+            ), { include_blank: t('.filters.any_content_type', default: 'Any content type') },
+            class: 'form-select form-select-sm' %>
+    </div>
+    <% if @show_connection_health_section %>
+      <div class="col-auto">
+        <%= form.label :direction, t('.filters.direction', default: 'Direction'), class: 'visually-hidden' %>
+        <%= form.select :direction,
+              options_for_select(
+                [[t('.filters.outgoing', default: 'Outgoing'), 'outgoing'],
+                 [t('.filters.incoming', default: 'Incoming'), 'incoming']],
+                params[:direction]
+              ), { include_blank: t('.filters.any_direction', default: 'Any direction') },
+              class: 'form-select form-select-sm' %>
+      </div>
+    <% end %>
+    <div class="col-auto">
+      <%= form.submit t('.filters.apply', default: 'Filter'), class: 'btn btn-outline-primary btn-sm' %>
+    </div>
+  <% end %>
+
+  <% if @activities.empty? %>
+    <p class="text-muted mb-0"><%= t('.no_activity', default: 'No federation activity yet.') %></p>
+  <% else %>
+    <ul class="list-group mb-3" id="federation-hub-activity-list">
+      <% @activities.each do |activity| %>
+        <%= render 'better_together/federation_hub/activity_item', activity: activity %>
+      <% end %>
+    </ul>
+
+    <% if @activities.respond_to?(:total_pages) && @activities.total_pages > 1 %>
+      <nav class="d-flex justify-content-center">
+        <%= paginate @activities %>
+      </nav>
+    <% end %>
+  <% end %>
+</div>

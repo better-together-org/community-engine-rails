@@ -56,6 +56,7 @@ module BetterTogether
       BetterTogether::PersonPurgeAudit.create!(
         person:,
         person_deletion_request:,
+        platform_id: audit_platform_id,
         reviewed_by: persistent_reviewer,
         user_email_snapshot: person.user&.email,
         person_identifier_snapshot: person.identifier,
@@ -74,6 +75,10 @@ module BetterTogether
       )
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def audit_platform_id
+      person_deletion_request&.platform_id || person&.platform_id
+    end
 
     def complete_audit!(audit, execution_snapshot)
       audit.update!(

@@ -23,7 +23,7 @@ Examples of external-provider wrapper gems:
 - Sidekiq / Redis queue and cache integrations
 - SMTP provider integrations
 - S3-compatible object storage integrations
-- Google analytics or search console integrations
+- Third-party analytics or search console integrations
 - Cloudflare metrics or Turnstile integrations
 - Formbricks survey/feedback integrations
 - Nextcloud publication or collaboration integrations

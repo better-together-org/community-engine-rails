@@ -1,0 +1,83 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1"><%= t('better_together.feature_access_grants.index.title', default: 'Feature Access Grants') %></h1>
+      <p class="text-muted mb-0">
+        <%= t('better_together.feature_access_grants.index.description',
+              default: 'Grant beta or alpha access to specific people without broadening their platform role permissions.') %>
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <%= link_to t('better_together.feature_access_grants.index.new', default: 'New grant'),
+                  new_platform_feature_access_grant_path(@platform),
+                  class: 'btn btn-primary' %>
+      <%= link_to t('actions.back_to_platform', default: 'Back to platform'),
+                  platform_path(@platform),
+                  class: 'btn btn-outline-secondary' %>
+    </div>
+  </div>
+
+  <% if @feature_access_grants.any? %>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th><%= t('better_together.feature_access_grants.table.person', default: 'Person') %></th>
+            <th><%= t('better_together.feature_access_grants.table.feature', default: 'Feature') %></th>
+            <th><%= t('better_together.feature_access_grants.table.access_level', default: 'Access level') %></th>
+            <th><%= t('better_together.feature_access_grants.table.status', default: 'Status') %></th>
+            <th><%= t('better_together.feature_access_grants.table.expires_at', default: 'Expires') %></th>
+            <th class="text-end"><%= t('better_together.feature_access_grants.table.actions', default: 'Actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @feature_access_grants.each do |grant| %>
+            <tr id="<%= dom_id(grant) %>">
+              <td>
+                <div class="fw-semibold"><%= grant.person.select_option_title %></div>
+                <% if grant.granted_by_person.present? %>
+                  <div class="small text-muted">
+                    <%= t('better_together.feature_access_grants.table.granted_by',
+                          default: 'Granted by %{name}',
+                          name: grant.granted_by_person.select_option_title) %>
+                  </div>
+                <% end %>
+              </td>
+              <td><%= BetterTogether::FeatureRegistry.name_for(grant.feature_key) %></td>
+              <td><span class="badge text-bg-info"><%= grant.access_level.humanize %></span></td>
+              <td>
+                <% if grant.active_now? %>
+                  <span class="badge text-bg-success"><%= t('better_together.feature_access_grants.status.active', default: 'Active') %></span>
+                <% else %>
+                  <span class="badge text-bg-secondary"><%= t('better_together.feature_access_grants.status.revoked', default: 'Inactive') %></span>
+                <% end %>
+              </td>
+              <td><%= grant.expires_at.present? ? l(grant.expires_at, format: :short) : t('better_together.feature_access_grants.table.no_expiry', default: 'No expiry') %></td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <%= link_to t('globals.edit', default: 'Edit'),
+                              edit_platform_feature_access_grant_path(@platform, grant),
+                              class: 'btn btn-outline-primary btn-sm' %>
+                  <% if grant.active_now? %>
+                    <%= button_to t('better_together.feature_access_grants.index.revoke', default: 'Revoke'),
+                                  platform_feature_access_grant_path(@platform, grant),
+                                  method: :delete,
+                                  class: 'btn btn-outline-danger btn-sm',
+                                  form: { data: { turbo_confirm: t('better_together.feature_access_grants.index.revoke_confirm',
+                                                                   default: 'Revoke this feature access grant?') } } %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-light border">
+      <%= t('better_together.feature_access_grants.index.empty',
+            default: 'No explicit feature access grants have been created for this platform yet.') %>
+    </div>
+  <% end %>
+</div>

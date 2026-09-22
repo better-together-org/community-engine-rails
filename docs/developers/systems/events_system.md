@@ -328,87 +328,74 @@ timeline
 - **Friendly URLs**: SEO-friendly slugs via `FriendlySlug` concern
 
 ### Location System (Advanced)
-- **Polymorphic Location Support**: Three location types via `LocatableLocation`:
-  - Simple location (text name only)
-  - Full Address with geocoding
-  - Building with associated Address
-- **Dynamic Location Selector**: Stimulus-powered UI for switching location types
-- **Inline Location Creation**: Create new addresses/buildings directly in event form
-- **Location Validation**: Manual `location_attributes=` setter handles polymorphic nested creation
-- **Geocoding Integration**: Background jobs for address geocoding
+- **Polymorphic Location Support** via `LocatableLocation`:
+  - Simple location (text `name` only)
+  - Any `Geography::Placeable` type: Address, Building, Settlement, Region, Floor, Room
+- **Mixed-search Location Picker**: one Stimulus-powered combobox that searches every Placeable type at once
+- **Inline Address Creation**: create a new `Address` directly in the event form
+- **Location Assignment**: manual `location_attributes=` setter handles polymorphic nested creation and lookup
+- **Geocoding Integration**: background jobs for address geocoding
 
 #### Location Selector Deep Dive
 
-The location selector provides a sophisticated, user-friendly interface for managing event locations with three distinct types: Simple, Address, and Building. This system uses Stimulus controllers for dynamic UI management and custom backend processing for polymorphic location creation.
+The location picker is a single [SlimSelect](https://slimselectjs.com/) combobox
+(`#event_location_picker`) that searches every `Geography::Placeable` type at once.
+There is no location-type radio group: the organizer types a few letters and sees
+matching addresses, buildings, and curated places together in one type-labeled
+list.
 
-**Location Types Overview**
+**How a location is assigned**
 
-**Simple Location**
-- Text-only location description (e.g., "Community Center", "Online via Zoom")
-- Stored directly on the `LocatableLocation` model in the `name` field
-- Best for virtual events, TBA locations, or simple venue references
-- No geocoding or mapping features
+| Organizer action | What is written | Server handling |
+|---|---|---|
+| Picks an existing result (`"ClassName:id"` composite value) | hidden `location_id` + `location_type` (nested `location_attributes`) | `location_attributes=` -> `Address.locatable_location_build` (id lookup) or the Placeable default lookup |
+| Selects the "Use '\<typed text\>' as a custom location name" row | hidden `name` field | `location_attributes=` -> `self.name = ...` (simple location) |
+| Selects the "Create new address" row | reveals the inline `#event_location_new_address` `<fieldset>`; its nested `location_attributes[location_attributes][...]` are submitted | `location_attributes=` -> `Address.locatable_location_build` builds a new `Address`, autosaved with the event |
 
-**Address Location**  
-- Full postal address with geocoding capabilities
-- Uses existing `Address` records or creates new ones inline
-- Includes geocoding for mapping and directions
-- Fields: line1, line2, city, state, postal_code, country, physical/postal flags
-- Supports primary address designation
+The "Create new address" and "Use typed text" rows are synthetic options appended
+to the AJAX results by `slim_select_controller.js` (its opt-in `createOptions`
+config). Picking one dispatches `better_together--slim-select:create`, which
+`location_selector_controller.js#revealNewRecord` turns into either the inline
+address fieldset or a simple-name assignment.
 
-**Building Location**
-- Named venues/facilities with associated addresses  
-- Uses existing `Building` records or creates new ones inline
-- Buildings have their own address through association
-- Perfect for institutions, community centers, schools
-- Provides both building name and full address context
+**Only `Address` is inline-creatable here.** `Building`, `Settlement`, `Region`,
+`Floor`, and `Room` are chosen from the existing set only. A `Building` is shared
+reference data with its own hierarchy, geocoding, and ownership; creating one as a
+side effect of event creation would produce orphan records, so
+`Building.inline_create_fields_partial` stays at its lookup-only default.
+`Placeable.included_in_models` still drives which types are searched and which is
+inline-creatable, so this stays in sync with the Ruby allow-list.
 
-**Dynamic UI Implementation**
+**Stimulus controllers**
 
-**Stimulus Controller (`location_selector_controller.js`)**
-- **Targets**: `typeSelector`, `simpleLocation`, `addressLocation`, `buildingLocation`, `newAddress`, `newBuilding`
-- **Actions**: `toggleLocationType`, `showNewAddress`, `showNewBuilding`, `updateVisibility`
-- **State Management**: Shows/hides location sections based on user selection
-- **Form Clearing**: Clears irrelevant fields when switching location types
-- **Accessibility**: Focuses first field in new forms, maintains keyboard navigation
+`location_selector_controller.js`
+- **Targets**: `locationSelect`, `locationIdField`, `locationTypeField`, `simpleNameField`, `newRecordBlock`, `newRecordQuery`, `cancelNewRecordButton`, `announcement`
+- **Actions**: `applyLocationSelection` (on the picker's `change`), `revealNewRecord` (on `better_together--slim-select:create`), `cancelNewRecord`
+- `applyLocationSelection()`: matches the composite value's class-name prefix against `locationTypeMapValue`; writes the structured or simple hidden fields; closes any open address panel
+- `revealNewRecord(event)`: resets the picker, unhides and enables the inline address fieldset, prefills `line1` from the typed term, sets the `<legend>` caption, moves focus into the fieldset, and announces via the live region
+- `cancelNewRecord()`: hides and disables the fieldset, clears its inputs and all three hidden fields, returns focus to the combobox, announces
+- `connect()`: disables the hidden fieldset's fields (a hidden `[hidden]` fieldset still POSTs) unless the server re-rendered it open after a validation error
 
-**Key Methods:**
-- `connect()`: Initialize form state based on existing data
-- `toggleLocationType(event)`: Show appropriate location section
-- `hideAllLocationTypes()`: Reset all location sections
-- `showNewAddress(event)` / `showNewBuilding(event)`: Toggle inline creation forms
-- `clearSimpleLocationFields()` / `clearStructuredLocationFields()`: Field cleanup
+`slim_select_controller.js` (`createOptions` branch, opt-in, used only by this picker)
+- appends the synthetic "Create new address" / "Use typed text" rows to every AJAX result set (always at least one row, so SlimSelect never suppresses the list)
+- `beforeChange` cancels a pick of one of those rows and dispatches `better_together--slim-select:create`
+- listens for `better_together--location-selector:reset-picker` to clear the current selection
+
+**Accessibility**
+
+- Single `<label for="event_location_picker">` ("Location"); a single hint wired via `aria-describedby`
+- The inline creation panel is a `<fieldset>` with a `<legend>` ("New address" plus the typed-text caption); focus moves into it on reveal and back to the combobox on cancel; both transitions are announced in a visually-hidden `role="status"` live region
+- On a validation failure the picker gets `aria-invalid="true"` and `aria-describedby` also points at a `role="alert"` error node; the inline address input the organizer typed is preserved on re-render
+- WCAG 2.1 AA coverage: `spec/features/events/event_location_picker_accessibility_spec.rb` (axe over the region in en/fr/es/uk plus semantic assertions)
 
 **Backend Processing**
 
-The system uses a custom `location_attributes=` setter on `LocatableLocation` instead of Rails' standard `accepts_nested_attributes_for` due to polymorphic association complexity.
-
-**Polymorphic Location Creation Flow:**
-1. Form submission includes `location_attributes` nested in event params
-2. `location_attributes=` setter determines location type from submitted data
-3. For Address: Creates `Address` record with geocoding job scheduling
-4. For Building: Creates `Building` with nested `Address`, handles attribute normalization
-5. `LocatableLocation` polymorphic association points to appropriate location record
-6. Geocoding jobs run in background for address-based locations
-
-**Form Integration & UI**
-
-**Inline Creation Features:**
-- "New" buttons reveal inline forms without page navigation
-- Address and Building forms use consistent partial rendering
-- Form validation shows errors inline without losing user input
-- Progressive enhancement: works without JavaScript (graceful degradation)
-
-**Validation & Error Handling:**
-- Model validations for Event, Address, Building, and LocatableLocation
-- Form error display within respective location sections
-- JavaScript preserves form state during error correction
-- Backend error handling with graceful rollback protection
-
-**Integration Points:**
-- Authorization via policies for Address/Building creation
-- Geocoding integration with background job processing
-- Performance optimizations with efficient queries and selective loading
+The system uses a custom `location_attributes=` setter on `LocatableLocation`
+instead of Rails' standard `accepts_nested_attributes_for` due to polymorphic
+association complexity. `accepts_nested_attributes_for :location` lives on `Event`
+(via the `Geography::Locatable::One` concern); the setter routes by `id` present
+(existing pick), `location_type` present (build via `locatable_location_build`), or
+`name` present (simple location).
 
 **Diagram Files:**
 - 📊 [Location Selector Flow](../../diagrams/source/events_location_selector_flow.mmd) - Detailed UI and backend flow

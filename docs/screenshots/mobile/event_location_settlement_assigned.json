@@ -1,0 +1,49 @@
+{
+  "name": "event_location_settlement_assigned",
+  "device": "mobile",
+  "url": "/en/events/3377d165-b717-43f5-8885-36ecb30238cb/edit",
+  "title": "Edit Community Meetup | Events | Community Engine",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_location_picker",
+  "flow": "event_location_settlement_assigned",
+  "source_spec": "./spec/docs_screenshots/better_together/event_location_picker_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event_location_picker",
+      "title": "Currently assigned location",
+      "bullets": [
+        "Pre-selected with a composite value (\"BetterTogether::Geography::Settlement:<id>\") built server-side from the event's existing location.",
+        "The organizer can search for a different location in the same field without a separate mode switch."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1039.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1077.390625,
+        "center_x": 242.5,
+        "center_y": 1058.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1039.390625,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1077.390625,
+        "center_x": 242.5,
+        "center_y": 1058.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 595.39,
+        "width": 270.0,
+        "height": 424,
+        "score": 1039.390625
+      }
+    }
+  ]
+}

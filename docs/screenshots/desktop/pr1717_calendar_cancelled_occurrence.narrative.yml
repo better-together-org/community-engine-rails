@@ -1,0 +1,18 @@
+---
+title: Calendar — cancelled occurrence indicator
+audience:
+- event_attendee
+- event_organizer
+- developer
+journey_step: As an attendee checking the calendar, I can immediately tell a specific
+  session was cancelled rather than wondering if it was ever scheduled.
+callouts:
+- :id: cancelled_badge
+  :title: '"Cancelled" indicator'
+  :description: RecurringSchedulable#occurrences_between always includes cancelled
+    dates (never filters them out) precisely so display code like this can render
+    the badge instead of a silent gap.
+accessibility_notes: Text badge, not color-only; same pattern as the event show page's
+  own Sessions list.
+slug: pr1717_calendar_cancelled_occurrence
+device: desktop

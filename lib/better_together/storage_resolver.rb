@@ -51,6 +51,14 @@ module BetterTogether
 
     # Registers this resolver's service with Active Storage so Rails can use it.
     # Call this from an initializer (once per platform or once globally from env).
+    #
+    # Currently unused — config/initializers/storage.rb and
+    # StorageConfigurationsController#activate both bypass this and reassign
+    # ActiveStorage::Blob.service/services directly for the host platform only
+    # (see the acute-fix note in StorageConfigurationsController#activate).
+    # This is the intended seam for a future per-tenant storage architecture:
+    # registering each platform's config as its own named service here, then
+    # resolving per-request/per-attachment instead of one process-wide default.
     def register!
       key = service_name
       return if ActiveStorage::Blob.service.try(:name) == key.to_s
@@ -87,7 +95,9 @@ module BetterTogether
         service_type: active_config.service_type,
         endpoint: active_config.endpoint,
         bucket: active_config.bucket,
-        region: active_config.region
+        region: active_config.region,
+        asset_host: ENV.fetch('ASSET_HOST', nil),
+        cdn_host: ENV.fetch('FOG_HOST', nil)
       }
     end
 
@@ -97,7 +107,9 @@ module BetterTogether
         service_type: env_service_name,
         endpoint: ENV.fetch('S3_ENDPOINT', nil),
         bucket: ENV.fetch('S3_BUCKET_NAME', ENV.fetch('FOG_DIRECTORY', nil)),
-        region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1'))
+        region: ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')),
+        asset_host: ENV.fetch('ASSET_HOST', nil),
+        cdn_host: ENV.fetch('FOG_HOST', nil)
       }
     end
 

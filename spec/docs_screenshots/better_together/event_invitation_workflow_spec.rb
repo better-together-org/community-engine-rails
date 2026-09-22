@@ -10,12 +10,12 @@ RSpec.describe 'Documentation screenshots for event invitation workflow',
                type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
-  let!(:host_platform) do
+  let(:host_platform) do
     configure_host_platform.tap do |platform|
       platform.update!(privacy: 'private', requires_invitation: true)
     end
   end
-  let!(:manager) { BetterTogether::User.find_by!(email: 'manager@example.test') }
+  let(:manager) { BetterTogether::User.find_by!(email: 'manager@example.test') }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'

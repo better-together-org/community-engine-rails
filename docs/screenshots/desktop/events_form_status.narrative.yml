@@ -1,0 +1,17 @@
+---
+title: Event form — explicit publish step via the status field
+audience:
+- event_organizer
+- platform_manager
+- developer
+journey_step: As an organizer, I keep my event as a draft while planning, then set
+  it to Confirmed when I am ready to publish it.
+callouts:
+- :id: status_field
+  :title: Event status
+  :description: 'Backs the new events.status enum (default draft). Completes the draft-by-default
+    workflow: the index status filter and card badges read the same column.'
+accessibility_notes: Status select has an explicit label and a descriptive hint linked
+  below the control.
+slug: events_form_status
+device: desktop

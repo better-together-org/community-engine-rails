@@ -85,4 +85,36 @@ RSpec.describe 'BetterTogether::Federation::OauthTokens', :no_auth do
     expect(response).to have_http_status(:bad_request)
     expect(JSON.parse(response.body)).to include('error' => 'invalid_scope')
   end
+
+  context 'when the local platform is target_platform on the connection, not source_platform' do
+    let(:remote_platform) { create(:better_together_platform, :community_engine_peer) }
+    let(:connection) do
+      create(
+        :better_together_platform_connection,
+        :active,
+        source_platform: remote_platform,
+        target_platform: source_platform,
+        federation_auth_policy: 'api_read',
+        content_sharing_policy: 'mirror_network_feed',
+        share_posts: true,
+        allow_identity_scope: true,
+        allow_content_read_scope: true
+      )
+    end
+
+    it 'still issues a scoped bearer token' do
+      post better_together.federation_oauth_token_path(locale:),
+           params: {
+             grant_type: 'client_credentials',
+             client_id: connection.oauth_client_id,
+             client_secret: connection.oauth_client_secret,
+             scope: 'content.feed.read'
+           }
+
+      expect(response).to have_http_status(:ok)
+
+      payload = JSON.parse(response.body)
+      expect(payload['access_token']).to be_present
+    end
+  end
 end

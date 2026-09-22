@@ -1,0 +1,16 @@
+---
+title: Host Dashboard -- Geography Section
+audience:
+- platform_manager
+- developer
+journey_step: As a platform manager reviewing geography reference-data counts on the
+  dashboard, I can jump straight to the seed catalog to install what is missing.
+callouts:
+- :id: seed_catalog_link
+  :title: Seed Catalog link
+  :description: Links to /host/seeds/catalog -- the same platform-manager gate as
+    the rest of the host area.
+accessibility_notes: The link renders as a real anchor with visible text (not an icon-only
+  button), reachable by keyboard in normal tab order.
+slug: host_dashboard_seed_catalog_link
+device: desktop

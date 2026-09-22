@@ -12,16 +12,8 @@ module BetterTogether
         authorize BetterTogether::Safety::Case
 
         @safety_cases = filtered_safety_cases
-        @content_security_review_items = BetterTogether::ContentSecurity::Subject
-                                         .review_queue
-                                         .includes(:active_storage_blob)
-                                         .limit(10)
-        @local_review_snapshot = Rails.cache.fetch(
-          BetterTogether::Safety::LocalReviewSnapshotService::CACHE_KEY,
-          expires_in: 15.minutes
-        ) do
-          BetterTogether::Safety::LocalReviewSnapshotService.new.call
-        end
+        @content_security_review_items = content_security_review_items
+        @local_review_snapshot = local_review_snapshot
       end
 
       def show
@@ -46,6 +38,31 @@ module BetterTogether
       end
 
       private
+
+      def review_platform
+        @review_platform ||= ::Current.platform || ::Current.host_platform || ::BetterTogether::Platform.find_by(host: true)
+      end
+
+      def content_security_review_items
+        BetterTogether::ContentSecurity::Subject
+          .for_platform(review_platform)
+          .review_queue
+          .includes(:active_storage_blob)
+          .limit(10)
+      end
+
+      def local_review_snapshot
+        Rails.cache.fetch(
+          BetterTogether::Safety::LocalReviewSnapshotService.cache_key_for(review_platform),
+          expires_in: 15.minutes
+        ) do
+          BetterTogether::Safety::LocalReviewSnapshotService.new(
+            case_scope: policy_scope(BetterTogether::Safety::Case),
+            report_scope: policy_scope(BetterTogether::Report),
+            content_security_subject_scope: BetterTogether::ContentSecurity::Subject.for_platform(review_platform)
+          ).call
+        end
+      end
 
       def filtered_safety_cases
         scope = policy_scope(BetterTogether::Safety::Case)

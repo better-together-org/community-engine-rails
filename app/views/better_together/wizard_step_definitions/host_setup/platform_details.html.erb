@@ -60,7 +60,7 @@
 
         <div class="mb-3">
           <%= f.label :description, t('.fields.description.label'), class: 'form-label' %>
-          <%= f.text_area :description, placeholder: t('.fields.description.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:description].any?}", rows: 3, required: true %>
+          <%= f.rich_text_area :description, placeholder: t('.fields.description.placeholder'), class: "form-control#{' is-invalid' if @form.errors[:description].any?}", required: true, 'aria-label': t('.fields.description.label') %>
           <small class="form-text text-muted">
             <%= t('.fields.description.help') %>
           </small>

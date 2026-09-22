@@ -20,7 +20,8 @@ RSpec.describe BetterTogether::HostDashboardPolicy, type: :policy do
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 

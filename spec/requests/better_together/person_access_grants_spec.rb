@@ -5,7 +5,15 @@ require 'rails_helper'
 RSpec.describe 'BetterTogether::PersonAccessGrants', :no_auth do
   let(:locale) { I18n.default_locale }
   let(:password) { 'SecureTest123!@#' }
-  let(:grant) { create(:better_together_person_access_grant, allow_private_posts: true) }
+  # PersonAccessGrantPolicy::Scope filters by `for_platform(current_platform)`, so the
+  # underlying person_link's platform_connection must involve the host platform the
+  # request runs against, not an arbitrary unrelated platform pair.
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:person_link) do
+    create(:better_together_person_link,
+           platform_connection: create(:better_together_platform_connection, :active, source_platform: host_platform))
+  end
+  let(:grant) { create(:better_together_person_access_grant, person_link:, allow_private_posts: true) }
   let(:grantor_person) { grant.grantor_person }
   let(:grantee_person) { grant.grantee_person }
   let(:grantor_user) { create(:better_together_user, :confirmed, person: grantor_person, password:) }
@@ -16,6 +24,12 @@ RSpec.describe 'BetterTogether::PersonAccessGrants', :no_auth do
   end
 
   describe 'GET /access-grants' do
+    it 'returns 404 for unauthenticated users' do
+      get better_together.person_access_grants_path(locale:)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it 'allows the grantor to list their grants' do
       login(grantor_user.email, password)
 
@@ -82,6 +96,12 @@ RSpec.describe 'BetterTogether::PersonAccessGrants', :no_auth do
   end
 
   describe 'POST /access-grants/:id/revoke' do
+    it 'raises a routing error when unauthenticated because the route is constrained' do
+      expect do
+        post better_together.revoke_person_access_grant_path(grant, locale:)
+      end.to raise_error(ActionController::RoutingError)
+    end
+
     it 'allows the grantor to revoke the grant and soft-hide cached linked seeds' do
       login(grantor_user.email, password)
 

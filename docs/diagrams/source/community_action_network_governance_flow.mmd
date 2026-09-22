@@ -18,7 +18,6 @@ graph TB
         AG[Unified Agreements and Policy]
         RB[RBAC and Policy Authorization]
         AU[Robot Author Identity]
-        RP[Release Package Publishing]
         RS[Resource and Rights Surfaces]
     end
 
@@ -44,15 +43,12 @@ graph TB
     A --> RB
     G --> RS
     U --> AU
-    I --> RP
-    A --> RP
     AG --> AU
     AG --> RS
     RB --> RS
-    AU --> RP
 
     AU --> T
     RS --> V
-    RP --> Q
+    AG --> Q
     RS --> X
 

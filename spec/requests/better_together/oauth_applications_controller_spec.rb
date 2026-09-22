@@ -188,6 +188,32 @@ RSpec.describe 'BetterTogether::OauthApplicationsController' do
   end
 
   describe 'access control' do
+    context 'when authenticated as a regular user', :as_user do
+      let!(:owned_app) do
+        create(:better_together_oauth_application,
+               name: 'Regular User App',
+               owner: BetterTogether::User.find_by(email: 'user@example.test').person)
+      end
+
+      it 'denies access to host index' do
+        get better_together.oauth_applications_path(locale:)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'denies access to host show' do
+        get better_together.oauth_application_path(locale:, id: owned_app.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'denies access to host edit' do
+        get better_together.edit_oauth_application_path(locale:, id: owned_app.id)
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
     context 'when not authenticated', :unauthenticated do
       it 'denies access to index' do
         get better_together.oauth_applications_path(locale:)

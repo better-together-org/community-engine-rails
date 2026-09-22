@@ -7,10 +7,11 @@ RSpec.describe BetterTogether::ChecklistPolicy, type: :policy do
   let(:creator_person) { create(:better_together_person) }
   let(:creator_user) { create(:better_together_user, person: creator_person) }
   let(:normal_user) { create(:better_together_user) }
-  let(:community_checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'community') }
-  let(:public_checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'public') }
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:community_checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'community', platform: host_platform) }
+  let(:public_checklist) { create(:better_together_checklist, creator: creator_person, privacy: 'public', platform: host_platform) }
 
-  let(:checklist) { create(:better_together_checklist, creator: creator_person) }
+  let(:checklist) { create(:better_together_checklist, creator: creator_person, platform: host_platform) }
 
   describe '#create?' do
     subject { described_class.new(user, BetterTogether::Checklist).create? }

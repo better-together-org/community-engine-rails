@@ -3,10 +3,20 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::OauthApplicationPolicy do
+  let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
   let(:platform_manager_user) { create(:better_together_user, :confirmed, :platform_manager) }
   let(:regular_user) { create(:better_together_user, :confirmed) }
   let(:owner_user) { create(:better_together_user, :confirmed) }
   let(:oauth_app) { create(:better_together_oauth_application, owner: owner_user.person) }
+
+  before do
+    host_platform.update!(feature_gate_rollouts: { 'developer_settings' => 'stable' })
+    Current.platform = host_platform
+  end
+
+  after do
+    Current.platform = nil
+  end
 
   describe '#index?' do
     it 'allows platform managers' do
@@ -19,6 +29,12 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
 
     it 'denies unauthenticated users' do
       expect(described_class.new(nil, BetterTogether::OauthApplication)).not_to be_index
+    end
+
+    it 'denies access when developer settings are disabled for the current platform' do
+      host_platform.update!(feature_gate_rollouts: { 'developer_settings' => 'off' })
+
+      expect(described_class.new(regular_user, BetterTogether::OauthApplication)).not_to be_index
     end
   end
 
@@ -100,6 +116,13 @@ RSpec.describe BetterTogether::OauthApplicationPolicy do
 
     it 'returns no applications for unauthenticated users' do
       scope = described_class::Scope.new(nil, BetterTogether::OauthApplication)
+      expect(scope.resolve).to be_empty
+    end
+
+    it 'returns no applications when developer settings are disabled' do
+      host_platform.update!(feature_gate_rollouts: { 'developer_settings' => 'off' })
+
+      scope = described_class::Scope.new(owner_user, BetterTogether::OauthApplication)
       expect(scope.resolve).to be_empty
     end
   end

@@ -5,10 +5,6 @@ module BetterTogether
     # Renders a collection of BetterTogether::Person records
     class PeopleBlock < Block
       include ::BetterTogether::Content::ResourceBlockAttributes
-
-      def self.content_addable?
-        true
-      end
     end
   end
 end

@@ -1,0 +1,82 @@
+{
+  "name": "federation_hub_personal_panel",
+  "device": "mobile",
+  "url": "/en/federation-hub",
+  "title": "Federation Hub | Community Engine",
+  "locale": "en",
+  "feature_set": "federation_item_consent",
+  "flow": "federation_hub_personal_panel",
+  "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#federation-hub-recent-items",
+      "title": "Recently updated content",
+      "bullets": [
+        "Shows this member's own recent posts/pages/events with their federation badge."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 463.578125,
+        "width": 442.0,
+        "height": 76.0,
+        "right": 471.0,
+        "bottom": 539.578125,
+        "center_x": 250.0,
+        "center_y": 501.578125
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 463.578125,
+        "width": 442.0,
+        "height": 76.0,
+        "right": 471.0,
+        "bottom": 539.578125,
+        "center_x": 250.0,
+        "center_y": 501.578125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 559.58,
+        "width": 270.0,
+        "height": 242,
+        "score": 721.421875
+      }
+    },
+    {
+      "selector": "#federation-hub-visibility-counts",
+      "title": "Federation visibility counts",
+      "bullets": [
+        "Counts of this member's content by platform default / always federate / never federate."
+      ],
+      "target": {
+        "x": 25.0,
+        "y": 261.390625,
+        "width": 450.0,
+        "height": 159.0,
+        "right": 475.0,
+        "bottom": 420.390625,
+        "center_x": 250.0,
+        "center_y": 340.890625
+      },
+      "avoid": {
+        "x": 25.0,
+        "y": 261.390625,
+        "width": 450.0,
+        "height": 159.0,
+        "right": 475.0,
+        "bottom": 420.390625,
+        "center_x": 250.0,
+        "center_y": 340.890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 871,
+        "width": 270.0,
+        "height": 242,
+        "score": 0
+      }
+    }
+  ]
+}

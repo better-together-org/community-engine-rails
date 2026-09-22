@@ -1,5 +1,10 @@
 
-<%# locals: (form:, destroy: true, only_primary: false) %>
+<%# locals: (form:, destroy: true, only_primary: false, inline: false) %>
+<%# `inline: true` - nested address form embedded in another record's form (event
+    location picker). Its required selects would otherwise silently block the
+    parent form's submit while the panel is visible, so default the label and drop
+    the browser `required` checks; the model validations still apply on save. %>
+<% form.object.label ||= 'main' if inline && form.object.respond_to?(:label) %>
 <div class="nested-fields my-3" data-new-record="<%= form.object.new_record? %>">
   <%= form.hidden_field :_destroy %>
   <div class="row">
@@ -18,11 +23,11 @@
       </div>
     <% end %>
     <div class="col-6 col-xl-3">
-      <%= label_select_field(form) %>
+      <%= inline ? label_select_field(form, required: false, prompt: nil) : label_select_field(form) %>
     </div>
     <div class="col-6 col-xl-3">
       <%= required_label form, :privacy, class: "form-label" %>
-      <%= privacy_field(form:, klass: form.object.class) %>
+      <%= privacy_field(form:, klass: form.object.class, html_options: (inline ? { required: false } : {})) %>
     </div>
     <div class="col-xl-4 mb-3 mt-3 mt-xl-0">
       <%= label_tag :address_type, nil, { class: 'form-label' } %>

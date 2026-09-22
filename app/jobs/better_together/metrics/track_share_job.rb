@@ -3,18 +3,14 @@
 module BetterTogether
   module Metrics
     class TrackShareJob < MetricsJob # rubocop:todo Style/Documentation
-      # Only allow shares on specific, known models
-      ALLOWED_SHAREABLES = %w[
-        BetterTogether::Page
-        BetterTogether::Event
-        BetterTogether::Post
-        BetterTogether::Community
-      ].freeze
-
-      def perform(platform, url, locale, shareable_type, shareable_id, platform_id, logged_in) # rubocop:todo Metrics/MethodLength, Metrics/ParameterLists
+      def perform(platform_name, url, locale, shareable_type, shareable_id, platform_id, logged_in) # rubocop:todo Metrics/MethodLength, Metrics/ParameterLists
         shareable = nil
         if shareable_type.present?
-          klass = BetterTogether::SafeClassResolver.resolve(shareable_type, allowed: ALLOWED_SHAREABLES)
+          # Dynamic extension point, not a gem-owned allow-list: a host app opts a model into
+          # share tracking by including BetterTogether::Metrics::Shareable, nothing else. See
+          # docs/developers/architecture/polymorphic_allowlist_extension_audit.md
+          allowed = BetterTogether::Metrics::Shareable.included_in_models.map(&:name)
+          klass = BetterTogether::SafeClassResolver.resolve(shareable_type, allowed:)
           shareable = klass&.find_by(id: shareable_id)
         end
 
@@ -22,13 +18,19 @@ module BetterTogether
         # If a shareable_type was provided but is disallowed, do not create a record
         return if shareable_type.present? && shareable.nil?
 
+        # Prefer the shareable's own platform (the real content owner) over the
+        # viewer's current platform context — they can differ for federated/
+        # cross-platform content, and the caller-supplied platform_id only
+        # reflects who was browsing, not what they shared.
+        resolved_platform_id = shareable.try(:platform_id) || platform_id
+
         BetterTogether::Metrics::Share.create!(
-          platform:,
+          platform_name:,
           url:,
           locale:,
           shared_at: Time.current,
           shareable:,
-          platform_id:,
+          platform_id: resolved_platform_id,
           logged_in:
         )
       end

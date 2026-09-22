@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  VERSION = '0.10.1'
+  module Version
+    STRING = '0.10.1'
+  end
+
+  VERSION = Version::STRING
 end

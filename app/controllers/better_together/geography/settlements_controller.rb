@@ -100,7 +100,7 @@ module BetterTogether
 
       # Only allow a list of trusted parameters through.
       def geography_settlement_params
-        params.fetch(:geography_settlement, {})
+        params.require(:geography_settlement).permit(*resource_class.permitted_attributes)
       end
     end
   end

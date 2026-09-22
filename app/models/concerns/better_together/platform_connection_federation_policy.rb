@@ -57,6 +57,18 @@ module BetterTogether
       federation_auth_policy == 'api_write' && allows_federation_scope?('content_write')
     end
 
+    def metadata_sync_depth?
+      sync_depth == 'metadata'
+    end
+
+    def standard_sync_depth?
+      sync_depth.in?(%w[standard full])
+    end
+
+    def full_sync_depth?
+      sync_depth == 'full'
+    end
+
     private
 
     def normalize_content_policy_settings!

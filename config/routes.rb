@@ -5,9 +5,20 @@ require 'rswag/ui'
 require 'rswag/api'
 
 BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
+  # Short link public redirect — no locale prefix keeps URLs short
+  get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
+
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
+
+  # Per-platform robots.txt (no locale). Host apps must remove their static
+  # public/robots.txt for this dynamic route to take effect.
+  get '/robots.txt', to: 'robots_txt#show', as: :robots_txt, defaults: { format: 'text' }
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
+  get '/bot-defense/challenges/:form_id',
+      to: 'bot_defense/challenges#show',
+      as: :bot_defense_challenge,
+      defaults: { format: :json }
 
   get '/content-security/active-storage/blobs/proxy/:signed_id/*filename',
       to: 'content_security/active_storage/blobs/proxy#show',
@@ -68,6 +79,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
       end
 
+      # Public person profile viewing - must be BEFORE authenticated routes
+      resources :people, only: %i[show], path: 'p', as: 'person'
+
       devise_scope :user do
         unauthenticated :user do
           # Avoid clobbering admin users_path helper; keep redirect but rename helper
@@ -86,9 +100,53 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       # Calendar feed route - accessible without authentication (token-based auth in controller)
       get 'calendars/:id/feed', to: 'calendars#feed', as: :feed_calendar
 
+      # Short link generation for public content — guests can generate share links
+      post 'short_links/ensure', to: 'short_links#ensure', as: :ensure_content_short_link
+
+      post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
+
+      # Exchange hub and public browsing — must be BEFORE authenticated routes
+      # Hub serves as a public landing page; write/member actions are gated below.
+      #
+      # The two explicit `new` routes just below are declared here, ahead of the
+      # `show` resources, so they win the literal path segment `/exchange/requests/new`
+      # (and `/offers/new`). The authenticated block further down also declares
+      # `resources ... except: %i[index show]` (which includes its own `new` with the
+      # same name/path — harmless duplication, see note there) — Rails tries routes in
+      # declaration order, so without these earlier entries the literal "new" segment
+      # would match the `show` route first (with id == "new", since Offers/Requests
+      # use FriendlySlug and `:id` is normally a slug string, not a format-restricted
+      # UUID — a plain id constraint can't safely exclude just "new" without an
+      # unreliable regex lookahead). Declared with an explicit controller/path (not
+      # nested in `namespace :joatu`) so `as:` isn't double-prefixed with "joatu_".
+      # Access control for these actions is still fully enforced by
+      # OfferPolicy#new?/RequestPolicy#new? in the controller regardless of route order.
+      get 'exchange/offers/new',   to: 'joatu/offers#new',   as: :new_joatu_offer
+      get 'exchange/requests/new', to: 'joatu/requests#new', as: :new_joatu_request
+
+      namespace :joatu, path: 'exchange' do
+        get '/', to: 'hub#index', as: :hub
+        resources :offers,   only: %i[index show]
+        resources :requests, only: %i[index show]
+      end
+
+      namespace :geography, path: :g do
+        resources :settlements, only: %i[index show]
+
+        authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do
+          resources :settlements, except: %i[index show]
+        end
+      end
+
       # These routes are only exposed for logged-in users
       authenticated :user do # rubocop:todo Metrics/BlockLength
-        resources :agreements
+        resources :short_links
+
+        resources :agreements do
+          member do
+            post :accept
+          end
+        end
 
         resources :calendars
         resources :calls_for_interest, except: %i[index show]
@@ -122,9 +180,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        resources :message_requests, only: %i[index show create] do
+          member do
+            put :accept
+            put :decline
+          end
+        end
+
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts
+            get :available_locations
+            get :recurrence_preview
           end
           resources :invitations, only: %i[create destroy] do
             collection do
@@ -143,7 +210,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         # Help banner preferences
         post 'help_banners/hide', to: 'help_preferences#hide', as: :hide_help_banner
         post 'help_banners/show', to: 'help_preferences#show', as: :show_help_banner
-        post 'view_preferences', to: 'view_preferences#update', as: :view_preferences
 
         scope path: 'hub' do
           get '/', to: 'hub#index', as: :hub
@@ -151,6 +217,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           get 'recent_offers', to: 'hub#recent_offers', as: :hub_recent_offers
           get 'recent_requests', to: 'hub#recent_requests', as: :hub_recent_requests
           get 'suggested_matches', to: 'hub#suggested_matches', as: :hub_suggested_matches
+        end
+
+        scope path: 'federation-hub' do
+          get '/', to: 'federation_hub#index', as: :federation_hub
+          get 'activity', to: 'federation_hub#activity', as: :federation_hub_activity
         end
 
         resources :notifications, only: %i[index] do
@@ -184,14 +255,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         namespace :joatu, path: 'exchange' do
-          # Exchange hub landing page
-          get '/', to: 'hub#index', as: :hub
-          resources :offers do
+          # index + show are declared outside authenticated block for public access.
+          # The `new` action for offers/requests is ALSO pre-declared, unauthenticated,
+          # near the top of routes.rb (see comment there) so it wins the literal path
+          # segment over the `show` route, which is tried first in table order — the
+          # `new` routes generated here are unreachable duplicates kept only so
+          # `resources` continues to read naturally; harmless (same controller/action).
+          resources :offers, except: %i[index show] do
             member do
               get :respond_with_request
             end
           end
-          resources :requests do
+          resources :requests, except: %i[index show] do
             member do
               get :matches
               get :respond_with_offer
@@ -201,6 +276,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             member do
               post :accept
               post :reject
+              post :fulfill
+              post :cancel
             end
           end
 
@@ -236,7 +313,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
-        resources :people, only: %i[update show edit], path: :p do
+        resources :people, only: %i[update edit], path: :p do
           get 'me', to: 'people#show', as: 'my_profile'
           get 'me/edit', to: 'people#edit', as: 'edit_my_profile'
         end
@@ -257,12 +334,30 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
         resources :posts
 
+        resources :comments, only: %i[create destroy]
+        # Pages: open to any authenticated user at the routing layer, same as
+        # events/posts/communities above — PagePolicy already does the
+        # fine-grained per-action authorization (platform/community content
+        # manager, or creator/editable_contributor for their own pages, or
+        # self-service community member + accepted publishing agreement for
+        # create?). Previously nested under the platform-manager-only host
+        # dashboard scope, which blocked self-service creators from ever
+        # reaching new/create, and would have also blocked them from viewing
+        # or editing a page they'd created.
+        resources :pages do
+          scope module: 'content' do
+            resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
+          end
+        end
+
         resources :platforms, only: %i[index show new create edit update] do
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
             end
           end
+          resources :membership_requests, only: %i[index show destroy],
+                                          controller: 'platform_membership_requests'
         end
 
         resources :person_seeds, only: %i[index show destroy], path: 'my/seeds' do
@@ -337,6 +432,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   get :search_queries_by_term_data
                   get :search_queries_daily_data
                   get :search_health_data
+                  get :search_health_panel
                   get :user_accounts_daily_data
                   get :user_confirmation_rate_data
                   get :user_registration_sources_data
@@ -352,12 +448,21 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do # rubocop:todo Metrics/BlockLength
           scope path: 'host' do # rubocop:todo Metrics/BlockLength
             get '/', to: 'host_dashboard#index', as: 'host_dashboard'
+            get 'membership-review', to: 'host_dashboard#membership_review', as: 'host_dashboard_membership_review'
+            get 'safety-review', to: 'host_dashboard#safety_review', as: 'host_dashboard_safety_review'
+            get 'federation-review',
+                to: 'host_dashboard#platform_connection_review',
+                as: 'host_dashboard_platform_connection_review'
 
             resources :categories
 
             # Lists all used content blocks. Allows setting built-in system blocks.
             namespace :content do
-              resources :blocks
+              resources :blocks do
+                collection do
+                  get :resource_search
+                end
+              end
             end
 
             # management for built-in Nav Areas and adding new ones for page sidebars.
@@ -369,19 +474,22 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             resources :resource_permissions
             resources :roles
 
-            # Content Management
-            resources :pages do
-              collection do
-                post :create_release_package_draft
-              end
-
-              scope module: 'content' do
-                resources :page_blocks, only: %i[new destroy], defaults: { format: :turbo_stream }
-              end
-            end
+            # Pages moved to the generic authenticated scope above — see the
+            # comment there. PagePolicy governs access; this host dashboard
+            # section stays platform-manager-only for everything else.
 
             # Seed data management
-            resources :seeds
+            resources :seeds do
+              # Seed catalog — on-demand planting of curated reference data (Geography today).
+              # Must be `collection` routes (not a sibling scope) so Rails resolves them before
+              # this resource's own GET/:id (show) route — a sibling `scope path: 'seeds'` block
+              # placed after `resources :seeds` loses to `seeds#show` matching "catalog" as :id.
+              collection do
+                get 'catalog', to: 'seed_catalog#index', as: 'seed_catalog'
+                post 'catalog/:catalog_key/plant/:category_key', to: 'seed_catalog#plant', as: 'seed_catalog_plant'
+                post 'catalog/:catalog_key/plant_all', to: 'seed_catalog#plant_all', as: 'seed_catalog_plant_all'
+              end
+            end
 
             # People and memberships
             resources :people
@@ -399,6 +507,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               member do
                 get :available_people
               end
+              resources :feature_access_grants, except: :show
+              resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
                 member do
@@ -410,6 +520,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                   put :activate
                 end
               end
+              resources :platform_domains, except: %i[show]
             end
 
             resources :users
@@ -428,7 +539,6 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :countries
               resources :regions
               resources :region_settlements
-              resources :settlements
               resources :states
             end
           end
@@ -440,16 +550,13 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         post 'oauth/token', to: 'oauth_tokens#create', as: :oauth_token
         resource :content_feed, only: :show, controller: :content_feed
         resources :linked_seeds, only: :index, controller: :linked_seeds
+
+        # Host app / extension gem hook — see BetterTogether.federation_routes_extension.
+        instance_exec(&BetterTogether.federation_routes_extension) if BetterTogether.federation_routes_extension
       end
 
       resources :agreements, only: :show
       resources :calls_for_interest, only: %i[index show]
-      get 'citations/export/:citeable_key/:id', to: 'citation_exports#show', as: :citation_export
-      get 'citations/import/github', to: 'github_citation_imports#index', as: :github_citation_imports
-      post 'citations/import/github/:citeable_key/:id', to: 'github_citation_imports#create', as: :import_github_citation
-      post 'contributions/import/github/:contributable_key/:id',
-           to: 'github_contribution_imports#create',
-           as: :github_contribution_imports
       # Public access: allow viewing public checklists
       resources :checklists, only: %i[index show]
 
@@ -470,6 +577,18 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           post :rsvp_interested
           post :rsvp_going
           delete :rsvp_cancel
+        end
+
+        # Per-session (EventOccurrence) actions — lazily creates the
+        # occurrence row on first interaction. :occurrence_date is an
+        # ISO8601 date (e.g. 2026-08-14), not a persisted record id.
+        resources :occurrences, only: %i[update], param: :occurrence_date, controller: 'event_occurrences' do
+          member do
+            post :rsvp_interested
+            post :rsvp_going
+            delete :rsvp_cancel
+            post :comments
+          end
         end
       end
 
@@ -501,7 +620,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         patch ':wizard_step_definition_id', to: 'wizard_steps#update'
       end
 
-      scope path: :w do
+      scope path: :w do # rubocop:todo Metrics/BlockLength
         scope path: :setup_wizard do
           get '/', to: 'setup_wizard#show', defaults: { wizard_id: 'host_setup' }, as: :setup_wizard
           get 'platform_details', to: 'setup_wizard_steps#platform_details',
@@ -524,6 +643,51 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               to: 'setup_wizard_steps#redirect',
               as: 'setup_wizard_step',
               constraints: { step: /platform_details|admin_creation/ }
+        end
+
+        # Unlike setup_wizard (a singleton scoped to the host platform), each
+        # run gets its own platform-scoped Wizard row, so every step route
+        # carries :platform_id — see
+        # NewPlatformSetupStepsController#wizard/#target_platform.
+        get 'new_platform_setup', to: 'new_platform_setup#start', as: :new_platform_setup
+
+        scope path: 'new_platform_setup/:platform_id' do # rubocop:todo Metrics/BlockLength
+          get 'welcome', to: 'new_platform_setup_steps#welcome',
+                         defaults: { wizard_step_definition_id: :welcome },
+                         as: :new_platform_setup_step_welcome
+          post 'welcome', to: 'new_platform_setup_steps#update_welcome',
+                          defaults: { wizard_step_definition_id: :welcome },
+                          as: :new_platform_setup_step_update_welcome
+          get 'platform_identity', to: 'new_platform_setup_steps#platform_identity',
+                                   defaults: { wizard_step_definition_id: :platform_identity },
+                                   as: :new_platform_setup_step_platform_identity
+          post 'platform_identity', to: 'new_platform_setup_steps#create_platform_identity',
+                                    defaults: { wizard_step_definition_id: :platform_identity },
+                                    as: :new_platform_setup_step_create_platform_identity
+          get 'domain', to: 'new_platform_setup_steps#domain',
+                        defaults: { wizard_step_definition_id: :domain },
+                        as: :new_platform_setup_step_domain
+          post 'domain', to: 'new_platform_setup_steps#create_domain',
+                         defaults: { wizard_step_definition_id: :domain },
+                         as: :new_platform_setup_step_create_domain
+          get 'steward_account', to: 'new_platform_setup_steps#steward_account',
+                                 defaults: { wizard_step_definition_id: :steward_account },
+                                 as: :new_platform_setup_step_steward_account
+          post 'steward_account', to: 'new_platform_setup_steps#create_steward_account',
+                                  defaults: { wizard_step_definition_id: :steward_account },
+                                  as: :new_platform_setup_step_create_steward_account
+          get 'invite_members', to: 'new_platform_setup_steps#invite_members',
+                                defaults: { wizard_step_definition_id: :invite_members },
+                                as: :new_platform_setup_step_invite_members
+          post 'invite_members', to: 'new_platform_setup_steps#create_invite_members',
+                                 defaults: { wizard_step_definition_id: :invite_members },
+                                 as: :new_platform_setup_step_create_invite_members
+          get 'review_and_launch', to: 'new_platform_setup_steps#review_and_launch',
+                                   defaults: { wizard_step_definition_id: :review_and_launch },
+                                   as: :new_platform_setup_step_review_and_launch
+          post 'review_and_launch', to: 'new_platform_setup_steps#launch_platform',
+                                    defaults: { wizard_step_definition_id: :review_and_launch },
+                                    as: :new_platform_setup_step_launch_platform
         end
       end
     end

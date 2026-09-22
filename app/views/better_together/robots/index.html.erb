@@ -1,0 +1,142 @@
+<%= render layout: 'layouts/better_together/host_nav' do %>
+  <% content_for :page_title do %>
+    <%= t('better_together.robots.index.title', platform_name: @platform.name) %>
+  <% end %>
+
+  <div class="container my-4">
+    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-4">
+      <div>
+        <h1 class="mb-1"><%= t('better_together.robots.index.title', platform_name: @platform.name) %></h1>
+        <p class="text-muted mb-0"><%= t('better_together.robots.index.subtitle') %></p>
+      </div>
+
+      <div class="d-flex gap-2">
+        <%= link_to platform_path(@platform), class: 'btn btn-outline-secondary btn-sm' do %>
+          <i class="fas fa-arrow-left" aria-hidden="true"></i>
+          <%= t('better_together.robots.index.back_to_platform') %>
+        <% end %>
+
+        <% if policy(BetterTogether::Robot.new(platform: @platform)).create? %>
+          <%= link_to new_platform_robot_path(@platform), class: 'btn btn-primary btn-sm' do %>
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            <%= t('better_together.robots.index.new_robot') %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('better_together.robots.readiness.openai_credentials') %></div>
+            <div class="fw-semibold <%= @openai_credentials_present ? 'text-success' : 'text-danger' %>">
+              <%= t("better_together.robots.readiness.#{@openai_credentials_present ? 'configured' : 'missing'}") %>
+            </div>
+            <p class="small text-muted mb-0 mt-2"><%= t('better_together.robots.readiness.credentials_help') %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('better_together.robots.readiness.translation_provider') %></div>
+            <div class="fw-semibold <%= @translation_available ? 'text-success' : 'text-danger' %>">
+              <%= t("better_together.robots.readiness.#{@translation_available ? 'ready' : 'unavailable'}") %>
+            </div>
+            <p class="small text-muted mb-0 mt-2">
+              <%= @translation_robot.present? ? @translation_robot.name : t('better_together.robots.readiness.no_translation_robot') %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 bg-body-tertiary">
+          <div class="card-body">
+            <div class="text-muted small text-uppercase fw-semibold mb-1"><%= t('better_together.robots.readiness.translation_ui') %></div>
+            <div class="fw-semibold <%= @translation_available ? 'text-success' : 'text-danger' %>">
+              <%= t("better_together.robots.readiness.#{@translation_available ? 'shown' : 'hidden'}") %>
+            </div>
+            <p class="small text-muted mb-0 mt-2"><%= t('better_together.robots.readiness.translation_ui_help') %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th><%= BetterTogether::Robot.human_attribute_name(:name) %></th>
+                <th><%= BetterTogether::Robot.human_attribute_name(:identifier) %></th>
+                <th><%= BetterTogether::Robot.human_attribute_name(:robot_type) %></th>
+                <th><%= BetterTogether::Robot.human_attribute_name(:provider) %></th>
+                <th><%= BetterTogether::Robot.human_attribute_name(:default_model) %></th>
+                <th><%= t('better_together.robots.index.scope') %></th>
+                <th><%= t('better_together.robots.index.status') %></th>
+                <th class="text-end"><%= t('globals.actions') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @robots.each do |robot| %>
+                <tr id="<%= dom_id(robot) %>">
+                  <td>
+                    <div class="fw-semibold"><%= robot.name %></div>
+                    <% if robot.system_prompt.present? %>
+                      <div class="small text-muted"><%= truncate(robot.system_prompt, length: 90) %></div>
+                    <% end %>
+                  </td>
+                  <td><code><%= robot.identifier %></code></td>
+                  <td><%= robot.robot_type %></td>
+                  <td>
+                    <div><%= robot.provider %></div>
+                    <div class="small <%= robot_provider_status_class(robot) %>"><%= robot_provider_status_text(robot) %></div>
+                  </td>
+                  <td>
+                    <div><%= robot.chat_model %></div>
+                    <div class="small text-muted"><%= robot.embedding_model %></div>
+                  </td>
+                  <td>
+                    <span class="badge <%= robot_scope_badge_class(robot) %>"><%= robot_scope_label(robot) %></span>
+                  </td>
+                  <td>
+                    <div class="<%= robot.active? ? 'text-success' : 'text-muted' %>">
+                      <%= t("better_together.robots.statuses.#{robot.active? ? 'active' : 'inactive'}") %>
+                    </div>
+                    <% if robot.translation_robot? %>
+                      <div class="small text-muted">
+                        <%= translation_robot_status_text(robot, @translation_robot, @translation_available) %>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td class="text-end">
+                    <% if robot.managed_by_platform?(@platform) %>
+                      <div class="d-flex justify-content-end gap-2">
+                        <%= link_to edit_platform_robot_path(@platform, robot), class: 'btn btn-outline-primary btn-sm' do %>
+                          <i class="fas fa-pen" aria-hidden="true"></i>
+                          <%= t('better_together.robots.index.edit') %>
+                        <% end %>
+                        <%= link_to platform_robot_path(@platform, robot),
+                                    data: { turbo_method: :delete, turbo_confirm: t('better_together.robots.index.delete_confirm', name: robot.name) },
+                                    class: 'btn btn-outline-danger btn-sm' do %>
+                          <i class="fas fa-trash" aria-hidden="true"></i>
+                          <%= t('better_together.robots.index.delete') %>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <span class="small text-muted"><%= t('better_together.robots.index.global_read_only') %></span>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

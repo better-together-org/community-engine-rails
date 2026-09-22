@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class PersonCommunityMembershipPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class PersonCommunityMembershipPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       user.present? && can_manage_any_community_members?
     end
@@ -23,11 +23,11 @@ module BetterTogether
         !record.member.permitted_to?('manage_community_roles', record.joinable)
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
         return scope.none unless user.present?
 
-        own_memberships.or(manageable_memberships).distinct
+        platform_scoped(own_memberships.or(manageable_memberships).distinct)
       end
 
       private
@@ -57,9 +57,15 @@ module BetterTogether
 
     def can_manage_community_members?
       community = record.try(:joinable)
+      return false unless community
 
-      permitted_to?('manage_community_members', community) ||
+      creator_of_community?(community) ||
+        permitted_to?('manage_community_members', community) ||
         permitted_to?('manage_community_roles', community)
+    end
+
+    def creator_of_community?(community)
+      community.respond_to?(:creator_id) && agent.present? && community.creator_id == agent.id
     end
 
     def self_service_membership_create?
