@@ -22,6 +22,14 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - `federated_author` JSONB column on posts, pages, and events for mirrored bylines
 - Federation idempotent mirror lookup + identifier conflict namespacing (#1405)
 - Federation member export consent controls for cross-platform sharing preferences (#1465)
+- Per-item federation consent: tri-state `federation_visibility` on Post/Page/Event, per-connection sync intervals, and rate-limited federation feed delivery
+- RBAC platform-scoping remediation across 27 policy files, closing several unscoped `manage_platform`/`manage_platform_settings` checks — see Security
+- `new_platform_setup` wizard: a distinct, platform-scoped flow for provisioning additional tenant platforms (separate from the singleton host-bootstrap wizard), with a full accessibility pass
+- Platform Domains admin UI (`PlatformDomainsController`) — previously required Rails console/rake task access (#1677)
+- Federation Hub: a new top-level nav destination showing any signed-in person their own content's federation status and connection health, plus a paginated activity feed
+- First-class `BetterTogether::StorageConfiguration` adapter (local/S3/S3-compatible), AR-encrypted credentials, admin CRUD (#1392)
+- Community Action Network governance system: `GovernedAgent` identity scaffold and agreement-gated public publishing (#1494)
+- Per-platform multi-tenant sitemaps and dynamic, tenant-aware `robots.txt`
 
 #### Removed
 - Signal Protocol E2E encrypted-messaging beta (prekey exchange, Double Ratchet, sender-key group rotation, passphrase key backup) pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings). Preserved intact on `feature/e2e-signal-protocol-messaging-01100notes` for future rework.
@@ -30,9 +38,9 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 #### CMS Block System
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)
-- MCP tools for block management (create, update, delete, reorder)
+- 8 MCP tools for block/page-block management: `SearchPagesTool`, `PublishPostTool`, `UpdatePostTool`, `ListPageBlocksTool`, `GetBlockTool`, `CreatePageBlockTool`, `UpdateBlockTool`, `DeletePageBlockTool`
 - JSON:API endpoints for content blocks and page blocks (#1373)
-- 12 additional content block types implemented in follow-up, with page-builder rollout deferred until a 0.11.x patch review (#1350)
+- All 13 new content block types (Accordion, Alert, Call to Action, Checklist, Communities, Events, Iframe, Navigation Area, People, Posts, Quote, Statistics, Video) ship standard as of 2026-09-18 — the earlier `new_content_blocks` alpha gate has been removed entirely (#1350)
 - Missing `blocks/new/_mermaid_diagram` partial restored (#1349)
 
 #### Storage Adapter
@@ -75,6 +83,9 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 #### Inbound Mail Relay
 - Action Mailbox-powered inbound email relay MVP with Better Together router mailboxes, tenant-safe resolution/routing, and persisted inbound message records (#1501)
+- Reply-by-email: `reply+<token>@` resolves a single-use, per-recipient reply token back to the originating conversation/comment (#1690)
+- SPF/DKIM/DMARC verification of inbound senders via trusted `Authentication-Results:`/`Received-SPF:` headers (#1691)
+- Authorization hardening across all alias kinds: membership-request submission by email now honors the same gate as the web form, a platform-level `allow_inbound_mail` kill switch was added, and `agent+` sender identity is now verified against the resolved person's actual email instead of trusted from a guessable identifier alone (#1689)
 
 #### Content Security & Reporting
 - Content-security ingress workflow for uploads and rich-text attachments with under-review/restricted states and a review queue for release decisions (#1504)
@@ -105,7 +116,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - `SearchPagesTool` plus a shared AREL content-search helper for page-oriented MCP search paths (#1273)
 
 #### CI / Developer Experience
-- Rails 8.1 informational CI lane (non-blocking) + versioned bundle helpers (#1391)
+- Branch-native Rails compatibility lanes (7.2 / 8.0 / 8.1) via `compat-branch-sync.yml`, `dependency-compatibility.yml`, and `dependabot-auto-merge.yml` — supersedes the earlier informational-only Rails 8.1 preview lane (#1391, #1281)
 - Self-contained historical migrations: all legacy migrations carry their own `add_index`/`create_table` guards (#1402)
 - Dual migration path support + FK ordering fixes (#1401)
 - Share Docker services across worktrees for faster local dev (#1279)
@@ -121,9 +132,16 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - `BetterTogether::ShortLink` model with configurable slug, polymorphic target, optional expiry, and click tracking (#1594)
 - `Shortlinkable` concern: attach a managed share URL to any model with one line
 - Share button UI component with clipboard copy-to-clipboard (Stimulus `clipboard` controller), integrated on post, page, and event surfaces
-- Platform-scoped short-link index and management views (`GET /c/:community/short_links`)
-- Public redirect endpoint at `GET /r/:slug`
+- Platform-scoped short-link index and management views (`resources :short_links`, under the authenticated-user namespace)
+- Public redirect endpoint at `GET /s/:code` (open redirect by design — scheme-validated `target_url`, platform-scoped lookup, no target-host allowlist)
 - Stable `dom_id`/`dom_class` DOM identifiers on all new short-link views per the View DOM Identifier Standard
+
+#### Geography
+- PostGIS-backed geography hierarchy resolution: any geocoded Address/Building/Event point resolves to its containing Continent/Country/State/Region/Settlement via polygon containment, with ISO country-code and name-similarity fallbacks (#1667)
+- Boundary-polygon import from Nominatim/Geocoder, plus operator rake tasks for backfill, seed-catalog generation, and reference-data import
+- Redesigned, accessible location picker (mixed-type search, inline-create rows) replacing the prior radio-group type selector (#1781)
+- `Geography::Map#platform_id` added and `Geography::Map`/JOATU matching scoped to platform boundaries — see Security (#1766)
+- `privacy` column added to the geography and category reference-data tables
 
 ### Fixed
 - **Content Blocks / Hero images:** two bugs kept a hero/background image from displaying for anonymous visitors. (1) `block_styles` emitted `background-image: url(<proxy-url>)` **unquoted**; ActiveStorage appends the blob filename as the last path segment, so any file with `(`, `)`, a space or a comma in its name (e.g. `photo(1).jpg`) produced a CSS syntax error and the whole declaration was dropped -- now quoted (`url("...")`). (2) `Content::Block#privacy` defaults to `'private'` and nothing syncs it from the page, so blocks predating the 0.11.0 `authorize_blob_access` gate (#1392) had their images return 401 even on a public homepage -- new backfill migration `20260902190000` makes visible blocks on published public pages `public` (raw SQL, mirroring `20251219191929` for navigation items).
@@ -140,7 +158,9 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Federation:** Narrow platform connection updates so host dashboards only mutate the intended fields (#1458)
 - **Messaging:** Scope conversation participants to the current platform (#1459)
 - **Navigation:** Seed navigation using the host platform context so installs pick up the correct platform-owned records (#1466)
-- **Observability:** Log and report rescued production exceptions to both server logs and Sentry (#1472)
+- **Observability:** Log and report rescued production exceptions through `BetterTogether.report_error`'s pluggable adapter-registry dispatch, now also covering background-job errors via `ApplicationJob` (#1472). Note: `sentry-rails`/`sentry-ruby` were removed as core dependencies this cycle — a host app or extension gem must register its own Sentry (or other) adapter for exception reports to reach an external service; without one, core CE only guarantees `Rails.error.report`.
+- **Comments:** Deleting a comment no longer cascades to destroy its linked moderation `Report`/`Safety::Case` record; a moderator-block gap on comment destroy closed; comment length capped; the content-publishing agreement is now actually enforced on new comments; credited co-authors are now notified on new comments; the long-dormant `notify_on_comments` preference is now wired end-to-end.
+- **Reliability:** Upgraded Ruby 3.4.4 → 3.4.10, fixing a reproducible `socket.rb` heap-use-after-free segfault (upstream Ruby Bug #21443) that was crashing Puma in production roughly 1-2x/day; paired with a new `mcp/sse/ip` Rack::Attack throttle closing the underlying trigger (an MCP SSE-reconnect loop holding Puma threads open).
 - **Uploads:** Restore same-origin profile image URLs through the Rails storage proxy instead of presigned direct S3 URLs (#1474)
 - **Policies:** Restored `can_manage_platform_members?` to `PlatformInvitationPolicy` outer class after it was accidentally removed by the RBAC hardening commit — `index?`, `create?`, `destroy?`, `resend?` all call this method
 - **Policies:** RBAC scope hardening — cleaner `PersonCommunityMembershipPolicy` / `PersonPlatformMembershipPolicy` resolution; tighter invitation role checks (#1403)
@@ -164,18 +184,27 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 - **CVE-2026-32700 (Devise):** Upgraded Devise to 5.0.3 across Rails 7.2, 8.0, and 8.1 compat branches (#1385, #1386, #1387). Existing password-reset tokens will be invalidated on upgrade — users with pending resets will need to re-request a new link.
 - **SSRF (Federation):** Added `ssrf_filter` gem to close SSRF DNS rebinding attack vector in federation outbound HTTP requests; all federated outbound requests are now filtered against private and loopback address ranges.
+- **Cross-tenant admin takeover (RBAC):** `UserPolicy` and 26 other policy files checked `manage_platform`/`manage_platform_settings` permissions with no platform argument, so any tenant's admin could view and edit every other tenant's records — most severely, every other tenant's `User` accounts (email, password, and admin flags included) via `UserPolicy`. Fixed by threading the target record's own platform into every check (#1762).
+- **Privilege escalation via host-platform membership backfill:** A data migration (`BackfillHostPlatformMemberships`) granted every backfilled person the platform's highest-privilege role instead of the low-privilege role a companion migration had specifically seeded for this purpose. This had confirmed real-world impact on two live hosts before the fix landed (#1687).
+- **Cross-tenant ActiveStorage service hijack:** A tenant admin could activate their own storage configuration as the shared/global storage service, rerouting every other tenant's file storage through credentials they controlled (#1763).
+- **ActiveStorage direct uploads had zero authentication:** Rails core's `DirectUploadsController` bypasses the host application's controller stack entirely; every CE-family app had unauthenticated direct-upload endpoints until this cycle closed the gap (#1750, #1392).
+- **Unsafe reflection in `BlocksController`:** `params[:resource_class].safe_constantize` ran on unvalidated input (Brakeman High-confidence, RCE-class); fixed with a strict class allowlist.
+- **Inbound mail person-impersonation:** `agent+<identifier>@` resolved a real `Person` from a guessable identifier with no verification the sender owned that identity, allowing a message to be routed/attributed as if from an arbitrary real person; fixed alongside the other alias-authorization gaps (#1689).
 
-### Dependencies (post-#1547 updates)
+### Dependencies
 
-- Devise 5.0.4 (patch after 5.0.3 security release)
-- ruby_llm 1.15.0
-- sidekiq 8.1.5
-- nokogiri 1.19.3
-- active_storage_validations 3.0.5
-- faraday 2.14.2, bootsnap 1.24.4
-- rubocop-rails 2.35.2, selenium-webdriver 4.44.0, parallel_rspec 3.1.0
-- icalendar 2.12.3, css_parser 1.22.0, doorkeeper 5.9.1, jwt 3.2.0
-- aws-sdk-s3 1.223.0
+- **ruby_llm** 2.0.0.rc4 (exact-pinned) — fixes CVE-2026-67991 (ReDoS, no patched 1.x release exists); replaces `ruby-openai`, which is removed
+- **Devise** 5.0.4 — fixes CVE-2026-32700 and CVE-2026-40295 (open redirect via `Referer` header)
+- **css_parser** promoted to an explicit `>= 3.0.0` gemspec dependency — fixes CVE-2026-53727 (SSRF + LFI); pulls in the new `ssrf_filter` dependency
+- **nokogiri** 1.19.4 — multiple use-after-free / out-of-bounds-read / null-pointer GHSA fixes
+- **Rails family** (actionpack, activestorage, etc.) 8.0.5.1 — fixes CVE-2026-66066 (ActiveStorage/libvips arbitrary file read / RCE)
+- **puma** 8.0.2 (major bump from the 7.x line) — fixes CVE-2026-47736 / CVE-2026-47737 (PROXY protocol memory exhaustion)
+- **oauth2** 2.0.23 (transitive) — fixes GHSA-pp92-crg2-gfv9 (bearer-token leak via protocol-relative redirect)
+- Removed: `elasticsearch-model`/`elasticsearch-rails` (replaced by `pg_search`, a Postgres-native search backend — Elasticsearch itself now lives in a standalone `better_together-elasticsearch` extension gem, no longer a core dependency), `sentry-rails`/`sentry-ruby` (see Observability, above)
+- sidekiq 8.1.6, active_storage_validations 3.0.5, faraday 2.14.3, bootsnap 1.24.6, rubocop-rails 2.35.5, selenium-webdriver 4.44.0
+- icalendar 2.12.3 (CVE-2026-33635), doorkeeper 5.9.3, jwt 3.2.0 (CVE-2026-45363), aws-sdk-s3 1.227.0
+
+A full dependency audit (every security-motivated, major/breaking, minor/patch, added, and removed gem) is available in the 0.11.0 release assessment; this section covers the highlights.
 
 ### Known Limitations & Deferred Surfaces
 
@@ -204,6 +233,14 @@ for 0.11.x patches.
 - **ClamAV Operator Deploy Guide:** A guide for deploying, configuring, and monitoring
   the ClamAV backend will be added in a 0.11.x docs patch before operators are expected
   to enable `BETTER_TOGETHER_CONTENT_SECURITY_CLAM_AV_ENABLED`.
+- **Observability & Marketing Adapters:** Core error reporting now dispatches through a
+  pluggable adapter registry, but no companion observability gem (e.g. Sentry) has
+  shipped yet — that extraction is roadmap-only. There is no dedicated marketing/Google
+  Analytics gem either; a small inline GA tracking hook was replaced by a generic
+  `share` browser event that a host app or future extension gem can listen for.
+- **SPF/DKIM/DMARC Verification:** `InboundMailAuthentication` (#1691) is implemented
+  and merged but is currently inert in production pending a separate do-3 infrastructure
+  change to set a stable `AuthservID`; deploy the two together.
 
 ---
 
