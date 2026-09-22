@@ -88,7 +88,12 @@ jobs:
   rspec:
     name: rspec (3.4.10, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
-    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
+    # always() is required here: without it, GitHub Actions implicitly ANDs this
+    # condition with success() across the whole needs chain, and pr_evidence is
+    # *designed* to skip on push events -- silently skipping this job (and
+    # rubocop/security below) on every direct push to main/dev/compat/*,
+    # regardless of the explicit "or skipped" clause below.
+    if: always() && needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     environment: test
     env:
@@ -218,7 +223,7 @@ jobs:
 
   rubocop:
     needs: [prepare, pr_evidence]
-    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
+    if: always() && needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
@@ -237,7 +242,7 @@ jobs:
 
   security:
     needs: [prepare, pr_evidence]
-    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
+    if: always() && needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
