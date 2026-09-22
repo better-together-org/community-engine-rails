@@ -8,7 +8,7 @@ Community Engine supports running multiple independent platforms from a single R
 - Multiple distinct communities/organizations run on the same database and Rails application
 - Each platform has its own content, members, configurations, and feature gates
 - Platforms are isolated by hostname-based routing (not separate databases or instances)
-- All platforms share infrastructure: PostgreSQL, Redis, Elasticsearch, background jobs
+- All platforms share infrastructure: PostgreSQL (including the `pg_search`-backed default search index), Redis, background jobs. *(This previously listed Elasticsearch as shared infrastructure — search now defaults to a Postgres-native backend; Elasticsearch, if used at all, lives in a separate optional `better_together-elasticsearch` extension gem and is no longer part of the default stack this guide describes.)*
 - This is suitable for SaaS deployments, cooperatives running multiple communities, or federation scenarios
 
 **What this is NOT:**
@@ -270,12 +270,14 @@ tenant_platform.update!(host_url: 'https://newtenant-a.example.com')
 
 ## Feature Gates Per Platform
 
-Each platform can independently enable or disable features. Control this via platform settings:
+Each platform can independently enable or disable features. Control this via platform settings.
+
+*(The examples below use `platform_federation_tools` as the illustrative gate key — the original examples used `new_content_blocks`, which was removed from `config/feature_gates.yml` entirely when the CMS block system's alpha gate was lifted on 2026-09-18; that key no longer exists in the registry. `platform_federation_tools`, `robot_api_access`, and `robot_configuration_ui` are examples of currently-registered gate keys as of this update.)*
 
 ```ruby
 tenant_platform.update!(
   feature_gate_rollouts: {
-    'new_content_blocks' => 'stable',    # Enabled for all users
+    'platform_federation_tools' => 'stable',    # Enabled for all users
     'developer_settings' => 'alpha',     # Only users with alpha access
     'some_experimental' => 'off'         # Disabled for everyone
   }
@@ -286,7 +288,7 @@ Valid rollout values: `'stable'`, `'beta'`, `'alpha'`, `'off'`
 
 **Checking in code:**
 ```ruby
-if BetterTogether::FeatureGate.enabled?(:new_content_blocks, actor: user.person, platform: current_platform)
+if BetterTogether::FeatureGate.enabled?(:platform_federation_tools, actor: user.person, platform: current_platform)
   # Feature is enabled for this user on this platform
 end
 ```
@@ -336,7 +338,7 @@ Rack::MockRequest.env_for("https://tenant-a.example.com/en", method: "GET")
 
 ```ruby
 tenant_platform = Platform.find_by(identifier: 'tenant-a-platform')
-tenant_platform.feature_rollout_for(:new_content_blocks)  # Should be 'stable'
+tenant_platform.feature_rollout_for(:platform_federation_tools)  # Should be 'stable'
 ```
 
 ### 5. Database Integrity
@@ -404,10 +406,10 @@ Rails.cache.clear
 platform.feature_gate_rollouts  # Should include the feature key
 
 # Check feature exists in registry
-BetterTogether::FeatureRegistry.find(:new_content_blocks)
+BetterTogether::FeatureRegistry.find(:platform_federation_tools)
 
 # Test directly:
-BetterTogether::FeatureGate.enabled?(:new_content_blocks, actor: user.person, platform:)
+BetterTogether::FeatureGate.enabled?(:platform_federation_tools, actor: user.person, platform:)
 ```
 
 ### Symptom: Cache key format in logs mentions `bt:platform_domain:...`
@@ -491,7 +493,7 @@ platform.update!(
   requires_invitation: true,  # Restrict registration
   allow_membership_requests: true,  # Allow users to request join
   feature_gate_rollouts: {
-    'new_content_blocks' => 'beta'
+    'platform_federation_tools' => 'beta'
   }
 )
 ```
