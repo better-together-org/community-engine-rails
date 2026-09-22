@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe PageAuthorshipNotifier do
-    let(:recipient) { double('Person') } # rubocop:todo RSpec/VerifiedDoubles
+    let(:recipient) { double('Person', locale: nil) } # rubocop:todo RSpec/VerifiedDoubles
 
     let(:page_class) do
       Class.new do

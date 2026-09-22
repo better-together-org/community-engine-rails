@@ -38,6 +38,7 @@ module BetterTogether
             { name_en: 'Medical Assistance' },
             { name_en: 'Other' },
             { name_en: 'Pet Care' },
+            { name_en: 'Membership Requests' }, # Auto-assigned to all MembershipRequest records
             { name_en: 'Platform Invitations' }, # Added for internal/platform-related offers
             { name_en: 'Translation' },
             { name_en: 'Transportation' },

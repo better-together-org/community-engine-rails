@@ -145,6 +145,57 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         throttle_names = Rack::Attack.throttles.keys
         expect(throttle_names).to include('oauth/token/ip')
       end
+
+      it 'has per-client_id throttle rule for federation OAuth token endpoint' do
+        throttle_names = Rack::Attack.throttles.keys
+        expect(throttle_names).to include('oauth/token/client_id')
+      end
+
+      it 'has a dedicated throttle for MCP SSE stream opens, tightened to 2/min in the 2026-09 hardening' do
+        expect(Rack::Attack.throttles.keys).to include('mcp/sse/ip')
+        expect(Rack::Attack.throttles['mcp/sse/ip'].limit).to eq(2)
+      end
+    end
+
+    describe '2.1a — 2026-09 federation/MCP hardening throttle tightening' do
+      it 'tightens the MCP tool-call throttle to 10/min (was 30)' do
+        expect(Rack::Attack.throttles['mcp/tool-calls/ip'].limit).to eq(10)
+      end
+
+      it 'tightens the federation feed per-IP throttle to 6/min (was 60)' do
+        expect(Rack::Attack.throttles['federation/feed/ip'].limit).to eq(6)
+      end
+
+      it 'safelists BetterStack by a stable UA substring, not the full exact UA string ' \
+         '(the recorded Chrome-version suffix drifts over time)' do
+        req = Rack::Attack::Request.new(
+          Rack::MockRequest.env_for('/', 'HTTP_USER_AGENT' => 'Better Uptime Bot Mozilla/5.0 (some future Chrome build)')
+        )
+        expect(Rack::Attack.configuration.safelisted?(req)).to be(true)
+      end
+
+      it 'still throttled_responder-503s (deliberately not 429, to avoid confirming a per-client rate ' \
+         'limit exists to a probing bot) but now includes a Retry-After header' do
+        # The gem calls throttled_responder with a Rack::Attack::Request (a
+        # Rack::Request subclass exposing .env), not the raw env hash directly.
+        env = Rack::MockRequest.env_for('/')
+        env['rack.attack.match_data'] = { limit: 6, period: 60, epoch_time: 0 }
+        req = Rack::Attack::Request.new(env)
+
+        status, headers, = Rack::Attack.throttled_responder.call(req)
+
+        expect(status).to eq(503)
+        expect(headers['Retry-After']).to eq('60')
+      end
+
+      it 'falls back to a 60s Retry-After when no match data is present' do
+        req = Rack::Attack::Request.new(Rack::MockRequest.env_for('/'))
+
+        status, headers, = Rack::Attack.throttled_responder.call(req)
+
+        expect(status).to eq(503)
+        expect(headers['Retry-After']).to eq('60')
+      end
     end
 
     describe '2.2 — Token introspection restricted' do
@@ -285,7 +336,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         for_event_section = source[/scope :for_event.*?\n\s*\}/m]
         expect(for_event_section).to be_present
         # Should not have Ruby string interpolation like #{event}
-        expect(for_event_section).not_to match(/#\{/)
+        expect(for_event_section).not_to include('#{')
       end
     end
   end
@@ -412,8 +463,8 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = double(
-          'BetterTogether::OauthAccessToken',
+        doorkeeper_token = instance_double(
+          BetterTogether::OauthAccessToken,
           accessible?: true,
           acceptable?: true,
           resource_owner_id: user.id
@@ -444,8 +495,8 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         warden = instance_double(Warden::Proxy, user: nil)
         request = instance_double(ActionDispatch::Request, env: { 'warden' => warden })
 
-        doorkeeper_token = double(
-          'BetterTogether::OauthAccessToken',
+        doorkeeper_token = instance_double(
+          BetterTogether::OauthAccessToken,
           accessible?: true,
           acceptable?: false,
           resource_owner_id: user.id
@@ -486,7 +537,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_people_tool.rb')
         )
-        expect(source).not_to match(/%#\{query\}%/)
+        expect(source).not_to include('%#{query}%') # rubocop:disable Lint/InterpolationCheck
         expect(source).to include('sanitize_like')
       end
 
@@ -494,7 +545,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'search_geography_tool.rb')
         )
-        expect(source).not_to match(/%#\{query\}%/)
+        expect(source).not_to include('%#{query}%') # rubocop:disable Lint/InterpolationCheck
         expect(source).to include('sanitize_like')
       end
 
@@ -505,7 +556,7 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         shared_source = File.read(
           Rails.root.join('..', '..', 'app', 'tools', 'better_together', 'mcp', 'application_tool.rb')
         )
-        expect(posts_source).not_to match(/%#\{query\}%/)
+        expect(posts_source).not_to include('%#{query}%') # rubocop:disable Lint/InterpolationCheck
         # sanitize_like lives in the shared AREL helper in ApplicationTool
         expect(shared_source).to include('sanitize_like')
       end

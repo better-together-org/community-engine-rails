@@ -5,10 +5,6 @@ module BetterTogether
     # Renders a collection of BetterTogether::Community records
     class CommunitiesBlock < Block
       include ::BetterTogether::Content::ResourceBlockAttributes
-
-      def self.content_addable?
-        true
-      end
     end
   end
 end

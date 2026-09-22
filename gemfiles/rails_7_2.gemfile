@@ -1,0 +1,5 @@
+# frozen_string_literal: true
+
+ENV['RAILS_VERSION'] = '7.2.2.2'
+
+eval_gemfile '../Gemfile'

@@ -13,4 +13,15 @@ RSpec.describe BetterTogether::Person do
       expect(person.preferences['receive_messages_from_members']).to be(true)
     end
   end
+
+  describe 'federation content preference' do
+    it 'defaults to false and can be toggled to true' do
+      person = create(:better_together_person)
+      expect(person.preferences['federate_content']).to be(false)
+
+      person.update!(preferences: person.preferences.merge('federate_content' => true))
+      person.reload
+      expect(person.preferences['federate_content']).to be(true)
+    end
+  end
 end

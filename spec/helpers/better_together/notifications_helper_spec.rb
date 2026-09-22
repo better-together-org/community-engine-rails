@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-module BetterTogether # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
   # rubocop:disable Metrics/BlockLength
   RSpec.describe NotificationsHelper do
     let(:unread_count) { 0 }

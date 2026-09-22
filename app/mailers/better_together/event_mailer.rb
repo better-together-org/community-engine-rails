@@ -8,7 +8,9 @@ module BetterTogether
       @event = params[:event]
       @reminder_type = params[:reminder_type] || '24_hours'
       @recipient = params[:person]
-      @platform = BetterTogether::Platform.find_by(host: true)
+
+      self.locale = @recipient.locale
+      self.time_zone = @recipient.time_zone
 
       mail(
         to: @recipient.email,
@@ -21,7 +23,9 @@ module BetterTogether
       @event = params[:event]
       @changed_attributes = params[:changed_attributes]
       @recipient = params[:person]
-      @platform = BetterTogether::Platform.find_by(host: true)
+
+      self.locale = @recipient.locale
+      self.time_zone = @recipient.time_zone
 
       mail(
         to: @recipient.email,

@@ -1,0 +1,10 @@
+{
+  "name": "release_0_11_0_bot_safety_report_form",
+  "device": "desktop",
+  "url": "/en/reports/new?reportable_id=2206f528-de75-448c-b213-6386ab012c9f&reportable_type=BetterTogether%3A%3APerson",
+  "title": "Report a safety concern | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "flow": "safety_report",
+  "source_spec": "./spec/docs_screenshots/better_together/release_0_11_0_bot_safety_spec.rb"
+}

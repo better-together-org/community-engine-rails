@@ -1,0 +1,50 @@
+<%# locals: (community:, community_roles:, memberships_by_role:) -%>
+
+<div class="mt-3">
+  <% if community_roles.any? %>
+    <% community_roles.each do |role| %>
+      <% role_members = memberships_by_role[role.id] || [] %>
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="h5 mb-0"><%= role.name %></h3>
+          <span class="badge rounded-pill bg-secondary"
+                aria-label="<%= t('better_together.communities.show.roles.member_count_aria', count: role_members.size) %>">
+            <%= role_members.size %>
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <p class="text-muted small mb-2"><%= t('better_together.communities.show.roles.permissions_heading') %></p>
+            <% permissions = role.resource_permissions.sort_by(&:position) %>
+            <% if permissions.any? %>
+              <div class="d-flex flex-wrap gap-1">
+                <% permissions.each do |permission| %>
+                  <span class="badge bg-light text-dark">
+                    <%= "#{permission.action} #{permission.target}" %>
+                  </span>
+                <% end %>
+              </div>
+            <% else %>
+              <span class="text-muted small"><%= t('better_together.communities.show.roles.no_permissions') %></span>
+            <% end %>
+          </div>
+
+          <p class="text-muted small mb-2"><%= t('better_together.communities.show.roles.members_heading') %></p>
+          <% if role_members.any? %>
+            <div class="d-flex flex-wrap">
+              <% role_members.each do |membership| %>
+                <%= render 'better_together/people/mention', person: membership.member %>
+              <% end %>
+            </div>
+          <% else %>
+            <span class="text-muted small"><%= t('better_together.communities.show.roles.no_members') %></span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= render 'better_together/shared/empty_state',
+               title: t('better_together.communities.show.roles.empty_title'),
+               description: nil %>
+  <% end %>
+</div>

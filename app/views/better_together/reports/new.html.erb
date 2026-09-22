@@ -9,6 +9,47 @@
           <p class="text-muted">
             <%= t('better_together.reports.new.intro') %>
           </p>
+          <% if @report.reportable.present? %>
+            <div class="alert alert-light border d-flex align-items-start gap-3" role="status">
+              <span class="text-danger mt-1" aria-hidden="true">
+                <i class="fas fa-flag"></i>
+              </span>
+              <div>
+                <div class="fw-semibold">
+                  <%= t('better_together.reports.new.reporting_label', default: 'Reporting') %>
+                </div>
+                <div>
+                  <%= @report.reportable.class.model_name.human %>:
+                  <%= content_actions_resource_name(@report.reportable) %>
+                </div>
+                <div class="small text-muted">
+                  <%= t(
+                        'better_together.reports.new.reporting_help',
+                        default: 'This report stays connected to the specific record you opened from so reviewers can follow the same context.'
+                      ) %>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info" role="note" aria-labelledby="report-routing-title">
+              <h2 id="report-routing-title" class="h6 mb-2">
+                <%= t('better_together.reports.new.routing_title', default: 'Who can see and act on this report') %>
+              </h2>
+              <dl class="mb-0">
+                <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.sent_to', default: 'Sent to') %></dt>
+                <dd><%= feedback_route_delivery_note(@report.reportable, action_kind: :report_safety_issue) %></dd>
+                <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.reviewers', default: 'Reviewers who can act') %></dt>
+                <dd><%= feedback_route_reviewer_label(@report.reportable, action_kind: :report_safety_issue) %></dd>
+                <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.visibility', default: 'Visible after submission') %></dt>
+                <dd><%= feedback_route_visibility_note(@report.reportable, action_kind: :report_safety_issue) %></dd>
+                <% exclusion_note = feedback_route_exclusion_note(@report.reportable, action_kind: :report_safety_issue) %>
+                <% if exclusion_note.present? %>
+                  <dt class="fw-semibold"><%= t('better_together.feedback_routing.summary_labels.not_shared_with', default: 'Not automatically shared with') %></dt>
+                  <dd class="mb-0"><%= exclusion_note %></dd>
+                <% end %>
+              </dl>
+            </div>
+          <% end %>
           <div class="alert alert-warning" role="note">
             <strong><%= t('better_together.reports.new.urgent_title') %></strong>
             <%= t('better_together.reports.new.urgent_help') %>
@@ -30,6 +71,7 @@
           <%= form_with model: @report, url: reports_path(locale: I18n.locale), local: true do |form| %>
             <%= form.hidden_field :reportable_id %>
             <%= form.hidden_field :reportable_type %>
+            <%= bot_defense_fields(:safety_report) %>
 
             <div class="mb-3">
               <%= form.label :category,

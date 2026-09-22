@@ -3,14 +3,19 @@
 module BetterTogether
   module Joatu
     # Agreement connects an offer and request and tracks value exchange
-    class Agreement < ApplicationRecord # rubocop:todo Metrics/ClassLength
+    class Agreement < PlatformRecord # rubocop:todo Metrics/ClassLength
+      include BetterTogether::Authorable
       include FriendlySlug
+      include BetterTogether::Privacy
       include Metrics::Viewable
+      include BetterTogether::Reportable
 
       STATUS_VALUES = {
         pending: 'pending',
         accepted: 'accepted',
-        rejected: 'rejected'
+        cancelled: 'cancelled',
+        rejected: 'rejected',
+        fulfilled: 'fulfilled'
       }.freeze
 
       # Use UUID id to generate a stable, unique slug without touching
@@ -30,6 +35,7 @@ module BetterTogether
 
       # When an agreement is created, mark the paired offer/request as matched
       after_create :mark_associated_matched
+      after_create :add_participant_contributions
 
       after_update_commit :notify_status_change, if: -> { saved_change_to_status? }
 
@@ -48,7 +54,54 @@ module BetterTogether
       }, if: :status_accepted?
 
       def self.permitted_attributes(id: false, destroy: false)
-        super + %i[offer_id request_id terms value status]
+        super + %i[offer_id request_id terms value status privacy]
+      end
+
+      def agreement_family
+        'transactional_agreement'
+      end
+
+      def agreement_type
+        return 'network_connection_agreement' if connection_request?
+        return 'person_link_agreement' if request.is_a?(BetterTogether::Joatu::PersonLinkRequest)
+        return 'person_access_grant_agreement' if request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest)
+
+        agreement_family
+      end
+
+      def participant_people
+        [offer&.creator, request&.creator].compact.uniq
+      end
+
+      def participant_ids
+        participant_people.map(&:id)
+      end
+
+      def participant_for?(person_or_user)
+        person = if person_or_user.is_a?(BetterTogether::User)
+                   person_or_user.person
+                 else
+                   person_or_user
+                 end
+
+        participant_ids.include?(person&.id)
+      end
+
+      def participant_roles
+        {
+          offer_creator: offer&.creator,
+          request_creator: request&.creator
+        }.compact
+      end
+
+      def participant_names
+        participant_people.map { |participant| participant.name.presence || participant.to_s }
+      end
+
+      def decision_made_at
+        return unless status_accepted? || status_rejected? || status_cancelled?
+
+        updated_at
       end
 
       def accept!
@@ -58,6 +111,21 @@ module BetterTogether
           update!(status: :accepted)
           offer.status_closed!
           request.status_closed!
+          request.after_agreement_acceptance!(offer:)
+          after_accept_side_effects
+        end
+      end
+
+      # Mark the agreement fulfilled. Requires an accepted agreement.
+      def fulfill!
+        unless status_accepted?
+          errors.add(:base, 'Agreement must be accepted before it can be fulfilled')
+          raise ActiveRecord::RecordInvalid, self
+        end
+
+        transaction do
+          complete_pending_settlement!
+          update!(status: :fulfilled)
         end
       end
 
@@ -66,22 +134,50 @@ module BetterTogether
         update!(status: :rejected)
       end
 
+      def cancel!
+        ensure_cancel_allowed!
+
+        transaction do
+          cancel_pending_settlement!
+          update!(status: :cancelled)
+          reopen_associated_exchanges!
+        end
+      end
+
       def to_s
         "#{offer} ↔ #{request}"
       end
 
+      def connection_request?
+        request.is_a?(BetterTogether::Joatu::ConnectionRequest)
+      end
+
+      def platform_connection
+        return unless connection_request?
+
+        BetterTogether::PlatformConnection.find_by(
+          source_platform: offer&.target,
+          target_platform: request&.target
+        )
+      end
+
       private
 
-      def ensure_accept_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+      # Raise if the agreement is already in a terminal or non-pending state.
+      # Shared guard for accept! and reject! — both require the agreement to still be pending.
+      def ensure_not_terminal!
         if status_accepted?
           errors.add(:base, 'Agreement already accepted')
           raise ActiveRecord::RecordInvalid, self
         end
+        return unless status_rejected?
 
-        if status_rejected?
-          errors.add(:base, 'Agreement already rejected')
-          raise ActiveRecord::RecordInvalid, self
-        end
+        errors.add(:base, 'Agreement already rejected')
+        raise ActiveRecord::RecordInvalid, self
+      end
+
+      def ensure_accept_allowed!
+        ensure_not_terminal!
 
         if offer.respond_to?(:status_closed?) && offer.status_closed?
           errors.add(:offer, 'is already closed')
@@ -94,25 +190,17 @@ module BetterTogether
         raise ActiveRecord::RecordInvalid, self
       end
 
-      def ensure_reject_allowed! # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        if status_accepted?
-          errors.add(:base, 'Agreement already accepted')
-          raise ActiveRecord::RecordInvalid, self
-        end
+      # Reject only requires the agreement to be non-terminal — the underlying offer/request
+      # may already be closed (e.g. another agreement on the same offer was accepted) and
+      # we still need to be able to reject the now-stale pending agreement.
+      def ensure_reject_allowed!
+        ensure_not_terminal!
+      end
 
-        if status_rejected?
-          errors.add(:base, 'Agreement already rejected')
-          raise ActiveRecord::RecordInvalid, self
-        end
+      def ensure_cancel_allowed!
+        return if status_accepted?
 
-        if offer.respond_to?(:status_closed?) && offer.status_closed?
-          errors.add(:offer, 'is already closed')
-          raise ActiveRecord::RecordInvalid, self
-        end
-
-        return unless request.respond_to?(:status_closed?) && request.status_closed?
-
-        errors.add(:request, 'is already closed')
+        errors.add(:base, 'Agreement must be accepted before it can be cancelled')
         raise ActiveRecord::RecordInvalid, self
       end
 
@@ -141,8 +229,13 @@ module BetterTogether
             errors.add(:offer, 'is already closed') if offer.respond_to?(:status_closed?) && offer.status_closed?
             errors.add(:request, 'is already closed') if request.respond_to?(:status_closed?) && request.status_closed?
           end
-        when STATUS_VALUES[:accepted], STATUS_VALUES[:rejected]
-          errors.add(:status, 'cannot change once accepted or rejected')
+        when STATUS_VALUES[:accepted]
+          # Accepted can only move forward to fulfilled or cancelled
+          unless [STATUS_VALUES[:fulfilled], STATUS_VALUES[:cancelled]].include?(to)
+            errors.add(:status, 'can only move from accepted to fulfilled or cancelled')
+          end
+        when STATUS_VALUES[:rejected], STATUS_VALUES[:fulfilled], STATUS_VALUES[:cancelled]
+          errors.add(:status, 'cannot change once rejected, cancelled, or fulfilled')
         else
           errors.add(:status, 'has an invalid transition')
         end
@@ -151,6 +244,9 @@ module BetterTogether
       # Ensures the offer targets the same record as the request
       def offer_matches_request_target
         return unless targets_present?
+        return if connection_request_target_pair?
+        return if person_link_request_target_pair?
+        return if person_access_grant_request_target_pair?
         return if offer.target_type == request.target_type && offer.target_id == request.target_id
 
         errors.add(:offer, 'target does not match request target')
@@ -159,6 +255,24 @@ module BetterTogether
       def targets_present?
         offer && request &&
           [offer, request].all? { |r| r.respond_to?(:target_type) && r.respond_to?(:target_id) }
+      end
+
+      def connection_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::ConnectionRequest) &&
+          offer.target.is_a?(BetterTogether::Platform) &&
+          request.target.is_a?(BetterTogether::Platform)
+      end
+
+      def person_link_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::PersonLinkRequest) &&
+          offer.target.is_a?(BetterTogether::Person) &&
+          request.target.is_a?(BetterTogether::Person)
+      end
+
+      def person_access_grant_request_target_pair?
+        request.is_a?(BetterTogether::Joatu::PersonAccessGrantRequest) &&
+          offer.target.is_a?(BetterTogether::Person) &&
+          request.target.is_a?(BetterTogether::Person)
       end
 
       def notify_creators
@@ -180,6 +294,47 @@ module BetterTogether
         notifier = BetterTogether::Joatu::AgreementStatusNotifier.with(record: self)
         notifier.deliver_later(offer.creator) if offer&.creator
         notifier.deliver_later(request.creator) if request&.creator
+      end
+
+      def add_participant_contributions
+        [offer&.creator, request&.creator].compact.uniq.each do |participant|
+          add_contributor(
+            participant,
+            role: BetterTogether::Authorship::EXCHANGE_PARTICIPANT_ROLE,
+            contribution_type: BetterTogether::Authorship::COMMUNITY_EXCHANGE_CONTRIBUTION
+          )
+        end
+      end
+
+      # Extension point called inside accept!'s transaction, after the agreement is
+      # marked accepted. No-op by default — the Borgberry extension prepends a
+      # module that creates a pending C3 settlement here when the offer is priced.
+      def after_accept_side_effects; end
+
+      # Extension point called inside fulfill!'s transaction, before the agreement
+      # is marked fulfilled. No-op by default — see after_accept_side_effects.
+      def complete_pending_settlement!; end
+
+      # Extension point called inside cancel!'s transaction, before the agreement
+      # is marked cancelled. No-op by default — see after_accept_side_effects.
+      def cancel_pending_settlement!; end
+
+      def reopen_associated_exchanges!
+        reopen_exchange!(offer)
+        reopen_exchange!(request)
+      end
+
+      def reopen_exchange!(record)
+        return unless record.respond_to?(:status) && record.status_closed?
+
+        next_status =
+          if record.agreements.where.not(id: id).where(status: STATUS_VALUES[:pending]).exists?
+            :matched
+          else
+            :open
+          end
+
+        record.public_send(:"status_#{next_status}!")
       end
     end
   end

@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  module Content # rubocop:todo Metrics/ModuleLength
+module BetterTogether # :nodoc:
+  module Content # :nodoc:
     RSpec.describe RichText do
       describe 'Factory' do
         it 'has a valid factory' do
@@ -104,26 +104,6 @@ module BetterTogether
             localized_content = rich_text_block.indexed_localized_content
             expect(localized_content.first).not_to include('<strong>')
             expect(localized_content.first).to include('Bold')
-          end
-        end
-
-        describe '#as_indexed_json' do
-          it 'includes basic attributes for Elasticsearch indexing' do
-            rich_text_block = create(:better_together_content_rich_text)
-            json = rich_text_block.as_indexed_json
-
-            expect(json).to have_key(:id)
-            expect(json).to have_key(:identifier)
-            expect(json).to have_key(:localized_content)
-          end
-
-          it 'includes indexed_localized_content' do
-            rich_text_block = create(:better_together_content_rich_text,
-                                     content_html: '<p>Test content</p>')
-
-            json = rich_text_block.as_indexed_json
-            expect(json[:localized_content]).to be_an(Array)
-            expect(json[:localized_content].first).to include('Test content')
           end
         end
       end

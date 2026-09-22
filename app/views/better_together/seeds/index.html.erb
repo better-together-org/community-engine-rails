@@ -1,0 +1,28 @@
+<% content_for :page_title do %>
+  <%= t('seeds.index.title') %>
+<% end %>
+
+<div class="container-fluid my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1><%= t('seeds.index.title') %></h1>
+    <% if policy(BetterTogether::Seed).create? %>
+      <%= link_to new_seed_path, class: 'btn btn-primary', 'aria-label' => t('seeds.index.new_seed') do %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('seeds.index.new_seed') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @seeds.none? %>
+    <div class="alert alert-info" role="alert">
+      <%= t('seeds.index.empty') %>
+    </div>
+  <% else %>
+    <%= paginate @seeds %>
+
+    <div id="seeds">
+      <%= render partial: 'seed', collection: @seeds, as: :seed %>
+    </div>
+
+    <%= paginate @seeds %>
+  <% end %>
+</div>

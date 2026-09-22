@@ -2,9 +2,9 @@
 
 module BetterTogether
   # groups messages for participants
-  class Conversation < ApplicationRecord
+  class Conversation < PlatformRecord
     encrypts :title, deterministic: true
-    belongs_to :creator, class_name: 'BetterTogether::Person'
+    belongs_to :creator, class_name: 'BetterTogether::Person', inverse_of: :created_conversations
     has_many :messages, dependent: :destroy
     accepts_nested_attributes_for :messages, allow_destroy: false
     has_many :conversation_participants, dependent: :destroy

@@ -3,7 +3,7 @@
 module BetterTogether
   module Safety
     # Restorative agreement tracked as part of a safety case.
-    class Agreement < ApplicationRecord
+    class Agreement < PlatformRecord
       self.table_name = 'better_together_safety_agreements'
 
       enum :status, {
@@ -15,7 +15,7 @@ module BetterTogether
       }, prefix: true
 
       belongs_to :safety_case, class_name: 'BetterTogether::Safety::Case', inverse_of: :agreements
-      belongs_to :created_by, class_name: 'BetterTogether::Person'
+      belongs_to :created_by, class_name: 'BetterTogether::Person', inverse_of: :created_safety_agreements
 
       validates :summary, presence: true
       validates :commitments, presence: true

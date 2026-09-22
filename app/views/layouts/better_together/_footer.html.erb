@@ -6,7 +6,7 @@
   <nav id="footer-pages-nav" class="navbar navbar-expand navbar-dark bt-underline-nav">
     <div class="container flex-column">
       <!-- Toggler for mobile view -->
-      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#footerNavbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="<%= t('navbar.toggle_navigation') %>">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -26,13 +26,15 @@
         <ul class="navbar-nav justify-content-between">
           <li class="nav-item">
             <p class="navbar-text">
-              <%= host_community.name %> &copy; <%= Time.zone.now.year %>. All rights reserved.
+              <%= t('layouts.better_together.footer.copyright',
+                    community_name: host_community.name,
+                    year: Time.zone.now.year) %>
             </p>
           </li>
           <!-- ... other nav items ... -->
 
           <li class="nav-item">
-            <a class="nav-link" href="#back-to-top"><i class="fa fa-solid fa-arrow-up me-2"></i>Back to top</a>
+            <a class="nav-link" href="#back-to-top"><i class="fa fa-solid fa-arrow-up me-2"></i><%= t('layouts.better_together.footer.back_to_top') %></a>
           </li>
         </ul>
       </div>

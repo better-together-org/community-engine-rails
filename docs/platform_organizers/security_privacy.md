@@ -140,6 +140,7 @@ Give users control over their data:
 - Block and mute users
 - Control who can message
 - Opt-out of optional tracking
+- Federation remains opt-in at the operator level; platform-to-platform sharing should stay disabled unless the scope and member impact are documented clearly
 
 **Administrator responsibilities:**
 - Honor privacy settings
@@ -147,6 +148,25 @@ Give users control over their data:
 - Provide data exports
 - Respond to access requests
 - Maintain transparency
+
+### Federation Privacy and Consent
+
+Cross-platform federation deserves separate review from ordinary platform administration.
+
+Current implementation notes:
+
+- federation trust is configured on `PlatformConnection`
+- sharing and application programming interface (API) scopes are operator-managed
+- current runtime consent is stronger at the platform level than at the per-person level
+- connection activation should stay conservative until person-level federation consent is complete
+
+Operational guidance:
+
+- keep new connections `pending` until governance review is complete
+- grant only the smallest content and scope set needed
+- suspend connections quickly if trust becomes unclear
+
+See [Federation Privacy and Consent](federation_privacy_and_consent.md) for the detailed runbook.
 
 ## Security Monitoring
 

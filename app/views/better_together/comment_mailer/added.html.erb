@@ -1,0 +1,17 @@
+<!-- app/views/better_together/comment_mailer/added.html.erb -->
+
+<p><%= t('.greeting', recipient_name: @recipient.name) %></p>
+
+<p><%= t('.intro') %></p>
+
+<% if @comment.creator.present? %>
+  <%= render partial: 'better_together/people/mention', locals: { person: @comment.creator } %>
+<% else %>
+  <p><%= t('better_together.comments.deleted_author', default: 'A member') %></p>
+<% end %>
+
+<blockquote><%= simple_format(h(@comment.content.to_s.truncate(280))) %></blockquote>
+
+<p><%= link_to t('.view_link'), polymorphic_url(@commentable, anchor: @comment.anchor_id) %></p>
+
+<p><%= t('.signature_html', platform: @platform.name) %></p>

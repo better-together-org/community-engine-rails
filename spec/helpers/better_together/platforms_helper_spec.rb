@@ -12,7 +12,7 @@ require 'rails_helper'
 #     end
 #   end
 # end
-module BetterTogether
+module BetterTogether # :nodoc:
   RSpec.describe PlatformsHelper do
     include ActiveSupport::Testing::TimeHelpers
 

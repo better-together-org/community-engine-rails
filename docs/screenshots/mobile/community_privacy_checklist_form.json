@@ -1,0 +1,12 @@
+{
+  "name": "community_privacy_checklist_form",
+  "device": "mobile",
+  "url": "http://127.0.0.1:34631/en/checklists/community-privacy-checklist/edit",
+  "title": "Edit Checklist | Test Host Community",
+  "captured_at": "2026-04-05T18:00:23Z",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_privacy_review",
+  "flow": "checklist_privacy_authoring",
+  "source_spec": "./spec/docs_screenshots/better_together/community_privacy_review_spec.rb"
+}

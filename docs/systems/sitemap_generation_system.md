@@ -19,12 +19,29 @@
 The Sitemap Generation System creates and maintains XML sitemaps for Better Together Community Engine platforms, supporting multi-locale content discovery by search engines while respecting privacy settings.
 
 ### Key Features
+- **Multi-platform**: Generates an independent sitemap set for every locally-hosted platform (`BetterTogether::Platform.internal`), each hosted on that platform's own canonical domain (`Platform#resolved_host_url`). One Community Engine instance can serve many tenant platforms, and each tenant gets its own sitemap and `robots.txt`.
 - **Multi-locale support**: Generates separate sitemaps for each language (en, es, fr, uk)
-- **Privacy filtering**: Only includes public content, filtering private communities/events/posts
-- **Sitemap index**: Aggregates all locale-specific sitemaps for search engine discovery
+- **Privacy filtering**: Only public content from that platform is indexed; private/community content and other platforms' content are excluded
+- **Sitemap index**: Per-platform `<sitemapindex>` that references the controller-served locale sitemap routes
 - **Active Storage integration**: Stores compressed sitemaps in S3/MinIO for scalable hosting
 - **Database resilience**: Gracefully handles deployment scenarios where database unavailable
-- **Background processing**: Asynchronous generation via Sidekiq jobs
+- **Background processing**: Asynchronous generation via Sidekiq jobs, triggered on content commit and on a daily schedule
+- **Dynamic `robots.txt`**: `/robots.txt` is served per platform with that platform's own `Sitemap:` directives
+
+### Entry Points
+
+| Purpose | Command / class |
+|---|---|
+| Regenerate every locally-hosted platform | `rake better_together:sitemap:refresh` |
+| Regenerate one platform | `BetterTogether::Sitemaps::Generator.new(platform).call` |
+| Background refresh (scoped or full sweep) | `BetterTogether::SitemapRefreshJob.perform_later([platform_id])` |
+| Daily scheduled sweep | `BetterTogether::SitemapRefreshScanJob` (sidekiq-cron, 02:00 UTC) |
+
+> The `sitemap_generator` gem also defines a `rake sitemap:refresh`. The engine no
+> longer uses that name so it does not inherit the gem's search-engine pinging or
+> its `SitemapGenerator::Interpreter` run of the host `config/sitemap.rb`.
+> `config/sitemap.rb` is kept only as a compatibility shim for host apps that
+> still drive the gem's Interpreter directly.
 
 ### Stakeholders
 - **Platform Organizers**: Need SEO optimization while protecting private content
@@ -72,19 +89,37 @@ The Sitemap Generation System creates and maintains XML sitemaps for Better Toge
 
 ### Data Flow
 
-1. **Trigger**: Background job or manual rake task
-2. **Database Check**: Verify database availability (skip if unavailable)
-3. **Platform Check**: Verify host platform exists
-4. **Generation Loop**: For each locale (en, es, fr, uk):
-   - Load sitemap configuration
-   - Query public resources (Communities, Events, Posts, Pages)
-   - Generate locale-specific XML sitemap
-   - Compress to .gz format
-   - Upload to Active Storage (S3/MinIO)
-   - Save database record (platform_id + locale)
-5. **Index Generation**: Create sitemap index referencing all locale sitemaps
-6. **Cleanup**: Remove temporary files
-7. **Serve**: Controller redirects requests to Active Storage URLs
+1. **Trigger**: `SitemapRefreshJob` (on content commit via `SitemapRefreshable`, or the daily `SitemapRefreshScanJob`) or the manual rake task.
+2. **Database Check**: Verify database availability (skip if unavailable).
+3. **Platform Loop**: For each `BetterTogether::Platform.internal` (locally-hosted, `external: false`), run `BetterTogether::Sitemaps::Generator`:
+   1. Resolve `default_host` from `platform.resolved_host_url` (the platform's primary `PlatformDomain`).
+   2. **Locale Loop** (en, es, fr, uk): a fresh `SitemapGenerator::LinkSet` builds `tmp/sitemaps/<platform.id>/<locale>/sitemap.xml.gz` from that platform's public content only (`Model.for_platform(platform)` in `SitemapHelper`).
+   3. Attach each file to `Sitemap.current(platform, locale)` via `attach_file_if_changed?` (checksum-deduplicated).
+   4. Build a per-platform `<sitemapindex>` (`Sitemaps::IndexBuilder`) whose `<loc>` entries are `<resolved_host_url>/<locale>/sitemap.xml.gz`, attach to `Sitemap.current_index(platform)`.
+   5. Remove the platform's temp directory.
+4. **Serve**: `SitemapsController` resolves the platform from `request.host` (`Current.platform`) and redirects `/sitemap.xml.gz` / `/:locale/sitemap.xml.gz` to that platform's Active Storage file.
+
+A failure generating one platform is logged and the sweep continues with the rest of the fleet.
+
+## Multi-Platform Implementation
+
+A single Community Engine instance serves many platforms, each resolved from the
+request host by `PlatformDomain.resolve` (`BetterTogether::PlatformContextMiddleware`
+and `ApplicationController#with_current_platform_context`). Sitemaps mirror that model:
+
+- **Which platforms**: `BetterTogether::Platform.internal` (`external: false`). External
+  federated peers are never indexed — their content is not hosted here.
+- **Host per platform**: `Platform#resolved_host_url` → the platform's primary
+  `PlatformDomain` (auto-synced from `host_url` by `after_commit :sync_primary_platform_domain!`),
+  falling back to `host_url`. All URLs in a platform's sitemap use that host.
+- **Alias domains**: a platform may have additional non-primary `PlatformDomain`
+  rows. They all resolve to the same platform; the sitemap and `robots.txt` always
+  advertise the primary domain.
+- **Storage**: `better_together_sitemaps` is keyed `(platform_id, locale)`, so each
+  platform has its own `en/es/fr/uk` + `index` rows.
+- **Serving**: `SitemapsController` / `RobotsTxtController` use `Current.platform`,
+  so a request to any tenant's own domain is served that tenant's sitemap. Requests
+  for a non-public or external platform return `404`.
 
 ## Multi-Locale Implementation
 
@@ -126,13 +161,16 @@ Sitemap.find_by(platform: platform, locale: 'index')
 
 ### File Storage Structure
 
+Each locally-hosted platform has its own set of Active Storage blobs, named with
+the platform id:
+
 ```
-Active Storage (S3/MinIO):
-├── sitemap_en.xml.gz         (English sitemap)
-├── sitemap_es.xml.gz         (Spanish sitemap)
-├── sitemap_fr.xml.gz         (French sitemap)
-├── sitemap_uk.xml.gz         (Ukrainian sitemap)
-└── sitemap_index.xml.gz      (Sitemap index)
+Active Storage (S3/MinIO), per platform:
+├── sitemap_<platform_id>_en.xml.gz
+├── sitemap_<platform_id>_es.xml.gz
+├── sitemap_<platform_id>_fr.xml.gz
+├── sitemap_<platform_id>_uk.xml.gz
+└── sitemap_index_<platform_id>.xml.gz
 ```
 
 ## Security & Privacy
@@ -289,6 +327,39 @@ curl -I https://example.com/en/sitemap.xml.gz
 # Location: https://s3.amazonaws.com/bucket/sitemap_en.xml.gz?...
 ```
 
+### robots.txt
+
+```
+GET /robots.txt
+```
+
+**Controller**: `BetterTogether::RobotsTxtController#show` (named to avoid the existing
+`RobotsController`, which is CRUD for the AI-agent `BetterTogether::Robot` model).
+
+Served per resolved platform. For a **private or external** platform it emits
+`User-agent: * / Disallow: /` and no `Sitemap:` line.
+
+For a **public, locally-hosted** platform it emits, all under a single
+`User-agent: *`:
+
+- **Root disallows** (`RobotsTxtController::ROOT_DISALLOW`, locale-independent):
+  `/api/`, `/sidekiq/`, `/s/` (short-link redirects — the controller also sets
+  `X-Robots-Tag: noindex`), `/bot-defense/`, `/content-security/` and `/rails/`
+  (signed/transient blob proxies).
+- **Per-locale disallows** (`LOCALE_DISALLOW`, for every `I18n.available_locale`):
+  `/<locale>/users/`, `/<locale>/host/`, `/<locale>/w/`, `/<locale>/wizards/` —
+  auth and host-management surfaces. Kept short and unambiguous so a public `Page`
+  slug is very unlikely to collide; other private controllers (conversations,
+  notifications, …) already emit `noindex` and 302 crawlers to sign-in.
+- If a host keeps the default `BetterTogether.route_scope_path` (`'bt'` — the CE
+  fleet apps all set it to `''`), `/bt/` and `/<locale>/bt/` are disallowed too.
+- **`Sitemap:`** lines for the index and every locale, on
+  `current_platform.resolved_host_url`.
+
+> **Host apps must remove their static `public/robots.txt`.** Rails'
+> `ActionDispatch::Static` serves a file in `public/` before routing, so a static
+> `public/robots.txt` shadows this dynamic route.
+
 ### HTML Link Tags
 
 The application layout includes sitemap link tags:
@@ -310,30 +381,27 @@ The application layout includes sitemap link tags:
 
 ### SitemapRefreshJob
 
-```ruby
-class BetterTogether::SitemapRefreshJob < ApplicationJob
-  queue_as :default
-  
-  def perform
-    Rails.application.load_tasks unless Rake::Task.task_defined?('sitemap:refresh')
-    Rake::Task['sitemap:refresh'].invoke
-    Rake::Task['sitemap:refresh'].reenable
-  end
-end
-```
+Calls `BetterTogether::Sitemaps::Generator` directly (no Rake shell-out).
 
-**Enqueue manually**:
-```ruby
-BetterTogether::SitemapRefreshJob.perform_later
-```
+- `perform` (no arg): sweeps every `Platform.internal`.
+- `perform(platform_id)`: regenerates just that platform. This is what content
+  models enqueue.
+- `SitemapRefreshJob.enqueue_unless_pending(platform_id = nil)`: debounced enqueue.
+  A pending full sweep suppresses everything; a pending scoped job only suppresses
+  another job for the same platform id.
 
-**Enqueue via Sidekiq scheduler** (recommended):
-```yaml
-# config/sidekiq_scheduler.yml
-sitemap_refresh:
-  cron: '0 2 * * *'  # Daily at 2 AM
-  class: 'BetterTogether::SitemapRefreshJob'
-```
+### SitemapRefreshScanJob
+
+Scheduled daily via sidekiq-cron (`config/sidekiq_scheduler.yml`,
+`better_together:sitemap_refresh_daily`, `0 2 * * *`, `maintenance` queue). Enqueues
+one scoped `SitemapRefreshJob` per `Platform.internal`.
+
+### SitemapRefreshable (concern)
+
+Included by `Page`, `Post`, `Event`, and `Community`. An `after_commit` hook enqueues
+a platform-scoped `SitemapRefreshJob` when the record is created, destroyed, or has a
+change to an indexed column (`slug`, `privacy`, `published_at`). It no-ops in the test
+environment unless `BetterTogether::SitemapRefreshable.enabled = true`.
 
 ## Configuration
 
@@ -356,19 +424,21 @@ AWS_ENDPOINT=https://minio.example.com
 
 ### Sitemap Configuration
 
-**File**: `config/sitemap.rb`
+The engine builds sitemaps in code (`BetterTogether::Sitemaps::Generator` +
+`BetterTogether::SitemapHelper`), not from a `config/sitemap.rb` file.
+`config/sitemap.rb` is retained only as a compatibility shim for host apps that
+still invoke the `sitemap_generator` gem's `SitemapGenerator::Interpreter` directly;
+it generates for the host platform only.
 
-The sitemap helper provides methods for resource inclusion:
+`SitemapHelper` still exposes the per-resource methods so a host app can compose its
+own sitemap. Each takes an explicit `platform:` so host content stays isolated:
 
 ```ruby
-# Add all Better Together resources
-BetterTogether::SitemapHelper.add_better_together_resources(self, locale)
-
-# Or add selectively
-BetterTogether::SitemapHelper.add_communities(self, locale)
-BetterTogether::SitemapHelper.add_posts(self, locale)
-BetterTogether::SitemapHelper.add_events(self, locale)
-BetterTogether::SitemapHelper.add_pages(self, locale)
+BetterTogether::SitemapHelper.add_better_together_resources(self, locale, platform: platform)
+BetterTogether::SitemapHelper.add_communities(self, locale, platform: platform)
+BetterTogether::SitemapHelper.add_posts(self, locale, platform: platform)
+BetterTogether::SitemapHelper.add_events(self, locale, platform: platform)
+BetterTogether::SitemapHelper.add_pages(self, locale, platform: platform)
 ```
 
 ### I18n Locale Configuration
@@ -397,13 +467,16 @@ config.i18n.default_locale = :en
 
 3. **Generate initial sitemaps**:
    ```bash
-   bin/dc-run bundle exec rake sitemap:refresh
+   bin/dc-run bundle exec rake better_together:sitemap:refresh
    ```
 
-4. **Verify generation**:
+4. **Verify generation** (per locally-hosted platform):
    ```ruby
-   BetterTogether::Sitemap.count
-   # Should return 5 (4 locales + 1 index)
+   BetterTogether::Platform.internal.find_each do |p|
+     puts "#{p.name} <#{p.resolved_host_url}>: " \
+          "#{BetterTogether::Sitemap.where(platform: p).pluck(:locale).sort.inspect}"
+   end
+   # Each platform: ["en", "es", "fr", "index", "uk"] (order depends on locales)
    ```
 
 ### Docker Build Safety
@@ -424,36 +497,26 @@ end
 
 ### Post-Deployment
 
-1. **Set up cron job** for periodic regeneration:
-   ```yaml
-   # config/sidekiq_scheduler.yml
-   sitemap_refresh:
-     cron: '0 2 * * *'  # Daily at 2 AM
-     class: 'BetterTogether::SitemapRefreshJob'
-   ```
+1. **Cron**: `better_together:sitemap_refresh_daily` (`BetterTogether::SitemapRefreshScanJob`)
+   is already in `config/sidekiq_scheduler.yml`; ensure sidekiq-scheduler is running.
 
-2. **Update robots.txt**:
-   ```
-   Sitemap: https://example.com/sitemap.xml.gz
-   ```
+2. **robots.txt**: remove the host app's static `public/robots.txt` so the dynamic
+   `/robots.txt` route (per-platform `Sitemap:` directives) takes effect.
 
-3. **Submit to search engines**:
-   - Google Search Console: Submit sitemap index URL
-   - Bing Webmaster Tools: Submit sitemap index URL
+3. **Submit to search engines** (per platform domain):
+   - Google Search Console / Bing Webmaster Tools: submit
+     `https://<platform-domain>/sitemap.xml.gz` for each platform.
 
 ## Monitoring & Troubleshooting
 
 ### Health Checks
 
 ```ruby
-# Check if sitemaps exist for platform
-platform = BetterTogether::Platform.find_by(host: true)
-BetterTogether::Sitemap.where(platform: platform).pluck(:locale)
-# Expected: ["en", "es", "fr", "uk", "index"]
-
-# Check if files attached
-BetterTogether::Sitemap.all.each do |sitemap|
-  puts "#{sitemap.locale}: #{sitemap.file.attached? ? '✅' : '❌'}"
+# Check sitemaps for every locally-hosted platform
+BetterTogether::Platform.internal.find_each do |platform|
+  rows = BetterTogether::Sitemap.where(platform: platform)
+  attached = rows.select { |r| r.file.attached? }.map(&:locale).sort
+  puts "#{platform.name} <#{platform.resolved_host_url}>: attached=#{attached.inspect}"
 end
 ```
 
@@ -486,7 +549,8 @@ No host platform:
 
 **Diagnosis**:
 ```ruby
-sitemap = BetterTogether::Sitemap.find_by(locale: 'en')
+platform = BetterTogether::Platform.internal.first
+sitemap = BetterTogether::Sitemap.find_by(platform: platform, locale: 'en')
 sitemap.present?        # Should be true
 sitemap.file.attached?  # Should be true
 ```
@@ -494,7 +558,7 @@ sitemap.file.attached?  # Should be true
 **Resolution**:
 ```bash
 # Regenerate sitemaps
-bin/dc-run bundle exec rake sitemap:refresh
+bin/dc-run bundle exec rake better_together:sitemap:refresh
 ```
 
 #### Issue: Private content in sitemap
@@ -504,7 +568,8 @@ bin/dc-run bundle exec rake sitemap:refresh
 **Diagnosis**:
 ```ruby
 # Download and inspect sitemap
-sitemap = BetterTogether::Sitemap.find_by(locale: 'en')
+platform = BetterTogether::Platform.internal.first
+sitemap = BetterTogether::Sitemap.find_by(platform: platform, locale: 'en')
 xml = Zlib::GzipReader.new(StringIO.new(sitemap.file.download)).read
 xml.include?('private-community-slug')  # Should be false
 ```
@@ -521,7 +586,7 @@ xml.include?('private-community-slug')  # Should be false
 heroku logs --tail | grep sitemap
 
 # Manual rake task
-bin/dc-run bundle exec rake sitemap:refresh --trace
+bin/dc-run bundle exec rake better_together:sitemap:refresh --trace
 ```
 
 **Common causes**:
@@ -532,15 +597,14 @@ bin/dc-run bundle exec rake sitemap:refresh --trace
 ### Manual Regeneration
 
 ```bash
-# Via rake task
-bin/dc-run bundle exec rake sitemap:refresh
+# Every locally-hosted platform
+bin/dc-run bundle exec rake better_together:sitemap:refresh
 
-# Via background job
-bin/dc-run-dummy rails runner "BetterTogether::SitemapRefreshJob.perform_now"
+# One platform (background job)
+bin/dc-run-dummy rails runner "BetterTogether::SitemapRefreshJob.perform_now('<platform_id>')"
 
-# Via Rails console
-bin/dc-run-dummy rails console
-> BetterTogether::SitemapRefreshJob.perform_now
+# One platform (synchronous, in a console)
+> BetterTogether::Sitemaps::Generator.new(platform).call
 ```
 
 ## SEO Best Practices
@@ -630,59 +694,54 @@ puts "Generation took #{time.round(2)} seconds"
 
 ```mermaid
 graph TB
-    Start([Sitemap Generation Triggered]) --> CheckDB{Database<br/>Available?}
-    
-    CheckDB -->|No| SkipDB[Log: Database unavailable<br/>Skip generation]
-    CheckDB -->|Yes| CheckPlatform{Host Platform<br/>Exists?}
+    Start([better_together:sitemap:refresh / SitemapRefreshJob]) --> CheckDB{Database<br/>available?}
+
+    CheckDB -->|No| SkipDB[Log: database unavailable<br/>skip]
+    CheckDB -->|Yes| PlatformScope[Platform.internal<br/>locally-hosted platforms]
     SkipDB --> End([End])
-    
-    CheckPlatform -->|No| SkipPlatform[Log: No host platform<br/>Skip generation]
-    CheckPlatform -->|Yes| InitGen[Initialize Sitemap Generator<br/>public_path: tmp/]
+
+    PlatformScope -->|none| SkipPlatform[Log: no locally-hosted platform<br/>skip]
+    PlatformScope -->|for each platform| Generator[Sitemaps::Generator.new platform]
     SkipPlatform --> End
-    
-    InitGen --> LocaleLoop{For each locale<br/>en, es, fr, uk}
-    
-    LocaleLoop --> SetLocalePath[Set sitemaps_path:<br/>sitemaps/locale/]
-    SetLocalePath --> LoadConfig[Load config/sitemap.rb]
-    LoadConfig --> GenResources[Generate Sitemap Resources]
-    
-    GenResources --> AddHome[Add Home Page<br/>with locale param]
-    AddHome --> AddCommIndex[Add Communities Index<br/>with locale param]
-    AddCommIndex --> AddComm[Add Public Communities<br/>.privacy_public filter]
-    
-    AddComm --> AddPostIndex[Add Posts Index<br/>with locale param]
-    AddPostIndex --> AddPost[Add Published Public Posts<br/>.published.privacy_public]
-    
-    AddPost --> AddEventIndex[Add Events Index<br/>with locale param]
-    AddEventIndex --> AddEvent[Add Public Events<br/>.privacy_public filter]
-    
-    AddEvent --> AddPages[Add Published Public Pages<br/>.published.privacy_public]
-    
-    AddPages --> CompressSitemap[Compress to<br/>sitemap.xml.gz]
-    CompressSitemap --> AttachFile[Attach file to<br/>Active Storage]
-    
-    AttachFile --> SaveRecord[Save Sitemap record<br/>platform_id + locale]
-    SaveRecord --> LogSuccess[Log: Sitemap generated<br/>for locale]
-    
-    LogSuccess --> MoreLocales{More locales?}
+
+    Generator --> ResolveHost[default_host =<br/>platform.resolved_host_url]
+    ResolveHost --> LocaleLoop{For each locale<br/>en, es, fr, uk}
+
+    LocaleLoop --> BuildLinkSet[Fresh SitemapGenerator::LinkSet<br/>public_path tmp/sitemaps/&lt;platform.id&gt;]
+    BuildLinkSet --> AddResources[SitemapHelper.add_better_together_resources<br/>platform:]
+
+    AddResources --> AddComm[Communities.for_platform.privacy_public]
+    AddComm --> AddPost[Posts.for_platform.published.privacy_public]
+    AddPost --> AddEvent[Events.for_platform.privacy_public]
+    AddEvent --> AddPages[Pages.for_platform.published.privacy_public]
+
+    AddPages --> AttachFile[attach_file_if_changed?<br/>Sitemap.current platform, locale]
+    AttachFile --> MoreLocales{More locales?}
     MoreLocales -->|Yes| LocaleLoop
-    MoreLocales -->|No| GenIndex[Generate Sitemap Index]
-    
-    GenIndex --> IndexLoop{For each locale}
-    IndexLoop --> AddIndexEntry[Add locale sitemap URL<br/>to index]
-    AddIndexEntry --> MoreIndex{More locales?}
-    MoreIndex -->|Yes| IndexLoop
-    MoreIndex -->|No| CompressIndex[Compress index to<br/>sitemap_index.xml.gz]
-    
-    CompressIndex --> AttachIndex[Attach index to<br/>Active Storage]
-    AttachIndex --> SaveIndex[Save Sitemap record<br/>platform_id + locale: 'index']
-    SaveIndex --> LogIndexSuccess[Log: Index generated]
-    
-    LogIndexSuccess --> Cleanup[Cleanup tmp files]
-    Cleanup --> End
-    
-    GenResources -.->|Error| HandleError[Catch Exception<br/>Log error + backtrace]
-    HandleError --> Cleanup
+    MoreLocales -->|No| BuildIndex[Sitemaps::IndexBuilder<br/>&lt;loc&gt; = resolved_host_url/&lt;locale&gt;/sitemap.xml.gz]
+
+    BuildIndex --> AttachIndex[attach_file_if_changed?<br/>Sitemap.current_index platform]
+    AttachIndex --> Cleanup[Remove tmp/sitemaps/&lt;platform.id&gt;]
+    Cleanup --> MorePlatforms{More platforms?}
+    MorePlatforms -->|Yes| Generator
+    MorePlatforms -->|No| End
+
+    Generator -.->|Error| HandleError[Log error<br/>continue with next platform]
+    HandleError --> MorePlatforms
+
+    Serve[SitemapsController / RobotsTxtController] --> ResolvePlatform[Current.platform<br/>from request host]
+    ResolvePlatform --> ServeFile[Redirect to that platform's<br/>Active Storage file]
+
+    style Start fill:#e1f5e1
+    style End fill:#ffe1e1
+    style CheckDB fill:#fff3cd
+    style AddComm fill:#d4edda
+    style AddPost fill:#d4edda
+    style AddEvent fill:#d4edda
+    style AddPages fill:#d4edda
+    style HandleError fill:#f8d7da
+    style AttachFile fill:#cce5ff
+    style AttachIndex fill:#cce5ff
 ```
 
 **Diagram Files:**
@@ -702,6 +761,6 @@ graph TB
 
 ---
 
-**Last Updated**: 2026-01-12  
+**Last Updated**: 2026-09-03  
 **Status**: Active  
 **Maintainer**: Better Together Platform Team

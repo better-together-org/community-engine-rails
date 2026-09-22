@@ -58,8 +58,12 @@ module BetterTogether
       return unless query.exists?
 
       scope_message = primary_flag_scope_key ? " per #{primary_flag_scope_key.to_s.humanize}" : ''
+      # NOTE: the interpolation var is `scope_suffix`, not `scope` — `scope` is a
+      # reserved I18n option name (used for translation-key namespacing) and is
+      # also a forbidden interpolation key, so `I18n.t(key, scope: scope_message)`
+      # raises I18n::ReservedInterpolationKey once the key/value actually resolve.
       errors.add(:primary_flag, :only_one_primary,
-                 message: I18n.t('better_together.errors.only_one_primary', scope: scope_message))
+                 message: I18n.t('better_together.errors.only_one_primary', scope_suffix: scope_message))
     end
     # rubocop:enable Metrics/MethodLength
 

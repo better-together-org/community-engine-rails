@@ -3,7 +3,7 @@
 # app/policies/better_together/navigation_area_policy.rb
 
 module BetterTogether
-  class NavigationAreaPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class NavigationAreaPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
       true
     end
@@ -13,7 +13,7 @@ module BetterTogether
     end
 
     def create?
-      user.present?
+      platform_navigation_manager?
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      user.present?
+      platform_navigation_manager?
     end
 
     def edit?
@@ -29,7 +29,14 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      platform_navigation_manager? && !record.protected?
+    end
+
+    private
+
+    def platform_navigation_manager?(target = record)
+      platform = (target.respond_to?(:platform) ? target.platform : nil) || current_platform
+      permitted_to?('manage_platform_settings', platform) || permitted_to?('manage_platform', platform)
     end
   end
 end

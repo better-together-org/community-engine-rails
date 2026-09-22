@@ -1,0 +1,50 @@
+{
+  "name": "content_reporting_actions_block_menu",
+  "device": "desktop",
+  "url": "/en/shared-kitchen-guide",
+  "title": "Shared Kitchen Guide | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "block_content_actions",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": ".bt-content-block__actions .bt-content-actions[open]",
+      "title": "Each reportable block keeps its scoped ellipsis menu",
+      "bullets": [
+        "The shared block wrapper still anchors reporting to the exact section a person wants reviewed.",
+        "Host apps can still add their own block controls through the existing extra-block-components seam without replacing the shared CE structure.",
+        "The screenshot callout now avoids covering the open dropdown and its related evidence."
+      ],
+      "target": {
+        "x": 1324.0,
+        "y": 280.5,
+        "width": 36.0,
+        "height": 24.5,
+        "right": 1360.0,
+        "bottom": 305.0,
+        "center_x": 1342.0,
+        "center_y": 292.75
+      },
+      "avoid": {
+        "x": 1072.0,
+        "y": 280.5,
+        "width": 288.0,
+        "height": 117.5,
+        "right": 1360.0,
+        "bottom": 398.0,
+        "center_x": 1216.0,
+        "center_y": 339.25
+      },
+      "placement": {
+        "side": "left",
+        "x": 672.0,
+        "y": 38.75,
+        "width": 380,
+        "height": 508,
+        "score": 1072.0
+      }
+    }
+  ]
+}

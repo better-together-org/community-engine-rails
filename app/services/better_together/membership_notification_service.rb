@@ -33,6 +33,7 @@ module BetterTogether
       return unless @membership.member
 
       send_in_app_role_notification(old_role)
+      send_email_role_notification(old_role) if @membership.member&.email.present?
     end
 
     def notify_removal(member_data)
@@ -43,6 +44,20 @@ module BetterTogether
     end
 
     private
+
+    def send_email_role_notification(old_role)
+      BetterTogether::MembershipMailer.with(
+        recipient: {
+          email: @membership.member.email,
+          locale: @membership.member.locale,
+          time_zone: (@membership.member.time_zone || Time.zone).to_s
+        },
+        joinable: @membership.joinable,
+        old_role: old_role,
+        new_role: @membership.role,
+        member_name: @membership.member.name
+      ).updated.deliver_later
+    end
 
     def send_in_app_role_notification(old_role)
       BetterTogether::MembershipUpdatedNotifier.with(

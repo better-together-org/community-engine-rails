@@ -4,7 +4,9 @@
 # <APP_HOST>/rails/mailers/better_together/platform_invitation_mailer to preview
 require 'factory_bot_rails'
 
-module BetterTogether
+# Spec helpers for BetterTogether.
+module BetterTogether # :nodoc:
+  # Mailer preview for PlatformInvitationMailer.
   class PlatformInvitationMailerPreview < ActionMailer::Preview
     include FactoryBot::Syntax::Methods
     include BetterTogether::ApplicationHelper

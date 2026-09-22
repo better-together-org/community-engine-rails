@@ -3,17 +3,17 @@
 # app/policies/better_together/resource_permission_policy.rb
 
 module BetterTogether
-  class ResourcePermissionPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
+  class ResourcePermissionPolicy < PlatformRecordPolicy # rubocop:todo Style/Documentation
     def index?
-      user.present?
+      user.present? && can_manage_any_roles?
     end
 
     def show?
-      user.present?
+      user.present? && can_manage_permission_resource_type?
     end
 
     def create?
-      false
+      user.present? && can_manage_permission_resource_type?
     end
 
     def new?
@@ -21,7 +21,7 @@ module BetterTogether
     end
 
     def update?
-      false
+      user.present? && can_manage_permission_resource_type?
     end
 
     def edit?
@@ -29,13 +29,45 @@ module BetterTogether
     end
 
     def destroy?
-      user.present? && !record.protected?
+      user.present? && can_manage_permission_resource_type? && !record.protected?
     end
 
-    class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.positioned
+        return scope.none unless user.present?
+
+        return platform_scoped.positioned if can_manage_any_roles?(current_platform)
+
+        scope.none
       end
+
+      private
+
+      def can_manage_any_roles?(target)
+        permitted_to?('manage_platform_roles', target) || permitted_to?('manage_community_roles', target)
+      end
+    end
+
+    private
+
+    def can_manage_permission_resource_type?
+      # When called with the class (e.g. policy(ResourcePermission).create?), fall back to any-role check
+      return can_manage_any_roles? if record.is_a?(Class)
+
+      target = record.platform
+
+      case record.resource_type
+      when 'BetterTogether::Platform'
+        permitted_to?('manage_platform_roles', target)
+      when 'BetterTogether::Community'
+        permitted_to?('manage_community_roles', target)
+      else
+        can_manage_any_roles?(target)
+      end
+    end
+
+    def can_manage_any_roles?(target = current_platform)
+      permitted_to?('manage_platform_roles', target) || permitted_to?('manage_community_roles', target)
     end
   end
 end

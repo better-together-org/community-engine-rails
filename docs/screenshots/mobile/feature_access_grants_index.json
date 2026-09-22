@@ -1,0 +1,49 @@
+{
+  "name": "feature_access_grants_index",
+  "device": "mobile",
+  "url": "/en/host/platforms/docs-feature-gate-platform-77f09735/feature_access_grants",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "feature_access_grants_and_developer_settings",
+  "flow": "grant_index",
+  "source_spec": "./spec/docs_screenshots/better_together/feature_access_grants_and_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "table.table",
+      "title": "Platform-scoped grant roster",
+      "bullets": [
+        "The list is rendered for a manager with explicit access to the target platform.",
+        "Each row shows the granted person, feature label, access level, status, and expiry."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 248.546875,
+        "width": 488.0,
+        "height": 196.0,
+        "right": 500.0,
+        "bottom": 444.546875,
+        "center_x": 256.0,
+        "center_y": 346.546875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 248.546875,
+        "width": 488.0,
+        "height": 196.0,
+        "right": 500.0,
+        "bottom": 444.546875,
+        "center_x": 256.0,
+        "center_y": 346.546875
+      },
+      "placement": {
+        "side": "below",
+        "x": 121.0,
+        "y": 464.55,
+        "width": 270.0,
+        "height": 372,
+        "score": 816.453125
+      }
+    }
+  ]
+}

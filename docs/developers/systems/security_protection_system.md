@@ -196,6 +196,44 @@ end
 - **Platform Roles**: Platform manager roles with elevated permissions
 - **Permission Caching**: 12-hour cache for authorization decisions
 
+#### Sensitive-Data Least-Privilege Contract
+- **Operational roles are not disclosure roles by default**: platform steward/manager and related built-in platform roles no longer automatically receive global people-directory or user-account read powers.
+- **People/profile access**: default platform roles must follow normal profile visibility rules unless a role is explicitly granted `read_person` or `list_person`.
+- **User-account access**: user records are limited to self-service unless a role is explicitly granted `manage_platform_users`.
+- **Safety/disclosure access**: safety reports, safety cases, safety notes, safety actions, and restorative agreements require explicit `manage_platform_safety` authority rather than broad `manage_platform`.
+- **Messaging discovery**: broad conversation participant discovery is limited to explicit directory access (`list_person`) instead of routine platform-management permissions.
+- **Webhook/admin API surfaces**: webhook endpoint administration is tied to explicit API management capability (`manage_platform_api`) rather than a generic platform-management shortcut.
+- **Invitation/member-management visibility**: community, event, and platform invitation surfaces must follow the explicit scoped invitation/member-management permissions for that resource. Broad `manage_platform` access alone is not invitation authority.
+- **Membership request discoverability**: request-membership entry points should be explicitly enabled at the platform or community level and surfaced only on the bounded intake surfaces that match that configuration.
+- **Host dashboard previews**: host dashboard cards must not preview people, user accounts, or private communication metadata unless a role has the explicit capability that governs that surface. Operational dashboard access alone is not enough to preview those records.
+- **Metrics/report access**: analytics dashboards and generated reports must rely on explicit metrics permissions (`view_metrics_dashboard`, `create_metrics_reports`, `download_metrics_reports`) instead of coarse platform-management shortcuts.
+
+See [Membership Request Workflow](./membership_request_workflow.md) for the bounded invitation-only intake path, enablement rules, diagram exports, and review UI screenshots that document this discoverability contract end to end.
+
+See [Safety and Federation Review Workflow](./safety_and_federation_review_workflow.md) for the reviewer-facing safety-case and federation connection entry points, the labeled notification-digest flow, and the screenshots that document those operational review surfaces end to end.
+
+This keeps private data private by default and ensures that exceptions are auditable, intentional, and role-specific.
+
+##### Review Artifacts For Reduced Platform-Manager Access
+
+- Diagram source: `docs/diagrams/source/platform_manager_least_privilege_surfaces.mmd`
+- Diagram exports:
+  - `docs/diagrams/exports/png/platform_manager_least_privilege_surfaces.png`
+  - `docs/diagrams/exports/svg/platform_manager_least_privilege_surfaces.svg`
+- Screenshot captures:
+  - `docs/screenshots/desktop/platform_manager_user_surface_fallback.png`
+  - `docs/screenshots/mobile/platform_manager_user_surface_fallback.png`
+  - `docs/screenshots/desktop/platform_manager_scoped_conversation_participants.png`
+  - `docs/screenshots/mobile/platform_manager_scoped_conversation_participants.png`
+
+These artifacts document two direct UI proofs of the least-privilege contract: default platform managers do not reach a usable host user-account administration surface without explicit `manage_platform_users`, and the conversation composer still limits participant discovery to opted-in or explicitly steward-visible people instead of reopening broad platform-wide messaging reach.
+
+#### Local-First Safety Review And Graceful Degradation
+- **Local base capability is required**: safety review must remain useful with locally accessible app data alone — reports, safety cases, notes, blocks, and privacy-preserving metrics.
+- **Remote analysis is additive**: remote or model-assisted review may enrich triage, but it must not be the only path to identify urgent, repeated, or retaliation-risk disclosures.
+- **Graceful degradation**: when remote analysis is unavailable, the approved fallback is deterministic local processing and scheduled local jobs, not silent failure or widened disclosure.
+- **Community-first auditability**: generated safety artifacts and metrics should be legible, reviewable, and discussable by the appropriate people, with ongoing consent and disclosure basis made visible wherever automation expands visibility.
+
 ### 3. Data Encryption & Privacy
 
 #### Active Record Encryption

@@ -2,129 +2,138 @@
 
 require 'rails_helper'
 
-module BetterTogether
-  RSpec.describe ApplicationHelper do
-    describe '#canonical_link_tag' do
-      before do
-        allow(helper).to receive(:base_url_with_locale).and_return('https://example.com/en')
-      end
+RSpec.describe BetterTogether::ApplicationHelper do
+  around do |example|
+    original_providers = BetterTogether.head_tag_providers.dup
+    BetterTogether.head_tag_providers = {}
+    example.run
+  ensure
+    BetterTogether.head_tag_providers = original_providers
+  end
 
-      context 'when no canonical_url is provided' do
-        it 'defaults to request.original_url' do
-          allow(helper.request).to receive(:original_url).and_return('https://example.com/en/posts')
-          result = helper.canonical_link_tag
-          expect(result).to include('href="https://example.com/en/posts"')
-        end
-      end
+  describe '#safe_current_user and #safe_current_person' do
+    it 'return nil instead of raising when Warden middleware is not present (helper specs have none)' do
+      expect(helper.safe_current_user).to be_nil
+      expect(helper.safe_current_person).to be_nil
+    end
+  end
 
-      context 'when canonical_url is a relative path with locale' do
-        it 'prefixes base_url_with_locale and removes duplicate locale' do
-          helper.content_for(:canonical_url, '/en/custom')
-          result = helper.canonical_link_tag
-          expect(result).to include('href="https://example.com/en/custom"')
-        end
-      end
+  describe '#host_community_primary_email' do
+    before { configure_host_platform }
 
-      context 'when canonical_url is a full URL' do
-        it 'uses the provided URL' do
-          helper.content_for(:canonical_url, 'https://external.test/path')
-          result = helper.canonical_link_tag
-          expect(result).to include('href="https://external.test/path"')
-        end
-      end
+    let(:community) { BetterTogether::Community.find_by!(host: true) }
+    let(:contact_detail) { community.contact_detail || create(:contact_detail, contactable: community) }
+
+    it 'returns the primary public host community email address' do
+      create(:email_address, contact_detail:, email: 'secondary@example.test', primary_flag: false, privacy: 'public')
+      create(:email_address, contact_detail:, email: 'primary@example.test', primary_flag: true, privacy: 'public')
+
+      expect(helper.host_community_primary_email).to eq('primary@example.test')
     end
 
-    describe '#hreflang_links' do
-      it 'returns alternate link tags for all locales' do
-        allow(I18n).to receive(:available_locales).and_return(%i[en fr])
-        allow(helper).to receive(:url_for) do |options|
-          "http://example.com/#{options[:locale]}"
-        end
+    it 'falls back to the first public email when no primary public email exists' do
+      create(:email_address, contact_detail:, email: 'fallback@example.test', primary_flag: false, privacy: 'public')
+      create(:email_address, contact_detail:, email: 'private@example.test', primary_flag: true, privacy: 'private')
 
-        html = helper.hreflang_links
-
-        expect(html).to include('rel="alternate" hreflang="en" href="http://example.com/en"')
-        expect(html).to include('rel="alternate" hreflang="fr" href="http://example.com/fr"')
-      end
+      expect(helper.host_community_primary_email).to eq('fallback@example.test')
     end
 
-    describe '#stimulus_debug_enabled?' do
-      it 'returns true when debug param is "true"' do # rubocop:todo RSpec/RepeatedExample
-        allow(helper).to receive_messages(params: { debug: 'true' }, session: {})
+    it 'returns nil when the host community has no public email addresses' do
+      create(:email_address, contact_detail:, email: 'existing-private@example.test', primary_flag: false, privacy: 'private')
+      create(:email_address, contact_detail:, email: 'private@example.test', primary_flag: true, privacy: 'private')
 
-        expect(helper.stimulus_debug_enabled?).to be true
-      end
+      expect(helper.host_community_primary_email).to be_nil
+    end
+  end
 
-      it 'returns false when debug param is not present' do
-        allow(helper).to receive_messages(params: {}, session: {})
+  describe '#base_url' do
+    it 'uses the resolved platform primary domain when available' do
+      platform_domain = instance_double(BetterTogether::PlatformDomain, url: 'https://primary.example.test')
+      platform = instance_double(BetterTogether::Platform,
+                                 primary_platform_domain: platform_domain,
+                                 resolved_host_url: 'https://primary.example.test')
+      Current.platform = platform
 
-        expect(helper.stimulus_debug_enabled?).to be false
-      end
+      expect(helper.base_url).to eq('https://primary.example.test')
+    ensure
+      Current.reset
+    end
+  end
 
-      it 'returns true when session is active and not expired' do
-        allow(helper).to receive_messages(params: {}, session: {
-                                            stimulus_debug: true,
-                                            stimulus_debug_expires_at: 10.minutes.from_now
-                                          })
+  describe '#storage_proxy_url_for' do
+    let(:attachment) { instance_double(ActiveStorage::Attached) }
+    let(:request_double) { instance_double(ActionDispatch::Request, base_url: 'https://communityengine.app') }
 
-        expect(helper.stimulus_debug_enabled?).to be true
-      end
-
-      it 'returns false when session is expired' do
-        allow(helper).to receive_messages(params: {}, session: {
-                                            stimulus_debug: true,
-                                            stimulus_debug_expires_at: 10.minutes.ago
-                                          })
-
-        expect(helper.stimulus_debug_enabled?).to be false
-      end
-
-      it 'returns false when session exists but no expiration time' do
-        allow(helper).to receive_messages(params: {}, session: {
-                                            stimulus_debug: true
-                                          })
-
-        expect(helper.stimulus_debug_enabled?).to be false
-      end
-
-      it 'prioritizes params over session' do # rubocop:todo RSpec/RepeatedExample
-        allow(helper).to receive_messages(params: { debug: 'true' }, session: {})
-
-        expect(helper.stimulus_debug_enabled?).to be true
-      end
+    before do
+      allow(helper).to receive_messages(
+        request: request_double,
+        default_url_options: { host: 'communityengine.app', protocol: 'https' }
+      )
     end
 
-    describe '#robots_meta_tag' do
-      it 'renders default robots meta tag' do
-        allow(helper).to receive(:stimulus_debug_enabled?).and_return(false)
+    it 'returns nil when the attachment is blank' do
+      expect(helper.storage_proxy_url_for(nil)).to be_nil
+    end
 
-        tag = helper.robots_meta_tag
-        expect(tag).to include('name="robots"')
-        expect(tag).to include('content="index,follow"')
+    it 'forwards default URL options and keyword arguments to the media URL builder' do
+      allow(BetterTogether::MediaUrlBuilder).to receive(:proxy_url_for).and_return(
+        'https://communityengine.app/rails/active_storage/proxy/test'
+      )
+
+      helper.storage_proxy_url_for(attachment, disposition: 'attachment')
+
+      expect(BetterTogether::MediaUrlBuilder).to have_received(:proxy_url_for).with(
+        attachment,
+        base_url: 'https://communityengine.app',
+        url_options: { host: 'communityengine.app', protocol: 'https' },
+        disposition: 'attachment'
+      )
+      expect(helper.storage_proxy_url_for(attachment, disposition: 'attachment')).to eq(
+        'https://communityengine.app/rails/active_storage/proxy/test'
+      )
+    end
+  end
+
+  it 'renders registered provider fragments in order' do
+    BetterTogether.register_head_tag_provider(:first, ->(_view_context) { '<meta name="first" />'.html_safe })
+    BetterTogether.register_head_tag_provider(:second, ->(_view_context) { '<script src="/test.js"></script>'.html_safe })
+
+    rendered = helper.render_provider_head_tags
+
+    expect(rendered).to include('<meta name="first" />')
+    expect(rendered).to include('<script src="/test.js"></script>')
+  end
+
+  it 'returns an empty safe buffer when no providers are registered' do
+    rendered = helper.render_provider_head_tags
+
+    expect(rendered).to eq('')
+    expect(rendered).to be_html_safe
+  end
+
+  describe '#contributor_display_visible_for?' do
+    let(:page) { build(:better_together_page) }
+
+    it 'returns false when contributor display is disabled, even for a viewer who can edit the record' do
+      allow(page).to receive(:contributors_display_visible?).and_return(false)
+      helper.define_singleton_method(:policy) do |_record|
+        instance_double(BetterTogether::PagePolicy, edit?: true)
       end
 
-      it 'allows override via content_for' do
-        allow(helper).to receive(:stimulus_debug_enabled?).and_return(false)
-        view.content_for(:meta_robots, 'noindex,nofollow')
+      expect(helper.contributor_display_visible_for?(page)).to be(false)
+    end
 
-        tag = helper.robots_meta_tag
-        expect(tag).to include('content="noindex,nofollow"')
-      end
+    it 'returns true when contributor display is enabled' do
+      allow(page).to receive(:contributors_display_visible?).and_return(true)
 
-      it 'sets noindex,nofollow when debug mode is enabled' do
-        allow(helper).to receive(:stimulus_debug_enabled?).and_return(true)
+      expect(helper.contributor_display_visible_for?(page)).to be(true)
+    end
 
-        tag = helper.robots_meta_tag
-        expect(tag).to include('content="noindex,nofollow"')
-      end
+    it 'returns false when the record does not support contributor display visibility' do
+      record = build(:better_together_page)
+      allow(record).to receive(:respond_to?).with(:contributors_display_visible?).and_return(false)
 
-      it 'prioritizes debug mode over content_for' do
-        allow(helper).to receive(:stimulus_debug_enabled?).and_return(true)
-        view.content_for(:meta_robots, 'index,follow')
-
-        tag = helper.robots_meta_tag
-        expect(tag).to include('content="noindex,nofollow"')
-      end
+      expect(helper.contributor_display_visible_for?(record)).to be(false)
     end
   end
 end

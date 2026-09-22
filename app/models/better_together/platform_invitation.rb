@@ -13,10 +13,12 @@ module BetterTogether
     belongs_to :invitee,
                class_name: '::BetterTogether::Person',
                foreign_key: 'invitee_id',
-               optional: true
+               optional: true,
+               inverse_of: :received_platform_invitations
     belongs_to :inviter,
                class_name: '::BetterTogether::Person',
-               foreign_key: 'inviter_id'
+               foreign_key: 'inviter_id',
+               inverse_of: :sent_platform_invitations
     belongs_to :invitable,
                class_name: '::BetterTogether::Platform',
                foreign_key: 'invitable_id'

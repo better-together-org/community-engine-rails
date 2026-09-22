@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Access control for conversations
-  class ConversationPolicy < ApplicationPolicy
+  class ConversationPolicy < PlatformRecordPolicy
     def index?
       user.present? && agent.present?
     end
@@ -40,35 +40,83 @@ module BetterTogether
       show? # Delegates to participant check
     end
 
-    # Returns the people that the agent is permitted to message
+    # Returns the people that the agent is permitted to message.
+    # Includes platform stewards, people who opted in globally, and people who
+    # have explicitly granted the current agent a messaging permission.
     def permitted_participants
-      if permitted_to?('manage_platform')
-        BetterTogether::Person.includes(:string_translations).all
-      else
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
-        manager_ids = BetterTogether::PersonPlatformMembership.where(role_id: role.id).pluck(:member_id)
-        # Include platform managers and any person who has explicitly opted in to receive messages
-        opted_in = BetterTogether::Person.where(
-          'preferences @> ?', { receive_messages_from_members: true }.to_json
-        )
-
-        BetterTogether::Person.includes(:string_translations).where(id: manager_ids).or(opted_in).distinct
-      end
+      admin_and_opted_in_participants.or(explicitly_granted_participants)
     end
 
     def new?
       user.present? && agent.present?
     end
 
-    # Authorization scope for conversations
-    class Scope < ApplicationPolicy::Scope
+    # Authorization scope for conversations — scoped to current platform.
+    class Scope < PlatformRecordPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        scope.includes(participants: [
-                         :string_translations,
-                         :contact_detail,
-                         { profile_image_attachment: :blob }
-                       ])
+        platform_scoped.includes(participants: [
+                                   :string_translations,
+                                   :contact_detail,
+                                   { profile_image_attachment: :blob }
+                                 ])
       end
+    end
+
+    private
+
+    def platform_steward_ids
+      BetterTogether::PersonPlatformMembership
+        .active
+        .where(joinable: current_platform)
+        .joins(role: { role_resource_permissions: :resource_permission })
+        .where(better_together_resource_permissions: {
+                 identifier: %w[manage_platform_members manage_platform_settings manage_platform]
+               })
+        .distinct
+        .pluck(:member_id)
+    end
+
+    def opted_in_participants
+      platform_people.where(
+        'preferences @> ?', { receive_messages_from_members: true }.to_json
+      )
+    end
+
+    def admin_and_opted_in_participants
+      platform_people
+        .where(id: platform_steward_ids)
+        .or(opted_in_participants)
+        .distinct
+    end
+
+    def explicitly_granted_participants
+      granted_grantor_ids = BetterTogether::PersonMessagingGrant
+                            .where(grantee: agent)
+                            .pluck(:grantor_id)
+      platform_people.where(id: granted_grantor_ids)
+    end
+
+    def platform_people
+      BetterTogether::Person
+        .includes(:string_translations)
+        .where(id: current_platform_person_ids)
+        .distinct
+    end
+
+    def current_platform_person_ids
+      ids = BetterTogether::PersonPlatformMembership
+            .active
+            .where(joinable: current_platform)
+            .pluck(:member_id)
+
+      return ids unless current_platform&.host? && current_platform.community.present?
+
+      host_community_ids = BetterTogether::PersonCommunityMembership
+                           .active
+                           .where(joinable: current_platform.community)
+                           .pluck(:member_id)
+
+      ids | host_community_ids
     end
   end
 end

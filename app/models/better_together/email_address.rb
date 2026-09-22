@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class EmailAddress < ApplicationRecord # rubocop:todo Style/Documentation
+  class EmailAddress < PlatformRecord # rubocop:todo Style/Documentation
     include PrimaryFlag
     include Privacy
 

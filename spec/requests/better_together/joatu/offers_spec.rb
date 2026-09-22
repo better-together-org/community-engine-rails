@@ -21,6 +21,7 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
 
   describe 'GET /index' do
     it 'returns success' do
+      offer
       get better_together.joatu_offers_path(locale: I18n.locale)
       expect(response).to be_successful
     end
@@ -28,9 +29,48 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
 
   describe 'POST /create' do
     it 'creates an offer' do
+      created_offer = nil
+
       expect do
         post better_together.joatu_offers_path(locale: I18n.locale), params: { joatu_offer: valid_attributes }
+        created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
       end.to change(BetterTogether::Joatu::Offer, :count).by(1)
+
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(created_offer, locale: I18n.locale)
+      )
+      expect(created_offer.creator).to eq(person)
+      expect(created_offer.categories).to contain_exactly(category)
+    end
+
+    it 'preserves a platform target when responding to a connection request' do
+      target_platform = create(:better_together_platform, :community_engine_peer)
+      connection_request = create(:better_together_joatu_connection_request, target: target_platform)
+
+      post better_together.joatu_offers_path(locale: I18n.locale), params: {
+        joatu_offer: valid_attributes.merge(
+          target_type: 'BetterTogether::Platform',
+          target_id: target_platform.id
+        ),
+        source_type: 'BetterTogether::Joatu::Request',
+        source_id: connection_request.id
+      }
+
+      created_offer = BetterTogether::Joatu::Offer.order(:created_at).last
+      expect(response).to redirect_to(
+        better_together.joatu_offer_path(created_offer, locale: I18n.locale)
+      )
+      expect(created_offer.target).to eq(target_platform)
+    end
+
+    it 'renders new when create params are invalid', :aggregate_failures do
+      expect do
+        post better_together.joatu_offers_path(locale: I18n.locale), params: {
+          joatu_offer: valid_attributes.merge(name: '', description: '')
+        }
+      end.not_to change(BetterTogether::Joatu::Offer, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 
@@ -52,6 +92,14 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       )
       expect(offer.reload.status).to eq('closed')
     end
+
+    it 'renders edit when update params are invalid', :aggregate_failures do
+      patch better_together.joatu_offer_path(offer, locale: I18n.locale),
+            params: { joatu_offer: { name: '', description: '' } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(offer.reload.name).not_to be_blank
+    end
   end
 
   describe 'DELETE /destroy' do
@@ -60,6 +108,42 @@ RSpec.describe 'BetterTogether::Joatu::Offers', :as_user do
       expect do
         delete better_together.joatu_offer_path(offer_to_delete, locale: I18n.locale)
       end.to change(BetterTogether::Joatu::Offer, :count).by(-1)
+    end
+  end
+
+  describe 'GET /respond_with_request' do
+    it 'redirects to a prefilled request form for the offer' do
+      get "/#{I18n.locale}/exchange/offers/#{offer.id}/respond_with_request"
+
+      expect(response).to redirect_to(
+        better_together.new_joatu_request_path(
+          locale: I18n.locale,
+          source_type: 'BetterTogether::Joatu::Offer',
+          source_id: offer.id
+        )
+      )
+    end
+  end
+
+  context 'as guest (unauthenticated)', :no_auth do
+    let(:public_offer) do
+      create(:joatu_offer).tap { |o| o.update_column(:privacy, 'public') }
+    end
+    let(:private_offer) { create(:joatu_offer) }
+
+    it 'allows browsing the offer index without signing in' do
+      get better_together.joatu_offers_path(locale: I18n.locale)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'allows viewing a public offer without signing in' do
+      get better_together.joatu_offer_path(public_offer, locale: I18n.locale)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'redirects to sign-in when viewing a private offer' do
+      get better_together.joatu_offer_path(private_offer, locale: I18n.locale)
+      expect(response).to redirect_to(new_user_session_path(locale: I18n.locale))
     end
   end
   # rubocop:enable Metrics/BlockLength

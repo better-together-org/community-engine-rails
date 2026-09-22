@@ -2,9 +2,11 @@
 
 require 'rails_helper'
 
-module BetterTogether
+# :nodoc:
+module BetterTogether # :nodoc:
   # rubocop:disable Metrics/ModuleLength
-  module Metrics
+  # :nodoc:
+  module Metrics # :nodoc:
     RSpec.describe UserAccountReport do
       describe 'associations' do
         it { is_expected.to have_one_attached(:report_file) }
@@ -12,6 +14,29 @@ module BetterTogether
 
       describe 'validations' do
         it { is_expected.to validate_inclusion_of(:file_format).in_array(%w[csv]) }
+      end
+
+      describe '.create_and_generate!' do
+        it 'accepts and persists an explicit creator and platform' do
+          federated_platform = create(:better_together_platform, :public, host: false)
+          creator = create(:better_together_person)
+
+          report = described_class.create_and_generate!(creator: creator, platform: federated_platform,
+                                                        from_date: 7.days.ago.to_date, to_date: Date.current)
+
+          expect(report.creator).to eq(creator)
+          expect(report.platform).to eq(federated_platform)
+        end
+
+        it 'falls back to the host platform when no platform is given' do
+          host_platform = BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host)
+          creator = create(:better_together_person)
+
+          report = described_class.create_and_generate!(creator: creator, from_date: 7.days.ago.to_date,
+                                                        to_date: Date.current)
+
+          expect(report.platform).to eq(host_platform)
+        end
       end
 
       describe '#generate!' do
@@ -35,9 +60,19 @@ module BetterTogether
       end
 
       describe '#build_summary' do
-        let!(:confirmed_user) { create(:user, created_at: 2.days.ago, confirmed_at: 1.day.ago) }
-        let!(:unconfirmed_user) { create(:user, created_at: 1.day.ago, confirmed_at: nil) }
-        let(:report) { described_class.new(filters: { from_date: 3.days.ago.to_date, to_date: Date.current }) }
+        let(:window_start) { Date.new(2099, 1, 1) }
+        let(:window_end) { Date.new(2099, 1, 3) }
+        let!(:confirmed_user) do
+          create(
+            :user,
+            created_at: Time.zone.parse('2099-01-01 12:00:00'),
+            confirmed_at: Time.zone.parse('2099-01-02 12:00:00')
+          )
+        end
+        let!(:unconfirmed_user) do
+          create(:user, created_at: Time.zone.parse('2099-01-02 12:00:00'), confirmed_at: nil)
+        end
+        let(:report) { described_class.new(filters: { from_date: window_start, to_date: window_end }) }
         let(:summary) { report.send(:build_summary) }
 
         it 'calculates total accounts created' do

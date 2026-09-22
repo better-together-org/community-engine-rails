@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manager do
   include Devise::Test::ControllerHelpers
-  include Rails.application.routes.url_helpers
+  include BetterTogether::Engine.routes.url_helpers
   include AutomaticTestConfiguration
 
   routes { BetterTogether::Engine.routes }
@@ -17,6 +17,12 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
 
   before do
     configure_host_platform
+    platform_role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+                    BetterTogether::Role.find_by(identifier: 'platform_manager')
+    if platform_role
+      membership = platform.person_platform_memberships.find_or_create_by!(member: user.person, role: platform_role)
+      membership.update!(status: 'active') unless membership.active?
+    end
     sign_in user
   end
 
@@ -171,7 +177,7 @@ RSpec.describe BetterTogether::PlatformInvitationsController, :as_platform_manag
           platform_id: platform_slug,
           platform_invitation: valid_attributes
         }
-        expect(response.location).to include(platform_path(platform))
+        expect(response.location).to include(platform_path(locale: locale, id: platform.to_param))
       end
 
       it 'sets success flash message' do

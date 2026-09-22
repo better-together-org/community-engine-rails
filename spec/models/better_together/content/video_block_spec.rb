@@ -11,7 +11,7 @@ module BetterTogether
         expect(described_class.superclass).to eq(BetterTogether::Content::Block)
       end
 
-      it 'is content_addable' do
+      it 'is content_addable (0.11.0 content blocks ship unconditionally, not gated)' do
         expect(described_class.content_addable?).to be true
       end
 

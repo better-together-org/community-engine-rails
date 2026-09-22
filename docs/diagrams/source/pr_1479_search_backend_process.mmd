@@ -1,0 +1,8 @@
+flowchart TD
+    A[Need a new search backend] --> B[Implement BaseBackend contract]
+    B --> C[Register adapter under :search]
+    C --> D[Set SEARCH_BACKEND to adapter key]
+    D --> E[Add model-native search scopes where useful]
+    E --> F[Run backend-specific specs]
+    F --> G[Deploy with explicit backend selection]
+    G --> H[Observe SearchResult status and backend metadata]

@@ -1,0 +1,32 @@
+flowchart TD
+    PM[Platform manager or steward]
+
+    PM --> HD{Host dashboard}
+    HD -->|default operational access| HDSAFE[Communities, content, exchange, events, infrastructure]
+    HD -->|not shown by default| HDPRIVATE[No People card\\nNo Users card\\nNo private messaging previews]
+
+    PM --> MSG{New conversation}
+    MSG -->|picker includes| MSGALLOW[Self\\nCurrent-platform stewards\\nOpted-in people]
+    MSG -->|picker excludes| MSGDENY[Regular non-opted-in members\\nOther-platform people]
+
+    PM --> INV{Invitation and member-management surfaces}
+    INV -->|explicit scoped permission required| INVOK[Community, event, or platform invitation authority]
+    INV -->|broad manage_platform alone| INVDENY[Not sufficient]
+
+    PM --> SAFE{Safety and disclosure surfaces}
+    SAFE -->|explicit manage_platform_safety required| SAFEOK[Reports, cases, notes, actions, agreements]
+    SAFE -->|broad manage_platform alone| SAFEDENY[Not sufficient]
+
+    PM --> API{Admin API and metrics surfaces}
+    API -->|explicit capability required| APIOK[manage_platform_api\\nview_metrics_dashboard\\ncreate/download_metrics_reports]
+    API -->|broad manage_platform alone| APIDENY[Not sufficient]
+
+    classDef actor fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+    classDef allowed fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+    classDef denied fill:#ffebee,stroke:#c62828,color:#b71c1c;
+    classDef gate fill:#fff8e1,stroke:#ef6c00,color:#e65100;
+
+    class PM actor;
+    class HD,MSG,INV,SAFE,API gate;
+    class HDSAFE,MSGALLOW,INVOK,SAFEOK,APIOK allowed;
+    class HDPRIVATE,MSGDENY,INVDENY,SAFEDENY,APIDENY denied;

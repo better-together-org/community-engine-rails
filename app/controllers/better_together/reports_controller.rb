@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  class ReportsController < ApplicationController # rubocop:todo Style/Documentation
+  class ReportsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include BotProtectedSubmissions
+
     before_action :authenticate_user!
     before_action :set_report, only: :show
     after_action :verify_authorized
@@ -13,6 +15,7 @@ module BetterTogether
 
     def show
       authorize @report
+      prepare_report_followup
     end
 
     def new
@@ -22,11 +25,16 @@ module BetterTogether
       authorize @report
     end
 
-    def create
+    def create # rubocop:todo Metrics/MethodLength
       @report = build_report
       return render_invalid_reportable unless valid_reportable_request?
 
       authorize @report
+      return render :new, status: :unprocessable_entity unless bot_protected_submission_valid?(
+        form_id: :safety_report,
+        resource: @report,
+        scope: :authenticated
+      )
 
       if @report.save
         redirect_to report_path(@report, locale: I18n.locale),
@@ -55,6 +63,15 @@ module BetterTogether
       @report = policy_scope(Report).find(params[:id])
     end
 
+    def prepare_report_followup
+      @participant_visible_notes = if @report.safety_case.present?
+                                     @report.safety_case.notes.where(visibility: :participant_visible).chronological
+                                   else
+                                     BetterTogether::Safety::Note.none
+                                   end
+      @report_followup = BetterTogether::Safety::Note.new
+    end
+
     def report_params
       params.require(:report).permit(
         :reportable_id,
@@ -73,7 +90,7 @@ module BetterTogether
     def resolved_reportable(reportable_type, reportable_id)
       klass = BetterTogether::SafeClassResolver.resolve!(
         reportable_type,
-        allowed: BetterTogether::Report::ALLOWED_REPORTABLES,
+        allowed: BetterTogether::Reportable.included_in_models.map(&:name),
         error_class: SecurityError
       )
 

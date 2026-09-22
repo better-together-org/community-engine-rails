@@ -1,0 +1,27 @@
+---
+title: Events Index — unified search, filter, and pagination
+audience:
+- community_member
+- event_organizer
+- platform_manager
+- developer
+journey_step: As a community member, I browse upcoming events soonest-first and narrow
+  them by search text, category, or status.
+callouts:
+- :id: new_event_btn
+  :title: Add New Event
+  :description: Create CTA plus the publishing agreement notice, both policy-gated.
+- :id: filter_sidebar
+  :title: Filter sidebar
+  :description: 'Replaces the old fixed Draft/Upcoming/Ongoing/Past sections with
+    a single bookmarkable GET form. Default view: upcoming events, soonest-first.'
+- :id: result_count
+  :title: Result count
+  :description: Shows how many events match the active filters.
+- :id: pagination
+  :title: Pagination
+  :description: Kaminari pagination with 10/20/50 per-page options.
+accessibility_notes: All filter controls have visible labels; the mobile toggle is
+  a real button with aria-expanded/aria-controls; status badges are text, not color-only.
+slug: events_index_filters
+device: desktop

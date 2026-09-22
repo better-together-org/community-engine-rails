@@ -1,0 +1,37 @@
+<%# app/views/better_together/membership_requests/_row_actions.html.erb %>
+<%# locals: (membership_request:) -%>
+
+<div id="<%= dom_id(membership_request, :actions) %>" class="d-inline-flex gap-1">
+  <%= link_to t('globals.view', default: 'View'),
+              community_membership_request_path(@community, membership_request),
+              class: 'btn btn-outline-secondary btn-sm' %>
+
+  <% if membership_request.status_open? %>
+    <% if policy(membership_request).approve? %>
+      <%= link_to t('better_together.membership_requests.actions.approve', default: 'Approve'),
+                  approve_community_membership_request_path(@community, membership_request),
+                  data: { turbo_method: :post,
+                          turbo_confirm: t('better_together.membership_requests.confirm_approve',
+                                          default: 'Approve this membership request?') },
+                  class: 'btn btn-success btn-sm' %>
+    <% end %>
+
+    <% if policy(membership_request).decline? %>
+      <%= link_to t('better_together.membership_requests.actions.decline', default: 'Decline'),
+                  decline_community_membership_request_path(@community, membership_request),
+                  data: { turbo_method: :post,
+                          turbo_confirm: t('better_together.membership_requests.confirm_decline',
+                                          default: 'Decline this membership request?') },
+                  class: 'btn btn-outline-warning btn-sm' %>
+    <% end %>
+
+    <% if policy(membership_request).destroy? %>
+      <%= link_to t('globals.delete', default: 'Delete'),
+                  community_membership_request_path(@community, membership_request),
+                  data: { turbo_method: :delete,
+                          turbo_confirm: t('better_together.membership_requests.confirm_delete',
+                                          default: 'Remove this membership request?') },
+                  class: 'btn btn-outline-danger btn-sm' %>
+    <% end %>
+  <% end %>
+</div>

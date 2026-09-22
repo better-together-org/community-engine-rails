@@ -2,7 +2,7 @@
 
 # Helpers for MCP tool and resource specs
 # Provides methods to stub Warden-based request context for FastMcp tools/resources
-module McpTestHelpers
+module McpTestHelpers # :nodoc:
   # Build a Rack::Request double with Warden session for the given user
   # @param user [User, nil] The authenticated user (nil for anonymous)
   # @return [Rack::Request] Double with Warden env configured

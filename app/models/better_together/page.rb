@@ -4,26 +4,32 @@ require 'storext'
 
 module BetterTogether
   # An informational document used to display custom content to the user
-  class Page < ApplicationRecord # rubocop:disable Metrics/ClassLength
+  class Page < PlatformRecord # rubocop:disable Metrics/ClassLength
     include Authorable
     # When adding authors via `author_ids=` or association ops, controllers can
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
+    include CommunityAssignable
     include Creatable
+    include Federatable
     include Identifier
+    include Metrics::Shareable
     include Metrics::Viewable
     include Protected
     include Privacy
     include Publishable
+    include Reportable
     include Searchable
+    include Seedable
+    include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
     include ::Storext.model
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     before_validation :sync_name_and_title
-    before_validation :assign_host_community
 
     categorizable
 
@@ -35,6 +41,7 @@ module BetterTogether
 
     store_attributes :display_settings do
       show_title Boolean, default: true
+      contributors_display_visibility String, default: 'inherit'
     end
 
     has_many :page_blocks, -> { positioned }, dependent: :destroy, class_name: 'BetterTogether::Content::PageBlock'
@@ -57,7 +64,7 @@ module BetterTogether
              dependent: :nullify
 
     belongs_to :sidebar_nav, class_name: 'BetterTogether::NavigationArea', optional: true
-    belongs_to :creator, class_name: 'BetterTogether::Person', optional: true
+    belongs_to :creator, class_name: 'BetterTogether::Person', optional: true, inverse_of: :created_pages
 
     accepts_nested_attributes_for :page_blocks, allow_destroy: true
 
@@ -66,18 +73,23 @@ module BetterTogether
 
     translates :content, backend: :action_text
 
-    settings index: default_elasticsearch_index
-
-    slugged :title, min_length: 1
+    slugged :title, min_length: 1, slug_uniqueness: false
 
     self.parameterize_slug = false # Allows us to keep forward slashes in the slug (for now)
+
+    searchable
 
     # Validations
     validates :title, presence: true
     validates :layout, inclusion: { in: PAGE_LAYOUTS }, allow_blank: true
+    validates :platform_id, presence: true
+    validates :source_id, uniqueness: { scope: :platform_id }, allow_blank: true
+    validates :contributors_display_visibility,
+              inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
-    # Automatically grant the page creator an authorship record
-    after_create :add_creator_as_author
+    # Automatically grant the page creator an authorship record only when no
+    # explicit human or robot authors were selected during creation.
+    after_commit :add_creator_as_author, on: :create
 
     # Touch associated navigation_items to invalidate navigation cache when page title changes
     # Use title_previously_changed? for Mobility-translated attributes
@@ -91,8 +103,6 @@ module BetterTogether
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
-    after_commit :refresh_sitemap, on: %i[create update destroy]
-
     def hero_block
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
     end
@@ -101,39 +111,25 @@ module BetterTogether
       @content_blocks ||= blocks.where.not(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations
     end
 
-    # Customize the data sent to Elasticsearch for indexing
-    def as_indexed_json(_options = {}) # rubocop:todo Metrics/MethodLength
-      json = as_json(
-        only: [:id],
-        methods: [:title, :name, :slug, *self.class.localized_attribute_list.keep_if do |a|
-          a.starts_with?('title' || a.starts_with?('slug'))
-        end],
-        include: {
-          markdown_blocks: {
-            only: %i[id],
-            methods: [:as_indexed_json]
-          },
-          rich_text_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          },
-          template_blocks: {
-            only: %i[id],
-            methods: [:indexed_localized_content]
-          }
-        }
-      )
-
-      # Include rendered template content if page has template attribute
-      if template.present?
-        json['template_content'] = BetterTogether::TemplateRendererService.new(template).render_for_all_locales
-      end
-
-      json
-    end
-
     def primary_image
       hero_block&.background_image_file
+    end
+
+    # Payload for search indexing (database fallback and future external backends).
+    # Includes block content so full-text search can match text that only lives
+    # inside a block (e.g. markdown source) rather than a direct Page column.
+    # Only publicly-visible block text is indexed (blocks and template blocks
+    # alike): a non-public block must not make its page a search hit for people
+    # who could not see that block (mirrors Content::BlockPolicy).
+    def as_indexed_json
+      {
+        title: title,
+        meta_description: meta_description,
+        keywords: keywords,
+        content: content&.to_plain_text,
+        blocks: indexed_blocks,
+        template_blocks: indexed_template_blocks
+      }.with_indifferent_access
     end
 
     def published?
@@ -152,38 +148,88 @@ module BetterTogether
       "#{::BetterTogether.base_url_with_locale}/#{slug}"
     end
 
+    def mirrored?
+      source_id.present? || last_synced_at.present? || platform&.external?
+    end
+
+    def preserved_remote_uuid?
+      source_id.blank? && platform&.external?
+    end
+
+    def source_identifier
+      source_id.presence || id
+    end
+
+    def local_to_platform?(local_platform = Current.platform)
+      return true if platform_id.blank?
+      return false unless local_platform
+
+      platform_id == local_platform.id
+    end
+
+    def remote_to_platform?(local_platform = Current.platform)
+      mirrored? && !local_to_platform?(local_platform)
+    end
+
+    # Transient (non-persisted) flag: builder/seed code (NavigationBuilder,
+    # AgreementBuilder) sets this on a brand-new built-in page (About, FAQ,
+    # legal/policy pages, contributor agreements) that must render for
+    # guests regardless of the platform's own privacy ceiling -- the same
+    # reasoning Agreement already gets its own exemption for. Deliberately
+    # NOT tied to `protected?` -- that flag is reused across many contexts
+    # (including page_spec.rb's own privacy-ceiling coverage, via the page
+    # factory's randomized `protected` value) that have nothing to do with
+    # this exemption. Mirrors Community#bootstrapping_primary_community's
+    # transient-flag pattern. Only matters at creation: the ceiling
+    # validation only fires when privacy is new or changing (see
+    # PrivacyCeilingValidatable), so a later, unrelated save of an
+    # already-seeded page is never affected by this flag's absence.
+    attr_accessor :seed_privacy_ceiling_exempt
+
+    def privacy_ceiling_exempt?
+      super || seed_privacy_ceiling_exempt
+    end
+
     private
 
-    def refresh_sitemap
-      return if Rails.env.test?
+    def indexed_blocks
+      content_blocks.select { |block| publicly_indexable_block?(block) }
+                    .filter_map { |block| indexed_block_text(block) }
+    end
 
-      SitemapRefreshJob.perform_later
+    def indexed_template_blocks
+      template_blocks.select { |block| publicly_indexable_block?(block) }
+                     .map { |block| indexed_template_block(block) }
+    end
+
+    def indexed_block_text(block)
+      return block.rendered_plain_text if block.respond_to?(:rendered_plain_text)
+      return block.content if block.respond_to?(:content) && block.content.is_a?(String)
+
+      nil
+    end
+
+    # A block's text is indexed only when it is both visible and public. Blocks
+    # that predate the privacy column, or lack it, fall back to "index it".
+    def publicly_indexable_block?(block)
+      return true unless block.respond_to?(:privacy_public?)
+
+      visible = block.respond_to?(:visible?) ? block.visible? : true
+      visible && block.privacy_public?
+    end
+
+    # Template blocks render their content from a file rather than storing it directly,
+    # so their rendered text (per locale) has to be indexed separately from indexed_block_text.
+    def indexed_template_block(block)
+      {
+        template_path: block.template_path,
+        indexed_localized_content: block.indexed_localized_content
+      }
     end
 
     def sync_name_and_title
       self.name = title if respond_to?(:name) && name.blank? && title.present?
       self.title = name if title.blank? && name.present?
-    end
-
-    def assign_host_community
-      return unless has_attribute?(:community_id)
-      return if community.present?
-
-      self.community ||= BetterTogether::Community.find_by(host: true)
-      self.community ||= host_platform_community
-    end
-
-    def host_platform_community
-      host_platform_community_id = BetterTogether::Platform.where(host: true).limit(1).pluck(:community_id).first
-      return unless host_platform_community_id
-
-      BetterTogether::Community.find_by(id: host_platform_community_id)
-    end
-
-    def add_creator_as_author
-      return unless respond_to?(:creator_id) && creator_id.present?
-
-      authorships.find_or_create_by(author_id: creator_id)
     end
 
     # Touch navigation areas for all navigation items that link to this page

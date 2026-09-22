@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Handles AI-powered translation requests via the TranslationBot (OpenAI).
+  # Handles AI-powered translation requests via the TranslationBot.
   #
   # Security rationale (audit finding H4):
-  #   The translate action forwards user-supplied content directly to the OpenAI API.
+  #   The translate action forwards user-supplied content to a configured LLM adapter.
   #   Without input validation an authenticated user could:
   #     1. Send megabytes of text, causing unbounded API cost and slow responses.
   #     2. Pass arbitrary strings as locale parameters, which are interpolated into
@@ -13,10 +13,10 @@ module BetterTogether
   #   content reaches the TranslationBot or the external API.
   class TranslationsController < ApplicationController
     # Maximum content size allowed for translation (50 KB).
-    # This limits OpenAI token consumption and prevents abuse.
+    # This limits token consumption and prevents abuse.
     MAX_CONTENT_SIZE = 50.kilobytes
 
-    def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def translate # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       content = params[:content]
       source_locale = params[:source_locale]
       target_locale = params[:target_locale]
@@ -27,7 +27,7 @@ module BetterTogether
                       status: :unprocessable_content
       end
 
-      # Guard: cap payload size to prevent excessive OpenAI token usage / cost.
+      # Guard: cap payload size to prevent excessive token usage / cost.
       if content.bytesize > MAX_CONTENT_SIZE
         return render json: {
           error: t('better_together.translations.errors.content_too_long')
@@ -45,6 +45,11 @@ module BetterTogether
       unless available.include?(source_locale.to_s)
         return render json: { error: t('better_together.translations.errors.invalid_source_locale') },
                       status: :unprocessable_content
+      end
+
+      unless BetterTogether.translation_available?(platform: Current.platform)
+        return render json: { error: t('better_together.translations.errors.translation_unavailable') },
+                      status: :service_unavailable
       end
 
       initiator = helpers.current_person

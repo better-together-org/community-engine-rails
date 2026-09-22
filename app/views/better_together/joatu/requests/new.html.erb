@@ -1,11 +1,17 @@
 <% content_for :page_title do %>
-  <%= t('better_together.joatu.requests.new_request', default: 'New Request') %>
+  <%= @joatu_request.is_a?(BetterTogether::Joatu::ConnectionRequest) ?
+        t('better_together.joatu.requests.new_connection_request', default: 'New Connection Request') :
+        t('better_together.joatu.requests.new_request', default: 'New Request') %>
 <% end %>
 
 <%= render 'better_together/joatu/shared/exchange_nav' %>
 
 <div class="container my-3">
-  <h1><%= t('better_together.joatu.requests.new_request', default: 'New Request') %></h1>
+  <h1>
+    <%= @joatu_request.is_a?(BetterTogether::Joatu::ConnectionRequest) ?
+          t('better_together.joatu.requests.new_connection_request', default: 'New Connection Request') :
+          t('better_together.joatu.requests.new_request', default: 'New Request') %>
+  </h1>
 
   <%# Add hidden fields when creating a request in response to an offer %>
   <% if params[:source_type] && params[:source_id] %>

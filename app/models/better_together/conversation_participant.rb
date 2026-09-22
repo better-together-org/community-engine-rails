@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # joins people to conversations
-  class ConversationParticipant < ApplicationRecord
+  # Joins people to conversations.
+  class ConversationParticipant < PlatformRecord
     belongs_to :conversation
     belongs_to :person
   end

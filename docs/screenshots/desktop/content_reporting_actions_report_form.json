@@ -1,0 +1,49 @@
+{
+  "name": "content_reporting_actions_report_form",
+  "device": "desktop",
+  "url": "/en/reports/new?reportable_id=d29bf351-b204-4602-8aba-38fe9bdecafc&reportable_type=BetterTogether%3A%3APage",
+  "title": "Report a safety concern | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "content_reporting_actions",
+  "flow": "report_form_context",
+  "source_spec": "./spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
+  "callouts": [
+    {
+      "selector": ".alert.alert-light.border",
+      "title": "The report form keeps the record context visible",
+      "bullets": [
+        "The report stays anchored to the specific page, post, or community the person started from.",
+        "This context card gives reporters confidence that they are flagging the right record."
+      ],
+      "target": {
+        "x": 308.5,
+        "y": 241.59375,
+        "width": 808.0,
+        "height": 124.0,
+        "right": 1116.5,
+        "bottom": 365.59375,
+        "center_x": 712.5,
+        "center_y": 303.59375
+      },
+      "avoid": {
+        "x": 308.5,
+        "y": 241.59375,
+        "width": 808.0,
+        "height": 124.0,
+        "right": 1116.5,
+        "bottom": 365.59375,
+        "center_x": 712.5,
+        "center_y": 303.59375
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 385.59,
+        "width": 380,
+        "height": 352,
+        "score": 1095.40625
+      }
+    }
+  ]
+}

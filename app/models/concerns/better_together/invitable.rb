@@ -98,5 +98,13 @@ module BetterTogether
         Rails.application.routes.url_helpers.polymorphic_path(self)
       end
     end
+
+    def access_mode
+      invitation_required_for_access? ? :invitation : :open
+    end
+
+    def invitation_required_for_access?
+      false
+    end
   end
 end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
+RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup do
   include BetterTogether::DeviseSessionHelpers
 
   let!(:platform) { configure_host_platform }
@@ -56,6 +56,9 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
       let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
+      let!(:content_publishing_agreement) do
+        BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+      end
       let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
 
       before do
@@ -63,13 +66,16 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
         create(:better_together_agreement_participant, person: existing_user.person, agreement: privacy_policy, accepted_at: Time.current)
         create(:better_together_agreement_participant, person: existing_user.person, agreement: terms_of_service, accepted_at: Time.current)
         create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
+        create(:better_together_agreement_participant,
+               person: existing_user.person,
+               agreement: content_publishing_agreement,
+               accepted_at: Time.current)
       end
 
       it 'signs in existing user and links GitHub account', :aggregate_failures do
         initial_count = BetterTogether.user_class.count
         visit '/users/auth/github/callback'
 
-        # P2 FIX: Existing user authenticating via OAuth goes to root, not settings
         expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that OAuth user was created (since it's a new email from OAuth)
@@ -88,6 +94,9 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       let!(:privacy_policy) { BetterTogether::Agreement.find_or_create_by!(identifier: 'privacy_policy') }
       let!(:terms_of_service) { BetterTogether::Agreement.find_or_create_by!(identifier: 'terms_of_service') }
       let!(:code_of_conduct) { BetterTogether::Agreement.find_or_create_by!(identifier: 'code_of_conduct') }
+      let!(:content_publishing_agreement) do
+        BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+      end
       let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
       let!(:existing_integration) do
         create(:person_platform_integration,
@@ -102,12 +111,15 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
         create(:better_together_agreement_participant, person: existing_user.person, agreement: privacy_policy, accepted_at: Time.current)
         create(:better_together_agreement_participant, person: existing_user.person, agreement: terms_of_service, accepted_at: Time.current)
         create(:better_together_agreement_participant, person: existing_user.person, agreement: code_of_conduct, accepted_at: Time.current)
+        create(:better_together_agreement_participant,
+               person: existing_user.person,
+               agreement: content_publishing_agreement,
+               accepted_at: Time.current)
       end
 
       it 'updates existing integration and signs in user', :aggregate_failures do
         visit '/users/auth/github/callback'
 
-        # User with existing integration connects again → treated as returning user
         expect(page).to have_current_path('/en', ignore_query: true)
 
         # Check that integration was updated
@@ -119,8 +131,18 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
     end
 
     context 'when user is already signed in' do
+      let!(:content_publishing_agreement) do
+        BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)
+      end
       # Use same email as OAuth to test linking behavior
       let(:current_user) { create(:user, :confirmed, email: oauth_email, password: 'MyS3cur3T3st!') }
+
+      before do
+        create(:better_together_agreement_participant,
+               person: current_user.person,
+               agreement: content_publishing_agreement,
+               accepted_at: Time.current)
+      end
 
       it 'links GitHub account to current user' do
         # Sign in the user first using Capybara
@@ -150,8 +172,8 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       it 'handles OAuth failure gracefully' do
         visit '/users/auth/github/callback'
 
-        expect(page).to have_text('Could not authenticate you from GitHub because "Invalid credentials"')
-        expect(page).to have_current_path(%r{^/(en/)?users/sign-in}, ignore_query: true)
+        expect(page).to have_text('There was a problem signing you in. Please register or try signing in later.')
+        expect(page).to have_current_path(%r{^/(en/)?users/sign-in$}, ignore_query: true)
       end
     end
 
@@ -184,7 +206,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       let(:incomplete_auth_hash) do
         OmniAuth::AuthHash.new({
                                  provider: 'github',
-                                 uid: '123456',
+                                 uid: unique_oauth_uid,
                                  info: {
                                    # Missing email
                                    name: 'Test User'
@@ -217,21 +239,25 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       it 'displays appropriate error message' do
         visit '/users/auth/github/callback'
 
-        expect(page).to have_text('Could not authenticate you from GitHub because "Access denied"')
-        expect(page).to have_current_path(%r{^/(en/)?users/sign-in}, ignore_query: true)
+        expect(page).to have_text('There was a problem signing you in. Please register or try signing in later.')
+        expect(page).to have_current_path(%r{^/(en/)?users/sign-in$}, ignore_query: true)
       end
     end
   end
 
   describe 'Post-authentication behavior' do
+    let(:post_auth_oauth_email) { unique_email }
+    let(:post_auth_oauth_uid) { unique_oauth_uid }
+    let(:post_auth_oauth_nickname) { unique_username }
+
     let(:github_auth_hash) do
       OmniAuth::AuthHash.new({
                                provider: 'github',
-                               uid: '123456',
+                               uid: post_auth_oauth_uid,
                                info: {
-                                 email: 'test@example.com',
+                                 email: post_auth_oauth_email,
                                  name: 'Test User',
-                                 nickname: 'testuser'
+                                 nickname: post_auth_oauth_nickname
                                },
                                credentials: {
                                  token: 'github_access_token_123'
@@ -257,7 +283,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
 
       # User should be able to access other protected pages
       # This tests that the session was properly established
-      user = BetterTogether.user_class.find_by(email: 'test@example.com')
+      user = BetterTogether.user_class.find_by(email: post_auth_oauth_email)
       expect(user).to be_present
     end
 
@@ -270,7 +296,7 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth do
       visit '/'
 
       # User should still be signed in
-      user = BetterTogether.user_class.find_by(email: 'test@example.com')
+      user = BetterTogether.user_class.find_by(email: post_auth_oauth_email)
       expect(user).to be_present
     end
   end

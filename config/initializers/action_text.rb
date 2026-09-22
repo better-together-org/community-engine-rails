@@ -8,6 +8,10 @@ Rails.application.config.to_prepare do
     ActionText::Attachment::ATTRIBUTES.to_set +
     Set.new(%w[style href])).freeze
 
+  unless ActionText::ContentHelper < BetterTogether::ContentSecurity::ActionTextContentHelper
+    ActionText::ContentHelper.prepend(BetterTogether::ContentSecurity::ActionTextContentHelper)
+  end
+
   # Customize the sanitizer to append icons to external links
   # ActionText::ContentHelper.sanitizer = Rails::HTML5::SafeListSanitizer.new.tap do |sanitizer|
   #   sanitizer.extend(Module.new do
@@ -33,4 +37,10 @@ Rails.application.config.to_prepare do
   #     end
   #   end)
   # end
+end
+
+ActiveSupport.on_load :action_text_rich_text do
+  include BetterTogether::ContentSecurity::ActionTextRichTextControls unless include?(
+    BetterTogether::ContentSecurity::ActionTextRichTextControls
+  )
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Base controller for the CE dummy application.
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.

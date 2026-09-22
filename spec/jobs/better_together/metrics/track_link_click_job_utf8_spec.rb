@@ -30,7 +30,9 @@ RSpec.describe BetterTogether::Metrics::TrackLinkClickJob do
             url,
             valid_params[:page_url],
             valid_params[:locale],
-            valid_params[:internal]
+            valid_params[:internal],
+            BetterTogether::Platform.find_by(host: true)&.id,
+            false
           )
         end.to change(BetterTogether::Metrics::LinkClick, :count).by(1)
 
@@ -47,6 +49,8 @@ RSpec.describe BetterTogether::Metrics::TrackLinkClickJob do
             'https://example.com/link',
             page_url,
             'en',
+            false,
+            BetterTogether::Platform.find_by(host: true)&.id,
             false
           )
         end.to change(BetterTogether::Metrics::LinkClick, :count).by(1)

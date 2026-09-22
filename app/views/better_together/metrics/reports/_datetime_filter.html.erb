@@ -1,11 +1,13 @@
 <%
   # Get min_date from local assigns, default to nil
   min_date_value = local_assigns.fetch(:min_date, nil)
+  initial_data_loaded = local_assigns.fetch(:initial_data_loaded, false)
 %>
 <div class="metrics-datetime-filter card mb-3"
      data-controller="better-together--metrics-datetime-filter"
      data-better-together--metrics-datetime-filter-chart-type-value="<%= chart_type %>"
      data-better-together--metrics-datetime-filter-data-url-value="<%= data_url %>"
+     data-better-together--metrics-datetime-filter-initial-data-loaded-value="<%= initial_data_loaded %>"
      <% if min_date_value.present? %>
        data-better-together--metrics-datetime-filter-min-date-value="<%= min_date_value.iso8601 %>"
      <% end %>>

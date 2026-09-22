@@ -4,6 +4,8 @@ module BetterTogether
   module Metrics
     # Controller for creating and downloading Link Checker reports
     class LinkCheckerReportsController < ApplicationController
+      include PlatformContext
+
       before_action :set_report, only: %i[download]
 
       def index
@@ -36,7 +38,9 @@ module BetterTogether
         opts = {
           from_date: params.dig(:metrics_link_checker_report, :filters, :from_date),
           to_date: params.dig(:metrics_link_checker_report, :filters, :to_date),
-          file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv'
+          file_format: params.dig(:metrics_link_checker_report, :file_format) || 'csv',
+          creator: helpers.current_person,
+          platform: metrics_platform
         }
 
         @link_checker_report = BetterTogether::Metrics::LinkCheckerReport.create_and_generate!(**opts)
@@ -92,7 +96,9 @@ module BetterTogether
             @link_checker_report.report_file.filename.to_s,
             @link_checker_report.report_file.content_type,
             @link_checker_report.report_file.byte_size,
-            I18n.locale.to_s
+            I18n.locale.to_s,
+            metrics_platform.id,
+            metrics_logged_in?
           )
 
           send_data @link_checker_report.report_file.download,

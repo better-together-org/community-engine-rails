@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterTogether
+module BetterTogether # :nodoc:
   # Preview all emails at http://localhost:3000/rails/mailers/better_together/conversation_mailer
   class ConversationMailerPreview < ActionMailer::Preview
     include FactoryBot::Syntax::Methods

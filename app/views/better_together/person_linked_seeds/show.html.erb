@@ -1,0 +1,25 @@
+<section class="container py-4">
+  <header class="mb-4">
+    <p class="text-muted mb-2">
+      <%= link_to t('better_together.person_linked_seeds.show.back'),
+                  person_linked_seeds_path,
+                  class: 'text-decoration-none' %>
+    </p>
+    <h1><%= @person_linked_seed.payload_title || @person_linked_seed.identifier %></h1>
+    <p class="text-muted mb-0">
+      <%= t("better_together.enums.person_linked_seed.seed_type.#{@person_linked_seed.seed_type}", default: @person_linked_seed.seed_type.to_s.humanize) %>
+      ·
+      <%= @person_linked_seed.source_platform.name %>
+    </p>
+  </header>
+
+  <% if @person_linked_seed.payload_body.present? %>
+    <article class="prose">
+      <p><%= @person_linked_seed.payload_body %></p>
+    </article>
+  <% elsif @payload_data.present? %>
+    <pre><%= JSON.pretty_generate(@payload_data) %></pre>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.person_linked_seeds.show.empty') %></p>
+  <% end %>
+</section>

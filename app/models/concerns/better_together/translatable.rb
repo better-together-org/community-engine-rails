@@ -31,6 +31,14 @@ module BetterTogether
         localized_attributes.flatten
       end
 
+      def self.localized_attribute_names_for_search
+        return [] unless respond_to? :mobility_attributes
+
+        mobility_attributes.flat_map do |attribute|
+          I18n.available_locales.map { |locale| "#{attribute}_#{locale}" }
+        end
+      end
+
       def self.extra_permitted_attributes
         # Permit both locale-specific and base attribute names so callers can
         # submit either `name`/`description` for current locale or

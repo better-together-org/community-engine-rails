@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+#
+# Bootstrap the host Ruby toolchain this project expects:
+#
+#   1. rbenv            (version manager)
+#   2. ruby-build       (rbenv plugin: `rbenv install`)
+#   3. rbenv-gemset     (rbenv plugin: honours .rbenv-gemsets)
+#   4. the Ruby version pinned in .ruby-version
+#
+# Most of this project runs inside Docker (bin/dc-run), but the host still needs
+# the pinned Ruby installed or rbenv's shims error on every call (`ruby`,
+# `bundle`, editor tooling, bin/dc-ensure-services in older checkouts).
+#
+# Anything already present is left untouched; the ruby-build definition list is
+# refreshed automatically when the pinned version is not yet known.
+#
+# Usage:
+#   bin/install-ruby-version           # install whatever is missing
+#   bin/install-ruby-version --force   # also reinstall the pinned Ruby
+#
+# Idempotent and fast when everything is already in place.
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+force=0
+if [[ "${1:-}" == "--force" || "${1:-}" == "-f" ]]; then
+  force=1
+fi
+
+log() { printf '[install-ruby-version] %s\n' "$*" >&2; }
+die() { log "ERROR: $*"; exit 1; }
+
+RBENV_GIT="https://github.com/rbenv/rbenv.git"
+RUBY_BUILD_GIT="https://github.com/rbenv/ruby-build.git"
+RBENV_GEMSET_GIT="https://github.com/jf/rbenv-gemset.git"
+
+rbenv_home="${RBENV_ROOT:-$HOME/.rbenv}"
+
+# --- 1. rbenv --------------------------------------------------------------
+
+load_rbenv_into_shell() {
+  # Make `rbenv` usable for the rest of this script even if the user's shell rc
+  # has not been reloaded yet.
+  if [[ -x "$rbenv_home/bin/rbenv" ]]; then
+    export PATH="$rbenv_home/bin:$PATH"
+  fi
+  if command -v rbenv >/dev/null 2>&1; then
+    eval "$(rbenv init - bash)" 2>/dev/null || export PATH="$(rbenv root)/shims:$PATH"
+  fi
+}
+
+ensure_rbenv() {
+  load_rbenv_into_shell
+  if command -v rbenv >/dev/null 2>&1; then
+    log "rbenv present: $(command -v rbenv) ($(rbenv --version))"
+    return 0
+  fi
+
+  log "rbenv not found - installing..."
+  if command -v brew >/dev/null 2>&1; then
+    brew install rbenv
+  else
+    [[ -d "$rbenv_home" ]] || git clone --depth 1 "$RBENV_GIT" "$rbenv_home"
+  fi
+
+  load_rbenv_into_shell
+  command -v rbenv >/dev/null 2>&1 || die "rbenv install did not put rbenv on PATH (looked in $rbenv_home/bin)"
+
+  log "rbenv installed ($(rbenv --version))"
+  cat >&2 <<EOF
+
+  Add rbenv to your shell startup so new terminals pick it up, e.g.:
+
+    # ~/.bashrc  (or ~/.zshrc)
+    export PATH="\$HOME/.rbenv/bin:\$PATH"
+    eval "\$(rbenv init - bash)"
+
+EOF
+}
+
+# --- 2 & 3. rbenv plugins -------------------------------------------------
+
+ensure_plugin() {
+  local name="$1" repo="$2"
+  local plugins_dir plugin_dir
+  plugins_dir="$(rbenv root)/plugins"
+  plugin_dir="$plugins_dir/$name"
+
+  if [[ -d "$plugin_dir" ]]; then
+    log "plugin $name present ($plugin_dir)"
+    return 0
+  fi
+
+  # ruby-build may be provided outside the plugins dir (Homebrew, apt).
+  if [[ "$name" == "ruby-build" ]] && command -v ruby-build >/dev/null 2>&1; then
+    log "plugin ruby-build satisfied by $(command -v ruby-build)"
+    return 0
+  fi
+
+  log "installing rbenv plugin: $name"
+  mkdir -p "$plugins_dir"
+  git clone --depth 1 "$repo" "$plugin_dir"
+}
+
+# --- 4. pinned Ruby -----------------------------------------------------------
+
+read_pinned_version() {
+  local version_file="$repo_root/.ruby-version"
+  [[ -f "$version_file" ]] || die "no .ruby-version file at $version_file"
+  local v
+  v="$(tr -d '[:space:]' < "$version_file")"
+  v="${v#ruby-}"
+  [[ -n "$v" ]] || die ".ruby-version is empty"
+  printf '%s' "$v"
+}
+
+ruby_installed() {
+  [[ -x "$(rbenv root)/versions/$1/bin/ruby" ]]
+}
+
+definition_exists() {
+  local version="$1" dir
+  for dir in \
+    "$(rbenv root)/plugins/ruby-build/share/ruby-build"; do
+    [[ -f "$dir/$version" ]] && return 0
+  done
+  if command -v ruby-build >/dev/null 2>&1; then
+    ruby-build --definitions 2>/dev/null | grep -qx "$version" && return 0
+  fi
+  rbenv install --list 2>/dev/null | sed 's/^[[:space:]]*//' | grep -qx "$version"
+}
+
+update_ruby_build() {
+  log "refreshing ruby-build definitions..."
+  local plugin_dir
+  plugin_dir="$(rbenv root)/plugins/ruby-build"
+
+  if [[ -d "$plugin_dir/.git" ]]; then
+    git -C "$plugin_dir" pull --ff-only && return 0
+    log "git pull of ruby-build plugin failed; trying other paths"
+  fi
+  if rbenv commands 2>/dev/null | grep -qx "update"; then
+    rbenv update && return 0
+  fi
+  if command -v brew >/dev/null 2>&1 && brew list --formula 2>/dev/null | grep -qx "ruby-build"; then
+    brew update && brew upgrade ruby-build && return 0
+  fi
+  return 1
+}
+
+ensure_ruby_version() {
+  local version="$1"
+
+  if ruby_installed "$version" && [[ "$force" -eq 0 ]]; then
+    log "Ruby $version already installed"
+    rbenv rehash
+    return 0
+  fi
+
+  log "installing Ruby $version via rbenv..."
+
+  if ! definition_exists "$version"; then
+    update_ruby_build || die \
+      "could not refresh ruby-build definitions automatically. Update ruby-build, then re-run."
+    definition_exists "$version" || die \
+      "ruby-build has no definition for '$version' even after updating. Is that a real release?"
+  fi
+
+  local flags=("--skip-existing")
+  [[ "$force" -eq 1 ]] && flags=("--force")
+
+  if ! rbenv install "${flags[@]}" "$version"; then
+    log "rbenv install failed; refreshing definitions and retrying once..."
+    update_ruby_build || true
+    rbenv install "${flags[@]}" "$version" \
+      || die "rbenv install $version failed - see the build log above."
+  fi
+
+  rbenv rehash
+  ruby_installed "$version" || die "install reported success but $(rbenv root)/versions/$version/bin/ruby is missing"
+  log "Done: $(RBENV_VERSION="$version" ruby -v)"
+}
+
+# --- run --------------------------------------------------------------------
+
+ensure_rbenv
+ensure_plugin ruby-build "$RUBY_BUILD_GIT"
+ensure_plugin rbenv-gemset "$RBENV_GEMSET_GIT"
+ensure_ruby_version "$(read_pinned_version)"
+
+log "Toolchain ready. Pinned Ruby: $(cat "$repo_root/.ruby-version")"

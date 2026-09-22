@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module BetterTogether
+module BetterTogether # :nodoc:
   # Test notifier for specs
   class TestNotifier < Noticed::Event
     # Optional: add any specific behavior for testing

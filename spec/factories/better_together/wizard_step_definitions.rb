@@ -3,9 +3,9 @@
 # spec/factories/wizard_step_definitions.rb
 
 FactoryBot.define do
-  factory :better_together_wizard_step_definition,
+  factory 'better_together/wizard_step_definition',
           class: 'BetterTogether::WizardStepDefinition',
-          aliases: %i[wizard_step_definition] do
+          aliases: %i[wizard_step_definition better_together_wizard_step_definition] do
     sequence(:id) { |_n| SecureRandom.uuid }
     wizard { create(:wizard) }
     name { Faker::Lorem.sentence(word_count: 3) }

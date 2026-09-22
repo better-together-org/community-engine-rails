@@ -1,68 +1,96 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Handles dispatching search queries to elasticsearch and displaying the results
+  # Handles dispatching search queries to the active backend and displaying the results
   class SearchController < ApplicationController
-    def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      searchable_models = BetterTogether::Searchable.included_in_models
+    include Metrics::PlatformContext
+
+    def search # rubocop:todo Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       @query = params[:q]
-      search_results = []
-      suggestions = []
+      search_results = perform_search
 
-      if @query.present?
-        begin
-          response = Elasticsearch::Model.search(build_search_query(@query), searchable_models)
-
-          search_results = response.records.to_a
-
-          suggest_source = response.response.dig('suggest', 'suggestions') || []
-          suggestions = suggest_source.flat_map { |s| s.fetch('options', []).map { |o| o['text'] } }
-        rescue StandardError => e
-          Rails.logger.warn("Search error: #{e.class}: #{e.message}")
-          # Fall back to empty results so the page still renders
-          search_results = []
-          suggestions = []
-        end
-
-        # Track search query even if Elasticsearch fails
-        BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
-          @query,
-          search_results.length,
-          I18n.locale.to_s
-        )
-      end
-
-      # Use Kaminari for pagination
-      @results = Kaminari.paginate_array(search_results).page(params[:page]).per(10)
-      @suggestions = suggestions
+      track_search_query(search_results) if @query.present?
+      assign_search_results(search_results)
     end
 
     private
 
-    def build_search_query(query) # rubocop:todo Metrics/MethodLength
-      {
-        query: {
-          bool: {
-            must: [
-              {
-                multi_match: {
-                  query: query,
-                  type: 'best_fields'
-                }
-              }
-            ]
-          }
-        },
-        suggest: {
-          text: query,
-          suggestions: {
-            term: {
-              field: 'name',
-              suggest_mode: 'always'
-            }
-          }
-        }
-      }
+    def perform_search
+      return idle_search_result unless @query.present?
+
+      search_results = BetterTogether::Search.backend.search(@query)
+      log_search_error(search_results)
+      search_results
+    end
+
+    def idle_search_result
+      BetterTogether::Search::SearchResult.new(
+        records: [],
+        suggestions: [],
+        status: :idle,
+        backend: BetterTogether::Search.backend.backend_key
+      )
+    end
+
+    def track_search_query(search_results)
+      query = BetterTogether::Metrics::SearchQueryCaptureService.new.call(@query)
+      return if query.blank?
+
+      BetterTogether::Metrics::TrackSearchQueryJob.perform_later(
+        query,
+        search_results.records.length,
+        I18n.locale.to_s,
+        metrics_platform.id,
+        metrics_logged_in?
+      )
+    end
+
+    def assign_search_results(search_results)
+      @results = Kaminari.paginate_array(visible_search_records(search_results.records)).page(params[:page]).per(10)
+      # Backend term suggestions are not privacy-aware and can leak unpublished or
+      # private titles. Keep them disabled until the search backend can scope them.
+      @suggestions = []
+      @search_backend = search_results.backend
+      @search_status = search_results.status
+    end
+
+    def log_search_error(search_results)
+      return unless search_results.status == :unreachable
+
+      Rails.logger.warn("Search error: #{search_results.error}")
+    end
+
+    def visible_search_records(records)
+      Array(records).group_by(&:class).flat_map do |model_class, model_records|
+        visible_records_for(model_class, model_records)
+      end
+    end
+
+    def search_record_visible?(record)
+      policy(record).show?
+    rescue Pundit::Error, NoMethodError
+      public_search_record?(record)
+    end
+
+    def visible_records_for(model_class, records)
+      visible_ids = stripped_policy_scope(model_class).where(id: records.map(&:id)).pluck(:id)
+      records.select { |record| visible_ids.include?(record.id) }
+    rescue ActiveRecord::EagerLoadPolymorphicError, Pundit::Error, NoMethodError
+      records.select { |record| search_record_visible?(record) }
+    end
+
+    def stripped_policy_scope(model_class)
+      scoped_records = policy_scope(model_class)
+      return scoped_records.except(:includes, :preload, :eager_load) if scoped_records.respond_to?(:except)
+
+      scoped_records
+    end
+
+    def public_search_record?(record)
+      privacy_visible = !record.respond_to?(:privacy_public?) || record.privacy_public?
+      publish_visible = !record.respond_to?(:published?) || record.published?
+
+      privacy_visible && publish_visible
     end
   end
 end

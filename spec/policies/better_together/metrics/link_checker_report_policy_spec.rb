@@ -16,11 +16,13 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
   describe '#index?' do
     context 'when user is analytics viewer' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -29,13 +31,15 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
       end
     end
 
-    context 'when user is platform manager' do
+    context 'when user is platform steward' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_manager')
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+               BetterTogether::Role.find_by(identifier: 'platform_manager')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -57,16 +61,40 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
         expect(policy.index?).to be false
       end
     end
+
+    context 'when user is a tenant (non-host) platform steward' do
+      let(:tenant_platform) { create(:better_together_platform) }
+
+      before do
+        role = BetterTogether::Role.find_by(identifier: 'platform_steward') ||
+               BetterTogether::Role.find_by(identifier: 'platform_manager')
+        BetterTogether::PersonPlatformMembership.create!(
+          joinable: tenant_platform,
+          member: user.person,
+          role: role,
+          status: 'active'
+        )
+        Current.platform = tenant_platform
+      end
+
+      after { Current.platform = nil }
+
+      it 'allows access on their own tenant platform' do
+        expect(policy.index?).to be true
+      end
+    end
   end
 
   describe '#show?' do
     context 'when user is analytics viewer' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -85,11 +113,13 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
   describe '#create?' do
     context 'when user has create_metrics_reports permission' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 
@@ -108,11 +138,13 @@ RSpec.describe BetterTogether::Metrics::LinkCheckerReportPolicy, type: :policy d
   describe '#destroy?' do
     context 'when user has create_metrics_reports permission' do
       before do
-        role = BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
+        role = BetterTogether::Role.find_by(identifier: 'analytics_viewer') ||
+               BetterTogether::Role.find_by(identifier: 'platform_analytics_viewer')
         BetterTogether::PersonPlatformMembership.create!(
           joinable: platform,
           member: user.person,
-          role: role
+          role: role,
+          status: 'active'
         )
       end
 

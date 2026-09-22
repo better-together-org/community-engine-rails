@@ -9,11 +9,15 @@ module BetterTogether
 
     # Keep lightweight: find events starting in the near future and enqueue the
     # existing per-event scheduler job which handles cancellation/rescheduling.
-    # default: next 7 days
-    def perform(window_hours: 168)
+    # @param window_hours [Integer] how far ahead to scan (default: 7 days)
+    # @param platform_id [String, nil] restrict scan to one platform (nil = all platforms)
+    def perform(window_hours: 168, platform_id: nil)
       cutoff = Time.current + window_hours.hours
 
-      BetterTogether::Event.where('starts_at <= ? AND starts_at >= ?', cutoff, Time.current).find_each do |event|
+      scope = BetterTogether::Event.where('starts_at <= ? AND starts_at >= ?', cutoff, Time.current)
+      scope = scope.where(platform_id: platform_id) if platform_id.present?
+
+      scope.find_each do |event|
         # Use the id to avoid serializing AR objects into the job payload
         BetterTogether::EventReminderSchedulerJob.perform_later(event.id)
       rescue StandardError => e

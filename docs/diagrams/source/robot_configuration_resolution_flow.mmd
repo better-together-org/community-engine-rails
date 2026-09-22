@@ -1,0 +1,63 @@
+graph TB
+    subgraph DATA["Persisted Robot Records"]
+        A[better_together_robots]
+        B[Platform-specific robot]
+        C[Global robot fallback]
+    end
+
+    subgraph RUNTIME["Runtime Resolution"]
+        D[ApplicationBot.new]
+        E{Identifier present?}
+        F[Robot.resolve]
+        G{Active platform robot exists?}
+        H[Use platform robot]
+        I{Active global robot exists?}
+        J[Use global robot]
+        K[No persisted robot]
+    end
+
+    subgraph DISPATCH["AI Dispatch"]
+        L[Provider]
+        M[Chat model]
+        N[System prompt]
+        O[Adapterized llm_chat or embed_text]
+        P[Metadata: robot_id, identifier, platform_id]
+    end
+
+    subgraph FALLBACKS["Fallback Behavior"]
+        Q[ENV BETTER_TOGETHER_LLM_PROVIDER]
+        R[ENV BETTER_TOGETHER_LLM_MODEL]
+        S[Bot default prompt]
+    end
+
+    A --> B
+    A --> C
+    D --> E
+    E -->|yes| F
+    E -->|no| K
+    F --> G
+    G -->|yes| H
+    G -->|no| I
+    I -->|yes| J
+    I -->|no| K
+
+    H --> L
+    H --> M
+    H --> N
+    J --> L
+    J --> M
+    J --> N
+
+    K --> Q
+    K --> R
+    K --> S
+    Q --> O
+    R --> O
+    S --> O
+
+    L --> O
+    M --> O
+    N --> O
+    H --> P
+    J --> P
+    P --> O
