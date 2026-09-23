@@ -11,9 +11,9 @@ This project maintains one current Rails line on `main` and separate compatibili
 
 Current workflow defaults:
 
-- `main` and `compat/rails-8.0` use Rails `8.0.4.1`
-- `compat/rails-7.2` uses Rails `7.2.2.2`
-- `compat/rails-8.1` uses Rails `8.1.2`
+- `main` and `compat/rails-8.0` use Rails `8.0.5.1`
+- `compat/rails-7.2` uses Rails `7.2.3.2`
+- `compat/rails-8.1` uses Rails `8.1.2` (**stale as of this update** — `bundler-audit` on the `compat/rails-7.2` bump surfaced that `8.1.2` predates several Rails security patches, including CVE-2026-66066; latest available is `8.1.3.1`. Not bumped here — needs its own confirmed pass.)
 
 ## CI Model
 

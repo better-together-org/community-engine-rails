@@ -35,7 +35,7 @@ jobs:
         run: |
           case "${GITHUB_BASE_REF}" in
             compat/rails-7.2)
-              rails_version="7.2.2.2"
+              rails_version="7.2.3.2"
               ;;
             compat/rails-8.1)
               rails_version="8.1.2"
