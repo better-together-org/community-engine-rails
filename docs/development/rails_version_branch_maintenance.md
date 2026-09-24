@@ -4,16 +4,18 @@ This project maintains one current Rails line on `main` and separate compatibili
 
 ## Branch Model
 
-- `main`: latest fully working Rails line
-- `compat/rails-7.2`: maintained compatibility branch for Rails 7.2
-- `compat/rails-8.0`: maintained compatibility branch for Rails 8.0
-- `compat/rails-8.1`: maintained compatibility branch for Rails 8.1
+- `main`: latest fully working Rails line — **8.1 as of 2026-09-22** (previously 8.0; switched because Rails 8.0's own EOL date is 2026-10-07, with no Rails release beyond 8.1 published yet)
+- `compat/rails-7.2`: maintained compatibility branch for Rails 7.2 — kept active on request for projects that still need it, despite 7.2's own EOL (2026-08-09) having already passed. Not a candidate for becoming primary.
+- `compat/rails-8.0`: maintained compatibility branch for Rails 8.0 — this is now `main`'s *previous* Rails line, kept as its own real compatibility target rather than mirroring `main`.
+- `compat/rails-8.1`: maintained compatibility branch for Rails 8.1 — now redundant with `main` (both track the same version). Left in place since the sync automation keeps it in sync from `main` for free; a candidate for removal once main's real "previous line" role is clearly `compat/rails-8.0`.
 
 Current workflow defaults:
 
-- `main` and `compat/rails-8.0` use Rails `8.0.5.1`
+- `main` and `compat/rails-8.1` use Rails `8.1.3.1` (latest published Rails release; no `8.2`/`9.0` exists yet)
+- `compat/rails-8.0` uses Rails `8.0.5.1`
 - `compat/rails-7.2` uses Rails `7.2.3.2`
-- `compat/rails-8.1` uses Rails `8.1.2` (**stale as of this update** — `bundler-audit` on the `compat/rails-7.2` bump surfaced that `8.1.2` predates several Rails security patches, including CVE-2026-66066; latest available is `8.1.3.1`. Not bumped here — needs its own confirmed pass.)
+
+Each of these is the latest published patch on its line as of 2026-09-22 (confirmed via the RubyGems API, not assumed) — bump the `rails_version` case statement in `rubyonrails.yml`/`i18n-health.yml`/`dependency-compatibility.yml`, the matching `gemfiles/rails_*.gemfile`, and (for whichever line is primary) `Gemfile`'s two `ENV.fetch('RAILS_VERSION', ...)` defaults whenever a newer patch ships.
 
 ## CI Model
 
