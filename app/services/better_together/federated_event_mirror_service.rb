@@ -18,14 +18,37 @@ module BetterTogether
     def call
       authorize_mirroring!
 
-      event = find_or_initialize_event
-      assign_attributes(event)
-      ensure_source_platform_host(event)
-      event.save!
-      event
+      with_stale_object_retry do
+        event = find_or_initialize_event
+        assign_attributes(event)
+        ensure_source_platform_host(event)
+        event.save!
+        event
+      rescue ActiveRecord::RecordNotUnique
+        # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
+        event = reload_after_concurrent_insert
+        assign_attributes(event)
+        ensure_source_platform_host(event)
+        event.save!
+        event
+      end
     end
 
     private
+
+    # Two overlapping syncs raced on UPDATE; reload and retry once rather
+    # than dropping the whole mirrored event.
+    def with_stale_object_retry
+      attempts = 0
+      begin
+        yield
+      rescue ActiveRecord::StaleObjectError
+        attempts += 1
+        raise unless attempts <= 1
+
+        retry
+      end
+    end
 
     attr_reader :connection, :remote_attributes, :remote_id, :preserve_remote_uuid, :source_updated_at
 
@@ -57,6 +80,33 @@ module BetterTogether
 
     def existing_event_by_source_id
       ::BetterTogether::Event.find_by(platform: target_platform, source_id: remote_id)
+    end
+
+    def reload_after_concurrent_insert
+      record = if mirror_with_remote_uuid?
+                 existing_event_with_remote_uuid || existing_event_by_source_id
+               else
+                 existing_event_by_source_id
+               end
+
+      return record if record
+
+      raise_uuid_collision_if_applicable!
+      raise ::ActiveRecord::RecordNotFound,
+            "Event not found after concurrent INSERT for remote_id=#{remote_id}"
+    end
+
+    # Raises RecordInvalid when an event with the remote UUID already exists under a
+    # different platform. This is a permanent cross-platform UUID collision, not a
+    # transient race; FederatedContentIngestService treats RecordInvalid with an
+    # identifier:taken error as a mirrored-identifier conflict and continues the batch.
+    def raise_uuid_collision_if_applicable!
+      return unless mirror_with_remote_uuid? && ::BetterTogether::Event.exists?(id: remote_id)
+
+      stub = ::BetterTogether::Event.new
+      stub.errors.add(:identifier, :taken,
+                      message: 'UUID conflicts with an existing event on another platform')
+      raise ::ActiveRecord::RecordInvalid, stub
     end
 
     def assign_attributes(event)

@@ -125,6 +125,54 @@ RSpec.describe BetterTogether::Content::FederatedPostMirrorService do
       expect(updated.identifier).to eq("#{source_platform.identifier}--remote-post")
     end
 
+    context 'when an overlapping sync raises ActiveRecord::StaleObjectError on UPDATE' do
+      it 'reloads and retries once, succeeding on the second attempt' do
+        existing = described_class.new(
+          connection:,
+          remote_attributes:,
+          remote_id: 'legacy-post-42'
+        ).call
+        service = described_class.new(
+          connection:,
+          remote_attributes: remote_attributes.merge(title: 'Updated Remote Post'),
+          remote_id: 'legacy-post-42'
+        )
+        original_find = service.method(:find_or_initialize_post)
+        call_count = 0
+        allow(service).to receive(:find_or_initialize_post) do
+          call_count += 1
+          post = original_find.call
+          allow(post).to receive(:save!).and_raise(ActiveRecord::StaleObjectError) if call_count == 1
+          post
+        end
+
+        result = service.call
+
+        expect(result.id).to eq(existing.id)
+        expect(result.title).to eq('Updated Remote Post')
+        expect(call_count).to eq(2)
+      end
+
+      it 'does not retry more than once' do
+        service = described_class.new(
+          connection:,
+          remote_attributes:,
+          remote_id: 'legacy-post-42'
+        )
+        original_find = service.method(:find_or_initialize_post)
+        call_count = 0
+        allow(service).to receive(:find_or_initialize_post) do
+          call_count += 1
+          post = original_find.call
+          allow(post).to receive(:save!).and_raise(ActiveRecord::StaleObjectError)
+          post
+        end
+
+        expect { service.call }.to raise_error(ActiveRecord::StaleObjectError)
+        expect(call_count).to eq(2)
+      end
+    end
+
     it 'mirrors public content even when the local platform/community would cap it lower' do
       private_target = create(:better_together_platform, privacy: 'private')
       private_connection = create(

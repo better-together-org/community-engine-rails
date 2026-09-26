@@ -77,4 +77,43 @@ RSpec.describe 'Locale handling in ApplicationController#set_locale' do
       expect(I18n.locale.to_s).to eq(I18n.default_locale.to_s)
     end
   end
+
+  # Regression coverage: extract_locale_from_accept_language_header guarded only on the
+  # header's *presence*, not on the regex actually matching, so `.scan(...).first` being
+  # nil (wildcard "*", an empty string, or any header not starting with two lowercase
+  # letters -- all seen from bots hitting /robots.txt in production) raised NoMethodError
+  # on `nil.to_sym` as an unhandled 500 before any controller logic ran.
+  describe '#extract_locale_from_accept_language_header (unit)' do
+    let(:controller) { BetterTogether::ApplicationController.new }
+
+    it 'returns nil for a wildcard header with no leading locale code' do
+      allow(controller).to receive(:request).and_return(double(env: { 'HTTP_ACCEPT_LANGUAGE' => '*' }))
+      expect(controller.send(:extract_locale_from_accept_language_header)).to be_nil
+    end
+
+    it 'returns nil for an empty header' do
+      allow(controller).to receive(:request).and_return(double(env: { 'HTTP_ACCEPT_LANGUAGE' => '' }))
+      expect(controller.send(:extract_locale_from_accept_language_header)).to be_nil
+    end
+
+    it 'returns nil when no header is present' do
+      allow(controller).to receive(:request).and_return(double(env: {}))
+      expect(controller.send(:extract_locale_from_accept_language_header)).to be_nil
+    end
+
+    it 'returns the matched locale for a well-formed header' do
+      valid_locale = I18n.available_locales.first
+      header = { 'HTTP_ACCEPT_LANGUAGE' => "#{valid_locale},en;q=0.9" }
+      allow(controller).to receive(:request).and_return(double(env: header))
+      expect(controller.send(:extract_locale_from_accept_language_header)).to eq(valid_locale)
+    end
+  end
+
+  it 'does not raise on a bot-style wildcard Accept-Language header' do
+    expect do
+      get '/sitemap.xml.gz', headers: { 'Accept-Language' => '*' }
+    end.not_to raise_error
+
+    expect(response).not_to have_http_status(:server_error)
+  end
 end
