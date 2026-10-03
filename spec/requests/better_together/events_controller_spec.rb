@@ -96,6 +96,38 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         expect(flash[:error]).to be_present
       end
     end
+
+    # Regression coverage: render_event_ics sets response.content_type to text/calendar
+    # via send_data. If anything later in the same request raises, ApplicationController
+    # #handle_error used to run its own respond_to (html/turbo_stream) against a response
+    # whose media type was already committed to text/calendar, raising
+    # ActionController::RespondToMismatchError instead of a clean error response.
+    context 'when an error occurs after .ics content-type has already been set' do
+      before do
+        allow(Rails.env).to receive(:production?).and_return(true)
+        # rubocop:disable RSpec/AnyInstance
+        # send_data is what actually commits response.content_type inside render_event_ics.
+        # Stub it to commit the same content type, then raise -- reproducing "something
+        # after content-type is set raises" without needing to call through render_event_ics
+        # itself (which would just re-invoke this same stub).
+        allow_any_instance_of(BetterTogether::EventsController).to receive(:send_data) do |controller, *_args|
+          controller.response.content_type = 'text/calendar'
+          raise StandardError, 'simulated post-render failure'
+        end
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      it 'does not raise RespondToMismatchError' do
+        expect do
+          get better_together.ics_event_path(test_event, locale:)
+        end.not_to raise_error
+      end
+
+      it 'returns a clean 500 instead of the committed text/calendar content type' do
+        get better_together.ics_event_path(test_event, locale:)
+        expect(response).to have_http_status(:internal_server_error)
+      end
+    end
   end
 
   describe 'GET /events/:id/ics (standalone ics action)' do

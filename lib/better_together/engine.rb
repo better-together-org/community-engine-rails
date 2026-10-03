@@ -124,6 +124,16 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # ActionDispatch::RemoteIp raises IpSpoofAttackError for malformed
+    # X-Forwarded-For headers before Rack::Attack's scanner blocklists ever
+    # run. Insert this guard immediately before RemoteIp so that traffic gets
+    # a normal blocked response instead of an unhandled 500 reaching Sentry.
+    # See app/middleware/better_together/spoofed_forwarded_for_guard_middleware.rb
+    initializer 'better_together.spoofed_forwarded_for_guard_middleware' do |app|
+      require root.join('app/middleware/better_together/spoofed_forwarded_for_guard_middleware').to_s
+      app.middleware.insert_before ActionDispatch::RemoteIp, BetterTogether::SpoofedForwardedForGuardMiddleware
+    end
+
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
     # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
     # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.

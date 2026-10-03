@@ -19,19 +19,35 @@ module BetterTogether
       def call
         authorize_mirroring!
 
-        page = find_or_initialize_page
-        assign_attributes(page)
-        page.save!
-        page
-      rescue ActiveRecord::RecordNotUnique
-        # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
-        page = reload_after_concurrent_insert
-        assign_attributes(page)
-        page.save!
-        page
+        with_stale_object_retry do
+          page = find_or_initialize_page
+          assign_attributes(page)
+          page.save!
+          page
+        rescue ActiveRecord::RecordNotUnique
+          # Two concurrent syncs raced on INSERT; reload the winner and apply our attributes.
+          page = reload_after_concurrent_insert
+          assign_attributes(page)
+          page.save!
+          page
+        end
       end
 
       private
+
+      # Two overlapping syncs raced on UPDATE; reload and retry once rather
+      # than dropping the whole mirrored page.
+      def with_stale_object_retry
+        attempts = 0
+        begin
+          yield
+        rescue ActiveRecord::StaleObjectError
+          attempts += 1
+          raise unless attempts <= 1
+
+          retry
+        end
+      end
 
       attr_reader :connection, :remote_attributes, :remote_id, :preserve_remote_uuid, :source_updated_at
 
