@@ -162,8 +162,16 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         expect(Rack::Attack.throttles['mcp/tool-calls/ip'].limit).to eq(10)
       end
 
-      it 'tightens the federation feed per-IP throttle to 6/min (was 60)' do
-        expect(Rack::Attack.throttles['federation/feed/ip'].limit).to eq(6)
+      it 'sets the federation feed per-IP throttle to 20/min (60 -> 6 -> 20)' do
+        # Raised from 6 to 20 on 2026-09-26: legitimate multi-connection fan-out
+        # from FederatedSyncScanJob's unstaggered dispatch was tripping the
+        # single-connection-tuned 6/min cap with no misbehaving peer involved
+        # (Sentry issue 148313524 -- CE has two connections both syncing from
+        # newfoundlandlabrador.online, dispatched back-to-back by the same
+        # hourly scan). Still well below the original 60 that let the
+        # stuck-cursor bug run, and below the authenticated federation/feed/token
+        # throttle at 120/min.
+        expect(Rack::Attack.throttles['federation/feed/ip'].limit).to eq(20)
       end
 
       it 'safelists BetterStack by a stable UA substring, not the full exact UA string ' \
