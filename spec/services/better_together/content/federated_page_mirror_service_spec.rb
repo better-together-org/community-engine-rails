@@ -163,6 +163,54 @@ module BetterTogether # :nodoc:
         end
       end
 
+      context 'when an overlapping sync raises ActiveRecord::StaleObjectError on UPDATE' do
+        it 'reloads and retries once, succeeding on the second attempt' do
+          existing = described_class.new(
+            connection:,
+            remote_attributes:,
+            remote_id: 'legacy-page-42'
+          ).call
+          service = described_class.new(
+            connection:,
+            remote_attributes: remote_attributes.merge(title: 'Updated Remote Page'),
+            remote_id: 'legacy-page-42'
+          )
+          original_find = service.method(:find_or_initialize_page)
+          call_count = 0
+          allow(service).to receive(:find_or_initialize_page) do
+            call_count += 1
+            page = original_find.call
+            allow(page).to receive(:save!).and_raise(ActiveRecord::StaleObjectError) if call_count == 1
+            page
+          end
+
+          result = service.call
+
+          expect(result.id).to eq(existing.id)
+          expect(result.title).to eq('Updated Remote Page')
+          expect(call_count).to eq(2)
+        end
+
+        it 'does not retry more than once' do
+          service = described_class.new(
+            connection:,
+            remote_attributes:,
+            remote_id: 'legacy-page-42'
+          )
+          original_find = service.method(:find_or_initialize_page)
+          call_count = 0
+          allow(service).to receive(:find_or_initialize_page) do
+            call_count += 1
+            page = original_find.call
+            allow(page).to receive(:save!).and_raise(ActiveRecord::StaleObjectError)
+            page
+          end
+
+          expect { service.call }.to raise_error(ActiveRecord::StaleObjectError)
+          expect(call_count).to eq(2)
+        end
+      end
+
       context 'when a UUID collision exists under a different platform' do
         it 'raises RecordInvalid with identifier:taken so the ingest service logs a conflict' do
           remote_id = SecureRandom.uuid

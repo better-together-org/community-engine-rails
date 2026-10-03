@@ -174,13 +174,21 @@ module Rack
       end
     end
 
-    # Secondary IP-based guard for the federation feed (6 req/min per IP --
-    # tightened from 60 as part of the 2026-09 federation hardening; a
+    # Secondary IP-based guard for the federation feed (20 req/min per IP --
+    # tightened from 60 to 6 as part of the 2026-09 federation hardening; a
     # ~7.5/min stuck-cursor pull loop tripped this same limit at 60 but not
-    # early enough to matter. Legitimate peers paginate a few pages/min at
-    # most; bulk sync goes through the authenticated federation/feed/token
-    # throttle at 120/min instead).
-    throttle('federation/feed/ip', limit: 6, period: 1.minute) do |req|
+    # early enough to matter. Raised from 6 to 20 in 2026-09-26 follow-up:
+    # FederatedSyncScanJob dispatches a pull job for every eligible connection
+    # back-to-back with no stagger, so two or more legitimate connections
+    # pointed at the same remote host (observed: two separate connections
+    # both syncing from newfoundlandlabrador.online) can land in the same
+    # 1-minute window from this app's single outbound IP and trip the
+    # per-connection-tuned 6/min cap even with no misbehaving peer involved.
+    # Legitimate peers paginate a few pages/min at most per connection; bulk
+    # sync goes through the authenticated federation/feed/token throttle at
+    # 120/min instead, so this is still a meaningful ceiling well below that
+    # and well below the original 60 that let the stuck-cursor bug run.
+    throttle('federation/feed/ip', limit: 20, period: 1.minute) do |req|
       req.ip if req.path.include?('/federation/content_feed')
     end
 
