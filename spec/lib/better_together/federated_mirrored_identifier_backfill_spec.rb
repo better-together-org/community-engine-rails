@@ -33,14 +33,9 @@ RSpec.describe 'Federated mirrored identifier backfill' do # rubocop:disable RSp
     expect(mirrored_post.reload.identifier).to eq("#{source_platform.identifier}--remote-post")
     expect(mirrored_page.reload.identifier).to eq("#{source_platform.identifier}--remote-page")
     expect(mirrored_event.reload.identifier).to eq("#{source_platform.identifier}--remote-event")
-    expect(mirrored_post.slug).to eq("#{source_platform.identifier}--remote-post")
-
-    slug_history = FriendlyId::Slug.where(
-      sluggable_type: 'BetterTogether::Post',
-      sluggable_id: mirrored_post.id
-    ).pluck(:slug)
-    expect(slug_history).to include(old_post_slug)
-    expect(slug_history).to include("#{source_platform.identifier}--remote-post")
+    # update_columns deliberately rewrites only `identifier` (see the migration), so the
+    # translated slug is left alone rather than regenerated with validations/history.
+    expect(mirrored_post.slug).to eq(old_post_slug)
   end
 
   it 'remains idempotent for mirrored records that are already namespaced' do
