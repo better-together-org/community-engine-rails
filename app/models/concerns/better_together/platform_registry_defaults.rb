@@ -29,7 +29,7 @@ module BetterTogether
     end
 
     def sync_primary_platform_domain!
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return unless self.class.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
       return if external?
 
       hostname = platform_hostname_from_host_url
