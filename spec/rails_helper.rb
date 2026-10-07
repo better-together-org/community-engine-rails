@@ -278,7 +278,14 @@ RSpec.configure do |config|
     # Without this, tests that lazily load Current.host_platform and then roll back
     # the platform record leave a dangling AR object; subsequent tests see an empty
     # platform_scoped because the stale id matches no live row.
-    ActiveSupport::CurrentAttributes.reset_all
+    # Rails 8.1 renamed the class-level .reset_all to .clear_all; this file is
+    # shared across every compat/rails-* lane, so support both rather than
+    # picking one and breaking the others.
+    if ActiveSupport::CurrentAttributes.respond_to?(:clear_all)
+      ActiveSupport::CurrentAttributes.clear_all
+    else
+      ActiveSupport::CurrentAttributes.reset_all
+    end
   end
 
   # Reset locale to English after each test to prevent test isolation issues

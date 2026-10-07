@@ -1,9 +1,4 @@
 {
-  "ignored_warnings": [
-    {
-      "fingerprint": "98b26f60d776fd41ee6f088c833725145be9aac2d7c5b33780241c273622db42",
-      "note": "EOLRails: Rails 8.0.5.1 EOL is 2026-10-07. Not an actionable code defect; Brakeman's own warning window (not our CI diff) started firing this around 2026-09-11. Tracked as its own Rails-upgrade planning item, not something a single PR should fix by bumping Rails. Re-evaluate this ignore entry once Rails is upgraded past 8.0.x."
-    }
-  ],
-  "brakeman_version": "8.0.4"
+  "ignored_warnings": [],
+  "brakeman_version": "8.0.5"
 }

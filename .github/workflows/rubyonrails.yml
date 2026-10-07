@@ -14,7 +14,7 @@ on:
       - compat/rails-8.1
   pull_request:
     # Run on PRs targeting any branch so feature/fix/salvage branches get CI.
-    # The prepare job defaults to the primary Rails lane (8.0.5.1) for any
+    # The prepare job defaults to the primary Rails lane (8.1.4) for any
     # non-compat target branch, so only one Rails version runs for these PRs.
     branches:
       - "**"
@@ -41,16 +41,16 @@ jobs:
 
           case "${branch}" in
             compat/rails-7.2)
-              rails_version="7.2.3.2"
+              rails_version="7.2.4"
               ;;
-            compat/rails-8.1)
-              rails_version="8.1.2"
-              ;;
-            main|dev|compat/rails-8.0)
+            compat/rails-8.0)
               rails_version="8.0.5.1"
+              ;;
+            main|dev|compat/rails-8.1)
+              rails_version="8.1.4"
               ;;
             *)
-              rails_version="8.0.5.1"
+              rails_version="8.1.4"
               ;;
           esac
 
@@ -129,6 +129,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install libvips
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips-dev
 
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
