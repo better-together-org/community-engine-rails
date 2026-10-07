@@ -11,7 +11,7 @@ This project maintains one current Rails line on `main` and separate compatibili
 
 Current workflow defaults:
 
-- `main` and `compat/rails-8.1` use Rails `8.1.3.1` (latest published Rails release; no `8.2`/`9.0` exists yet)
+- `main` and `compat/rails-8.1` use Rails `8.1.4` (latest published Rails release; no `8.2`/`9.0` exists yet)
 - `compat/rails-8.0` uses Rails `8.0.5.1`
 - `compat/rails-7.2` uses Rails `7.2.4`
 
