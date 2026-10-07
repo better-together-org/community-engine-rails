@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :better_together_content_html, class: 'BetterTogether::Content::Html' do
+    privacy { 'public' }
     content { "<div>#{Faker::Lorem.paragraph}</div>" }
 
     trait :with_heading do

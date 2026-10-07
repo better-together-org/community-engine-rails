@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :content_link, class: 'BetterTogether::Content::Link' do
+    privacy { 'public' }
     link_type { 'website' }
     sequence(:url) { |n| "https://example.test/#{n}" }
     scheme { 'https' }
