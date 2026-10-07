@@ -50,6 +50,15 @@ RSpec.describe 'BetterTogether::EventOccurrence' do
     end
   end
 
+  describe 'map' do
+    it 'does not create a map of its own (the parent event owns the map)' do
+      recurrence
+      occurrence = BetterTogether::EventOccurrence.create!(event:, occurrence_date: real_occurrence_date)
+
+      expect(occurrence.reload.map).to be_nil
+    end
+  end
+
   describe 'effective_* fallback and override behavior (AC-2.1, AC-2.2, AC-2.5)' do
     it 'falls back to the computed default when no override is set' do
       occurrence = BetterTogether::EventOccurrence.create!(event:, occurrence_date: real_occurrence_date)
