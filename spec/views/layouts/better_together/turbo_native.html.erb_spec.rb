@@ -32,7 +32,7 @@ RSpec.describe 'layouts/better_together/turbo_native' do
       csrf_meta_tags: '',
       csp_meta_tag: '',
       hreflang_links: '<link rel="alternate" hreflang="en" href="/en" />'.html_safe,
-      request: double(original_url: 'http://test.host/current')
+      request: double(original_url: 'http://test.host/current', path: '/current')
     )
     allow(view).to receive(:url_for).with(only_path: false).and_return('http://test.host/current')
     allow(view).to receive(:base_url).and_return('http://test.host')
