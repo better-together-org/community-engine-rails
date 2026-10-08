@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Print the spec files for one CI shard, balanced by recorded runtime.
+
+Usage: bin/ci-spec-shards INDEX TOTAL [--weights config/ci/spec_runtimes.json]
+
+INDEX is 1-based. Spec files are packed longest-first into TOTAL bins (deterministic for a given
+file list and weights file), so every shard gets a similar amount of work. Files missing from the
+weights file get the median weight. Regenerate the weights from a full run's JSON results with:
+
+  bin/ci-timing-summary --write-weights tmp/rspec_results.json > config/ci/spec_runtimes.json
+"""
+import glob
+import json
+import os
+import statistics
+import sys
+
+args = sys.argv[1:]
+weights_path = "config/ci/spec_runtimes.json"
+if "--weights" in args:
+    i = args.index("--weights")
+    weights_path = args[i + 1]
+    del args[i : i + 2]
+if len(args) != 2:
+    sys.exit(__doc__)
+index, total = int(args[0]), int(args[1])
+if not 1 <= index <= total:
+    sys.exit(f"INDEX must be between 1 and {total}")
+
+files = sorted(
+    f for f in glob.glob("spec/**/*_spec.rb", recursive=True)
+    if not f.startswith(("spec/dummy/", "spec/support/"))
+)
+weights = {}
+if os.path.exists(weights_path):
+    with open(weights_path) as handle:
+        weights = json.load(handle)
+default = statistics.median(weights.values()) if weights else 1.0
+
+bins = [[0.0, []] for _ in range(total)]
+for f in sorted(files, key=lambda f: (-weights.get(f, default), f)):
+    lightest = min(bins, key=lambda b: (b[0], len(b[1])))
+    lightest[0] += weights.get(f, default)
+    lightest[1].append(f)
+
+print(" ".join(sorted(bins[index - 1][1])))
+if os.environ.get("CI_SHARD_VERBOSE"):
+    for n, (load, members) in enumerate(bins, 1):
+        print(f"shard {n}: {len(members)} files, weight {load:.0f}s", file=sys.stderr)

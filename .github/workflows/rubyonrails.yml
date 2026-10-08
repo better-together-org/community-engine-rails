@@ -85,9 +85,15 @@ jobs:
           chmod +x scripts/validate_pr_evidence.sh
           scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
 
-  rspec:
-    name: rspec (3.4.10, ${{ needs.prepare.outputs.rails_version }})
+  rspec_shard:
+    name: rspec shard ${{ matrix.shard }}/${{ matrix.total }} (3.4.10, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
+    strategy:
+      # Let every shard finish so one failure still reports the rest of the suite.
+      fail-fast: false
+      matrix:
+        total: [4]
+        shard: [1, 2, 3, 4]
     # always() is required here: without it, GitHub Actions implicitly ANDs this
     # condition with success() across the whole needs chain, and pr_evidence is
     # *designed* to skip on push events -- silently skipping this job (and
@@ -103,6 +109,8 @@ jobs:
       SEARCH_BACKEND: "pg_search"
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
       WORKERS: 4
+      SHARD: ${{ matrix.shard }}
+      SHARDS: ${{ matrix.total }}
 
     services:
       postgres:
@@ -180,7 +188,11 @@ jobs:
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           mkdir -p tmp
-          bundle exec prspec spec --format json --out tmp/rspec_results.json || PRSPEC_EXIT=$?
+          # Spec files for this shard, balanced by recorded runtime (config/ci/spec_runtimes.json).
+          SHARD_FILES=$(python3 bin/ci-spec-shards "$SHARD" "$SHARDS")
+          echo "Shard $SHARD/$SHARDS: $(wc -w <<< "$SHARD_FILES") spec files"
+          # shellcheck disable=SC2086
+          bundle exec prspec $SHARD_FILES --format json --out "tmp/rspec_results_shard${SHARD}.json" || PRSPEC_EXIT=$?
           if [[ "${PRSPEC_EXIT:-0}" -ne 0 ]]; then
             FAILURES=0
             EXAMPLES=0
@@ -223,15 +235,16 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          name: coverage-report-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
+          include-hidden-files: true
 
       - name: Upload RSpec JSON results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rspec-results-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rspec-results-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: tmp/rspec_results*.json
           if-no-files-found: warn
 
@@ -239,8 +252,63 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rails-test-log-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          name: rails-test-log-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: spec/dummy/log/test.log
+          if-no-files-found: warn
+
+  rspec:
+    # Aggregate check: keeps the historical job name so tooling and humans still see one
+    # "rspec (3.4.10, <rails>)" result for the whole suite.
+    name: rspec (3.4.10, ${{ needs.prepare.outputs.rails_version }})
+    needs: [prepare, rspec_shard]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Require every shard to pass
+        run: |
+          if [[ "${{ needs.rspec_shard.result }}" != "success" ]]; then
+            echo "::error::rspec shards finished with result: ${{ needs.rspec_shard.result }}"
+            exit 1
+          fi
+
+      - name: Download shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: rspec-results-shard-*
+          path: tmp
+          merge-multiple: true
+
+      - name: Download shard coverage
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-report-shard-*
+          path: coverage-shards
+
+      - name: Check merged results and write timing summary
+        run: |
+          EXAMPLES=$(jq -s '[.[].summary.example_count // 0] | add' tmp/rspec_results_shard*.json)
+          FAILURES=$(jq -s '[.[].summary.failure_count // 0] | add' tmp/rspec_results_shard*.json)
+          echo "Merged: ${EXAMPLES} examples, ${FAILURES} failures across $(ls tmp/rspec_results_shard*.json | wc -l) shard files"
+          if [[ "${EXAMPLES}" -lt 8000 || "${FAILURES}" -gt 0 ]]; then
+            echo "::error::Expected at least 8000 examples and 0 failures (got ${EXAMPLES} examples, ${FAILURES} failures)"
+            exit 1
+          fi
+          python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Merge coverage
+        if: always()
+        run: |
+          python3 bin/ci-merge-coverage coverage $(find coverage-shards -name '.resultset.json') | tee -a "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Upload merged RSpec JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rspec-results-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          path: tmp/rspec_results*.json
           if-no-files-found: warn
 
       - name: Generate coverage badge
