@@ -8,7 +8,14 @@ require BetterTogether::Engine.root.join(
 RSpec.describe 'Backfill public privacy for content blocks on public pages migration' do # rubocop:disable RSpec/DescribeClass
   subject(:migration) { BackfillPublicPrivacyForContentBlocksOnPublicPages.new }
 
-  before { migration.verbose = false }
+  # Migration.verbose is process-global; restore it so later specs asserting on migration output still see it.
+  around do |example|
+    previous = ActiveRecord::Migration.verbose
+    migration.verbose = false
+    example.run
+  ensure
+    ActiveRecord::Migration.verbose = previous
+  end
 
   def block_on(page, privacy: 'private', visible: true)
     block = create(:better_together_content_rich_text)

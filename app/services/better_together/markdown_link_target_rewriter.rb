@@ -64,7 +64,7 @@ module BetterTogether
     end
 
     def platform_hostnames
-      return [] unless active_platform && BetterTogether::Platform.connection.data_source_exists?('better_together_platform_domains')
+      return [] unless active_platform && BetterTogether::Platform.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
 
       Current.platform_domain_hostnames ||=
         active_platform.platform_domains.active.pluck(:hostname).map { |hostname| normalized_host(hostname) }

@@ -72,13 +72,17 @@ module BetterTogether
           return true if planted?(category_key) # idempotent — a raw repeat POST bypasses the UI's disabled button
           return false if missing_prerequisites(category_key).any?
 
-          without_auto_geocoding { ::BetterTogether::GeographyBuilder.public_send(entry[:builder_method]) }
-          sync_dependent_joins!
+          ::BetterTogether::PublicVisibilityGate.as_system do
+            without_auto_geocoding { ::BetterTogether::GeographyBuilder.public_send(entry[:builder_method]) }
+            sync_dependent_joins!
+          end
           true
         end
 
         def plant_all
-          without_auto_geocoding { ::BetterTogether::GeographyBuilder.build_if_missing }
+          ::BetterTogether::PublicVisibilityGate.as_system do
+            without_auto_geocoding { ::BetterTogether::GeographyBuilder.build_if_missing }
+          end
           true
         end
         # rubocop:enable Naming/PredicateMethod

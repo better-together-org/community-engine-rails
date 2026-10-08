@@ -13,6 +13,12 @@ module BetterTogether
     end
 
     class << self
+      # Seeding and builders are system operations, not a person publishing content, so
+      # they run without an acting agent (the gate allows an agent-less write).
+      def as_system(&)
+        ::Current.set(agent: nil, &)
+      end
+
       def allow!(record:, actor:, target_privacy: nil, target_published_at: nil, target_network_visibility: nil)
         result = evaluate(record:, actor:, target_privacy:, target_published_at:, target_network_visibility:)
         return result if result.allowed?

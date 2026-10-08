@@ -1,7 +1,6 @@
 GIT
   remote: https://github.com/better-together-org/pundit-resources.git
-  revision: 1b8c943f2692b62513ea289a45e89d2458770634
-  branch: fix/rails-8-1-upper-bound-20260320
+  revision: 99c4f97db159c8cff48e961eb20d2fe8dd160ce1
   specs:
     pundit-resources (1.1.6)
       activesupport
@@ -11,8 +10,7 @@ GIT
 
 GIT
   remote: https://github.com/better-together-org/storext.git
-  revision: 914c114013a545169c402a70a093851f02e26dc0
-  branch: fix/rails-8-1-upper-bound-20260320
+  revision: 83533ff3e5fad660970d309cd168b6171dbd9fed
   specs:
     storext (3.3.1)
       activerecord (>= 4.0, < 8.2)

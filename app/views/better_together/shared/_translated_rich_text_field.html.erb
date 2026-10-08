@@ -28,6 +28,7 @@
           form.rich_text_area locale_attribute,
             class: "form-control#{' is-invalid' if model.errors[locale_attribute].any?}",
             'data-better_together-translation-target' => 'trix',
+            'aria-label' => "#{model.class.human_attribute_name(attribute)} (#{locale.to_s.upcase})",
             id: "#{dom_id(model)}-#{locale_attribute}"
         %>
         <% if model.errors[locale_attribute].any? %>

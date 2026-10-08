@@ -106,7 +106,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:latest
+        image: postgis/postgis:17-3.5
         ports: ["5432:5432"]
         env:
           POSTGRES_DB: rails_test
@@ -130,8 +130,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ruby-vips loads libvips through FFI, so only the runtime library is needed
+      # (libvips-dev pulled in hundreds of MB of headers and took 4-5 minutes).
       - name: Install libvips
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libvips-dev
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          $APT update
+          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+
+      # Test data is disposable: trade durability for speed (all three settings reload on SIGHUP).
+      - name: Tune Postgres for tests
+        run: |
+          PGPASSWORD=password psql -h localhost -U rails -d postgres \
+            -c "ALTER SYSTEM SET fsync = off" \
+            -c "ALTER SYSTEM SET synchronous_commit = off" \
+            -c "ALTER SYSTEM SET full_page_writes = off" \
+            -c "SELECT pg_reload_conf()"
 
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
@@ -166,16 +183,30 @@ jobs:
           bundle exec prspec spec --format json --out tmp/rspec_results.json || PRSPEC_EXIT=$?
           if [[ "${PRSPEC_EXIT:-0}" -ne 0 ]]; then
             FAILURES=0
+            EXAMPLES=0
+            LOAD_ERRORS=0
             JSON_FOUND=false
             for f in tmp/rspec_results*.json; do
               [[ -f "$f" ]] || continue
               JSON_FOUND=true
-              COUNT=$(jq '.summary.failure_count // 0' "$f" 2>/dev/null || echo 0)
-              FAILURES=$((FAILURES + COUNT))
+              FAILURES=$((FAILURES + $(jq '.summary.failure_count // 0' "$f" 2>/dev/null || echo 0)))
+              EXAMPLES=$((EXAMPLES + $(jq '.summary.example_count // 0' "$f" 2>/dev/null || echo 0)))
+              LOAD_ERRORS=$((LOAD_ERRORS + $(jq '.summary.errors_outside_of_examples_count // 0' "$f" 2>/dev/null || echo 0)))
+              {
+                echo "### $f"
+                jq -r '.summary_line' "$f" 2>/dev/null
+                jq -r '.examples[] | select(.status == "failed") | "- \(.file_path):\(.line_number) \(.full_description | .[0:100]) :: \(.exception.message | split("\n")[0] | .[0:140])"' "$f" 2>/dev/null
+                jq -r '.messages[]? | select(test("error occurred")) | "- load error: \(split("\n")[1:4] | join(" "))"' "$f" 2>/dev/null
+              } >> "$GITHUB_STEP_SUMMARY"
             done
+            # A run that executed no examples, or hit load errors, is a hard failure even
+            # when failure_count is 0 (e.g. a missing system library aborts spec loading).
             if [[ "${JSON_FOUND}" == "false" ]]; then
               echo "::error::prspec exited ${PRSPEC_EXIT} and no JSON results found (hard crash)"
               exit "${PRSPEC_EXIT}"
+            elif [[ "${LOAD_ERRORS}" -gt 0 || "${EXAMPLES}" -eq 0 ]]; then
+              echo "::error::RSpec ran ${EXAMPLES} example(s) with ${LOAD_ERRORS} error(s) outside of examples"
+              exit 1
             elif [[ "${FAILURES}" -gt 0 ]]; then
               echo "::error::RSpec: ${FAILURES} spec failure(s)"
               exit 1
@@ -183,6 +214,10 @@ jobs:
               echo "prspec exited ${PRSPEC_EXIT} with 0 spec failures (parallel DB teardown race — harmless)"
             fi
           fi
+
+      - name: RSpec timing summary
+        if: always()
+        run: python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Upload coverage report
         if: always()
