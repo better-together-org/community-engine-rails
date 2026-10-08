@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe BetterTogether::Geography::SettlementPolicy, type: :policy do
   let(:user) { create(:better_together_user) }
+  let(:manager) { create(:better_together_user, :platform_manager) }
   let(:settlement) { create(:geography_settlement, protected: false) }
   let(:protected_settlement) { create(:geography_settlement, :protected) }
 
@@ -12,8 +13,8 @@ RSpec.describe BetterTogether::Geography::SettlementPolicy, type: :policy do
       expect(described_class.new(user, settlement).index?).to be true
     end
 
-    it 'denies guest' do
-      expect(described_class.new(nil, settlement).index?).to be false
+    it 'allows guest (settlements are publicly listed)' do
+      expect(described_class.new(nil, settlement).index?).to be true
     end
   end
 
@@ -24,12 +25,12 @@ RSpec.describe BetterTogether::Geography::SettlementPolicy, type: :policy do
   end
 
   describe '#update?' do
-    it 'allows authenticated user for an unprotected settlement' do
-      expect(described_class.new(user, settlement).update?).to be true
+    it 'allows a platform manager for an unprotected settlement' do
+      expect(described_class.new(manager, settlement).update?).to be true
     end
 
-    it 'denies authenticated user for a protected settlement' do
-      expect(described_class.new(user, protected_settlement).update?).to be false
+    it 'denies an authenticated user without manage_platform' do
+      expect(described_class.new(user, settlement).update?).to be false
     end
 
     it 'denies guest' do
@@ -38,12 +39,16 @@ RSpec.describe BetterTogether::Geography::SettlementPolicy, type: :policy do
   end
 
   describe '#destroy?' do
-    it 'allows authenticated user for an unprotected settlement' do
-      expect(described_class.new(user, settlement).destroy?).to be true
+    it 'allows a platform manager for an unprotected settlement' do
+      expect(described_class.new(manager, settlement).destroy?).to be true
     end
 
-    it 'denies authenticated user for a protected settlement' do
-      expect(described_class.new(user, protected_settlement).destroy?).to be false
+    it 'denies a platform manager for a protected settlement' do
+      expect(described_class.new(manager, protected_settlement).destroy?).to be false
+    end
+
+    it 'denies an authenticated user without manage_platform' do
+      expect(described_class.new(user, settlement).destroy?).to be false
     end
   end
 end

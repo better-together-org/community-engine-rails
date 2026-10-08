@@ -154,13 +154,13 @@ module BetterTogether
     end
 
     def primary_platform_domain
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return unless self.class.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
 
       platform_domains.where(primary_flag: true).active.first
     end
 
     def share_platform_domain
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return unless self.class.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
 
       platform_domains.share_domain_active.first
     end

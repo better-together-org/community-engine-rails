@@ -97,4 +97,11 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
 
     expect(audit.platform_id).to eq(federated_platform.id)
   end
+
+  it 'surfaces the original error rather than masking it with failure bookkeeping' do
+    executor = described_class.new(person:, person_deletion_request: deletion_request, reviewed_by: reviewer)
+    allow(executor).to receive(:execute_inventory).and_raise(RuntimeError, 'inventory exploded')
+
+    expect { executor.call }.to raise_error(RuntimeError, 'inventory exploded')
+  end
 end

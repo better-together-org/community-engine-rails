@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+"""Print a markdown timing summary from RSpec JSON results (tmp/rspec_results*.json).
+
+Usage: bin/ci-timing-summary [results.json ...]   (default: tmp/rspec_results*.json)
+Shows CPU time by spec directory, the per-example floor (5th percentile) by directory,
+and the slowest examples, so runtime regressions are visible in the CI job summary.
+"""
+import collections
+import glob
+import json
+import statistics
+import sys
+
+paths = sys.argv[1:] or sorted(glob.glob("tmp/rspec_results*.json"))
+examples = []
+for path in paths:
+    with open(path) as handle:
+        examples.extend(json.load(handle).get("examples", []))
+
+if not examples:
+    print("No examples found in: " + ", ".join(paths))
+    sys.exit(0)
+
+total = sum(e["run_time"] for e in examples)
+by_dir = collections.defaultdict(list)
+for e in examples:
+    parts = e["file_path"].split("/")
+    by_dir[parts[2] if e["file_path"].startswith("./spec/") and len(parts) > 3 else "gems"].append(e["run_time"])
+
+print("### RSpec timing")
+print(f"{len(examples)} examples, {total:.0f}s total example time, median {statistics.median(e['run_time'] for e in examples):.2f}s\n")
+print("| Directory | Examples | CPU s | Share | Median s | Floor (p05) s |")
+print("|---|---|---|---|---|---|")
+for name, times in sorted(by_dir.items(), key=lambda kv: -sum(kv[1]))[:12]:
+    times.sort()
+    print(f"| {name} | {len(times)} | {sum(times):.0f} | {100 * sum(times) / total:.0f}% | "
+          f"{statistics.median(times):.2f} | {times[int(0.05 * len(times))]:.2f} |")
+
+print("\n| Slowest examples | s |")
+print("|---|---|")
+for e in sorted(examples, key=lambda e: -e["run_time"])[:25]:
+    print(f"| `{e['file_path'].removeprefix('./')}:{e['line_number']}` {e['full_description'][:70]} | {e['run_time']:.1f} |")

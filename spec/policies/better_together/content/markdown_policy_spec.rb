@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   let(:manager_user) { create(:better_together_user, :platform_steward) }
   let(:normal_user) { create(:better_together_user) }
-  let(:markdown_block) { create(:content_markdown) }
+  let(:markdown_block) { create(:content_markdown, privacy: 'private') }
 
   describe '#index?' do
     subject { described_class.new(user, markdown_block).index? }
@@ -150,8 +150,8 @@ RSpec.describe BetterTogether::Content::MarkdownPolicy, type: :policy do
   end
 
   describe 'Scope' do
-    let!(:markdown_block1) { create(:content_markdown) } # rubocop:todo RSpec/IndexedLet
-    let!(:markdown_block2) { create(:content_markdown) } # rubocop:todo RSpec/IndexedLet
+    let!(:markdown_block1) { create(:content_markdown, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
+    let!(:markdown_block2) { create(:content_markdown, privacy: 'private') } # rubocop:todo RSpec/IndexedLet
 
     context 'when user is a platform manager' do
       let(:user) { manager_user }
