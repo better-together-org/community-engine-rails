@@ -33,3 +33,16 @@ export REDIS_URL="${REDIS_URL:-redis://redis:6379}"
 export RACK_ATTACK_REDIS_URL="${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack:6379}"
 export RACK_ATTACK_REDIS_POOL_SIZE="${RACK_ATTACK_REDIS_POOL_SIZE:-5}"
 export RACK_ATTACK_REDIS_POOL_TIMEOUT="${RACK_ATTACK_REDIS_POOL_TIMEOUT:-5}"
+
+# prspec worker count. Default: two thirds of the host cores, between 4 and 8 (a 12-core machine
+# gets 8, which measured fastest; more workers than that oversubscribes CPU and Chrome). Override
+# with WORKERS=N. Databases for N workers are created on demand by bin/dc-prepare-worktree-test-dbs.
+if [[ -z "${WORKERS:-}" ]]; then
+  detected_cores="$(nproc 2>/dev/null || getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)"
+  default_workers=$(( detected_cores * 2 / 3 ))
+  (( default_workers < 4 )) && default_workers=4
+  (( default_workers > 8 )) && default_workers=8
+  export WORKERS="$default_workers"
+else
+  export WORKERS
+fi

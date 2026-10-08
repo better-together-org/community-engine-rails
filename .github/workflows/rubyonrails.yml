@@ -298,10 +298,21 @@ jobs:
           fi
           python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
 
+      - name: Set up Ruby for coverage merge
+        if: always()
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.10"
+
       - name: Merge coverage
         if: always()
         run: |
-          python3 bin/ci-merge-coverage coverage $(find coverage-shards -name '.resultset.json') | tee -a "$GITHUB_STEP_SUMMARY" || true
+          # Same SimpleCov version as the suite, so collate understands the shard resultsets.
+          SIMPLECOV_VERSION=$(grep -oP '^    simplecov \(\K[0-9.]+' Gemfile.lock | head -1)
+          gem install simplecov --version "${SIMPLECOV_VERSION}" --no-document
+          ruby bin/ci-collate-coverage coverage-shards coverage
+          COVERAGE=$(jq -r '.result.line // .result.covered_percent // empty' coverage/.last_run.json)
+          echo "Merged line coverage: ${COVERAGE}%" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Upload merged RSpec JSON results
         if: always()
@@ -315,7 +326,12 @@ jobs:
         if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
         run: |
-          COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
+          # SimpleCov >= 0.18 writes .result.line; older versions wrote .result.covered_percent.
+          COVERAGE=$(jq -r '.result.line // .result.covered_percent // empty' coverage/.last_run.json)
+          if [[ ! "${COVERAGE}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "::error::Could not read a coverage percentage from coverage/.last_run.json"
+            exit 1
+          fi
           COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" "$COVERAGE")
           npx badgen-cli --subject coverage --status "${COVERAGE}%" --color "$COLOR" > coverage.svg
 

@@ -23,6 +23,7 @@ require 'coveralls'
 require 'rspec/rebound'
 require 'webmock/rspec'
 require 'parallel_rspec'
+require_relative 'simplecov_filters'
 
 # Disable real external HTTP connections in tests but allow localhost so
 # Capybara drivers (cuprite/ferrum/selenium) can communicate with the app
@@ -56,7 +57,9 @@ Capybara.asset_host = ENV.fetch('APP_HOST', 'http://localhost:3000')
 
 Coveralls.wear!('rails')
 
-formatters = [Coveralls::SimpleCov::Formatter]
+# CI shards each cover only part of the suite; uploading a partial figure to Coveralls would report
+# the wrong coverage, so shards skip it (the aggregate job merges their results instead).
+formatters = ENV['SHARD'].to_s.empty? ? [Coveralls::SimpleCov::Formatter] : []
 formatters.unshift(SimpleCov::Formatter::HTMLFormatter) unless ENV['SIMPLECOV_NO_HTML'] == '1'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(formatters)
 
@@ -67,25 +70,7 @@ simplecov_start = lambda do |worker_num = nil|
   SimpleCov.command_name worker_num ? "RSpec:Worker#{worker_num}" : 'RSpec'
 
   SimpleCov.start 'rails' do
-    add_filter '/app/assets'
-    add_filter '/app/javascript'
-    add_filter '/app/views'
-    add_filter '/bin/'
-    add_filter '/config/'
-    add_filter '/coverage/'
-    add_filter '/db/'
-    add_filter '/deploy/'
-    add_filter '/docker/'
-    add_filter '/docs/'
-    add_filter '/log/'
-    add_filter '/node_modules/'
-    add_filter '/public/'
-    add_filter '/script/'
-    add_filter '/scripts/'
-    add_filter '/spec/' # for rspec
-    add_filter '/swagger/'
-    add_filter '/tmp/'
-    add_filter '/vendor/'
+    SIMPLECOV_FILTERS.each { |path| add_filter path }
 
     # Architectural coverage groups
     add_group 'Builders', 'app/builders'
