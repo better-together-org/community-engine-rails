@@ -86,7 +86,8 @@ module BetterTogether
         rounded: rounded,
         style: chosen_style,
         tooltip: tooltip_text,
-        aria_label: t('better_together.shared.event_status_level', status: event_status_label)
+        aria_label: t('better_together.shared.event_status_level', status: event_status_label),
+        extra_class: 'event-status-badge'
       )
     end
     # rubocop:enable Metrics/MethodLength

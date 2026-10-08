@@ -385,6 +385,10 @@ RSpec.configure do |config|
   #   bundle exec rspec --tag quarantine
   config.filter_run_excluding :quarantine
 
+  # Documentation screenshot specs only generate assets on demand (RUN_DOCS_SCREENSHOTS=1).
+  # Excluding them avoids running every global hook (host setup, login) just to hit `skip`.
+  config.filter_run_excluding :docs_screenshot unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
+
   # show retry status in spec process
   config.verbose_retry = true
   # show exception that triggers a retry if verbose_retry is set to true

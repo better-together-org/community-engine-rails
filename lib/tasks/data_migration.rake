@@ -30,7 +30,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
         table_name = model.table_name
 
         # 2) Change the default for the `privacy` column on that table:
-        ActiveRecord::Base.connection.change_column_default(table_name, :privacy, default_privacy)
+        ActiveRecord::Base.with_connection { |conn| conn.change_column_default(table_name, :privacy, default_privacy) }
 
         puts "→ #{model.name} (#{table_name}).privacy default set to #{default_privacy.inspect}"
       end
@@ -113,7 +113,7 @@ namespace :better_together do # rubocop:todo Metrics/BlockLength
     end
     desc 'Backfill authorships for existing pages based on creator_id'
     task backfill_page_authorships_for_creator: :environment do
-      unless ActiveRecord::Base.connection.column_exists?(:better_together_pages, :creator_id)
+      unless ActiveRecord::Base.with_connection { |conn| conn.column_exists?(:better_together_pages, :creator_id) }
         puts 'Column :creator_id does not exist on better_together_pages. Skipping.'
         next
       end
