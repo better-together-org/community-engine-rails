@@ -68,3 +68,21 @@ Empty request example floor: 1.8 s to 0.02 s.
 - FactoryProf shows `better_together_event`, `better_together_user` and `better_together_community`
   at 50-120 ms per `create`; each pulls in a primary community, calendar, map and contact detail.
 - Do not plant the full geography dataset unless the example is about that dataset.
+
+## CI sharding
+
+The `rspec` workflow job is split into 4 shard jobs (`rspec shard N/4`), each with its own
+Postgres/Redis and 4 workers, plus an aggregate `rspec (3.4.10, <rails>)` job that requires every
+shard, checks the merged example count and failures, merges SimpleCov results and publishes the
+merged timing summary. Shards are balanced by recorded runtime, not file count:
+
+```bash
+bin/ci-spec-shards 2 4                      # spec files for shard 2 of 4
+CI_SHARD_VERBOSE=1 bin/ci-spec-shards 1 4   # also prints each shard's weight to stderr
+# Rebalance after a big change (use a full run's JSON, for example the CI artifact):
+bin/ci-timing-summary --write-weights tmp/rspec_results.json > config/ci/spec_runtimes.json
+```
+
+Regenerate `config/ci/spec_runtimes.json` when a shard's wall time drifts more than about 25%
+from the others (the per-shard job summaries show their timings). Files missing from the weights
+file get the median weight.
