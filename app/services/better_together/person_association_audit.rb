@@ -84,7 +84,7 @@ module BetterTogether
     end
 
     def foreign_keys_for(klass)
-      klass.connection.foreign_keys(klass.table_name)
+      klass.with_connection { |conn| conn.foreign_keys(klass.table_name) }
     rescue StandardError
       []
     end
