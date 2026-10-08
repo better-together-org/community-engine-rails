@@ -332,11 +332,13 @@ module AutomaticTestConfiguration # :nodoc:
         example.example_group.parent_groups.map(&:description)
       ].flatten.compact.join(' ')
 
-      # Keep response nil for Example Automatic Configuration showcase; otherwise ensure route constraints by HTTP login
-      if full_description.include?('Example Automatic Configuration') && respond_to?(:sign_in)
-        sign_in user
-      else
+      # Warden/Devise `sign_in` authenticates without the sign-in POST plus the page render that
+      # follow_redirect! triggered (about 28% of request-spec time). Specs that need the real
+      # session/CSRF flow opt back in with :real_login.
+      if example.metadata[:real_login] || !respond_to?(:sign_in)
         login(user.email, 'SecureTest123!@#')
+      else
+        sign_in user
       end
     end
   end
