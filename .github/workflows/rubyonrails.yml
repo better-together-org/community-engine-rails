@@ -106,7 +106,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:latest
+        image: postgis/postgis:17-3.5
         ports: ["5432:5432"]
         env:
           POSTGRES_DB: rails_test
@@ -130,13 +130,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ruby-vips loads libvips through FFI, so only the runtime library is needed
+      # (libvips-dev pulled in hundreds of MB of headers and took 4-5 minutes).
       - name: Install libvips
         timeout-minutes: 10
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3 update
-          sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3 install -y --no-install-recommends libvips-dev
+          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          $APT update
+          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+
+      # Test data is disposable: trade durability for speed (all three settings reload on SIGHUP).
+      - name: Tune Postgres for tests
+        run: |
+          PGPASSWORD=password psql -h localhost -U rails -d postgres \
+            -c "ALTER SYSTEM SET fsync = off" \
+            -c "ALTER SYSTEM SET synchronous_commit = off" \
+            -c "ALTER SYSTEM SET full_page_writes = off" \
+            -c "SELECT pg_reload_conf()"
 
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
@@ -202,6 +214,10 @@ jobs:
               echo "prspec exited ${PRSPEC_EXIT} with 0 spec failures (parallel DB teardown race — harmless)"
             fi
           fi
+
+      - name: RSpec timing summary
+        if: always()
+        run: python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Upload coverage report
         if: always()

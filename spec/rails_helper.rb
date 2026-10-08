@@ -232,29 +232,9 @@ RSpec.configure do |config|
         :transaction
       end
 
-    # Seeded RBAC rows belong to the host platform; if a prior example left them on another
-    # (or no) platform, platform-scoped role/permission lists come back empty for the rest of
-    # the worker's run. Heal before DatabaseCleaner.start so the fix is not rolled back.
-    if (host_platform = BetterTogether::Platform.find_by(host: true))
-      [BetterTogether::Role, BetterTogether::ResourcePermission].each do |model|
-        stale = model.where(protected: true).merge(model.where(platform_id: nil).or(model.where.not(platform_id: host_platform.id)))
-        stale.update_all(platform_id: host_platform.id) if stale.exists? # rubocop:disable Rails/SkipsModelValidations
-      end
-    end
-
-    DatabaseCleaner.start
-
-    # Clear Rails cache to prevent permission/data pollution between parallel workers
-    # This is critical for RBAC specs that cache permission checks for 12 hours
-    Rails.cache.clear
-
-    # Re-seed essential data if a prior :js/:feature/:system example's :deletion
-    # cleanup wiped it. This must run in a `before` hook, AFTER DatabaseCleaner.start
-    # above: RSpec's `after` hooks run in reverse registration order, so anything
-    # restored from an `after` hook here would immediately be wiped again by the
-    # DatabaseCleaner.clean `after` hook below, since that hook is registered
-    # earlier and therefore runs later. Checking at the start of the next example
-    # instead avoids that ordering trap entirely.
+    # Re-seed essential data if a prior :js/:feature/:system example's :deletion cleanup wiped
+    # it. Runs BEFORE DatabaseCleaner.start so the rebuild commits once; inside the example's
+    # transaction it was rolled back and every later example rebuilt it (about 90 inserts each).
     unless BetterTogether::Role.exists?
       Rails.logger.debug '🔄 Re-seeding essential data after a prior :js/:feature/:system test'
       BetterTogether::AccessControlBuilder.build(clear: false)
@@ -276,6 +256,22 @@ RSpec.configure do |config|
       Rails.logger.debug '🔄 Re-linking agreement pages after a prior :js/:feature/:system test'
       BetterTogether::AgreementBuilder.build(clear: false)
     end
+
+    # Seeded RBAC rows belong to the host platform; if a prior example left them on another
+    # (or no) platform, platform-scoped role/permission lists come back empty for the rest of
+    # the worker's run. Heal before DatabaseCleaner.start so the fix is not rolled back.
+    if (host_platform = BetterTogether::Platform.find_by(host: true))
+      [BetterTogether::Role, BetterTogether::ResourcePermission].each do |model|
+        stale = model.where(protected: true).merge(model.where(platform_id: nil).or(model.where.not(platform_id: host_platform.id)))
+        stale.update_all(platform_id: host_platform.id) if stale.exists? # rubocop:disable Rails/SkipsModelValidations
+      end
+    end
+
+    DatabaseCleaner.start
+
+    # Clear Rails cache to prevent permission/data pollution between parallel workers
+    # This is critical for RBAC specs that cache permission checks for 12 hours
+    Rails.cache.clear
   end
 
   config.after do |example|
