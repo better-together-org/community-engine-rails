@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::GeographyBuilder, type: :model do
+RSpec.describe BetterTogether::GeographyBuilder, :reduced_geography, type: :model do
   describe '.clear_existing' do
     before do
       # create a continent to ensure delete_all works
@@ -69,7 +69,7 @@ RSpec.describe BetterTogether::GeographyBuilder, type: :model do
   describe '.build_if_missing' do
     before { described_class.clear_existing }
 
-    it 'seeds geography data when none exists yet' do
+    it 'seeds geography data when none exists yet', :full_geography do
       expect do
         described_class.build_if_missing
       end.to change(described_class, :seeded?).from(false).to(true)

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'BetterTogether::SeedCatalog' do
+RSpec.describe 'BetterTogether::SeedCatalog', :reduced_geography do
   include ActiveJob::TestHelper
 
   let(:locale) { I18n.default_locale }
