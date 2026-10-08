@@ -7,20 +7,23 @@ development machine (2026-10-08) running the full suite (9,532 examples) in Dock
 
 | Workers | Full suite (`Finished in`) | Notes |
 |---|---|---|
-| 4 (default) | 14 min 46 s | |
-| 8 | **9 min 16 s** | best on 12 cores with other work running |
+| 4 | 14 min 46 s | CI setting |
+| 8 (bts-0 default) | **9 min 16 s** | best on 12 cores with other work running |
 | 10 | 10 min 17 s | load average peaked near 37; Chrome-heavy specs oversubscribe the host |
 
 (Before the 2026-10 speed fixes the same suite took about 37 min with 4 workers.)
 
+The worker count defaults to two thirds of the host cores, between 4 and 8 (`bin/docker-compose-env.sh`), so
+a 12-core machine such as bts-0 runs 8 workers with no setup. Databases for the chosen count are created on
+demand the first time you run `bin/dc-run ... prspec` (`bin/dc-prepare-worktree-test-dbs`). Override with
+`WORKERS=N`; more workers than cores slows the run down.
+
 ```bash
-WORKERS=8 bin/parallel-setup      # creates the worker databases for 8 workers (once per worker count)
-WORKERS=8 bin/dc-ci               # full suite
-WORKERS=8 bin/dc-run bundle exec prspec spec/requests
+bin/dc-ci                              # full suite, default worker count
+WORKERS=6 bin/dc-run bundle exec prspec spec/requests
 ```
 
-`WORKERS` is passed into the container through `docker-compose.yml` (default 4). Pick a count of
-roughly two thirds of your cores; more workers than cores slows the run down.
+CI sets `WORKERS: 4` explicitly (4 vCPU runners).
 
 ## Profiling tools
 
