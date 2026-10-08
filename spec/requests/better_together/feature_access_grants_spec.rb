@@ -133,7 +133,7 @@ RSpec.describe 'BetterTogether::FeatureAccessGrantsController', :as_platform_man
       get edit_platform_feature_access_grant_path(platform, grant, locale:)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(grant.person.select_option_title)
+      expect_html_content(grant.person.select_option_title)
     end
   end
 

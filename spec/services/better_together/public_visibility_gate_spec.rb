@@ -70,4 +70,15 @@ RSpec.describe BetterTogether::PublicVisibilityGate do
       expect(result.allowed?).to be(true)
     end
   end
+
+  describe '.as_system' do
+    it 'lets a public record validate when the current agent has not accepted the agreement' do
+      Current.set(agent: person) do
+        expect(page).not_to be_valid
+
+        described_class.as_system { expect(page).to be_valid }
+        expect(Current.agent).to eq(person)
+      end
+    end
+  end
 end

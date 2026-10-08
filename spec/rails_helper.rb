@@ -232,6 +232,16 @@ RSpec.configure do |config|
         :transaction
       end
 
+    # Seeded RBAC rows belong to the host platform; if a prior example left them on another
+    # (or no) platform, platform-scoped role/permission lists come back empty for the rest of
+    # the worker's run. Heal before DatabaseCleaner.start so the fix is not rolled back.
+    if (host_platform = BetterTogether::Platform.find_by(host: true))
+      [BetterTogether::Role, BetterTogether::ResourcePermission].each do |model|
+        stale = model.where(protected: true).merge(model.where(platform_id: nil).or(model.where.not(platform_id: host_platform.id)))
+        stale.update_all(platform_id: host_platform.id) if stale.exists? # rubocop:disable Rails/SkipsModelValidations
+      end
+    end
+
     DatabaseCleaner.start
 
     # Clear Rails cache to prevent permission/data pollution between parallel workers
@@ -268,7 +278,12 @@ RSpec.configure do |config|
     end
   end
 
-  config.after do
+  config.after do |example|
+    # Capybara's own reset hook is registered earlier, so it runs after this one. Let the app
+    # server finish in-flight requests first, or the table-wide DISABLE TRIGGER of the
+    # :deletion cleanup deadlocks with their writes (PG::TRDeadlockDetected).
+    Capybara.reset_sessions! if example.metadata[:js] || example.metadata[:feature] || example.metadata[:system]
+
     DatabaseCleaner.clean
 
     # Clear cache again after each test to ensure clean state

@@ -12,6 +12,8 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
   before do
     visit better_together.destroy_user_session_path(locale: locale)
     capybara_login_as_platform_manager
+    # The form falls back to today's weekday in the user's zone; pin it to Time.zone (the platform zone is random).
+    manager_person.update!(time_zone: Time.zone.name)
     BetterTogether::AgreementParticipant.find_or_create_by!(
       participant: manager_person,
       agreement: content_publishing_agreement

@@ -11,7 +11,14 @@ RSpec.describe 'Repair local content scoped to external platforms migration' do 
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host, :public) }
   let(:external_platform) { create(:better_together_platform, :external) }
 
-  before { migration.verbose = false }
+  # Migration.verbose is process-global; restore it so later specs asserting on migration output still see it.
+  around do |example|
+    previous = ActiveRecord::Migration.verbose
+    migration.verbose = false
+    example.run
+  ensure
+    ActiveRecord::Migration.verbose = previous
+  end
 
   def scope_to(record, platform)
     record.update_column(:platform_id, platform.id)
