@@ -387,6 +387,13 @@ RSpec.configure do |config|
     ex.run_with_retry retry: 3
   end
 
+  # Cap each attempt (inside the retries above). A stalled database call or browser otherwise holds a
+  # worker for minutes (a single feature example once spent 300s in a transaction ROLLBACK on CI);
+  # failing the attempt lets the retry run. Normal feature examples take under a minute.
+  config.around :each, type: :feature do |ex|
+    Timeout.timeout(Integer(ENV.fetch('FEATURE_SPEC_ATTEMPT_TIMEOUT', 180))) { ex.run }
+  end
+
   # Use Capybara’s DSL in feature specs
   config.include Capybara::DSL
 
