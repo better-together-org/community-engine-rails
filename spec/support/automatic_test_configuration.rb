@@ -327,11 +327,6 @@ module AutomaticTestConfiguration # :nodoc:
                find_or_create_test_user('user@example.test', 'SecureTest123!@#', :user)
              end
 
-      full_description = [
-        example.example_group.description,
-        example.example_group.parent_groups.map(&:description)
-      ].flatten.compact.join(' ')
-
       # Warden/Devise `sign_in` authenticates without the sign-in POST plus the page render that
       # follow_redirect! triggered (about 28% of request-spec time). Specs that need the real
       # session/CSRF flow opt back in with :real_login.
