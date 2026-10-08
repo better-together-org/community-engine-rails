@@ -255,6 +255,10 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
     click_button 'Add exception date'
     expect(page).to have_css('#exception-dates-container .exception-date-row', count: 1, wait: 5)
 
+    # The preview panel is dimmed (opacity-50, which fails contrast) while its fetch is in flight.
+    expect(page).to have_css('#recurrence-preview-occurrences li', minimum: 1, wait: 5)
+    expect(page).to have_no_css('#event-recurrence .opacity-50', wait: 5)
+
     expect(page).to be_axe_clean
       .within('#event-recurrence')
       .according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
