@@ -340,10 +340,11 @@ module BetterTogether
     # This allows for cleaner calls to named routes without prefixing with 'better_together.'
     def method_missing(method, *args, &) # rubocop:todo Metrics/MethodLength
       if better_together_url_helper?(method)
+        url_options_with_locale = engine_url_options_with_locale
         if args.any? && args.first.is_a?(Hash)
-          args = [args.first.merge(default_url_options)]
+          args = [args.first.merge(url_options_with_locale)]
         else
-          args << default_url_options
+          args << url_options_with_locale
         end
         BetterTogether::Engine.routes.url_helpers.public_send(method, *args, &)
       elsif main_app_url_helper?(method)
@@ -351,6 +352,13 @@ module BetterTogether
       else
         super
       end
+    end
+
+    # In host-app controllers the view class's own default_url_options (from the
+    # main app routes) can shadow this module's, dropping :locale. Engine routes
+    # are /:locale/..., so a record passed positionally would then be read as the locale.
+    def engine_url_options_with_locale
+      default_url_options.reverse_merge(locale: I18n.locale)
     end
 
     def respond_to_missing?(method, include_private = false)

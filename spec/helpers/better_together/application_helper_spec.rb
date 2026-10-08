@@ -94,6 +94,22 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 
+  describe 'engine URL helpers via method_missing' do
+    let(:community) { create(:better_together_community) }
+
+    it 'adds the current locale when the view default_url_options omit it' do
+      allow(helper).to receive(:default_url_options).and_return({})
+
+      expect(helper.community_path(community)).to eq("/#{I18n.locale}/c/#{community.to_param}")
+    end
+
+    it 'keeps an explicit locale option from default_url_options' do
+      allow(helper).to receive(:default_url_options).and_return({ locale: :fr })
+
+      expect(helper.community_path(community)).to eq("/fr/c/#{community.to_param}")
+    end
+  end
+
   it 'renders registered provider fragments in order' do
     BetterTogether.register_head_tag_provider(:first, ->(_view_context) { '<meta name="first" />'.html_safe })
     BetterTogether.register_head_tag_provider(:second, ->(_view_context) { '<script src="/test.js"></script>'.html_safe })
