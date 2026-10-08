@@ -17,6 +17,26 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
     expect(backend.audit_capabilities).to eq(store_size: false, existence_checks: false)
   end
 
+  it 'selects the pg_search rank so results are ordered by score, not id' do
+    low = instance_double(Struct.new(:id, :pg_search_rank), id: 1, pg_search_rank: 0.1)
+    high = instance_double(Struct.new(:id, :pg_search_rank), id: 2, pg_search_rank: 0.9)
+    ranked = instance_double(ActiveRecord::Relation)
+    relation = double('relation', with_pg_search_rank: ranked) # rubocop:disable RSpec/VerifiedDoubles
+    entry = instance_double(
+      BetterTogether::Search::Registry::Entry,
+      pg_search_enabled?: true,
+      search_relation: relation
+    )
+
+    allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
+    allow(ranked).to receive(:limit).with(50).and_return([low, high])
+
+    result = backend.search('borgberry')
+
+    expect(result.records).to eq([high, low])
+    expect(relation).to have_received(:with_pg_search_rank)
+  end
+
   it 'uses pg_search_query scopes when available' do
     search_result_class = Struct.new(:id, :pg_search_rank)
     record = instance_double(search_result_class, id: 10, pg_search_rank: 0.42)
