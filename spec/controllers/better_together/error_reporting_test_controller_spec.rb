@@ -26,6 +26,9 @@ RSpec.describe BetterTogether::ErrorReportingTestController do
   end
   let(:production_env) { ActiveSupport::StringInquirer.new('production') }
 
+  # routes.draw replaces the application's route set; restore it for the examples that follow.
+  after { Rails.application.reload_routes! }
+
   before do
     routes.draw { get 'index' => 'better_together/error_reporting_test#index' }
 

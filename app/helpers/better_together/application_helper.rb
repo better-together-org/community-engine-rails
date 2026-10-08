@@ -70,6 +70,12 @@ module BetterTogether
       @current_person ||= current_user.person
     end
 
+    # Path to the signed-in person's own profile. Falls back to the id when the person has no
+    # slug in the current locale, so one missing slug translation cannot break every page's nav.
+    def current_person_profile_path
+      person_my_profile_path(person_id: current_person.slug.presence || current_person.id)
+    end
+
     # current_user/user_signed_in? need Warden, which isn't present in two render
     # contexts this engine actually uses: Comment/Message's broadcast_append_later_to
     # (a bare renderer, no request/session) and Devise-less view/helper specs. Every

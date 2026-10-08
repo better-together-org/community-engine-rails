@@ -3,7 +3,7 @@
   <div id="mobile-bar" class="container-fluid shadow-sm d-lg-none bt-underline-nav">
     <nav class="d-flex justify-content-around align-items-center py-2" aria-label='<%= t('better_together.mobile_bar.navigation') %>'>
       <% if current_person && policy(current_person).show? %>
-        <%= link_to person_my_profile_path(person_id: current_person.slug), class: "nav-link bt-mobile-nav-link", aria: { label: t('better_together.mobile_bar.profile') }, data: { bs_toggle: "tooltip", bs_placement: "top", bs_title: t('better_together.mobile_bar.profile') } do %>
+        <%= link_to current_person_profile_path, class: "nav-link bt-mobile-nav-link", aria: { label: t('better_together.mobile_bar.profile') }, data: { bs_toggle: "tooltip", bs_placement: "top", bs_title: t('better_together.mobile_bar.profile') } do %>
           <i class="fas fa-user fa-lg" aria-hidden="true"></i>
           <span class="visually-hidden"><%= t('better_together.mobile_bar.profile') %></span>
         <% end %>

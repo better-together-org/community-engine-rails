@@ -18,6 +18,24 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 
+  describe '#current_person_profile_path' do
+    let(:person) { build_stubbed(:better_together_person) }
+
+    before { allow(helper).to receive(:current_person).and_return(person) }
+
+    it 'uses the slug when present' do
+      allow(person).to receive(:slug).and_return('my-slug')
+
+      expect(helper.current_person_profile_path).to eq(helper.person_my_profile_path(person_id: 'my-slug'))
+    end
+
+    it 'falls back to the id when the person has no slug in the current locale' do
+      allow(person).to receive(:slug).and_return(nil)
+
+      expect(helper.current_person_profile_path).to eq(helper.person_my_profile_path(person_id: person.id))
+    end
+  end
+
   describe '#host_community_primary_email' do
     before { configure_host_platform }
 

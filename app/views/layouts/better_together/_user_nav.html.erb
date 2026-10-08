@@ -1,8 +1,8 @@
 <!-- If user is signed in, show avatar and name -->
 <li id="user-nav" class="nav-item dropdown" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= t('navbar.user_nav_tooltip') %>">
   <% if current_person %>
-    <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === person_my_profile_path(person_id: current_person.slug) %>"
-       href="<%= person_my_profile_path(person_id: current_person.slug) %>"
+    <a class="nav-link dropdown-toggle<%= ' active' if url_for(controller: params[:controller], action: params[:action]) === current_person_profile_path %>"
+       href="<%= current_person_profile_path %>"
        id="userNavbarDropdownMenuLink"
        role="button"
        data-bs-toggle="dropdown"
@@ -19,7 +19,7 @@
       </li>
       <li><hr class="dropdown-divider"></li>
       <li>
-        <%= link_to t('navbar.my_profile'), person_my_profile_path(person_id: current_person.slug), class: "my-profile dropdown-item ", data: { identifier: 'my-profile' } %>
+        <%= link_to t('navbar.my_profile'), current_person_profile_path, class: "my-profile dropdown-item ", data: { identifier: 'my-profile' } %>
       </li>
       <li><%= link_to t('navbar.conversations'), conversations_path, class: "dropdown-item", data: { identifier: 'conversations' } %></li>
       <li>
