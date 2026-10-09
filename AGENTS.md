@@ -50,7 +50,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 ### Test Execution Guidelines (CRITICAL)
 - **All CI failures are the agent's responsibility.** There is no such thing as a "pre-existing" or "unrelated" failure. If a test fails on your branch, fix it before declaring the task complete — regardless of when or how the failure was introduced.
 - **NEVER run the full test suite (`bin/dc-run bin/ci` or `bin/dc-run bundle exec prspec spec`) until ALL targeted tests pass individually**
-- **Full suite takes about 15 minutes with 4 workers (about 9 minutes with `WORKERS=8 bin/parallel-setup` then `WORKERS=8 bin/dc-ci`)** - running it prematurely wastes time and resources; see `docs/development/test_profiling.md`
+- **Full suite takes about 9 minutes on a 12-core host (the worker count defaults to 8 there; override with `WORKERS=N`), about 15 minutes with 4 workers** - running it prematurely wastes time and resources; see `docs/development/test_profiling.md`
 - **Always verify specific tests first**: Run individual test files or line numbers to confirm fixes work
 - **After any DB schema change, run `bin/parallel-setup`**: This recreates all parallel test databases (`community_engine_test`, `test2`, `test3`, `test4`). Without this, `prspec` workers will hit `PG::UndefinedTable` errors. Schema changes include: new migrations, `db:drop`/`db:create`, `db:schema:load`, or updates to `spec/dummy/db/schema.rb`.
 - **Test execution workflow**:
