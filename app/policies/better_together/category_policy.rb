@@ -18,6 +18,12 @@ module BetterTogether
       platform_taxonomy_manager?
     end
 
+    # Gate for the record's attached media (ActiveStorageSecurity#enforce_download_policy!): the same
+    # audience as the record itself. Without this method the gate lets any signed-in user through.
+    def download?
+      show?
+    end
+
     private
 
     def platform_taxonomy_manager?(target = record)
