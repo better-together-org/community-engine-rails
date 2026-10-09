@@ -87,10 +87,13 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
 
   describe 'registered sources' do
     around do |example|
-      original = BetterTogether.registered_content_security_policy_sources.transform_values(&:dup)
+      registry = BetterTogether.registered_content_security_policy_sources
+      original = registry.transform_values(&:dup)
       example.run
     ensure
-      BetterTogether.registered_content_security_policy_sources.replace(original)
+      # Keep the registry's default proc: Hash#replace would drop it.
+      registry.clear
+      original.each { |directive, sources| registry[directive].concat(sources) }
     end
 
     it 'are read when the policy is evaluated, so sources registered after boot are included', :aggregate_failures do
