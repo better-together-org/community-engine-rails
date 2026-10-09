@@ -29,6 +29,8 @@ x-app-shared: &app-shared
     DB_USERNAME: ${DB_USERNAME:-postgres}
     DB_PASSWORD: ${DB_PASSWORD:-postgres}
     CE_WORKTREE_DB_SUFFIX: ${CE_WORKTREE_DB_SUFFIX:-}
+    # prspec worker count; databases for N workers come from `WORKERS=N bin/parallel-setup`
+    WORKERS: ${WORKERS:-4}
     SEARCH_BACKEND: ${SEARCH_BACKEND:-pg_search}
     REDIS_URL: ${REDIS_URL:-redis://redis:6379}
     RACK_ATTACK_REDIS_URL: ${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack:6379}

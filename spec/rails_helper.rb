@@ -10,6 +10,7 @@ require File.expand_path('dummy/config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
+require 'test-prof' # profilers stay inactive unless a *_PROF env var is set (see docs/development/test_profiling.md)
 require 'rails-controller-testing'
 
 ActiveJob::Base.queue_adapter = :test
@@ -220,9 +221,12 @@ RSpec.configure do |config|
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
   config.before do |example|
+    # Reload once per worker. The old guard (mounted_helpers.respond_to?(:better_together)) was never
+    # true, so routes were rebuilt before every example (about 24% of request-spec time).
     if %i[controller feature request].include?(example.metadata[:type]) &&
-       !Rails.application.routes.mounted_helpers.respond_to?(:better_together)
+       !Rails.application.config.x.spec_routes_reloaded
       Rails.application.reload_routes!
+      Rails.application.config.x.spec_routes_reloaded = true
     end
 
     DatabaseCleaner.strategy =
@@ -252,7 +256,10 @@ RSpec.configure do |config|
     # `agreement.update!` calls with PG::ForeignKeyViolation. AgreementBuilder
     # is idempotent (recreates a missing page and re-links it), so just check
     # whether one of its known seeded pages still exists.
-    unless BetterTogether::Page.exists?(identifier: 'privacy_policy')
+    # Check through the agreement's own page link: the page's stored identifier ('privacy-policy')
+    # differs from the builder's ('privacy_policy'), so a direct Page lookup never matched and the
+    # builder re-ran before every example.
+    unless BetterTogether::Agreement.joins(:page).exists?(identifier: 'privacy_policy')
       Rails.logger.debug '🔄 Re-linking agreement pages after a prior :js/:feature/:system test'
       BetterTogether::AgreementBuilder.build(clear: false)
     end
