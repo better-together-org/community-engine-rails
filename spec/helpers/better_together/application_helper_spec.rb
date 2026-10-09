@@ -18,6 +18,24 @@ RSpec.describe BetterTogether::ApplicationHelper do
     end
   end
 
+  describe '#current_person_profile_path' do
+    let(:person) { build_stubbed(:better_together_person) }
+
+    before { allow(helper).to receive(:current_person).and_return(person) }
+
+    it 'uses the slug when present' do
+      allow(person).to receive(:slug).and_return('my-slug')
+
+      expect(helper.current_person_profile_path).to eq(helper.person_my_profile_path(person_id: 'my-slug'))
+    end
+
+    it 'falls back to the id when the person has no slug in the current locale' do
+      allow(person).to receive(:slug).and_return(nil)
+
+      expect(helper.current_person_profile_path).to eq(helper.person_my_profile_path(person_id: person.id))
+    end
+  end
+
   describe '#host_community_primary_email' do
     before { configure_host_platform }
 
@@ -91,6 +109,22 @@ RSpec.describe BetterTogether::ApplicationHelper do
       expect(helper.storage_proxy_url_for(attachment, disposition: 'attachment')).to eq(
         'https://communityengine.app/rails/active_storage/proxy/test'
       )
+    end
+  end
+
+  describe 'engine URL helpers via method_missing' do
+    let(:community) { create(:better_together_community) }
+
+    it 'adds the current locale when the view default_url_options omit it' do
+      allow(helper).to receive(:default_url_options).and_return({})
+
+      expect(helper.community_path(community)).to eq("/#{I18n.locale}/c/#{community.to_param}")
+    end
+
+    it 'keeps an explicit locale option from default_url_options' do
+      allow(helper).to receive(:default_url_options).and_return({ locale: :fr })
+
+      expect(helper.community_path(community)).to eq("/fr/c/#{community.to_param}")
     end
   end
 

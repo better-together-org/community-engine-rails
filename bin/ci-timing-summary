@@ -2,8 +2,10 @@
 """Print a markdown timing summary from RSpec JSON results (tmp/rspec_results*.json).
 
 Usage: bin/ci-timing-summary [results.json ...]   (default: tmp/rspec_results*.json)
+       bin/ci-timing-summary --write-weights [results.json ...] > config/ci/spec_runtimes.json
 Shows CPU time by spec directory, the per-example floor (5th percentile) by directory,
 and the slowest examples, so runtime regressions are visible in the CI job summary.
+--write-weights prints per-spec-file CPU seconds as JSON for bin/ci-spec-shards.
 """
 import collections
 import glob
@@ -11,7 +13,9 @@ import json
 import statistics
 import sys
 
-paths = sys.argv[1:] or sorted(glob.glob("tmp/rspec_results*.json"))
+args = sys.argv[1:]
+write_weights = "--write-weights" in args
+paths = [a for a in args if a != "--write-weights"] or sorted(glob.glob("tmp/rspec_results*.json"))
 examples = []
 for path in paths:
     with open(path) as handle:
@@ -19,6 +23,14 @@ for path in paths:
 
 if not examples:
     print("No examples found in: " + ", ".join(paths))
+    sys.exit(0)
+
+if write_weights:
+    # Group by the spec file in the example id (rswag examples report a gem path in file_path).
+    weights = collections.defaultdict(float)
+    for e in examples:
+        weights[e["id"].split("[")[0].removeprefix("./")] += e["run_time"]
+    print(json.dumps({k: round(v, 1) for k, v in sorted(weights.items())}, indent=2))
     sys.exit(0)
 
 total = sum(e["run_time"] for e in examples)

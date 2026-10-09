@@ -902,6 +902,8 @@ GEM
       tins (~> 1)
     terminal-table (4.0.0)
       unicode-display_width (>= 1.1.1, < 4)
+    test-prof (1.6.3)
+      logger
     thor (1.5.0)
     thread (0.2.2)
     thread_safe (0.3.6)
@@ -1029,6 +1031,7 @@ DEPENDENCIES
   ssrf_filter (~> 1.1)
   stackprof
   storext!
+  test-prof
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
   webmock

@@ -7,7 +7,7 @@ FactoryBot.define do
           class: 'BetterTogether::Platform',
           aliases: %i[better_together_platform platform] do
     id { SecureRandom.uuid }
-    name { Faker::Company.unique.name }
+    name { "#{Faker::Company.unique.name} #{SecureRandom.hex(3)}" }
     description { Faker::Lorem.paragraph }
     identifier { "platform-#{SecureRandom.hex(10)}" }
     # Ensure uniqueness to avoid validation collisions across parallel specs

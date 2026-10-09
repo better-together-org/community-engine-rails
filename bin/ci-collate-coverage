@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Merge SimpleCov resultsets from the CI shards into one report using SimpleCov itself, with the
+# same filters as spec/spec_helper.rb, so the figure (and the coverage badge) match a single run.
+#
+# Usage: bin/ci-collate-coverage [SHARDS_DIR] [OUTPUT_DIR]
+#   SHARDS_DIR  directory searched recursively for .resultset.json (default: coverage-shards)
+#   OUTPUT_DIR  where the merged report and .last_run.json are written (default: coverage)
+
+require 'simplecov'
+require_relative '../spec/simplecov_filters'
+
+shards_dir = ARGV.fetch(0, 'coverage-shards')
+output_dir = ARGV.fetch(1, 'coverage')
+resultsets = Dir.glob(File.join(shards_dir, '**', '.resultset.json'))
+abort "No .resultset.json files found under #{shards_dir}" if resultsets.empty?
+
+SimpleCov.collate(resultsets, 'rails') do
+  SIMPLECOV_FILTERS.each { |path| add_filter path }
+  coverage_dir output_dir
+  formatter SimpleCov::Formatter::SimpleFormatter
+end
