@@ -123,6 +123,8 @@ group :test do
   # gem 'webdrivers'
   # Rails controller testing for assigns method
   gem 'rails-controller-testing'
+  # Test profiling (RSpecDissect, FactoryProf, EventProf, StackProf); inert unless a *_PROF env var is set
+  gem 'test-prof', require: false
   # RuboCop RSpec for RSpec-specific code analysis
   gem 'rubocop-capybara'
   gem 'rubocop-factory_bot'

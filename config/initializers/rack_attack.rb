@@ -44,6 +44,30 @@ module Rack
       req.user_agent.to_s.include?('Better Uptime Bot')
     end
 
+    # Known infrastructure (load balancers, uptime monitors, the operator's network) must never be
+    # throttled or banned. Comma-separated CIDRs, e.g.
+    #   RACK_ATTACK_SAFELIST_NETWORKS="10.45.20.0/24,142.93.157.196/32"
+    # Only as reliable as req.ip: the proxy chain must pass the real client address in X-Forwarded-For.
+    def self.safelisted_networks
+      ENV.fetch('RACK_ATTACK_SAFELIST_NETWORKS', '').split(',').filter_map do |cidr|
+        IPAddr.new(cidr.strip) if cidr.strip.present?
+      rescue IPAddr::Error
+        nil
+      end
+    end
+
+    safelist('allow trusted networks') do |req|
+      networks = Rack::Attack.safelisted_networks
+      next false if networks.empty?
+
+      begin
+        client = IPAddr.new(req.ip.to_s)
+        networks.any? { |network| network.include?(client) }
+      rescue IPAddr::Error
+        false
+      end
+    end
+
     ### Throttle Spammy Clients ###
 
     # If any single client IP is making tons of requests, then they're
