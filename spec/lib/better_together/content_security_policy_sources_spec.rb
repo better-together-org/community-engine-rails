@@ -71,8 +71,60 @@ RSpec.describe BetterTogether::ContentSecurityPolicySources do
       end
 
       expect(sources).to include('https://scripts.example.com')
-      expect(sources).not_to include('https://cdn.jsdelivr.net', 'https://cdnjs.cloudflare.com', 'https://unpkg.com',
-                                     'https://ga.jspm.io')
+      expect(sources).not_to include('https://cdnjs.cloudflare.com', 'https://unpkg.com')
+    end
+
+    it 'allow-lists the origins of importmap pins so CE and host app dependencies load by default',
+       :aggregate_failures do
+      sources = described_class.script_sources(nil, nil).flat_map do |source|
+        source.respond_to?(:call) ? source.call : source
+      end
+
+      expect(sources).to include('https://cdn.jsdelivr.net', 'https://ga.jspm.io')
+      expect(sources).not_to include(nil)
+    end
+  end
+
+  describe 'registered sources' do
+    around do |example|
+      original = BetterTogether.registered_content_security_policy_sources.transform_values(&:dup)
+      example.run
+    ensure
+      BetterTogether.registered_content_security_policy_sources.replace(original)
+    end
+
+    it 'are read when the policy is evaluated, so sources registered after boot are included', :aggregate_failures do
+      script_sources = described_class.script_sources(nil, nil)
+      img_sources = described_class.img_sources(nil, nil)
+
+      BetterTogether.register_content_security_policy_sources(:script_src, 'https://late.example.com')
+      BetterTogether.register_content_security_policy_sources(:img_src, 'https://images.example.com')
+
+      expect(script_sources.flat_map { |source| source.respond_to?(:call) ? source.call : source }).to include('https://late.example.com')
+      expect(img_sources.flat_map { |source| source.respond_to?(:call) ? source.call : source }).to include('https://images.example.com')
+    end
+  end
+
+  describe '.importmap_origins' do
+    let(:packages) do
+      {
+        'local' => double(path: '/assets/local.js'),
+        'cdn' => double(path: 'https://cdn.example.com/lib.js'),
+        'cdn_again' => double(path: 'https://cdn.example.com/other.js'),
+        'insecure' => double(path: 'http://insecure.example.com/lib.js')
+      }
+    end
+
+    before { allow(Rails.application.importmap).to receive(:packages).and_return(packages) }
+
+    it 'returns each distinct https origin once and ignores local and insecure pins' do
+      expect(described_class.importmap_origins).to eq(['https://cdn.example.com'])
+    end
+
+    it 'returns no origins if the importmap cannot be read' do
+      allow(Rails.application.importmap).to receive(:packages).and_raise(StandardError)
+
+      expect(described_class.importmap_origins).to eq([])
     end
   end
 
