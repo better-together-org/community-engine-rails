@@ -40,8 +40,8 @@ gem 'rswag'
 
 # Sidekiq 8.1 requires Rack >= 3.2, which is incompatible with the 7.2 CI lane.
 gem 'sidekiq', ENV.fetch('RAILS_VERSION', '8.1.4').start_with?('7.2.') ? '~> 7.3.9' : '~> 8.1.1'
-# Pin connection_pool to avoid breaking changes in 3.x
-gem 'connection_pool', '~> 3.0.2'
+# connection_pool 3.x for current Rails; Rails 7.2.4+ (activesupport) requires connection_pool < 3.
+gem 'connection_pool', ENV.fetch('RAILS_VERSION', '8.1.4').start_with?('7.2.') ? '~> 2.5' : '~> 3.0.2'
 
 gem 'stackprof'
 
