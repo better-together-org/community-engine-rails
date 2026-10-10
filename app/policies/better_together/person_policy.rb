@@ -12,6 +12,12 @@ module BetterTogether
       me? || can_read_private_people? || visible_in_scope?
     end
 
+    # Gate for the record's attached media (ActiveStorageSecurity#enforce_download_policy!): the same
+    # audience as the record itself. Without this method the gate lets any signed-in user through.
+    def download?
+      show?
+    end
+
     def create?
       user.present? && (permitted_to?('create_person', current_platform) || platform_manager?)
     end

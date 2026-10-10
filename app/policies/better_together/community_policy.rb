@@ -17,6 +17,12 @@ module BetterTogether
         valid_invitation_token?
     end
 
+    # Gate for the record's attached media (ActiveStorageSecurity#enforce_download_policy!): the same
+    # audience as the record itself. Without this method the gate lets any signed-in user through.
+    def download?
+      show?
+    end
+
     def create?
       return false unless user.present?
 
