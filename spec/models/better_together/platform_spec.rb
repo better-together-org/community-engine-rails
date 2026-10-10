@@ -279,4 +279,27 @@ RSpec.describe BetterTogether::Platform, :skip_host_setup do
       )
     end
   end
+
+  describe 'host community privacy' do
+    let(:host_platform) { described_class.find_by(host: true) || create(:better_together_platform, :host, privacy: 'public') }
+
+    before { host_platform.community.update_columns(privacy: host_platform.privacy) }
+
+    it 'makes the host community follow the platform when the privacy changes', :aggregate_failures do
+      host_platform.update!(privacy: 'private')
+      expect(host_platform.community.reload.privacy).to eq('private')
+
+      host_platform.update!(privacy: 'public')
+      expect(host_platform.community.reload.privacy).to eq('public')
+    end
+
+    it 'leaves the communities of other platforms alone' do
+      other = create(:better_together_platform, privacy: 'public')
+      other.community.update_columns(privacy: 'private')
+
+      other.update!(privacy: 'public', name: 'Renamed')
+
+      expect(other.community.reload.privacy).to eq('private')
+    end
+  end
 end

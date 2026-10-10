@@ -149,6 +149,7 @@ module BetterTogether
     after_commit :clear_host_community_cache, if: -> { saved_change_to_attribute?(:host) }
 
     validates :name, presence: true
+    validate :host_privacy_matches_platform, if: -> { host? && persisted? && will_save_change_to_privacy? }
     validates :contributors_display_visibility,
               inclusion: { in: BetterTogether::Authorable::CONTRIBUTOR_DISPLAY_VISIBILITIES }
 
@@ -239,6 +240,15 @@ module BetterTogether
     end
 
     private
+
+    # The host community follows its platform's privacy; change the platform's privacy instead.
+    def host_privacy_matches_platform
+      platform = ::BetterTogether::Platform.find_by(host: true, community_id: id)
+      return if platform.nil? || platform.privacy == privacy
+
+      errors.add(:privacy, :host_community_follows_platform,
+                 message: "must match the host platform privacy ('#{platform.privacy}')")
+    end
 
     def create_default_calendar
       calendar_identifier = "default-#{identifier}"
