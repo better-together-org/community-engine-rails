@@ -12,6 +12,12 @@ module BetterTogether
       public_or_member_scoped_community?(record) || can_manage_platform_settings?
     end
 
+    # Gate for the record's attached media (ActiveStorageSecurity#enforce_download_policy!): the same
+    # audience as the record itself. Without this method the gate lets any signed-in user through.
+    def download?
+      show?
+    end
+
     # Platform creation (both internally-hosted tenant provisioning and external federation
     # peer registration) is restricted to stewards of the HOST platform specifically. A tenant
     # platform_steward's role grant lives on their own platform, never on the host platform, so
