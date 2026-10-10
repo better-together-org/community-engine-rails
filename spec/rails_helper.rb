@@ -147,10 +147,10 @@ RSpec.configure do |config|
 
     # Seed essential data idempotently. No initial full-clean here because:
     # 1. db:parallel:prepare already gives each CI worker a clean schema.
-    # 2. In CI, parallel_rspec workers share the same database (DATABASE_URL).
-    #    A destructive clean_with(:deletion) in one worker would wipe seeds
-    #    that a sibling worker just created, causing intermittent "Host Setup
-    #    Wizard not configured" / "Platform can't be blank" failures.
+    # 2. parallel_rspec gives each worker its own database: it appends the worker number to
+    #    the database name, also when CI sets DATABASE_URL (verified 2026-10-10 with four
+    #    workers: ci_probe_test, test2, test3, test4). A clean_with(:deletion) here would
+    #    still only slow the suite down and risk wiping seeds built in this process.
     # All builders use clear: false so seed_data runs without deleting first.
     # build_with_retry treats duplicate-key errors as "already seeded" — safe
     # for concurrent workers that race to create the same rows.
