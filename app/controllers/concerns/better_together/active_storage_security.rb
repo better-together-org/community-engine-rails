@@ -126,6 +126,7 @@ module BetterTogether
 
     def publicly_accessible?(record)
       return sitemap_publicly_accessible?(record) if record.is_a?(BetterTogether::Sitemap)
+      return true if host_brand_asset?(record)
       return false unless record.respond_to?(:privacy_public?)
 
       # A content block is bounded by its page: a public block whose page is
@@ -134,6 +135,13 @@ module BetterTogether
       return BetterTogether::Content::BlockPolicy.new(nil, record).show? if record.is_a?(BetterTogether::Content::Block)
 
       record.privacy_public?
+    end
+
+    # The host platform and host community are the site's brand (logo, cover, profile image). They must
+    # render for anonymous visitors whatever the platform's privacy, or a private platform's sign-in and
+    # registration pages lose their logo.
+    def host_brand_asset?(record)
+      (record.is_a?(BetterTogether::Platform) || record.is_a?(BetterTogether::Community)) && record.host?
     end
 
     # Sitemap is a system-generated infra artifact with no creator/owner -- not user
