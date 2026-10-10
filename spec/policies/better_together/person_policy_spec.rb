@@ -153,4 +153,25 @@ RSpec.describe BetterTogether::PersonPolicy do
       expect(described_class.new(steward_b, platform_b_person).update?).to be true
     end
   end
+
+  describe '#download? (attached media)' do
+    let(:viewer) { create(:better_together_user, :confirmed) }
+
+    it 'matches #show? for a public record, for anonymous and signed-in viewers', :aggregate_failures do
+      record = create(:better_together_person, privacy: 'public')
+
+      [nil, viewer].each do |agent|
+        policy = described_class.new(agent, record)
+        expect(policy.download?).to eq(policy.show?)
+      end
+    end
+
+    it 'is refused to a signed-in viewer who cannot see a private record', :aggregate_failures do
+      record = create(:better_together_person, privacy: 'private')
+      policy = described_class.new(viewer, record)
+
+      expect(policy.show?).to be false
+      expect(policy.download?).to be false
+    end
+  end
 end

@@ -49,4 +49,25 @@ RSpec.describe BetterTogether::CategoryPolicy, type: :policy do
       expect(described_class.new(normal_user, BetterTogether::Category).update?).to be false
     end
   end
+
+  describe '#download? (attached media)' do
+    let(:viewer) { create(:better_together_user, :confirmed) }
+
+    it 'matches #show? for a public record, for anonymous and signed-in viewers', :aggregate_failures do
+      record = create(:category, privacy: 'public')
+
+      [nil, viewer].each do |agent|
+        policy = described_class.new(agent, record)
+        expect(policy.download?).to eq(policy.show?)
+      end
+    end
+
+    it 'is refused to a signed-in viewer who cannot see a private record', :aggregate_failures do
+      record = create(:category, privacy: 'private')
+      policy = described_class.new(viewer, record)
+
+      expect(policy.show?).to be false
+      expect(policy.download?).to be false
+    end
+  end
 end
