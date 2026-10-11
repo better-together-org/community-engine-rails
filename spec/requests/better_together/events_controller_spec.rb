@@ -5,7 +5,10 @@ require 'rails_helper'
 # rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::EventsController', :as_user do
   let(:locale) { I18n.default_locale }
-  let!(:publishing_agreement) do
+
+  # The shared platform manager accepts the agreement through the idempotent helper, so a leftover
+  # acceptance cannot raise "Agreement has already been taken".
+  before do
     BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |agreement|
       agreement.title = 'Content Publishing Agreement'
       agreement.privacy = 'public'
@@ -301,10 +304,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       before do
-        create(:better_together_agreement_participant,
-               agreement: publishing_agreement,
-               participant: manager_user.person,
-               accepted_at: Time.current)
+        grant_content_publishing_agreement(manager_user.person)
         login(manager_user.email, 'SecureTest123!@#')
       end
 
@@ -654,10 +654,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     before do
       manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
                      create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
-      create(:better_together_agreement_participant,
-             agreement: publishing_agreement,
-             participant: manager_user.person,
-             accepted_at: Time.current)
+      grant_content_publishing_agreement(manager_user.person)
     end
 
     context 'when creating an event with Eastern timezone while user is in Newfoundland timezone' do

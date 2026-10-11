@@ -231,6 +231,14 @@ jobs:
         if: always()
         run: python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
 
+      # Examples rspec-rebound retried (feature/js): shown in the job summary and as annotations.
+      # Set the repository variable CI_FAIL_ON_FLAKY=true to fail the job when one passed only after a retry.
+      - name: Retried (flaky) examples
+        if: always()
+        env:
+          CI_FAIL_ON_FLAKY: ${{ vars.CI_FAIL_ON_FLAKY }}
+        run: python3 bin/ci-flaky-report >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
@@ -245,7 +253,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: rspec-results-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
-          path: tmp/rspec_results*.json
+          path: |
+            tmp/rspec_results*.json
+            tmp/flaky/
           if-no-files-found: warn
 
       - name: Upload Rails test log
