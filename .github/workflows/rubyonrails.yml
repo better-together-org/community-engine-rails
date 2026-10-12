@@ -21,7 +21,8 @@ on:
 
 jobs:
   prepare:
-    # Skip automated compat sync PRs (main → compat/*) whose head_ref == 'main'.
+    # Skip legacy compat sync PRs whose head_ref == 'main'. Current sync PRs use
+    # sync/main-to-compat-* branches and are tested via workflow_dispatch.
     # All downstream jobs (rspec, rubocop, security) cascade-skip via needs: prepare.
     if: github.head_ref != 'main'
     runs-on: ubuntu-latest
@@ -37,6 +38,13 @@ jobs:
             branch="${GITHUB_BASE_REF}"
           else
             branch="${GITHUB_REF_NAME}"
+          fi
+
+          # compat-branch-sync.yml dispatches CI on sync/main-to-compat-rails-X;
+          # run that PR on the lane of the compat branch it merges into.
+          if [[ "${branch}" == sync/main-to-compat-* ]]; then
+            branch="${branch#sync/main-to-}"
+            branch="${branch/compat-/compat/}"
           fi
 
           case "${branch}" in
@@ -400,3 +408,16 @@ jobs:
           # -w2: only show Confidence >= 2 (HIGH and MEDIUM)
           # --no-summary: suppress summary output
           # This will FAIL the job if HIGH-confidence vulnerabilities are detected
+
+  ci-gate:
+    # Stable-named required check for the compat/rails-* rulesets. The rspec
+    # check name embeds the Rails version, so rulesets require this instead.
+    name: ci-gate
+    needs: [prepare, rspec, rubocop, security]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require rspec, rubocop and security to pass
+        run: |
+          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }}"
+          [[ "${{ needs.rspec.result }}" == "success" && "${{ needs.rubocop.result }}" == "success" && "${{ needs.security.result }}" == "success" ]]
