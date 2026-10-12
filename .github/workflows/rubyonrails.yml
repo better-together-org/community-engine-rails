@@ -408,3 +408,16 @@ jobs:
           # -w2: only show Confidence >= 2 (HIGH and MEDIUM)
           # --no-summary: suppress summary output
           # This will FAIL the job if HIGH-confidence vulnerabilities are detected
+
+  ci-gate:
+    # Stable-named required check for the compat/rails-* rulesets. The rspec
+    # check name embeds the Rails version, so rulesets require this instead.
+    name: ci-gate
+    needs: [prepare, rspec, rubocop, security]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require rspec, rubocop and security to pass
+        run: |
+          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }}"
+          [[ "${{ needs.rspec.result }}" == "success" && "${{ needs.rubocop.result }}" == "success" && "${{ needs.security.result }}" == "success" ]]
