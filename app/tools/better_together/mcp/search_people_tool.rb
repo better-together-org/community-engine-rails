@@ -34,21 +34,21 @@ module BetterTogether
       private
 
       def search_people(query, limit)
-        sanitized = sanitize_like(query)
+        pattern = "%#{sanitize_like(query)}%"
         base = policy_scope(BetterTogether::Person)
 
-        matches_by_name = base.i18n
-                              .joins(:string_translations)
-                              .where(
-                                'mobility_string_translations.value ILIKE ? AND mobility_string_translations.key IN (?)',
-                                "%#{sanitized}%",
-                                %w[name]
-                              )
+        # Match names through a subquery rather than joining the translations table: the policy
+        # scope already eager-loads translations, and a join filtered to key = 'name' would leave
+        # each person's loaded translations without their slug, so person_path would fail.
+        name_matches = Mobility::Backends::ActiveRecord::KeyValue::StringTranslation
+                       .where(translatable_type: BetterTogether::Person.polymorphic_name, key: 'name')
+                       .where('value ILIKE ?', pattern)
+                       .select(:translatable_id)
 
-        matches_by_name
-          .or(base.where('identifier ILIKE ?', "%#{sanitized}%"))
-          .distinct
-          .limit([limit, 100].min)
+        base.where(id: name_matches)
+            .or(base.where('identifier ILIKE ?', pattern))
+            .distinct
+            .limit([limit, 100].min)
       end
 
       def serialize_person(person)
