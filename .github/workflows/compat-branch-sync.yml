@@ -114,11 +114,32 @@ jobs:
               --title "chore(compat): merge main into ${TARGET_BRANCH}" \
               --body "${body}"
           fi
-          gh pr merge --auto --merge "${SYNC_BRANCH}"
 
       - name: Dispatch CI on the sync branch
-        if: steps.build.outputs.action == 'pushed'
+        if: steps.build.outputs.action == 'pushed' || steps.build.outputs.action == 'reuse'
         shell: bash
         env:
           SYNC_BRANCH: ${{ steps.build.outputs.sync_branch }}
-        run: gh workflow run rubyonrails.yml --ref "${SYNC_BRANCH}"
+        run: |
+          set -euo pipefail
+          head_sha="$(git ls-remote origin "refs/heads/${SYNC_BRANCH}" | cut -f1)"
+          # Dispatch unless a run already exists for this exact commit, so a
+          # re-run after a failed earlier step still gets CI.
+          existing="$(gh run list --workflow rubyonrails.yml --branch "${SYNC_BRANCH}" --event workflow_dispatch --limit 20 \
+            --json headSha --jq "[.[] | select(.headSha == \"${head_sha}\")] | length")"
+          if [[ "${existing}" != "0" ]]; then
+            echo "::notice::CI already dispatched for ${head_sha}."
+            exit 0
+          fi
+          gh workflow run rubyonrails.yml --ref "${SYNC_BRANCH}"
+
+      - name: Enable auto-merge
+        if: steps.build.outputs.action == 'pushed' || steps.build.outputs.action == 'reuse'
+        shell: bash
+        env:
+          SYNC_BRANCH: ${{ steps.build.outputs.sync_branch }}
+        run: |
+          # Needs the compat ruleset (required checks); without it GitHub
+          # refuses. Warn rather than fail so CI dispatch is never blocked.
+          gh pr merge --auto --merge "${SYNC_BRANCH}" \
+            || echo "::warning::Could not enable auto-merge on ${SYNC_BRANCH}. Check the compat ruleset and the repo auto-merge setting."
