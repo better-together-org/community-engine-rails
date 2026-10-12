@@ -21,7 +21,8 @@ on:
 
 jobs:
   prepare:
-    # Skip automated compat sync PRs (main → compat/*) whose head_ref == 'main'.
+    # Skip legacy compat sync PRs whose head_ref == 'main'. Current sync PRs use
+    # sync/main-to-compat-* branches and are tested via workflow_dispatch.
     # All downstream jobs (rspec, rubocop, security) cascade-skip via needs: prepare.
     if: github.head_ref != 'main'
     runs-on: ubuntu-latest
@@ -37,6 +38,13 @@ jobs:
             branch="${GITHUB_BASE_REF}"
           else
             branch="${GITHUB_REF_NAME}"
+          fi
+
+          # compat-branch-sync.yml dispatches CI on sync/main-to-compat-rails-X;
+          # run that PR on the lane of the compat branch it merges into.
+          if [[ "${branch}" == sync/main-to-compat-* ]]; then
+            branch="${branch#sync/main-to-}"
+            branch="${branch/compat-/compat/}"
           fi
 
           case "${branch}" in
