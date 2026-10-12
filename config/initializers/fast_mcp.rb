@@ -8,6 +8,8 @@
 # Configuration via environment variables:
 # - MCP_ENABLED: Enable/disable MCP endpoints (default: true in development)
 # - MCP_PATH_PREFIX: URL path prefix for MCP endpoints (default: /mcp)
+# - MCP_ALLOWED_ORIGINS: extra hostnames (comma-separated) accepted in the Origin header, in addition to the
+#   platform's active domains and internal platform URLs (see BetterTogether::Mcp::AllowedOrigins)
 #
 # Authentication is handled at the tool/resource level via Pundit RBAC (see filter_tools
 # and filter_resources blocks below). No transport-level bearer token is required.
@@ -33,6 +35,11 @@ if defined?(Rails)
     # covers both transports.
     require 'better_together/mcp/sse_concurrency_guard'
     FastMcp::Transports::RackTransport.prepend(BetterTogether::Mcp::SseConcurrencyGuard)
+
+    # Origin validation against the platform's domains (the static allowed_origins option below
+    # is only informational once this is prepended).
+    require 'better_together/mcp/origin_guard'
+    FastMcp::Transports::RackTransport.prepend(BetterTogether::Mcp::OriginGuard)
 
     mcp_path_prefix = ENV.fetch('MCP_PATH_PREFIX', '/mcp')
 
