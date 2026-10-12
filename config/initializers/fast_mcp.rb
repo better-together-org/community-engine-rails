@@ -6,7 +6,7 @@
 # while respecting platform privacy settings and Pundit authorization policies.
 #
 # Configuration via environment variables:
-# - MCP_ENABLED: Enable/disable MCP endpoints (default: true in development)
+# - MCP_ENABLED: Enable/disable MCP endpoints (default: true in development and test)
 # - MCP_PATH_PREFIX: URL path prefix for MCP endpoints (default: /mcp)
 # - MCP_ALLOWED_ORIGINS: extra hostnames (comma-separated) accepted in the Origin header, in addition to the
 #   platform's active domains and internal platform URLs (see BetterTogether::Mcp::AllowedOrigins)
@@ -24,7 +24,7 @@
 # its configuration directly from env vars to avoid initializer ordering
 # issues (the engine sets `config.mcp` later).
 if defined?(Rails)
-  mcp_enabled = ENV.fetch('MCP_ENABLED', Rails.env.development?).to_s == 'true'
+  mcp_enabled = ENV.fetch('MCP_ENABLED', Rails.env.development? || Rails.env.test?).to_s == 'true'
 
   skip_for_db_tasks = defined?(Rake) && Rake.application.top_level_tasks.any? { |t| t.start_with?('db:') }
 

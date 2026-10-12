@@ -10,9 +10,11 @@ RSpec.describe BetterTogether::Mcp, type: :model do # rubocop:disable RSpec/Spec
         allow(BetterTogether::Engine.config).to receive(:mcp).and_return(mcp_config)
       end
 
-      it 'mounts MCP routes' do
-        skip 'MCP routes not yet mounted'
-        expect(Rails.application.routes.recognize_path('/mcp/messages', method: :post)).to include(controller: 'mcp/messages')
+      it 'is enabled in the test environment with the transport guards installed' do
+        expect(Rails.application.config.mcp.enabled).to be(true)
+        expect(FastMcp::Transports::RackTransport.ancestors).to include(
+          BetterTogether::Mcp::SseConcurrencyGuard, BetterTogether::Mcp::OriginGuard
+        )
       end
     end
 
