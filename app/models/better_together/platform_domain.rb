@@ -91,6 +91,7 @@ module BetterTogether
     def bust_resolve_cache
       Rails.cache.delete("bt:platform_domain:#{hostname}")
       Rails.cache.delete("bt:platform_domain:#{hostname_before_last_save}") if hostname_before_last_save.present?
+      BetterTogether::Mcp::AllowedOrigins.reset_cache!
     end
   end
 end

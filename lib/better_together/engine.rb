@@ -218,6 +218,8 @@ module BetterTogether
       unless app.config.respond_to?(:mcp)
         app.config.mcp = ActiveSupport::OrderedOptions.new
         app.config.mcp.excerpt_length = Integer(ENV.fetch('MCP_EXCERPT_LENGTH', 200))
+        # Mirrors config/initializers/fast_mcp.rb, which mounts MCP from the same variable.
+        app.config.mcp.enabled = ENV.fetch('MCP_ENABLED', Rails.env.development? || Rails.env.test?).to_s == 'true'
       end
     end
 
