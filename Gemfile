@@ -33,7 +33,10 @@ gem 'rack-protection'
 gem 'rails', ENV.fetch('RAILS_VERSION', '8.1.4')
 gem 'ssrf_filter', '~> 1.1'
 
-# Redis for ActionCable and background jobs
+# Redis for ActionCable and background jobs.
+# The allowed redis range comes from Rails' actioncable (subscription_adapter/redis.rb):
+# Rails <= 8.0 requires redis < 6; Rails >= 8.1 allows < 7. Re-check it when Rails changes
+# (bundle exec gem contents actioncable | grep adapter/redis.rb).
 gem 'redis', '~> 5.4'
 
 gem 'rswag'
