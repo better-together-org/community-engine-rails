@@ -74,13 +74,18 @@ Empty request example floor: 1.8 s to 0.02 s.
 
 ## CI sharding
 
-The `rspec` workflow job is split into 4 shard jobs (`rspec shard N/4`), each with its own
-Postgres/Redis and 4 workers, plus an aggregate `rspec (3.4.10, <rails>)` job that requires every
+The `rspec` workflow job is split into shard jobs, each with its own Postgres/Redis: 4 `other`
+shards (`rspec other shard N/4`, 4 workers) and 2 `browser` shards (`rspec browser shard N/2`,
+2 workers). Browser examples (tagged `js`, `feature` or `system`) run only in the browser shards.
+They use the `:deletion` cleaner and a Puma server thread, so keeping them out of the
+transaction-cleaned workers stops leaked state crossing between the two kinds. The tag filters
+partition every example exactly once. The workflow also has an aggregate `rspec (3.4.10, <rails>)` job that requires every
 shard, checks the merged example count and failures, merges SimpleCov results and publishes the
 merged timing summary. Shards are balanced by recorded runtime, not file count:
 
 ```bash
-bin/ci-spec-shards 2 4                      # spec files for shard 2 of 4
+bin/ci-spec-shards 2 4 --kind other         # spec files for other shard 2 of 4
+bin/ci-spec-shards 1 2 --kind browser       # files that may hold browser examples
 CI_SHARD_VERBOSE=1 bin/ci-spec-shards 1 4   # also prints each shard's weight to stderr
 # Rebalance after a big change (use a full run's JSON, for example the CI artifact):
 bin/ci-timing-summary --write-weights tmp/rspec_results.json > config/ci/spec_runtimes.json
