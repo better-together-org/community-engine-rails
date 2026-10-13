@@ -4,6 +4,36 @@
 **Date:** June 3, 2026  
 **Scope:** Current vs intended architecture for v0.12.0 "balanced spacetime foundation" milestone  
 **Fills:** `docs/assessments/system_assessment_inventory_2025-11.md` row 8 (❌ Missing geography assessment)
+**Reassessed:** October 13, 2026 against `main` at `dfad67df6` (see [Reassessment Against main](#reassessment-against-main-2026-10-13) below; the sections that follow are the original June 3 audit, kept for history)
+
+---
+
+## Reassessment Against main (2026-10-13)
+
+The June 3 audit was written against the 0.11.0 release-notes branch. Re-checking each of the 17 gaps in Section 5 against current `main`:
+
+| Gap | June 3 status | Status on main | Evidence |
+|-----|---------------|----------------|----------|
+| 1 Space geometry | Open | **Partly resolved** | `Space#boundary` (multi-polygon, SRID 4326 geography) was added by the 2026-07-15 migration (PR #1667) and powers `ST_Covers` hierarchy resolution. Point coordinates are still the float `latitude`/`longitude`/`elevation` columns, so `ST_DWithin`/`ST_Distance` proximity on points is still not possible. See also #1790 (plaintext coordinates for non-reference spaces) before choosing a point-geometry design |
+| 2 Spatial indexes | Open | **Partly resolved** | GiST index `index_better_together_geography_spaces_on_boundary` exists on `spaces.boundary`. Still no GiST index on `maps.center`, and none is possible on points until gap 1's point column exists |
+| 3 Address geometry | Open | **Open** | `Address` has no spatial column |
+| 4 City/District/Neighborhood/Street | Open | **Resolved or deferred by decision** | City is replaced by `Settlement` in the geography manifest. District and Neighborhood are deferred until a concrete use case needs them. Street is not planned. No new model work is required for v0.12.0 |
+| 5 Event geocoding | Open | **Resolved** | Event geocodes through the shared `Geospatial::One` `geocoded_by`/`schedule_geocoding` hooks using `location_geocoding_string` (`event.rb`) |
+| 6 Place as location | Open | **Resolved** | `LocatableLocation` accepts any model that includes `Geography::Placeable`, discovered dynamically, not hardcoded to Address/Building |
+| 7 Joatu address association | Open | **Resolved** | `belongs_to :address` and nested attributes now live in the `Joatu::Exchange` concern |
+| 8 EventResource location attributes | Open | **Open** | `event_resource.rb` still exposes no location attributes or relationship |
+| 9 Geographic filters | Open | **Open** | No radius or proximity code in resources, controllers, routes, tools or geography models |
+| 10 Proximity search endpoint | Open | **Open** | Same as gap 9 |
+| 11 Infrastructure API resources | Open | **Open** | No Building/Floor/Room resources, controllers or routes |
+| 12 MCP spatial search | Open | **Open** | `search_geography_tool.rb` is still text-only |
+| 13 PostGIS storage from geocoding | Open | **Open** | `GeocodingJob` still saves coordinates to the `Space` floats. It now also stashes the raw geocode result and runs `resolve_geographic_hierarchy!`, which is new but not spatial |
+| 14 Map center update | Open | **Open** | `GeocodingJob` does not touch `Map#center` |
+| 15 Implementation status | Blocking | **Partly stale** | Sub-issues #1426 to #1436 are all still open, but many geography and events fixes have landed on `main` since June (event map crash on Room/Floor locations, platform scoping of `Geography::Map`, privacy columns on geography tables, hierarchy resolution). "No work has started" is no longer accurate |
+| 16, 17 Docs | Informational | Unchanged | GiST indexes and proximity search are still described in `geography_system.md` but not implemented |
+
+**Net result:** 3 gaps resolved (5, 6, 7), 1 resolved by decision (4), 2 partly resolved (1, 2), 8 open (3, 8, 9, 10, 11, 12, 13, 14), plus informational 17. The critical path to a proximity-capable v0.12.0 is unchanged: point geometry on `Space` (subject to #1790) with a GiST index, geocoding writes to geometry, then the API filter and `EventResource` location surface.
+
+Technical-debt items 1, 4 and 7 in Section 6 and the "Immediate Actions" for Event dead code and the Joatu association in Section 7 are done and can be dropped from the plan.
 
 ---
 
@@ -78,7 +108,7 @@ Planned 8 models: Country, State, Region, City, District, Neighborhood, Street, 
 
 **Completion state:**
 - ✅ Country, State, Region — implemented with PostGIS
-- ❌ City, District, Neighborhood, Street — never started
+- ✅ City: replaced by `Settlement`; ⏸ District, Neighborhood: deferred until a use case needs them; ❌ Street: not planned (decisions of 2026-10-13)
 - ⚠️ Address — implemented but missing planned `st_point` column
 
 ---
@@ -512,10 +542,10 @@ Planned **8 models**, completion checklist at 6/8 checked:
 | 1 | Country | bt_identifier, bt_protected, bt_slug, bt_references | ✅ Done | `geography/countries.rb` with iso_code |
 | 2 | State | bt_identifier, bt_protected, bt_slug, bt_references Country | ✅ Done | `geography/states.rb` with iso_code |
 | 3 | Region | bt_identifier, bt_protected, bt_slug, bt_references Country/State | ✅ Done | `geography/regions.rb` (STI) |
-| 4 | City | — | ❌ Never started | N/A |
-| 5 | District | — | ❌ Never started | N/A |
-| 6 | Neighborhood | — | ❌ Never started | N/A |
-| 7 | Street | — | ❌ Never started | N/A |
+| 4 | City | — | ✅ Replaced by `Settlement` (decision recorded 2026-10-13) | `geography/settlements.rb` |
+| 5 | District | — | ⏸ Deferred until a concrete use case needs it (2026-10-13) | N/A |
+| 6 | Neighborhood | — | ⏸ Deferred until a concrete use case needs it (2026-10-13) | N/A |
+| 7 | Street | — | ❌ Not planned | N/A |
 | 8 | Address | bt_references City/State/Country, st_point (PostGIS) | ⚠️ Partial | `addresses.rb` created but **NO st_point column** |
 
 **Key deviation:** Address was implemented without the planned `st_point` geometry column. Instead, coordinates live on the separate `Space` table as floats.
@@ -529,10 +559,10 @@ Planned **8 models**, completion checklist at 6/8 checked:
 | **1** | **DB: Space Geometry** | Space has `geometry(ST_Point, SRID 4326)` column for PostGIS proximity queries | Space has only float lat/lng/elevation; no PostGIS geometry | Cannot run ST_DWithin or ST_Distance | **CRITICAL** |
 | **2** | **DB: Spatial Indexes** | GiST indexes on all spatial columns (Space.geometry, maps.center, addresses if it had geometry) | No GiST indexes exist anywhere, including on `maps.center` | Proximity queries would be O(n), not O(log n) | **CRITICAL** |
 | **3** | **DB: Address Geometry** | Address has `st_point` column (planned in #12) for structured location storage | Address has NO spatial columns; coordinates only on Space via FK | Cannot query nearby addresses directly | **HIGH** |
-| **4** | **DB: City/District/Neighborhood/Street** | 4 additional geography models for finer hierarchy (Issue #12) | Never implemented; only Continent/Country/State/Region/Settlement exist | Incomplete hierarchy; no support for sub-regional divisions | **MEDIUM** |
-| **5** | **Model: Event Geocoding** | Event is geocodable; can be located independently with geocoded_by | Event `geocoded_by` is **commented out** (lines 43–46); methods reference non-existent `address` association | Event location only via Space or LocatableLocation; cannot geocode directly | **HIGH** |
-| **6** | **Model: Place as Location** | Place can be used as `location_type` in LocatableLocation; events can reference places | LocatableLocation only supports Address or Building; no Place support | Events cannot be located at a named place; Place is disconnected from event location flows | **MEDIUM** |
-| **7** | **Model: Joatu Address Association** | Joatu::Offer and Joatu::Request have addresses with proper associations | Joatu models have `address_id` FK but NO `belongs_to :address` in code | Foreign key orphan; cannot query offers by address | **MEDIUM** |
+| **4** | **DB: City/District/Neighborhood/Street** | 4 additional geography models for finer hierarchy (Issue #12) | Never implemented as separate models; only Continent/Country/State/Region/Settlement exist | **Updated 2026-10-13:** City is replaced by Settlement; District and Neighborhood are deferred until a use case needs them; Street is not planned. Not a v0.12.0 blocker | ~~MEDIUM~~ **DEFERRED** |
+| **5** | **Model: Event Geocoding** | Event is geocodable; can be located independently with geocoded_by | Event `geocoded_by` is **commented out** (lines 43–46); methods reference non-existent `address` association | Event location only via Space or LocatableLocation; cannot geocode directly | ~~HIGH~~ **RESOLVED (2026-10-13)** |
+| **6** | **Model: Place as Location** | Place can be used as `location_type` in LocatableLocation; events can reference places | LocatableLocation only supports Address or Building; no Place support | Events cannot be located at a named place; Place is disconnected from event location flows | ~~MEDIUM~~ **RESOLVED (2026-10-13)** |
+| **7** | **Model: Joatu Address Association** | Joatu::Offer and Joatu::Request have addresses with proper associations | Joatu models have `address_id` FK but NO `belongs_to :address` in code | Foreign key orphan; cannot query offers by address | ~~MEDIUM~~ **RESOLVED (2026-10-13)** |
 | **8** | **API: EventResource Attributes** | EventResource exposes location (address, building, lat/lng, etc.) | EventResource has ZERO location attributes (15+ other attributes exposed) | Event API consumers cannot get location data | **CRITICAL** |
 | **9** | **API: Geographic Filters** | `GET /api/v1/events?filter[latitude]=48.95&filter[longitude]=-57.95&filter[radius]=5` supported | No geographic filter params on any endpoint | Cannot query events by proximity | **HIGH** |
 | **10** | **API: Proximity Search** | `/api/v1/proximity_search?latitude=...&longitude=...&radius=...` endpoint for fuzzy location lookup | No proximity search endpoint; only text-based `search_geography` MCP tool | Cannot discover locations or events by distance | **HIGH** |

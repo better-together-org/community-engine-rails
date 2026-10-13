@@ -392,8 +392,8 @@ The events and geography system serves **7 distinct stakeholder groups**, each w
 
 **Stakeholder constraints:**
 - Currently: Space is float-based, breaking PostGIS proximity (gap #1 in assessment)
-- Currently: Event geocoding commented out; dead code referencing non-existent associations
-- Currently: 13 open GitHub issues for v0.12.0 with no implementation started
+- Event geocoding is now wired through the shared `Geospatial::One` hooks (resolved on main, reassessed 2026-10-13); the remaining location gaps are the API surface and proximity queries
+- Currently: 11 open sub-issues (#1426 to #1436) for v0.12.0; some geography and events groundwork has landed on main since June (see the assessment's reassessment section)
 - Need: Clear responsibility boundaries (whose job is it to store geometry vs floats?)
 
 **Improvement priorities (grounded in assessment findings):**
