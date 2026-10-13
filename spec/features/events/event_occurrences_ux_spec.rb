@@ -62,7 +62,10 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     it 'shows the recurring event on multiple future date cells within the visible month' do
       visit better_together.calendar_path(calendar, locale:)
 
-      occurrence_dates = recurrence.occurrences_between(Time.current, 3.weeks.from_now).map(&:to_date)
+      # Bound to the visible month: a rolling now..+3.weeks window spills past the
+      # month grid late in the month and fails on a date nobody can see.
+      occurrence_dates = recurrence.occurrences_between(Time.current.beginning_of_month,
+                                                        Time.current.end_of_month).map(&:to_date)
       occurrence_dates.each do |date|
         expect(page).to have_css("#calendar-day-#{date.iso8601}-events .calendar-event-link", text: event.name)
       end

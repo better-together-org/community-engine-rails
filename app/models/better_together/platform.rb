@@ -133,6 +133,7 @@ module BetterTogether
              inverse_of: :target_platform
 
     after_commit :sync_primary_platform_domain!, on: %i[create update]
+    after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_external? }
 
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
@@ -251,6 +252,10 @@ module BetterTogether
       return if community.blank? || community.privacy == privacy
 
       community.update_columns(privacy:, updated_at: Time.current)
+    end
+
+    def reset_mcp_allowed_origins
+      BetterTogether::Mcp::AllowedOrigins.reset_cache!
     end
 
     def set_default_requires_invitation
