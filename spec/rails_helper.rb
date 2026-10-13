@@ -239,9 +239,7 @@ RSpec.configure do |config|
     # Re-seed essential data if a prior :js/:feature/:system example's :deletion cleanup wiped
     # it. Runs BEFORE DatabaseCleaner.start so the rebuild commits once; inside the example's
     # transaction it was rolled back and every later example rebuilt it (about 90 inserts each).
-    # The host wizard is checked too: a worker whose first examples are browser specs has no
-    # transaction example to rebuild it, and the feature helper cannot create it (no name).
-    unless BetterTogether::Role.exists? && BetterTogether::Wizard.exists?(identifier: 'host_setup')
+    unless BetterTogether::Role.exists?
       Rails.logger.debug '🔄 Re-seeding essential data after a prior :js/:feature/:system test'
       BetterTogether::AccessControlBuilder.build(clear: false)
       BetterTogether::NavigationBuilder.build(clear: false)
