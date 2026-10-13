@@ -116,7 +116,8 @@ jobs:
       REDIS_URL: "redis://localhost:6379/0"
       SEARCH_BACKEND: "pg_search"
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
-      WORKERS: 4
+      # Four parallel Chrome sessions per runner contended on chromedriver's lock port.
+      WORKERS: 2
       SHARD: ${{ matrix.shard }}
       SHARDS: ${{ matrix.total }}
 

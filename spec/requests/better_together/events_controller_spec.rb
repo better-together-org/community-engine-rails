@@ -327,7 +327,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event).to be_present
         expect(event.location).to be_present
@@ -370,7 +370,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
           post better_together.events_path(locale: locale), params: params
         end.to change(BetterTogether::Address, :count).by(1)
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event.location.location).to be_a(BetterTogether::Address)
         expect(event.location.location.line1).to eq('9 New Street')
@@ -398,7 +398,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event).to be_present
         expect(event.location).to be_present
@@ -429,7 +429,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event).to be_present
         expect(event.location).to be_present
@@ -460,7 +460,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event).to be_present
         expect(event.location).to be_present
@@ -490,7 +490,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event).to be_present
         expect(event.location).to be_present
@@ -514,7 +514,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
         expect(event).to be_present
         expect(event.starts_at).to be_nil
@@ -683,7 +683,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         post better_together.events_path(locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         event = BetterTogether::Event.order(:created_at).last
 
         # Verify event was created
@@ -731,7 +731,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         patch better_together.event_path(existing_event, locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         existing_event.reload
 
         # Verify timezone changed
@@ -770,7 +770,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
 
         patch better_together.event_path(existing_event, locale: locale), params: params
 
-        expect(response).to have_http_status(:found)
+        expect(response).to have_http_status(:found), -> { response_failure_detail }
         existing_event.reload
 
         # Timezone unchanged

@@ -7,6 +7,12 @@ Capybara.server = :puma, { Silent: true }
 Capybara.server_host = '127.0.0.1'
 Capybara.always_include_port = true
 
+# An explicit chromedriver port per process skips Selenium's cross-process port lock, which
+# timed out ("unable to bind to locking port") when parallel workers launched Chrome together.
+CHROMEDRIVER_SERVICE = lambda do
+  Selenium::WebDriver::Service.chrome(port: 9515 + (Process.pid % 400))
+end
+
 Capybara.register_driver :selenium_chrome_headless do |app|
   # Generate a unique temporary directory for each session to avoid conflicts in parallel execution
   # Include process ID and timestamp for better uniqueness across parallel workers
@@ -35,6 +41,7 @@ Capybara.register_driver :selenium_chrome_headless do |app|
     app,
     browser: :chrome,
     options: options,
+    service: CHROMEDRIVER_SERVICE.call,
     http_client: http_client
   )
 end
@@ -55,7 +62,8 @@ Capybara.register_driver :selenium_chrome do |app|
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
-    options: options
+    options: options,
+    service: CHROMEDRIVER_SERVICE.call
   )
 end
 
