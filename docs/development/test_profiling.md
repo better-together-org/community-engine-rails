@@ -75,8 +75,8 @@ Empty request example floor: 1.8 s to 0.02 s.
 ## CI sharding
 
 The `rspec` workflow job is split into shard jobs, each with its own Postgres/Redis: 4 `other`
-shards (`rspec other shard N/4`, 4 workers) and 2 `browser` shards (`rspec browser shard N/2`,
-2 workers). Browser examples (tagged `js`, `feature` or `system`) run only in the browser shards.
+shards (`rspec other shard N/4`, 4 workers) and 4 `browser` shards (`rspec browser shard N/4`,
+1 worker). Browser examples (tagged `js`, `feature` or `system`) run only in the browser shards.
 They use the `:deletion` cleaner and a Puma server thread, so keeping them out of the
 transaction-cleaned workers stops leaked state crossing between the two kinds. The tag filters
 partition every example exactly once. The workflow also has an aggregate `rspec (3.4.10, <rails>)` job that requires every

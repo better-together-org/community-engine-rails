@@ -101,15 +101,17 @@ jobs:
       fail-fast: false
       # Browser (js/feature/system) examples run apart from the rest: they use the :deletion
       # cleaner and a Puma server thread, which leaked state into transaction-cleaned examples
-      # sharing a worker database. Fewer workers per browser job keeps Chrome sessions apart.
+      # sharing a worker database. One worker per browser job keeps Chrome sessions apart.
       matrix:
         include:
           - { suite: other, shard: 1, total: 4, workers: 4 }
           - { suite: other, shard: 2, total: 4, workers: 4 }
           - { suite: other, shard: 3, total: 4, workers: 4 }
           - { suite: other, shard: 4, total: 4, workers: 4 }
-          - { suite: browser, shard: 1, total: 2, workers: 2 }
-          - { suite: browser, shard: 2, total: 2, workers: 2 }
+          - { suite: browser, shard: 1, total: 4, workers: 1 }
+          - { suite: browser, shard: 2, total: 4, workers: 1 }
+          - { suite: browser, shard: 3, total: 4, workers: 1 }
+          - { suite: browser, shard: 4, total: 4, workers: 1 }
     # always() is required here: without it, GitHub Actions implicitly ANDs this
     # condition with success() across the whole needs chain, and pr_evidence is
     # *designed* to skip on push events -- silently skipping this job (and
