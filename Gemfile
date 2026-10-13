@@ -37,7 +37,7 @@ gem 'ssrf_filter', '~> 1.1'
 # The allowed redis range comes from Rails' actioncable (subscription_adapter/redis.rb):
 # Rails <= 8.0 requires redis < 6; Rails >= 8.1 allows < 7. Re-check it when Rails changes
 # (bundle exec gem contents actioncable | grep adapter/redis.rb).
-gem 'redis', '~> 5.4'
+gem 'redis', Gem::Version.new(ENV.fetch('RAILS_VERSION', '8.1.4')) >= Gem::Version.new('8.1') ? '~> 6.0' : '~> 5.4'
 
 gem 'rswag'
 
