@@ -62,7 +62,7 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         env:
