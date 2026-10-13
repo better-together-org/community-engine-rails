@@ -33,6 +33,8 @@ The June 3 audit was written against the 0.11.0 release-notes branch. Re-checkin
 
 **Net result:** 3 gaps resolved (5, 6, 7), 1 resolved by decision (4), 2 partly resolved (1, 2), 8 open (3, 8, 9, 10, 11, 12, 13, 14), plus informational 17. The critical path to a proximity-capable v0.12.0 is unchanged: point geometry on `Space` (subject to #1790) with a GiST index, geocoding writes to geometry, then the API filter and `EventResource` location surface.
 
+**Security dependency:** `Geography::Space` latitude, longitude and elevation are plaintext floats shared by public reference geography and private venue spaces (#1790). The scoping and migration are tracked in #1881. Any new point-geometry column, EventResource location attribute or radius filter (gaps 1, 3, 8, 9, 10, 13) must follow the spatial design chosen there, because encrypted coordinates cannot be used with PostGIS.
+
 Technical-debt items 1, 4 and 7 in Section 6 and the "Immediate Actions" for Event dead code and the Joatu association in Section 7 are done and can be dropped from the plan.
 
 ---
