@@ -130,6 +130,7 @@ jobs:
       SUITE: ${{ matrix.suite }}
       SHARD: ${{ matrix.shard }}
       SHARDS: ${{ matrix.total }}
+      CAPYBARA_ARTIFACT_PATH: ${{ github.workspace }}/tmp/capybara-artifacts
 
     services:
       postgres:
@@ -281,6 +282,15 @@ jobs:
             tmp/rspec_results*.json
             tmp/flaky/
           if-no-files-found: warn
+
+      - name: Upload browser failure artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure-artifacts-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          path: tmp/capybara-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Upload Rails test log
         if: always()
