@@ -228,6 +228,11 @@ module BetterTogether
       app.config.action_view.form_with_generates_remote_forms = true
     end
 
+    # After every initializer, so processor extension gems have registered their adapters.
+    config.after_initialize do
+      BetterTogether::Billing::WebhookSubscriptions.subscribe_all!
+    end
+
     initializer 'better_together.append_migrations' do |app|
       begin
         next if Pathname.new(app.root).realpath == Pathname.new(root).realpath

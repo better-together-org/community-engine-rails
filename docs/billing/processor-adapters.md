@@ -37,3 +37,24 @@ end
 Implement `processor_name`, `sanitize_payload`, `capabilities`, `webhook_event_types`, and the methods for each capability you advertise. `ProcessorAdapter::CAPABILITY_METHODS` lists the methods and keywords per capability. The contract version is checked when the adapter is built; a mismatch raises `ContractError`. Run the shared examples in `spec/support/shared_examples/billing_processor_adapter.rb` against your adapter.
 
 Core owns idempotency keys and money state. Money-moving calls always receive an `idempotency_key` that the adapter must pass through to the processor.
+
+## Event pipeline
+
+Processors deliver webhooks through Pay. Core logs, retries and replays them; the adapter only understands the vendor payload.
+
+1. After boot, core subscribes each registered adapter's `webhook_event_types` to Pay's delegator.
+2. `adapter.normalize_webhook(vendor_event)` returns `{ event_id:, event_type:, payload: }`. Core records it once per `(processor, event_id)` in `better_together_billing_events`; a duplicate delivery is ignored.
+3. `ProcessBillingEventJob` is enqueued with the **event id only**, so payloads never appear in Redis or job logs.
+4. `adapter.process_event(event:)` reads `event.payload` and returns a `Billing::EventResult`: `processed`, `ignored`, `alerted` (handled, but an operator should look), or `retry` (a prerequisite such as a not-yet-synced subscription is missing).
+
+Status values: `pending`, `processed`, `ignored`, `alerted`, `failed`, `dead_lettered`, `replayed`. Only `failed` and `dead_lettered` count as problems, so unrelated or informational events do not raise alerts.
+
+### Retries, dead letters and replay
+
+- A failed or `retry` result is retried by ActiveJob up to `Billing::Event::MAX_ATTEMPTS` (5) times. `processed_at` is set only on a final outcome.
+- Hourly, `DeadLetterStaleBillingEventsJob` moves events that exhausted their retries (`retries_exhausted`) or made no progress for 6 hours (`stale_unresolved_drift`) to `dead_lettered`.
+- `Billing::ReplayEvent` re-enqueues a dead-lettered event. It refuses events whose payload was redacted or whose processor is no longer installed.
+
+### Payload retention
+
+Raw payloads are kept for `BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS` (default 30) after processing. A daily job then replaces each with `adapter.sanitize_payload(payload)`, or with just `id` and `type` if the adapter is gone. Sanitizers must remove personal data and secrets.
