@@ -234,7 +234,7 @@ for 0.11.x patches.
   resolution path.
 - **ClamAV Operator Deploy Guide:** A guide for deploying, configuring, and monitoring
   the ClamAV backend will be added in a 0.11.x docs patch before operators are expected
-  to enable `BETTER_TOGETHER_CONTENT_SECURITY_CLAM_AV_ENABLED`.
+  to enable `BT_MALWARE_SCANNING_ENABLED`.
 - **Observability & Marketing Adapters:** Core error reporting now dispatches through a
   pluggable adapter registry, but no companion observability gem (e.g. Sentry) has
   shipped yet — that extraction is roadmap-only. There is no dedicated marketing/Google
