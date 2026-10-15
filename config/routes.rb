@@ -27,6 +27,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       to: 'content_security/active_storage/representations/proxy#show',
       as: :content_security_blob_representation_proxy
 
+  mount Pay::Engine, at: '/pay'
+
   # Enable Omniauth for Devise
   devise_for :users, class_name: BetterTogether.user_class.to_s,
                      only: :omniauth_callbacks,
