@@ -241,7 +241,9 @@ Implemented now:
 
 - generic CE adapter registry
 - multi-provider error-reporting support
-- host app Sentry registration moved out of controller overrides and into provider registration
+- Sentry registration moved out of core into the shipped [`better_together-sentry`](https://github.com/better-together-org/better_together-sentry) provider gem
+- Google Analytics moved into [`better_together-google-analytics`](https://github.com/better-together-org/better_together-google-analytics)
+- Elasticsearch moved into [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch), registering a `:search` adapter
 
 Not implemented yet:
 

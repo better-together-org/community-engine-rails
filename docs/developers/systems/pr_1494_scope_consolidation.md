@@ -57,7 +57,7 @@ The following pieces belong together and now form the intended milestone.
 - JOATU exchange participation recorded as community contribution
 - GitHub-backed contribution import foundation
 
-### 4. Evidence foundation
+### 4. Evidence foundation (carved out of 0.11.0, see Final 0.11.0 Scope Decision above)
 
 - structured citations
 - explicit claims and evidence links
@@ -71,7 +71,7 @@ The following pieces belong together and now form the intended milestone.
 - policy visibility hardening
 - JOATU contribution and evidence compatibility
 
-### 6. Canonical UI evidence
+### 6. Canonical UI evidence (citation and claim browsing, and GitHub import, carved out of 0.11.0)
 
 The PR should keep screenshots and diagrams for the canonical flows that prove the system works:
 

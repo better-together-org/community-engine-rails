@@ -217,88 +217,64 @@ Living = rewrite to current behaviour. Historical (assessments, plans, release n
 
 | Term group | Living files | Living matches | Historical files |
 | --- | --- | --- | --- |
-| elasticsearch | 32 | 122 | 25 |
-| sentry | 6 | 32 | 10 |
-| e2ee_signal | 1 | 3 | 4 |
-| c3_borgberry | 10 | 67 | 7 |
-| claims_evidence | 4 | 6 | 4 |
+| elasticsearch | 22 | 91 | 25 |
+| sentry | 4 | 23 | 10 |
+| e2ee_signal | 0 | 0 | 4 |
+| c3_borgberry | 6 | 25 | 5 |
+| claims_evidence | 2 | 5 | 4 |
 | ruby_openai | 2 | 2 | 2 |
 
 <details><summary>elasticsearch: living files</summary>
 
-- `docs/platform_organizers/elasticsearch_upgrade_to_8_guide.md` (22)
-- `docs/production/external-services-to-configure.md` (13)
-- `docs/developers/systems/caching_performance_system.md` (10)
-- `.github/copilot-instructions.md` (9)
-- `docs/developers/systems/search_backend_adapter_system.md` (8)
+- `docs/platform_organizers/elasticsearch_upgrade_to_8_guide.md` (21)
+- `docs/developers/systems/search_backend_adapter_system.md` (16)
+- `docs/production/external-services-to-configure.md` (8)
 - `docs/developers/systems/search_and_filtering_system.md` (7)
-- `docs/diagrams/source/pr_1479_search_backend_architecture.mmd` (3)
-- `docs/developers/systems/markdown_content_management_system.md` (3)
-- `docs/diagrams/source/posts_search_and_filter_flow.mmd` (3)
-- `docs/development/dev-setup.md` (3)
-- `docs/documentation_assessment.md` (3)
-- `docs/diagrams/source/elasticsearch_8_reindex_and_validation_flow.mmd` (3)
-- `docs/diagrams/source/pr_1479_search_backend_flow.mmd` (3)
-- `docs/diagrams/source/pr_1479_search_contract_normalization.mmd` (3)
+- `.github/instructions/search.instructions.md` (5)
+- `.github/copilot-instructions.md` (5)
+- `docs/developers/systems/caching_performance_system.md` (4)
+- `docs/development/adapter_registry_architecture.md` (3)
 - `docs/production/multi_platform_deployment.md` (3)
+- `docs/development/dev-setup.md` (2)
+- `docs/diagrams/source/pr_1479_search_backend_architecture.mmd` (2)
 - `docs/diagrams/source/pr_1479_searchable_model_onboarding.mmd` (2)
-- `docs/diagrams/source/release_0_11_0_search_validation_flow.mmd` (2)
 - `AGENTS.md` (2)
-- `.github/instructions/search-elasticsearch.instructions.md` (2)
-- `.github/agents-README.md` (2)
-- `.github/instructions/README.md` (2)
-- `.github/instructions/rails-engine.instructions.md` (2)
-- `docs/diagrams/source/caching_performance_flow.mmd` (2)
 - `docs/developers/systems/content_management.md` (2)
-- `docs/upgrade/multi-tenancy-upgrade.md` (1)
-- `docs/table_of_contents.md` (1)
-- `docs/platform_organizers/platform_administration.md` (1)
+- `.github/instructions/rails-engine.instructions.md` (2)
 - `docs/platform_organizers/host_management.md` (1)
-- `docs/end_users/search_and_filter_guide.md` (1)
-- `docs/development/README.md` (1)
-- `docs/developers/systems/metrics_system.md` (1)
-- `docs/developers/systems/community_social_system.md` (1)
+- `docs/platform_organizers/platform_administration.md` (1)
+- `docs/developers/systems/markdown_content_management_system.md` (1)
+- `docs/table_of_contents.md` (1)
+- `docs/diagrams/source/pr_1479_search_contract_normalization.mmd` (1)
+- `.github/agents-README.md` (1)
+- `.github/instructions/README.md` (1)
 
 </details>
 
 <details><summary>sentry: living files</summary>
 
-- `docs/production/external-services-to-configure.md` (15)
-- `docs/development/adapter_registry_architecture.md` (7)
-- `docs/developers/systems/documentation_builder_system.md` (3)
+- `docs/production/external-services-to-configure.md` (10)
+- `docs/development/adapter_registry_architecture.md` (9)
 - `docs/development/external_provider_adapter_roadmap.md` (3)
-- `docs/diagrams/source/documentation_builder_flow.mmd` (3)
 - `AGENTS.md` (1)
-
-</details>
-
-<details><summary>e2ee_signal: living files</summary>
-
-- `docs/diagrams/source/release_0_11_0_capability_map.mmd` (3)
 
 </details>
 
 <details><summary>c3_borgberry: living files</summary>
 
-- `docs/joatu-v2-vs-ce-comparison.md` (32)
 - `docs/development/adapter_registry_architecture.md` (10)
 - `docs/development/external_provider_adapter_roadmap.md` (6)
 - `docs/developers/systems/ai_integration_system.md` (5)
-- `docs/developers/systems/conversations_messaging_system.md` (4)
-- `docs/diagrams/source/conversations_messaging_flow.mmd` (3)
-- `docs/developers/systems/pr_1494_scope_consolidation.md` (2)
 - `docs/production/external-services-to-configure.md` (2)
-- `docs/diagrams/source/events_invitations_flow.mmd` (2)
-- `docs/diagrams/source/release_0_11_0_content_block_roster_map.mmd` (1)
+- `docs/developers/systems/pr_1494_scope_consolidation.md` (1)
+- `docs/joatu-v2-vs-ce-comparison.md` (1)
 
 </details>
 
 <details><summary>claims_evidence: living files</summary>
 
-- `docs/developers/systems/pr_1494_scope_consolidation.md` (3)
+- `docs/developers/systems/pr_1494_scope_consolidation.md` (4)
 - `docs/developers/systems/community_action_network_governance_system.md` (1)
-- `docs/diagrams/source/pr_1494_cross_record_evidence_exports_flow.mmd` (1)
-- `docs/diagrams/source/pr_1494_governance_bundle_and_community_evidence_flow.mmd` (1)
 
 </details>
 

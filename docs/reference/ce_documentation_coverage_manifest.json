@@ -18295,8 +18295,7 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/metrics_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/developers/systems/search_backend_adapter_system.md",
-        "docs/platform_organizers/elasticsearch_upgrade_to_8_guide.md"
+        "docs/developers/systems/search_backend_adapter_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_metrics_search_ai_rails_layers.mmd",
@@ -20700,6 +20699,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/search_and_filtering_system.md",
         "docs/developers/systems/search_backend_adapter_system.md"
       ],
       "erd_diagrams": [],
@@ -20781,6 +20781,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/search_and_filtering_system.md",
         "docs/developers/systems/search_backend_adapter_system.md"
       ],
       "erd_diagrams": [],
@@ -20936,10 +20937,10 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/rbac_overview.md",
+        "docs/developers/systems/community_social_system.md",
         "docs/developers/systems/content_event_creation_authorization.md",
         "docs/developers/systems/content_permission_standardization_assessment.md",
-        "docs/developers/systems/events_system.md",
-        "docs/developers/systems/membership_request_system.md"
+        "docs/developers/systems/events_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22890,6 +22891,7 @@
       "docs": [
         "docs/developers/systems/caching_performance_system.md",
         "docs/developers/systems/joatu_public_visibility_hardening_plan.md",
+        "docs/developers/systems/search_and_filtering_system.md",
         "docs/developers/systems/search_backend_adapter_system.md"
       ],
       "erd_diagrams": [],
@@ -22958,6 +22960,7 @@
       "docs": [
         "docs/developers/systems/joatu_public_visibility_hardening_plan.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/search_and_filtering_system.md",
         "docs/developers/systems/search_backend_adapter_system.md"
       ],
       "erd_diagrams": [],
@@ -23694,8 +23697,8 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/navigation_quick_reference.md",
         "docs/developers/systems/ai_integration_system.md",
-        "docs/developers/systems/contribution_attribution_system.md",
-        "docs/developers/systems/documentation_builder_system.md"
+        "docs/developers/systems/content_management.md",
+        "docs/developers/systems/contribution_attribution_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -25573,6 +25576,7 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/caching_performance_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
         "docs/developers/systems/search_backend_adapter_system.md"
       ],
@@ -25997,22 +26001,14 @@
       "living": [
         {
           "file": "docs/platform_organizers/elasticsearch_upgrade_to_8_guide.md",
-          "matches": 22
-        },
-        {
-          "file": "docs/production/external-services-to-configure.md",
-          "matches": 13
-        },
-        {
-          "file": "docs/developers/systems/caching_performance_system.md",
-          "matches": 10
-        },
-        {
-          "file": ".github/copilot-instructions.md",
-          "matches": 9
+          "matches": 21
         },
         {
           "file": "docs/developers/systems/search_backend_adapter_system.md",
+          "matches": 16
+        },
+        {
+          "file": "docs/production/external-services-to-configure.md",
           "matches": 8
         },
         {
@@ -26020,35 +26016,19 @@
           "matches": 7
         },
         {
-          "file": "docs/diagrams/source/pr_1479_search_backend_architecture.mmd",
-          "matches": 3
+          "file": ".github/instructions/search.instructions.md",
+          "matches": 5
         },
         {
-          "file": "docs/developers/systems/markdown_content_management_system.md",
-          "matches": 3
+          "file": ".github/copilot-instructions.md",
+          "matches": 5
         },
         {
-          "file": "docs/diagrams/source/posts_search_and_filter_flow.mmd",
-          "matches": 3
+          "file": "docs/developers/systems/caching_performance_system.md",
+          "matches": 4
         },
         {
-          "file": "docs/development/dev-setup.md",
-          "matches": 3
-        },
-        {
-          "file": "docs/documentation_assessment.md",
-          "matches": 3
-        },
-        {
-          "file": "docs/diagrams/source/elasticsearch_8_reindex_and_validation_flow.mmd",
-          "matches": 3
-        },
-        {
-          "file": "docs/diagrams/source/pr_1479_search_backend_flow.mmd",
-          "matches": 3
-        },
-        {
-          "file": "docs/diagrams/source/pr_1479_search_contract_normalization.mmd",
+          "file": "docs/development/adapter_registry_architecture.md",
           "matches": 3
         },
         {
@@ -26056,11 +26036,15 @@
           "matches": 3
         },
         {
-          "file": "docs/diagrams/source/pr_1479_searchable_model_onboarding.mmd",
+          "file": "docs/development/dev-setup.md",
           "matches": 2
         },
         {
-          "file": "docs/diagrams/source/release_0_11_0_search_validation_flow.mmd",
+          "file": "docs/diagrams/source/pr_1479_search_backend_architecture.mmd",
+          "matches": 2
+        },
+        {
+          "file": "docs/diagrams/source/pr_1479_searchable_model_onboarding.mmd",
           "matches": 2
         },
         {
@@ -26068,15 +26052,7 @@
           "matches": 2
         },
         {
-          "file": ".github/instructions/search-elasticsearch.instructions.md",
-          "matches": 2
-        },
-        {
-          "file": ".github/agents-README.md",
-          "matches": 2
-        },
-        {
-          "file": ".github/instructions/README.md",
+          "file": "docs/developers/systems/content_management.md",
           "matches": 2
         },
         {
@@ -26084,19 +26060,7 @@
           "matches": 2
         },
         {
-          "file": "docs/diagrams/source/caching_performance_flow.mmd",
-          "matches": 2
-        },
-        {
-          "file": "docs/developers/systems/content_management.md",
-          "matches": 2
-        },
-        {
-          "file": "docs/upgrade/multi-tenancy-upgrade.md",
-          "matches": 1
-        },
-        {
-          "file": "docs/table_of_contents.md",
+          "file": "docs/platform_organizers/host_management.md",
           "matches": 1
         },
         {
@@ -26104,23 +26068,23 @@
           "matches": 1
         },
         {
-          "file": "docs/platform_organizers/host_management.md",
+          "file": "docs/developers/systems/markdown_content_management_system.md",
           "matches": 1
         },
         {
-          "file": "docs/end_users/search_and_filter_guide.md",
+          "file": "docs/table_of_contents.md",
           "matches": 1
         },
         {
-          "file": "docs/development/README.md",
+          "file": "docs/diagrams/source/pr_1479_search_contract_normalization.mmd",
           "matches": 1
         },
         {
-          "file": "docs/developers/systems/metrics_system.md",
+          "file": ".github/agents-README.md",
           "matches": 1
         },
         {
-          "file": "docs/developers/systems/community_social_system.md",
+          "file": ".github/instructions/README.md",
           "matches": 1
         }
       ],
@@ -26130,22 +26094,14 @@
       "living": [
         {
           "file": "docs/production/external-services-to-configure.md",
-          "matches": 15
+          "matches": 10
         },
         {
           "file": "docs/development/adapter_registry_architecture.md",
-          "matches": 7
-        },
-        {
-          "file": "docs/developers/systems/documentation_builder_system.md",
-          "matches": 3
+          "matches": 9
         },
         {
           "file": "docs/development/external_provider_adapter_roadmap.md",
-          "matches": 3
-        },
-        {
-          "file": "docs/diagrams/source/documentation_builder_flow.mmd",
           "matches": 3
         },
         {
@@ -26156,20 +26112,11 @@
       "historical_files": 10
     },
     "e2ee_signal": {
-      "living": [
-        {
-          "file": "docs/diagrams/source/release_0_11_0_capability_map.mmd",
-          "matches": 3
-        }
-      ],
+      "living": [],
       "historical_files": 4
     },
     "c3_borgberry": {
       "living": [
-        {
-          "file": "docs/joatu-v2-vs-ce-comparison.md",
-          "matches": 32
-        },
         {
           "file": "docs/development/adapter_registry_architecture.md",
           "matches": 10
@@ -26183,48 +26130,28 @@
           "matches": 5
         },
         {
-          "file": "docs/developers/systems/conversations_messaging_system.md",
-          "matches": 4
-        },
-        {
-          "file": "docs/diagrams/source/conversations_messaging_flow.mmd",
-          "matches": 3
-        },
-        {
-          "file": "docs/developers/systems/pr_1494_scope_consolidation.md",
-          "matches": 2
-        },
-        {
           "file": "docs/production/external-services-to-configure.md",
           "matches": 2
         },
         {
-          "file": "docs/diagrams/source/events_invitations_flow.mmd",
-          "matches": 2
+          "file": "docs/developers/systems/pr_1494_scope_consolidation.md",
+          "matches": 1
         },
         {
-          "file": "docs/diagrams/source/release_0_11_0_content_block_roster_map.mmd",
+          "file": "docs/joatu-v2-vs-ce-comparison.md",
           "matches": 1
         }
       ],
-      "historical_files": 7
+      "historical_files": 5
     },
     "claims_evidence": {
       "living": [
         {
           "file": "docs/developers/systems/pr_1494_scope_consolidation.md",
-          "matches": 3
+          "matches": 4
         },
         {
           "file": "docs/developers/systems/community_action_network_governance_system.md",
-          "matches": 1
-        },
-        {
-          "file": "docs/diagrams/source/pr_1494_cross_record_evidence_exports_flow.mmd",
-          "matches": 1
-        },
-        {
-          "file": "docs/diagrams/source/pr_1494_governance_bundle_and_community_evidence_flow.mmd",
           "matches": 1
         }
       ],

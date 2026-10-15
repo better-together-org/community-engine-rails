@@ -266,7 +266,7 @@ If any answer is weak, the adapter should not ship.
 
 ## Recommended Next Build Order
 
-1. Extract host-app Sentry use to `better_together-sentry`
+1. ~~Extract Sentry use to `better_together-sentry`~~ (done; the gem is shipped, no tagged release yet)
 2. Implement `better_together-borgberry-observability`
 3. Define stable `:queue`, `:cache`, `:throttling`, and `:storage` contracts
 4. Build `better_together-sidekiq`, `better_together-redis-cache`, and `better_together-redis-throttling`

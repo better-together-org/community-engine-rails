@@ -12,14 +12,14 @@ Instructions for GitHub Copilot and other automated contributors working in this
 
 ## Project
 - Ruby: 3.4.10 (installed via rbenv in setup)
-- Rails: 7.2
+- Rails: 8.1 (gemspec supports `>= 7.2, < 8.2`)
 - Node: 20
 - DB: PostgreSQL + PostGIS
-- Search: Elasticsearch 7.17.23
+- Search: Postgres-native `pg_search` (default); Elasticsearch is the optional `better_together-elasticsearch` extension gem
 - Test app: `spec/dummy`
 
 ## Setup
-- Environment runs a setup script that installs Ruby 3.4.10, Node 20, Postgres + PostGIS, and ES7, then prepares databases.
+- Environment runs a setup script that installs Ruby 3.4.10, Node 20, and Postgres + PostGIS, then prepares databases.
 - **Host Ruby**: `bin/install-ruby-version` bootstraps the host toolchain — rbenv, the `ruby-build` and `rbenv-gemset` plugins, and the Ruby pinned in `.ruby-version` (refreshing the `ruby-build` definition list if needed). Idempotent; run it if `ruby`/`bundle` on the host error with `rbenv: version '...' is not installed`.
 - **Docker Environment**: All commands requiring database access must use `bin/dc-run` to execute within the containerized environment.
 - **Dummy App Commands**: Use `bin/dc-run-dummy` for Rails commands that need the dummy app context (e.g., `bin/dc-run-dummy rails console`, `bin/dc-run-dummy rails db:migrate`).
@@ -277,7 +277,7 @@ element lacks one, add it to the view first.
 
 ## Privacy Practices for Platform Organizers
 - Default posture: keep `requires_invitation` enabled unless there is a clear, consented need to open registration.
-- Privacy policy: publish and maintain a platform‑specific privacy policy; disclose any third‑party trackers (e.g., GA, Sentry) and their purposes.
+- Privacy policy: publish and maintain a platform‑specific privacy policy; disclose any third‑party trackers (e.g., Google Analytics or Sentry via their extension gems) and their purposes.
 - Consent/cookies: add a cookie/consent banner before enabling third‑party trackers; anonymize IPs; disable ad personalization; respect regional requirements.
 - Data minimization:
   - Avoid placing PII in URLs, block identifiers, or public content.
@@ -924,7 +924,7 @@ Each major system must include:
 - **Debugging Approach**: When testing errors occur in only one spec, compare its type and setup to working specs
 
 ## Docker Environment Usage
-- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL or Redis
 - **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
