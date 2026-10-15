@@ -18,7 +18,7 @@ class RecreateBetterTogetherBillingTables < ActiveRecord::Migration[7.2]
       t.text :description
       t.string :billing_interval, null: false, default: 'month'
       t.integer :amount_cents, null: false, default: 0
-      t.string :currency, null: false, default: 'CAD'
+      t.string :currency, null: false
       t.boolean :active, null: false, default: true
       t.string :stripe_price_id, null: false
       t.jsonb :metadata, null: false, default: {}

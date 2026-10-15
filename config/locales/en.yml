@@ -1044,6 +1044,7 @@ en:
       no_sponsorship_plans: No sponsorship contribution amounts are configured yet.
       no_sponsorships_given_yet: You are not sponsoring any accounts yet.
       no_subscription: No synced subscription is recorded for this community yet.
+      not_configured: Billing has not been set up for this platform yet.
       offer_sponsorship_heading: Offer to sponsor someone
       oldest_unresolved_at: 'Oldest unresolved at:'
       open_merchant_onboarding: Open merchant onboarding

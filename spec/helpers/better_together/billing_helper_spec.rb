@@ -16,6 +16,10 @@ module BetterTogether # :nodoc:
         expect(helper.billing_amount(4_500, 'cad')).to eq('CA$45.00')
       end
 
+      it 'omits the unit when no currency is known instead of assuming one' do
+        expect(helper.billing_amount(4_500, nil)).to eq('45.00')
+      end
+
       it 'falls back to the raw upcased code for an uncurated currency' do
         expect(helper.billing_amount(4_500, 'JPY')).to eq('JPY 45.00')
       end

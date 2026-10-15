@@ -1050,6 +1050,7 @@ fr:
       no_sponsorships_given_yet: Vous n'avez encore donné de parrainage à aucun compte.
       no_subscription: Aucun abonnement synchronise n'est encore enregistre pour cette
         communaute.
+      not_configured: La facturation n'est pas encore configurée pour cette plateforme.
       offer_sponsorship_heading: Proposer de parrainer quelqu'un
       oldest_unresolved_at: 'Plus ancien non resolu a :'
       open_merchant_onboarding: Ouvrir l''integration marchand

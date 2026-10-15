@@ -50,6 +50,37 @@ RSpec.describe 'BetterTogether::CommunityBillings' do
     create(:better_together_billing_subscription, pay_subscription:, billing_plan:)
   end
 
+  describe 'when billing is not configured for the host' do
+    before { allow(BetterTogether::Billing::Configuration).to receive(:ready?).and_return(false) }
+
+    it 'shows the not-configured notice and offers no plans on the billing page' do
+      get better_together.community_billing_path(community, locale:)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('better_together.billing.not_configured'))
+      expect(response.body).not_to include('Keeps this community space online and stewarded.')
+    end
+
+    it 'refuses checkout without calling the processor' do
+      post better_together.checkout_community_billing_path(community, locale:), params: { billing_plan_id: billing_plan.identifier }
+
+      expect(response).to redirect_to(better_together.community_billing_path(community, locale:))
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.not_configured'))
+    end
+
+    it 'refuses the customer portal' do
+      post better_together.portal_community_billing_path(community, locale:)
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.not_configured'))
+    end
+
+    it 'refuses sponsorship contributions' do
+      post better_together.contribute_community_billing_path(community, locale:), params: { beneficiary_id: community.slug }
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.not_configured'))
+    end
+  end
+
   describe 'GET /:locale/c/:community_id/billing' do
     it 'renders the billing page and plan catalog' do
       get better_together.community_billing_path(community, locale:)

@@ -2,11 +2,17 @@
 
 Pay.setup do |config|
   config.automount_routes = false
-  config.business_name = ENV.fetch('PAY_BUSINESS_NAME', 'Better Together')
-  config.business_address = ENV.fetch('PAY_BUSINESS_ADDRESS', "St. John's, NL, Canada")
   config.application_name = ENV.fetch('PAY_APPLICATION_NAME', 'Community Engine')
-  config.support_email = ENV.fetch('PAY_SUPPORT_EMAIL', 'support@btsdev.ca')
   config.send_emails = false
+
+  # Host identity has no built-in default; see BetterTogether::Billing::Configuration.
+  config.business_name = ENV['PAY_BUSINESS_NAME'].presence
+  config.business_address = ENV['PAY_BUSINESS_ADDRESS'].presence
+  config.support_email = ENV['PAY_SUPPORT_EMAIL'].presence
+end
+
+Rails.application.config.after_initialize do
+  BetterTogether::Billing::Configuration.log_missing!
 end
 
 ActiveSupport.on_load(:pay) do

@@ -23,7 +23,7 @@ module BetterTogether
     end
 
     def billing_amount(amount_cents, currency)
-      number_to_currency(amount_cents.to_i / 100.0, unit: currency_unit(currency))
+      number_to_currency(amount_cents.to_i / 100.0, unit: currency.present? ? currency_unit(currency) : '')
     end
 
     def billing_interval_label(interval)

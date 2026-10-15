@@ -39,7 +39,7 @@
               <% @sponsored_communities.each do |sponsorship| %>
                 <% sponsored_community = sponsorship.beneficiary %>
                 <% contributed_total = sponsorship.monetary_contributions.sum(&:amount_cents) %>
-                <% contributed_currency = sponsorship.monetary_contributions.first&.currency || 'CAD' %>
+                <% contributed_currency = sponsorship.monetary_contributions.first&.currency %>
                 <div id="<%= dom_id(sponsored_community, :sponsorship_row) %>" class="list-group-item px-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
                   <div>
                     <div class="fw-semibold"><%= sponsored_community.name %></div>

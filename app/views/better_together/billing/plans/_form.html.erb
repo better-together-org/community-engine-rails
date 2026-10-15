@@ -1,3 +1,4 @@
+<% selected_currency = billing_plan.currency.presence || BetterTogether::Billing::Configuration.default_currency %>
 <%= form_with(
       model: billing_plan,
       url: billing_plan.persisted? ? billing_plan_path(billing_plan) : billing_plans_path,
@@ -76,7 +77,7 @@
                        class: 'form-label' %>
         <%= form.select :currency,
                         BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES,
-                        { selected: billing_plan.currency.presence || 'CAD' },
+                        { selected: selected_currency, include_blank: selected_currency.blank? ? true : nil },
                         class: 'form-select',
                         required: true %>
       </div>

@@ -31,7 +31,7 @@
           <%= t(
                 'better_together.billing.sponsorship_received_notice',
                 default: 'This community has received %{amount} in sponsorship contributions.',
-                amount: billing_amount(received_contribution_total, @received_monetary_contributions.first&.currency || 'CAD')
+                amount: billing_amount(received_contribution_total, @received_monetary_contributions.first&.currency)
               ) %>
         </div>
       <% end %>

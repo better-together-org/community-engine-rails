@@ -1043,6 +1043,7 @@ es:
       no_sponsorships_given_yet: Aún no está patrocinando ninguna cuenta.
       no_subscription: Todavia no hay una suscripcion sincronizada registrada para
         esta comunidad.
+      not_configured: La facturación aún no está configurada para esta plataforma.
       offer_sponsorship_heading: Ofrecer patrocinio a alguien
       oldest_unresolved_at: 'No resuelto mas antiguo en:'
       open_merchant_onboarding: Abrir incorporacion comercial

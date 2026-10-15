@@ -52,6 +52,10 @@ module BetterTogether
 
     private
 
+    def billing_gated_actions
+      super + %w[contribute provision_platform]
+    end
+
     def billing_owner
       @community
     end

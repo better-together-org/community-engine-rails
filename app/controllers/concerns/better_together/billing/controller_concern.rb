@@ -24,13 +24,14 @@ module BetterTogether
         before_action :set_billing_owner
         before_action :authorize_billing_owner
         before_action :authorize_merchant_account_management, only: %i[merchant_onboarding refresh_merchant_account]
+        before_action :require_billing_configured
         after_action :verify_authorized
       end
 
       def show
         @checkout_session_pending = valid_checkout_session_id?
         enqueue_checkout_session_sync if @checkout_session_pending
-        @billing_plans = available_billing_plans
+        load_billing_plans
         @billing_subscription = current_billing_subscription
         @merchant_account = current_merchant_account
         @billing_alert_events = billing_alert_events
@@ -100,6 +101,35 @@ module BetterTogether
       end
 
       private
+
+      def load_billing_plans
+        if billing_configured?
+          @billing_plans = available_billing_plans
+        else
+          @billing_plans = []
+          flash.now[:alert] = billing_not_configured_message
+        end
+      end
+
+      def billing_configured?
+        BetterTogether::Billing::Configuration.ready?
+      end
+
+      # Actions that reach the processor. A single callback keyed on action_name
+      # (a repeated before_action with the same name would replace this one).
+      def billing_gated_actions
+        %w[checkout portal merchant_onboarding]
+      end
+
+      def require_billing_configured
+        return if billing_configured? || billing_gated_actions.exclude?(action_name)
+
+        redirect_to_billing_with_alert(billing_not_configured_message)
+      end
+
+      def billing_not_configured_message
+        t('better_together.billing.not_configured', default: 'Billing has not been set up for this platform yet.')
+      end
 
       def sponsorship_opt_in_param
         ActiveModel::Type::Boolean.new.cast(params[:accepts_sponsorship])

@@ -105,7 +105,7 @@ module BetterTogether
           end
 
           def owner_country(owner)
-            owner.try(:country).presence || 'CA'
+            owner.try(:country).presence || BetterTogether::Billing::Configuration.require_default_country!
           end
 
           def owner_email(owner)

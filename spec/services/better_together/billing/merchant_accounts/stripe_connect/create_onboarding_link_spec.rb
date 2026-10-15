@@ -32,11 +32,13 @@ RSpec.describe BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateO
   let(:account_link) { instance_double(Stripe::AccountLink, url: 'https://connect.stripe.test/onboarding') }
 
   around do |example|
-    original = ENV.fetch('BT_BILLING_MERCHANT_ONBOARDING_ENABLED', nil)
+    keys = %w[BT_BILLING_MERCHANT_ONBOARDING_ENABLED BT_BILLING_DEFAULT_COUNTRY]
+    originals = ENV.to_h.slice(*keys)
     ENV['BT_BILLING_MERCHANT_ONBOARDING_ENABLED'] = 'true'
+    ENV['BT_BILLING_DEFAULT_COUNTRY'] = 'CA'
     example.run
   ensure
-    ENV['BT_BILLING_MERCHANT_ONBOARDING_ENABLED'] = original
+    keys.each { |key| originals.key?(key) ? ENV[key] = originals[key] : ENV.delete(key) }
   end
 
   it 'creates a stripe account and onboarding link for a new owner' do
@@ -105,6 +107,16 @@ RSpec.describe BetterTogether::Billing::MerchantAccounts::StripeConnect::CreateO
 
     expect(result.created).to be(false)
     expect(result.merchant_account).to eq(merchant_account)
+    expect(Stripe::Account).not_to have_received(:create)
+  end
+
+  it 'fails closed instead of assuming a country when the owner has none and none is configured' do
+    ENV.delete('BT_BILLING_DEFAULT_COUNTRY')
+    allow(Stripe::Account).to receive(:create)
+
+    expect do
+      service.call(owner:, refresh_url: 'https://example.test/refresh', return_url: 'https://example.test/return')
+    end.to raise_error(BetterTogether::Billing::Configuration::MissingConfigurationError, /BT_BILLING_DEFAULT_COUNTRY/)
     expect(Stripe::Account).not_to have_received(:create)
   end
 
