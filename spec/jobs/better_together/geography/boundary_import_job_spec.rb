@@ -34,7 +34,7 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
   describe '#perform' do
     context 'when the record has no boundary yet' do
       it 'fetches, coerces to MultiPolygon, and stores provenance' do
-        allow(Geocoder).to receive(:search).with('Corner Brook', params: { polygon_geojson: 1 })
+        allow(Geocoder).to receive(:search).with(a_string_starting_with('Corner Brook'), params: hash_including(polygon_geojson: 1))
                                            .and_return([nominatim_result])
 
         job.perform(settlement)
@@ -42,7 +42,7 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
 
         expect(settlement.space.boundary).to be_a(RGeo::Feature::MultiPolygon)
         expect(settlement.space.metadata['boundary_source']).to include(
-          'provider' => 'nominatim', 'osm_type' => 'relation', 'osm_id' => 12_345
+          'provider' => 'nominatim', 'osm_type' => 'relation', 'osm_id' => 12_345, 'via' => 'search'
         )
       end
     end
@@ -87,17 +87,25 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
         )
       end
 
-      it 'does not save a nil boundary and does not touch the record' do
+      it 'does not save a nil boundary and does not touch an unsaved space' do
         allow(Geocoder).to receive(:search).and_return([point_result])
         expect(settlement.space).not_to receive(:save!)
 
         expect { job.perform(settlement) }.not_to raise_error
 
-        # No boundary was ever saved, so the space was never persisted at all -
-        # reload would raise on a record with no id, unlike the "has a boundary"
-        # cases above which explicitly persist one first.
+        # No boundary was ever saved, so the space was never persisted at all.
         expect(settlement.space).not_to be_persisted
         expect(settlement.space.boundary).to be_nil
+      end
+
+      it 'remembers on a saved space that there is no polygon, so later runs do not ask again', :aggregate_failures do
+        settlement.space.save!
+        allow(Geocoder).to receive(:search).and_return([point_result])
+
+        job.perform(settlement)
+
+        expect(settlement.space.reload.boundary).to be_nil
+        expect(settlement.space.metadata['boundary_source']).to include('status' => 'no_polygon', 'reason' => 'no_polygon')
       end
 
       it 'returns a falsy, non-false value distinguishing it from a real failure' do
@@ -119,8 +127,8 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
       without_boundary = create(:geography_region, :without_country, :without_state)
 
       allow(described_class).to receive(:perform_now).and_call_original
-      expect(described_class).to receive(:perform_now).with(without_boundary)
-      expect(described_class).not_to receive(:perform_now).with(with_boundary)
+      expect(described_class).to receive(:perform_now).with(without_boundary, force_refresh: false, threshold: nil)
+      expect(described_class).not_to receive(:perform_now).with(with_boundary, anything)
 
       summary = described_class.import_all_missing
 
@@ -130,7 +138,7 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
       # landing in `unsupported`, not `imported`. That's the correct count now;
       # the old hardcoded-true perform_with_retries would have miscounted this
       # exact case as `imported` despite never calling save_boundary.
-      expect(summary).to eq(imported: 0, skipped: 1, unsupported: 1, failed: 0)
+      expect(summary).to include(imported: 0, skipped: 1, unsupported: 1, failed: 0)
     end
 
     it 'counts an unsupported-geometry record separately from imported, without raising' do
@@ -145,7 +153,68 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
       summary = nil
       expect { summary = described_class.import_all_missing }.not_to raise_error
 
-      expect(summary).to eq(imported: 0, skipped: 0, unsupported: 1, failed: 0)
+      expect(summary).to include(imported: 0, skipped: 0, unsupported: 1, failed: 0)
+    end
+
+    context 'when scoped' do
+      let!(:settlement_a) { create(:geography_settlement, :without_country, :without_state, identifier: 'town-a') }
+      let!(:settlement_b) { create(:geography_settlement, :without_country, :without_state, identifier: 'town-b') }
+      let!(:region) { create(:geography_region, :without_country, :without_state) }
+
+      before { allow(described_class).to receive(:perform_with_retries).and_return(true) }
+
+      it 'limits the run to the given levels' do
+        summary = described_class.import_all_missing(levels: %w[settlement])
+
+        expect(summary[:imported]).to eq(2)
+      end
+
+      it 'limits the run to the given identifiers' do
+        described_class.import_all_missing(identifiers: ['town-a'])
+
+        expect(described_class).to have_received(:perform_with_retries).once.with(settlement_a, force_refresh: false,
+                                                                                                threshold: nil)
+      end
+
+      it 'only lists what it would fetch on a dry run', :aggregate_failures do
+        summary = described_class.import_all_missing(levels: %w[settlement], dry_run: true)
+
+        expect(summary[:planned]).to contain_exactly('settlement/town-a', 'settlement/town-b')
+        expect(described_class).not_to have_received(:perform_with_retries)
+      end
+
+      it 'passes force and threshold through to the import' do
+        described_class.import_all_missing(identifiers: ['town-b'], force: true, threshold: 0.01)
+
+        expect(described_class).to have_received(:perform_with_retries)
+          .with(settlement_b, force_refresh: true, threshold: 0.01)
+      end
+    end
+
+    context 'when a record is remembered as having no polygon' do
+      let!(:remembered) do
+        create(:geography_settlement, :without_country, :without_state).tap do |record|
+          space = BetterTogether::Geography::Space.create!(metadata: { 'boundary_source' => { 'status' => 'no_polygon' } })
+          BetterTogether::Geography::GeospatialSpace.create!(geospatial: record, space:)
+        end
+      end
+
+      it 'skips it, and counts it separately', :aggregate_failures do
+        allow(described_class).to receive(:perform_with_retries)
+
+        summary = described_class.import_all_missing(levels: %w[settlement])
+
+        expect(summary[:skipped_known_missing]).to eq(1)
+        expect(described_class).not_to have_received(:perform_with_retries)
+      end
+
+      it 'asks again when forced' do
+        allow(described_class).to receive(:perform_with_retries).and_return(nil)
+
+        described_class.import_all_missing(levels: %w[settlement], force: true)
+
+        expect(described_class).to have_received(:perform_with_retries).with(remembered, force_refresh: true, threshold: nil)
+      end
     end
   end
 
