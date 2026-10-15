@@ -1,7 +1,7 @@
 {
   "name": "content_reporting_actions_followup",
   "device": "desktop",
-  "url": "/en/reports/41ea4291-bbe0-4d2a-9d0f-11552d4d65fb",
+  "url": "/en/reports/bb646b01-2a60-4e6e-9e64-37eb5b6ad3d7",
   "title": "Safety report | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -42,7 +42,7 @@
         "y": 898.0,
         "width": 380,
         "height": 358,
-        "score": 583.0
+        "score": 579.0
       }
     }
   ]

@@ -1,3 +1,8 @@
+
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 Goal:
 Perform an in-depth review of the Role-Based Access Control (RBAC) system in this Ruby on Rails application, analyzing its architecture, policies, and enforcement patterns to identify improvements in security, maintainability, and clarity.
 

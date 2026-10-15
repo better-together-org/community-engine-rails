@@ -1,5 +1,9 @@
 # Metrics User Stories - Detailed Analysis (US-MET-002 through US-MET-011)
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-09. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** January 8, 2026  
 **Status:** Design Review - Continuation  
 **Related:** [Design Decisions Document](./metrics_retention_design_decisions.md)

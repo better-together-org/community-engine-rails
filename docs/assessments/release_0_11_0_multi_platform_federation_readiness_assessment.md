@@ -1,5 +1,9 @@
 # 0.11.0 Multi-Platform, Multi-Tenancy & Federation Release-Readiness Assessment
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-07-17 (last edited 2026-10-15). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** July 17, 2026
 **Assessment Type:** Release-readiness architecture and process assessment
 **Repository:** better-together-org/community-engine-rails

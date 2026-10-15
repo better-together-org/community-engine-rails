@@ -1,5 +1,9 @@
 # Federated Seed And Sync Handoff
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-22 (last edited 2026-04-02). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 Date: 2026-03-12
 Branch: `agent/codex/019cdef3-03bf-7153-b45c-e36f8a1ad56c-ce-mt`
 PR draft URL: `https://github.com/better-together-org/community-engine-rails/pull/new/agent/codex/019cdef3-03bf-7153-b45c-e36f8a1ad56c-ce-mt`
