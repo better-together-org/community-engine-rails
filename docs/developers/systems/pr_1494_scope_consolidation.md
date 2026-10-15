@@ -31,7 +31,7 @@ and preserved intact on `feature/claims-evidence-citation-governance-01100notes`
 
 The Governed agent foundation (§1), Public publishing governance (§2), Contribution attribution
 substrate (§3, minus its GitHub-backed import piece), and JOATU baseline hardening (§5, minus its
-C3-priced settlement branch, which moved to the `better_together-borgberry` extension gem) shipped in
+priced-settlement branch, which was removed from the release) shipped in
 0.11.0 as originally planned.
 
 ## What Belongs In PR 1494

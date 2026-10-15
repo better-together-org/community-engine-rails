@@ -3,10 +3,10 @@
   "method": "Heuristic text matching over living docs, diagram sources, screenshot sidecars and specs; staleness from git last-touch times.",
   "summary": {
     "views": {
-      "covered": 199,
+      "covered": 221,
       "missing": 44,
-      "partial": 261,
-      "stale": 275
+      "partial": 266,
+      "stale": 248
     },
     "models": {
       "covered": 115,
@@ -1179,10 +1179,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1213,10 +1211,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1246,10 +1242,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1281,10 +1275,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1314,10 +1306,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1347,10 +1337,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1380,10 +1368,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1413,10 +1399,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1448,10 +1432,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1482,10 +1464,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -1517,10 +1497,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5256,10 +5234,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5283,10 +5259,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5308,10 +5282,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5334,10 +5306,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5359,10 +5329,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5386,10 +5354,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5412,10 +5378,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -5439,10 +5403,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -7568,8 +7530,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md"
+        "docs/developers/development/i18n_todo.md"
       ],
       "status": "stale"
     },
@@ -7595,8 +7556,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md"
+        "docs/developers/development/i18n_todo.md"
       ],
       "status": "stale"
     },
@@ -7624,8 +7584,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md"
+        "docs/developers/development/i18n_todo.md"
       ],
       "status": "stale"
     },
@@ -7655,8 +7614,7 @@
         "spec/features/better_together/timezone_selector_accessibility_spec.rb"
       ],
       "stale_artifacts": [
-        "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md"
+        "docs/developers/development/i18n_todo.md"
       ],
       "status": "stale"
     },
@@ -7694,7 +7652,6 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/screenshots/desktop/agreement_publish_blocked_form.json",
         "docs/screenshots/desktop/agreement_publish_modal_locked.json",
         "docs/screenshots/desktop/agreement_publish_modal_ready.json",
@@ -7744,13 +7701,13 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/screenshots/desktop/community_access_mode_open_join.json",
         "docs/screenshots/desktop/community_access_mode_request_to_join.json",
         "docs/screenshots/desktop/community_event_evidence_summary.json",
         "docs/screenshots/desktop/community_membership_multi_role_cards.json",
         "docs/screenshots/desktop/community_page_contribution_summary.json",
-        "docs/screenshots/desktop/community_privacy_badge.json"
+        "docs/screenshots/desktop/community_privacy_badge.json",
+        "docs/screenshots/desktop/content_reporting_actions_community_menu.json"
       ],
       "status": "stale"
     },
@@ -7777,8 +7734,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md"
+        "docs/developers/development/i18n_todo.md"
       ],
       "status": "stale"
     },
@@ -7977,8 +7933,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8017,8 +7971,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8059,8 +8011,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8101,8 +8051,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8155,10 +8103,10 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md",
-        "docs/screenshots/desktop/pr_1490_checklist_form_after.json"
+        "docs/screenshots/desktop/pr_1490_checklist_form_after.json",
+        "docs/screenshots/desktop/pr_1490_checklist_form_before.json",
+        "docs/screenshots/desktop/pr_1490_hero_form_after.json"
       ],
       "status": "stale"
     },
@@ -8196,8 +8144,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8236,8 +8182,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8280,8 +8224,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8321,8 +8263,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_management.md",
         "docs/platform_organizers/block_inventory_and_customization.md"
       ],
       "status": "stale"
@@ -8742,10 +8682,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -8784,10 +8724,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -8828,10 +8768,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -8870,10 +8810,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -8923,10 +8863,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -8965,10 +8905,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9020,10 +8960,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9077,10 +9017,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9121,10 +9061,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9163,10 +9103,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9205,10 +9145,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9247,10 +9187,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9302,10 +9242,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -9349,10 +9289,10 @@
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
-        "docs/developers/systems/search_and_filtering_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
-        "docs/development/test_pollution_mitigation_plan.md"
+        "docs/development/test_pollution_mitigation_plan.md",
+        "docs/development/timezone_handling_strategy.md"
       ],
       "status": "stale"
     },
@@ -12968,7 +12908,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13004,7 +12943,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13042,7 +12980,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13078,7 +13015,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13114,7 +13050,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13150,7 +13085,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13186,7 +13120,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13222,7 +13155,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13258,7 +13190,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13294,7 +13225,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13330,7 +13260,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13366,7 +13295,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13402,7 +13330,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13438,7 +13365,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13474,7 +13400,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13510,7 +13435,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13546,7 +13470,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13582,7 +13505,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -13618,7 +13540,6 @@
       "stale_artifacts": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/metrics_test_coverage_gaps.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -15370,7 +15291,6 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/screenshots/ce-screenshots-backup/desktop/blocked_people_list.json",
         "docs/screenshots/ce-screenshots-backup/mobile/blocked_people_list.json",
         "docs/screenshots/desktop/blocked_people_list.json",
@@ -15496,10 +15416,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -15522,10 +15440,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -15549,10 +15465,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -15576,10 +15490,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -15603,10 +15515,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -15630,10 +15540,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -15656,10 +15564,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/community_social_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -17371,7 +17277,6 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/accessibility_testing.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/platform_organizers/safety_reporting_operations.md"
@@ -17415,13 +17320,13 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/accessibility_testing.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_history.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_history.json",
-        "docs/screenshots/desktop/report_history.json"
+        "docs/screenshots/desktop/report_history.json",
+        "docs/screenshots/mobile/report_history.json"
       ],
       "status": "stale"
     },
@@ -17468,13 +17373,13 @@
       ],
       "stale_artifacts": [
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/accessibility_testing.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_form.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_form.json",
-        "docs/screenshots/desktop/content_reporting_actions_report_form.json"
+        "docs/screenshots/desktop/content_reporting_actions_report_form.json",
+        "docs/screenshots/desktop/release_0_11_0_bot_safety_report_form.json"
       ],
       "status": "stale"
     },
@@ -17520,13 +17425,13 @@
       ],
       "stale_artifacts": [
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_social_system.md",
         "docs/development/accessibility_testing.md",
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_detail.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_detail.json",
-        "docs/screenshots/desktop/content_reporting_actions_followup.json"
+        "docs/screenshots/desktop/content_reporting_actions_followup.json",
+        "docs/screenshots/desktop/report_detail.json"
       ],
       "status": "stale"
     },
@@ -18307,10 +18212,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/search_backend_adapter_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -26114,35 +26017,6 @@
     "e2ee_signal": {
       "living": [],
       "historical_files": 4
-    },
-    "c3_borgberry": {
-      "living": [
-        {
-          "file": "docs/development/adapter_registry_architecture.md",
-          "matches": 10
-        },
-        {
-          "file": "docs/development/external_provider_adapter_roadmap.md",
-          "matches": 6
-        },
-        {
-          "file": "docs/developers/systems/ai_integration_system.md",
-          "matches": 5
-        },
-        {
-          "file": "docs/production/external-services-to-configure.md",
-          "matches": 2
-        },
-        {
-          "file": "docs/developers/systems/pr_1494_scope_consolidation.md",
-          "matches": 1
-        },
-        {
-          "file": "docs/joatu-v2-vs-ce-comparison.md",
-          "matches": 1
-        }
-      ],
-      "historical_files": 5
     },
     "claims_evidence": {
       "living": [

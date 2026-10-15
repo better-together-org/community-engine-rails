@@ -4912,8 +4912,8 @@ es:
     joatu:
       agreement:
         accepted: Acuerdo aceptado
-        cancelled: Acuerdo cancelado — las Semillas reservadas han sido devueltas.
-        fulfilled: Acuerdo cumplido — C3 transferido al creador de la oferta.
+        cancelled: Acuerdo cancelado.
+        fulfilled: Acuerdo cumplido.
         rejected: Acuerdo rechazado
       response_links:
         offer_created: Oferta creada en respuesta a la solicitud.

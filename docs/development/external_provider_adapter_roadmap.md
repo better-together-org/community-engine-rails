@@ -30,7 +30,6 @@ Current state:
 Thin gems:
 
 - `better_together-sentry`
-- `better_together-borgberry-observability`
 
 Future:
 
@@ -174,18 +173,16 @@ Target subsystems:
 Internal/default adapters:
 
 - none required in CE core
-- BTS-hosted Borgberry bridge for audited local model access
 
 External thin gems:
 
-- `better_together-borgberry-llm`
 - `better_together-ruby-llm-openai`
 
 Rules:
 
 - CE should target `ruby_llm` as the provider abstraction instead of direct `ruby-openai`
 - direct OpenAI usage is transitional and should move behind a thin provider gem
-- Borgberry-mediated local Ollama access is the preferred BTS path
+- local model hosts (for example Ollama) should register as audited providers
 - no silent fallback from audited local routing to cloud providers
 - tenant, platform, and community context must be preserved for audit and authorization
 - prompts, outputs, model identifiers, and tool usage metadata should be auditable with redaction controls
@@ -267,15 +264,13 @@ If any answer is weak, the adapter should not ship.
 ## Recommended Next Build Order
 
 1. ~~Extract Sentry use to `better_together-sentry`~~ (done; the gem is shipped, no tagged release yet)
-2. Implement `better_together-borgberry-observability`
-3. Define stable `:queue`, `:cache`, `:throttling`, and `:storage` contracts
-4. Build `better_together-sidekiq`, `better_together-redis-cache`, and `better_together-redis-throttling`
-5. Define a stable `:smtp` contract and platform SMTP configuration model
-6. Define stable `:llm` and `:embeddings` payload contracts around `ruby_llm`
-7. Build `better_together-borgberry-llm`
-8. Build `better_together-ruby-llm-openai`
-9. Define a stable `:metrics` event payload contract
-10. Build `better_together-google-metrics`
-11. Define a stable `:publishing` payload contract
-12. Build `better_together-discourse-publishing`
-13. Design consent/policy model for corporate publishing adapters before any implementation
+2. Define stable `:queue`, `:cache`, `:throttling`, and `:storage` contracts
+3. Build `better_together-sidekiq`, `better_together-redis-cache`, and `better_together-redis-throttling`
+4. Define a stable `:smtp` contract and platform SMTP configuration model
+5. Define stable `:llm` and `:embeddings` payload contracts around `ruby_llm`
+6. Build `better_together-ruby-llm-openai`
+7. Define a stable `:metrics` event payload contract
+8. Build `better_together-google-metrics`
+9. Define a stable `:publishing` payload contract
+10. Build `better_together-discourse-publishing`
+11. Design consent/policy model for corporate publishing adapters before any implementation

@@ -9,9 +9,9 @@ Baseline `v0.10.0`. Generated from [`ce_documentation_coverage_manifest.json`](c
 | --- | --- | --- | --- | --- | --- | --- |
 | developer | 8 | 0 | 1 | 0 | 7 | 0 |
 | platform_manager | 100 | 0 | 34 | 46 | 20 | 21 |
-| community_organizer | 11 | 0 | 1 | 10 | 0 | 3 |
+| community_organizer | 11 | 0 | 5 | 6 | 0 | 3 |
 | content_moderator | 5 | 0 | 0 | 5 | 0 | 2 |
-| end_user | 81 | 6 | 8 | 50 | 17 | 16 |
+| end_user | 81 | 6 | 9 | 49 | 17 | 16 |
 
 Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the generator) and needs a human pass.
 
@@ -56,10 +56,10 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 | `better_together/communities#index` | changed | stale | 2 | 0 |
 | `better_together/communities#new` | changed | stale | 2 | 6 |
 | `better_together/communities#show` | changed | stale | 2 | 26 |
-| `better_together/person_community_memberships#edit` | changed | stale | 1 | 0 |
-| `better_together/person_community_memberships#index` | changed | stale | 1 | 0 |
-| `better_together/person_community_memberships#new` | changed | stale | 1 | 0 |
-| `better_together/person_community_memberships#show` | changed | stale | 1 | 0 |
+| `better_together/person_community_memberships#edit` | changed | partial | 1 | 0 |
+| `better_together/person_community_memberships#index` | changed | partial | 1 | 0 |
+| `better_together/person_community_memberships#new` | changed | partial | 1 | 0 |
+| `better_together/person_community_memberships#show` | changed | partial | 1 | 0 |
 
 ### content moderator: top gaps (5 total)
 
@@ -220,7 +220,6 @@ Living = rewrite to current behaviour. Historical (assessments, plans, release n
 | elasticsearch | 22 | 91 | 25 |
 | sentry | 4 | 23 | 10 |
 | e2ee_signal | 0 | 0 | 4 |
-| c3_borgberry | 6 | 25 | 5 |
 | claims_evidence | 2 | 5 | 4 |
 | ruby_openai | 2 | 2 | 2 |
 
@@ -257,17 +256,6 @@ Living = rewrite to current behaviour. Historical (assessments, plans, release n
 - `docs/development/adapter_registry_architecture.md` (9)
 - `docs/development/external_provider_adapter_roadmap.md` (3)
 - `AGENTS.md` (1)
-
-</details>
-
-<details><summary>c3_borgberry: living files</summary>
-
-- `docs/development/adapter_registry_architecture.md` (10)
-- `docs/development/external_provider_adapter_roadmap.md` (6)
-- `docs/developers/systems/ai_integration_system.md` (5)
-- `docs/production/external-services-to-configure.md` (2)
-- `docs/developers/systems/pr_1494_scope_consolidation.md` (1)
-- `docs/joatu-v2-vs-ce-comparison.md` (1)
 
 </details>
 

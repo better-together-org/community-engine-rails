@@ -4928,8 +4928,8 @@ uk:
     joatu:
       agreement:
         accepted: Угоду прийнято
-        cancelled: Угоду скасовано — зарезервовані насіння повернено.
-        fulfilled: Угоду виконано — C3 передано творцю пропозиції.
+        cancelled: Угоду скасовано.
+        fulfilled: Угоду виконано.
         rejected: Угоду відхилено
       response_links:
         offer_created: Пропозицію створено у відповідь на запит.

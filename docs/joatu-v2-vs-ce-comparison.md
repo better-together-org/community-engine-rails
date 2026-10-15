@@ -168,7 +168,7 @@ graph TD
 
 ### CE Rails: no built-in currency or ledger
 
-CE core has no balance, token or ledger model. Offers and requests carry no price or budget columns, and agreements record `terms` and `value` text only. A compute-earned token system (C3 "Tree Seeds") was developed alongside the 0.11.0 line but is not part of the 0.11.0 release or of the core gem, so there is nothing in core to compare against v2's caps ledger.
+CE core has no balance, token or ledger model. Offers and requests carry no price or budget columns, and agreements record `terms` and `value` text only. There is nothing in core to compare against v2's caps ledger.
 
 | Dimension | v2 Caps | CE Rails 0.11.0 |
 |-----------|---------|-----------------|

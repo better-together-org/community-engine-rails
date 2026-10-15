@@ -53,7 +53,7 @@ Baseline provider selection:
 Provider-specific credentials remain optional and depend on the installed thin gem:
 - OpenAI-compatible providers: `OPENAI_API_KEY` or `OPENAI_ACCESS_TOKEN`
 - OpenAI-compatible base override: `OPENAI_API_BASE`
-- Local Ollama/Borgberry routing: provider-specific configuration in the future Borgberry adapter gem
+- Local Ollama routing: provider-specific configuration in a provider gem registered in the adapter registry
 
 Example environment:
 ```bash

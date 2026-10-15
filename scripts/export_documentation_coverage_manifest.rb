@@ -50,7 +50,6 @@ module CeDocumentationCoverage
     'elasticsearch' => /elasticsearch|default_elasticsearch_index|as_indexed_json/i,
     'sentry' => /\bsentry\b|sentry-(rails|ruby)/i,
     'e2ee_signal' => /e2ee|signal protocol|one_time_prekey|one-time prekey/i,
-    'c3_borgberry' => /tree seeds?|borgberry|fleet[_ ]nodes?|c3_|C3::|\bC3 (token|balance|price|exchange|earn)/i,
     'claims_evidence' => /evidence[_ ]?links?|claim[_ ]citation|\bcitations?\b.*\bclaims?\b/i,
     'ruby_openai' => /ruby[-_]openai/i
   }.freeze
