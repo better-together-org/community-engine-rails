@@ -3951,6 +3951,22 @@ fr:
           agreement first.
       event_status_level: 'Statut de l''événement: %{status}'
       event_status_tooltip: 'Statut de l''événement: %{status}'
+      map:
+        buttons:
+          geolocate: Me localiser
+          map: Carte
+          satellite: Satellite
+        geolocation:
+          denied: L'accès à la localisation est bloqué. Autorisez-le pour ce site
+            dans les paramètres du navigateur, puis réessayez.
+          located: Affichage de votre position.
+          locating: Recherche de votre position...
+          timeout: La recherche de votre position a pris trop de temps. Réessayez.
+          unavailable: Votre position n'a pas pu être déterminée. Vérifiez que les
+            services de localisation sont activés, puis réessayez.
+          unsupported: Votre navigateur ne prend pas en charge la localisation.
+          you_are_here: Vous êtes ici
+        show_on_map: Afficher sur la carte
       privacy_level: 'Confidentialité: %{privacy}'
       privacy_tooltip: Ce contenu est %{privacy}
       publishing_agreement_notice:

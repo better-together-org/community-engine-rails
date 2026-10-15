@@ -3924,6 +3924,22 @@ es:
           agreement first.
       event_status_level: 'Estado del evento: %{status}'
       event_status_tooltip: 'Estado del evento: %{status}'
+      map:
+        buttons:
+          geolocate: Ubicarme
+          map: Mapa
+          satellite: Satélite
+        geolocation:
+          denied: El acceso a la ubicación está bloqueado. Permítalo para este sitio
+            en la configuración del navegador e inténtelo de nuevo.
+          located: Mostrando su ubicación.
+          locating: Buscando su ubicación...
+          timeout: Encontrar su ubicación tardó demasiado. Inténtelo de nuevo.
+          unavailable: No se pudo determinar su ubicación. Compruebe que los servicios
+            de ubicación estén activados e inténtelo de nuevo.
+          unsupported: Su navegador no admite la ubicación.
+          you_are_here: Usted está aquí
+        show_on_map: Mostrar en el mapa
       privacy_level: 'Privacidad: %{privacy}'
       privacy_tooltip: Este contenido es %{privacy}
       publishing_agreement_notice:
