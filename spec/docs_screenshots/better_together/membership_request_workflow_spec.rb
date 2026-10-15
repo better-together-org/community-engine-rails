@@ -45,6 +45,7 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
   end
 
   it 'captures the private registration interstitial with membership request form' do
+    platform
     capture_docs_screenshot('membership_request_registration_interstitial') do
       visit '/en/users/sign-up'
 
@@ -55,6 +56,7 @@ RSpec.describe 'Documentation screenshots for membership request workflow',
   end
 
   it 'captures the membership request review queue' do
+    open_request
     capture_docs_screenshot('membership_request_review_queue') do
       sign_in_for_docs_capture
       visit better_together.community_membership_requests_path(community, locale: I18n.default_locale)
