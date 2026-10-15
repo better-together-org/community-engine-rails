@@ -32,6 +32,11 @@ module BetterTogether
           url: '',
           linkable: page,
           privacy: page.privacy,
+          # This method only ever builds nav items for the built-in seeded
+          # pages (header/footer static pages) -- they need to be visible
+          # regardless of the platform's own privacy ceiling, same as the
+          # pages themselves (see Page#seed_privacy_ceiling_exempt).
+          seed_privacy_ceiling_exempt: true,
           visibility_strategy: 'authenticated'
         )
       end

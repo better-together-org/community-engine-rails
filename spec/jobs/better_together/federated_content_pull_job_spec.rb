@@ -49,7 +49,7 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       expect do
         described_class.perform_now(platform_connection_id: connection.id, cursor: 'cursor-4')
       end.to have_enqueued_job(described_class)
-        .with(platform_connection_id: connection.id, cursor: 'cursor-5', limit: anything)
+        .with(platform_connection_id: connection.id, cursor: 'cursor-5', limit: anything, page: 2)
         .on_queue('platform_sync')
     end
 
@@ -147,6 +147,78 @@ RSpec.describe BetterTogether::FederatedContentPullJob do
       described_class.perform_now(platform_connection_id: connection.id)
 
       expect(connection.reload.sync_failure_streak.to_i).to eq(0)
+    end
+
+    describe 'defense-in-depth guards against a runaway pagination chain (2026-09 regression)' do
+      before do
+        allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+        allow(BetterTogether::FederatedContentPullService).to receive(:call).and_return(pull_result)
+        allow(BetterTogether::Content::FederatedContentIngestService).to receive(:call).and_return(ingest_result)
+      end
+
+      it 'does not enqueue another page once MAX_PAGES_PER_DISPATCH is reached, even with a cursor still present' do
+        expect do
+          described_class.perform_now(
+            platform_connection_id: connection.id,
+            page: described_class::MAX_PAGES_PER_DISPATCH
+          )
+        end.not_to have_enqueued_job(described_class)
+      end
+
+      it 'does not enqueue the next page if the connection was suspended mid-chain by another process' do
+        allow_any_instance_of(BetterTogether::PlatformConnection) # rubocop:disable RSpec/AnyInstance
+          .to receive(:active?).and_return(false)
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.not_to have_enqueued_job(described_class)
+      end
+
+      it 'does not enqueue the next page if the connection picked up an active backoff mid-chain' do
+        connection.update_columns(settings: connection.settings.merge('sync_backoff_until' => 1.hour.from_now.iso8601))
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.not_to have_enqueued_job(described_class)
+      end
+    end
+
+    describe 'circuit breaker on repeated failure (2026-09 regression - Sentry saw a 690-count job error ' \
+             'because every retry re-raised and Sidekiq kept scheduling more)' do
+      before do
+        allow(BetterTogether::Federation::Transport::TransportResolver).to receive(:call).and_return(resolution)
+        allow(BetterTogether::FederatedContentPullService).to receive(:call).and_raise(StandardError, 'token request failed')
+      end
+
+      it 'keeps raising (letting Sidekiq retry) below the suspend threshold' do
+        # Pre-seed the streak so the job's own failure lands one short of the
+        # threshold (e.g. threshold 20: 18 pre-seeded + this job's own = 19).
+        (BetterTogether::PlatformConnectionSyncTracking::SYNC_FAILURE_SUSPEND_THRESHOLD - 2).times do
+          connection.mark_sync_failed!(message: 'earlier failure')
+        end
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.to raise_error(StandardError, 'token request failed')
+
+        expect(connection.reload).to be_active
+      end
+
+      it 'suspends the connection and stops raising once the streak crosses the threshold' do
+        # Pre-seed one short of the threshold so the job's own failure is the
+        # one that crosses it (e.g. threshold 20: 19 pre-seeded + this job's
+        # own = 20, the trip point).
+        (BetterTogether::PlatformConnectionSyncTracking::SYNC_FAILURE_SUSPEND_THRESHOLD - 1).times do
+          connection.mark_sync_failed!(message: 'earlier failure')
+        end
+        expect(connection.reload).to be_active # not tripped yet - the job's own failure below is what trips it
+
+        expect do
+          described_class.perform_now(platform_connection_id: connection.id)
+        end.not_to raise_error
+
+        expect(connection.reload).to be_suspended
+      end
     end
 
     it 'records a sync summary when ingest completed with mirrored content conflicts' do

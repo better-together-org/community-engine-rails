@@ -1,5 +1,12 @@
 # Content block privacy & visibility — surface assessment (2026-09-02)
 
+> **RESOLVED (2026-09-18).** The follow-up work this document maps was completed and
+> merged into `release/0.11.0-notes`: PR #1778 makes `Content::Block#privacy` gate
+> visibility in page render, blob access, and the Pundit scope
+> (`BlockPolicy#show?`/`#download?`); PR #1779 (stacked on #1778) extends that to search
+> indexing and MCP page-block tooling; PR #1780 fixes seeded static-page privacy defaults.
+> Retained below as historical design rationale — do not re-implement this as open work.
+
 ## Why this exists
 
 `BetterTogether::Content::Block` includes `Privacy` (column, default `'private'`), but

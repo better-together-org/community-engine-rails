@@ -21,7 +21,8 @@ module BetterTogether
 
       # Resolve the category class via SafeClassResolver
       def category_klass
-        BetterTogether::SafeClassResolver.resolve!(category_class_name, allowed: allowed_category_classes)
+        BetterTogether::SafeClassResolver.resolve!(category_class_name, allowed: allowed_category_classes,
+                                                                        error_class: NameError)
       end
 
       def categorizable(class_name: category_class_name) # rubocop:todo Metrics/MethodLength

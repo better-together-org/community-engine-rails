@@ -24,5 +24,17 @@ FactoryBot.define do
       association :location, factory: :better_together_infrastructure_building
       location_type { 'BetterTogether::Infrastructure::Building' }
     end
+
+    trait :with_settlement do
+      name { nil }
+      association :location, factory: :geography_settlement
+      location_type { 'BetterTogether::Geography::Settlement' }
+    end
+
+    trait :with_region do
+      name { nil }
+      association :location, factory: :geography_region
+      location_type { 'BetterTogether::Geography::Region' }
+    end
   end
 end

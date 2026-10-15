@@ -100,7 +100,11 @@ module BetterTogether
           source_platform_id: origin_platform.id,
           source_platform_identifier: origin_platform.identifier,
           source_platform_url: origin_platform.resolved_host_url,
-          visibility: serialized_attributes[:privacy],
+          # Read directly rather than via #serialized_attributes -- Post/Page/
+          # Event all expose privacy as a plain attribute, so there's no need
+          # to round-trip through FederatedSeedAttributes (which also reads
+          # the content body) a second time just for this one field.
+          visibility: subject.privacy,
           content_type: serialized_type
         }.merge(context[:origin_metadata] || {})
       end

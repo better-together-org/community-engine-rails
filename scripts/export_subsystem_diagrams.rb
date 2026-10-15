@@ -250,7 +250,6 @@ module CeSubsystemDiagramExport
       models: %w[
         BetterTogether::Links
         BetterTogether::Notification
-        BetterTogether::OneTimePrekey
       ],
       controllers: %w[
         BetterTogether::HelpPreferencesController

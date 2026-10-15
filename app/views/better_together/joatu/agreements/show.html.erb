@@ -95,7 +95,7 @@
           <% elsif @joatu_agreement.status_fulfilled? %>
             <p class="mb-0">This mutual aid agreement has been fulfilled. The exchange is complete.</p>
           <% elsif @joatu_agreement.status_cancelled? %>
-            <p class="mb-0">This mutual aid agreement was cancelled. Any reserved Tree Seeds have been returned to the payer.</p>
+            <p class="mb-0">This mutual aid agreement was cancelled.</p>
           <% else %>
             <p class="mb-0">This mutual aid agreement was rejected. Use the related offer and request records to decide whether to revise terms, open a new match, or close the thread.</p>
           <% end %>
@@ -128,7 +128,7 @@
                           class: 'btn btn-outline-secondary',
                           data: { turbo: false,
                                   confirm: t('better_together.joatu.agreements.cancel_confirm',
-                                             default: 'Cancel this agreement? Any reserved Tree Seeds will be returned.') } %>
+                                             default: 'Cancel this agreement?') } %>
           <% end %>
         </div>
       <% end %>

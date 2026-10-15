@@ -290,6 +290,46 @@ RSpec.describe BetterTogether::PlatformConnection do
 
       expect(own_activities.call.count).to eq(3)
     end
+
+    it 'does not bump lock_version on routine sync bookkeeping (2026-09 regression guard - one production ' \
+       'connection reached lock_version 7,270,509 over ~5 months of a runaway federation loop)' do
+      connection = create(:better_together_platform_connection)
+      starting_lock_version = connection.lock_version
+
+      connection.mark_sync_started!(cursor: 'cursor-1')
+      connection.mark_sync_succeeded!(cursor: 'cursor-2', item_count: 1, final: false)
+      connection.mark_sync_failed!(message: 'timeout')
+
+      expect(connection.reload.lock_version).to eq(starting_lock_version)
+    end
+
+    it 'trips the circuit breaker and suspends an active connection once the failure streak crosses ' \
+       'SYNC_FAILURE_SUSPEND_THRESHOLD, notifying reviewers via the normal status-change path' do
+      connection = create(:better_together_platform_connection, :active)
+      threshold = described_class::SYNC_FAILURE_SUSPEND_THRESHOLD
+
+      notification_service = instance_double(BetterTogether::PlatformConnectionNotificationService,
+                                             notify_status_change: true)
+      allow(BetterTogether::PlatformConnectionNotificationService).to receive(:new).and_return(notification_service)
+
+      tripped = nil
+      threshold.times { tripped = connection.mark_sync_failed!(message: 'token request failed') }
+
+      expect(tripped).to be(true)
+      expect(connection.reload).to be_suspended
+      expect(BetterTogether::PlatformConnectionNotificationService).to have_received(:new).with(connection)
+    end
+
+    it 'does not trip the circuit breaker below the threshold' do
+      connection = create(:better_together_platform_connection, :active)
+      threshold = described_class::SYNC_FAILURE_SUSPEND_THRESHOLD
+
+      tripped = nil
+      (threshold - 1).times { tripped = connection.mark_sync_failed!(message: 'timeout') }
+
+      expect(tripped).to be(false)
+      expect(connection.reload).to be_active
+    end
   end
 
   describe 'oauth credentials encryption' do

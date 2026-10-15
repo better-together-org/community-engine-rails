@@ -33,14 +33,6 @@ module BetterTogether
         privacy: 'private',
         preferences: default_preferences,
         notification_preferences: default_notification_preferences,
-        identity_key_public: nil,
-        signed_prekey_id: nil,
-        signed_prekey_public: nil,
-        signed_prekey_sig: nil,
-        registration_id: nil,
-        key_backup_blob: nil,
-        key_backup_salt: nil,
-        key_backup_updated_at: nil,
         deleted_at: Time.current,
         anonymized_at: Time.current
       }

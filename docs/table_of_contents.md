@@ -35,7 +35,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 #### **Platform Organizers** - [`platform_organizers/`](platform_organizers/)
 *Multi-tenant administrators and platform operators*
 - [README](platform_organizers/README.md) - Platform administration guide
-- [End-to-End Encryption Rollout](platform_organizers/e2e_encryption_rollout.md) - Encrypted-conversation rollout and support guide
 - [Embedded Content & CSP Controls](platform_organizers/embedded_content_and_csp.md) - Trusted iframe/video origin management
 - [Host Management](platform_organizers/host_management.md) - Managing platform instances
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
@@ -143,7 +142,6 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
 - [Content Flow](diagrams/source/content_flow.mmd)
 - [Conversations Messaging Flow](diagrams/source/conversations_messaging_flow.mmd)
-- [E2E Encrypted Conversation Flow](diagrams/source/e2e_encrypted_conversation_flow.mmd)
 - [Documentation System Flow](diagrams/source/documentation_system_flow.mmd)
 - [Events Flow](diagrams/source/events_flow.mmd)
 - [Exchange Flow](diagrams/source/exchange_flow.mmd)

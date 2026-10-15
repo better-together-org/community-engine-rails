@@ -10,6 +10,13 @@ RSpec.describe 'BetterTogether::MessageRequestsController' do
   let(:regular_user) { BetterTogether::User.find_by(email: 'user@example.test') }
   let(:platform) { BetterTogether::Platform.find_by(host: true) }
 
+  before do
+    # message_requests defaults to alpha rollout (config/feature_gates.yml) — set the
+    # platform's override to stable so these specs exercise the controller/feature flow
+    # rather than alpha-access resolution (covered by message_request_policy_spec.rb).
+    platform.update!(feature_gate_rollouts: { 'message_requests' => 'stable' })
+  end
+
   describe 'GET /:locale/message_requests (index)' do
     context 'when authenticated', :as_user do
       it 'returns 200' do
@@ -26,6 +33,13 @@ RSpec.describe 'BetterTogether::MessageRequestsController' do
 
         get better_together.message_requests_path(locale:)
         expect(response.body).to include(received_request.id)
+      end
+
+      it 'is blocked when the message_requests feature rollout is off (server-side gate)' do
+        platform.update!(feature_gate_rollouts: { 'message_requests' => 'off' })
+
+        get better_together.message_requests_path(locale:)
+        expect(response).not_to have_http_status(:ok)
       end
     end
   end

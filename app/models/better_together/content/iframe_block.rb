@@ -26,12 +26,6 @@ module BetterTogether
         title.presence || I18n.t('better_together.content.blocks.iframe_block.default_title')
       end
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[iframe_url aspect_ratio title caption]
       end

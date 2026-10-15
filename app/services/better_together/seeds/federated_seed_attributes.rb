@@ -7,6 +7,10 @@ module BetterTogether
     #   'metadata' — identifiers and dates only, no content bodies
     #   'standard' — flat attributes + ActionText HTML bodies (default)
     #   'full'     — standard + block layout (pages only, when implemented)
+    #
+    # Content bodies are read via SafeRichText, not the raw ActionText reader
+    # -- see that module for why (a pathological rich text body can otherwise
+    # blow the stack the moment it's read at all, regardless of sync_depth).
     module FederatedSeedAttributes
       module_function
 
@@ -18,7 +22,7 @@ module BetterTogether
           published_at: record.published_at,
           updated_at: record.updated_at
         }
-        attrs[:content] = record.content&.body&.to_s unless sync_depth == 'metadata'
+        attrs[:content] = SafeRichText.trix_html_for(record, :content) unless sync_depth == 'metadata'
         attrs
       end
 
@@ -51,7 +55,7 @@ module BetterTogether
           registration_url: record.registration_url,
           timezone: record.timezone
         }
-        attrs[:description] = record.description&.body&.to_s unless sync_depth == 'metadata'
+        attrs[:description] = SafeRichText.trix_html_for(record, :description) unless sync_depth == 'metadata'
         attrs
       end
     end

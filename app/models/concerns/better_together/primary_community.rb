@@ -46,9 +46,12 @@ module BetterTogether
       )
     end
 
-    # description here is rich text (ActionText) — reduce to plain text before
-    # handing it off, so the auto-created Community doesn't inherit raw HTML/rich
-    # formatting from whatever record is delegating its primary community to it.
+    # The auto-created primary community's description is a plain-text summary,
+    # not a copy of the host record's own rich formatting -- passing an
+    # ActionText::Content (or similar rich value) straight through as a
+    # description: kwarg on create_community doesn't coerce through Community's
+    # own action_text setter the way plain-string assignment does, and stores
+    # the wrong shape (the underlying rich-text-translation row itself).
     def primary_community_description
       return "#{name}'s primary community" unless respond_to?(:description)
 

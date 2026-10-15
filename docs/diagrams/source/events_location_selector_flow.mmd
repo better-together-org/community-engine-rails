@@ -1,108 +1,58 @@
 flowchart TD
-  
+
   %% Location Selector Stimulus Controller
-  START[Event Form Load] --> INIT[Location Selector\nStimulus Controller]
-  INIT --> DETECT[Detect existing location type]
-  DETECT --> SHOW[Show appropriate UI section]
-  
-  %% User Interaction Flow
-  SHOW --> USERCHOICE{User selects location type}
-  
-  %% Simple Location Branch
-  USERCHOICE -->|Simple| SIMPLE[Show simple location field]
-  SIMPLE --> SIMPLENAME[Enter location name]
-  SIMPLENAME --> SIMPLEVALID[Simple location ready]
-  
-  %% Address Location Branch
-  USERCHOICE -->|Address| ADDRESS[Show address section]
-  ADDRESS --> ADDRCHOICE{Use existing or create new?}
-  ADDRCHOICE -->|Existing| SELECTADDR[Select from address dropdown]
-  ADDRCHOICE -->|New| CREATEADDR[Click 'New' button]
-  
-  %% Address Creation Flow
-  CREATEADDR --> SHOWADDRFORM[Show inline address form]
-  SHOWADDRFORM --> ADDRFIELDS[Fill address fields:\nline1, city, postal_code, etc.]
-  ADDRFIELDS --> ADDRFLAGS[Set physical/postal flags]
-  ADDRFLAGS --> ADDRREADY[Address data ready]
-  SELECTADDR --> ADDRREADY
-  
-  %% Building Location Branch
-  USERCHOICE -->|Building| BUILDING[Show building section]
-  BUILDING --> BLDGCHOICE{Use existing or create new?}
-  BLDGCHOICE -->|Existing| SELECTBLDG[Select from building dropdown]
-  BLDGCHOICE -->|New| CREATEBLDG[Click 'New' button]
-  
-  %% Building Creation Flow
-  CREATEBLDG --> SHOWBLDGFORM[Show inline building form]
-  SHOWBLDGFORM --> BLDGFIELDS[Fill building fields:\nname, description]
-  BLDGFIELDS --> BLDGADDR[Fill nested address fields:\nline1, city, postal_code]
-  BLDGADDR --> BLDGFLAGS[Set physical/postal flags]
-  BLDGFLAGS --> BLDGREADY[Building + Address ready]
-  SELECTBLDG --> BLDGREADY
-  
-  %% Form Submission & Processing
-  SIMPLEVALID --> SUBMIT[Submit Event Form]
-  ADDRREADY --> SUBMIT
-  BLDGREADY --> SUBMIT
-  
-  %% Backend Processing
-  SUBMIT --> BACKEND[EventsController#create/update]
-  BACKEND --> LOCATTR[location_attributes= setter]
-  LOCATTR --> LOCTYPE{Determine location type}
-  
-  %% Location Type Processing
-  LOCTYPE -->|Simple| SETSIMPLE[Set name on LocatableLocation]
-  LOCTYPE -->|Address data| CREATEADDR_BE[Create Address record]
-  LOCTYPE -->|Building data| CREATEBLDG_BE[Create Building + Address]
-  
-  %% Address Creation Backend
-  CREATEADDR_BE --> ADDRVALID_BE[Validate address data]
-  ADDRVALID_BE --> ADDRSAVE[Save Address]
-  ADDRSAVE --> ADDRLOCATABLE[Create LocatableLocation\npointing to Address]
-  
-  %% Building Creation Backend
-  CREATEBLDG_BE --> NORMALIZE[Normalize address_attributes\nnesting for Building]
-  NORMALIZE --> BLDGVALID_BE[Validate building + address]
-  BLDGVALID_BE --> BLDGSAVE[Save Building with Address]
-  BLDGSAVE --> BLDGLOCATABLE[Create LocatableLocation\npointing to Building]
-  
-  %% Final Processing
-  SETSIMPLE --> LOCSAVED[Location saved]
-  ADDRLOCATABLE --> LOCSAVED
-  BLDGLOCATABLE --> LOCSAVED
-  LOCSAVED --> GEOCODE{Address needs geocoding?}
-  GEOCODE -->|Yes| GEOJOB[Schedule geocoding job]
-  GEOCODE -->|No| SUCCESS[Event with location saved]
+  START[Event Form Load] --> INIT["Location Selector Stimulus Controller\nconnect()"]
+  INIT --> DISABLE["Disable the inline address panel's fields\n(hidden but not disabled still POSTs),\nunless the server re-rendered it open"]
+
+  %% Search
+  DISABLE --> USER[Organizer types in the mixed-search picker]
+  USER --> DEBOUNCE["slim_select_controller debounces\nthe AJAX fetch (300ms)"]
+  DEBOUNCE --> SEARCH["GET /events/available_locations?search=..."]
+  SEARCH --> BACKEND["EventsController#available_locations\n(no location_type given)"]
+  BACKEND --> MIXED["mixed_location_options:\nsearches every Placeable type at once"]
+  MIXED --> SCOPES{Per type}
+  SCOPES -->|Address / Building| POLICY["Policy-scoped:\norganizer's own + public records"]
+  SCOPES -->|Settlement / Region| CURATED[Unscoped: full curated reference list]
+  SCOPES -->|Floor / Room| INHERITED[Scoped via their building's visibility]
+  POLICY --> RESULTS
+  CURATED --> RESULTS
+  INHERITED --> RESULTS["Composite ClassName:id results,\ncapped per type, type-labeled,\nplus Create-new-address and\nUse-typed-text action rows"]
+
+  %% Selection
+  RESULTS --> CHOICE{Organizer's choice}
+  CHOICE -->|Picks an existing result| SPLIT["applyLocationSelection:\nmatch composite value's class-name prefix"]
+  CHOICE -->|Selects the Use-typed-text row| SIMPLE["applySimpleFromQuery:\nwrite hidden name field"]
+  CHOICE -->|Selects the Create-new-address row| NEWRECORD["revealNewRecord: reset the picker,\nunhide and enable the inline address\nfieldset, prefill line1, move focus"]
+
+  SPLIT --> STRUCTURED["setStructuredLocation:\nwrite hidden location_id/location_type,\nclear simple name field"]
+  STRUCTURED --> CLOSEBLOCKS["closeAllNewRecordBlocks:\nany open address panel closes and disables"]
+  SIMPLE --> CLOSEBLOCKS
+  NEWRECORD --> FILL["Fill inline address fields:\nline1, city, postal_code, etc."]
+  NEWRECORD --> CANCEL["Cancel: hide and disable the fieldset,\nclear its inputs and the hidden fields,\nreturn focus to the combobox"]
+  CANCEL --> USER
+
+  %% Submission & backend
+  CLOSEBLOCKS --> SUBMIT[Submit Event Form]
+  FILL --> SUBMIT
+
+  SUBMIT --> LOCATTR{Which fields are populated?}
+  LOCATTR -->|location_id + location_type| CUSTOM
+  LOCATTR -->|name only| CUSTOM
+  LOCATTR -->|Nested location_attributes| CUSTOM["LocatableLocation#location_attributes=\n(id lookup, type build, or simple name)"]
+  CUSTOM --> BUILD["Address.locatable_location_build(attrs):\nlooks up by id first,\nonly builds a new Address if not found"]
+
+  CUSTOM --> SAVE["belongs_to :location, autosave: true"]
+  BUILD --> SAVE
+  SAVE --> GEOCODE{Needs geocoding?}
+  GEOCODE -->|"Yes: this save changed something,\nor not yet geocoded"| GEOJOB[Schedule geocoding job]
+  GEOCODE -->|No| SUCCESS[Event + location saved together]
   GEOJOB --> SUCCESS
-  
-  %% Error Handling
-  ADDRVALID_BE -->|Invalid| ADDRERR[Address validation error]
-  BLDGVALID_BE -->|Invalid| BLDGERR[Building validation error]
-  ADDRERR --> FORMERR[Show form errors]
-  BLDGERR --> FORMERR
-  FORMERR --> SHOW
-  
-  %% UI State Management
-  USERCHOICE --> HIDE[Hide other location sections]
-  CREATEADDR --> FOCUS[Focus first address field]
-  CREATEBLDG --> FOCUS2[Focus first building field]
-  
-  %% Stimulus Controller Methods
-  INIT -.-> CONNECT["connect() method"]
-  USERCHOICE -.-> TOGGLE["toggleLocationType()"]
-  CREATEADDR -.-> SHOWNEW["showNewAddress()"]
-  CREATEBLDG -.-> SHOWNEWB["showNewBuilding()"]
-  HIDE -.-> HIDEALL["hideAllLocationTypes()"]
-  
+
   %% CSS Classes for Visual Distinction
   classDef stimulus fill:#e3f2fd
-  classDef ui fill:#f3e5f5
   classDef backend fill:#e8f5e8
   classDef data fill:#fff3e0
-  classDef error fill:#ffebee
-  
-  class INIT,DETECT,TOGGLE,SHOWNEW,SHOWNEWB,HIDEALL,CONNECT stimulus
-  class SIMPLE,ADDRESS,BUILDING,SHOWADDRFORM,SHOWBLDGFORM,HIDE,FOCUS,FOCUS2 ui
-  class BACKEND,LOCATTR,LOCTYPE,CREATEADDR_BE,CREATEBLDG_BE,NORMALIZE,GEOJOB backend
-  class SIMPLENAME,ADDRFIELDS,BLDGFIELDS,ADDRFLAGS,BLDGFLAGS,ADDRSAVE,BLDGSAVE data
-  class ADDRERR,BLDGERR,FORMERR error
+
+  class INIT,DISABLE,DEBOUNCE,SPLIT,STRUCTURED,SIMPLE,CLOSEBLOCKS,NEWRECORD,CANCEL stimulus
+  class BACKEND,MIXED,POLICY,CURATED,INHERITED,CUSTOM,BUILD,GEOJOB backend
+  class RESULTS,FILL,SAVE data

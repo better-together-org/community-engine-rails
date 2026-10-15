@@ -77,5 +77,30 @@ FactoryBot.define do
         create_list(:event_attendance, 3, event: event)
       end
     end
+
+    # Reproduces the 2026-09 production incident: a rich text body
+    # non-idempotently re-wrapped in its own render output on repeated
+    # read-then-save round trips (`ActionText::Content#to_s` always adds one
+    # more `<div class="trix-content">` layer). Written directly to the
+    # column so the wrapper count is exact and isn't touched by ActionText's
+    # normal save-path sanitization.
+    trait :with_pathologically_wrapped_description do
+      transient do
+        wrapper_repeats { 400 }
+      end
+
+      after(:create) do |event, evaluator|
+        open_wrapper = '<div class="trix-content">' * evaluator.wrapper_repeats
+        close_wrapper = '</div>' * evaluator.wrapper_repeats
+        wrapped = "#{open_wrapper}<p>Original event description.</p>#{close_wrapper}"
+        BetterTogether::TestSupport::RawRichText.write!(event, :description, wrapped)
+        # #reset (not #reload) -- just drops the has_one cache so the next
+        # access re-queries fresh. #reload would re-query AND immediately use
+        # the freshly loaded target, and something in that path calls .nil?
+        # on it -- which is itself dangerous on pathological content, since
+        # ActionText::RichText delegates #nil? to #body. See RawRichText.
+        event.association(:rich_text_description).reset
+      end
+    end
   end
 end

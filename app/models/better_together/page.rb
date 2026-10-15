@@ -23,6 +23,7 @@ module BetterTogether
     include Searchable
     include Seedable
     include Shortlinkable
+    include SitemapRefreshable
     include TrackedActivity
     include ::Storext.model
 
@@ -102,8 +103,6 @@ module BetterTogether
     scope :published, -> { where.not(published_at: nil).where('published_at <= ?', Time.zone.now) }
     scope :by_publication_date, -> { order(published_at: :desc) }
 
-    after_commit :refresh_sitemap, on: %i[create update destroy]
-
     def hero_block
       @hero_block ||= blocks.where(type: 'BetterTogether::Content::Hero').with_attached_background_image_file.with_translations.first
     end
@@ -172,6 +171,25 @@ module BetterTogether
       mirrored? && !local_to_platform?(local_platform)
     end
 
+    # Transient (non-persisted) flag: builder/seed code (NavigationBuilder,
+    # AgreementBuilder) sets this on a brand-new built-in page (About, FAQ,
+    # legal/policy pages, contributor agreements) that must render for
+    # guests regardless of the platform's own privacy ceiling -- the same
+    # reasoning Agreement already gets its own exemption for. Deliberately
+    # NOT tied to `protected?` -- that flag is reused across many contexts
+    # (including page_spec.rb's own privacy-ceiling coverage, via the page
+    # factory's randomized `protected` value) that have nothing to do with
+    # this exemption. Mirrors Community#bootstrapping_primary_community's
+    # transient-flag pattern. Only matters at creation: the ceiling
+    # validation only fires when privacy is new or changing (see
+    # PrivacyCeilingValidatable), so a later, unrelated save of an
+    # already-seeded page is never affected by this flag's absence.
+    attr_accessor :seed_privacy_ceiling_exempt
+
+    def privacy_ceiling_exempt?
+      super || seed_privacy_ceiling_exempt
+    end
+
     private
 
     def indexed_blocks
@@ -207,12 +225,6 @@ module BetterTogether
         template_path: block.template_path,
         indexed_localized_content: block.indexed_localized_content
       }
-    end
-
-    def refresh_sitemap
-      return if Rails.env.test?
-
-      SitemapRefreshJob.enqueue_unless_pending
     end
 
     def sync_name_and_title

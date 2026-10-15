@@ -39,6 +39,14 @@ RSpec.describe 'BetterTogether::Joatu::Agreements', :as_user do
       get better_together.joatu_agreement_path(agreement, locale: I18n.locale)
       expect(response).to be_successful
     end
+
+    it 'does not reference Tree Seeds (C3 is an external extension, not core gem scope)' do
+      agreement.update_columns(status: 'cancelled')
+
+      get better_together.joatu_agreement_path(agreement, locale: I18n.locale)
+
+      expect(response.body).not_to include('Tree Seed')
+    end
   end
 
   describe 'PATCH /update' do

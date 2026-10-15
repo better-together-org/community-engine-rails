@@ -16,6 +16,14 @@ module BetterTogether
     encrypts :access_key_id
     encrypts :secret_access_key
 
+    # Not PlatformScoped: every read/write goes through the owning Platform's
+    # `has_many :storage_configurations` association or `Platform#
+    # active_storage_configuration` (belongs_to, keyed by
+    # platforms.storage_configuration_id) rather than a bare class-level
+    # query — no `StorageConfiguration.find`/`.first`/`.all` exists anywhere
+    # in the app. Holds encrypted S3 credentials, so any new call site should
+    # keep going through the platform association rather than querying this
+    # class directly.
     belongs_to :platform, class_name: 'BetterTogether::Platform'
 
     validates :name, presence: true

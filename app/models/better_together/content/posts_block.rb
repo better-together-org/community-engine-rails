@@ -14,12 +14,6 @@ module BetterTogether
 
       validates :posts_scope, inclusion: { in: POSTS_SCOPES }
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[posts_scope]
       end

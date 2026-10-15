@@ -1,0 +1,35 @@
+---
+title: Seed Catalog -- Nothing Planted
+audience:
+- platform_manager
+- developer
+journey_step: As a platform manager, I open the seed catalog to install geography
+  reference data on my own schedule, instead of it being auto-seeded on every deploy.
+callouts:
+- :id: plant_all
+  :title: Plant All
+  :description: One click installs Continents, Countries, Provinces & Territories,
+    Regions, and Settlements together, syncing the country<->continent and region<->settlement
+    join tables once both sides of each pair exist.
+- :id: status_badge
+  :title: Not planted
+  :description: 'Every category starts unplanted -- this replaces the automatic GeographyBuilder.build(clear:
+    true) call that used to run on every seed/deploy.'
+- :id: plant_button
+  :title: Plant one category
+  :description: Category-level granularity, matching GeographyBuilder's existing separable
+    seed_continents/seed_countries/seed_provinces/seed_regions/seed_settlements methods.
+- :id: missing_prerequisites
+  :title: Prerequisite guard
+  :description: 'Bug fixed in this PR: planting Settlements before Provinces (or Provinces
+    before Countries) previously raised an uncaught 500 -- seed_settlements looks
+    up its State by identifier and reads state.country, which is nil if Provinces
+    was never planted. GeographyCatalog.missing_prerequisites now checks this server-side
+    (returning a friendly alert instead of calling the builder method), and the same
+    check disables the button and shows this hint in the UI before the organizer can
+    even click it.'
+accessibility_notes: Plant buttons carry an aria-label naming the specific category;
+  the disabled state (once planted, or once blocked on a missing prerequisite) is
+  a real disabled attribute, not just a CSS class.
+slug: seed_catalog_index_unplanted
+device: mobile

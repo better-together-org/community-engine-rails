@@ -67,7 +67,7 @@ module BetterTogether
         {
           id: event.id,
           name: event.name,
-          description: event.description.to_s.truncate(200),
+          description: BetterTogether::Seeds::SafeRichText.plain_text_for(event, :description)&.truncate(200),
           privacy: event.privacy,
           timezone: event.timezone,
           registration_url: event.registration_url

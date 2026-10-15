@@ -19,6 +19,14 @@ module BetterTogether
     encrypts :refresh_token
 
     belongs_to :person
+    # Not PlatformScoped: isolation here is by person/user ownership, not by
+    # platform — a person's OAuth integrations are theirs regardless of which
+    # tenant they're viewing from. PersonPlatformIntegrationPolicy's index/show
+    # scope by `user_id == current user`, not by Current.platform. `platform`
+    # instead identifies the external OAuth provider itself (a `Platform`
+    # record with `external: true`, e.g. "Github") or, for the omniauth
+    # callback lookup, is bypassed entirely via `find_by(provider:, uid:)`
+    # since a `uid`+`provider` pair identifies an external identity globally.
     belongs_to :platform
     belongs_to :user
 

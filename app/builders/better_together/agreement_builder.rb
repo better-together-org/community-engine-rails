@@ -253,7 +253,7 @@ module BetterTogether
 
         # New agreement pages seed public; an existing page keeps a host's
         # customized privacy (this builder is re-run on every seed).
-        page ||= BetterTogether::Page.new(identifier:, privacy: 'public')
+        page ||= BetterTogether::Page.new(identifier:, privacy: 'public', seed_privacy_ceiling_exempt: true)
 
         page.assign_attributes(
           platform: Current.platform || BetterTogether::Platform.find_by(host: true) || BetterTogether::Platform.first,
@@ -277,6 +277,7 @@ module BetterTogether
           block: BetterTogether::Content::Template.create!(
             template_path:,
             privacy: 'public',
+            seed_privacy_ceiling_exempt: true,
             css_settings: { container_class: '', css_classes: 'my-4' }
           )
         )

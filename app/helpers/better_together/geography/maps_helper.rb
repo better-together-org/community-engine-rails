@@ -11,6 +11,10 @@ module BetterTogether
           map
         end
       end
+
+      def events_map
+        @events_map ||= EventCollectionMap.find_or_create_by(identifier: 'events')
+      end
     end
   end
 end

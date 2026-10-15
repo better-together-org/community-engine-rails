@@ -131,6 +131,18 @@ module BetterTogether
       app.config.active_storage.variant_processor = :vips
     end
 
+    # Belt-and-suspenders redaction: PlatformConnectionOauthCredentials never
+    # logs the decrypted oauth_client_secret itself, but any raw exception
+    # report or param dump that happens to include a PlatformConnection's
+    # attributes (or a federation request's Authorization header) should not
+    # print it either. See app/models/concerns/better_together/
+    # platform_connection_oauth_credentials.rb for the encrypted-storage side.
+    initializer 'better_together.filter_sensitive_federation_params' do |app|
+      app.config.filter_parameters += %i[
+        oauth_client_secret oauth_client_secret_digest client_secret authorization
+      ]
+    end
+
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true

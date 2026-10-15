@@ -7,55 +7,42 @@ module BetterTogether
       include Creatable
 
       belongs_to :locatable, polymorphic: true
-      belongs_to :location, polymorphic: true, optional: true
+      # autosave: true is required for the "+New Address/Building" inline-create
+      # path — Address/Building#locatable_location_build builds an unsaved record
+      # via .new(attrs), and plain belongs_to never persists a newly-built target on
+      # its own. Without this, the association silently held an unsaved, phantom
+      # location: the parent event saved successfully (location.present? satisfied
+      # #at_least_one_location_source) while the Address/Building itself never hit
+      # the database. No-op for the "pick an existing record" path, since an
+      # already-persisted, unchanged association has nothing to autosave.
+      belongs_to :location, polymorphic: true, optional: true, autosave: true
 
       # Handle nested attributes for polymorphic `location` manually because
       # ActiveRecord doesn't support building polymorphic belongs_to via
       # accepts_nested_attributes_for. The form submits a `location_attributes`
-      # hash describing either an Address or a Building; this setter builds or
-      # assigns the proper associated record.
-      def location_attributes=(attrs) # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+      # hash describing any Geography::Placeable-including model (Address, Building,
+      # Settlement, Region, ...); this setter builds or assigns the proper associated
+      # record.
+      #
+      # Dynamic extension point (see docs/developers/architecture/
+      # polymorphic_allowlist_extension_audit.md): the set of valid location types comes
+      # from Placeable.included_in_models, not a hardcoded case/when — a model becomes a
+      # valid location_type purely by including Geography::Placeable, with no other change
+      # required here. Each Placeable model owns its own build behavior via
+      # .locatable_location_build(attrs) (lookup-only by default; Address/Building override
+      # it to build a new nested record).
+      def location_attributes=(attrs)
         attrs = attrs.to_h.stringify_keys
 
         # Reject obviously blank nested payloads (mirror previous reject_if logic)
         return if attrs.blank? || (attrs['id'].blank? && attrs.except('id', '_destroy').values.all?(&:blank?))
 
-        # If an id is provided, prefer reusing the existing record
+        allowed_names = BetterTogether::Geography::Placeable.included_in_models.map(&:name)
+
         if attrs['id'].present?
-          found = BetterTogether::Address.find_by(id: attrs['id']) ||
-                  BetterTogether::Infrastructure::Building.find_by(id: attrs['id'])
-          self.location = found if found
-          return
-        end
-
-        # Determine target type: prefer explicit location_type in params, then existing location_type
-        target_type = attrs['location_type'].presence || location_type
-
-        case target_type
-        when 'BetterTogether::Address'
-          # Create a new Address from nested params (allow nested unknown keys; model will validate)
-          self.location = BetterTogether::Address.new(attrs.except('id', '_destroy', 'location_type'))
-        when 'BetterTogether::Infrastructure::Building'
-          # Building may include nested address attributes. Normalize incoming params
-          # by moving any address attribute keys found at the top-level into
-          # address_attributes so Building.new receives nested address params.
-          address_keys = BetterTogether::Address.permitted_attributes(id: true, destroy: true).map(&:to_s)
-
-          attrs['address_attributes'] ||= {}
-
-          address_keys.each do |akey|
-            next unless attrs.key?(akey)
-
-            attrs['address_attributes'][akey] = attrs.delete(akey)
-          end
-
-          # Remove keys that belong to the join record
-          attrs.except!('id', '_destroy', 'location_type', 'name', 'locatable_id', 'locatable_type', 'location_id')
-
-          self.location = BetterTogether::Infrastructure::Building.new(attrs)
+          assign_location_by_id(attrs['id'], allowed_names)
         else
-          # Fallback: treat as simple named location
-          self.name = attrs['name'] if attrs['name'].present?
+          assign_location_by_type(attrs, allowed_names)
         end
       end
 
@@ -67,20 +54,17 @@ module BetterTogether
       validates :name, presence: true, if: -> { simple_location? && !marked_for_destruction? }
       validate :at_least_one_location_source, unless: :marked_for_destruction?
 
-      def self.permitted_attributes(id: false, destroy: false) # rubocop:todo Metrics/MethodLength
+      def self.permitted_attributes(id: false, destroy: false)
         super + %i[
           name locatable_id locatable_type location_id location_type
         ] + [
           {
-            # Permit nested attributes for either Address or Building. We merge
-            # both permitted attribute lists so the params hash allows keys for
-            # either polymorphic type used by the form.
-            location_attributes:
-              BetterTogether::Address.permitted_attributes(id: true,
-                                                           destroy: true) +
-              BetterTogether::Infrastructure::Building.permitted_attributes(
-                id: true, destroy: true
-              )
+            # Merge permitted attributes across every Placeable-including model, so the
+            # params hash allows keys for whichever polymorphic type the form submits —
+            # dynamically discovered, not hardcoded to Address/Building.
+            location_attributes: BetterTogether::Geography::Placeable.included_in_models.flat_map do |klass|
+              klass.respond_to?(:permitted_attributes) ? klass.permitted_attributes(id: true, destroy: true) : []
+            end.uniq
           }
         ]
       end
@@ -114,87 +98,194 @@ module BetterTogether
         !simple_location?
       end
 
-      # Convenience methods for specific location types
+      # Convenience methods for specific location types. Check the loaded `location`
+      # object's actual class via `is_a?`, not the raw `location_type` string column —
+      # `Infrastructure::Building` has STI (`type` column), and a string-equality check
+      # against the base class name would go false for any future subtype even though
+      # `is_a?` correctly still matches it.
       def address
-        location if location_type == 'BetterTogether::Address'
+        location if address?
       end
 
       def building
-        location if location_type == 'BetterTogether::Infrastructure::Building'
+        location if building?
+      end
+
+      def settlement
+        location if settlement?
+      end
+
+      def region
+        location if region?
+      end
+
+      # Generalizes address?/building?/settlement?/region? below to any current or
+      # future Geography::Placeable includer, keyed the same way the event form's
+      # location_type_map is (klass.name.demodulize.underscore) — a future Placeable
+      # model needs zero changes here, unlike checking one hardcoded class per type.
+      # Callers that only know the key (not a class constant), like the event form's
+      # radio/current-selection logic, should call this directly instead of
+      # `public_send("#{key}?")`, which raises NoMethodError for any key beyond the
+      # 4 explicitly-defined predicates below.
+      def location_type_matches?(key)
+        return false if location.blank?
+
+        BetterTogether::Geography::Placeable.included_in_models.any? do |klass|
+          klass.name.demodulize.underscore == key.to_s && location.is_a?(klass)
+        end
       end
 
       # Check if location is of a specific type
       def address?
-        location_type == 'BetterTogether::Address'
+        location_type_matches?('address')
       end
 
       def building?
-        location_type == 'BetterTogether::Infrastructure::Building'
+        location_type_matches?('building')
       end
 
-      # Helper method for forms - get available addresses for the user/context
-      def self.available_addresses_for(context = nil) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-        return BetterTogether::Address.none unless context
+      def settlement?
+        location_type_matches?('settlement')
+      end
 
-        case context
-        when BetterTogether::Person
-          # Use policy to get authorized addresses for the person
-          user = context.user
-          if user
-            policy_scope = BetterTogether::AddressPolicy::Scope.new(user, BetterTogether::Address).resolve
-            policy_scope.includes(:contact_detail)
-          else
-            # Person without user - only public addresses
-            BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
-          end
-        when BetterTogether::Community
-          # Communities can access public addresses and their own addresses
-          community_address_ids = BetterTogether::Address
-                                  .joins(:contact_detail)
-                                  .where(better_together_contact_details: { contactable: context })
-                                  .pluck(:id)
+      def region?
+        location_type_matches?('region')
+      end
 
-          public_address_ids = BetterTogether::Address.where(privacy: 'public').pluck(:id)
+      # Helper method for forms - get available addresses for the user/context.
+      # `search` filters by substring match across the address's component fields
+      # (no single translated `name` field to run a trigram search against, unlike
+      # Building/Floor/Room/Settlement/Region).
+      def self.available_addresses_for(context = nil, search: nil) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+        scope = if context
+                  case context
+                  when BetterTogether::Person
+                    # Use policy to get authorized addresses for the person
+                    user = context.user
+                    if user
+                      policy_scope = BetterTogether::AddressPolicy::Scope.new(user, BetterTogether::Address).resolve
+                      policy_scope.includes(:contact_detail)
+                    else
+                      # Person without user - only public addresses
+                      BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
+                    end
+                  when BetterTogether::Community
+                    # Communities can access public addresses and their own addresses
+                    community_address_ids = BetterTogether::Address
+                                            .joins(:contact_detail)
+                                            .where(better_together_contact_details: { contactable: context })
+                                            .pluck(:id)
 
-          # Combine IDs and query with includes
-          all_address_ids = (community_address_ids + public_address_ids).uniq
-          BetterTogether::Address.where(id: all_address_ids).includes(:contact_detail)
-        else
-          # Default: return public addresses only
-          BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
-        end
+                    public_address_ids = BetterTogether::Address.where(privacy: 'public').pluck(:id)
+
+                    # Combine IDs and query with includes
+                    all_address_ids = (community_address_ids + public_address_ids).uniq
+                    BetterTogether::Address.where(id: all_address_ids).includes(:contact_detail)
+                  else
+                    # Default: return public addresses only
+                    BetterTogether::Address.where(privacy: 'public').includes(:contact_detail)
+                  end
+                else
+                  BetterTogether::Address.none
+                end
+
+        filter_addresses_by_search(scope, search)
       end
 
       # Helper method for forms - get available buildings for the user/context
-      def self.available_buildings_for(context = nil) # rubocop:todo Metrics/MethodLength
-        return BetterTogether::Infrastructure::Building.none unless context
+      def self.available_buildings_for(context = nil, search: nil) # rubocop:todo Metrics/MethodLength
+        scope = if context
+                  case context
+                  when BetterTogether::Person
+                    if context.user
+                      # Person with user can access buildings they created and public buildings
+                      BetterTogether::Infrastructure::Building
+                        .where(creator: context)
+                        .or(BetterTogether::Infrastructure::Building.where(privacy: 'public'))
+                        .includes(:string_translations, :address)
+                    else
+                      # Person without user - only public buildings
+                      BetterTogether::Infrastructure::Building
+                        .where(privacy: 'public')
+                        .includes(:string_translations, :address)
+                    end
+                  when BetterTogether::Community
+                    # Communities get public buildings for now
+                    BetterTogether::Infrastructure::Building
+                      .where(privacy: 'public')
+                      .includes(:string_translations, :address)
+                  else
+                    # Fallback: return empty scope for unsupported context types
+                    BetterTogether::Infrastructure::Building.none
+                  end
+                else
+                  BetterTogether::Infrastructure::Building.none
+                end
 
-        case context
-        when BetterTogether::Person
-          if context.user
-            # Person with user can access buildings they created and public buildings
-            BetterTogether::Infrastructure::Building
-              .where(creator: context)
-              .or(BetterTogether::Infrastructure::Building.where(privacy: 'public'))
-              .includes(:string_translations, :address)
-          else
-            # Person without user - only public buildings
-            BetterTogether::Infrastructure::Building
-              .where(privacy: 'public')
-              .includes(:string_translations, :address)
-          end
-        when BetterTogether::Community
-          # Communities get public buildings for now
-          BetterTogether::Infrastructure::Building
-            .where(privacy: 'public')
-            .includes(:string_translations, :address)
-        else
-          # Fallback: return empty scope for unsupported context types
-          BetterTogether::Infrastructure::Building.none
-        end
+        search.present? ? scope.merge(BetterTogether::Infrastructure::Building.name_similarity_scope(search)) : scope
+      end
+
+      # Settlement/Region are global curated reference data (no privacy column, no
+      # creator-based visibility), unlike Address/Building — so no policy scoping is
+      # needed. `context` is accepted only for call-site symmetry with
+      # .available_addresses_for/.available_buildings_for.
+      def self.available_settlements_for(_context = nil, search: nil)
+        return BetterTogether::Geography::Settlement.i18n.order(:name) if search.blank?
+
+        BetterTogether::Geography::Settlement.name_similarity_scope(search)
+      end
+
+      def self.available_regions_for(_context = nil, search: nil)
+        return BetterTogether::Geography::Region.i18n.order(:name) if search.blank?
+
+        BetterTogether::Geography::Region.name_similarity_scope(search)
+      end
+
+      # Floors/Rooms have no independent privacy or visibility scoping of their
+      # own — availability is entirely inherited from their building, so these
+      # compose on top of .available_buildings_for rather than duplicating its
+      # policy/context logic. `search` matches against the floor/room's own name,
+      # not the parent building's, so it's applied after inheriting the building scope.
+      def self.available_floors_for(context = nil, search: nil)
+        scope = BetterTogether::Infrastructure::Floor.where(building: available_buildings_for(context))
+        search.present? ? scope.merge(BetterTogether::Infrastructure::Floor.name_similarity_scope(search)) : scope
+      end
+
+      def self.available_rooms_for(context = nil, search: nil)
+        scope = BetterTogether::Infrastructure::Room.where(floor: available_floors_for(context))
+        search.present? ? scope.merge(BetterTogether::Infrastructure::Room.name_similarity_scope(search)) : scope
+      end
+
+      def self.filter_addresses_by_search(scope, search)
+        return scope if search.blank?
+
+        pattern = "%#{search}%"
+        columns = %i[line1 line2 city_name state_province_name postal_code country_name]
+        conditions = columns.map { |col| BetterTogether::Address.arel_table[col].matches(pattern) }.reduce(:or)
+
+        scope.where(conditions)
       end
 
       private
+
+      # If an id is provided, prefer reusing the existing record — look it up across every
+      # allowed type, matching the prior Address-or-Building-only behavior.
+      def assign_location_by_id(id, allowed_names)
+        found = allowed_names.filter_map { |name| name.constantize.find_by(id:) }.first
+        self.location = found if found
+      end
+
+      def assign_location_by_type(attrs, allowed_names)
+        target_type = attrs['location_type'].presence || location_type
+        klass = BetterTogether::SafeClassResolver.resolve(target_type, allowed: allowed_names)
+
+        if klass
+          self.location = klass.locatable_location_build(attrs.except('locatable_id', 'locatable_type'))
+        elsif attrs['name'].present?
+          # Fallback: treat as simple named location
+          self.name = attrs['name']
+        end
+      end
 
       def mark_for_destruction_if_empty
         # Only mark for destruction if this is a persisted nested record that becomes empty

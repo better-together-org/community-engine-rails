@@ -28,6 +28,12 @@ module BetterTogether
     alias planted_by= creator=
 
     belongs_to :seed, class_name: 'BetterTogether::Seed', optional: true
+    # Not PlatformScoped: platform is optional because not every planting is
+    # tied to a single tenant (bulk_data/configuration plantings can be
+    # system-level) and a federated_tending planting's platform reference is
+    # about a remote/source platform context, not "which tenant owns this
+    # row" in the usual PlatformScoped sense — callers set it explicitly
+    # rather than relying on Current.platform auto-assignment.
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
 
     enum :status, STATUS_VALUES, default: :pending, validate: true

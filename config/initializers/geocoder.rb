@@ -11,6 +11,14 @@ Geocoder.configure(
   # set default units to kilometers:
   units: :km,
 
+  # Nominatim's usage policy (https://operations.osmfoundation.org/policies/nominatim/) requires
+  # a valid, identifying User-Agent on every request — without one, Nominatim silently returns a
+  # response Geocoder can't parse as JSON (raises Geocoder::ResponseParseError on every single
+  # call, with no indication it's a missing-header problem rather than a network/service issue).
+  http_headers: {
+    'User-Agent' => 'BetterTogetherCommunityEngine/1.0 (+https://github.com/better-together-org/community-engine-rails)'
+  },
+
   # caching (see Caching section below for details):
   cache: Geocoder::CacheStore::Generic.new(Rails.cache, {})
 )

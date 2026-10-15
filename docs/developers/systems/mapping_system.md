@@ -213,26 +213,39 @@ SPATIAL_REFERENCE_SYSTEM = 4326  # WGS 84
 ## Usage Examples
 
 ### Creating Mappable Models
+`BetterTogether::Geography::Locatable::One` (the concern giving a model a single assigned
+`location`, e.g. `Event`) already includes `Mappable` and provides `leaflet_points`/`spaces`
+for you — any model that includes it is mappable with zero extra code:
 ```ruby
-class Event < ApplicationRecord
-  include BetterTogether::Geography::Mappable
-  has_many :locatable_locations, as: :locatable
-  
-  def leaflet_points
-    locatable_locations.filter_map do |ll|
-      space = ll.location&.space
-      next unless space
-      
-      {
-        lat: space.latitude,
-        lng: space.longitude,
-        label: ll.display_name,
-        popup_html: "<strong>#{title}</strong><br/>#{ll.display_name}"
-      }
+module BetterTogether
+  module Geography
+    module Locatable
+      module One
+        extend ActiveSupport::Concern
+
+        included do
+          include ::BetterTogether::Geography::Mappable
+          has_one :location, class_name: 'BetterTogether::Geography::LocatableLocation', as: :locatable
+        end
+
+        def leaflet_points
+          point = location&.location&.to_leaflet_point
+          return [] unless point
+
+          place_link = "<a href='#{locatable_map_url}' class='text-decoration-none'><strong>#{self}</strong></a>"
+          [point.merge(label: place_link, popup_html: "#{place_link}<br>#{location.display_name}")]
+        end
+
+        def spaces
+          [location&.location&.space].compact
+        end
+      end
     end
   end
 end
 ```
+`Event` includes `Geography::Locatable::One` and gets `event.map`, `event.leaflet_points`, and
+`event.spaces` for free — no per-model `leaflet_points` override needed.
 
 ### Rendering Maps in Views
 ```erb
@@ -251,33 +264,48 @@ end
 ```
 
 ### Custom Map Types
+`LocatableMap` (`BetterTogether::Geography::LocatableMap < BetterTogether::Geography::Map`) is a
+generic subtype for any `Locatable::One`-including mappable — it needs no `mappable_class`
+override at all, since the base `Map#leaflet_points` delegation to `mappable` already works once
+the mappable includes `Locatable::One` (above). A concrete "collection" subtype is still needed
+per entity type, to scope the aggregate query (mirrors `CommunityCollectionMap`):
 ```ruby
-class EventCollectionMap < BetterTogether::Geography::Map
+class BetterTogether::Geography::EventCollectionMap < BetterTogether::Geography::LocatableMap
   def self.mappable_class
-    ::Event
+    ::BetterTogether::Event
   end
-  
+
+  def self.records
+    mappable_class.joins(:location).includes(location: :location).order(created_at: :desc)
+  end
+
   def records
-    mappable_class.published.includes(:locatable_locations)
+    @records ||= self.class.records
   end
-  
+
   def leaflet_points
-    records.map(&:leaflet_points).flatten.uniq
+    @leaflet_points ||= records.flat_map(&:leaflet_points)
+  end
+
+  def spaces
+    @spaces ||= records.flat_map(&:spaces).compact.uniq
   end
 end
 ```
 
 ### Map Controller Integration
+`@event.map` is auto-provisioned by the `Mappable` concern's `after_create`/`after_update`
+callbacks (via `Locatable::One`), so views can render it directly without an explicit
+`find_or_create`. The events index reuses the same `MapsHelper#events_map` pattern already
+used by `communities_map`:
 ```ruby
 class EventsController < ApplicationController
   def show
     @event = Event.find(params[:id])
-    @map = @event.map || @event.create_map
   end
-  
+
   def index
     @events = Event.published
-    @collection_map = EventCollectionMap.new
   end
 end
 ```
@@ -472,7 +500,7 @@ end
 
 ```ruby
 # Debug map data
-map = Event.find(1).map
+map = BetterTogether::Event.find(1).map
 puts "Center: #{map.center_for_leaflet}"
 puts "Zoom: #{map.zoom}"
 puts "Points: #{map.leaflet_points.count}"

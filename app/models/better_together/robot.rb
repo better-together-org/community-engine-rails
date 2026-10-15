@@ -22,6 +22,12 @@ module BetterTogether
       submit_authenticated_forms
     ].freeze
 
+    # Deliberately not PlatformScoped: a Robot can be platform-specific OR a
+    # global/network-wide fallback (see `scope :global`, `platform_id: nil`),
+    # which PlatformScoped's Current.platform-based auto-assignment and
+    # required-platform assumptions don't accommodate. Every query call site
+    # goes through `.for_platform`/`.available_for_platform`/`.resolve`, which
+    # correctly handle both cases explicitly.
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     has_many :authorships, as: :author, class_name: 'BetterTogether::Authorship', inverse_of: :author, dependent: :restrict_with_exception
 

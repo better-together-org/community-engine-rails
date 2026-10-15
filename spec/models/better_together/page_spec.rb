@@ -413,6 +413,27 @@ module BetterTogether # :nodoc:
           expect(page).to be_valid
         end
       end
+
+      context 'seed_privacy_ceiling_exempt (built-in seeded pages)' do
+        # NavigationBuilder/AgreementBuilder set this transient flag on new
+        # built-in pages (About, FAQ, legal/policy pages, contributor
+        # agreements) so they render for guests regardless of the platform's
+        # privacy ceiling. Deliberately not tied to `protected?` -- that flag
+        # is reused (and randomized by the page factory) across unrelated
+        # contexts, including the other examples in this describe block.
+        it 'allows public privacy even under a private platform and community' do
+          page = page_for.call(platform: private_platform, community: private_community, privacy: 'public')
+          page.seed_privacy_ceiling_exempt = true
+
+          expect(page).to be_valid
+        end
+
+        it 'does not affect an otherwise-identical page without the flag' do
+          page = page_for.call(platform: private_platform, community: private_community, privacy: 'public')
+
+          expect(page).not_to be_valid
+        end
+      end
     end
 
     describe 'privacy default' do

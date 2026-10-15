@@ -52,12 +52,6 @@ module BetterTogether
         caption.presence || I18n.t('better_together.content.blocks.video_block.title')
       end
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[video_url caption aspect_ratio]
       end

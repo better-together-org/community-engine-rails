@@ -151,6 +151,19 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       it 'has correct job class' do
         expect(job['class']).to eq('BetterTogether::Billing::DeadLetterStaleBillingEventsJob')
       end
+    end
+
+    describe 'sitemap refresh job configuration' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+      let(:job) { schedule['better_together:sitemap_refresh_daily'] }
+
+      it 'has correct cron schedule' do
+        expect(job['cron']).to eq('0 2 * * *')
+      end
+
+      it 'has correct job class' do
+        expect(job['class']).to eq('BetterTogether::SitemapRefreshScanJob')
+      end
 
       it 'uses maintenance queue' do
         expect(job['queue']).to eq('maintenance')
@@ -351,6 +364,10 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       it 'billing reconciliation scan job classes are defined' do
         expect(defined?(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingScanJob)).to be_truthy
         expect(defined?(BetterTogether::Billing::ReconcileStripeMerchantAccountScanJob)).to be_truthy
+      end
+      
+      it 'sitemap refresh scan job class is defined' do
+        expect(defined?(BetterTogether::SitemapRefreshScanJob)).to be_truthy
       end
     end
   end

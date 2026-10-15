@@ -10,6 +10,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
 
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
+
+  # Per-platform robots.txt (no locale). Host apps must remove their static
+  # public/robots.txt for this dynamic route to take effect.
+  get '/robots.txt', to: 'robots_txt#show', as: :robots_txt, defaults: { format: 'text' }
   post '/inbound-email/relay', to: 'inbound_emails#create', as: :inbound_email_relay
   get '/bot-defense/challenges/:form_id',
       to: 'bot_defense/challenges#show',
@@ -205,6 +209,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts
+            get :available_locations
             get :recurrence_preview
           end
           resources :invitations, only: %i[create destroy] do
@@ -505,7 +510,17 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
             # section stays platform-manager-only for everything else.
 
             # Seed data management
-            resources :seeds
+            resources :seeds do
+              # Seed catalog — on-demand planting of curated reference data (Geography today).
+              # Must be `collection` routes (not a sibling scope) so Rails resolves them before
+              # this resource's own GET/:id (show) route — a sibling `scope path: 'seeds'` block
+              # placed after `resources :seeds` loses to `seeds#show` matching "catalog" as :id.
+              collection do
+                get 'catalog', to: 'seed_catalog#index', as: 'seed_catalog'
+                post 'catalog/:catalog_key/plant/:category_key', to: 'seed_catalog#plant', as: 'seed_catalog_plant'
+                post 'catalog/:catalog_key/plant_all', to: 'seed_catalog#plant_all', as: 'seed_catalog_plant_all'
+              end
+            end
 
             # People and memberships
             resources :people

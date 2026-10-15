@@ -9,27 +9,30 @@ RSpec.describe BetterTogether::Llm::DefaultAdapter do
       chat_class = Class.new do
         def with_instructions(_value); end
         def with_temperature(_value); end
-        def with_params(_value); end
+        def with_max_output_tokens(_value); end
         def ask(_prompt); end
+      end
+      tokens_class = Class.new do
+        def input; end
+        def output; end
       end
       response_class = Class.new do
         def content; end
-        def model_id; end
-        def input_tokens; end
-        def output_tokens; end
+        def model; end
+        def tokens; end
       end
       chat = instance_double(chat_class)
+      tokens = instance_double(tokens_class, input: 12, output: 4)
       response = instance_double(response_class,
                                  content: 'Bonjour',
-                                 model_id: 'gpt-4o-mini-2024-07-18',
-                                 input_tokens: 12,
-                                 output_tokens: 4)
+                                 model: 'gpt-4o-mini-2024-07-18',
+                                 tokens:)
 
       allow(RubyLLM).to receive(:chat).and_return(chat)
       allow(chat).to receive_messages(
         with_instructions: chat,
         with_temperature: chat,
-        with_params: chat
+        with_max_output_tokens: chat
       )
       allow(chat).to receive(:ask).with('Hello').and_return(response)
 
@@ -46,9 +49,12 @@ RSpec.describe BetterTogether::Llm::DefaultAdapter do
         model: BetterTogether::Robot::DEFAULT_CHAT_MODEL,
         provider: :openai
       )
+      expect(chat).to have_received(:with_max_output_tokens).with(1000)
       expect(result[:content]).to eq('Bonjour')
       expect(result[:provider]).to eq('openai')
       expect(result[:model]).to eq('gpt-4o-mini-2024-07-18')
+      expect(result[:prompt_tokens]).to eq(12)
+      expect(result[:completion_tokens]).to eq(4)
     end
   end
 end

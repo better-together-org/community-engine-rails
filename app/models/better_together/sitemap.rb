@@ -5,6 +5,11 @@ require 'digest/md5'
 module BetterTogether
   # Stores the generated sitemap in Active Storage for serving via S3
   class Sitemap < ApplicationRecord
+    # Not PlatformScoped: every caller (SitemapsController, the sitemap
+    # generator/index-builder, and the refresh jobs) already passes `platform`
+    # explicitly to `.current`/`.current_index`, so PlatformScoped's
+    # Current.platform-based auto-assignment isn't needed. No bare
+    # `Sitemap.find`/`.first`/`.all` exists anywhere in the app.
     belongs_to :platform
 
     has_one_attached :file

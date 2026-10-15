@@ -5,6 +5,8 @@
 **Rails Version:** 8.0.2  
 **Reviewer:** GitHub Copilot (Automated Analysis)
 
+> **Editor's note (2026-09-11):** H1 below is stale. After this review, a Signal Protocol E2EE implementation was in fact built in full (`edc0388bb`, 2026-03-22) — not merely planned — then pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings) rather than shipped. It was not "never started"; it is preserved on `feature/e2e-signal-protocol-messaging-01100notes` for future rework. The rest of this review (H2-H7 and below) is unaffected by this correction.
+
 ---
 
 ## Executive Summary

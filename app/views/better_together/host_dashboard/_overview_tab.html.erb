@@ -193,8 +193,9 @@
   </div>
 
   <div id="geography-section" class="row mt-3">
-    <div class="col-12">
+    <div class="col-12 d-flex justify-content-between align-items-center">
       <h3><%= t('host_dashboard.index.geography') %></h3>
+      <%= link_to t('seed_catalog.index.title'), seed_catalog_seeds_path, id: 'seed-catalog-link', class: 'btn btn-outline-primary btn-sm' %>
     </div>
     <%= render partial: 'resource_card', locals: { collection: @geography_continents, count: @geography_continent_count, url_helper: :geography_continent_path } %>
     <%= render partial: 'resource_card', locals: { collection: @geography_countries, count: @geography_country_count, url_helper: :geography_country_path } %>

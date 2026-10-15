@@ -8,23 +8,23 @@ RSpec.describe BetterTogether::Platform do
       let(:platform) { build(:better_together_platform) }
 
       it 'returns feature registry default when no rollout override is set' do
-        rollout = platform.feature_rollout_for(:new_content_blocks)
-        registry_default = BetterTogether::FeatureRegistry.find(:new_content_blocks).fetch(:default_rollout)
+        rollout = platform.feature_rollout_for(:device_permissions)
+        registry_default = BetterTogether::FeatureRegistry.find(:device_permissions).fetch(:default_rollout)
 
         expect(rollout).to eq(registry_default)
       end
 
       it 'returns platform-specific override when set' do
-        platform.settings = { feature_gate_rollouts: { new_content_blocks: 'alpha' } }
+        platform.settings = { feature_gate_rollouts: { device_permissions: 'alpha' } }
 
-        expect(platform.feature_rollout_for(:new_content_blocks)).to eq('alpha')
+        expect(platform.feature_rollout_for(:device_permissions)).to eq('alpha')
       end
 
       it 'falls back to registry default when override is removed' do
         platform.settings = { feature_gate_rollouts: {} }
 
-        rollout = platform.feature_rollout_for(:new_content_blocks)
-        registry_default = BetterTogether::FeatureRegistry.find(:new_content_blocks).fetch(:default_rollout)
+        rollout = platform.feature_rollout_for(:device_permissions)
+        registry_default = BetterTogether::FeatureRegistry.find(:device_permissions).fetch(:default_rollout)
 
         expect(rollout).to eq(registry_default)
       end
@@ -32,8 +32,8 @@ RSpec.describe BetterTogether::Platform do
       it 'handles nil settings gracefully' do
         platform.settings = nil
 
-        rollout = platform.feature_rollout_for(:new_content_blocks)
-        registry_default = BetterTogether::FeatureRegistry.find(:new_content_blocks).fetch(:default_rollout)
+        rollout = platform.feature_rollout_for(:device_permissions)
+        registry_default = BetterTogether::FeatureRegistry.find(:device_permissions).fetch(:default_rollout)
 
         expect(rollout).to eq(registry_default)
       end
@@ -42,7 +42,7 @@ RSpec.describe BetterTogether::Platform do
         platform.settings = { feature_gate_rollouts: { unknown_feature: 'beta' } }
 
         # Should not raise; just return registry default or raise FeatureRegistry::NotFound
-        expect { platform.feature_rollout_for(:new_content_blocks) }
+        expect { platform.feature_rollout_for(:device_permissions) }
           .not_to raise_error
       end
     end
@@ -52,30 +52,30 @@ RSpec.describe BetterTogether::Platform do
 
       it 'sanitizes feature_gate_rollouts to reject unknown features' do
         platform.feature_gate_rollouts = {
-          new_content_blocks: 'beta',
+          device_permissions: 'beta',
           unknown_feature: 'beta'
         }
 
         sanitized = platform.feature_gate_rollouts
-        expect(sanitized).to include('new_content_blocks' => 'beta')
+        expect(sanitized).to include('device_permissions' => 'beta')
         expect(sanitized).not_to include('unknown_feature')
       end
 
       it 'rejects invalid rollout values' do
         platform.feature_gate_rollouts = {
-          new_content_blocks: 'invalid_rollout'
+          device_permissions: 'invalid_rollout'
         }
 
         sanitized = platform.feature_gate_rollouts
         # Invalid rollout should be stripped or replaced with default
-        expect(sanitized['new_content_blocks']).not_to eq('invalid_rollout')
+        expect(sanitized['device_permissions']).not_to eq('invalid_rollout')
       end
 
       it 'accepts valid rollout values (stable, beta, alpha, off)' do
         %w[stable beta alpha off].each do |rollout|
-          platform.feature_gate_rollouts = { new_content_blocks: rollout }
+          platform.feature_gate_rollouts = { device_permissions: rollout }
 
-          expect(platform.feature_gate_rollouts['new_content_blocks']).to eq(rollout)
+          expect(platform.feature_gate_rollouts['device_permissions']).to eq(rollout)
         end
       end
     end
@@ -88,24 +88,24 @@ RSpec.describe BetterTogether::Platform do
 
       context 'with stable rollout' do
         before do
-          host_platform.update!(feature_gate_rollouts: { new_content_blocks: 'stable' })
+          host_platform.update!(feature_gate_rollouts: { device_permissions: 'stable' })
         end
 
         it 'returns true for all users' do
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(true)
         end
       end
 
       context 'with alpha rollout' do
         before do
-          host_platform.update!(feature_gate_rollouts: { new_content_blocks: 'alpha' })
+          host_platform.update!(feature_gate_rollouts: { device_permissions: 'alpha' })
         end
 
         it 'returns false for users without alpha access' do
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(false)
         end
 
@@ -125,7 +125,7 @@ RSpec.describe BetterTogether::Platform do
           end.update!(role: alpha_role, status: 'active')
 
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(true)
         end
 
@@ -133,23 +133,23 @@ RSpec.describe BetterTogether::Platform do
           create(:better_together_feature_access_grant,
                  platform: host_platform,
                  person:,
-                 feature_key: 'new_content_blocks',
+                 feature_key: 'device_permissions',
                  access_level: 'alpha')
 
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(true)
         end
       end
 
       context 'with beta rollout' do
         before do
-          host_platform.update!(feature_gate_rollouts: { new_content_blocks: 'beta' })
+          host_platform.update!(feature_gate_rollouts: { device_permissions: 'beta' })
         end
 
         it 'returns false for users without beta access' do
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(false)
         end
 
@@ -169,19 +169,19 @@ RSpec.describe BetterTogether::Platform do
           end.update!(role: beta_role, status: 'active')
 
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(true)
         end
       end
 
       context 'with off rollout' do
         before do
-          host_platform.update!(feature_gate_rollouts: { new_content_blocks: 'off' })
+          host_platform.update!(feature_gate_rollouts: { device_permissions: 'off' })
         end
 
         it 'returns false for all users by default' do
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(false)
         end
 
@@ -189,37 +189,37 @@ RSpec.describe BetterTogether::Platform do
           create(:better_together_feature_access_grant,
                  platform: host_platform,
                  person:,
-                 feature_key: 'new_content_blocks',
+                 feature_key: 'device_permissions',
                  access_level: 'alpha')
 
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(true)
         end
       end
 
       context 'with different platforms' do
         before do
-          host_platform.update!(feature_gate_rollouts: { new_content_blocks: 'stable' })
-          other_platform.update!(feature_gate_rollouts: { new_content_blocks: 'off' })
+          host_platform.update!(feature_gate_rollouts: { device_permissions: 'stable' })
+          other_platform.update!(feature_gate_rollouts: { device_permissions: 'off' })
         end
 
         it 'respects per-platform rollout settings' do
           # Same user, different rollouts on each platform
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: host_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: host_platform)
           ).to be(true)
 
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: other_platform)
+            described_class.enabled?(:device_permissions, actor: person, platform: other_platform)
           ).to be(false)
         end
 
         it 'falls back to host platform when platform is nil' do
-          host_platform.update!(feature_gate_rollouts: { new_content_blocks: 'stable' })
+          host_platform.update!(feature_gate_rollouts: { device_permissions: 'stable' })
 
           expect(
-            described_class.enabled?(:new_content_blocks, actor: person, platform: nil)
+            described_class.enabled?(:device_permissions, actor: person, platform: nil)
           ).to be(true)
         end
       end
@@ -234,7 +234,7 @@ RSpec.describe BetterTogether::Platform do
           create(:better_together_feature_access_grant,
                  platform:,
                  person:,
-                 feature_key: 'new_content_blocks',
+                 feature_key: 'device_permissions',
                  access_level: 'alpha')
         end
 
@@ -243,7 +243,7 @@ RSpec.describe BetterTogether::Platform do
           create(:better_together_feature_access_grant,
                  platform: other_platform,
                  person:,
-                 feature_key: 'new_content_blocks',
+                 feature_key: 'device_permissions',
                  access_level: 'beta')
         end
 
@@ -254,7 +254,7 @@ RSpec.describe BetterTogether::Platform do
           grants_on_platform = described_class.where(
             platform:,
             person:,
-            feature_key: 'new_content_blocks'
+            feature_key: 'device_permissions'
           )
 
           expect(grants_on_platform.count).to eq(1)
@@ -269,7 +269,7 @@ RSpec.describe BetterTogether::Platform do
             create(:better_together_feature_access_grant,
                    platform:,
                    person:,
-                   feature_key: 'new_content_blocks',
+                   feature_key: 'device_permissions',
                    access_level: 'beta')
           end.to raise_error(ActiveRecord::RecordInvalid)
         end
@@ -319,13 +319,13 @@ RSpec.describe BetterTogether::Platform do
           grant = create(:better_together_feature_access_grant,
                          platform:,
                          person:,
-                         feature_key: 'new_content_blocks')
+                         feature_key: 'device_permissions')
 
           grant.revoke!
 
           active_grants = described_class.active.where(
             person:,
-            feature_key: 'new_content_blocks'
+            feature_key: 'device_permissions'
           )
 
           expect(active_grants).not_to include(grant)

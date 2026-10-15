@@ -232,6 +232,34 @@ module BetterTogether
       # Convert to event timezone and format for datetime-local input
       datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
     end
+
+    # SlimSelect options-value for the event location picker. AJAX mixed search
+    # plus opt-in "Create new address" / "Use typed text" result rows (see
+    # slim_select_controller.js createOptions). `q: '%{q}'` keeps the %{q}
+    # placeholder literal in the label so the Stimulus controller can substitute
+    # the live search term client-side.
+    # rubocop:disable Style/FormatStringToken, Metrics/MethodLength, Metrics/AbcSize
+    def location_picker_slim_select_options
+      address_model = BetterTogether::Address.model_name.human
+
+      {
+        ajax: { url: available_locations_events_path },
+        createOptions: {
+          simple: {
+            label: t('better_together.events.location_picker.create_row.use_typed_name', q: '%{q}')
+          },
+          types: [
+            {
+              type: 'address',
+              label: t('better_together.events.actions.create_new', model: address_model),
+              labelWithQuery: t('better_together.events.location_picker.create_row.new_named_with_query',
+                                model: address_model, q: '%{q}')
+            }
+          ]
+        }
+      }
+    end
+    # rubocop:enable Style/FormatStringToken, Metrics/MethodLength, Metrics/AbcSize
   end
   # rubocop:enable Metrics/ModuleLength
 end

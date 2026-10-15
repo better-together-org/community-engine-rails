@@ -13,7 +13,8 @@ FactoryBot.define do
     iso_code { "#{SecureRandom.alphanumeric(2).upcase}-#{SecureRandom.alphanumeric(2).upcase}" }
     protected { false }
 
-    association :community, factory: :better_together_community
+    # See continents.rb factory for why privacy: 'public' is explicit here.
+    association :community, factory: :better_together_community, privacy: 'public'
     association :country, factory: :geography_country
 
     trait :protected do

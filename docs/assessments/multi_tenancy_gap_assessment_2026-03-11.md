@@ -1,5 +1,7 @@
 # CE Multi-Tenancy Gap Assessment
 
+> **⚠️ Superseded.** This assessment predates PR [#1215](https://github.com/better-together-org/community-engine-rails/pull/1215) (merged ~March 21–26, 2026), which built most of the `PlatformDomain` model, `PlatformContextMiddleware`, `PlatformRecord`/`PlatformScoped` scoping, and the ~80-model `platform_id` backfill described as missing below. It is retained as a historical snapshot of the pre-0.11.0 state only — **do not cite it as a description of current architecture.** For the current state, see [`release_0_11_0_multi_platform_federation_readiness_assessment.md`](./release_0_11_0_multi_platform_federation_readiness_assessment.md) (2026-07-17) and [`../developers/systems/multi_tenant_platform_runtime.md`](../developers/systems/multi_tenant_platform_runtime.md).
+
 **Date:** March 11, 2026  
 **Assessment Type:** Branch, PR, and architecture gap assessment  
 **Repository:** better-together-org/community-engine-rails  

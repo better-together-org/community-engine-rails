@@ -29,12 +29,6 @@ module BetterTogether
         open_first == 'true'
       end
 
-      def self.content_addable?(actor: nil)
-        BetterTogether::FeatureGate.enabled?('new_content_blocks', actor:, platform: Current.platform)
-      rescue KeyError
-        false
-      end
-
       def self.extra_permitted_attributes
         super + %i[heading accordion_items_json open_first]
       end

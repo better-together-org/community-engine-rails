@@ -9,6 +9,7 @@ This assessment is generated from the current live class set and the concern cap
 | Concern | Capability | Included by live classes | Drawbacks / risks |
 | --- | --- | --- | --- |
 | `ActiveStorageSecurity` | Activestoragesecurity | `ContentSecurity::ActiveStorage::Representations::ProxyController`, `ContentSecurity::ActiveStorage::Blobs::ProxyController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `ActiveStorageVariantErrorHandling` | Activestoragevarianterrorhandling | `ContentSecurity::ActiveStorage::Representations::ProxyController`, `ContentSecurity::ActiveStorage::Blobs::ProxyController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Agentic` | Agentic | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::Auth::RegistrationHelpers` | Registrationhelpers | `Api::Auth::RegistrationsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::OauthAuthorization` | Oauthauthorization | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -36,8 +37,10 @@ This assessment is generated from the current live class set and the concern cap
 | `Federatable` | Federatable | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `FriendlySlug` | Adds translated/human-friendly slugs for routes and lookup. | `ResourcePermission`, `User`, `Role`, `Person`, `OauthUser` | Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved. |
 | `Geography::Geospatial::One` | One | `Geography::Settlement`, `Geography::Region`, `Geography::State`, `Geography::Country`, `Geography::Continent`, `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Geography::Locatable::Many` | Many | `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::One` | One | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Mappable` | Mappable | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Geography::Placeable` | Placeable | `Geography::Settlement`, `Geography::Region`, `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `GovernanceParticipant` | Governanceparticipant | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `HostsEvents` | Hostsevents | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Identifier` | Adds canonical identifiers and slug/lookup helpers used across APIs and UI. | `ResourcePermission`, `Role`, `Person` | Identifier reuse across platforms or mirrors can blur provenance without explicit platform context. |
@@ -62,6 +65,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Metrics::Utf8UrlHandler` | Utf8urlhandler | `Metrics::PageView`, `Metrics::LinkClick` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::Viewable` | Viewable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `NotificationReadable` | Notificationreadable | `CommunitiesController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PageBlockVisibility` | Pageblockvisibility | `PagesController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Permissible` | Adds role/resource-permission linkage for policy checks and platform governance. | `Platform`, `Community` | Permission bundling can create god-mode reads unless capabilities are split carefully. |
 | `PlatformConnectionFederationPolicy` | Platformconnectionfederationpolicy | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionOauthCredentials` | Platformconnectionoauthcredentials | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -88,9 +92,10 @@ This assessment is generated from the current live class set and the concern cap
 | `Searchable` | Registers backend-neutral search contracts, pg_search wiring, and Elasticsearch callbacks. | `Community` | Search can become a visibility bypass if model scopes and indexed payloads drift. |
 | `Seedable` | Adds seed/import/export helper behavior for reusable content and onboarding flows. | `PersonPurgeAudit`, `PersonPlatformIntegration`, `PersonLinkedSeed`, `PersonLink`, `PersonAccessGrant`, `PersonPlatformMembership` | Seed portability can carry stale permissions or provenance unless metadata stays explicit. |
 | `Shortlinkable` | Shortlinkable | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `SitemapRefreshable` | Sitemaprefreshable | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `TimezoneAttributeAliasing` | Adds consistent timezone aliases and coercion for scheduler-facing models. | `Person` | Hidden timezone aliasing can obscure which timestamps are canonical. |
 | `TrackedActivity` | Adds PublicActivity hooks and activity-feed integration. | `Page`, `Post` | Activity streams can reveal private operations if trackable scoping is too broad. |
 | `Translatable` | Translatable | `ResourcePermission`, `User`, `Role`, `Person`, `OauthUser` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Viewable` | Adds view-tracking hooks and reader-facing display helpers. | `Person` | View analytics and cache helpers can become privacy-sensitive telemetry surfaces. |
 | `Visible` | Visible | `NavigationArea` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `WizardMethods` | Wizardmethods | `WizardStepsController`, `WizardsController`, `SetupWizardStepsController`, `SetupWizardController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `WizardMethods` | Wizardmethods | `WizardsController`, `WizardStepsController`, `SetupWizardController`, `SetupWizardStepsController` | Review the concern source for configuration-specific coupling or visibility implications. |
