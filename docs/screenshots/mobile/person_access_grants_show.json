@@ -1,0 +1,10 @@
+{
+  "name": "person_access_grants_show",
+  "device": "mobile",
+  "url": "/en/access-grants/db5d1c1f-4f05-49c2-99ad-80e57e8afa28",
+  "title": "Community Engine Host",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "person_access_grants",
+  "source_spec": "./spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+}

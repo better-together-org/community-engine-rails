@@ -1,0 +1,10 @@
+{
+  "name": "platform_connections_new",
+  "device": "desktop",
+  "url": "/en/platform_connections/new",
+  "title": "New Platform Connection | Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_connections",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+}
