@@ -16,7 +16,7 @@ Row-level data is in [`ce_documentation_coverage_manifest.json`](ce_documentatio
 
 | Surface | Status |
 | --- | --- |
-| views | covered: 248, missing: 37, partial: 244, stale: 250 |
+| views | covered: 258, missing: 31, partial: 246, stale: 244 |
 | models | covered: 159, partial: 47 |
 | concerns | covered: 78, missing: 4 |
 | workflows | covered: 4, partial: 17 |
