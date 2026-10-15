@@ -1,0 +1,10 @@
+{
+  "name": "seed_subprocessors",
+  "device": "mobile",
+  "url": "/en/subprocessors",
+  "title": "Subprocessors | Community Engine Host",
+  "locale": "en",
+  "role": "public",
+  "source_spec": "./spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb",
+  "page_slug": "subprocessors"
+}

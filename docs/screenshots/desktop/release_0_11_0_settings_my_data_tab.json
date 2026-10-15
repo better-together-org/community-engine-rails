@@ -2,7 +2,7 @@
   "name": "release_0_11_0_settings_my_data_tab",
   "device": "desktop",
   "url": "/en/settings",
-  "title": "Settings | Test Host Community",
+  "title": "Settings | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "settings_embed_review",

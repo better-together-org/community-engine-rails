@@ -1,8 +1,8 @@
 {
   "name": "feature_access_grants_index",
   "device": "mobile",
-  "url": "/en/host/platforms/docs-feature-gate-platform-77f09735/feature_access_grants",
-  "title": "Test Host Community",
+  "url": "/en/host/platforms/docs-feature-gate-platform-5687d772/feature_access_grants",
+  "title": "Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "feature_access_grants_and_developer_settings",
@@ -42,7 +42,7 @@
         "y": 464.55,
         "width": 270.0,
         "height": 372,
-        "score": 816.453125
+        "score": 812.453125
       }
     }
   ]

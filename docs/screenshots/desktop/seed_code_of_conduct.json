@@ -2,7 +2,7 @@
   "name": "seed_code_of_conduct",
   "device": "desktop",
   "url": "/en/code-of-conduct",
-  "title": "Code of Conduct | Test Host Community",
+  "title": "Code of Conduct | Community Engine Host",
   "locale": "en",
   "role": "public",
   "source_spec": "./spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb",

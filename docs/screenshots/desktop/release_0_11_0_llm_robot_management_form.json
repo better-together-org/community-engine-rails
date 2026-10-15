@@ -1,8 +1,8 @@
 {
   "name": "release_0_11_0_llm_robot_management_form",
   "device": "desktop",
-  "url": "/en/host/platforms/test-host-community/robots/6afbc06a-e033-4717-a8d3-68cb3524cc83/edit",
-  "title": "Edit Platform Translation Override for Test Host Community | Test Host Community",
+  "url": "/en/host/platforms/community-engine-host/robots/f4b81ed6-02ef-48d0-9a36-d01113fcefe6/edit",
+  "title": "Edit Platform Translation Override for Community Engine Host | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_llm_robot_management",
