@@ -180,6 +180,13 @@ export default class extends Controller {
 <% end %>
 ```
 
+## Collection maps show only what the viewer may see
+
+`EventCollectionMap` and `CommunityCollectionMap` accept `visible_scope=`, a policy scope used as an id subquery.
+`MapsHelper#events_map` and `#communities_map` set it from `policy_scope`. Without it a collection map includes every
+record with a location, so anything rendering one for a viewer must set it. Popup HTML built from community and building
+names and addresses is HTML escaped.
+
 ## Configuration Options
 
 ### Environment Variables
