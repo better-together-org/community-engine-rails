@@ -60,6 +60,21 @@ Current downstream routing is intentionally narrow:
 - membership-request aliases can create `BetterTogether::Joatu::MembershipRequest`
 - unresolved routes are rejected and preserved as CE audit records
 
+### Reply by email (reply tokens)
+
+Comment notification emails can be answered by replying. `CommentMailer#added` issues a `BetterTogether::InboundEmailReplyToken` (`InboundEmailReplyToken.issue!(recipient:, repliable:, notification_type:, platform:)`) and sets the `Reply-To` header to `reply+<token>@<inbound mail domain>`. It does this only when the platform allows inbound mail, has a primary domain hostname, and the recipient has an email address; otherwise there is no `Reply-To` and the reply goes to the `From` address.
+
+| Column | Notes |
+|---|---|
+| `token` | Secure random token (`has_secure_token`) |
+| `recipient` | The `Person` the email was sent to |
+| `repliable` | Polymorphic target (a commentable) |
+| `notification_type` | Required, for example `comment_added` |
+| `platform` | Optional, checked against the receiving platform |
+| `expires_at`, `consumed_at` | Tokens last 30 days (`DEFAULT_LIFETIME`) and are single use |
+
+`InboundEmailResolutionService#reply_token_target` resolves a `reply+<token>` address only when the token is still active (not consumed, not expired), belongs to the receiving platform, and the sender address matches the recipient person; unlike `agent+` addresses it does not trust the `From` header on its own. `InboundEmailRoutingService#create_reply!` then creates a comment on the `repliable` as the recipient with the plain-text body and consumes the token, so a second reply with the same address is rejected.
+
 ### Mail screening behavior
 
 `BetterTogether::ContentSecurity::MailScreeningService` builds shared content-security payloads for:

@@ -1,5 +1,7 @@
 # Short Links for Platform Managers
 
+<!-- doc-coverage: better_together/short_links -->
+
 Short links are short, stable web addresses that point at a post, page, event, community or any other web address. They look like `https://example.org/s/abc123`, belong to your platform, and work without signing in. Visits are counted.
 
 ## Where to find them

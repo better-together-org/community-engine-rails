@@ -1,5 +1,7 @@
 # Message Requests and Linked Access
 
+<!-- doc-coverage: better_together/message_requests, better_together/person_access_grants, better_together/person_links -->
+
 This guide covers three ways you control who can reach you or see more of your information: **message requests**, **your messaging permissions**, and **access grants and person links** that connect you with people on other, connected platforms.
 
 You are always in charge. Nothing here is shared until you accept or grant it, and you can take it back.

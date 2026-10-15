@@ -3,22 +3,22 @@
   "method": "Heuristic text matching over living docs, diagram sources, screenshot sidecars and specs; staleness from git last-touch times.",
   "summary": {
     "views": {
-      "covered": 221,
-      "missing": 44,
-      "partial": 267,
-      "stale": 247
+      "covered": 248,
+      "missing": 37,
+      "partial": 244,
+      "stale": 250
     },
     "models": {
-      "covered": 115,
-      "partial": 91
+      "covered": 159,
+      "partial": 47
     },
     "concerns": {
-      "covered": 50,
-      "missing": 32
+      "covered": 78,
+      "missing": 4
     },
     "workflows": {
-      "covered": 2,
-      "partial": 19
+      "covered": 4,
+      "partial": 17
     }
   },
   "views": [
@@ -2018,6 +2018,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2050,6 +2051,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2082,6 +2084,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2115,6 +2118,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2147,6 +2151,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2179,6 +2184,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2212,6 +2218,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2245,6 +2252,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -2278,6 +2286,7 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
@@ -5415,7 +5424,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -5427,7 +5438,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -5438,7 +5449,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -5450,7 +5463,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -5461,7 +5474,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -5473,7 +5488,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -5484,7 +5499,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -5496,7 +5513,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -5507,7 +5524,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -5519,7 +5538,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -5530,7 +5549,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -5542,7 +5563,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -5902,7 +5923,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -5924,7 +5946,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -5946,7 +5969,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -5968,7 +5992,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -5990,7 +6015,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -6012,7 +6038,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -6035,7 +6062,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -6057,7 +6085,8 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -7463,7 +7492,8 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/architecture/pr_1651_merge_readiness.md"
+        "docs/developers/architecture/pr_1651_merge_readiness.md",
+        "docs/developers/systems/notifications_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -7491,7 +7521,8 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/architecture/pr_1651_merge_readiness.md"
+        "docs/developers/architecture/pr_1651_merge_readiness.md",
+        "docs/developers/systems/notifications_system.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -7699,13 +7730,13 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
-        "docs/screenshots/desktop/community_access_mode_open_join.json",
-        "docs/screenshots/desktop/community_access_mode_request_to_join.json",
         "docs/screenshots/desktop/community_event_evidence_summary.json",
         "docs/screenshots/desktop/community_page_contribution_summary.json",
-        "docs/screenshots/desktop/community_privacy_badge.json",
-        "docs/screenshots/desktop/membership_review_community_shortcut.json",
-        "docs/screenshots/mobile/community_access_mode_open_join.json"
+        "docs/screenshots/mobile/community_event_evidence_summary.json",
+        "docs/screenshots/mobile/community_page_contribution_summary.json",
+        "docs/screenshots/review/pr-1494/community_page_contribution_summary-desktop.json",
+        "docs/screenshots/review/pr-1494/community_page_contribution_summary-mobile.json",
+        "docs/screenshots/review/pr-1494/pr_1494_community_event_evidence_summary-desktop.json"
       ],
       "status": "stale"
     },
@@ -8416,8 +8447,7 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/README_conversations.md",
-        "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md"
+        "docs/developers/systems/conversations_messaging_system.md"
       ],
       "status": "stale"
     },
@@ -8513,8 +8543,7 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/README_conversations.md",
-        "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md"
+        "docs/developers/systems/conversations_messaging_system.md"
       ],
       "status": "stale"
     },
@@ -8553,7 +8582,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -8562,7 +8593,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -8573,7 +8604,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -8582,7 +8615,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -8593,7 +8626,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -8602,7 +8637,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -8613,7 +8648,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -8622,7 +8659,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -8634,7 +8671,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -8643,7 +8682,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -8657,12 +8696,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8679,7 +8718,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -8699,12 +8737,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8721,7 +8759,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -8741,12 +8778,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8765,7 +8802,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -8785,12 +8821,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8807,7 +8843,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -8829,12 +8864,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8860,11 +8895,11 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
-        "docs/development/timezone_handling_strategy.md"
+        "docs/development/timezone_handling_strategy.md",
+        "docs/screenshots/desktop/events_form_status.json"
       ],
       "status": "stale"
     },
@@ -8880,12 +8915,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8902,7 +8937,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -8924,12 +8958,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -8957,11 +8991,11 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
-        "docs/development/timezone_handling_strategy.md"
+        "docs/development/timezone_handling_strategy.md",
+        "docs/screenshots/desktop/events_index_filters.json"
       ],
       "status": "stale"
     },
@@ -8979,12 +9013,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9014,11 +9048,11 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
-        "docs/development/timezone_handling_strategy.md"
+        "docs/development/timezone_handling_strategy.md",
+        "docs/screenshots/review/pr-1692/pr1692_event_form_general_errors-desktop.json"
       ],
       "status": "stale"
     },
@@ -9036,12 +9070,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9058,7 +9092,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -9078,12 +9111,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9100,7 +9133,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -9120,12 +9152,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9142,7 +9174,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -9162,12 +9193,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9184,7 +9215,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -9206,12 +9236,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9239,11 +9269,11 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
-        "docs/development/timezone_handling_strategy.md"
+        "docs/development/timezone_handling_strategy.md",
+        "docs/screenshots/desktop/pr1717_event_sessions_tab.json"
       ],
       "status": "stale"
     },
@@ -9260,12 +9290,12 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md",
         "docs/developers/systems/notifications_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/development/datetime_timezone_assessment.md",
-        "docs/development/test_pollution_fixes_applied.md"
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd",
@@ -9286,7 +9316,6 @@
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/developers/systems/mapping_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/datetime_timezone_assessment.md",
         "docs/development/test_pollution_fixes_applied.md",
         "docs/development/test_pollution_mitigation_plan.md",
@@ -9494,10 +9523,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/federation_system.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -10721,9 +10748,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/platform_organizers/host_dashboard_extensions.md",
-        "docs/screenshots/desktop/host_dashboard_review_overview.json",
-        "docs/screenshots/mobile/host_dashboard_review_overview.json"
+        "docs/platform_organizers/host_dashboard_extensions.md"
       ],
       "status": "stale"
     },
@@ -10785,9 +10810,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/platform_organizers/host_dashboard_extensions.md",
-        "docs/screenshots/desktop/federation_review_host_dashboard_queue.json",
-        "docs/screenshots/mobile/federation_review_host_dashboard_queue.json"
+        "docs/platform_organizers/host_dashboard_extensions.md"
       ],
       "status": "stale"
     },
@@ -11846,6 +11869,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -11878,6 +11902,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -11912,6 +11937,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -11946,6 +11972,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -11991,6 +12018,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -12025,6 +12053,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -12057,6 +12086,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -12091,6 +12121,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -12135,6 +12166,7 @@
       "docs": [
         "docs/developers/systems/bot_safety_system.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
         "docs/developers/systems/turnstile_host_app_adapter.md"
       ],
       "diagrams": [
@@ -12312,8 +12344,6 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/screenshots/desktop/membership_request_review_queue.json",
-        "docs/screenshots/mobile/membership_request_review_queue.json",
         "docs/screenshots/review/pr-1500/membership_request_review_queue-desktop.json",
         "docs/screenshots/review/pr-1500/membership_request_review_queue-mobile.json"
       ],
@@ -12392,7 +12422,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -12401,7 +12433,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -12412,7 +12444,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -12421,7 +12455,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -12432,7 +12466,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -12441,7 +12477,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -12454,7 +12490,9 @@
         "app/views/better_together/message_requests/index.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -12463,7 +12501,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -12476,7 +12514,9 @@
         "app/views/better_together/message_requests/show.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -12485,7 +12525,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -12513,8 +12553,7 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/README_conversations.md",
-        "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md"
+        "docs/developers/systems/conversations_messaging_system.md"
       ],
       "status": "stale"
     },
@@ -12542,8 +12581,7 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/README_conversations.md",
-        "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md"
+        "docs/developers/systems/conversations_messaging_system.md"
       ],
       "status": "stale"
     },
@@ -12571,8 +12609,7 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/developers/systems/README_conversations.md",
-        "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md"
+        "docs/developers/systems/conversations_messaging_system.md"
       ],
       "status": "stale"
     },
@@ -14382,7 +14419,6 @@
       "stale_artifacts": [
         "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
         "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/timezone_handling_strategy.md",
         "docs/test_coverage_assessment.md"
       ],
@@ -14422,7 +14458,6 @@
       "stale_artifacts": [
         "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
         "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/timezone_handling_strategy.md",
         "docs/test_coverage_assessment.md"
       ],
@@ -14457,7 +14492,6 @@
       "stale_artifacts": [
         "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
         "docs/developers/systems/conversations_messaging_system.md",
-        "docs/developers/systems/notifications_system.md",
         "docs/development/timezone_handling_strategy.md",
         "docs/test_coverage_assessment.md"
       ],
@@ -14829,13 +14863,12 @@
         "docs/screenshots/desktop/pr_1490_hero_render_after.png",
         "docs/screenshots/desktop/pr_1490_hero_render_before.png"
       ],
-      "screenshot_count": 65,
+      "screenshot_count": 75,
       "screenshot_specs": [
         "spec/docs_screenshots/better_together/block_editor_contract_review_spec.rb",
         "spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
         "spec/docs_screenshots/better_together/person_deletion_review_spec.rb",
         "spec/docs_screenshots/better_together/release_0_11_0_content_block_roster_spec.rb",
-        "spec/docs_screenshots/better_together/release_0_11_0_setup_wizard_spec.rb",
         "spec/docs_screenshots/better_together/robot_authored_page_post_publishing_spec.rb",
         "spec/docs_screenshots/better_together/settings_tab_embed_review_spec.rb",
         "spec/docs_screenshots/better_together/short_links_spec.rb",
@@ -15132,7 +15165,9 @@
         "app/views/better_together/person_access_grants/index.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
@@ -15141,7 +15176,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -15152,7 +15187,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
@@ -15161,7 +15198,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15174,7 +15211,9 @@
         "app/views/better_together/person_access_grants/show.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
@@ -15183,7 +15222,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -15195,7 +15234,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
@@ -15204,7 +15245,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15287,9 +15328,7 @@
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
         "docs/screenshots/ce-screenshots-backup/desktop/blocked_people_list.json",
-        "docs/screenshots/ce-screenshots-backup/mobile/blocked_people_list.json",
-        "docs/screenshots/desktop/blocked_people_list.json",
-        "docs/screenshots/mobile/blocked_people_list.json"
+        "docs/screenshots/ce-screenshots-backup/mobile/blocked_people_list.json"
       ],
       "status": "stale"
     },
@@ -15571,7 +15610,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -15583,7 +15624,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15594,7 +15635,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -15606,7 +15649,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15617,7 +15660,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -15629,7 +15674,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15640,7 +15685,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
@@ -15652,7 +15699,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15709,27 +15756,9 @@
         "app/views/better_together/person_links/index.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
-      "diagrams": [
-        "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
-      "axe_specs": [],
-      "stale_artifacts": [],
-      "status": "missing"
-    },
-    {
-      "route": [
-        "POST /:locale/person-links/:id/revoke(.:format)"
-      ],
-      "controller_action": "better_together/person_links#revoke",
-      "audience": "end_user",
-      "html_view": false,
-      "views": [],
-      "change_vs_baseline": "new",
-      "docs": [],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
@@ -15742,6 +15771,28 @@
     },
     {
       "route": [
+        "POST /:locale/person-links/:id/revoke(.:format)"
+      ],
+      "controller_action": "better_together/person_links#revoke",
+      "audience": "end_user",
+      "html_view": false,
+      "views": [],
+      "change_vs_baseline": "new",
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
+      "diagrams": [
+        "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
+      ],
+      "screenshots": [],
+      "screenshot_count": 0,
+      "screenshot_specs": [],
+      "axe_specs": [],
+      "stale_artifacts": [],
+      "status": "covered"
+    },
+    {
+      "route": [
         "GET /:locale/person-links/:id(.:format)"
       ],
       "controller_action": "better_together/person_links#show",
@@ -15751,7 +15802,9 @@
         "app/views/better_together/person_links/show.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/end_users/message_requests_and_linked_access.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
@@ -15760,7 +15813,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -16933,11 +16986,11 @@
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/robot_configuration_system.md",
         "docs/screenshots/desktop/release_0_11_0_host_platform_profile.json",
-        "docs/screenshots/desktop/release_0_11_0_llm_robot_platform_unavailable.json",
         "docs/screenshots/desktop/safety_review_host_platform_panel.json",
-        "docs/screenshots/mobile/platform_access_mode_invitation_only.json",
         "docs/screenshots/mobile/platform_domains_show_page_entry_point.json",
-        "docs/screenshots/mobile/platform_membership_multi_role_cards.json"
+        "docs/screenshots/mobile/release_0_11_0_host_platform_profile.json",
+        "docs/screenshots/review/pr-1500/platform_access_mode_invitation_only-desktop.json",
+        "docs/screenshots/review/pr-1500/platform_access_mode_invitation_only-mobile.json"
       ],
       "status": "stale"
     },
@@ -17062,12 +17115,8 @@
       "stale_artifacts": [
         "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/development/datetime_timezone_assessment.md",
-        "docs/screenshots/desktop/post_federation_content_grants_field.json",
-        "docs/screenshots/desktop/robot_authored_post_form.json",
-        "docs/screenshots/mobile/post_federation_content_grants_field.json",
-        "docs/screenshots/mobile/post_federation_visibility_field.json",
-        "docs/screenshots/mobile/robot_authored_post_form.json",
-        "docs/screenshots/review/pr-1496/robot_authored_post_form-desktop.json"
+        "docs/screenshots/review/pr-1496/robot_authored_post_form-desktop.json",
+        "docs/screenshots/review/pr-1496/robot_authored_post_form-mobile.json"
       ],
       "status": "stale"
     },
@@ -17181,12 +17230,10 @@
       "stale_artifacts": [
         "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/development/datetime_timezone_assessment.md",
-        "docs/screenshots/desktop/robot_authored_post_show.json",
-        "docs/screenshots/mobile/comment_permission_controls_disabled.json",
-        "docs/screenshots/mobile/comment_permission_controls_open_thread.json",
-        "docs/screenshots/mobile/content_reporting_actions_post_menu.json",
-        "docs/screenshots/mobile/robot_authored_post_show.json",
-        "docs/screenshots/review/pr-1496/robot_authored_post_show-desktop.json"
+        "docs/screenshots/review/pr-1496/robot_authored_post_show-desktop.json",
+        "docs/screenshots/review/pr-1496/robot_authored_post_show-mobile.json",
+        "docs/screenshots/review/pr-1504/content_reporting_actions_post_menu-desktop.json",
+        "docs/screenshots/review/pr-1504/content_reporting_actions_post_menu-mobile.json"
       ],
       "status": "stale"
     },
@@ -17315,9 +17362,7 @@
         "docs/development/content_reporting_stakeholder_flows.md",
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_history.json",
-        "docs/screenshots/ce-screenshots-backup/mobile/report_history.json",
-        "docs/screenshots/desktop/report_history.json",
-        "docs/screenshots/mobile/report_history.json"
+        "docs/screenshots/ce-screenshots-backup/mobile/report_history.json"
       ],
       "status": "stale"
     },
@@ -17357,6 +17402,7 @@
       "screenshot_specs": [
         "spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
         "spec/docs_screenshots/better_together/release_0_11_0_bot_safety_spec.rb",
+        "spec/docs_screenshots/better_together/report_form_spec.rb",
         "spec/docs_screenshots/better_together/safety_docs_spec.rb"
       ],
       "axe_specs": [
@@ -17369,8 +17415,8 @@
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_form.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_form.json",
-        "docs/screenshots/desktop/report_form.json",
-        "docs/screenshots/mobile/content_reporting_actions_report_form.json"
+        "docs/screenshots/review/pr-1504/content_reporting_actions_report_form-desktop.json",
+        "docs/screenshots/review/pr-1504/content_reporting_actions_report_form-mobile.json"
       ],
       "status": "stale"
     },
@@ -17421,8 +17467,8 @@
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_detail.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_detail.json",
-        "docs/screenshots/mobile/content_reporting_actions_followup.json",
-        "docs/screenshots/mobile/report_detail.json"
+        "docs/screenshots/review/pr-1504/content_reporting_actions_followup-desktop.json",
+        "docs/screenshots/review/pr-1504/content_reporting_actions_followup-mobile.json"
       ],
       "status": "stale"
     },
@@ -18076,6 +18122,7 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
+        "docs/platform_organizers/content_security_and_malware_scanning.md",
         "docs/platform_organizers/safety_reporting_operations.md"
       ],
       "diagrams": [
@@ -18094,7 +18141,6 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/platform_organizers/safety_reporting_operations.md",
-        "docs/screenshots/desktop/content_security_review_queue.json",
         "docs/screenshots/mobile/content_security_review_queue.json",
         "docs/screenshots/review/pr-1504/content_security_review_queue-desktop.json",
         "docs/screenshots/review/pr-1504/content_security_review_queue-mobile.json"
@@ -18113,6 +18159,7 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
+        "docs/platform_organizers/content_security_and_malware_scanning.md",
         "docs/platform_organizers/safety_reporting_operations.md"
       ],
       "diagrams": [
@@ -18138,6 +18185,7 @@
       "views": [],
       "change_vs_baseline": "new",
       "docs": [
+        "docs/platform_organizers/content_security_and_malware_scanning.md",
         "docs/platform_organizers/safety_reporting_operations.md"
       ],
       "diagrams": [
@@ -18213,7 +18261,9 @@
         "app/views/better_together/seed_catalog/index.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
         "docs/diagrams/source/seed_catalog_planting_flow.mmd"
@@ -18230,7 +18280,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -18241,7 +18291,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
         "docs/diagrams/source/seed_catalog_planting_flow.mmd"
@@ -18251,7 +18303,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -18262,7 +18314,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
         "docs/diagrams/source/seed_catalog_planting_flow.mmd"
@@ -18272,7 +18326,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -18698,11 +18752,8 @@
         "spec/docs_screenshots/better_together/release_0_11_0_setup_wizard_spec.rb"
       ],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/screenshots/desktop/release_0_11_0_setup_wizard_platform_details.json",
-        "docs/screenshots/mobile/release_0_11_0_setup_wizard_platform_details.json"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -18734,7 +18785,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/short_links_system.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
@@ -18743,7 +18796,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -18756,7 +18809,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18781,7 +18836,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18808,7 +18865,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18833,7 +18892,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18860,7 +18921,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18878,9 +18941,7 @@
       "axe_specs": [],
       "stale_artifacts": [
         "docs/development/view_dom_identifier_standard.md",
-        "docs/screenshots/desktop/short_links_index_default.json",
         "docs/screenshots/desktop/short_links_index_empty.json",
-        "docs/screenshots/mobile/short_links_index_default.json",
         "docs/screenshots/mobile/short_links_index_empty.json"
       ],
       "status": "stale"
@@ -18898,7 +18959,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18925,7 +18988,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -18956,7 +19021,9 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/development/view_dom_identifier_standard.md"
+        "docs/developers/systems/short_links_system.md",
+        "docs/development/view_dom_identifier_standard.md",
+        "docs/platform_organizers/short_links.md"
       ],
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -19049,7 +19116,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19057,8 +19126,10 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [],
-      "status": "partial"
+      "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
+      "status": "stale"
     },
     {
       "route": [
@@ -19069,7 +19140,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19077,8 +19150,10 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [],
-      "status": "partial"
+      "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
+      "status": "stale"
     },
     {
       "route": [
@@ -19089,7 +19164,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19097,8 +19174,10 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [],
-      "status": "partial"
+      "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
+      "status": "stale"
     },
     {
       "route": [
@@ -19111,7 +19190,9 @@
         "app/views/better_together/storage_configurations/edit.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19119,8 +19200,10 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [],
-      "status": "missing"
+      "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
+      "status": "stale"
     },
     {
       "route": [
@@ -19133,7 +19216,9 @@
         "app/views/better_together/storage_configurations/index.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19147,6 +19232,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md",
         "docs/screenshots/desktop/release_0_11_0_storage_configurations_index.json",
         "docs/screenshots/mobile/release_0_11_0_storage_configurations_index.json"
       ],
@@ -19163,7 +19249,9 @@
         "app/views/better_together/storage_configurations/new.html.erb"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19177,6 +19265,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md",
         "docs/screenshots/desktop/release_0_11_0_storage_configuration_form.json",
         "docs/screenshots/mobile/release_0_11_0_storage_configuration_form.json"
       ],
@@ -19192,7 +19281,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
@@ -19200,8 +19291,10 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [],
-      "status": "partial"
+      "stale_artifacts": [
+        "docs/platform_organizers/storage_configuration_guide.md"
+      ],
+      "status": "stale"
     },
     {
       "route": [
@@ -19240,7 +19333,9 @@
       "html_view": false,
       "views": [],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/content_security_and_malware_scanning.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_content_publishing_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -19250,7 +19345,7 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -19263,7 +19358,9 @@
         "app/views/better_together/uploads/index.html.erb"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/platform_organizers/content_security_and_malware_scanning.md"
+      ],
       "diagrams": [
         "docs/diagrams/source/ce_content_publishing_rails_layers.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
@@ -19285,14 +19382,12 @@
         "spec/features/better_together/uploads_accessibility_spec.rb"
       ],
       "stale_artifacts": [
-        "docs/screenshots/desktop/content_security_upload_restricted.json",
-        "docs/screenshots/desktop/content_security_upload_under_review.json",
         "docs/screenshots/desktop/release_0_11_0_uploads_gallery.json",
-        "docs/screenshots/mobile/content_security_upload_restricted.json",
-        "docs/screenshots/mobile/content_security_upload_under_review.json",
         "docs/screenshots/mobile/release_0_11_0_uploads_gallery.json",
         "docs/screenshots/review/pr-1504/content_security_upload_restricted-desktop.json",
-        "docs/screenshots/review/pr-1504/content_security_upload_restricted-mobile.json"
+        "docs/screenshots/review/pr-1504/content_security_upload_restricted-mobile.json",
+        "docs/screenshots/review/pr-1504/content_security_upload_under_review-desktop.json",
+        "docs/screenshots/review/pr-1504/content_security_upload_under_review-mobile.json"
       ],
       "status": "stale"
     },
@@ -20057,9 +20152,14 @@
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/release_0_11_0_setup_wizard_completed_redirect.png",
+        "docs/screenshots/mobile/release_0_11_0_setup_wizard_completed_redirect.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/release_0_11_0_setup_wizard_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
       "status": "partial"
@@ -20362,6 +20462,11 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/content_management.md",
+        "docs/developers/systems/events_system.md",
         "docs/developers/systems/federation_system.md"
       ],
       "erd_diagrams": [],
@@ -20390,7 +20495,10 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/systems/events_system.md",
-        "docs/developers/systems/geography_system.md"
+        "docs/developers/systems/geography_system.md",
+        "docs/development/test_pollution_fixes_applied.md",
+        "docs/end_users/community_guidelines.md",
+        "docs/end_users/user_management_guide.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20416,10 +20524,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
-        "docs/developers/systems/agreements_system.md",
-        "docs/joatu-v2-vs-ce-comparison.md",
-        "docs/oauth_integration_assessment.md"
+        "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
+        "docs/community_organizers/content_and_event_permissions.md",
+        "docs/developers/README.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/development/i18n_todo.md",
+        "docs/developers/development/navigation_area_management.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20441,6 +20551,7 @@
         "docs/developers/systems/accounts_and_invitations.md",
         "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
         "docs/developers/systems/agreements_system.md",
+        "docs/developers/systems/content_event_creation_authorization.md",
         "docs/oauth_integration_assessment.md"
       ],
       "erd_diagrams": [],
@@ -20505,7 +20616,10 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/architecture/polymorphic_and_sti.md",
         "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
+        "docs/developers/systems/community_action_network_governance_system.md",
         "docs/developers/systems/contribution_attribution_system.md",
         "docs/developers/systems/notifications_system.md"
       ],
@@ -20534,7 +20648,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/development/i18n_todo.md",
+        "docs/developers/systems/community_privacy_visibility_system.md",
+        "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/events_system.md",
+        "docs/documentation_assessment.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20554,7 +20673,8 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/event_invitations_and_attendance.md"
+        "docs/developers/systems/event_invitations_and_attendance.md",
+        "docs/developers/systems/events_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20581,8 +20701,11 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/community_privacy_visibility_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/developers/systems/search_backend_adapter_system.md"
+        "docs/developers/systems/search_backend_adapter_system.md",
+        "docs/development/datetime_timezone_assessment.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20601,7 +20724,9 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/events_system.md",
+        "docs/platform_organizers/platform_administration.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20631,8 +20756,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/api_documentation_assessment.md",
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/events_system.md",
+        "docs/end_users/reporting_harm_and_safety_concerns.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20663,8 +20792,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/systems/search_and_filtering_system.md",
-        "docs/developers/systems/search_backend_adapter_system.md"
+        "docs/content-block-completeness-checklist.md",
+        "docs/developers/adding_new_invitation_types.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/security/mcp_authentication_security_assessment.md",
+        "docs/developers/systems/block_system_and_cms.md",
+        "docs/developers/systems/caching_performance_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20690,13 +20823,15 @@
         "BetterTogether::Translatable"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/community_privacy_visibility_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_exchange_governance_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Comment",
@@ -20714,7 +20849,10 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/architecture/pr_1651_merge_readiness.md"
+        "docs/developers/architecture/pr_1651_merge_readiness.md",
+        "docs/developers/github_api_integration.md",
+        "docs/developers/security/mcp_authentication_security_assessment.md",
+        "docs/developers/systems/community_social_system.md"
       ],
       "erd_diagrams": [
         "docs/diagrams/source/pr_1651_comments_schema_erd.mmd"
@@ -20735,7 +20873,10 @@
         "BetterTogether::CommentAddedNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/architecture/pr_1651_merge_readiness.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -20744,7 +20885,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::CommentAddedNotifier::Notification",
@@ -20817,12 +20958,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/rbac_overview.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_event_creation_authorization.md",
-        "docs/developers/systems/content_permission_standardization_assessment.md",
-        "docs/developers/systems/events_system.md"
+        "README.md",
+        "docs/README.md",
+        "docs/api/block-management-api-guide.md",
+        "docs/api/mcp-integration-guide.md",
+        "docs/api/oauth-integration-guide.md",
+        "docs/api/webhook-integration-guide.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20901,7 +21042,8 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_and_sti.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -20975,10 +21117,10 @@
       "docs": [
         "docs/api/block-management-api-guide.md",
         "docs/content-block-completeness-checklist.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/architecture/polymorphic_and_sti.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/developers/systems/documentation_builder_system.md",
-        "docs/developers/systems/markdown_content_management_system.md"
+        "docs/developers/systems/documentation_builder_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -21064,7 +21206,8 @@
       "docs": [
         "docs/content-block-completeness-checklist.md",
         "docs/developers/systems/block_system_and_cms.md",
-        "docs/platform_organizers/block_inventory_and_customization.md"
+        "docs/platform_organizers/block_inventory_and_customization.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -21467,13 +21610,15 @@
         "BetterTogether::ContentSecurity::Finding::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/content_security_ingress_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::ContentSecurity::Item",
@@ -21484,13 +21629,15 @@
         "BetterTogether::ContentSecurity::Item::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/content_security_ingress_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::ContentSecurity::ScanEvent",
@@ -21501,13 +21648,15 @@
         "BetterTogether::ContentSecurity::ScanEvent::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/content_security_ingress_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::ContentSecurity::Subject",
@@ -21538,10 +21687,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/community_organizers/community_management.md",
+        "docs/developers/README.md",
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/resource_controller_patterns.md",
         "docs/developers/architecture/resource_permitted_attributes.md",
-        "docs/developers/systems/conversations_messaging_system.md"
+        "docs/developers/systems/README_conversations.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -21560,7 +21711,10 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/README_conversations.md",
+        "docs/developers/systems/conversations_messaging_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -21624,12 +21778,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/content_event_creation_authorization.md",
-        "docs/developers/systems/content_permission_standardization_assessment.md",
-        "docs/developers/systems/event_invitations_and_attendance.md",
-        "docs/developers/systems/events_system.md",
-        "docs/developers/systems/federation_system.md"
+        "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
+        "docs/api/mcp-integration-guide.md",
+        "docs/api/webhook-integration-guide.md",
+        "docs/community_organizers/content_and_event_permissions.md",
+        "docs/community_organizers/event_invitations_management.md",
+        "docs/content-block-completeness-checklist.md"
       ],
       "erd_diagrams": [
         "docs/diagrams/source/events_invitations_schema_erd.mmd"
@@ -21671,6 +21825,7 @@
       "change_vs_baseline": "unchanged",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/events_system.md"
       ],
       "erd_diagrams": [],
@@ -21692,6 +21847,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/content_event_creation_authorization.md",
         "docs/developers/systems/events_system.md"
       ],
       "erd_diagrams": [],
@@ -21711,6 +21867,7 @@
       ],
       "change_vs_baseline": "unchanged",
       "docs": [
+        "docs/community_organizers/event_invitations_management.md",
         "docs/developers/systems/event_invitations_and_attendance.md",
         "docs/platform_organizers/host_management.md"
       ],
@@ -21775,13 +21932,15 @@
         "BetterTogether::Geography::Mappable"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::EventReminderNotifier",
@@ -21834,7 +21993,8 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/systems/events_system.md"
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/notifications_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -21873,13 +22033,15 @@
         "BetterTogether::FeatureAccessGrant::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/feature_access_grants_and_developer_settings.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::FederationAccessToken",
@@ -21890,13 +22052,15 @@
         "BetterTogether::FederationAccessToken::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/federation_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::FederationContentGrant",
@@ -21907,13 +22071,15 @@
         "BetterTogether::FederationContentGrant::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/federation_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::FederationVisibilityStatusNotifier",
@@ -21924,7 +22090,10 @@
         "BetterTogether::FederationVisibilityStatusNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -21933,7 +22102,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::FederationVisibilityStatusNotifier::Notification",
@@ -22007,7 +22176,8 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22034,6 +22204,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/seed_catalog_and_plantings_system.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "erd_diagrams": [],
@@ -22110,7 +22281,8 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/systems/events_system.md",
-        "docs/developers/systems/mapping_system.md"
+        "docs/developers/systems/mapping_system.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22157,6 +22329,7 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/geography_system.md",
         "docs/developers/systems/mapping_system.md"
       ],
       "erd_diagrams": [],
@@ -22186,7 +22359,8 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/systems/events_system.md",
-        "docs/developers/systems/geography_system.md"
+        "docs/developers/systems/geography_system.md",
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22235,6 +22409,7 @@
       "docs": [
         "docs/developers/systems/events_system.md",
         "docs/developers/systems/geography_system.md",
+        "docs/developers/systems/seed_catalog_and_plantings_system.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "erd_diagrams": [],
@@ -22257,13 +22432,16 @@
         "BetterTogether::Translatable"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/mapping_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_geography_places_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Geography::State",
@@ -22283,6 +22461,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/seed_catalog_and_plantings_system.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "erd_diagrams": [],
@@ -22321,6 +22500,7 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_and_sti.md",
         "docs/developers/systems/accounts_and_invitations.md"
       ],
       "erd_diagrams": [],
@@ -22359,13 +22539,15 @@
         "BetterTogether::InboundEmailReplyToken::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/content_security_ingress_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Infrastructure::Building",
@@ -22390,7 +22572,8 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/systems/events_system.md",
-        "docs/developers/systems/geography_system.md"
+        "docs/developers/systems/geography_system.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22488,9 +22671,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/community_organizers/community_management.md",
+        "docs/community_organizers/event_invitations_management.md",
         "docs/developers/adding_new_invitation_types.md",
-        "docs/developers/systems/event_invitations_and_attendance.md",
-        "docs/generators/invitation_generator_namespace_support.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/security/mcp_authentication_security_assessment.md",
+        "docs/developers/systems/accounts_and_invitations.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22557,8 +22743,11 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/agreements_system.md",
         "docs/developers/systems/joatu_public_visibility_hardening_plan.md",
+        "docs/developers/systems/notifications_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md",
         "docs/joatu-v2-vs-ce-comparison.md"
       ],
       "erd_diagrams": [],
@@ -22579,6 +22768,7 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/systems/agreements_system.md",
+        "docs/developers/systems/notifications_system.md",
         "docs/joatu-v2-vs-ce-comparison.md"
       ],
       "erd_diagrams": [],
@@ -22619,6 +22809,8 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/agreements_system.md",
+        "docs/developers/systems/notifications_system.md",
         "docs/joatu-v2-vs-ce-comparison.md"
       ],
       "erd_diagrams": [],
@@ -22659,7 +22851,8 @@
       ],
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22679,13 +22872,15 @@
         "BetterTogether::Joatu::ConnectionRequest::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_exchange_governance_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Joatu::MatchNotifier",
@@ -22739,7 +22934,8 @@
       "change_vs_baseline": "new",
       "docs": [
         "docs/developers/systems/content_security_ingress_system.md",
-        "docs/developers/systems/membership_request_system.md"
+        "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/membership_request_workflow.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22771,10 +22967,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/caching_performance_system.md",
         "docs/developers/systems/joatu_public_visibility_hardening_plan.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/developers/systems/search_backend_adapter_system.md"
+        "docs/developers/systems/search_backend_adapter_system.md",
+        "docs/joatu-v2-vs-ce-comparison.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -22792,13 +22990,15 @@
         "BetterTogether::Joatu::PersonAccessGrantRequest::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_exchange_governance_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Joatu::PersonLinkRequest",
@@ -22809,13 +23009,15 @@
         "BetterTogether::Joatu::PersonLinkRequest::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_exchange_governance_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Joatu::Request",
@@ -22840,8 +23042,10 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/joatu_public_visibility_hardening_plan.md",
         "docs/developers/systems/membership_request_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md",
         "docs/developers/systems/search_and_filtering_system.md",
         "docs/developers/systems/search_backend_adapter_system.md"
       ],
@@ -22882,13 +23086,16 @@
         "BetterTogether::JwtDenylist::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/security/mcp_authentication_security_assessment.md",
+        "docs/security/api_security_performance_assessment.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::MembershipCreatedNotifier",
@@ -22975,7 +23182,9 @@
         "BetterTogether::MembershipRequestDeclinedNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -22984,7 +23193,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::MembershipRequestDeclinedNotifier::Notification",
@@ -23013,7 +23222,10 @@
         "BetterTogether::MembershipRequestDigestNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/membership_request_workflow.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -23022,7 +23234,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::MembershipRequestDigestNotifier::Notification",
@@ -23051,7 +23263,10 @@
         "BetterTogether::MembershipRequestSubmittedNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/membership_request_workflow.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -23060,7 +23275,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::MembershipRequestSubmittedNotifier::Notification",
@@ -23130,11 +23345,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
+        "docs/api/mcp-integration-guide.md",
+        "docs/community_organizers/community_management.md",
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/pr_1651_merge_readiness.md",
-        "docs/developers/architecture/resource_controller_patterns.md",
-        "docs/developers/architecture/resource_permitted_attributes.md",
-        "docs/developers/systems/conversations_messaging_system.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/architecture/pr_1651_merge_readiness.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -23152,13 +23368,16 @@
         "BetterTogether::MessageRequest::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Metrics::Download",
@@ -23171,6 +23390,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_and_sti.md",
         "docs/developers/systems/metrics_system.md"
       ],
       "erd_diagrams": [],
@@ -23250,6 +23470,7 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/metrics_system.md",
         "docs/production/multi_platform_deployment.md"
       ],
@@ -23330,6 +23551,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/metrics_system.md"
       ],
       "erd_diagrams": [],
@@ -23348,13 +23570,15 @@
         "BetterTogether::Metrics::ShortLinkVisit::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/short_links_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_metrics_search_ai_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Metrics::UserAccountReport",
@@ -23388,12 +23612,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/content-block-completeness-checklist.md",
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/development/navigation_area_management.md",
         "docs/developers/development/navigation_quick_reference.md",
-        "docs/developers/systems/content_management.md",
-        "docs/developers/systems/documentation_builder_system.md",
-        "docs/developers/systems/navigation_system.md"
+        "docs/developers/systems/block_system_and_cms.md",
+        "docs/developers/systems/content_management.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -23420,10 +23644,11 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/development/navigation_quick_reference.md",
+        "docs/developers/systems/caching_performance_system.md",
         "docs/developers/systems/documentation_builder_system.md",
-        "docs/developers/systems/markdown_content_management_system.md",
-        "docs/developers/systems/navigation_system.md"
+        "docs/developers/systems/markdown_content_management_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -23443,6 +23668,7 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
+        "docs/developers/systems/README_conversations.md",
         "docs/developers/systems/conversations_messaging_system.md",
         "docs/developers/systems/notifications_system.md"
       ],
@@ -23517,13 +23743,15 @@
         "BetterTogether::OauthApplication::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/security/api_security_performance_assessment.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::OauthUser",
@@ -23536,6 +23764,7 @@
       "change_vs_baseline": "unchanged",
       "docs": [
         "docs/api/oauth-integration-guide.md",
+        "docs/oauth_integration_assessment.md",
         "docs/test_coverage_assessment.md"
       ],
       "erd_diagrams": [],
@@ -23575,12 +23804,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/api/block-management-api-guide.md",
+        "docs/content-block-completeness-checklist.md",
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/development/navigation_quick_reference.md",
-        "docs/developers/systems/ai_integration_system.md",
-        "docs/developers/systems/content_management.md",
-        "docs/developers/systems/contribution_attribution_system.md"
+        "docs/developers/architecture/polymorphic_and_sti.md",
+        "docs/developers/architecture/rbac_overview.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -23598,7 +23827,9 @@
         "BetterTogether::PageAuthorshipNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -23607,7 +23838,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PageAuthorshipNotifier::Notification",
@@ -23658,12 +23889,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/api/mcp-integration-guide.md",
+        "docs/api/oauth-integration-guide.md",
+        "docs/api/webhook-integration-guide.md",
         "docs/api_documentation_assessment.md",
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/architecture/polymorphic_and_sti.md",
-        "docs/developers/architecture/rbac_overview.md",
-        "docs/developers/systems/accounts_and_invitations.md"
+        "docs/community_organizers/community_management.md",
+        "docs/community_organizers/event_invitations_management.md"
       ],
       "erd_diagrams": [
         "docs/diagrams/source/events_invitations_schema_erd.mmd"
@@ -23683,13 +23914,15 @@
         "BetterTogether::PersonAccessGrant::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonBlock",
@@ -23700,13 +23933,15 @@
         "BetterTogether::PersonBlock::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/community_social_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonChecklistItem",
@@ -23739,6 +23974,8 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/rbac_overview.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/content_event_creation_authorization.md",
         "docs/developers/systems/membership_request_system.md",
         "docs/developers/systems/membership_request_workflow.md"
       ],
@@ -23758,13 +23995,15 @@
         "BetterTogether::PersonDataExport::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonDeletionRequest",
@@ -23775,13 +24014,15 @@
         "BetterTogether::PersonDeletionRequest::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonLink",
@@ -23792,13 +24033,17 @@
         "BetterTogether::PersonLink::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md",
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonLinkedSeed",
@@ -23809,13 +24054,15 @@
         "BetterTogether::PersonLinkedSeed::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/personal_data_exports_and_seeds.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonMessagingGrant",
@@ -23826,13 +24073,16 @@
         "BetterTogether::PersonMessagingGrant::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonPlatformIntegration",
@@ -23845,9 +24095,11 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/api/oauth-integration-guide.md",
+        "docs/developers/github_api_integration.md",
         "docs/development/test_pollution_mitigation_plan.md",
         "docs/oauth_integration_assessment.md",
-        "docs/platform_organizers/github_integration_setup.md"
+        "docs/platform_organizers/github_integration_setup.md",
+        "docs/test_coverage_assessment.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -23865,7 +24117,9 @@
         "BetterTogether::PersonPlatformIntegrationCreatedNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/oauth_integration_assessment.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -23874,7 +24128,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification",
@@ -23906,6 +24160,9 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/rbac_overview.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/content_event_creation_authorization.md",
         "docs/production/multi_platform_deployment.md",
         "docs/upgrade/multi-tenancy-upgrade.md"
       ],
@@ -23925,13 +24182,15 @@
         "BetterTogether::PersonPurgeAudit::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PhoneNumber",
@@ -23970,13 +24229,20 @@
         "BetterTogether::Translatable"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/ai_integration_system.md",
+        "docs/developers/systems/documentation_builder_system.md",
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/geography_system.md",
+        "docs/metrics_test_coverage_gaps.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_geography_places_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Platform",
@@ -24008,12 +24274,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/rbac_overview.md",
-        "docs/developers/systems/federation_system.md",
-        "docs/developers/systems/markdown_content_management_system.md",
-        "docs/mail_ingress_mvp.md",
-        "docs/production/multi_platform_deployment.md"
+        "docs/README.md",
+        "docs/api/mcp-integration-guide.md",
+        "docs/api/oauth-integration-guide.md",
+        "docs/api/webhook-integration-guide.md",
+        "docs/community_organizers/community_management.md",
+        "docs/community_organizers/event_invitations_management.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24037,10 +24303,10 @@
       "docs": [
         "docs/developers/systems/federation_system.md",
         "docs/developers/systems/multi_tenant_platform_runtime.md",
+        "docs/developers/systems/notifications_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md",
         "docs/platform_organizers/federation_privacy_and_consent.md",
-        "docs/platform_organizers/federation_setup_and_activation.md",
-        "docs/platform_organizers/security_privacy.md",
-        "docs/production/platform_sync_sidekiq_rollout_plan.md"
+        "docs/platform_organizers/federation_setup_and_activation.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24058,7 +24324,10 @@
         "BetterTogether::PlatformConnectionDigestNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -24067,7 +24336,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PlatformConnectionDigestNotifier::Notification",
@@ -24096,7 +24365,10 @@
         "BetterTogether::PlatformConnectionStatusNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -24105,7 +24377,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PlatformConnectionStatusNotifier::Notification",
@@ -24134,7 +24406,10 @@
         "BetterTogether::PlatformConnectionSubmittedNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -24143,7 +24418,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
@@ -24196,7 +24471,10 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/systems/accounts_and_invitations.md"
+        "docs/developers/systems/accounts_and_invitations.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/development/datetime_timezone_assessment.md",
+        "docs/oauth_integration_assessment.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24239,12 +24517,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/api/mcp-integration-guide.md",
+        "docs/community_organizers/content_and_event_permissions.md",
+        "docs/content-block-completeness-checklist.md",
+        "docs/developers/README.md",
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/systems/contribution_attribution_system.md",
-        "docs/developers/systems/federation_system.md",
-        "docs/developers/systems/personal_data_exports_and_seeds.md",
-        "docs/developers/systems/search_and_filtering_system.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24262,13 +24540,18 @@
         "BetterTogether::Recurrence::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
+        "docs/development/test_pollution_fixes_applied.md",
+        "docs/reference/model_concerns_reference.md",
+        "docs/table_of_contents.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_events_calendar_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Report",
@@ -24280,10 +24563,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/community_organizers/README.md",
+        "docs/community_organizers/membership_and_reporting_protection.md",
+        "docs/content_moderators/README.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/architecture/pr_1651_merge_readiness.md",
-        "docs/developers/systems/bot_safety_system.md",
-        "docs/development/feedback_surface_policy_matrix.md"
+        "docs/developers/security/mcp_authentication_security_assessment.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24311,7 +24596,9 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/architecture/polymorphic_and_sti.md",
         "docs/developers/architecture/rbac_overview.md",
+        "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "erd_diagrams": [],
@@ -24333,12 +24620,12 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
+        "docs/developers/README.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
         "docs/developers/systems/ai_integration_system.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/contribution_attribution_system.md",
-        "docs/developers/systems/pr_1494_scope_consolidation.md"
+        "docs/developers/systems/community_action_network_governance_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24366,11 +24653,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/architecture/rbac_overview.md",
-        "docs/developers/systems/caching_performance_system.md",
-        "docs/oauth_integration_assessment.md",
-        "docs/reference/safe_class_resolver.md"
+        "docs/README.md",
+        "docs/api/mcp-integration-guide.md",
+        "docs/api_documentation_assessment.md",
+        "docs/community_organizers/README.md",
+        "docs/community_organizers/community_management.md",
+        "docs/community_organizers/content_and_event_permissions.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24389,6 +24677,7 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/rbac_overview.md",
         "docs/developers/systems/content_permission_standardization_assessment.md"
       ],
       "erd_diagrams": [],
@@ -24407,13 +24696,15 @@
         "BetterTogether::Safety::Action::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/safety_and_federation_review_workflow.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_conversations_safety_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Safety::Agreement",
@@ -24425,7 +24716,8 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/joatu-v2-vs-ce-comparison.md"
+        "docs/joatu-v2-vs-ce-comparison.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24444,6 +24736,10 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/architecture/pr_1651_merge_readiness.md",
+        "docs/developers/systems/safety_and_federation_review_workflow.md",
+        "docs/development/feedback_surface_policy_matrix.md",
         "docs/platform_organizers/safety_reporting_operations.md"
       ],
       "erd_diagrams": [],
@@ -24462,13 +24758,15 @@
         "BetterTogether::Safety::Note::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/safety_and_federation_review_workflow.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_conversations_safety_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::SafetyReportDigestNotifier",
@@ -24479,7 +24777,9 @@
         "BetterTogether::SafetyReportDigestNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -24488,7 +24788,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::SafetyReportDigestNotifier::Notification",
@@ -24517,7 +24817,9 @@
         "BetterTogether::SafetyReportSubmittedNotifier::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/notifications_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
@@ -24526,7 +24828,7 @@
         "docs/diagrams/source/ce_polymorphic_association_map.mmd",
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
@@ -24562,8 +24864,12 @@
       ],
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/systems/personal_data_exports_and_seeds.md",
-        "docs/end_users/personal_data_export_guide.md"
+        "docs/developers/development/navigation_area_management.md",
+        "docs/developers/systems/agreements_system.md",
+        "docs/developers/systems/content_permission_standardization_assessment.md",
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/person_deletion_and_purge_audit_system.md",
+        "docs/developers/systems/person_links_grants_and_messaging_system.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24587,13 +24893,15 @@
         "BetterTogether::SeedPlanting::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_exchange_governance_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::ShortLink",
@@ -24606,13 +24914,17 @@
         "BetterTogether::Translatable"
       ],
       "change_vs_baseline": "new",
-      "docs": [],
+      "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md",
+        "docs/production/multi_platform_deployment.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::Sitemap",
@@ -24625,7 +24937,8 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/reference/sitemap_configuration.md",
-        "docs/systems/sitemap_generation_system.md"
+        "docs/systems/sitemap_generation_system.md",
+        "docs/table_of_contents.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24691,13 +25004,20 @@
         "BetterTogether::Upload::GeneratedAttributeMethods"
       ],
       "change_vs_baseline": "changed",
-      "docs": [],
+      "docs": [
+        "docs/community_organizers/community_management.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/architecture/polymorphic_and_sti.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/content_security_ingress_system.md",
+        "docs/developers/systems/events_system.md"
+      ],
       "erd_diagrams": [],
       "in_dbml": true,
       "diagrams": [
         "docs/diagrams/source/ce_content_publishing_rails_layers.mmd"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "model": "BetterTogether::User",
@@ -24712,12 +25032,12 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/FRAGMENT_CACHING_IMPLEMENTATION.md",
+        "docs/README.md",
+        "docs/api/jwt-auth-guide.md",
+        "docs/api/oauth-integration-guide.md",
         "docs/api_documentation_assessment.md",
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/security/mcp_authentication_security_assessment.md",
-        "docs/developers/systems/accounts_and_invitations.md",
-        "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/turnstile_host_app_adapter.md"
+        "docs/developers/architecture/models_and_concerns.md"
       ],
       "erd_diagrams": [],
       "in_dbml": true,
@@ -24796,6 +25116,11 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/development/automatic_test_configuration.md",
+        "docs/developers/systems/documentation_builder_system.md",
+        "docs/documentation_assessment.md",
+        "docs/production/multi_platform_deployment.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "erd_diagrams": [],
@@ -24815,6 +25140,8 @@
       ],
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/documentation_assessment.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "erd_diagrams": [],
@@ -24851,8 +25178,12 @@
       "concern": "BetterTogether::Agent",
       "file": "app/models/concerns/better_together/agent.rb",
       "change_vs_baseline": "unchanged",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
+        "docs/developers/systems/community_action_network_governance_system.md",
+        "docs/developers/systems/security_protection_system.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Agentic",
@@ -24867,17 +25198,24 @@
       "concern": "BetterTogether::Attachments::Images",
       "file": "app/models/concerns/better_together/attachments/images.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/events_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Author",
       "file": "app/models/concerns/better_together/author.rb",
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
-        "docs/developers/systems/notifications_system.md"
+        "docs/api/jwt-auth-guide.md",
+        "docs/api/mcp-integration-guide.md",
+        "docs/api/oauth-integration-guide.md",
+        "docs/api_documentation_assessment.md",
+        "docs/community_organizers/README.md",
+        "docs/developers/README.md"
       ],
       "status": "covered"
     },
@@ -24887,7 +25225,8 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/content_management.md"
       ],
       "status": "covered"
     },
@@ -24902,8 +25241,10 @@
       "concern": "BetterTogether::BlockFilterable",
       "file": "app/models/concerns/better_together/block_filterable.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Broadcastable",
@@ -24921,7 +25262,9 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/content_management.md",
         "docs/developers/systems/events_system.md",
+        "docs/documentation_assessment.md",
         "docs/reference/safe_class_resolver.md"
       ],
       "status": "covered"
@@ -24940,22 +25283,27 @@
       "concern": "BetterTogether::Communicator",
       "file": "app/models/concerns/better_together/communicator.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::CommunityAssignable",
       "file": "app/models/concerns/better_together/community_assignable.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Contactable",
       "file": "app/models/concerns/better_together/contactable.rb",
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/community_social_system.md"
       ],
       "status": "covered"
     },
@@ -24963,29 +25311,39 @@
       "concern": "BetterTogether::Content::BlockAttributes",
       "file": "app/models/concerns/better_together/content/block_attributes.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Content::ResourceBlockAttributes",
       "file": "app/models/concerns/better_together/content/resource_block_attributes.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::ContentSecurity::ActionTextRichTextControls",
       "file": "app/models/concerns/better_together/content_security/action_text_rich_text_controls.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/content_security_ingress_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::ContentSecurity::ScannableAttachment",
       "file": "app/models/concerns/better_together/content_security/scannable_attachment.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/content_security_ingress_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Creatable",
@@ -24994,7 +25352,9 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/systems/actor_safe_creator_authorship_migration_plan.md",
-        "docs/developers/systems/events_system.md"
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/mapping_system.md",
+        "docs/developers/systems/seed_catalog_and_plantings_system.md"
       ],
       "status": "covered"
     },
@@ -25002,8 +25362,10 @@
       "concern": "BetterTogether::CreatedRecords",
       "file": "app/models/concerns/better_together/created_records.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::DeviseUser",
@@ -25020,7 +25382,8 @@
       "file": "app/models/concerns/better_together/federatable.rb",
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/systems/federation_system.md"
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/notifications_system.md"
       ],
       "status": "covered"
     },
@@ -25030,7 +25393,9 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/events_system.md"
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/mapping_system.md"
       ],
       "status": "covered"
     },
@@ -25038,15 +25403,23 @@
       "concern": "BetterTogether::Geography::Geospatial",
       "file": "app/models/concerns/better_together/geography/geospatial.rb",
       "change_vs_baseline": "unchanged",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/geography_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Geography::Geospatial::One",
       "file": "app/models/concerns/better_together/geography/geospatial/one.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/geography_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Geography::IsoLocation",
@@ -25060,7 +25433,11 @@
       "file": "app/models/concerns/better_together/geography/locatable.rb",
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/systems/mapping_system.md"
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/geography_system.md",
+        "docs/developers/systems/mapping_system.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "status": "covered"
     },
@@ -25068,14 +25445,18 @@
       "concern": "BetterTogether::Geography::Locatable::Many",
       "file": "app/models/concerns/better_together/geography/locatable/many.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Geography::Locatable::One",
       "file": "app/models/concerns/better_together/geography/locatable/one.rb",
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
+        "docs/developers/systems/events_system.md",
         "docs/developers/systems/mapping_system.md"
       ],
       "status": "covered"
@@ -25093,15 +25474,21 @@
       "concern": "BetterTogether::Geography::Placeable",
       "file": "app/models/concerns/better_together/geography/placeable.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/geography_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::GovernanceParticipant",
       "file": "app/models/concerns/better_together/governance_participant.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::HostsEvents",
@@ -25109,6 +25496,7 @@
       "change_vs_baseline": "unchanged",
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/community_social_system.md",
         "docs/developers/systems/events_system.md"
       ],
       "status": "covered"
@@ -25119,7 +25507,11 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/events_system.md"
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/content_management.md",
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/mapping_system.md",
+        "docs/developers/systems/navigation_system.md"
       ],
       "status": "covered"
     },
@@ -25128,7 +25520,12 @@
       "file": "app/models/concerns/better_together/identity.rb",
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/caching_performance_system.md",
+        "docs/developers/systems/community_action_network_governance_system.md",
+        "docs/developers/systems/community_social_system.md",
+        "docs/developers/systems/federation_system.md",
+        "docs/developers/systems/robot_author_identity_system.md"
       ],
       "status": "covered"
     },
@@ -25154,14 +25551,17 @@
       "concern": "BetterTogether::InvitationParticipant",
       "file": "app/models/concerns/better_together/invitation_participant.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Joatu::Exchange",
       "file": "app/models/concerns/better_together/joatu/exchange.rb",
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/notifications_system.md"
       ],
       "status": "covered"
@@ -25180,7 +25580,9 @@
       "file": "app/models/concerns/better_together/joinable.rb",
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/rbac_overview.md",
+        "docs/developers/systems/community_social_system.md"
       ],
       "status": "covered"
     },
@@ -25197,18 +25599,22 @@
       "concern": "BetterTogether::Mcp::PunditIntegration",
       "file": "app/models/concerns/better_together/mcp/pundit_integration.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Member",
       "file": "app/models/concerns/better_together/member.rb",
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/caching_performance_system.md",
-        "docs/developers/systems/turnstile_host_app_adapter.md"
+        "docs/README.md",
+        "docs/api_documentation_assessment.md",
+        "docs/community_organizers/README.md",
+        "docs/community_organizers/community_management.md",
+        "docs/community_organizers/content_and_event_permissions.md",
+        "docs/community_organizers/event_invitations_management.md"
       ],
       "status": "covered"
     },
@@ -25217,9 +25623,12 @@
       "file": "app/models/concerns/better_together/membership.rb",
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/turnstile_host_app_adapter.md"
+        "docs/api_documentation_assessment.md",
+        "docs/community_organizers/README.md",
+        "docs/community_organizers/community_management.md",
+        "docs/community_organizers/membership_and_reporting_protection.md",
+        "docs/content_moderators/README.md",
+        "docs/developers/architecture/models_and_concerns.md"
       ],
       "status": "covered"
     },
@@ -25254,6 +25663,8 @@
       "change_vs_baseline": "unchanged",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/content_management.md",
         "docs/developers/systems/events_system.md"
       ],
       "status": "covered"
@@ -25272,7 +25683,8 @@
       "file": "app/models/concerns/better_together/permissible.rb",
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/rbac_overview.md"
       ],
       "status": "covered"
     },
@@ -25289,57 +25701,76 @@
       "concern": "BetterTogether::PlatformConnectionOauthCredentials",
       "file": "app/models/concerns/better_together/platform_connection_oauth_credentials.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformConnectionSyncTracking",
       "file": "app/models/concerns/better_together/platform_connection_sync_tracking.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformCspConfiguration",
       "file": "app/models/concerns/better_together/platform_csp_configuration.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformCssBlockManagement",
       "file": "app/models/concerns/better_together/platform_css_block_management.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformFederationStatus",
       "file": "app/models/concerns/better_together/platform_federation_status.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/federation_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformHost",
       "file": "app/models/concerns/better_together/platform_host.rb",
       "change_vs_baseline": "unchanged",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/community_social_system.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformMembershipDisplay",
       "file": "app/models/concerns/better_together/platform_membership_display.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformRegistryDefaults",
       "file": "app/models/concerns/better_together/platform_registry_defaults.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::PlatformScoped",
@@ -25355,7 +25786,9 @@
       "file": "app/models/concerns/better_together/positioned.rb",
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/systems/agreements_system.md",
+        "docs/developers/systems/navigation_system.md"
       ],
       "status": "covered"
     },
@@ -25364,7 +25797,8 @@
       "file": "app/models/concerns/better_together/primary_community.rb",
       "change_vs_baseline": "changed",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/production/multi_platform_deployment.md"
       ],
       "status": "covered"
     },
@@ -25372,20 +25806,22 @@
       "concern": "BetterTogether::PrimaryFlag",
       "file": "app/models/concerns/better_together/primary_flag.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Privacy",
       "file": "app/models/concerns/better_together/privacy.rb",
       "change_vs_baseline": "changed",
       "docs": [
+        "docs/api/mcp-integration-guide.md",
+        "docs/community_organizers/content_and_event_permissions.md",
+        "docs/developers/README.md",
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
-        "docs/developers/systems/community_privacy_visibility_system.md",
-        "docs/developers/systems/community_social_system.md",
-        "docs/developers/systems/content_event_creation_authorization.md",
-        "docs/developers/systems/events_system.md"
+        "docs/developers/development/navigation_area_management.md"
       ],
       "status": "covered"
     },
@@ -25393,15 +25829,22 @@
       "concern": "BetterTogether::PrivacyCeilingValidatable",
       "file": "app/models/concerns/better_together/privacy_ceiling_validatable.rb",
       "change_vs_baseline": "new",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::Protected",
       "file": "app/models/concerns/better_together/protected.rb",
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/development/navigation_area_management.md",
+        "docs/developers/systems/agreements_system.md",
+        "docs/developers/systems/bot_safety_system.md",
+        "docs/developers/systems/documentation_builder_system.md",
+        "docs/developers/systems/mapping_system.md"
       ],
       "status": "covered"
     },
@@ -25411,7 +25854,9 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/architecture/pr_1651_merge_readiness.md",
         "docs/developers/systems/content_event_creation_authorization.md",
+        "docs/developers/systems/content_management.md",
         "docs/developers/systems/public_publishing_agreement_gate_system.md"
       ],
       "status": "covered"
@@ -25420,8 +25865,11 @@
       "concern": "BetterTogether::RecurringSchedulable",
       "file": "app/models/concerns/better_together/recurring_schedulable.rb",
       "change_vs_baseline": "changed",
-      "docs": [],
-      "status": "missing"
+      "docs": [
+        "docs/developers/systems/event_recurrence_and_occurrences_system.md",
+        "docs/reference/model_concerns_reference.md"
+      ],
+      "status": "covered"
     },
     {
       "concern": "BetterTogether::RemoveableAttachment",
@@ -25459,8 +25907,10 @@
       "docs": [
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
         "docs/developers/systems/caching_performance_system.md",
+        "docs/developers/systems/content_management.md",
         "docs/developers/systems/search_and_filtering_system.md",
-        "docs/developers/systems/search_backend_adapter_system.md"
+        "docs/developers/systems/search_backend_adapter_system.md",
+        "docs/developers/systems/security_protection_system.md"
       ],
       "status": "covered"
     },
@@ -25478,7 +25928,9 @@
       "file": "app/models/concerns/better_together/shortlinkable.rb",
       "change_vs_baseline": "new",
       "docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md",
+        "docs/reference/model_concerns_reference.md"
       ],
       "status": "covered"
     },
@@ -25517,6 +25969,7 @@
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
         "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/content_management.md",
         "docs/developers/systems/events_system.md"
       ],
       "status": "covered"
@@ -25527,7 +25980,11 @@
       "change_vs_baseline": "changed",
       "docs": [
         "docs/content-block-completeness-checklist.md",
-        "docs/developers/systems/i18n_mobility_localization_system.md"
+        "docs/developers/systems/ai_integration_system.md",
+        "docs/developers/systems/documentation_builder_system.md",
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/i18n_mobility_localization_system.md",
+        "docs/developers/systems/markdown_content_management_system.md"
       ],
       "status": "covered"
     },
@@ -25537,7 +25994,11 @@
       "change_vs_baseline": "unchanged",
       "docs": [
         "docs/developers/architecture/models_and_concerns.md",
-        "docs/developers/systems/events_system.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/content_management.md",
+        "docs/developers/systems/documentation_builder_system.md",
+        "docs/developers/systems/events_system.md",
+        "docs/developers/systems/mapping_system.md"
       ],
       "status": "covered"
     },
@@ -25546,7 +26007,12 @@
       "file": "app/models/concerns/better_together/visible.rb",
       "change_vs_baseline": "unchanged",
       "docs": [
-        "docs/developers/architecture/models_and_concerns.md"
+        "docs/developers/architecture/models_and_concerns.md",
+        "docs/developers/development/navigation_area_management.md",
+        "docs/developers/systems/ai_integration_system.md",
+        "docs/developers/systems/content_event_creation_authorization.md",
+        "docs/developers/systems/content_management.md",
+        "docs/developers/systems/navigation_system.md"
       ],
       "status": "covered"
     },
@@ -25570,7 +26036,7 @@
       "screens_with_screenshots": 0,
       "screens_with_docs": 0,
       "models": 3,
-      "models_documented": 0,
+      "models_documented": 3,
       "workflow_docs": [],
       "status": "partial"
     },
@@ -25585,7 +26051,7 @@
       "screens_with_screenshots": 4,
       "screens_with_docs": 5,
       "models": 5,
-      "models_documented": 3,
+      "models_documented": 5,
       "workflow_docs": [],
       "status": "partial"
     },
@@ -25614,7 +26080,7 @@
       "screens_with_screenshots": 4,
       "screens_with_docs": 2,
       "models": 4,
-      "models_documented": 1,
+      "models_documented": 4,
       "workflow_docs": [],
       "status": "partial"
     },
@@ -25629,7 +26095,7 @@
       "screens_with_screenshots": 0,
       "screens_with_docs": 0,
       "models": 3,
-      "models_documented": 2,
+      "models_documented": 3,
       "workflow_docs": [],
       "status": "partial"
     },
@@ -25642,11 +26108,14 @@
       ],
       "screens": 1,
       "screens_with_screenshots": 1,
-      "screens_with_docs": 0,
+      "screens_with_docs": 1,
       "models": 5,
-      "models_documented": 1,
-      "workflow_docs": [],
-      "status": "partial"
+      "models_documented": 5,
+      "workflow_docs": [
+        "docs/developers/systems/content_security_ingress_system.md",
+        "docs/platform_organizers/content_security_and_malware_scanning.md"
+      ],
+      "status": "covered"
     },
     {
       "id": "agreements_acceptance",
@@ -25734,11 +26203,13 @@
       "screens_with_screenshots": 2,
       "screens_with_docs": 4,
       "models": 2,
-      "models_documented": 0,
+      "models_documented": 2,
       "workflow_docs": [
-        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md"
+        "docs/developers/architecture/polymorphic_allowlist_extension_audit.md",
+        "docs/developers/systems/short_links_system.md",
+        "docs/platform_organizers/short_links.md"
       ],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "id": "events_and_calendars",
@@ -25751,7 +26222,7 @@
       "screens_with_screenshots": 5,
       "screens_with_docs": 9,
       "models": 6,
-      "models_documented": 4,
+      "models_documented": 6,
       "workflow_docs": [],
       "status": "partial"
     },
@@ -25777,9 +26248,9 @@
       ],
       "screens": 5,
       "screens_with_screenshots": 2,
-      "screens_with_docs": 3,
+      "screens_with_docs": 5,
       "models": 5,
-      "models_documented": 3,
+      "models_documented": 5,
       "workflow_docs": [
         "docs/developers/systems/README_conversations.md"
       ],
@@ -25809,9 +26280,9 @@
       ],
       "screens": 10,
       "screens_with_screenshots": 7,
-      "screens_with_docs": 1,
+      "screens_with_docs": 4,
       "models": 3,
-      "models_documented": 2,
+      "models_documented": 3,
       "workflow_docs": [],
       "status": "partial"
     },

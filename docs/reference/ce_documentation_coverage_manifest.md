@@ -6,7 +6,8 @@ Row-level data is in [`ce_documentation_coverage_manifest.json`](ce_documentatio
 ## How coverage is decided
 
 - **View action**: a route's `controller#action`. `covered` = a living doc names the controller (class or controller path) and, for HTML views, a docs screenshot sidecar resolves to the action's route. `partial` = one of the two. `missing` = neither. `stale` = covered or partial, the controller or view changed since the baseline, and a linked doc or screenshot was last committed before that change.
-- **Model**: `covered` = a living doc names the model and an ERD source or the DBML names its table; `partial` = one of the two.
+- **Doc coverage annotations**: a living doc can declare the screens it covers with an HTML comment, `<!-- doc-coverage: better_together/short_links, better_together/reports#new -->`. A bare controller path covers every action of that controller. Use it in audience guides, which rarely name controllers.
+- **Model**: `covered` = a living doc names the model (with or without the `BetterTogether::` prefix) and an ERD source or the DBML names its table; `partial` = one of the two.
 - **Concern**: `covered` when a living doc names it.
 - **Workflow**: curated in [`ce_documentation_workflows.yml`](ce_documentation_workflows.yml); `covered` needs a screenshot, a doc and a documented model across its screens, plus a doc that names the workflow.
 - Living docs exclude `docs/assessments`, `plans`, `implementation`, `releases`, `meta`, generated diagram references and screenshots. Matching is textual, so a mention is evidence of coverage, not of accuracy.
@@ -15,7 +16,7 @@ Row-level data is in [`ce_documentation_coverage_manifest.json`](ce_documentatio
 
 | Surface | Status |
 | --- | --- |
-| views | covered: 221, missing: 44, partial: 267, stale: 247 |
-| models | covered: 115, partial: 91 |
-| concerns | covered: 50, missing: 32 |
-| workflows | covered: 2, partial: 19 |
+| views | covered: 248, missing: 37, partial: 244, stale: 250 |
+| models | covered: 159, partial: 47 |
+| concerns | covered: 78, missing: 4 |
+| workflows | covered: 4, partial: 17 |
