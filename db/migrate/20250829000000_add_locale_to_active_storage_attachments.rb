@@ -12,9 +12,9 @@ class AddLocaleToActiveStorageAttachments < ActiveRecord::Migration[7.1]
     # Step 2: backfill existing rows to default locale in one SQL update
     say_with_time("Backfilling active_storage_attachments.locale to default locale") do
       default = I18n.default_locale.to_s
-      ActiveRecord::Base.connection.execute(<<~SQL)
+      connection.execute(<<~SQL)
         UPDATE active_storage_attachments
-        SET locale = #{ActiveRecord::Base.connection.quote(default)}
+        SET locale = #{connection.quote(default)}
         WHERE locale IS NULL
       SQL
     end

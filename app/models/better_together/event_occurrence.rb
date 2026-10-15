@@ -11,6 +11,11 @@ module BetterTogether
     include Commentable
     include Geography::Locatable::One
 
+    # An occurrence shows its parent event's map (see #effective_location); a map of its
+    # own has no title source (Object#to_s is binary-encoded, which breaks slug generation).
+    skip_callback :create, :after, :create_map
+    skip_callback :update, :after, :create_map
+
     belongs_to :event, class_name: 'BetterTogether::Event', inverse_of: :event_occurrences
 
     has_rich_text :description_override

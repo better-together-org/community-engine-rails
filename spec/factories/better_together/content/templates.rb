@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :content_template, class: 'BetterTogether::Content::Template' do
+    privacy { 'public' }
     template_path { 'better_together/content/blocks/template/default' }
   end
 end

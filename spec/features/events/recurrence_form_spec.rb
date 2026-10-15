@@ -12,6 +12,8 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
   before do
     visit better_together.destroy_user_session_path(locale: locale)
     capybara_login_as_platform_manager
+    # The form falls back to today's weekday in the user's zone; pin it to Time.zone (the platform zone is random).
+    manager_person.update!(time_zone: Time.zone.name)
     BetterTogether::AgreementParticipant.find_or_create_by!(
       participant: manager_person,
       agreement: content_publishing_agreement
@@ -252,6 +254,10 @@ RSpec.describe 'Event recurrence form interactivity', :accessibility, :as_platfo
     select 'Weekly', from: 'event[recurrence_attributes][frequency]'
     click_button 'Add exception date'
     expect(page).to have_css('#exception-dates-container .exception-date-row', count: 1, wait: 5)
+
+    # The preview panel is dimmed (opacity-50, which fails contrast) while its fetch is in flight.
+    expect(page).to have_css('#recurrence-preview-occurrences li', minimum: 1, wait: 5)
+    expect(page).to have_no_css('#event-recurrence .opacity-50', wait: 5)
 
     expect(page).to be_axe_clean
       .within('#event-recurrence')

@@ -16,6 +16,9 @@ RSpec.describe 'Per-occurrence event interactions' do
   let(:other_occurrence_date) { recurrence.occurrences_between(2.weeks.from_now, 2.years.from_now).first.to_date }
 
   before do
+    # Dates below are computed in Time.zone (UTC); the request resolves the user's zone first,
+    # and the platform factory's zone is random, so pin the users to UTC.
+    [organizer, attendee].each { |user| user.person.update!(time_zone: Time.zone.name) }
     event.event_hosts.create!(host: organizer.person)
     recurrence
   end

@@ -205,6 +205,24 @@ module BetterTogether
         end
       end
 
+      context 'when the record is the host platform or host community (site branding)' do
+        it 'is public even when the host platform is private', :aggregate_failures do
+          platform = build_stubbed(:better_together_platform, host: true, privacy: 'private')
+          community = build_stubbed(:better_together_community, host: true, privacy: 'private')
+
+          expect(controller.send(:publicly_accessible?, platform)).to be true
+          expect(controller.send(:publicly_accessible?, community)).to be true
+        end
+
+        it 'does not extend to other platforms or communities', :aggregate_failures do
+          platform = build_stubbed(:better_together_platform, host: false, privacy: 'private')
+          community = build_stubbed(:better_together_community, host: false, privacy: 'private')
+
+          expect(controller.send(:publicly_accessible?, platform)).to be false
+          expect(controller.send(:publicly_accessible?, community)).to be false
+        end
+      end
+
       context 'when the record is a Settlement, Category, or other Privacy-including record' do
         it 'returns true for a public settlement' do
           settlement = instance_double(BetterTogether::Geography::Settlement, privacy_public?: true)

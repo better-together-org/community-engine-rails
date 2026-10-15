@@ -2,6 +2,9 @@
 
 module BetterTogether
   class PlatformsController < FriendlyResourceController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    # #new builds an external platform and authorizes that itself; the inherited
+    # check would authorize a blank internal Platform (create_platform) instead.
+    skip_before_action :authorize_resource, only: :new
     before_action :set_platform, only: %i[show edit update destroy available_people]
     before_action :authorize_platform, only: %i[show edit update destroy available_people]
     after_action :verify_authorized, except: :index
@@ -63,6 +66,8 @@ module BetterTogether
     def new
       @platform = ::BetterTogether::Platform.new(external: true)
       authorize @platform
+    rescue Pundit::NotAuthorizedError
+      render_not_found
     end
 
     def edit

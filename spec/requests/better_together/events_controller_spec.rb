@@ -5,7 +5,10 @@ require 'rails_helper'
 # rubocop:todo RSpec/MultipleDescribes
 RSpec.describe 'BetterTogether::EventsController', :as_user do
   let(:locale) { I18n.default_locale }
-  let!(:publishing_agreement) do
+
+  # The shared platform manager accepts the agreement through the idempotent helper, so a leftover
+  # acceptance cannot raise "Agreement has already been taken".
+  before do
     BetterTogether::Agreement.find_or_create_by!(identifier: 'content_publishing_agreement') do |agreement|
       agreement.title = 'Content Publishing Agreement'
       agreement.privacy = 'public'
@@ -94,6 +97,38 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
         get better_together.ics_event_path(draft_event, locale:)
         expect(response).to have_http_status(:found)
         expect(flash[:error]).to be_present
+      end
+    end
+
+    # Regression coverage: render_event_ics sets response.content_type to text/calendar
+    # via send_data. If anything later in the same request raises, ApplicationController
+    # #handle_error used to run its own respond_to (html/turbo_stream) against a response
+    # whose media type was already committed to text/calendar, raising
+    # ActionController::RespondToMismatchError instead of a clean error response.
+    context 'when an error occurs after .ics content-type has already been set' do
+      before do
+        allow(Rails.env).to receive(:production?).and_return(true)
+        # rubocop:disable RSpec/AnyInstance
+        # send_data is what actually commits response.content_type inside render_event_ics.
+        # Stub it to commit the same content type, then raise -- reproducing "something
+        # after content-type is set raises" without needing to call through render_event_ics
+        # itself (which would just re-invoke this same stub).
+        allow_any_instance_of(BetterTogether::EventsController).to receive(:send_data) do |controller, *_args|
+          controller.response.content_type = 'text/calendar'
+          raise StandardError, 'simulated post-render failure'
+        end
+        # rubocop:enable RSpec/AnyInstance
+      end
+
+      it 'does not raise RespondToMismatchError' do
+        expect do
+          get better_together.ics_event_path(test_event, locale:)
+        end.not_to raise_error
+      end
+
+      it 'returns a clean 500 instead of the committed text/calendar content type' do
+        get better_together.ics_event_path(test_event, locale:)
+        expect(response).to have_http_status(:internal_server_error)
       end
     end
   end
@@ -269,10 +304,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
       end
 
       before do
-        create(:better_together_agreement_participant,
-               agreement: publishing_agreement,
-               participant: manager_user.person,
-               accepted_at: Time.current)
+        grant_content_publishing_agreement(manager_user.person)
         login(manager_user.email, 'SecureTest123!@#')
       end
 
@@ -622,10 +654,7 @@ RSpec.describe 'BetterTogether::EventsController', :as_user do
     before do
       manager_user = BetterTogether::User.find_by(email: 'manager@example.test') ||
                      create(:better_together_user, :confirmed, :platform_manager, email: 'manager@example.test')
-      create(:better_together_agreement_participant,
-             agreement: publishing_agreement,
-             participant: manager_user.person,
-             accepted_at: Time.current)
+      grant_content_publishing_agreement(manager_user.person)
     end
 
     context 'when creating an event with Eastern timezone while user is in Newfoundland timezone' do

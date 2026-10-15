@@ -21,11 +21,22 @@ module BetterTogether
       end
     end
 
+    # jsonapi-resources 0.10.x calls `resources name, options_hash`; Rails 8.1
+    # deprecates the positional hash. Remove once the gem passes keywords.
+    module MapperResourcesKeywordCompat
+      def resources(*names, **options, &)
+        options = names.pop.to_h.symbolize_keys.merge(options) if names.last.is_a?(Hash)
+
+        super
+      end
+    end
+
     def self.apply!
       resource_class = ActionDispatch::Routing::Mapper::Resources::Resource
-      return if resource_class.ancestors.include?(MapperResourceInitializeCompat)
+      resource_class.prepend(MapperResourceInitializeCompat) unless resource_class.ancestors.include?(MapperResourceInitializeCompat)
 
-      resource_class.prepend(MapperResourceInitializeCompat)
+      mapper = ActionDispatch::Routing::Mapper::Resources
+      mapper.prepend(MapperResourcesKeywordCompat) unless mapper.ancestors.include?(MapperResourcesKeywordCompat)
     end
   end
 

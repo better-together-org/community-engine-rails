@@ -14,8 +14,15 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
       'BetterTogether::Content::Html' => %w[html_content],
       # active_source is derived from the markdown_source_type radio choice via
       # the sync_active_source before_save callback — never submitted directly.
-      'BetterTogether::Content::Markdown' => %w[active_source]
+      'BetterTogether::Content::Markdown' => %w[active_source],
+      # Inherited from ResourceBlockAttributes but unused: the block renders a single
+      # navigation area, with no collection, paging, or "view all" link to configure.
+      'BetterTogether::Content::NavigationAreaBlock' => %w[display_style item_limit resource_ids
+                                                           community_scope_id show_view_more_link]
     }.freeze
+  end
+  let(:internal_localized_fields) do
+    { 'BetterTogether::Content::NavigationAreaBlock' => %w[view_more_url] }.freeze
   end
 
   before do
@@ -39,7 +46,9 @@ RSpec.describe 'better_together/content/blocks/fields/_block.html.erb' do
   end
 
   def expected_localized_attributes_for(klass)
-    klass.respond_to?(:mobility_attributes) ? klass.mobility_attributes.map(&:to_s) : []
+    return [] unless klass.respond_to?(:mobility_attributes)
+
+    klass.mobility_attributes.map(&:to_s) - internal_localized_fields.fetch(klass.name, [])
   end
 
   def expected_nonlocalized_attributes_for(klass)

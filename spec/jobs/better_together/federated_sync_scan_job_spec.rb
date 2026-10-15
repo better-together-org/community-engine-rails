@@ -13,6 +13,12 @@ RSpec.describe BetterTogether::FederatedSyncScanJob do
 
   describe '#perform' do
     before do
+      # The scan lock lives in Redis, which every parallel worker shares: another worker's scan holding
+      # the lock made this job return early (connection left 'idle'). Use a per-worker key.
+      lock_key = "bt:federation:scan_lock:test-#{ENV.fetch('TEST_ENV_NUMBER', '1')}"
+      stub_const('BetterTogether::FederatedSyncScanJob::LOCK_KEY', lock_key)
+      Sidekiq.redis { |redis| redis.del(lock_key) }
+
       # Default: any genuinely external connection resolved through HttpAdapter is
       # reachable. Individual tests override this per-connection where needed.
       allow(BetterTogether::Federation::Transport::HttpAdapter).to receive(:accessible?).and_return(true)

@@ -38,9 +38,33 @@ module BetterTogether
     def script_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_script_src = ENV.fetch('CSP_SCRIPT_SRC', nil))
       env_sources = parse_origin_list(raw_script_src)
       dynamic_sources = dynamic_platform_sources(:csp_script_src)
-      registered_sources = BetterTogether.registered_content_security_policy_sources[:script_src]
+      registered_sources = registered_sources_for(:script_src)
 
-      with_asset_host(SCRIPT_SOURCES + env_sources + dynamic_sources + registered_sources, raw_asset_host)
+      with_asset_host(SCRIPT_SOURCES + env_sources + dynamic_sources + importmap_script_sources + registered_sources,
+                      raw_asset_host)
+    end
+
+    # Every script CE or the host app loads from another origin is pinned in an importmap (CE's own
+    # mermaid and es-module-shims pins, plus whatever the host app pins), so the importmap is the source
+    # of truth: pinning a CDN package allow-lists its origin, and nothing needs to be repeated in the
+    # environment or in platform settings. Evaluated per request so host apps' pins are included.
+    def importmap_script_sources
+      [-> { BetterTogether::ContentSecurityPolicySources.importmap_origins }]
+    end
+
+    # Registered sources are read per request, not copied when the policy is built at boot: engines and
+    # host apps register from model classes and app initializers that load after CE's own initializer.
+    def registered_sources_for(directive)
+      [-> { BetterTogether.registered_content_security_policy_sources[directive].dup }]
+    end
+
+    def importmap_origins
+      return [] unless Rails.application.respond_to?(:importmap)
+
+      Rails.application.importmap.packages.values.filter_map { |package| origin_for_url(package.path) }.uniq
+    rescue StandardError => e
+      Rails.logger.warn("[BetterTogether::ContentSecurityPolicySources] importmap origins unavailable: #{e.class}")
+      []
     end
 
     def style_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil))
@@ -50,7 +74,7 @@ module BetterTogether
     def img_sources(raw_asset_host = ENV.fetch('ASSET_HOST', nil), raw_img_src = ENV.fetch('CSP_IMG_SRC', nil))
       env_sources = parse_origin_list(raw_img_src)
       dynamic_sources = dynamic_platform_sources(:csp_img_src)
-      registered_sources = BetterTogether.registered_content_security_policy_sources[:img_src]
+      registered_sources = registered_sources_for(:img_src)
 
       with_asset_host(IMG_SOURCES + env_sources + dynamic_sources + registered_sources, raw_asset_host)
     end
@@ -62,13 +86,13 @@ module BetterTogether
     def connect_sources(raw_connect_src = ENV.fetch('CSP_CONNECT_SRC', nil))
       env_sources = parse_origin_list(raw_connect_src)
       dynamic_sources = dynamic_platform_sources(:csp_connect_src)
-      registered_sources = BetterTogether.registered_content_security_policy_sources[:connect_src]
+      registered_sources = registered_sources_for(:connect_src)
 
       CONNECT_SOURCES + env_sources + dynamic_sources + registered_sources
     end
 
     def frame_sources(raw_frame_src = ENV.fetch('CSP_FRAME_SRC', nil))
-      registered_sources = BetterTogether.registered_content_security_policy_sources[:frame_src]
+      registered_sources = registered_sources_for(:frame_src)
       [:self] + parse_origin_list(raw_frame_src) + dynamic_platform_sources(:csp_frame_src) + registered_sources
     end
 

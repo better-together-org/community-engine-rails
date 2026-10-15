@@ -132,7 +132,7 @@ module BetterTogether
         end
         header << 'Page URL'
 
-        file_path = Rails.root.join('tmp', build_filename)
+        file_path = Rails.root.join('tmp', "#{SecureRandom.hex(8)}_#{build_filename}")
         CSV.open(file_path, 'w') do |csv|
           csv << header
 

@@ -219,6 +219,38 @@ RSpec.describe BetterTogether::Seed do
       expect(updated_seed.id).to eq(seed.id)
       expect(updated_seed.payload_data[:attributes][:title]).to eq('Updated Title')
     end
+
+    context 'when an overlapping ingest raises ActiveRecord::StaleObjectError on save' do
+      it 'retries once and succeeds' do
+        original_find = described_class.method(:find_or_build_from_data)
+        call_count = 0
+        allow(described_class).to receive(:find_or_build_from_data) do |*args|
+          call_count += 1
+          record = original_find.call(*args)
+          allow(record).to receive(:save!).and_raise(ActiveRecord::StaleObjectError) if call_count == 1
+          record
+        end
+
+        seed = described_class.import_or_update!(seed_data)
+
+        expect(seed).to be_persisted
+        expect(call_count).to eq(2)
+      end
+
+      it 'does not retry more than once' do
+        original_find = described_class.method(:find_or_build_from_data)
+        call_count = 0
+        allow(described_class).to receive(:find_or_build_from_data) do |*args|
+          call_count += 1
+          record = original_find.call(*args)
+          allow(record).to receive(:save!).and_raise(ActiveRecord::StaleObjectError)
+          record
+        end
+
+        expect { described_class.import_or_update!(seed_data) }.to raise_error(ActiveRecord::StaleObjectError)
+        expect(call_count).to eq(2)
+      end
+    end
   end
 
   # -------------------------------------------------------------------

@@ -30,18 +30,10 @@ module BetterTogether
       inventory = BetterTogether::PersonHardDeletionInventory.call(person:)
       audit = nil
 
-      ActiveRecord::Base.transaction do
-        # Destroying a person's memberships (PersonCommunityMembership,
-        # PersonPlatformMembership — both belongs_to :member, touch: true)
-        # cascades touch calls back onto this same person record. Multiple
-        # memberships touching the same person within one transaction races
-        # against itself: each touch call captures the target's in-memory
-        # lock_version at load time, but the prior membership's touch has
-        # already bumped the actual row, so the second touch's optimistic
-        # lock check fails with StaleObjectError. Touching a record that's
-        # being deleted along with everything that references it is
-        # meaningless anyway — suppress it for the whole operation.
-        BetterTogether::Person.no_touching do
+      # The person is destroyed in this transaction; deferred belongs_to touches of it would
+      # run at commit against a stale/deleted row (Rails 8.1 raises StaleObjectError).
+      BetterTogether::Person.no_touching do
+        ActiveRecord::Base.transaction do
           approve_request_if_needed!
           audit = build_audit(inventory)
           prepare_owned_belongs_to_cycles!(inventory)
@@ -51,17 +43,27 @@ module BetterTogether
 
       audit.reload
     rescue StandardError => e
-      audit&.update!(
-        status: :failed,
-        error_message: e.message,
-        execution_snapshot: (audit.execution_snapshot || {}).merge('backtrace' => Array(e.backtrace).first(20)),
-        failed_at: Time.current
-      )
+      record_failure(audit, e)
       raise
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
+
+    # Failure bookkeeping must never replace the error that caused the failure: the audit may
+    # already be rolled back or terminal (and PersonPurgeAudit is immutable once terminal).
+    def record_failure(audit, error)
+      return unless audit&.persisted? && audit.running?
+
+      audit.update!(
+        status: :failed,
+        error_message: error.message,
+        execution_snapshot: (audit.execution_snapshot || {}).merge('backtrace' => Array(error.backtrace).first(20)),
+        failed_at: Time.current
+      )
+    rescue StandardError => e
+      Rails.logger.error("PersonHardDeletionExecutor could not record failure: #{e.message}")
+    end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def build_audit(inventory)

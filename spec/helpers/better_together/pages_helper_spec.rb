@@ -84,6 +84,9 @@ RSpec.describe BetterTogether::PagesHelper do
   describe '#render_page_content' do
     let(:page) { create(:better_together_page) }
 
+    # policy_scope comes from Pundit via the controller; a helper spec has no controller.
+    before { helper.extend(Module.new { def policy_scope(scope) = scope }) }
+
     it 'scopes the cache by locale and visibility context' do
       content_blocks = [instance_double(BetterTogether::Content::Block)]
       allow(page).to receive(:content_blocks).and_return(content_blocks)
@@ -93,7 +96,7 @@ RSpec.describe BetterTogether::PagesHelper do
         ['page_content', page.cache_key_with_version,
          page.page_blocks.maximum(:updated_at),
          page.blocks.maximum(:updated_at),
-         I18n.locale, 'guest', 'v2'],
+         I18n.locale, 'guest', 'v3'],
         expires_in: 1.minute
       ).and_yield
 

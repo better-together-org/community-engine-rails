@@ -44,6 +44,30 @@ module Rack
       req.user_agent.to_s.include?('Better Uptime Bot')
     end
 
+    # Known infrastructure (load balancers, uptime monitors, the operator's network) must never be
+    # throttled or banned. Comma-separated CIDRs, e.g.
+    #   RACK_ATTACK_SAFELIST_NETWORKS="10.45.20.0/24,142.93.157.196/32"
+    # Only as reliable as req.ip: the proxy chain must pass the real client address in X-Forwarded-For.
+    def self.safelisted_networks
+      ENV.fetch('RACK_ATTACK_SAFELIST_NETWORKS', '').split(',').filter_map do |cidr|
+        IPAddr.new(cidr.strip) if cidr.strip.present?
+      rescue IPAddr::Error
+        nil
+      end
+    end
+
+    safelist('allow trusted networks') do |req|
+      networks = Rack::Attack.safelisted_networks
+      next false if networks.empty?
+
+      begin
+        client = IPAddr.new(req.ip.to_s)
+        networks.any? { |network| network.include?(client) }
+      rescue IPAddr::Error
+        false
+      end
+    end
+
     ### Throttle Spammy Clients ###
 
     # If any single client IP is making tons of requests, then they're
@@ -174,13 +198,21 @@ module Rack
       end
     end
 
-    # Secondary IP-based guard for the federation feed (6 req/min per IP --
-    # tightened from 60 as part of the 2026-09 federation hardening; a
+    # Secondary IP-based guard for the federation feed (20 req/min per IP --
+    # tightened from 60 to 6 as part of the 2026-09 federation hardening; a
     # ~7.5/min stuck-cursor pull loop tripped this same limit at 60 but not
-    # early enough to matter. Legitimate peers paginate a few pages/min at
-    # most; bulk sync goes through the authenticated federation/feed/token
-    # throttle at 120/min instead).
-    throttle('federation/feed/ip', limit: 6, period: 1.minute) do |req|
+    # early enough to matter. Raised from 6 to 20 in 2026-09-26 follow-up:
+    # FederatedSyncScanJob dispatches a pull job for every eligible connection
+    # back-to-back with no stagger, so two or more legitimate connections
+    # pointed at the same remote host (observed: two separate connections
+    # both syncing from newfoundlandlabrador.online) can land in the same
+    # 1-minute window from this app's single outbound IP and trip the
+    # per-connection-tuned 6/min cap even with no misbehaving peer involved.
+    # Legitimate peers paginate a few pages/min at most per connection; bulk
+    # sync goes through the authenticated federation/feed/token throttle at
+    # 120/min instead, so this is still a meaningful ceiling well below that
+    # and well below the original 60 that let the stuck-cursor bug run.
+    throttle('federation/feed/ip', limit: 20, period: 1.minute) do |req|
       req.ip if req.path.include?('/federation/content_feed')
     end
 

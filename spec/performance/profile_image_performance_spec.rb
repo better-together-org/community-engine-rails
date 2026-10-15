@@ -10,7 +10,7 @@ RSpec.describe 'Profile Image Performance', type: :request do
   end
 
   context 'with multiple platform members' do
-    let!(:platform) { create(:better_together_platform) }
+    let!(:platform) { create(:better_together_platform, :public) }
     let!(:people) { create_list(:better_together_person, 3) } # Reduce to 3 for faster test
     let!(:role) { create(:better_together_role, :platform_role) } # Create platform role
     let!(:memberships) do
@@ -21,7 +21,15 @@ RSpec.describe 'Profile Image Performance', type: :request do
                role: role) # Reuse the same platform role
       end
     end
-    let!(:viewer_user) { create(:better_together_user, :confirmed, :platform_steward) }
+    # Membership lists are scoped to platforms the viewer manages, so the viewer must steward
+    # this platform itself (a host steward has no standing on another platform).
+    let!(:viewer_user) do
+      create(:better_together_user, :confirmed).tap do |user|
+        create(:better_together_person_platform_membership,
+               joinable: platform, member: user.person,
+               role: BetterTogether::Role.find_by!(identifier: 'platform_steward'))
+      end
+    end
 
     it 'loads platform show page efficiently with profile images' do
       sign_in viewer_user
@@ -48,7 +56,7 @@ RSpec.describe 'Profile Image Performance', type: :request do
 
       # Count the membership cards rendered
       membership_count = response.body.scan('membership-column').length
-      expect(membership_count).to eq(people.count)
+      expect(membership_count).to eq(people.count + 1) # the members plus the viewer
     end
   end
 

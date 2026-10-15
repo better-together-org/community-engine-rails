@@ -17,6 +17,9 @@ module BetterTogether
 end
 
 RSpec.describe BetterTogether::ProfilingTestController do
+  # routes.draw replaces the application's route set; restore it for the examples that follow.
+  after { Rails.application.reload_routes! }
+
   before do
     routes.draw { get 'index' => 'better_together/profiling_test#index' }
 

@@ -147,7 +147,7 @@ module BetterTogether
 
       # rubocop:todo Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def generate_csv_file
-        file_path = Rails.root.join('tmp', build_filename)
+        file_path = Rails.root.join('tmp', "#{SecureRandom.hex(8)}_#{build_filename}")
 
         # rubocop:disable Metrics/BlockLength
         CSV.open(file_path, 'w') do |csv|

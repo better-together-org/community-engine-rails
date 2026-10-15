@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog do
+RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog, :reduced_geography do
   before { BetterTogether::GeographyBuilder.clear_existing }
 
   describe '.key/.label/.description' do

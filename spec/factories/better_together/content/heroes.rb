@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :better_together_content_hero, class: 'BetterTogether::Content::Hero' do
+    privacy { 'public' }
     transient do
       title { Faker::Lorem.sentence }
       subtitle { Faker::Lorem.paragraph }

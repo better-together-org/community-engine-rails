@@ -39,7 +39,7 @@ class BackfillContentBlockTranslations < ActiveRecord::Migration[7.2]
 
   def backfill_string_fields(locale)
     STRING_FIELDS.each do |block_type, fields|
-      blocks = ActiveRecord::Base.connection.execute(
+      blocks = connection.execute(
         "SELECT id, content_data FROM #{quote_table_name('better_together_content_blocks')} WHERE type = '#{block_type}'"
       )
 
@@ -60,7 +60,7 @@ class BackfillContentBlockTranslations < ActiveRecord::Migration[7.2]
 
   def backfill_text_fields(locale)
     TEXT_FIELDS.each do |block_type, fields|
-      blocks = ActiveRecord::Base.connection.execute(
+      blocks = connection.execute(
         "SELECT id, content_data FROM #{quote_table_name('better_together_content_blocks')} WHERE type = '#{block_type}'"
       )
 
@@ -80,7 +80,7 @@ class BackfillContentBlockTranslations < ActiveRecord::Migration[7.2]
   end
 
   def insert_translation(table_name, translatable_id, key, value, locale)
-    conn = ActiveRecord::Base.connection
+    conn = connection
     translatable_type = 'BetterTogether::Content::Block'
 
     existing = conn.execute(

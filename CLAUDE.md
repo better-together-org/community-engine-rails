@@ -8,7 +8,7 @@ Project instructions for Claude Code sessions in this repository.
 
 - **Tests must use `prspec` (parallel rspec)**. Bare `rspec` is not permitted without explicit operator authorization. If `prspec` is unavailable, stop and report — do not fall back.
   - Targeted spec: `bin/dc-run bundle exec prspec spec/path/to/file_spec.rb`
-  - Full suite (use sparingly, 13–18 min): `bin/dc-ci`
+  - Full suite (about 9 min on a 12-core host, which defaults to 8 workers; 4 workers is about 15 min; see `docs/development/test_profiling.md`): `bin/dc-ci`
   - After any DB schema change: run `bin/parallel-setup` before running any tests
 - **GitHub comments/PRs**: Use `gh_with_bts_robot.sh` — never bare `gh api graphql`. Posts as `bettertogether-bts-robot`, not `rsmithlal`.
 - **Migrations**: Use `create_bt_table :name`, not `create_table :better_together_name`. Guard all additive migrations with `table_exists?`, `column_exists?`, `index_name_exists?`.

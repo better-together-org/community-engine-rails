@@ -286,6 +286,8 @@ module BetterTogether
       # call error reporting
       error_reporting(exception)
 
+      return render_committed_format_error if response_format_already_committed?
+
       respond_to do |format|
         format.turbo_stream do
           # rubocop:todo Layout/LineLength
@@ -303,6 +305,21 @@ module BetterTogether
       end
     end
     # rubocop:enable Metrics/MethodLength
+
+    # A prior render earlier in this request (e.g. EventsController#show's .ics
+    # branch calling render_event_ics, which sets response.content_type to
+    # text/calendar) already committed the response's media type to something
+    # outside html/turbo_stream. Re-negotiating with respond_to against that
+    # committed type raises ActionController::RespondToMismatchError instead
+    # of a clean error response, so skip straight to a plain response.
+    def response_format_already_committed?
+      media_type = response.media_type
+      media_type.present? && media_type != Mime[:html].to_s && media_type != Mime[:turbo_stream].to_s
+    end
+
+    def render_committed_format_error
+      head :internal_server_error
+    end
 
     def error_reporting(exception)
       BetterTogether.report_error(exception, context: error_reporting_context)
@@ -339,7 +356,12 @@ module BetterTogether
     def extract_locale_from_accept_language_header
       return unless request.env['HTTP_ACCEPT_LANGUAGE']
 
-      lg = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first.to_sym
+      # scan returns [] (not nil) when the header doesn't start with two lowercase
+      # letters (e.g. "*", "EN-US", or an empty string -- all seen from bots) --
+      # `.first` is then nil, so guard before `.to_sym`.
+      lg = request.env['HTTP_ACCEPT_LANGUAGE'].scan(/^[a-z]{2}/).first&.to_sym
+      return nil unless lg
+
       lg.in?(I18n.available_locales) ? lg : nil
     end
 

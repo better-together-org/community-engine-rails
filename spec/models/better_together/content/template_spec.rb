@@ -139,6 +139,7 @@ RSpec.describe BetterTogether::Content::Template do
           {
             block_attributes: {
               type: 'BetterTogether::Content::Template',
+              privacy: 'public',
               template_path: 'better_together/static_pages/privacy'
             }
           }

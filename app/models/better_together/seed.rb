@@ -192,10 +192,20 @@ module BetterTogether
     # -------------------------------------------------------------
     def self.import_or_update!(seed_data, root_key: DEFAULT_ROOT_KEY)
       data = seed_data.deep_symbolize_keys.fetch(root_key.to_sym)
-      record = find_or_build_from_data(data)
-      record.assign_attributes(seed_record_attributes(data))
-      record.save!
-      record
+      attempts = 0
+      begin
+        record = find_or_build_from_data(data)
+        record.assign_attributes(seed_record_attributes(data))
+        record.save!
+        record
+      rescue ActiveRecord::StaleObjectError
+        # Two overlapping federation ingests touched the same Seed row; reload
+        # and retry once rather than dropping the whole ingest batch.
+        attempts += 1
+        raise unless attempts <= 1
+
+        retry
+      end
     end
 
     def self.find_or_build_from_data(data)

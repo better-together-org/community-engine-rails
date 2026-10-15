@@ -5,7 +5,7 @@ require 'rails_helper'
 # DOM contract for the seed catalog: asserts the stable identifiers that documentation
 # screenshots (spec/docs_screenshots/better_together/seed_catalog_spec.rb) and downstream
 # tooling target. Runs in normal CI (no RUN_DOCS_SCREENSHOTS gate).
-RSpec.describe 'Seed catalog DOM contract', :as_platform_manager, type: :request do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Seed catalog DOM contract', :as_platform_manager, :reduced_geography, type: :request do # rubocop:disable RSpec/DescribeClass
   before { BetterTogether::GeographyBuilder.clear_existing }
 
   it 'exposes the stable identifiers the docs screenshots target' do # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength

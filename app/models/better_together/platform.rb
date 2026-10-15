@@ -89,6 +89,7 @@ module BetterTogether
     validate :require_publishing_agreement_for_public_network_visibility
 
     after_initialize :set_default_requires_invitation, if: :new_record?
+    after_update :sync_host_community_privacy, if: -> { host? && saved_change_to_privacy? }
     before_validation :apply_platform_registry_defaults
 
     # Class method for permitted attributes - used by controllers for strong parameters
@@ -132,6 +133,7 @@ module BetterTogether
              inverse_of: :target_platform
 
     after_commit :sync_primary_platform_domain!, on: %i[create update]
+    after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_external? }
 
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
@@ -162,13 +164,13 @@ module BetterTogether
     end
 
     def primary_platform_domain
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return unless self.class.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
 
       platform_domains.where(primary_flag: true).active.first
     end
 
     def share_platform_domain
-      return unless self.class.connection.data_source_exists?('better_together_platform_domains')
+      return unless self.class.with_connection { |conn| conn.data_source_exists?('better_together_platform_domains') }
 
       platform_domains.share_domain_active.first
     end
@@ -243,6 +245,26 @@ module BetterTogether
     end
 
     private
+
+    # A platform's privacy is not capped by its own primary community: that community follows the
+    # platform (see sync_host_community_privacy), so letting it cap the platform would lock a private
+    # platform out of ever becoming public again.
+    def wrapping_privacy_ceiling_community
+      nil
+    end
+
+    # The host community is the platform's own face (name, logo, cover), so it always carries the
+    # platform's privacy. Other communities set their privacy independently. update_columns: the platform's
+    # visibility was just validated, and the community's own ceiling check would be circular.
+    def sync_host_community_privacy
+      return if community.blank? || community.privacy == privacy
+
+      community.update_columns(privacy:, updated_at: Time.current)
+    end
+
+    def reset_mcp_allowed_origins
+      BetterTogether::Mcp::AllowedOrigins.reset_cache!
+    end
 
     def set_default_requires_invitation
       self.requires_invitation = true if requires_invitation.nil?

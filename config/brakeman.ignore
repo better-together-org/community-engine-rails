@@ -2,8 +2,12 @@
   "ignored_warnings": [
     {
       "fingerprint": "98b26f60d776fd41ee6f088c833725145be9aac2d7c5b33780241c273622db42",
-      "note": "EOLRails: Rails 8.0.5.1 EOL is 2026-10-07. Not an actionable code defect; Brakeman's own warning window (not our CI diff) started firing this around 2026-09-11. Tracked as its own Rails-upgrade planning item, not something a single PR should fix by bumping Rails. Re-evaluate this ignore entry once Rails is upgraded past 8.0.x."
+      "note": "EOLRails: Rails 8.0.5.1 EOL is 2026-10-07. Not an actionable code defect; Brakeman's own warning window (not our CI diff) started firing this around 2026-09-11. Tracked as its own Rails-upgrade planning item, not something a single PR should fix by bumping Rails. Re-evaluate this ignore entry once Rails is upgraded past 8.0.x. (Obsolete on this branch specifically -- compat/rails-7.2 runs 7.2.3.2, not 8.0.5.1 -- kept for parity with main/release so this file doesn't need branch-specific pruning.)"
+    },
+    {
+      "fingerprint": "d84924377155b41e094acae7404ec2e521629d86f97b0ff628e3d1b263f8101c",
+      "note": "EOLRails: Rails 7.2.3.2 EOL was 2026-08-09 -- this compat lane is already past its own EOL date. Not an actionable code defect; upgrading this branch's Rails target is its own project (compat/rails-7.2 itself may end up retired rather than bumped, given 7.2 has no further patch releases). Re-evaluate this ignore entry when this branch's Rails target is decided."
     }
   ],
-  "brakeman_version": "8.0.4"
+  "brakeman_version": "8.0.5"
 }

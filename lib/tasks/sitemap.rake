@@ -5,7 +5,7 @@ namespace :better_together do
     desc 'Generate per-platform XML sitemaps for every locally-hosted platform and upload to Active Storage'
     task refresh: :environment do
       # Skip sitemap generation if the database is unavailable (e.g. during Docker builds)
-      unless ActiveRecord::Base.connection.active?
+      unless ActiveRecord::Base.with_connection(&:active?)
         Rails.logger.warn 'Skipping sitemap generation: database connection not available'
         next
       end

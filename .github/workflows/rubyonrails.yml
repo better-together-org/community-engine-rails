@@ -14,14 +14,15 @@ on:
       - compat/rails-8.1
   pull_request:
     # Run on PRs targeting any branch so feature/fix/salvage branches get CI.
-    # The prepare job defaults to the primary Rails lane (8.0.5.1) for any
+    # The prepare job defaults to the primary Rails lane (8.1.4) for any
     # non-compat target branch, so only one Rails version runs for these PRs.
     branches:
       - "**"
 
 jobs:
   prepare:
-    # Skip automated compat sync PRs (main → compat/*) whose head_ref == 'main'.
+    # Skip legacy compat sync PRs whose head_ref == 'main'. Current sync PRs use
+    # sync/main-to-compat-* branches and run on the PR event.
     # All downstream jobs (rspec, rubocop, security) cascade-skip via needs: prepare.
     if: github.head_ref != 'main'
     runs-on: ubuntu-latest
@@ -39,18 +40,25 @@ jobs:
             branch="${GITHUB_REF_NAME}"
           fi
 
+          # Manual workflow_dispatch runs on sync/main-to-compat-rails-X use
+          # the lane of the compat branch they merge into.
+          if [[ "${branch}" == sync/main-to-compat-* ]]; then
+            branch="${branch#sync/main-to-}"
+            branch="${branch/compat-/compat/}"
+          fi
+
           case "${branch}" in
             compat/rails-7.2)
-              rails_version="7.2.2.2"
+              rails_version="7.2.4"
               ;;
-            compat/rails-8.1)
-              rails_version="8.1.2"
-              ;;
-            main|dev|compat/rails-8.0)
+            compat/rails-8.0)
               rails_version="8.0.5.1"
+              ;;
+            main|dev|compat/rails-8.1)
+              rails_version="8.1.4"
               ;;
             *)
-              rails_version="8.0.5.1"
+              rails_version="8.1.4"
               ;;
           esac
 
@@ -71,7 +79,7 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Fetch base branch
         run: git fetch origin "${GITHUB_BASE_REF}" --depth=1
       - name: Write pull request body
@@ -85,10 +93,31 @@ jobs:
           chmod +x scripts/validate_pr_evidence.sh
           scripts/validate_pr_evidence.sh --base-ref "origin/${GITHUB_BASE_REF}" --head-ref HEAD --pr-body-file tmp_pr_body.md
 
-  rspec:
-    name: rspec (3.4.10, ${{ needs.prepare.outputs.rails_version }})
+  rspec_shard:
+    name: rspec ${{ matrix.suite }} shard ${{ matrix.shard }}/${{ matrix.total }} (3.4.10, ${{ needs.prepare.outputs.rails_version }})
     needs: [prepare, pr_evidence]
-    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
+    strategy:
+      # Let every shard finish so one failure still reports the rest of the suite.
+      fail-fast: false
+      # Browser (js/feature/system) examples run apart from the rest: they use the :deletion
+      # cleaner and a Puma server thread, which leaked state into transaction-cleaned examples
+      # sharing a worker database. One worker per browser job keeps Chrome sessions apart.
+      matrix:
+        include:
+          - { suite: other, shard: 1, total: 4, workers: 4 }
+          - { suite: other, shard: 2, total: 4, workers: 4 }
+          - { suite: other, shard: 3, total: 4, workers: 4 }
+          - { suite: other, shard: 4, total: 4, workers: 4 }
+          - { suite: browser, shard: 1, total: 4, workers: 1 }
+          - { suite: browser, shard: 2, total: 4, workers: 1 }
+          - { suite: browser, shard: 3, total: 4, workers: 1 }
+          - { suite: browser, shard: 4, total: 4, workers: 1 }
+    # always() is required here: without it, GitHub Actions implicitly ANDs this
+    # condition with success() across the whole needs chain, and pr_evidence is
+    # *designed* to skip on push events -- silently skipping this job (and
+    # rubocop/security below) on every direct push to main/dev/compat/*,
+    # regardless of the explicit "or skipped" clause below.
+    if: always() && needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     environment: test
     env:
@@ -97,11 +126,15 @@ jobs:
       REDIS_URL: "redis://localhost:6379/0"
       SEARCH_BACKEND: "pg_search"
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
-      WORKERS: 4
+      WORKERS: ${{ matrix.workers }}
+      SUITE: ${{ matrix.suite }}
+      SHARD: ${{ matrix.shard }}
+      SHARDS: ${{ matrix.total }}
+      CAPYBARA_ARTIFACT_PATH: ${{ github.workspace }}/tmp/capybara-artifacts
 
     services:
       postgres:
-        image: postgis/postgis:latest
+        image: postgis/postgis:17-3.5
         ports: ["5432:5432"]
         env:
           POSTGRES_DB: rails_test
@@ -123,7 +156,27 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+
+      # ruby-vips loads libvips through FFI, so only the runtime library is needed
+      # (libvips-dev pulled in hundreds of MB of headers and took 4-5 minutes).
+      - name: Install libvips
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          APT="sudo apt-get -o Acquire::http::Timeout=30 -o Acquire::Retries=3"
+          $APT update
+          $APT install -y --no-install-recommends libvips42t64 || $APT install -y --no-install-recommends libvips42
+
+      # Test data is disposable: trade durability for speed (all three settings reload on SIGHUP).
+      - name: Tune Postgres for tests
+        run: |
+          PGPASSWORD=password psql -h localhost -U rails -d postgres \
+            -c "ALTER SYSTEM SET fsync = off" \
+            -c "ALTER SYSTEM SET synchronous_commit = off" \
+            -c "ALTER SYSTEM SET full_page_writes = off" \
+            -c "SELECT pg_reload_conf()"
 
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
@@ -155,19 +208,42 @@ jobs:
         run: |
           rm -f spec/dummy/tmp/pids/server.pid
           mkdir -p tmp
-          bundle exec prspec spec --format json --out tmp/rspec_results.json || PRSPEC_EXIT=$?
+          # Spec files for this shard, balanced by recorded runtime (config/ci/spec_runtimes.json).
+          SHARD_FILES=$(python3 bin/ci-spec-shards "$SHARD" "$SHARDS" --kind "$SUITE")
+          echo "Suite $SUITE shard $SHARD/$SHARDS: $(wc -w <<< "$SHARD_FILES") spec files"
+          if [[ "$SUITE" == "browser" ]]; then
+            TAGS=(--tag js --tag feature --tag system)
+          else
+            TAGS=(--tag '~js' --tag '~feature' --tag '~system')
+          fi
+          # shellcheck disable=SC2086
+          bundle exec prspec $SHARD_FILES "${TAGS[@]}" --format json --out "tmp/rspec_results_${SUITE}_shard${SHARD}.json" || PRSPEC_EXIT=$?
           if [[ "${PRSPEC_EXIT:-0}" -ne 0 ]]; then
             FAILURES=0
+            EXAMPLES=0
+            LOAD_ERRORS=0
             JSON_FOUND=false
             for f in tmp/rspec_results*.json; do
               [[ -f "$f" ]] || continue
               JSON_FOUND=true
-              COUNT=$(jq '.summary.failure_count // 0' "$f" 2>/dev/null || echo 0)
-              FAILURES=$((FAILURES + COUNT))
+              FAILURES=$((FAILURES + $(jq '.summary.failure_count // 0' "$f" 2>/dev/null || echo 0)))
+              EXAMPLES=$((EXAMPLES + $(jq '.summary.example_count // 0' "$f" 2>/dev/null || echo 0)))
+              LOAD_ERRORS=$((LOAD_ERRORS + $(jq '.summary.errors_outside_of_examples_count // 0' "$f" 2>/dev/null || echo 0)))
+              {
+                echo "### $f"
+                jq -r '.summary_line' "$f" 2>/dev/null
+                jq -r '.examples[] | select(.status == "failed") | "- \(.file_path):\(.line_number) \(.full_description | .[0:100]) :: \(.exception.message | split("\n")[0] | .[0:140])"' "$f" 2>/dev/null
+                jq -r '.messages[]? | select(test("error occurred")) | "- load error: \(split("\n")[1:4] | join(" "))"' "$f" 2>/dev/null
+              } >> "$GITHUB_STEP_SUMMARY"
             done
+            # A run that executed no examples, or hit load errors, is a hard failure even
+            # when failure_count is 0 (e.g. a missing system library aborts spec loading).
             if [[ "${JSON_FOUND}" == "false" ]]; then
               echo "::error::prspec exited ${PRSPEC_EXIT} and no JSON results found (hard crash)"
               exit "${PRSPEC_EXIT}"
+            elif [[ "${LOAD_ERRORS}" -gt 0 || "${EXAMPLES}" -eq 0 ]]; then
+              echo "::error::RSpec ran ${EXAMPLES} example(s) with ${LOAD_ERRORS} error(s) outside of examples"
+              exit 1
             elif [[ "${FAILURES}" -gt 0 ]]; then
               echo "::error::RSpec: ${FAILURES} spec failure(s)"
               exit 1
@@ -176,15 +252,113 @@ jobs:
             fi
           fi
 
+      - name: RSpec timing summary
+        if: always()
+        run: python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
+
+      # Examples rspec-rebound retried (feature/js): shown in the job summary and as annotations.
+      # Set the repository variable CI_FAIL_ON_FLAKY=true to fail the job when one passed only after a retry.
+      - name: Retried (flaky) examples
+        if: always()
+        env:
+          CI_FAIL_ON_FLAKY: ${{ vars.CI_FAIL_ON_FLAKY }}
+        run: python3 bin/ci-flaky-report >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          name: coverage-report-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
             coverage/
+          include-hidden-files: true
 
       - name: Upload RSpec JSON results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rspec-results-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          path: |
+            tmp/rspec_results*.json
+            tmp/flaky/
+          if-no-files-found: warn
+
+      - name: Upload browser failure artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure-artifacts-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          path: tmp/capybara-artifacts/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Rails test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rails-test-log-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
+          path: spec/dummy/log/test.log
+          if-no-files-found: warn
+
+  rspec:
+    # Aggregate check: keeps the historical job name so tooling and humans still see one
+    # "rspec (3.4.10, <rails>)" result for the whole suite.
+    name: rspec (3.4.10, ${{ needs.prepare.outputs.rails_version }})
+    needs: [prepare, rspec_shard]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Require every shard to pass
+        run: |
+          if [[ "${{ needs.rspec_shard.result }}" != "success" ]]; then
+            echo "::error::rspec shards finished with result: ${{ needs.rspec_shard.result }}"
+            exit 1
+          fi
+
+      - name: Download shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: rspec-results-*-shard-*
+          path: tmp
+          merge-multiple: true
+
+      - name: Download shard coverage
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-report-*-shard-*
+          path: coverage-shards
+
+      - name: Check merged results and write timing summary
+        run: |
+          EXAMPLES=$(jq -s '[.[].summary.example_count // 0] | add' tmp/rspec_results_*_shard*.json)
+          FAILURES=$(jq -s '[.[].summary.failure_count // 0] | add' tmp/rspec_results_*_shard*.json)
+          echo "Merged: ${EXAMPLES} examples, ${FAILURES} failures across $(ls tmp/rspec_results_*_shard*.json | wc -l) shard files"
+          if [[ "${EXAMPLES}" -lt 8000 || "${FAILURES}" -gt 0 ]]; then
+            echo "::error::Expected at least 8000 examples and 0 failures (got ${EXAMPLES} examples, ${FAILURES} failures)"
+            exit 1
+          fi
+          python3 bin/ci-timing-summary >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Set up Ruby for coverage merge
+        if: always()
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.10"
+
+      - name: Merge coverage
+        if: always()
+        run: |
+          # Same SimpleCov version as the suite, so collate understands the shard resultsets.
+          SIMPLECOV_VERSION=$(grep -oP '^    simplecov \(\K[0-9.]+' Gemfile.lock | head -1)
+          gem install simplecov --version "${SIMPLECOV_VERSION}" --no-document
+          ruby bin/ci-collate-coverage coverage-shards coverage
+          COVERAGE=$(jq -r '.result.line // .result.covered_percent // empty' coverage/.last_run.json)
+          echo "Merged line coverage: ${COVERAGE}%" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload merged RSpec JSON results
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -192,38 +366,35 @@ jobs:
           path: tmp/rspec_results*.json
           if-no-files-found: warn
 
-      - name: Upload Rails test log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: rails-test-log-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
-          path: spec/dummy/log/test.log
-          if-no-files-found: warn
-
       - name: Generate coverage badge
         if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
         run: |
-          COVERAGE=$(jq -r '.result.covered_percent' coverage/.last_run.json)
+          # SimpleCov >= 0.18 writes .result.line; older versions wrote .result.covered_percent.
+          COVERAGE=$(jq -r '.result.line // .result.covered_percent // empty' coverage/.last_run.json)
+          if [[ ! "${COVERAGE}" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+            echo "::error::Could not read a coverage percentage from coverage/.last_run.json"
+            exit 1
+          fi
           COLOR=$(node -e "cov=parseFloat(process.argv[1]);console.log(cov>=90?'green':cov>=75?'orange':'red')" "$COVERAGE")
           npx badgen-cli --subject coverage --status "${COVERAGE}%" --color "$COLOR" > coverage.svg
 
       - name: Commit badge
         if: ${{ needs.prepare.outputs.update_coverage_badge == 'true' && success() }}
         continue-on-error: true
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "chore: update coverage badge"
           file_pattern: coverage.svg
 
   rubocop:
     needs: [prepare, pr_evidence]
-    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
+    if: always() && needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4.10"
@@ -237,12 +408,12 @@ jobs:
 
   security:
     needs: [prepare, pr_evidence]
-    if: needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
+    if: always() && needs.prepare.result == 'success' && (needs.pr_evidence.result == 'success' || needs.pr_evidence.result == 'skipped')
     runs-on: ubuntu-latest
     env:
       RAILS_VERSION: ${{ needs.prepare.outputs.rails_version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4.10"
@@ -263,3 +434,16 @@ jobs:
           # -w2: only show Confidence >= 2 (HIGH and MEDIUM)
           # --no-summary: suppress summary output
           # This will FAIL the job if HIGH-confidence vulnerabilities are detected
+
+  ci-gate:
+    # Stable-named required check for the compat/rails-* rulesets. The rspec
+    # check name embeds the Rails version, so rulesets require this instead.
+    name: ci-gate
+    needs: [prepare, rspec, rubocop, security]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require rspec, rubocop and security to pass
+        run: |
+          echo "rspec=${{ needs.rspec.result }} rubocop=${{ needs.rubocop.result }} security=${{ needs.security.result }}"
+          [[ "${{ needs.rspec.result }}" == "success" && "${{ needs.rubocop.result }}" == "success" && "${{ needs.security.result }}" == "success" ]]

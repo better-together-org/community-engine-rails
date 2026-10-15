@@ -34,7 +34,9 @@ RSpec.describe 'BetterTogether::HelpPreferencesController', :as_user do
     end
   end
 
-  describe 'POST /:locale/help_banners/show' do
+  # The before block updates the person first; sign_in would hand the controller the stale in-memory
+  # person from sign-in time (StaleObjectError), so use the real login that reloads it.
+  describe 'POST /:locale/help_banners/show', :real_login do
     before do
       person.update!(preferences: {
                        'help_banners' => {

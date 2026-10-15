@@ -365,7 +365,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
         expect(defined?(BetterTogether::Billing::ReconcileStripeBillableOwnerBillingScanJob)).to be_truthy
         expect(defined?(BetterTogether::Billing::ReconcileStripeMerchantAccountScanJob)).to be_truthy
       end
-      
+
       it 'sitemap refresh scan job class is defined' do
         expect(defined?(BetterTogether::SitemapRefreshScanJob)).to be_truthy
       end

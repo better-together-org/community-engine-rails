@@ -39,7 +39,12 @@ module BetterTogether
       def pg_search_matches(entry, query)
         return score_matching_records(entry, normalize_terms(query)) unless entry.pg_search_enabled?
 
-        entry.search_relation(query).limit(50).map do |record|
+        # pg_search only selects the rank column when asked; without it every score is
+        # 0.0 and results tie-break on id, ignoring the model's weights and boosts.
+        relation = entry.search_relation(query)
+        relation = relation.with_pg_search_rank if relation.respond_to?(:with_pg_search_rank)
+
+        relation.limit(50).map do |record|
           {
             record:,
             score: record.try(:pg_search_rank).to_f

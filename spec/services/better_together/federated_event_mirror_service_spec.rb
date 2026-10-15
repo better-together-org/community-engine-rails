@@ -132,6 +132,54 @@ module BetterTogether # :nodoc:
         expect(updated.identifier).to eq("#{source_platform.identifier}--remote-event")
       end
 
+      context 'when an overlapping sync raises ActiveRecord::StaleObjectError on UPDATE' do
+        it 'reloads and retries once, succeeding on the second attempt' do
+          existing = described_class.new(
+            connection:,
+            remote_attributes:,
+            remote_id: 'legacy-event-42'
+          ).call
+          service = described_class.new(
+            connection:,
+            remote_attributes: remote_attributes.merge(name: 'Updated Remote Event'),
+            remote_id: 'legacy-event-42'
+          )
+          original_find = service.method(:find_or_initialize_event)
+          call_count = 0
+          allow(service).to receive(:find_or_initialize_event) do
+            call_count += 1
+            event = original_find.call
+            allow(event).to receive(:save!).and_raise(ActiveRecord::StaleObjectError) if call_count == 1
+            event
+          end
+
+          result = service.call
+
+          expect(result.id).to eq(existing.id)
+          expect(result.name).to eq('Updated Remote Event')
+          expect(call_count).to eq(2)
+        end
+
+        it 'does not retry more than once' do
+          service = described_class.new(
+            connection:,
+            remote_attributes:,
+            remote_id: 'legacy-event-42'
+          )
+          original_find = service.method(:find_or_initialize_event)
+          call_count = 0
+          allow(service).to receive(:find_or_initialize_event) do
+            call_count += 1
+            event = original_find.call
+            allow(event).to receive(:save!).and_raise(ActiveRecord::StaleObjectError)
+            event
+          end
+
+          expect { service.call }.to raise_error(ActiveRecord::StaleObjectError)
+          expect(call_count).to eq(2)
+        end
+      end
+
       it 'falls back to UTC for invalid timezones' do
         event = described_class.new(
           connection:,

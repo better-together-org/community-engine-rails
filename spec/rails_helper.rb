@@ -10,6 +10,7 @@ require File.expand_path('dummy/config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
+require 'test-prof' # profilers stay inactive unless a *_PROF env var is set (see docs/development/test_profiling.md)
 require 'rails-controller-testing'
 
 ActiveJob::Base.queue_adapter = :test
@@ -146,10 +147,10 @@ RSpec.configure do |config|
 
     # Seed essential data idempotently. No initial full-clean here because:
     # 1. db:parallel:prepare already gives each CI worker a clean schema.
-    # 2. In CI, parallel_rspec workers share the same database (DATABASE_URL).
-    #    A destructive clean_with(:deletion) in one worker would wipe seeds
-    #    that a sibling worker just created, causing intermittent "Host Setup
-    #    Wizard not configured" / "Platform can't be blank" failures.
+    # 2. parallel_rspec gives each worker its own database: it appends the worker number to
+    #    the database name, also when CI sets DATABASE_URL (verified 2026-10-10 with four
+    #    workers: ci_probe_test, test2, test3, test4). A clean_with(:deletion) here would
+    #    still only slow the suite down and risk wiping seeds built in this process.
     # All builders use clear: false so seed_data runs without deleting first.
     # build_with_retry treats duplicate-key errors as "already seeded" — safe
     # for concurrent workers that race to create the same rows.
@@ -220,9 +221,12 @@ RSpec.configure do |config|
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
   config.before do |example|
+    # Reload once per worker. The old guard (mounted_helpers.respond_to?(:better_together)) was never
+    # true, so routes were rebuilt before every example (about 24% of request-spec time).
     if %i[controller feature request].include?(example.metadata[:type]) &&
-       !Rails.application.routes.mounted_helpers.respond_to?(:better_together)
+       !Rails.application.config.x.spec_routes_reloaded
       Rails.application.reload_routes!
+      Rails.application.config.x.spec_routes_reloaded = true
     end
 
     DatabaseCleaner.strategy =
@@ -233,19 +237,9 @@ RSpec.configure do |config|
         :transaction
       end
 
-    DatabaseCleaner.start
-
-    # Clear Rails cache to prevent permission/data pollution between parallel workers
-    # This is critical for RBAC specs that cache permission checks for 12 hours
-    Rails.cache.clear
-
-    # Re-seed essential data if a prior :js/:feature/:system example's :deletion
-    # cleanup wiped it. This must run in a `before` hook, AFTER DatabaseCleaner.start
-    # above: RSpec's `after` hooks run in reverse registration order, so anything
-    # restored from an `after` hook here would immediately be wiped again by the
-    # DatabaseCleaner.clean `after` hook below, since that hook is registered
-    # earlier and therefore runs later. Checking at the start of the next example
-    # instead avoids that ordering trap entirely.
+    # Re-seed essential data if a prior :js/:feature/:system example's :deletion cleanup wiped
+    # it. Runs BEFORE DatabaseCleaner.start so the rebuild commits once; inside the example's
+    # transaction it was rolled back and every later example rebuilt it (about 90 inserts each).
     unless BetterTogether::Role.exists?
       Rails.logger.debug '🔄 Re-seeding essential data after a prior :js/:feature/:system test'
       BetterTogether::AccessControlBuilder.build(clear: false)
@@ -263,13 +257,37 @@ RSpec.configure do |config|
     # `agreement.update!` calls with PG::ForeignKeyViolation. AgreementBuilder
     # is idempotent (recreates a missing page and re-links it), so just check
     # whether one of its known seeded pages still exists.
-    unless BetterTogether::Page.exists?(identifier: 'privacy_policy')
+    # Check through the agreement's own page link: the page's stored identifier ('privacy-policy')
+    # differs from the builder's ('privacy_policy'), so a direct Page lookup never matched and the
+    # builder re-ran before every example.
+    unless BetterTogether::Agreement.joins(:page).exists?(identifier: 'privacy_policy')
       Rails.logger.debug '🔄 Re-linking agreement pages after a prior :js/:feature/:system test'
       BetterTogether::AgreementBuilder.build(clear: false)
     end
+
+    # Seeded RBAC rows belong to the host platform; if a prior example left them on another
+    # (or no) platform, platform-scoped role/permission lists come back empty for the rest of
+    # the worker's run. Heal before DatabaseCleaner.start so the fix is not rolled back.
+    if (host_platform = BetterTogether::Platform.find_by(host: true))
+      [BetterTogether::Role, BetterTogether::ResourcePermission].each do |model|
+        stale = model.where(protected: true).merge(model.where(platform_id: nil).or(model.where.not(platform_id: host_platform.id)))
+        stale.update_all(platform_id: host_platform.id) if stale.exists? # rubocop:disable Rails/SkipsModelValidations
+      end
+    end
+
+    DatabaseCleaner.start
+
+    # Clear Rails cache to prevent permission/data pollution between parallel workers
+    # This is critical for RBAC specs that cache permission checks for 12 hours
+    Rails.cache.clear
   end
 
-  config.after do
+  config.after do |example|
+    # Capybara's own reset hook is registered earlier, so it runs after this one. Let the app
+    # server finish in-flight requests first, or the table-wide DISABLE TRIGGER of the
+    # :deletion cleanup deadlocks with their writes (PG::TRDeadlockDetected).
+    Capybara.reset_sessions! if example.metadata[:js] || example.metadata[:feature] || example.metadata[:system]
+
     DatabaseCleaner.clean
 
     # Clear cache again after each test to ensure clean state
@@ -279,7 +297,14 @@ RSpec.configure do |config|
     # Without this, tests that lazily load Current.host_platform and then roll back
     # the platform record leave a dangling AR object; subsequent tests see an empty
     # platform_scoped because the stale id matches no live row.
-    ActiveSupport::CurrentAttributes.reset_all
+    # Rails 8.1 renamed the class-level .reset_all to .clear_all; this file is
+    # shared across every compat/rails-* lane, so support both rather than
+    # picking one and breaking the others.
+    if ActiveSupport::CurrentAttributes.respond_to?(:clear_all)
+      ActiveSupport::CurrentAttributes.clear_all
+    else
+      ActiveSupport::CurrentAttributes.reset_all
+    end
   end
 
   # Reset locale to English after each test to prevent test isolation issues
