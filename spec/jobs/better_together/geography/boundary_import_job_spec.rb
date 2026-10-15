@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::Geography::BoundaryImportJob do
   let(:nominatim_result) do
     instance_double(
       Geocoder::Result::Test,
-      data: { 'osm_type' => 'relation', 'osm_id' => 12_345, 'geojson' => polygon_geojson }
+      data: { 'osm_type' => 'relation', 'osm_id' => 12_345, 'class' => 'boundary', 'geojson' => polygon_geojson }
     )
   end
 

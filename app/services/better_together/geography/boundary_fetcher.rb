@@ -17,6 +17,8 @@ module BetterTogether
       POLYGON_TYPES = %w[Polygon MultiPolygon].freeze
       DEFAULT_THRESHOLD = 0.0005 # about 50 m
       SEARCH_LIMIT = 5
+      ACCEPTED_CLASSES = %w[boundary place natural].freeze
+      BBOX_MARGIN = 0.1 # of the box size, for a seed point that sits near an edge
 
       Result = Struct.new(:data, :reason, :via, keyword_init: true)
 
@@ -64,8 +66,31 @@ module BetterTogether
       end
 
       def pick(results)
-        polygons = results.map(&:data).select { |data| POLYGON_TYPES.include?(data.dig('geojson', 'type')) }
-        polygons.find { |data| (data['category'] || data['class']) == 'boundary' } || polygons.first
+        polygons = results.map(&:data).select { |data| usable?(data) }
+        polygons.find { |data| kind(data) == 'boundary' } || polygons.first
+      end
+
+      def usable?(data)
+        POLYGON_TYPES.include?(data.dig('geojson', 'type')) && ACCEPTED_CLASSES.include?(kind(data)) &&
+          covers_seed_point?(data['boundingbox'])
+      end
+
+      def kind(data)
+        data['category'] || data['class']
+      end
+
+      # Nominatim's boundingbox is [south, north, west, east] as strings. No coordinates or no box: nothing to check.
+      def covers_seed_point?(box)
+        space = @record.space
+        return true unless box && space&.latitude && space.longitude
+
+        south, north, west, east = box.map(&:to_f)
+        within?(space.latitude, south, north) && within?(space.longitude, west, east)
+      end
+
+      def within?(value, low, high)
+        margin = (high - low) * BBOX_MARGIN
+        value.between?(low - margin, high + margin)
       end
 
       def source

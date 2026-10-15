@@ -58,6 +58,27 @@ RSpec.describe BetterTogether::Geography::BoundaryFetcher do
       expect(fetched.via).to eq(:search)
     end
 
+    it 'ignores polygons of the wrong kind, such as a post office returned for an informal region', :aggregate_failures do
+      allow(Geocoder).to receive(:search).and_return([hit(category: 'amenity')])
+
+      expect(described_class.call(settlement)).to have_attributes(data: nil, reason: :no_polygon)
+    end
+
+    it 'accepts a natural feature when there is no administrative boundary' do
+      allow(Geocoder).to receive(:search).and_return([hit(category: 'natural', osm_id: 8)])
+
+      expect(described_class.call(settlement).data['osm_id']).to eq(8)
+    end
+
+    it 'ignores a polygon whose bounding box is nowhere near the record', :aggregate_failures do
+      settlement.space.update!(latitude: 48.95, longitude: -57.95)
+      far = hit(category: 'boundary').tap { |r| r.data['boundingbox'] = %w[10.0 11.0 20.0 21.0] }
+      near = hit(category: 'boundary', osm_id: 9).tap { |r| r.data['boundingbox'] = %w[48.9 49.0 -58.0 -57.9] }
+      allow(Geocoder).to receive(:search).and_return([far, near])
+
+      expect(described_class.call(settlement).data['osm_id']).to eq(9)
+    end
+
     it 'reports no polygon when only points come back' do
       point = hit(category: 'place', geojson: { 'type' => 'Point', 'coordinates' => [-57.9, 48.9] })
       allow(Geocoder).to receive(:search).and_return([point])
