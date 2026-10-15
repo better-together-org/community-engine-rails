@@ -5,8 +5,8 @@
     "views": {
       "covered": 221,
       "missing": 44,
-      "partial": 266,
-      "stale": 248
+      "partial": 267,
+      "stale": 247
     },
     "models": {
       "covered": 115,
@@ -6513,9 +6513,9 @@
         "docs/developers/github_api_integration.md",
         "docs/developers/security/mcp_authentication_security_assessment.md",
         "docs/developers/systems/accounts_and_invitations.md",
-        "docs/developers/systems/ai_integration_system.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_privacy_visibility_system.md"
+        "docs/developers/systems/community_privacy_visibility_system.md",
+        "docs/developers/systems/mapping_system.md"
       ],
       "status": "stale"
     },
@@ -6555,9 +6555,9 @@
         "docs/developers/github_api_integration.md",
         "docs/developers/security/mcp_authentication_security_assessment.md",
         "docs/developers/systems/accounts_and_invitations.md",
-        "docs/developers/systems/ai_integration_system.md",
         "docs/developers/systems/bot_safety_system.md",
-        "docs/developers/systems/community_privacy_visibility_system.md"
+        "docs/developers/systems/community_privacy_visibility_system.md",
+        "docs/developers/systems/mapping_system.md"
       ],
       "status": "stale"
     },
@@ -6773,8 +6773,6 @@
       ],
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
-        "docs/screenshots/desktop/pr1692_calendar_grid_with_events.json",
-        "docs/screenshots/mobile/pr1692_calendar_grid_with_events.json",
         "docs/screenshots/review/pr-1692/pr1692_calendar_grid_with_events-desktop.json",
         "docs/screenshots/review/pr-1692/pr1692_calendar_grid_with_events-mobile.json"
       ],
@@ -7704,10 +7702,10 @@
         "docs/screenshots/desktop/community_access_mode_open_join.json",
         "docs/screenshots/desktop/community_access_mode_request_to_join.json",
         "docs/screenshots/desktop/community_event_evidence_summary.json",
-        "docs/screenshots/desktop/community_membership_multi_role_cards.json",
         "docs/screenshots/desktop/community_page_contribution_summary.json",
         "docs/screenshots/desktop/community_privacy_badge.json",
-        "docs/screenshots/desktop/content_reporting_actions_community_menu.json"
+        "docs/screenshots/desktop/membership_review_community_shortcut.json",
+        "docs/screenshots/mobile/community_access_mode_open_join.json"
       ],
       "status": "stale"
     },
@@ -10756,9 +10754,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/platform_organizers/host_dashboard_extensions.md",
-        "docs/screenshots/desktop/membership_review_host_dashboard_queue.json",
-        "docs/screenshots/mobile/membership_review_host_dashboard_queue.json"
+        "docs/platform_organizers/host_dashboard_extensions.md"
       ],
       "status": "stale"
     },
@@ -12382,8 +12378,6 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/screenshots/desktop/membership_request_review_detail.json",
-        "docs/screenshots/mobile/membership_request_review_detail.json",
         "docs/screenshots/review/pr-1500/membership_request_review_detail-desktop.json",
         "docs/screenshots/review/pr-1500/membership_request_review_detail-mobile.json"
       ],
@@ -14835,7 +14829,7 @@
         "docs/screenshots/desktop/pr_1490_hero_render_after.png",
         "docs/screenshots/desktop/pr_1490_hero_render_before.png"
       ],
-      "screenshot_count": 55,
+      "screenshot_count": 65,
       "screenshot_specs": [
         "spec/docs_screenshots/better_together/block_editor_contract_review_spec.rb",
         "spec/docs_screenshots/better_together/content_reporting_actions_spec.rb",
@@ -14844,7 +14838,8 @@
         "spec/docs_screenshots/better_together/release_0_11_0_setup_wizard_spec.rb",
         "spec/docs_screenshots/better_together/robot_authored_page_post_publishing_spec.rb",
         "spec/docs_screenshots/better_together/settings_tab_embed_review_spec.rb",
-        "spec/docs_screenshots/better_together/short_links_spec.rb"
+        "spec/docs_screenshots/better_together/short_links_spec.rb",
+        "spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb"
       ],
       "axe_specs": [
         "spec/features/better_together/csp_embed_accessibility_spec.rb",
@@ -14855,11 +14850,11 @@
         "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/developers/systems/documentation_builder_system.md",
         "docs/development/datetime_timezone_assessment.md",
-        "docs/screenshots/desktop/content_reporting_actions_block_menu.json",
-        "docs/screenshots/desktop/content_reporting_actions_page_feedback_bar.json",
         "docs/screenshots/desktop/pr_1486_my_data_embedded_after.json",
         "docs/screenshots/desktop/pr_1486_my_data_seeds_embedded_after.json",
-        "docs/screenshots/desktop/pr_1490_hero_render_after.json"
+        "docs/screenshots/desktop/pr_1490_hero_render_after.json",
+        "docs/screenshots/desktop/pr_1490_hero_render_before.json",
+        "docs/screenshots/desktop/release_0_11_0_accordion_block_render.json"
       ],
       "status": "stale"
     },
@@ -16301,11 +16296,8 @@
         "spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb"
       ],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/screenshots/desktop/release_0_11_0_platform_connection_editor.json",
-        "docs/screenshots/mobile/release_0_11_0_platform_connection_editor.json"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -16928,6 +16920,7 @@
       "screenshot_specs": [
         "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
         "spec/docs_screenshots/better_together/access_mode_panel_spec.rb",
+        "spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
         "spec/docs_screenshots/better_together/release_0_11_0_federation_platform_spec.rb",
         "spec/docs_screenshots/better_together/release_0_11_0_llm_robot_management_spec.rb",
         "spec/docs_screenshots/better_together/review_operations_access_spec.rb",
@@ -16939,12 +16932,12 @@
       "stale_artifacts": [
         "docs/developers/development/i18n_todo.md",
         "docs/developers/systems/robot_configuration_system.md",
-        "docs/screenshots/desktop/platform_access_mode_invitation_only.json",
-        "docs/screenshots/desktop/platform_domains_show_page_entry_point.json",
-        "docs/screenshots/desktop/platform_membership_multi_role_cards.json",
         "docs/screenshots/desktop/release_0_11_0_host_platform_profile.json",
-        "docs/screenshots/desktop/release_0_11_0_llm_robot_platform_ready.json",
-        "docs/screenshots/desktop/release_0_11_0_llm_robot_platform_unavailable.json"
+        "docs/screenshots/desktop/release_0_11_0_llm_robot_platform_unavailable.json",
+        "docs/screenshots/desktop/safety_review_host_platform_panel.json",
+        "docs/screenshots/mobile/platform_access_mode_invitation_only.json",
+        "docs/screenshots/mobile/platform_domains_show_page_entry_point.json",
+        "docs/screenshots/mobile/platform_membership_multi_role_cards.json"
       ],
       "status": "stale"
     },
@@ -17069,12 +17062,12 @@
       "stale_artifacts": [
         "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/development/datetime_timezone_assessment.md",
-        "docs/screenshots/desktop/comment_permission_controls_post_edit_fields.json",
         "docs/screenshots/desktop/post_federation_content_grants_field.json",
-        "docs/screenshots/desktop/post_federation_visibility_field.json",
         "docs/screenshots/desktop/robot_authored_post_form.json",
-        "docs/screenshots/mobile/comment_permission_controls_post_edit_fields.json",
-        "docs/screenshots/mobile/post_federation_content_grants_field.json"
+        "docs/screenshots/mobile/post_federation_content_grants_field.json",
+        "docs/screenshots/mobile/post_federation_visibility_field.json",
+        "docs/screenshots/mobile/robot_authored_post_form.json",
+        "docs/screenshots/review/pr-1496/robot_authored_post_form-desktop.json"
       ],
       "status": "stale"
     },
@@ -17113,8 +17106,6 @@
       "stale_artifacts": [
         "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/development/datetime_timezone_assessment.md",
-        "docs/screenshots/desktop/posts_index_ordering.json",
-        "docs/screenshots/mobile/posts_index_ordering.json",
         "docs/screenshots/review/pr-1489/posts_index_ordering_after_desktop.json",
         "docs/screenshots/review/pr-1489/posts_index_ordering_after_mobile.json",
         "docs/screenshots/review/pr-1489/posts_index_ordering_before_desktop.json",
@@ -17190,12 +17181,12 @@
       "stale_artifacts": [
         "docs/developers/systems/content_permission_standardization_assessment.md",
         "docs/development/datetime_timezone_assessment.md",
-        "docs/screenshots/desktop/comment_permission_controls_community_required.json",
-        "docs/screenshots/desktop/comment_permission_controls_disabled.json",
-        "docs/screenshots/desktop/comment_permission_controls_open_thread.json",
-        "docs/screenshots/desktop/content_reporting_actions_post_menu.json",
         "docs/screenshots/desktop/robot_authored_post_show.json",
-        "docs/screenshots/mobile/comment_permission_controls_community_required.json"
+        "docs/screenshots/mobile/comment_permission_controls_disabled.json",
+        "docs/screenshots/mobile/comment_permission_controls_open_thread.json",
+        "docs/screenshots/mobile/content_reporting_actions_post_menu.json",
+        "docs/screenshots/mobile/robot_authored_post_show.json",
+        "docs/screenshots/review/pr-1496/robot_authored_post_show-desktop.json"
       ],
       "status": "stale"
     },
@@ -17378,8 +17369,8 @@
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_form.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_form.json",
-        "docs/screenshots/desktop/content_reporting_actions_report_form.json",
-        "docs/screenshots/desktop/release_0_11_0_bot_safety_report_form.json"
+        "docs/screenshots/desktop/report_form.json",
+        "docs/screenshots/mobile/content_reporting_actions_report_form.json"
       ],
       "status": "stale"
     },
@@ -17430,8 +17421,8 @@
         "docs/platform_organizers/safety_reporting_operations.md",
         "docs/screenshots/ce-screenshots-backup/desktop/report_detail.json",
         "docs/screenshots/ce-screenshots-backup/mobile/report_detail.json",
-        "docs/screenshots/desktop/content_reporting_actions_followup.json",
-        "docs/screenshots/desktop/report_detail.json"
+        "docs/screenshots/mobile/content_reporting_actions_followup.json",
+        "docs/screenshots/mobile/report_detail.json"
       ],
       "status": "stale"
     },
@@ -17693,9 +17684,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/systems/robot_configuration_system.md",
-        "docs/screenshots/desktop/release_0_11_0_llm_robot_management_form.json",
-        "docs/screenshots/mobile/release_0_11_0_llm_robot_management_form.json"
+        "docs/developers/systems/robot_configuration_system.md"
       ],
       "status": "stale"
     },
@@ -17728,9 +17717,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/systems/robot_configuration_system.md",
-        "docs/screenshots/desktop/release_0_11_0_llm_robot_management_index.json",
-        "docs/screenshots/mobile/release_0_11_0_llm_robot_management_index.json"
+        "docs/developers/systems/robot_configuration_system.md"
       ],
       "status": "stale"
     },
@@ -18506,14 +18493,9 @@
         "spec/features/better_together/device_permissions_spec.rb"
       ],
       "stale_artifacts": [
-        "docs/screenshots/desktop/release_0_11_0_settings_account_deletion.json",
-        "docs/screenshots/desktop/release_0_11_0_settings_blocked_people.json",
         "docs/screenshots/desktop/release_0_11_0_settings_my_data_followup.json",
-        "docs/screenshots/desktop/release_0_11_0_settings_my_data_tab.json",
-        "docs/screenshots/mobile/release_0_11_0_settings_account_deletion.json",
-        "docs/screenshots/mobile/release_0_11_0_settings_blocked_people.json",
         "docs/screenshots/mobile/release_0_11_0_settings_my_data_followup.json",
-        "docs/screenshots/mobile/release_0_11_0_settings_my_data_tab.json"
+        "docs/test_coverage_assessment.md"
       ],
       "status": "stale"
     },
@@ -18958,9 +18940,7 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/development/view_dom_identifier_standard.md",
-        "docs/screenshots/desktop/short_links_show_default.json",
-        "docs/screenshots/mobile/short_links_show_default.json"
+        "docs/development/view_dom_identifier_standard.md"
       ],
       "status": "stale"
     },
@@ -19247,7 +19227,6 @@
       "screenshot_specs": [],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/developers/systems/ai_integration_system.md",
         "docs/developers/systems/i18n_mobility_localization_system.md"
       ],
       "status": "stale"
@@ -19913,14 +19892,14 @@
         "docs/diagrams/source/pr_1486_person_deletion_flow.mmd"
       ],
       "screenshots": [
+        "docs/screenshots/desktop/person_deletion_entrypoint.png",
         "docs/screenshots/desktop/pr_1486_account_delete_after.png",
         "docs/screenshots/desktop/pr_1486_account_delete_before.png",
         "docs/screenshots/desktop/release_0_11_0_person_deletion_request.png",
-        "docs/screenshots/mobile/pr_1486_account_delete_after.png",
-        "docs/screenshots/mobile/pr_1486_account_delete_before.png",
-        "docs/screenshots/mobile/release_0_11_0_person_deletion_request.png"
+        "docs/screenshots/mobile/person_deletion_entrypoint.png",
+        "docs/screenshots/mobile/pr_1486_account_delete_after.png"
       ],
-      "screenshot_count": 12,
+      "screenshot_count": 14,
       "screenshot_specs": [
         "spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
       ],
