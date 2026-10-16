@@ -10,35 +10,35 @@
   "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
   "callouts": [
     {
-      "selector": "#post_c617f9c2-0be7-4d2e-88c9-47fc18bb175a .community-chip",
+      "selector": "#post_f9a714a0-1a50-4ad3-9bf7-344d487040f5 .community-chip",
       "title": "Community chip",
       "bullets": [
         "Links to the post's community."
       ],
       "target": {
         "x": 913.0,
-        "y": 719.0,
+        "y": 727.0,
         "width": 204.953125,
         "height": 23.0,
         "right": 1117.953125,
-        "bottom": 742.0,
+        "bottom": 750.0,
         "center_x": 1015.4765625,
-        "center_y": 730.5
+        "center_y": 738.5
       },
       "avoid": {
         "x": 913.0,
-        "y": 719.0,
+        "y": 727.0,
         "width": 204.953125,
         "height": 23.0,
         "right": 1117.953125,
-        "bottom": 742.0,
+        "bottom": 750.0,
         "center_x": 1015.4765625,
-        "center_y": 730.5
+        "center_y": 738.5
       },
       "placement": {
         "side": "left",
         "x": 513.0,
-        "y": 664.5,
+        "y": 672.5,
         "width": 380,
         "height": 132,
         "score": 913.0

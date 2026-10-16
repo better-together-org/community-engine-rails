@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
   "callouts": [
     {
-      "selector": "#community_post_a006f265-aa83-48a9-9b02-c8f28b69a99d .community-chip",
+      "selector": "#community_post_ecd99eec-d913-47cd-b32c-b181391d351b .community-chip",
       "title": "Community chip",
       "bullets": [
         "Links to the post's community."
