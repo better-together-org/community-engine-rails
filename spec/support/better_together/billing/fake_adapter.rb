@@ -28,6 +28,17 @@ module BetterTogether
         EventResult.new(status: outcome.presence || 'processed', retry_reason: ('prerequisite_missing' if outcome == 'retry'))
       end
 
+      def sync_plan(plan:)
+        @calls << [:sync_plan, plan.id]
+      end
+
+      # Price ids containing "missing" are unknown; "boom" simulates a lookup failure.
+      def verify_price(processor_price_id:) # rubocop:disable Naming/PredicateMethod
+        raise 'lookup failed' if processor_price_id.to_s.include?('boom')
+
+        processor_price_id.to_s.exclude?('missing')
+      end
+
       def sanitize_payload(payload) = payload.to_h.slice('id', 'type')
 
       def create_checkout_session(**args)

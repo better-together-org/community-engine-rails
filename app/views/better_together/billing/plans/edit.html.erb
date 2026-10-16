@@ -1,0 +1,24 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.plans.edit_title', default: 'Edit Billing Plan') %> — <%= @plan.name %>
+<% end %>
+
+<div class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to t('better_together.billing.plans.index_title', default: 'Billing Plans'),
+                    billing_plans_path(locale: I18n.locale) %>
+      </li>
+      <li class="breadcrumb-item">
+        <%= link_to @plan.name, billing_plan_path(@plan, locale: I18n.locale) %>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <%= t('better_together.billing.plans.edit_title', default: 'Edit') %>
+      </li>
+    </ol>
+  </nav>
+
+  <h1 class="mb-4"><%= t('better_together.billing.plans.edit_title', default: 'Edit Billing Plan') %></h1>
+
+  <%= render 'form', billing_plan: @plan %>
+</div>

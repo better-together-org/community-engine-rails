@@ -12,6 +12,12 @@ module BetterTogether
         Billable.model_names << name if name.present?
       end
 
+      # True when the named class exists and includes this concern (loads it on demand).
+      def self.model?(type_name)
+        klass = type_name.to_s.safe_constantize
+        klass.present? && klass.include?(self)
+      end
+
       # Class names, not constants, so code reloading never holds stale classes.
       def self.model_names
         @model_names ||= Concurrent::Set.new
