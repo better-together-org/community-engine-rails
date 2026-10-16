@@ -124,7 +124,7 @@ jobs:
         run: bin/i18n health > i18n-health.txt
         continue-on-error: true
       - name: Archive i18n health report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: i18n-health-report
           path: i18n-health.txt
