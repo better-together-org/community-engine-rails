@@ -31,7 +31,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
     allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
     allow(ranked).to receive(:limit).with(50).and_return([low, high])
 
-    result = backend.search('borgberry')
+    result = backend.search('lighthouse')
 
     expect(result.records).to eq([high, low])
     expect(relation).to have_received(:with_pg_search_rank)
@@ -48,10 +48,10 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
     )
 
     allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
-    allow(entry).to receive(:search_relation).with('borgberry').and_return(relation)
+    allow(entry).to receive(:search_relation).with('lighthouse').and_return(relation)
     allow(relation).to receive(:limit).with(50).and_return([record])
 
-    result = backend.search('borgberry')
+    result = backend.search('lighthouse')
 
     expect(result.status).to eq(:ok), result.error
     expect(result.backend).to eq(:pg_search)
@@ -80,7 +80,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
   end
 
   it 'falls back to database scoring when a model has no pg_search scope configured' do
-    record = instance_double(BetterTogether::Checklist, id: 10, as_indexed_json: { title: 'Borgberry checklist archive' })
+    record = instance_double(BetterTogether::Checklist, id: 10, as_indexed_json: { title: 'Lighthouse checklist archive' })
     entry = instance_double(
       BetterTogether::Search::Registry::Entry,
       pg_search_enabled?: false,
@@ -89,7 +89,7 @@ RSpec.describe BetterTogether::Search::PgSearchBackend do
 
     allow(BetterTogether::Search::Registry).to receive(:entries).and_return([entry])
 
-    result = backend.search('borgberry archive')
+    result = backend.search('lighthouse archive')
 
     expect(result.status).to eq(:ok), result.error
     expect(result.records).to eq([record])

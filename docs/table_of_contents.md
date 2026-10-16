@@ -66,7 +66,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
-- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across Elasticsearch, database, and pg_search search modes
+- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across pg_search (default) and database search modes, with Elasticsearch as an optional extension gem
 - [Robot Authored Page And Post Publishing](developers/systems/robot_authored_page_post_publishing_system.md) - Narrow workflow for truthful robot bylines on pages and posts
 - [Security Protection System](developers/systems/security_protection_system.md) - Security measures
 

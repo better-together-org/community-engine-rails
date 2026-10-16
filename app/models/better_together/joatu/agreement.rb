@@ -307,8 +307,8 @@ module BetterTogether
       end
 
       # Extension point called inside accept!'s transaction, after the agreement is
-      # marked accepted. No-op by default — the Borgberry extension prepends a
-      # module that creates a pending C3 settlement here when the offer is priced.
+      # marked accepted. No-op by default; extension gems can prepend a module to add
+      # side effects here.
       def after_accept_side_effects; end
 
       # Extension point called inside fulfill!'s transaction, before the agreement

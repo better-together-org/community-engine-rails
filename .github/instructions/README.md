@@ -54,9 +54,9 @@ When Copilot is working on a file, it automatically loads instructions from file
 - **Purpose**: Rails 7.1+ conventions, engine isolation, controllers, models, jobs, search, testing
 
 ### Search
-- **File**: `search-elasticsearch.instructions.md`
+- **File**: `search.instructions.md`
 - **Applies to**: `**/*.rb`
-- **Purpose**: Elasticsearch 7 integration, indexing strategies, query patterns, cluster management
+- **Purpose**: pg_search backend, the `Searchable` contract, query patterns, and the optional Elasticsearch extension gem
 
 ### Security & Encryption
 - **File**: `security-encryption.instructions.md`

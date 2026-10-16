@@ -33,7 +33,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 #### Removed
 - Signal Protocol E2E encrypted-messaging beta (prekey exchange, Double Ratchet, sender-key group rotation, passphrase key backup) pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings). Preserved intact on `feature/e2e-signal-protocol-messaging-01100notes` for future rework.
-- C3 Tree Seeds community contribution token system, including the Borgberry fleet-compute integration and fleet-node authorization, relocated to a standalone extension gem rather than shipping in core 0.11.0.
 - Claim/Citation/Evidence governance foundation pulled from the 0.11.0 release. Reintegration tracked as draft PR #1797, not part of this release.
 
 #### CMS Block System
