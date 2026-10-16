@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_10_15_130000) do
+ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -255,6 +255,29 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_130000) do
     t.index ["payload_redacted_at"], name: "idx_bt_billing_events_payload_redacted_at"
     t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
     t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
+  end
+
+  create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "billing_interval", default: "month", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", null: false
+    t.boolean "active", default: true, null: false
+    t.string "processor", null: false
+    t.string "processor_price_id", null: false
+    t.string "processor_product_id"
+    t.datetime "synced_to_processor_at"
+    t.string "latest_processor_event_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["active"], name: "idx_bt_billing_plans_active"
+    t.index ["identifier"], name: "idx_bt_billing_plans_identifier", unique: true
+    t.index ["processor", "processor_price_id"], name: "idx_bt_billing_plans_processor_price", unique: true
+    t.index ["processor", "processor_product_id"], name: "idx_bt_billing_plans_processor_product", unique: true, where: "(processor_product_id IS NOT NULL)"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

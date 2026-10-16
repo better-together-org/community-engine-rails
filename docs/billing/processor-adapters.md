@@ -58,3 +58,11 @@ Status values: `pending`, `processed`, `ignored`, `alerted`, `failed`, `dead_let
 ### Payload retention
 
 Raw payloads are kept for `BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS` (default 30) after processing. A daily job then replaces each with `adapter.sanitize_payload(payload)`, or with just `id` and `type` if the adapter is gone. Sanitizers must remove personal data and secrets.
+
+## Plan catalog
+
+A `Billing::Plan` links one price at one processor (`processor` + `processor_price_id`; a price id is unique per processor). Platform stewards manage plans under the host dashboard (Billing Plans). Plans have no default currency; amounts are stored in the currency's smallest unit, and zero-decimal currencies such as JPY are displayed without dividing by 100 (`Billing::Currency`).
+
+- **Creating a plan** requires an installed processor. If the processor supports `plan_sync`, `verify_price` must confirm the price exists in your account, so a steward cannot link a price from someone else's account. A failed lookup rejects the plan (fail closed).
+- **Price fields** (amount, currency, interval) cannot change after a price is linked.
+- **Sync:** saving a plan enqueues `SyncPlanJob`, which calls `adapter.sync_plan(plan:)` when the processor supports `plan_sync`. Code applying a change that came from the processor sets `plan.skip_processor_sync = true` for that save, so it is not pushed straight back. The flag is not stored, so later admin edits always sync.

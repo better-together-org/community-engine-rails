@@ -15,7 +15,7 @@ module BetterTogether
         checkout: { create_checkout_session: %i[owner plan success_url cancel_url idempotency_key metadata],
                     sync_checkout_session: %i[checkout_session_id] },
         portal: { create_portal_session: %i[owner return_url] },
-        plan_sync: { sync_plan: %i[plan] },
+        plan_sync: { sync_plan: %i[plan], verify_price: %i[processor_price_id] },
         stored_value_credit: { credit_balance: %i[beneficiary amount_cents currency idempotency_key metadata],
                                reverse_credit: %i[credit_reference amount_cents idempotency_key reason] },
         merchant_accounts: { merchant_onboarding_link: %i[owner refresh_url return_url],
@@ -58,6 +58,7 @@ module BetterTogether
 
       # Capability methods; keywords are listed in CAPABILITY_METHODS.
       def sync_plan(**) = unsupported!(:plan_sync)
+      def verify_price(**) = unsupported!(:plan_sync)
       def create_checkout_session(**) = unsupported!(:checkout)
       def sync_checkout_session(**) = unsupported!(:checkout)
       def create_portal_session(**) = unsupported!(:portal)
