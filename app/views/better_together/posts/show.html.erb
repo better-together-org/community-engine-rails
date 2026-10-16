@@ -27,6 +27,8 @@
                   <%= privacy_badge(@post) if respond_to?(:privacy_badge) %>
                 </div>
 
+                <%= community_chip(@post.community, hide_current: false) %>
+
                 <div>
                   <%# Show a single date: prefer updated_at (if meaningfully newer), otherwise created_at. Remove visible label but provide it to screen readers and show creation date on hover when updated is shown. %>
                   <% if @post.updated_at && (@post.updated_at.to_i > @post.created_at.to_i + 5) %>

@@ -112,6 +112,15 @@ The key assertions now prove that:
 - The checklist item help text now accurately describes the available visibility choices.
 - Screenshot evidence captures both authoring and rendered-display states so reviewers can confirm the help text and badge language visually.
 
+## Community Chip On Posts
+
+Post cards, list items, table rows and the post show page identify the owning community with `community_chip(post.community)` (`CommunitiesHelper`, partial `better_together/shared/_community_chip`).
+
+- The chip is omitted when the viewer cannot `show?` the community, so a visible post never reveals a hidden community.
+- It is omitted on the index when the page is already scoped to that community (`community_id` param); the show page always renders it (`hide_current: false`).
+- Visibility is memoized per request, and the posts index preloads `community` with its translations and profile image.
+- The helper takes a community, not a post, so other community-scoped models can reuse it. Events and Joatu are tracked in the community scope assessment (issue 1933).
+
 ## Risks And Boundaries
 
 - This PR intentionally completes the **primary browsing and authoring surfaces** first. Additional specialized privacy-heavy areas can reuse the same shared helpers and contract if they need follow-up.

@@ -1,0 +1,7 @@
+<%= link_to community,
+            class: 'community-chip d-inline-flex align-items-center gap-1 small text-decoration-none text-muted',
+            title: t('better_together.shared.community_chip.title', community: community.name) do %>
+  <%= profile_image_tag(community, size: 32, alt: '', title: community.name,
+                                   style: 'width: 1.25rem; height: 1.25rem; object-fit: cover;') %>
+  <span class="community-chip-name"><%= community.name %></span>
+<% end %>

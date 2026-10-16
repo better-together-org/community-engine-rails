@@ -3400,6 +3400,7 @@ uk:
         table_headers:
           authors: Автори
           categories: Категорії
+          community: Спільнота
           published: Опубліковано
           title: Заголовок
       labels:
@@ -3914,6 +3915,8 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_chip:
+        title: 'Спільнота: %{community}'
       community_creation_agreement_notice:
         accept_link: Перегляньте і прийміть угоду про створення спільноти
         message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення
