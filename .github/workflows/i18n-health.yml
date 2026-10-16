@@ -54,7 +54,12 @@ jobs:
   i18n-health:
     needs: prepare
     runs-on: ubuntu-latest
+    # The auto-fix commits to the branch tip, so only the newest push's run may proceed.
+    concurrency:
+      group: i18n-health-${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
     env:
+      HAS_PUSH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN != '' }}
       # Ensure dev/test gems (incl. i18n-tasks) are installed
       BUNDLE_WITHOUT: ""
       BUNDLE_WITH: "development:test"
@@ -63,6 +68,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          token: ${{ secrets.BTS_ROBOT_PUSH_TOKEN || github.token }}
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         env:
@@ -80,7 +88,35 @@ jobs:
       - name: Verify i18n-tasks
         run: bundle exec i18n-tasks --version
       - name: Normalize locale files
-        run: bin/i18n normalize
+        id: normalize
+        run: |
+          bin/i18n normalize
+          if git diff --quiet -- config/locales; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --stat -- config/locales
+          fi
+      # Normalizing is deterministic, so commit it back instead of leaving the branch unnormalized.
+      # Compat lanes (base or branch compat/*) normalize under an older Rails, so they never commit.
+      - name: Commit normalized locale files (GitHub-signed)
+        id: autofix
+        if: >-
+          steps.normalize.outputs.changed == 'true'
+          && env.HAS_PUSH_TOKEN == 'true'
+          && github.ref_name != github.event.repository.default_branch
+          && !startsWith(github.base_ref, 'compat/')
+          && !startsWith(github.ref_name, 'compat/')
+          && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          GH_TOKEN: ${{ secrets.BTS_ROBOT_PUSH_TOKEN }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          bin/ci-signed-commit "chore(i18n): normalize locale files" config/locales
+      - name: Warn that normalization was not committed
+        if: steps.normalize.outputs.changed == 'true' && steps.autofix.outcome != 'success'
+        run: |
+          echo "::warning::Locale files are not normalized. Run bin/i18n normalize and commit config/locales."
       - name: Run i18n checks
         run: bin/i18n check
       - name: Upload i18n health report
