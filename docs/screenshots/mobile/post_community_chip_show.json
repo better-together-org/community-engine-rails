@@ -1,0 +1,48 @@
+{
+  "name": "post_community_chip_show",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-1",
+  "title": "Mill cam timelapse, 12 October | Posts | Parker, Howell and Heidenreich",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "post_community_chip",
+  "flow": "post_community_chip_show",
+  "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
+  "callouts": [
+    {
+      "selector": "#community_post_f1564b9c-a9c9-4431-aceb-e99881632332 .community-chip",
+      "title": "Community chip",
+      "bullets": [
+        "Links to the post's community."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 785.8125,
+        "width": 147.765625,
+        "height": 20.0,
+        "right": 176.765625,
+        "bottom": 805.8125,
+        "center_x": 102.8828125,
+        "center_y": 795.8125
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 785.8125,
+        "width": 147.765625,
+        "height": 20.0,
+        "right": 176.765625,
+        "bottom": 805.8125,
+        "center_x": 102.8828125,
+        "center_y": 795.8125
+      },
+      "placement": {
+        "side": "above",
+        "x": 24,
+        "y": 633.81,
+        "width": 270.0,
+        "height": 132,
+        "score": 785.8125
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "post_community_chip_show_plain",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-1",
+  "title": "Mill cam timelapse, 12 October | Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "post_community_chip",
+  "flow": "post_community_chip_show_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "post_community_chip_index_plain",
+  "device": "desktop",
+  "url": "/en/posts",
+  "title": "Posts | Herman, Stracke and Hettinger",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "post_community_chip",
+  "flow": "post_community_chip_index_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb"
+}
