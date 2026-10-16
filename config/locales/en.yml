@@ -3348,6 +3348,7 @@ en:
         table_headers:
           authors: Authors
           categories: Categories
+          community: Community
           published: Published
           title: Title
       labels:
@@ -3856,6 +3857,9 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_chip:
+        label: Community
+        title: Posted in the %{community} community
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
