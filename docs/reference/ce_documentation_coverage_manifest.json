@@ -3,10 +3,10 @@
   "method": "Heuristic text matching over living docs, diagram sources, screenshot sidecars and specs; staleness from git last-touch times.",
   "summary": {
     "views": {
-      "covered": 248,
-      "missing": 37,
-      "partial": 244,
-      "stale": 250
+      "covered": 258,
+      "missing": 31,
+      "partial": 246,
+      "stale": 244
     },
     "models": {
       "covered": 159,
@@ -9432,12 +9432,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/feature_access_grants_new.png",
+        "docs/screenshots/mobile/feature_access_grants_new.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -12496,12 +12501,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/message_requests_index.png",
+        "docs/screenshots/mobile/message_requests_index.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/message_requests_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -12520,12 +12530,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/message_requests_show.png",
+        "docs/screenshots/mobile/message_requests_show.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/message_requests_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15171,12 +15186,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/person_access_grants_index.png",
+        "docs/screenshots/mobile/person_access_grants_index.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15217,12 +15237,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/person_access_grants_show.png",
+        "docs/screenshots/mobile/person_access_grants_show.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15716,12 +15741,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/person_linked_seeds_index.png",
+        "docs/screenshots/mobile/person_linked_seeds_index.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/person_linked_seeds_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -15738,12 +15768,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/person_linked_seeds_show.png",
+        "docs/screenshots/mobile/person_linked_seeds_show.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/person_linked_seeds_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -15762,12 +15797,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/person_links_index.png",
+        "docs/screenshots/mobile/person_links_index.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -15808,12 +15848,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_identity_access_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/person_links_show.png",
+        "docs/screenshots/mobile/person_links_show.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/person_links_and_access_grants_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "partial"
+      "status": "covered"
     },
     {
       "route": [
@@ -16397,12 +16442,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/platform_connections_new.png",
+        "docs/screenshots/mobile/platform_connections_new.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -16439,12 +16489,17 @@
       "diagrams": [
         "docs/diagrams/source/ce_platform_network_rails_layers.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/platform_connections_show.png",
+        "docs/screenshots/mobile/platform_connections_show.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -16545,12 +16600,17 @@
         "docs/diagrams/source/ce_shared_supporting_rails_layers.mmd",
         "docs/diagrams/source/platform_domains_admin_crud_flow.mmd"
       ],
-      "screenshots": [],
-      "screenshot_count": 0,
-      "screenshot_specs": [],
+      "screenshots": [
+        "docs/screenshots/desktop/platform_domains_edit.png",
+        "docs/screenshots/mobile/platform_domains_edit.png"
+      ],
+      "screenshot_count": 2,
+      "screenshot_specs": [
+        "spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+      ],
       "axe_specs": [],
       "stale_artifacts": [],
-      "status": "missing"
+      "status": "partial"
     },
     {
       "route": [
@@ -18483,10 +18543,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/developers/systems/personal_data_exports_and_seeds.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -19126,10 +19184,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -19150,10 +19206,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -19174,10 +19228,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -19200,10 +19252,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "partial"
     },
     {
       "route": [
@@ -19232,7 +19282,6 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md",
         "docs/screenshots/desktop/release_0_11_0_storage_configurations_index.json",
         "docs/screenshots/mobile/release_0_11_0_storage_configurations_index.json"
       ],
@@ -19265,7 +19314,6 @@
       ],
       "axe_specs": [],
       "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md",
         "docs/screenshots/desktop/release_0_11_0_storage_configuration_form.json",
         "docs/screenshots/mobile/release_0_11_0_storage_configuration_form.json"
       ],
@@ -19291,10 +19339,8 @@
       "screenshot_count": 0,
       "screenshot_specs": [],
       "axe_specs": [],
-      "stale_artifacts": [
-        "docs/platform_organizers/storage_configuration_guide.md"
-      ],
-      "status": "stale"
+      "stale_artifacts": [],
+      "status": "covered"
     },
     {
       "route": [
@@ -26077,7 +26123,7 @@
         "platform_manager"
       ],
       "screens": 8,
-      "screens_with_screenshots": 4,
+      "screens_with_screenshots": 8,
       "screens_with_docs": 2,
       "models": 4,
       "models_documented": 4,
@@ -26247,7 +26293,7 @@
         "end_user"
       ],
       "screens": 5,
-      "screens_with_screenshots": 2,
+      "screens_with_screenshots": 4,
       "screens_with_docs": 5,
       "models": 5,
       "models_documented": 5,
@@ -26279,7 +26325,7 @@
         "platform_manager"
       ],
       "screens": 10,
-      "screens_with_screenshots": 7,
+      "screens_with_screenshots": 9,
       "screens_with_docs": 4,
       "models": 3,
       "models_documented": 3,
