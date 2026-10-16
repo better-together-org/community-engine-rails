@@ -19,7 +19,7 @@ module HistoricalDocBanners
 
   module_function
 
-  def git(*args) = Open3.capture2('git', *args, chdir: ROOT.to_s).first.strip
+  def git(*) = Open3.capture2('git', *, chdir: ROOT.to_s).first.strip
 
   def files = PREFIXES.flat_map { |p| git('ls-files', p).split("\n") }.grep(/\.md\z/).sort
 
@@ -44,12 +44,19 @@ module HistoricalDocBanners
     lines.join
   end
 
+  def rewrite(path, text, remove)
+    return strip(text) if remove
+    return text if text.include?(MARKER)
+
+    with_banner(path, text)
+  end
+
   def run(argv)
     remove = argv.include?('--remove')
     dry = argv.include?('--dry-run')
     changed = files.filter_map do |path|
       text = ROOT.join(path).read
-      updated = remove ? strip(text) : (text.include?(MARKER) ? text : with_banner(path, text))
+      updated = rewrite(path, text, remove)
       next if updated == text
 
       ROOT.join(path).write(updated) unless dry
