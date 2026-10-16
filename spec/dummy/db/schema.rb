@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_10_15_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_10_15_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -221,6 +221,40 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_120000) do
     t.index ["creator_id"], name: "by_better_together_authorships_creator"
     t.index ["platform_id"], name: "index_better_together_authorships_on_platform_id"
     t.index ["role"], name: "by_better_together_authorships_role"
+  end
+
+  create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "billable_owner_type"
+    t.uuid "billable_owner_id"
+    t.string "beneficiary_type"
+    t.uuid "beneficiary_id"
+    t.string "processor", null: false
+    t.string "event_type", null: false
+    t.string "event_id", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.string "processing_status", default: "pending", null: false
+    t.text "error_message"
+    t.integer "attempt_count", default: 0, null: false
+    t.integer "replay_count", default: 0, null: false
+    t.string "dead_letter_reason"
+    t.string "last_replay_requested_by_type"
+    t.uuid "last_replay_requested_by_id"
+    t.datetime "first_received_at"
+    t.datetime "last_attempted_at"
+    t.datetime "processed_at"
+    t.datetime "payload_redacted_at"
+    t.datetime "dead_lettered_at"
+    t.datetime "last_replayed_at"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_events_beneficiary"
+    t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_events_owner"
+    t.index ["dead_lettered_at"], name: "idx_bt_billing_events_dead_lettered_at"
+    t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
+    t.index ["payload_redacted_at"], name: "idx_bt_billing_events_payload_redacted_at"
+    t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
+    t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

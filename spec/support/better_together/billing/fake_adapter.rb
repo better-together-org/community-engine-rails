@@ -14,6 +14,20 @@ module BetterTogether
 
       def processor_name = :fake
       def webhook_event_types = ['fake.invoice.paid']
+
+      def normalize_webhook(vendor_event)
+        { event_id: vendor_event['id'], event_type: vendor_event['type'], payload: vendor_event.to_h }
+      end
+
+      # The event payload's 'outcome' picks the result; 'boom' raises.
+      def process_event(event:)
+        @calls << [:process_event, event.id]
+        outcome = event.payload['outcome'].to_s
+        raise 'fake processor failure' if outcome == 'boom'
+
+        EventResult.new(status: outcome.presence || 'processed', retry_reason: ('prerequisite_missing' if outcome == 'retry'))
+      end
+
       def sanitize_payload(payload) = payload.to_h.slice('id', 'type')
 
       def create_checkout_session(**args)

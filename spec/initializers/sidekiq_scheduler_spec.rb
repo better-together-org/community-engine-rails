@@ -27,8 +27,26 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       expect(schedule).to be_a(Hash)
       expect(schedule.keys).to include(
         'better_together:metrics:link_checker_weekly',
-        'better_together:event_reminder_scan_hourly'
+        'better_together:event_reminder_scan_hourly',
+        'better_together:billing:redact_expired_event_payloads_daily',
+        'better_together:billing:dead_letter_stale_events_hourly'
       )
+    end
+
+    describe 'billing event maintenance jobs' do
+      let(:schedule) { YAML.load(engine_schedule_path.read) }
+
+      {
+        'better_together:billing:redact_expired_event_payloads_daily' =>
+          ['20 4 * * *', 'BetterTogether::Billing::RedactExpiredEventPayloadsJob'],
+        'better_together:billing:dead_letter_stale_events_hourly' =>
+          ['15 * * * *', 'BetterTogether::Billing::DeadLetterStaleBillingEventsJob']
+      }.each do |key, (cron, job_class)|
+        it "schedules #{key}" do
+          expect(schedule[key]).to include('cron' => cron, 'class' => job_class, 'queue' => 'maintenance')
+          expect(schedule[key]['description']).to be_present
+        end
+      end
     end
 
     describe 'link checker job configuration' do
