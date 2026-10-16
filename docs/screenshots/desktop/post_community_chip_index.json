@@ -2,7 +2,7 @@
   "name": "post_community_chip_index",
   "device": "desktop",
   "url": "/en/posts",
-  "title": "Posts | Pfannerstill, Will and Kassulke",
+  "title": "Posts | Simonis-Upton",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "post_community_chip",
@@ -10,35 +10,35 @@
   "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
   "callouts": [
     {
-      "selector": "#post_d2822ec0-7a17-491d-b61a-148211998f04 .community-chip",
+      "selector": "#post_4e0345f3-9409-48ae-9c58-393073b4b44f .community-chip",
       "title": "Community chip",
       "bullets": [
         "Links to the post's community."
       ],
       "target": {
         "x": 913.0,
-        "y": 719.0,
-        "width": 165.453125,
-        "height": 21.0,
-        "right": 1078.453125,
-        "bottom": 740.0,
-        "center_x": 995.7265625,
-        "center_y": 729.5
+        "y": 719.5,
+        "width": 180.953125,
+        "height": 23.0,
+        "right": 1093.953125,
+        "bottom": 742.5,
+        "center_x": 1003.4765625,
+        "center_y": 731.0
       },
       "avoid": {
         "x": 913.0,
-        "y": 719.0,
-        "width": 165.453125,
-        "height": 21.0,
-        "right": 1078.453125,
-        "bottom": 740.0,
-        "center_x": 995.7265625,
-        "center_y": 729.5
+        "y": 719.5,
+        "width": 180.953125,
+        "height": 23.0,
+        "right": 1093.953125,
+        "bottom": 742.5,
+        "center_x": 1003.4765625,
+        "center_y": 731.0
       },
       "placement": {
         "side": "left",
         "x": 513.0,
-        "y": 663.5,
+        "y": 665.0,
         "width": 380,
         "height": 132,
         "score": 913.0

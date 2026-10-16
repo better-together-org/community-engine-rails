@@ -122,4 +122,18 @@ RSpec.describe 'Documentation screenshots for the post community chip', # ruboco
       scroll_to(find("##{dom_id(post_record, :community)} .community-chip"), align: :center)
     end
   end
+
+  it 'captures the tooltip shown when hovering the chip' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'post_community_chip_tooltip',
+      device: :desktop,
+      metadata: screenshot_metadata(flow: 'post_community_chip_tooltip', role: 'platform_manager')
+    ) do
+      visit better_together.post_path(post_record, locale: I18n.default_locale)
+      chip = find("##{dom_id(post_record, :community)} .community-chip")
+      scroll_to(chip, align: :center)
+      chip.hover
+      expect(page).to have_css('.tooltip', text: 'Posted in the Corner Brook Online community')
+    end
+  end
 end

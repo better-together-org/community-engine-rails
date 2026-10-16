@@ -3920,7 +3920,8 @@ es:
       whatsapp: Compartir en WhatsApp
     shared:
       community_chip:
-        title: 'Comunidad: %{community}'
+        label: Comunidad
+        title: Publicado en la comunidad %{community}
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation

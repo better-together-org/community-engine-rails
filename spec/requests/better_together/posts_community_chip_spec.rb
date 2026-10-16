@@ -17,30 +17,44 @@ RSpec.describe 'Post community chip' do
     Nokogiri::HTML(response.body).css('.community-chip')
   end
 
+  def chip_names
+    chip_nodes.map { |node| node.at_css('.community-chip-name').text.strip }
+  end
+
   it 'shows the community on the posts index card' do
     get better_together.posts_path(locale:)
 
-    expect(chip_nodes.map { |n| n.text.strip }).to include('Chip Visible Community')
+    expect(chip_names).to include('Chip Visible Community')
     expect(chip_nodes.first['href']).to include(community.slug)
   end
 
   it 'shows the community on the post list view' do
     get better_together.posts_path(locale:, view_type: 'list')
 
-    expect(chip_nodes.map { |n| n.text.strip }).to include('Chip Visible Community')
+    expect(chip_names).to include('Chip Visible Community')
   end
 
   it 'shows the community on the post table view' do
     get better_together.posts_path(locale:, view_type: 'table')
 
-    expect(chip_nodes.map { |n| n.text.strip }).to include('Chip Visible Community')
+    expect(chip_names).to include('Chip Visible Community')
   end
 
   it 'shows the community on the post show page' do
     get better_together.post_path(post_record, locale:)
 
     expect(response).to have_http_status(:ok)
-    expect(chip_nodes.map { |n| n.text.strip }).to include('Chip Visible Community')
+    expect(chip_names).to include('Chip Visible Community')
+  end
+
+  it 'distinguishes the chip with an icon, a screen reader label and a tooltip' do
+    get better_together.post_path(post_record, locale:)
+
+    chip = chip_nodes.first
+    expect(chip.at_css('i.fa-people-group')['aria-hidden']).to eq('true')
+    expect(chip.at_css('.visually-hidden').text).to eq('Community:')
+    expect(chip['title']).to eq('Posted in the Chip Visible Community community')
+    expect(chip['data-bs-toggle']).to eq('tooltip')
   end
 
   it 'omits the chip on the index when the page is scoped to that community' do

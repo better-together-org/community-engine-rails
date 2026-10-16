@@ -2,7 +2,7 @@
   "name": "post_community_chip_show",
   "device": "desktop",
   "url": "/en/posts/sample-post-1",
-  "title": "Mill cam timelapse, 12 October | Posts | Parker, Howell and Heidenreich",
+  "title": "Mill cam timelapse, 12 October | Posts | Pfannerstill, Will and Kassulke",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "post_community_chip",
@@ -10,38 +10,38 @@
   "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
   "callouts": [
     {
-      "selector": "#community_post_f1564b9c-a9c9-4431-aceb-e99881632332 .community-chip",
+      "selector": "#community_post_042bbefc-122e-4746-a8dc-c4199d6a0a6a .community-chip",
       "title": "Community chip",
       "bullets": [
         "Links to the post's community."
       ],
       "target": {
         "x": 146.734375,
-        "y": 790.796875,
-        "width": 147.765625,
-        "height": 20.0,
-        "right": 294.5,
-        "bottom": 810.796875,
-        "center_x": 220.6171875,
-        "center_y": 800.796875
+        "y": 794.078125,
+        "width": 161.078125,
+        "height": 20.375,
+        "right": 307.8125,
+        "bottom": 814.453125,
+        "center_x": 227.2734375,
+        "center_y": 804.265625
       },
       "avoid": {
         "x": 146.734375,
-        "y": 790.796875,
-        "width": 147.765625,
-        "height": 20.0,
-        "right": 294.5,
-        "bottom": 810.796875,
-        "center_x": 220.6171875,
-        "center_y": 800.796875
+        "y": 794.078125,
+        "width": 161.078125,
+        "height": 20.375,
+        "right": 307.8125,
+        "bottom": 814.453125,
+        "center_x": 227.2734375,
+        "center_y": 804.265625
       },
       "placement": {
         "side": "right",
-        "x": 314.5,
-        "y": 734.8,
+        "x": 327.81,
+        "y": 738.27,
         "width": 380,
         "height": 132,
-        "score": 1145.5
+        "score": 1132.1875
       }
     }
   ]

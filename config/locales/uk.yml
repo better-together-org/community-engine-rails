@@ -3916,7 +3916,8 @@ uk:
       whatsapp: Share on WhatsApp
     shared:
       community_chip:
-        title: 'Спільнота: %{community}'
+        label: Спільнота
+        title: Опубліковано у спільноті %{community}
       community_creation_agreement_notice:
         accept_link: Перегляньте і прийміть угоду про створення спільноти
         message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення

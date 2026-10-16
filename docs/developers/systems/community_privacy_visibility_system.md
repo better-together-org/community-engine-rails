@@ -116,6 +116,7 @@ The key assertions now prove that:
 
 Post cards, list items, table rows and the post show page identify the owning community with `community_chip(post.community)` (`CommunitiesHelper`, partial `better_together/shared/_community_chip`).
 
+- The chip is a bordered pill with a community icon, a visually hidden "Community:" label for screen readers and a tooltip ("Posted in the ... community"), so it is not mistaken for a contributor mention.
 - The chip is omitted when the viewer cannot `show?` the community, so a visible post never reveals a hidden community.
 - It is omitted on the index when the page is already scoped to that community (`community_id` param); the show page always renders it (`hide_current: false`).
 - Visibility is memoized per request, and the posts index preloads `community` with its translations and profile image.

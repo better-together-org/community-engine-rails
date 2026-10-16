@@ -3947,7 +3947,8 @@ fr:
       whatsapp: Partager sur WhatsApp
     shared:
       community_chip:
-        title: 'Communauté : %{community}'
+        label: Communauté
+        title: Publié dans la communauté %{community}
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
