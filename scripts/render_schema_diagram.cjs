@@ -19,7 +19,7 @@ if (!pngPath) {
   process.exit(2);
 }
 const toolsRequire = createRequire(path.join(path.resolve(toolsDir), 'package.json'));
-const MAX_PNG_SIDE = 16000;
+const MAX_PNG_SIDE = 10000; // Chrome drops most of the drawing on larger canvases
 
 function dotFor(dbml) {
   const cli = path.join(path.resolve(toolsDir), 'node_modules', '.bin', 'dbml-renderer');
@@ -57,8 +57,12 @@ async function rasterize(svg) {
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: pxWidth, height: pxHeight });
-    const uri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
-    await page.setContent(`<body style="margin:0;background:#fff"><img src="${uri}" width="${pxWidth}" height="${pxHeight}"></body>`);
+    // Graphviz sizes the SVG in pt; restate it in px so the viewBox scales the drawing to the viewport.
+    // Inline SVG: as an <img> Chrome drops most of an SVG this large.
+    const scaled = svg
+      .replace(/<\?xml[^>]*\?>|<!DOCTYPE[^>]*>/g, '')
+      .replace(/(<svg[^>]*?)width="[\d.]+pt"\s+height="[\d.]+pt"/, `$1width="${pxWidth}" height="${pxHeight}"`);
+    await page.setContent(`<body style="margin:0;background:#fff">${scaled}</body>`, { waitUntil: 'load', timeout: 120000 });
     await page.screenshot({ path: pngPath, clip: { x: 0, y: 0, width: pxWidth, height: pxHeight } });
   } finally {
     await browser.close();
