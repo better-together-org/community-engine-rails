@@ -73,7 +73,7 @@ module BetterTogether
     def self.card_render_includes
       includes = [
         :string_translations,
-        { community: :string_translations },
+        { community: [:string_translations, { profile_image_attachment: :blob }] },
         { cover_image_attachment: :blob },
         { contributions: :author },
         { categories: { cover_image_attachment: :blob } }

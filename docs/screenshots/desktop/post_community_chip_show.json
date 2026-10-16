@@ -10,38 +10,38 @@
   "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
   "callouts": [
     {
-      "selector": "#community_post_042bbefc-122e-4746-a8dc-c4199d6a0a6a .community-chip",
+      "selector": "#community_post_a006f265-aa83-48a9-9b02-c8f28b69a99d .community-chip",
       "title": "Community chip",
       "bullets": [
         "Links to the post's community."
       ],
       "target": {
         "x": 146.734375,
-        "y": 794.078125,
-        "width": 161.078125,
-        "height": 20.375,
-        "right": 307.8125,
-        "bottom": 814.453125,
-        "center_x": 227.2734375,
-        "center_y": 804.265625
+        "y": 790.296875,
+        "width": 185.078125,
+        "height": 22.0,
+        "right": 331.8125,
+        "bottom": 812.296875,
+        "center_x": 239.2734375,
+        "center_y": 801.296875
       },
       "avoid": {
         "x": 146.734375,
-        "y": 794.078125,
-        "width": 161.078125,
-        "height": 20.375,
-        "right": 307.8125,
-        "bottom": 814.453125,
-        "center_x": 227.2734375,
-        "center_y": 804.265625
+        "y": 790.296875,
+        "width": 185.078125,
+        "height": 22.0,
+        "right": 331.8125,
+        "bottom": 812.296875,
+        "center_x": 239.2734375,
+        "center_y": 801.296875
       },
       "placement": {
         "side": "right",
-        "x": 327.81,
-        "y": 738.27,
+        "x": 351.81,
+        "y": 735.3,
         "width": 380,
         "height": 132,
-        "score": 1132.1875
+        "score": 1108.1875
       }
     }
   ]

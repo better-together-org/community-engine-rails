@@ -47,11 +47,13 @@ RSpec.describe 'Post community chip' do
     expect(chip_names).to include('Chip Visible Community')
   end
 
-  it 'distinguishes the chip with an icon, a screen reader label and a tooltip' do
+  it 'distinguishes the chip with the image, a trailing icon, a screen reader label and a tooltip' do
     get better_together.post_path(post_record, locale:)
 
     chip = chip_nodes.first
+    expect(chip.at_css('img.profile-image')).to be_present
     expect(chip.at_css('i.fa-people-group')['aria-hidden']).to eq('true')
+    expect(chip.element_children.last.name).to eq('i')
     expect(chip.at_css('.visually-hidden').text).to eq('Community:')
     expect(chip['title']).to eq('Posted in the Chip Visible Community community')
     expect(chip['data-bs-toggle']).to eq('tooltip')
