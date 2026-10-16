@@ -8,7 +8,7 @@ Baseline `v0.10.0`. Generated from [`ce_documentation_coverage_manifest.json`](c
 | Audience | HTML actions | covered | partial | stale | missing | new since baseline |
 | --- | --- | --- | --- | --- | --- | --- |
 | developer | 8 | 0 | 1 | 0 | 7 | 0 |
-| platform_manager | 100 | 0 | 34 | 46 | 20 | 21 |
+| platform_manager | 100 | 0 | 35 | 45 | 20 | 21 |
 | community_organizer | 11 | 0 | 5 | 6 | 0 | 3 |
 | content_moderator | 5 | 0 | 0 | 5 | 0 | 2 |
 | end_user | 81 | 6 | 9 | 49 | 17 | 16 |
@@ -25,7 +25,7 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 | `better_together/platform_domains#edit` | new | missing | 0 | 0 |
 | `better_together/feature_access_grants#edit` | new | partial | 0 | 2 |
 | `better_together/feature_access_grants#index` | new | partial | 0 | 2 |
-| `better_together/platform_connections#edit` | new | stale | 0 | 2 |
+| `better_together/platform_connections#edit` | new | partial | 0 | 2 |
 | `better_together/platform_connections#index` | new | stale | 0 | 2 |
 | `better_together/platform_domains#index` | new | partial | 0 | 2 |
 | `better_together/platform_domains#new` | new | partial | 0 | 4 |

@@ -21,26 +21,26 @@
         "x": 423.5,
         "y": 261.796875,
         "width": 908.0,
-        "height": 1199.203125,
+        "height": 1195.203125,
         "right": 1331.5,
-        "bottom": 1461.0,
+        "bottom": 1457.0,
         "center_x": 877.5,
-        "center_y": 861.3984375
+        "center_y": 859.3984375
       },
       "avoid": {
         "x": 423.5,
         "y": 261.796875,
         "width": 908.0,
-        "height": 1199.203125,
+        "height": 1195.203125,
         "right": 1331.5,
-        "bottom": 1461.0,
+        "bottom": 1457.0,
         "center_x": 877.5,
-        "center_y": 861.3984375
+        "center_y": 859.3984375
       },
       "placement": {
         "side": "left",
         "x": 24,
-        "y": 607.4,
+        "y": 605.4,
         "width": 380,
         "height": 508,
         "score": 423.5

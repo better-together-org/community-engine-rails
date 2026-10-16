@@ -2,7 +2,7 @@
   "name": "post_federation_visibility_field",
   "device": "desktop",
   "url": "/en/posts/sample-post-1/edit",
-  "title": "Edit Post | Community Engine",
+  "title": "Edit Post | Test Host Community",
   "locale": "en",
   "feature_set": "federation_item_consent",
   "flow": "post_federation_visibility_field",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 711.0,
+        "y": 709.0,
         "width": 1296.0,
         "height": 38.0,
         "right": 1360.5,
-        "bottom": 749.0,
+        "bottom": 747.0,
         "center_x": 712.5,
-        "center_y": 730.0
+        "center_y": 728.0
       },
       "avoid": {
         "x": 64.5,
-        "y": 711.0,
+        "y": 709.0,
         "width": 1296.0,
         "height": 38.0,
         "right": 1360.5,
-        "bottom": 749.0,
+        "bottom": 747.0,
         "center_x": 712.5,
-        "center_y": 730.0
+        "center_y": 728.0
       },
       "placement": {
         "side": "below",
         "x": 522.5,
-        "y": 769.0,
+        "y": 767.0,
         "width": 380,
         "height": 294,
-        "score": 712.0
+        "score": 710.0
       }
     }
   ]

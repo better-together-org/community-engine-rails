@@ -1,0 +1,10 @@
+{
+  "name": "seed_better_together",
+  "device": "mobile",
+  "url": "/en/better-together",
+  "title": "404 - Page Not Found | Test Host Community",
+  "locale": "en",
+  "role": "public",
+  "source_spec": "./spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb",
+  "page_slug": "better-together"
+}

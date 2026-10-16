@@ -1,5 +1,9 @@
 # Implementation Plan: Richer, Unified Platform-Provisioning Wizard
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-07-18. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** July 18, 2026
 **Companion to:** [`docs/assessments/richer_platform_setup_wizard_assessment.md`](../assessments/richer_platform_setup_wizard_assessment.md)
 **Status:** Planning only — no code changes are made against these items in this document. Each phase below is scoped for a future implementation PR.

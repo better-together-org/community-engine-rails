@@ -1,0 +1,10 @@
+{
+  "name": "person_deletion_entrypoint",
+  "device": "mobile",
+  "url": "/en/users/edit",
+  "title": "Edit User | Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "person_deletion_review",
+  "source_spec": "./spec/docs_screenshots/better_together/person_deletion_review_spec.rb"
+}

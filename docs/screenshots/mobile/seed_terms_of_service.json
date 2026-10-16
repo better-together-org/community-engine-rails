@@ -1,0 +1,10 @@
+{
+  "name": "seed_terms_of_service",
+  "device": "mobile",
+  "url": "/en/terms-of-service",
+  "title": "Terms of Service | Test Host Community",
+  "locale": "en",
+  "role": "public",
+  "source_spec": "./spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb",
+  "page_slug": "terms-of-service"
+}

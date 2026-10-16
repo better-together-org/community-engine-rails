@@ -1,5 +1,9 @@
 # Better Together Community Engine - Database Documentation Inventory
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document provides a comprehensive inventory of all database tables in the Better Together Community Engine, categorizing them by system/domain and tracking documentation completion status. Based on the schema.rb analysis, we have identified **75 total tables** across **15 major system domains**.
