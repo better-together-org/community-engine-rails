@@ -3866,6 +3866,22 @@ en:
           agreement first.
       event_status_level: 'Event status: %{status}'
       event_status_tooltip: 'Event status: %{status}'
+      map:
+        buttons:
+          geolocate: Geolocate Me
+          map: Map
+          satellite: Satellite
+        geolocation:
+          denied: Location access is blocked. Allow it for this site in your browser
+            settings and try again.
+          located: Showing your location.
+          locating: Finding your location...
+          timeout: Finding your location took too long. Try again.
+          unavailable: Your location could not be determined. Check that location
+            services are on and try again.
+          unsupported: Your browser does not support location.
+          you_are_here: You are here
+        show_on_map: Show on the map
       privacy_level: 'Privacy: %{privacy}'
       privacy_tooltip: This content is %{privacy}
       publishing_agreement_notice:
