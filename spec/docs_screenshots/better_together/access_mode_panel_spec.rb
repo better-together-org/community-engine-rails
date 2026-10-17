@@ -23,6 +23,7 @@ RSpec.describe 'Documentation screenshots for access mode panels',
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    user
   end
 
   after do
@@ -61,6 +62,7 @@ RSpec.describe 'Documentation screenshots for access mode panels',
       :better_together_community,
       name: 'Open Join Community',
       privacy: 'public',
+      requires_invitation: false,
       allow_membership_requests: false
     )
 
@@ -82,10 +84,13 @@ RSpec.describe 'Documentation screenshots for access mode panels',
   end
 
   it 'captures a community in request-to-join mode for a signed-in person' do
+    # A community only offers request-to-join while the platform also allows membership requests.
+    host_platform.update!(allow_membership_requests: true)
     community = create(
       :better_together_community,
       name: 'Request Join Community',
       privacy: 'public',
+      requires_invitation: false,
       allow_membership_requests: true
     )
 

@@ -2,7 +2,7 @@
   "name": "pr1692_recurrence_live_preview",
   "device": "mobile",
   "url": "/en/events/new",
-  "title": "Flatley-Kris",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "recurrence_calendar_ux",
@@ -13,70 +13,70 @@
       "selector": "#recurrence-preview-summary",
       "title": "Plain-English rule summary",
       "bullets": [
-        "Confirms the whole configuration at a glance instead of parsing 5 separate fields."
+        "Confirms the whole rule at a glance."
       ],
       "target": {
         "x": 12.0,
-        "y": 1196.390625,
+        "y": 785.390625,
         "width": 461.0,
         "height": 24.0,
         "right": 473.0,
-        "bottom": 1220.390625,
+        "bottom": 809.390625,
         "center_x": 242.5,
-        "center_y": 1208.390625
+        "center_y": 797.390625
       },
       "avoid": {
         "x": 12.0,
-        "y": 1196.390625,
+        "y": 785.390625,
         "width": 461.0,
         "height": 24.0,
         "right": 473.0,
-        "bottom": 1220.390625,
+        "bottom": 809.390625,
         "center_x": 242.5,
-        "center_y": 1208.390625
+        "center_y": 797.390625
       },
       "placement": {
         "side": "above",
         "x": 107.5,
-        "y": 934.39,
+        "y": 601.39,
         "width": 270.0,
-        "height": 242,
-        "score": 1196.390625
+        "height": 164,
+        "score": 785.390625
       }
     },
     {
       "selector": "#recurrence-preview-occurrences",
       "title": "Real upcoming occurrence dates",
       "bullets": [
-        "The preview endpoint existed before this PR but was never actually wired to any field — every interaction silently did nothing."
+        "Lists the dates the rule will create."
       ],
       "target": {
         "x": 12.0,
-        "y": 1228.390625,
+        "y": 817.390625,
         "width": 461.0,
-        "height": 32.609375,
+        "height": 72.0,
         "right": 473.0,
-        "bottom": 1261.0,
+        "bottom": 889.390625,
         "center_x": 242.5,
-        "center_y": 1244.6953125
+        "center_y": 853.390625
       },
       "avoid": {
         "x": 12.0,
-        "y": 1228.390625,
+        "y": 817.390625,
         "width": 461.0,
-        "height": 32.609375,
+        "height": 72.0,
         "right": 473.0,
-        "bottom": 1261.0,
+        "bottom": 889.390625,
         "center_x": 242.5,
-        "center_y": 1244.6953125
+        "center_y": 853.390625
       },
       "placement": {
-        "side": "right",
-        "x": 206.0,
-        "y": 24,
+        "side": "below",
+        "x": 107.5,
+        "y": 909.39,
         "width": 270.0,
-        "height": 320,
-        "score": 0
+        "height": 190,
+        "score": 367.609375
       }
     }
   ]

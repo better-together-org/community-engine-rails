@@ -17,6 +17,9 @@ RSpec.describe 'Documentation screenshots for content security review states',
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
+    # Content-security enrollment is off by default in the test environment; without this no
+    # ContentSecurity::Subject is created for attachments and the review states never render.
+    allow(BetterTogether::ContentSecurity::Configuration).to receive_messages(enabled?: true, enabled_for_surface?: true)
     Current.platform = host_platform
     BetterTogether::AccessControlBuilder.seed_data
   end
@@ -247,7 +250,7 @@ RSpec.describe 'Documentation screenshots for content security review states',
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:, status: 'active')
   end
 
   def png_data

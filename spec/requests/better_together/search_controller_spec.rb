@@ -109,7 +109,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       let!(:public_post) do
         create(
           :better_together_post,
-          title: 'Borgberry Public Post',
+          title: 'Lighthouse Public Post',
           privacy: 'public',
           published_at: 1.day.ago
         )
@@ -118,7 +118,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       let!(:private_post) do
         create(
           :better_together_post,
-          title: 'Borgberry Private Post',
+          title: 'Lighthouse Private Post',
           privacy: 'private',
           published_at: 1.day.ago
         )
@@ -127,7 +127,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       let!(:scheduled_page) do
         create(
           :better_together_page,
-          title: 'Borgberry Scheduled Page',
+          title: 'Lighthouse Scheduled Page',
           privacy: 'public',
           published_at: 1.day.from_now
         )
@@ -137,7 +137,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         allow(backend).to receive(:search).and_return(
           BetterTogether::Search::SearchResult.new(
             records: [public_post, private_post, scheduled_page],
-            suggestions: ['borgberry private post'],
+            suggestions: ['lighthouse private post'],
             status: :ok,
             backend: :elasticsearch
           )
@@ -145,21 +145,21 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
 
       it 'renders only records visible to the current visitor and suppresses suggestions' do
-        get better_together.search_path(locale:), params: { q: 'borgberry' }
+        get better_together.search_path(locale:), params: { q: 'lighthouse' }
 
         visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
 
         expect(response).to have_http_status(:ok)
-        expect(visible_titles).to include('Borgberry Public Post')
-        expect(visible_titles).not_to include('Borgberry Private Post')
-        expect(visible_titles).not_to include('Borgberry Scheduled Page')
+        expect(visible_titles).to include('Lighthouse Public Post')
+        expect(visible_titles).not_to include('Lighthouse Private Post')
+        expect(visible_titles).not_to include('Lighthouse Scheduled Page')
         expect(response.body).not_to include('Did you mean?')
-        expect(response.body).not_to include('borgberry private post')
+        expect(response.body).not_to include('lighthouse private post')
       end
     end
 
     context 'when the backend returns records that require authentication', :no_auth do
-      let!(:offer) { create(:better_together_joatu_offer, name: 'Borgberry Mutual Aid Offer') }
+      let!(:offer) { create(:better_together_joatu_offer, name: 'Lighthouse Mutual Aid Offer') }
 
       before do
         allow(backend).to receive(:search).and_return(
@@ -173,12 +173,12 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
 
       it 'filters records whose policy denies guest access' do
-        get better_together.search_path(locale:), params: { q: 'borgberry' }
+        get better_together.search_path(locale:), params: { q: 'lighthouse' }
 
         visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
 
         expect(response).to have_http_status(:ok)
-        expect(visible_titles).not_to include('Borgberry Mutual Aid Offer')
+        expect(visible_titles).not_to include('Lighthouse Mutual Aid Offer')
       end
     end
 
@@ -252,7 +252,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       let!(:own_private_post) do
         create(
           :better_together_post,
-          title: 'My Borgberry Draft',
+          title: 'My Lighthouse Draft',
           privacy: 'private',
           published_at: 1.day.ago,
           creator: user.person,
@@ -263,7 +263,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       let!(:other_private_post) do
         create(
           :better_together_post,
-          title: 'Someone Else Borgberry Draft',
+          title: 'Someone Else Lighthouse Draft',
           privacy: 'private',
           published_at: 1.day.ago
         )
@@ -273,7 +273,7 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
         allow(backend).to receive(:search).and_return(
           BetterTogether::Search::SearchResult.new(
             records: [own_private_post, other_private_post],
-            suggestions: ['someone else borgberry draft'],
+            suggestions: ['someone else lighthouse draft'],
             status: :ok,
             backend: :elasticsearch
           )
@@ -281,13 +281,13 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
 
       it 'keeps authorized private records while filtering unauthorized ones' do
-        get better_together.search_path(locale:), params: { q: 'borgberry' }
+        get better_together.search_path(locale:), params: { q: 'lighthouse' }
 
         visible_titles = assigns(:results).map { |result| result.try(:title) || result.try(:name) }
 
         expect(response).to have_http_status(:ok)
-        expect(visible_titles).to include('My Borgberry Draft')
-        expect(visible_titles).not_to include('Someone Else Borgberry Draft')
+        expect(visible_titles).to include('My Lighthouse Draft')
+        expect(visible_titles).not_to include('Someone Else Lighthouse Draft')
         expect(response.body).not_to include('Did you mean?')
       end
     end

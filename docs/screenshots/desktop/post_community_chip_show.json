@@ -1,0 +1,48 @@
+{
+  "name": "post_community_chip_show",
+  "device": "desktop",
+  "url": "/en/posts/sample-post-1",
+  "title": "Mill cam timelapse, 12 October | Posts | Pfannerstill, Will and Kassulke",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "post_community_chip",
+  "flow": "post_community_chip_show",
+  "source_spec": "./spec/docs_screenshots/better_together/post_community_chip_spec.rb",
+  "callouts": [
+    {
+      "selector": "#community_post_ecd99eec-d913-47cd-b32c-b181391d351b .community-chip",
+      "title": "Community chip",
+      "bullets": [
+        "Links to the post's community."
+      ],
+      "target": {
+        "x": 146.734375,
+        "y": 790.296875,
+        "width": 185.078125,
+        "height": 22.0,
+        "right": 331.8125,
+        "bottom": 812.296875,
+        "center_x": 239.2734375,
+        "center_y": 801.296875
+      },
+      "avoid": {
+        "x": 146.734375,
+        "y": 790.296875,
+        "width": 185.078125,
+        "height": 22.0,
+        "right": 331.8125,
+        "bottom": 812.296875,
+        "center_x": 239.2734375,
+        "center_y": 801.296875
+      },
+      "placement": {
+        "side": "right",
+        "x": 351.81,
+        "y": 735.3,
+        "width": 380,
+        "height": 132,
+        "score": 1108.1875
+      }
+    }
+  ]
+}

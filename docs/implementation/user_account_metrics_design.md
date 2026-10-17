@@ -1,5 +1,9 @@
 # User Account Metrics Design
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-12. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This document outlines the design for tracking user account creation and confirmation metrics in the Better Together Community Engine.

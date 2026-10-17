@@ -24,7 +24,7 @@ This repository uses a comprehensive system of instruction files:
    - `importmaps.instructions.md` - JavaScript module management (JS, importmap.rb)
    - `notifications-noticed.instructions.md` - Noticed gem patterns (Ruby)
    - `rails-engine.instructions.md` - Rails 7.1+ & engine conventions (Ruby)
-   - `search-elasticsearch.instructions.md` - Elasticsearch 7 integration (Ruby)
+   - `search.instructions.md` - pg_search-based search and the optional Elasticsearch extension gem (Ruby)
    - `security-encryption.instructions.md` - Security & Active Record Encryption (Ruby, ERB, JS)
    - `sidekiq-redis.instructions.md` - Background jobs & caching (job files, Redis, initializers)
    - `view-helpers.instructions.md` - Action View & helper patterns (ERB, Ruby, helpers)
@@ -36,7 +36,7 @@ This repository uses a comprehensive system of instruction files:
 **Build & Setup:**
 ```bash
 bin/dc build                    # Build Docker containers
-bin/dc up -d                    # Start services (Postgres, Redis, Elasticsearch)
+bin/dc up -d                    # Start services (Postgres, Redis)
 bin/dc-run rails db:prepare     # Setup/migrate database
 bin/parallel-setup              # Setup parallel test DBs (REQUIRED for prspec)
 ```
@@ -70,7 +70,7 @@ bin/dc-run bin/i18n                                         # I18n validation
   4. Verify no new security warnings from brakeman
 - **Documentation**: Run `bin/render_diagrams` after updating `.mmd` files
 
-> **Critical**: Always use `bin/dc-run` for commands that access database, Redis, or Elasticsearch. See AGENTS.md for complete command reference.
+> **Critical**: Always use `bin/dc-run` for commands that access the database or Redis. See AGENTS.md for complete command reference.
 
 ## Core Principles
 
@@ -98,7 +98,7 @@ bin/dc-run bin/i18n                                         # I18n validation
 - **Trix / Action Text** for rich text
 - **Active Record Encryption** for sensitive fields; encrypted Active Storage files
 - **Mobility** for attribute translations
-- **Elasticsearch 7** via `elasticsearch-rails`
+- **Postgres-native search** via `pg_search` (Elasticsearch is the optional `better_together-elasticsearch` extension gem)
 - **Importmap-Rails** for JS deps (no bundler by default)
 - **Docker** containerized development environment - use `bin/dc-run` for all database-dependent commands
 - **Dokku** (Docker-based PaaS) for deployment; Cloudflare for DNS/DDoS/tunnels
@@ -323,7 +323,7 @@ All form inputs MUST use one of these accessible label patterns:
 - **Prefer `build_stubbed` for nil/timezone scenarios**: Use stubbed instances instead of mutating database constraints in setup.
 
 ### Docker Environment Usage
-- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL or Redis
 - **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:
@@ -751,11 +751,11 @@ ls bin/dc*  # Should show: bin/dc, bin/dc-run, bin/dc-run-dummy
 chmod +x bin/dc*  # If needed
 ```
 
-**Problem: Elasticsearch not available**
+**Problem: search returns nothing or is unavailable**
 ```bash
-# Solution: Check Docker services and wait for ES to be ready
-bin/dc ps  # Should show elasticsearch running
-# Wait ~30 seconds for ES to fully start
+# Solution: check SEARCH_BACKEND (default pg_search) and run the audit
+bin/dc-run bundle exec rake better_together:search:audit
+# Only with SEARCH_BACKEND=elasticsearch (extension gem) is an Elasticsearch service required
 ```
 
 **Problem: Test database schema out of sync**

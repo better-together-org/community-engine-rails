@@ -1,5 +1,9 @@
 # Better Together Community Engine — Comprehensive Code Audit
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-02-11. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Audit Date:** February 11, 2026
 **Rails Version:** 8.0.3
 **Ruby Version:** 3.4.4

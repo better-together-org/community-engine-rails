@@ -111,7 +111,15 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
   end
 
   def peer_platform
-    @peer_platform ||= create(:better_together_platform, name: 'Neighbourhood Commons', external: true, privacy: 'private')
+    @peer_platform ||= find_or_create_peer_platform('Neighbourhood Commons')
+  end
+
+  # Platforms and communities are in ESSENTIAL_TABLES, so the :deletion cleanup keeps them between
+  # examples; reuse the peer by a fixed identifier instead of recreating it (duplicate community slug).
+  def find_or_create_peer_platform(name)
+    identifier = "docs-#{name.parameterize}"
+    BetterTogether::Platform.find_by(identifier:) ||
+      create(:better_together_platform, name:, identifier:, external: true, privacy: 'private')
   end
 
   def connection
@@ -123,9 +131,7 @@ RSpec.describe 'Documentation screenshots for the Federation Hub and per-item fe
   end
 
   def second_peer_platform
-    @second_peer_platform ||= create(
-      :better_together_platform, name: 'Riverside Neighbours Collective', external: true, privacy: 'private'
-    )
+    @second_peer_platform ||= find_or_create_peer_platform('Riverside Neighbours Collective')
   end
 
   def second_connection

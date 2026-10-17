@@ -1,5 +1,9 @@
 # Better Together Community Engine - Documentation Completeness Assessment
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-23. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Assessment Date:** August 23, 2025  
 **Analyst:** GitHub Copilot  
 **Assessment Version:** 2025_08_23_comprehensive_analysis  
