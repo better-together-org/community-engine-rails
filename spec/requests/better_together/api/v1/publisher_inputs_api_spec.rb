@@ -109,6 +109,29 @@ RSpec.describe 'BetterTogether::Api::V1 publisher inputs', :no_auth do
       expect(record.reload.updated_at).to be_within(1.second).of(original)
     end
 
+    it 'keeps attached image blocks when the body is rewritten', :aggregate_failures do
+      BetterTogether::Content::Image.include(ActionText::Attachable)
+      BetterTogether::Content::Image.include(Module.new { def to_attachable_partial_path = 'better_together/test_support/attachable' })
+      BetterTogether::ContentSecurity::AttachableRegistry.register('BetterTogether::Content::Image')
+      block = BetterTogether::Content::Image.create!(platform: BetterTogether::Platform.find_by(host: true), privacy: 'public',
+                                                     identifier: 'pi-img', creator: user.person, caption: 'Harbour',
+                                                     media_data: data, media_filename: 'h.png')
+      post '/api/v1/posts', params: jsonapi('posts', title: 'Arrived', content: '<p>Arrived</p>', privacy: 'public',
+                                                     attachment_block_ids: [block.id]), headers: headers
+      expect(response).to have_http_status(:created), response.body
+      id = JSON.parse(response.body).dig('data', 'id')
+      patch "/api/v1/posts/#{id}", params: jsonapi_update('posts', id, content: '<p>Departed</p>'), headers: headers
+
+      expect(response).to have_http_status(:ok), response.body
+      body = BetterTogether::Post.find(id).content.body
+      expect(body.attachables.map(&:id)).to eq([block.id])
+      expect(body.to_html).to include('Departed')
+      expect(body.to_html).not_to include('Arrived')
+      expect(JSON.parse(response.body).dig('data', 'attributes')).not_to have_key('attachment_block_ids')
+    ensure
+      BetterTogether::ContentSecurity::AttachableRegistry.reset!
+    end
+
     it 'never rewrites created_at after creation', :aggregate_failures do
       record = create(:better_together_post, privacy: 'public', creator: user.person)
       created = record.created_at
