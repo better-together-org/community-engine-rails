@@ -22,15 +22,24 @@ module BetterTogether
     class CommunityCollectionMap < CommunityMap
       attr_writer :loaded_collection
 
-      def self.records
-        mappable_class
+      # The communities the viewer may see (a policy scope), used when no loaded collection was injected.
+      attr_writer :visible_scope
+
+      def self.records(visible_scope = nil)
+        scope = if visible_scope
+                  mappable_class.where(id: visible_scope.except(:includes, :preload, :eager_load,
+                                                                :order).select(:id))
+                else
+                  mappable_class
+                end
+        scope
           .joins(buildings: [:space])
           .preload(buildings: %i[space address])
           .order(created_at: :desc)
       end
 
       def records
-        @records ||= @loaded_collection || self.class.records
+        @records ||= @loaded_collection || self.class.records(@visible_scope)
       end
 
       def spaces
@@ -66,12 +75,13 @@ module BetterTogether
         end
       end
 
+      # Names and addresses are user supplied, so every piece is HTML escaped before it goes into popup markup.
       def build_leaflet_point(point, community, address)
         place_label = address&.text_label.present? ? " - #{address.text_label}" : nil
         place_url = community_place_url(community)
         place_link = "<a href='#{place_url}' class='text-decoration-none'>" \
-                     "<strong>#{community.name}#{place_label}</strong></a>"
-        address_label = address&.to_formatted_s(excluded: [:display_label])
+                     "<strong>#{ERB::Util.html_escape("#{community.name}#{place_label}")}</strong></a>"
+        address_label = ERB::Util.html_escape(address&.to_formatted_s(excluded: [:display_label]))
 
         point.merge(label: place_link, popup_html: "#{place_link}<br>#{address_label}")
       end

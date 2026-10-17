@@ -14,6 +14,7 @@ module BetterTogether
     def post_index_includes
       base_includes = [
         :string_translations,
+        { community: [:string_translations, { profile_image_attachment: :blob }] },
         { categories: :string_translations },
         { contributions: { author: [:string_translations, { profile_image_attachment: :blob }] } }
       ]

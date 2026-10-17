@@ -578,7 +578,7 @@ Manage external service integrations:
 - Error tracking or monitoring services
 - Email delivery (SMTP, SendGrid)
 - File storage (S3, MinIO)
-- Search (Elasticsearch)
+- Search (optional Elasticsearch extension gem; Postgres search needs no external service)
 
 **Integration requirements:**
 - Update privacy policy

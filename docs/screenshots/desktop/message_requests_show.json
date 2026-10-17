@@ -1,0 +1,10 @@
+{
+  "name": "message_requests_show",
+  "device": "desktop",
+  "url": "/en/message_requests/255eb26b-cec5-4f80-af08-9e29e5875f01",
+  "title": "Message Request | Community Engine Host",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "message_requests",
+  "source_spec": "./spec/docs_screenshots/better_together/message_requests_spec.rb"
+}

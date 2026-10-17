@@ -13,6 +13,7 @@ RSpec.describe 'Documentation screenshots for block editor contract review',
       title: 'PR 1490 Hero Docs Page',
       slug: 'pr-1490-hero-docs-page',
       identifier: 'pr-1490-hero-docs-page',
+      platform: BetterTogether::Platform.find_by!(host: true),
       protected: false,
       published_at: 1.day.ago
     )

@@ -1,18 +1,43 @@
-<%# locals: (map:, enable_popups: true, use_label_as_popup: false) %>
+<%# locals: (map:, enable_popups: true, use_label_as_popup: false, cluster: true, types: [], boundary: nil, extra_controllers: nil, attributes: {}) %>
+<%# attributes: extra HTML attributes for the map element, with full data attribute names as keys (for example
+    'data-better_together--space-fields-target' => 'map'). extra_controllers: more Stimulus controllers to attach.
+    types: [{ key:, label:, color: }] for points that carry a type (drives the legend and cluster pies).
+    boundary: GeoJSON drawn as an outline. cluster: group nearby points by density. %>
 
 <% if map %>
-  <div class="map" id="<%= dom_id(map) %>"
-      data-controller="better_together--map"
-      data-better_together--map-center-value="<%= map.center_for_leaflet %>"
-      data-better_together--map-spaces-value="<%= map.leaflet_points.to_json %>"
-      data-better_together--map-zoom-value="<%= map.zoom %>"
-      data-better_together--map-extent-value="<%= map.viewport %>"
-      data-better_together--map-enable-popups-value="<%= enable_popups %>"
-      data-better_together--map-use-label-as-popup-value="<%= use_label_as_popup %>">
+  <%
+    scope = 'better_together.shared.map'
+    labels = {
+      locating: t("#{scope}.geolocation.locating"),
+      located: t("#{scope}.geolocation.located"),
+      denied: t("#{scope}.geolocation.denied"),
+      unavailable: t("#{scope}.geolocation.unavailable"),
+      timeout: t("#{scope}.geolocation.timeout"),
+      unsupported: t("#{scope}.geolocation.unsupported"),
+      youAreHere: t("#{scope}.geolocation.you_are_here"),
+      showOnMap: t("#{scope}.show_on_map")
+    }
+    map_attributes = {
+      id: dom_id(map),
+      class: 'map',
+      'data-controller' => ['better_together--map', *extra_controllers].join(' '),
+      'data-better_together--map-center-value' => map.center_for_leaflet,
+      'data-better_together--map-spaces-value' => map.leaflet_points.to_json,
+      'data-better_together--map-zoom-value' => map.zoom,
+      'data-better_together--map-extent-value' => map.viewport,
+      'data-better_together--map-enable-popups-value' => enable_popups,
+      'data-better_together--map-use-label-as-popup-value' => use_label_as_popup,
+      'data-better_together--map-cluster-value' => cluster,
+      'data-better_together--map-types-value' => types.to_json,
+      'data-better_together--map-labels-value' => labels.to_json
+    }
+    map_attributes['data-better_together--map-boundary-value'] = boundary.to_json if boundary.present?
+  %>
+  <%= content_tag(:div, map_attributes.stringify_keys.merge(attributes.to_h.stringify_keys)) do %>
     <div class="map-controls">
-      <button class="btn btn-secondary" data-action="better_together--map#switchToOSM">Map</button>
-      <button class="btn btn-secondary" data-action="better_together--map#switchToSatellite">Satellite</button>
-      <button class="btn btn-secondary" data-action="better_together--map#enableGeolocation">Geolocate Me</button>
+      <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToOSM"><%= t("#{scope}.buttons.map") %></button>
+      <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToSatellite"><%= t("#{scope}.buttons.satellite") %></button>
+      <button type="button" class="btn btn-secondary" data-geolocation-button data-action="better_together--map#enableGeolocation"><%= t("#{scope}.buttons.geolocate") %></button>
     </div>
-  </div>
+  <% end %>
 <% end %>

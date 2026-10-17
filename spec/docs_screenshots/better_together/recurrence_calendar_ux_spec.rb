@@ -203,16 +203,13 @@ RSpec.describe 'Documentation screenshots for the calendar grid and recurrence f
           id: 'preview_summary',
           selector: '#recurrence-preview-summary',
           title: 'Plain-English rule summary',
-          bullets: ['Confirms the whole configuration at a glance instead of parsing 5 separate fields.']
+          bullets: ['Confirms the whole rule at a glance.']
         },
         {
           id: 'preview_occurrences',
           selector: '#recurrence-preview-occurrences',
           title: 'Real upcoming occurrence dates',
-          bullets: [
-            'The preview endpoint existed before this PR but was never actually wired to any field ' \
-            '— every interaction silently did nothing.'
-          ]
+          bullets: ['Lists the dates the rule will create.']
         }
       ],
       narrative: {
@@ -237,7 +234,10 @@ RSpec.describe 'Documentation screenshots for the calendar grid and recurrence f
       select 'After occurrences', from: 'event[recurrence_attributes][end_type]'
       fill_in 'event[recurrence_attributes][count]', with: '3'
 
+      expect(page).to have_css('#recurrence-preview-summary', wait: 5)
       expect(page).to have_css('#recurrence-preview-occurrences li', minimum: 1, wait: 5)
+      # Both callout targets must sit inside the captured viewport (the mobile capture is shorter).
+      page.execute_script("document.getElementById('recurrence-preview-summary').scrollIntoView({ block: 'center', behavior: 'instant' })")
     end
   end
 
