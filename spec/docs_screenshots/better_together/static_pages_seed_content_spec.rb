@@ -8,6 +8,9 @@ RSpec.describe 'Documentation screenshots for built-in static pages', :docs_scre
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     configure_host_platform
+    # Pages are not in ESSENTIAL_TABLES, so an earlier example's :deletion cleanup removes them while
+    # their navigation items remain. The builder is idempotent for the footer pages and recreates the missing ones.
+    BetterTogether::NavigationBuilder.build(clear: false)
   end
 
   it 'captures the Better Together seed page' do
@@ -20,7 +23,7 @@ RSpec.describe 'Documentation screenshots for built-in static pages', :docs_scre
 
   it 'captures the Community Engine seed page' do
     capture_static_page(
-      slug: 'better-together/community-engine',
+      slug: 'better-together-community-engine',
       screenshot_name: 'seed_community_engine',
       expected_text: 'Community Engine'
     )

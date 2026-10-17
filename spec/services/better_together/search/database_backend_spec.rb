@@ -11,7 +11,7 @@ RSpec.describe BetterTogether::Search::DatabaseBackend do
       id: 10,
       class: BetterTogether::Page,
       as_indexed_json: {
-        title: 'Borgberry seed packet',
+        title: 'Lighthouse seed packet',
         template_content: { en: 'Community archive and public launch notes' }
       }
     )
@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::Search::DatabaseBackend do
 
   describe '#search' do
     it 'returns matching records from the configured registry entries' do
-      result = backend.search('borgberry archive')
+      result = backend.search('lighthouse archive')
 
       expect(result.status).to eq(:ok)
       expect(result.backend).to eq(:database)

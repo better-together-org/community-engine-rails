@@ -1,5 +1,9 @@
 # Plan: Posts Index — Search, Filter Sidebar, Pagination
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-24 (last edited 2026-06-03). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **v0.12.0 Release** | **Tracking issue:** better-together-org/community-engine-rails#1407
 
 **Related plans:**

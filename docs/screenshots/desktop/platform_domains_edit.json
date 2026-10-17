@@ -1,0 +1,10 @@
+{
+  "name": "platform_domains_edit",
+  "device": "desktop",
+  "url": "/en/host/platforms/community-engine-host/platform_domains/43068890-dba3-4c8f-a908-c5d82213eb21/edit",
+  "title": "Edit app.clientdomain.example | Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_domains",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+}

@@ -3,9 +3,8 @@
 # better_together_joatu_service_credit_balances is a ghost table — present in
 # schema.rb with zero corresponding migration in history and zero code
 # references anywhere (no model, route, or controller). It was never actually
-# built; the repo's own design doc (docs/c3-contribution-integration-design.md
-# §3.2) recommends retiring it in favor of a JSONAPI resource delegating to
-# C3::Balance, which is a separate feature request, not part of this cleanup.
+# built, and any replacement is a separate feature request, not part of this
+# cleanup.
 # This migration only restores schema.rb <-> migration-history parity.
 class DropOrphanedJoatuServiceCreditBalances < ActiveRecord::Migration[7.2]
   def up

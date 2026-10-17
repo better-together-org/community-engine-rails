@@ -1,5 +1,9 @@
 # Membership Notifications Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-12-21. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Collaborative Review Required
 
 This implementation plan must be reviewed collaboratively before implementation begins. The plan creator should:

@@ -41,16 +41,10 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
       consent_to_restorative_process: report_record.consent_to_restorative_process
     )
   end
-  let(:federation_target_one) do
-    create(:better_together_platform,
-           name: 'Neighbourhood Commons',
-           identifier: "neighbourhood-commons-#{SecureRandom.hex(4)}")
-  end
-  let(:federation_target_two) do
-    create(:better_together_platform,
-           name: 'Coastal Mutual Aid',
-           identifier: "coastal-mutual-aid-#{SecureRandom.hex(4)}")
-  end
+  # Platforms and communities are in ESSENTIAL_TABLES, so the :deletion cleanup keeps them between
+  # examples; reuse each target by a fixed identifier instead of recreating it (duplicate community slug).
+  let(:federation_target_one) { find_or_create_federation_target('Neighbourhood Commons') }
+  let(:federation_target_two) { find_or_create_federation_target('Coastal Mutual Aid') }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
@@ -211,11 +205,16 @@ RSpec.describe 'Documentation screenshots for safety and federation review acces
 
   private
 
+  def find_or_create_federation_target(name)
+    identifier = "docs-#{name.parameterize}"
+    BetterTogether::Platform.find_by(identifier:) || create(:better_together_platform, name:, identifier:)
+  end
+
   def grant_platform_permission(user, permission_identifier)
     role = create(:better_together_role, :platform_role)
     permission = BetterTogether::ResourcePermission.find_by!(identifier: permission_identifier)
     role.assign_resource_permissions([permission.identifier])
-    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:)
+    host_platform.person_platform_memberships.find_or_create_by!(member: user.person, role:, status: 'active')
   end
 
   # rubocop:disable Metrics/MethodLength, Metrics/ParameterLists

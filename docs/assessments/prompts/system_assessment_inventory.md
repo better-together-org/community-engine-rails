@@ -1,3 +1,8 @@
+
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 Goal:
 Generate a per-system assessment inventory by comparing the architectural systems identified in the most recent architecture analysis with the existing documentation in docs/assessments/.
 The purpose is to determine which systems already have an assessment file and which still need one.
