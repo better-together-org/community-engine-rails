@@ -112,4 +112,38 @@ RSpec.describe BetterTogether::ApplicationPolicy do
       expect(policy.invitation_token).to eq('tok-abc')
     end
   end
+
+  describe '#entitled_to?' do
+    # protected — subclasses call it from within their own permission
+    # methods, so tests reach it via #send, matching how it's actually used.
+    let(:holder) { create(:better_together_community) }
+
+    it 'delegates to Billing::EntitlementResolver and reflects a current grant' do
+      BetterTogether::Billing::Entitlement.grant!(holder:, entitlement_key: 'hosted_access')
+
+      expect(policy.send(:entitled_to?, 'hosted_access', holder:)).to be(true)
+    end
+
+    it 'returns false when the holder has no matching grant' do
+      expect(policy.send(:entitled_to?, 'hosted_access', holder:)).to be(false)
+    end
+  end
+
+  describe BetterTogether::ApplicationPolicy::Scope do
+    subject(:scope) { described_class.new(user, BetterTogether::Community) }
+
+    let(:holder) { create(:better_together_community) }
+
+    describe '#entitled_to?' do
+      it 'delegates to Billing::EntitlementResolver and reflects a current grant' do
+        BetterTogether::Billing::Entitlement.grant!(holder:, entitlement_key: 'hosted_access')
+
+        expect(scope.entitled_to?('hosted_access', holder:)).to be(true)
+      end
+
+      it 'returns false when the holder has no matching grant' do
+        expect(scope.entitled_to?('hosted_access', holder:)).to be(false)
+      end
+    end
+  end
 end

@@ -1,0 +1,83 @@
+{
+  "name": "pr_1581_person_billing_overview",
+  "device": "desktop",
+  "url": "/en/p/manager-example-test/billing",
+  "title": "Personal Billing | Platform Steward | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#current_subscription_card_person_e6179f28-d7d4-4f4d-a43c-e0646a5875dd",
+      "title": "Personal subscription",
+      "bullets": [
+        "Shows the plan attached to the person as payer.",
+        "Surfaces portal issues and renewal timing."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 268.0,
+        "width": 416.0,
+        "height": 1193.0,
+        "right": 480.5,
+        "bottom": 1461.0,
+        "center_x": 272.5,
+        "center_y": 864.5
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 268.0,
+        "width": 416.0,
+        "height": 1193.0,
+        "right": 480.5,
+        "bottom": 1461.0,
+        "center_x": 272.5,
+        "center_y": 864.5
+      },
+      "placement": {
+        "side": "right",
+        "x": 500.5,
+        "y": 772.5,
+        "width": 380,
+        "height": 184,
+        "score": 959.5
+      }
+    },
+    {
+      "selector": "#sponsored_communities_card_person_e6179f28-d7d4-4f4d-a43c-e0646a5875dd",
+      "title": "Sponsored communities",
+      "bullets": [
+        "Lists communities this person is currently paying for.",
+        "Provides direct links to each community billing page."
+      ],
+      "target": {
+        "x": 504.5,
+        "y": 268.0,
+        "width": 856.0,
+        "height": 136.0,
+        "right": 1360.5,
+        "bottom": 404.0,
+        "center_x": 932.5,
+        "center_y": 336.0
+      },
+      "avoid": {
+        "x": 504.5,
+        "y": 268.0,
+        "width": 856.0,
+        "height": 136.0,
+        "right": 1360.5,
+        "bottom": 404.0,
+        "center_x": 932.5,
+        "center_y": 336.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 742.5,
+        "y": 424.0,
+        "width": 380,
+        "height": 210,
+        "score": 1057.0
+      }
+    }
+  ]
+}

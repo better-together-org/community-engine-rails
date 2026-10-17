@@ -1,0 +1,47 @@
+{
+  "name": "pr_1581_checkout_session_pending",
+  "device": "desktop",
+  "url": "/en/c/harbour-voices-c532c30b/billing?checkout_session_id=cs_pr1581_pending_demo",
+  "title": "Community Billing | Harbour Voices | Community Engine",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#checkout-session-sync-cs_pr1581_pending_demo",
+      "title": "Confirming payment",
+      "bullets": [
+        "The page renders immediately instead of blocking on a live Stripe API call.",
+        "A background job confirms the payment and updates this region in place once it completes."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 128.0,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1360.5,
+        "bottom": 152.0,
+        "center_x": 712.5,
+        "center_y": 140.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 128.0,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1360.5,
+        "bottom": 152.0,
+        "center_x": 712.5,
+        "center_y": 140.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 522.5,
+        "y": 172.0,
+        "width": 380,
+        "height": 288,
+        "score": 1309.0
+      }
+    }
+  ]
+}

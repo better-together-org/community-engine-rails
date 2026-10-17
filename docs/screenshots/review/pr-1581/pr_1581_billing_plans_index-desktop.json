@@ -1,0 +1,83 @@
+{
+  "name": "pr_1581_billing_plans_index",
+  "device": "desktop",
+  "url": "/en/host/billing/plans",
+  "title": "Billing Plans | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-billing-plan-btn",
+      "title": "New plan",
+      "bullets": [
+        "Creates a host-managed billing plan.",
+        "Only visible to plan stewards."
+      ],
+      "target": {
+        "x": 1267.46875,
+        "y": 137.0,
+        "width": 100.53125,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 175.0,
+        "center_x": 1317.734375,
+        "center_y": 156.0
+      },
+      "avoid": {
+        "x": 1267.46875,
+        "y": 137.0,
+        "width": 100.53125,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 175.0,
+        "center_x": 1317.734375,
+        "center_y": 156.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 195.0,
+        "width": 380,
+        "height": 184,
+        "score": 1286.0
+      }
+    },
+    {
+      "selector": "#billing-plans-table",
+      "title": "Plan catalog",
+      "bullets": [
+        "Shows identifier, interval, price, activation state, and active subscriber count.",
+        "Gives operators a quick inventory of launch-ready hosted plans."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 209.0,
+        "width": 1294.0,
+        "height": 178.0,
+        "right": 1367.0,
+        "bottom": 387.0,
+        "center_x": 720.0,
+        "center_y": 298.0
+      },
+      "avoid": {
+        "x": 73.0,
+        "y": 209.0,
+        "width": 1294.0,
+        "height": 178.0,
+        "right": 1367.0,
+        "bottom": 387.0,
+        "center_x": 720.0,
+        "center_y": 298.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 407.0,
+        "width": 380,
+        "height": 236,
+        "score": 1074.0
+      }
+    }
+  ]
+}

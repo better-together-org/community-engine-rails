@@ -1,0 +1,35 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef action fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef system fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+
+  Start["Steward opens a billing page"]:::action
+  Choose["Choose a recurring hosted or personal plan"]:::action
+  Checkout["Stripe Checkout session starts<br/>(always self-funded — billable_owner is the payer)"]:::system
+  Webhook["Stripe sends checkout/subscription webhooks"]:::system
+  Sync["CE syncs the local Billing::Subscription"]:::action
+  Hook["StripeEventProcessor calls EntitlementGrantSync<br/>for every key in Plan#granted_entitlement_keys<br/>(webhook leg only — never the browser checkout-return leg)"]:::action
+  AccessActive{"source.access_active?<br/>(activeish? OR in_grace_period?;<br/>one-time payments always grantable)"}:::decision
+  Grant["Billing::Entitlement row upserted active<br/>for this holder + key"]:::action
+  Revoke["Billing::Entitlement row revoked<br/>for this holder + key"]:::action
+  Entitled["entitled_to?(key) resolves true"]:::outcome
+  NotEntitled["entitled_to?(key) resolves false"]:::outcome
+  Provision["Community can open platform provisioning"]:::outcome
+  Alerts["If sync fails, billing alerts and replay paths stay visible"]:::outcome
+
+  Start --> Choose --> Checkout --> Webhook --> Sync --> Hook --> AccessActive
+  AccessActive -->|Yes| Grant --> Entitled --> Provision
+  AccessActive -->|No| Revoke --> NotEntitled
+  Webhook --> Alerts
+  Sync --> Alerts
+
+  subgraph SponsorFlow["Separately: funding someone else"]
+    direction LR
+    Sponsor["Another party creates a Sponsorship<br/>(consent required from the beneficiary)"]:::action
+    Contribute["Sponsor's contribution credits the<br/>beneficiary's own Stripe balance"]:::system
+    Sponsor --> Contribute
+  end
+
+  Contribute -.->|never reassigns billable_owner| Checkout

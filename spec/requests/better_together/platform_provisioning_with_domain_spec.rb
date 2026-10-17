@@ -16,15 +16,18 @@ RSpec.describe 'Platform provisioning with domains', :skip_host_setup do
   # spec/services/better_together/tenant_platform_provisioning_service_spec.rb.
   let!(:host_platform) { configure_host_platform }
 
+  # privacy: 'public' explicit — TenantPlatformProvisioningService defaults to
+  # 'private' (intentional), but this spec creates public-privacy pages below
+  # to test domain-based routing/isolation, which needs a public platform.
   let(:tenant_result) do
     BetterTogether::TenantPlatformProvisioningService.call(
-      name: 'Tenant A', host_url: 'https://tenant-a.example.test', time_zone: 'UTC'
+      name: 'Tenant A', host_url: 'https://tenant-a.example.test', time_zone: 'UTC', privacy: 'public'
     )
   end
 
   let(:other_result) do
     BetterTogether::TenantPlatformProvisioningService.call(
-      name: 'Tenant B', host_url: 'https://tenant-b.example.test', time_zone: 'UTC'
+      name: 'Tenant B', host_url: 'https://tenant-b.example.test', time_zone: 'UTC', privacy: 'public'
     )
   end
 

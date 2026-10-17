@@ -1,0 +1,8 @@
+<div id="<%= dom_id %>" role="status" aria-live="polite">
+  <% messages.each do |message| %>
+    <div class="alert <%= message[:variant] == :notice ? 'alert-success' : 'alert-warning' %> alert-dismissible fade show" role="alert">
+      <%= message[:text] %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+</div>

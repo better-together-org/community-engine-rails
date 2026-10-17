@@ -29,11 +29,11 @@ RSpec.describe 'BetterTogether::NewPlatformSetup', :as_platform_manager do
   end
 
   def start_wizard
-    get better_together.new_platform_setup_path(locale:)
+    post better_together.new_platform_setup_path(locale:)
     BetterTogether::Platform.order(created_at: :desc).first
   end
 
-  describe 'GET #start' do
+  describe 'POST #start' do
     it 'creates a draft platform and its paired wizard' do
       expect { start_wizard }.to change(BetterTogether::Platform, :count).by(1)
                                                                          .and change(BetterTogether::Wizard, :count).by(1)

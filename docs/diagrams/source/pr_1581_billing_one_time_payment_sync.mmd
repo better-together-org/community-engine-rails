@@ -1,0 +1,48 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef action fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef system fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+  classDef risk fill:#fbeaea,stroke:#8a3a3a,color:#4a1414,stroke-width:1px;
+
+  Choose["Owner starts checkout for a plan"]:::action
+  ModeCheck{"billing_plan.recurring?"}:::decision
+  SubMode["Checkout session mode: 'subscription'"]:::system
+  PayMode["Checkout session mode: 'payment'<br/>(one-time)"]:::system
+  SubSync["StripeSubscriptionSync"]:::action
+
+  Return["Browser returns to #reconcile"]:::action
+  Webhook["Stripe sends checkout.session.completed<br/>(no guaranteed delivery order vs. other events)"]:::system
+  CheckoutSync["StripeCheckoutSessionSync#call"]:::action
+  HasSub{"checkout_session.subscription<br/>present?"}:::decision
+
+  FindIntent{"payment_intent present<br/>on the session?"}:::decision
+  NoSync["Not synced<br/>(reason: :no_subscription)"]:::risk
+  OneTimeSync["StripeOneTimePaymentSync#call"]:::action
+  ResolveOwner{"Owner resolved from<br/>session/customer metadata?"}:::decision
+  ResolvePlan{"Billing::Plan resolved<br/>(metadata id/identifier, or line-item price)?"}:::decision
+  NoOwner["Not synced<br/>(reason: :owner_not_found)"]:::risk
+  NoPlan["Not synced<br/>(reason: :billing_plan_not_found)"]:::risk
+  Persist["Billing::OneTimePayment upserted<br/>(find_or_initialize_by stripe_checkout_session_id)<br/>status: succeeded"]:::outcome
+
+  Choose --> ModeCheck
+  ModeCheck -->|Yes| SubMode --> SubSync
+  ModeCheck -->|No| PayMode
+
+  PayMode --> Return --> CheckoutSync
+  PayMode --> Webhook --> CheckoutSync
+  CheckoutSync --> HasSub
+  HasSub -->|Yes, this is a subscription checkout| SubSync
+  HasSub -->|No, this is a one-time payment| FindIntent
+  FindIntent -->|No| NoSync
+  FindIntent -->|Yes| OneTimeSync
+  OneTimeSync --> ResolveOwner
+  ResolveOwner -->|No| NoOwner
+  ResolveOwner -->|Yes| ResolvePlan
+  ResolvePlan -->|No| NoPlan
+  ResolvePlan -->|Yes| Persist
+
+  subgraph PlainLanguage["How to read this"]
+    Note["A one-time payment has no Pay::Subscription to delegate to — it is\nits own record, matched on stripe_checkout_session_id so replaying the\nsame webhook or browser return never double-persists the same payment.\nSame two entry points (webhook + browser return) as the subscription\nflow share one StripeCheckoutSessionSync#call — it branches on whether\nthe Stripe Checkout Session carries a subscription."]:::outcome
+  end

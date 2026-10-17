@@ -38,6 +38,18 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
     Current.platform = nil
   end
 
+  # provision_platform/new_platform_setup#start were converted from GET links to
+  # POST button_to forms (CSRF fix) -- Capybara's `visit` is GET-only, so every
+  # step capture in this file now enters the wizard via a real click on the
+  # platforms#index entry point instead of visiting new_platform_setup_path
+  # directly. Mirrors the same pattern already used in
+  # new_platform_setup_wizard_accessibility_spec.rb and
+  # dom_contracts/billing_foundation_spec.rb on this branch.
+  def start_new_platform_setup(locale:)
+    visit better_together.platforms_path(locale:)
+    click_on I18n.t('better_together.platforms.index.provision_new_platform', locale:)
+  end
+
   def screenshot_metadata(flow:, role:)
     {
       locale: I18n.default_locale,
@@ -99,11 +111,13 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       callouts: [
         {
           id: 'provision_button',
-          selector: "a[href='#{better_together.new_platform_setup_path(locale: I18n.default_locale)}']",
+          selector: '#provision-new-platform-btn',
           title: 'Provision New Platform',
           bullets: [
             'New entry point that starts the new_platform_setup wizard.',
-            'Only rendered when PlatformPolicy#create? passes for the signed-in user.'
+            'Only rendered when PlatformPolicy#create? passes for the signed-in user.',
+            'Session follow-up: converted from a GET link to a POST button_to form — this action creates ' \
+            'a draft Platform + Wizard, so it needs CSRF protection like every other mutating billing action.'
           ]
         }
       ],
@@ -114,16 +128,18 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
                       'button that starts the guided wizard, instead of the bare external-registration form.',
         callouts: [
           { id: 'provision_button', title: 'Provision New Platform',
-            description: 'Routes to new_platform_setup_path, which creates a draft Platform + Wizard ' \
+            description: 'Routes to new_platform_setup_path (POST), which creates a draft Platform + Wizard ' \
                          'and redirects into step 1 (welcome). Gated on policy(Platform.new).create? — ' \
-                         'an instance, not the bare class, since PlatformPolicy#create? touches record.class.' }
+                         'an instance, not the bare class, since PlatformPolicy#create? touches record.class. ' \
+                         'Session follow-up: was a plain link_to (GET) with no CSRF protection for a real write; ' \
+                         'now a button_to form, matching the convention used everywhere else in this billing UI.' }
         ],
-        accessibility_notes: 'Rendered as a standard Bootstrap btn-primary link in the page header.'
+        accessibility_notes: 'Rendered as a standard Bootstrap btn-primary submit button in the page header.'
       }
     ) do
       capybara_login_as_platform_manager
       visit better_together.platforms_path(locale: I18n.default_locale)
-      expect(page).to have_link(href: better_together.new_platform_setup_path(locale: I18n.default_locale))
+      expect(page).to have_css('#provision-new-platform-btn')
     end
   end
 
@@ -170,7 +186,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       }
     ) do
       capybara_login_as_platform_manager
-      visit better_together.new_platform_setup_path(locale: I18n.default_locale)
+      start_new_platform_setup(locale: I18n.default_locale)
       expect(page).to have_css('#new_platform_setup_locale', wait: 10)
     end
   end
@@ -227,7 +243,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       }
     ) do
       capybara_login_as_platform_manager
-      visit better_together.new_platform_setup_path(locale: I18n.default_locale)
+      start_new_platform_setup(locale: I18n.default_locale)
       advance_past_welcome
       expect(page).to have_css('#new_platform_platform_name', wait: 10)
     end
@@ -277,7 +293,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       }
     ) do
       capybara_login_as_platform_manager
-      visit better_together.new_platform_setup_path(locale: I18n.default_locale)
+      start_new_platform_setup(locale: I18n.default_locale)
       advance_past_welcome
       fill_in_platform_identity_and_submit(suffix: SecureRandom.hex(4))
       expect(page).to have_css('#new_platform_domain_hostname', wait: 10)
@@ -327,7 +343,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       }
     ) do
       capybara_login_as_platform_manager
-      visit better_together.new_platform_setup_path(locale: I18n.default_locale)
+      start_new_platform_setup(locale: I18n.default_locale)
       advance_past_welcome
       fill_in_platform_identity_and_submit(suffix: SecureRandom.hex(4))
       skip_domain_step
@@ -372,7 +388,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       suffix = SecureRandom.hex(4)
 
       capybara_login_as_platform_manager
-      visit better_together.new_platform_setup_path(locale: I18n.default_locale)
+      start_new_platform_setup(locale: I18n.default_locale)
       advance_past_welcome
       fill_in_platform_identity_and_submit(suffix:)
       skip_domain_step
@@ -428,7 +444,7 @@ RSpec.describe 'Documentation screenshots for the new_platform_setup wizard', # 
       suffix = SecureRandom.hex(4)
 
       capybara_login_as_platform_manager
-      visit better_together.new_platform_setup_path(locale: I18n.default_locale)
+      start_new_platform_setup(locale: I18n.default_locale)
       advance_past_welcome
       fill_in_platform_identity_and_submit(suffix:)
       skip_domain_step

@@ -1,0 +1,40 @@
+%% render.orientation: landscape
+sequenceDiagram
+  participant Browser as Steward's browser
+  participant Controller as Billing::ControllerConcern#show
+  participant Queue as ActiveJob queue
+  participant Job as SyncCheckoutSessionJob
+  participant Stripe as Stripe API
+  participant Broadcaster as CheckoutSessionSyncBroadcaster
+  participant Cable as Turbo Streams / ActionCable
+
+  Browser->>Controller: GET billing, checkout_session_id param present
+  Note over Controller: valid_checkout_session_id? true
+  Controller->>Queue: enqueue SyncCheckoutSessionJob
+  Controller-->>Browser: renders immediately, pending region<br/>spinner, role status, aria-live polite
+  Note over Browser: page opens a turbo_stream_from<br/>subscription keyed on the checkout session id
+
+  Queue->>Job: perform checkout_session_id, owner_type, owner_id
+  Job->>Stripe: Checkout Session retrieve / Subscription retrieve<br/>via StripeCheckoutSessionSync
+  Stripe-->>Job: session and subscription data
+
+  alt sync succeeds
+    Job->>Broadcaster: call with checkout_session_id and result
+  else Stripe InvalidRequestError, bad session id
+    Note over Job: not retried, a rejected session id<br/>will never succeed on retry
+    Job->>Broadcaster: call with checkout_session_id and error
+  else other StandardError
+    Note over Job: retry_on StandardError,<br/>polynomial backoff, up to 10 attempts
+    Job->>Queue: re-enqueue for retry
+  end
+
+  opt result has a one time payment, sponsorship contribution
+    Broadcaster->>Broadcaster: ProcessSponsorshipContributionFromCheckoutSync
+    Note over Broadcaster: credits the beneficiary Stripe balance,<br/>idempotent, same guard as the webhook leg
+  end
+
+  Broadcaster->>Cable: broadcast_replace_to the checkout session stream<br/>target is the pending region dom id
+  Cable-->>Browser: Turbo Stream replace
+  Note over Browser: pending spinner is replaced in place<br/>with the resolved success or alert banner,<br/>no page reload
+
+  Note over Job,Stripe: The webhook driven leg, StripeEventProcessor,<br/>is the authoritative sync path and runs independently.<br/>This diagram covers only the best effort,<br/>immediate feedback browser return leg.

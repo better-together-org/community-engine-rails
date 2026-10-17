@@ -1,0 +1,20 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef action fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef system fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+
+  Open["Community or person opens merchant onboarding"]:::action
+  Stripe["Stripe Connect onboarding flow"]:::system
+  Local["CE stores or refreshes the local merchant account"]:::action
+  Ready{"Are charges and payouts enabled?"}:::decision
+  ReadyOut["Merchant account is payout-ready"]:::outcome
+  ActionNeeded["Merchant account needs more action or review"]:::outcome
+  Disconnect["If Stripe deauthorizes access,<br/>CE marks the account disconnected"]:::outcome
+  Review["Billing page shows current merchant status<br/>and a refresh action"]:::outcome
+
+  Open --> Stripe --> Local --> Ready
+  Ready -->|Yes| ReadyOut --> Review
+  Ready -->|No| ActionNeeded --> Review
+  Stripe --> Disconnect --> Review

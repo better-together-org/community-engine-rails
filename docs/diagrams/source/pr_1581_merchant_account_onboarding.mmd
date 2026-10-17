@@ -1,0 +1,32 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef action fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef system fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+  classDef warning fill:#fbeaea,stroke:#a13d3d,color:#4a1414,stroke-width:1px;
+
+  Owner["Community or Person requests<br/>payout onboarding"]:::action
+  Create["CreateOnboardingLink<br/>finds or creates the merchant account"]:::action
+  Provision["Provisions a Stripe Connect Express account<br/>(or reuses the existing one)"]:::system
+  InitialSync["SyncAccount<br/>writes initial status to Billing::MerchantAccount"]:::action
+  Link["Stripe returns a hosted onboarding link"]:::system
+  Onboard["Owner completes identity, banking,<br/>and business details on Stripe"]:::action
+  Return["Stripe redirects back to refresh_url / return_url"]:::system
+  Refresh["RefreshAccount<br/>re-pulls the account from Stripe"]:::action
+  ReSync["SyncAccount<br/>maps requirements + capability flags to status"]:::action
+  StatusCheck{"charges_enabled and<br/>payouts_enabled both true?"}:::decision
+  Active["status: active<br/>ready to receive payouts"]:::outcome
+  NeedsMore["status: required_action / pending / onboarding<br/>still missing information"]:::warning
+  Card["Merchant account card<br/>(community/person billing overview)"]:::outcome
+  ScanReconcile["Scheduled reconciliation<br/>(ReconcileStripeMerchantAccountJob)"]:::action
+
+  Owner --> Create --> Provision --> InitialSync --> Link --> Onboard --> Return --> Refresh --> ReSync --> StatusCheck
+  StatusCheck -->|Yes| Active --> Card
+  StatusCheck -->|No| NeedsMore --> Card
+  NeedsMore -.->|owner returns to finish later| Onboard
+  ScanReconcile -.->|keeps status current even without a redirect| ReSync
+
+  subgraph PlainLanguage["How to read this"]
+    Note["Onboarding is separate from hosted billing: a community can subscribe to a hosted<br/>plan without ever connecting payouts. This flow only applies once payout<br/>onboarding is explicitly requested."]:::outcome
+  end

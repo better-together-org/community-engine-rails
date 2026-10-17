@@ -1,0 +1,83 @@
+{
+  "name": "pr_1581_billing_plan_detail",
+  "device": "mobile",
+  "url": "/en/host/billing/plans/99c0b3d4-78a2-4e7d-ab6b-41ae934d9630",
+  "title": "Community Stewardship | Billing Plans | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#summary_card_billing_plan_99c0b3d4-78a2-4e7d-ab6b-41ae934d9630",
+      "title": "Plan summary",
+      "bullets": [
+        "Shows the immutable Stripe-linked pricing identifiers.",
+        "Confirms whether the plan is active."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 189.0,
+        "width": 461.0,
+        "height": 347.0,
+        "right": 473.0,
+        "bottom": 536.0,
+        "center_x": 242.5,
+        "center_y": 362.5
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 189.0,
+        "width": 461.0,
+        "height": 347.0,
+        "right": 473.0,
+        "bottom": 536.0,
+        "center_x": 242.5,
+        "center_y": 362.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 556.0,
+        "width": 270.0,
+        "height": 236,
+        "score": 725.0
+      }
+    },
+    {
+      "selector": "#metadata_card_billing_plan_99c0b3d4-78a2-4e7d-ab6b-41ae934d9630",
+      "title": "Plan metadata",
+      "bullets": [
+        "Explains the plain-language copy shown to subscribers.",
+        "Defines hosted access level, support tier, and eligibility.",
+        "Session follow-up: now also includes pricing tier and solidarity description (see pr_1581_billing_plan_solidarity_detail for a plan where these are non-default)."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 560.0,
+        "width": 461.0,
+        "height": 643.1875,
+        "right": 473.0,
+        "bottom": 1203.1875,
+        "center_x": 242.5,
+        "center_y": 881.59375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 560.0,
+        "width": 461.0,
+        "height": 643.1875,
+        "right": 473.0,
+        "bottom": 1203.1875,
+        "center_x": 242.5,
+        "center_y": 881.59375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 715,
+        "width": 270.0,
+        "height": 522
+      }
+    }
+  ]
+}

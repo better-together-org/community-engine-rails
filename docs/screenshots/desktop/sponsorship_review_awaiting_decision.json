@@ -1,0 +1,82 @@
+{
+  "name": "sponsorship_review_awaiting_decision",
+  "device": "desktop",
+  "url": "/en/sponsorships/xFsuu8EnLLqCo6xAPRrf9fse",
+  "title": "Community Engine",
+  "locale": "en",
+  "feature_set": "sponsorship_panel_states",
+  "source_spec": "./spec/docs_screenshots/better_together/sponsorship_panel_states_spec.rb",
+  "callouts": [
+    {
+      "selector": "#sponsorship-from-to-summary",
+      "title": "Offer summary",
+      "bullets": [
+        "Names the sponsor and the beneficiary in plain language."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 172.796875,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 196.796875,
+        "center_x": 720.0,
+        "center_y": 184.796875
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 172.796875,
+        "width": 1296.0,
+        "height": 24.0,
+        "right": 1368.0,
+        "bottom": 196.796875,
+        "center_x": 720.0,
+        "center_y": 184.796875
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 216.8,
+        "width": 380,
+        "height": 158,
+        "score": 1264.203125
+      }
+    },
+    {
+      "selector": "#sponsorship-decision-actions",
+      "title": "Accept or decline",
+      "bullets": [
+        "Only shown to the beneficiary while the offer is pending.",
+        "Accepting activates the sponsorship immediately; declining ends it permanently."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 212.796875,
+        "width": 1296.0,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 250.796875,
+        "center_x": 720.0,
+        "center_y": 231.796875
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 212.796875,
+        "width": 1296.0,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 250.796875,
+        "center_x": 720.0,
+        "center_y": 231.796875
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 270.8,
+        "width": 380,
+        "height": 262,
+        "score": 0
+      }
+    }
+  ]
+}

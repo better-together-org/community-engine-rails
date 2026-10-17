@@ -1,0 +1,21 @@
+---
+title: Sponsorship offer — awaiting the beneficiary's decision
+audience:
+- board_member
+- sponsor
+- operator
+journey_step: A person or community steward opens a sponsorship offer link (from an
+  email or the billing page) and decides whether to accept funding from another party.
+callouts:
+- :title: Offer summary
+  :description: Uses sponsorship_counterpart_name to show a person or community name
+    regardless of which polymorphic type is on either side of the offer.
+- :title: Accept or decline
+  :description: Pundit's SponsorshipPolicy#accept?/#decline? gate this — only the
+    beneficiary (or someone who stewards it) sees these buttons; the sponsor sees
+    the read-only "awaiting a decision" state instead (see sponsorship_review_awaiting_beneficiary
+    for that view).
+accessibility_notes: Both actions are button_to submit buttons (not JS-only links),
+  so they work with keyboard navigation and without JavaScript.
+slug: sponsorship_review_awaiting_decision
+device: mobile

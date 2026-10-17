@@ -70,7 +70,13 @@ RSpec.describe 'New platform setup wizard accessibility', :accessibility, :as_pl
   end
 
   def visit_new_platform_setup(locale)
-    visit better_together.new_platform_setup_path(locale:)
+    visit better_together.platforms_path(locale:)
+    # A leftover flash notice (e.g. from capybara_login_as_platform_manager, or
+    # from the previous locale's wizard run in this same session) can overlap
+    # the provision button's click point — dismiss it first so Selenium's real
+    # click isn't intercepted by the banner sitting on top of it.
+    page.all('[data-better_together--flash-target="message"] .btn-close', wait: 0).each(&:click)
+    click_on I18n.t('better_together.platforms.index.provision_new_platform', locale:, default: 'Provision New Platform')
     expect(page).to have_css('main form', wait: 10, visible: :all)
   end
 

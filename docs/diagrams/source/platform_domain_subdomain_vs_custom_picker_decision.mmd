@@ -3,7 +3,7 @@ flowchart TD
 
   B -->|Use a subdomain of the host domain — default| C[Enter just the label, e.g. tenant-a]
   C --> D[Stimulus controller computes label + . + host apex client-side]
-  D --> E[Hostname field auto-filled: tenant-a.btsdev.ca]
+  D --> E[Hostname field auto-filled: tenant-a.example.org]
 
   B -->|Use my own domain| F[DNS/TLS guidance panel shown]
   F --> G[Steward types the full external hostname directly]

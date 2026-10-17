@@ -1,0 +1,47 @@
+<div id="<%= dom_id(owner, :current_subscription_card) %>" class="card h-100">
+  <div class="card-header">
+    <strong><%= t('better_together.billing.current_subscription', default: 'Current subscription') %></strong>
+  </div>
+  <div class="card-body">
+    <% if billing_subscription.present? %>
+      <% if billing_subscription.portal_access_issue? %>
+        <div class="alert alert-warning">
+          <strong><%= t('better_together.billing.portal_access_attention', default: 'Billing portal access needs attention.') %></strong>
+          <div>
+            <%= billing_subscription.last_portal_error_message.presence ||
+                t('better_together.billing.portal_access_attention_fallback',
+                  default: 'The last portal access attempt did not complete successfully.') %>
+          </div>
+          <div class="small mb-0">
+            <%= t('better_together.billing.portal_access_last_failed_at', default: 'Last failed attempt:') %>
+            <strong><%= l(billing_subscription.last_portal_error_at, format: :long) if billing_subscription.last_portal_error_at %></strong>
+          </div>
+        </div>
+      <% end %>
+      <p class="mb-2"><strong><%= billing_subscription.billing_plan.name %></strong></p>
+      <p class="mb-2">
+        <span class="badge <%= billing_subscription.status_badge_class %> billing-subscription-status-badge">
+          <%= t("better_together.billing.subscription_status.#{billing_subscription.status}", default: billing_subscription.status.humanize) %>
+        </span>
+      </p>
+      <p class="mb-1">
+        <%= t('better_together.billing.last_synced_at', default: 'Last synced:') %>
+        <strong><%= l(billing_subscription.last_synced_at, format: :long) if billing_subscription.last_synced_at %></strong>
+      </p>
+      <p class="mb-1">
+        <%= t('better_together.billing.sync_source', default: 'Sync source:') %>
+        <strong><%= billing_subscription.sync_source.presence || t('better_together.billing.unknown_sync_source', default: 'Unknown') %></strong>
+      </p>
+      <p class="mb-1">
+        <%= t('better_together.billing.current_period_ends', default: 'Current period ends:') %>
+        <strong><%= l(billing_subscription.current_period_end, format: :long) if billing_subscription.current_period_end %></strong>
+      </p>
+      <p class="mb-0">
+        <%= t('better_together.billing.cancel_at_period_end', default: 'Cancel at period end:') %>
+        <strong><%= billing_subscription.cancel_at_period_end? ? t('globals.yes', default: 'Yes') : t('globals.no', default: 'No') %></strong>
+      </p>
+    <% else %>
+      <p class="mb-0 text-muted"><%= no_subscription_message %></p>
+    <% end %>
+  </div>
+</div>
