@@ -171,6 +171,8 @@ Rules:
 
 ## Recommended Next Adapter Waves
 
+Shipped extension gems (on GitHub, no tagged releases yet): `better_together-sentry` (error reporting and browser snippet), `better_together-google-analytics` (Google Analytics provider) and `better_together-elasticsearch` (search backend). Every other gem named in the waves below is roadmap only and does not exist yet.
+
 ### Wave 1
 
 - `better_together-sentry`

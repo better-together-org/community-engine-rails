@@ -100,4 +100,26 @@ RSpec.describe BetterTogether::Geography::EventCollectionMap do
       expect { described_class.records.to_a }.not_to raise_error
     end
   end
+
+  describe 'visible_scope' do
+    it 'maps only the events in the scope, even when the scope has its own joins and ordering', :aggregate_failures do
+      shown = create(:event, :with_address_location, privacy: 'public')
+      hidden = create(:event, :with_address_location, privacy: 'private')
+      [shown, hidden].each do |event|
+        create(:geography_geospatial_space, geospatial: event.location.location, space: create(:geography_space))
+      end
+
+      map = described_class.new
+      map.visible_scope = BetterTogether::Event.where(privacy: 'public').includes(:categories).order(:starts_at)
+
+      expect(map.records.map(&:id)).to eq([shown.id])
+      expect(map.leaflet_points.size).to eq(1)
+    end
+
+    it 'maps every event with a location when no scope is given (callers rendering for a viewer must set one)' do
+      create(:event, :with_address_location)
+
+      expect(described_class.new.records.size).to eq(1)
+    end
+  end
 end

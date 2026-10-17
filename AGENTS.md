@@ -168,6 +168,13 @@ Required elements and their patterns:
 or other structural pseudo-selectors. Always target a stable `id` or semantic `class`. If the target
 element lacks one, add it to the view first.
 
+## Screenshots And Diagrams Are Required (CRITICAL)
+
+- **Every new or modified view** (ERB/HAML, partial, CSS, or JS that changes rendering) ships screenshots in the same PR: a `spec/docs_screenshots/better_together/<feature>_spec.rb` capturing desktop and mobile, annotated and plain, plus stable DOM ids and a `spec/dom_contracts` spec. Capture with `bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec <spec>'`.
+- **Targets must be in frame.** Scroll to the element before capture and open the generated PNGs to confirm it is visible and not hidden by its own callout.
+- **Every model, association, or table change** adds or updates a Mermaid diagram in `docs/diagrams/source`, rendered with `bin/render_diagrams`.
+- Commit the assets, embed them in the PR body, and state which were produced. If a change has nothing visual, say so in the PR. See `skills/ce-pr-docs` in management-tool for the full workflow.
+
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.
 - **Follow existing pattern**: Use full English words as enum values (current average: ~7 characters).
@@ -243,6 +250,7 @@ element lacks one, add it to the view first.
   - For model/association changes: update Mermaid diagrams (e.g., `docs/diagrams/source/*_diagram.mmd` or add a new one).
 - Keep diagrams in Mermaid (`.mmd`) format in `docs/diagrams/source/` and render to exports for convenience.
   - Preferred: run `bin/render_diagrams` to regenerate images for all `docs/diagrams/source/*.mmd` files.
+  - After any migration or `schema.rb` change, run `bin/export_schema_diagrams` (regenerates the DBML, the full-schema ERD and the subsystem ERDs); the `Schema Diagrams` workflow fails PRs that skip it.
   - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/diagrams/source/your_diagram.mmd -o docs/diagrams/exports/png/your_diagram.png`.
 - PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
 - When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.

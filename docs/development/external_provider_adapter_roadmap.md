@@ -20,6 +20,8 @@ Thin gems own:
 
 ## Subsystems to Adapterize
 
+Status: only `better_together-sentry`, `better_together-google-analytics` and `better_together-elasticsearch` exist today. Other gems named in this roadmap are planned, not shipped.
+
 ### Error Reporting
 
 Current state:
@@ -29,7 +31,7 @@ Current state:
 
 Thin gems:
 
-- `better_together-sentry`
+- `better_together-sentry` (shipped, [repository](https://github.com/better-together-org/better_together-sentry))
 
 Future:
 
