@@ -1,8 +1,8 @@
 {
   "name": "feature_access_grant_retired_feature_edit",
   "device": "desktop",
-  "url": "/en/host/platforms/docs-feature-gate-platform-ffaacc9b/feature_access_grants/7db97f6c-2877-4864-b2db-e139c6828033/edit",
-  "title": "Test Host Community",
+  "url": "/en/host/platforms/docs-feature-gate-platform-3136b9a5/feature_access_grants/d918e783-f6a9-438d-8fc0-f4fa34092c9d/edit",
+  "title": "Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "feature_access_grants_and_developer_settings",
@@ -42,7 +42,7 @@
         "y": 361.59,
         "width": 380,
         "height": 268,
-        "score": 1119.40625
+        "score": 1115.40625
       }
     }
   ]

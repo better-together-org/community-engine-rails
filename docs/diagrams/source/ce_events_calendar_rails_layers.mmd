@@ -46,7 +46,7 @@ classDiagram
       <<Model>>
       table: better_together_categories
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +8
+      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +10
       weak refs: owner: seeds, owner: slugs, owner: views, owner: cover_image_attachment +7
     }
     class BetterTogether__EventHost["EventHost"] {

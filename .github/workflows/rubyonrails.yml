@@ -266,7 +266,7 @@ jobs:
 
       - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
@@ -275,7 +275,7 @@ jobs:
 
       - name: Upload RSpec JSON results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rspec-results-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: |
@@ -285,7 +285,7 @@ jobs:
 
       - name: Upload browser failure artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: browser-failure-artifacts-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: tmp/capybara-artifacts/
@@ -294,7 +294,7 @@ jobs:
 
       - name: Upload Rails test log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rails-test-log-${{ matrix.suite }}-shard-${{ matrix.shard }}-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: spec/dummy/log/test.log
@@ -319,14 +319,14 @@ jobs:
           fi
 
       - name: Download shard results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: rspec-results-*-shard-*
           path: tmp
           merge-multiple: true
 
       - name: Download shard coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: coverage-report-*-shard-*
           path: coverage-shards
@@ -360,7 +360,7 @@ jobs:
 
       - name: Upload merged RSpec JSON results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rspec-results-ruby-3.4.10-rails-${{ needs.prepare.outputs.rails_version }}
           path: tmp/rspec_results*.json

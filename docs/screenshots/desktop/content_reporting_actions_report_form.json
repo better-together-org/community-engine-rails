@@ -1,7 +1,7 @@
 {
   "name": "content_reporting_actions_report_form",
   "device": "desktop",
-  "url": "/en/reports/new?reportable_id=d29bf351-b204-4602-8aba-38fe9bdecafc&reportable_type=BetterTogether%3A%3APage",
+  "url": "/en/reports/new?reportable_id=e4f8bf6e-b418-4a07-9531-0a3402e27974&reportable_type=BetterTogether%3A%3APage",
   "title": "Report a safety concern | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -42,7 +42,7 @@
         "y": 385.59,
         "width": 380,
         "height": 352,
-        "score": 1095.40625
+        "score": 1091.40625
       }
     }
   ]

@@ -117,7 +117,7 @@ The sync queue is `platform_sync`.
 
 ## Privacy Boundary: Consent Layers
 
-Three independent layers gate whether a specific content item is actually exported, all enforced
+Four independent layers gate whether a specific content item is actually exported, all enforced
 in `FederatedContentExportService#federation_consent_scoped`
 (`app/services/better_together/content/federated_content_export_service.rb`):
 
@@ -134,6 +134,16 @@ in `FederatedContentExportService#federation_consent_scoped`
    `.where.not(federation_visibility: 'no_federate')`; `federate` satisfies the OR'd consent
    clause regardless of the creator's global preference; `platform_default` falls through to
    layer 2 unchanged.
+
+4. **Per-connection grant** — `BetterTogether::FederationContentGrant` (`allowed` or `denied`) for this
+   item and this connection, set through `Federatable#federation_content_grants_by_connection=`
+   (the per-connection matrix on the post edit form). A `denied` grant excludes the item for that
+   connection; an `allowed` grant includes it for that connection even when the creator has not opted
+   in globally. No grant falls through to layers 2 and 3. Setting a connection to `platform_default`
+   deletes its grant. `no_federate` (layer 3) still wins over an `allowed` grant.
+
+Precedence, highest first: `federation_visibility = no_federate`, then an explicit grant for this connection,
+then `federation_visibility = federate`, then the creator's `federate_content` preference.
 
 `FederationScopeAuthorizer` and `Content::FederatedContentAuthorizer` remain connection/scope-level
 only — neither was changed by the item-level work, since item consent is deliberately a lower
@@ -157,6 +167,31 @@ still exports posts/pages/events with no creator/author field — this is the sp
 plan closes. Do not assume author identity is protected just because content-level consent is
 now member-controlled.
 
+## Access tokens and connection credentials
+
+`FederationAccessToken` (`better_together_federation_access_tokens`) is the short-lived bearer token issued by the OAuth flow. It belongs to a `PlatformConnection` and stores only a SHA-256 digest of the token (`token_digest`, unique); the plaintext exists in `token` only on the record that was just created and in the response. Columns: `scopes` (space separated), `expires_at`, `revoked_at`, `last_used_at`. `FederationAccessTokenIssuer.call(connection:, requested_scopes:)` asks `FederationScopeAuthorizer` for the granted scopes, raises when none are authorised, and creates the token with a default lifetime of 15 minutes (`DEFAULT_EXPIRES_IN`).
+
+Lookup is `FederationAccessToken.find_active_by_plaintext(value)`: not revoked, not expired, and the connection `active`. `includes_scope?`, `revoke!` and `touch_last_used!` (at most once a minute) complete the model.
+
+`PlatformConnectionOauthCredentials` gives each connection its client credentials: `oauth_client_id` (`ce-` plus 24 hex characters) and a 64-character secret generated on create. The secret is encrypted at rest and a bcrypt digest is stored; `authenticate_oauth_secret` checks the digest (falling back to a constant-time SHA-256 comparison for older rows) and `rotate_oauth_client_secret!` replaces both and clears the cached token.
+
+## Sync tracking and the circuit breaker
+
+`PlatformConnectionSyncTracking` keeps pull-sync bookkeeping in the connection's `settings` JSON: cursor, `last_sync_status` (`idle`, `running`, `succeeded`, `failed`), start, success and error times, last error message (500 characters), item count, failure streak and backoff. Values are written with `update_columns`, not `update!`, so frequent bookkeeping does not bump `lock_version` or fire callbacks.
+
+- `mark_sync_started!`, `mark_sync_succeeded!` and `mark_sync_failed!` also write an activity record (`platform_connection.sync_started`, `sync_succeeded`, `sync_failed`) that the Federation Hub activity feed reads.
+- A successful **final** page clears the failure streak and backoff; an intermediate page does not, so a connection that can only serve one page before failing cannot reset its own backoff.
+- Failures back off exponentially from 300 seconds, capped at 6 hours (21,600), or the remote's own `retry_after` if longer (`sync_backoff_active?`).
+- After 20 consecutive failures `trip_circuit_breaker!` sets the connection `suspended` with a real `update!`, so the status-change notifier fires, and records `sync_circuit_breaker_tripped`. `mark_sync_failed!` returns true in that case so `FederatedContentPullJob` stops retrying.
+
+## Platform federation status
+
+`PlatformFederationStatus` (included in `Platform`) answers whether a platform is `local_hosted?` or an `external_peer?`, whether it is a Community Engine (`community_engine?`, true for local platforms or `software_variant == 'community_engine'`), `federated?` (has a `federation_protocol`), its `effective_oauth_issuer_url` (the explicit issuer, or the resolved host URL for Community Engine platforms), `pending_host_connection_bootstrap?`, and `connected_platforms` (targets of active outgoing connections plus sources of active incoming ones).
+
+## Notifiers
+
+Federation changes notify people through `FederationVisibilityStatusNotifier` (creator told when an item's `federation_visibility` changes), `PlatformConnectionSubmittedNotifier`, `PlatformConnectionStatusNotifier` and `PlatformConnectionDigestNotifier`; see [Notifications System](notifications_system.md).
+
 ## Federation Hub
 
 Members (not just platform managers) can see a summary of their own content's federation status
@@ -175,6 +210,11 @@ stay restricted to permission-holders.
 - `app/models/concerns/better_together/platform_connection_federation_policy.rb`
 - `app/models/concerns/better_together/federatable.rb`
 - `app/models/concerns/better_together/platform_connection_sync_tracking.rb`
+- `app/models/concerns/better_together/platform_connection_oauth_credentials.rb`
+- `app/models/concerns/better_together/platform_federation_status.rb`
+- `app/models/better_together/federation_access_token.rb`
+- `app/models/better_together/federation_content_grant.rb`
+- `app/services/better_together/federation_access_token_issuer.rb`
 - `app/services/better_together/federation_scope_authorizer.rb`
 - `app/services/better_together/content/federated_content_authorizer.rb`
 - `app/services/better_together/content/federated_content_export_service.rb`

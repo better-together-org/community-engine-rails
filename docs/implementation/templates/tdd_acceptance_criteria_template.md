@@ -1,5 +1,9 @@
 # TDD Acceptance Criteria Template
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 This template guides the creation of stakeholder-focused acceptance criteria for implementing features using Test-Driven Development (TDD). Use this template to transform confirmed implementation plans into specific, testable acceptance criteria.

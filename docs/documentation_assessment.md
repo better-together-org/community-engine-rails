@@ -45,7 +45,7 @@ The Better Together Community Engine consists of **75 database tables** organize
 | **Agreement & Legal** | 🔴 LOW | 3 | 📋 Pending | ❌ Needed | ❌ Needed | 0% |
 | **Support Systems** | 🔴 LOW | 4 | 📋 Pending | ❌ Needed | ❌ Needed | 0% |
 
-*_External systems (Redis, Elasticsearch) - no direct tables_
+*_External systems (Redis) - no direct tables_
 
 ---
 
@@ -136,7 +136,7 @@ The Better Together Community Engine consists of **75 database tables** organize
 **Documentation Size:** 12,822+ bytes  
 **Tables Covered:** 0 (external systems)
 - Redis caching infrastructure
-- Elasticsearch search optimization
+- Search performance (Postgres `pg_search`)
 - Sidekiq background processing
 - Rails caching framework
 
@@ -201,7 +201,7 @@ The Better Together Community Engine consists of **75 database tables** organize
 - Live preview via Stimulus controller with debouncing
 - Auto-sync and manual import workflows
 - Platform manager authorization with protected content
-- Plain-text rendering for Elasticsearch indexing
+- Plain-text rendering for search indexing
 - **Test Coverage:** 386+ lines of model/policy/service tests
 
 ---

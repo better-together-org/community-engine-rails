@@ -1,5 +1,9 @@
 # Plan: Federation Item Consent (Tri-State) + Federation Hub
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-07-19. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Tracking issue:** TBD — file a new tracking issue before merging (deliberately separate from
 better-together-org/community-engine-rails#1407; do not fold this work into that issue)
 **Target version:** v0.11.1+

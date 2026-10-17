@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Regenerates docs/reference/ce_documentation_coverage_manifest.{json,md} and documentation_gap_report.md.
+# Step 1 dumps the live Rails surface inside the dummy app container (no database needed); step 2 runs on the host.
+set -euo pipefail
+
+bin/dc-run-dummy bundle exec rails runner ../../scripts/dump_rails_surface.rb
+ruby scripts/export_documentation_coverage_manifest.rb
