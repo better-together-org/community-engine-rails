@@ -195,3 +195,7 @@ Relevant code:
 - Use MCP tools when an authenticated AI assistant needs the higher-level page editing workflow.
 
 For the system-level model behind these endpoints, see [Block System and CMS](../developers/systems/block_system_and_cms.md).
+
+### Navigation landmarks in HTML blocks
+
+HTML block content is sanitized. `nav` and the accessibility attributes `aria-label`, `aria-labelledby`, `aria-current` and `aria-hidden` are kept, so a breadcrumb can be a labelled `<nav aria-label="Breadcrumb">` with `aria-current="page"` on the current item. Scripts, event handlers and unsafe link protocols are still removed.
