@@ -244,15 +244,12 @@ for 0.11.x patches.
   resolution path.
 - **ClamAV Operator Deploy Guide:** A guide for deploying, configuring, and monitoring
   the ClamAV backend will be added in a 0.11.x docs patch before operators are expected
-  to enable `BETTER_TOGETHER_CONTENT_SECURITY_CLAM_AV_ENABLED`.
-- **Observability & Marketing Adapters:** Core error reporting dispatches through a
-  pluggable adapter registry. Sentry and Google Analytics support that 0.10.0 carried in
-  core now live in optional extension gems:
-  [`better_together-sentry`](https://github.com/better-together-org/better_together-sentry)
-  and [`better_together-google-analytics`](https://github.com/better-together-org/better_together-google-analytics)
-  (the inline GA hook was replaced by a generic `share` browser event the gem listens
-  for). Neither gem has a tagged release yet; reference them from `github:` with
-  `branch: 'main'`.
+  to enable `BT_MALWARE_SCANNING_ENABLED`.
+- **Observability & Marketing Adapters:** Core error reporting now dispatches through a
+  pluggable adapter registry, but no companion observability gem (e.g. Sentry) has
+  shipped yet — that extraction is roadmap-only. There is no dedicated marketing/Google
+  Analytics gem either; a small inline GA tracking hook was replaced by a generic
+  `share` browser event that a host app or future extension gem can listen for.
 - **SPF/DKIM/DMARC Verification:** `InboundMailAuthentication` (#1691) is implemented
   and merged but is currently inert in production pending a separate do-3 infrastructure
   change to set a stable `AuthservID`; deploy the two together.

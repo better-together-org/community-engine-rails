@@ -8,10 +8,10 @@ Baseline `v0.10.0`. Generated from [`ce_documentation_coverage_manifest.json`](c
 | Audience | HTML actions | covered | partial | stale | missing | new since baseline |
 | --- | --- | --- | --- | --- | --- | --- |
 | developer | 8 | 0 | 1 | 0 | 7 | 0 |
-| platform_manager | 100 | 0 | 35 | 45 | 20 | 21 |
+| platform_manager | 100 | 0 | 40 | 44 | 16 | 21 |
 | community_organizer | 11 | 0 | 5 | 6 | 0 | 3 |
 | content_moderator | 5 | 0 | 0 | 5 | 0 | 2 |
-| end_user | 81 | 6 | 9 | 49 | 17 | 16 |
+| end_user | 81 | 13 | 11 | 49 | 8 | 16 |
 
 Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the generator) and needs a human pass.
 
@@ -19,14 +19,14 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 
 | Action | Change | Status | Docs | Screenshots |
 | --- | --- | --- | --- | --- |
-| `better_together/feature_access_grants#new` | new | missing | 0 | 0 |
-| `better_together/platform_connections#new` | new | missing | 0 | 0 |
-| `better_together/platform_connections#show` | new | missing | 0 | 0 |
-| `better_together/platform_domains#edit` | new | missing | 0 | 0 |
 | `better_together/feature_access_grants#edit` | new | partial | 0 | 2 |
 | `better_together/feature_access_grants#index` | new | partial | 0 | 2 |
+| `better_together/feature_access_grants#new` | new | partial | 0 | 2 |
 | `better_together/platform_connections#edit` | new | partial | 0 | 2 |
 | `better_together/platform_connections#index` | new | stale | 0 | 2 |
+| `better_together/platform_connections#new` | new | partial | 0 | 2 |
+| `better_together/platform_connections#show` | new | partial | 0 | 2 |
+| `better_together/platform_domains#edit` | new | partial | 0 | 2 |
 | `better_together/platform_domains#index` | new | partial | 0 | 2 |
 | `better_together/platform_domains#new` | new | partial | 0 | 4 |
 | `better_together/robots#edit` | new | stale | 2 | 2 |
@@ -35,11 +35,11 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 | `better_together/seeds#edit` | new | partial | 2 | 0 |
 | `better_together/seeds#index` | new | partial | 2 | 0 |
 | `better_together/seeds#new` | new | partial | 2 | 0 |
-| `better_together/seeds#show` | new | stale | 2 | 0 |
-| `better_together/short_links#edit` | new | stale | 2 | 0 |
-| `better_together/short_links#index` | new | stale | 2 | 4 |
-| `better_together/short_links#new` | new | stale | 2 | 0 |
-| `better_together/short_links#show` | new | stale | 2 | 2 |
+| `better_together/seeds#show` | new | partial | 2 | 0 |
+| `better_together/short_links#edit` | new | stale | 4 | 0 |
+| `better_together/short_links#index` | new | stale | 4 | 4 |
+| `better_together/short_links#new` | new | stale | 4 | 0 |
+| `better_together/short_links#show` | new | stale | 4 | 2 |
 | `better_together/categories#edit` | unchanged | missing | 0 | 0 |
 | `better_together/categories#index` | unchanged | missing | 0 | 0 |
 | `better_together/categories#new` | unchanged | missing | 0 | 0 |
@@ -65,29 +65,22 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 
 | Action | Change | Status | Docs | Screenshots |
 | --- | --- | --- | --- | --- |
-| `better_together/safety/cases#index` | new | stale | 1 | 4 |
-| `better_together/safety/cases#show` | new | stale | 1 | 0 |
+| `better_together/safety/cases#index` | new | stale | 2 | 4 |
+| `better_together/safety/cases#show` | new | stale | 2 | 0 |
 | `better_together/reports#index` | changed | stale | 6 | 4 |
 | `better_together/reports#new` | changed | stale | 6 | 10 |
 | `better_together/reports#show` | changed | stale | 6 | 8 |
 
-### end user: top gaps (75 total)
+### end user: top gaps (68 total)
 
 | Action | Change | Status | Docs | Screenshots |
 | --- | --- | --- | --- | --- |
-| `better_together/message_requests#index` | new | missing | 0 | 0 |
-| `better_together/message_requests#show` | new | missing | 0 | 0 |
-| `better_together/person_access_grants#index` | new | missing | 0 | 0 |
-| `better_together/person_access_grants#show` | new | missing | 0 | 0 |
-| `better_together/person_linked_seeds#index` | new | missing | 0 | 0 |
-| `better_together/person_linked_seeds#show` | new | missing | 0 | 0 |
-| `better_together/person_links#index` | new | missing | 0 | 0 |
-| `better_together/person_links#show` | new | missing | 0 | 0 |
-| `better_together/storage_configurations#edit` | new | missing | 0 | 0 |
+| `better_together/person_linked_seeds#index` | new | partial | 0 | 2 |
+| `better_together/person_linked_seeds#show` | new | partial | 0 | 2 |
 | `better_together/person_seeds#show` | new | stale | 1 | 4 |
-| `better_together/seed_catalog#index` | new | partial | 0 | 4 |
-| `better_together/storage_configurations#index` | new | stale | 0 | 2 |
-| `better_together/storage_configurations#new` | new | stale | 0 | 2 |
+| `better_together/storage_configurations#edit` | new | partial | 1 | 0 |
+| `better_together/storage_configurations#index` | new | stale | 1 | 2 |
+| `better_together/storage_configurations#new` | new | stale | 1 | 2 |
 | `better_together/checklist_items#edit` | unchanged | missing | 0 | 0 |
 | `better_together/hub#activities` | changed | missing | 0 | 0 |
 | `better_together/hub#index` | changed | missing | 0 | 0 |
@@ -100,6 +93,13 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 | `better_together/agreements#index` | changed | stale | 1 | 0 |
 | `better_together/agreements#new` | changed | stale | 1 | 0 |
 | `better_together/agreements#show` | changed | stale | 1 | 0 |
+| `better_together/agreements_status#index` | changed | stale | 1 | 2 |
+| `better_together/calendars#edit` | changed | stale | 1 | 0 |
+| `better_together/calendars#index` | changed | stale | 1 | 0 |
+| `better_together/calendars#new` | changed | stale | 1 | 0 |
+| `better_together/calendars#show` | changed | stale | 1 | 8 |
+| `better_together/calls_for_interest#edit` | unchanged | partial | 1 | 0 |
+| `better_together/calls_for_interest#index` | unchanged | partial | 1 | 0 |
 
 ### developer: top gaps (8 total)
 
@@ -116,96 +116,37 @@ Audience is derived from the controller namespace (see `AUDIENCE_RULES` in the g
 
 ## Models and concerns
 
-115 of 206 models are covered (doc plus ERD or DBML). New since baseline and not covered: **34**.
+159 of 206 models are covered (doc plus ERD or DBML). New since baseline and not covered: **0**.
 
 | Model | Table | Doc | ERD/DBML |
 | --- | --- | --- | --- |
-| `BetterTogether::CommentAddedNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::ContentSecurity::Finding` | `better_together_content_security_findings` | no | yes |
-| `BetterTogether::ContentSecurity::Item` | `better_together_content_security_items` | no | yes |
-| `BetterTogether::ContentSecurity::ScanEvent` | `better_together_content_security_scan_events` | no | yes |
-| `BetterTogether::EventOccurrence` | `better_together_event_occurrences` | no | yes |
-| `BetterTogether::FeatureAccessGrant` | `better_together_feature_access_grants` | no | yes |
-| `BetterTogether::FederationAccessToken` | `better_together_federation_access_tokens` | no | yes |
-| `BetterTogether::FederationContentGrant` | `better_together_federation_content_grants` | no | yes |
-| `BetterTogether::FederationVisibilityStatusNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::InboundEmailReplyToken` | `better_together_inbound_email_reply_tokens` | no | yes |
-| `BetterTogether::Joatu::ConnectionRequest` | `better_together_joatu_requests` | no | yes |
-| `BetterTogether::Joatu::PersonAccessGrantRequest` | `better_together_joatu_requests` | no | yes |
-| `BetterTogether::Joatu::PersonLinkRequest` | `better_together_joatu_requests` | no | yes |
-| `BetterTogether::MembershipRequestDeclinedNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::MembershipRequestDigestNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::MembershipRequestSubmittedNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::MessageRequest` | `better_together_message_requests` | no | yes |
-| `BetterTogether::Metrics::ShortLinkVisit` | `better_together_metrics_short_link_visits` | no | yes |
-| `BetterTogether::PersonAccessGrant` | `better_together_person_access_grants` | no | yes |
-| `BetterTogether::PersonDataExport` | `better_together_person_data_exports` | no | yes |
-| `BetterTogether::PersonDeletionRequest` | `better_together_person_deletion_requests` | no | yes |
-| `BetterTogether::PersonLink` | `better_together_person_links` | no | yes |
-| `BetterTogether::PersonLinkedSeed` | `better_together_person_linked_seeds` | no | yes |
-| `BetterTogether::PersonMessagingGrant` | `better_together_person_messaging_grants` | no | yes |
-| `BetterTogether::PersonPurgeAudit` | `better_together_person_purge_audits` | no | yes |
-| `BetterTogether::PlatformConnectionDigestNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::PlatformConnectionStatusNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::PlatformConnectionSubmittedNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::Safety::Action` | `better_together_safety_actions` | no | yes |
-| `BetterTogether::Safety::Note` | `better_together_safety_notes` | no | yes |
-| `BetterTogether::SafetyReportDigestNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::SafetyReportSubmittedNotifier` | `noticed_events` | no | yes |
-| `BetterTogether::SeedPlanting` | `better_together_seed_plantings` | no | yes |
-| `BetterTogether::ShortLink` | `better_together_short_links` | no | yes |
 
-Concerns new or changed since baseline with no doc mention: **25**.
+Concerns new or changed since baseline with no doc mention: **0**.
 
 | Concern | Change |
 | --- | --- |
-| `BetterTogether::Attachments::Images` | changed |
-| `BetterTogether::BlockFilterable` | changed |
-| `BetterTogether::Communicator` | new |
-| `BetterTogether::CommunityAssignable` | new |
-| `BetterTogether::Content::BlockAttributes` | changed |
-| `BetterTogether::Content::ResourceBlockAttributes` | new |
-| `BetterTogether::ContentSecurity::ActionTextRichTextControls` | new |
-| `BetterTogether::ContentSecurity::ScannableAttachment` | new |
-| `BetterTogether::CreatedRecords` | new |
-| `BetterTogether::Geography::Geospatial::One` | changed |
-| `BetterTogether::Geography::Locatable::Many` | new |
-| `BetterTogether::Geography::Placeable` | new |
-| `BetterTogether::GovernanceParticipant` | new |
-| `BetterTogether::InvitationParticipant` | new |
-| `BetterTogether::Mcp::PunditIntegration` | changed |
-| `BetterTogether::PlatformConnectionOauthCredentials` | new |
-| `BetterTogether::PlatformConnectionSyncTracking` | new |
-| `BetterTogether::PlatformCspConfiguration` | new |
-| `BetterTogether::PlatformCssBlockManagement` | new |
-| `BetterTogether::PlatformFederationStatus` | new |
-| `BetterTogether::PlatformMembershipDisplay` | new |
-| `BetterTogether::PlatformRegistryDefaults` | new |
-| `BetterTogether::PrimaryFlag` | changed |
-| `BetterTogether::PrivacyCeilingValidatable` | new |
-| `BetterTogether::RecurringSchedulable` | changed |
 
 ## Workflows
 
 | Workflow | Audiences | Screens | Screenshots | Docs | Models documented | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| Person data export and deletion | end_user, content_moderator | 0 | 0 | 0 | 0/3 | partial |
-| Safety reporting and case review | end_user, content_moderator | 5 | 4 | 5 | 3/5 | partial |
+| Person data export and deletion | end_user, content_moderator | 0 | 0 | 0 | 3/3 | partial |
+| Safety reporting and case review | end_user, content_moderator | 5 | 4 | 5 | 5/5 | partial |
 | Invitations and membership requests | community_organizer, end_user | 9 | 2 | 9 | 4/4 | partial |
-| Platform connections and federation | platform_manager | 8 | 4 | 2 | 1/4 | partial |
-| Inbound email screening | platform_manager, content_moderator | 0 | 0 | 0 | 2/3 | partial |
-| Content security review | platform_manager, content_moderator | 1 | 1 | 0 | 1/5 | partial |
+| Platform connections and federation | platform_manager | 8 | 8 | 2 | 4/4 | partial |
+| Inbound email screening | platform_manager, content_moderator | 0 | 0 | 0 | 3/3 | partial |
+| Content security review | platform_manager, content_moderator | 1 | 1 | 1 | 5/5 | covered |
 | Agreements and consent | end_user, platform_manager | 5 | 1 | 5 | 3/3 | partial |
 | Robots and authorship | platform_manager, developer | 3 | 2 | 3 | 2/2 | partial |
 | Pages and content blocks | platform_manager | 9 | 3 | 9 | 4/4 | partial |
 | Navigation areas and items | platform_manager | 7 | 0 | 7 | 2/2 | partial |
 | Search and discovery | end_user | 1 | 0 | 1 | 3/3 | partial |
-| Short links and share | platform_manager, end_user | 4 | 2 | 4 | 0/2 | partial |
-| Events, occurrences and calendars | end_user, community_organizer | 9 | 5 | 9 | 4/6 | partial |
+| Short links and share | platform_manager, end_user | 4 | 2 | 4 | 2/2 | covered |
+| Events, occurrences and calendars | end_user, community_organizer | 9 | 5 | 9 | 6/6 | partial |
 | Offers, requests and agreements (Joatu) | end_user | 15 | 3 | 7 | 5/5 | partial |
-| Conversations and message requests | end_user | 5 | 2 | 3 | 3/5 | covered |
+| Conversations and message requests | end_user | 5 | 4 | 5 | 5/5 | covered |
 | Platform setup wizard | platform_manager | 0 | 0 | 0 | 2/3 | covered |
-| Platform domains, storage and feature access | platform_manager | 10 | 7 | 1 | 2/3 | partial |
+| Platform domains, storage and feature access | platform_manager | 10 | 9 | 4 | 3/3 | partial |
 | Roles and permissions | platform_manager | 12 | 0 | 12 | 4/4 | partial |
 | Metrics and reports | platform_manager | 9 | 0 | 1 | 4/4 | partial |
 | Geography, maps and places | platform_manager, end_user | 23 | 0 | 23 | 6/6 | partial |

@@ -110,6 +110,19 @@ module CeDocumentationCoverage
 
   def living_docs = corpus.reject { |f, _| HISTORICAL_PREFIXES.any? { |p| f.start_with?(p) } }
 
+  # Audience docs rarely name controllers, so a doc can declare what it covers with an HTML comment:
+  #   <!-- doc-coverage: better_together/short_links, better_together/reports#new -->
+  # A bare controller path covers every action of that controller.
+  def coverage_annotations
+    @coverage_annotations ||= living_docs.transform_values do |text|
+      text.scan(/<!--\s*doc-coverage:\s*(.*?)\s*-->/m).flatten.flat_map { |list| list.split(',').map(&:strip) }
+    end
+  end
+
+  def annotated_docs(controller_path, action)
+    coverage_annotations.select { |_f, tokens| tokens.include?(controller_path) || tokens.include?("#{controller_path}##{action}") }.keys
+  end
+
   def diagram_sources
     @diagram_sources ||= files('docs/diagrams/source/*.mmd').to_h { |f| [f, read(f)] }
   end
@@ -176,7 +189,8 @@ module CeDocumentationCoverage
       short = camelize(controller.split('/').last)
       klass_names = ["BetterTogether::#{controller.sub('better_together/', '').split('/').map { |p| camelize(p) }.join('::')}Controller", "#{short}Controller"]
       helpers = routes.filter_map { |r| r['name'] }.uniq.flat_map { |n| ["#{n}_path", "#{n}_url"] }
-      doc_hits = matching(living_docs, klass_names + [cpath]).reject { |f| f.start_with?('docs/diagrams/') }
+      doc_hits = (matching(living_docs, klass_names + [cpath]) + annotated_docs(cpath, action)).uniq.sort
+      doc_hits = doc_hits.reject { |f| f.start_with?('docs/diagrams/') }
       diag_hits = matching(diagram_sources, klass_names)
       axe_hits = helpers.empty? ? [] : matching(axe_specs, helpers)
       shot_sidecars = shots_by_action["#{controller}##{action}"]
@@ -219,14 +233,14 @@ module CeDocumentationCoverage
     concerns = concerns_dir.map do |f|
       name = f.sub(%r{\Aapp/models/concerns/}, '').sub(/\.rb\z/, '').split('/').map { |p| camelize(p) }.join('::')
       short = name.split('::').last
-      doc_hits = matching(living_docs, [name, "`#{short}`"])
+      doc_hits = matching(living_docs, [name, name.delete_prefix('BetterTogether::'), "`#{short}`"])
       { 'concern' => name, 'file' => f, 'change_vs_baseline' => change_label([f]), 'docs' => doc_hits.first(6),
         'status' => doc_hits.any? ? 'covered' : 'missing' }
     end
     models = surface['models'].sort_by { |m| m['name'] }.map do |m|
       short = m['name'].split('::').last
       file = m['file']&.sub(%r{\A.*?/(app/)}, '\1')
-      doc_hits = matching(living_docs, [m['name'], "`#{short}`"]).reject { |f| f.start_with?('docs/diagrams/') }
+      doc_hits = matching(living_docs, [m['name'], m['name'].delete_prefix('BetterTogether::'), "`#{short}`"]).reject { |f| f.start_with?('docs/diagrams/') }
       erd_hits = matching(erd_text, [m['name'], m['table'], "#{short} "]).first(4)
       in_dbml = dbml.include?(m['table'])
       diag_hits = matching(diagram_sources, [m['name'], m['table']]).first(5)
@@ -335,7 +349,8 @@ module CeDocumentationCoverage
       ## How coverage is decided
 
       - **View action**: a route's `controller#action`. `covered` = a living doc names the controller (class or controller path) and, for HTML views, a docs screenshot sidecar resolves to the action's route. `partial` = one of the two. `missing` = neither. `stale` = covered or partial, the controller or view changed since the baseline, and a linked doc or screenshot was last committed before that change.
-      - **Model**: `covered` = a living doc names the model and an ERD source or the DBML names its table; `partial` = one of the two.
+      - **Doc coverage annotations**: a living doc can declare the screens it covers with an HTML comment, `<!-- doc-coverage: better_together/short_links, better_together/reports#new -->`. A bare controller path covers every action of that controller. Use it in audience guides, which rarely name controllers.
+      - **Model**: `covered` = a living doc names the model (with or without the `BetterTogether::` prefix) and an ERD source or the DBML names its table; `partial` = one of the two.
       - **Concern**: `covered` when a living doc names it.
       - **Workflow**: curated in [`ce_documentation_workflows.yml`](ce_documentation_workflows.yml); `covered` needs a screenshot, a doc and a documented model across its screens, plus a doc that names the workflow.
       - Living docs exclude `docs/assessments`, `plans`, `implementation`, `releases`, `meta`, generated diagram references and screenshots. Matching is textual, so a mention is evidence of coverage, not of accuracy.
