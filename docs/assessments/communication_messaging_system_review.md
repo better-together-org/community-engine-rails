@@ -1,5 +1,9 @@
 # Communication & Messaging System Review
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05 (last edited 2026-09-11). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Better Together Community Engine**  
 **Review Date:** November 5, 2025  
 **Rails Version:** 8.0.2  

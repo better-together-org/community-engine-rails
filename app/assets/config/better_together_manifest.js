@@ -25,3 +25,5 @@
 //= link leaflet.js
 //= link leaflet-gesture-handling.js
 //= link leaflet-providers.js
+//= link leaflet-extensible.js
+//= link leaflet.markercluster.js

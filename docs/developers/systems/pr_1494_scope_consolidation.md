@@ -31,7 +31,7 @@ and preserved intact on `feature/claims-evidence-citation-governance-01100notes`
 
 The Governed agent foundation (§1), Public publishing governance (§2), Contribution attribution
 substrate (§3, minus its GitHub-backed import piece), and JOATU baseline hardening (§5, minus its
-C3-priced settlement branch, which moved to the `better_together-borgberry` extension gem) shipped in
+priced-settlement branch, which was removed from the release) shipped in
 0.11.0 as originally planned.
 
 ## What Belongs In PR 1494
@@ -57,7 +57,7 @@ The following pieces belong together and now form the intended milestone.
 - JOATU exchange participation recorded as community contribution
 - GitHub-backed contribution import foundation
 
-### 4. Evidence foundation
+### 4. Evidence foundation (carved out of 0.11.0, see Final 0.11.0 Scope Decision above)
 
 - structured citations
 - explicit claims and evidence links
@@ -71,7 +71,7 @@ The following pieces belong together and now form the intended milestone.
 - policy visibility hardening
 - JOATU contribution and evidence compatibility
 
-### 6. Canonical UI evidence
+### 6. Canonical UI evidence (citation and claim browsing, and GitHub import, carved out of 0.11.0)
 
 The PR should keep screenshots and diagrams for the canonical flows that prove the system works:
 

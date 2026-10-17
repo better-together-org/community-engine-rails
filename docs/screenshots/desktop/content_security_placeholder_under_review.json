@@ -1,8 +1,8 @@
 {
   "name": "content_security_placeholder_under_review",
   "device": "desktop",
-  "url": "/en/conversations/fbdbfcb9-535e-47fb-b63f-21f1fc7f376e?person_id=user",
-  "title": "Occaecati quaerat tempore iste. | Conversations | Test Host Community",
+  "url": "/en/conversations/dd8d51d4-421a-4bb2-83d9-7b6310fdf5d4?person_id=user",
+  "title": "Est quia qui qui. | Conversations | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "content_security_review_states",
@@ -43,7 +43,7 @@
         "y": 491.0,
         "width": 380,
         "height": 378,
-        "score": 990.0
+        "score": 986.0
       }
     }
   ]

@@ -1,5 +1,9 @@
 # MCP & API Integration Plan — Community Engine + Management Tool
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-02-15 (last edited 2026-10-11). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** February 15, 2026
 **Scope:** MCP server hardening, Doorkeeper OAuth2 integration, JSON API + MCP coverage gap analysis, full system architecture mapping
 **Branch:** `feat/mcp`

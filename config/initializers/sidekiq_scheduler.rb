@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 # Load Sidekiq Scheduler schedule file when Sidekiq server starts.
-# Merges schedules from the core engine, any bundled extension engines (e.g.
-# better_together-borgberry), and the host app, in that order — so extension
+# Merges schedules from the core engine, any bundled extension engines, and the host app, in that order — so extension
 # gems can ship their own scheduled jobs without core CE knowing about them,
 # and a host app can still override or disable any job by name.
 #
@@ -33,7 +32,7 @@ if defined?(Sidekiq) && Sidekiq.server?
   # Load core engine's schedule first (base schedule)
   merge_schedule_file.call(BetterTogether::Engine.root.join('config', 'sidekiq_scheduler.yml'), 'Community Engine')
 
-  # Load any bundled extension engine's schedule next (e.g. better_together-borgberry),
+  # Load any bundled extension engine's schedule next,
   # sorted by engine name for deterministic merge order across boots.
   Rails::Engine.descendants
                .reject { |engine| engine == BetterTogether::Engine || engine <= Rails::Application }
