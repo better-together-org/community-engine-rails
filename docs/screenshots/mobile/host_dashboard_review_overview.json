@@ -23,26 +23,26 @@
         "x": 24.0,
         "y": 216.0,
         "width": 437.0,
-        "height": 1045.0,
+        "height": 1041.0,
         "right": 461.0,
-        "bottom": 1261.0,
+        "bottom": 1257.0,
         "center_x": 242.5,
-        "center_y": 738.5
+        "center_y": 736.5
       },
       "avoid": {
         "x": 24.0,
         "y": 216.0,
         "width": 437.0,
-        "height": 1045.0,
+        "height": 1041.0,
         "right": 461.0,
-        "bottom": 1261.0,
+        "bottom": 1257.0,
         "center_x": 242.5,
-        "center_y": 738.5
+        "center_y": 736.5
       },
       "placement": {
         "side": "floating",
-        "x": 206.0,
-        "y": 275,
+        "x": 24.0,
+        "y": 44,
         "width": 270.0,
         "height": 962
       }

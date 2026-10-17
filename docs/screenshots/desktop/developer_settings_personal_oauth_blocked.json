@@ -2,7 +2,7 @@
   "name": "developer_settings_personal_oauth_blocked",
   "device": "desktop",
   "url": "/en/settings/applications",
-  "title": "404 - Page Not Found | Test Host Community",
+  "title": "404 - Page Not Found | Community Engine Host",
   "locale": "en",
   "role": "user",
   "feature_set": "feature_access_grants_and_developer_settings",
@@ -20,21 +20,21 @@
         "x": 0.0,
         "y": 104.0,
         "width": 1440.0,
-        "height": 1145.0,
+        "height": 1141.0,
         "right": 1440.0,
-        "bottom": 1249.0,
+        "bottom": 1245.0,
         "center_x": 720.0,
-        "center_y": 676.5
+        "center_y": 674.5
       },
       "avoid": {
         "x": 0.0,
         "y": 104.0,
         "width": 1440.0,
-        "height": 1145.0,
+        "height": 1141.0,
         "right": 1440.0,
-        "bottom": 1249.0,
+        "bottom": 1245.0,
         "center_x": 720.0,
-        "center_y": 676.5
+        "center_y": 674.5
       },
       "placement": {
         "side": "floating",

@@ -27,6 +27,10 @@ Each screenshot is paired with a JSON sidecar containing metadata such as the so
 
 Which routes have screenshots, and which screenshots are older than the views they show, is tracked in [`docs/reference/ce_documentation_coverage_manifest.md`](../reference/ce_documentation_coverage_manifest.md) and its gap report.
 
+## Scheduled refresh
+
+The `Docs Screenshots` workflow (`.github/workflows/docs-screenshots.yml`) runs every Monday and on demand. It skips itself unless a screenshot source (views, assets, JavaScript, helpers, `en.yml`, the docs screenshot specs or the screenshot engine) changed since `docs/screenshots` was last committed (`bin/ci-docs-screenshots-changed`). When something changed it runs `spec/docs_screenshots` in one process on a clean database, keeps the new screenshots and the PNGs where more than 1% of the pixels changed (`bin/ci-docs-screenshots-select`; tunable with the `min_change_percent` input), and opens or updates a single pull request from `docs/screenshots-refresh`. A failing spec fails the run and uploads the browser artifacts instead of committing anything. Trigger it by hand with `force` to refresh without a source change.
+
 ## Release packet naming
 
 When screenshots are captured specifically for a release note or release review packet, use a stable release-prefixed slug so the assets are easy to inventory and validate:

@@ -1,8 +1,8 @@
 {
   "name": "release_0_11_0_llm_robot_management_index",
   "device": "mobile",
-  "url": "/en/host/platforms/test-host-community/robots",
-  "title": "LLM Robots for Test Host Community | Test Host Community",
+  "url": "/en/host/platforms/community-engine-host/robots",
+  "title": "LLM Robots for Community Engine Host | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_llm_robot_management",

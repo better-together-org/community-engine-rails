@@ -2,7 +2,7 @@
   "name": "membership_review_host_dashboard_queue",
   "device": "mobile",
   "url": "/en/host/membership-review",
-  "title": "Membership Review | Test Host Community",
+  "title": "Membership Review | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "membership_review_access_remediation",

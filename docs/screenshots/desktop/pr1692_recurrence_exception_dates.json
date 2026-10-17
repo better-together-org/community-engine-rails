@@ -2,7 +2,7 @@
   "name": "pr1692_recurrence_exception_dates",
   "device": "desktop",
   "url": "/en/events/new",
-  "title": "Kilback, Bailey and Mitchell",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "recurrence_calendar_ux",
@@ -42,7 +42,7 @@
         "y": 773.0,
         "width": 380,
         "height": 320,
-        "score": 708.0
+        "score": 704.0
       }
     }
   ]
