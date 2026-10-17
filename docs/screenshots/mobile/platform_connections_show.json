@@ -1,0 +1,10 @@
+{
+  "name": "platform_connections_show",
+  "device": "mobile",
+  "url": "/en/platform_connections/466de157-cf47-4da2-8260-bbf75864e3f9",
+  "title": "Community Engine Host → Valley Commons | Community Engine Host",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_connections",
+  "source_spec": "./spec/docs_screenshots/better_together/host_dashboard_new_forms_spec.rb"
+}

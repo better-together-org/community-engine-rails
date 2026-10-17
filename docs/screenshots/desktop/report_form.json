@@ -1,11 +1,10 @@
 {
   "name": "report_form",
   "device": "desktop",
-  "url": "http://127.0.0.1:38459/en/reports/new?reportable_id=8199b688-dcac-4fd3-9128-945a77d664bb&reportable_type=BetterTogether%3A%3APerson",
-  "title": "Report a safety concern | Schinner, Langworth and Hintz",
-  "captured_at": "2026-03-09T03:53:31Z",
+  "url": "/en/reports/new?reportable_id=b9dd2be5-53c0-4297-b28f-2e0911d0ed51&reportable_type=BetterTogether%3A%3APerson",
+  "title": "Report a safety concern | Community Engine Host",
   "locale": "en",
   "role": "user",
-  "feature_set": "safety",
-  "source_spec": "./spec/docs_screenshots/better_together/safety_docs_spec.rb"
+  "flow": "report_intake",
+  "source_spec": "./spec/docs_screenshots/better_together/report_form_spec.rb"
 }

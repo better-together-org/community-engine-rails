@@ -1,0 +1,16 @@
+---
+title: 'Posts index: community chip'
+audience:
+- member
+- content_editor
+- developer
+journey_step: As a reader of the posts feed, I can see which community each post comes
+  from.
+callouts:
+- :id: community_chip
+  :title: Community chip
+  :description: Profile image and name of the owning community, linked to its page.
+accessibility_notes: The chip is a text link with a title; the profile image has empty
+  alt text.
+slug: post_community_chip_index
+device: desktop

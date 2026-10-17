@@ -9,6 +9,20 @@ This branch tightens two related platform-management surfaces:
 
 It also hardens feature lifecycle behavior so retired feature keys do not break the grant admin UI or historical records.
 
+## The `FeatureAccessGrant` model
+
+`BetterTogether::FeatureAccessGrant` (`better_together_feature_access_grants`, a `PlatformRecord`) lets a platform give one person early access to a feature that is still in a limited rollout.
+
+| Attribute | Notes |
+|---|---|
+| `person` | The person who gets access |
+| `granted_by_person` | Optional: who granted it |
+| `feature_key` | Required; must be a key in `FeatureRegistry` (an unchanged key on an existing record is allowed even if the feature was later retired, so history stays valid) |
+| `access_level` | `beta` or `alpha` |
+| `expires_at`, `revoked_at` | Optional expiry; `revoke!` sets `revoked_at` |
+
+Rules: there can be only one active grant per platform, person and feature. A grant past its `expires_at` is treated as revoked: it revokes itself on validation, and saving a new grant for the same person and feature revokes older expired ones first so they cannot block it. `FeatureAccessGrant.active` returns unrevoked, unexpired grants and `active_now?` is the instance check. Gating itself is decided by `FeatureGate` against `config/feature_gates.yml`; grants only widen access for the named person.
+
 ## Visual Flow
 
 ```mermaid

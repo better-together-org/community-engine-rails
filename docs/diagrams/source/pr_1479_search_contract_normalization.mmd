@@ -3,7 +3,6 @@ flowchart TD
     B -- No --> X[Not surfaced in registry or search results]
     B -- Yes --> C[Registered through Search::Registry]
     C --> D[Shared Searchable contract]
-    D --> E[Elasticsearch callbacks and index hooks]
     D --> F{pg_search config present?}
     D --> G[as_indexed_json plain-text payload]
     F -- Yes --> H[Normalize pg_search options]
@@ -18,5 +17,4 @@ flowchart TD
     G --> M
     L --> N[PgSearch backend can return model]
     M --> N
-    E --> O[Elasticsearch backend can return model]
-
+    G --> O[Extension backends can index the same payload]

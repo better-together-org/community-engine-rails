@@ -1,8 +1,8 @@
 {
   "name": "content_security_placeholder_restricted",
   "device": "desktop",
-  "url": "/en/conversations/5f41fafe-637b-4d9b-8ef3-995109a7b878?person_id=user",
-  "title": "A officia quasi qui. | Conversations | Test Host Community",
+  "url": "/en/conversations/66da730f-eac9-47d1-a5b1-0331d2d3f5c1?person_id=user",
+  "title": "Nemo doloribus autem distinctio. | Conversations | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "content_security_review_states",
@@ -43,7 +43,7 @@
         "y": 491.0,
         "width": 380,
         "height": 346,
-        "score": 990.0
+        "score": 986.0
       }
     }
   ]

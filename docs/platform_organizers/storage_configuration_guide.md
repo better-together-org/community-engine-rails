@@ -1,5 +1,7 @@
 # Storage Configuration Guide
 
+<!-- doc-coverage: better_together/storage_configurations -->
+
 **Target Audience:** Platform organizers  
 **Document Type:** Operator guide  
 **Last Updated:** March 2026

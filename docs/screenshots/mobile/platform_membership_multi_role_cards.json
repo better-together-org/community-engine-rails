@@ -19,23 +19,23 @@
       ],
       "target": {
         "x": 0.0,
-        "y": 451.953125,
+        "y": 389.953125,
         "width": 485.0,
         "height": 648.0,
         "right": 485.0,
-        "bottom": 1099.953125,
+        "bottom": 1037.953125,
         "center_x": 242.5,
-        "center_y": 775.953125
+        "center_y": 713.953125
       },
       "avoid": {
         "x": 0.0,
-        "y": 451.953125,
+        "y": 389.953125,
         "width": 485.0,
         "height": 648.0,
         "right": 485.0,
-        "bottom": 1099.953125,
+        "bottom": 1037.953125,
         "center_x": 242.5,
-        "center_y": 775.953125
+        "center_y": 713.953125
       },
       "placement": {
         "side": "floating",

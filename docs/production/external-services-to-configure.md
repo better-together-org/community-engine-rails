@@ -3,7 +3,7 @@
 This guide lists external services used in production and the environment variables required to configure them. See `.env.prod.sample` for a concise reference of the variables used by this project.
 
 Important notes:
-- Prefer setting a single `DATABASE_URL`, `REDIS_URL`, and `ELASTICSEARCH_URL` where supported.
+- Prefer setting a single `DATABASE_URL` and `REDIS_URL` where supported. Search needs no external service by default (`SEARCH_BACKEND=pg_search`).
 - Hostnames and asset/CDN domains must be consistent (`APP_HOST`, `ASSET_HOST`).
 - Keep secrets out of the repo; use your platform’s secret manager (e.g., Dokku `config:set`).
 
@@ -53,7 +53,7 @@ Baseline provider selection:
 Provider-specific credentials remain optional and depend on the installed thin gem:
 - OpenAI-compatible providers: `OPENAI_API_KEY` or `OPENAI_ACCESS_TOKEN`
 - OpenAI-compatible base override: `OPENAI_API_BASE`
-- Local Ollama/Borgberry routing: provider-specific configuration in the future Borgberry adapter gem
+- Local Ollama routing: provider-specific configuration in a provider gem registered in the adapter registry
 
 Example environment:
 ```bash
@@ -69,29 +69,29 @@ References:
 - `app/models/better_together/robot.rb`
 - `app/helpers/better_together/translatable_fields_helper.rb`
 
-## Sentry (Backend + Optional Host-App Browser Integration)
+## Sentry (optional extension gem)
 
-Backend error reporting and performance traces:
-- `SENTRY_DSN`: Server DSN for the Ruby SDK.
-- `GIT_REV`: Git SHA/version for release tagging.
+Sentry is not part of core since 0.11.0. Add [`better_together-sentry`](https://github.com/better-together-org/better_together-sentry) to the host app Gemfile:
+
+```ruby
+gem 'better_together-sentry', github: 'better-together-org/better_together-sentry', branch: 'main'
+```
+
+The gem registers the `:error_reporting` adapter, the browser head-tag provider and the matching CSP origins. Core still dispatches rescued errors and background-job failures through `BetterTogether.report_error`, so a host app can register any other reporter instead.
+
+Variables read by the gem:
+- `SENTRY_DSN`: server DSN; enables the default `Sentry.init` bootstrap.
+- `SENTRY_CLIENT_KEY`: public key for the browser script (optional).
+- `GIT_REV`: release tag.
 - Optional sampling: `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_PROFILES_SAMPLE_RATE`.
 
-Browser (frontend) error reporting, if a host app or optional integration adds the Sentry browser SDK:
-- `SENTRY_CLIENT_KEY`: Public key used by the host app or optional browser integration.
-
-Example environment:
 ```bash
 SENTRY_DSN=https://<key>@o<org>.ingest.sentry.io/<project>
 SENTRY_CLIENT_KEY=<public-browser-key>
 GIT_REV=$(git rev-parse --short HEAD)
-# Optional sampling
-# SENTRY_TRACES_SAMPLE_RATE=0.2
-# SENTRY_PROFILES_SAMPLE_RATE=0.1
 ```
 
-References:
-- `spec/dummy/config/initializers/sentry.rb:3`
-- Host-app or optional integration-specific browser initializer/template
+See the gem README for the full list.
 
 ## Email (SMTP / SendGrid)
 
@@ -126,28 +126,11 @@ Rails.application.configure do
 end
 ```
 
-## Elasticsearch
+## Search (Postgres by default; Elasticsearch is optional)
 
-Used for search indexing via `elasticsearch-model`.
+Core search runs on Postgres (`SEARCH_BACKEND=pg_search`, the default, or `database`) and needs no external service or search-specific environment variables.
 
-Preferred:
-- `ELASTICSEARCH_URL`: Full URL (e.g., `http://localhost:9200`).
-
-Fallback variables (if `ELASTICSEARCH_URL` is not set):
-- `ES_HOST`: Host URL (default `http://localhost`).
-- `ES_PORT`: Port (default `9200`).
-
-Example environment:
-```bash
-ELASTICSEARCH_URL=http://elasticsearch:9200
-# or
-# ES_HOST=http://elasticsearch
-# ES_PORT=9200
-```
-
-Reference:
-- `config/initializers/elasticsearch.rb:6`
-- See also: [Elasticsearch Upgrade to 8 Guide](../platform_organizers/elasticsearch_upgrade_to_8_guide.md)
+Elasticsearch is available through the optional [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch) extension gem, which owns the client configuration, index lifecycle and its environment variables; follow that gem's README. Set `SEARCH_BACKEND=elasticsearch` once the gem is installed. Host models then need an Elasticsearch document concern registered with the gem.
 
 ## Redis
 
@@ -206,9 +189,9 @@ SECRET_KEY_BASE=<generated-secret>
 
 - S3/CDN: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `FOG_DIRECTORY`, `FOG_REGION`, `ASSET_HOST`
 - LLM provider credentials: `BETTER_TOGETHER_LLM_PROVIDER`, `BETTER_TOGETHER_LLM_MODEL`, plus provider-specific secrets such as `OPENAI_API_KEY` (optional)
-- Sentry: `SENTRY_DSN`, `SENTRY_CLIENT_KEY` (only when a host app/browser integration uses it), `GIT_REV`
+- Sentry (only with `better_together-sentry`): `SENTRY_DSN`, `SENTRY_CLIENT_KEY`, `GIT_REV`
 - Email: `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`
-- Elasticsearch: `ELASTICSEARCH_URL` or `ES_HOST` + `ES_PORT`
+- Search: none by default; `SEARCH_BACKEND` selects the backend (Elasticsearch settings come from `better_together-elasticsearch`)
 - Redis: `REDIS_URL` (+ `RACK_ATTACK_REDIS_URL` optional)
 - PostgreSQL: `DATABASE_URL`
 - Host/Secrets: `ALLOWED_HOSTS`, `APP_HOST`, `SECRET_KEY_BASE`
