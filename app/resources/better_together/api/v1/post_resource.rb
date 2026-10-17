@@ -17,6 +17,9 @@ module BetterTogether
         # Categories by identifier (unknown identifiers are rejected)
         attribute :category_identifiers
 
+        # Write-only: ids of existing blocks attached at the top of the body (never returned)
+        attribute :attachment_block_ids
+
         # Virtual attributes for attachments
         attribute :cover_image_url
 
@@ -45,9 +48,13 @@ module BetterTogether
           _model.pinned_updated_at = value
         end
 
+        def fetchable_fields
+          super - %i[attachment_block_ids]
+        end
+
         # Creatable and updatable fields. created_at is create-only: it is never rewritten afterwards.
         def self.creatable_fields(context)
-          super - %i[slug cover_image_url published_at] + %i[category_identifiers created_at updated_at]
+          super - %i[slug cover_image_url published_at] + %i[category_identifiers attachment_block_ids created_at updated_at]
         end
 
         def self.updatable_fields(context)
