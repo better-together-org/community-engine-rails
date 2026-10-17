@@ -12,6 +12,7 @@ module BetterTogether
       include Pundit::Authorization
       include Pundit::ResourceController
       include BetterTogether::Api::OauthAuthorization
+      include BetterTogether::Api::LocaleScoping
 
       protect_from_forgery with: :exception, unless: -> { request.format.json? || request.format == Mime[:jsonapi] }
 

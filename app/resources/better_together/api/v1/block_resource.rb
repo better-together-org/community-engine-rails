@@ -87,12 +87,33 @@ module BetterTogether
         # attribute() — JSONAPI-Resources 0.10.x checks `unless method_defined?` for
         # both, so our guards are preserved and unguarded delegation is never installed.
         %w[en fr es uk].each do |locale|
-          %i[markdown_source heading cta_text content attribution alt_text caption diagram_source].each do |base|
+          %i[markdown_source heading cta_text content attribution attribution_url alt_text caption diagram_source].each do |base|
             full = :"#{base}_#{locale}"
             define_method(full) { @model.respond_to?(full) ? @model.public_send(full) : nil }
             define_method(:"#{full}=") { |v| @model.public_send(:"#{full}=", v) if @model.respond_to?(:"#{full}=") }
             attribute full
           end
+        end
+
+        # ── Write-only base64 image input ────────────────────────────────────────
+        # The JSON:API cannot upload files, so image blocks take media_data and hero blocks background_image_data
+        # (base64, JPEG/PNG/WebP) with an optional filename. Send block_type first. Never returned.
+        WRITE_ONLY_FIELDS = %i[media_data media_filename background_image_data background_image_filename].freeze
+
+        WRITE_ONLY_FIELDS.each do |field|
+          define_method(field) { nil }
+          define_method(:"#{field}=") do |value|
+            unless @model.respond_to?(:"#{field}=")
+              raise JSONAPI::Exceptions::InvalidFieldValue.new(field, 'is not valid for this block type')
+            end
+
+            @model.public_send(:"#{field}=", value)
+          end
+          attribute field
+        end
+
+        def fetchable_fields
+          super - WRITE_ONLY_FIELDS
         end
 
         # ── Associations ─────────────────────────────────────────────────────────
@@ -136,6 +157,8 @@ module BetterTogether
             cta_text_en cta_text_fr cta_text_es cta_text_uk
             content_en content_fr content_es content_uk
             attribution_en attribution_fr attribution_es attribution_uk
+            attribution_url_en attribution_url_fr attribution_url_es attribution_url_uk
+            media_data media_filename background_image_data background_image_filename
             alt_text_en alt_text_fr alt_text_es alt_text_uk
             caption_en caption_fr caption_es caption_uk
             diagram_source_en diagram_source_fr diagram_source_es diagram_source_uk
