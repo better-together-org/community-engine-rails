@@ -195,3 +195,18 @@ Relevant code:
 - Use MCP tools when an authenticated AI assistant needs the higher-level page editing workflow.
 
 For the system-level model behind these endpoints, see [Block System and CMS](../developers/systems/block_system_and_cms.md).
+
+## Inputs for headless publishers
+
+These fields let a script publish a complete page or post without a browser. Send `block_type` before the image fields.
+
+| Where | Field | Notes |
+|---|---|---|
+| Image block | `media_data`, `media_filename` | Base64 JPEG, PNG or WebP (5 MB). The type is taken from the bytes. A caption is required. Write-only. |
+| Hero block | `background_image_data`, `background_image_filename` | Same rules. Replaces the background on update. Write-only. |
+| Image block | `attribution_url_en` (and `_fr`, `_es`, `_uk`) | Link the attribution text points to. |
+| Page, post | `category_identifiers` | Array of category identifiers. Unknown identifiers return 422. |
+| Page | `slug` | Forward slashes are kept (`ships/mt-explora-iii`); each segment is parameterized. |
+| Post | `created_at` (create only), `updated_at` | Keep original dates for imports. `updated_at` is re-applied after commit because saving blocks or a cover touches the record. |
+
+Every API request runs in the default locale. Send `X-Api-Locale: fr` to write another locale; a locale left on the server thread by a web request is ignored.
