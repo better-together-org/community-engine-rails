@@ -8,7 +8,7 @@ This guide explains how page views, link clicks, shares, and downloads are track
   - Link click POST payload: `url`, `page_url`, `internal` → creates `Metrics::LinkClick`.
 - Shares (Stimulus): `share_controller.js` constructs share URLs and posts tracking events to record platform, url, and shareable ids.
 - Search queries: tracked in two ways:
-  - Server‑side in `SearchController#search` after Elasticsearch returns (records `query`, `results_count`, `locale`).
+  - Server‑side in `SearchController#search` after the search backend returns (records `query`, `results_count`, `locale`).
   - API endpoint `/:locale/bt/metrics/search_queries` (POST) via `Metrics::SearchQueriesController#create` for client‑side tracking.
 - Downloads: when a report file is downloaded, `TrackDownloadJob` records a `Metrics::Download` (filename, content_type, byte_size, locale).
 

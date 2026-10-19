@@ -46,6 +46,18 @@ The seed system includes several guardrails in `Seed` itself:
 
 These guardrails are relevant for file-backed imports and for any host app code that works directly with seed files on disk.
 
+## Personal data export requests (`PersonDataExport`)
+
+The GDPR-oriented export added in 0.11.0 is separate from the seed list below and runs in the background.
+
+1. A signed-in person presses the export button on **Settings, My data** (`settings/my_data`), which posts to `POST /person_data_exports` (`PersonDataExportsController#create`). A `BetterTogether::PersonDataExport` is created with `status: pending`, `format: json` and `requested_at`; the current platform (or the host platform) is recorded.
+2. An after-commit callback enqueues `GeneratePersonDataExportJob`. The job marks the export `processing`, calls `PersonDataExportService` and attaches the result as a JSON file named `person-data-export-<person id>-<date>.json`, then marks it `completed`; on any error it marks the export `failed` with the message and re-raises.
+3. `GET /person_data_exports/:id` (`show`) sends the file as an attachment only when the export is `completed` and has a file; otherwise it redirects back with a "not ready" message. Only the owner can see their exports.
+
+`PersonDataExportService` builds the file from a personal export seed (`Seeds::Builder` with the `personal_export` profile, persisted for the person) plus an account section: `exported_at`, the person's attributes (including preferences and email), memberships, agreements, blocks, reports, conversations, events, integrations and seeds.
+
+`PersonDataExport` (`better_together_person_data_exports`): `person`, `platform`, `status` (`pending`, `processing`, `completed`, `failed`), `format` (only `json`), `requested_at`, `started_at`, `completed_at`, `error_message` and the `export_file` attachment (purged with the record). Scopes: `latest_first`, `active` (pending or processing). It is listed in `config/person_deletion_inventory.yml`; see [Person Deletion Requests and Purge Audits](person_deletion_and_purge_audit_system.md).
+
 ## Personal data exports
 
 ### Entry point
@@ -77,7 +89,7 @@ When a signed-in user requests an export:
 4. it calls `person.export_as_seed(creator_id: person.id)`
 5. the resulting `Seed` record appears in the person's seed list and can be viewed, downloaded, or deleted
 
-The controller logs the export request under a GDPR-oriented log message, but this branch does not show a separate background-job queue for the personal export itself.
+The controller logs the export request under a GDPR-oriented log message and creates the seed synchronously. The background export described above is the file members download from My data.
 
 See also:
 

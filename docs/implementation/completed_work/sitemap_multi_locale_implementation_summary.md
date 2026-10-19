@@ -1,5 +1,9 @@
 # Sitemap Generator Multi-Locale Implementation - Summary
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-12. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 Successfully implemented multi-locale sitemap generation with security fixes and database resilience improvements for the Better Together Community Engine.
 

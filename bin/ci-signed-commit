@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Creates one GitHub-signed commit on $BRANCH from the working-tree changes under the given
+# paths (modified, new and deleted files). A runner-side `git commit` would be unsigned, so
+# CI auto-fixes go through the GraphQL createCommitOnBranch mutation instead.
+#
+# Usage: GH_TOKEN=... BRANCH=... bin/ci-signed-commit "<headline>" <path>...
+# Needs GITHUB_REPOSITORY, and a checkout of $BRANCH whose HEAD is the branch tip.
+set -euo pipefail
+
+headline="$1"; shift
+: "${GH_TOKEN:?}" "${BRANCH:?}" "${GITHUB_REPOSITORY:?}"
+
+additions="$(mktemp)"; deletions="$(mktemp)"
+echo '[]' > "$additions"
+git ls-files --deleted -- "$@" | jq -R . | jq -s . > "$deletions"
+while IFS= read -r f; do
+  jq -c --arg p "$f" --rawfile c <(base64 -w0 "$f") '. + [{path: $p, contents: $c}]' "$additions" > "$additions.new"
+  mv "$additions.new" "$additions"
+done < <(git ls-files --modified --others --exclude-standard -- "$@")
+
+jq -n --slurpfile additions "$additions" --slurpfile deletions "$deletions" \
+  --arg repo "$GITHUB_REPOSITORY" --arg branch "$BRANCH" --arg oid "$(git rev-parse HEAD)" --arg headline "$headline" \
+  '{query: "mutation($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { url } } }",
+    variables: {input: {
+      branch: {repositoryNameWithOwner: $repo, branchName: $branch},
+      expectedHeadOid: $oid,
+      message: {headline: $headline},
+      fileChanges: {additions: $additions[0], deletions: ($deletions[0] | map({path: .}))}}}}' \
+  | gh api graphql --input - > "$additions.out" 2>&1 || {
+  # A newer push moved the branch; that push's own run re-evaluates the tip.
+  if grep -q STALE_DATA "$additions.out"; then
+    echo "Branch moved since checkout; skipping, the newer run will handle it." >&2
+    exit 0
+  fi
+  cat "$additions.out" >&2
+  exit 1
+}
+jq -r '.data.createCommitOnBranch.commit.url' "$additions.out"

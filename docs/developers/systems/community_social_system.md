@@ -591,7 +591,7 @@ end
 - **Membership Caching**: Cache expensive membership queries
 - **Privacy Filtering**: Optimize privacy-aware database queries
 - **Bulk Operations**: Efficient bulk membership and permission operations
-- **Search Indexing**: Elasticsearch integration for community and user search
+- **Search**: Communities are in the `pg_search` registry (`Community` declares `searchable pg_search: { ... }`); people are not in the global search registry
 
 ## Development Guidelines
 

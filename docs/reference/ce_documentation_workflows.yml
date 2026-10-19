@@ -1,0 +1,251 @@
+# Curated user and operator workflows. Names must match live controllers and models; the generator fails on unknown names.
+# Edit this file to add workflows, then run bin/export_documentation_coverage_manifest.
+workflows:
+  - id: person_data_export_and_deletion
+    title: "Person data export and deletion"
+    audiences: [end_user, content_moderator]
+    controllers:
+      - BetterTogether::PersonDataExportsController
+      - BetterTogether::PersonDeletionRequestsController
+    models:
+      - BetterTogether::PersonDataExport
+      - BetterTogether::PersonDeletionRequest
+      - BetterTogether::PersonPurgeAudit
+  - id: safety_reporting_and_case_review
+    title: "Safety reporting and case review"
+    audiences: [end_user, content_moderator]
+    controllers:
+      - BetterTogether::ReportsController
+      - BetterTogether::ReportFollowupsController
+      - BetterTogether::Safety::CasesController
+      - BetterTogether::Safety::ActionsController
+      - BetterTogether::Safety::NotesController
+      - BetterTogether::Safety::AgreementsController
+    models:
+      - BetterTogether::Report
+      - BetterTogether::Safety::Case
+      - BetterTogether::Safety::Action
+      - BetterTogether::Safety::Note
+      - BetterTogether::Safety::Agreement
+  - id: invitations_and_membership_requests
+    title: "Invitations and membership requests"
+    audiences: [community_organizer, end_user]
+    controllers:
+      - BetterTogether::InvitationsController
+      - BetterTogether::PlatformInvitationsController
+      - BetterTogether::MembershipRequestsController
+      - BetterTogether::PersonCommunityMembershipsController
+    models:
+      - BetterTogether::Invitation
+      - BetterTogether::PlatformInvitation
+      - BetterTogether::Joatu::MembershipRequest
+      - BetterTogether::PersonCommunityMembership
+  - id: platform_connections_and_federation
+    title: "Platform connections and federation"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::PlatformConnectionsController
+      - BetterTogether::FederationHubController
+      - BetterTogether::Federation::LinkedSeedsController
+      - BetterTogether::PersonLinkedSeedsController
+    models:
+      - BetterTogether::PlatformConnection
+      - BetterTogether::FederationAccessToken
+      - BetterTogether::FederationContentGrant
+      - BetterTogether::PersonLinkedSeed
+  - id: inbound_email_screening
+    title: "Inbound email screening"
+    audiences: [platform_manager, content_moderator]
+    controllers:
+      - BetterTogether::InboundEmailsController
+    models:
+      - BetterTogether::InboundEmailMessage
+      - BetterTogether::InboundEmailReplyToken
+      - BetterTogether::ContentSecurity::Subject
+  - id: content_security_review
+    title: "Content security review"
+    audiences: [platform_manager, content_moderator]
+    controllers:
+      - BetterTogether::UploadsController
+    models:
+      - BetterTogether::ContentSecurity::Finding
+      - BetterTogether::ContentSecurity::Item
+      - BetterTogether::ContentSecurity::ScanEvent
+      - BetterTogether::ContentSecurity::Subject
+      - BetterTogether::Upload
+  - id: agreements_acceptance
+    title: "Agreements and consent"
+    audiences: [end_user, platform_manager]
+    controllers:
+      - BetterTogether::AgreementsController
+      - BetterTogether::AgreementsStatusController
+    models:
+      - BetterTogether::Agreement
+      - BetterTogether::AgreementParticipant
+      - BetterTogether::AgreementTerm
+  - id: robots_and_authorship
+    title: "Robots and authorship"
+    audiences: [platform_manager, developer]
+    controllers:
+      - BetterTogether::RobotsController
+    models:
+      - BetterTogether::Robot
+      - BetterTogether::Authorship
+  - id: cms_pages_and_blocks
+    title: "Pages and content blocks"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::PagesController
+      - BetterTogether::Content::BlocksController
+      - BetterTogether::Content::PageBlocksController
+      - BetterTogether::StaticPagesController
+    models:
+      - BetterTogether::Page
+      - BetterTogether::Content::Block
+      - BetterTogether::Content::PageBlock
+      - BetterTogether::Content::Template
+  - id: navigation_management
+    title: "Navigation areas and items"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::NavigationAreasController
+      - BetterTogether::NavigationItemsController
+    models:
+      - BetterTogether::NavigationArea
+      - BetterTogether::NavigationItem
+  - id: search_and_discovery
+    title: "Search and discovery"
+    audiences: [end_user]
+    controllers:
+      - BetterTogether::SearchController
+    models:
+      - BetterTogether::Page
+      - BetterTogether::Post
+      - BetterTogether::Event
+  - id: short_links
+    title: "Short links and share"
+    audiences: [platform_manager, end_user]
+    controllers:
+      - BetterTogether::ShortLinksController
+      - BetterTogether::ShortLinkRedirectsController
+    models:
+      - BetterTogether::ShortLink
+      - BetterTogether::Metrics::ShortLinkVisit
+  - id: events_and_calendars
+    title: "Events, occurrences and calendars"
+    audiences: [end_user, community_organizer]
+    controllers:
+      - BetterTogether::EventsController
+      - BetterTogether::EventOccurrencesController
+      - BetterTogether::CalendarsController
+    models:
+      - BetterTogether::Event
+      - BetterTogether::EventOccurrence
+      - BetterTogether::EventAttendance
+      - BetterTogether::EventInvitation
+      - BetterTogether::Calendar
+      - BetterTogether::Recurrence
+  - id: joatu_exchange
+    title: "Offers, requests and agreements (Joatu)"
+    audiences: [end_user]
+    controllers:
+      - BetterTogether::Joatu::OffersController
+      - BetterTogether::Joatu::RequestsController
+      - BetterTogether::Joatu::AgreementsController
+      - BetterTogether::Joatu::CategoriesController
+      - BetterTogether::Joatu::ResponseLinksController
+    models:
+      - BetterTogether::Joatu::Offer
+      - BetterTogether::Joatu::Request
+      - BetterTogether::Joatu::Agreement
+      - BetterTogether::Joatu::Category
+      - BetterTogether::Joatu::ResponseLink
+  - id: conversations_and_messaging
+    title: "Conversations and message requests"
+    audiences: [end_user]
+    controllers:
+      - BetterTogether::ConversationsController
+      - BetterTogether::MessagesController
+      - BetterTogether::MessageRequestsController
+    models:
+      - BetterTogether::Conversation
+      - BetterTogether::ConversationParticipant
+      - BetterTogether::Message
+      - BetterTogether::MessageRequest
+      - BetterTogether::PersonMessagingGrant
+  - id: platform_setup_wizard
+    title: "Platform setup wizard"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::NewPlatformSetupController
+      - BetterTogether::NewPlatformSetupStepsController
+      - BetterTogether::SetupWizardController
+      - BetterTogether::SetupWizardStepsController
+      - BetterTogether::WizardsController
+      - BetterTogether::WizardStepsController
+    models:
+      - BetterTogether::Wizard
+      - BetterTogether::WizardStep
+      - BetterTogether::WizardStepDefinition
+  - id: platform_domains_and_storage
+    title: "Platform domains, storage and feature access"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::PlatformDomainsController
+      - BetterTogether::StorageConfigurationsController
+      - BetterTogether::FeatureAccessGrantsController
+      - BetterTogether::SettingsController
+    models:
+      - BetterTogether::PlatformDomain
+      - BetterTogether::StorageConfiguration
+      - BetterTogether::FeatureAccessGrant
+  - id: roles_and_permissions
+    title: "Roles and permissions"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::RolesController
+      - BetterTogether::ResourcePermissionsController
+      - BetterTogether::PersonPlatformMembershipsController
+    models:
+      - BetterTogether::Role
+      - BetterTogether::ResourcePermission
+      - BetterTogether::RoleResourcePermission
+      - BetterTogether::PersonPlatformMembership
+  - id: metrics_and_reports
+    title: "Metrics and reports"
+    audiences: [platform_manager]
+    controllers:
+      - BetterTogether::Metrics::ReportsController
+      - BetterTogether::Metrics::PageViewReportsController
+      - BetterTogether::Metrics::LinkClickReportsController
+      - BetterTogether::Metrics::LinkCheckerReportsController
+      - BetterTogether::Metrics::UserAccountReportsController
+    models:
+      - BetterTogether::Metrics::PageView
+      - BetterTogether::Metrics::LinkClick
+      - BetterTogether::Metrics::PageViewReport
+      - BetterTogether::Metrics::LinkClickReport
+  - id: geography_and_maps
+    title: "Geography, maps and places"
+    audiences: [platform_manager, end_user]
+    controllers:
+      - BetterTogether::Geography::MapsController
+      - BetterTogether::Geography::CountriesController
+      - BetterTogether::Geography::SettlementsController
+      - BetterTogether::Geography::RegionsController
+      - BetterTogether::Geography::StatesController
+      - BetterTogether::Geography::ContinentsController
+    models:
+      - BetterTogether::Geography::Map
+      - BetterTogether::Geography::Country
+      - BetterTogether::Geography::Settlement
+      - BetterTogether::Geography::Region
+      - BetterTogether::Geography::State
+      - BetterTogether::Geography::Continent
+  - id: bot_defense
+    title: "Bot defense on public forms"
+    audiences: [platform_manager, end_user]
+    controllers:
+      - BetterTogether::BotDefense::ChallengesController
+    models:
+      - BetterTogether::Report

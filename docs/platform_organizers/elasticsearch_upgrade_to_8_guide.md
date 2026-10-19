@@ -1,126 +1,46 @@
-# Elasticsearch Upgrade to 8 Guide
+# Elasticsearch in Community Engine 0.11.0
 
 **Target Audience:** Platform organizers and operators  
 **Document Type:** Administrator Guide  
-**Last Updated:** March 2026
+**Last Updated:** October 2026
 
-## Overview
+## What changed
 
-This branch already carries Elasticsearch 8 client compatibility work, but it does not ship a one-click deployment script or a large migration playbook. The operator guidance here stays focused on the surfaces that exist in the repo today:
+Elasticsearch is no longer part of the Community Engine core gem. In 0.10.x the core gem depended on `elasticsearch-model` and `elasticsearch-rails` 7 and used Elasticsearch as the search backend. From 0.11.0:
 
-- environment-based client configuration
-- backend health and drift auditing
-- index refresh and reindex tasks
-- current search scope limits
+- core search runs on Postgres (`SEARCH_BACKEND=pg_search`, the default) and needs no search service
+- Elasticsearch support lives in the optional [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch) extension gem, which depends on the Elasticsearch 8 client libraries (`elasticsearch-model` and `elasticsearch-rails` `~> 8`)
+- core keeps the generic search backend registry and searchable-model registry that the gem plugs into
 
-## What is actually indexed on this branch
+This page used to document the Elasticsearch 8 client work in core. That code and its configuration (`config/initializers/elasticsearch.rb`, `ElasticsearchClientOptions`) are gone from core and are owned by the gem.
 
-The search registry currently includes only:
+## If you do not need Elasticsearch
 
-- `BetterTogether::Page`
-- `BetterTogether::Post`
+Do nothing beyond the normal upgrade. Remove any Elasticsearch service from your deployment once nothing else uses it, and see the [host upgrade guide](../releases/0.11.0_host_upgrade_guide.md) for host models that still declare Elasticsearch index settings.
 
-Events are not currently part of the global Elasticsearch registry. If you are validating a release upgrade, treat pages and posts as the authoritative search coverage set for this worktree.
+## If you want to keep using Elasticsearch
 
-## Client configuration
+1. Add the gem to the host app Gemfile and bundle:
 
-Main code paths:
+   ```ruby
+   gem 'better_together-elasticsearch', github: 'better-together-org/better_together-elasticsearch', branch: 'main'
+   ```
 
-- `config/initializers/elasticsearch.rb`
-- `app/services/better_together/elasticsearch_client_options.rb`
+2. Set `SEARCH_BACKEND=elasticsearch` and the connection settings described in the gem README.
+3. Register a document concern for each host model that should be indexed (see the gem README for `register_model_document`).
+4. Build the indexes and check health:
 
-Preferred variables:
+   ```bash
+   bin/rails better_together:search:reindex_all
+   bin/rails better_together:search:audit
+   ```
 
-- `ELASTICSEARCH_URL`
-- `ELASTICSEARCH_USERNAME`
-- `ELASTICSEARCH_PASSWORD`
-- `ELASTICSEARCH_CA_CERT_FILE`
-- `ELASTICSEARCH_CA_FINGERPRINT`
-- `ELASTICSEARCH_SSL_VERIFY`
+   `audit` reports backend status and database-to-index drift; the reindex tasks call the active backend's index lifecycle methods.
 
-Fallback variables still supported by the client builder:
+The gem has no tagged release yet, so pin it by branch or commit and review its changes before upgrading.
 
-- `ES_HOST`
-- `ES_PORT`
-- `ES_USERNAME`
-- `ES_PASSWORD`
-- `ES_CA_CERT_FILE`
-- `ES_CA_FINGERPRINT`
-- `ES_SSL_VERIFY`
+## Related
 
-## Why Elasticsearch 8 matters here
-
-The client options builder explicitly supports Elasticsearch 8-style TLS configuration by allowing both a CA file and a CA fingerprint. This is the most release-relevant ES8 surface currently represented in code.
-
-Example:
-
-```bash
-ELASTICSEARCH_URL=https://search.example.test:9200
-ELASTICSEARCH_USERNAME=elastic
-ELASTICSEARCH_PASSWORD=secret
-ELASTICSEARCH_CA_CERT_FILE=/certs/http_ca.crt
-ELASTICSEARCH_CA_FINGERPRINT=AA:BB:CC
-ELASTICSEARCH_SSL_VERIFY=true
-```
-
-## Validation workflow
-
-Run the search audit first. It gives you the cleanest branch-supported health view.
-
-```bash
-bundle exec rake better_together:search:audit
-bundle exec rake better_together:search:audit FORMAT=json
-```
-
-The audit reports:
-
-- backend availability
-- whether each expected index exists
-- database row count versus indexed document count
-- drift between database and index
-
-Status meanings from `AuditService`:
-
-- `ok` / `healthy`: configured, reachable, and aligned
-- `missing`: index missing for a registered model
-- `drifted`: document count does not match database count
-- `unreachable`: backend not responding
-- `disabled`: backend not configured
-
-## Reindex workflow
-
-If the backend is reachable but drifted, use the supported rake tasks.
-
-```bash
-bundle exec rake better_together:search:refresh
-bundle exec rake better_together:search:reindex_all
-bundle exec rake better_together:search:reindex_pages
-```
-
-Use `recreate_indices` only when you intentionally want to delete and rebuild all registered indices:
-
-```bash
-bundle exec rake better_together:search:recreate_indices
-```
-
-That task prompts before destructive work.
-
-## Application behavior during search trouble
-
-`SearchController#search` handles backend failures gracefully:
-
-- the page still renders
-- the backend status becomes `unreachable`
-- query tracking still records the attempted search with the returned result count
-
-This is useful for release verification because users do not get a hard exception page when search is down.
-
-## Release caveat
-
-The changelog mentions Elasticsearch 8 validation and optional full reindex support, and both are grounded in this repo. What is **not** present here is a dedicated deployment-orchestration script for cluster upgrades, rolling restarts, or index template migrations. Keep this guide scoped to application-side validation and reindex steps.
-
-## Related docs
-
+- [Search Backend Adapter System](../developers/systems/search_backend_adapter_system.md)
 - [Search and Filtering System](../developers/systems/search_and_filtering_system.md)
-- [External Services Configuration](../production/external-services-to-configure.md)
-- [Elasticsearch 8 reindex and validation flow](../diagrams/source/elasticsearch_8_reindex_and_validation_flow.mmd)
+- [Host upgrade guide](../releases/0.11.0_host_upgrade_guide.md)

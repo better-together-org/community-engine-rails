@@ -9,19 +9,8 @@
     <%= form.number_field :longitude, step: 'any', class: "form-control", placeholder: "Longitude", 'data-better_together--space-fields-target' => "longitude" %>
   </div>
   <div class="col-12 col-md-12 mt-3">
-    <div class="map" id="<%= dom_id(map) %>"
-      data-controller="better_together--map"
-      data-better_together--map-center-value="<%= map.center_for_leaflet %>"
-      data-better_together--map-spaces-value="<%= map.leaflet_points.to_json %>"
-      data-better_together--map-zoom-value="<%= map.zoom %>"
-      data-better_together--map-extent-value="<%= map.viewport %>"
-      data-better_together--space-fields-target="map">
-      <div class="map-controls">
-        <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToOSM">Map</button>
-        <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToSatellite">Satellite</button>
-        <button type="button" class="btn btn-secondary" data-action="better_together--map#enableGeolocation">Geolocate Me</button>
-      </div>
-    </div>
+    <%= render 'better_together/shared/map', map: map, cluster: false,
+               attributes: { 'data-better_together--space-fields-target' => 'map' } %>
   </div>
 </div>
 

@@ -1,5 +1,9 @@
 # Stakeholder-Focused Documentation Restructure Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Identified Stakeholders
 
 Based on the existing documentation analysis, I've identified the following primary stakeholders with distinct documentation needs:

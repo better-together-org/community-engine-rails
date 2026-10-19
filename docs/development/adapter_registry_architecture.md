@@ -29,7 +29,7 @@ Examples of external-provider wrapper gems:
 - Nextcloud publication or collaboration integrations
 - Discourse / Forem / Reddit / LinkedIn / Facebook / Instagram publishing integrations
 - OpenAI and other LLM providers via `ruby_llm`
-- Borgberry-mediated audited local Ollama access
+- Local model hosts (for example Ollama) via `ruby_llm`
 - Google Maps or other mapping backends
 
 ## Built-In Subsystem Groups
@@ -71,7 +71,7 @@ This allows:
 
 - CE + Discourse cross-posting
 - internal metrics + external metrics fan-out
-- Sentry + Borgberry/Loki error fan-out
+- Sentry + a log-pipeline error fan-out
 
 Named registrations replace prior registrations with the same name for that subsystem.
 
@@ -121,8 +121,8 @@ The same pattern can be used for:
 - `:search, :ce`
 - `:search, :google`
 - `:llm, :openai`
-- `:llm, :borgberry`
-- `:embeddings, :borgberry`
+- `:llm, :local_ollama`
+- `:embeddings, :local_ollama`
 
 ## Privacy and Consent Constraints
 
@@ -155,27 +155,27 @@ Target architecture:
 - CE defines stable `llm` and `embeddings` subsystem contracts
 - CE uses `ruby_llm` as the abstraction layer instead of depending on direct `ruby-openai` calls
 - provider gems register concrete LLM backends
-- Borgberry is the preferred BTS-hosted audited path for local Ollama usage
+- local model hosts can register as audited providers
 
 Planned provider shape:
 
 - `better_together-ruby-llm-openai`
-- `better_together-borgberry-llm`
 
 Rules:
 
 - no external LLM provider is required by the CE gem
-- no silent fallback from Borgberry/Ollama to OpenAI or another cloud provider
+- no silent fallback from a local model host to OpenAI or another cloud provider
 - tenant, platform, and community context must be preserved for authorization and audit
 - prompt and response handling should support redaction and policy-aware logging
 - embeddings should follow the same pattern as chat/completion calls
 
 ## Recommended Next Adapter Waves
 
+Shipped extension gems (on GitHub, no tagged releases yet): `better_together-sentry` (error reporting and browser snippet), `better_together-google-analytics` (Google Analytics provider) and `better_together-elasticsearch` (search backend). Every other gem named in the waves below is roadmap only and does not exist yet.
+
 ### Wave 1
 
 - `better_together-sentry`
-- `better_together-borgberry-observability`
 - `better_together-sidekiq`
 - `better_together-redis-cache`
 - `better_together-redis-throttling`
@@ -184,7 +184,6 @@ Rules:
 ### Wave 2
 
 - `better_together-active_storage-s3-compatible`
-- `better_together-borgberry-llm`
 - `better_together-ruby-llm-openai`
 - `better_together-google-metrics`
 - `better_together-cloudflare-metrics`
@@ -226,7 +225,7 @@ The same pattern should be applied to other subsystems over time:
   - optional Google or external provider adapters
 - `llm` and `embeddings`
   - `ruby_llm` abstraction
-  - Borgberry-audited local Ollama routing
+  - audited local model routing (for example Ollama)
   - optional cloud-provider thin gems
 - `translation`
   - internal CE/Mobility pipeline
@@ -241,7 +240,9 @@ Implemented now:
 
 - generic CE adapter registry
 - multi-provider error-reporting support
-- host app Sentry registration moved out of controller overrides and into provider registration
+- Sentry registration moved out of core into the shipped [`better_together-sentry`](https://github.com/better-together-org/better_together-sentry) provider gem
+- Google Analytics moved into [`better_together-google-analytics`](https://github.com/better-together-org/better_together-google-analytics)
+- Elasticsearch moved into [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch), registering a `:search` adapter
 
 Not implemented yet:
 
