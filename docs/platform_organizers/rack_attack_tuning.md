@@ -45,7 +45,7 @@ Authentication and identity endpoints:
 - `api_logins/ip`: 5 POSTs per 20 seconds to `/api/auth/sign_in`
 - `api_registrations/ip`: 3 POSTs per minute to `/api/auth/sign_up`
 - `api_password_resets/ip`: 5 POSTs per minute to `/api/auth/password`
-- `oauth/token/ip`: 10 POSTs per minute to `/oauth/token`
+- `oauth/token/ip`: 10 POSTs per minute to `/api/oauth/token`
 - `oauth/token/client_id`: 10 POSTs per minute per OAuth `client_id`
 
 ## Current blocklists
