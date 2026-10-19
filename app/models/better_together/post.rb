@@ -26,6 +26,9 @@ module BetterTogether
     include TrackedActivity
     include ::Storext.model
     include CommunityAssignable
+    include CategoryIdentifiers
+    include PinnableTimestamps
+    include BlockAttachments
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 

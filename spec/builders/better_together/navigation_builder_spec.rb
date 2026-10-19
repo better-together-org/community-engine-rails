@@ -493,7 +493,7 @@ module BetterTogether # :nodoc:
           described_class.build_better_together
 
           what_is_page = Page.find_by(identifier: 'better-together')
-          engine_page = Page.find_by(identifier: 'better-together-community-engine')
+          engine_page = Page.find_by(identifier: 'better-together/community-engine')
 
           expect(what_is_page).to be_present
           expect(what_is_page.title_en).to eq('What is Better Together?')
