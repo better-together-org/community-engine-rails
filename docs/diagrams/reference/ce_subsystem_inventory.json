@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T21:04:53Z",
+  "generated_at": "2026-10-15T18:08:51Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7765,6 +7765,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -7785,7 +7789,7 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
-            "InclusionValidator: protected (in=[true, false])"
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -7876,6 +7880,8 @@
             "BetterTogether::Metrics::Viewable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -12552,6 +12558,7 @@
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
             "Upload",
+            "Category",
             "CallForInterest",
             "Page",
             "Content::Block",
@@ -12586,6 +12593,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Upload",
+            "Category",
             "CallForInterest",
             "Page",
             "Content::Block",
@@ -13779,6 +13787,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -13790,8 +13802,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -13874,6 +13886,8 @@
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -13908,6 +13922,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -13919,8 +13937,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -14003,6 +14021,8 @@
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -14785,6 +14805,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -14800,8 +14824,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -14897,6 +14921,8 @@
             "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -14985,6 +15011,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -14996,8 +15026,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15100,6 +15130,8 @@
             "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -15238,6 +15270,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -15249,8 +15285,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15339,6 +15375,8 @@
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -15679,6 +15717,11 @@
           "capability": "Adds privacy enum helpers and shared visibility semantics.",
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
+            "Geography::Settlement",
+            "Geography::Region",
+            "Geography::State",
+            "Geography::Country",
+            "Geography::Continent",
             "Geography::Map",
             "Place",
             "Address",
@@ -15694,6 +15737,11 @@
           "capability": "Privacyceilingvalidatable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Geography::Settlement",
+            "Geography::Region",
+            "Geography::State",
+            "Geography::Country",
+            "Geography::Continent",
             "Geography::Map",
             "Place",
             "Address",
@@ -16614,6 +16662,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -16634,7 +16686,7 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
-            "InclusionValidator: protected (in=[true, false])"
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -16725,6 +16777,8 @@
             "BetterTogether::Metrics::Viewable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -17262,7 +17316,8 @@
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
             "Calendar",
-            "Event"
+            "Event",
+            "EventCategory"
           ]
         },
         {
@@ -17272,7 +17327,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Calendar",
-            "Event"
+            "Event",
+            "EventCategory"
           ]
         },
         {
@@ -19786,6 +19842,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -19806,7 +19866,7 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
-            "InclusionValidator: protected (in=[true, false])"
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -19897,6 +19957,8 @@
             "BetterTogether::Metrics::Viewable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -22375,7 +22437,8 @@
             "Joatu::PersonLinkRequest",
             "Joatu::PersonAccessGrantRequest",
             "Joatu::MembershipRequest",
-            "Joatu::ConnectionRequest"
+            "Joatu::ConnectionRequest",
+            "Joatu::Category"
           ]
         },
         {
@@ -22395,7 +22458,8 @@
             "Joatu::PersonLinkRequest",
             "Joatu::PersonAccessGrantRequest",
             "Joatu::MembershipRequest",
-            "Joatu::ConnectionRequest"
+            "Joatu::ConnectionRequest",
+            "Joatu::Category"
           ]
         },
         {

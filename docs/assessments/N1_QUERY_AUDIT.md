@@ -1,5 +1,9 @@
 # N+1 Query Audit: Community Engine Rails - PeopleController#show
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-05-04. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Executive Summary
 Found **6 major N+1 query sources** causing 90x, 20x, 18x, 16x, 14x, and 12x+ queries. Root cause: missing eager loading and repeated database lookups. Implementation of fixes will reduce PeopleController#show queries by ~70%.
 

@@ -26,16 +26,23 @@ What to expect:
 
 ## What search currently includes
 
-The current global search registry indexes:
+Global search covers:
 
 - pages
 - posts
+- events
+- communities
+- offers and requests (Joatu exchange)
+- checklists
+- calls for interest
+
+Results only include records you are allowed to see.
 
 In practice, this means:
 
 - post titles and post body content can appear in results
 - page titles and indexed page block content can appear in results
-- events are **not** part of the current global Elasticsearch registry on this branch
+- events, communities, exchange offers and requests, checklists and calls for interest can appear too, if you may view them
 
 ## Searching for posts
 
@@ -50,7 +57,7 @@ Tips:
 
 ## Browsing events
 
-Events are currently discovered through the events index rather than the site-wide search registry.
+Events can appear in site-wide search, and the events index is the best place to browse them.
 
 The events index groups records into these sections:
 

@@ -138,6 +138,7 @@ module BetterTogether # :nodoc:
       normalized = Array(callouts).map { |callout| normalize_callout(callout) }.reject { |callout| callout[:selector].blank? }
       return [] if normalized.empty?
 
+      scroll_callout_targets_into_view(normalized.map { |callout| callout[:selector] })
       geometry_by_selector = fetch_callout_geometry(normalized)
       missing_selectors = normalized.map { |callout| callout[:selector] } - geometry_by_selector.keys
       if missing_selectors.any?
@@ -169,6 +170,28 @@ module BetterTogether # :nodoc:
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    # Geometry and the screenshot are both viewport-relative, so a target below the
+    # fold would be missed. Centre the targets in the viewport first when needed.
+    def scroll_callout_targets_into_view(selectors)
+      Capybara.page.execute_script(<<~JS, selectors)
+        (function(selectors) {
+          const rects = selectors
+            .map((selector) => document.querySelector(selector))
+            .filter(Boolean)
+            .map((element) => element.getBoundingClientRect());
+          if (!rects.length) return;
+
+          const top = Math.min(...rects.map((rect) => rect.top));
+          const bottom = Math.max(...rects.map((rect) => rect.bottom));
+          if (top >= 0 && bottom <= window.innerHeight) return;
+
+          const fits = (bottom - top) < window.innerHeight;
+          const focus = fits ? (top + bottom) / 2 : (rects[0].top + rects[0].bottom) / 2;
+          window.scrollBy({ top: focus - window.innerHeight / 2, behavior: 'instant' });
+        })(arguments[0]);
+      JS
+    end
+
     def fetch_callout_geometry(callouts)
       results = Capybara.page.evaluate_script(<<~JS, callouts)
         (function(targetCallouts) {

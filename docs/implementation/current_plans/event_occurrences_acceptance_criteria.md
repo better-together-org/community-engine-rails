@@ -1,5 +1,9 @@
 # TDD Acceptance Criteria: Per-Occurrence Event Data + Recurrence-Aware Index/Calendar
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-07-29 (last edited 2026-08-08). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 Transforms the approved plan (`feat/event-occurrences-attendance-comments-overrides`, branched off `release/0.11.0-notes` at `38f37c4fb`) into stakeholder-focused, testable acceptance criteria. Recurrence today is 100% virtual — one `Event` row + an IceCube rule, with occurrences computed on demand and never persisted. This feature adds a lightweight, lazily-created `EventOccurrence` model so a single session of a recurring series can carry its own attendance, comments, and location/time overrides — without duplicating hosting/authorization data, and without materializing a row for every occurrence up front.

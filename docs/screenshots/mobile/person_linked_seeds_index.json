@@ -1,0 +1,10 @@
+{
+  "name": "person_linked_seeds_index",
+  "device": "mobile",
+  "url": "/en/linked-seeds",
+  "title": "Community Engine Host",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "person_linked_seeds",
+  "source_spec": "./spec/docs_screenshots/better_together/person_linked_seeds_spec.rb"
+}

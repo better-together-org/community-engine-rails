@@ -1,5 +1,9 @@
 # Plan: Federation Consent Gate + Person Identity Architecture
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-25 (last edited 2026-09-18). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Tracking issue:** better-together-org/community-engine-rails#1407 (closed 2026-09-18,
 deliberately scoped/deferred to v0.11.1 — not abandoned)
 **Target version:** v0.11.1

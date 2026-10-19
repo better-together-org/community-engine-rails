@@ -1,8 +1,8 @@
 {
   "name": "release_0_11_0_llm_robot_platform_unavailable",
   "device": "desktop",
-  "url": "/en/platforms/test-host-community",
-  "title": "Test Host Community | Platforms | Test Host Community",
+  "url": "/en/platforms/community-engine-host",
+  "title": "Community Engine Host | Platforms | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "release_0_11_0_llm_robot_management",
