@@ -1,5 +1,9 @@
 # Richer Platform Setup Wizard — Current-State Assessment
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-07-18. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** July 18, 2026
 **Assessment Type:** Architecture and gap assessment for platform-provisioning UX
 **Repository:** better-together-org/community-engine-rails

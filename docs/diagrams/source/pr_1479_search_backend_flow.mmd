@@ -1,14 +1,14 @@
 flowchart TD
-    A[Incoming query] --> B[Read SEARCH_BACKEND]
+    A[Incoming query] --> B[Read SEARCH_BACKEND, default pg_search]
     B --> C[Register default search adapters]
-    C --> D{Adapter exists?}
+    C --> D{Adapter registered for the key?}
     D -- Yes --> E[Instantiate backend]
-    D -- No --> F[Fallback to elasticsearch adapter]
+    D -- No --> F[Fall back to pg_search, then database]
     F --> E
     E --> G{Backend key}
-    G -- elasticsearch --> H[Query Elasticsearch backend]
-    G -- database --> I[Score records from registry relations]
     G -- pg_search --> J[Use pg_search scopes or database fallback]
+    G -- database --> I[Score records from registry relations]
+    G -- extension key --> H[Query the extension gem backend]
     H --> K[Return SearchResult]
     I --> K
     J --> K

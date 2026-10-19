@@ -74,6 +74,88 @@ ESSENTIAL_TABLES = %w[
 # rubocop:enable Lint/CopDirectiveSyntax
 # rubocop:enable Metrics/PerceivedComplexity
 
+# Seeds the essential rows into the database this process is connected to. parallel_rspec runs
+# before(:suite) once in the parent (base database) and forks workers 2..N onto their own
+# databases afterwards, so each worker calls this again from after_fork.
+module EssentialTestSeed
+  module_function
+
+  # Seed essential data idempotently. No initial full-clean here because:
+  # 1. db:parallel:prepare already gives each CI worker a clean schema.
+  # 2. parallel_rspec gives each worker its own database: it appends the worker number to
+  #    the database name, also when CI sets DATABASE_URL (verified 2026-10-10 with four
+  #    workers: ci_probe_test, test2, test3, test4). A clean_with(:deletion) here would
+  #    still only slow the suite down and risk wiping seeds built in this process.
+  # All builders use clear: false so seed_data runs without deleting first.
+  # build_with_retry treats duplicate-key errors as "already seeded" — safe
+  # for concurrent workers that race to create the same rows.
+  def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+    attempts = 0
+    begin
+      yield
+    rescue StandardError => e
+      attempts += 1
+      is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
+                           e.is_a?(ActiveRecord::RecordNotUnique)
+
+      if is_duplicate_error
+        Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
+      elsif attempts < times
+        retry
+      else
+        warn "[build_with_retry] FAILED after #{times} attempts: #{e.class}: #{e.message}"
+        Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
+      end
+    end
+  end
+
+  def seed_host_platform! # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    # Seed a host community + platform before AccessControlBuilder/NavigationBuilder.
+    # Both builders create records (ResourcePermission, Page, ...) that resolve
+    # platform_id via PlatformScoped#assign_current_platform_if_available:
+    # Current.platform, Platform.find_by(host: true), or Platform.first — all nil
+    # on a fresh database. Production db/seeds.rb creates the host platform before
+    # calling AccessControlBuilder for exactly this reason; do the same here so
+    # seeded ResourcePermission rows aren't left with a permanently-nil platform_id
+    # (which silently hides them from any platform-scoped policy, e.g.
+    # ResourcePermissionPolicy::Scope#resolve). find_or_create_by! is idempotent
+    # across parallel workers.
+    build_with_retry do
+      host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
+        c.name       = 'Test Host Community'
+        c.identifier = 'test-host-community'
+        c.privacy    = 'public'
+        c.protected  = true
+      end
+
+      BetterTogether::Platform.find_or_create_by!(host: true) do |p|
+        p.name       = host_community.name
+        p.identifier = host_community.identifier
+        p.host_url   = 'http://www.example.com'
+        p.time_zone  = 'UTC'
+        p.privacy    = 'public'
+        p.protected  = true
+        p.community  = host_community
+      end
+    end
+  end
+
+  def seed!
+    seed_host_platform!
+
+    # Set Current.platform so assign_current_platform_if_available resolves
+    # correctly during AccessControlBuilder/NavigationBuilder (belt + suspenders
+    # alongside find_by(host: true)).
+    Current.platform = BetterTogether::Platform.find_by(host: true)
+    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
+    Current.platform = nil
+    build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: false) }
+    build_with_retry { BetterTogether::AgreementBuilder.build(clear: false) }
+  end
+end
+
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include ActiveSupport::Testing::TimeHelpers
@@ -144,79 +226,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     DatabaseCleaner.allow_remote_database_url = true if ENV['ALLOW_REMOTE_DB_URL']
-
-    # Seed essential data idempotently. No initial full-clean here because:
-    # 1. db:parallel:prepare already gives each CI worker a clean schema.
-    # 2. parallel_rspec gives each worker its own database: it appends the worker number to
-    #    the database name, also when CI sets DATABASE_URL (verified 2026-10-10 with four
-    #    workers: ci_probe_test, test2, test3, test4). A clean_with(:deletion) here would
-    #    still only slow the suite down and risk wiping seeds built in this process.
-    # All builders use clear: false so seed_data runs without deleting first.
-    # build_with_retry treats duplicate-key errors as "already seeded" — safe
-    # for concurrent workers that race to create the same rows.
-    def build_with_retry(times: 3) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-      attempts = 0
-      begin
-        yield
-      rescue StandardError => e
-        attempts += 1
-        is_duplicate_error = (e.is_a?(ActiveRecord::RecordInvalid) && e.message.include?('already been taken')) ||
-                             e.is_a?(ActiveRecord::RecordNotUnique)
-        e.is_a?(ActiveRecord::Deadlocked) ||
-          e.is_a?(ActiveRecord::StaleObjectError) ||
-          e.is_a?(ActiveRecord::InvalidForeignKey) ||
-          e.is_a?(ActiveRecord::StatementInvalid)
-
-        if is_duplicate_error
-          Rails.logger.debug "Seed data already present from parallel worker: #{e.message}"
-        elsif attempts < times
-          retry
-        else
-          warn "[build_with_retry] FAILED after #{times} attempts: #{e.class}: #{e.message}"
-          Rails.logger.warn "build_with_retry: giving up after #{times} attempts (#{e.class}: #{e.message})"
-        end
-      end
-    end
-
-    # Seed a host community + platform before AccessControlBuilder/NavigationBuilder.
-    # Both builders create records (ResourcePermission, Page, ...) that resolve
-    # platform_id via PlatformScoped#assign_current_platform_if_available:
-    # Current.platform, Platform.find_by(host: true), or Platform.first — all nil
-    # on a fresh database. Production db/seeds.rb creates the host platform before
-    # calling AccessControlBuilder for exactly this reason; do the same here so
-    # seeded ResourcePermission rows aren't left with a permanently-nil platform_id
-    # (which silently hides them from any platform-scoped policy, e.g.
-    # ResourcePermissionPolicy::Scope#resolve). find_or_create_by! is idempotent
-    # across parallel workers.
-    build_with_retry do
-      host_community = BetterTogether::Community.find_or_create_by!(host: true) do |c|
-        c.name       = 'Test Host Community'
-        c.identifier = 'test-host-community'
-        c.privacy    = 'public'
-        c.protected  = true
-      end
-
-      BetterTogether::Platform.find_or_create_by!(host: true) do |p|
-        p.name       = host_community.name
-        p.identifier = host_community.identifier
-        p.host_url   = 'http://www.example.com'
-        p.time_zone  = 'UTC'
-        p.privacy    = 'public'
-        p.protected  = true
-        p.community  = host_community
-      end
-    end
-
-    # Set Current.platform so assign_current_platform_if_available resolves
-    # correctly during AccessControlBuilder/NavigationBuilder (belt + suspenders
-    # alongside find_by(host: true)).
-    Current.platform = BetterTogether::Platform.find_by(host: true)
-    build_with_retry { BetterTogether::AccessControlBuilder.build(clear: false) }
-    build_with_retry { BetterTogether::NavigationBuilder.build(clear: false) }
-    Current.platform = nil
-    build_with_retry { BetterTogether::CategoryBuilder.build(clear: false) }
-    build_with_retry { BetterTogether::SetupWizardBuilder.build(clear: false) }
-    build_with_retry { BetterTogether::AgreementBuilder.build(clear: false) }
+    EssentialTestSeed.seed!
   end
 
   # Use deletion strategy for all tests to avoid FK constraint issues with PostgreSQL
@@ -239,7 +249,9 @@ RSpec.configure do |config|
     # Re-seed essential data if a prior :js/:feature/:system example's :deletion cleanup wiped
     # it. Runs BEFORE DatabaseCleaner.start so the rebuild commits once; inside the example's
     # transaction it was rolled back and every later example rebuilt it (about 90 inserts each).
-    unless BetterTogether::Role.exists?
+    # The host setup wizard is checked too: a worker whose suite seeding skipped it otherwise
+    # serves 'Host Setup Wizard not configured' on every request.
+    unless BetterTogether::Role.exists? && BetterTogether::Wizard.exists?(identifier: 'host_setup')
       Rails.logger.debug '🔄 Re-seeding essential data after a prior :js/:feature/:system test'
       BetterTogether::AccessControlBuilder.build(clear: false)
       BetterTogether::NavigationBuilder.build(clear: false)
@@ -337,3 +349,5 @@ def ensure_essential_data!
   Rails.logger.warn '⚠️  Essential data missing, re-seeding...'
   load BetterTogether::Engine.root.join('db', 'seeds.rb')
 end
+
+ParallelRSpec.configure { |parallel| parallel.after_fork { |_worker| EssentialTestSeed.seed! } } if defined?(ParallelRSpec)
