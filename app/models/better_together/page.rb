@@ -10,10 +10,12 @@ module BetterTogether
     # set BetterTogether::Authorship.creator_context_id = current_person.id
     # to stamp newly-created authorships with the acting person.
     include Categorizable
+    include CategoryIdentifiers
     include CommunityAssignable
     include Creatable
     include Federatable
     include Identifier
+    include NamespacedSlug
     include Metrics::Shareable
     include Metrics::Viewable
     include Protected

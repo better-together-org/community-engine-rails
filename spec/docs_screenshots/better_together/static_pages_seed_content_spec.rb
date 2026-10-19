@@ -23,7 +23,7 @@ RSpec.describe 'Documentation screenshots for built-in static pages', :docs_scre
 
   it 'captures the Community Engine seed page' do
     capture_static_page(
-      slug: 'better-together-community-engine',
+      slug: 'better-together/community-engine',
       screenshot_name: 'seed_community_engine',
       expected_text: 'Community Engine'
     )
