@@ -23,7 +23,15 @@ module BetterTogether
       end
     end
 
+    def create?
+      super && !invitee_blocked?
+    end
+
     private
+
+    def invitee_blocked?
+      agent.present? && agent.block_between?(record.try(:invitee))
+    end
 
     def allowed_on_invitable?
       event = record.invitable
