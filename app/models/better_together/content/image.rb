@@ -7,12 +7,17 @@ module BetterTogether
     # Allows the user to ceate and display image content
     class Image < Block
       include ::Storext.model
+      include Base64ImageInput
 
       CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
 
       has_one_attached :media
 
       delegate :url, to: :media
+
+      # API clients send the image as base64 (media_data); the caption is then required, as it is the image's text.
+      accepts_base64_image :media_data, attachment: :media, filename_field: :media_filename, default_name: 'image'
+      validate :caption_required_for_api_images
 
       translates :attribution, :alt_text, :caption, :attribution_url, type: :string
 
@@ -35,6 +40,12 @@ module BetterTogether
 
       def self.extra_permitted_attributes
         super + %i[media]
+      end
+
+      private
+
+      def caption_required_for_api_images
+        errors.add(:caption, :blank) if (media_data.present? || media_data_received?) && caption.blank?
       end
     end
   end
