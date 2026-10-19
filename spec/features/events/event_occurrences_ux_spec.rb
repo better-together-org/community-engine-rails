@@ -82,8 +82,9 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
     end
 
     it 'links a future occurrence\'s day-cell entry to the correct, single canonical event page (AC-4.3)' do
-      visit better_together.calendar_path(calendar, locale:)
       future_date = recurrence.occurrences_between(1.week.from_now, 1.year.from_now).first.to_date
+      # Open the month that holds the occurrence: late in a month it falls on the next month's grid.
+      visit better_together.calendar_path(calendar, locale:, start_date: future_date.beginning_of_month.iso8601)
 
       within("#calendar-day-#{future_date.iso8601}-events") { click_link event.name }
 
@@ -98,7 +99,7 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
       moved_date = occurrence.effective_starts_at + 1.day
       occurrence.update!(starts_at: moved_date)
 
-      visit better_together.calendar_path(calendar, locale:)
+      visit better_together.calendar_path(calendar, locale:, start_date: moved_date.to_date.beginning_of_month.iso8601)
 
       expect(page).to have_css("#calendar-day-#{moved_date.to_date.iso8601}-events", text: event.name)
     end
@@ -107,7 +108,7 @@ RSpec.describe 'Event occurrences UX', :accessibility, :js, retry: 0 do
       occurrence_date = recurrence.occurrences_between(Time.current, 1.year.from_now).first.to_date
       BetterTogether::EventOccurrence.create!(event:, occurrence_date:, cancelled: true)
 
-      visit better_together.calendar_path(calendar, locale:)
+      visit better_together.calendar_path(calendar, locale:, start_date: occurrence_date.beginning_of_month.iso8601)
 
       within("#calendar-day-#{occurrence_date.iso8601}-events") do
         expect(page).to have_content(/Cancelled/i)

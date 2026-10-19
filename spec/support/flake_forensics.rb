@@ -5,8 +5,10 @@
 # suspect rows are COMMITTED (visible to a second connection) versus only inside the example's transaction.
 # This makes a CI-only flake traceable from the job log instead of from guesses. It changes no behaviour.
 module FlakeForensics
-  LEAK_SIGNATURE = /already been taken|PG::UniqueViolation|PG::ForeignKeyViolation|cmd_tuples|
-                    could\ not\ obtain\ a\ connection|another\ command\ is\ already\ in\ progress/x
+  LEAK_SIGNATURE = Regexp.union(
+    'already been taken', 'PG::UniqueViolation', 'PG::ForeignKeyViolation', 'cmd_tuples',
+    'could not obtain a connection', 'another command is already in progress'
+  )
   RECENT_LIMIT = 8
   RECENT = [] # rubocop:disable Style/MutableConstant
 
