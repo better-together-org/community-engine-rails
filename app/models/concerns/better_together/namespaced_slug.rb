@@ -18,7 +18,9 @@ module BetterTogether
     def generate_identifier
       return super unless identifier.blank? && slug.to_s.include?('/')
 
-      self.identifier = normalize_friendly_id(slug)
+      candidate = normalize_friendly_id(slug)
+      candidate = "#{candidate}-#{SecureRandom.alphanumeric(10)}" if identifier_taken?(candidate)
+      self.identifier = candidate
     end
   end
 end

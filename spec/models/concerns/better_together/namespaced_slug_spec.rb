@@ -40,6 +40,14 @@ RSpec.describe BetterTogether::NamespacedSlug do
     end
   end
 
+  it 'suffixes the identifier instead of colliding when a namespaced slug is reused', :aggregate_failures do
+    create(:better_together_page, title: 'First', slug: 'ships/mt-explora-iii', privacy: 'private')
+    second = create(:better_together_page, title: 'Second', slug: 'ships/mt-explora-iii', privacy: 'private')
+
+    expect(second).to be_persisted
+    expect(second.identifier).to start_with('ships/mt-explora-iii-')
+  end
+
   it 'leaves an ordinary slug unchanged' do
     page = page_with_slug('about-us')
     page.valid?
