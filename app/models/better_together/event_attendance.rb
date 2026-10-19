@@ -18,6 +18,12 @@ module BetterTogether
     validates :event_id, uniqueness: { scope: %i[person_id event_occurrence_id] }
     validate :event_must_be_scheduled
 
+    # Drops attendees who blocked, or are blocked by, the viewer.
+    scope :visible_to, lambda { |viewer|
+      blocked_ids = viewer&.block_related_person_ids
+      blocked_ids.blank? ? all : where.not(person_id: blocked_ids)
+    }
+
     after_save :manage_calendar_entry
     after_destroy :remove_calendar_entry
 

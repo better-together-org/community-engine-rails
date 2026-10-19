@@ -59,7 +59,7 @@ The platform uses a centralized **Settings** page (accessible via user dropdown 
 After registration, complete your profile:
 
 - **Contact Information:** Add phone numbers, addresses
-- **Privacy Settings:** Control profile visibility
+- **Privacy Settings:** Contact detail visibility (profile visibility is currently set by platform administrators)
 - **Notification Preferences:** Manage email/in-app notifications
 - **Community Memberships:** Join relevant communities
 - **Profile Image:** Upload avatar (optional)
@@ -268,7 +268,7 @@ The Settings page is organized into several tabs:
    - Contact support if persistent
 
 2. **Profile Visibility**
-   - Check privacy settings
+   - Ask a platform administrator to check the profile's privacy setting
    - Verify community memberships
    - Ensure profile is complete
    - Ask community administrators if needed
