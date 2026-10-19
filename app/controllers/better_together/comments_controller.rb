@@ -81,6 +81,7 @@ module BetterTogether
       commentable = comment.commentable
       recipients = commentable.respond_to?(:agent_authors) ? commentable.agent_authors : [commentable.try(:creator)]
       recipients = recipients.compact.uniq - [comment.creator]
+      recipients.reject! { |recipient| comment.creator&.block_between?(recipient) }
       return if recipients.empty?
 
       BetterTogether::CommentAddedNotifier.with(record: comment, comment: comment).deliver_later(recipients)

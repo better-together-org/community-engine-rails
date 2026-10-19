@@ -41,6 +41,8 @@ module BetterTogether
       # notify the offer creator about the match.
       def notify_match # rubocop:todo Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
         # Symmetric notifications for direct response links
+        return if source&.creator&.block_between?(response&.creator)
+
         if source.is_a?(BetterTogether::Joatu::Offer) && response.is_a?(BetterTogether::Joatu::Request)
           return unless source.creator
 
