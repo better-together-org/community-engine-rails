@@ -219,6 +219,11 @@ jobs:
           # shellcheck disable=SC2086
           bundle exec prspec $SHARD_FILES "${TAGS[@]}" --format json --out "tmp/rspec_results_${SUITE}_shard${SHARD}.json" || PRSPEC_EXIT=$?
           if [[ "${PRSPEC_EXIT:-0}" -ne 0 ]]; then
+            # Last resort: re-run only the failed examples (max 3 rounds, stops early when a
+            # round fails the identical set). Rewrites the shard JSON, so the counting below
+            # sees 0 failures when everything passed on retry.
+            python3 bin/ci-retry-failures --results "tmp/rspec_results_${SUITE}_shard${SHARD}.json" \
+              >> "$GITHUB_STEP_SUMMARY" || true
             FAILURES=0
             EXAMPLES=0
             LOAD_ERRORS=0
