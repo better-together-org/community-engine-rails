@@ -12,6 +12,10 @@
         <%= privacy_badge(post) if respond_to?(:privacy_badge) %>
       </div>
 
+      <% if (chip = community_chip(post.community)) %>
+        <div class="mt-2"><%= chip %></div>
+      <% end %>
+
       <p class="text-muted small mt-2 mb-2">
         <%= truncate(strip_tags(post.content.to_plain_text), length: 200) %>
       </p>

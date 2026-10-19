@@ -1,0 +1,10 @@
+{
+  "name": "message_requests_index",
+  "device": "mobile",
+  "url": "/en/message_requests",
+  "title": "Message Requests | Community Engine Host",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "message_requests",
+  "source_spec": "./spec/docs_screenshots/better_together/message_requests_spec.rb"
+}

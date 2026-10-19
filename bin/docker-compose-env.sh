@@ -23,6 +23,8 @@ else
   worktree_db_suffix="_$(sanitize_slug "$repo_basename")"
 fi
 
+export DC_UID="${DC_UID:-$(id -u)}"
+export DC_GID="${DC_GID:-$(id -g)}"
 export CE_WORKTREE_DB_SUFFIX="${CE_WORKTREE_DB_SUFFIX:-$worktree_db_suffix}"
 export DB_HOST="${DB_HOST:-db}"
 export DB_PORT="${DB_PORT:-5432}"

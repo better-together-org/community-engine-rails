@@ -31,6 +31,7 @@ x-app-shared: &app-shared
     CE_WORKTREE_DB_SUFFIX: ${CE_WORKTREE_DB_SUFFIX:-}
     # prspec worker count; databases for N workers come from `WORKERS=N bin/parallel-setup`
     WORKERS: ${WORKERS:-4}
+    HOME: /tmp
     SEARCH_BACKEND: ${SEARCH_BACKEND:-pg_search}
     REDIS_URL: ${REDIS_URL:-redis://redis:6379}
     RACK_ATTACK_REDIS_URL: ${RACK_ATTACK_REDIS_URL:-redis://redis-rack-attack:6379}
@@ -40,6 +41,8 @@ x-app-shared: &app-shared
     - db
     - redis
     - redis-rack-attack
+  # Run as the host user so files written to the bind mount (log, tmp, coverage) are not root-owned.
+  user: "${DC_UID:-1000}:${DC_GID:-1000}"
 
 services:
   app: &app

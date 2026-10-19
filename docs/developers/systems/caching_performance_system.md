@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Better Together Community Engine implements a comprehensive caching and performance optimization system designed to handle high-traffic community platforms efficiently. The system leverages **Redis** for distributed caching, **Elasticsearch** for search performance, **Sidekiq** for background processing, and multi-layered caching strategies to deliver optimal user experience.
+The Better Together Community Engine implements a comprehensive caching and performance optimization system designed to handle high-traffic community platforms efficiently. The system leverages **Redis** for distributed caching, **Postgres-native search (`pg_search`)** for search, **Sidekiq** for background processing, and multi-layered caching strategies to deliver optimal user experience.
 
 ## Process Flow Diagram
 
@@ -232,49 +232,28 @@ end
 - **Locale Indexes**: Locale-specific query optimization
 - **FriendlyId Slugs**: Locale-aware URL resolution with indexed slug lookups
 
-### 5. Search Performance (Elasticsearch)
+### 5. Search Performance (pg_search)
 
-#### Configuration & Connection Management
-**Settings**: `config/initializers/elasticsearch.rb`
-- **Connection**: Configurable URL with fallback to host/port combination
-- **Resilience**: Retry on failure, connection reloading
-- **Timeouts**: Request timeout (5s), connection timeout (2s)
-- **Environment Isolation**: Separate indexes per environment
+#### Backend selection
+**Settings**: `SEARCH_BACKEND` (default `pg_search`; `database` is the no-extension fallback)
+- **No separate search service**: queries run against live tables, so there is no index to build, refresh or keep in sync
+- **Indexes**: performance depends on ordinary Postgres indexes and the translation tables that `Searchable` merges into each `pg_search` scope
+- **Optional index-backed search**: Elasticsearch is available through the separate [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch) extension gem, which owns its client configuration, indexing jobs and queues
 
-#### Search Indexing Strategy
-**Models**: Pages, Posts, People, Events
-- **Background Processing**: `ElasticsearchIndexJob` for async indexing
-- **Queue**: Default Sidekiq queue for search operations
-- **Actions**: Index creation, document indexing, document deletion
-- **Content Extraction**: Rich text content indexing via `as_indexed_json`
+#### Search query strategy
+**Models**: Pages, Posts, Events, Communities, Joatu offers and requests, Checklists, Calls for interest (the `Search::Registry` entries)
+- **Per-model scopes**: each model declares `searchable pg_search: { ... }` with real columns plus auto-merged translation associations
+- **Rank**: `PgSearchBackend` selects `pg_search_rank` and limits each model to 50 matches
+- **Fallback scoring**: models without a scope are scored from the normalized plain-text payload returned by `as_indexed_json`
+- **Visibility**: results are filtered through policy scopes before pagination
 
-```ruby
-def as_indexed_json(_options = {})
-  as_json(
-    only: [:id],
-    methods: [:title, :name, :slug, *localized_attribute_list],
-    include: {
-      rich_text_blocks: {
-        only: [:id],
-        methods: [:indexed_localized_content]
-      }
-    }
-  )
-end
-```
-
-#### Index Optimization
-**Features**:
-- **Localized Content**: Multi-language search with locale-specific indexing
-- **Rich Text Processing**: Plain text extraction from Trix content
-- **Selective Fields**: Only necessary data indexed to reduce storage/query load
-- **Bulk Operations**: Batch indexing support for initial data import
+See [Search Backend Adapter System](search_backend_adapter_system.md) for the contract and [Search and Filtering System](search_and_filtering_system.md) for request flow.
 
 ### 6. Background Processing Performance
 
 #### Sidekiq Configuration
 **Setup**: Redis-backed job queue system
-- **Queues**: Purpose-specific queues (`:default`, `:mailers`, `:metrics`, `:elasticsearch`)
+- **Queues**: Purpose-specific queues (see `spec/dummy/config/sidekiq.yml` for the set the engine uses)
 - **Concurrency**: Matched to database connection pool size
 - **Resilience**: Retry strategies with exponential backoff
 - **Monitoring**: Dead job tracking and alerting
@@ -282,14 +261,6 @@ end
 ```ruby
 Sidekiq.configure_server do |config|
   config.redis = { url: ENV.fetch('REDIS_URL') }
-end
-
-class ElasticsearchIndexJob < ApplicationJob
-  queue_as :default
-  
-  def perform(record, action)
-    # Async search indexing
-  end
 end
 ```
 
@@ -388,7 +359,7 @@ end
 - **Cache Hit Rates**: Redis monitoring for cache effectiveness
 - **Query Analysis**: Database query performance tracking
 - **Job Queue Health**: Sidekiq queue depth and processing metrics
-- **Search Performance**: Elasticsearch query timing and result quality
+- **Search Performance**: search query timing and result quality (`better_together:search:audit` for backend health)
 
 ### 12. Production Optimization Checklist
 
@@ -406,7 +377,7 @@ end
 - ✅ **Rack::Attack**: Request rate limiting enabled
 - ✅ **Cache Isolation**: Environment-specific cache namespaces
 - ✅ **Permission Caching**: Time-limited RBAC cache expiration
-- ✅ **Search Security**: Elasticsearch query filtering and sanitization
+- ✅ **Search Security**: Policy-scoped results and privacy-aware suggestions (suggestions are disabled)
 
 ## Process Flow Summary
 

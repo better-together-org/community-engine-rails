@@ -1,8 +1,8 @@
 {
   "name": "pr1692_calendar_grid_with_events",
   "device": "mobile",
-  "url": "/en/calendars/104fbb7d-313e-4e56-9ffc-0109bbacbaf7",
-  "title": "Kilback, Bailey and Mitchell",
+  "url": "/en/calendars/94c482b6-b01f-4f50-a9dd-b9f8a11e90f3",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "recurrence_calendar_ux",
@@ -17,32 +17,32 @@
         "Each day cell now links directly to the event on the date it actually occurs."
       ],
       "target": {
-        "x": 329.390625,
-        "y": 931.046875,
+        "x": 19.0,
+        "y": 851.046875,
         "width": 67.171875,
         "height": 58.0,
-        "right": 396.5625,
-        "bottom": 989.046875,
-        "center_x": 362.9765625,
-        "center_y": 960.046875
+        "right": 86.171875,
+        "bottom": 909.046875,
+        "center_x": 52.5859375,
+        "center_y": 880.046875
       },
       "avoid": {
-        "x": 329.390625,
-        "y": 931.046875,
+        "x": 19.0,
+        "y": 851.046875,
         "width": 67.171875,
         "height": 58.0,
-        "right": 396.5625,
-        "bottom": 989.046875,
-        "center_x": 362.9765625,
-        "center_y": 960.046875
+        "right": 86.171875,
+        "bottom": 909.046875,
+        "center_x": 52.5859375,
+        "center_y": 880.046875
       },
       "placement": {
         "side": "above",
-        "x": 206.0,
-        "y": 565.05,
+        "x": 24,
+        "y": 485.05,
         "width": 270.0,
         "height": 346,
-        "score": 931.046875
+        "score": 851.046875
       }
     },
     {

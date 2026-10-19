@@ -1,0 +1,10 @@
+{
+  "name": "seed_code_contributor_agreement",
+  "device": "desktop",
+  "url": "/en/code-contributor-agreement",
+  "title": "Code Contributor Agreement | Community Engine Host",
+  "locale": "en",
+  "role": "public",
+  "source_spec": "./spec/docs_screenshots/better_together/static_pages_seed_content_spec.rb",
+  "page_slug": "code-contributor-agreement"
+}

@@ -24,7 +24,7 @@ module BetterTogether
     def capture(example, session)
       base = directory.join(basename(example))
       notes = [*header(example, session), save(session, base, :screenshot), save(session, base, :html),
-               console(session, base)]
+               console(session, base), *server_state]
       File.write("#{base}.txt", notes.compact.join("\n"))
     end
 
@@ -50,6 +50,23 @@ module BetterTogether
       nil
     rescue StandardError => e
       "console not saved: #{e.class}: #{e.message[0, 200]}"
+    end
+
+    # Database and log facts that decide whether a 404 on a host-scoped page is a data problem
+    # (no host platform, missing wizard, manager without a role) or a routing one.
+    def server_state
+      ["host_platforms: #{safe { BetterTogether::Platform.where(host: true).pluck(:id, :identifier) }.inspect}",
+       "platforms: #{safe { BetterTogether::Platform.count }.inspect}",
+       "host_setup_wizard_completed: #{safe { BetterTogether::Wizard.find_by(identifier: 'host_setup')&.completed? }.inspect}",
+       "platform_memberships: #{safe { BetterTogether::PersonPlatformMembership.count }.inspect}",
+       "recent_4xx_5xx: #{recent_error_requests.inspect}"]
+    end
+
+    def recent_error_requests
+      log = Rails.root.join('log/test.log')
+      File.readlines(log).last(4000).grep(/Completed [45]\d\d/).last(5).map { |line| line.strip[0, 160] }
+    rescue StandardError
+      nil
     end
 
     def safe
