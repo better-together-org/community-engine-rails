@@ -128,6 +128,22 @@ module BetterTogether # :nodoc:
         expect(helper.sanitize_block_html(html)).to eq(html)
       end
 
+      it 'keeps a labelled navigation landmark such as an accessible breadcrumb' do
+        html = '<nav aria-label="Breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="/en/ships">Ships</a></li>' \
+               '<li class="breadcrumb-item active" aria-current="page">MIRA BAY</li></ol></nav>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<nav aria-label="Breadcrumb">', 'aria-current="page"', '</nav>')
+      end
+
+      it 'still strips event handlers and unsafe protocols from navigation markup' do
+        sanitized = helper.sanitize_block_html('<nav onclick="x()" aria-label="Menu"><a href="javascript:alert(1)">Go</a></nav>')
+
+        expect(sanitized).not_to include('onclick')
+        expect(sanitized).not_to include('javascript:')
+        expect(sanitized).to include('aria-label="Menu"')
+      end
+
       it 'removes iframe tags so embeds must use dedicated block types' do
         html = '<p>Before</p><iframe src="https://forms.btsdev.ca/s/example" title="Survey"></iframe><p>After</p>'
         sanitized = helper.sanitize_block_html(html)
