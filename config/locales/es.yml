@@ -2095,6 +2095,7 @@ es:
       invitee: Invitado
       invitee_email: Correo electrónico
       invitee_type: Tipo de invitado
+      invitee_unavailable: No se puede invitar a esta persona.
       login_to_respond: Por favor, inicia sesión para responder a tu invitación.
       no_invitations: No se encontraron invitaciones
       no_role: Sin rol
