@@ -379,12 +379,13 @@ RSpec.configure do |config|
   # show exception that triggers a retry if verbose_retry is set to true
   config.display_try_failure_messages = true
 
-  # run retry only on features
+  # run retry only on features; CI_BROWSER_RETRIES=0 exposes first-attempt failures the retries hide
+  browser_retries = Integer(ENV.fetch('CI_BROWSER_RETRIES', 3))
   config.around :each, type: :feature do |ex|
-    ex.run_with_retry retry: 3
+    ex.run_with_retry retry: browser_retries
   end
   config.around :each, :js do |ex|
-    ex.run_with_retry retry: 3
+    ex.run_with_retry retry: browser_retries
   end
 
   # Cap each attempt (inside the retries above). A stalled database call or browser otherwise holds a
