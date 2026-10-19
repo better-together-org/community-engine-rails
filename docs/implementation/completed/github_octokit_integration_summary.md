@@ -1,5 +1,9 @@
 # GitHub Octokit Integration - Implementation Summary
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-06. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date**: January 6, 2026
 **Status**: ✅ Complete and Tested
 

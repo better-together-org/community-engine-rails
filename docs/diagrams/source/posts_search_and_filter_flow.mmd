@@ -2,12 +2,15 @@
             SearchBar[Shared search bar
 GET /search?q=...] --> SearchController[SearchController#search]
             SearchController --> SearchBackend[BetterTogether::Search.backend]
-            SearchBackend --> ElasticsearchBackend[ElasticsearchBackend]
-            ElasticsearchBackend --> Registry[Search::Registry
-Page + Post only]
-            Registry --> PostIndex[Post index]
-            Registry --> PageIndex[Page index]
-            SearchController --> Results[Paginated results
+            SearchBackend --> PgSearchBackend[PgSearchBackend]
+            PgSearchBackend --> Registry[Search::Registry
+Page, Post, Event, Community,
+Joatu offers and requests,
+Checklist, CallForInterest]
+            Registry --> PostScope1[Post pg_search scope]
+            Registry --> PageScope[Page database fallback]
+            Registry --> OtherScopes[Other model scopes]
+            SearchController --> Results[Policy-filtered, paginated results
 10 per page]
             SearchController --> Suggestions[Optional suggestions]
 

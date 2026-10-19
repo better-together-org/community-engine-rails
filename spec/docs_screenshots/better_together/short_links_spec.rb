@@ -67,6 +67,8 @@ RSpec.describe 'Documentation screenshots for Short Links',
   end
 
   it 'captures the short links index — populated list' do
+    active_short_link
+    expired_short_link
     BetterTogether::CapybaraScreenshotEngine.capture(
       'short_links_index_default',
       device: :both,

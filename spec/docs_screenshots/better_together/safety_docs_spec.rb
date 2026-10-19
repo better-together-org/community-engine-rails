@@ -21,6 +21,8 @@ RSpec.describe 'Documentation screenshots for safety flows', :as_user, :docs_scr
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
+
+    user
   end
 
   it 'captures safety report form screenshots' do
@@ -31,6 +33,7 @@ RSpec.describe 'Documentation screenshots for safety flows', :as_user, :docs_scr
   end
 
   it 'captures report history screenshots' do
+    report_record
     capture_docs_screenshot('report_history') do
       visit_with_login better_together.reports_path(locale: I18n.default_locale)
       expect(page).to have_text('My safety reports')
@@ -47,6 +50,7 @@ RSpec.describe 'Documentation screenshots for safety flows', :as_user, :docs_scr
   end
 
   it 'captures blocked people list screenshots' do
+    person_block
     capture_docs_screenshot('blocked_people_list') do
       visit_with_login better_together.person_blocks_path(locale: I18n.default_locale)
       expect(page).to have_text('Blocked People')

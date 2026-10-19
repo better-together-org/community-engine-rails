@@ -2,7 +2,7 @@
   "name": "platform_manager_user_surface_fallback",
   "device": "mobile",
   "url": "/en/host/users",
-  "title": "404 - Page Not Found | Test Host Community",
+  "title": "404 - Page Not Found | Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_manager_least_privilege_review",
@@ -27,13 +27,23 @@
         "center_x": 250.0,
         "center_y": 107.6953125
       },
+      "avoid": {
+        "x": 12.0,
+        "y": 90.0,
+        "width": 476.0,
+        "height": 35.390625,
+        "right": 488.0,
+        "bottom": 125.390625,
+        "center_x": 250.0,
+        "center_y": 107.6953125
+      },
       "placement": {
         "side": "below",
         "x": 115.0,
         "y": 145.39,
         "width": 270.0,
         "height": 618,
-        "score": 1135.609375
+        "score": 1131.609375
       }
     }
   ]

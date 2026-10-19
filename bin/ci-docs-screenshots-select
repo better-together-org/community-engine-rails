@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+"""Keep only the screenshot changes worth a pull request after the docs screenshot specs have run.
+
+Every run rewrites each tracked screenshot and its JSON sidecar (sub-pixel coordinates, random names and
+dates), so a plain `git add` would turn each refresh into hundreds of changed files. This keeps:
+
+  * every new file under docs/screenshots/{desktop,mobile};
+  * a changed PNG only when it differs from the committed one by more than --min-change-percent of its
+    pixels (difference above 5% brightness) or when its dimensions changed, together with its sidecars;
+
+and restores every other tracked screenshot file from HEAD.
+
+Usage: bin/ci-docs-screenshots-select [--min-change-percent 1.0] [--dry-run]
+Prints a markdown summary (also appended to $GITHUB_STEP_SUMMARY) and, under Actions, writes
+`new`, `updated` and `kept` to $GITHUB_OUTPUT. Needs Pillow (`pip install pillow`).
+"""
+import argparse
+import os
+import subprocess
+import sys
+
+DIRS = ("docs/screenshots/desktop", "docs/screenshots/mobile")
+
+
+def run(*cmd, check=True, text=True):
+    return subprocess.run(cmd, check=check, capture_output=True, text=text)
+
+
+def changed_pixel_percent(old_path, new_path):
+    """Percentage of pixels whose difference exceeds 5% brightness; 100 when the sizes differ."""
+    from PIL import Image, ImageChops
+
+    with Image.open(old_path) as old, Image.open(new_path) as new:
+        if old.size != new.size:
+            return 100.0
+        diff = ImageChops.difference(old.convert("RGB"), new.convert("RGB")).convert("L")
+        histogram = diff.histogram()
+        differing = sum(histogram[13:])  # 13/255 is about 5%
+        return differing / (new.size[0] * new.size[1]) * 100
+
+
+def siblings(png):
+    base = png[:-4]
+    return [path for path in (png, base + ".json", base + ".narrative.yml") if os.path.exists(path)]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--min-change-percent", type=float, default=1.0)
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    status = run("git", "status", "--porcelain", "--", *DIRS).stdout.splitlines()
+    new_files = sorted(line[3:] for line in status if line.startswith("??"))
+    modified_pngs = sorted(line[3:] for line in status if line[1] == "M" and line[3:].endswith(".png"))
+    modified_other = sorted(line[3:] for line in status if line[1] == "M" and not line[3:].endswith(".png"))
+
+    updated, reverted = [], []
+    for png in modified_pngs:
+        committed = run("git", "show", f"HEAD:{png}", text=False).stdout
+        old_path = "/tmp/ci-docs-screenshots-old.png"
+        with open(old_path, "wb") as handle:
+            handle.write(committed)
+        percent = changed_pixel_percent(old_path, png)
+        (updated if percent > args.min_change_percent else reverted).append((png, percent))
+
+    keep_bases = {png[:-4] for png, _ in updated}
+    for png, _ in reverted:
+        if not args.dry_run:
+            run("git", "checkout", "--", *siblings(png))
+    for path in modified_other:  # sidecars whose PNG was not kept
+        if path.rsplit(".", 1)[0].removesuffix(".narrative") not in keep_bases and not args.dry_run:
+            run("git", "checkout", "--", path, check=False)
+
+    new_pngs = [path for path in new_files if path.endswith(".png")]
+    lines = [
+        "### Docs screenshot refresh",
+        "",
+        f"- New screenshots: **{len(new_pngs)}**",
+        f"- Updated (more than {args.min_change_percent}% of pixels changed): **{len(updated)}**",
+        f"- Unchanged in substance, left as committed: **{len(reverted)}**",
+    ]
+    for title, rows in (("New", [(p, None) for p in new_pngs]), ("Updated", updated)):
+        if rows:
+            lines += ["", f"{title}:", ""]
+            lines += [f"- `{png}`" + (f" ({percent:.1f}% of pixels)" if percent is not None else "") for png, percent in rows[:80]]
+    summary = "\n".join(lines) + "\n"
+    print(summary)
+
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as handle:
+            handle.write(summary)
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a") as handle:
+            handle.write(f"new={len(new_pngs)}\nupdated={len(updated)}\nkept={len(new_pngs) + len(updated)}\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

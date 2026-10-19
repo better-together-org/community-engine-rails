@@ -6,16 +6,23 @@ RSpec.describe 'Documentation screenshots for 0.11.0 setup wizard and bootstrap 
                :docs_screenshot, :js, :skip_host_setup, retry: 0, type: :feature do
   include BetterTogether::CapybaraFeatureHelpers
 
+  let(:restore_ids) { {} }
+
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = nil
+    # Platforms, communities and wizards are in ESSENTIAL_TABLES, so these changes outlive the example.
+    # Remember what to restore, otherwise every later example runs without a host platform.
+    restore_ids[:platforms] = BetterTogether::Platform.where(host: true).pluck(:id)
+    restore_ids[:communities] = BetterTogether::Community.where(host: true).pluck(:id)
     BetterTogether::Platform.where(host: true).update_all(host: false)
     BetterTogether::Community.where(host: true).update_all(host: false)
     reset_host_setup_wizard!
   end
 
   after do
+    restore_host_state!
     Current.platform = nil
   end
 
@@ -43,6 +50,8 @@ RSpec.describe 'Documentation screenshots for 0.11.0 setup wizard and bootstrap 
   end
 
   it 'captures the completed setup wizard re-entry guard' do
+    # A completed setup means a host platform exists again.
+    restore_host_state!
     BetterTogether::Wizard.find_by!(identifier: 'host_setup').mark_completed
 
     BetterTogether::CapybaraScreenshotEngine.capture(
@@ -56,7 +65,8 @@ RSpec.describe 'Documentation screenshots for 0.11.0 setup wizard and bootstrap 
     ) do
       visit better_together.setup_wizard_path(locale: I18n.default_locale)
 
-      expect(page).to have_current_path(home_page_path(locale: I18n.default_locale), wait: 10)
+      # A visitor who is not signed in is sent to the sign-in page with the "already completed" notice.
+      expect(page).to have_current_path(new_user_session_path(locale: I18n.default_locale), wait: 10)
       expect(page).to have_css('.alert, .notice', wait: 10)
 
       page.execute_script(
@@ -67,6 +77,12 @@ RSpec.describe 'Documentation screenshots for 0.11.0 setup wizard and bootstrap 
   end
 
   private
+
+  def restore_host_state!
+    BetterTogether::Platform.where(id: restore_ids[:platforms]).update_all(host: true) if restore_ids[:platforms].present?
+    BetterTogether::Community.where(id: restore_ids[:communities]).update_all(host: true) if restore_ids[:communities].present?
+    BetterTogether::Wizard.find_by(identifier: 'host_setup')&.mark_completed
+  end
 
   def reset_host_setup_wizard!
     wizard = BetterTogether::Wizard.find_by!(identifier: 'host_setup')

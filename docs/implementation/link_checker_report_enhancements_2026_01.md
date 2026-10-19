@@ -1,5 +1,9 @@
 # Link Checker Report Enhancements - Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-15. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** January 15, 2026  
 **Status:** Planning  
 **Priority:** High - Improves actionability of weekly link checker reports

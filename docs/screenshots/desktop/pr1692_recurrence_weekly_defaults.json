@@ -2,7 +2,7 @@
   "name": "pr1692_recurrence_weekly_defaults",
   "device": "desktop",
   "url": "/en/events/new",
-  "title": "Harvey Group",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "recurrence_calendar_ux",
@@ -41,7 +41,7 @@
         "y": 618.0,
         "width": 380,
         "height": 190,
-        "score": 863.0
+        "score": 859.0
       }
     },
     {

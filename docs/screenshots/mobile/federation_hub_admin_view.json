@@ -2,7 +2,7 @@
   "name": "federation_hub_admin_view",
   "device": "mobile",
   "url": "/en/federation-hub",
-  "title": "Federation Hub | Community Engine",
+  "title": "Federation Hub | Community Engine Host",
   "locale": "en",
   "feature_set": "federation_item_consent",
   "flow": "federation_hub_admin_view",
@@ -40,7 +40,7 @@
         "y": 569.39,
         "width": 270.0,
         "height": 236,
-        "score": 711.609375
+        "score": 707.609375
       }
     },
     {

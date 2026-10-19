@@ -22,7 +22,6 @@
 - Node.js 20.x
 - PostgreSQL 14+ with PostGIS
 - Redis (for caching and Sidekiq)
-- Elasticsearch 7.17.23
 - Docker & Docker Compose
 
 ### Development Commands

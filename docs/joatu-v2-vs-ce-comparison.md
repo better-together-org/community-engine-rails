@@ -73,8 +73,6 @@ erDiagram
         uuid target_id      "polymorphic scope (any BT entity)"
         string target_type
         uuid creator_id FK
-        bigint c3_price_millitokens  "optional C3 pricing signal"
-        string c3_price_currency     "default: C3"
     }
     better_together_joatu_requests {
         uuid id PK
@@ -84,8 +82,6 @@ erDiagram
         uuid target_id
         string target_type
         uuid creator_id FK
-        bigint c3_budget_millitokens  "max willing to pay in C3"
-        string c3_budget_currency
     }
     better_together_joatu_agreements {
         uuid id PK
@@ -170,51 +166,16 @@ graph TD
 - Uses `money-rails` gem with `monetize :caps_cents` — currency is `"caps"`, formatted as money
 - `Profile.accepted_currencies` JSON field — users declare which currencies they accept
 
-### CE Rails — C3 (Tree Seeds 🌱): earned through contribution
+### CE Rails: no built-in currency or ledger
 
-```mermaid
-graph TD
-    subgraph "Borgberry Fleet Layer"
-        Node[Fleet::Node\nbts-0 / bts-7 / jens-pc]
-        Job[AgentJobResult\ntranscription / inference / embed]
-        Node -->|ran| Job
-    end
+CE core has no balance, token or ledger model. Offers and requests carry no price or budget columns, and agreements record `terms` and `value` text only. There is nothing in core to compare against v2's caps ledger.
 
-    subgraph "C3 Earning"
-        Job -->|POST /api/v1/c3/contributions| API[CE API]
-        Rate[C3::ExchangeRate\ncompute_gpu: 1.5 C3/gpu_hour]
-        API -->|create| Token[C3::Token\nstatus: pending → confirmed\nc3_millitokens: 18750]
-        API -->|credit| Bal[C3::Balance\navailable_millitokens += 18750]
-        Rate -->|rates| API
-    end
-
-    subgraph "Joatu C3 Exchange (optional pricing)"
-        Offer[Joatu::Offer\nc3_price_millitokens: 5000\n= 0.5 C3]
-        Req[Joatu::Request\nc3_budget_millitokens: 10000\n= 1.0 C3]
-        Bal -->|spend| Offer
-        Bal -->|budget| Req
-    end
-
-    style Token fill:#dcfce7,stroke:#22c55e
-    style Bal fill:#dcfce7,stroke:#22c55e
-```
-
-**Key characteristics:**
-- Balance in a **dedicated `C3::Balance` model** (not denormalized onto Person)
-- `C3::Token` records each earning event with `source_ref` (job ID), `contribution_type`, units, duration
-- Stored as **integer millitokens** (1 C3 = 10,000 millitokens) — no Money gem, no float arithmetic
-- C3 is **earned** through compute work (transcription, GPU inference, video encode) — there is no mint
-- `C3::ExchangeRate` table maps contribution type → C3 per unit
-- Joatu C3 pricing (`c3_price_millitokens` / `c3_budget_millitokens`) is **optional signalling** — not yet a forced ledger debit/credit
-
-| Dimension | v2 Caps | CE C3 |
-|-----------|---------|-------|
-| Creation mechanism | `CapsGenerator` singleton (from thin air) | Borgberry compute jobs (earned) |
-| Balance storage | Denormalized on `users`/`organizations` | Separate `C3::Balance` model |
-| Ledger | `CapsTransaction` double-entry | `C3::Token` event log + `C3::Balance` running total |
-| Currency type | Money gem, `caps_cents`, `"caps"` currency | Integer millitokens, no Money gem |
-| Joatu integration | Implicit (user's balance visible in profile) | Optional `c3_price_millitokens` columns on offers/requests |
-| Governance weight | Unclear — not documented | Explicitly **excluded** (one member one vote) |
+| Dimension | v2 Caps | CE Rails 0.11.0 |
+|-----------|---------|-----------------|
+| Balance storage | Denormalized on `users`/`organizations` | None |
+| Ledger | `CapsTransaction` double-entry | None |
+| Currency type | Money gem, `caps_cents`, `"caps"` currency | None |
+| Joatu integration | Implicit (user's balance visible in profile) | `Agreement#value` text only |
 
 ---
 
@@ -298,10 +259,9 @@ sequenceDiagram
 4. **JSONAPI v1** — full REST API for mobile and external clients
 5. **Pundit policies** — per-action, per-user authorization (v2 had none visible in models)
 6. **Internationalization** — Mobility-translated `name` + ActionText `description` in all locales
-7. **C3 integration** — compute-earned currency tied to borgberry fleet jobs (vs. assigned caps)
-8. **`urgency` field** — priority signalling on offers/requests
-9. **`address` association** — location scoping without requiring PostGIS
-10. **`ResponseLinkable` concern** — structured UI flow for responding to the other side
+7. **`urgency` field** — priority signalling on offers/requests
+8. **`address` association** — location scoping without requiring PostGIS
+9. **`ResponseLinkable` concern** — structured UI flow for responding to the other side
 
 ---
 
@@ -337,25 +297,17 @@ graph TD
         CE_Agreement["Joatu::Agreement\nstate machine\nacceptance transaction"]
         CE_Link["ResponseLink\npairing record\ndedup index"]
         CE_Match["Matchmaker service\nauto-notify on create"]
-        CE_C3["C3::Token + Balance\nearned from compute\nnot assigned"]
-        CE_Fleet["Fleet::Node\nborgberry heartbeat"]
 
         CE_Offer --- CE_Agreement
         CE_Request --- CE_Agreement
         CE_Offer --- CE_Link
         CE_Request --- CE_Link
         CE_Match --> CE_Link
-        CE_Fleet --> CE_C3
-        CE_C3 -.->|"optional pricing signal"| CE_Offer
-        CE_C3 -.->|"optional budget signal"| CE_Request
     end
 
-    V_Caps -.->|"concept lives on\nas optional C3 pricing"| CE_C3
     V_STI -.->|"split into concern-based\nseparate tables"| CE_Offer
     V_Pod -.->|"generalised to\npolymorphic target"| CE_Offer
 
-    style CE_C3 fill:#dcfce7,stroke:#22c55e
-    style CE_Fleet fill:#dbeafe,stroke:#3b82f6
     style V_Caps fill:#fef9c3,stroke:#ca8a04
     style V_Pod fill:#fef9c3,stroke:#ca8a04
 ```

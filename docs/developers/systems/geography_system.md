@@ -525,6 +525,33 @@ invalid_coords = Space.where(
    - Optimize query patterns
    - Check cache configuration
 
+### Boundary Import
+
+`Geography::Space#boundary` (multi polygon, SRID 4326) is filled by an admin-run task, never on a request path and
+never at seed time (the seed only carries point coordinates):
+
+```bash
+bin/rails better_together:geography:import_boundaries                    # everything still missing
+LEVEL=settlement IDENTIFIER=corner-brook bin/rails better_together:geography:import_boundaries
+DRY_RUN=1 LEVEL=settlement bin/rails better_together:geography:import_boundaries   # list, fetch nothing
+FORCE=1 THRESHOLD=0.0001 IDENTIFIER=corner-brook bin/rails better_together:geography:import_boundaries
+```
+
+`BoundaryFetcher` decides what to ask Nominatim, most exact first:
+
+1. The OpenStreetMap object already recorded in `space.metadata['boundary_source']` (`osm_type`, `osm_id`) is fetched
+   by id (`/lookup`, `NominatimOsmLookup`), so a re-import returns the same feature.
+2. Otherwise a name search with the parents appended ("Corner Brook, Newfoundland and Labrador, Canada"), taking the
+   first result with polygon geometry and preferring an administrative boundary over other polygons.
+
+Polygons are simplified by Nominatim (`polygon_threshold`, degrees; default 0.0005, about 50 m; set
+`NOMINATIM_POLYGON_THRESHOLD` or `THRESHOLD`) so a stored boundary is a few KB. When Nominatim has only a point (or
+nothing) for a record, `metadata['boundary_source']['status']` is set to `no_polygon` and later runs skip it until
+`FORCE=1`. Requests are serial, one per 1.1 seconds in production, with in-process retries.
+
+Boundaries are what `HierarchyResolutionJob` uses (`ST_Covers`) to place geocoded addresses and buildings at
+settlement, region, state and country level.
+
 ### Debugging Tools
 
 ```ruby

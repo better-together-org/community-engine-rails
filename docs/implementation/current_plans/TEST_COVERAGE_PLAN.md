@@ -1,5 +1,9 @@
 # Test Coverage Improvement Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-24. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Current Status (Updated: November 24, 2025)
 - **Coverage**: 77.7% line coverage (8482/10917 lines) ✅ UP from 77.45%
 - **Test Suite**: 1985 examples, 0 failures, 8 pending

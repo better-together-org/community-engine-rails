@@ -19,6 +19,7 @@ RSpec.describe 'Documentation screenshots for comment permission controls',
   let(:host_community) { host_platform.community }
   let(:community_member_role) { BetterTogether::Role.find_by(identifier: 'community_member') }
   let(:author) { create(:better_together_person, name: 'Harbour Notes Editor') }
+  let(:original_state) { {} }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
@@ -27,6 +28,9 @@ RSpec.describe 'Documentation screenshots for comment permission controls',
   end
 
   after do
+    # The platform is in ESSENTIAL_TABLES, so a loopback host_url set for one capture would
+    # otherwise outlive the example and fail the host_url validation in every later spec.
+    host_platform.update_column(:host_url, original_state[:host_url]) if original_state[:host_url] # rubocop:disable Rails/SkipsModelValidations
     Current.platform = nil
   end
 
@@ -289,6 +293,7 @@ RSpec.describe 'Documentation screenshots for comment permission controls',
     visit better_together.posts_path(locale:)
     live_server_uri = URI.parse(current_url)
     live_server_url = "#{live_server_uri.scheme}://#{live_server_uri.host}:#{live_server_uri.port}"
+    original_state[:host_url] = host_platform.host_url
     host_platform.update_column(:host_url, live_server_url) # rubocop:disable Rails/SkipsModelValidations
     mail = BetterTogether::CommentMailer.with(comment:, recipient:).added
     html_path = Rails.root.join('tmp', 'comment_permission_controls_notification_email.html')

@@ -42,6 +42,8 @@ pin 'leaflet-esm', to: 'leaflet-src.esm.js' # @1.9.4
 pin 'leaflet', preload: true # @1.9.4
 pin 'leaflet-gesture-handling', to: 'leaflet-gesture-handling.js', preload: true # Ensure it is preloaded # @1.2.2
 pin 'leaflet-providers', preload: true # @2.0.0
+pin 'leaflet-extensible', to: 'leaflet-extensible.js', preload: true
+pin 'leaflet.markercluster', to: 'leaflet.markercluster.js', preload: true # @1.5.3 (vendored, MIT)
 
 # Optional: Module shims
 pin 'es-module-shims', to: 'https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js', preload: true

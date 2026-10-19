@@ -1,0 +1,15 @@
+flowchart TD
+    A[Organizer edits the recurrence tab on an event] --> B[GET events/recurrence_preview with the form fields]
+    B --> C[RecurrenceScheduleBuilder builds an IceCube schedule]
+    C --> D[Preview partial: plain-English summary and next 5 dates in the coming year]
+    A --> E[Save event with nested recurrence attributes]
+    E --> F[Recurrence stores the IceCube rule, frequency, ends_on, exception_dates]
+    F --> G[Event.refresh_next_occurrence_at! writes next_occurrence_at]
+    H[EventNextOccurrenceRefreshScanJob] --> G
+    F --> I[RecurringSchedulable.occurrences_between builds Occurrence value objects]
+    I --> J{EventOccurrence row for that date?}
+    J -- No --> K[Computed from the rule, cancelled false]
+    J -- Yes --> L[Override: starts_at, ends_at, location, description, cancelled]
+    M[RSVP, comment or override on one date] --> N[find_or_create_occurrence_for date]
+    N --> O[EventOccurrence row created lazily, date must match the rule]
+    O --> G
