@@ -3,6 +3,10 @@
 module BetterTogether
   # rubocop:todo Metrics/ClassLength
   class PlatformInvitationsController < ApplicationController # rubocop:todo Style/Documentation
+    include PerUserThrottling
+
+    throttle_per_user :invitation_create, only: :create
+
     before_action :set_platform
     before_action :set_platform_invitation, only: %i[destroy resend]
     after_action :verify_authorized
