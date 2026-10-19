@@ -1,0 +1,18 @@
+---
+title: Billing plans index
+audience:
+- operator
+- board_member
+journey_step: A host steward reviews the plan catalog to see what recurring plans
+  exist and how widely each one is in use.
+callouts:
+- :title: New plan
+  :description: Billing plans are centrally managed by the host. This button opens
+    the editor for defining price-linked recurring plans.
+- :title: Plan catalog
+  :description: The table summarizes the operational state of each plan, including
+    whether it is active and how many subscriptions currently depend on it.
+accessibility_notes: The primary call-to-action and the plan table each expose stable
+  IDs for screenshot callouts and CI DOM contracts.
+slug: pr_1581_billing_plans_index
+device: desktop

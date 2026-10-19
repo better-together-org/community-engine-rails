@@ -1,8 +1,8 @@
 {
   "name": "new_platform_setup_steward_account",
   "device": "desktop",
-  "url": "/en/w/new_platform_setup/new-platform-d64eebd8eb24/steward_account",
-  "title": "Create the Steward Account | Test Host Community",
+  "url": "/en/w/new_platform_setup/new-platform-755ad52a894e/steward_account",
+  "title": "Create the Steward Account | Community Engine",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "new_platform_setup",
@@ -16,28 +16,28 @@
         "Creates the first User for the new platform."
       ],
       "target": {
-        "x": 402.0,
+        "x": 394.5,
         "y": 430.59375,
         "width": 636.0,
         "height": 38.0,
-        "right": 1038.0,
+        "right": 1030.5,
         "bottom": 468.59375,
-        "center_x": 720.0,
+        "center_x": 712.5,
         "center_y": 449.59375
       },
       "avoid": {
-        "x": 402.0,
+        "x": 394.5,
         "y": 430.59375,
         "width": 636.0,
         "height": 38.0,
-        "right": 1038.0,
+        "right": 1030.5,
         "bottom": 468.59375,
-        "center_x": 720.0,
+        "center_x": 712.5,
         "center_y": 449.59375
       },
       "placement": {
         "side": "below",
-        "x": 530.0,
+        "x": 522.5,
         "y": 488.59,
         "width": 380,
         "height": 132,
@@ -51,32 +51,32 @@
         "Show/hide toggle via better_together--password-toggle Stimulus controller."
       ],
       "target": {
-        "x": 402.0,
+        "x": 394.5,
         "y": 540.59375,
         "width": 591.0,
         "height": 38.0,
-        "right": 993.0,
+        "right": 985.5,
         "bottom": 578.59375,
-        "center_x": 697.5,
+        "center_x": 690.0,
         "center_y": 559.59375
       },
       "avoid": {
-        "x": 402.0,
+        "x": 394.5,
         "y": 540.59375,
         "width": 591.0,
         "height": 38.0,
-        "right": 993.0,
+        "right": 985.5,
         "bottom": 578.59375,
-        "center_x": 697.5,
+        "center_x": 690.0,
         "center_y": 559.59375
       },
       "placement": {
         "side": "right",
-        "x": 1013.0,
+        "x": 1005.5,
         "y": 480.59,
         "width": 380,
         "height": 158,
-        "score": 447.0
+        "score": 454.5
       }
     },
     {
@@ -86,28 +86,28 @@
         "Creates the paired Person profile for the steward."
       ],
       "target": {
-        "x": 402.0,
+        "x": 394.5,
         "y": 845.59375,
         "width": 636.0,
         "height": 38.0,
-        "right": 1038.0,
+        "right": 1030.5,
         "bottom": 883.59375,
-        "center_x": 720.0,
+        "center_x": 712.5,
         "center_y": 864.59375
       },
       "avoid": {
-        "x": 402.0,
+        "x": 394.5,
         "y": 845.59375,
         "width": 636.0,
         "height": 38.0,
-        "right": 1038.0,
+        "right": 1030.5,
         "bottom": 883.59375,
-        "center_x": 720.0,
+        "center_x": 712.5,
         "center_y": 864.59375
       },
       "placement": {
         "side": "above",
-        "x": 530.0,
+        "x": 522.5,
         "y": 693.59,
         "width": 380,
         "height": 132,

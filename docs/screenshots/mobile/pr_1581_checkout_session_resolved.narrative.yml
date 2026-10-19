@@ -1,0 +1,24 @@
+---
+title: Checkout return — payment confirmed (async)
+audience:
+- board_member
+- community_steward
+- operator
+- developer
+journey_step: Once SyncCheckoutSessionJob finishes syncing with Stripe, CheckoutSessionSyncBroadcaster
+  replaces the pending region shown in pr_1581_checkout_session_pending with this
+  confirmation, over the Turbo Stream subscription the page opened on load.
+callouts:
+- :title: Payment confirmed
+  :description: Reuses the exact same message text the old synchronous flash.now-based
+    code showed ("Stripe checkout was synchronized successfully."), just delivered
+    via a Turbo Stream replace instead of being present in the initial response body.
+    This screenshot renders the actual _checkout_session_result partial directly (rather
+    than racing a live ActionCable delivery under headless Chrome, which this codebase's
+    own Turbo-Stream-broadcast feature specs — see spec/features/conversations/send_message_spec.rb
+    — already flag as flaky) so the captured markup is byte-for-byte what the broadcaster
+    sends in production.
+accessibility_notes: Same role="status"/aria-live="polite" region as the pending state,
+  so the confirmation is announced without the user needing to have focus on the page.
+slug: pr_1581_checkout_session_resolved
+device: mobile

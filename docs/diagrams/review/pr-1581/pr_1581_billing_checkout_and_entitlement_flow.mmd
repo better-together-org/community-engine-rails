@@ -1,0 +1,24 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef action fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef system fill:#e8f1fb,stroke:#376996,color:#12304b,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+
+  Start["Steward opens a billing page"]:::action
+  Choose["Choose a recurring hosted plan"]:::action
+  Payer["Choose who will pay<br/>community, person, or sponsor community"]:::action
+  Checkout["Stripe Checkout session starts"]:::system
+  Webhook["Stripe sends checkout and subscription webhooks"]:::system
+  Sync["CE syncs the local billing subscription"]:::action
+  Resolve{"Is there an active current subscription<br/>for this beneficiary?"}:::decision
+  Entitled["Hosted entitlement is active"]:::outcome
+  NotEntitled["Hosted entitlement is inactive or needs attention"]:::outcome
+  Provision["Community can open platform provisioning"]:::outcome
+  Alerts["If sync fails, billing alerts and replay paths stay visible"]:::outcome
+
+  Start --> Choose --> Payer --> Checkout --> Webhook --> Sync --> Resolve
+  Resolve -->|Yes| Entitled --> Provision
+  Resolve -->|No| NotEntitled
+  Webhook --> Alerts
+  Sync --> Alerts

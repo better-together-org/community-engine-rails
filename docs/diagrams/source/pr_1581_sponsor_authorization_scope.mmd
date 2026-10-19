@@ -1,0 +1,32 @@
+%% render.orientation: landscape
+flowchart LR
+  classDef record fill:#f6f3ea,stroke:#6f5b3e,color:#23180d,stroke-width:1px;
+  classDef decision fill:#fff4dc,stroke:#b48722,color:#5b3d00,stroke-width:1px;
+  classDef outcome fill:#edf7ec,stroke:#4f7b43,color:#1f3c1a,stroke-width:1px;
+  classDef risk fill:#fbeaea,stroke:#8a3a3a,color:#4a1414,stroke-width:1px;
+
+  Sponsor["Would-be sponsor<br/>(Person or Community)"]:::record
+  Beneficiary["Target beneficiary<br/>(Person or Community)"]:::record
+  Consent{"Beneficiary currently<br/>accepts_sponsorship?"}:::decision
+  Create["Sponsorship#create<br/>(SponsorshipPolicy#create? — sponsor must be self or a community they steward)"]:::record
+  Blocked["Validation fails on create<br/>(BT_BILLING_SPONSORSHIP_CONSENT_ENFORCED)"]:::risk
+  Pending["Sponsorship status: pending"]:::outcome
+  Decide{"Beneficiary accepts or declines<br/>(SponsorshipPolicy#accept?/#decline?)"}:::decision
+  Active["Sponsorship status: active<br/>contributions now credit beneficiary's balance"]:::outcome
+  Declined["Sponsorship status: declined"]:::outcome
+  End["Either party can end an active sponsorship<br/>(SponsorshipPolicy#end?)"]:::record
+  Ended["Sponsorship status: ended"]:::outcome
+
+  Sponsor --> Create
+  Create --> Consent
+  Consent -->|No, consent enforced| Blocked
+  Consent -->|Yes, or not enforced| Pending
+  Beneficiary -.->|controls, via accepts_sponsorship toggle| Consent
+  Pending --> Decide
+  Decide -->|Accept| Active
+  Decide -->|Decline| Declined
+  Active --> End --> Ended
+
+  subgraph PlainLanguage["How to read this"]
+    Note["Consent lives on the beneficiary side (accepts_sponsorship?), not on\nwhat the sponsor can see. This replaced the old model where any\ncommunity visible under CommunityPolicy::Scope could appear as a\nbilling-takeover candidate — sponsorship is now opt-in by the\nbeneficiary and never reassigns Subscription ownership."]:::outcome
+  end

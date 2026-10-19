@@ -1,0 +1,187 @@
+%% render.orientation: landscape
+%% Full entity diagram for PR 1581 (Stripe-first community billing foundation).
+%% Covers every pay gem table (mounted via `pay_customer` / `pay_merchant` on
+%% Person and Community) and every better_together_billing_* table this PR
+%% creates or restructures. EXT_PERSON / EXT_COMMUNITY are thin stand-ins for
+%% the pre-existing BetterTogether::Person / BetterTogether::Community tables.
+%% Polymorphic associations (owner, billable_owner, beneficiary,
+%% last_replay_requested_by) are drawn as one relationship line per possible
+%% target type, not a single combined line.
+erDiagram
+  EXT_PERSON ||--o{ PAY_CUSTOMERS : "pay_customer macro / owner (person)"
+  EXT_COMMUNITY ||--o{ PAY_CUSTOMERS : "pay_customer macro / owner (community)"
+  EXT_PERSON ||--o{ PAY_MERCHANTS : "pay_merchant macro / owner (person)"
+  EXT_COMMUNITY ||--o{ PAY_MERCHANTS : "pay_merchant macro / owner (community)"
+
+  PAY_CUSTOMERS ||--o{ PAY_PAYMENT_METHODS : "customer_id"
+  PAY_CUSTOMERS ||--o{ PAY_SUBSCRIPTIONS : "customer_id"
+  PAY_CUSTOMERS ||--o{ PAY_CHARGES : "customer_id"
+  PAY_SUBSCRIPTIONS o|--o{ PAY_CHARGES : "subscription_id (optional)"
+
+  PAY_SUBSCRIPTIONS ||--|| BT_BILLING_SUBSCRIPTIONS : "pay_subscription_id (1:1 CE extension)"
+  BT_BILLING_PLANS ||--o{ BT_BILLING_SUBSCRIPTIONS : "billing_plan_id"
+  BT_BILLING_SUBSCRIPTIONS o|--o{ BT_BILLING_EVENTS : "billing_subscription_id (optional)"
+
+  EXT_PERSON o|--o{ BT_BILLING_EVENTS : "billable_owner (person)"
+  EXT_COMMUNITY o|--o{ BT_BILLING_EVENTS : "billable_owner (community)"
+  EXT_PERSON o|--o{ BT_BILLING_EVENTS : "beneficiary (person)"
+  EXT_COMMUNITY o|--o{ BT_BILLING_EVENTS : "beneficiary (community)"
+  EXT_PERSON o|--o{ BT_BILLING_EVENTS : "last_replay_requested_by (operator)"
+
+  EXT_PERSON ||--o{ BT_BILLING_MERCHANT_ACCOUNTS : "owner (person)"
+  EXT_COMMUNITY ||--o{ BT_BILLING_MERCHANT_ACCOUNTS : "owner (community)"
+
+  EXT_PERSON o|--o{ BT_BILLING_SUBSCRIPTION_SUMMARY_REPORTS : "creator_id"
+
+  PAY_WEBHOOKS {
+    string processor
+    string event_type
+    jsonb event
+  }
+
+  PAY_CUSTOMERS {
+    string owner_type "polymorphic: Person or Community"
+    uuid owner_id
+    string processor "always stripe in this PR"
+    string processor_id "Stripe cus_... id"
+    boolean default
+    string type "STI: Pay::Stripe::Customer"
+    json data "cached processor object"
+    json object "raw processor payload"
+    datetime deleted_at
+  }
+
+  PAY_MERCHANTS {
+    string owner_type "polymorphic: Person or Community"
+    uuid owner_id
+    string processor "stripe_connect in this PR"
+    string processor_id "Stripe acct_... id"
+    boolean default
+    string type "STI: Pay::Stripe::Merchant"
+    json data "cached processor object"
+  }
+
+  PAY_PAYMENT_METHODS {
+    uuid customer_id FK
+    string processor_id "Stripe pm_... id"
+    boolean default
+    string payment_method_type "renamed from STI type column"
+    string type "STI: Pay::Stripe::PaymentMethod"
+    json data
+    string stripe_account
+  }
+
+  PAY_SUBSCRIPTIONS {
+    uuid customer_id FK
+    string name "pay subscription slot name"
+    string processor_id "Stripe sub_... id"
+    string processor_plan "Stripe price id"
+    integer quantity
+    string status "trialing/active/past_due/canceled/..."
+    datetime current_period_start
+    datetime current_period_end
+    datetime trial_ends_at
+    datetime ends_at
+    boolean metered
+    string pause_behavior
+    decimal application_fee_percent
+    json metadata "app-set metadata"
+    json data "cached processor object"
+    json object "raw processor payload"
+    string type "STI: Pay::Stripe::Subscription"
+  }
+
+  PAY_CHARGES {
+    uuid customer_id FK
+    uuid subscription_id FK "nullable, one-off charges have none"
+    string processor_id "Stripe ch_.../pi_... id"
+    integer amount "cents"
+    string currency
+    integer application_fee_amount
+    integer amount_refunded
+    json metadata
+    json data
+    json object
+    string type "STI: Pay::Stripe::Charge"
+  }
+
+  BT_BILLING_PLANS {
+    string identifier UK "immutable after creation"
+    string name
+    text description
+    string billing_interval "month / year / one_time"
+    integer amount_cents "immutable after Stripe link"
+    string currency "immutable after Stripe link"
+    boolean active
+    string stripe_price_id UK "immutable after creation"
+    string stripe_product_id UK "populated on first outbound sync"
+    string sync_source "stripe_webhook = inbound loop guard"
+    datetime synced_to_stripe_at
+    string latest_stripe_event_id
+    jsonb metadata "participant copy, eligible owner types, pricing tier"
+  }
+
+  BT_BILLING_SUBSCRIPTIONS {
+    uuid pay_subscription_id FK "UNIQUE, 1:1 with pay_subscriptions"
+    uuid billing_plan_id FK
+    string sync_source
+    string latest_checkout_session_id
+    string latest_processor_event_id
+    datetime last_synced_at
+    jsonb metadata "bt_beneficiary_type/id when beneficiary differs from payer; portal error tracking"
+  }
+
+  BT_BILLING_EVENTS {
+    uuid billing_subscription_id FK "nullable, set once matched"
+    string billable_owner_type "polymorphic: who Stripe billed"
+    uuid billable_owner_id
+    string beneficiary_type "polymorphic: who the plan benefits"
+    uuid beneficiary_id
+    string processor "stripe"
+    string event_type "Stripe event type, e.g. invoice.payment_failed"
+    string event_id UK "scoped unique with processor"
+    jsonb payload "raw webhook payload, redacted after retention window"
+    datetime processed_at
+    string processing_status "pending/processed/failed/ignored/dead_lettered/replayed"
+    text error_message
+    datetime first_received_at
+    datetime last_attempted_at
+    integer attempt_count
+    datetime payload_redacted_at
+    datetime dead_lettered_at
+    string dead_letter_reason
+    datetime last_replayed_at
+    integer replay_count
+    string last_replay_requested_by_type "polymorphic: operator who replayed"
+    uuid last_replay_requested_by_id
+  }
+
+  BT_BILLING_MERCHANT_ACCOUNTS {
+    string owner_type "polymorphic: Person or Community"
+    uuid owner_id
+    string provider "stripe_connect / paypal_multiparty"
+    string external_account_id "Stripe acct_... id"
+    string status "pending/onboarding/required_action/active/restricted/disabled/errored/disconnected"
+    boolean charges_enabled
+    boolean payouts_enabled
+    jsonb capabilities
+    string country
+    string currency
+    jsonb metadata "requirements, business_type, details_submitted"
+    datetime last_synced_at
+  }
+
+  BT_BILLING_SUBSCRIPTION_SUMMARY_REPORTS {
+    jsonb filters "from_date / to_date"
+    string file_format "csv"
+    jsonb report_data "computed MRR, active subs, event health"
+    uuid creator_id FK "BetterTogether::Person"
+  }
+
+  EXT_PERSON {
+    string export_ref "BetterTogether::Person (pre-existing)"
+  }
+
+  EXT_COMMUNITY {
+    string export_ref "BetterTogether::Community (pre-existing)"
+  }

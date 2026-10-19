@@ -1,0 +1,12 @@
+<%= t('.greeting', name: @recipient&.name, default: 'Hi %{name},') %>
+
+<%= t(
+      '.message',
+      community_name: @community_name,
+      grace_period_ends_on: @grace_period_ends_on,
+      default: 'Hosted access for %{community_name} will pause on %{grace_period_ends_on} unless billing is resolved.'
+    ) %>
+
+<% if @billing_url.present? %>
+<%= t('.review_billing', default: 'Review billing:') %> <%= @billing_url %>
+<% end %>

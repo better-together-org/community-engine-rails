@@ -1,0 +1,29 @@
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <%= link_to owner.name, owner_path %>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      <%= t('better_together.billing.breadcrumb_label', default: 'Billing') %>
+    </li>
+  </ol>
+</nav>
+
+<div id="<%= dom_id(owner, :billing_header) %>" class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h1 class="mb-1"><%= heading %></h1>
+    <p class="text-muted mb-0"><%= subheading %></p>
+  </div>
+  <div class="d-flex gap-2">
+    <%= link_to t('globals.edit', default: 'Edit'), edit_path, class: 'btn btn-outline-secondary' %>
+    <%= button_to t('better_together.billing.reconcile_now', default: 'Reconcile now'),
+                  reconcile_path,
+                  method: :post,
+                  class: 'btn btn-outline-secondary' %>
+    <%= button_to t('better_together.billing.open_portal', default: 'Open billing portal'),
+                  portal_path,
+                  method: :post,
+                  class: 'btn btn-outline-primary',
+                  data: { turbo: false } %>
+  </div>
+</div>

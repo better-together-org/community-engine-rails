@@ -1,0 +1,16 @@
+---
+title: Community profile — billing entry point
+audience:
+- community_steward
+- operator
+journey_step: A steward viewing the community profile page needs the same one-click
+  path into billing that exists on the edit screen.
+callouts:
+- :title: Manage billing
+  :description: This button only renders when the viewer is authorized to update the
+    community, so billing management is not exposed to ordinary members browsing the
+    profile.
+accessibility_notes: The button is conditionally rendered based on policy authorization
+  and uses a stable ID for deterministic review coverage.
+slug: pr_1581_community_show_billing_entry_point
+device: mobile

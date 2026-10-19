@@ -1,0 +1,15 @@
+---
+title: Sponsorship offer — sponsor's read-only view
+audience:
+- sponsor
+- operator
+journey_step: A sponsor who just sent an offer revisits the review link to confirm
+  it is still pending.
+callouts:
+- :title: Awaiting beneficiary
+  :description: 'Same #show action and same underlying Sponsorship record as the beneficiary''s
+    view — only the policy check on accept? determines which branch of the view renders.'
+accessibility_notes: Informational alert uses the standard Bootstrap alert-info role;
+  no interactive elements in this state.
+slug: sponsorship_review_awaiting_beneficiary
+device: desktop

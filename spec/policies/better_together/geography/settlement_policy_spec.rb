@@ -18,6 +18,12 @@ RSpec.describe BetterTogether::Geography::SettlementPolicy, type: :policy do
     end
   end
 
+  describe '#show?' do
+    it 'allows guest (settlements are publicly viewable)' do
+      expect(described_class.new(nil, settlement).show?).to be true
+    end
+  end
+
   describe '#create?' do
     it 'always returns false' do
       expect(described_class.new(user, BetterTogether::Geography::Settlement).create?).to be false

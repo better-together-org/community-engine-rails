@@ -19,6 +19,7 @@ gem 'excon', '>= 1.5.0' # CVE-2026-54171: redact sensitive headers on redirect
 gem 'fog-aws'
 
 # Database adapter for PostgreSQL
+gem 'pay', '~> 11.6'
 gem 'pg', '>= 0.18', '< 2.0'
 # Puma as the app server
 gem 'puma', '~> 8.0'
@@ -38,6 +39,7 @@ gem 'ssrf_filter', '~> 1.1'
 # Rails <= 8.0 and 8.1.0-8.1.3 require redis < 6; Rails >= 8.1.4 allows < 7. Re-check it
 # when Rails changes (bundle exec gem contents actioncable | grep adapter/redis.rb).
 gem 'redis', Gem::Version.new(ENV.fetch('RAILS_VERSION', '8.1.4')) >= Gem::Version.new('8.1') ? '~> 6.0' : '~> 5.4'
+gem 'stripe', '~> 19.0'
 
 gem 'rswag'
 

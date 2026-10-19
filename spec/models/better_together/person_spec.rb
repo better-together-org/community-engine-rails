@@ -243,4 +243,16 @@ RSpec.describe BetterTogether::Person do
       expect(association.options[:dependent]).to eq(:destroy)
     end
   end
+
+  describe '#accepts_sponsorship?' do
+    it 'defaults to false' do
+      expect(build(:better_together_person).accepts_sponsorship?).to be(false)
+    end
+
+    it 'returns true once opted in' do
+      person = create(:better_together_person, accepts_sponsorship: true)
+
+      expect(person.accepts_sponsorship?).to be(true)
+    end
+  end
 end

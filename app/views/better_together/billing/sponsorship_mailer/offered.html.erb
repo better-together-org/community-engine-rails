@@ -1,0 +1,15 @@
+<p><%= t('.greeting', name: @recipient&.name, default: 'Hi %{name},') %></p>
+
+<p>
+  <%= t(
+        '.message',
+        sponsor_name: @sponsor_name,
+        default: '%{sponsor_name} has offered to sponsor your hosted-access balance.'
+      ) %>
+</p>
+
+<% if @review_url.present? %>
+  <p>
+    <%= link_to t('.review_offer', default: 'Review this offer'), @review_url, class: 'text-decoration-none' %>
+  </p>
+<% end %>

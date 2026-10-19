@@ -1,0 +1,117 @@
+{
+  "name": "pr_1581_person_billing_overview",
+  "device": "mobile",
+  "url": "/en/p/manager-example-test/billing",
+  "title": "Personal Billing | Platform Steward | Test Host Community",
+  "locale": "en",
+  "feature_set": "billing_foundation_review",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_foundation_review_spec.rb",
+  "callouts": [
+    {
+      "selector": "#current_subscription_card_person_ddceeec5-8387-43c3-bb3e-0e4bbe5ce7e4",
+      "title": "Personal subscription",
+      "bullets": [
+        "Shows the plan attached to the person as payer.",
+        "Surfaces portal issues and renewal timing."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 327.390625,
+        "width": 461.0,
+        "height": 263.0,
+        "right": 473.0,
+        "bottom": 590.390625,
+        "center_x": 242.5,
+        "center_y": 458.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 327.390625,
+        "width": 461.0,
+        "height": 263.0,
+        "right": 473.0,
+        "bottom": 590.390625,
+        "center_x": 242.5,
+        "center_y": 458.890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 610.39,
+        "width": 270.0,
+        "height": 268,
+        "score": 670.609375
+      }
+    },
+    {
+      "selector": "#sponsored_communities_card_person_ddceeec5-8387-43c3-bb3e-0e4bbe5ce7e4",
+      "title": "Sponsored communities",
+      "bullets": [
+        "Lists communities this person is currently paying for.",
+        "Provides direct links to each community billing page."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 614.390625,
+        "width": 461.0,
+        "height": 167.0,
+        "right": 473.0,
+        "bottom": 781.390625,
+        "center_x": 242.5,
+        "center_y": 697.890625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 614.390625,
+        "width": 461.0,
+        "height": 167.0,
+        "right": 473.0,
+        "bottom": 781.390625,
+        "center_x": 242.5,
+        "center_y": 697.890625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 898.39,
+        "width": 270.0,
+        "height": 320
+      }
+    },
+    {
+      "selector": "#merchant_account_card_person_ddceeec5-8387-43c3-bb3e-0e4bbe5ce7e4",
+      "title": "Merchant account (connected)",
+      "bullets": [
+        "Session follow-up: the status badge now reflects real state (green here) instead of a hardcoded color regardless of status.",
+        "The explainer text below correctly describes a connected, active account — a prior bug reused the not-connected copy for both states on the community version of this page."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 805.390625,
+        "width": 461.0,
+        "height": 270.0,
+        "right": 473.0,
+        "bottom": 1075.390625,
+        "center_x": 242.5,
+        "center_y": 940.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 805.390625,
+        "width": 461.0,
+        "height": 270.0,
+        "right": 473.0,
+        "bottom": 1075.390625,
+        "center_x": 242.5,
+        "center_y": 940.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 657,
+        "width": 270.0,
+        "height": 580
+      }
+    }
+  ]
+}

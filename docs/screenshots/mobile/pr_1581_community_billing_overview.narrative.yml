@@ -1,0 +1,61 @@
+---
+title: Community billing overview
+audience:
+- board_member
+- community_steward
+- operator
+journey_step: A steward reviews the community billing page to see whether the community's
+  own plan is active, whether it is being sponsored by others, what it can contribute
+  to other communities, whether payouts are configured, and whether Stripe events
+  need attention.
+callouts:
+- :title: Hosted plan status
+  :description: 'This card translates billing into plain operational terms: whether
+    the hosted community is active, what support tier it has, and whether platform
+    provisioning is allowed.'
+- :title: Current subscription
+  :description: This community's own hosted plan, if it pays for itself — a subscription
+    is always self-funded (billable_owner and beneficiary are the same record now;
+    see Subscription#beneficiary). Replaces the old "takeover" mechanism (billing
+    ownership reassignment) entirely — a third party funding this community's access
+    instead does so via the Sponsorship panel below, crediting this community's own
+    Stripe balance rather than taking over the subscription record.
+- :title: Sponsorship received
+  :description: A Billing::Sponsorship crediting this community's balance via a MonetaryContribution,
+    replacing the removed takeover UI ("Let Collective Budget pay instead"). This
+    banner only shows the total credited so far — see the Sponsorship panel below
+    for who the sponsor is and accept/decline actions.
+- :title: Contribute to another community
+  :description: This community can fund another community's hosted-access balance
+    directly, without ever taking over that community's subscription ownership.
+- :title: Sponsorship
+  :description: A sponsor's contribution is credited to the beneficiary's own Stripe
+    Customer Balance; it never reassigns billable_owner on a Subscription record.
+    This panel (below the fixed screenshot viewport on this page, so it has no callout
+    box here — see sponsorship_panel_states for the dedicated, annotated view) shows
+    who currently sponsors this account, who this account sponsors, and lets a steward
+    offer to sponsor another community or person.
+- :title: Merchant account
+  :description: Hosted billing and payout onboarding are intentionally separate. A
+    community can have hosted access without yet being ready to receive payouts.
+- :title: Billing activity alerts
+  :description: This gives operators a plain dashboard for recent webhook trouble,
+    including failures that may require replay or reconciliation.
+- :title: Available hosted plans
+  :description: The plan table explains what each recurring plan supports and which
+    checkout path will charge the selected payer.
+- :title: Solidarity pricing tier
+  :description: 'Session follow-up: plans with a non-standard pricing_tier now show
+    a badge and the plan''s own solidarity_description directly on this table, surfacing
+    a value that previously only existed in the admin plan editor. It sorts to the
+    top row of "Available hosted plans" (lowest amount_cents first) but falls below
+    the fixed screenshot viewport on this page, so it has no callout box here — see
+    pr_1581_billing_plan_solidarity_detail for the dedicated, annotated view of these
+    fields.'
+accessibility_notes: 'All annotated targets use stable IDs or semantic classes. The
+  page uses native headings, buttons, and table semantics so non-technical reviewers
+  can cross-reference the screenshot with the live UI. Session follow-up: the billing
+  activity alert banners now carry role="alert" so assistive technology announces
+  dead-letter/repeated-failure/unresolved-drift states.'
+slug: pr_1581_community_billing_overview
+device: mobile

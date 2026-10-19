@@ -2,7 +2,7 @@
   "name": "new_platform_setup_entry_point",
   "device": "desktop",
   "url": "/en/platforms",
-  "title": "Platforms | Test Host Community",
+  "title": "Platforms | Community Engine",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "new_platform_setup",
@@ -10,11 +10,12 @@
   "source_spec": "./spec/docs_screenshots/better_together/new_platform_setup_wizard_spec.rb",
   "callouts": [
     {
-      "selector": "a[href='/en/w/new_platform_setup']",
+      "selector": "#provision-new-platform-btn",
       "title": "Provision New Platform",
       "bullets": [
         "New entry point that starts the new_platform_setup wizard.",
-        "Only rendered when PlatformPolicy#create? passes for the signed-in user."
+        "Only rendered when PlatformPolicy#create? passes for the signed-in user.",
+        "Session follow-up: converted from a GET link to a POST button_to form — this action creates a draft Platform + Wizard, so it needs CSRF protection like every other mutating billing action."
       ],
       "target": {
         "x": 1137.9375,
@@ -41,7 +42,7 @@
         "x": 1036,
         "y": 203.0,
         "width": 380,
-        "height": 236,
+        "height": 444,
         "score": 1278.0
       }
     }

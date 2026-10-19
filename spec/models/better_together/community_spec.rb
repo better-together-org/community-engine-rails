@@ -200,6 +200,29 @@ RSpec.describe BetterTogether::Community, :skip_host_setup do
     end
   end
 
+  describe '#accepts_sponsorship?' do
+    it 'defaults to false' do
+      expect(build(:better_together_community).accepts_sponsorship?).to be(false)
+    end
+
+    it 'returns true once opted in' do
+      community = create(:better_together_community, accepts_sponsorship: true)
+
+      expect(community.accepts_sponsorship?).to be(true)
+    end
+  end
+
+  describe '#current_sponsorship' do
+    it 'returns the most recent active received sponsorship' do
+      community = create(:better_together_community)
+      sponsor = create(:better_together_person)
+      create(:better_together_billing_sponsorship, sponsor:, beneficiary: community, status: 'ended')
+      active_sponsorship = create(:better_together_billing_sponsorship, sponsor:, beneficiary: community, status: 'active')
+
+      expect(community.current_sponsorship).to eq(active_sponsorship)
+    end
+  end
+
   describe 'host community privacy' do
     let(:host_platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host, privacy: 'public') }
     let(:host_community) { host_platform.community }

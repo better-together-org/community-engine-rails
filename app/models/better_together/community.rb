@@ -5,6 +5,9 @@ require 'storext'
 module BetterTogether
   # A gathering
   class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
+    include Billing::Billable
+    include Billing::EntitlementHolder
+    include Billing::SponsorshipRecipient
     include Contactable
     include HostsEvents
     include Identifier
@@ -178,6 +181,10 @@ module BetterTogether
         ActiveModel::Type::Boolean.new.cast(platform&.allow_membership_requests?)
     end
 
+    def email
+      primary_email_address&.email || creator_email
+    end
+
     # Resize the cover image to specific dimensions
     def cover_image_variant(width, height)
       cover_image.variant(resize_to_fill: [width, height])
@@ -241,6 +248,10 @@ module BetterTogether
 
     private
 
+    def billing_owner_metadata
+      { bt_community_id: id, bt_community_identifier: identifier }
+    end
+
     # The host community follows its platform's privacy; change the platform's privacy instead.
     def host_privacy_matches_platform
       platform = ::BetterTogether::Platform.find_by(host: true, community_id: id)
@@ -271,6 +282,14 @@ module BetterTogether
           default: 'Default calendar for %<community_name>s'
         )
       end
+    end
+
+    def primary_email_address
+      email_addresses.find(&:primary_flag)
+    end
+
+    def creator_email
+      creator&.user&.email || creator&.email
     end
 
     def log_default_calendar_seed_error(record, calendar_identifier)
