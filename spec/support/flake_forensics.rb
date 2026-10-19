@@ -5,7 +5,8 @@
 # suspect rows are COMMITTED (visible to a second connection) versus only inside the example's transaction.
 # This makes a CI-only flake traceable from the job log instead of from guesses. It changes no behaviour.
 module FlakeForensics
-  LEAK_SIGNATURE = /already been taken|PG::UniqueViolation|PG::ForeignKeyViolation|cmd_tuples/
+  LEAK_SIGNATURE = /already been taken|PG::UniqueViolation|PG::ForeignKeyViolation|cmd_tuples|
+                    could\ not\ obtain\ a\ connection|another\ command\ is\ already\ in\ progress/x
   RECENT_LIMIT = 8
   RECENT = [] # rubocop:disable Style/MutableConstant
 
@@ -38,6 +39,8 @@ module FlakeForensics
         "[FLAKE-FORENSICS] #{example.metadata[:location]} #{exception.class}: #{exception.message.to_s.lines.first&.strip}",
         "  process pid=#{Process.pid} TEST_ENV_NUMBER=#{ENV['TEST_ENV_NUMBER'].inspect} #{connection_facts}",
         "  committed rows (second connection): #{committed_counts}",
+        "  pool: #{pool_facts}",
+        "  threads: #{thread_facts}",
         "  previous examples in this process: #{RECENT.join(' | ')}"
       ]
     end
@@ -46,6 +49,16 @@ module FlakeForensics
       connection = ActiveRecord::Base.connection
       "db=#{connection.current_database} backend=#{connection.select_value('SELECT pg_backend_pid()')} " \
         "open_transactions=#{connection.open_transactions}"
+    end
+
+    # Who still holds connections: pool counters plus every live thread other than this one.
+    def pool_facts
+      ActiveRecord::Base.connection_pool.stat.inspect
+    end
+
+    def thread_facts
+      (Thread.list - [Thread.current]).map { |t| "#{t.name || t.object_id}:#{t.status}@#{t.backtrace&.first.to_s[0, 80]}" }
+                                      .first(12).join(' | ')
     end
 
     # Committed state only: a separate connection cannot see this example's uncommitted rows.
