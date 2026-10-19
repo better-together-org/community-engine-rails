@@ -8,7 +8,7 @@ module BetterTogether
     end
 
     def create?
-      user.present? && participant?
+      user.present? && participant? && !block_between_participants?
     end
 
     def update?
@@ -37,6 +37,13 @@ module BetterTogether
     def participant?
       conversation = record.try(:conversation)
       conversation.present? && conversation.participants.include?(agent)
+    end
+
+    # A block in either direction between the sender and another participant
+    # stops new messages; the existing history stays readable.
+    def block_between_participants?
+      blocked_ids = agent.block_related_person_ids
+      blocked_ids.any? && record.conversation.participants.where(id: blocked_ids).exists?
     end
 
     def sender?

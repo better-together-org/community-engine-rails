@@ -89,6 +89,39 @@ RSpec.describe BetterTogether::ConversationPolicy, type: :policy do
     end
   end
 
+  describe '#permitted_participants with blocks' do
+    let!(:regular_user) { create(:user, :confirmed, password: 'SecureTest123!@#') }
+    let(:policy) { described_class.new(regular_user, BetterTogether::Conversation.new) }
+
+    before do
+      create(:better_together_person_platform_membership, member: regular_user.person, joinable: host_platform)
+    end
+
+    it 'excludes people the agent has blocked' do
+      create(:person_block, blocker: regular_user.person, blocked: opted_in_person)
+
+      expect(policy.permitted_participants).not_to include(opted_in_person)
+    end
+
+    it 'excludes people who have blocked the agent' do
+      create(:person_block, blocker: opted_in_person, blocked: regular_user.person)
+
+      expect(policy.permitted_participants).not_to include(opted_in_person)
+    end
+
+    it 'keeps other permitted people' do
+      create(:person_block, blocker: regular_user.person, blocked: opted_in_person)
+
+      expect(policy.permitted_participants).to include(steward_person, host_only_opted_in_person)
+    end
+
+    it 'denies create? when a requested participant is blocked' do
+      create(:person_block, blocker: opted_in_person, blocked: regular_user.person)
+
+      expect(policy.create?(participants: [opted_in_person])).to be false
+    end
+  end
+
   describe '#create? with participants kwarg' do
     let(:regular_user) { create(:user, :confirmed, password: 'SecureTest123!@#') }
     let(:policy) { described_class.new(regular_user, BetterTogether::Conversation.new) }
