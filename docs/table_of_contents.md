@@ -25,6 +25,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [After You Report](end_users/after_you_report.md) - What happens after submission
 - [Privacy and Safety Preferences](end_users/privacy_and_safety_preferences.md) - Privacy and safety choices
 - [Emergency and Urgent Situations](end_users/emergency_and_urgent_situations.md) - Emergency boundary guidance
+- [Message Requests and Linked Access](end_users/message_requests_and_linked_access.md) - Message requests, messaging permissions, person links and access grants
 
 #### **Community Organizers** - [`community_organizers/`](community_organizers/)
 *People managing and growing communities*
@@ -40,6 +41,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Host Dashboard Extensions](platform_organizers/host_dashboard_extensions.md) - Custom dashboard features
 - [GitHub Integration Setup](platform_organizers/github_integration_setup.md) - Configure GitHub OAuth and API access
 - [Federation Privacy and Consent](platform_organizers/federation_privacy_and_consent.md) - Safe operation of platform-to-platform trust
+- [Short Links](platform_organizers/short_links.md) - Short share links, expiry and visit tracking
+- [Content Security and Malware Scanning](platform_organizers/content_security_and_malware_scanning.md) - ClamAV scanning, held uploads and review
 
 #### **Developers** - [`developers/`](developers/)
 *Technical documentation for contributors and maintainers*
@@ -66,12 +69,20 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
-- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across Elasticsearch, database, and pg_search search modes
+- [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across pg_search (default) and database search modes, with Elasticsearch as an optional extension gem
 - [Robot Authored Page And Post Publishing](developers/systems/robot_authored_page_post_publishing_system.md) - Narrow workflow for truthful robot bylines on pages and posts
 - [Security Protection System](developers/systems/security_protection_system.md) - Security measures
+- [Short Links System](developers/systems/short_links_system.md) - Short URLs, redirect, visit tracking
+- [Person Links, Access Grants and Messaging Permissions](developers/systems/person_links_grants_and_messaging_system.md) - Message requests, messaging grants, cross-platform person links
+- [Seed Catalog and Seed Plantings](developers/systems/seed_catalog_and_plantings_system.md) - On-demand reference data and planting audit records
+- [Event Recurrence and Occurrences](developers/systems/event_recurrence_and_occurrences_system.md) - Recurrence rules and lazily created occurrence overrides
+- [Person Deletion Requests and Purge Audits](developers/systems/person_deletion_and_purge_audit_system.md) - Anonymizing and hard deletion with audit records
+- [Content Security Ingress System](developers/systems/content_security_ingress_system.md) - Attachment gating, malware scanning, review records
+- [Safety and Federation Review Workflow](developers/systems/safety_and_federation_review_workflow.md) - Reviewer surfaces, safety cases, actions and notes
 
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
 - [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
+- [Model Concerns Reference](reference/model_concerns_reference.md) - Concerns new or changed in 0.11.0
 - [Polymorphic and STI](developers/architecture/polymorphic_and_sti.md) - Database design patterns
 - [RBAC Overview](developers/architecture/rbac_overview.md) - Role-based access control
 

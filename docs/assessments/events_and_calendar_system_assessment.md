@@ -1,5 +1,9 @@
 # Events & Calendar System: Comprehensive Technical and UX Assessment
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-11-05 (last edited 2026-01-23). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Assessment Date**: November 5, 2025  
 **System Version**: Rails 8.0.2 / Better Together Community Engine  
 **Assessment Type**: Technical Architecture, Performance, Security, UX, and Scalability  

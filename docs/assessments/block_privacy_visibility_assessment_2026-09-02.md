@@ -1,5 +1,9 @@
 # Content block privacy & visibility — surface assessment (2026-09-02)
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-09-02 (last edited 2026-09-18). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 > **RESOLVED (2026-09-18).** The follow-up work this document maps was completed and
 > merged into `release/0.11.0-notes`: PR #1778 makes `Content::Block#privacy` gate
 > visibility in page render, blob access, and the Pundit scope

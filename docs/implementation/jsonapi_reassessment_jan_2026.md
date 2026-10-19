@@ -1,5 +1,9 @@
 # JSONAPI Implementation Reassessment - January 27, 2026
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-27. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Status:** Files Migrated, Namespaces Corrected ✅  
 **Priority:** Address Remaining Issues (Security, Model Alignment)
 

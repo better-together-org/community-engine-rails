@@ -13,14 +13,14 @@ classDiagram
       <<Model>>
       table: better_together_geography_continents
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
+      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +6
       weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
     }
     class BetterTogether__Geography__Country["Geography::Country"] {
       <<Model>>
       table: better_together_geography_countries
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
+      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +6
       weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
     }
     class BetterTogether__Geography__CountryContinent["Geography::CountryContinent"] {
@@ -53,7 +53,7 @@ classDiagram
       <<Model>>
       table: better_together_geography_regions
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Geography::Placeable +5
+      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Geography::Placeable +7
       weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
     }
     class BetterTogether__Geography__RegionSettlement["Geography::RegionSettlement"] {
@@ -66,7 +66,7 @@ classDiagram
       <<Model>>
       table: better_together_geography_settlements
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Geography::Geospatial::One +7
+      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Geography::Geospatial::One +9
       weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +7
     }
     class BetterTogether__Geography__Space["Geography::Space"] {
@@ -80,7 +80,7 @@ classDiagram
       <<Model>>
       table: better_together_geography_states
       translates: description, name, slug
-      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +4
+      concerns: BetterTogetherId, FriendlySlug, Geography::Geospatial::One, Identifier +6
       weak refs: owner: seeds, owner: geospatial_space, owner: slugs, owner: rich_text_translations +6
     }
     class BetterTogether__Place["Place"] {

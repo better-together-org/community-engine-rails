@@ -1,5 +1,9 @@
 # Calendar Feeds and Recurrence Implementation Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-23 (last edited 2026-01-24). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Status**: Phase 2 COMPLETE - Phase 4 COMPLETE - Phase 5 COMPLETE - All Phases Implemented  
 **Created**: 2026-01-23  
 **Updated**: 2026-01-24  
