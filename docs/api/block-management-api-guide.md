@@ -216,3 +216,7 @@ Every API request runs in the default locale. Send `X-Api-Locale: fr` to write a
 `attachment_block_ids` (write-only, create and update) names existing blocks that are attached at the top of a post's body in that order. A host app opts a block class in with `BetterTogether::ContentSecurity::AttachableRegistry.register('Your::BlockClass')`; the class must include `ActionText::Attachable` and provide its attachment partial. Only registered classes of the post's platform are accepted (`422` otherwise), and a registered block is rendered only while it is public and visible.
 
 A body update keeps the post's blocks: `PATCH` with new `content` and no attachments puts the existing attachments back in front of the new text, so a publisher can rewrite the text without re-sending the blocks. Sending `attachment_block_ids` on update replaces them. Sending rendered `<action-text-attachment>` HTML back as `content` is rejected, because it has no signed id.
+
+### Navigation landmarks in HTML blocks
+
+HTML block content is sanitized. `nav` and the accessibility attributes `aria-label`, `aria-labelledby`, `aria-current` and `aria-hidden` are kept, so a breadcrumb can be a labelled `<nav aria-label="Breadcrumb">` with `aria-current="page"` on the current item. Scripts, event handlers and unsafe link protocols are still removed.
