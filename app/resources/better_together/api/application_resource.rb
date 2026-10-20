@@ -31,6 +31,26 @@ module BetterTogether
         Pundit.policy_scope!(context[:current_user], _model_class)
       end
 
+      # A credential limited to one community only ever sees that community's
+      # records; models with no community linkage are hidden (fail closed).
+      # Prepended on every subclass so resources that override `records` are covered.
+      module CredentialCommunityScoping
+        def records(options = {})
+          relation = super
+          community = Current.credential_community
+          return relation if community.nil?
+          return relation.where(id: community.id) if _model_class <= BetterTogether::Community
+          return relation.where(community_id: community.id) if _model_class.column_names.include?('community_id')
+
+          relation.none
+        end
+      end
+
+      def self.inherited(subclass)
+        super
+        subclass.singleton_class.prepend(CredentialCommunityScoping)
+      end
+
       # Helper method for defining translatable attributes
       # Usage: translatable_attribute :name
       def self.translatable_attribute(attr_name)
