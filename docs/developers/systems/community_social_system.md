@@ -388,7 +388,7 @@ All social interactions are governed by comprehensive Pundit policies:
 ### Privacy Controls
 The system implements granular privacy controls:
 
-**Profile Privacy**: User-controlled visibility of personal information
+**Profile Privacy**: Profile visibility is set by platform administrators or through the API; members cannot yet change it themselves
 **Content Privacy**: Public/private settings for all user-generated content
 **Contact Privacy**: Granular controls for addresses, phone numbers, emails
 **Platform Privacy**: Community-level visibility controls
@@ -591,7 +591,7 @@ end
 - **Membership Caching**: Cache expensive membership queries
 - **Privacy Filtering**: Optimize privacy-aware database queries
 - **Bulk Operations**: Efficient bulk membership and permission operations
-- **Search Indexing**: Elasticsearch integration for community and user search
+- **Search**: Communities are in the `pg_search` registry (`Community` declares `searchable pg_search: { ... }`); people are not in the global search registry
 
 ## Development Guidelines
 

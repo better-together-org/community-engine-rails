@@ -100,6 +100,17 @@ The dashboard queue is intentionally summary-oriented. It exposes:
 - `docs/screenshots/desktop/release_0_11_0_platform_connections_index.png`
 - `docs/screenshots/mobile/release_0_11_0_platform_connections_index.png`
 
+## Safety case records: actions and notes
+
+A `Safety::Case` (`better_together_safety_cases`) is opened automatically for every report. It has a `status` (`submitted`, `triaged`, `needs_reporter_followup`, `restorative_in_progress`, `protective_action_in_effect`, `resolved`, `closed_no_action`), a `lane` and an optional `closure_type`. The lane defaults on create from the report: `malware_detected` and `scan_failure` reports go to `technical_security`; urgent or retaliation-risk reports to `immediate_safety`; `spam_or_scam`, `fraud`, `impersonation` and `misinformation` to `administrative`; everything else to `restorative`. `open_cases` excludes `resolved` and `closed_no_action`. Reporters see `submitted` and `triaged` as "under review".
+
+Reviewers add two kinds of record to a case through nested routes under `/safety/cases/:id` (`resources :actions, only: [:create]` and `resources :notes, only: [:create]`, both requiring the safety review permission):
+
+- **`Safety::Note`** (`better_together_safety_notes`): a `body`, its `author`, and `visibility`: `internal_only` (reviewers) or `participant_visible` (shown to the reporter on their report page). Notes are listed chronologically.
+- **`Safety::Action`** (`better_together_safety_actions`): a recorded protective or restorative step. `action_type` is one of `content_hidden`, `content_removed`, `contact_restriction`, `messaging_restriction`, `event_restriction`, `temporary_suspension`, `restorative_referral` or `watch_flag`; `status` is `active`, `completed` or `cancelled`. A reason is required, and an `active` action must carry a `review_at` date. The form also records the values checks (love and inclusivity, solidarity, accountability, care), review notes, whether a second review is required, an optional approver and an `expires_at`, so each action's reasoning is auditable. Creating an active action moves the case to `protective_action_in_effect` and copies `review_at` onto the case.
+
+The content security scanner also creates cases and internal notes; see [Content Security Ingress System](content_security_ingress_system.md).
+
 ## Notification and digest contract
 
 Safety and federation review now follow the same operator-facing delivery pattern:

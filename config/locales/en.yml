@@ -2077,6 +2077,7 @@ en:
       invitee: Invitee
       invitee_email: Email
       invitee_type: Invitee Type
+      invitee_unavailable: This person cannot be invited.
       login_to_respond: Please log in to respond to your invitation.
       no_invitations: No invitations found
       no_role: No role
@@ -2128,6 +2129,7 @@ en:
       categories:
         index:
           new_btn_text: New Category
+      exchange_unavailable: This exchange is not available.
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review
@@ -3348,6 +3350,7 @@ en:
         table_headers:
           authors: Authors
           categories: Categories
+          community: Community
           published: Published
           title: Title
       labels:
@@ -3856,12 +3859,31 @@ en:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_chip:
+        label: Community
+        title: Posted in the %{community} community
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
       event_status_level: 'Event status: %{status}'
       event_status_tooltip: 'Event status: %{status}'
+      map:
+        buttons:
+          geolocate: Geolocate Me
+          map: Map
+          satellite: Satellite
+        geolocation:
+          denied: Location access is blocked. Allow it for this site in your browser
+            settings and try again.
+          located: Showing your location.
+          locating: Finding your location...
+          timeout: Finding your location took too long. Try again.
+          unavailable: Your location could not be determined. Check that location
+            services are on and try again.
+          unsupported: Your browser does not support location.
+          you_are_here: You are here
+        show_on_map: Show on the map
       privacy_level: 'Privacy: %{privacy}'
       privacy_tooltip: This content is %{privacy}
       publishing_agreement_notice:

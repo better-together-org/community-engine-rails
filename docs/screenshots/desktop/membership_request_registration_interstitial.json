@@ -2,7 +2,7 @@
   "name": "membership_request_registration_interstitial",
   "device": "desktop",
   "url": "/en/users/sign-up",
-  "title": "Sign Up | Test Host Community",
+  "title": "Sign Up | Community Engine Host",
   "locale": "en",
   "role": "community_manager",
   "feature_set": "membership_request_workflow",

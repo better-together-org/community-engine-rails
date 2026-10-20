@@ -14,9 +14,8 @@ module BetterTogether
     }.freeze
 
     class << self
-      # Extension point for optional federation scopes (e.g. the Borgberry
-      # extension's 'c3.exchange') owned by a gem that may not be bundled —
-      # core never references scope names it doesn't itself implement.
+      # Extension point for optional federation scopes owned by a gem that may
+      # not be bundled; core never references scope names it doesn't implement.
       def register_scope_rule(name, &rule)
         self.additional_scope_rules = additional_scope_rules.merge(name.to_s => rule)
       end

@@ -1,7 +1,7 @@
 {
   "name": "content_reporting_actions_post_menu",
   "device": "mobile",
-  "url": "/en/posts/sample-post-6",
+  "url": "/en/posts/sample-post-3",
   "title": "Community Garden Update | Posts | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -19,31 +19,31 @@
       ],
       "target": {
         "x": 420.0,
-        "y": 665.140625,
+        "y": 663.546875,
         "width": 36.0,
         "height": 24.5,
         "right": 456.0,
-        "bottom": 689.640625,
+        "bottom": 688.046875,
         "center_x": 438.0,
-        "center_y": 677.390625
+        "center_y": 675.796875
       },
       "avoid": {
         "x": 168.0,
-        "y": 665.140625,
+        "y": 663.546875,
         "width": 288.0,
         "height": 117.5,
         "right": 456.0,
-        "bottom": 782.640625,
+        "bottom": 781.046875,
         "center_x": 312.0,
-        "center_y": 723.890625
+        "center_y": 722.296875
       },
       "placement": {
         "side": "above",
         "x": 177.0,
-        "y": 79.14,
+        "y": 77.55,
         "width": 270.0,
         "height": 566,
-        "score": 665.140625
+        "score": 663.546875
       }
     }
   ]

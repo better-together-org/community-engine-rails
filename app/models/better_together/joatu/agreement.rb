@@ -28,6 +28,7 @@ module BetterTogether
       validates :offer, :request, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
       validate :offer_matches_request_target
+      validate :no_block_between_parties, on: :create
 
       enum :status, STATUS_VALUES, prefix: :status
 
@@ -241,6 +242,13 @@ module BetterTogether
         end
       end
 
+      # An agreement cannot be made between people with a block between them.
+      def no_block_between_parties
+        return unless offer&.creator&.block_between?(request&.creator)
+
+        errors.add(:base, I18n.t('better_together.joatu.exchange_unavailable'))
+      end
+
       # Ensures the offer targets the same record as the request
       def offer_matches_request_target
         return unless targets_present?
@@ -307,8 +315,8 @@ module BetterTogether
       end
 
       # Extension point called inside accept!'s transaction, after the agreement is
-      # marked accepted. No-op by default — the Borgberry extension prepends a
-      # module that creates a pending C3 settlement here when the offer is priced.
+      # marked accepted. No-op by default; extension gems can prepend a module to add
+      # side effects here.
       def after_accept_side_effects; end
 
       # Extension point called inside fulfill!'s transaction, before the agreement

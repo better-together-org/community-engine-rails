@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
+### Fixed (person safety and privacy)
+- Private contact details (emails, phones, addresses, social accounts) no longer render to other viewers of a profile, community or host page (#1947)
+- The person JSON:API returns email, preference attributes and membership relationships only to the person and to staff who can update them; `communities` and `person_community_memberships` are no longer includable (#1948)
+- Person blocks are enforced in both directions for new conversations and messages (#1949)
+- No comment, Joatu match or message notifications across a block; blocked people are excluded from Joatu matching, response links and agreements, with a generic "exchange unavailable" refusal. Existing agreements are not cancelled by a later block, and stewards and Joatu managers still see everything (#1950)
+- Person blocks are enforced for event visibility, RSVPs, the attendee list and counts, and for event, community and platform invitations, including invitations to a member's email address (#1951, #1955)
+- Profile visibility docs corrected to say it is admin or API controlled (#1955)
+
+### Added (abuse protection)
+- Per-user throttles for conversation creation, message sending, report creation, blocking, invitations and comments, tunable with `BTS_THROTTLE_<NAME>_LIMIT` and `BTS_THROTTLE_<NAME>_PERIOD` (seconds, `0` disables); over-limit requests get a 503 with `Retry-After` (#1952)
+
 ### Added
 
 #### Multi-Tenant Platform Architecture & Federation MVP
@@ -33,7 +44,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 #### Removed
 - Signal Protocol E2E encrypted-messaging beta (prekey exchange, Double Ratchet, sender-key group rotation, passphrase key backup) pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings). Preserved intact on `feature/e2e-signal-protocol-messaging-01100notes` for future rework.
-- C3 Tree Seeds community contribution token system, including the Borgberry fleet-compute integration and fleet-node authorization, relocated to a standalone extension gem rather than shipping in core 0.11.0.
 - Claim/Citation/Evidence governance foundation pulled from the 0.11.0 release. Reintegration tracked as draft PR #1797, not part of this release.
 
 #### CMS Block System
@@ -182,6 +192,14 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Settings / Privacy:** Move account deletion requests into the account tab and retire the legacy My Data seed section after the deletion-audit rollout
 - **Auth / UX:** Hide OAuth sign-in buttons when provider credentials are not configured
 - **API:** Remove the stray `created_at` attribute from `InvitationResource`
+- **Rack::Attack:** the federation feed per-IP throttle is 20/min (was 6/min) so several legitimate connections to one remote host no longer trip it; `RACK_ATTACK_SAFELIST_NETWORKS` (comma-separated CIDRs, invalid entries ignored, unset means no change) safelists load balancers, monitors and operator networks. It is only as reliable as `req.ip`, so proxies must pass the client address in `X-Forwarded-For`.
+- **Federation:** `Seed.import_or_update!` and the Page, Post and Event mirror services reload and retry once on `ActiveRecord::StaleObjectError` instead of discarding the whole ingest.
+- **Search:** `PgSearchBackend` now selects `pg_search_rank`, so scores are real and model weights apply (every score was 0.0 and results tied on id); engine URL helpers keep the locale in host-app views.
+- **Navigation:** the user nav and mobile bar fall back to the person id when the profile slug is missing in the current locale, instead of raising `UrlGenerationError` on every page.
+- **MCP:** `SearchPeopleTool` builds profile URLs for people matched by name alone.
+- **Metrics:** report CSV exports write to a unique temp path, so concurrent exports no longer collide and fail Active Storage integrity checks.
+- **Seeds:** builders and seed-catalog planting run outside the publishing gate (`PublicVisibilityGate.as_system`), so an administrator who has not accepted the publishing agreement can still plant geography.
+- **Events:** event occurrences no longer create their own map (they use the parent event's), which raised on non-UTF-8 titles.
 
 ### Security
 
@@ -193,6 +211,8 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **ActiveStorage direct uploads had zero authentication:** Rails core's `DirectUploadsController` bypasses the host application's controller stack entirely; every CE-family app had unauthenticated direct-upload endpoints until this cycle closed the gap (#1750, #1392).
 - **Unsafe reflection in `BlocksController`:** `params[:resource_class].safe_constantize` ran on unvalidated input (Brakeman High-confidence, RCE-class); fixed with a strict class allowlist.
 - **Inbound mail person-impersonation:** `agent+<identifier>@` resolved a real `Person` from a guessable identifier with no verification the sender owned that identity, allowing a message to be routed/attributed as if from an arbitrary real person; fixed alongside the other alias-authorization gaps (#1689).
+- **MCP Origin validation:** `fast-mcp` skips its Origin check when `allowed_origins` is empty, which is what non-development environments passed, so any Origin was accepted. CE now allows the hostnames of active `PlatformDomain` records and internal platform URLs, plus an optional `MCP_ALLOWED_ORIGINS`; an empty list allows nothing (#1857).
+- **Spoofed `X-Forwarded-For`:** `ActionDispatch::RemoteIp::IpSpoofAttackError` raised before Rack::Attack ran, so malformed headers from scanners became unhandled 500s. `SpoofedForwardedForGuardMiddleware` now answers them with the same blocked response Rack::Attack uses.
 
 ### Dependencies
 
@@ -200,10 +220,10 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Devise** 5.0.4 — fixes CVE-2026-32700 and CVE-2026-40295 (open redirect via `Referer` header)
 - **css_parser** promoted to an explicit `>= 3.0.0` gemspec dependency — fixes CVE-2026-53727 (SSRF + LFI); pulls in the new `ssrf_filter` dependency
 - **nokogiri** 1.19.4 — multiple use-after-free / out-of-bounds-read / null-pointer GHSA fixes
-- **Rails family** (actionpack, activestorage, etc.) 8.0.5.1 — fixes CVE-2026-66066 (ActiveStorage/libvips arbitrary file read / RCE)
+- **Rails family** (actionpack, activestorage, etc.) 8.0.5.1 — fixes CVE-2026-66066 (ActiveStorage/libvips arbitrary file read / RCE). `main`'s primary CI lane is now Rails 8.1.3.1 (8.0 reached end of life on 2026-10-07); the gemspec supports `>= 7.2, < 8.2`, with `compat/rails-7.2`, `-8.0` and `-8.1` lanes
 - **puma** 8.0.2 (major bump from the 7.x line) — fixes CVE-2026-47736 / CVE-2026-47737 (PROXY protocol memory exhaustion)
 - **oauth2** 2.0.23 (transitive) — fixes GHSA-pp92-crg2-gfv9 (bearer-token leak via protocol-relative redirect)
-- Removed: `elasticsearch-model`/`elasticsearch-rails` (replaced by `pg_search`, a Postgres-native search backend — Elasticsearch itself now lives in a standalone `better_together-elasticsearch` extension gem, no longer a core dependency), `sentry-rails`/`sentry-ruby` (see Observability, above)
+- Removed: `elasticsearch-model`/`elasticsearch-rails` (replaced by `pg_search`, a Postgres-native search backend — Elasticsearch itself now lives in the standalone [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch) extension gem, no longer a core dependency), `sentry-rails`/`sentry-ruby` (now the optional [`better_together-sentry`](https://github.com/better-together-org/better_together-sentry) gem)
 - sidekiq 8.1.6, active_storage_validations 3.0.5, faraday 2.14.3, bootsnap 1.24.6, rubocop-rails 2.35.5, selenium-webdriver 4.44.0
 - icalendar 2.12.3 (CVE-2026-33635), doorkeeper 5.9.3, jwt 3.2.0 (CVE-2026-45363), aws-sdk-s3 1.227.0
 
@@ -235,7 +255,7 @@ for 0.11.x patches.
   resolution path.
 - **ClamAV Operator Deploy Guide:** A guide for deploying, configuring, and monitoring
   the ClamAV backend will be added in a 0.11.x docs patch before operators are expected
-  to enable `BETTER_TOGETHER_CONTENT_SECURITY_CLAM_AV_ENABLED`.
+  to enable `BT_MALWARE_SCANNING_ENABLED`.
 - **Observability & Marketing Adapters:** Core error reporting now dispatches through a
   pluggable adapter registry, but no companion observability gem (e.g. Sentry) has
   shipped yet — that extraction is roadmap-only. There is no dedicated marketing/Google

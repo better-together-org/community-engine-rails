@@ -2107,6 +2107,7 @@ fr:
       invitee: Invité(e)
       invitee_email: E-mail
       invitee_type: Type d'invité
+      invitee_unavailable: Cette personne ne peut pas être invitée.
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       no_invitations: Aucune invitation trouvée
       no_role: Aucun rôle
@@ -2158,6 +2159,7 @@ fr:
       categories:
         index:
           new_btn_text: Nouvelle catégorie
+      exchange_unavailable: Cet échange n'est pas disponible.
       help:
         agreements:
           index: Les accords relient une offre et une demande. Utilisez cette liste
@@ -3422,6 +3424,7 @@ fr:
         table_headers:
           authors: Auteurs
           categories: Catégories
+          community: Communauté
           published: Publié
           title: Titre
       labels:
@@ -3945,12 +3948,31 @@ fr:
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      community_chip:
+        label: Communauté
+        title: Publié dans la communauté %{community}
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
       event_status_level: 'Statut de l''événement: %{status}'
       event_status_tooltip: 'Statut de l''événement: %{status}'
+      map:
+        buttons:
+          geolocate: Me localiser
+          map: Carte
+          satellite: Satellite
+        geolocation:
+          denied: L'accès à la localisation est bloqué. Autorisez-le pour ce site
+            dans les paramètres du navigateur, puis réessayez.
+          located: Affichage de votre position.
+          locating: Recherche de votre position...
+          timeout: La recherche de votre position a pris trop de temps. Réessayez.
+          unavailable: Votre position n'a pas pu être déterminée. Vérifiez que les
+            services de localisation sont activés, puis réessayez.
+          unsupported: Votre navigateur ne prend pas en charge la localisation.
+          you_are_here: Vous êtes ici
+        show_on_map: Afficher sur la carte
       privacy_level: 'Confidentialité: %{privacy}'
       privacy_tooltip: Ce contenu est %{privacy}
       publishing_agreement_notice:
@@ -4950,8 +4972,8 @@ fr:
     joatu:
       agreement:
         accepted: Accord accepté
-        cancelled: Accord annulé — les Graines réservées ont été retournées.
-        fulfilled: Accord rempli — C3 transféré au créateur de l'offre.
+        cancelled: Accord annulé.
+        fulfilled: Accord rempli.
         rejected: Accord rejeté
       response_links:
         offer_created: Offre créée en réponse à la demande.

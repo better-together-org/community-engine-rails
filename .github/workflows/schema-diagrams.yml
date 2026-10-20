@@ -1,0 +1,125 @@
+name: Schema Diagrams
+
+# Fails a pull request that changes the database schema (migrations or spec/dummy/db/schema.rb) without
+# regenerating every whole-schema diagram. Fix: run bin/export_schema_diagrams and commit the result.
+#
+#   full-schema:  db/community-engine-db.dbml and the full-schema ERD (svg; the png is rendered from it)
+#   subsystems:   the per-subsystem ERD Mermaid sources, generated from live Rails reflections
+#
+# diagrams.yml already checks that the Mermaid exports match their sources.
+
+on:
+  pull_request:
+    paths:
+      - "db/migrate/**"
+      - "spec/dummy/db/schema.rb"
+      - "db/community-engine-db.dbml"
+      - "docs/diagrams/exports/svg/ce_full_schema_erd.svg"
+      - "docs/diagrams/source/ce_*_schema_erd.mmd"
+      - "scripts/export_schema_dbml.rb"
+      - "scripts/render_schema_diagram.cjs"
+      - "scripts/export_subsystem_diagrams.rb"
+      - "bin/export_schema_diagrams"
+      - ".github/workflows/schema-diagrams.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.10"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Regenerate the DBML and the full-schema diagram
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: bin/export_schema_diagrams --skip-subsystems
+
+      - name: Verify they are committed and current
+        shell: bash
+        run: |
+          paths="db/community-engine-db.dbml docs/diagrams/exports/svg/ce_full_schema_erd.svg"
+          if [ -n "$(git status --porcelain -- ${paths})" ]; then
+            echo "::error::Whole-schema diagrams are out of date. Run bin/export_schema_diagrams and commit the result."
+            git status --porcelain -- ${paths}
+            exit 1
+          fi
+          test -s docs/diagrams/exports/png/ce_full_schema_erd.png
+
+  subsystems:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: "postgis://rails:password@localhost:5432/rails_test"
+      REDIS_URL: "redis://localhost:6379/0"
+      SEARCH_BACKEND: "pg_search"
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_DB: rails_test
+          POSTGRES_USER: rails
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd "pg_isready -U rails"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install libvips
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvips42t64 || sudo apt-get install -y --no-install-recommends libvips42
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4.10"
+          bundler-cache: true
+
+      - name: Load the schema
+        run: |
+          cd spec/dummy
+          bundle exec rake db:create db:schema:load
+
+      - name: Regenerate the subsystem ERD sources
+        run: |
+          cd spec/dummy
+          bundle exec rails runner export_subsystem_diagrams.rb
+
+      - name: Verify the ERD sources are committed and current
+        shell: bash
+        run: |
+          paths="docs/diagrams/source/ce_*_schema_erd.mmd"
+          if [ -n "$(git status --porcelain -- ${paths})" ]; then
+            echo "::error::Subsystem ERDs are out of date. Run bin/export_schema_diagrams and commit the result."
+            git status --porcelain -- ${paths}
+            exit 1
+          fi

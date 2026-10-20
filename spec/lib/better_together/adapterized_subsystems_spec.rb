@@ -76,12 +76,12 @@ RSpec.describe BetterTogether do
       adapter = instance_double(Proc)
       allow(adapter).to receive(:call).and_return(vectors: [0.1, 0.2])
 
-      described_class.register_embedding_adapter(:borgberry, adapter)
+      described_class.register_embedding_adapter(:local_model, adapter)
 
-      result = described_class.embed_text('hello', provider: 'borgberry', model: 'embed-small')
+      result = described_class.embed_text('hello', provider: 'local_model', model: 'embed-small')
 
       expect(result).to eq(vectors: [0.1, 0.2])
-      expect(adapter).to have_received(:call).with('hello', provider: 'borgberry', model: 'embed-small')
+      expect(adapter).to have_received(:call).with('hello', provider: 'local_model', model: 'embed-small')
     end
   end
 

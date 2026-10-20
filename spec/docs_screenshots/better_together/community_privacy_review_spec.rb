@@ -21,6 +21,7 @@ RSpec.describe 'Documentation screenshots for community privacy', :docs_screensh
     checklist = create(
       :better_together_checklist,
       creator: manager.person,
+      platform: BetterTogether::Platform.find_by!(host: true),
       privacy: 'community',
       title: 'Community Privacy Checklist'
     )
@@ -53,7 +54,8 @@ RSpec.describe 'Documentation screenshots for community privacy', :docs_screensh
     BetterTogether::PersonCommunityMembership.find_or_create_by!(
       joinable: community,
       member: user.person,
-      role: member_role
+      role: member_role,
+      status: 'active'
     )
 
     result = BetterTogether::CapybaraScreenshotEngine.capture(
