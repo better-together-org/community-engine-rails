@@ -12,10 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
 ### Fixed (person safety and privacy)
-- Private contact details no longer render to other viewers of a profile
-- The person JSON:API no longer exposes email and preference attributes to other viewers
-- Person blocks are enforced in messaging, notifications, events (visibility, RSVPs, attendee list and counts) and in community, platform and event invitations
-- Per-user throttles for conversations, messages, reports, blocks, invitations and comments (`BTS_THROTTLE_<NAME>_LIMIT` and `_PERIOD`)
+- Private contact details (emails, phones, addresses, social accounts) no longer render to other viewers of a profile, community or host page (#1947)
+- The person JSON:API returns email, preference attributes and membership relationships only to the person and to staff who can update them; `communities` and `person_community_memberships` are no longer includable (#1948)
+- Person blocks are enforced in both directions for new conversations and messages (#1949)
+- No comment, Joatu match or message notifications across a block; blocked people are excluded from Joatu matching, response links and agreements, with a generic "exchange unavailable" refusal. Existing agreements are not cancelled by a later block, and stewards and Joatu managers still see everything (#1950)
+- Person blocks are enforced for event visibility, RSVPs, the attendee list and counts, and for event, community and platform invitations, including invitations to a member's email address (#1951, #1955)
+- Profile visibility docs corrected to say it is admin or API controlled (#1955)
+
+### Added (abuse protection)
+- Per-user throttles for conversation creation, message sending, report creation, blocking, invitations and comments, tunable with `BTS_THROTTLE_<NAME>_LIMIT` and `BTS_THROTTLE_<NAME>_PERIOD` (seconds, `0` disables); over-limit requests get a 503 with `Retry-After` (#1952)
 
 ### Added
 
