@@ -29,8 +29,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - Federation MVP: `PlatformConnection` model, OAuth-based cross-platform trust, `FederatedSeedAttributes` for content syndication
 - `LinkedSeedIngestService`: receive and persist federated content (posts, pages, events) as local mirrors
 - `PlatformConnectionsController` with full CRUD and federation OAuth token exchange flow
-- Federation authorship opt-in: `federate_authorship` boolean on `Person` settings — authors who want attribution on federated platforms can opt in (#1408)
-- `federated_author` JSONB column on posts, pages, and events for mirrored bylines
 - Federation idempotent mirror lookup + identifier conflict namespacing (#1405)
 - Federation member export consent controls for cross-platform sharing preferences (#1465)
 - Per-item federation consent: tri-state `federation_visibility` on Post/Page/Event, per-connection sync intervals, and rate-limited federation feed delivery
@@ -41,10 +39,6 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - First-class `BetterTogether::StorageConfiguration` adapter (local/S3/S3-compatible), AR-encrypted credentials, admin CRUD (#1392)
 - Community Action Network governance system: `GovernedAgent` identity scaffold and agreement-gated public publishing (#1494)
 - Per-platform multi-tenant sitemaps and dynamic, tenant-aware `robots.txt`
-
-#### Removed
-- Signal Protocol E2E encrypted-messaging beta (prekey exchange, Double Ratchet, sender-key group rotation, passphrase key backup) pulled from the 0.11.0 release pending further security hardening (open V9/V10 findings). Preserved intact on `feature/e2e-signal-protocol-messaging-01100notes` for future rework.
-- Claim/Citation/Evidence governance foundation pulled from the 0.11.0 release. Reintegration tracked as draft PR #1797, not part of this release.
 
 #### CMS Block System
 - `BlockResource` base model and 19 concrete block type models: text, image, video, audio, map, embed, CTA, divider, accordion, checklist, mermaid diagram, and more (#1376)
@@ -220,7 +214,7 @@ Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 - **Devise** 5.0.4 — fixes CVE-2026-32700 and CVE-2026-40295 (open redirect via `Referer` header)
 - **css_parser** promoted to an explicit `>= 3.0.0` gemspec dependency — fixes CVE-2026-53727 (SSRF + LFI); pulls in the new `ssrf_filter` dependency
 - **nokogiri** 1.19.4 — multiple use-after-free / out-of-bounds-read / null-pointer GHSA fixes
-- **Rails family** (actionpack, activestorage, etc.) 8.0.5.1 — fixes CVE-2026-66066 (ActiveStorage/libvips arbitrary file read / RCE). `main`'s primary CI lane is now Rails 8.1.3.1 (8.0 reached end of life on 2026-10-07); the gemspec supports `>= 7.2, < 8.2`, with `compat/rails-7.2`, `-8.0` and `-8.1` lanes
+- **Rails family** (actionpack, activestorage, etc.) 8.1.4 (0.10.0 shipped 8.0.3) — includes the fix for CVE-2026-66066 (ActiveStorage/libvips arbitrary file read / RCE). `main`'s primary CI lane is Rails 8.1 (8.0 reached end of life on 2026-10-07); the gemspec supports `>= 7.2, < 8.2`, with `compat/rails-7.2`, `-8.0` and `-8.1` lanes
 - **puma** 8.0.2 (major bump from the 7.x line) — fixes CVE-2026-47736 / CVE-2026-47737 (PROXY protocol memory exhaustion)
 - **oauth2** 2.0.23 (transitive) — fixes GHSA-pp92-crg2-gfv9 (bearer-token leak via protocol-relative redirect)
 - Removed: `elasticsearch-model`/`elasticsearch-rails` (replaced by `pg_search`, a Postgres-native search backend — Elasticsearch itself now lives in the standalone [`better_together-elasticsearch`](https://github.com/better-together-org/better_together-elasticsearch) extension gem, no longer a core dependency), `sentry-rails`/`sentry-ruby` (now the optional [`better_together-sentry`](https://github.com/better-together-org/better_together-sentry) gem)
