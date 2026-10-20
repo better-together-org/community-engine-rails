@@ -60,6 +60,11 @@ module BetterTogether
         mappable&.leaflet_points || []
       end
 
+      # Data layers (with their attribution) the mappable draws on its map.
+      def layers
+        mappable.respond_to?(:map_layers) ? MapLayer.resolve(mappable.map_layers) : []
+      end
+
       def spaces_for_leaflet
         spaces.map(&:to_leaflet_point).compact.to_json
       end
