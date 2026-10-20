@@ -1,0 +1,48 @@
+{
+  "name": "event_attendees_block_filter",
+  "device": "mobile",
+  "url": "/en/events/997fedbc-3320-45fb-bb70-c27477cc2f8b",
+  "title": "Harbour cleanup | Events | Test Host Community",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_attendees_block_filter",
+  "flow": "event_attendees_block_filter",
+  "source_spec": "./spec/docs_screenshots/better_together/event_attendees_block_filter_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event-attendees-list",
+      "title": "Attendee list",
+      "bullets": [
+        "People you blocked, or who blocked you, are left out."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 657.578125,
+        "width": 427.0,
+        "height": 42.0,
+        "right": 456.0,
+        "bottom": 699.578125,
+        "center_x": 242.5,
+        "center_y": 678.578125
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 657.578125,
+        "width": 427.0,
+        "height": 42.0,
+        "right": 456.0,
+        "bottom": 699.578125,
+        "center_x": 242.5,
+        "center_y": 678.578125
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 453.58,
+        "width": 270.0,
+        "height": 184,
+        "score": 657.578125
+      }
+    }
+  ]
+}
