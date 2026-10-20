@@ -1,8 +1,10 @@
-<%# locals: (map:, enable_popups: true, use_label_as_popup: false, cluster: true, types: [], boundary: nil, extra_controllers: nil, attributes: {}) %>
+<%# locals: (map:, enable_popups: true, use_label_as_popup: false, cluster: true, types: [], boundary: nil, boundary_attribution: nil, layers: [], extra_controllers: nil, attributes: {}) %>
 <%# attributes: extra HTML attributes for the map element, with full data attribute names as keys (for example
     'data-better_together--space-fields-target' => 'map'). extra_controllers: more Stimulus controllers to attach.
     types: [{ key:, label:, color: }] for points that carry a type (drives the legend and cluster pies).
-    boundary: GeoJSON drawn as an outline. cluster: group nearby points by density. %>
+    boundary: GeoJSON drawn as an outline; boundary_attribution: its credit (a MapLayer attribute hash or HTML-safe text).
+    layers: MapLayers, registered layer keys or attribute hashes drawn with their attribution, in addition to the
+    map's own (Map#layers). cluster: group nearby points by density. %>
 
 <% if map %>
   <%
@@ -32,6 +34,12 @@
       'data-better_together--map-labels-value' => labels.to_json
     }
     map_attributes['data-better_together--map-boundary-value'] = boundary.to_json if boundary.present?
+    if boundary_attribution.present?
+      credit = boundary_attribution.is_a?(Hash) ? BetterTogether::Geography::MapLayer.new(key: 'boundary', **boundary_attribution).attribution_html : h(boundary_attribution)
+      map_attributes['data-better_together--map-boundary-attribution-value'] = credit
+    end
+    map_layers = BetterTogether::Geography::MapLayer.resolve(map.try(:layers), layers)
+    map_attributes['data-better_together--map-layers-value'] = map_layers.to_json if map_layers.any?
   %>
   <%= content_tag(:div, map_attributes.stringify_keys.merge(attributes.to_h.stringify_keys)) do %>
     <div class="map-controls">
