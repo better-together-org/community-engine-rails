@@ -52,6 +52,11 @@ module BetterTogether
     has_many :blocked_by_person_blocks, foreign_key: :blocked_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
 
+    # Ids of people this person has blocked or who have blocked them.
+    def block_related_person_ids
+      person_blocks.pluck(:blocked_id) | blocked_by_person_blocks.pluck(:blocker_id)
+    end
+
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
     # Overrides Reportable's default (no dependent:) to preserve this model's pre-existing
     # cascade-delete behavior for reports filed against a person.
