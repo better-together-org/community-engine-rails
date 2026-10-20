@@ -106,12 +106,24 @@ editing core: `read_platform_integrations`, `manage_platform_integrations`,
 3. **G2**: credential and grant management endpoints (JSONAPI), `me/credential`
    introspection, per-token throttles, rswag specs.
 
-## Open questions
+## Decisions (2026-10-20, Rob)
 
-- Is a robot bound to one platform or allowed global (the `Robot` model supports
-  both)? Proposal: agent keys are always platform-bound; global robots need one
-  grant per platform.
-- Should `AgentGrant` scopes reuse Doorkeeper scope names or a separate permission
-  vocabulary? Proposal: reuse scope names, one vocabulary.
-- Migrate the existing Robot bot-access token to this model or leave it for public
-  content access? Proposal: leave it; it serves a different read-only purpose.
+- Agent keys are always bound to one platform. A global robot needs one grant per platform.
+- Grant scopes reuse the Doorkeeper scope names, one vocabulary.
+- The Robot bot-access token stays as is and is documented below. It is not migrated.
+
+## Credential types on a Robot
+
+| | Bot-access token (0.11.0, unchanged) | Agent credential (G1) |
+|---|---|---|
+| Purpose | Anonymous-style read access and form-check bypass for the HTML web app | Authenticated actions through REST API and MCP |
+| Mechanism | `X-Better-Together-Robot-Token: <identifier>.<secret>`, SHA256 digest in `Robot#settings`, honoured only when no human is signed in | Doorkeeper application bound to a robot, bearer token |
+| Authority | Static scopes: `read_public_content`, `read_community_content`, `read_private_content`, `submit_public_forms`, `submit_authenticated_forms` | Intersection of token scopes, `AgentGrant` scopes and the operator's current permissions |
+| Operator | None | Required, recorded on every action |
+| Community limit | None | Per community |
+| Consumers | `ApplicationPolicy` and `PagePolicy` privacy filtering, `BotProtectedSubmissions`, `ActiveStorageGate` | `Api::ApplicationController`, `Mcp::PunditContext` |
+| Docs | `docs/developers/systems/bot_safety_system.md` | this document, then the agent credentials system doc |
+
+The two never share a header or a table. A robot may hold both; they are evaluated
+by different code paths and neither widens the other. Possible later hygiene for the
+bot-access token (last-used timestamp, rotation notices) is tracked separately.
