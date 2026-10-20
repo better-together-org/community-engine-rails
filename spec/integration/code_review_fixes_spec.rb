@@ -245,10 +245,19 @@ RSpec.describe 'BetterTogether::CodeReviewFixes' do
         expect(resource.fetchable_fields).not_to include(:email)
       end
 
-      it 'includes email for context with current_person' do
-        person = create(:better_together_person)
-        resource = BetterTogether::Api::V1::PersonResource.new(person, { current_person: person })
+      it "includes email for the person's own user" do
+        user = create(:better_together_user, :confirmed)
+        context = { current_user: user, current_person: user.person }
+        resource = BetterTogether::Api::V1::PersonResource.new(user.person, context)
         expect(resource.fetchable_fields).to include(:email)
+      end
+
+      it 'excludes email for a different signed-in member' do
+        person = create(:better_together_person)
+        viewer = create(:better_together_user, :confirmed)
+        context = { current_user: viewer, current_person: viewer.person }
+        resource = BetterTogether::Api::V1::PersonResource.new(person, context)
+        expect(resource.fetchable_fields).not_to include(:email)
       end
     end
 
