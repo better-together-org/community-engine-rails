@@ -49,7 +49,7 @@ module BetterTogether
           )
           candidates = candidates.joins(join_sql).where('rl.id IS NULL')
 
-          candidates.distinct
+          exclude_block_related(candidates, record).distinct
         when offer_klass
           candidates = request_klass.status_open.where(platform_id: record.platform_id)
           if record.category_ids.any?
@@ -79,13 +79,19 @@ module BetterTogether
           )
           candidates = candidates.joins(join_sql).where('rl.id IS NULL')
 
-          candidates.distinct
+          exclude_block_related(candidates, record).distinct
         else
           raise ArgumentError, "Unsupported record type: #{record.class.name}"
         end
       end
       # rubocop:enable Metrics/CyclomaticComplexity
       # rubocop:enable Metrics/MethodLength
+
+      # Counterparts created by someone who blocked, or was blocked by, the record's creator.
+      def self.exclude_block_related(candidates, record)
+        blocked_ids = record.creator&.block_related_person_ids
+        blocked_ids.blank? ? candidates : candidates.where.not(creator_id: blocked_ids)
+      end
     end
   end
 end

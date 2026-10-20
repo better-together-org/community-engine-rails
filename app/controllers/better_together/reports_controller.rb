@@ -2,6 +2,10 @@
 
 module BetterTogether
   class ReportsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include PerUserThrottling
+
+    throttle_per_user :report_create, only: :create
+
     include BotProtectedSubmissions
 
     before_action :authenticate_user!
