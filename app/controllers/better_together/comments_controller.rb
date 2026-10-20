@@ -3,6 +3,10 @@
 module BetterTogether
   # Handles creating and removing comments on commentable records (MVP: posts).
   class CommentsController < ApplicationController
+    include PerUserThrottling
+
+    throttle_per_user :comment_create, only: :create
+
     include ChecksRequiredAgreements
 
     before_action :authenticate_user!
