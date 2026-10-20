@@ -79,7 +79,7 @@
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
           <%# Show the Attendees tab only to organizers (reuse invitation policy check) %>
           <% if policy(@event).update? %>
-            <% attendees_count = @event.event_attendances.count %>
+            <% attendees_count = @event.event_attendances.visible_to(current_person).count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
           <% if @event.recurring? %>
@@ -146,14 +146,14 @@
           <div id="attendees" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="attendees-tab">
             <div class="row">
               <div class="col-md-12">
-                <% attendances = @event.event_attendances %>
+                <% attendances = @event.event_attendances.visible_to(current_person).includes(:person) %>
                 <% if attendances.any? %>
-                  <h6 class="mb-2"><%= t('better_together.events.attendees', default: 'Attendees') %></h6>
-                  <div class="list-group">
+                  <h6 class="mb-2" id="event-attendees-heading"><%= t('better_together.events.attendees', default: 'Attendees') %></h6>
+                  <div class="list-group" id="event-attendees-list">
                     <%= render partial: 'better_together/events/attendance_item', collection: attendances, as: :attendance %>
                   </div>
                 <% else %>
-                  <p class="text-muted"><%= t('better_together.events.no_attendees', default: 'No attendees yet.') %></p>
+                  <p class="text-muted" id="event-attendees-empty"><%= t('better_together.events.no_attendees', default: 'No attendees yet.') %></p>
                 <% end %>
               </div>
             </div>
