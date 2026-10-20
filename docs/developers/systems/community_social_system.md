@@ -388,7 +388,7 @@ All social interactions are governed by comprehensive Pundit policies:
 ### Privacy Controls
 The system implements granular privacy controls:
 
-**Profile Privacy**: User-controlled visibility of personal information
+**Profile Privacy**: Profile visibility is set by platform administrators or through the API; members cannot yet change it themselves
 **Content Privacy**: Public/private settings for all user-generated content
 **Contact Privacy**: Granular controls for addresses, phone numbers, emails
 **Platform Privacy**: Community-level visibility controls
