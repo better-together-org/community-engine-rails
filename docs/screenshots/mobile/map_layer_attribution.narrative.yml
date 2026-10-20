@@ -1,0 +1,15 @@
+---
+title: Map layer attribution
+audience:
+- visitor
+- developer
+journey_step: As a visitor, I can see who provided the data drawn on a map and under
+  which licence.
+callouts:
+- :id: attribution
+  :title: Layer attribution
+  :description: The credit comes from the layer itself and shows only while the layer
+    is on the map.
+accessibility_notes: Credits are real links with visible text.
+slug: map_layer_attribution
+device: mobile
