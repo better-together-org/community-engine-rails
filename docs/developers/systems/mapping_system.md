@@ -199,6 +199,32 @@ A point may carry extra keys, all optional and ignored by anything that does not
 that type and the clusters recompute. `boundary:` takes GeoJSON and draws it as an outline, and the map fits it with the
 points. Subclassing the controller? Override `createMarkerLayer()`, `buildMarker(point)` or `clusterIcon(cluster)`.
 
+## Data layers and attribution
+
+Map data that needs a credit (boundaries, overlays, third-party feeds) is drawn as a `BetterTogether::Geography::MapLayer`. The layer carries its attribution, so every map that draws it credits the source in Leaflet's attribution control, and only while the layer is on the map. There is no per-map step.
+
+```ruby
+# config/initializers/map_layers.rb in a host app: register once
+Rails.application.config.to_prepare do
+  BetterTogether::Geography::MapLayer.register(
+    :electoral_districts, label: 'Electoral districts', url: '/geo/districts.geojson',
+    attribution: 'Electoral Boundaries Commission', attribution_url: 'https://example.org/data',
+    licence: 'Open Government Licence', licence_url: 'https://example.org/ogl'
+  )
+end
+
+# a mappable offers layers to every map it backs
+def map_layers = [:electoral_districts]
+
+# or per render: layers: [:electoral_districts], boundary_attribution: { attribution: '...', attribution_url: '...' }
+```
+
+- `geojson:` embeds the data; `url:` loads it when the map connects, so pages stay small. A failed load fires `map:layererror` and the map keeps working.
+- `Map#layers` (from `mappable.map_layers`) and the partial's `layers:` local are merged by key. Unknown keys are skipped.
+- Attribution text is escaped and links must be http(s); `boundary_attribution:` credits the existing `boundary:` outline.
+
+![Layer attribution flow](../../diagrams/exports/png/map_layer_attribution_flow.png)
+
 ## Geolocate Me
 
 The button asks the browser for the user's position, centres the map there at zoom 13 and marks it with a dot and an

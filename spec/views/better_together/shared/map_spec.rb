@@ -43,6 +43,24 @@ RSpec.describe 'better_together/shared/_map' do
                                        I18n.t('better_together.shared.map.buttons.geolocate')])
   end
 
+  it 'passes registered and given layers, and the boundary credit, to the controller', :aggregate_failures do
+    BetterTogether::Geography::MapLayer.register(:districts, attribution: 'Commission', url: '/d.geojson')
+    boundary = { 'type' => 'Polygon', 'coordinates' => [[[0, 0], [1, 0], [1, 1], [0, 0]]] }
+
+    element = render_map(layers: [:districts], boundary:, boundary_attribution: { attribution: 'Survey' })
+    layers = JSON.parse(element['data-better_together--map-layers-value'])
+
+    expect(layers.map { |l| l['key'] }).to eq(['districts'])
+    expect(layers.first['attribution']).to eq('Commission')
+    expect(element['data-better_together--map-boundary-attribution-value']).to eq('Survey')
+  ensure
+    BetterTogether::Geography::MapLayer.clear_registry!
+  end
+
+  it 'omits layer values when there are none' do
+    expect(render_map['data-better_together--map-layers-value']).to be_nil
+  end
+
   it 'can turn clustering off, and pass types and a boundary', :aggregate_failures do
     boundary = { 'type' => 'Polygon', 'coordinates' => [[[0, 0], [1, 0], [1, 1], [0, 0]]] }
     types = [{ key: 'Event', label: 'Events', color: '#198754' }]
