@@ -92,4 +92,4 @@ end
 
 - [Metrics System](metrics_system.md)
 - [View DOM Identifier Standard](../../development/view_dom_identifier_standard.md)
-- [0.11.0 release packet, section 9A](../../releases/0.11.0.md)
+- [0.11.0 release notes](../../releases/0.11.0.md)
