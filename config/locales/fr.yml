@@ -2107,6 +2107,7 @@ fr:
       invitee: Invité(e)
       invitee_email: E-mail
       invitee_type: Type d'invité
+      invitee_unavailable: Cette personne ne peut pas être invitée.
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       no_invitations: Aucune invitation trouvée
       no_role: Aucun rôle
@@ -2158,6 +2159,7 @@ fr:
       categories:
         index:
           new_btn_text: Nouvelle catégorie
+      exchange_unavailable: Cet échange n'est pas disponible.
       help:
         agreements:
           index: Les accords relient une offre et une demande. Utilisez cette liste

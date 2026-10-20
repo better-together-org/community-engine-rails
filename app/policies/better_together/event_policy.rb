@@ -11,6 +11,8 @@ module BetterTogether
     end
 
     def show?
+      return false if blocked_with_creator?
+
       (public_or_member_scoped_community?(record) && record.starts_at.present?) ||
         creator_or_platform_steward ||
         event_host_member? ||
@@ -168,11 +170,19 @@ module BetterTogether
           query = query.or(events_table[:id].in(event_ids_with_valid_invitations))
         end
 
-        query
+        query.and(excluding_block_related_creators(events_table))
       end
       # rubocop:enable Metrics/MethodLength
 
       private
+
+      # Hides events created by people who blocked, or are blocked by, the viewer.
+      def excluding_block_related_creators(events_table)
+        blocked_ids = agent&.block_related_person_ids
+        return events_table[:id].eq(events_table[:id]) if blocked_ids.blank?
+
+        events_table[:creator_id].eq(nil).or(events_table[:creator_id].not_in(blocked_ids))
+      end
 
       def platform_event_manager?
         permitted_to?('manage_platform_settings', current_platform) || permitted_to?('manage_platform', current_platform)
@@ -180,6 +190,10 @@ module BetterTogether
     end
 
     # creator_or_platform_steward is provided by the EventHostAuthorizable concern.
+
+    def blocked_with_creator?
+      agent.present? && agent.block_between?(record.try(:creator))
+    end
 
     def invitation?
       return false unless agent.present?

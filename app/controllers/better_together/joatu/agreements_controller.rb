@@ -8,6 +8,8 @@ module BetterTogether
       def create # rubocop:todo Metrics/MethodLength
         resource_instance(resource_params)
         authorize_resource
+        return if performed?
+
         # Support both nested params (joatu_agreement[offer_id]/[request_id])
         # and top-level params (offer_id/request_id) from UI buttons.
         @resource.offer_id ||= params[:offer_id]
@@ -49,8 +51,9 @@ module BetterTogether
                                 locals: { object: @resource })
           ]
         end
+        # There is no agreements#new template, so send the person back with the reason.
         format.html do
-          render :new, status: :unprocessable_entity
+          redirect_back fallback_location: joatu_hub_path, alert: @resource.errors.full_messages.to_sentence
         end
       end
 

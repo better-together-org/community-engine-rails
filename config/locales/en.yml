@@ -2077,6 +2077,7 @@ en:
       invitee: Invitee
       invitee_email: Email
       invitee_type: Invitee Type
+      invitee_unavailable: This person cannot be invited.
       login_to_respond: Please log in to respond to your invitation.
       no_invitations: No invitations found
       no_role: No role
@@ -2128,6 +2129,7 @@ en:
       categories:
         index:
           new_btn_text: New Category
+      exchange_unavailable: This exchange is not available.
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review

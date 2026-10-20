@@ -91,7 +91,7 @@
               <%= @resource.description.presence || t('better_together.communities.show.about.no_description') %>
             </p>
 
-            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
+            <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource, include_private: policy(@resource).update? } %>
 
             <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
           </div>

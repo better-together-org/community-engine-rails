@@ -43,7 +43,7 @@ module BetterTogether
     end
 
     # rubocop:todo Metrics/MethodLength
-    def render_contact(contact, include_private) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
+    def render_contact(contact, include_private: false) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
       content_tag(:div, class: 'contact mb-3 col') do
         name_and_role = content_tag(:div, class: 'name-and-role mb-3') do
           name = contact.name.present? ? content_tag(:strong, contact.name) : ''.html_safe
