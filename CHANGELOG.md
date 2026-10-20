@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Detailed release packet: [docs/releases/0.11.0.md](docs/releases/0.11.0.md)
 
+### Fixed (person safety and privacy)
+- Private contact details no longer render to other viewers of a profile
+- The person JSON:API no longer exposes email and preference attributes to other viewers
+- Person blocks are enforced in messaging, notifications, events (visibility, RSVPs, attendee list and counts) and in community, platform and event invitations
+- Per-user throttles for conversations, messages, reports, blocks, invitations and comments (`BTS_THROTTLE_<NAME>_LIMIT` and `_PERIOD`)
+
 ### Added
 
 #### Multi-Tenant Platform Architecture & Federation MVP

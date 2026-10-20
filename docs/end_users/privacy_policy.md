@@ -72,7 +72,7 @@ We do **not** sell your personal information. We may share data only in these ci
 ### Account Management
 - **Email preferences** - Choose which notifications you receive
 - **Privacy levels** - Set content as public or private
-- **Profile visibility** - Control who can view your profile
+- **Profile visibility** - Currently set by platform administrators; ask them to change it. Self-service control is planned
 - **Delete account** - Request account deletion (with data retention policies)
 
 ### Rights by Jurisdiction
