@@ -8,6 +8,16 @@ RSpec.describe BetterTogether::Joatu::Agreement do
   let(:offer)     { create(:better_together_joatu_offer, creator: creator_a) }
   let(:request)   { create(:better_together_joatu_request, creator: creator_b) }
 
+  describe 'blocks' do
+    it 'refuses an agreement between people with a block between them' do
+      create(:person_block, blocker: creator_b, blocked: creator_a)
+      agreement = build(:better_together_joatu_agreement, offer:, request:)
+
+      expect(agreement).not_to be_valid
+      expect(agreement.errors[:base]).to include(I18n.t('better_together.joatu.exchange_unavailable'))
+    end
+  end
+
   describe 'status transitions' do
     it 'exposes explicit participant and agreement metadata helpers' do
       agreement = create(:better_together_joatu_agreement, offer:, request:)
