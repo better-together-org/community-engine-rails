@@ -2158,6 +2158,7 @@ uk:
       categories:
         index:
           new_btn_text: Нова категорія
+      exchange_unavailable: Цей обмін недоступний.
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review

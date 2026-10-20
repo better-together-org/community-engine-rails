@@ -2128,6 +2128,7 @@ en:
       categories:
         index:
           new_btn_text: New Category
+      exchange_unavailable: This exchange is not available.
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review

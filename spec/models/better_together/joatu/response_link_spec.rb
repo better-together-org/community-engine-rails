@@ -28,11 +28,13 @@ RSpec.describe BetterTogether::Joatu::ResponseLink do
       end.to change(match_events, :count).by(1)
     end
 
-    it 'does not notify when the creators have a block between them' do
+    it 'refuses to link responses between people with a block, in either direction' do
       create(:person_block, blocker: request.creator, blocked: offer.creator)
 
       expect do
-        described_class.create!(source: offer, response: request, creator_id: create(:person).id)
+        link = described_class.new(source: offer, response: request, creator_id: create(:person).id)
+        expect(link).not_to be_valid
+        expect(link.errors[:base]).to include(I18n.t('better_together.joatu.exchange_unavailable'))
       end.not_to(change(match_events, :count))
     end
   end

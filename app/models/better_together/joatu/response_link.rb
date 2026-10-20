@@ -13,6 +13,7 @@ module BetterTogether
       validates :source, :response, presence: true
 
       validate :disallow_same_type_link
+      validate :no_block_between_creators, on: :create
 
       after_commit :notify_match, on: :create
 
@@ -35,6 +36,13 @@ module BetterTogether
         return if source.class != response.class
 
         errors.add(:base, 'Response must be of the opposite type to the source')
+      end
+
+      # A response cannot be linked across a person block, in either direction.
+      def no_block_between_creators
+        return unless source&.creator&.block_between?(response&.creator)
+
+        errors.add(:base, I18n.t('better_together.joatu.exchange_unavailable'))
       end
 
       # When a direct response link is created from an Offer -> Request,
