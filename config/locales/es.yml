@@ -2146,6 +2146,7 @@ es:
       categories:
         index:
           new_btn_text: Nueva categoría
+      exchange_unavailable: Este intercambio no está disponible.
       help:
         agreements:
           index: Los acuerdos conectan una oferta y una solicitud. Usa esta lista

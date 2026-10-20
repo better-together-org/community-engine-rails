@@ -28,6 +28,7 @@ module BetterTogether
       validates :offer, :request, presence: true
       validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
       validate :offer_matches_request_target
+      validate :no_block_between_parties, on: :create
 
       enum :status, STATUS_VALUES, prefix: :status
 
@@ -239,6 +240,13 @@ module BetterTogether
         else
           errors.add(:status, 'has an invalid transition')
         end
+      end
+
+      # An agreement cannot be made between people with a block between them.
+      def no_block_between_parties
+        return unless offer&.creator&.block_between?(request&.creator)
+
+        errors.add(:base, I18n.t('better_together.joatu.exchange_unavailable'))
       end
 
       # Ensures the offer targets the same record as the request

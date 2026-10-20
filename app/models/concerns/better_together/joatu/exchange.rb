@@ -94,6 +94,8 @@ module BetterTogether
               [other, self]
             end
 
+          next if creator&.block_between?(other&.creator)
+
           recipients = [creator, other&.creator].compact
           next if recipients.empty?
 
