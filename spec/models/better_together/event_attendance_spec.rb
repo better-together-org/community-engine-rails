@@ -66,4 +66,29 @@ RSpec.describe BetterTogether::EventAttendance do
       expect(described_class.exists?(series_wide.id)).to be true
     end
   end
+
+  describe '.visible_to' do
+    let(:event) { create(:event) }
+    let(:viewer) { create(:person) }
+    let!(:plain) { create(:event_attendance, event:) }
+    let!(:blocked) { create(:event_attendance, event:) }
+    let!(:blocker) { create(:event_attendance, event:) }
+
+    before do
+      create(:person_block, blocker: viewer, blocked: blocked.person)
+      create(:person_block, blocker: blocker.person, blocked: viewer)
+    end
+
+    it 'omits attendees the viewer blocked or who blocked the viewer' do
+      expect(described_class.visible_to(viewer)).to contain_exactly(plain)
+    end
+
+    it 'returns everything for a viewer with no blocks' do
+      expect(described_class.visible_to(create(:person)).count).to eq(3)
+    end
+
+    it 'returns everything when there is no viewer' do
+      expect(described_class.visible_to(nil).count).to eq(3)
+    end
+  end
 end

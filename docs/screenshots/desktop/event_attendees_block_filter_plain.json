@@ -1,0 +1,11 @@
+{
+  "name": "event_attendees_block_filter_plain",
+  "device": "desktop",
+  "url": "/en/events/5093638d-ed7a-488c-b946-b2260a5ebb18",
+  "title": "Harbour cleanup | Events | Test Host Community",
+  "locale": "en",
+  "role": "event_organizer",
+  "feature_set": "event_attendees_block_filter",
+  "flow": "event_attendees_block_filter_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/event_attendees_block_filter_spec.rb"
+}
