@@ -2107,6 +2107,7 @@ fr:
       invitee: Invité(e)
       invitee_email: E-mail
       invitee_type: Type d'invité
+      invitee_unavailable: Cette personne ne peut pas être invitée.
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       no_invitations: Aucune invitation trouvée
       no_role: Aucun rôle

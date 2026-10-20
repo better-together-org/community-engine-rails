@@ -2107,6 +2107,7 @@ uk:
       invitee: Запрошений
       invitee_email: Електронна пошта
       invitee_type: Тип запрошеного
+      invitee_unavailable: Цю особу не можна запросити.
       login_to_respond: Будь ласка, увійдіть до системи, щоб відповісти на ваше запрошення.
       no_invitations: Запрошень не знайдено
       no_role: Без ролі
