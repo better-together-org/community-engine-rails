@@ -18,6 +18,19 @@ const GEOLOCATION_ATTEMPTS = [
 ]
 const GEOLOCATION_ERROR_STATE = { 1: 'denied', 2: 'unavailable', 3: 'timeout' }
 
+// Icon and Bootstrap colour of the locate button for each state, so a tap always visibly does something.
+const GEOLOCATION_BUTTON = {
+  idle: { icon: 'fa-globe', style: 'btn-secondary' },
+  locating: { icon: 'fa-globe fa-spin', style: 'btn-secondary' },
+  located: { icon: 'fa-circle-check', style: 'btn-success' },
+  denied: { icon: 'fa-triangle-exclamation', style: 'btn-warning' },
+  unavailable: { icon: 'fa-triangle-exclamation', style: 'btn-warning' },
+  timeout: { icon: 'fa-triangle-exclamation', style: 'btn-warning' },
+  unsupported: { icon: 'fa-triangle-exclamation', style: 'btn-warning' }
+}
+const GEOLOCATION_MIN_RADIUS = 100 // metres, so a very precise fix does not zoom in past street level
+const GEOLOCATION_MAX_ZOOM = 16
+
 const DEFAULT_LABELS = {
   locating: 'Finding your location...',
   located: 'Showing your location.',
@@ -159,7 +172,7 @@ export default class extends Controller {
     const latlng = [latitude, longitude]
 
     this.showCurrentPosition(latlng, accuracy)
-    this.map.setView(latlng, 13)
+    this.frameCurrentPosition(latlng, accuracy)
     this.setGeolocationState('located')
     this.element.dispatchEvent(new CustomEvent('map:located', { detail: { latlng, accuracy } }))
   }
@@ -182,9 +195,27 @@ export default class extends Controller {
     this.element.dataset.geolocationState = state
 
     const button = this.element.querySelector('[data-geolocation-button]')
-    if (button) button.setAttribute('aria-busy', String(state === 'locating'))
+    if (button) {
+      button.setAttribute('aria-busy', String(state === 'locating'))
+      this.renderGeolocationButton(button, state)
+    }
 
     if (this.statusElement) this.statusElement.textContent = this.label(state === 'idle' ? '' : state)
+  }
+
+  renderGeolocationButton(button, state) {
+    const look = GEOLOCATION_BUTTON[state] || GEOLOCATION_BUTTON.idle
+    const icon = button.querySelector('[data-geolocation-icon]')
+    if (icon) icon.className = `fas ${look.icon} me-1`
+    const styles = Object.values(GEOLOCATION_BUTTON).map((entry) => entry.style)
+    button.classList.remove(...styles)
+    button.classList.add(look.style)
+  }
+
+  // Zooms to the accuracy circle (at least GEOLOCATION_MIN_RADIUS across) so the found position is clearly in view.
+  frameCurrentPosition(latlng, accuracy) {
+    const radius = Math.max(Number(accuracy) || 0, GEOLOCATION_MIN_RADIUS)
+    this.map.fitBounds(L.latLng(latlng).toBounds(radius * 2), { maxZoom: GEOLOCATION_MAX_ZOOM, padding: [30, 30] })
   }
 
   showCurrentPosition(latlng, accuracy) {

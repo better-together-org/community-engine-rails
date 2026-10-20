@@ -37,7 +37,7 @@
     <div class="map-controls">
       <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToOSM"><%= t("#{scope}.buttons.map") %></button>
       <button type="button" class="btn btn-secondary" data-action="better_together--map#switchToSatellite"><%= t("#{scope}.buttons.satellite") %></button>
-      <button type="button" class="btn btn-secondary" data-geolocation-button data-action="better_together--map#enableGeolocation"><%= t("#{scope}.buttons.geolocate") %></button>
+      <button type="button" class="btn btn-secondary" data-geolocation-button data-action="better_together--map#enableGeolocation"><i class="fas fa-globe me-1" data-geolocation-icon aria-hidden="true"></i><span><%= t("#{scope}.buttons.geolocate") %></span></button>
     </div>
   <% end %>
 <% end %>
