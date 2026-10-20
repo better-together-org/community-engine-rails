@@ -18,6 +18,19 @@ const GEOLOCATION_ATTEMPTS = [
 ]
 const GEOLOCATION_ERROR_STATE = { 1: 'denied', 2: 'unavailable', 3: 'timeout' }
 
+// Icon and Bootstrap colour of the locate button for each state, so a tap always visibly does something.
+const GEOLOCATION_BUTTON = {
+  idle: { icon: 'fa-globe', style: 'btn-secondary' },
+  locating: { icon: 'fa-globe fa-spin', style: 'btn-secondary' },
+  located: { icon: 'fa-circle-check', style: 'btn-success' },
+  denied: { icon: 'fa-triangle-exclamation', style: 'btn-warning' },
+  unavailable: { icon: 'fa-triangle-exclamation', style: 'btn-warning' },
+  timeout: { icon: 'fa-triangle-exclamation', style: 'btn-warning' },
+  unsupported: { icon: 'fa-triangle-exclamation', style: 'btn-warning' }
+}
+const GEOLOCATION_MIN_RADIUS = 100 // metres, so a very precise fix does not zoom in past street level
+const GEOLOCATION_MAX_ZOOM = 16
+
 const DEFAULT_LABELS = {
   locating: 'Finding your location...',
   located: 'Showing your location.',
@@ -40,6 +53,8 @@ export default class extends Controller {
     cluster: { type: Boolean, default: true }, // Group nearby points by density
     types: Array, // [{ key, label, color }] for points that carry a type; drives the legend
     boundary: Object, // GeoJSON drawn as an outline layer
+    boundaryAttribution: String, // credit for the boundary data, shown in the attribution control with the layer
+    layers: Array, // [{ key, label, style, geojson | url, attribution }] data layers credited while on the map
     labels: Object // translated strings, see DEFAULT_LABELS
   }
 
@@ -71,6 +86,7 @@ export default class extends Controller {
     }
 
     this.addBoundary()
+    this.addDataLayers()
     this.addPointsWithLabels(this.spacesValue)
     this.addLegend()
     this.addStatusRegion()
@@ -159,7 +175,7 @@ export default class extends Controller {
     const latlng = [latitude, longitude]
 
     this.showCurrentPosition(latlng, accuracy)
-    this.map.setView(latlng, 13)
+    this.frameCurrentPosition(latlng, accuracy)
     this.setGeolocationState('located')
     this.element.dispatchEvent(new CustomEvent('map:located', { detail: { latlng, accuracy } }))
   }
@@ -182,9 +198,27 @@ export default class extends Controller {
     this.element.dataset.geolocationState = state
 
     const button = this.element.querySelector('[data-geolocation-button]')
-    if (button) button.setAttribute('aria-busy', String(state === 'locating'))
+    if (button) {
+      button.setAttribute('aria-busy', String(state === 'locating'))
+      this.renderGeolocationButton(button, state)
+    }
 
     if (this.statusElement) this.statusElement.textContent = this.label(state === 'idle' ? '' : state)
+  }
+
+  renderGeolocationButton(button, state) {
+    const look = GEOLOCATION_BUTTON[state] || GEOLOCATION_BUTTON.idle
+    const icon = button.querySelector('[data-geolocation-icon]')
+    if (icon) icon.className = `fas ${look.icon} me-1`
+    const styles = Object.values(GEOLOCATION_BUTTON).map((entry) => entry.style)
+    button.classList.remove(...styles)
+    button.classList.add(look.style)
+  }
+
+  // Zooms to the accuracy circle (at least GEOLOCATION_MIN_RADIUS across) so the found position is clearly in view.
+  frameCurrentPosition(latlng, accuracy) {
+    const radius = Math.max(Number(accuracy) || 0, GEOLOCATION_MIN_RADIUS)
+    this.map.fitBounds(L.latLng(latlng).toBounds(radius * 2), { maxZoom: GEOLOCATION_MAX_ZOOM, padding: [30, 30] })
   }
 
   showCurrentPosition(latlng, accuracy) {
@@ -217,8 +251,30 @@ export default class extends Controller {
 
     this.boundaryLayer = L.geoJSON(this.boundaryValue, {
       style: { color: '#0d6efd', weight: 2, fillOpacity: 0.08 },
-      interactive: false
+      interactive: false,
+      attribution: this.hasBoundaryAttributionValue ? this.boundaryAttributionValue : undefined
     }).addTo(this.map)
+  }
+
+  // Each layer carries its own attribution, so Leaflet credits the source exactly while the layer is on the map.
+  // Layers with a url are fetched when the map connects, so pages do not embed the data.
+  addDataLayers() {
+    this.dataLayers = this.layersValue.map((layer) => {
+      const geoLayer = L.geoJSON(layer.geojson || null, {
+        style: layer.style,
+        interactive: false,
+        attribution: layer.attribution
+      }).addTo(this.map)
+      if (layer.url) this.loadLayerData(geoLayer, layer.url)
+      return geoLayer
+    })
+  }
+
+  loadLayerData(geoLayer, url) {
+    fetch(url, { headers: { Accept: 'application/geo+json, application/json' } })
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error(response.status))))
+      .then((data) => geoLayer.addData(data))
+      .catch(() => this.element.dispatchEvent(new CustomEvent('map:layererror', { bubbles: true, detail: { url } })))
   }
 
   // Subclasses can replace the layer markers are added to.
