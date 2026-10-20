@@ -43,8 +43,11 @@ module BetterTogether
     # Returns the people that the agent is permitted to message.
     # Includes platform stewards, people who opted in globally, and people who
     # have explicitly granted the current agent a messaging permission.
+    # People who have blocked the agent, or whom the agent has blocked, are excluded.
     def permitted_participants
-      admin_and_opted_in_participants.or(explicitly_granted_participants)
+      permitted = admin_and_opted_in_participants.or(explicitly_granted_participants)
+      blocked_ids = agent.block_related_person_ids
+      blocked_ids.empty? ? permitted : permitted.where.not(id: blocked_ids)
     end
 
     def new?
