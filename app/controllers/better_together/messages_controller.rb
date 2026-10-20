@@ -3,6 +3,10 @@
 module BetterTogether
   # handles managing messages
   class MessagesController < ApplicationController
+    include PerUserThrottling
+
+    throttle_per_user :message_send, only: :create
+
     before_action :authenticate_user!
     before_action :disallow_robots
     before_action :set_conversation

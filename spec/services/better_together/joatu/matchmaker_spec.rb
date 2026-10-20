@@ -13,6 +13,29 @@ RSpec.describe BetterTogether::Joatu::Matchmaker do
   end
 
   describe '.match' do
+    context 'with person blocks' do
+      let(:request) { with_category(create(:better_together_joatu_request, creator: creator_a, status: 'open')) }
+      let!(:offer) { with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open')) }
+
+      it 'matches when there is no block' do
+        expect(described_class.match(request)).to include(offer)
+      end
+
+      it 'omits offers from people the request creator blocked' do
+        create(:person_block, blocker: creator_a, blocked: creator_b)
+
+        expect(described_class.match(request)).not_to include(offer)
+      end
+
+      it 'omits requests from people who blocked the offer creator' do
+        create(:person_block, blocker: creator_a, blocked: creator_b)
+        offer_side = with_category(create(:better_together_joatu_offer, creator: creator_b, status: 'open'))
+        request
+
+        expect(described_class.match(offer_side)).not_to include(request)
+      end
+    end
+
     context 'pair-specific response link exclusion' do
       it 'excludes an offer only when a response link exists for that specific request->offer pair' do
         # rubocop:enable RSpec/MultipleExpectations

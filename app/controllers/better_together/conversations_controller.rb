@@ -3,6 +3,10 @@
 module BetterTogether
   # Handles managing conversations
   class ConversationsController < ApplicationController # rubocop:todo Metrics/ClassLength
+    include PerUserThrottling
+
+    throttle_per_user :conversation_create, only: :create
+
     include BetterTogether::NotificationReadable
 
     before_action :authenticate_user!

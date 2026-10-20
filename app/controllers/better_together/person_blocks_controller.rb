@@ -2,6 +2,10 @@
 
 module BetterTogether
   class PersonBlocksController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include PerUserThrottling
+
+    throttle_per_user :block_create, only: :create
+
     before_action :authenticate_user!
     before_action :set_person_block, only: :destroy
     after_action :verify_authorized
