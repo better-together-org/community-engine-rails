@@ -243,4 +243,24 @@ RSpec.describe BetterTogether::Person do
       expect(association.options[:dependent]).to eq(:destroy)
     end
   end
+
+  describe '#block_between?' do
+    let(:person) { create(:better_together_person) }
+    let(:other) { create(:better_together_person) }
+
+    it 'is false without a block' do
+      expect(person.block_between?(other)).to be(false)
+    end
+
+    it 'is true in both directions once either person blocks the other', :aggregate_failures do
+      create(:person_block, blocker: person, blocked: other)
+
+      expect(person.block_between?(other)).to be(true)
+      expect(other.block_between?(person)).to be(true)
+    end
+
+    it 'is false for nil' do
+      expect(person.block_between?(nil)).to be(false)
+    end
+  end
 end

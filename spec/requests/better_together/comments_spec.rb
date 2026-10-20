@@ -63,6 +63,23 @@ RSpec.describe 'BetterTogether comments' do
              )).not_to exist
     end
 
+    it 'does not notify an author who blocked the commenter' do
+      create(:person_block, blocker: post_author.person, blocked: user.person)
+      grant_content_publishing_agreement(user.person)
+      sign_in user
+
+      post better_together.comments_path(locale:), params: {
+        commentable_type: 'BetterTogether::Post',
+        commentable_id: target_post.id,
+        comment: { content: 'Hello' }
+      }
+
+      comment = BetterTogether::Comment.last
+      expect(Noticed::Notification.where(
+               event_id: BetterTogether::CommentAddedNotifier.where(record: comment).select(:id)
+             )).not_to exist
+    end
+
     it 'notifies the post\'s credited author, not just its DB-row creator, when they differ' do
       staff_creator = find_or_create_test_user('comments-staff-creator@example.test', 'SecureTest123!@#', :user)
       credited_author = create(:better_together_person)
