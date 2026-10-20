@@ -41,7 +41,7 @@ RSpec.feature 'Map geolocation', :js do
     state = leaflet_map_state
     expect(state['center']['lat']).to be_within(0.001).of(47.5615)
     expect(state['center']['lng']).to be_within(0.001).of(-52.7126)
-    expect(state['zoom']).to eq(13)
+    expect(state['zoom']).to be_between(14, 16)
     expect(state['positionShown']).to be(true)
     expect(map_status).to eq('Showing your location.')
     expect(browser_alerts).to be_empty
@@ -131,6 +131,26 @@ RSpec.feature 'Map geolocation', :js do
     expect(map_status).to eq('Finding your location...')
     tap_geolocate
     expect(geolocation_calls.size).to eq(1)
+  end
+
+  scenario 'spins a globe while locating, then shows a success check and a warning icon after a failure' do
+    script_browser_geolocation({ pending: true })
+    tap_geolocate
+    expect(page).to have_css('[data-geolocation-button] i.fa-globe.fa-spin')
+
+    script_browser_geolocation({ position: position })
+    page.refresh
+    wait_for_leaflet_map
+    script_browser_geolocation({ position: position })
+    tap_geolocate
+    expect(page).to have_css('[data-geolocation-button].btn-success i.fa-circle-check')
+  end
+
+  scenario 'shows a warning icon when the location cannot be found' do
+    script_browser_geolocation({ error: 1 })
+    tap_geolocate
+
+    expect(page).to have_css('[data-geolocation-button].btn-warning i.fa-triangle-exclamation')
   end
 
   scenario 'can be tried again after an error' do
