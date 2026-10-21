@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_10_09_210000) do
+ActiveRecord::Schema[7.2].define(version: 2026_10_20_120100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -108,6 +108,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_09_210000) do
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"
     t.index ["platform_id"], name: "index_better_together_addresses_on_platform_id"
     t.index ["privacy"], name: "by_better_together_addresses_privacy"
+  end
+
+  create_table "better_together_agent_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "robot_id", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "operator_id", null: false
+    t.uuid "community_id"
+    t.uuid "granted_by_id"
+    t.string "scopes", default: [], null: false, array: true
+    t.datetime "expires_at"
+    t.datetime "revoked_at"
+    t.index ["community_id"], name: "idx_bt_agent_grants_community"
+    t.index ["granted_by_id"], name: "idx_bt_agent_grants_granted_by"
+    t.index ["operator_id"], name: "idx_bt_agent_grants_operator"
+    t.index ["platform_id"], name: "idx_bt_agent_grants_platform"
+    t.index ["robot_id"], name: "idx_bt_agent_grants_robot"
   end
 
   create_table "better_together_agreement_participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -1503,8 +1522,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_09_210000) do
     t.boolean "confidential", default: true, null: false
     t.uuid "owner_id"
     t.uuid "platform_id"
+    t.uuid "robot_id"
+    t.uuid "community_id"
+    t.datetime "last_used_at"
+    t.datetime "rotated_at"
+    t.index ["community_id"], name: "index_better_together_oauth_applications_on_community_id"
     t.index ["owner_id"], name: "index_bt_oauth_apps_on_owner_id"
     t.index ["platform_id"], name: "index_better_together_oauth_applications_on_platform_id"
+    t.index ["robot_id"], name: "index_better_together_oauth_applications_on_robot_id"
     t.index ["uid"], name: "index_bt_oauth_apps_on_uid", unique: true
   end
 
@@ -2488,6 +2513,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_09_210000) do
   add_foreign_key "better_together_activities", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_addresses", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_agent_grants", "better_together_communities", column: "community_id", on_delete: :cascade
+  add_foreign_key "better_together_agent_grants", "better_together_people", column: "granted_by_id", on_delete: :nullify
+  add_foreign_key "better_together_agent_grants", "better_together_people", column: "operator_id", on_delete: :cascade
+  add_foreign_key "better_together_agent_grants", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_agent_grants", "better_together_robots", column: "robot_id"
   add_foreign_key "better_together_agreement_participants", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_agreement_participants", "better_together_people", column: "person_id"
   add_foreign_key "better_together_agreement_participants", "better_together_platforms", column: "platform_id"
@@ -2644,8 +2674,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_09_210000) do
   add_foreign_key "better_together_oauth_access_tokens", "better_together_oauth_applications", column: "application_id"
   add_foreign_key "better_together_oauth_access_tokens", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_oauth_access_tokens", "better_together_users", column: "resource_owner_id"
+  add_foreign_key "better_together_oauth_applications", "better_together_communities", column: "community_id", on_delete: :cascade
   add_foreign_key "better_together_oauth_applications", "better_together_people", column: "owner_id"
   add_foreign_key "better_together_oauth_applications", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_oauth_applications", "better_together_robots", column: "robot_id", on_delete: :cascade
   add_foreign_key "better_together_pages", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_pages", "better_together_navigation_areas", column: "sidebar_nav_id"
   add_foreign_key "better_together_pages", "better_together_people", column: "creator_id"
