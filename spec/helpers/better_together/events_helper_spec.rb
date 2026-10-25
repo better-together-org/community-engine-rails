@@ -129,6 +129,35 @@ RSpec.describe BetterTogether::EventsHelper do
     end
   end
 
+  describe '#event_card_cache_key' do
+    let(:end_time) { start_time + 2.hours }
+    let(:community) { create(:better_together_community) }
+
+    before { event.event_hosts.destroy_all && event.event_hosts.create!(host: community) }
+
+    it 'changes when a host is edited, without the event being saved' do
+      before_key = helper.event_card_cache_key(event.reload)
+
+      community.touch # what attaching a new profile image does to the community
+
+      expect(helper.event_card_cache_key(event.reload)).not_to eq(before_key)
+    end
+
+    it 'changes when the hosts change' do
+      before_key = helper.event_card_cache_key(event.reload)
+
+      event.event_hosts.create!(host: create(:better_together_person))
+
+      expect(helper.event_card_cache_key(event.reload)).not_to eq(before_key)
+    end
+
+    it 'is stable when nothing changed' do
+      first_key = helper.event_card_cache_key(event.reload)
+
+      expect(helper.event_card_cache_key(event.reload)).to eq(first_key)
+    end
+  end
+
   describe '#visible_event_hosts' do
     it 'handles events without event_hosts method' do
       event = double('event') # rubocop:todo RSpec/VerifiedDoubles
