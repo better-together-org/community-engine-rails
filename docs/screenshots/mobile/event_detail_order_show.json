@@ -1,0 +1,49 @@
+{
+  "name": "event_detail_order_show",
+  "device": "mobile",
+  "url": "/en/events/b2602953-a33a-4ab2-8681-c1b6f11f10b9",
+  "title": "Harbour Lights Concert | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_detail_order",
+  "flow": "event_detail_order_show",
+  "source_spec": "./spec/docs_screenshots/better_together/event_detail_order_spec.rb",
+  "callouts": [
+    {
+      "selector": ".event-info-container .event-datetime, .event-info-container .event-location",
+      "title": "Date and time, then location",
+      "bullets": [
+        "Date and time first.",
+        "Location below it."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 455.390625,
+        "width": 461.0,
+        "height": 48.0,
+        "right": 473.0,
+        "bottom": 503.390625,
+        "center_x": 242.5,
+        "center_y": 479.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 455.390625,
+        "width": 461.0,
+        "height": 48.0,
+        "right": 473.0,
+        "bottom": 503.390625,
+        "center_x": 242.5,
+        "center_y": 479.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 523.39,
+        "width": 270.0,
+        "height": 190,
+        "score": 753.609375
+      }
+    }
+  ]
+}
