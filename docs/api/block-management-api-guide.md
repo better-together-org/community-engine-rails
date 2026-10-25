@@ -224,6 +224,7 @@ A body update keeps the post's blocks: `PATCH` with new `content` and no attachm
 - `hosts` (a list, or a JSON string of `[{"host_type": "BetterTogether::Community", "host_id": "..."}]`) sets every host of the event, of any `HostsEvents` type. It replaces the list, so the creator is not added as a host when it is given. As in the event form, a host must be the person or a community they can host for (`valid_event_host_ids`); platform managers may name any host (`422` otherwise).
 - `status` sets the lifecycle status (`draft`, `confirmed`, `cancelled`); an unknown value is `422`.
 - `cover_image_data` (base64) with optional `cover_image_filename` sets the cover image. Neither is returned.
+- `address_spec` (write-only; a hash or a JSON string) locates the event at a street address: `line1` is required, with optional `line2`, `city_name`, `state_province_name`, `postal_code`, `country_name` and a `name` for the place. An existing address with the same line1, city, postal code and country is reused, otherwise a public one is created. Blank clears the location. A named place prints its street address too ("Rotary Arts Centre, 5 Park Street, ...") on cards, pages and map popups.
 - `attachment_block_ids` appends existing blocks to the end of the description, under the text, in that order. A block already in the description is not added twice, so sending the same ids again changes nothing. The registry and platform rules above apply.
 
 ### Navigation landmarks in HTML blocks
