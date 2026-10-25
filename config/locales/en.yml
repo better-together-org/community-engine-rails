@@ -3353,6 +3353,7 @@ en:
           community: Community
           published: Published
           title: Title
+        toggle_filters: Filters
       labels:
         privacy: Privacy
       list_form:

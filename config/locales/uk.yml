@@ -3405,6 +3405,7 @@ uk:
           community: Спільнота
           published: Опубліковано
           title: Заголовок
+        toggle_filters: Фільтри
       labels:
         privacy: Конфіденційність
       list_form:

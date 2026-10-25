@@ -3427,6 +3427,7 @@ fr:
           community: Communauté
           published: Publié
           title: Titre
+        toggle_filters: Filtres
       labels:
         privacy: Confidentialité
       list_form:

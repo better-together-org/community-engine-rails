@@ -3404,6 +3404,7 @@ es:
           community: Comunidad
           published: Publicado
           title: Título
+        toggle_filters: Filtros
       labels:
         privacy: Privacidad
       list_form:
