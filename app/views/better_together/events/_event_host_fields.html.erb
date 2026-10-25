@@ -60,11 +60,8 @@
         <div class="d-flex align-items-start gap-3">
           <!-- Host Avatar/Icon -->
           <div class="flex-shrink-0">
-            <%= profile_image_tag(form.object.host, 
-                                  class: 'rounded-circle border border-2 border-white shadow-sm', 
-                                  size: 40,
-                                  style: 'width: 40px; height: 40px; object-fit: cover;',
-                                  alt: form.object.host.name) %>
+            <%= community_mark_tag(form.object.host, size: 40, class: 'border border-2 border-white shadow-sm',
+                                   alt: form.object.host.name) %>
           </div>
           
           <!-- Host Information -->
