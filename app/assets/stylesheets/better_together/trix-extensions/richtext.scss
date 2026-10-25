@@ -71,7 +71,10 @@ trix-editor {
   h5 { font-size: 14px; }
   h6 { font-size: 12px; }
 
-  > div {
+  // Trix's reset zeroes every margin; paragraphs written outside the editor (API, import, paste) need the same
+  // spacing as the <div> blocks the editor writes.
+  > div,
+  > p {
     margin-top: 1em;
     margin-bottom: 1em;
   }

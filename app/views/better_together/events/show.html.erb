@@ -21,17 +21,17 @@
     <div class="row align-items-end">
       <div class="col">
         <h1 class="event-name mt-3"><%= @resource.name %></h1>
-        <% if @event.location&.name&.present? %>
-          <div class="event-location card-text text-muted mt-2">
-            <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
-          </div>
-        <% end %>
         <% if @event.starts_at.present? %>
           <div class="event-datetime card-text text-muted my-2">
             <i class="fas fa-calendar-alt me-2"></i>
             <%= display_event_time @event %>
             <%= event_timezone_badge @event %>
             <%= viewer_timezone_conversion(@event, current_person) if current_person %>
+          </div>
+        <% end %>
+        <% if @event.location&.name&.present? %>
+          <div class="event-location card-text text-muted mt-2">
+            <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
           </div>
         <% end %>
         <% unless @event.status_confirmed? %>
@@ -102,15 +102,10 @@
                 <div class="event-datetime card-text text-muted mt-2">
                   <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@event) %>
                 </div>
-                <% if @event.location&.name&.present? %>
-                  <div class="event-location card-text text-muted mt-2">
-                    <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
+                <% if @event.registration_url.present? %>
+                  <div class="event-datetime card-text text-muted mt-2">
+                    <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
                   </div>
-                <% end %>
-                <% if @event.spaces.any? %>
-                  <section class="event-map my-3">
-                    <%= render partial: 'better_together/shared/map', locals: { map: @event.map } %>
-                  </section>
                 <% end %>
                 <% if @event.starts_at.present? %>
                   <div class="event-datetime card-text text-muted mt-2">
@@ -120,10 +115,15 @@
                       <%= viewer_timezone_conversion(@event, current_person) if current_person %>
                   </div>
                 <% end %>
-                <% if @event.registration_url.present? %>
-                  <div class="event-datetime card-text text-muted mt-2">
-                    <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
+                <% if @event.location&.name&.present? %>
+                  <div class="event-location card-text text-muted mt-2">
+                    <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
                   </div>
+                <% end %>
+                <% if @event.spaces.any? %>
+                  <section class="event-map my-3">
+                    <%= render partial: 'better_together/shared/map', locals: { map: @event.map } %>
+                  </section>
                 <% end %>
 
                 <% if @event.categories.any? %>
