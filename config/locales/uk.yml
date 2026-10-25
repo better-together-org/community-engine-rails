@@ -1032,7 +1032,7 @@ uk:
           edit_aria: Редагувати спільноту
         events:
           loading: Завантаження подій...
-        map_aria: "Карта: %{name}"
+        map_aria: 'Карта: %{name}'
         members:
           add_member_modal:
             close: Закрити
