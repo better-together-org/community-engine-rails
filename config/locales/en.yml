@@ -1044,10 +1044,9 @@ en:
         actions:
           destroy_aria: Delete community
           edit_aria: Edit community
-        create_event: Create an Event
         events:
-          create_event: Create an Event
-          draft_heading: Draft
+          loading: Loading events...
+        map_aria: Map of %{name}
         members:
           add_member_modal:
             close: Close
@@ -1057,9 +1056,7 @@ en:
             submit: Add
             title: Add New Member
         posts:
-          create_post: Create Post
-          empty_description: Posts created for this community will show up here.
-          empty_title: No posts yet
+          loading: Loading posts...
         roles:
           empty_title: No community roles defined
           member_count_aria:

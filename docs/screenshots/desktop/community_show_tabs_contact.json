@@ -1,0 +1,48 @@
+{
+  "name": "community_show_tabs_contact",
+  "device": "desktop",
+  "url": "/en/c/community-6ad260565e45bb89bcb9",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_tabs",
+  "flow": "contact",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#contact",
+      "title": "Contact",
+      "bullets": [
+        "Phone and email in their own tab."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 886.796875,
+        "width": 822.0,
+        "height": 116.78125,
+        "right": 903.5,
+        "bottom": 1003.578125,
+        "center_x": 492.5,
+        "center_y": 945.1875
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 886.796875,
+        "width": 822.0,
+        "height": 116.78125,
+        "right": 903.5,
+        "bottom": 1003.578125,
+        "center_x": 492.5,
+        "center_y": 945.1875
+      },
+      "placement": {
+        "side": "above",
+        "x": 302.5,
+        "y": 734.8,
+        "width": 380,
+        "height": 132,
+        "score": 886.796875
+      }
+    }
+  ]
+}
