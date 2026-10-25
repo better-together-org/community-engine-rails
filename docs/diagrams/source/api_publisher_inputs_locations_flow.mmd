@@ -1,0 +1,17 @@
+flowchart LR
+  subgraph API["JSON:API write-only inputs"]
+    A1["address_spec (Event, Community)"]
+    A2["contact_spec (Community)"]
+    A3["logo_data / cover_image_data / profile_image_data (Community)"]
+  end
+  A1 --> AS["Geography::Locatable::AddressSpec"]
+  AS --> LL["LocatableLocation (has_one :location)"]
+  LL --> AD["Address (reused when line1, city, postal code, country match)"]
+  A2 --> CS["ContactSpec"]
+  CS --> CD["ContactDetail: phones, emails, links, social accounts, addresses"]
+  A3 --> BI["Base64ImageInput"]
+  BI --> AT["Active Storage: logo, cover_image, profile_image"]
+  EV["Event (Locatable::One)"] --> LL
+  CM["Community (plain has_one, not Mappable)"] --> LL
+  CM --> CD
+  CM --> AT
