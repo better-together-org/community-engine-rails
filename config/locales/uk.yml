@@ -1762,6 +1762,8 @@ uk:
       rsvp_saved: RSVP збережено
       rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
       save_event: Зберегти подію
+      show:
+        map_label: "Карта: %{name}"
       statuses:
         cancelled: Скасовано
         confirmed: Підтверджено
