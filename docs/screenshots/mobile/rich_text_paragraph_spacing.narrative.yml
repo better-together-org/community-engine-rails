@@ -1,0 +1,15 @@
+---
+title: 'Rich text: paragraph spacing'
+audience:
+- member
+- content_editor
+- developer
+journey_step: As a reader, I see rich text spaced the way its author saw it in the
+  editor.
+callouts:
+- :id: rich_text
+  :title: Rendered rich text
+  :description: Direct paragraph children get the same 1em spacing as editor blocks.
+accessibility_notes: Spacing only; no change to markup or reading order.
+slug: rich_text_paragraph_spacing
+device: mobile

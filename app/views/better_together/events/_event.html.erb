@@ -1,19 +1,12 @@
 <%# Template Dependency: better_together/shared/card %>
 <%# locals: (event:) %>
 
-<%# next_occurrence_at is included in the cache key alongside cache_key_with_version %>
-<%# because update_column (used to refresh it — see Event#refresh_next_occurrence_at!) %>
-<%# intentionally skips touching updated_at; without this the card's date/badge could %>
-<%# go stale between real record saves. %>
-<%= cache [event.cache_key_with_version, event.next_occurrence_at] do %>
+<%# See EventsHelper#event_card_cache_key: it adds next_occurrence_at (refreshed without touching %>
+<%# updated_at) and the hosts' versions (the card shows their names and avatars). %>
+<%= cache event_card_cache_key(event) do %>
 	<% if policy(event).show? %>
 		<%= render 'better_together/shared/card', entity: event, card_classes: 'hover-effect event-card' do %>
 			<%= event_hosts_display(event) %>
-			<% if event.location&.name&.present? %>
-				<div class="event-location card-text text-muted mt-2">
-				<i class="fas fa-map-marker-alt me-2 icon-above-stretched-link" aria-hidden="true" data-bs-toggle="tooltip" title="<%= t('better_together.events.location') %>"></i> <%= event.location %>
-				</div>
-			<% end %>
 			<% card_start_time = event.recurring? ? (event.next_occurrence_at || event.starts_at) : event.starts_at %>
 			<%# For a recurring event, the original ends_at doesn't shift with next_occurrence_at — %>
 			<%# derive the displayed end from duration_minutes instead of the stale absolute ends_at. %>
@@ -27,6 +20,11 @@
 				<i class="fas fa-calendar-alt me-2 icon-above-stretched-link" aria-hidden="true" data-bs-toggle="tooltip" title="<%= t('better_together.events.date_and_time') %>"></i>
 					<%= display_event_time event, start_time: card_start_time, end_time: card_end_time %>
 					<%= event_timezone_badge event %>
+				</div>
+			<% end %>
+			<% if event.location&.name&.present? %>
+				<div class="event-location card-text text-muted mt-2">
+				<i class="fas fa-map-marker-alt me-2 icon-above-stretched-link" aria-hidden="true" data-bs-toggle="tooltip" title="<%= t('better_together.events.location') %>"></i> <%= event.location %>
 				</div>
 			<% end %>
 			<div class="event-categories">

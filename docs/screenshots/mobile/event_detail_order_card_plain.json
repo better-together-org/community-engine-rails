@@ -1,0 +1,11 @@
+{
+  "name": "event_detail_order_card_plain",
+  "device": "mobile",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_detail_order",
+  "flow": "event_detail_order_card_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/event_detail_order_spec.rb"
+}
