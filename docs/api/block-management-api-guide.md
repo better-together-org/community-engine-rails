@@ -217,6 +217,15 @@ Every API request runs in the default locale. Send `X-Api-Locale: fr` to write a
 
 A body update keeps the post's blocks: `PATCH` with new `content` and no attachments puts the existing attachments back in front of the new text, so a publisher can rewrite the text without re-sending the blocks. Sending `attachment_block_ids` on update replaces them. Sending rendered `<action-text-attachment>` HTML back as `content` is rejected, because it has no signed id.
 
+### Event inputs for publishers
+
+`events` accepts the same publisher inputs, on create and update:
+
+- `hosts` (a list, or a JSON string of `[{"host_type": "BetterTogether::Community", "host_id": "..."}]`) sets every host of the event, of any `HostsEvents` type. It replaces the list, so the creator is not added as a host when it is given. As in the event form, a host must be the person or a community they can host for (`valid_event_host_ids`); platform managers may name any host (`422` otherwise).
+- `status` sets the lifecycle status (`draft`, `confirmed`, `cancelled`); an unknown value is `422`.
+- `cover_image_data` (base64) with optional `cover_image_filename` sets the cover image. Neither is returned.
+- `attachment_block_ids` appends existing blocks to the end of the description, under the text, in that order. A block already in the description is not added twice, so sending the same ids again changes nothing. The registry and platform rules above apply.
+
 ### Navigation landmarks in HTML blocks
 
 HTML block content is sanitized. `nav` and the accessibility attributes `aria-label`, `aria-labelledby`, `aria-current` and `aria-hidden` are kept, so a breadcrumb can be a labelled `<nav aria-label="Breadcrumb">` with `aria-current="page"` on the current item. Scripts, event handlers and unsafe link protocols are still removed.
