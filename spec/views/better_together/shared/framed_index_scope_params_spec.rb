@@ -4,7 +4,7 @@ require 'rails_helper'
 
 # A host scopes a framed index by something other than a community through two hooks on the controller
 # (FramedIndex#index_scope_params and #index_heading); the filter forms must keep those params.
-RSpec.describe 'Framed index scope params', type: :view do # rubocop:disable RSpec/DescribeClass
+RSpec.describe 'Framed index scope params' do # rubocop:disable RSpec/DescribeClass
   let(:scope_params) { { settlement: 'corner-brook' } }
 
   before do

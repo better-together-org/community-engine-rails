@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::FramedIndex, type: :controller do # rubocop:disable RSpec/SpecFilePathFormat
+RSpec.describe BetterTogether::FramedIndex do # rubocop:disable RSpec/SpecFilePathFormat
   controller(ActionController::Base) do
-    include BetterTogether::FramedIndex
+    include described_class
 
     def resource_class = BetterTogether::Event
   end
