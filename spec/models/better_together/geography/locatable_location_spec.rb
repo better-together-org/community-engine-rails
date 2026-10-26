@@ -65,6 +65,23 @@ RSpec.describe BetterTogether::Geography::LocatableLocation do
         end
       end
 
+      context 'when a named place is at a street address' do
+        let(:address) do
+          build(:better_together_address, line1: '5 Park Street', city_name: 'Corner Brook', postal_code: 'A2H 2Y8',
+                                          country_name: 'Canada')
+        end
+        let(:place) { described_class.new(name: 'Rotary Arts Centre', location: address) }
+
+        it 'adds the street address to the name', :aggregate_failures do
+          expect(place.display_name).to start_with('Rotary Arts Centre, 5 Park Street, Corner Brook')
+          expect(place.display_name).to end_with('A2H 2Y8, Canada')
+        end
+
+        it 'leaves a free text place as it was' do
+          expect(described_class.new(name: 'The wharf').display_name).to eq('The wharf')
+        end
+      end
+
       context 'when location is present but name is not' do
         let(:structured_location) { build(:locatable_location, :with_address, name: nil) }
 
