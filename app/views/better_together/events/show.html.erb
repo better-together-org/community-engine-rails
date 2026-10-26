@@ -34,6 +34,7 @@
             <i class="fas fa-map-marker-alt me-2"></i> <%= @event.location %>
           </div>
         <% end %>
+        <%= render 'better_together/events/series_banner', event: @event if @event.session? %>
         <% unless @event.status_confirmed? %>
           <div class="mt-2">
             <%= event_status_badge(@event) %>
@@ -44,10 +45,10 @@
         <%= render 'shared/resource_toolbar',
                     edit_path: policy(@resource).edit? ? edit_event_path(@resource) : nil,
                     edit_aria_label: t('better_together.events.edit_event'),
-                    destroy_path: policy(@resource).destroy? ? event_path(@resource) : nil,
+                    destroy_path: policy(@resource).destroy? && !@event.series? ? event_path(@resource) : nil,
                     destroy_confirm: t('globals.confirm_delete'),
                     destroy_aria_label: t('better_together.events.delete_event') do %>
-          <% if policy(@event).ics? %>
+          <% if policy(@event).ics? && !@event.series? %>
             <%= link_to ics_event_path(@event), class: 'btn btn-outline-secondary btn-sm' do %>
               <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i><%= t('better_together.events.add_to_calendar', default: 'Add to calendar (.ics)') %>
             <% end %>
@@ -64,7 +65,7 @@
     <!-- Membership section -->
     <hr aria-hidden="true">
 
-    <%= render 'better_together/events/rsvp', event: @event, attendance: @current_attendance %>
+    <%= render 'better_together/events/rsvp', event: @event, attendance: @current_attendance unless @event.series? %>
 
     <% if @current_invitation %>
       <%= render 'better_together/shared/invitation_review', invitation: @current_invitation %>
@@ -82,14 +83,14 @@
         <%= content_tag :div, id: 'eventTabs', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'Event Sections' do %>
           <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
           <%# Show the Attendees tab only to organizers (reuse invitation policy check) %>
-          <% if policy(@event).update? %>
+          <% if policy(@event).update? && !@event.series? %>
             <% attendees_count = @event.event_attendances.visible_to(current_person).count %>
             <%= link_to "#{t('globals.tabs.attendees', default: 'Attendees')} (#{attendees_count})", '#attendees', class: 'nav-link', id: 'attendees-tab', data: { bs_toggle: 'tab', bs_target: '#attendees', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'attendees', selected: 'false' }, tabindex: '0' %>
           <% end %>
           <% if @event.recurring? %>
             <%= link_to t('globals.tabs.sessions', default: 'Sessions'), '#sessions', class: 'nav-link', id: 'sessions-tab', data: { bs_toggle: 'tab', bs_target: '#sessions', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'sessions', selected: 'false' }, tabindex: '0' %>
           <% end %>
-          <% if policy(@invitation).create? %>
+          <% if policy(@invitation).create? && !@event.series? %>
             <% invitations_count = @event.invitations.count %>
             <%= link_to "#{t('globals.tabs.invitations', default: 'Invitations')} (#{invitations_count})", '#invitations', class: 'nav-link', id: 'invitations-tab', data: { bs_toggle: 'tab', bs_target: '#invitations', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'invitations', selected: 'false' }, tabindex: '0' %>
           <% end %>
@@ -106,7 +107,7 @@
                 <div class="event-datetime card-text text-muted mt-2">
                   <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@event) %>
                 </div>
-                <% if @event.registration_url.present? %>
+                <% if @event.registration_url.present? && !@event.series? %>
                   <div class="event-datetime card-text text-muted mt-2">
                     <i class="fas fa-ticket me-2"></i> <%= link_to t('better_together.events.register'), @event.registration_url, target: '_blank', class: 'text-decoration-none' %>
                   </div>
@@ -134,6 +135,9 @@
                 <div class="card-text mt-3 text-muted" id="event-description">
                   <%= @resource.description.presence || t('better_together.events.no_description_available') %>
                 </div>
+
+                <%= render 'better_together/events/series_other_dates', event: @event if @event.session? %>
+                <%= render 'better_together/events/series_sessions', series: @event if @event.series? %>
 
                 <%= render 'better_together/events/event_hosts', event: @event %>
               </div>
@@ -169,7 +173,7 @@
             </div>
           <% end %>
 
-          <% if policy(@invitation).create? %>
+          <% if policy(@invitation).create? && !@event.series? %>
             <!-- Invitations (organizer-only) Tab Pane -->
             <div id="invitations" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="invitations-tab">
               <%# Render the existing invitations panel inside this attendees pane %>

@@ -13,8 +13,8 @@ module BetterTogether
     included do
       attr_accessor :session_disposition
 
-      before_destroy :settle_sessions_before_destroy, prepend: true, if: :series?
-      after_save :settle_sessions_after_cancel, if: :series_cancelled_now?
+      before_destroy :dispose_sessions_before_destroy, prepend: true, if: :series?
+      after_save :dispose_sessions_after_cancel, if: :series_cancelled_now?
       validate :cancelling_a_series_needs_a_choice
     end
 
@@ -44,22 +44,22 @@ module BetterTogether
       series? && saved_change_to_status? && status_cancelled?
     end
 
-    def settle_sessions_after_cancel
+    def dispose_sessions_after_cancel
       affected = live_sessions.reject { |session| session.starts_at&.past? }
       case session_disposition.to_s
       when 'cancel' then affected.each { |session| session.update!(status: 'cancelled') }
       when 'promote' then promote_sessions
       end
-      log_settlement('cancel', affected)
+      log_disposition('cancel', affected)
     end
 
-    def settle_sessions_before_destroy
+    def dispose_sessions_before_destroy
       return if sessions.none?
       return refuse_destroy_without_choice unless DELETE_CHOICES.include?(session_disposition.to_s)
 
       affected = sessions.to_a
       session_disposition.to_s == 'delete' ? affected.each(&:destroy!) : promote_sessions
-      log_settlement('delete', affected)
+      log_disposition('delete', affected)
     end
 
     def refuse_destroy_without_choice
@@ -72,7 +72,7 @@ module BetterTogether
       series_session_links.reset
     end
 
-    def log_settlement(action, affected)
+    def log_disposition(action, affected)
       Rails.logger.info(
         "[EventSeries] #{action} series #{identifier}: sessions #{session_disposition} " \
         "(#{affected.map(&:identifier).join(', ')})"

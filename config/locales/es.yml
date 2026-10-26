@@ -1762,6 +1762,29 @@ es:
       rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
         programado.
       save_event: Save Event
+      series:
+        disposed: Serie actualizada.
+        disposition:
+          cancel_legend: Cancelar la serie
+          cancel_sessions: Cancelar también las próximas fechas
+          cancel_submit: Cancelar serie
+          delete_legend: Eliminar la serie
+          delete_sessions: Eliminar también las fechas
+          delete_submit: Eliminar serie
+          explain: Esta serie tiene %{count} fechas. Indica qué ocurre con ellas antes
+            de cancelarla o eliminarla.
+          open: Cancelar o eliminar esta serie
+          promote_sessions: Conservar las fechas como eventos independientes
+        no_sessions: Todavía no se han añadido fechas a esta serie.
+        other_dates: Otras fechas
+        part_of: Parte de %{name}
+        part_of_run:
+          one: Parte de una serie de %{count} fecha
+          other: Parte de una serie de %{count} fechas
+        sessions_heading: Fechas
+        show_all_dates:
+          one: Mostrar %{count} fecha más
+          other: Mostrar %{count} fechas más
       show:
         map_label: Mapa de %{name}
       statuses:

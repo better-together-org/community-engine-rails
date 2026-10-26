@@ -1,0 +1,13 @@
+---
+title: Series page
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I see every date of a run.
+callouts:
+- :id: sessions
+  :title: Sessions
+  :description: No RSVP on the series; each date has its own.
+accessibility_notes: Links carry their text; the panel is a labelled fieldset.
+slug: event_series_show
+device: mobile
