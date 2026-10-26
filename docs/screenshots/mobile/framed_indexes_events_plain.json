@@ -1,0 +1,11 @@
+{
+  "name": "framed_indexes_events_plain",
+  "device": "mobile",
+  "url": "/en/events?community_id=community-f643fdfc16bb565d57f4",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_scoped_indexes",
+  "flow": "events_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/framed_indexes_spec.rb"
+}
