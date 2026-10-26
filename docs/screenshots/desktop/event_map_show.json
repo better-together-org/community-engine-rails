@@ -1,8 +1,8 @@
 {
   "name": "event_map_show",
   "device": "desktop",
-  "url": "/en/events/30e50b12-f6ab-4659-b803-b1f01804abfb",
-  "title": "Community Meetup | Events | Hyatt, Herzog and Swaniawski",
+  "url": "/en/events/4f76cf38-d397-4691-87c1-67ad79332434",
+  "title": "Community Meetup | Events | Test Host Community",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_map",
@@ -17,32 +17,32 @@
         "Powered by the reusable Locatable::One#leaflet_points mechanism — no per-event configuration."
       ],
       "target": {
-        "x": 81.5,
-        "y": 806.0,
-        "width": 1262.0,
-        "height": 500.0,
-        "right": 1343.5,
-        "bottom": 1306.0,
-        "center_x": 712.5,
-        "center_y": 1056.0
+        "x": 932.5,
+        "y": 660.0,
+        "width": 440.0,
+        "height": 508.0,
+        "right": 1372.5,
+        "bottom": 1168.0,
+        "center_x": 1152.5,
+        "center_y": 914.0
       },
       "avoid": {
-        "x": 81.5,
-        "y": 806.0,
-        "width": 1262.0,
-        "height": 500.0,
-        "right": 1343.5,
-        "bottom": 1306.0,
-        "center_x": 712.5,
-        "center_y": 1056.0
+        "x": 932.5,
+        "y": 660.0,
+        "width": 440.0,
+        "height": 508.0,
+        "right": 1372.5,
+        "bottom": 1168.0,
+        "center_x": 1152.5,
+        "center_y": 914.0
       },
       "placement": {
-        "side": "above",
-        "x": 522.5,
-        "y": 498.0,
+        "side": "left",
+        "x": 532.5,
+        "y": 770.0,
         "width": 380,
         "height": 288,
-        "score": 806.0
+        "score": 932.5
       }
     }
   ]

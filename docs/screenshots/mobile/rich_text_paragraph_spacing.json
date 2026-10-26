@@ -1,0 +1,48 @@
+{
+  "name": "rich_text_paragraph_spacing",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-1",
+  "title": "Spacing between paragraphs | Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "rich_text_paragraph_spacing",
+  "flow": "rich_text_paragraph_spacing",
+  "source_spec": "./spec/docs_screenshots/better_together/rich_text_paragraph_spacing_spec.rb",
+  "callouts": [
+    {
+      "selector": ".post-content",
+      "title": "Rendered rich text",
+      "bullets": [
+        "Paragraphs have a line of space between them."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 564.8125,
+        "width": 427.0,
+        "height": 128.0,
+        "right": 456.0,
+        "bottom": 692.8125,
+        "center_x": 242.5,
+        "center_y": 628.8125
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 564.8125,
+        "width": 427.0,
+        "height": 128.0,
+        "right": 456.0,
+        "bottom": 692.8125,
+        "center_x": 242.5,
+        "center_y": 628.8125
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 386.81,
+        "width": 270.0,
+        "height": 158,
+        "score": 564.8125
+      }
+    }
+  ]
+}

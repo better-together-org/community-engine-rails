@@ -1,0 +1,16 @@
+---
+title: Event page, map column
+audience:
+- event_attendee
+- developer
+journey_step: As an attendee, I read about an event and see where it is.
+callouts:
+- :id: tabs
+  :title: Details
+  :description: The tab column shrinks to make room.
+- :id: map
+  :title: Map
+  :description: Rendered once the place is geocoded.
+accessibility_notes: The map section is labelled with the event name.
+slug: event_show_map
+device: mobile

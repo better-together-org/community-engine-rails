@@ -1773,6 +1773,8 @@ fr:
       rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
         programmé.
       save_event: Enregistrer l'événement
+      show:
+        map_label: Carte de %{name}
       statuses:
         cancelled: Annulé
         confirmed: Confirmé
