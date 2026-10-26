@@ -76,6 +76,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Person Links, Access Grants and Messaging Permissions](developers/systems/person_links_grants_and_messaging_system.md) - Message requests, messaging grants, cross-platform person links
 - [Seed Catalog and Seed Plantings](developers/systems/seed_catalog_and_plantings_system.md) - On-demand reference data and planting audit records
 - [Event Recurrence and Occurrences](developers/systems/event_recurrence_and_occurrences_system.md) - Recurrence rules and lazily created occurrence overrides
+- [Event Series and Sessions](event-series-and-sessions-design.md) - Series that group the dates of a run, with the API and the cancel or delete choice
 - [Person Deletion Requests and Purge Audits](developers/systems/person_deletion_and_purge_audit_system.md) - Anonymizing and hard deletion with audit records
 - [Content Security Ingress System](developers/systems/content_security_ingress_system.md) - Attachment gating, malware scanning, review records
 - [Safety and Federation Review Workflow](developers/systems/safety_and_federation_review_workflow.md) - Reviewer surfaces, safety cases, actions and notes

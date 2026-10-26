@@ -226,6 +226,15 @@ A body update keeps the post's blocks: `PATCH` with new `content` and no attachm
 - `cover_image_data` (base64) with optional `cover_image_filename` sets the cover image. Neither is returned.
 - `attachment_block_ids` appends existing blocks to the end of the description, under the text, in that order. A block already in the description is not added twice, so sending the same ids again changes nothing. The registry and platform rules above apply.
 
+### Event series and sessions
+
+`events` also groups the dates of a run into a series (see [Event series and sessions](../event-series-and-sessions-design.md)):
+
+- `series: true` on create makes a dateless parent event. It cannot be changed afterwards, and a series has no dates, recurrence or RSVPs of its own.
+- `session_of` (a series identifier) links an event to that series. On create it also fills hosts, categories, description, privacy and timezone from the series where none were given. On update it only links an event that is in no series and changes nothing else. It is never returned.
+- `series_identifier` is read only and names the series a session belongs to.
+- Series are left out of the event lists and the map but are still returned by `GET /api/v1/events`. Cancelling or deleting a series asks what happens to its sessions; that choice is made on the series page, and the model refuses to do either without it.
+
 ### Navigation landmarks in HTML blocks
 
 HTML block content is sanitized. `nav` and the accessibility attributes `aria-label`, `aria-labelledby`, `aria-current` and `aria-hidden` are kept, so a breadcrumb can be a labelled `<nav aria-label="Breadcrumb">` with `aria-current="page"` on the current item. Scripts, event handlers and unsafe link protocols are still removed.
