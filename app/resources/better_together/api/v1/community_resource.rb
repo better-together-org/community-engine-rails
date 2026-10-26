@@ -18,6 +18,18 @@ module BetterTogether
         attribute :cover_image_url
         attribute :logo_url
 
+        # Publisher inputs, write-only (the image URLs above are what is returned): base64 images, a street
+        # address for the location (Locatable::AddressSpec) and the contact details (ContactSpec).
+        WRITE_ONLY = %i[
+          logo_data logo_filename cover_image_data cover_image_filename profile_image_data profile_image_filename
+          address_spec contact_spec
+        ].freeze
+        attributes(*WRITE_ONLY)
+
+        def fetchable_fields
+          super - WRITE_ONLY
+        end
+
         # Relationships
         has_one :creator, class_name: 'Person'
         has_many :members, relation_name: :person_members, class_name: 'Person'
