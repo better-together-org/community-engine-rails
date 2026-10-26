@@ -128,12 +128,18 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
       expect_html_content('Test Community')
     end
 
-    it 'renders community posts tab content' do
+    it 'renders the posts tab with a frame for the community posts', :aggregate_failures do
       get better_together.community_path(locale:, id: community.slug)
 
       expect(response).to have_http_status(:ok)
+      expect(response.body).to include('id="community-posts"')
+    end
+
+    it 'lists the community posts in the posts frame' do
+      get better_together.posts_path(locale:, community_id: community.slug),
+          headers: { 'Turbo-Frame' => 'community-posts' }
+
       expect_html_content('Community Post Title')
-      expect(response.body).to include('community-posts-create-btn')
     end
 
     it 'finds community by slug across locales' do
@@ -631,273 +637,80 @@ RSpec.describe 'BetterTogether::CommunitiesController' do
     end
   end
 
-  describe 'GET /:locale/c/:slug (show) - events tab' do
+  describe 'GET /:locale/c/:slug (show) - posts and events tabs' do
+    let(:author) { create(:better_together_person) }
     let(:community) do
-      create(:better_together_community,
-             name: 'Event Test Community',
-             privacy: 'public',
-             creator: platform_manager.person)
+      create(:better_together_community, name: 'Event Test Community', privacy: 'public',
+                                         creator: author)
     end
 
-    let!(:draft_event) do
-      create(:better_together_event,
-             :draft,
-             name: 'Draft Event',
-             creator: platform_manager.person).tap do |event|
-        create(:better_together_event_host,
-               event: event,
-               host: community)
+    let(:host_event) do
+      lambda do |name, **attrs|
+        create(:better_together_event, name:, creator: author, **attrs).tap do |event|
+          create(:better_together_event_host, event:, host: community)
+        end
       end
     end
 
-    let!(:upcoming_event) do
-      create(:better_together_event,
-             name: 'Upcoming Event',
-             starts_at: 2.days.from_now,
-             ends_at: 2.days.from_now + 1.hour,
-             duration_minutes: 60,
-             creator: platform_manager.person).tap do |event|
-        create(:better_together_event_host,
-               event: event,
-               host: community)
-      end
+    let!(:upcoming_event) { host_event.call('Upcoming Event', starts_at: 2.days.from_now, ends_at: 2.days.from_now + 1.hour) }
+    let!(:draft_event) { host_event.call('Draft Event', status: 'draft') }
+    let!(:other_event) do
+      create(:better_together_event, name: 'Elsewhere Event', starts_at: 2.days.from_now,
+                                     ends_at: 2.days.from_now + 1.hour, creator: author)
     end
 
-    let!(:ongoing_event) do
-      create(:better_together_event,
-             name: 'Ongoing Event',
-             starts_at: 15.minutes.ago,
-             ends_at: 15.minutes.from_now, # 30 minutes total: started 15 ago, ends 15 from now
-             duration_minutes: 30,
-             creator: platform_manager.person).tap do |event|
-        create(:better_together_event_host,
-               event: event,
-               host: community)
-      end
-    end
-
-    let!(:past_event) do
-      create(:better_together_event,
-             name: 'Past Event',
-             starts_at: 2.days.ago,
-             ends_at: 2.days.ago + 1.hour,
-             duration_minutes: 60,
-             creator: platform_manager.person).tap do |event|
-        create(:better_together_event_host,
-               event: event,
-               host: community)
-      end
-    end
-
-    context 'when user is not authenticated', :unauthenticated do
-      it 'shows events tab' do
+    context 'when user is a platform manager', :as_platform_manager do
+      it 'embeds the scoped indexes in lazy frames', :aggregate_failures do
         get better_together.community_path(locale:, id: community.slug)
+
         expect(response).to have_http_status(:ok)
-        expect(response.body).to include('events-tab')
+        frames = Nokogiri::HTML(response.body).css('turbo-frame[loading="lazy"]')
+        expect(frames.pluck('id')).to contain_exactly('community-posts', 'community-events')
+        expect(frames.find { |f| f['id'] == 'community-events' }['src']).to include("community_id=#{community.slug}")
       end
 
-      it 'does not show draft events' do
+      it 'no longer renders the events list in the page', :aggregate_failures do
         get better_together.community_path(locale:, id: community.slug)
-        expect_no_html_content('Draft Event')
-        expect_no_html_content('draft_events_list')
+
+        expect_no_html_content('Upcoming Event')
+        expect(response.body).not_to include('upcoming_events_list')
       end
 
-      it 'shows upcoming events section' do
-        get better_together.community_path(locale:, id: community.slug)
+      it 'lists only the events the community hosts in its frame', :aggregate_failures do
+        get better_together.events_path(locale:, community_id: community.slug),
+            headers: { 'Turbo-Frame' => 'community-events' }
+
         expect_html_content('Upcoming Event')
-        expect(response.body).to include('upcoming_events_list')
-      end
-
-      it 'shows ongoing events section' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect_html_content('Ongoing Event')
-        expect(response.body).to include('ongoing_events_list')
-      end
-
-      it 'shows past events section' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect_html_content('Past Event')
-        expect(response.body).to include('past_events_list')
-      end
-
-      it 'does not show create event button' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).not_to include('Create an Event')
+        expect_no_html_content('Elsewhere Event')
+        expect(response.body).to include('id="new-event-btn"')
       end
     end
 
     context 'when user is authenticated but cannot create events', :as_user do
-      it 'shows events tab' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include('events-tab')
-      end
+      it 'does not list drafts or offer the new event button', :aggregate_failures do
+        get better_together.events_path(locale:, community_id: community.slug),
+            headers: { 'Turbo-Frame' => 'community-events' }
 
-      it 'does not show draft events' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect_no_html_content('Draft Event')
-        expect_no_html_content('draft_events_list')
-      end
-
-      it 'shows upcoming events' do
-        get better_together.community_path(locale:, id: community.slug)
         expect_html_content('Upcoming Event')
-      end
-
-      it 'shows ongoing events' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect_html_content('Ongoing Event')
-      end
-
-      it 'shows past events' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect_html_content('Past Event')
-      end
-
-      it 'does not show create event button' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).not_to include('Create an Event')
+        expect_no_html_content('Draft Event')
+        expect(response.body).not_to include('new-event-btn')
       end
     end
 
-    context 'when user can create events (platform manager)', :as_platform_manager do
-      it 'shows events tab' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include('events-tab')
-      end
+    context 'when user is not authenticated', :unauthenticated do
+      it 'lists the public events and no drafts', :aggregate_failures do
+        get better_together.events_path(locale:, community_id: community.slug),
+            headers: { 'Turbo-Frame' => 'community-events' }
 
-      it 'shows draft events section' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect_html_content('Draft Event')
-        expect(response.body).to include('draft_events_list')
-      end
-
-      it 'shows draft section header' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Draft')
-      end
-
-      it 'shows upcoming events section with translated header' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('upcoming_events_list')
-        expect_html_contents(
-          'Upcoming Event',
-          I18n.t('better_together.people.calendar.upcoming_events')
-        )
-      end
-
-      it 'shows ongoing events section with translated header' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('ongoing_events_list')
-        expect_html_contents(
-          'Ongoing Event',
-          I18n.t('better_together.people.calendar.ongoing_events')
-        )
-      end
-
-      it 'shows past events section with translated header' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('past_events_list')
-        expect_html_contents(
-          'Past Event',
-          I18n.t('better_together.people.calendar.recent_events')
-        )
-      end
-
-      it 'shows create event button' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(response.body).to include('Create an Event')
-      end
-
-      it 'assigns all event categories to instance variables' do
-        get better_together.community_path(locale:, id: community.slug)
-        expect(assigns(:draft_events)).to include(draft_event)
-        expect(assigns(:upcoming_events)).to include(upcoming_event)
-        expect(assigns(:ongoing_events)).to include(ongoing_event)
-        expect(assigns(:past_events)).to include(past_event)
+        expect_html_content('Upcoming Event')
+        expect_no_html_content('Draft Event')
       end
     end
 
-    context 'when community has no events', :as_platform_manager do
-      let(:empty_community) do
-        create(:better_together_community,
-               name: 'Empty Community',
-               privacy: 'public',
-               creator: platform_manager.person)
-      end
+    it 'shows the events tab without a request for the page lists' do
+      get better_together.community_path(locale:, id: community.slug)
 
-      it 'shows events tab' do
-        get better_together.community_path(locale:, id: empty_community.slug)
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include('events-tab')
-      end
-
-      it 'does not show draft events section when no draft events' do
-        get better_together.community_path(locale:, id: empty_community.slug)
-        expect(response.body).not_to include('draft_events_list')
-      end
-
-      it 'does not show upcoming events section when no upcoming events' do
-        get better_together.community_path(locale:, id: empty_community.slug)
-        expect(response.body).not_to include('upcoming_events_list')
-      end
-
-      it 'does not show ongoing events section when no ongoing events' do
-        get better_together.community_path(locale:, id: empty_community.slug)
-        expect(response.body).not_to include('ongoing_events_list')
-      end
-
-      it 'does not show past events section when no past events' do
-        get better_together.community_path(locale:, id: empty_community.slug)
-        expect(response.body).not_to include('past_events_list')
-      end
-
-      it 'shows create event button for authorized users' do
-        get better_together.community_path(locale:, id: empty_community.slug)
-        expect(response.body).to include('Create an Event')
-      end
-    end
-
-    context 'event time categorization' do
-      it 'correctly categorizes a 30-minute event that started 15 minutes ago as ongoing', :as_platform_manager do
-        get better_together.community_path(locale:, id: community.slug)
-
-        # Should be in ongoing, not past
-        expect(assigns(:ongoing_events)).to include(ongoing_event)
-        expect(assigns(:past_events)).not_to include(ongoing_event)
-
-        # Verify it appears in the ongoing section in the HTML
-        expect(response.body).to match(/ongoing_events_list.*Ongoing Event/m)
-      end
-
-      it 'categorizes events with only starts_at as past after start time', :as_platform_manager do
-        event_without_end = create(:better_together_event,
-                                   name: 'No End Time Event',
-                                   starts_at: 1.hour.ago,
-                                   ends_at: nil,
-                                   creator: platform_manager.person)
-        create(:better_together_event_host,
-               event: event_without_end,
-               host: community)
-
-        get better_together.community_path(locale:, id: community.slug)
-
-        expect(assigns(:past_events)).to include(event_without_end)
-        expect(assigns(:ongoing_events)).not_to include(event_without_end)
-      end
-
-      it 'only shows events that have fully ended in past section', :as_platform_manager do
-        get better_together.community_path(locale:, id: community.slug)
-
-        # Past event should have ended
-        expect(past_event.ends_at).to be < Time.current
-        expect(assigns(:past_events)).to include(past_event)
-
-        # Ongoing event should not have ended
-        expect(ongoing_event.ends_at).to be > Time.current
-        expect(assigns(:past_events)).not_to include(ongoing_event)
-      end
+      expect(response.body).to include('events-tab')
     end
   end
 end

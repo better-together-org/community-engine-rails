@@ -1,0 +1,83 @@
+{
+  "name": "framed_indexes_posts",
+  "device": "desktop",
+  "url": "/en/posts?community_id=community-f2e3e2342a8989667cac",
+  "title": "Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_scoped_indexes",
+  "flow": "posts",
+  "source_spec": "./spec/docs_screenshots/better_together/framed_indexes_spec.rb",
+  "callouts": [
+    {
+      "selector": "#posts-filter-toggle",
+      "title": "Filters",
+      "bullets": [
+        "A collapsible filter, as on the events index."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 297.0,
+        "width": 306.0,
+        "height": 500.0,
+        "right": 378.0,
+        "bottom": 797.0,
+        "center_x": 225.0,
+        "center_y": 547.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 297.0,
+        "width": 306.0,
+        "height": 500.0,
+        "right": 378.0,
+        "bottom": 797.0,
+        "center_x": 225.0,
+        "center_y": 547.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 398.0,
+        "y": 481.0,
+        "width": 380,
+        "height": 132,
+        "score": 1062.0
+      }
+    },
+    {
+      "selector": "#posts",
+      "title": "Community posts",
+      "bullets": [
+        "Posts of this community only."
+      ],
+      "target": {
+        "x": 390.0,
+        "y": 337.0,
+        "width": 990.0,
+        "height": 550.0,
+        "right": 1380.0,
+        "bottom": 887.0,
+        "center_x": 885.0,
+        "center_y": 612.0
+      },
+      "avoid": {
+        "x": 390.0,
+        "y": 337.0,
+        "width": 990.0,
+        "height": 550.0,
+        "right": 1380.0,
+        "bottom": 887.0,
+        "center_x": 885.0,
+        "center_y": 612.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 695.0,
+        "y": 907.0,
+        "width": 380,
+        "height": 132,
+        "score": 570.0
+      }
+    }
+  ]
+}

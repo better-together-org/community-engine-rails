@@ -1030,10 +1030,9 @@ uk:
         actions:
           destroy_aria: Видалити спільноту
           edit_aria: Редагувати спільноту
-        create_event: Створити подію
         events:
-          create_event: Створити подію
-          draft_heading: Чернетка
+          loading: Завантаження подій...
+        map_aria: 'Карта: %{name}'
         members:
           add_member_modal:
             close: Закрити
@@ -1043,9 +1042,7 @@ uk:
             submit: Додати
             title: Додати нового учасника
         posts:
-          create_post: Створити допис
-          empty_description: Дописи, створені для цієї спільноти, з'являться тут.
-          empty_title: Поки що немає дописів
+          loading: Завантаження дописів...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1762,6 +1759,35 @@ uk:
       rsvp_saved: RSVP збережено
       rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
       save_event: Зберегти подію
+      series:
+        disposed: Серію оновлено.
+        disposition:
+          cancel_legend: Скасувати серію
+          cancel_sessions: Скасувати також майбутні дати
+          cancel_submit: Скасувати серію
+          delete_legend: Видалити серію
+          delete_sessions: Видалити також дати
+          delete_submit: Видалити серію
+          explain: У цій серії %{count} дат. Вкажіть, що станеться з ними, перш ніж
+            скасувати або видалити серію.
+          open: Скасувати або видалити цю серію
+          promote_sessions: Залишити дати окремими подіями
+        no_sessions: До цієї серії ще не додано жодної дати.
+        other_dates: Інші дати
+        part_of: Частина серії %{name}
+        part_of_run:
+          few: Частина серії з %{count} дат
+          many: Частина серії з %{count} дат
+          one: Частина серії з %{count} дати
+          other: Частина серії з %{count} дати
+        sessions_heading: Дати
+        show_all_dates:
+          few: Показати ще %{count} дати
+          many: Показати ще %{count} дат
+          one: Показати ще %{count} дату
+          other: Показати ще %{count} дати
+      show:
+        map_label: 'Карта: %{name}'
       statuses:
         cancelled: Скасовано
         confirmed: Підтверджено
@@ -3405,6 +3431,7 @@ uk:
           community: Спільнота
           published: Опубліковано
           title: Заголовок
+        toggle_filters: Фільтри
       labels:
         privacy: Конфіденційність
       list_form:
