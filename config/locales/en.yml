@@ -1757,7 +1757,8 @@ en:
           delete_legend: Delete the series
           delete_sessions: Delete the dates too
           delete_submit: Delete series
-          explain: This series has %{count} dates. Say what happens to them before cancelling or deleting it.
+          explain: This series has %{count} dates. Say what happens to them before
+            cancelling or deleting it.
           open: Cancel or delete this series
           promote_sessions: Keep the dates as separate events
         no_sessions: No dates have been added to this series yet.
