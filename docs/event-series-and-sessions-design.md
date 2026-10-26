@@ -34,7 +34,8 @@ them to standalone events. Past sessions are never changed.
 
 | Surface | Series | Session |
 | --- | --- | --- |
-| `Event.upcoming` and `Event.past`, `EventsSearchFilter`, events map | Hidden | Shown |
+| `Event.upcoming` and `Event.past`, `EventsSearchFilter`, events map | Hidden | Shown, with a "Part of <series>" mention on the card |
+| Event page | Derived date range, session cards, no RSVP, attendees, invitations, calendar or tickets | Normal page plus a banner linking to the series and its other dates |
 | JSON:API | Returned with `series: true` | Returned with read-only `series_identifier` |
 
 ## API
@@ -47,3 +48,10 @@ content publishing agreement.
   categories, description, privacy and timezone from the series where none were given. On update, links an existing
   event that is in no series and changes nothing else.
 - `series_identifier` (read only).
+
+## Cancelling or deleting from the page
+
+The series page shows a collapsed panel (`disposition_event_<id>`) with one form per action. Nothing is preselected:
+cancel needs `cancel` or `promote`, delete needs `delete` or `promote`. `EventSeriesActions` (in `EventsController`)
+sends the choice to `cancel_series!` or `destroy_series!` and redirects with a notice, or with the validation error
+when no choice was made.

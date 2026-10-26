@@ -1773,6 +1773,28 @@ fr:
       rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
         programmé.
       save_event: Enregistrer l'événement
+      series:
+        disposed: Série mise à jour.
+        disposition:
+          cancel_legend: Annuler la série
+          cancel_sessions: Annuler aussi les dates à venir
+          cancel_submit: Annuler la série
+          delete_legend: Supprimer la série
+          delete_sessions: Supprimer aussi les dates
+          delete_submit: Supprimer la série
+          explain: 'Cette série compte %{count} dates. Indiquez ce qu''il advient d''elles avant de l''annuler ou de la supprimer.'
+          open: Annuler ou supprimer cette série
+          promote_sessions: Conserver les dates comme événements distincts
+        no_sessions: 'Aucune date n''a encore été ajoutée à cette série.'
+        other_dates: Autres dates
+        part_of: Fait partie de %{name}
+        part_of_run:
+          one: 'Fait partie d''une série de %{count} date'
+          other: 'Fait partie d''une série de %{count} dates'
+        sessions_heading: Dates
+        show_all_dates:
+          one: Afficher %{count} date de plus
+          other: Afficher %{count} dates de plus
       show:
         map_label: Carte de %{name}
       statuses:

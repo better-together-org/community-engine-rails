@@ -1,0 +1,13 @@
+---
+title: Events list
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I see that dates belong to a run.
+callouts:
+- :id: mention
+  :title: Mention
+  :description: The series itself is not listed.
+accessibility_notes: Links carry their text; the panel is a labelled fieldset.
+slug: event_series_list
+device: desktop
