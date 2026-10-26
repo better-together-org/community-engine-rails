@@ -19,8 +19,9 @@ module BetterTogether
         attribute :cover_image_url
 
         # Publisher inputs: hosts (EventHosting), lifecycle status, a base64 cover image and blocks appended to the
-        # description (BlockAttachments). The write-only ones are never returned.
-        attributes :hosts, :status, :cover_image_data, :cover_image_filename, :attachment_block_ids
+        # description (BlockAttachments), and a street address for the location (Locatable::One#address_data). The
+        # write-only ones are never returned.
+        attributes :hosts, :status, :cover_image_data, :cover_image_filename, :attachment_block_ids, :address_data
 
         # Series membership (EventSeries): +series+ at creation, +session_of+ (a series identifier) at creation or on
         # an event in no series, +series_identifier+ to read it back.
@@ -103,7 +104,7 @@ module BetterTogether
         end
 
         def fetchable_fields
-          super - %i[cover_image_data cover_image_filename attachment_block_ids session_of]
+          super - %i[cover_image_data cover_image_filename attachment_block_ids session_of address_data]
         end
 
         # As in the event form, a host must be the person or a community they belong to; platform managers may

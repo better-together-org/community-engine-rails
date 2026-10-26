@@ -1,0 +1,13 @@
+---
+title: Card mark
+audience:
+- community_member
+- developer
+journey_step: 'As a visitor, I recognise a community by its logo: card mark.'
+callouts:
+- :id: mark
+  :title: Card mark
+  :description: The logo, else the profile image, over the cover.
+accessibility_notes: Decorative marks have empty alt text; names stay in text.
+slug: community_marks_card
+device: desktop

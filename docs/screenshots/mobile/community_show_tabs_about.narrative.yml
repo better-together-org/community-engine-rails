@@ -1,0 +1,16 @@
+---
+title: Community page, About tab
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I read about a community and see where it is.
+callouts:
+- :id: tabs
+  :title: Tabs
+  :description: Hash links select a tab without scrolling.
+- :id: map
+  :title: Map
+  :description: Falls back to the located place.
+accessibility_notes: Tabs use role=tablist, aria-controls and aria-labelledby pairs.
+slug: community_show_tabs_about
+device: mobile

@@ -1040,10 +1040,9 @@ es:
         actions:
           destroy_aria: Eliminar la comunidad
           edit_aria: Editar la comunidad
-        create_event: Crear un evento
         events:
-          create_event: Crear un evento
-          draft_heading: Borrador
+          loading: Cargando eventos...
+        map_aria: Mapa de %{name}
         members:
           add_member_modal:
             close: Cerrar
@@ -1053,10 +1052,7 @@ es:
             submit: Agregar
             title: Agregar nuevo miembro
         posts:
-          create_post: Crear publicación
-          empty_description: Las publicaciones creadas para esta comunidad aparecerán
-            aquí.
-          empty_title: Sin publicaciones
+          loading: Cargando publicaciones...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1766,6 +1762,8 @@ es:
       rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
         programado.
       save_event: Save Event
+      show:
+        map_label: Mapa de %{name}
       statuses:
         cancelled: Cancelado
         confirmed: Confirmado
@@ -3404,6 +3402,7 @@ es:
           community: Comunidad
           published: Publicado
           title: Título
+        toggle_filters: Filtros
       labels:
         privacy: Privacidad
       list_form:

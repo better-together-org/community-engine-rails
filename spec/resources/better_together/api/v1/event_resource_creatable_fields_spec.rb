@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::Api::V1::EventResource, '.creatable_fields' do
   let(:resource) { described_class }
 
   it 'accepts the host and cover image fields on create and update', :aggregate_failures do
-    %i[hosts status cover_image_data cover_image_filename attachment_block_ids].each do |field|
+    %i[hosts status cover_image_data cover_image_filename attachment_block_ids address_data].each do |field|
       expect(resource.creatable_fields({})).to include(field)
       expect(resource.updatable_fields({})).to include(field)
     end
@@ -15,7 +15,7 @@ RSpec.describe BetterTogether::Api::V1::EventResource, '.creatable_fields' do
   it 'never returns the write-only image or session_of fields' do
     fields = resource.new(BetterTogether::Event.new, {}).fetchable_fields
 
-    expect(fields).not_to include(:cover_image_data, :cover_image_filename, :attachment_block_ids)
+    expect(fields).not_to include(:cover_image_data, :cover_image_filename, :attachment_block_ids, :address_data)
   end
 
   describe 'naming hosts' do
