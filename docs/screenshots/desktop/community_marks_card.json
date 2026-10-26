@@ -1,0 +1,48 @@
+{
+  "name": "community_marks_card",
+  "device": "desktop",
+  "url": "/en/communities",
+  "title": "Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_marks",
+  "flow": "community_marks_card",
+  "source_spec": "./spec/docs_screenshots/better_together/community_marks_spec.rb",
+  "callouts": [
+    {
+      "selector": ".community-card-mark",
+      "title": "Card mark",
+      "bullets": [
+        "The logo, else the profile image, over the cover."
+      ],
+      "target": {
+        "x": 80.0,
+        "y": 174.0,
+        "width": 56.0,
+        "height": 56.0,
+        "right": 136.0,
+        "bottom": 230.0,
+        "center_x": 108.0,
+        "center_y": 202.0
+      },
+      "avoid": {
+        "x": 80.0,
+        "y": 174.0,
+        "width": 56.0,
+        "height": 56.0,
+        "right": 136.0,
+        "bottom": 230.0,
+        "center_x": 108.0,
+        "center_y": 202.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 156.0,
+        "y": 136.0,
+        "width": 380,
+        "height": 132,
+        "score": 1304.0
+      }
+    }
+  ]
+}
