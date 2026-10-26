@@ -3,11 +3,14 @@
     <h2 class="h5"><%= t('.filters') %></h2>
   </div>
   <div class="panel-body">
-    <% filter_path = events_path(**{ community_id: scoped_community&.slug }.compact) %>
+    <% filter_path = events_path(**index_scope_params, **{ community_id: scoped_community&.slug }.compact) %>
     <%= form_with url: filter_path, method: :get, class: 'events-filter-sidebar', local: true,
                   data: (index_frame_id ? { turbo_frame: index_frame_id } : {}) do |f| %>
       <% if scoped_community %>
         <%= f.hidden_field :community_id, value: scoped_community.slug %>
+      <% end %>
+      <% index_scope_params.each do |name, value| %>
+        <%= f.hidden_field name, value: value %>
       <% end %>
       <div class="mb-3">
         <%= f.label :q, t('.search_label'), class: 'form-label' %>
