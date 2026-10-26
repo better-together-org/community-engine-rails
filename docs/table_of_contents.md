@@ -208,6 +208,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
 - [Pull Request Evidence Standard](development/pull_request_evidence_standard.md) - Tiered evidence requirements for PR docs, diagrams, and screenshots
 - [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment
+- [Community Subtypes](development/community_subtypes.md) - Host app Community subtypes, role scoping and the Resourceful registry
 
 #### **Joatu Exchange System** - [`joatu/`](joatu/)
 *Specialized exchange/marketplace functionality*
