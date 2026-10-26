@@ -1771,22 +1771,23 @@ uk:
           delete_legend: Видалити серію
           delete_sessions: Видалити також дати
           delete_submit: Видалити серію
-          explain: У цій серії %{count} дат. Вкажіть, що станеться з ними, перш ніж скасувати або видалити серію.
+          explain: У цій серії %{count} дат. Вкажіть, що станеться з ними, перш ніж
+            скасувати або видалити серію.
           open: Скасувати або видалити цю серію
           promote_sessions: Залишити дати окремими подіями
         no_sessions: До цієї серії ще не додано жодної дати.
         other_dates: Інші дати
         part_of: Частина серії %{name}
         part_of_run:
-          one: Частина серії з %{count} дати
           few: Частина серії з %{count} дат
           many: Частина серії з %{count} дат
+          one: Частина серії з %{count} дати
           other: Частина серії з %{count} дати
         sessions_heading: Дати
         show_all_dates:
-          one: Показати ще %{count} дату
           few: Показати ще %{count} дати
           many: Показати ще %{count} дат
+          one: Показати ще %{count} дату
           other: Показати ще %{count} дати
       show:
         map_label: 'Карта: %{name}'

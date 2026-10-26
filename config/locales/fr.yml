@@ -1782,15 +1782,16 @@ fr:
           delete_legend: Supprimer la série
           delete_sessions: Supprimer aussi les dates
           delete_submit: Supprimer la série
-          explain: 'Cette série compte %{count} dates. Indiquez ce qu''il advient d''elles avant de l''annuler ou de la supprimer.'
+          explain: Cette série compte %{count} dates. Indiquez ce qu'il advient d'elles
+            avant de l'annuler ou de la supprimer.
           open: Annuler ou supprimer cette série
           promote_sessions: Conserver les dates comme événements distincts
-        no_sessions: 'Aucune date n''a encore été ajoutée à cette série.'
+        no_sessions: Aucune date n'a encore été ajoutée à cette série.
         other_dates: Autres dates
         part_of: Fait partie de %{name}
         part_of_run:
-          one: 'Fait partie d''une série de %{count} date'
-          other: 'Fait partie d''une série de %{count} dates'
+          one: Fait partie d'une série de %{count} date
+          other: Fait partie d'une série de %{count} dates
         sessions_heading: Dates
         show_all_dates:
           one: Afficher %{count} date de plus
