@@ -1,0 +1,11 @@
+{
+  "name": "event_show_map_plain",
+  "device": "desktop",
+  "url": "/en/events/1c09f367-702b-40d1-92d2-116534eef7f4",
+  "title": "Harbour Arts Night | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_show_map",
+  "flow": "map_column_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/event_show_map_spec.rb"
+}

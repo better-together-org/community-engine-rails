@@ -1030,10 +1030,9 @@ uk:
         actions:
           destroy_aria: Видалити спільноту
           edit_aria: Редагувати спільноту
-        create_event: Створити подію
         events:
-          create_event: Створити подію
-          draft_heading: Чернетка
+          loading: Завантаження подій...
+        map_aria: 'Карта: %{name}'
         members:
           add_member_modal:
             close: Закрити
@@ -1043,9 +1042,7 @@ uk:
             submit: Додати
             title: Додати нового учасника
         posts:
-          create_post: Створити допис
-          empty_description: Дописи, створені для цієї спільноти, з'являться тут.
-          empty_title: Поки що немає дописів
+          loading: Завантаження дописів...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1762,6 +1759,8 @@ uk:
       rsvp_saved: RSVP збережено
       rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
       save_event: Зберегти подію
+      show:
+        map_label: 'Карта: %{name}'
       statuses:
         cancelled: Скасовано
         confirmed: Підтверджено
@@ -3405,6 +3404,7 @@ uk:
           community: Спільнота
           published: Опубліковано
           title: Заголовок
+        toggle_filters: Фільтри
       labels:
         privacy: Конфіденційність
       list_form:

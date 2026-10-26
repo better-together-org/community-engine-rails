@@ -18,6 +18,11 @@ module BetterTogether
         # Virtual attributes for attachments
         attribute :cover_image_url
 
+        # Publisher inputs: hosts (EventHosting), lifecycle status, a base64 cover image and blocks appended to the
+        # description (BlockAttachments), and a street address for the location (Locatable::One#address_spec). The
+        # write-only ones are never returned.
+        attributes :hosts, :status, :cover_image_data, :cover_image_filename, :attachment_block_ids, :address_spec
+
         # Virtual attributes for computed fields
         attribute :local_starts_at
         attribute :local_ends_at
@@ -94,6 +99,26 @@ module BetterTogether
           @model.timezone_display
         end
 
+        def fetchable_fields
+          super - %i[cover_image_data cover_image_filename attachment_block_ids address_spec]
+        end
+
+        # As in the event form, a host must be the person or a community they belong to; platform managers may
+        # name any host.
+        def hosts=(value)
+          raise JSONAPI::Exceptions::InvalidFieldValue.new(:hosts, value) unless may_host?(value)
+
+          @model.hosts = value
+        end
+
+        def status=(value)
+          unless BetterTogether::Event.statuses.key?(value.to_s)
+            raise JSONAPI::Exceptions::InvalidFieldValue.new(:status, value)
+          end
+
+          @model.status = value
+        end
+
         # Creatable and updatable fields
         def self.creatable_fields(context)
           super - %i[slug local_starts_at local_ends_at timezone_display cover_image_url]
@@ -101,6 +126,24 @@ module BetterTogether
 
         def self.updatable_fields(context)
           creatable_fields(context)
+        end
+
+        private
+
+        def may_host?(value)
+          person = context[:current_user]&.person
+          return false unless person
+          return true if person.permitted_to?('manage_platform')
+
+          allowed = person.valid_event_host_ids.map(&:to_s)
+          parsed_host_ids(value).all? { |id| allowed.include?(id) }
+        end
+
+        def parsed_host_ids(value)
+          value = JSON.parse(value) if value.is_a?(String)
+          Array(value).map { |spec| spec.to_h.with_indifferent_access[:host_id].to_s }
+        rescue JSON::ParserError
+          []
         end
       end
     end

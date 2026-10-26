@@ -63,3 +63,29 @@
     object-fit: contain;
   }
 }
+
+// Indexes embedded in a pane (a community page tab): the pane is narrower than the viewport, so cards are sized
+// by the container (auto-fill) instead of viewport breakpoints, and card text and badges wrap inside the card.
+.frame-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+
+  > .entity-column {
+    width: auto;
+    max-width: none;
+    flex: none;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .card-body {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .badge {
+    white-space: normal;
+    text-align: start;
+  }
+}
