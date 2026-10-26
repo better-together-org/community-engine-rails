@@ -6,7 +6,7 @@ RSpec.describe BetterTogether::Api::V1::CommunityResource, '.creatable_fields' d
   let(:resource) { described_class }
   let(:fields) do
     %i[logo_data logo_filename cover_image_data cover_image_filename profile_image_data profile_image_filename
-       address_spec contact_spec]
+       address_data contact_data]
   end
 
   it 'accepts the image and contact fields on create and update', :aggregate_failures do
