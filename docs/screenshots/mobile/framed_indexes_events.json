@@ -1,0 +1,117 @@
+{
+  "name": "framed_indexes_events",
+  "device": "mobile",
+  "url": "/en/events?community_id=community-8316450e850cb6dd0b77",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_scoped_indexes",
+  "flow": "events",
+  "source_spec": "./spec/docs_screenshots/better_together/framed_indexes_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-event-btn",
+      "title": "New event",
+      "bullets": [
+        "Pre-selects the community as the host."
+      ],
+      "target": {
+        "x": 177.046875,
+        "y": 165.390625,
+        "width": 130.90625,
+        "height": 38.0,
+        "right": 307.953125,
+        "bottom": 203.390625,
+        "center_x": 242.5,
+        "center_y": 184.390625
+      },
+      "avoid": {
+        "x": 177.046875,
+        "y": 165.390625,
+        "width": 130.90625,
+        "height": 38.0,
+        "right": 307.953125,
+        "bottom": 203.390625,
+        "center_x": 242.5,
+        "center_y": 184.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 223.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 1053.609375
+      }
+    },
+    {
+      "selector": "#events-filter-toggle",
+      "title": "Filters",
+      "bullets": [
+        "Keeps ?community_id= when applied or cleared."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 380.390625,
+        "width": 95.046875,
+        "height": 38.0,
+        "right": 107.046875,
+        "bottom": 418.390625,
+        "center_x": 59.5234375,
+        "center_y": 399.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 380.390625,
+        "width": 95.046875,
+        "height": 38.0,
+        "right": 107.046875,
+        "bottom": 418.390625,
+        "center_x": 59.5234375,
+        "center_y": 399.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 438.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 838.609375
+      }
+    },
+    {
+      "selector": "#events",
+      "title": "Hosted events",
+      "bullets": [
+        "Only events this community hosts, through the policy scope."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 490.390625,
+        "width": 485.0,
+        "height": 766.609375,
+        "right": 485.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 873.6953125
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 490.390625,
+        "width": 485.0,
+        "height": 766.609375,
+        "right": 485.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 873.6953125
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 616.39,
+        "width": 270.0,
+        "height": 184
+      }
+    }
+  ]
+}

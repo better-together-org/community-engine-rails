@@ -25,6 +25,7 @@ module BetterTogether
     include Shortlinkable
     include SitemapRefreshable
     include ::Storext.model
+    include Geography::Locatable::LocationMapPoints
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',

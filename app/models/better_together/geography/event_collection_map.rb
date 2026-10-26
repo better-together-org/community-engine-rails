@@ -48,6 +48,8 @@ module BetterTogether
                 else
                   mappable_class
                 end
+        # A series sits where its sessions are and would only add a duplicate pin.
+        scope = scope.where(series: false)
         scope.joins(:location)
              .includes(location: { location: [:space, { building: :space }] })
              .order(created_at: :desc)

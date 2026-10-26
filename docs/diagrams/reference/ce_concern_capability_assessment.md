@@ -12,15 +12,20 @@ This assessment is generated from the current live class set and the concern cap
 | `ActiveStorageVariantErrorHandling` | Activestoragevarianterrorhandling | `ContentSecurity::ActiveStorage::Representations::ProxyController`, `ContentSecurity::ActiveStorage::Blobs::ProxyController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Agentic` | Agentic | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::Auth::RegistrationHelpers` | Registrationhelpers | `Api::Auth::RegistrationsController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Api::LocaleScoping` | Localescoping | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Api::OauthAuthorization` | Oauthauthorization | `Api::V1::WebhooksController`, `Api::V1::PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Attachments::Images` | Images | `Category`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Author` | Author | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Authorable` | Adds author/authorship associations and creator-aware authorship workflow. | `Page`, `Post` | Author visibility and blocked-author behavior must stay aligned with policy scopes. |
+| `Base64ImageInput` | Base64imageinput | `Content::Image`, `Content::Hero` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BetterTogetherId` | Bettertogetherid | `PersonPurgeAudit`, `PersonPlatformIntegration`, `PersonLinkedSeed`, `PersonLink`, `PersonAccessGrant`, `PersonPlatformMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `BlockAttachments` | Blockattachments | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `BlockAwareInvitation` | Blockawareinvitation | `GuestAccess`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockFilterable` | Blockfilterable | `Comment`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BotProtectedSubmissions` | Botprotectedsubmissions | `MembershipRequestsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Broadcastable` | Broadcastable | `Comment` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Categorizable` | Adds category join models and category-aware filtering. | `Page`, `Post` | Cross-subsystem joins can become noisy when categories span multiple content families. |
+| `CategoryIdentifiers` | Categoryidentifiers | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `ChecksRequiredAgreements` | Checksrequiredagreements | `CommunitiesController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Commentable` | Commentable | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Communicator` | Communicator | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -34,6 +39,9 @@ This assessment is generated from the current live class set and the concern cap
 | `CreatedRecords` | Createdrecords | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `DeviseLocales` | Deviselocales | `Users::UnlocksController`, `Users::SessionsController`, `Api::Auth::SessionsController`, `Users::RegistrationsController`, `Api::Auth::RegistrationsController`, `Users::PasswordsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `DeviseUser` | Deviseuser | `User`, `OauthUser` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `EventHosting` | Eventhosting | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `EventSeries` | Eventseries | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `EventSeriesDisposition` | Eventseriesdisposition | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Federatable` | Federatable | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `FriendlySlug` | Adds translated/human-friendly slugs for routes and lookup. | `ResourcePermission`, `User`, `Role`, `Person`, `OauthUser` | Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved. |
 | `Geography::Geospatial::One` | One | `Geography::Settlement`, `Geography::Region`, `Geography::State`, `Geography::Country`, `Geography::Continent`, `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -64,9 +72,12 @@ This assessment is generated from the current live class set and the concern cap
 | `Metrics::Shareable` | Shareable | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::Utf8UrlHandler` | Utf8urlhandler | `Metrics::PageView`, `Metrics::LinkClick` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::Viewable` | Viewable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `NamespacedSlug` | Namespacedslug | `Page` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `NotificationReadable` | Notificationreadable | `CommunitiesController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PageBlockVisibility` | Pageblockvisibility | `PagesController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PerUserThrottling` | Peruserthrottling | `PersonBlocksController`, `InvitationsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Permissible` | Adds role/resource-permission linkage for policy checks and platform governance. | `Platform`, `Community` | Permission bundling can create god-mode reads unless capabilities are split carefully. |
+| `PinnableTimestamps` | Pinnabletimestamps | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionFederationPolicy` | Platformconnectionfederationpolicy | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionOauthCredentials` | Platformconnectionoauthcredentials | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionSyncTracking` | Platformconnectionsynctracking | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |

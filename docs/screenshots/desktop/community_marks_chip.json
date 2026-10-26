@@ -1,0 +1,48 @@
+{
+  "name": "community_marks_chip",
+  "device": "desktop",
+  "url": "/en/posts",
+  "title": "Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_marks",
+  "flow": "community_marks_chip",
+  "source_spec": "./spec/docs_screenshots/better_together/community_marks_spec.rb",
+  "callouts": [
+    {
+      "selector": ".community-chip",
+      "title": "Chip mark",
+      "bullets": [
+        "The chip uses the same mark as cards and hosts."
+      ],
+      "target": {
+        "x": 418.0,
+        "y": 604.0,
+        "width": 258.171875,
+        "height": 26.0,
+        "right": 676.171875,
+        "bottom": 630.0,
+        "center_x": 547.0859375,
+        "center_y": 617.0
+      },
+      "avoid": {
+        "x": 418.0,
+        "y": 604.0,
+        "width": 258.171875,
+        "height": 26.0,
+        "right": 676.171875,
+        "bottom": 630.0,
+        "center_x": 547.0859375,
+        "center_y": 617.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 357.09,
+        "y": 650.0,
+        "width": 380,
+        "height": 132,
+        "score": 827.0
+      }
+    }
+  ]
+}

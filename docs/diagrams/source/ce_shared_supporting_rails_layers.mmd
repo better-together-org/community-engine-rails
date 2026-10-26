@@ -5,7 +5,7 @@ classDiagram
   namespace Controllers {
     class BetterTogether__Api__ApplicationController["Api::ApplicationController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__Auth__ConfirmationsController["Api::Auth::ConfirmationsController"] {
       <<Controller>>
@@ -32,131 +32,131 @@ classDiagram
     }
     class BetterTogether__Api__V1__AuthorshipsController["Api::V1::AuthorshipsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__BlocksController["Api::V1::BlocksController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__CommunitiesController["Api::V1::CommunitiesController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__ConversationsController["Api::V1::ConversationsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__EventsController["Api::V1::EventsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__GeographyContinentsController["Api::V1::GeographyContinentsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__GeographyCountriesController["Api::V1::GeographyCountriesController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__GeographyRegionsController["Api::V1::GeographyRegionsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__GeographySettlementsController["Api::V1::GeographySettlementsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__GeographyStatesController["Api::V1::GeographyStatesController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__InvitationsController["Api::V1::InvitationsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__JoatuAgreementsController["Api::V1::JoatuAgreementsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__JoatuOffersController["Api::V1::JoatuOffersController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__JoatuRequestsController["Api::V1::JoatuRequestsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__MembershipRequestsController["Api::V1::MembershipRequestsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization, BotProtectedSubmissions
+      concerns: Api::LocaleScoping, Api::OauthAuthorization, BotProtectedSubmissions
     }
     class BetterTogether__Api__V1__MessagesController["Api::V1::MessagesController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__MetricsSummaryController["Api::V1::MetricsSummaryController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization, Metrics::PlatformContext
+      concerns: Api::LocaleScoping, Api::OauthAuthorization, Metrics::PlatformContext
     }
     class BetterTogether__Api__V1__NavigationAreasController["Api::V1::NavigationAreasController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__NavigationItemsController["Api::V1::NavigationItemsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__NotificationsController["Api::V1::NotificationsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PageBlocksController["Api::V1::PageBlocksController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PagesController["Api::V1::PagesController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PeopleController["Api::V1::PeopleController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PersonBlocksController["Api::V1::PersonBlocksController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PersonCommunityMembershipsController["Api::V1::PersonCommunityMembershipsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PersonDataExportsController["Api::V1::PersonDataExportsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__PersonDeletionRequestsController["Api::V1::PersonDeletionRequestsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__RobotsController["Api::V1::RobotsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__RolesController["Api::V1::RolesController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__ShortLinksController["Api::V1::ShortLinksController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__UploadsController["Api::V1::UploadsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__WebhookEndpointsController["Api::V1::WebhookEndpointsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__ApplicationController["ApplicationController"] {
       <<Controller>>
@@ -168,7 +168,7 @@ classDiagram
     }
     class BetterTogether__CommentsController["CommentsController"] {
       <<Controller>>
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Content__PageBlocksController["Content::PageBlocksController"] {
       <<Controller>>
@@ -450,6 +450,12 @@ classDiagram
       concerns: BetterTogetherId, Commentable, Geography::Locatable::One, Geography::Mappable +1
       weak refs: owner: seeds, owner: comments, owner: comment_config, owner: map +2
     }
+    class BetterTogether__EventSeriesSession["EventSeriesSession"] {
+      <<Model>>
+      table: better_together_event_series_sessions
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__FeatureAccessGrant["FeatureAccessGrant"] {
       <<Model>>
       table: better_together_feature_access_grants
@@ -662,6 +668,8 @@ classDiagram
   BetterTogether__EmailAddress --> BetterTogether__Platform : platform
   BetterTogether__EmailAddress --> BetterTogether__ContactDetail : contact_detail
   BetterTogether__EventOccurrence --> BetterTogether__Event : event
+  BetterTogether__EventSeriesSession --> BetterTogether__Event : series
+  BetterTogether__EventSeriesSession --> BetterTogether__Event : session
   BetterTogether__FeatureAccessGrant --> BetterTogether__Platform : platform
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : person
   BetterTogether__FeatureAccessGrant --> BetterTogether__Person : granted_by_person
