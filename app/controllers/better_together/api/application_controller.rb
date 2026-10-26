@@ -20,6 +20,7 @@ module BetterTogether
       # Support both Devise JWT (scp: api_user) and Doorkeeper OAuth2 tokens.
       # devise_for :users inside namespace :api creates the :api_user Warden scope.
       before_action :authenticate_api_user!, unless: :oauth2_authenticated?
+      prepend_before_action :enforce_agent_credential, if: :oauth2_authenticated?
       around_action :with_current_agent_context
 
       # Override JSONAPI's handle_exceptions to convert Pundit errors to 404
@@ -52,8 +53,10 @@ module BetterTogether
       # Override current_user to support both Devise and Doorkeeper authentication.
       # Devise JWT uses the :api_user scope (from namespace :api + devise_for :users),
       # so fall back to current_api_user when no Doorkeeper token is present.
-      def current_user # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-        if oauth2_authenticated? && doorkeeper_token.resource_owner_id.present?
+      def current_user # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
+        if token_actor
+          token_actor.user
+        elsif oauth2_authenticated? && doorkeeper_token.resource_owner_id.present?
           @current_user ||= BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
         elsif oauth2_authenticated?
           # client_credentials flow: resolve user from application owner (Person)
@@ -61,6 +64,33 @@ module BetterTogether
         else
           current_api_user
         end
+      end
+
+      # Resolved from the bearer token only; nil for non-agent credentials.
+      def token_actor
+        return @token_actor if defined?(@token_actor)
+
+        @token_actor = oauth2_authenticated? ? BetterTogether::Api::TokenActor.from_token(doorkeeper_token) : nil
+      rescue StandardError
+        @token_actor = nil
+      end
+
+      # Fail closed: an agent credential needs a live grant and scopes that
+      # cover the request method, even where a controller declares no scopes.
+      def enforce_agent_credential
+        return unless token_actor
+
+        return render_agent_forbidden unless token_actor.active?
+        return if self.class.required_scopes_for_action(action_name).any?
+        return if token_actor.allows_http_method?(request.request_method)
+
+        render_agent_forbidden
+      end
+
+      def render_agent_forbidden
+        render json: { errors: [{ status: '403', title: 'Forbidden',
+                                  detail: 'The agent credential has no active grant covering this request.' }] },
+               status: :forbidden
       end
 
       # Pundit needs this method to get the current user for policy initialization
@@ -77,8 +107,12 @@ module BetterTogether
       end
 
       def with_current_agent_context
-        Current.person = current_user&.person
-        Current.agent = Current.person
+        if token_actor&.active?
+          token_actor.apply_to_current!
+        else
+          Current.person = current_user&.person
+          Current.agent = Current.person
+        end
         yield
       ensure
         Current.reset

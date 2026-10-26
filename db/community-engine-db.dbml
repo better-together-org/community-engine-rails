@@ -123,6 +123,29 @@ Table "better_together_addresses" {
   }
 }
 
+Table "better_together_agent_grants" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "robot_id" uuid [not null]
+  "platform_id" uuid [not null]
+  "operator_id" uuid [not null]
+  "community_id" uuid
+  "granted_by_id" uuid
+  "scopes" varchar[] [not null, default: '{}']
+  "expires_at" timestamp
+  "revoked_at" timestamp
+
+  indexes {
+    "community_id" [name: "idx_bt_agent_grants_community"]
+    "granted_by_id" [name: "idx_bt_agent_grants_granted_by"]
+    "operator_id" [name: "idx_bt_agent_grants_operator"]
+    "platform_id" [name: "idx_bt_agent_grants_platform"]
+    "robot_id" [name: "idx_bt_agent_grants_robot"]
+  }
+}
+
 Table "better_together_agreement_participants" {
   "id" uuid [pk]
   "lock_version" integer [not null, default: 0]
@@ -1834,10 +1857,16 @@ Table "better_together_oauth_applications" {
   "confidential" boolean [not null, default: true]
   "owner_id" uuid
   "platform_id" uuid
+  "robot_id" uuid
+  "community_id" uuid
+  "last_used_at" timestamp
+  "rotated_at" timestamp
 
   indexes {
+    "community_id" [name: "index_better_together_oauth_applications_on_community_id"]
     "owner_id" [name: "index_bt_oauth_apps_on_owner_id"]
     "platform_id" [name: "index_better_together_oauth_applications_on_platform_id"]
+    "robot_id" [name: "index_better_together_oauth_applications_on_robot_id"]
     "uid" [unique, name: "index_bt_oauth_apps_on_uid"]
   }
 }
@@ -3027,6 +3056,16 @@ Ref: "better_together_addresses"."contact_detail_id" > "better_together_contact_
 
 Ref: "better_together_addresses"."platform_id" > "better_together_platforms"."id"
 
+Ref: "better_together_agent_grants"."community_id" > "better_together_communities"."id"
+
+Ref: "better_together_agent_grants"."granted_by_id" > "better_together_people"."id"
+
+Ref: "better_together_agent_grants"."operator_id" > "better_together_people"."id"
+
+Ref: "better_together_agent_grants"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_agent_grants"."robot_id" > "better_together_robots"."id"
+
 Ref: "better_together_agreement_participants"."agreement_id" > "better_together_agreements"."id"
 
 Ref: "better_together_agreement_participants"."person_id" > "better_together_people"."id"
@@ -3343,9 +3382,13 @@ Ref: "better_together_oauth_access_tokens"."platform_id" > "better_together_plat
 
 Ref: "better_together_oauth_access_tokens"."resource_owner_id" > "better_together_users"."id"
 
+Ref: "better_together_oauth_applications"."community_id" > "better_together_communities"."id"
+
 Ref: "better_together_oauth_applications"."owner_id" > "better_together_people"."id"
 
 Ref: "better_together_oauth_applications"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_oauth_applications"."robot_id" > "better_together_robots"."id"
 
 Ref: "better_together_pages"."community_id" > "better_together_communities"."id"
 

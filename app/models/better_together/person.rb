@@ -110,6 +110,16 @@ module BetterTogether
              foreign_key: :owner_id,
              dependent: :destroy,
              inverse_of: :owner
+    has_many :agent_grants,
+             class_name: 'BetterTogether::AgentGrant',
+             foreign_key: :operator_id,
+             dependent: :destroy,
+             inverse_of: :operator
+    has_many :granted_agent_grants,
+             class_name: 'BetterTogether::AgentGrant',
+             foreign_key: :granted_by_id,
+             dependent: :nullify,
+             inverse_of: :granted_by
     has_many :calendars, foreign_key: :creator_id, class_name: 'BetterTogether::Calendar', dependent: :destroy
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance', dependent: :destroy
