@@ -9,6 +9,8 @@ module BetterTogether
     # CommentsHelper/ContentActionsHelper for the same reason.
     def mention_profile_path(person)
       return nil unless person.present?
+      # Set by MentionPrefetch from PersonPolicy::Scope, so membership implies PersonPolicy#show?.
+      return person_path(person) if @mention_visible_ids&.include?(person.id)
       return nil unless respond_to?(:policy) && policy(person).show?
 
       person_path(person)
