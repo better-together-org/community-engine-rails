@@ -51,8 +51,8 @@ module BetterTogether
 
         base_scope = platform_scoped(base_scope)
 
-        # Explicit directory access can still see all people within platform.
-        return base_scope if permitted_to?('list_person')
+        # Explicit directory access sees every person on the platform, except blocks in either direction.
+        return base_scope.where.not(id: blocked_person_ids) if agent && permitted_to?('list_person')
 
         # Unauthenticated users can only see public profiles
         return base_scope.privacy_public unless agent
@@ -81,17 +81,20 @@ module BetterTogether
         # Add people with direct interactions (blocked users, conversation participants, etc.)
         query = query.or(people_table[:id].in(interaction_person_ids)) if interaction_person_ids.any?
 
-        # Get IDs of people the current user has blocked or been blocked by
-        blocked_ids = agent.person_blocks.pluck(:blocked_id)
-        blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id)
-        excluded_ids = blocked_ids + blocker_ids
-
+        excluded_ids = blocked_person_ids
         query = query.and(people_table[:id].not_in(excluded_ids)) if excluded_ids.any?
 
         base_scope.where(query).distinct
       end
 
       private
+
+      # IDs of people the agent has blocked or who have blocked the agent.
+      def blocked_person_ids
+        blocked_ids = agent.person_blocks.pluck(:blocked_id)
+        blocker_ids = BetterTogether::PersonBlock.where(blocked_id: agent.id).pluck(:blocker_id)
+        blocked_ids + blocker_ids
+      end
 
       def shared_community_member_ids # rubocop:todo Metrics/MethodLength
         return @shared_community_member_ids if defined?(@shared_community_member_ids)
