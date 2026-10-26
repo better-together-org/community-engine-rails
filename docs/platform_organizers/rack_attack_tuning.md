@@ -45,7 +45,7 @@ Authentication and identity endpoints:
 - `api_logins/ip`: 5 POSTs per 20 seconds to `/api/auth/sign_in`
 - `api_registrations/ip`: 3 POSTs per minute to `/api/auth/sign_up`
 - `api_password_resets/ip`: 5 POSTs per minute to `/api/auth/password`
-- `oauth/token/ip`: 10 POSTs per minute to `/oauth/token`
+- `oauth/token/ip`: 10 POSTs per minute to `/api/oauth/token`
 - `oauth/token/client_id`: 10 POSTs per minute per OAuth `client_id`
 
 ## Current blocklists
@@ -98,3 +98,22 @@ This repo contains the Rack::Attack policy itself, but not a full operational da
 - [Security Protection System](../developers/systems/security_protection_system.md)
 - [External Services Configuration](../production/external-services-to-configure.md)
 - [Rack Attack rate limiting flow](../diagrams/source/rack_attack_rate_limiting_flow.mmd)
+
+## Per-account throttles
+
+Abuse-prone actions are also limited per signed-in account, not just per IP, by
+`BetterTogether::PerUserThrottling`. It runs after authentication and counts through the
+Rack::Attack cache store (so `RACK_ATTACK_REDIS_URL` makes the limits shared across processes).
+An over-limit request gets `503` with `Retry-After`, matching the IP throttles.
+
+| Name | Action | Default |
+|------|--------|---------|
+| `CONVERSATION_CREATE` | start a conversation | 10 per hour |
+| `MESSAGE_SEND` | send a message | 30 per minute |
+| `REPORT_CREATE` | file a safety report | 10 per hour |
+| `BLOCK_CREATE` | block a person | 20 per hour |
+| `INVITATION_CREATE` | send a community, event or platform invitation | 30 per hour |
+| `COMMENT_CREATE` | post a comment | 20 per minute |
+
+Tune each with `BTS_THROTTLE_<NAME>_LIMIT` and `BTS_THROTTLE_<NAME>_PERIOD` (seconds). A limit of `0`
+disables that throttle.

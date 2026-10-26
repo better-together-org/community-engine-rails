@@ -4,6 +4,7 @@ module BetterTogether
   # Used to invite someone to something (platform, community, etc)
   class Invitation < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Creatable
+    include BlockAwareInvitation
 
     has_secure_token :token
 

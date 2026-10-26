@@ -1,0 +1,11 @@
+{
+  "name": "event_series_list_plain",
+  "device": "mobile",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_series",
+  "flow": "list_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb"
+}

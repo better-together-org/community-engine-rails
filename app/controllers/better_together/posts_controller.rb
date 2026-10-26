@@ -6,6 +6,7 @@ module BetterTogether
   class PostsController < FriendlyResourceController
     include PostsIndexPreload
     include ChecksRequiredAgreements
+    include FramedIndex
 
     # Prepended so this runs before the inherited :authorize_resource
     # before_action — otherwise Pundit's plain 404 (via authorize_resource's

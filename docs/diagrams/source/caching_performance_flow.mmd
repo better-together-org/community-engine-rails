@@ -83,15 +83,8 @@ flowchart TD
     BG_JOBS -->|Yes| QUEUE_JOBS[Queue Sidekiq Jobs]
     BG_JOBS -->|No| SEND_RESPONSE[Send HTTP Response]
     
-    QUEUE_JOBS --> SEARCH_INDEX[Search Index Updates]
     QUEUE_JOBS --> EMAIL_QUEUE[Email Notifications]  
     QUEUE_JOBS --> METRICS_QUEUE[Metrics Processing]
-    
-    %% Search Indexing Subsystem
-    SEARCH_INDEX --> REDIS_QUEUE[Redis Job Queue]
-    REDIS_QUEUE --> SIDEKIQ_WORKER[Sidekiq Worker]
-    SIDEKIQ_WORKER --> ES_UPDATE[Update Elasticsearch Index]
-    ES_UPDATE --> INDEX_COMPLETE[Indexing Complete]
     
     %% Cache Invalidation Layer
     SEND_RESPONSE --> CACHE_INVALID{Cache Invalidation Needed?}
@@ -109,9 +102,9 @@ flowchart TD
     
     SEARCH_CACHE_CHECK --> SEARCH_HIT{Search Cache Hit?}
     SEARCH_HIT -->|Hit| CACHED_SEARCH[Return Cached Results]
-    SEARCH_HIT -->|Miss| ES_QUERY[Elasticsearch Query]
+    SEARCH_HIT -->|Miss| ES_QUERY[pg_search Query]
     
-    ES_QUERY --> ES_RESULTS[Process Search Results]
+    ES_QUERY --> ES_RESULTS[Policy-scope Search Results]
     ES_RESULTS --> CACHE_SEARCH[Cache Search Results]
     CACHE_SEARCH --> CACHED_SEARCH
     CACHED_SEARCH --> REQUEST_COMPLETE

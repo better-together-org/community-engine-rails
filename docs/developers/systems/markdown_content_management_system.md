@@ -34,7 +34,7 @@ The Markdown Content Management system provides a flexible, dual-source content 
 - **BetterTogether::MarkdownRendererService**: Redcarpet wrapper for secure markdown→HTML conversion
 - **GitHub-flavored markdown**: Tables, code blocks, strikethrough, superscript, footnotes
 - **Security features**: External link targeting (`target="_blank"`), XSS prevention, safe HTML rendering
-- **Search support**: Plain-text rendering via HTML tag stripping for Elasticsearch
+- **Search support**: Plain-text rendering via HTML tag stripping for the search payload
 
 #### 3. Authorization Layer
 - **BetterTogether::Content::MarkdownPolicy**: Pundit policy restricting creation/editing to platform managers
@@ -700,7 +700,7 @@ Response: 302 Redirect with flash message
    ```
 
 2. **Async rendering**: Pre-render HTML for large documents in background
-3. **Search indexing**: Background job to update Elasticsearch after content changes
+3. **Search indexing**: only relevant with an index-backed search backend (the optional Elasticsearch extension gem); the default `pg_search` backend queries live tables
 
 ## Security Considerations
 
@@ -964,7 +964,7 @@ end
 - **BetterTogether::DocumentationBuilder**: Creates Markdown blocks for .md files in docs/ directory
 - **BetterTogether::Page**: Contains Markdown blocks as primary content
 - **BetterTogether::NavigationItem**: May contain Markdown blocks for item descriptions
-- **Search/Elasticsearch**: Uses `plain_text` method for full-text indexing
+- **Search**: Uses `plain_text` method for the plain-text search payload
 - **Platform Organizers**: Edit markdown content via admin interfaces
 - **End Users**: View rendered markdown content on public pages
 

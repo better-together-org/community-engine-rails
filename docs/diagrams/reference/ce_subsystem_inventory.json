@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-11T21:04:53Z",
+  "generated_at": "2026-10-26T00:05:21Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -156,6 +156,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAwareInvitation",
             "BetterTogether::Seedable"
           ],
           "concern_notes": [],
@@ -359,6 +360,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAwareInvitation",
             "BetterTogether::Creatable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Seedable"
@@ -2441,7 +2443,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -2497,7 +2500,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -2718,6 +2722,16 @@
           ]
         },
         {
+          "name": "BetterTogether::BlockAwareInvitation",
+          "label": "BlockAwareInvitation",
+          "capability": "Blockawareinvitation",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "GuestAccess",
+            "Invitation"
+          ]
+        },
+        {
           "name": "BetterTogether::Communicator",
           "label": "Communicator",
           "capability": "Communicator",
@@ -2925,6 +2939,16 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Person"
+          ]
+        },
+        {
+          "name": "BetterTogether::PerUserThrottling",
+          "label": "PerUserThrottling",
+          "capability": "Peruserthrottling",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PersonBlocksController",
+            "InvitationsController"
           ]
         },
         {
@@ -4182,6 +4206,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAwareInvitation",
             "BetterTogether::Creatable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Seedable"
@@ -4931,6 +4956,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAwareInvitation",
             "BetterTogether::Seedable"
           ],
           "concern_notes": [],
@@ -5630,7 +5656,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -5783,6 +5810,16 @@
             "NavigationItem",
             "NavigationArea",
             "Community",
+            "CommunityInvitation"
+          ]
+        },
+        {
+          "name": "BetterTogether::BlockAwareInvitation",
+          "label": "BlockAwareInvitation",
+          "capability": "Blockawareinvitation",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PlatformInvitation",
             "CommunityInvitation"
           ]
         },
@@ -6007,6 +6044,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "CommunitiesController"
+          ]
+        },
+        {
+          "name": "BetterTogether::PerUserThrottling",
+          "label": "PerUserThrottling",
+          "capability": "Peruserthrottling",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PlatformInvitationsController"
           ]
         },
         {
@@ -7765,6 +7811,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -7785,7 +7835,7 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
-            "InclusionValidator: protected (in=[true, false])"
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -7876,6 +7926,8 @@
             "BetterTogether::Metrics::Viewable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -9273,6 +9325,7 @@
             "heading"
           ],
           "concerns": [
+            "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Content::BlockAttributes",
             "BetterTogether::Creatable",
@@ -9689,6 +9742,7 @@
             "caption"
           ],
           "concerns": [
+            "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Content::BlockAttributes",
             "BetterTogether::Creatable",
@@ -11527,6 +11581,7 @@
             "BetterTogether::Authorable",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Categorizable",
+            "BetterTogether::CategoryIdentifiers",
             "BetterTogether::CommunityAssignable",
             "BetterTogether::Creatable",
             "BetterTogether::Federatable",
@@ -11534,6 +11589,7 @@
             "BetterTogether::Identifier",
             "BetterTogether::Metrics::Shareable",
             "BetterTogether::Metrics::Viewable",
+            "BetterTogether::NamespacedSlug",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -11826,8 +11882,10 @@
             "BetterTogether::Attachments::Images",
             "BetterTogether::Authorable",
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAttachments",
             "BetterTogether::BlockFilterable",
             "BetterTogether::Categorizable",
+            "BetterTogether::CategoryIdentifiers",
             "BetterTogether::Commentable",
             "BetterTogether::CommunityAssignable",
             "BetterTogether::Creatable",
@@ -11836,6 +11894,7 @@
             "BetterTogether::Identifier",
             "BetterTogether::Metrics::Shareable",
             "BetterTogether::Metrics::Viewable",
+            "BetterTogether::PinnableTimestamps",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -12177,6 +12236,16 @@
           ]
         },
         {
+          "name": "BetterTogether::Base64ImageInput",
+          "label": "Base64ImageInput",
+          "capability": "Base64imageinput",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Content::Image",
+            "Content::Hero"
+          ]
+        },
+        {
           "name": "BetterTogether::BetterTogetherId",
           "label": "BetterTogetherId",
           "capability": "Bettertogetherid",
@@ -12218,6 +12287,15 @@
           ]
         },
         {
+          "name": "BetterTogether::BlockAttachments",
+          "label": "BlockAttachments",
+          "capability": "Blockattachments",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Post"
+          ]
+        },
+        {
           "name": "BetterTogether::BlockFilterable",
           "label": "BlockFilterable",
           "capability": "Blockfilterable",
@@ -12241,6 +12319,16 @@
           "label": "Categorizable",
           "capability": "Adds category join models and category-aware filtering.",
           "risk": "Cross-subsystem joins can become noisy when categories span multiple content families.",
+          "included_by": [
+            "Page",
+            "Post"
+          ]
+        },
+        {
+          "name": "BetterTogether::CategoryIdentifiers",
+          "label": "CategoryIdentifiers",
+          "capability": "Categoryidentifiers",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Page",
             "Post"
@@ -12479,12 +12567,30 @@
           ]
         },
         {
+          "name": "BetterTogether::NamespacedSlug",
+          "label": "NamespacedSlug",
+          "capability": "Namespacedslug",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Page"
+          ]
+        },
+        {
           "name": "BetterTogether::PageBlockVisibility",
           "label": "PageBlockVisibility",
           "capability": "Pageblockvisibility",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "PagesController"
+          ]
+        },
+        {
+          "name": "BetterTogether::PinnableTimestamps",
+          "label": "PinnableTimestamps",
+          "capability": "Pinnabletimestamps",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Post"
           ]
         },
         {
@@ -12552,6 +12658,7 @@
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
             "Upload",
+            "Category",
             "CallForInterest",
             "Page",
             "Content::Block",
@@ -12586,6 +12693,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Upload",
+            "Category",
             "CallForInterest",
             "Page",
             "Content::Block",
@@ -13779,6 +13887,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -13790,8 +13902,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -13874,6 +13986,8 @@
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -13908,6 +14022,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -13919,8 +14037,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -14003,6 +14121,8 @@
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -14785,6 +14905,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -14800,8 +14924,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -14897,6 +15021,8 @@
             "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -14985,6 +15111,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -14996,8 +15126,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15100,6 +15230,8 @@
             "BetterTogether::Geography::Placeable",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -15238,6 +15370,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "protected",
               "boolean"
             ]
@@ -15249,8 +15385,8 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "UniquenessValidator: slug",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
-            "InclusionValidator: protected (in=[true, false])",
-            "PresenceValidator: name"
+            "PresenceValidator: privacy",
+            "InclusionValidator: privacy (in=[\"public\", \"community\", \"private\"])"
           ],
           "belongs_to": [
             {
@@ -15339,6 +15475,8 @@
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Identifier",
             "BetterTogether::PrimaryCommunity",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Seedable",
             "BetterTogether::Translatable"
@@ -15679,6 +15817,11 @@
           "capability": "Adds privacy enum helpers and shared visibility semantics.",
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
+            "Geography::Settlement",
+            "Geography::Region",
+            "Geography::State",
+            "Geography::Country",
+            "Geography::Continent",
             "Geography::Map",
             "Place",
             "Address",
@@ -15694,6 +15837,11 @@
           "capability": "Privacyceilingvalidatable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Geography::Settlement",
+            "Geography::Region",
+            "Geography::State",
+            "Geography::Country",
+            "Geography::Continent",
             "Geography::Map",
             "Place",
             "Address",
@@ -16451,9 +16599,14 @@
           ],
           "concerns": [
             "BetterTogether::Attachments::Images",
+            "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAttachments",
             "BetterTogether::Categorizable",
             "BetterTogether::Creatable",
+            "BetterTogether::EventHosting",
+            "BetterTogether::EventSeries",
+            "BetterTogether::EventSeriesDisposition",
             "BetterTogether::Federatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Geography::Geospatial::One",
@@ -16614,6 +16767,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -16634,7 +16791,7 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
-            "InclusionValidator: protected (in=[true, false])"
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -16725,6 +16882,8 @@
             "BetterTogether::Metrics::Viewable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -16920,6 +17079,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::BlockAwareInvitation",
             "BetterTogether::Creatable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Seedable"
@@ -17053,6 +17213,15 @@
           ]
         },
         {
+          "name": "BetterTogether::Base64ImageInput",
+          "label": "Base64ImageInput",
+          "capability": "Base64imageinput",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
+          ]
+        },
+        {
           "name": "BetterTogether::BetterTogetherId",
           "label": "BetterTogetherId",
           "capability": "Bettertogetherid",
@@ -17066,6 +17235,24 @@
             "Event",
             "EventInvitation",
             "EventCategory"
+          ]
+        },
+        {
+          "name": "BetterTogether::BlockAttachments",
+          "label": "BlockAttachments",
+          "capability": "Blockattachments",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::BlockAwareInvitation",
+          "label": "BlockAwareInvitation",
+          "capability": "Blockawareinvitation",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventInvitation"
           ]
         },
         {
@@ -17095,6 +17282,33 @@
             "Calendar",
             "Event",
             "EventInvitation"
+          ]
+        },
+        {
+          "name": "BetterTogether::EventHosting",
+          "label": "EventHosting",
+          "capability": "Eventhosting",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::EventSeries",
+          "label": "EventSeries",
+          "capability": "Eventseries",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::EventSeriesDisposition",
+          "label": "EventSeriesDisposition",
+          "capability": "Eventseriesdisposition",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
           ]
         },
         {
@@ -17262,7 +17476,8 @@
           "risk": "Shared helpers can over-broaden access when “community” or admin semantics drift.",
           "included_by": [
             "Calendar",
-            "Event"
+            "Event",
+            "EventCategory"
           ]
         },
         {
@@ -17272,7 +17487,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Calendar",
-            "Event"
+            "Event",
+            "EventCategory"
           ]
         },
         {
@@ -17484,6 +17700,18 @@
         }
       ],
       "inbound_references": [
+        {
+          "from": "BetterTogether::EventSeriesSession",
+          "to": "BetterTogether::Event",
+          "label": "series (series_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::EventSeriesSession",
+          "to": "BetterTogether::Event",
+          "label": "session (session_id)",
+          "source_subsystem": "shared_supporting"
+        },
         {
           "from": "BetterTogether::EventOccurrence",
           "to": "BetterTogether::Event",
@@ -18287,7 +18515,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -18301,7 +18530,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -18316,7 +18546,8 @@
             "BetterTogether::BotProtectedSubmissions",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -18428,6 +18659,17 @@
           "capability": "Notificationreadable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "ConversationsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::PerUserThrottling",
+          "label": "PerUserThrottling",
+          "capability": "Peruserthrottling",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ReportsController",
+            "MessagesController",
             "ConversationsController"
           ]
         },
@@ -19786,6 +20028,10 @@
               "string"
             ],
             [
+              "privacy",
+              "string"
+            ],
+            [
               "type",
               "string"
             ],
@@ -19806,7 +20052,7 @@
             "UniquenessValidator: slug (unless=dynamic)",
             "PresenceValidator: identifier (unless=:skip_validate_identifier?)",
             "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)",
-            "InclusionValidator: protected (in=[true, false])"
+            "PresenceValidator: privacy"
           ],
           "belongs_to": [
             {
@@ -19897,6 +20143,8 @@
             "BetterTogether::Metrics::Viewable",
             "BetterTogether::PlatformScoped",
             "BetterTogether::Positioned",
+            "BetterTogether::Privacy",
+            "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
@@ -22375,7 +22623,8 @@
             "Joatu::PersonLinkRequest",
             "Joatu::PersonAccessGrantRequest",
             "Joatu::MembershipRequest",
-            "Joatu::ConnectionRequest"
+            "Joatu::ConnectionRequest",
+            "Joatu::Category"
           ]
         },
         {
@@ -22395,7 +22644,8 @@
             "Joatu::PersonLinkRequest",
             "Joatu::PersonAccessGrantRequest",
             "Joatu::MembershipRequest",
-            "Joatu::ConnectionRequest"
+            "Joatu::ConnectionRequest",
+            "Joatu::Category"
           ]
         },
         {
@@ -24358,6 +24608,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -24368,6 +24619,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -24387,6 +24639,16 @@
         }
       ],
       "concerns_inventory": [
+        {
+          "name": "BetterTogether::Api::LocaleScoping",
+          "label": "Api::LocaleScoping",
+          "capability": "Localescoping",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Api::V1::WebhooksController",
+            "Api::V1::PostsController"
+          ]
+        },
         {
           "name": "BetterTogether::Api::OauthAuthorization",
           "label": "Api::OauthAuthorization",
@@ -25855,6 +26117,73 @@
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
           "shared_table_group_size": 21
+        },
+        {
+          "name": "BetterTogether::EventSeriesSession",
+          "label": "EventSeriesSession",
+          "source_path": "app/models/better_together/event_series_session.rb",
+          "table_name": "better_together_event_series_sessions",
+          "columns": [
+            [
+              "series_id",
+              "uuid FK"
+            ],
+            [
+              "session_id",
+              "uuid FK"
+            ],
+            [
+              "position",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "UniquenessValidator: session_id"
+          ],
+          "belongs_to": [
+            {
+              "name": "series",
+              "foreign_key": "series_id",
+              "target": "BetterTogether::Event",
+              "optional": false
+            },
+            {
+              "name": "session",
+              "foreign_key": "session_id",
+              "target": "BetterTogether::Event",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "series",
+              "foreign_key": "series_id",
+              "target": "BetterTogether::Event",
+              "optional": false,
+              "target_subsystem": "events_calendar"
+            },
+            {
+              "name": "session",
+              "foreign_key": "session_id",
+              "target": "BetterTogether::Event",
+              "optional": false,
+              "target_subsystem": "events_calendar"
+            }
+          ]
         },
         {
           "name": "BetterTogether::EventUpdateNotifier",
@@ -29520,6 +29849,7 @@
           "superclass": "JSONAPI::ResourceController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29604,6 +29934,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29614,6 +29945,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29624,6 +29956,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29634,6 +29967,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29644,6 +29978,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29654,6 +29989,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29664,6 +30000,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29674,6 +30011,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29684,6 +30022,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29694,6 +30033,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29704,6 +30044,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29714,6 +30055,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29724,6 +30066,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29734,6 +30077,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29744,6 +30088,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization",
             "BetterTogether::BotProtectedSubmissions"
           ]
@@ -29755,6 +30100,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29765,6 +30111,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization",
             "BetterTogether::Metrics::PlatformContext"
           ]
@@ -29776,6 +30123,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29786,6 +30134,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29796,6 +30145,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29806,6 +30156,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29816,6 +30167,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29826,6 +30178,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29836,6 +30189,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29846,6 +30200,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29856,6 +30211,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29866,6 +30222,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29876,6 +30233,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29886,6 +30244,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29896,6 +30255,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29906,6 +30266,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29916,6 +30277,7 @@
           "superclass": "BetterTogether::Api::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::Api::LocaleScoping",
             "BetterTogether::Api::OauthAuthorization"
           ]
         },
@@ -29957,7 +30319,8 @@
             "BetterTogether::ChecksRequiredAgreements",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::PerUserThrottling"
           ]
         },
         {
@@ -30689,6 +31052,47 @@
           ]
         },
         {
+          "name": "BetterTogether::Api::LocaleScoping",
+          "label": "Api::LocaleScoping",
+          "capability": "Localescoping",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Api::ApplicationController",
+            "Api::V1::WebhookEndpointsController",
+            "Api::V1::UploadsController",
+            "Api::V1::ShortLinksController",
+            "Api::V1::RolesController",
+            "Api::V1::RobotsController",
+            "Api::V1::PersonDeletionRequestsController",
+            "Api::V1::PersonDataExportsController",
+            "Api::V1::PersonCommunityMembershipsController",
+            "Api::V1::PersonBlocksController",
+            "Api::V1::PeopleController",
+            "Api::V1::PagesController",
+            "Api::V1::PageBlocksController",
+            "Api::V1::NotificationsController",
+            "Api::V1::NavigationItemsController",
+            "Api::V1::NavigationAreasController",
+            "Api::V1::MetricsSummaryController",
+            "Api::V1::MessagesController",
+            "Api::V1::MembershipRequestsController",
+            "Api::V1::JoatuRequestsController",
+            "Api::V1::JoatuOffersController",
+            "Api::V1::JoatuAgreementsController",
+            "Api::V1::InvitationsController",
+            "Api::V1::GeographyStatesController",
+            "Api::V1::GeographySettlementsController",
+            "Api::V1::GeographyRegionsController",
+            "Api::V1::GeographyCountriesController",
+            "Api::V1::GeographyContinentsController",
+            "Api::V1::EventsController",
+            "Api::V1::ConversationsController",
+            "Api::V1::CommunitiesController",
+            "Api::V1::BlocksController",
+            "Api::V1::AuthorshipsController"
+          ]
+        },
+        {
           "name": "BetterTogether::Api::OauthAuthorization",
           "label": "Api::OauthAuthorization",
           "capability": "Oauthauthorization",
@@ -30737,6 +31141,7 @@
           "included_by": [
             "Infrastructure::BuildingConnection",
             "FederationContentGrant",
+            "EventSeriesSession",
             "EventOccurrence",
             "CommentConfig",
             "Infrastructure::Room",
@@ -31154,6 +31559,15 @@
           ]
         },
         {
+          "name": "BetterTogether::PerUserThrottling",
+          "label": "PerUserThrottling",
+          "capability": "Peruserthrottling",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "CommentsController"
+          ]
+        },
+        {
           "name": "BetterTogether::PlatformScoped",
           "label": "PlatformScoped",
           "capability": "Platformscoped",
@@ -31251,6 +31665,7 @@
           "included_by": [
             "Infrastructure::BuildingConnection",
             "FederationContentGrant",
+            "EventSeriesSession",
             "EventOccurrence",
             "CommentConfig",
             "Infrastructure::Room",
@@ -31428,6 +31843,18 @@
           "to": "BetterTogether::PlatformConnection",
           "label": "platform_connection (platform_connection_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EventSeriesSession",
+          "to": "BetterTogether::Event",
+          "label": "series (series_id)",
+          "target_subsystem": "events_calendar"
+        },
+        {
+          "from": "BetterTogether::EventSeriesSession",
+          "to": "BetterTogether::Event",
+          "label": "session (session_id)",
+          "target_subsystem": "events_calendar"
         },
         {
           "from": "BetterTogether::EventOccurrence",

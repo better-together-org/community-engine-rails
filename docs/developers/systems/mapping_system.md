@@ -180,6 +180,90 @@ export default class extends Controller {
 <% end %>
 ```
 
+## Clustering, typed pins, legend and boundary
+
+The shared map controller groups nearby points with `leaflet.markercluster` (vendored in `vendor/javascript`, MIT,
+version 1.5.3, loaded through the importmap; `leaflet-extensible.js` gives it a plain `L` to attach to). Clustering is on
+by default and costs nothing for a handful of points. Turn it off with `cluster: false` on the partial (the coordinate
+form does, because its marker is edited, not browsed). If the plugin ever fails to load, the controller falls back to a
+plain layer.
+
+A point may carry extra keys, all optional and ignored by anything that does not know them:
+
+| Key | Effect |
+|---|---|
+| `type` | the point's type; clusters show a pie of the types they contain |
+| `color`, `icon` | draws a coloured round pin with a Font Awesome icon instead of the default pin |
+
+`types: [{ key:, label:, color: }]` on the partial adds a legend with one checkbox per type present; unchecking hides
+that type and the clusters recompute. `boundary:` takes GeoJSON and draws it as an outline, and the map fits it with the
+points. Subclassing the controller? Override `createMarkerLayer()`, `buildMarker(point)` or `clusterIcon(cluster)`.
+
+## Data layers and attribution
+
+Map data that needs a credit (boundaries, overlays, third-party feeds) is drawn as a `BetterTogether::Geography::MapLayer`. The layer carries its attribution, so every map that draws it credits the source in Leaflet's attribution control, and only while the layer is on the map. There is no per-map step.
+
+```ruby
+# config/initializers/map_layers.rb in a host app: register once
+Rails.application.config.to_prepare do
+  BetterTogether::Geography::MapLayer.register(
+    :electoral_districts, label: 'Electoral districts', url: '/geo/districts.geojson',
+    attribution: 'Electoral Boundaries Commission', attribution_url: 'https://example.org/data',
+    licence: 'Open Government Licence', licence_url: 'https://example.org/ogl'
+  )
+end
+
+# a mappable offers layers to every map it backs
+def map_layers = [:electoral_districts]
+
+# or per render: layers: [:electoral_districts], boundary_attribution: { attribution: '...', attribution_url: '...' }
+```
+
+- `geojson:` embeds the data; `url:` loads it when the map connects, so pages stay small. A failed load fires `map:layererror` and the map keeps working.
+- `Map#layers` (from `mappable.map_layers`) and the partial's `layers:` local are merged by key. Unknown keys are skipped.
+- Attribution text is escaped and links must be http(s); `boundary_attribution:` credits the existing `boundary:` outline.
+
+![Layer attribution flow](../../diagrams/exports/png/map_layer_attribution_flow.png)
+
+## Geolocate Me
+
+The button asks the browser for the user's position, centres the map there at zoom 13 and marks it with a dot and an
+accuracy circle. Behaviour (covered by `spec/features/better_together/map_geolocation_spec.rb`):
+
+1. First attempt: `enableHighAccuracy: false, timeout: 15000, maximumAge: 300000`. A coarse or cached fix is plenty to
+   centre a map, and browsers count the time the user spends on the permission prompt towards the timeout, so this
+   attempt is deliberately patient.
+2. If that fails with a timeout or "position unavailable", one more attempt with `enableHighAccuracy: true,
+   timeout: 30000, maximumAge: 0`. A permission denial is final, with no retry.
+3. No `alert()`. The result is a state on the element, `data-geolocation-state` (`idle`, `locating`, `located`,
+   `denied`, `unavailable`, `timeout`, `unsupported`), a translated message in a polite live region, and `aria-busy` on
+   the button while locating. A second tap while locating is ignored; after an error the button can be used again.
+4. Events on the map element: `map:located` (`detail: { latlng, accuracy }`) and `map:locationerror`
+   (`detail: { state, code }`).
+
+The old implementation asked for high accuracy with a 5 second timeout and no cache, and showed "Geolocation failed" for
+every error kind, so a slow first fix, or a user taking more than 5 seconds over the permission prompt, looked like
+a failure even though location was allowed.
+
+Testing: `MapFeatureHelpers` has `grant_browser_geolocation` and `deny_browser_geolocation` (real browser permission and
+position through the Chrome DevTools Protocol), `script_browser_geolocation` (a scripted sequence of positions, errors and
+never-answering calls that records each call's options), `remove_browser_geolocation`, and `record_browser_alerts`.
+
+## Rendering a map: the partial
+
+`render 'better_together/shared/map', map:` takes `enable_popups`, `use_label_as_popup`, `cluster`, `types`, `boundary`,
+`extra_controllers` (more Stimulus controllers on the same element) and `attributes` (extra HTML attributes, full data
+attribute names as keys, for example `'data-better_together--space-fields-target' => 'map'`). The button labels and
+geolocation messages are translated (`better_together.shared.map`). Do not copy the partial to add behaviour: use these
+locals.
+
+## Collection maps show only what the viewer may see
+
+`EventCollectionMap` and `CommunityCollectionMap` accept `visible_scope=`, a policy scope used as an id subquery.
+`MapsHelper#events_map` and `#communities_map` set it from `policy_scope`. Without it a collection map includes every
+record with a location, so anything rendering one for a viewer must set it. Popup HTML built from community and building
+names and addresses is HTML escaped.
+
 ## Configuration Options
 
 ### Environment Variables

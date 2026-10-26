@@ -1,0 +1,83 @@
+{
+  "name": "framed_indexes_posts",
+  "device": "mobile",
+  "url": "/en/posts?community_id=community-f2e3e2342a8989667cac",
+  "title": "Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_scoped_indexes",
+  "flow": "posts",
+  "source_spec": "./spec/docs_screenshots/better_together/framed_indexes_spec.rb",
+  "callouts": [
+    {
+      "selector": "#posts-filter-toggle",
+      "title": "Filters",
+      "bullets": [
+        "A collapsible filter, as on the events index."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 380.390625,
+        "width": 95.046875,
+        "height": 38.0,
+        "right": 107.046875,
+        "bottom": 418.390625,
+        "center_x": 59.5234375,
+        "center_y": 399.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 380.390625,
+        "width": 95.046875,
+        "height": 38.0,
+        "right": 107.046875,
+        "bottom": 418.390625,
+        "center_x": 59.5234375,
+        "center_y": 399.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 438.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 838.609375
+      }
+    },
+    {
+      "selector": "#posts",
+      "title": "Community posts",
+      "bullets": [
+        "Posts of this community only."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 490.390625,
+        "width": 485.0,
+        "height": 543.328125,
+        "right": 485.0,
+        "bottom": 1033.71875,
+        "center_x": 242.5,
+        "center_y": 762.0546875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 490.390625,
+        "width": 485.0,
+        "height": 543.328125,
+        "right": 485.0,
+        "bottom": 1033.71875,
+        "center_x": 242.5,
+        "center_y": 762.0546875
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 1053.72,
+        "width": 270.0,
+        "height": 132,
+        "score": 223.28125
+      }
+    }
+  ]
+}

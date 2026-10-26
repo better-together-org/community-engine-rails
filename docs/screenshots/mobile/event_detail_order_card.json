@@ -1,0 +1,49 @@
+{
+  "name": "event_detail_order_card",
+  "device": "mobile",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_detail_order",
+  "flow": "event_detail_order_card",
+  "source_spec": "./spec/docs_screenshots/better_together/event_detail_order_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event_8dcae710-d8f9-448b-a35c-50d934eb5112 .event-location",
+      "title": "Date and time, then location",
+      "bullets": [
+        "Date and time first.",
+        "Location below it."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 929.71875,
+        "width": 429.0,
+        "height": 24.0,
+        "right": 457.0,
+        "bottom": 953.71875,
+        "center_x": 242.5,
+        "center_y": 941.71875
+      },
+      "avoid": {
+        "x": 28.0,
+        "y": 929.71875,
+        "width": 429.0,
+        "height": 24.0,
+        "right": 457.0,
+        "bottom": 953.71875,
+        "center_x": 242.5,
+        "center_y": 941.71875
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 719.72,
+        "width": 270.0,
+        "height": 190,
+        "score": 929.71875
+      }
+    }
+  ]
+}

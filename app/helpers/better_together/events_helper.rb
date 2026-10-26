@@ -12,6 +12,16 @@ module BetterTogether
       event.event_hosts.map { |eh| eh.host if policy(eh.host).show? }.compact
     end
 
+    # Cache key for the event card fragment. The card draws each host's name and avatar, so the key carries the
+    # hosts' versions: editing a host (name, profile image) or changing who hosts refreshes the card without the
+    # event being saved. next_occurrence_at is refreshed with update_column, which does not touch updated_at.
+    # A session's card also names its series (when show_series), so the series' version is part of the key.
+    def event_card_cache_key(event, show_series: true)
+      host_versions = event.event_hosts.map { |event_host| event_host.host&.cache_key_with_version }
+      [event.cache_key_with_version, event.next_occurrence_at, host_versions, show_series,
+       event.parent_series&.cache_key_with_version]
+    end
+
     # Intelligently displays event time based on duration and date span
     #
     # Rules:

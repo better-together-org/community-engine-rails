@@ -1,46 +1,46 @@
 {
   "name": "post_federation_content_grants_field",
   "device": "mobile",
-  "url": "/en/posts/sample-post-1/edit",
-  "title": "Edit Post | Test Host Community",
+  "url": "/en/posts/sample-post-12/edit",
+  "title": "Edit Post | Community Engine Host",
   "locale": "en",
   "feature_set": "federation_item_consent",
   "flow": "post_federation_content_grants_field",
   "source_spec": "./spec/docs_screenshots/better_together/federation_hub_spec.rb",
   "callouts": [
     {
-      "selector": "#federation-content-grant-11bd7b4b-bb28-4fad-8276-8156b074e590",
+      "selector": "#federation-content-grant-12d2950c-87bd-4841-99f5-e93837344af6",
       "title": "Per-connection override in effect",
       "bullets": [
         "This connection is explicitly set to \"Never federate,\" overriding the tri-state above for this one connection only."
       ],
       "target": {
         "x": 8.0,
-        "y": 619.390625,
+        "y": 617.390625,
         "width": 469.0,
         "height": 50.0,
         "right": 477.0,
-        "bottom": 669.390625,
+        "bottom": 667.390625,
         "center_x": 242.5,
-        "center_y": 644.390625
+        "center_y": 642.390625
       },
       "avoid": {
         "x": 8.0,
-        "y": 619.390625,
+        "y": 617.390625,
         "width": 469.0,
         "height": 50.0,
         "right": 477.0,
-        "bottom": 669.390625,
+        "bottom": 667.390625,
         "center_x": 242.5,
-        "center_y": 644.390625
+        "center_y": 642.390625
       },
       "placement": {
         "side": "above",
         "x": 107.5,
-        "y": 305.39,
+        "y": 303.39,
         "width": 270.0,
         "height": 294,
-        "score": 619.390625
+        "score": 617.390625
       }
     },
     {
@@ -52,31 +52,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 545.390625,
+        "y": 543.390625,
         "width": 461.0,
         "height": 170.0,
         "right": 473.0,
-        "bottom": 715.390625,
+        "bottom": 713.390625,
         "center_x": 242.5,
-        "center_y": 630.390625
+        "center_y": 628.390625
       },
       "avoid": {
         "x": 12.0,
-        "y": 545.390625,
+        "y": 543.390625,
         "width": 461.0,
         "height": 170.0,
         "right": 473.0,
-        "bottom": 715.390625,
+        "bottom": 713.390625,
         "center_x": 242.5,
-        "center_y": 630.390625
+        "center_y": 628.390625
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 735.39,
+        "y": 733.39,
         "width": 270.0,
         "height": 398,
-        "score": 545.609375
+        "score": 543.609375
       }
     }
   ]

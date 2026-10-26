@@ -6,6 +6,13 @@ module BetterTogether
       # JSONAPI resource for people
       # Provides API equivalent functionality to BetterTogether::PeopleController
       class PeopleController < BetterTogether::Api::ApplicationController
+        # Membership relationships are private to the person and staff who can
+        # update them (see PersonResource::PRIVATE_FIELDS).
+        PRIVATE_RELATIONSHIPS = %w[communities person_community_memberships].freeze
+
+        before_action :restrict_private_relationships,
+                      only: %i[show_relationship get_related_resources get_related_resource]
+
         # Custom /people/me endpoint - equivalent to HTML controller's me? logic
         # Sets the ID param to current user's person and processes as a standard show request
         def me
@@ -61,6 +68,15 @@ module BetterTogether
         end
 
         private
+
+        def restrict_private_relationships
+          return unless PRIVATE_RELATIONSHIPS.include?(params[:relationship].to_s)
+
+          person = BetterTogether::Person.find_by(id: params[:person_id] || params[:id])
+          return if person && current_user && BetterTogether::PersonPolicy.new(current_user, person).update?
+
+          head :not_found
+        end
 
         def enforce_policy_use
           # JSONAPI::ResourceController applies policy scope internally but

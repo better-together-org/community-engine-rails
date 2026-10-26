@@ -1041,10 +1041,9 @@ fr:
         actions:
           destroy_aria: Supprimer la communauté
           edit_aria: Modifier la communauté
-        create_event: Créer un événement
         events:
-          create_event: Créer un événement
-          draft_heading: Brouillon
+          loading: Chargement des événements...
+        map_aria: Carte de %{name}
         members:
           add_member_modal:
             close: Fermer
@@ -1054,10 +1053,7 @@ fr:
             submit: Ajouter
             title: Ajouter un nouveau membre
         posts:
-          create_post: Créer un article
-          empty_description: Les publications créées pour cette communauté apparaîtront
-            ici.
-          empty_title: Aucune publication
+          loading: Chargement des publications...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1773,6 +1769,31 @@ fr:
       rsvp_unavailable_draft: RSVP sera disponible une fois que cet événement sera
         programmé.
       save_event: Enregistrer l'événement
+      series:
+        disposed: Série mise à jour.
+        disposition:
+          cancel_legend: Annuler la série
+          cancel_sessions: Annuler aussi les dates à venir
+          cancel_submit: Annuler la série
+          delete_legend: Supprimer la série
+          delete_sessions: Supprimer aussi les dates
+          delete_submit: Supprimer la série
+          explain: Cette série compte %{count} dates. Indiquez ce qu'il advient d'elles
+            avant de l'annuler ou de la supprimer.
+          open: Annuler ou supprimer cette série
+          promote_sessions: Conserver les dates comme événements distincts
+        no_sessions: Aucune date n'a encore été ajoutée à cette série.
+        other_dates: Autres dates
+        part_of: Fait partie de %{name}
+        part_of_run:
+          one: Fait partie d'une série de %{count} date
+          other: Fait partie d'une série de %{count} dates
+        sessions_heading: Dates
+        show_all_dates:
+          one: Afficher %{count} date de plus
+          other: Afficher %{count} dates de plus
+      show:
+        map_label: Carte de %{name}
       statuses:
         cancelled: Annulé
         confirmed: Confirmé
@@ -2107,6 +2128,7 @@ fr:
       invitee: Invité(e)
       invitee_email: E-mail
       invitee_type: Type d'invité
+      invitee_unavailable: Cette personne ne peut pas être invitée.
       login_to_respond: Veuillez vous connecter pour répondre à votre invitation.
       no_invitations: Aucune invitation trouvée
       no_role: Aucun rôle
@@ -2158,6 +2180,7 @@ fr:
       categories:
         index:
           new_btn_text: Nouvelle catégorie
+      exchange_unavailable: Cet échange n'est pas disponible.
       help:
         agreements:
           index: Les accords relient une offre et une demande. Utilisez cette liste
@@ -3422,8 +3445,10 @@ fr:
         table_headers:
           authors: Auteurs
           categories: Catégories
+          community: Communauté
           published: Publié
           title: Titre
+        toggle_filters: Filtres
       labels:
         privacy: Confidentialité
       list_form:
@@ -3945,12 +3970,31 @@ fr:
       share: Partager
       whatsapp: Partager sur WhatsApp
     shared:
+      community_chip:
+        label: Communauté
+        title: Publié dans la communauté %{community}
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
       event_status_level: 'Statut de l''événement: %{status}'
       event_status_tooltip: 'Statut de l''événement: %{status}'
+      map:
+        buttons:
+          geolocate: Me localiser
+          map: Carte
+          satellite: Satellite
+        geolocation:
+          denied: L'accès à la localisation est bloqué. Autorisez-le pour ce site
+            dans les paramètres du navigateur, puis réessayez.
+          located: Affichage de votre position.
+          locating: Recherche de votre position...
+          timeout: La recherche de votre position a pris trop de temps. Réessayez.
+          unavailable: Votre position n'a pas pu être déterminée. Vérifiez que les
+            services de localisation sont activés, puis réessayez.
+          unsupported: Votre navigateur ne prend pas en charge la localisation.
+          you_are_here: Vous êtes ici
+        show_on_map: Afficher sur la carte
       privacy_level: 'Confidentialité: %{privacy}'
       privacy_tooltip: Ce contenu est %{privacy}
       publishing_agreement_notice:
@@ -4950,8 +4994,8 @@ fr:
     joatu:
       agreement:
         accepted: Accord accepté
-        cancelled: Accord annulé — les Graines réservées ont été retournées.
-        fulfilled: Accord rempli — C3 transféré au créateur de l'offre.
+        cancelled: Accord annulé.
+        fulfilled: Accord rempli.
         rejected: Accord rejeté
       response_links:
         offer_created: Offre créée en réponse à la demande.

@@ -1,5 +1,9 @@
 # Live Role Association Inventory
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-03-22. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Snapshot captured:** March 11-12, 2026  
 **Purpose:** Document which live CE role identifiers are actually referenced by invitations and memberships on live CE-based platforms
 

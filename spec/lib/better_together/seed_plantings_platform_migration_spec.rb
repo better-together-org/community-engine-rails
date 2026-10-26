@@ -13,6 +13,7 @@ RSpec.describe 'Seed plantings platform migration' do # rubocop:disable RSpec/De
 
   after do
     migration.up unless connection.column_exists?(:better_together_seed_plantings, :platform_id)
+    BetterTogether::SeedPlanting.reset_column_information
   end
 
   it 'adds a nullable platform reference' do
