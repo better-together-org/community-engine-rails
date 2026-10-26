@@ -1751,6 +1751,8 @@ en:
       rsvp_saved: RSVP saved
       rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
       save_event: Save Event
+      show:
+        map_label: Map of %{name}
       statuses:
         cancelled: Cancelled
         confirmed: Confirmed

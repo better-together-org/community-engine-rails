@@ -1766,6 +1766,8 @@ es:
       rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
         programado.
       save_event: Save Event
+      show:
+        map_label: Mapa de %{name}
       statuses:
         cancelled: Cancelado
         confirmed: Confirmado
