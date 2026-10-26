@@ -39,14 +39,10 @@ module BetterTogether
                            :contributions,
                            blocks: { background_image_file_attachment: :blob }
                          )
-      load_community_posts
       set_current_person_community_membership
       set_membership_request_review_state
       load_community_roles_data
       load_community_memberships
-
-      # Categorize events for display
-      categorize_community_events
 
       mark_match_notifications_read_for(resource_instance)
     end
@@ -307,13 +303,6 @@ module BetterTogether
       @community = @resource if @resource.is_a?(BetterTogether::Community)
     end
 
-    def categorize_community_events
-      @draft_events = policy_scope(@community.hosted_events).draft
-      @upcoming_events = policy_scope(@community.hosted_events).upcoming
-      @ongoing_events = policy_scope(@community.hosted_events).ongoing
-      @past_events = policy_scope(@community.hosted_events).past
-    end
-
     def load_community_roles_data
       @community_roles = BetterTogether::Role
                          .where(resource_type: 'BetterTogether::Community')
@@ -352,14 +341,6 @@ module BetterTogether
           }
         } }
       ] }
-    end
-
-    def load_community_posts
-      @community_posts = PostsSearchFilter.call(
-        relation: policy_scope(BetterTogether::Post).where(community: @community),
-        params: { community_ids: [@community.id] }
-      ).with_translations
-       .includes(BetterTogether::Post.card_render_includes)
     end
   end
 end
