@@ -3,8 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::FramedIndex do # rubocop:disable RSpec/SpecFilePathFormat
+  concern = described_class
+
   controller(ActionController::Base) do
-    include described_class
+    include concern
 
     def resource_class = BetterTogether::Event
   end
