@@ -63,6 +63,11 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
     schedule.to_yaml
   end
 
+  # Event.last orders by UUID, which is random; the event just created is the newest by time.
+  def newest_event
+    BetterTogether::Event.order(:created_at).last
+  end
+
   describe 'POST /events with recurrence_attributes' do
     context 'when creating a weekly recurring event' do
       it 'creates event with recurrence', :aggregate_failures do
@@ -77,9 +82,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           )
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expect(event.recurrence).to be_present
         expect(event.recurrence.frequency).to eq('weekly')
         expect(event.recurrence.recurring?).to be true
@@ -101,9 +106,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           )
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expect(event.recurrence).to be_present
         expect(event.recurrence.frequency).to eq('monthly')
         expect(event.recurrence.ends_on).to eq(end_date)
@@ -124,9 +129,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           )
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expect(event.recurrence).to be_present
         expect(event.recurrence.month_option).to eq('day_of_week')
 
@@ -141,9 +146,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           event: event_params
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expect(event.recurrence).to be_nil
       end
     end
@@ -167,9 +172,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           )
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expect(event.recurrence).to be_present
         expect(event.recurrence.exception_dates.size).to eq(2)
       end
@@ -189,9 +194,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           )
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expect(event.recurrence).to be_present
         expect(event.recurrence.exception_dates).to contain_exactly(Date.parse('2026-02-22'), Date.parse('2026-03-01'))
       end
@@ -442,9 +447,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
           )
         }
 
-        expect(response).to redirect_to(better_together.event_path(BetterTogether::Event.last, locale:))
+        expect(response).to redirect_to(better_together.event_path(newest_event, locale:))
 
-        event = BetterTogether::Event.last
+        event = newest_event
         expected_start = ActiveSupport::TimeZone['America/St_Johns'].parse('2026-03-02T09:00:00')
 
         expect(event.recurrence.schedule.start_time).to eq(expected_start)
