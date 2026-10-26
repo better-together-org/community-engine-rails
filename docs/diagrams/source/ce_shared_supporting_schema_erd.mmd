@@ -18,6 +18,8 @@ erDiagram
   EXT_PLATFORM o|--o{ EMAIL_ADDRESSES : "platform / platform_id"
   CONTACT_DETAILS ||--o{ EMAIL_ADDRESSES : "contact_detail / contact_detail_id"
   EXT_EVENT ||--o{ EVENT_OCCURRENCES : "event / event_id"
+  EXT_EVENT ||--o{ EVENT_SERIES_SESSIONS : "series / series_id"
+  EXT_EVENT ||--o{ EVENT_SERIES_SESSIONS : "session / session_id"
   EXT_PLATFORM o|--o{ FEATURE_ACCESS_GRANTS : "platform / platform_id"
   EXT_PERSON ||--o{ FEATURE_ACCESS_GRANTS : "person / person_id"
   EXT_PERSON o|--o{ FEATURE_ACCESS_GRANTS : "granted_by_person / granted_by_person_id"
@@ -169,6 +171,12 @@ erDiagram
     ends_at datetime
     starts_at datetime
     occurrence_date date
+  }
+
+  EVENT_SERIES_SESSIONS {
+    series_id uuid
+    session_id uuid
+    position integer
   }
 
   FEATURE_ACCESS_GRANTS {
