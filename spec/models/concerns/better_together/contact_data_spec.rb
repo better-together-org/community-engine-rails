@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::ContactSpec do
+RSpec.describe BetterTogether::ContactData do
   include RequestSpecHelper
 
   before { configure_host_platform }
@@ -23,7 +23,7 @@ RSpec.describe BetterTogether::ContactSpec do
   end
 
   it 'writes each kind with its custom label, public', :aggregate_failures do # rubocop:disable RSpec/ExampleLength
-    community.update!(contact_spec: spec.to_json)
+    community.update!(contact_data: spec.to_json)
 
     expect(contact.phone_numbers.map { |p| [p.number, p.label, p.privacy] })
       .to eq([['709-630-0012', 'Box office', 'public']])
@@ -34,42 +34,42 @@ RSpec.describe BetterTogether::ContactSpec do
   end
 
   it 'shows the custom label as written' do
-    community.update!(contact_spec: spec.to_json)
+    community.update!(contact_data: spec.to_json)
 
     expect(contact.phone_numbers.first.display_label).to eq('Box office')
   end
 
   it 'changes nothing when the same spec is sent again', :aggregate_failures do
-    community.update!(contact_spec: spec.to_json)
+    community.update!(contact_data: spec.to_json)
     ids = contact.phone_numbers.pluck(:id) + contact.addresses.pluck(:id)
-    community.update!(contact_spec: spec.to_json)
+    community.update!(contact_data: spec.to_json)
 
     expect(contact.phone_numbers.pluck(:id) + contact.addresses.pluck(:id)).to eq(ids)
   end
 
   it 'replaces a kind that is present and leaves an absent kind alone', :aggregate_failures do
-    community.update!(contact_spec: spec.to_json)
-    community.update!(contact_spec: { phone_numbers: [{ number: '709-555-0100', label: 'Office' }] }.to_json)
+    community.update!(contact_data: spec.to_json)
+    community.update!(contact_data: { phone_numbers: [{ number: '709-555-0100', label: 'Office' }] }.to_json)
 
     expect(contact.phone_numbers.pluck(:number)).to eq(['709-555-0100'])
     expect(contact.email_addresses.count).to eq(1)
   end
 
   it 'reuses the address the record is located at', :aggregate_failures do
-    community.update!(address_spec: spec[:addresses].first.to_json)
+    community.update!(address_data: spec[:addresses].first.to_json)
     located = community.reload.location.location
-    community.update!(contact_spec: spec.to_json)
+    community.update!(contact_data: spec.to_json)
 
     expect(contact.addresses).to eq([located])
     expect(BetterTogether::Address.where(line1: '5 Park Street').count).to eq(1)
   end
 
   it 'rejects invalid JSON and entries without their key', :aggregate_failures do
-    community.contact_spec = 'nope'
+    community.contact_data = 'nope'
     expect(community).not_to be_valid
 
     other = build(:better_together_community)
-    other.contact_spec = { phone_numbers: [{ label: 'x' }] }.to_json
+    other.contact_data = { phone_numbers: [{ label: 'x' }] }.to_json
     expect(other).not_to be_valid
   end
 end

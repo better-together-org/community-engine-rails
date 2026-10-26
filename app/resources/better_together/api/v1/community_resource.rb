@@ -19,10 +19,10 @@ module BetterTogether
         attribute :logo_url
 
         # Publisher inputs, write-only (the image URLs above are what is returned): base64 images, a street
-        # address for the location (Locatable::AddressSpec) and the contact details (ContactSpec).
+        # address for the location (Locatable::AddressData) and the contact details (ContactData).
         WRITE_ONLY = %i[
           logo_data logo_filename cover_image_data cover_image_filename profile_image_data profile_image_filename
-          address_spec contact_spec
+          address_data contact_data
         ].freeze
         attributes(*WRITE_ONLY)
 

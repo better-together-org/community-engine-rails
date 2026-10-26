@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module BetterTogether
-  # Write-only +contact_spec+ for a Contactable record (a community): the record's own contact details as one JSON
+  # Write-only +contact_data+ for a Contactable record (a community): the record's own contact details as one JSON
   # string, because JSON:API takes no nested objects. Keys are the contact kinds; each is a list of entries
   # carrying the kind's fields plus a +label+ (any text, CE shows custom labels as written; social accounts have
   # none, their platform is the label) and optional +privacy+ (default public):
@@ -13,10 +13,10 @@ module BetterTogether
   #    "addresses": [{"line1": "5 Park Street", "city_name": "Corner Brook", "label": "Main"}]}
   #
   # A kind that is present replaces that kind's entries (matched on number, email, url, platform and handle, or
-  # street address, so repeating a spec changes nothing); a kind that is absent is left alone. An address already
+  # street address, so repeating the same data changes nothing); a kind that is absent is left alone. An address already
   # in the database, such as the one the record is located at, is reused instead of duplicated, so send the
-  # location (+address_spec+) before the contact spec.
-  module ContactSpec
+  # location (+address_data+) before the contact data.
+  module ContactData
     LABEL = %w[label].freeze
     KINDS = {
       'phone_numbers' => { keys: %w[number], fields: %w[number] + LABEL },
@@ -29,30 +29,30 @@ module BetterTogether
     }.freeze
 
     def self.included(base)
-      base.validate :contact_spec_must_be_valid
+      base.validate :contact_data_must_be_valid
     end
 
-    def contact_spec; end
+    def contact_data; end
 
-    def contact_spec=(value)
-      @contact_spec_error = nil
+    def contact_data=(value)
+      @contact_data_error = nil
       spec = value.is_a?(String) ? JSON.parse(value) : value.to_h.deep_stringify_keys
       unless spec.is_a?(Hash)
-        @contact_spec_error = 'must be an object'
+        @contact_data_error = 'must be an object'
         return
       end
 
       detail = contact_detail || build_contact_detail
       KINDS.each { |kind, config| sync_contacts(detail, kind, config, Array(spec[kind])) if spec.key?(kind) }
     rescue JSON::ParserError
-      @contact_spec_error = 'is not valid JSON'
+      @contact_data_error = 'is not valid JSON'
     end
 
     private
 
     def sync_contacts(detail, kind, config, entries)
       entries = entries.map { |entry| entry.to_h.stringify_keys }
-      return @contact_spec_error = "#{kind} entries need #{config[:keys].first}" unless complete?(config, entries)
+      return @contact_data_error = "#{kind} entries need #{config[:keys].first}" unless complete?(config, entries)
 
       records = detail.public_send(kind)
       kept = entries.map { |entry| contact_record_for(detail, records, kind, config, entry) }
@@ -87,11 +87,11 @@ module BetterTogether
       ::BetterTogether::Address.find_by(attrs.slice(*config[:keys]).merge(contact_detail_id: nil))
     end
 
-    def contact_spec_must_be_valid
-      errors.add(:contact_spec, @contact_spec_error) if @contact_spec_error
+    def contact_data_must_be_valid
+      errors.add(:contact_data, @contact_data_error) if @contact_data_error
     end
 
     private :sync_contacts, :complete?, :contact_record_for, :contact_attributes, :existing_contact,
-            :reusable_address, :contact_spec_must_be_valid
+            :reusable_address, :contact_data_must_be_valid
   end
 end

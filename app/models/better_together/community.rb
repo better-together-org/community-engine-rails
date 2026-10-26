@@ -7,8 +7,8 @@ module BetterTogether
   class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Base64ImageInput
     include Contactable
-    include ContactSpec
-    include Geography::Locatable::AddressSpec
+    include ContactData
+    include Geography::Locatable::AddressData
     include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
