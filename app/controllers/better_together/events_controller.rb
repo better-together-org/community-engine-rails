@@ -3,6 +3,7 @@
 module BetterTogether
   # CRUD for BetterTogether::Event
   class EventsController < FriendlyResourceController # rubocop:todo Metrics/ClassLength
+    include EventSeriesActions
     include InvitationTokenAuthorization
     include NotificationReadable
     include ChecksRequiredAgreements

@@ -1748,6 +1748,29 @@ en:
       rsvp_saved: RSVP saved
       rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
       save_event: Save Event
+      series:
+        disposed: Series updated.
+        disposition:
+          cancel_legend: Cancel the series
+          cancel_sessions: Cancel the upcoming dates too
+          cancel_submit: Cancel series
+          delete_legend: Delete the series
+          delete_sessions: Delete the dates too
+          delete_submit: Delete series
+          explain: This series has %{count} dates. Say what happens to them before
+            cancelling or deleting it.
+          open: Cancel or delete this series
+          promote_sessions: Keep the dates as separate events
+        no_sessions: No dates have been added to this series yet.
+        other_dates: Other dates
+        part_of: Part of %{name}
+        part_of_run:
+          one: Part of a series of %{count} date
+          other: Part of a series of %{count} dates
+        sessions_heading: Dates
+        show_all_dates:
+          one: Show %{count} more date
+          other: Show %{count} more dates
       show:
         map_label: Map of %{name}
       statuses:
