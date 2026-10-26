@@ -227,6 +227,14 @@ A body update keeps the post's blocks: `PATCH` with new `content` and no attachm
 - `address_spec` (write-only; a hash or a JSON string) locates the event at a street address: `line1` is required, with optional `line2`, `city_name`, `state_province_name`, `postal_code`, `country_name` and a `name` for the place. An existing address with the same line1, city, postal code and country is reused, otherwise a public one is created. Blank clears the location. A named place prints its street address too ("Rotary Arts Centre, 5 Park Street, ...") on cards, pages and map popups.
 - `attachment_block_ids` appends existing blocks to the end of the description, under the text, in that order. A block already in the description is not added twice, so sending the same ids again changes nothing. The registry and platform rules above apply.
 
+### Community inputs for publishers
+
+`communities` accepts these write-only inputs on create and update (CE returns the image URLs):
+
+- `logo_data`, `cover_image_data`, `profile_image_data` (base64) with optional `logo_filename`, `cover_image_filename`, `profile_image_filename`. CE's attachment validators and variants still apply.
+- `address_spec` locates the community at a street address, as for events above. A community gets a plain `location`, not a map row.
+- `contact_spec` (JSON string) sets the community's own contact details. Keys are `phone_numbers` (`number`), `email_addresses` (`email`), `website_links` (`url`), `social_media_accounts` (`platform_name`, `url`, `handle`) and `addresses` (`line1`, `city_name`, ...), each a list of entries with an optional `label` (shown as written) and `privacy` (default `public`). A kind that is present replaces that kind's entries, matched on number, email, url, platform and handle, or street address, so repeating a spec changes nothing; a kind that is absent is left alone. An address already in the database is reused, so send `address_spec` first.
+
 ### Navigation landmarks in HTML blocks
 
 HTML block content is sanitized. `nav` and the accessibility attributes `aria-label`, `aria-labelledby`, `aria-current` and `aria-hidden` are kept, so a breadcrumb can be a labelled `<nav aria-label="Breadcrumb">` with `aria-current="page"` on the current item. Scripts, event handlers and unsafe link protocols are still removed.

@@ -11,7 +11,7 @@ module BetterTogether
         ADDRESS_MATCH_FIELDS = %w[line1 city_name postal_code country_name].freeze
 
         included do
-          validate :address_spec_must_be_valid
+          include ::BetterTogether::Geography::Locatable::AddressSpec
 
           # Any Locatable::One includer is also mappable — its single assigned
           # `location` is rendered via `leaflet_points`/`spaces` below, delegated
