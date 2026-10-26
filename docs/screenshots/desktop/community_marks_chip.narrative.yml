@@ -1,0 +1,13 @@
+---
+title: Chip mark
+audience:
+- community_member
+- developer
+journey_step: 'As a visitor, I recognise a community by its logo: chip mark.'
+callouts:
+- :id: mark
+  :title: Chip mark
+  :description: The chip uses the same mark as cards and hosts.
+accessibility_notes: Decorative marks have empty alt text; names stay in text.
+slug: community_marks_chip
+device: desktop

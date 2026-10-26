@@ -1,0 +1,13 @@
+---
+title: Event page order
+audience:
+- member
+- developer
+journey_step: As a reader of an event, I see register, when, then where.
+callouts:
+- :id: order
+  :title: Date and time, then location
+  :description: The same order is used in the header, the About pane and the card.
+accessibility_notes: Order in the DOM matches the visual order.
+slug: event_detail_order_show
+device: desktop

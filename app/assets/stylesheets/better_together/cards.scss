@@ -9,3 +9,83 @@
     background-color: var(--bs-primary-bg-subtle);
   }
 }
+
+// A community's logo, else its profile image, on its card: a tile over the cover or large in place of it.
+.community-card-mark {
+  pointer-events: none;
+
+  img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+.community-card-mark--cover {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0.25rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.community-card--mark-only .community-card-mark {
+  order: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 3 / 2;
+  margin: -1rem -1rem 0.75rem;
+  padding: 1.5rem;
+  background: var(--bs-tertiary-bg);
+  border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0;
+}
+
+// A community's logo as a small tile (event hosts, chips, the host picker): keeps its shape at --mark-size high.
+.community-mark-tile {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 2px;
+  background: #fff;
+  border-radius: calc(var(--mark-size) * 0.2);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+
+  img {
+    display: block;
+    width: auto;
+    height: var(--mark-size);
+    max-width: calc(var(--mark-size) * 2.4);
+    object-fit: contain;
+  }
+}
+
+// Indexes embedded in a pane (a community page tab): the pane is narrower than the viewport, so cards are sized
+// by the container (auto-fill) instead of viewport breakpoints, and card text and badges wrap inside the card.
+.frame-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1rem;
+
+  > .entity-column {
+    width: auto;
+    max-width: none;
+    flex: none;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .card-body {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .badge {
+    white-space: normal;
+    text-align: start;
+  }
+}
