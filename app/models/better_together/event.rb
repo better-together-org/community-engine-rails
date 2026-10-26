@@ -5,8 +5,11 @@ module BetterTogether
   # rubocop:disable Metrics/ClassLength
   class Event < PlatformRecord
     include Attachments::Images
+    include Base64ImageInput
+    include BlockAttachments
     include Categorizable
     include Creatable
+    include EventHosting
     include Federatable
     include FriendlySlug
     include Identifier
@@ -28,6 +31,9 @@ module BetterTogether
     include TrackedActivity
 
     attachable_cover_image
+    accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
+                                            default_name: 'cover'
+    attaches_blocks_to :description, at: :end
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
