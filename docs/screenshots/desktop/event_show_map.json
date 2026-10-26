@@ -1,0 +1,83 @@
+{
+  "name": "event_show_map",
+  "device": "desktop",
+  "url": "/en/events/3dbd8106-293c-4bcb-8a80-6f1090101974",
+  "title": "Harbour Arts Night | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_show_map",
+  "flow": "map_column",
+  "source_spec": "./spec/docs_screenshots/better_together/event_show_map_spec.rb",
+  "callouts": [
+    {
+      "selector": "#event-tabbed-section",
+      "title": "Details",
+      "bullets": [
+        "Date, location, hosts and description keep the wider column."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 657.0,
+        "width": 856.0,
+        "height": 582.578125,
+        "right": 920.5,
+        "bottom": 1239.578125,
+        "center_x": 492.5,
+        "center_y": 948.2890625
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 657.0,
+        "width": 856.0,
+        "height": 582.578125,
+        "right": 920.5,
+        "bottom": 1239.578125,
+        "center_x": 492.5,
+        "center_y": 948.2890625
+      },
+      "placement": {
+        "side": "above",
+        "x": 302.5,
+        "y": 479.0,
+        "width": 380,
+        "height": 158,
+        "score": 657.0
+      }
+    },
+    {
+      "selector": "#event-map",
+      "title": "Map",
+      "bullets": [
+        "Beside the tabs on wide screens, below them on narrow ones."
+      ],
+      "target": {
+        "x": 932.5,
+        "y": 657.0,
+        "width": 440.0,
+        "height": 508.0,
+        "right": 1372.5,
+        "bottom": 1165.0,
+        "center_x": 1152.5,
+        "center_y": 911.0
+      },
+      "avoid": {
+        "x": 932.5,
+        "y": 657.0,
+        "width": 440.0,
+        "height": 508.0,
+        "right": 1372.5,
+        "bottom": 1165.0,
+        "center_x": 1152.5,
+        "center_y": 911.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 962.5,
+        "y": 479.0,
+        "width": 380,
+        "height": 158,
+        "score": 657.0
+      }
+    }
+  ]
+}

@@ -272,6 +272,7 @@ flowchart TB
     BetterTogether__ContentSecurity__Subject_polymorphic_summary["ContentSecurity::Subject\ntarget: subject, owner: seeds"]
     BetterTogether__EmailAddress_polymorphic_summary["EmailAddress\nowner: seeds"]
     BetterTogether__EventOccurrence_polymorphic_summary["EventOccurrence\nowner: seeds, owner: comments, owner: comment_config, owner: map, owner: location +1"]
+    BetterTogether__EventSeriesSession_polymorphic_summary["EventSeriesSession\nowner: seeds"]
     BetterTogether__FeatureAccessGrant_polymorphic_summary["FeatureAccessGrant\nowner: seeds"]
     BetterTogether__FederationContentGrant_polymorphic_summary["FederationContentGrant\ntarget: federatable, owner: seeds"]
     BetterTogether__InboundEmailMessage_polymorphic_summary["InboundEmailMessage\ntarget: target, target: routed_record, owner: seeds"]
@@ -298,7 +299,8 @@ flowchart TB
     BetterTogether__ContentSecurity__ScanEvent_polymorphic_summary ~~~ BetterTogether__ContentSecurity__Subject_polymorphic_summary
     BetterTogether__ContentSecurity__Subject_polymorphic_summary ~~~ BetterTogether__EmailAddress_polymorphic_summary
     BetterTogether__EmailAddress_polymorphic_summary ~~~ BetterTogether__EventOccurrence_polymorphic_summary
-    BetterTogether__EventOccurrence_polymorphic_summary ~~~ BetterTogether__FeatureAccessGrant_polymorphic_summary
+    BetterTogether__EventOccurrence_polymorphic_summary ~~~ BetterTogether__EventSeriesSession_polymorphic_summary
+    BetterTogether__EventSeriesSession_polymorphic_summary ~~~ BetterTogether__FeatureAccessGrant_polymorphic_summary
     BetterTogether__FeatureAccessGrant_polymorphic_summary ~~~ BetterTogether__FederationContentGrant_polymorphic_summary
     BetterTogether__FederationContentGrant_polymorphic_summary ~~~ BetterTogether__InboundEmailMessage_polymorphic_summary
     BetterTogether__InboundEmailMessage_polymorphic_summary ~~~ BetterTogether__InboundEmailReplyToken_polymorphic_summary

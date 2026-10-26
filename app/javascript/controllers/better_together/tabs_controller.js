@@ -10,7 +10,16 @@ export default class extends Controller {
     this.allPanes = this.getOwnedPanes();
 
     this.activateTabFromHash();
+    this.resetAnchorScroll();
     this.setupTabChangeListener();
+  }
+
+  // A hash naming a pane (/c/rac#events) selects its tab; the browser must not also scroll down to the pane.
+  resetAnchorScroll() {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (id && this.allPanes.some((pane) => pane.id === id)) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    }
   }
 
   activateTabFromHash() {

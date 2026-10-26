@@ -29,11 +29,14 @@ RSpec.describe 'BetterTogether::EventNextOccurrenceRefreshScanJob' do
 
   it 'does not raise or abort the batch when one record fails to refresh' do
     event.update_columns(next_occurrence_at: 1.day.ago) # rubocop:disable Rails/SkipsModelValidations
-    # allow_any_instance_of is deliberate here: the job queries and instantiates its
-    # own Event record internally, so a specific-instance stub on `event` would never
-    # intercept it.
-    allow_any_instance_of(BetterTogether::Event) # rubocop:disable RSpec/AnyInstance
-      .to receive(:refresh_next_occurrence_at!).and_raise(StandardError)
+    # The refresh method is prepended by EventSeries::SpanRefresh, which any_instance stubs cannot reach,
+    # so the scan is handed a record that raises.
+    failing = instance_double(BetterTogether::Event, id: event.id)
+    allow(failing).to receive(:refresh_next_occurrence_at!).and_raise(StandardError)
+    scope = BetterTogether::Event.none
+    allow(BetterTogether::Event).to receive(:joins).with(:recurrence).and_return(scope)
+    allow(scope).to receive(:where).and_return(scope)
+    allow(scope).to receive(:find_each).and_yield(failing)
 
     expect { BetterTogether::EventNextOccurrenceRefreshScanJob.perform_now }.not_to raise_error
   end
