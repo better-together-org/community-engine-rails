@@ -7,6 +7,7 @@ module BetterTogether
     include InvitationTokenAuthorization
     include NotificationReadable
     include ChecksRequiredAgreements
+    include FramedIndex
 
     # Prepended so this runs before the inherited :authorize_resource
     # before_action — otherwise Pundit's denial (via #authorize_resource,
@@ -47,6 +48,7 @@ module BetterTogether
     before_action :process_recurrence_attributes, only: %i[create update]
 
     skip_before_action :resource_collection, only: :index
+    before_action :require_scoped_community, only: :index
 
     def index
       load_events
@@ -280,6 +282,10 @@ module BetterTogether
 
     private
 
+    def require_scoped_community
+      raise ActiveRecord::RecordNotFound if params[:community_id].present? && scoped_community.nil?
+    end
+
     def filter_params
       # :status is permitted both as a scalar (?status=draft) and as an
       # array (?status[]=draft&status[]=confirmed) for union filtering.
@@ -352,8 +358,12 @@ module BetterTogether
     # Memoized so load_categories reuses load_events' policy_scope(resource_class)
     # call instead of re-running EventPolicy::Scope's host/attendance/invitation
     # OR-branch subqueries a second time on every index request.
+    # With ?community_id= the index lists the events that community hosts; the policy scope still applies.
     def policy_scoped_resources
-      @policy_scoped_resources ||= policy_scope(resource_class)
+      @policy_scoped_resources ||= begin
+        scope = policy_scope(resource_class)
+        scoped_community ? scope.where(id: scoped_community.hosted_events.select(:id)) : scope
+      end
     end
 
     def restore_invitation_token_context

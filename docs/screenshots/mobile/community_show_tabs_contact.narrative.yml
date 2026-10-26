@@ -1,0 +1,13 @@
+---
+title: Community page, Contact tab
+audience:
+- community_member
+- developer
+journey_step: As a visitor, I find how to contact a community.
+callouts:
+- :id: contact
+  :title: Contact
+  :description: Public details only.
+accessibility_notes: The pane is labelled by its tab.
+slug: community_show_tabs_contact
+device: mobile

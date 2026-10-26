@@ -73,12 +73,19 @@ module BetterTogether
         display_name
       end
 
-      # Primary display name for the location
+      # Primary display name for the location. A named place at a street address also prints the address, so a
+      # card or map popup says where "Rotary Arts Centre" is.
       def display_name
+        return named_address if name.present? && address?
         return name if name.present?
         return location.to_s if location.present?
 
         'Unnamed Location'
+      end
+
+      def named_address
+        street = location.to_formatted_s(excluded: [:display_label])
+        street.present? ? "#{name}, #{street}" : name
       end
 
       # Full address string for geocoding

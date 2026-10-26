@@ -2,9 +2,13 @@
   <%= resource_class.model_name.human.pluralize %>
 <% end %>
 
+<%# Inside a turbo-frame (a community page tab) the list lays out for the pane: filters stack above a card grid,
+    the heading is an h2 because the host page owns the h1, and links leave the frame. -%>
+<% frame_id = index_frame_id %>
+<%= content_tag(frame_id ? :'turbo-frame' : :div, id: frame_id, target: ('_top' if frame_id)) do %>
 <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
+    <%= content_tag(frame_id ? :h2 : :h1, resource_class.model_name.human.pluralize, class: 'mb-0') %>
     <div class="d-flex align-items-center gap-2">
       <% if @available_view_types.size > 1 %>
         <%= render 'better_together/shared/view_switcher',
@@ -28,12 +32,19 @@
 
   <div class="row">
     <!-- Filter Sidebar -->
-    <div class="col-lg-3 mb-4">
-      <%= render 'list_form' %>
+    <div class="<%= frame_id ? 'col-12' : 'col-lg-3' %> mb-4">
+      <button id="posts-filter-toggle" class="btn btn-outline-secondary <%= 'd-lg-none' unless frame_id %> mb-2 sidebar-toggle" type="button"
+              data-bs-toggle="collapse" data-bs-target="#posts-filter-sidebar"
+              aria-expanded="false" aria-controls="posts-filter-sidebar">
+        <i class="fas fa-filter" aria-hidden="true"></i> <%= t('.toggle_filters') %>
+      </button>
+      <div id="posts-filter-sidebar" class="collapse <%= 'd-lg-block' unless frame_id %> sidebar">
+        <%= render 'list_form' %>
+      </div>
     </div>
 
     <!-- Posts List -->
-    <div class="col-lg-9">
+    <div class="<%= frame_id ? 'col-12' : 'col-lg-9' %>">
 
       <!-- Pagination -->
       <% if @posts.respond_to?(:total_pages) && @posts.total_pages > 1 %>
@@ -96,7 +107,7 @@
             </ul>
           </div>
         <% else %>
-          <div id="posts" class="row row-cols-1 row-cols-md-2">
+          <div id="posts" class="<%= frame_id ? 'frame-card-grid' : 'row row-cols-1 row-cols-md-2' %>">
             <%= render @posts %>
           </div>
         <% end %>
@@ -113,3 +124,4 @@
     </div>
   </div>
 </div>
+<% end %>

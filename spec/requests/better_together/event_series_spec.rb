@@ -17,9 +17,11 @@ RSpec.describe 'Event series in lists' do
                                    name: 'Tribute Night', session_of: series.identifier)
   end
 
-  # The series is not listed; its sessions are.
+  # The series is not listed; its sessions are. A session card still links to its series in a mention.
   def series_links
-    Nokogiri::HTML(response.body).css(%(a[href*="events/#{series.slug}"]))
+    Nokogiri::HTML(response.body).css(%(a[href*="events/#{series.slug}"])).reject do |link|
+      link.ancestors('.event-series-mention').any?
+    end
   end
 
   before do

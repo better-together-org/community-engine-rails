@@ -1041,10 +1041,9 @@ fr:
         actions:
           destroy_aria: Supprimer la communauté
           edit_aria: Modifier la communauté
-        create_event: Créer un événement
         events:
-          create_event: Créer un événement
-          draft_heading: Brouillon
+          loading: Chargement des événements...
+        map_aria: Carte de %{name}
         members:
           add_member_modal:
             close: Fermer
@@ -1054,10 +1053,7 @@ fr:
             submit: Ajouter
             title: Ajouter un nouveau membre
         posts:
-          create_post: Créer un article
-          empty_description: Les publications créées pour cette communauté apparaîtront
-            ici.
-          empty_title: Aucune publication
+          loading: Chargement des publications...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -3451,6 +3447,7 @@ fr:
           community: Communauté
           published: Publié
           title: Titre
+        toggle_filters: Filtres
       labels:
         privacy: Confidentialité
       list_form:
