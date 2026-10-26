@@ -63,9 +63,9 @@ RSpec.describe 'Event Recurrence Form', :as_platform_manager do
     schedule.to_yaml
   end
 
-  # Event.last orders by UUID, which is random; the event just created is the newest by time.
+  # Time is frozen in the past, so created_at ordering can pick a seeded event; find by the posted slug.
   def newest_event
-    BetterTogether::Event.order(:created_at).last
+    BetterTogether::Event.friendly.find(event_params[:slug])
   end
 
   describe 'POST /events with recurrence_attributes' do

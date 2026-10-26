@@ -31,7 +31,7 @@ RSpec.describe 'Documentation screenshots for the community page tabs', # ruboco
     create(:geography_geospatial_space, geospatial: address,
                                         space: create(:geography_space, latitude: 48.95, longitude: -57.95))
     community.create_location!(location: address, name: 'Harbour Hall')
-    community.update!(contact_spec: { email_addresses: [{ email: 'hello@harbour.example', label: 'General' }],
+    community.update!(contact_data: { email_addresses: [{ email: 'hello@harbour.example', label: 'General' }],
                                       phone_numbers: [{ number: '709-555-0100', label: 'Box office' }] }.to_json)
     2.times do |i|
       event = create(:event, platform: host_platform, creator: manager.person, name: "Harbour Arts Night #{i + 1}",
