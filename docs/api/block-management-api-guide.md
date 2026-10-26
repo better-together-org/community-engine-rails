@@ -233,7 +233,7 @@ A body update keeps the post's blocks: `PATCH` with new `content` and no attachm
 
 - `logo_data`, `cover_image_data`, `profile_image_data` (base64) with optional `logo_filename`, `cover_image_filename`, `profile_image_filename`. CE's attachment validators and variants still apply.
 - `address_data` locates the community at a street address, as for events above. A community gets a plain `location`, not a map row.
-- `contact_data` (JSON string) sets the community's own contact details. Keys are `phone_numbers` (`number`), `email_addresses` (`email`), `website_links` (`url`), `social_media_accounts` (`platform_name`, `url`, `handle`) and `addresses` (`line1`, `city_name`, ...), each a list of entries with an optional `label` (shown as written) and `privacy` (default `public`). A kind that is present replaces that kind's entries, matched on number, email, url, platform and handle, or street address, so repeating a spec changes nothing; a kind that is absent is left alone. An address already in the database is reused, so send `address_data` first.
+- `contact_data` (JSON string) sets the community's own contact details. Keys are `phone_numbers` (`number`), `email_addresses` (`email`), `website_links` (`url`), `social_media_accounts` (`platform_name`, `url`, `handle`) and `addresses` (`line1`, `city_name`, ...), each a list of entries with an optional `label` (shown as written) and `privacy` (default `public`). A kind that is present replaces that kind's entries, matched on number, email, url, platform and handle, or street address, so repeating the same data changes nothing; a kind that is absent is left alone. An address already in the database is reused, so send `address_data` first.
 
 ### Event series and sessions
 

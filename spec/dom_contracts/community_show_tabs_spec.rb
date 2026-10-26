@@ -22,7 +22,7 @@ RSpec.describe 'Community show tabs DOM contract', :as_platform_manager, type: :
 
   describe 'tab markup' do
     before do
-      community.update!(contact_spec: contact)
+      community.update!(contact_data: contact)
       get show_path
     end
 
