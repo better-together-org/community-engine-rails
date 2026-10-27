@@ -5,6 +5,7 @@ module BetterTogether
     # Renders an embedded video from YouTube, Vimeo, or a raw iframe URL.
     class VideoBlock < Block
       include Translatable
+      include AttachableBlock
 
       ASPECT_RATIOS = %w[16x9 4x3 1x1 9x16].freeze
       PRIVACY_EMBED_HOST = 'https://www.youtube-nocookie.com/embed/'
@@ -58,6 +59,10 @@ module BetterTogether
 
       def portrait?
         aspect_ratio == '9x16'
+      end
+
+      def attachable_plain_text_representation(_caption = nil)
+        '[Video]'
       end
 
       def embed_title
