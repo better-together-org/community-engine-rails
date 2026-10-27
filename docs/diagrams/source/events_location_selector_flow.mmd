@@ -7,8 +7,8 @@ flowchart TD
   %% Search
   DISABLE --> USER[Organizer types in the mixed-search picker]
   USER --> DEBOUNCE["slim_select_controller debounces\nthe AJAX fetch (300ms)"]
-  DEBOUNCE --> SEARCH["GET /events/available_locations?search=..."]
-  SEARCH --> BACKEND["EventsController#available_locations\n(no location_type given)"]
+  DEBOUNCE --> SEARCH["GET /locations/available?search=..."]
+  SEARCH --> BACKEND["LocationsController#available\n(no location_type given)"]
   BACKEND --> MIXED["mixed_location_options:\nsearches every Placeable type at once"]
   MIXED --> SCOPES{Per type}
   SCOPES -->|Address / Building| POLICY["Policy-scoped:\norganizer's own + public records"]

@@ -99,7 +99,7 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
 
     expect(address_panel).to be_visible
     within('#event_location_new_address') do
-      expect(page).to have_css('legend', text: I18n.t('better_together.events.location_picker.new_address_legend'))
+      expect(page).to have_css('legend', text: I18n.t('better_together.locations.picker.new_address_legend'))
       expect(page).to have_css('[data-better_together--location-selector-target="newRecordQuery"]', text: 'Bright Hall')
       expect(find('input[name*="[line1]"]').value).to eq('Bright Hall')
     end
@@ -117,14 +117,14 @@ RSpec.feature 'Event location selector', :as_platform_manager, :js do
     choose_create_address_row
     expect(address_panel).to be_visible
 
-    within('#event_location_new_address') { click_button I18n.t('better_together.events.location_picker.cancel_new_address') }
+    within('#event_location_new_address') { click_button I18n.t('better_together.locations.picker.cancel_new_address') }
 
     expect(address_panel).not_to be_visible
     expect(find("input[name='event[location_attributes][location_id]']", visible: :all).value).to be_blank
     expect(find("input[name='event[location_attributes][location_type]']", visible: :all).value).to be_blank
     expect(find("input[name='event[location_attributes][name]']", visible: :all).value).to be_blank
     expect(page).to have_css('[data-better_together--location-selector-target="announcement"]',
-                             text: I18n.t('better_together.events.location_picker.announcements.cancelled'),
+                             text: I18n.t('better_together.locations.picker.announcements.cancelled'),
                              visible: :all, wait: 5)
     expect(page.evaluate_script('document.activeElement.classList.contains("ss-main")')).to be(true)
   end

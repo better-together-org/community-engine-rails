@@ -187,10 +187,11 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
           end
         end
 
+        get 'locations/available', to: 'locations#available', as: :available_locations
+
         resources :events, except: %i[index show] do
           collection do
             get :available_hosts
-            get :available_locations
             get :recurrence_preview
           end
           resources :invitations, only: %i[create destroy] do

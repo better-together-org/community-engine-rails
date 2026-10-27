@@ -1662,16 +1662,6 @@ fr:
         status_draft: Brouillon
         status_label: Statut
       location: Lieu
-      location_picker:
-        announcements:
-          cancelled: Nouvelle adresse annulée. Retour au champ de recherche de lieu.
-          creating: Création d'une nouvelle adresse. Remplissez les champs d'adresse
-            ci-dessous, puis enregistrez l'événement.
-        cancel_new_address: Annuler la nouvelle adresse
-        create_row:
-          new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
-          use_typed_name: Utiliser « %{q} » comme nom de lieu personnalisé
-        new_address_legend: Nouvelle adresse
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
@@ -2316,6 +2306,21 @@ fr:
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
+    locations:
+      picker:
+        announcements:
+          cancelled: Nouvelle adresse annulée. Retour au champ de recherche de lieu.
+          creating: Création d'une nouvelle adresse. Remplissez les champs d'adresse
+            ci-dessous, puis enregistrez.
+        cancel_new_address: Annuler la nouvelle adresse
+        create_new: Créer un(e) nouveau/nouvelle %{model}
+        hint: Recherchez une adresse, un bâtiment ou un lieu existant. S'il n'est
+          pas répertorié, choisissez « Créer une nouvelle adresse » ou utilisez le
+          texte saisi comme nom personnalisé.
+        label: Lieu
+        new_address_legend: Nouvelle adresse
+        new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
+        use_typed_name: Utiliser « %{q} » comme nom de lieu personnalisé
     mailer:
       footer:
         no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
