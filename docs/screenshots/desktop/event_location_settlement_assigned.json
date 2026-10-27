@@ -1,8 +1,8 @@
 {
   "name": "event_location_settlement_assigned",
   "device": "desktop",
-  "url": "/en/events/3377d165-b717-43f5-8885-36ecb30238cb/edit",
-  "title": "Edit Community Meetup | Events | Community Engine",
+  "url": "/en/events/e333cb91-fdcb-4d60-8a1f-61339980d3f1/edit",
+  "title": "Edit Community Meetup | Events | Test Host Community",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_location_picker",

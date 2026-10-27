@@ -1,5 +1,5 @@
 // Stimulus controller for the event location picker. A single mixed-type
-// SlimSelect field (see EventsController#available_locations) searches every
+// SlimSelect field (see LocationsController#available) searches every
 // Geography::Placeable type at once; on selection, the composite "ClassName:id"
 // value is split back into the hidden location_id/location_type fields that
 // LocatableLocation's polymorphic assignment already expects. Free-typed text
