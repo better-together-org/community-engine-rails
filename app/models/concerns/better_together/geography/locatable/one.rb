@@ -17,6 +17,7 @@ module BetterTogether
           # `location` is rendered via `leaflet_points`/`spaces` below, delegated
           # to by BetterTogether::Geography::Map#leaflet_points.
           include ::BetterTogether::Geography::Mappable
+          include ::BetterTogether::Geography::Locatable::LocatedIn
 
           has_one :location,
                   class_name: 'BetterTogether::Geography::LocatableLocation',
