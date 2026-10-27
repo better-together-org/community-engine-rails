@@ -60,6 +60,7 @@ FROM ruby:3.4.12
 
 # Install runtime dependencies
 RUN apt-get update -qq \
+  && apt-get upgrade -y --no-install-recommends \
   && apt-get install -y --no-install-recommends \
     libpq-dev \
     nodejs \
