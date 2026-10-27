@@ -1,0 +1,3 @@
+<%# locals: (image:, in_gallery: false) -%>
+<% block = image.try(:attachable) || image %>
+<span class="image-embed-preview"><%= t('better_together.content.blocks.attachment_preview.image', caption: block.caption) %></span>

@@ -1122,6 +1122,10 @@ uk:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Associated Pages
+        attachment_preview:
+          image: 'Зображення: %{caption}'
+          opens_in_new_tab: "(відкривається в новій вкладці)"
+          video: 'Відео: %{url}'
         checklist_block:
           not_found: Контрольний список не знайдено.
           select_prompt: "— Виберіть контрольний список —"

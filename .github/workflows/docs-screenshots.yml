@@ -114,7 +114,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.4.10"
+          ruby-version: "3.4.12"
           bundler-cache: true
 
       - name: Install Pillow
