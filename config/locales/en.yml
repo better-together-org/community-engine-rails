@@ -1644,16 +1644,6 @@ en:
         status_draft: Draft
         status_label: Status
       location: Location
-      location_picker:
-        announcements:
-          cancelled: New address cancelled. Returned to the location search field.
-          creating: Creating a new address. Fill in the address fields below, then
-            save the event.
-        cancel_new_address: Cancel new address
-        create_row:
-          new_named_with_query: 'Create new %{model}: "%{q}"'
-          use_typed_name: Use "%{q}" as a custom location name
-        new_address_legend: New address
       login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
@@ -2287,6 +2277,20 @@ en:
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
+    locations:
+      picker:
+        announcements:
+          cancelled: New address cancelled. Returned to the location search field.
+          creating: Creating a new address. Fill in the address fields below, then
+            save.
+        cancel_new_address: Cancel new address
+        create_new: Create new %{model}
+        hint: Search for an existing address, building, or place. If it is not listed,
+          choose "Create new address" or use your typed text as a custom name.
+        label: Location
+        new_address_legend: New address
+        new_named_with_query: 'Create new %{model}: "%{q}"'
+        use_typed_name: Use "%{q}" as a custom location name
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
