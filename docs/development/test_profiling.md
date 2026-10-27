@@ -79,7 +79,7 @@ shards (`rspec other shard N/4`, 4 workers) and 4 `browser` shards (`rspec brows
 1 worker). Browser examples (tagged `js`, `feature` or `system`) run only in the browser shards.
 They use the `:deletion` cleaner and a Puma server thread, so keeping them out of the
 transaction-cleaned workers stops leaked state crossing between the two kinds. The tag filters
-partition every example exactly once. The workflow also has an aggregate `rspec (3.4.10, <rails>)` job that requires every
+partition every example exactly once. The workflow also has an aggregate `rspec (3.4.12, <rails>)` job that requires every
 shard, checks the merged example count and failures, merges SimpleCov results and publishes the
 merged timing summary. Shards are balanced by recorded runtime, not file count:
 
