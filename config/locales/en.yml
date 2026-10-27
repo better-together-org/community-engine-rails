@@ -1134,6 +1134,10 @@ en:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Associated Pages
+        attachment_preview:
+          image: 'Image: %{caption}'
+          opens_in_new_tab: "(opens in a new tab)"
+          video: 'Video: %{url}'
         checklist_block:
           not_found: Checklist not found.
           select_prompt: "— Select a checklist —"

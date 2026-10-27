@@ -1132,6 +1132,10 @@ fr:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Pages associées
+        attachment_preview:
+          image: 'Image : %{caption}'
+          opens_in_new_tab: "(s'ouvre dans un nouvel onglet)"
+          video: 'Vidéo : %{url}'
         checklist_block:
           not_found: Liste de vérification introuvable.
           select_prompt: "— Sélectionner une liste de vérification —"

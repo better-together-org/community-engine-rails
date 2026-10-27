@@ -29,10 +29,19 @@ module BetterTogether
     include CategoryIdentifiers
     include PinnableTimestamps
     include BlockAttachments
+    include Base64ImageInput
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     attachable_cover_image
+    accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
+                                            default_name: 'cover'
+
+    # Write-only: an existing block featured at the top of a new post, ahead of attachment_block_ids.
+    attr_accessor :video_block_id
+
+    validate :video_block_must_be_attachable, on: :create
+    after_save { self.video_block_id = nil }
 
     categorizable
 
@@ -141,6 +150,18 @@ module BetterTogether
         title: title,
         content: content&.to_plain_text
       }
+    end
+
+    private
+
+    def leading_attachment_ids
+      new_record? ? [video_block_id].compact_blank : []
+    end
+
+    def video_block_must_be_attachable
+      return if video_block_id.blank? || attachable_block(video_block_id)
+
+      errors.add(:video_block_id, :invalid)
     end
   end
 end
