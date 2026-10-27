@@ -1239,6 +1239,7 @@ es:
           default: Plantilla predeterminada
           host_community_contact_details: Detalles de contacto de la comunidad anfitriona
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: No se ha configurado ninguna URL de video.
           title: Reproductor de video de YouTube
           url_help: Acepta URLs de YouTube, Vimeo o cualquier URL de inserción directa.
