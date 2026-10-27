@@ -8,6 +8,7 @@ module BetterTogether
     class Image < Block
       include ::Storext.model
       include Base64ImageInput
+      include AttachableBlock
 
       CONTENT_TYPES = %w[image/jpeg image/png image/gif image/webp image/svg+xml].freeze
 
@@ -40,6 +41,10 @@ module BetterTogether
 
       def self.extra_permitted_attributes
         super + %i[media]
+      end
+
+      def attachable_plain_text_representation(_caption = nil)
+        caption.presence || '[Image]'
       end
 
       private
