@@ -81,6 +81,15 @@ After an organizer allows the relevant origins:
 3. set an appropriate title and caption
 4. preview the block
 
+### Vertical videos
+
+A `VideoBlock` accepts the aspect ratios 16:9, 4:3, 1:1 and 9:16. Choose 9:16 for a vertical video such as a short: the frame is centred and held to 360px wide instead of stretching across the page.
+
+![Vertical video on desktop](../screenshots/desktop/video_block_portrait.png)
+![Vertical video on mobile](../screenshots/mobile/video_block_portrait.png)
+
+When the video is hosted on YouTube, the `attachment_embed_url` helper returns the privacy-enhanced `youtube-nocookie.com` embed address, which hosts can use when a video is embedded as an attachment.
+
 If the origin is still blocked, the page will show a visible fallback with an “open in new tab” path instead of a silent failure.
 
 ## Governance recommendations

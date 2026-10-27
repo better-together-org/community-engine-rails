@@ -1246,6 +1246,7 @@ fr:
           default: Modèle par défaut
           host_community_contact_details: Coordonnées de la communauté hôte
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: Aucune URL de vidéo configurée.
           title: Lecteur vidéo YouTube
           url_help: Accepte les URL YouTube, Vimeo ou tout URL d'intégration direct.
