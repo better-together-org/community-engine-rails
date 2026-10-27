@@ -1230,6 +1230,7 @@ uk:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста
         video_block:
+          aspect_ratio_portrait: 9:16 (Вертикальне)
           missing_url: URL відео не налаштовано.
           title: Відеопрогравач YouTube
           url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.

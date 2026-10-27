@@ -1,0 +1,11 @@
+{
+  "name": "video_block_portrait_plain",
+  "device": "desktop",
+  "url": "/en/pages/vertical-video",
+  "title": "Vertical video | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "video_block_portrait",
+  "flow": "video_block_portrait_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/video_block_portrait_spec.rb"
+}

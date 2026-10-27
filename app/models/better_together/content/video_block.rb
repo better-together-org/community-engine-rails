@@ -6,7 +6,8 @@ module BetterTogether
     class VideoBlock < Block
       include Translatable
 
-      ASPECT_RATIOS = %w[16x9 4x3 1x1].freeze
+      ASPECT_RATIOS = %w[16x9 4x3 1x1 9x16].freeze
+      PRIVACY_EMBED_HOST = 'https://www.youtube-nocookie.com/embed/'
 
       YOUTUBE_PATTERN = %r{
         (?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/) |
@@ -46,6 +47,17 @@ module BetterTogether
         else
           video_url
         end
+      end
+
+      # The same embed on youtube-nocookie.com, for places that embed without the viewer opening the page (attachments).
+      def attachment_embed_url
+        return embed_url unless provider == :youtube
+
+        embed_url.sub(%r{\Ahttps://www\.youtube\.com/embed/}, PRIVACY_EMBED_HOST)
+      end
+
+      def portrait?
+        aspect_ratio == '9x16'
       end
 
       def embed_title
