@@ -22,10 +22,11 @@
       <%= label_tag "#{scope}[aspect_ratio]", BetterTogether::Content::Block.human_attribute_name('aspect_ratio', default: 'Aspect Ratio'), class: 'form-label' %>
       <%= select_tag "#{scope}[aspect_ratio]",
                      options_for_select(
-                       [['16:9 (Widescreen)', '16x9'], ['4:3 (Standard)', '4x3'], ['1:1 (Square)', '1x1']],
+                       [['16:9 (Widescreen)', '16x9'], ['4:3 (Standard)', '4x3'], ['1:1 (Square)', '1x1'],
+                        [t('better_together.content.blocks.video_block.aspect_ratio_portrait'), '9x16']],
                        block.aspect_ratio
                      ),
-                     class: 'form-select',
+                     class: 'form-select video-block-aspect-ratio',
                      data: { controller: 'better_together--slim-select' } %>
     </div>
     <div class="col mb-3">

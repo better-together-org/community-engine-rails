@@ -1240,6 +1240,7 @@ en:
           default: Default template
           host_community_contact_details: Host community contact details
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: No video URL configured.
           title: YouTube video player
           url_help: Accepts YouTube, Vimeo, or any direct embed URL.
