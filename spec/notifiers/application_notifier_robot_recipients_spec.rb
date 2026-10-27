@@ -21,8 +21,11 @@ RSpec.describe ApplicationNotifier, '#deliver' do # rubocop:disable RSpec/SpecFi
       end
 
       it 'saves and queues nothing when every recipient is a robot', :aggregate_failures do
+        notifier # build the comment first: its own creation may notify the author
+        saved = -> { Noticed::Event.count + Noticed::Notification.count }
+
+        expect { notifier.public_send(method, robot) }.not_to(change(saved, :call))
         expect { notifier.public_send(method, robot) }.not_to have_enqueued_job(Noticed::EventJob)
-        expect(Noticed::Event.count + Noticed::Notification.count).to eq(0)
       end
     end
   end
