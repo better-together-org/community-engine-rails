@@ -97,7 +97,7 @@ RSpec.describe 'Documentation screenshots for the event location picker',
           {
             id: 'location_picker',
             title: 'Mixed-type search',
-            description: 'EventsController#available_locations searches every Geography::Placeable type ' \
+            description: 'LocationsController#available searches every Geography::Placeable type ' \
                          'at once when no location_type is given, returning composite "ClassName:id" ' \
                          'values so one merged, type-labeled result list can span types without id ' \
                          'collisions. The allow-list is read from Placeable.included_in_models, so a ' \
