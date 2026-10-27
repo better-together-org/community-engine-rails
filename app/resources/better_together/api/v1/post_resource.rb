@@ -20,6 +20,9 @@ module BetterTogether
         # Write-only: ids of existing blocks attached at the top of the body (never returned)
         attribute :attachment_block_ids
 
+        # Write-only: a base64 cover image, and the id of an existing block featured at the top of a new post
+        attributes :cover_image_data, :cover_image_filename, :video_block_id
+
         # Virtual attributes for attachments
         attribute :cover_image_url
 
@@ -49,16 +52,17 @@ module BetterTogether
         end
 
         def fetchable_fields
-          super - %i[attachment_block_ids]
+          super - %i[attachment_block_ids cover_image_data cover_image_filename video_block_id]
         end
 
         # Creatable and updatable fields. created_at is create-only: it is never rewritten afterwards.
         def self.creatable_fields(context)
-          super - %i[slug cover_image_url published_at] + %i[category_identifiers attachment_block_ids created_at updated_at]
+          super - %i[slug cover_image_url published_at] + %i[category_identifiers attachment_block_ids cover_image_data cover_image_filename
+                                                             video_block_id created_at updated_at]
         end
 
         def self.updatable_fields(context)
-          creatable_fields(context) - %i[created_at]
+          creatable_fields(context) - %i[created_at video_block_id]
         end
       end
     end

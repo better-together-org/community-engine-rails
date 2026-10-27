@@ -217,6 +217,11 @@ Every API request runs in the default locale. Send `X-Api-Locale: fr` to write a
 
 A body update keeps the post's blocks: `PATCH` with new `content` and no attachments puts the existing attachments back in front of the new text, so a publisher can rewrite the text without re-sending the blocks. Sending `attachment_block_ids` on update replaces them. Sending rendered `<action-text-attachment>` HTML back as `content` is rejected, because it has no signed id.
 
+`posts` also accepts these write-only inputs, never returned:
+
+- `cover_image_data` (base64) with optional `cover_image_filename`, on create and update. CE's attachment validators still apply; data that is not an image is `422`.
+- `video_block_id` (create only) features one existing block at the very top of a new post, ahead of `attachment_block_ids`. The registry and platform rules above apply, and an unknown or unregistered block is `422` on `video_block_id`. It is ignored on update, where `attachment_block_ids` replaces attachments.
+
 ### Event inputs for publishers
 
 `events` accepts the same publisher inputs, on create and update:
