@@ -52,7 +52,7 @@ classDiagram
 
     class Quotas_Owner {
       <<concern>>
-      +quotas
+      +quota
       +self.included_in_models()
       -erase_quota_ledger() "before_destroy: deletes owned ledger, nullifies actor refs"
     }

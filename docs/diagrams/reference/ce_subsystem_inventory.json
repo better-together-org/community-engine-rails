@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T13:48:08Z",
+  "generated_at": "2026-10-29T20:25:11Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -925,7 +925,7 @@
             },
             {
               "direction": "has_many",
-              "name": "quotas",
+              "name": "quota",
               "as": "owner",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
@@ -4036,7 +4036,7 @@
             },
             {
               "direction": "has_many",
-              "name": "quotas",
+              "name": "quota",
               "as": "owner",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
@@ -4720,7 +4720,7 @@
             },
             {
               "direction": "has_many",
-              "name": "quotas",
+              "name": "quota",
               "as": "owner",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },

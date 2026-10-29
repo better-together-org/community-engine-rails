@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-10-29T13:48:08Z`.
+Generated from live Rails reflections at `2026-10-29T20:25:11Z`.
 
 ## Identity, access, and memberships
 
@@ -72,7 +72,7 @@ People, users, identifications, invitations, roles, memberships, and privacy/exp
 - `OauthAccessToken`: `seeds` (has_many)
 - `OauthApplication`: `seeds` (has_many)
 - `OauthUser`: `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many), `person_identification` (has_one)
-- `Person`: `seeds` (has_many), `contributions` (has_many), `authorships` (has_many), `page_contributions` (has_many), `post_contributions` (has_many), `page_authorships` (has_many), `post_authorships` (has_many), `contact_detail` (has_one), `contacts` (has_many), `slugs` (has_many), `event_hosts` (has_many), `identifications` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quotas` (has_many), `views` (has_many), `agreement_participants` (has_many), `reports_received` (has_many), `notifications` (has_many), `notification_mentions` (has_many), `event_invitations` (has_many), `user_identification` (has_one), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
+- `Person`: `seeds` (has_many), `contributions` (has_many), `authorships` (has_many), `page_contributions` (has_many), `post_contributions` (has_many), `page_authorships` (has_many), `post_authorships` (has_many), `contact_detail` (has_one), `contacts` (has_many), `slugs` (has_many), `event_hosts` (has_many), `identifications` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quota` (has_many), `views` (has_many), `agreement_participants` (has_many), `reports_received` (has_many), `notifications` (has_many), `notification_mentions` (has_many), `event_invitations` (has_many), `user_identification` (has_one), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
 - `PersonAccessGrant`: `seeds` (has_many)
 - `PersonBlock`: `seeds` (has_many)
 - `PersonChecklistItem`: `seeds` (has_many)
@@ -144,12 +144,12 @@ Platforms, communities, domains, platform connections, storage, robots, routing,
 
 ### Polymorphic / weak-reference surfaces
 
-- `Community`: `seeds` (has_many), `contact_detail` (has_one), `contacts` (has_many), `event_hosts` (has_many), `slugs` (has_many), `map` (has_one), `building_connections` (has_many), `views` (has_many), `quotas` (has_many), `reports_received` (has_many), `short_link` (has_one), `invitations` (has_many), `string_translations` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `location` (has_one), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one), `logo_attachment` (has_one)
+- `Community`: `seeds` (has_many), `contact_detail` (has_one), `contacts` (has_many), `event_hosts` (has_many), `slugs` (has_many), `map` (has_one), `building_connections` (has_many), `views` (has_many), `quota` (has_many), `reports_received` (has_many), `short_link` (has_one), `invitations` (has_many), `string_translations` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `location` (has_one), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one), `logo_attachment` (has_one)
 - `CommunityInvitation`: `invitable` (belongs_to), `inviter` (belongs_to), `invitee` (belongs_to), `seeds` (has_many)
 - `FederationAccessToken`: `seeds` (has_many)
 - `NavigationArea`: `navigable` (belongs_to), `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many)
 - `NavigationItem`: `linkable` (belongs_to), `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many)
-- `Platform`: `seeds` (has_many), `slugs` (has_many), `views` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quotas` (has_many), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
+- `Platform`: `seeds` (has_many), `slugs` (has_many), `views` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quota` (has_many), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
 - `PlatformConnection`: `seeds` (has_many)
 - `PlatformDomain`: `seeds` (has_many)
 - `PlatformInvitation`: `seeds` (has_many), `rich_text_greeting` (has_one)
