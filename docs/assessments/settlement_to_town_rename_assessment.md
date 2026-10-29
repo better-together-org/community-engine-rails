@@ -100,6 +100,28 @@ Host-app files that reference the model, for a future Phase 2 (from a read-only 
 - Data: `db/schema.rb`, plus copied CE migrations under `db/migrate/*.better_together.rb` (including leftover `joatu_settlements` migrations, which are a different, removed feature)
 - Docs/specs: `docs/{settlement-map,locatable-onboarding,regions,live-current-image,district-cover-images,ce-backport-assessment,event-series-and-sessions-design}.md`, diagram `docs/diagrams/source/nlo_district_page_layers.mmd`, ~16 spec files (`spec/requests/.../settlement_{events,posts}_spec.rb`, `spec/support/locatable_record_examples.rb`, ...)
 
+### 2.6a Host-app view copies vs CE: backport candidates
+
+Both host copies (`app/views/better_together/geography/settlements/{index,show}.html.erb`) were taken from CE `929bb51a9492`. CE's settlement views have **not changed since that commit** (other than the Phase 1 edits to `index`, `new`, `edit` and `_settlement`), so the host diffs below are purely additive and there is no CE fix to pull from the host. Every difference is a feature insertion, which is why the host had to copy whole files.
+
+| Host change | In | Backport to CE? | Why / dependency |
+|---|---|---|---|
+| Communities tab + pane (`policy_scope(Community).located_in(settlement)`, tab only if any) | `show` | **Yes, now** | CE `Community` already includes `Locatable` (`located_in`) and ships `better_together/communities/_community`. Fix on the way: the host tab label uses `Community.model_name.human.pluralize` (English `pluralize`, wrong in fr/uk); use an I18n key. |
+| Live Events tab (lazy turbo-frame to `events_path(settlement: identifier)`) replacing CE's commented-out "test tab" placeholder | `show` (+ host `SettlementEvents`) | **Yes** | CE `Event` is already located (`Locatable::One`); `FramedIndex` already has the `index_scope_params` / `index_heading` hooks and its header comment names a settlement as the use case. Missing in CE: a controller concern that reads `?settlement=` and applies `located_in`, plus the tab. Make it generic (any `Placeable`: settlement, region, state). |
+| Live Posts tab (`posts_path(settlement: ...)`, `SettlementPosts`) | `show` | **Later** | Needs `Post` onboarded to the location system. In the host that is `LocatableModels` (`'BetterTogether::Post'`, `inherit: :community`), not CE. Backport after the location-picker/onboarding work in the host's backport plan; until then CE should not show an empty Posts tab. |
+| Settlement map section (`SettlementMap < Geography::LocatableMap` + `SettlementMapHelper`, rendered with CE's `shared/map`) | `show` | **Partly** | CE has `LocatableMap`, `shared/map` and `Space#boundary`, so a minimal "pin + boundary" map for any geocoded `Placeable` can live in CE. The host's extra pins for located records come from its own `LocatableModels` registry and stay host-side. |
+| Live image card (`LiveImage.slug_for`, `live_images/card`) | `show` | **No** | Host-specific service. |
+| Listing map above the list (`ListingMap`, `ListingMapHelper`, `shared/listing_map`, about 190 lines) | `index` | **Low priority** | The host's own backport plan rates it "lower". Backport the hook (below), not the map. |
+
+**The most valuable backport is an extension point, not any one feature.** The host already did this for communities: CE ships hook partials (`_header_media`, `_location_line`, `_about_extra`) and the host deleted its `communities/show` copy. The settlement views should get the same treatment so both host copies can be deleted:
+
+- `settlements/index`: a hook partial between the `h1`/gloss and the table (the host's listing map goes there).
+- `settlements/show`: hook partials for content above the tab card (map, communities), for extra tab links, and for extra tab panes (live image card, host tabs).
+
+Also visible in the diff, CE-side and independent of the host: `show.html.erb` still contains large commented-out placeholder panes, a developer-string `aria_label: 'geography-settlement Sections'`, and `id="geography-settlementSections"`. Replace the placeholders and give the tab list a translated accessible name when the hooks are added.
+
+When the host adopts Phase 1 it must also re-diff `index` against CE (the gloss, ids and `t('.new')`); the pin comment in the host file says "re-diff when the CE pin moves".
+
 ### 2.7 Verification status
 
 | Check | Result |
