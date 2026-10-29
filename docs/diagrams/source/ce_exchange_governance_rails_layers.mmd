@@ -6,41 +6,41 @@ classDiagram
     class BetterTogether__AgreementsController["AgreementsController"] {
       <<Controller>>
       models: Agreement
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, PageBlockVisibility
     }
     class BetterTogether__AgreementsStatusController["AgreementsStatusController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__ChecklistItemsController["ChecklistItemsController"] {
       <<Controller>>
       models: ChecklistItem
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__ChecklistsController["ChecklistsController"] {
       <<Controller>>
       models: Checklist
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__Joatu__AgreementsController["Joatu::AgreementsController"] {
       <<Controller>>
       models: Joatu::Agreement
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
     }
     class BetterTogether__Joatu__OffersController["Joatu::OffersController"] {
       <<Controller>>
       models: Joatu::Offer
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
     }
     class BetterTogether__Joatu__RequestsController["Joatu::RequestsController"] {
       <<Controller>>
       models: Joatu::Request
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
     }
     class BetterTogether__SeedsController["SeedsController"] {
       <<Controller>>
       models: Seed
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
   }
 

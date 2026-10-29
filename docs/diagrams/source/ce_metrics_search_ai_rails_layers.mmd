@@ -5,19 +5,19 @@ classDiagram
   namespace Controllers {
     class BetterTogether__HelpPreferencesController["HelpPreferencesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
     class BetterTogether__NotificationsController["NotificationsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
     }
     class BetterTogether__SearchController["SearchController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
     }
     class BetterTogether__ViewPreferencesController["ViewPreferencesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
     }
   }
 
