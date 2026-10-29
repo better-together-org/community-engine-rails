@@ -2010,18 +2010,21 @@ es:
       locatable_location:
         errors:
           no_location_source: Debes especificar un nombre o una ubicación
+      place_scoped_index:
+        events_heading: Eventos en %{name}
+        posts_heading: Publicaciones en %{name}
       regions:
         index:
           title: Regiones
         show:
-          settlements_heading: "Localidades en %{name}"
+          settlements_heading: Localidades en %{name}
       settlements:
         edit:
           heading: Editando localidad
-          page_title: "Editar %{name} | %{resources}"
+          page_title: Editar %{name} | %{resources}
         index:
-          description: Ciudades, pueblos, aldeas, caseríos, comunidades de las
-            Primeras Naciones y otros lugares con nombre.
+          description: Ciudades, pueblos, aldeas, caseríos, comunidades de las Primeras
+            Naciones y otros lugares con nombre.
           new: Nueva localidad
           title: Localidades
         new:
@@ -2030,6 +2033,9 @@ es:
         show:
           destroy: Destruir localidad
           edit-settlement: Editar localidad
+          events_loading: Cargando eventos...
+          posts_loading: Cargando publicaciones...
+          sections_aria: Secciones de la localidad
           view-all-settlements: Ver todas las localidades
         toolbar:
           back_to_geography_settlements: Volver a las localidades
@@ -2315,10 +2321,10 @@ es:
             continuación y luego guarda.
         cancel_new_address: Cancelar nueva dirección
         create_new: Crear nuevo %{model}
-        hint: Busca una dirección, un edificio o una localidad que ya exista
-          (ciudad, pueblo, aldea, comunidad de las Primeras Naciones u otro
-          lugar con nombre). Si no está en la lista, elige «Crear nueva
-          dirección» o usa el texto que escribiste como nombre personalizado.
+        hint: Busca una dirección, un edificio o una localidad que ya exista (ciudad,
+          pueblo, aldea, comunidad de las Primeras Naciones u otro lugar con nombre).
+          Si no está en la lista, elige «Crear nueva dirección» o usa el texto que
+          escribiste como nombre personalizado.
         label: Ubicación
         new_address_legend: Nueva dirección
         new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
@@ -5052,6 +5058,7 @@ es:
     tabs:
       about: Acerca de
       attendees: Asistentes
+      communities: Comunidades
       contact: Contacto
       events: Eventos
       federation: Federación
@@ -5528,10 +5535,9 @@ es:
         provinces: Provincias y territorios
         regions: Regiones
         settlements: Localidades
-      description: Continentes, países, provincias y territorios, regiones y
-        localidades (ciudades, pueblos, aldeas, comunidades de las Primeras
-        Naciones y otros lugares con nombre) que se usan para situar ubicaciones
-        en la jerarquía geográfica.
+      description: Continentes, países, provincias y territorios, regiones y localidades
+        (ciudades, pueblos, aldeas, comunidades de las Primeras Naciones y otros lugares
+        con nombre) que se usan para situar ubicaciones en la jerarquía geográfica.
       label: Datos de referencia geográficos
     index:
       actions: Acciones

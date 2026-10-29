@@ -1995,18 +1995,21 @@ en:
       locatable_location:
         errors:
           no_location_source: Must specify either a name or location
+      place_scoped_index:
+        events_heading: Events in %{name}
+        posts_heading: Posts in %{name}
       regions:
         index:
           title: Regions
         show:
-          settlements_heading: "Settlements in %{name}"
+          settlements_heading: Settlements in %{name}
       settlements:
         edit:
           heading: Editing settlement
-          page_title: "Edit %{name} | %{resources}"
+          page_title: Edit %{name} | %{resources}
         index:
-          description: Cities, towns, villages, hamlets, First Nations
-            communities and other named places.
+          description: Cities, towns, villages, hamlets, First Nations communities
+            and other named places.
           new: New settlement
           title: Settlements
         new:
@@ -2015,6 +2018,9 @@ en:
         show:
           destroy: Destroy Settlement
           edit-settlement: Edit Settlement
+          events_loading: Loading events...
+          posts_loading: Loading posts...
+          sections_aria: Settlement sections
           view-all-settlements: View All Settlements
         toolbar:
           back_to_geography_settlements: Back to Settlements
@@ -2299,10 +2305,10 @@ en:
             save.
         cancel_new_address: Cancel new address
         create_new: Create new %{model}
-        hint: Search for an existing address, building, or settlement (a city,
-          town, village, hamlet, First Nations community or other named place).
-          If it is not listed, choose "Create new address" or use your typed
-          text as a custom name.
+        hint: Search for an existing address, building, or settlement (a city, town,
+          village, hamlet, First Nations community or other named place). If it is
+          not listed, choose "Create new address" or use your typed text as a custom
+          name.
         label: Location
         new_address_legend: New address
         new_named_with_query: 'Create new %{model}: "%{q}"'
@@ -4973,6 +4979,7 @@ en:
     tabs:
       about: About
       attendees: Attendees
+      communities: Communities
       contact: Contact
       events: Events
       federation: Federation
@@ -5437,13 +5444,12 @@ en:
       categories:
         continents: Continents
         countries: Countries
-        provinces: "Provinces & Territories"
+        provinces: Provinces & Territories
         regions: Regions
         settlements: Settlements
-      description: Continents, countries, provinces/territories, regions, and
-        settlements (cities, towns, villages, hamlets, First Nations communities
-        and other named places) used to place locations in the geography
-        hierarchy.
+      description: Continents, countries, provinces/territories, regions, and settlements
+        (cities, towns, villages, hamlets, First Nations communities and other named
+        places) used to place locations in the geography hierarchy.
       label: Geography Reference Data
     index:
       actions: Actions

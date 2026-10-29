@@ -23,10 +23,10 @@ RSpec.describe 'BetterTogether::Geography::SettlementsController', :as_platform_
       expect(parsed_response.at_css('#settlements-table')['aria-describedby']).to eq('settlements-description')
     end
 
-    it 'exposes a stable id on the new-settlement button' do
+    it 'does not offer a new-settlement button while SettlementPolicy#create? is false' do
       get better_together.geography_settlements_path(locale:)
 
-      expect(parsed_response.at_css('a#new-settlement-btn')).to be_present
+      expect(parsed_response.at_css('a#new-settlement-btn')).to be_nil
     end
 
     %i[es fr uk].each do |other_locale|
@@ -47,6 +47,55 @@ RSpec.describe 'BetterTogether::Geography::SettlementsController', :as_platform_
     it 'renders show' do
       get better_together.geography_settlement_path(locale:, id: settlement.slug)
       expect(response).to have_http_status(:ok)
+    end
+  end
+
+  describe 'settlement page tabs' do
+    let!(:settlement) { create(:settlement) }
+
+    before { get better_together.geography_settlement_path(locale:, id: settlement.slug) }
+
+    it 'lazy-loads the posts index scoped to the settlement' do
+      expect(parsed_response.at_css('turbo-frame#settlement-posts')['src'])
+        .to include("settlement=#{settlement.identifier}")
+    end
+
+    it 'lazy-loads the events index scoped to the settlement' do
+      expect(parsed_response.at_css('turbo-frame#settlement-events')['src'])
+        .to include("settlement=#{settlement.identifier}")
+    end
+
+    it 'names the tab list for assistive technology' do
+      expect(parsed_response.at_css('#geography-settlement[role="tablist"]')['aria-label'])
+        .to eq(I18n.t('better_together.geography.settlements.show.sections_aria', locale:))
+    end
+
+    it 'omits the Communities tab when no community is located there' do
+      expect(parsed_response.at_css('a#communities-tab')).to be_nil
+    end
+  end
+
+  describe 'settlement page Communities tab' do
+    let!(:settlement) { create(:settlement) }
+    let!(:community) { create(:better_together_community, name: 'Harbour Guild', privacy: 'public') }
+
+    before do
+      create(:better_together_community, name: 'Hilltop Club', privacy: 'public')
+      community.create_location!(location: settlement)
+      get better_together.geography_settlement_path(locale:, id: settlement.slug)
+    end
+
+    it 'adds a Communities tab' do
+      expect(parsed_response.at_css('a#communities-tab').text)
+        .to eq(I18n.t('globals.tabs.communities', locale:))
+    end
+
+    it 'lists the communities located in the settlement' do
+      expect_html_content('Harbour Guild')
+    end
+
+    it 'leaves out communities located elsewhere' do
+      expect_no_html_content('Hilltop Club')
     end
   end
 

@@ -1,6 +1,6 @@
 # Assessment: naming and wording of `Geography::Settlement`
 
-**Status:** Phase 1 (wording: glosses + translation fixes) implemented on branch `claude/charming-rubin-cm2s4m`. Phase 2 (class/table/route rename) is **deferred**; its edit-point map is kept in section 4.
+**Status:** Phase 1 (wording: glosses + translation fixes) implemented. Phase 2 (class/table/route rename) is **deferred**; its edit-point map is kept in section 4.
 **Trigger:** Community feedback that "Settlement" is not intuitive.
 **Scope searched:** `.rb`, `.erb`, `.yml`, `.js`, `.css`, `.rake`, `.json`, `.mmd`, `.md`, `.svg`, `.dbml` across the engine (excluding `node_modules`, `.git`, `log`, `tmp`), plus a read-only pass over the Newfoundland Labrador Online host app (`better-together-solutions/newfoundlandlabradoronline`).
 
@@ -76,7 +76,6 @@ Class, tables, `settlement_id`, route helpers, `/g/settlements`, controllers, po
 |---|---|
 | `app/views/better_together/geography/region_settlements/*` (6 files) | Whole scaffold is hard-coded English ("Region settlements", "Show this region settlement", ...) |
 | `states/show.html.erb`, `regions/show.html.erb` | Other labels ("Protected:", "Yes"/"No", "Edit this state", "Back to states", "Edit this region", "See all regions") |
-| `settlements/show.html.erb` | `aria_label: 'geography-settlement Sections'` is a developer string, not a translated accessible name |
 | `app/tools/better_together/mcp/search_geography_tool.rb` | Tool description text |
 | `lib/tasks/better_together/geography_*.rake` | `desc` strings (operator-facing, English only) |
 | `app/builders/better_together/geography_builder.rb#settlements` | Seed `description:` values are English data ("City in Newfoundland and Labrador") |
@@ -100,27 +99,20 @@ Host-app files that reference the model, for a future Phase 2 (from a read-only 
 - Data: `db/schema.rb`, plus copied CE migrations under `db/migrate/*.better_together.rb` (including leftover `joatu_settlements` migrations, which are a different, removed feature)
 - Docs/specs: `docs/{settlement-map,locatable-onboarding,regions,live-current-image,district-cover-images,ce-backport-assessment,event-series-and-sessions-design}.md`, diagram `docs/diagrams/source/nlo_district_page_layers.mmd`, ~16 spec files (`spec/requests/.../settlement_{events,posts}_spec.rb`, `spec/support/locatable_record_examples.rb`, ...)
 
-### 2.6a Host-app view copies vs CE: backport candidates
+### 2.6a Host-app view copies vs CE: backport candidates (and what was done)
 
-Both host copies (`app/views/better_together/geography/settlements/{index,show}.html.erb`) were taken from CE `929bb51a9492`. CE's settlement views have **not changed since that commit** (other than the Phase 1 edits to `index`, `new`, `edit` and `_settlement`), so the host diffs below are purely additive and there is no CE fix to pull from the host. Every difference is a feature insertion, which is why the host had to copy whole files.
+Both host copies (`app/views/better_together/geography/settlements/{index,show}.html.erb`) were taken from CE `929bb51a9492`. CE's settlement views had **not changed since that commit** (other than the Phase 1 edits), so the host diffs were purely additive and there was no CE fix to pull from the host. Every difference is a feature insertion, which is why the host had to copy whole files.
 
-| Host change | In | Backport to CE? | Why / dependency |
+| Host change | In | Status in CE | Notes |
 |---|---|---|---|
-| Communities tab + pane (`policy_scope(Community).located_in(settlement)`, tab only if any) | `show` | **Yes, now** | CE `Community` already includes `Locatable` (`located_in`) and ships `better_together/communities/_community`. Fix on the way: the host tab label uses `Community.model_name.human.pluralize` (English `pluralize`, wrong in fr/uk); use an I18n key. |
-| Live Events tab (lazy turbo-frame to `events_path(settlement: identifier)`) replacing CE's commented-out "test tab" placeholder | `show` (+ host `SettlementEvents`) | **Yes** | CE `Event` is already located (`Locatable::One`); `FramedIndex` already has the `index_scope_params` / `index_heading` hooks and its header comment names a settlement as the use case. Missing in CE: a controller concern that reads `?settlement=` and applies `located_in`, plus the tab. Make it generic (any `Placeable`: settlement, region, state). |
-| Live Posts tab (`posts_path(settlement: ...)`, `SettlementPosts`) | `show` | **Later** | Needs `Post` onboarded to the location system. In the host that is `LocatableModels` (`'BetterTogether::Post'`, `inherit: :community`), not CE. Backport after the location-picker/onboarding work in the host's backport plan; until then CE should not show an empty Posts tab. |
-| Settlement map section (`SettlementMap < Geography::LocatableMap` + `SettlementMapHelper`, rendered with CE's `shared/map`) | `show` | **Partly** | CE has `LocatableMap`, `shared/map` and `Space#boundary`, so a minimal "pin + boundary" map for any geocoded `Placeable` can live in CE. The host's extra pins for located records come from its own `LocatableModels` registry and stay host-side. |
-| Live image card (`LiveImage.slug_for`, `live_images/card`) | `show` | **No** | Host-specific service. |
-| Listing map above the list (`ListingMap`, `ListingMapHelper`, `shared/listing_map`, about 190 lines) | `index` | **Low priority** | The host's own backport plan rates it "lower". Backport the hook (below), not the map. |
+| Communities tab + pane | `show` | **Done** (2.8) | Correction to an earlier version of this table: CE's `Community` had a plain `has_one :location` but **no** `located_in` scope (the host adds one). CE `Community` now includes `Geography::Locatable::LocatedIn`. Tab label is an I18n key (`globals.tabs.communities`), not English `pluralize`. |
+| Live Events tab (lazy frame to `events_path(settlement:)`) | `show` (+ host `SettlementEvents`) | **Done** (2.8) | Generic `PlaceScopedIndex` concern replaces the host concern. |
+| Live Posts tab (lazy frame to `posts_path(settlement:)`) | `show` (+ host `SettlementPosts`) | **Done, community-inherited only** (2.8) | CE `Post` now includes `LocatedIn` + `inherit_location_from :community`, so a post counts as located wherever its community is. CE `Post` still has **no location row of its own** (no picker, no `has_one :location`); the host's `LocatableModels` entry for `Post` keeps providing that. |
+| Settlement map section (`SettlementMap < Geography::LocatableMap` + `SettlementMapHelper`, rendered with CE's `shared/map`) | `show` | **Hook only** | Host content goes in the `header_extra` hook. A minimal generic pin-and-boundary map in CE is still a possible follow-up (CE has `LocatableMap`, `shared/map` and `Space#boundary`). |
+| Live image card (`LiveImage.slug_for`, `live_images/card`) | `show` | **Hook only** (`about_extra`) | Host-specific service. |
+| Listing map above the list (`ListingMap`, `ListingMapHelper`, `shared/listing_map`) | `index` | **Hook only** (`index_extra`) | The host's own backport plan rates the map itself "lower". |
 
-**The most valuable backport is an extension point, not any one feature.** The host already did this for communities: CE ships hook partials (`_header_media`, `_location_line`, `_about_extra`) and the host deleted its `communities/show` copy. The settlement views should get the same treatment so both host copies can be deleted:
-
-- `settlements/index`: a hook partial between the `h1`/gloss and the table (the host's listing map goes there).
-- `settlements/show`: hook partials for content above the tab card (map, communities), for extra tab links, and for extra tab panes (live image card, host tabs).
-
-Also visible in the diff, CE-side and independent of the host: `show.html.erb` still contains large commented-out placeholder panes, a developer-string `aria_label: 'geography-settlement Sections'`, and `id="geography-settlementSections"`. Replace the placeholders and give the tab list a translated accessible name when the hooks are added.
-
-When the host adopts Phase 1 it must also re-diff `index` against CE (the gloss, ids and `t('.new')`); the pin comment in the host file says "re-diff when the CE pin moves".
+Also visible in the diff and fixed in CE independent of the host: `show.html.erb` had large commented-out placeholder panes (weather, live cam, mutual aid, alerts: removed; the hooks replace them) and a developer-string `aria_label: 'geography-settlement Sections'` (now `t('.sections_aria')`).
 
 ### 2.7 Verification status
 
@@ -128,9 +120,42 @@ When the host adopts Phase 1 it must also re-diff `index` against CE (the gloss,
 |---|---|
 | YAML parses; new keys present in en/es/fr/uk; interpolation variables match; no legacy term ("asentamiento", "établissement", "поселення") remains in the non-English locales | Passed (ad-hoc script) |
 | ERB templates compile; Ruby and spec files pass `ruby -c` | Passed |
-| `prspec` (new and existing specs), `rubocop`, `bin/i18n`, `brakeman` | **Not run.** The cloud session has no Docker daemon and Ruby 3.3.6 (repo needs 3.4.12). Run `bin/dc-run bundle exec prspec spec/requests/better_together/geography spec/services/better_together/seed_catalog spec/dom_contracts/settlements_pages_spec.rb spec/requests/better_together/seed_catalog_spec.rb` and `bin/dc-run bin/i18n` before merge. The new specs were written without being executed. |
+| Changed specs via `bin/dc-run bundle exec prspec` (settlements, regions and states controllers, `PlaceScopedIndex`, `LocatedIn`, seed catalog, settlements DOM contract), `rubocop` on changed Ruby files, `bin/i18n`, `brakeman -q -z -w2` | Passed (66 examples, 0 failures; no offenses; no missing or inconsistent translations; no warnings). Full `bin/dc-ci` suite not run. |
+| `PlaceScopedIndex` prepend order against the controllers' own before_actions, `Community.located_in` with the community policy scope, and the `.or` composition of `located_in` on a policy scope | Exercised by `place_scoped_index_spec.rb` and `located_in_spec.rb`, which pass |
 | Desktop/mobile screenshots (required for modified views) | **Not produced** (needs Chrome + DB). Capture with `bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec <spec>'`; there is no settlements-index screenshot spec yet. |
 | `bin/i18n normalize` formatting | The long `description` scalars were folded by hand to 80 columns; run `bin/dc-run bin/i18n normalize` and commit any whitespace-only churn |
+
+### 2.8 Settlement page extension points, tabs and place-scoped indexes (where everything lives)
+
+**Hook partials** (empty in the engine; a host app overrides one by creating the same path in its own `app/views`; same pattern as the community hooks `_header_media`, `_location_line`, `_about_extra`). All in `app/views/better_together/geography/settlements/`, all take strict locals:
+
+| Partial | Locals | Rendered by | Where it appears | Host use (NLO) |
+|---|---|---|---|---|
+| `_index_extra.html.erb` | `settlements:` | `index.html.erb` | Between the heading/gloss and the table | Listing map |
+| `_header_extra.html.erb` | `settlement:` | `show.html.erb` | Between the action buttons and the tabbed section | Settlement map |
+| `_about_extra.html.erb` | `settlement:` | `show.html.erb` | Below the description in the About pane | Live image card |
+| `_tab_links_extra.html.erb` | `settlement:` | `show.html.erb` | After the built-in tab links, inside the `role="tablist"` | Extra tab links |
+| `_tab_panes_extra.html.erb` | `settlement:` | `show.html.erb` | After the built-in panes, inside `.tab-content` | Matching panes (`id="<name>"`, `aria-labelledby="<name>-tab"`) |
+
+**Built-in tabs on `show.html.erb`:** About, Posts, Events, and Communities (only when `@located_communities` is non-empty). Stable ids: `section#settlement-tabbed-section`, `#geography-settlement[role=tablist]`, `a#<name>-tab` / `div#<name>` for `about|posts|events|communities`, `turbo-frame#settlement-posts`, `turbo-frame#settlement-events`, `#settlement-communities`. The tab-list name is `better_together.geography.settlements.show.sections_aria`; the loading placeholders are `...show.posts_loading` and `...show.events_loading`; the Communities label is `globals.tabs.communities`.
+
+**Data for the Communities tab:** `Geography::SettlementsController#show` sets `@located_communities` from `policy_scope(Community).located_in(settlement)`.
+
+**Place-scoped indexes:** `app/controllers/concerns/better_together/place_scoped_index.rb` (`BetterTogether::PlaceScopedIndex`), `prepend`ed in `EventsController` and `PostsController` right after `include FramedIndex`.
+- `GET /events?settlement=<identifier>` and `GET /posts?settlement=<identifier>` list only what is `located_in` the settlement, applied to the policy scope.
+- The place is looked up through its policy scope: an unknown or invisible identifier, or a non-string param, is a 404.
+- Uses the `FramedIndex` hooks (`index_scope_params` keeps the param through the filter form, `index_heading` titles the list) and exposes `scoped_place` to views; `events/index.html.erb` hides the all-events map when `scoped_place` is set.
+- To scope by another level, add it to `PlaceScopedIndex.place_classes` (a `{ param_symbol => class }` allow-list; the class needs an `identifier` and a policy scope).
+- Headings: `better_together.geography.place_scoped_index.{events_heading,posts_heading}`.
+
+**Model support:** `Community` and `Post` now include `Geography::Locatable::LocatedIn` (`app/models/better_together/community.rb`, `app/models/better_together/post.rb`); `Post` calls `inherit_location_from :community`. Guide: `docs/development/located_in_scope.md`.
+
+**Host adoption (NLO), in order:**
+1. Re-pin to the CE release containing this change.
+2. `app/controllers/concerns/.../settlement_{events,posts}.rb`: delete the files and the two `prepend` lines in `config/initializers/better_together_controllers.rb` (CE now does this; the host's prepends keep working in the meantime because both apply the same param and scope).
+3. `app/views/better_together/geography/settlements/{index,show}.html.erb`: delete the copies and move their additions into overrides of `_index_extra` (listing map), `_header_extra` (settlement map), `_about_extra` (live image card).
+4. `LocatableModels` (`'BetterTogether::Community'`, `'BetterTogether::Post'`): the host `Locatable` concern still supplies the own-location `has_one` and picker for `Post`; including CE's `LocatedIn` as well is harmless. `inherit: :community` for `Post` is now also set by CE.
+5. Host locale keys `newfoundland_labrador_online.settlement_{events,posts}.{title,loading}` become unused once its concerns and view copy are gone (CE keys: 2.8 above).
 
 ---
 
@@ -377,6 +402,12 @@ grep -rn "location_type_matches?\|location_picker_type_map" app
 
 # Files named for the model
 find app spec db docs lib -iname '*settlement*' -not -path '*/screenshots/pr*'
+
+# Settlement page hooks, tabs, place-scoped indexes (2.8)
+ls app/views/better_together/geography/settlements/_*_extra.html.erb
+grep -rn "PlaceScopedIndex" app spec docs
+grep -rn "place_scoped_index\|settlement-posts\|settlement-events\|settlement-tabbed-section" app spec config
+grep -n "LocatedIn\|inherit_location_from" app/models/better_together/{community,post}.rb
 
 # Gloss and Phase 1 keys
 grep -rn "settlements-description\|settlements_heading\|settlements_tab\|seed_catalog.geography" app spec config

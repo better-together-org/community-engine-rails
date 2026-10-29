@@ -6,6 +6,8 @@
   <h1><%= t('.title') %></h1>
   <p id="settlements-description" class="text-muted"><%= t('.description') %></p>
 
+  <%= render 'better_together/geography/settlements/index_extra', settlements: @geography_settlements %>
+
   <div class="row">
     <div class="col">
       <table id="settlements-table" class="table" aria-describedby="settlements-description">

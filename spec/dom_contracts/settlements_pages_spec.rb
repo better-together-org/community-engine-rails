@@ -11,13 +11,12 @@ RSpec.describe 'Settlement pages DOM contract', :as_platform_manager, type: :req
   describe 'settlements index' do
     before { get better_together.geography_settlements_path(locale:) }
 
-    it 'exposes the heading gloss, the table and the new-settlement button' do # rubocop:disable RSpec/MultipleExpectations
+    it 'exposes the heading gloss and the table described by it' do # rubocop:disable RSpec/MultipleExpectations
       table = 'table#settlements-table[aria-describedby="settlements-description"]'
 
       expect(response).to have_http_status(:ok)
       expect(parsed_response.at_css('p#settlements-description')).to be_present
       expect(parsed_response.at_css(table)).to be_present
-      expect(parsed_response.at_css('a#new-settlement-btn')).to be_present
     end
   end
 
@@ -30,6 +29,25 @@ RSpec.describe 'Settlement pages DOM contract', :as_platform_manager, type: :req
       row_id = ActionView::RecordIdentifier.dom_id(settlement)
 
       expect(parsed_response.at_css("table#settlements-table tr##{row_id}")).to be_present
+    end
+  end
+
+  describe 'settlement page tabs' do
+    let!(:settlement) { create(:settlement) }
+
+    before { get better_together.geography_settlement_path(locale:, id: settlement.slug) }
+
+    it 'exposes the tabbed section and each tab with its pane', :aggregate_failures do
+      expect(parsed_response.at_css('section#settlement-tabbed-section')).to be_present
+      %w[about posts events].each do |name|
+        expect(parsed_response.at_css("a##{name}-tab[aria-controls=\"#{name}\"]")).to be_present
+        expect(parsed_response.at_css("div##{name}[aria-labelledby=\"#{name}-tab\"]")).to be_present
+      end
+    end
+
+    it 'exposes the lazy frames the host apps and docs screenshots target', :aggregate_failures do
+      expect(parsed_response.at_css('turbo-frame#settlement-posts[loading="lazy"]')).to be_present
+      expect(parsed_response.at_css('turbo-frame#settlement-events[loading="lazy"]')).to be_present
     end
   end
 

@@ -2023,18 +2023,21 @@ fr:
       locatable_location:
         errors:
           no_location_source: Vous devez préciser soit un nom, soit un emplacement
+      place_scoped_index:
+        events_heading: Événements à %{name}
+        posts_heading: Publications à %{name}
       regions:
         index:
           title: Régions
         show:
-          settlements_heading: "Localités dans %{name}"
+          settlements_heading: Localités dans %{name}
       settlements:
         edit:
           heading: Modification de la localité
-          page_title: "Modifier %{name} | %{resources}"
+          page_title: Modifier %{name} | %{resources}
         index:
-          description: Villes, villages, hameaux, communautés des Premières
-            Nations et autres lieux nommés.
+          description: Villes, villages, hameaux, communautés des Premières Nations
+            et autres lieux nommés.
           new: Nouvelle localité
           title: Localités
         new:
@@ -2043,6 +2046,9 @@ fr:
         show:
           destroy: Détruire la localité
           edit-settlement: Modifier la localité
+          events_loading: Chargement des événements...
+          posts_loading: Chargement des publications...
+          sections_aria: Sections de la localité
           view-all-settlements: Voir toutes les localités
         toolbar:
           back_to_geography_settlements: Retour aux localités
@@ -2328,10 +2334,10 @@ fr:
             ci-dessous, puis enregistrez.
         cancel_new_address: Annuler la nouvelle adresse
         create_new: Créer un(e) nouveau/nouvelle %{model}
-        hint: Recherchez une adresse, un bâtiment ou une localité existante
-          (ville, village, hameau, communauté des Premières Nations ou autre
-          lieu nommé). S'il n'est pas répertorié, choisissez « Créer une
-          nouvelle adresse » ou utilisez le texte saisi comme nom personnalisé.
+        hint: Recherchez une adresse, un bâtiment ou une localité existante (ville,
+          village, hameau, communauté des Premières Nations ou autre lieu nommé).
+          S'il n'est pas répertorié, choisissez « Créer une nouvelle adresse » ou
+          utilisez le texte saisi comme nom personnalisé.
         label: Lieu
         new_address_legend: Nouvelle adresse
         new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
@@ -5090,6 +5096,7 @@ fr:
     tabs:
       about: À propos
       attendees: Participants
+      communities: Communautés
       contact: Contact
       events: Événements
       federation: Fédération
@@ -5564,10 +5571,9 @@ fr:
         provinces: Provinces et territoires
         regions: Régions
         settlements: Localités
-      description: Continents, pays, provinces et territoires, régions et
-        localités (villes, villages, hameaux, communautés des Premières Nations
-        et autres lieux nommés) utilisés pour situer les emplacements dans la
-        hiérarchie géographique.
+      description: Continents, pays, provinces et territoires, régions et localités
+        (villes, villages, hameaux, communautés des Premières Nations et autres lieux
+        nommés) utilisés pour situer les emplacements dans la hiérarchie géographique.
       label: Données de référence géographiques
     index:
       actions: Actions

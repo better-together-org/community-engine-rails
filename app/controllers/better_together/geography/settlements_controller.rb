@@ -17,7 +17,13 @@ module BetterTogether
       end
 
       # GET /geography/settlements/1
-      def show; end
+      # The communities located here, through the viewer's policy scope so visibility never widens.
+      def show
+        @located_communities = policy_scope(::BetterTogether::Community)
+                               .located_in(@geography_settlement)
+                               .with_translations
+                               .order(:identifier)
+      end
 
       # GET /geography/settlements/new
       def new

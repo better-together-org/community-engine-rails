@@ -33,6 +33,12 @@ module BetterTogether
 
     belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
+    # located_in(place) works through the community: a post counts as located wherever its community is. Posts have
+    # no location row of their own in the engine (a host app may add one), so only the scope is included.
+    include Geography::Locatable::LocatedIn
+
+    inherit_location_from :community
+
     attachable_cover_image
     accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
                                             default_name: 'cover'
