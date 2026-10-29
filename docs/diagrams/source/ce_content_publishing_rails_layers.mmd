@@ -6,40 +6,40 @@ classDiagram
     class BetterTogether__CallsForInterestController["CallsForInterestController"] {
       <<Controller>>
       models: CallForInterest
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__CategoriesController["CategoriesController"] {
       <<Controller>>
       models: Category
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Content__BlocksController["Content::BlocksController"] {
       <<Controller>>
       models: Content::Block
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PagesController["PagesController"] {
       <<Controller>>
       models: Page
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__PostsController["PostsController"] {
       <<Controller>>
       models: Post
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: ChecksRequiredAgreements, FramedIndex, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__StaticPagesController["StaticPagesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__TranslationsController["TranslationsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__UploadsController["UploadsController"] {
       <<Controller>>
       models: Upload
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
   }
 
@@ -81,7 +81,7 @@ classDiagram
       table: better_together_content_blocks
       variants: Content::AccordionBlock, Content::AlertBlock, Content::CallToActionBlock, Content::ChecklistBlock, Content::CommunitiesBlock +16
       translates: accordion_items_json, heading, body_text, primary_button_label +21
-      concerns: BetterTogetherId, Content::BlockAttributes, Creatable, PlatformScoped +10
+      concerns: BetterTogetherId, Content::BlockAttributes, Creatable, PlatformScoped +11
       weak refs: owner: seeds, owner: background_image_file_attachment, owner: reports_received, owner: string_translations +8
     }
     class BetterTogether__Content__Link["Content::Link"] {
@@ -113,7 +113,7 @@ classDiagram
       <<Model>>
       table: better_together_posts
       translates: content, slug, title
-      concerns: Attachments::Images, Authorable, BetterTogetherId, BlockAttachments +25
+      concerns: Attachments::Images, Authorable, Base64ImageInput, BetterTogetherId +26
       weak refs: owner: seeds, owner: contributions, owner: authorships, owner: author_contributions +22
     }
     class BetterTogether__Upload["Upload"] {

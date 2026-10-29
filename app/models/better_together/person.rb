@@ -23,6 +23,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Quotas::Owner
     include Reportable
     include Seedable
     include TimezoneAttributeAliasing

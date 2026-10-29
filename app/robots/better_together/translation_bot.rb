@@ -75,6 +75,8 @@ module BetterTogether
     def log_translation(request_content, response_content, initiator, start_time, end_time, source_locale,
                         target_locale, estimated_cost, prompt_tokens:, completion_tokens:, response_model:)
       # rubocop:enable Metrics/ParameterLists
+      settle_translation_tokens_quota(initiator, start_time, prompt_tokens, completion_tokens)
+
       BetterTogether::Ai::Log::TranslationLoggerJob.perform_later(
         request_content:,
         response_content:,
@@ -96,6 +98,23 @@ module BetterTogether
       )
     end
     # rubocop:enable Metrics/MethodLength
+
+    # Settle-only, no pre-call reserve!: token counts are only known after the
+    # provider call returns (see #translate above). subject: nil because the
+    # Ai::Log::Translation row doesn't exist yet, created async below; never
+    # retroactively link this usage row to that later-created log row. Errors are
+    # caught non-fatally, a quota-tracking bug must never break translation.
+    def settle_translation_tokens_quota(initiator, start_time, prompt_tokens, completion_tokens)
+      BetterTogether::Quotas.settle!(
+        type: 'ai_translation_tokens',
+        owner: BetterTogether::Quotas::OwnerResolver.resolve(initiator),
+        amount: prompt_tokens + completion_tokens,
+        idempotency_key: "ai_translation_tokens:settle:#{initiator.id}:#{start_time.to_i}",
+        actor: initiator
+      )
+    rescue StandardError => e
+      Rails.logger.warn("[Quotas] settle! failed non-fatally for ai_translation_tokens: #{e.class}: #{e.message}")
+    end
 
     def estimate_cost(prompt_tokens, completion_tokens, model)
       rates = {

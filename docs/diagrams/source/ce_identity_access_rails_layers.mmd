@@ -6,86 +6,86 @@ classDiagram
     class BetterTogether__InvitationsController["InvitationsController"] {
       <<Controller>>
       models: Invitation
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, PerUserThrottling
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__OauthApplicationsController["OauthApplicationsController"] {
       <<Controller>>
       models: OauthApplication
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PeopleController["PeopleController"] {
       <<Controller>>
       models: Person
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonAccessGrantsController["PersonAccessGrantsController"] {
       <<Controller>>
       models: PersonAccessGrant
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonBlocksController["PersonBlocksController"] {
       <<Controller>>
       models: PersonBlock
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, PerUserThrottling
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__PersonChecklistItemsController["PersonChecklistItemsController"] {
       <<Controller>>
       models: PersonChecklistItem
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonCommunityMembershipsController["PersonCommunityMembershipsController"] {
       <<Controller>>
       models: PersonCommunityMembership
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonDataExportsController["PersonDataExportsController"] {
       <<Controller>>
       models: PersonDataExport
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonDeletionRequestsController["PersonDeletionRequestsController"] {
       <<Controller>>
       models: PersonDeletionRequest
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonLinkedSeedsController["PersonLinkedSeedsController"] {
       <<Controller>>
       models: PersonLinkedSeed
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonLinksController["PersonLinksController"] {
       <<Controller>>
       models: PersonLink
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonPlatformIntegrationsController["PersonPlatformIntegrationsController"] {
       <<Controller>>
       models: PersonPlatformIntegration
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonPlatformMembershipsController["PersonPlatformMembershipsController"] {
       <<Controller>>
       models: PersonPlatformMembership
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PersonSeedsController["PersonSeedsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ResourcePermissionsController["ResourcePermissionsController"] {
       <<Controller>>
       models: ResourcePermission
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__RolesController["RolesController"] {
       <<Controller>>
       models: Role
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__UsersController["UsersController"] {
       <<Controller>>
       models: User
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
   }
 
@@ -130,8 +130,8 @@ classDiagram
       <<Model>>
       table: better_together_people
       translates: description, name, slug
-      concerns: Agentic, Author, BetterTogetherId, Communicator +20
-      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: page_contributions +24
+      concerns: Agentic, Author, BetterTogetherId, Communicator +21
+      weak refs: owner: seeds, owner: contributions, owner: authorships, owner: page_contributions +25
     }
     class BetterTogether__PersonAccessGrant["PersonAccessGrant"] {
       <<Model>>

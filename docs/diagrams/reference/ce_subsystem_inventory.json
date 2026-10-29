@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T00:05:21Z",
+  "generated_at": "2026-10-29T01:45:36Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -925,6 +925,12 @@
             },
             {
               "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
               "name": "views",
               "as": "pageable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -1008,6 +1014,7 @@
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
+            "BetterTogether::Quotas::Owner",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Reportable",
             "BetterTogether::Seedable",
@@ -2444,6 +2451,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -2458,7 +2466,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2472,7 +2481,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2486,7 +2496,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2501,6 +2512,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -2515,7 +2527,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2529,7 +2542,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2543,7 +2557,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2557,7 +2572,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2571,7 +2587,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2585,7 +2602,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2599,7 +2617,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2613,7 +2632,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2625,7 +2645,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2639,7 +2660,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2653,7 +2675,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -2667,7 +2690,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -2933,6 +2957,31 @@
           ]
         },
         {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PersonSeedsController",
+            "PersonPlatformMembershipsController",
+            "PersonPlatformIntegrationsController",
+            "PersonLinksController",
+            "PersonLinkedSeedsController",
+            "PersonDeletionRequestsController",
+            "PersonDataExportsController",
+            "PersonCommunityMembershipsController",
+            "PersonChecklistItemsController",
+            "PersonBlocksController",
+            "PersonAccessGrantsController",
+            "InvitationsController",
+            "OauthApplicationsController",
+            "UsersController",
+            "RolesController",
+            "ResourcePermissionsController",
+            "PeopleController"
+          ]
+        },
+        {
           "name": "BetterTogether::Metrics::Viewable",
           "label": "Metrics::Viewable",
           "capability": "Viewable",
@@ -3020,6 +3069,15 @@
           "included_by": [
             "ResourcePermission",
             "Role"
+          ]
+        },
+        {
+          "name": "BetterTogether::Quotas::Owner",
+          "label": "Quotas::Owner",
+          "capability": "Owner",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Person"
           ]
         },
         {
@@ -3978,6 +4036,12 @@
             },
             {
               "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
               "name": "reports_received",
               "as": "reportable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -4038,6 +4102,12 @@
             },
             {
               "direction": "has_one",
+              "name": "location",
+              "as": "locatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
               "name": "profile_image_attachment",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -4061,9 +4131,13 @@
             "slug"
           ],
           "concerns": [
+            "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::ContactData",
             "BetterTogether::Contactable",
             "BetterTogether::FriendlySlug",
+            "BetterTogether::Geography::Locatable::AddressData",
+            "BetterTogether::Geography::Locatable::LocationMapPoints",
             "BetterTogether::Geography::Mappable",
             "BetterTogether::HostsEvents",
             "BetterTogether::Identifier",
@@ -4078,6 +4152,7 @@
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
+            "BetterTogether::Quotas::Owner",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Reportable",
             "BetterTogether::Searchable",
@@ -4645,6 +4720,12 @@
             },
             {
               "direction": "has_many",
+              "name": "quotas",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
               "name": "string_translations",
               "as": "translatable",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
@@ -4685,6 +4766,7 @@
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
+            "BetterTogether::Quotas::Owner",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
             "BetterTogether::TimezoneAttributeAliasing",
@@ -5551,6 +5633,7 @@
             "BetterTogether::InvitationTokenAuthorization",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -5563,7 +5646,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5575,7 +5659,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5587,7 +5672,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5600,7 +5686,8 @@
             "BetterTogether::BotProtectedSubmissions",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5614,7 +5701,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5628,7 +5716,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5642,7 +5731,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5657,6 +5747,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -5671,7 +5762,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5683,7 +5775,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5696,6 +5789,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -5709,6 +5803,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -5723,7 +5818,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5737,7 +5833,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -5752,6 +5849,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -5767,6 +5865,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::WizardMethods"
           ]
         }
@@ -5788,6 +5887,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Robot"
+          ]
+        },
+        {
+          "name": "BetterTogether::Base64ImageInput",
+          "label": "Base64ImageInput",
+          "capability": "Base64imageinput",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Community"
           ]
         },
         {
@@ -5842,6 +5950,15 @@
           ]
         },
         {
+          "name": "BetterTogether::ContactData",
+          "label": "ContactData",
+          "capability": "Contactdata",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Community"
+          ]
+        },
+        {
           "name": "BetterTogether::Contactable",
           "label": "Contactable",
           "capability": "Adds contact detail, website, phone, and social-link associations.",
@@ -5871,6 +5988,24 @@
             "Wizard",
             "NavigationItem",
             "NavigationArea",
+            "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::Locatable::AddressData",
+          "label": "Geography::Locatable::AddressData",
+          "capability": "Addressdata",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::Locatable::LocationMapPoints",
+          "label": "Geography::Locatable::LocationMapPoints",
+          "capability": "Locationmappoints",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
             "Community"
           ]
         },
@@ -6016,6 +6151,31 @@
           "included_by": [
             "Platform",
             "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "StorageConfigurationsController",
+            "SitemapsController",
+            "WizardsController",
+            "SettingsController",
+            "PlatformInvitationsController",
+            "WizardStepsController",
+            "MembershipRequestsController",
+            "HubController",
+            "HostDashboardController",
+            "SetupWizardController",
+            "SetupWizardStepsController",
+            "PlatformConnectionsController",
+            "CommunityWebhookEndpointsController",
+            "PlatformsController",
+            "NavigationItemsController",
+            "NavigationAreasController",
+            "CommunitiesController"
           ]
         },
         {
@@ -6222,6 +6382,16 @@
             "Wizard",
             "NavigationItem",
             "NavigationArea",
+            "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::Quotas::Owner",
+          "label": "Quotas::Owner",
+          "capability": "Owner",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform",
             "Community"
           ]
         },
@@ -7326,6 +7496,30 @@
         },
         {
           "from": "BetterTogether::ShortLink",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaReservation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaBalance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Quota",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -9744,6 +9938,7 @@
           "concerns": [
             "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::Content::AttachableBlock",
             "BetterTogether::Content::BlockAttributes",
             "BetterTogether::Creatable",
             "BetterTogether::PlatformScoped",
@@ -11310,6 +11505,7 @@
           ],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::Content::AttachableBlock",
             "BetterTogether::Content::BlockAttributes",
             "BetterTogether::Creatable",
             "BetterTogether::PlatformScoped",
@@ -11881,6 +12077,7 @@
           "concerns": [
             "BetterTogether::Attachments::Images",
             "BetterTogether::Authorable",
+            "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
             "BetterTogether::BlockAttachments",
             "BetterTogether::BlockFilterable",
@@ -12111,7 +12308,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -12125,7 +12323,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -12139,7 +12338,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -12155,6 +12355,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PageBlockVisibility"
           ]
         },
@@ -12168,9 +12369,11 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::FramedIndex",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PostsIndexPreload"
           ]
         },
@@ -12183,7 +12386,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -12195,7 +12399,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -12210,6 +12415,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         }
@@ -12241,6 +12447,7 @@
           "capability": "Base64imageinput",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Post",
             "Content::Image",
             "Content::Hero"
           ]
@@ -12364,6 +12571,16 @@
           ]
         },
         {
+          "name": "BetterTogether::Content::AttachableBlock",
+          "label": "Content::AttachableBlock",
+          "capability": "Attachableblock",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Content::VideoBlock",
+            "Content::Image"
+          ]
+        },
+        {
           "name": "BetterTogether::Content::BlockAttributes",
           "label": "Content::BlockAttributes",
           "capability": "Blockattributes",
@@ -12463,6 +12680,15 @@
           ]
         },
         {
+          "name": "BetterTogether::FramedIndex",
+          "label": "FramedIndex",
+          "capability": "Framedindex",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PostsController"
+          ]
+        },
+        {
           "name": "BetterTogether::FriendlySlug",
           "label": "FriendlySlug",
           "capability": "Adds translated/human-friendly slugs for routes and lookup.",
@@ -12524,6 +12750,22 @@
           "name": "BetterTogether::InvitationUserSetup",
           "label": "InvitationUserSetup",
           "capability": "Invitationusersetup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "TranslationsController",
+            "StaticPagesController",
+            "Content::BlocksController",
+            "UploadsController",
+            "PostsController",
+            "PagesController",
+            "CategoriesController",
+            "CallsForInterestController"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "TranslationsController",
@@ -16610,6 +16852,8 @@
             "BetterTogether::Federatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Geography::Geospatial::One",
+            "BetterTogether::Geography::Locatable::AddressData",
+            "BetterTogether::Geography::Locatable::LocatedIn",
             "BetterTogether::Geography::Locatable::One",
             "BetterTogether::Geography::Mappable",
             "BetterTogether::Identifier",
@@ -17180,7 +17424,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -17193,10 +17438,13 @@
           ],
           "concerns": [
             "BetterTogether::ChecksRequiredAgreements",
+            "BetterTogether::EventSeriesActions",
+            "BetterTogether::FramedIndex",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenAuthorization",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         }
@@ -17303,6 +17551,15 @@
           ]
         },
         {
+          "name": "BetterTogether::EventSeriesActions",
+          "label": "EventSeriesActions",
+          "capability": "Eventseriesactions",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventsController"
+          ]
+        },
+        {
           "name": "BetterTogether::EventSeriesDisposition",
           "label": "EventSeriesDisposition",
           "capability": "Eventseriesdisposition",
@@ -17321,6 +17578,15 @@
           ]
         },
         {
+          "name": "BetterTogether::FramedIndex",
+          "label": "FramedIndex",
+          "capability": "Framedindex",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventsController"
+          ]
+        },
+        {
           "name": "BetterTogether::FriendlySlug",
           "label": "FriendlySlug",
           "capability": "Adds translated/human-friendly slugs for routes and lookup.",
@@ -17335,6 +17601,24 @@
           "name": "BetterTogether::Geography::Geospatial::One",
           "label": "Geography::Geospatial::One",
           "capability": "One",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::Locatable::AddressData",
+          "label": "Geography::Locatable::AddressData",
+          "capability": "Addressdata",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::Locatable::LocatedIn",
+          "label": "Geography::Locatable::LocatedIn",
+          "capability": "Locatedin",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Event"
@@ -17411,6 +17695,16 @@
           "name": "BetterTogether::InvitationUserSetup",
           "label": "InvitationUserSetup",
           "capability": "Invitationusersetup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventsController",
+            "CalendarsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "EventsController",
@@ -18515,6 +18809,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable",
             "BetterTogether::PerUserThrottling"
           ]
@@ -18531,6 +18826,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -18547,6 +18843,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -18561,7 +18858,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -18575,7 +18873,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -18644,6 +18943,19 @@
           "name": "BetterTogether::InvitationUserSetup",
           "label": "InvitationUserSetup",
           "capability": "Invitationusersetup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Safety::NotesController",
+            "Safety::CasesController",
+            "ReportsController",
+            "MessagesController",
+            "ConversationsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Safety::NotesController",
@@ -22239,6 +22551,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PageBlockVisibility"
           ]
         },
@@ -22251,7 +22564,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -22265,7 +22579,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -22279,7 +22594,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -22294,6 +22610,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -22309,6 +22626,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -22324,6 +22642,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -22338,7 +22657,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -22534,6 +22854,22 @@
             "Joatu::PersonAccessGrantRequest",
             "Joatu::MembershipRequest",
             "Joatu::ConnectionRequest"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "SeedsController",
+            "AgreementsStatusController",
+            "ChecklistsController",
+            "ChecklistItemsController",
+            "AgreementsController",
+            "Joatu::RequestsController",
+            "Joatu::OffersController",
+            "Joatu::AgreementsController"
           ]
         },
         {
@@ -24078,7 +24414,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -24091,6 +24428,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -24106,6 +24444,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -24118,7 +24457,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -24171,6 +24511,18 @@
           "name": "BetterTogether::InvitationUserSetup",
           "label": "InvitationUserSetup",
           "capability": "Invitationusersetup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ViewPreferencesController",
+            "SearchController",
+            "NotificationsController",
+            "HelpPreferencesController"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "ViewPreferencesController",
@@ -24634,7 +24986,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -24691,6 +25044,15 @@
           "name": "BetterTogether::InvitationUserSetup",
           "label": "InvitationUserSetup",
           "capability": "Invitationusersetup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "WebhookEndpointsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "WebhookEndpointsController"
@@ -25982,6 +26344,8 @@
           "concerns": [
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Commentable",
+            "BetterTogether::Geography::Locatable::AddressData",
+            "BetterTogether::Geography::Locatable::LocatedIn",
             "BetterTogether::Geography::Locatable::One",
             "BetterTogether::Geography::Mappable",
             "BetterTogether::Seedable"
@@ -29328,6 +29692,405 @@
           "shared_table_group_size": 21
         },
         {
+          "name": "BetterTogether::Quota",
+          "label": "Quota",
+          "source_path": "app/models/better_together/quota.rb",
+          "table_name": "better_together_quota",
+          "columns": [
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "enforcement_mode",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "limit",
+              "integer"
+            ],
+            [
+              "soft_limit",
+              "integer"
+            ],
+            [
+              "metadata",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "InclusionValidator: quota_type (in=dynamic)",
+            "PresenceValidator: limit",
+            "NumericalityValidator: limit (greater_than_or_equal_to=0)",
+            "InclusionValidator: owner_type (in=dynamic)",
+            "UniquenessValidator: owner_id (scope=[:owner_type, :quota_type])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaBalance",
+          "label": "QuotaBalance",
+          "source_path": "app/models/better_together/quota_balance.rb",
+          "table_name": "better_together_quota_balances",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "period_key",
+              "string"
+            ],
+            [
+              "consumed",
+              "integer"
+            ],
+            [
+              "reserved",
+              "integer"
+            ],
+            [
+              "recalculated_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: period_key",
+            "UniquenessValidator: quota_id (scope=:period_key)",
+            "NumericalityValidator: consumed, reserved (only_integer=true)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaReservation",
+          "label": "QuotaReservation",
+          "source_path": "app/models/better_together/quota_reservation.rb",
+          "table_name": "better_together_quota_reservations",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "actor_type",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period_key",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "PresenceValidator: amount",
+            "NumericalityValidator: amount (only_integer=true)",
+            "PresenceValidator: period_key",
+            "PresenceValidator: expires_at",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaUsage",
+          "label": "QuotaUsage",
+          "source_path": "app/models/better_together/quota_usage.rb",
+          "table_name": "better_together_quota_usages",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "actor_type",
+              "string"
+            ],
+            [
+              "event",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period_key",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "PresenceValidator: amount",
+            "NumericalityValidator: amount (only_integer=true)",
+            "PresenceValidator: period_key",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key",
+            "InclusionValidator: event (in=[\"reserve\", \"settle\", \"reverse\", \"backfill\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::SafetyReportDigestNotifier",
           "label": "SafetyReportDigestNotifier",
           "source_path": "app/notifiers/better_together/safety_report_digest_notifier.rb",
@@ -29863,7 +30626,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -29876,7 +30640,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -29891,7 +30656,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -29904,7 +30670,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -29924,7 +30691,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30290,7 +31058,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30304,7 +31073,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30320,6 +31090,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -30334,7 +31105,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30373,7 +31145,8 @@
             "BetterTogether::ChecksRequiredAgreements",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30387,7 +31160,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30399,7 +31173,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30411,7 +31186,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30423,7 +31199,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30435,7 +31212,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30449,7 +31227,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30461,7 +31240,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30475,7 +31255,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30489,7 +31270,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30503,7 +31285,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30517,7 +31300,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30531,7 +31315,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30545,7 +31330,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30559,7 +31345,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30581,7 +31368,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30593,7 +31381,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30606,6 +31395,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -30621,7 +31411,21 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
+          ]
+        },
+        {
+          "name": "BetterTogether::LocationsController",
+          "label": "LocationsController",
+          "source_path": "app/controllers/better_together/locations_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30635,7 +31439,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30650,6 +31455,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30665,6 +31471,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30680,6 +31487,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30695,6 +31503,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30710,6 +31519,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30723,6 +31533,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::DatetimeFilterable",
             "BetterTogether::Metrics::PlatformContext"
           ]
@@ -30739,6 +31550,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30754,6 +31566,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30769,6 +31582,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -30781,7 +31595,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30794,6 +31609,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -30806,7 +31622,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30820,7 +31637,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30832,7 +31650,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30844,7 +31663,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30858,7 +31678,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30870,7 +31691,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30884,7 +31706,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30898,7 +31721,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30912,7 +31736,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30924,7 +31749,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30938,7 +31764,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30951,7 +31778,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30964,7 +31792,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30977,7 +31806,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30991,7 +31821,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31004,7 +31835,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31017,7 +31849,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -31154,6 +31987,10 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
+            "QuotaUsage",
+            "QuotaReservation",
+            "QuotaBalance",
+            "Quota",
             "PhoneNumber",
             "PersonMessagingGrant",
             "MessageRequest",
@@ -31267,6 +32104,24 @@
           ]
         },
         {
+          "name": "BetterTogether::Geography::Locatable::AddressData",
+          "label": "Geography::Locatable::AddressData",
+          "capability": "Addressdata",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventOccurrence"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::Locatable::LocatedIn",
+          "label": "Geography::Locatable::LocatedIn",
+          "capability": "Locatedin",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventOccurrence"
+          ]
+        },
+        {
           "name": "BetterTogether::Geography::Locatable::Many",
           "label": "Geography::Locatable::Many",
           "capability": "Many",
@@ -31349,6 +32204,7 @@
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
+            "LocationsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -31414,6 +32270,7 @@
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
+            "LocationsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -31479,6 +32336,7 @@
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
+            "LocationsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -31519,6 +32377,72 @@
             "WebsiteLink",
             "PhoneNumber",
             "EmailAddress"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ApplicationController",
+            "Api::Oauth::ApplicationsController",
+            "Safety::AgreementsController",
+            "Safety::ActionsController",
+            "Metrics::UserAccountReportsController",
+            "Metrics::SharesController",
+            "Metrics::SearchQueriesController",
+            "Metrics::ReportsController",
+            "Metrics::PageViewsController",
+            "Metrics::PageViewReportsController",
+            "Metrics::LinkClicksController",
+            "Metrics::LinkClickReportsController",
+            "Metrics::LinkCheckerReportsController",
+            "Joatu::HubController",
+            "Geography::StatesController",
+            "Geography::RegionSettlementsController",
+            "Geography::ContinentsController",
+            "Federation::ApiController",
+            "Content::PageBlocksController",
+            "BotDefense::ChallengesController",
+            "ShortLinkRedirectsController",
+            "SeedCatalogController",
+            "RobotsTxtController",
+            "RobotsController",
+            "ReportFollowupsController",
+            "PlatformDomainsController",
+            "NewPlatformSetupController",
+            "MessageRequestsController",
+            "LocationsController",
+            "FederationHubController",
+            "FeatureAccessGrantsController",
+            "EventOccurrencesController",
+            "CommentsController",
+            "ResourceController",
+            "Federation::OauthTokensController",
+            "Federation::LinkedSeedsController",
+            "Federation::ContentFeedController",
+            "Users::UnlocksController",
+            "Users::SessionsController",
+            "Api::Auth::SessionsController",
+            "Users::RegistrationsController",
+            "Api::Auth::RegistrationsController",
+            "Users::PasswordsController",
+            "Api::Auth::PasswordsController",
+            "Users::ConfirmationsController",
+            "Api::Auth::ConfirmationsController",
+            "OmniauthCallbacksController",
+            "Users::OmniauthCallbacksController",
+            "NewPlatformSetupStepsController",
+            "ShortLinksController",
+            "FriendlyResourceController",
+            "Joatu::JoatuController",
+            "Geography::SettlementsController",
+            "Geography::RegionsController",
+            "Geography::MapsController",
+            "Geography::CountriesController",
+            "Joatu::ResponseLinksController",
+            "Joatu::CategoriesController"
           ]
         },
         {
@@ -31583,6 +32507,10 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
+            "QuotaUsage",
+            "QuotaReservation",
+            "QuotaBalance",
+            "Quota",
             "PhoneNumber",
             "PersonMessagingGrant",
             "MessageRequest",
@@ -31678,6 +32606,10 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
+            "QuotaUsage",
+            "QuotaReservation",
+            "QuotaBalance",
+            "Quota",
             "PhoneNumber",
             "PersonMessagingGrant",
             "MessageRequest",
@@ -31981,6 +32913,30 @@
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaReservation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaBalance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Quota",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::PhoneNumber",

@@ -6,12 +6,12 @@ classDiagram
     class BetterTogether__CalendarsController["CalendarsController"] {
       <<Controller>>
       models: Calendar
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__EventsController["EventsController"] {
       <<Controller>>
       models: Event
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenAuthorization, InvitationTokenSession +2
+      concerns: ChecksRequiredAgreements, EventSeriesActions, FramedIndex, InvitationSessionManagement +5
     }
   }
 
@@ -33,7 +33,7 @@ classDiagram
       <<Model>>
       table: better_together_events
       translates: description, name, slug
-      concerns: Attachments::Images, Base64ImageInput, BetterTogetherId, BlockAttachments +28
+      concerns: Attachments::Images, Base64ImageInput, BetterTogetherId, BlockAttachments +30
       weak refs: owner: seeds, owner: federation_content_grants, owner: slugs, owner: geospatial_space +16
     }
     class BetterTogether__EventAttendance["EventAttendance"] {
