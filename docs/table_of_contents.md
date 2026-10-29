@@ -205,6 +205,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Development setup and configuration*
 - [README](development/README.md) - Development resources overview
 - [Development Setup](development/dev-setup.md) - Local development guide
+- [Cloud Agent Session Environment](development/cloud_session_environment.md) - Running dev/test in Claude Code cloud sessions (`bin/cloud-session-env`)
 - [♿ Accessibility Testing](development/accessibility_testing.md) - Browser accessibility and screenshot testing guidance
 - [Pull Request Evidence Standard](development/pull_request_evidence_standard.md) - Tiered evidence requirements for PR docs, diagrams, and screenshots
 - [Screenshot And Documentation Tooling Assessment](development/screenshot_and_documentation_tooling_assessment.md) - CE and management-tool tooling assessment

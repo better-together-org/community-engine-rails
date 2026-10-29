@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+#
+# Dev/test environment for Claude Code cloud sessions (claude.ai/code containers).
+#
+# The standard bin/dc-* workflow does not work there: the Docker daemon is not
+# running at start, Docker Hub rate-limits anonymous pulls, and `docker build` of
+# Dockerfile.dev fails because containers cannot reach Debian's apt mirrors (the
+# session's egress proxy refuses them). The host also has no usable Ruby
+# (cache.ruby-lang.org is refused, so rbenv cannot build .ruby-version).
+#
+# What works instead: the official ruby:<.ruby-version> image run with
+# --network host and the session proxy's CA, against the compose Postgres/Redis
+# services. See docs/development/cloud_session_environment.md for the full
+# background, known gaps (no browser for JS specs, no libvips, no DNS) and
+# troubleshooting.
+#
+# Usage:
+#   bin/cloud-session-env setup          # services + gems + test/dev databases
+#   bin/cloud-session-env services       # start dockerd, pull images, start Postgres/Redis
+#   bin/cloud-session-env bundle         # bundle install inside the runner image
+#   bin/cloud-session-env db-setup       # cloud equivalent of bin/parallel-setup (+ dev DB)
+#   bin/cloud-session-env run CMD...     # run CMD in the runner, e.g.
+#                                        #   bin/cloud-session-env run bundle exec prspec spec/models/foo_spec.rb
+#   bin/cloud-session-env diagrams [mmd...]  # bin/export_schema_diagrams equivalent, then
+#                                        #   render the given .mmd files (or all changed ones)
+#
+# Environment:
+#   WORKERS   prspec worker count / parallel test databases to prepare (default 4)
+
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+ruby_version="$(cat .ruby-version)"
+runner_image="ruby:${ruby_version}"
+tools_dir="$repo_root/tmp/cloud-session"
+ca_bundle="${CCR_CA_BUNDLE:-/root/.ccr/ca-bundle.crt}"
+workers="${WORKERS:-4}"
+
+log() { echo "[cloud-session-env] $*" >&2; }
+
+ensure_dockerd() {
+  docker info >/dev/null 2>&1 && return 0
+
+  log 'starting dockerd'
+  mkdir -p "$tools_dir"
+  nohup dockerd >"$tools_dir/dockerd.log" 2>&1 &
+  for _ in $(seq 1 30); do
+    docker info >/dev/null 2>&1 && return 0
+    sleep 1
+  done
+  log "dockerd did not come up; see $tools_dir/dockerd.log"
+  return 1
+}
+
+# Docker Hub answers 429 to anonymous pulls once the shared egress IP is rate
+# limited, so fall back to Google's Docker Hub mirror and retry with backoff.
+# (mirror.gcr.io has library/* images and some others, but not
+# imresamu/postgis, which only Docker Hub serves.)
+pull_image() {
+  local image="$1"
+  docker image inspect "$image" >/dev/null 2>&1 && return 0
+
+  local mirror_path="$image"
+  [[ "$image" == */* ]] || mirror_path="library/$image"
+
+  local attempt
+  for attempt in 1 2 3 4 5; do
+    if docker pull -q "$image" >/dev/null 2>&1; then
+      return 0
+    fi
+    if docker pull -q "mirror.gcr.io/$mirror_path" >/dev/null 2>&1; then
+      docker tag "mirror.gcr.io/$mirror_path" "$image"
+      return 0
+    fi
+    log "pull of $image failed (attempt $attempt); retrying in $((attempt * 20))s"
+    sleep $((attempt * 20))
+  done
+  log "could not pull $image"
+  return 1
+}
+
+compose_images() {
+  grep -E "^\s+image:" docker-compose.yml | sed -E "s/^\s+image:\s*['\"]?([^'\"]+)['\"]?/\1/" |
+    grep -v '^better-together/' | sort -u
+}
+
+cmd_services() {
+  ensure_dockerd
+  local image
+  for image in $(compose_images) "$runner_image"; do
+    pull_image "$image"
+  done
+  # Starts only db/redis/redis-rack-attack, which need no build.
+  ./bin/dc-ensure-services
+}
+
+# The runner: official Ruby image, host network (so Postgres is 127.0.0.1:5440
+# and the egress proxy is reachable), proxy CA trusted, gems in a named volume
+# that survives between runs.
+cmd_run() {
+  [[ $# -gt 0 ]] || { log 'run needs a command'; return 2; }
+  ensure_dockerd
+
+  local tty_flag=()
+  [[ -t 1 ]] && tty_flag=(-t)
+
+  local env_flags=(
+    -e DB_HOST=127.0.0.1 -e DB_PORT=5440
+    -e REDIS_URL=redis://127.0.0.1:6380
+    -e RACK_ATTACK_REDIS_URL=redis://127.0.0.1:6381
+    -e "WORKERS=$workers" -e "PARALLEL_TEST_PROCESSORS=$workers"
+    -e NO_PROXY=localhost,127.0.0.1 -e no_proxy=localhost,127.0.0.1
+  )
+  [[ -n "${RAILS_ENV:-}" ]] && env_flags+=(-e "RAILS_ENV=$RAILS_ENV")
+  if [[ -n "${HTTPS_PROXY:-}" ]]; then
+    env_flags+=(-e "HTTPS_PROXY=$HTTPS_PROXY" -e "https_proxy=$HTTPS_PROXY"
+                -e "HTTP_PROXY=${HTTP_PROXY:-$HTTPS_PROXY}" -e "http_proxy=${HTTP_PROXY:-$HTTPS_PROXY}")
+  fi
+
+  local ca_flags=()
+  if [[ -f "$ca_bundle" ]]; then
+    ca_flags=(-v "$ca_bundle:/etc/ssl/certs/cloud-session-ca.crt:ro"
+              -e SSL_CERT_FILE=/etc/ssl/certs/cloud-session-ca.crt
+              -e BUNDLE_SSL_CA_CERT=/etc/ssl/certs/cloud-session-ca.crt)
+  fi
+
+  docker run --rm -i "${tty_flag[@]}" --network host \
+    -v "$repo_root:/app" -w /app \
+    -v ce-cloud-bundle:/usr/local/bundle \
+    "${ca_flags[@]}" "${env_flags[@]}" \
+    "$runner_image" "$@"
+}
+
+cmd_bundle() {
+  cmd_run bundle install -j"$(nproc)"
+}
+
+cmd_db_setup() {
+  log "rebuilding test databases for $workers workers"
+  cmd_run bash -c "
+    set -e
+    cd spec/dummy
+    RAILS_ENV=test bin/rails db:drop db:create db:schema:load
+    RAILS_ENV=test PARALLEL_TEST_PROCESSORS=$workers bundle exec rake db:parallel:purge db:parallel:create db:parallel:prepare
+    # Development DB: needed by the subsystem-diagram exporter and for new migrations.
+    RAILS_ENV=development bin/rails db:prepare
+  "
+}
+
+cmd_setup() {
+  cmd_services
+  cmd_bundle
+  cmd_db_setup
+  log "ready: bin/cloud-session-env run bundle exec prspec spec/path/to/file_spec.rb"
+}
+
+# Playwright's preinstalled Chromium stands in for the Chrome both the schema
+# renderer (CHROME_PATH) and mermaid-cli (PUPPETEER_EXECUTABLE_PATH) look for.
+chromium_path() {
+  local candidate
+  for candidate in /opt/pw-browsers/chromium-*/chrome-linux*/chrome; do
+    [[ -x "$candidate" ]] && { echo "$candidate"; return 0; }
+  done
+  return 1
+}
+
+# Host Ruby for the stdlib-only DBML exporter: .ruby-version is usually not
+# installable here, so fall back to the newest Ruby rbenv does have.
+host_ruby_env() {
+  if command -v rbenv >/dev/null 2>&1 && ! rbenv prefix "$ruby_version" >/dev/null 2>&1; then
+    echo "RBENV_VERSION=$(rbenv versions --bare | sort -V | tail -1)"
+  fi
+}
+
+cmd_diagrams() {
+  local chrome
+  chrome="$(chromium_path)" || { log 'no Chromium found under /opt/pw-browsers'; return 1; }
+
+  log 'exporting DBML and the full-schema ERD'
+  env $(host_ruby_env) CHROME_PATH="$chrome" bin/export_schema_diagrams --skip-subsystems
+
+  log 'exporting subsystem inventory and ERD sources (dev DB)'
+  RAILS_ENV=development cmd_run ./bin/dummy bundle exec rails runner export_subsystem_diagrams.rb
+
+  local files=("$@")
+  if [[ ${#files[@]} -eq 0 ]]; then
+    mapfile -t files < <(git status --porcelain -- docs/diagrams/source | awk '{print $2}' | xargs -rn1 basename)
+  fi
+  if [[ ${#files[@]} -eq 0 ]]; then
+    log 'no changed .mmd sources to render'
+    return 0
+  fi
+  log "rendering ${files[*]}"
+  PUPPETEER_SKIP_DOWNLOAD=1 PUPPETEER_EXECUTABLE_PATH="$chrome" bin/render_diagrams "${files[@]}"
+}
+
+case "${1:-}" in
+  setup) shift; cmd_setup "$@" ;;
+  services) shift; cmd_services "$@" ;;
+  bundle) shift; cmd_bundle "$@" ;;
+  db-setup) shift; cmd_db_setup "$@" ;;
+  run) shift; cmd_run "$@" ;;
+  diagrams) shift; cmd_diagrams "$@" ;;
+  *) sed -n '2,29p' "$0"; exit 2 ;;
+esac
