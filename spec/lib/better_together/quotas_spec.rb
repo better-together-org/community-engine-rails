@@ -9,6 +9,11 @@ RSpec.describe BetterTogether::Quotas do
 
   let(:owner) { create(:better_together_person) }
 
+  def balance
+    quota = BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
+    BetterTogether::QuotaBalance.find_by(quota:, period_key: 'cumulative')
+  end
+
   describe '.check!' do
     it 'is always permissive in shadow mode regardless of amount' do
       result = described_class.check!(type: 'media_storage', owner:, amount: 10**15)
@@ -60,6 +65,29 @@ RSpec.describe BetterTogether::Quotas do
       end.to change(BetterTogether::Quota, :count).by(1)
     end
 
+    it 'files usage under the period of occurred_at when given, not the current one' do
+      usage = described_class.settle!(
+        type: 'ai_translation_tokens', owner:, amount: 10, idempotency_key: 'quotas_spec:settle:period',
+        occurred_at: Time.zone.local(2025, 3, 14, 12)
+      )
+
+      expect(usage.period_key).to eq('2025-03')
+    end
+
+    it 'adds a new row to the balance once, and an idempotent repeat not at all' do
+      2.times do
+        described_class.settle!(
+          type: 'media_storage', owner:, amount: 500, idempotency_key: 'quotas_spec:settle:balance'
+        )
+      end
+      described_class.settle!(
+        type: 'media_storage', owner:, amount: 250, idempotency_key: 'quotas_spec:settle:balance:2'
+      )
+
+      quota = BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
+      expect(BetterTogether::QuotaBalance.find_by(quota:, period_key: 'cumulative').consumed).to eq(750)
+    end
+
     it 'skips logging when the type declares the subject does not count' do
       log = create(:ai_log_translation, status: 'failure')
 
@@ -69,6 +97,36 @@ RSpec.describe BetterTogether::Quotas do
       )
 
       expect(BetterTogether::QuotaUsage.where(idempotency_key: 'quotas_spec:settle:5')).not_to exist
+    end
+  end
+
+  describe '.reserve! and .settle_reservations_for!' do
+    let(:blob) do
+      ActiveStorage::Blob.create_and_upload!(io: StringIO.new('abc'), filename: 'a.txt', content_type: 'text/plain')
+    end
+
+    it 'counts a held reservation as reserved until it is settled' do
+      described_class.reserve!(
+        type: 'media_storage', owner:, amount: 300, idempotency_key: 'quotas_spec:reserve:1', subject: blob
+      )
+      expect(balance.reserved).to eq(300)
+
+      described_class.settle_reservations_for!(blob)
+
+      expect(balance.reload.reserved).to eq(0)
+      expect(BetterTogether::QuotaReservation.find_by(idempotency_key: 'quotas_spec:reserve:1'))
+        .to be_status_settled
+    end
+
+    it 'stops counting a held reservation once it has expired' do
+      described_class.reserve!(
+        type: 'media_storage', owner:, amount: 300, idempotency_key: 'quotas_spec:reserve:2', ttl: 1.minute
+      )
+      quota = BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
+
+      travel 2.minutes do
+        expect(BetterTogether::QuotaBalance.refresh_reserved!(quota, 'cumulative').reserved).to eq(0)
+      end
     end
   end
 

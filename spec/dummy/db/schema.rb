@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_28_220310) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_29_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2019,9 +2019,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_220310) do
     t.datetime "released_at"
     t.string "idempotency_key", null: false
     t.jsonb "context", default: {}, null: false
+    t.uuid "platform_id"
     t.index ["actor_type", "actor_id"], name: "index_bt_quota_reservations_on_actor"
     t.index ["idempotency_key"], name: "index_bt_quota_reservations_on_idempotency_key", unique: true
     t.index ["owner_type", "owner_id"], name: "index_bt_quota_reservations_on_owner"
+    t.index ["platform_id"], name: "index_better_together_quota_reservations_on_platform_id"
     t.index ["quota_id"], name: "index_bt_quota_reservations_on_quota"
     t.index ["status", "expires_at"], name: "index_bt_quota_reservations_on_status_and_expiry"
     t.index ["subject_type", "subject_id"], name: "index_bt_quota_reservations_on_subject"
@@ -2818,6 +2820,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_28_220310) do
   add_foreign_key "better_together_quota", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_balances", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_balances", "better_together_quota", column: "quota_id"
+  add_foreign_key "better_together_quota_reservations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_reservations", "better_together_quota", column: "quota_id"
   add_foreign_key "better_together_quota_usages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_usages", "better_together_quota", column: "quota_id"

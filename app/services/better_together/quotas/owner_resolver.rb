@@ -39,7 +39,7 @@ module BetterTogether
       end
 
       def owner_record?(record)
-        BetterTogether::Quotas::Owner.included_in_models.any? { |klass| record.is_a?(klass) }
+        record.is_a?(BetterTogether::Quotas::Owner)
       end
 
       def creator_like_owner(record)

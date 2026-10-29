@@ -14,13 +14,43 @@ module BetterTogether
         after_destroy_commit :reverse_media_storage_quota
       end
 
-      # ActiveStorage::Attached::One/Many#detach calls Attachment#delete, not
-      # #destroy, which bypasses ActiveRecord callbacks entirely (no
-      # after_destroy_commit). Overriding delete directly is the only way to also
-      # catch plain detach, the common path for replacing a profile/cover image.
+      # The one idempotency key for an attachment's charge, shared by the live
+      # settle below and Quotas::Backfill, so an attachment is charged at most once
+      # whichever path writes first.
+      def self.charge_key(attachment_id)
+        "media_storage:settle:attachment:#{attachment_id}"
+      end
+
+      # ActiveStorage::Attached::One#detach and Attachment#purge call
+      # Attachment#delete, not #destroy, which bypasses ActiveRecord callbacks
+      # entirely (no after_destroy_commit). Overriding delete directly catches those.
+      # has_many_attached detach goes through a relation delete_all instead; see
+      # DetachManyTracking.
       def delete
         reverse_media_storage_quota
         super
+      end
+
+      # Reverses exactly the charge recorded for this attachment, reusing that row's
+      # owner and amount rather than re-resolving `record`/`blob`: (1) if the owner
+      # (e.g. a Post) was destroyed in the same transaction, record may already be
+      # gone by the time this fires post-commit; (2) Rails core's own
+      # after_destroy_commit :purge_dependent_blob_later can purge the blob first.
+      # No charge row (an attachment from before deploy that the backfill hasn't
+      # covered yet, or an owner whose ledger was erased) means nothing to reverse.
+      def reverse_media_storage_quota
+        charge = BetterTogether::QuotaUsage.find_by(idempotency_key: AttachmentTracking.charge_key(id))
+        return unless charge
+
+        BetterTogether::Quotas.reverse!(
+          type: 'media_storage',
+          owner: charge.owner,
+          amount: charge.amount,
+          idempotency_key: "media_storage:reverse:attachment:#{id}",
+          subject: self
+        )
+      rescue StandardError => e
+        Rails.logger.warn("[Quotas] reverse! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
       end
 
       private
@@ -30,36 +60,12 @@ module BetterTogether
           type: 'media_storage',
           owner: BetterTogether::Quotas::OwnerResolver.resolve(record),
           amount: blob.byte_size,
-          idempotency_key: "media_storage:settle:attachment:#{id}",
+          idempotency_key: AttachmentTracking.charge_key(id),
           subject: self
         )
+        BetterTogether::Quotas.settle_reservations_for!(blob)
       rescue StandardError => e
         Rails.logger.warn("[Quotas] settle! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
-      end
-
-      # Reuses the settle row's own recorded owner and amount rather than
-      # re-resolving `record`/`blob` fresh: (1) if the owner (e.g. a Post) was
-      # destroyed in the same transaction, record may already be gone by the time
-      # this fires post-commit, misattributing the reversal to the Platform
-      # fallback; (2) Rails core's own after_destroy_commit :purge_dependent_blob_later
-      # on ActiveStorage::Attachment can run before this callback and purge the
-      # blob, making a fresh blob.byte_size read unreliable.
-      def reverse_media_storage_quota
-        original = BetterTogether::QuotaUsage.find_by(subject: self, event: 'settle')
-        owner = original&.owner || BetterTogether::Quotas::OwnerResolver.resolve(record)
-        amount = original&.amount || blob&.byte_size
-
-        return unless amount
-
-        BetterTogether::Quotas.reverse!(
-          type: 'media_storage',
-          owner:,
-          amount:,
-          idempotency_key: "media_storage:reverse:attachment:#{id}",
-          subject: self
-        )
-      rescue StandardError => e
-        Rails.logger.warn("[Quotas] reverse! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
       end
     end
   end

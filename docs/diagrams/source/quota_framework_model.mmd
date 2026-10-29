@@ -45,13 +45,16 @@ classDiagram
       +consumed
       +reserved
       +recalculated_at
-      +self.recalculate!(quota, period_key)
+      +self.apply_usage!(quota, period_key, amount) "per-write, incremental"
+      +self.refresh_reserved!(quota, period_key) "held and unexpired only"
+      +self.recalculate!(quota, period_key) "full re-sum, backfill/repair"
     }
 
     class Quotas_Owner {
       <<concern>>
       +quotas
       +self.included_in_models()
+      -erase_quota_ledger() "before_destroy: deletes owned ledger, nullifies actor refs"
     }
 
     class Quotas_Type {
@@ -85,12 +88,18 @@ classDiagram
       <<concern on ActiveStorage::Attachment>>
       +settle_media_storage_quota()
       +reverse_media_storage_quota()
-      +delete() "overridden: detach bypasses #destroy callbacks"
+      +delete() "overridden: has_one detach/purge bypass #destroy callbacks"
+      +self.charge_key(attachment_id) "shared with Backfill"
+    }
+
+    class Quotas_DetachManyTracking {
+      <<prepended on Attached::Changes::DetachMany>>
+      +detach() "has_many detach uses relation delete_all"
     }
 
     class Quotas_DirectUploadReservation {
       <<concern on DirectUploadsController>>
-      +reserve_media_storage_quota()
+      +reserve_media_storage_quota() "after_action, subject = created blob"
     }
 
     class Quotas_Backfill {
@@ -105,7 +114,8 @@ classDiagram
       +attribute(type, actor, subject)
       +check!(...) "always permissive this phase"
       +reserve!(...)
-      +settle!(...)
+      +settle!(..., occurred_at) "occurred_at picks the period"
+      +settle_reservations_for!(subject)
       +reverse!(...) "raises NonReversibleQuotaError unless type.reversible?"
     }
 
@@ -131,13 +141,14 @@ classDiagram
     BetterTogether_Quotas --> Quota : find_or_build_quota
     BetterTogether_Quotas --> QuotaUsage : settle!/reverse! write
     BetterTogether_Quotas --> QuotaReservation : reserve! write
-    BetterTogether_Quotas --> QuotaBalance : recalculate!
+    BetterTogether_Quotas --> QuotaBalance : apply_usage! / refresh_reserved!
 
     Quotas_AttachmentTracking --> BetterTogether_Quotas : settle!/reverse! (media_storage)
     ActiveStorage_Attachment ..|> Quotas_AttachmentTracking : included via to_prepare
+    Quotas_DetachManyTracking --> Quotas_AttachmentTracking : reverse each detached attachment
     Quotas_DirectUploadReservation --> BetterTogether_Quotas : reserve! (media_storage)
 
-    TranslationBot --> BetterTogether_Quotas : settle! (ai_translation_tokens)
+    TranslationBot --> BetterTogether_Quotas : settle! (ai_translation_tokens, key from pre-generated log id)
 
     Quotas_Backfill --> Quotas_OwnerResolver : resolve owners
-    Quotas_Backfill --> QuotaUsage : find_or_create_by! event=backfill
+    Quotas_Backfill --> QuotaUsage : settle! with the live idempotency keys, event=backfill

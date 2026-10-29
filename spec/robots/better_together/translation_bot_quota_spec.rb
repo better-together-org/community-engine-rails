@@ -39,12 +39,39 @@ RSpec.describe BetterTogether::TranslationBot do
       expect(usage.event).to eq('settle')
     end
 
-    it 'does not settle anything when no initiator is given' do
+    it 'still meters tokens when no initiator is given, charged to the host platform' do
       bot = described_class.new(platform:)
 
       expect do
         bot.translate('Hello', target_locale: 'fr', source_locale: 'en')
-      end.not_to change(BetterTogether::QuotaUsage, :count)
+      end.to change(BetterTogether::QuotaUsage, :count).by(1)
+
+      usage = BetterTogether::QuotaUsage.last
+      expect(usage.owner).to eq(BetterTogether::Quotas::OwnerResolver.platform_fallback)
+      expect(usage.actor).to be_nil
+    end
+
+    it 'settles each call separately even when the same initiator translates twice in one second' do
+      initiator = create(:better_together_person)
+      bot = described_class.new(platform:)
+
+      freeze_time do
+        expect do
+          2.times { bot.translate('Hello', target_locale: 'fr', source_locale: 'en', initiator:) }
+        end.to change(BetterTogether::QuotaUsage, :count).by(2)
+      end
+    end
+
+    it 'keys the usage row by the log id handed to the logger job, the key the backfill reuses' do
+      initiator = create(:better_together_person)
+      bot = described_class.new(platform:)
+      log_id = nil
+      allow(BetterTogether::Ai::Log::TranslationLoggerJob).to receive(:perform_later) { |args| log_id = args[:log_id] }
+
+      bot.translate('Hello', target_locale: 'fr', source_locale: 'en', initiator:)
+
+      expect(log_id).to be_present
+      expect(BetterTogether::QuotaUsage.last.idempotency_key).to eq(described_class.translation_charge_key(log_id))
     end
 
     it 'still enqueues Ai::Log::TranslationLoggerJob as before (no regression)' do

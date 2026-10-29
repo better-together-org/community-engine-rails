@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T01:45:36Z",
+  "generated_at": "2026-10-29T13:48:08Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -29744,7 +29744,6 @@
             "InclusionValidator: quota_type (in=dynamic)",
             "PresenceValidator: limit",
             "NumericalityValidator: limit (greater_than_or_equal_to=0)",
-            "InclusionValidator: owner_type (in=dynamic)",
             "UniquenessValidator: owner_id (scope=[:owner_type, :quota_type])"
           ],
           "belongs_to": [
@@ -29877,6 +29876,10 @@
               "uuid FK"
             ],
             [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
               "quota_id",
               "uuid FK"
             ],
@@ -29902,10 +29905,6 @@
             ],
             [
               "quota_type",
-              "string"
-            ],
-            [
-              "status",
               "string"
             ]
           ],

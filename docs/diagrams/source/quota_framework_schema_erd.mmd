@@ -10,11 +10,11 @@ erDiagram
   QUOTA ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
   QUOTA ||--o{ QUOTA_BALANCES : "quota / quota_id (materialized per period_key)"
   EXT_ACTIVE_STORAGE_ATTACHMENT o|--o| QUOTA_USAGES : "subject / subject_id (media_storage settle/reverse)"
-  EXT_AI_LOG_TRANSLATION o|--o| QUOTA_USAGES : "subject / subject_id (ai_translation_tokens settle, often nil)"
+  EXT_AI_LOG_TRANSLATION o|--o| QUOTA_USAGES : "subject / subject_id (nil on live settle; key shares the log id)"
 
   QUOTA {
     uuid id PK
-    string owner_type "Person | Community | Platform — Quotas::Owner.included_in_models"
+    string owner_type "Person | Community | Platform — includes Quotas::Owner"
     uuid owner_id FK
     string quota_type "registry key, e.g. media_storage, ai_translation_tokens"
     bigint limit
@@ -62,6 +62,7 @@ erDiagram
     datetime released_at "nullable"
     string idempotency_key "unique"
     jsonb context
+    uuid platform_id FK
   }
 
   QUOTA_BALANCES {

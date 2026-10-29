@@ -3,9 +3,10 @@
 module BetterTogether
   module Quotas
     # Populates quota_usages retroactively so the ledger does not start from zero.
-    # Safe to re-run: every write goes through BetterTogether::Quotas.settle!, whose
-    # idempotency_key uniqueness guarantee is the only thing relied on for "run twice,
-    # no duplicates" -- this class does no idempotency bookkeeping of its own.
+    # Safe to re-run, and safe to run after the live hooks have been writing: every
+    # write goes through BetterTogether::Quotas.settle! with the *same* idempotency
+    # key the live path uses for that attachment or translation, so whichever path
+    # writes first is the one charge. `event: 'backfill'` only records provenance.
     class Backfill
       Summary = Struct.new(
         :translation_usages, :attachment_usages, :reflection_attachment_count,
@@ -47,10 +48,11 @@ module BetterTogether
           type: 'ai_translation_tokens',
           owner: BetterTogether::Quotas::OwnerResolver.resolve(log),
           amount: log.tokens_used,
-          idempotency_key: "ai_translation_tokens:backfill:#{log.id}",
+          idempotency_key: BetterTogether::TranslationBot.translation_charge_key(log.id),
           subject: log,
           actor: log.initiator,
-          event: 'backfill'
+          event: 'backfill',
+          occurred_at: log.created_at
         )
       end
 
@@ -72,12 +74,17 @@ module BetterTogether
         [count, count, ActiveStorage::Attachment.count]
       end
 
+      # Walks each STI hierarchy once, from its base class: Block.find_each already
+      # loads Image rows as Image instances, and backfill_record_attachments reads the
+      # loaded record's own class reflections, so walking the subclass as well would
+      # count every subclass row twice.
       def attachment_bearing_classes
         ActiveRecord::Base.descendants.select do |klass|
-          klass.respond_to?(:reflect_on_all_attachments) && klass.reflect_on_all_attachments.any?
+          !klass.abstract_class? &&
+            klass.respond_to?(:reflect_on_all_attachments) && klass.reflect_on_all_attachments.any?
         rescue StandardError
           false
-        end
+        end.map(&:base_class).uniq
       end
 
       def backfill_record_attachments(record)
@@ -107,9 +114,10 @@ module BetterTogether
           type: 'media_storage',
           owner: BetterTogether::Quotas::OwnerResolver.resolve(record),
           amount: attachment.blob.byte_size,
-          idempotency_key: "media_storage:backfill:attachment:#{attachment.id}",
+          idempotency_key: BetterTogether::Quotas::AttachmentTracking.charge_key(attachment.id),
           subject: attachment,
-          event: 'backfill'
+          event: 'backfill',
+          occurred_at: attachment.created_at
         )
       end
 

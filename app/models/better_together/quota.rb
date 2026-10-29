@@ -31,9 +31,17 @@ module BetterTogether
 
     validates :quota_type, presence: true, inclusion: { in: ->(_record) { BetterTogether::Quotas::Type.keys } }
     validates :limit, presence: true, numericality: { greater_than_or_equal_to: 0 }
-    validates :owner_type, inclusion: {
-      in: ->(_record) { BetterTogether::Quotas::Owner.included_in_models.map(&:name) }
-    }
     validates :owner_id, uniqueness: { scope: %i[owner_type quota_type] }
+    validate :owner_is_quota_owner
+
+    private
+
+    # A direct module check rather than Owner.included_in_models, which eager-loads
+    # the whole app outside production on every call.
+    def owner_is_quota_owner
+      return if owner.is_a?(BetterTogether::Quotas::Owner)
+
+      errors.add(:owner_type, :inclusion, value: owner_type)
+    end
   end
 end
