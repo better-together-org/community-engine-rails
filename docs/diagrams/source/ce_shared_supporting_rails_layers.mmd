@@ -531,6 +531,30 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
+    class BetterTogether__Quota["Quota"] {
+      <<Model>>
+      table: better_together_quota
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: owner, owner: seeds
+    }
+    class BetterTogether__QuotaBalance["QuotaBalance"] {
+      <<Model>>
+      table: better_together_quota_balances
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__QuotaReservation["QuotaReservation"] {
+      <<Model>>
+      table: better_together_quota_reservations
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: subject, target: actor, target: owner, owner: seeds
+    }
+    class BetterTogether__QuotaUsage["QuotaUsage"] {
+      <<Model>>
+      table: better_together_quota_usages
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: subject, target: actor, target: owner, owner: seeds
+    }
     class BetterTogether__ShortLink["ShortLink"] {
       <<Model>>
       table: better_together_short_links
@@ -700,6 +724,13 @@ classDiagram
   BetterTogether__PersonMessagingGrant --> BetterTogether__Person : grantee
   BetterTogether__PhoneNumber --> BetterTogether__Platform : platform
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__Quota --> BetterTogether__Platform : platform
+  BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
+  BetterTogether__QuotaBalance --> BetterTogether__Quota : quota
+  BetterTogether__QuotaReservation --> BetterTogether__Platform : platform
+  BetterTogether__QuotaReservation --> BetterTogether__Quota : quota
+  BetterTogether__QuotaUsage --> BetterTogether__Platform : platform
+  BetterTogether__QuotaUsage --> BetterTogether__Quota : quota
   BetterTogether__ShortLink --> BetterTogether__Platform : platform
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform

@@ -20,6 +20,7 @@ module BetterTogether
     include Privacy
     include Metrics::Shareable
     include Metrics::Viewable
+    include Quotas::Owner
     include Reportable
     include Searchable
     include Shortlinkable

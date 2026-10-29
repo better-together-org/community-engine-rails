@@ -6,6 +6,7 @@
 ## Getting Started
 
 - [Development Setup](dev-setup.md) - Complete local development environment setup guide
+- [Cloud Agent Session Environment](cloud_session_environment.md) - Running dev/test in Claude Code cloud sessions via `bin/cloud-session-env`
 - [Rails Version Branch Maintenance](rails_version_branch_maintenance.md) - Branch strategy, CI flow, and dependency update procedure for Rails compatibility lines
 
 ## Quick Links
