@@ -13,6 +13,20 @@ RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog, :reduced_geography
     end
   end
 
+  describe 'localization' do
+    it 'describes settlements in the description, so admins know what the category covers' do
+      expect(described_class.description).to include('First Nations communities')
+    end
+
+    it 'labels the settlements category per locale' do
+      labels = %i[en es fr uk].to_h do |locale|
+        [locale, I18n.with_locale(locale) { described_class.category(:settlements)[:label] }]
+      end
+
+      expect(labels).to eq(en: 'Settlements', es: 'Localidades', fr: 'Localités', uk: 'Населені пункти')
+    end
+  end
+
   describe '.categories' do
     it 'exposes all five geography hierarchy levels' do
       expect(described_class.categories.map { |c| c[:key] }).to contain_exactly(

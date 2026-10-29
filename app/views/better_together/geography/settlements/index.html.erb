@@ -4,10 +4,11 @@
 
 <div class="container my-3">
   <h1><%= t('.title') %></h1>
+  <p id="settlements-description" class="text-muted"><%= t('.description') %></p>
 
   <div class="row">
     <div class="col">
-      <table class="table">
+      <table id="settlements-table" class="table" aria-describedby="settlements-description">
         <thead>
           <tr>
             <th><%= ::BetterTogether::Geography::Settlement.human_attribute_name(:name) %></th>
@@ -24,7 +25,7 @@
   </div>
 
   <% if policy(::BetterTogether::Geography::Settlement.new).create? %>
-    <%= link_to "New settlement", new_geography_settlement_path, class: "btn btn-success mt-3" %>
+    <%= link_to t('.new'), new_geography_settlement_path, id: 'new-settlement-btn', class: "btn btn-success mt-3" %>
   <% end %>
 </div>
 

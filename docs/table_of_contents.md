@@ -65,6 +65,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Event Invitations & Attendance](developers/systems/event_invitations_and_attendance.md) - Invitations, tokens, RSVP
 - [Federation System](developers/systems/federation_system.md) - Platform connections, scopes, and sync
 - [Geography System](developers/systems/geography_system.md) - Location and mapping
+- [Settlement naming and wording assessment](assessments/settlement_to_town_rename_assessment.md) - Why "Settlement" stays, where the gloss lives, and the edit-point map for a future rename
 - [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation

@@ -169,8 +169,8 @@ uk:
         identifier: Ідентифікатор
         lock_version: Версія блокування
         protected: Захищено
-        region_settlements: Поселення регіону
-        settlements: Поселення
+        region_settlements: Населені пункти регіону
+        settlements: Населені пункти
         slug: Слаг
         slugs: Слаги
         state: :activerecord.models.state
@@ -187,7 +187,7 @@ uk:
         identifier: Ідентифікатор
         lock_version: Версія блокування
         protected: Захищено
-        region_settlements: Поселення регіону
+        region_settlements: Населені пункти регіону
         regions: Регіони
         slug: Слаг
         slugs: Слаги
@@ -202,7 +202,7 @@ uk:
         lock_version: Версія блокування
         protected: Захищено
         regions: Регіони
-        settlements: Поселення
+        settlements: Населені пункти
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
@@ -643,8 +643,8 @@ uk:
       better_together/geography/country: Країна
       better_together/geography/country_continent: Континент країни
       better_together/geography/region: Регіон
-      better_together/geography/region_settlement: Поселення регіону
-      better_together/geography/settlement: Поселення
+      better_together/geography/region_settlement: Населений пункт регіону
+      better_together/geography/settlement: Населений пункт
       better_together/geography/state: Штат
       better_together/guest_access: Гостьовий доступ
       better_together/identification: Ідентифікація
@@ -2031,18 +2031,32 @@ uk:
           no_location_source: Потрібно вказати або ім'я, або місцезнаходження
       regions:
         index:
-          title: Regions
-      settlements:
-        index:
-          title: Поселення
+          title: Регіони
         show:
-          destroy: Зруйнувати поселення
-          edit-settlement: Редагувати поселення
-          view-all-settlements: Переглянути всі поселення
+          settlements_heading: "Населені пункти в %{name}"
+      settlements:
+        edit:
+          heading: Редагування населеного пункту
+          page_title: "Редагувати %{name} | %{resources}"
+        index:
+          description: Міста, містечка, села, хутори, громади Перших націй та
+            інші місця з власною назвою.
+          new: Новий населений пункт
+          title: Населені пункти
+        new:
+          back: Назад до населених пунктів
+          heading: Новий населений пункт
+        show:
+          destroy: Зруйнувати населений пункт
+          edit-settlement: Редагувати населений пункт
+          view-all-settlements: Переглянути всі населені пункти
         toolbar:
-          back_to_geography_settlements: Назад до Поселень
-          save_geography_settlement: Зберегти поселення
-          view_geography_settlement: Переглянути поселення
+          back_to_geography_settlements: Назад до населених пунктів
+          save_geography_settlement: Зберегти населений пункт
+          view_geography_settlement: Переглянути населений пункт
+      states:
+        show:
+          settlements_tab: Населені пункти
     global:
       add: Додати
     globals:
@@ -2318,9 +2332,10 @@ uk:
           creating: Створення нової адреси. Заповніть поля адреси нижче, потім збережіть.
         cancel_new_address: Скасувати нову адресу
         create_new: Створити новий %{model}
-        hint: Знайдіть наявну адресу, будівлю або місце. Якщо його немає у списку,
-          виберіть «Створити нову адресу» або використайте введений текст як власну
-          назву.
+        hint: Знайдіть наявну адресу, будівлю або населений пункт (місто,
+          містечко, село, хутір, громаду Перших націй чи інше місце з власною
+          назвою). Якщо його немає у списку, виберіть «Створити нову адресу» або
+          використайте введений текст як власну назву.
         label: Місце
         new_address_legend: Нова адреса
         new_named_with_query: 'Створити новий %{model}: «%{q}»'
@@ -2767,7 +2782,7 @@ uk:
         geography_countries: Countries
         geography_maps: Maps
         geography_regions: Regions
-        geography_settlements: Settlements
+        geography_settlements: Населені пункти
         geography_states: States
         host_dashboard: Host Dashboard
         host_dashboard_membership_review: Membership Review
@@ -5526,12 +5541,12 @@ uk:
     platform: Платформа
     profile: Профіль
     region: Регіон
-    region_settlement: Регіональне поселення
+    region_settlement: Населений пункт регіону
     report: Звіт
     resource_permission: Дозвіл ресурсу
     role: Роль
     seed: Seed
-    settlement: Поселення
+    settlement: Населений пункт
     state: Штат/Область
     user: Користувач
   roles:
@@ -5540,6 +5555,18 @@ uk:
     button: Пошук
     placeholder: Пошук...
   seed_catalog:
+    geography:
+      categories:
+        continents: Континенти
+        countries: Країни
+        provinces: Провінції та території
+        regions: Регіони
+        settlements: Населені пункти
+      description: Континенти, країни, провінції та території, регіони й
+        населені пункти (міста, містечка, села, хутори, громади Перших націй та
+        інші місця з власною назвою), які використовуються для розміщення
+        локацій у географічній ієрархії.
+      label: Географічні довідкові дані
     index:
       actions: Дії
       category: Категорія

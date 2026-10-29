@@ -169,8 +169,8 @@ es:
         identifier: Identificador
         lock_version: Versión de bloqueo
         protected: Protegido
-        region_settlements: Asentamientos regionales
-        settlements: Asentamientos
+        region_settlements: Localidades de la región
+        settlements: Localidades
         slug: Identificador
         slugs: Identificadors
         state: :activerecord.models.state
@@ -187,7 +187,7 @@ es:
         identifier: Identificador
         lock_version: Versión de bloqueo
         protected: Protegido
-        region_settlements: Asentamientos regionales
+        region_settlements: Localidades de la región
         regions: Regiones
         slug: Identificador
         slugs: Identificadors
@@ -202,7 +202,7 @@ es:
         lock_version: Versión de bloqueo
         protected: Protegido
         regions: Regiones
-        settlements: Asentamientos
+        settlements: Localidades
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -653,8 +653,8 @@ es:
       better_together/geography/country: País
       better_together/geography/country_continent: País Continente
       better_together/geography/region: Región
-      better_together/geography/region_settlement: Asentamiento Regional
-      better_together/geography/settlement: Asentamiento
+      better_together/geography/region_settlement: Localidad de la región
+      better_together/geography/settlement: Localidad
       better_together/geography/state: Estado
       better_together/guest_access: Acceso de invitado
       better_together/identification: Identificación
@@ -2013,17 +2013,31 @@ es:
       regions:
         index:
           title: Regiones
-      settlements:
-        index:
-          title: Asentamientos
         show:
-          destroy: Destruir asentamiento
-          edit-settlement: Editar asentamiento
-          view-all-settlements: Ver todos los asentamientos
+          settlements_heading: "Localidades en %{name}"
+      settlements:
+        edit:
+          heading: Editando localidad
+          page_title: "Editar %{name} | %{resources}"
+        index:
+          description: Ciudades, pueblos, aldeas, caseríos, comunidades de las
+            Primeras Naciones y otros lugares con nombre.
+          new: Nueva localidad
+          title: Localidades
+        new:
+          back: Volver a las localidades
+          heading: Nueva localidad
+        show:
+          destroy: Destruir localidad
+          edit-settlement: Editar localidad
+          view-all-settlements: Ver todas las localidades
         toolbar:
-          back_to_geography_settlements: Volver a los asentamientos
-          save_geography_settlement: Guardar asentamiento
-          view_geography_settlement: Ver el asentamiento
+          back_to_geography_settlements: Volver a las localidades
+          save_geography_settlement: Guardar localidad
+          view_geography_settlement: Ver la localidad
+      states:
+        show:
+          settlements_tab: Localidades
     global:
       add: Agregar
     globals:
@@ -2301,9 +2315,10 @@ es:
             continuación y luego guarda.
         cancel_new_address: Cancelar nueva dirección
         create_new: Crear nuevo %{model}
-        hint: Busca una dirección, un edificio o un lugar existente. Si no está en
-          la lista, elige «Crear nueva dirección» o usa el texto que escribiste como
-          nombre personalizado.
+        hint: Busca una dirección, un edificio o una localidad que ya exista
+          (ciudad, pueblo, aldea, comunidad de las Primeras Naciones u otro
+          lugar con nombre). Si no está en la lista, elige «Crear nueva
+          dirección» o usa el texto que escribiste como nombre personalizado.
         label: Ubicación
         new_address_legend: Nueva dirección
         new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
@@ -2758,7 +2773,7 @@ es:
         geography_countries: Países
         geography_maps: Mapas
         geography_regions: Regiones
-        geography_settlements: Asentamientos
+        geography_settlements: Localidades
         geography_states: Estados
         host_dashboard: Panel de control del anfitrión
         host_dashboard_membership_review: Revisión de membresías
@@ -5492,12 +5507,12 @@ es:
     platform: Plataforma
     profile: Perfil
     region: Región
-    region_settlement: Asentamiento Regional
+    region_settlement: Localidad de la región
     report: Informe
     resource_permission: Permiso de recurso
     role: Rol
     seed: Seed
-    settlement: Asentamiento
+    settlement: Localidad
     state: Estado
     user: Usuario
   roles:
@@ -5506,6 +5521,18 @@ es:
     button: Buscar
     placeholder: Buscar...
   seed_catalog:
+    geography:
+      categories:
+        continents: Continentes
+        countries: Países
+        provinces: Provincias y territorios
+        regions: Regiones
+        settlements: Localidades
+      description: Continentes, países, provincias y territorios, regiones y
+        localidades (ciudades, pueblos, aldeas, comunidades de las Primeras
+        Naciones y otros lugares con nombre) que se usan para situar ubicaciones
+        en la jerarquía geográfica.
+      label: Datos de referencia geográficos
     index:
       actions: Acciones
       category: Categoría

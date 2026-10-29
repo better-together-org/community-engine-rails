@@ -1998,9 +1998,20 @@ en:
       regions:
         index:
           title: Regions
+        show:
+          settlements_heading: "Settlements in %{name}"
       settlements:
+        edit:
+          heading: Editing settlement
+          page_title: "Edit %{name} | %{resources}"
         index:
+          description: Cities, towns, villages, hamlets, First Nations
+            communities and other named places.
+          new: New settlement
           title: Settlements
+        new:
+          back: Back to settlements
+          heading: New settlement
         show:
           destroy: Destroy Settlement
           edit-settlement: Edit Settlement
@@ -2009,6 +2020,9 @@ en:
           back_to_geography_settlements: Back to Settlements
           save_geography_settlement: Save Settlement
           view_geography_settlement: View Settlement
+      states:
+        show:
+          settlements_tab: Settlements
     global:
       add: Add
     globals:
@@ -2285,8 +2299,10 @@ en:
             save.
         cancel_new_address: Cancel new address
         create_new: Create new %{model}
-        hint: Search for an existing address, building, or place. If it is not listed,
-          choose "Create new address" or use your typed text as a custom name.
+        hint: Search for an existing address, building, or settlement (a city,
+          town, village, hamlet, First Nations community or other named place).
+          If it is not listed, choose "Create new address" or use your typed
+          text as a custom name.
         label: Location
         new_address_legend: New address
         new_named_with_query: 'Create new %{model}: "%{q}"'
@@ -5417,6 +5433,18 @@ en:
     button: Search
     placeholder: Search...
   seed_catalog:
+    geography:
+      categories:
+        continents: Continents
+        countries: Countries
+        provinces: "Provinces & Territories"
+        regions: Regions
+        settlements: Settlements
+      description: Continents, countries, provinces/territories, regions, and
+        settlements (cities, towns, villages, hamlets, First Nations communities
+        and other named places) used to place locations in the geography
+        hierarchy.
+      label: Geography Reference Data
     index:
       actions: Actions
       category: Category
