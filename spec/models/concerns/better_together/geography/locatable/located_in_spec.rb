@@ -44,6 +44,46 @@ RSpec.describe BetterTogether::Geography::Locatable::LocatedIn do
     expect(ids.map(&:locatable_id)).to contain_exactly(event.id)
   end
 
+  describe 'a community' do
+    let(:community) { create(:better_together_community, privacy: 'public') }
+    let(:other_community) { create(:better_together_community, privacy: 'public') }
+
+    it 'is found at the place it is located in, and not elsewhere', :aggregate_failures do
+      community.create_location!(location: settlement)
+      other_community.create_location!(location: elsewhere)
+
+      expect(BetterTogether::Community.located_in(settlement)).to contain_exactly(community)
+      expect(BetterTogether::Community.located_in(elsewhere)).to contain_exactly(other_community)
+    end
+
+    it 'is left out when it has no location' do
+      community
+
+      expect(BetterTogether::Community.located_in(settlement)).to be_empty
+    end
+  end
+
+  describe 'a post' do
+    let(:community) { create(:better_together_community, privacy: 'public') }
+    let(:other_community) { create(:better_together_community, privacy: 'public') }
+    let!(:post_here) { create(:better_together_post, community:) }
+    let!(:post_there) { create(:better_together_post, community: other_community) }
+
+    before do
+      community.create_location!(location: settlement)
+      other_community.create_location!(location: elsewhere)
+    end
+
+    it 'takes the place of its community', :aggregate_failures do
+      expect(BetterTogether::Post.located_in(settlement)).to contain_exactly(post_here)
+      expect(BetterTogether::Post.located_in(elsewhere)).to contain_exactly(post_there)
+    end
+
+    it 'is left out when its community is not located in the place' do
+      expect(BetterTogether::Post.located_in(create(:geography_settlement))).to be_empty
+    end
+  end
+
   describe 'inheriting a location' do
     let(:occurrence_class) { BetterTogether::EventOccurrence }
     let(:occurrence) do

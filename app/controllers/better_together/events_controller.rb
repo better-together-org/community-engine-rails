@@ -8,6 +8,7 @@ module BetterTogether
     include NotificationReadable
     include ChecksRequiredAgreements
     include FramedIndex
+    prepend PlaceScopedIndex # ?settlement=<identifier> lists only what is located in that place
 
     # Prepended so this runs before the inherited :authorize_resource
     # before_action — otherwise Pundit's denial (via #authorize_resource,
