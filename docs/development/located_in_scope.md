@@ -46,3 +46,21 @@ their own location adds a `has_one :location`; the scope then prefers it and fal
 the Posts and Events tabs of a settlement page load in lazy turbo-frames. An unknown or invisible identifier is a 404.
 Add another level in `PlaceScopedIndex.place_classes`. See
 `docs/assessments/settlement_to_town_rename_assessment.md` (section 2.8) for the settlement page hooks and tabs.
+
+## Diagram
+
+```mermaid
+flowchart TD
+  PAGE["Settlement show page"] --> COMM["Communities tab: policy_scope(Community).located_in(settlement)"]
+  PAGE --> LAZY["Posts and Events tabs: lazy frames, ?settlement=identifier"]
+  LAZY --> PSI["PlaceScopedIndex: allow-listed param, policy_scope(Settlement).find_by!, 404 if not visible"]
+  PSI --> SCOPE["policy_scoped_resources.located_in(place)"]
+  COMM --> SCOPE
+  SCOPE --> DIRECT["direct: own location is the place or an address within it"]
+  SCOPE --> INHERIT["inherited: no explicit location, community is located_in(place)"]
+```
+
+**Diagram files:**
+- [Mermaid source](../diagrams/source/settlement_page_place_scoping_flow.mmd)
+- [PNG export](../diagrams/exports/png/settlement_page_place_scoping_flow.png)
+- [SVG export](../diagrams/exports/svg/settlement_page_place_scoping_flow.svg)
