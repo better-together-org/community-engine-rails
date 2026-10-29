@@ -2036,8 +2036,8 @@ fr:
           heading: Modification de la localité
           page_title: Modifier %{name} | %{resources}
         index:
-          description: Villes, villages, hameaux, communautés des Premières Nations
-            et autres lieux nommés.
+          description: Villes, villages, hameaux, communautés autochtones et autres
+            lieux nommés.
           new: Nouvelle localité
           title: Localités
         new:
@@ -2335,9 +2335,9 @@ fr:
         cancel_new_address: Annuler la nouvelle adresse
         create_new: Créer un(e) nouveau/nouvelle %{model}
         hint: Recherchez une adresse, un bâtiment ou une localité existante (ville,
-          village, hameau, communauté des Premières Nations ou autre lieu nommé).
-          S'il n'est pas répertorié, choisissez « Créer une nouvelle adresse » ou
-          utilisez le texte saisi comme nom personnalisé.
+          village, hameau, communauté autochtone ou autre lieu nommé). S'il n'est
+          pas répertorié, choisissez « Créer une nouvelle adresse » ou utilisez le
+          texte saisi comme nom personnalisé.
         label: Lieu
         new_address_legend: Nouvelle adresse
         new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
@@ -5572,8 +5572,8 @@ fr:
         regions: Régions
         settlements: Localités
       description: Continents, pays, provinces et territoires, régions et localités
-        (villes, villages, hameaux, communautés des Premières Nations et autres lieux
-        nommés) utilisés pour situer les emplacements dans la hiérarchie géographique.
+        (villes, villages, hameaux, communautés autochtones et autres lieux nommés)
+        utilisés pour situer les emplacements dans la hiérarchie géographique.
       label: Données de référence géographiques
     index:
       actions: Actions

@@ -74,7 +74,7 @@ RSpec.describe 'Documentation screenshots for the settlement pages', # rubocop:d
                                   journey_step: 'As a visitor, I learn what counts as a settlement before browsing.',
                                   callouts: [
                                     { id: 'gloss', title: 'What a settlement is',
-                                      description: 'Cities, towns, villages, hamlets, First Nations communities and ' \
+                                      description: 'Cities, towns, villages, hamlets, Indigenous communities and ' \
                                                    'other named places. The table points at it with aria-describedby.' }
                                   ],
                                   accessibility_notes: 'The table is described by the gloss paragraph.'

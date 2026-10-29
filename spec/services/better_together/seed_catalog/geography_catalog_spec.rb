@@ -15,7 +15,7 @@ RSpec.describe BetterTogether::SeedCatalog::GeographyCatalog, :reduced_geography
 
   describe 'localization' do
     it 'describes settlements in the description, so admins know what the category covers' do
-      expect(described_class.description).to include('First Nations communities')
+      expect(described_class.description).to include('Indigenous communities')
     end
 
     it 'labels the settlements category per locale' do

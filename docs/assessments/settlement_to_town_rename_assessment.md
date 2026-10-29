@@ -10,7 +10,7 @@
 
 | Question | Answer |
 |---|---|
-| What must the name cover? | Cities, towns, villages, hamlets, First Nations communities and unincorporated places. The original geographic-model spec said "City"; "Settlement" replaced it for accuracy. |
+| What must the name cover? | Cities, towns, villages, hamlets, Indigenous communities and unincorporated places. The original geographic-model spec said "City"; "Settlement" replaced it for accuracy. |
 | Rename the model? | **Not now.** No everyday noun fits the scope (Town, City, Village exclude cases; Place and Community are existing models; see 6.4). |
 | What fixes "not intuitive"? | A one-line **gloss** wherever the term is introduced, plus **better translations** (the fr/es/uk labels were the weakest part). |
 | Do visible wording and URLs change? | Wording yes (per locale). **Paths no**: keeping "Settlement" in English leaves nothing to alias. `/g/settlements`, route helpers, view directory, API type, class and tables are untouched. |
@@ -44,7 +44,7 @@ Sizing for a future rename (unchanged by Phase 1): 181 files / ~1,000 raw matche
 | Event / locatable location picker hint | `better_together.locations.picker.hint` | `better_together/locations/_picker.html.erb` via `LocationPickerHelper::LOCALE_SCOPE` |
 | Seed catalog card (admin) | `seed_catalog.geography.description` | `SeedCatalog::GeographyCatalog.description` |
 
-English gloss: *"Cities, towns, villages, hamlets, First Nations communities and other named places."* It deliberately lists **cities** first because both seeded records (St. John's, Corner Brook) are cities.
+English gloss: *"Cities, towns, villages, hamlets, Indigenous communities and other named places."* "Indigenous" is used rather than "First Nations" because it is the more widely accepted term and also covers Métis and Inuit communities. It deliberately lists **cities** first because both seeded records (St. John's, Corner Brook) are cities.
 
 ### 2.3 Translation changes
 
@@ -53,7 +53,7 @@ English gloss: *"Cities, towns, villages, hamlets, First Nations communities and
 | Settlement | Settlement(s) | ~~Asentamiento(s)~~ **Localidad(es)** | ~~Établissement(s)~~ **Localité(s)** | ~~Поселення~~ **Населений пункт / Населені пункти** |
 | Region settlement | Region settlement(s) | **Localidad(es) de la región** | **Localité(s) de la région** | **Населений пункт / пункти регіону** |
 
-Why: fr *établissement* means an institution, es *asentamiento* usually means an informal or irregular settlement, uk *поселення* skews archaeological or colonial. The host app's own es/fr files already say "Localidades" / "Localités", which corroborates the choice. **All three need native-speaker review** (the glosses especially: es "caseríos", uk "хутори", and "First Nations" as "Primeras Naciones" / "Перших націй").
+Why: fr *établissement* means an institution, es *asentamiento* usually means an informal or irregular settlement, uk *поселення* skews archaeological or colonial. The host app's own es/fr files already say "Localidades" / "Localités", which corroborates the choice. **All three need native-speaker review** (the glosses especially: es "caseríos", uk "хутори", and "Indigenous communities" as "comunidades indígenas" / "громади корінних народів" (fr "communautés autochtones")).
 
 Key paths reworded in every non-English locale (values only; key names unchanged):
 
@@ -364,7 +364,7 @@ Host app caveat: the Newfoundland Labrador Online host app overrides CE views by
 
 ### 6.4 Outcome
 
-- **Town / Town or city:** rejected. The model covers villages, hamlets, First Nations communities and unincorporated places, not just municipalities; "Settlement" was chosen over "City" (the original spec) for exactly that reason.
+- **Town / Town or city:** rejected. The model covers villages, hamlets, Indigenous communities and unincorporated places, not just municipalities; "Settlement" was chosen over "City" (the original spec) for exactly that reason.
 - **Place:** rejected. `BetterTogether::Place` already exists (a join between spaces and communities), and provinces, countries and addresses are all places too.
 - **Community:** rejected. `BetterTogether::Community` is a core model.
 - **Locality:** accurate and neutral, but in English it is as abstract as "Settlement" and adds little once a gloss is present. Kept as the fallback if the feedback turns out to be about *connotation* rather than comprehension.

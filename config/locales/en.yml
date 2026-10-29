@@ -2008,8 +2008,8 @@ en:
           heading: Editing settlement
           page_title: Edit %{name} | %{resources}
         index:
-          description: Cities, towns, villages, hamlets, First Nations communities
-            and other named places.
+          description: Cities, towns, villages, hamlets, Indigenous communities and
+            other named places.
           new: New settlement
           title: Settlements
         new:
@@ -2306,9 +2306,8 @@ en:
         cancel_new_address: Cancel new address
         create_new: Create new %{model}
         hint: Search for an existing address, building, or settlement (a city, town,
-          village, hamlet, First Nations community or other named place). If it is
-          not listed, choose "Create new address" or use your typed text as a custom
-          name.
+          village, hamlet, Indigenous community or other named place). If it is not
+          listed, choose "Create new address" or use your typed text as a custom name.
         label: Location
         new_address_legend: New address
         new_named_with_query: 'Create new %{model}: "%{q}"'
@@ -5448,7 +5447,7 @@ en:
         regions: Regions
         settlements: Settlements
       description: Continents, countries, provinces/territories, regions, and settlements
-        (cities, towns, villages, hamlets, First Nations communities and other named
+        (cities, towns, villages, hamlets, Indigenous communities and other named
         places) used to place locations in the geography hierarchy.
       label: Geography Reference Data
     index:

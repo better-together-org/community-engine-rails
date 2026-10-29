@@ -2023,8 +2023,8 @@ es:
           heading: Editando localidad
           page_title: Editar %{name} | %{resources}
         index:
-          description: Ciudades, pueblos, aldeas, caseríos, comunidades de las Primeras
-            Naciones y otros lugares con nombre.
+          description: Ciudades, pueblos, aldeas, caseríos, comunidades indígenas
+            y otros lugares con nombre.
           new: Nueva localidad
           title: Localidades
         new:
@@ -2322,9 +2322,9 @@ es:
         cancel_new_address: Cancelar nueva dirección
         create_new: Crear nuevo %{model}
         hint: Busca una dirección, un edificio o una localidad que ya exista (ciudad,
-          pueblo, aldea, comunidad de las Primeras Naciones u otro lugar con nombre).
-          Si no está en la lista, elige «Crear nueva dirección» o usa el texto que
-          escribiste como nombre personalizado.
+          pueblo, aldea, comunidad indígena u otro lugar con nombre). Si no está en
+          la lista, elige «Crear nueva dirección» o usa el texto que escribiste como
+          nombre personalizado.
         label: Ubicación
         new_address_legend: Nueva dirección
         new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
@@ -5536,8 +5536,8 @@ es:
         regions: Regiones
         settlements: Localidades
       description: Continentes, países, provincias y territorios, regiones y localidades
-        (ciudades, pueblos, aldeas, comunidades de las Primeras Naciones y otros lugares
-        con nombre) que se usan para situar ubicaciones en la jerarquía geográfica.
+        (ciudades, pueblos, aldeas, comunidades indígenas y otros lugares con nombre)
+        que se usan para situar ubicaciones en la jerarquía geográfica.
       label: Datos de referencia geográficos
     index:
       actions: Acciones
