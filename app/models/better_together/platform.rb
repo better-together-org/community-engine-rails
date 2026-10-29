@@ -19,6 +19,7 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Protected
+    include Quotas::Owner
     include TimezoneAttributeAliasing
     include RemoveableAttachment
     include ::Storext.model

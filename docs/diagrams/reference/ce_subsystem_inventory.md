@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-10-26T00:05:21Z`.
+Generated from live Rails reflections at `2026-10-29T20:56:41Z`.
 
 ## Identity, access, and memberships
 
@@ -72,7 +72,7 @@ People, users, identifications, invitations, roles, memberships, and privacy/exp
 - `OauthAccessToken`: `seeds` (has_many)
 - `OauthApplication`: `seeds` (has_many)
 - `OauthUser`: `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many), `person_identification` (has_one)
-- `Person`: `seeds` (has_many), `contributions` (has_many), `authorships` (has_many), `page_contributions` (has_many), `post_contributions` (has_many), `page_authorships` (has_many), `post_authorships` (has_many), `contact_detail` (has_one), `contacts` (has_many), `slugs` (has_many), `event_hosts` (has_many), `identifications` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `views` (has_many), `agreement_participants` (has_many), `reports_received` (has_many), `notifications` (has_many), `notification_mentions` (has_many), `event_invitations` (has_many), `user_identification` (has_one), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
+- `Person`: `seeds` (has_many), `contributions` (has_many), `authorships` (has_many), `page_contributions` (has_many), `post_contributions` (has_many), `page_authorships` (has_many), `post_authorships` (has_many), `contact_detail` (has_one), `contacts` (has_many), `slugs` (has_many), `event_hosts` (has_many), `identifications` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quota` (has_many), `views` (has_many), `agreement_participants` (has_many), `reports_received` (has_many), `notifications` (has_many), `notification_mentions` (has_many), `event_invitations` (has_many), `user_identification` (has_one), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
 - `PersonAccessGrant`: `seeds` (has_many)
 - `PersonBlock`: `seeds` (has_many)
 - `PersonChecklistItem`: `seeds` (has_many)
@@ -144,12 +144,12 @@ Platforms, communities, domains, platform connections, storage, robots, routing,
 
 ### Polymorphic / weak-reference surfaces
 
-- `Community`: `seeds` (has_many), `contact_detail` (has_one), `contacts` (has_many), `event_hosts` (has_many), `slugs` (has_many), `map` (has_one), `building_connections` (has_many), `views` (has_many), `reports_received` (has_many), `short_link` (has_one), `invitations` (has_many), `string_translations` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one), `logo_attachment` (has_one)
+- `Community`: `seeds` (has_many), `contact_detail` (has_one), `contacts` (has_many), `event_hosts` (has_many), `slugs` (has_many), `map` (has_one), `building_connections` (has_many), `views` (has_many), `quota` (has_many), `reports_received` (has_many), `short_link` (has_one), `invitations` (has_many), `string_translations` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `location` (has_one), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one), `logo_attachment` (has_one)
 - `CommunityInvitation`: `invitable` (belongs_to), `inviter` (belongs_to), `invitee` (belongs_to), `seeds` (has_many)
 - `FederationAccessToken`: `seeds` (has_many)
 - `NavigationArea`: `navigable` (belongs_to), `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many)
 - `NavigationItem`: `linkable` (belongs_to), `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many)
-- `Platform`: `seeds` (has_many), `slugs` (has_many), `views` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
+- `Platform`: `seeds` (has_many), `slugs` (has_many), `views` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quota` (has_many), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
 - `PlatformConnection`: `seeds` (has_many)
 - `PlatformDomain`: `seeds` (has_many)
 - `PlatformInvitation`: `seeds` (has_many), `rich_text_greeting` (has_one)
@@ -681,6 +681,10 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PlatformConnectionStatusNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | PlatformConnectionSubmittedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | PlatformConnectionSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
+| Quota | `better_together_quota` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`enforcement_mode` (string)<br>`owner_type` (string)<br>`period` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>UniquenessValidator: owner_id (scope=[:owner_type, :quota_type]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
+| QuotaBalance | `better_together_quota_balances` | `platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`period_key` (string)<br>`consumed` (integer)<br>`reserved` (integer)<br>`recalculated_at` (datetime) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: period_key<br>UniquenessValidator: quota_id (scope=:period_key)<br>NumericalityValidator: consumed, reserved (only_integer=true) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
+| QuotaReservation | `better_together_quota_reservations` | `actor_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`actor_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>PresenceValidator: amount<br>NumericalityValidator: amount (only_integer=true)<br>PresenceValidator: period_key<br>PresenceValidator: expires_at | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
+| QuotaUsage | `better_together_quota_usages` | `actor_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`actor_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>PresenceValidator: amount<br>NumericalityValidator: amount (only_integer=true)<br>PresenceValidator: period_key<br>PresenceValidator: idempotency_key | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | SafetyReportDigestNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | SafetyReportDigestNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | SafetyReportSubmittedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
@@ -868,6 +872,10 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `PlatformConnectionStatusNotifier::Notification`: `recipient` (belongs_to)
 - `PlatformConnectionSubmittedNotifier`: `record` (belongs_to)
 - `PlatformConnectionSubmittedNotifier::Notification`: `recipient` (belongs_to)
+- `Quota`: `owner` (belongs_to), `seeds` (has_many)
+- `QuotaBalance`: `seeds` (has_many)
+- `QuotaReservation`: `subject` (belongs_to), `actor` (belongs_to), `owner` (belongs_to), `seeds` (has_many)
+- `QuotaUsage`: `subject` (belongs_to), `actor` (belongs_to), `owner` (belongs_to), `seeds` (has_many)
 - `SafetyReportDigestNotifier`: `record` (belongs_to)
 - `SafetyReportDigestNotifier::Notification`: `recipient` (belongs_to)
 - `SafetyReportSubmittedNotifier`: `record` (belongs_to)

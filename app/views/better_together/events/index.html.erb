@@ -20,8 +20,8 @@
     <%= render 'better_together/shared/publishing_agreement_notice' %>
   <% end %>
 
-  <%# A community page shows the community's own map beside its tabs. %>
-  <% if events_map && events_map.spaces.any? && !scoped_community %>
+  <%# A community page shows the community's own map beside its tabs; a place-scoped list would map every event. %>
+  <% if events_map && events_map.spaces.any? && !scoped_community && !scoped_place %>
     <section class="events-map my-4">
       <%= render partial: 'better_together/shared/map', locals: { map: events_map, use_label_as_popup: true } %>
     </section>

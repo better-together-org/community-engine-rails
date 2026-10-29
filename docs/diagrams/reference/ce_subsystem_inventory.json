@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26T00:05:21Z",
+  "generated_at": "2026-10-29T20:56:41Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -982,6 +982,12 @@
               "name": "cover_image_attachment",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quota",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [
@@ -1013,7 +1019,8 @@
             "BetterTogether::Seedable",
             "BetterTogether::TimezoneAttributeAliasing",
             "BetterTogether::Translatable",
-            "BetterTogether::Viewable"
+            "BetterTogether::Viewable",
+            "BetterTogether::Quotas::Owner"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -3111,6 +3118,15 @@
           "included_by": [
             "Person"
           ]
+        },
+        {
+          "name": "BetterTogether::Quotas::Owner",
+          "label": "Quotas::Owner",
+          "capability": "Owner",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Person"
+          ]
         }
       ],
       "outbound_relationships": [
@@ -4053,6 +4069,12 @@
               "name": "logo_attachment",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quota",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [
@@ -4085,7 +4107,8 @@
             "BetterTogether::Shortlinkable",
             "BetterTogether::SitemapRefreshable",
             "BetterTogether::Translatable",
-            "BetterTogether::Viewable"
+            "BetterTogether::Viewable",
+            "BetterTogether::Quotas::Owner"
           ],
           "concern_notes": [
             "Searchable: pg_search=true, scope=pg_search_query, global_search=true"
@@ -4660,6 +4683,12 @@
               "name": "cover_image_attachment",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "quota",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [
@@ -4689,7 +4718,8 @@
             "BetterTogether::Seedable",
             "BetterTogether::TimezoneAttributeAliasing",
             "BetterTogether::Translatable",
-            "BetterTogether::Viewable"
+            "BetterTogether::Viewable",
+            "BetterTogether::Quotas::Owner"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -6347,6 +6377,16 @@
             "SetupWizardController",
             "SetupWizardStepsController"
           ]
+        },
+        {
+          "name": "BetterTogether::Quotas::Owner",
+          "label": "Quotas::Owner",
+          "capability": "Owner",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform",
+            "Community"
+          ]
         }
       ],
       "outbound_relationships": [
@@ -7386,6 +7426,30 @@
         },
         {
           "from": "BetterTogether::Activity",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaReservation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaBalance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Quota",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -29839,6 +29903,404 @@
               "target_subsystem": "platform_network"
             }
           ]
+        },
+        {
+          "name": "BetterTogether::Quota",
+          "label": "Quota",
+          "source_path": "app/models/better_together/quota.rb",
+          "table_name": "better_together_quota",
+          "columns": [
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "enforcement_mode",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "limit",
+              "integer"
+            ],
+            [
+              "soft_limit",
+              "integer"
+            ],
+            [
+              "metadata",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "InclusionValidator: quota_type (in=dynamic)",
+            "PresenceValidator: limit",
+            "NumericalityValidator: limit (greater_than_or_equal_to=0)",
+            "UniquenessValidator: owner_id (scope=[:owner_type, :quota_type])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaBalance",
+          "label": "QuotaBalance",
+          "source_path": "app/models/better_together/quota_balance.rb",
+          "table_name": "better_together_quota_balances",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "period_key",
+              "string"
+            ],
+            [
+              "consumed",
+              "integer"
+            ],
+            [
+              "reserved",
+              "integer"
+            ],
+            [
+              "recalculated_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: period_key",
+            "UniquenessValidator: quota_id (scope=:period_key)",
+            "NumericalityValidator: consumed, reserved (only_integer=true)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaReservation",
+          "label": "QuotaReservation",
+          "source_path": "app/models/better_together/quota_reservation.rb",
+          "table_name": "better_together_quota_reservations",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "actor_type",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period_key",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "PresenceValidator: amount",
+            "NumericalityValidator: amount (only_integer=true)",
+            "PresenceValidator: period_key",
+            "PresenceValidator: expires_at",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaUsage",
+          "label": "QuotaUsage",
+          "source_path": "app/models/better_together/quota_usage.rb",
+          "table_name": "better_together_quota_usages",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "actor_type",
+              "string"
+            ],
+            [
+              "event",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period_key",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "PresenceValidator: amount",
+            "NumericalityValidator: amount (only_integer=true)",
+            "PresenceValidator: period_key",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key",
+            "InclusionValidator: event (in=[\"reserve\", \"settle\", \"reverse\", \"backfill\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
         }
       ],
       "controllers_inventory": [
@@ -31162,7 +31624,11 @@
             "JwtDenylist",
             "FeatureAccessGrant",
             "EmailAddress",
-            "ContactDetail"
+            "ContactDetail",
+            "QuotaUsage",
+            "QuotaReservation",
+            "QuotaBalance",
+            "Quota"
           ]
         },
         {
@@ -31592,7 +32058,11 @@
             "FeatureAccessGrant",
             "EmailAddress",
             "ContactDetail",
-            "Activity"
+            "Activity",
+            "QuotaUsage",
+            "QuotaReservation",
+            "QuotaBalance",
+            "Quota"
           ]
         },
         {
@@ -31686,7 +32156,11 @@
             "JwtDenylist",
             "FeatureAccessGrant",
             "EmailAddress",
-            "ContactDetail"
+            "ContactDetail",
+            "QuotaUsage",
+            "QuotaReservation",
+            "QuotaBalance",
+            "Quota"
           ]
         },
         {
@@ -32080,6 +32554,30 @@
         },
         {
           "from": "BetterTogether::Activity",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaReservation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaBalance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Quota",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
