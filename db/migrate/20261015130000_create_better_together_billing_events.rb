@@ -2,6 +2,16 @@
 
 # Processor-neutral billing event log: one row per processor event, kept for audit,
 # retry, dead-lettering and replay. Final state; guarded so a re-run is a no-op.
+#
+# * platform_id NOT NULL: every event belongs to exactly one platform and nothing
+#   guesses which (see BetterTogether::Billing::PlatformBound).
+# * payload and error_message are `text` because the model encrypts them
+#   (BetterTogether::Billing::EncryptedAttributes); ciphertext is not a JSON document,
+#   so a jsonb column cannot hold it, and an encrypted column takes no default.
+# * The vendor's own event time is kept separately from when we received it, so a stale
+#   event can be told apart from a newer one.
+# * claimed_at is a short lease taken while a job processes the event, so two jobs for
+#   the same event (a duplicate delivery, a replay) never run the processor at once.
 class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
   TABLE = :better_together_billing_events
 
@@ -9,6 +19,8 @@ class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
     return if table_exists?(TABLE)
 
     create_bt_table :billing_events do |t|
+      t.references :platform, null: false, type: :uuid, index: { name: 'idx_bt_billing_events_platform' },
+                              foreign_key: { to_table: :better_together_platforms }
       t.string :billable_owner_type
       t.uuid :billable_owner_id
       t.string :beneficiary_type
@@ -16,7 +28,7 @@ class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
       t.string :processor, null: false
       t.string :event_type, null: false
       t.string :event_id, null: false
-      t.jsonb :payload, null: false, default: {}
+      t.text :payload, null: false
       t.string :processing_status, null: false, default: 'pending'
       t.text :error_message
       t.integer :attempt_count, null: false, default: 0
@@ -25,7 +37,9 @@ class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
       t.string :last_replay_requested_by_type
       t.uuid :last_replay_requested_by_id
       t.datetime :first_received_at
+      t.datetime :processor_event_created_at
       t.datetime :last_attempted_at
+      t.datetime :claimed_at
       t.datetime :processed_at
       t.datetime :payload_redacted_at
       t.datetime :dead_lettered_at
@@ -41,6 +55,8 @@ class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
 
   private
 
+  # Vendor event ids are globally unique, so (processor, event_id) is unique across
+  # platforms; the ingest refuses to hand one platform another platform's event.
   def add_indexes
     add_index TABLE, %i[processor event_id], unique: true, name: 'idx_bt_billing_events_processor_event'
     add_index TABLE, %i[billable_owner_type billable_owner_id], name: 'idx_bt_billing_events_owner'

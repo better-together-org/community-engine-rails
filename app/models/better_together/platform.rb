@@ -136,6 +136,11 @@ module BetterTogether
     after_commit :sync_primary_platform_domain!, on: %i[create update]
     after_commit :reset_mcp_allowed_origins, if: -> { destroyed? || saved_change_to_url? || saved_change_to_external? }
 
+    # Billing records are reached through their platform, never by a bare class-level
+    # read (see docs/billing/platform_isolation.md). Deleting a platform that has
+    # billing history is refused rather than silently dropping payment records.
+    has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
+
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
              dependent: :destroy

@@ -99,6 +99,42 @@ module BetterTogether
           expect(described_class.processors_for(host_platform)).to eq([:fake])
         end
       end
+
+      describe '.platform_for_webhook' do
+        let(:host_platform) { configure_host_platform }
+        let(:other_platform) { create(:better_together_platform) }
+
+        before { Billing.register_processor(:fake, -> { FakeAdapter.new }) }
+
+        it 'attributes an event with no hint to the only platform that has billing configured' do
+          expect(described_class.platform_for_webhook(:fake)).to eq(host_platform)
+        end
+
+        it 'honours an event that names its platform, if that platform has billing configured' do
+          expect(described_class.platform_for_webhook(:fake, platform_id: host_platform.id)).to eq(host_platform)
+          expect(described_class.platform_for_webhook(:fake, platform_id: other_platform.id)).to be_nil
+        end
+
+        it 'does not guess when no platform has billing configured for the processor' do
+          expect(described_class.platform_for_webhook(:ghost)).to be_nil
+        end
+
+        it 'does not guess when more than one platform could own the event' do
+          allow(described_class).to receive(:platforms_with_context).and_return([host_platform, other_platform])
+
+          expect(described_class.platform_for_webhook(:fake)).to be_nil
+        end
+
+        it 'matches a processor account to the platform whose context names it' do
+          allow(described_class).to receive(:platforms_with_context).and_return([host_platform, other_platform])
+          allow(described_class).to receive(:context_for) do |platform, processor|
+            ProcessorContext.new(platform:, processor:, account_ref: platform == other_platform ? 'acct_b' : 'acct_a')
+          end
+
+          expect(described_class.platform_for_webhook(:fake, account_ref: 'acct_b')).to eq(other_platform)
+          expect(described_class.platform_for_webhook(:fake, account_ref: 'acct_other')).to be_nil
+        end
+      end
     end
   end
 end

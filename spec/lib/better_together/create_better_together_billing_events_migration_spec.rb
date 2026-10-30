@@ -34,6 +34,27 @@ RSpec.describe 'Create Better Together billing events migration' do # rubocop:di
     expect(connection.columns(:better_together_billing_events).find { |c| c.name == 'processor' }.default).to be_nil
   end
 
+  it 'binds every event to a platform, NOT NULL, with a foreign key' do
+    column = connection.columns(:better_together_billing_events).find { |c| c.name == 'platform_id' }
+
+    expect(column.null).to be(false)
+    expect(connection.foreign_keys(:better_together_billing_events).map(&:to_table)).to include('better_together_platforms')
+  end
+
+  it 'holds the encrypted payload and error text as text columns with no default' do
+    %w[payload error_message].each do |name|
+      column = connection.columns(:better_together_billing_events).find { |c| c.name == name }
+
+      expect(column.type).to eq(:text)
+      expect(column.default).to be_nil
+    end
+  end
+
+  it 'records when the processor says an event happened and a lease for the job holding it' do
+    expect(connection.column_exists?(:better_together_billing_events, :processor_event_created_at, :datetime)).to be true
+    expect(connection.column_exists?(:better_together_billing_events, :claimed_at, :datetime)).to be true
+  end
+
   it 'drops and recreates cleanly' do
     migration.down
     expect(connection.table_exists?(:better_together_billing_events)).to be false

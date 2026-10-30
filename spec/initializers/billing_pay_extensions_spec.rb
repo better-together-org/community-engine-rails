@@ -22,6 +22,12 @@ RSpec.describe 'config/initializers/billing_pay_extensions.rb' do # rubocop:disa
     expect(Pay::CustomerSyncJob.new.queue_name).to eq(expected)
   end
 
+  it 'does not retry a webhook that matches no platform, because retrying cannot change the answer' do
+    handlers = Pay::Webhooks::ProcessJob.rescue_handlers.map(&:first)
+
+    expect(handlers).to include('BetterTogether::Billing::UnattributableWebhookError')
+  end
+
   it 'is harmless to run again, as happens on every code reload' do
     expect { 2.times { Rails.application.reloader.prepare! } }.not_to raise_error
 
