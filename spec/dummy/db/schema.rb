@@ -265,6 +265,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
     t.string "identifier", null: false
     t.string "name", null: false
     t.text "description"
@@ -273,15 +274,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.string "currency", null: false
     t.boolean "active", default: true, null: false
     t.string "processor", null: false
-    t.string "processor_price_id", null: false
+    t.string "processor_price_id"
     t.string "processor_product_id"
+    t.boolean "manages_processor_product", default: true, null: false
+    t.string "sync_status", default: "pending", null: false
+    t.string "sync_error"
+    t.datetime "sync_attempted_at"
     t.datetime "synced_to_processor_at"
     t.string "latest_processor_event_id"
     t.jsonb "metadata", default: {}, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
-    t.index ["identifier"], name: "idx_bt_billing_plans_identifier", unique: true
+    t.index ["platform_id", "identifier"], name: "idx_bt_billing_plans_platform_identifier", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_plans_platform"
     t.index ["processor", "processor_price_id"], name: "idx_bt_billing_plans_processor_price", unique: true
-    t.index ["processor", "processor_product_id"], name: "idx_bt_billing_plans_processor_product", unique: true, where: "(processor_product_id IS NOT NULL)"
+    t.index ["processor", "processor_product_id"], name: "idx_bt_billing_plans_processor_product"
+    t.index ["sync_status"], name: "idx_bt_billing_plans_sync_status"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2777,6 +2784,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"

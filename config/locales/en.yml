@@ -911,6 +911,12 @@ en:
         personal_beneficiary_label: Personal access
         recurring_participant_summary: Ongoing hosted access and stewardship support
       plans:
+        actions_heading: Actions
+        beneficiary_placeholder: Hosted access
+        benefits_placeholder: |-
+          Hosted community access
+          Ongoing stewardship support
+        change_price: Change price
         create_submit: Create plan
         created: Billing plan created successfully.
         deactivate_confirm: Deactivate this plan? Existing subscribers are unaffected.
@@ -933,6 +939,10 @@ en:
         field_participant_benefits: Benefits
         field_participant_benefits_hint: One benefit per line.
         field_participant_summary: Participant summary
+        field_price: Existing price
+        field_price_hint: Choose a price that already exists in your payment processor
+          account. Its amount, currency, interval and product are copied from the
+          processor.
         field_pricing_tier: Pricing tier
         field_pricing_tier_hint: Solidarity tiers let smaller co-ops access the platform
           at a reduced contribution.
@@ -940,28 +950,67 @@ en:
         field_processor_price_id: Processor price ID
         field_processor_price_id_hint: From your payment processor dashboard. Cannot
           be changed after creation.
+        field_processor_product_id: Product
+        field_processor_product_id_hint: Choose an existing product, or leave empty
+          to create a new one in your payment processor.
         field_solidarity_description: Solidarity description
         field_solidarity_description_hint: Shown to potential subscribers to explain
           who this tier is for.
         field_support_tier: Support tier
+        hosted_access_placeholder: Standard
+        identifier_placeholder: e.g. hosted_stewardship_monthly
         index_title: Billing Plans
         interval_month: Monthly
         interval_one_time: One-time
         interval_year: Yearly
+        locked_label: Set when the price was created
+        locked_note: "%{fields} can't be changed here: the payment processor fixes
+          them when the price is created. To use a different price, create a new one."
+        lookup_search: Search…
+        lookup_unavailable: Could not reach the payment processor. Try again in a
+          moment.
         metadata_section_hint: Shown on billing pages and entitlement cards
         metadata_section_title: Plan metadata
+        mode_create: Create in the payment processor
+        mode_heading: How do you want to add this plan?
+        mode_link: Link an existing price
         new_plan: New plan
         new_title: New Billing Plan
         no_plans: No billing plans have been created yet.
         owner_type_community: Community
         owner_type_person: Person
+        price_section_title: Price
         pricing_tier_solidarity_medium: Solidarity — Medium
         pricing_tier_solidarity_premium: Solidarity Premium
         pricing_tier_solidarity_small: Solidarity — Small
         pricing_tier_standard: Standard
+        product_none: Create a new product
+        retry_sync: Retry sync
+        select_required: Please choose a value.
         show_title: Billing Plan
+        snapshot_drift: 'Different at the payment processor: %{fields}.'
+        snapshot_loading: Loading payment processor details…
+        snapshot_not_found: This price was not found at the payment processor.
+        snapshot_not_linked: This plan is not linked to a payment processor price
+          yet.
+        snapshot_title: Payment processor (%{processor})
+        snapshot_unavailable: Could not reach the payment processor.
+        solidarity_placeholder: e.g. For co-ops under $100k annual revenue
         status_active: Active
         status_inactive: Inactive
+        support_tier_placeholder: Community
+        sync_errors:
+          not_configured: Billing is not configured for this platform and processor.
+          processor_error: The payment processor did not accept this plan. Check the
+            details, then retry the sync.
+          processor_unavailable: The payment processor could not be reached. Use "Retry
+            sync" to try again.
+        sync_requested: Syncing with the payment processor has been requested.
+        sync_status_failed: Sync failed
+        sync_status_heading: Sync status
+        sync_status_pending: Sync pending
+        sync_status_synced: Synced
+        sync_unsupported: This payment processor does not support syncing plans.
         toggle_activate: Activate
         toggle_deactivate: Deactivate
         update_submit: Update plan
@@ -4909,6 +4958,7 @@ en:
       model_invalid: 'Validation failed: %{errors}'
       not_a_number: is not a number
       not_an_integer: must be an integer
+      not_configured: is not set up for this platform
       not_found: not found
       not_found_at_processor: was not found at the payment processor
       not_installed: is not an installed payment processor
@@ -4919,6 +4969,7 @@ en:
       odd: must be odd
       other_than: must be other than %{count}
       present: must be blank
+      price_inactive: is archived at the payment processor
       required: must exist
       taken: has already been taken
       too_long:
@@ -4927,6 +4978,8 @@ en:
       too_short:
         one: is too short (minimum is %{count} character)
         other: is too short (minimum is %{count} characters)
+      unknown_owner_types: 'includes types that cannot be billed: %{types}'
+      used_by_another_platform: is already used by another platform
       weak_password: not strong enough. Consider adding a number, symbols or more
         letters to make it stronger. Avoid using the word 'password', your birthday,
         or other common easily-guessable passwords.

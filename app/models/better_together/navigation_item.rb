@@ -53,6 +53,13 @@ module BetterTogether
       billing_plans: 'billing_plans_url'
     }
 
+    # Items whose target only exists when a subsystem is switched on for the platform.
+    # Without it a platform that has not set billing up would show a link to a page that
+    # answers 404.
+    ROUTE_AVAILABILITY = {
+      'billing_plans_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) }
+    }.freeze
+
     belongs_to :navigation_area, touch: true
     belongs_to :linkable, polymorphic: true, optional: true, touch: true
 
@@ -245,6 +252,7 @@ module BetterTogether
     # @return [Boolean]
     def visible_to?(user, context = {})
       return false unless visible? # Check base visibility flag first
+      return false unless route_available?(context)
 
       # Public items are visible to everyone
       return true if privacy_public?
@@ -351,6 +359,13 @@ module BetterTogether
       return unless permission_identifier.present?
 
       errors.add(:permission_identifier, 'cannot be used with public privacy')
+    end
+
+    def route_available?(context)
+      gate = ROUTE_AVAILABILITY[route_name]
+      return true unless gate
+
+      gate.call(context[:platform] || Current.platform || BetterTogether::Platform.find_by(host: true))
     end
 
     def permission_visible?(user, context)

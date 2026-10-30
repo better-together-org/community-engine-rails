@@ -909,6 +909,12 @@ fr:
         personal_beneficiary_label: Acces personnel
         recurring_participant_summary: Acces heberge continu et soutien de stewardship
       plans:
+        actions_heading: Actions
+        beneficiary_placeholder: Accès hébergé
+        benefits_placeholder: |-
+          Accès communautaire hébergé
+          Soutien continu à l'intendance
+        change_price: Changer le prix
         create_submit: Creer le plan
         created: Plan de facturation cree avec succes.
         deactivate_confirm: Desactiver ce plan ? Les abonnes existants ne seront pas
@@ -932,6 +938,10 @@ fr:
         field_participant_benefits: Avantages
         field_participant_benefits_hint: Un avantage par ligne.
         field_participant_summary: Resume pour les participants
+        field_price: Prix existant
+        field_price_hint: Choisissez un prix qui existe déjà dans votre compte du
+          processeur de paiement. Son montant, sa devise, son intervalle et son produit
+          sont copiés depuis le processeur.
         field_pricing_tier: Niveau tarifaire
         field_pricing_tier_hint: Les niveaux solidaires permettent aux plus petites
           cooperatives d''acceder a la plateforme a cout reduit.
@@ -939,29 +949,72 @@ fr:
         field_processor_price_id: ID de prix du processeur
         field_processor_price_id_hint: Depuis le tableau de bord de votre processeur
           de paiement. Ne peut pas être modifié après la création.
+        field_processor_product_id: Produit
+        field_processor_product_id_hint: Choisissez un produit existant, ou laissez
+          vide pour en créer un nouveau dans votre processeur de paiement.
         field_solidarity_description: Description de solidarite
         field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
           a qui ce niveau s''adresse.
         field_support_tier: Niveau de support
+        hosted_access_placeholder: Standard
+        identifier_placeholder: p. ex. hosted_stewardship_monthly
         index_title: Plans de facturation
         interval_month: Mensuel
         interval_one_time: Unique
         interval_year: Annuel
+        locked_label: Défini à la création du prix
+        locked_note: "%{fields} ne peuvent pas être modifiés ici : le processeur de
+          paiement les fixe à la création du prix. Pour utiliser un autre prix, créez-en
+          un nouveau."
+        lookup_search: Rechercher…
+        lookup_unavailable: Impossible de joindre le processeur de paiement. Réessayez
+          dans un instant.
         metadata_section_hint: Affiche sur les pages de facturation et les cartes
           de droits
         metadata_section_title: Metadonnees du plan
+        mode_create: Créer dans le processeur de paiement
+        mode_heading: Comment voulez-vous ajouter ce plan ?
+        mode_link: Lier un prix existant
         new_plan: Nouveau plan
         new_title: Nouveau plan de facturation
         no_plans: Aucun plan de facturation n''a encore ete cree.
         owner_type_community: Communaute
         owner_type_person: Personne
+        price_section_title: Prix
         pricing_tier_solidarity_medium: Solidarite — Moyenne
         pricing_tier_solidarity_premium: Prime de solidarite
         pricing_tier_solidarity_small: Solidarite — Petite
         pricing_tier_standard: Standard
+        product_none: Créer un nouveau produit
+        retry_sync: Relancer la synchronisation
+        select_required: Veuillez choisir une valeur.
         show_title: Plan de facturation
+        snapshot_drift: 'Différent chez le processeur de paiement : %{fields}.'
+        snapshot_loading: Chargement des détails du processeur de paiement…
+        snapshot_not_found: Ce prix est introuvable chez le processeur de paiement.
+        snapshot_not_linked: Ce plan n'est pas encore lié à un prix du processeur
+          de paiement.
+        snapshot_title: Processeur de paiement (%{processor})
+        snapshot_unavailable: Impossible de joindre le processeur de paiement.
+        solidarity_placeholder: p. ex. Pour les coopératives de moins de 100 k$ de
+          revenus annuels
         status_active: Actif
         status_inactive: Inactif
+        support_tier_placeholder: Communautaire
+        sync_errors:
+          not_configured: La facturation n'est pas configurée pour cette plateforme
+            et ce processeur.
+          processor_error: Le processeur de paiement n'a pas accepté ce plan. Vérifiez
+            les détails, puis relancez la synchronisation.
+          processor_unavailable: Le processeur de paiement est injoignable. Utilisez
+            « Relancer la synchronisation » pour réessayer.
+        sync_requested: La synchronisation avec le processeur de paiement a été demandée.
+        sync_status_failed: Échec de la synchronisation
+        sync_status_heading: État de la synchronisation
+        sync_status_pending: Synchronisation en attente
+        sync_status_synced: Synchronisé
+        sync_unsupported: Ce processeur de paiement ne prend pas en charge la synchronisation
+          des plans.
         toggle_activate: Activer
         toggle_deactivate: Desactiver
         update_submit: Mettre a jour le plan
@@ -5028,6 +5081,7 @@ fr:
       model_invalid: 'Validation échouée : %{errors}'
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
+      not_configured: n'est pas configuré pour cette plateforme
       not_found: n’a pas été trouvé(e)
       not_found_at_processor: est introuvable chez le processeur de paiement
       not_installed: n'est pas un processeur de paiement installé
@@ -5039,6 +5093,7 @@ fr:
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
+      price_inactive: est archivé chez le processeur de paiement
       required: doit exister
       taken: est déjà utilisé(e)
       too_long:
@@ -5047,6 +5102,9 @@ fr:
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
+      unknown_owner_types: 'comprend des types qui ne peuvent pas être facturés :
+        %{types}'
+      used_by_another_platform: est déjà utilisé par une autre plateforme
       weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
         ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',
         votre date de naissance ou d'autres mots de passe communs faciles à deviner.

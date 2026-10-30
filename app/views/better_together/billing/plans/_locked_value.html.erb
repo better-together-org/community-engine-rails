@@ -1,0 +1,9 @@
+<%# A field the payment processor fixed when it created the price. Shown as text, not an input. %>
+<div class="mb-3 billing-plan-locked-field" id="<%= dom_id(plan, "locked_#{field}") %>">
+  <span class="form-label d-block fw-bold"><%= label %></span>
+  <div class="form-control-plaintext">
+    <i class="fa-solid fa-lock text-muted me-1" aria-hidden="true"></i>
+    <span class="visually-hidden"><%= t('better_together.billing.plans.locked_label') %></span>
+    <%= value.presence || '—' %>
+  </div>
+</div>

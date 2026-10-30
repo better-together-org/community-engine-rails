@@ -1,0 +1,80 @@
+%% Billing — the processor adapter contract (version 1). Core never calls a vendor SDK; an extension
+%% gem implements this class and registers it. Every capability method receives a ProcessorContext.
+classDiagram
+  class ProcessorAdapter {
+    +contract_version() Integer
+    +processor_name() Symbol
+    +capabilities() Array
+    +webhook_event_types() Array
+    +normalize_webhook(vendor_event) Hash
+    +process_event(event, context) EventResult
+    +sanitize_payload(payload) Hash
+    +field_rules(resource) Hash
+    +lookup_kinds() Array
+    +supported_currencies() Array
+    +supported_intervals() Array
+    +sync_plan(context, plan, idempotency_key) PlanSyncResult
+    +fetch_price(context, processor_price_id) PriceInfo
+    +fetch_product(context, processor_product_id) ProductInfo
+    +lookup(context, kind, search, scope, limit) Array
+    +create_checkout_session(context, ...)
+    +create_portal_session(context, ...)
+  }
+  class ProcessorContext {
+    +platform
+    +processor
+    +source
+    +account_ref
+    +credentials
+  }
+  class PlanSyncResult {
+    +product_id
+    +price PriceInfo
+  }
+  class PriceInfo {
+    +price_id
+    +product_id
+    +amount_cents
+    +currency
+    +interval
+    +active
+  }
+  class ProductInfo {
+    +product_id
+    +name
+    +description
+    +active
+  }
+  class LookupOption {
+    +value
+    +text
+  }
+  class Configuration {
+    +context_for(platform, processor) ProcessorContext
+    +processors_for(platform) Array
+  }
+  class Plan {
+    +field_rules()
+    +locked_field?(field)
+    +sync_idempotency_key()
+    +apply_sync_result!(result)
+  }
+  class SyncPlanJob
+  class ProcessorOptionsController
+  class FieldRule {
+    <<enumeration>>
+    create_only
+    updatable
+  }
+  ProcessorAdapter ..> ProcessorContext : receives on every call
+  ProcessorAdapter ..> PlanSyncResult : sync_plan returns
+  PlanSyncResult --> PriceInfo
+  ProcessorAdapter ..> PriceInfo : fetch_price returns
+  ProcessorAdapter ..> ProductInfo : fetch_product returns
+  ProcessorAdapter ..> LookupOption : lookup returns
+  ProcessorAdapter ..> FieldRule : field_rules declares
+  Configuration ..> ProcessorContext : builds, per platform
+  Plan ..> ProcessorAdapter : asks field_rules
+  SyncPlanJob ..> Plan : stores the result
+  SyncPlanJob ..> ProcessorAdapter : sync_plan
+  ProcessorOptionsController ..> ProcessorAdapter : lookup

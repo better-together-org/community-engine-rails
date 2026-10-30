@@ -175,10 +175,7 @@ export default class extends Controller {
             }
 
             this.searchDebounceTimer = setTimeout(() => {
-              const url = new URL(options.ajax.url, window.location.origin);
-
-              // Add cache-busting timestamp to prevent stale results
-              url.searchParams.append('_', Date.now().toString());
+              const url = this.buildAjaxUrl(options.ajax);
 
               // Add search parameter if search term is provided
               if (search && search.trim().length > 0) {
@@ -194,7 +191,7 @@ export default class extends Controller {
                   'Cache-Control': 'no-cache'
                 }
               })
-              .then(response => response.json())
+              .then(response => this.parseAjaxResponse(response, options.ajax))
               .then(data => {
                 resolve(data);
               })
@@ -211,7 +208,10 @@ export default class extends Controller {
 
           // For single-select AJAX (not multiSelectJson), reset and reload fresh data
           // For multiSelectJson, preserve selected options and only reload to refresh the list
-          if (!isMultiSelectJson) {
+          if (!isMultiSelectJson && options.preserveSelection) {
+            // Keep the current selection; just refresh the list around it.
+            this.loadInitialResults(options.ajax, { preserveSelected: true });
+          } else if (!isMultiSelectJson) {
             // Reset the select to empty state
             this.element.value = '';
 
@@ -233,7 +233,7 @@ export default class extends Controller {
             }
 
             // Reload fresh results
-            this.loadInitialResults(options.ajax.url);
+            this.loadInitialResults(options.ajax);
           }
 
           // Prevent modal focus trap from interfering
@@ -286,7 +286,7 @@ export default class extends Controller {
               this.element.value = '';
               // Set custom validation message if this field was originally required
               if (this.wasRequired) {
-                this.element.setCustomValidity('Please select a person.');
+                this.element.setCustomValidity(this.requiredMessage(options));
               }
               this.element.dispatchEvent(new Event('change', { bubbles: true }));
             }
@@ -389,6 +389,47 @@ export default class extends Controller {
     }
   }
 
+  // The message shown when a required select is submitted empty. Pass
+  // requiredMessage in the select's options to localize it.
+  requiredMessage(options) {
+    return (options && options.requiredMessage) || 'Please select a person.';
+  }
+
+  // The URL for an AJAX options request: the configured url plus
+  //   ajax.params      static query params, e.g. { kind: 'products' }
+  //   ajax.paramsFrom  query params read from other fields when the request is made,
+  //                    e.g. { 'scope[product]': '#billing_plan_processor_product_id' };
+  //                    a param is left out while its field is empty
+  // and a cache-busting timestamp.
+  buildAjaxUrl(ajax) {
+    const url = new URL(ajax.url, window.location.origin);
+
+    Object.entries(ajax.params || {}).forEach(([name, value]) => {
+      url.searchParams.set(name, value);
+    });
+    Object.entries(ajax.paramsFrom || {}).forEach(([name, selector]) => {
+      const field = document.querySelector(selector);
+      if (field && field.value) url.searchParams.set(name, field.value);
+    });
+    url.searchParams.append('_', Date.now().toString());
+
+    return url;
+  }
+
+  // Turns a response into rows for SlimSelect. When the select configures
+  // ajax.errorText, a failed request (or a response carrying ajax.errorHeader) becomes one
+  // disabled row with that text, so the person sees why the list is empty instead of
+  // nothing. Without errorText the response is read as before.
+  parseAjaxResponse(response, ajax) {
+    const failed = !response.ok || (ajax.errorHeader && response.headers.get(ajax.errorHeader));
+
+    if (ajax.errorText && failed) {
+      return Promise.resolve([{ text: ajax.errorText, value: '', disabled: true }]);
+    }
+
+    return response.json();
+  }
+
   // Builds the synthetic "Create new ..." rows appended to every AJAX result set
   // when createOptions is configured. Always returns at least one row for a
   // configured select, so SlimSelect's renderOptions never sees an empty array
@@ -431,11 +472,11 @@ export default class extends Controller {
     return rows;
   }
 
-  loadInitialResults(url) {
-    // Fetch initial results without search term to populate dropdown
-    const fullUrl = new URL(url, window.location.origin);
-    // Add timestamp to prevent caching
-    fullUrl.searchParams.append('_', Date.now().toString());
+  // Asks the server for the first page of options (no search term). `ajax` is the
+  // select's ajax config ({ url, params, paramsFrom, errorText, errorHeader }). With
+  // preserveSelected, the rows already chosen stay in the list and stay selected.
+  loadInitialResults(ajax, { preserveSelected = false } = {}) {
+    const fullUrl = this.buildAjaxUrl(ajax);
 
     return fetch(fullUrl.toString(), {
       method: 'GET',
@@ -446,8 +487,17 @@ export default class extends Controller {
         'X-Requested-With': 'XMLHttpRequest'
       }
     })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => this.parseAjaxResponse(response, ajax))
+    .then(rows => {
+      const kept = preserveSelected
+        ? Array.from(this.element.selectedOptions).filter(opt => opt.value !== '')
+        : [];
+      const keptValues = kept.map(opt => opt.value);
+      const data = [
+        ...kept.map(opt => ({ text: opt.text, value: opt.value, selected: true })),
+        ...rows.filter(row => !keptValues.includes(row.value))
+      ];
+
       // Clear existing options except the prompt
       const existingOptions = Array.from(this.element.options);
       const promptOption = existingOptions.find(opt => opt.value === '');
@@ -462,7 +512,8 @@ export default class extends Controller {
       
       // Add initial options to the select element
       data.forEach(item => {
-        const option = new Option(item.text, item.value, false, false);
+        const option = new Option(item.text, item.value, false, Boolean(item.selected));
+        option.disabled = Boolean(item.disabled);
         this.element.add(option);
       });
       
@@ -541,7 +592,7 @@ export default class extends Controller {
       form.addEventListener('submit', (event) => {
         if (this.wasRequired && (!this.element.value || this.element.value === '')) {
           event.preventDefault();
-          this.element.setCustomValidity('Please select a person.');
+          this.element.setCustomValidity(this.requiredMessage(this.currentOptions));
           // Focus the SlimSelect instead of the hidden original select
           const slimSelectEl = form.querySelector(`[data-id="${this.element.dataset.id || 'ss-' + this.element.id}"]`);
           if (slimSelectEl) {

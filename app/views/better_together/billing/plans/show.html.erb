@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= @plan.name %> | <%= t('better_together.billing.plans.index_title', default: 'Billing Plans') %>
+  <%= @plan.name %> | <%= t('better_together.billing.plans.index_title') %>
 <% end %>
 
 <div id="<%= dom_id(@plan, :show_page) %>" class="container my-4">
@@ -13,51 +13,93 @@
         <div class="card-header">
           <strong><%= @plan.name %></strong>
           <% if @plan.active? %>
-            <span class="badge bg-success ms-2 billing-plan-status-badge"><%= t('better_together.billing.plans.status_active', default: 'Active') %></span>
+            <span class="badge bg-success ms-2 billing-plan-status-badge"><%= t('better_together.billing.plans.status_active') %></span>
           <% else %>
-            <span class="badge bg-secondary ms-2 billing-plan-status-badge"><%= t('better_together.billing.plans.status_inactive', default: 'Inactive') %></span>
+            <span class="badge bg-secondary ms-2 billing-plan-status-badge"><%= t('better_together.billing.plans.status_inactive') %></span>
           <% end %>
         </div>
         <div class="card-body">
           <dl id="<%= dom_id(@plan, :summary_details) %>" class="row mb-0">
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_identifier', default: 'Identifier') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_identifier') %></dt>
             <dd id="<%= dom_id(@plan, :identifier) %>" class="col-sm-7"><code><%= @plan.identifier %></code></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_description', default: 'Description') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_description') %></dt>
             <dd id="<%= dom_id(@plan, :description) %>" class="col-sm-7"><%= @plan.description.presence || '—' %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_billing_interval', default: 'Interval') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_billing_interval') %></dt>
             <dd id="<%= dom_id(@plan, :billing_interval) %>" class="col-sm-7">
-              <%= t("better_together.billing.plans.interval_#{@plan.billing_interval}",
-                    default: @plan.billing_interval.humanize) %>
+              <%= t("better_together.billing.plans.interval_#{@plan.billing_interval}") %>
             </dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents', default: 'Price') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents') %></dt>
             <dd id="<%= dom_id(@plan, :price) %>" class="col-sm-7">
               <%= billing_amount(@plan.amount_cents, @plan.currency) %>
             </dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor', default: 'Processor') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor') %></dt>
             <dd id="<%= dom_id(@plan, :processor) %>" class="col-sm-7"><%= @plan.processor %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor_price_id', default: 'Processor price ID') %></dt>
-            <dd id="<%= dom_id(@plan, :processor_price_id) %>" class="col-sm-7"><code><%= @plan.processor_price_id %></code></dd>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor_product_id') %></dt>
+            <dd id="<%= dom_id(@plan, :processor_product_id) %>" class="col-sm-7"><code><%= @plan.processor_product_id.presence || '—' %></code></dd>
+
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor_price_id') %></dt>
+            <dd id="<%= dom_id(@plan, :processor_price_id) %>" class="col-sm-7"><code><%= @plan.processor_price_id.presence || '—' %></code></dd>
+
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.sync_status_heading') %></dt>
+            <dd id="<%= dom_id(@plan, :sync_status) %>" class="col-sm-7">
+              <%= billing_sync_badge(@plan) %>
+              <% if billing_sync_error(@plan) %>
+                <span class="text-danger small ms-2 billing-plan-sync-error"><%= billing_sync_error(@plan) %></span>
+              <% end %>
+            </dd>
           </dl>
         </div>
+        <div class="card-footer d-flex flex-wrap gap-2" id="<%= dom_id(@plan, :actions) %>">
+          <% if policy(@plan).sync? && !@plan.sync_synced? && @plan.sync_supported? %>
+            <%= button_to t('better_together.billing.plans.retry_sync'),
+                          sync_billing_plan_path(@plan, locale: I18n.locale),
+                          method: :post,
+                          class: 'btn btn-outline-primary btn-sm',
+                          id: 'billing-plan-retry-sync-btn' %>
+          <% end %>
+          <% if policy(BetterTogether::Billing::Plan.new).new? && @plan.linked? %>
+            <%= link_to t('better_together.billing.plans.change_price'),
+                        new_billing_plan_path(locale: I18n.locale, from: @plan.id),
+                        class: 'btn btn-outline-secondary btn-sm',
+                        id: 'billing-plan-change-price-btn' %>
+          <% end %>
+        </div>
       </div>
+
+      <% if @plan.linked? %>
+        <div id="billing-plan-locked-fields-note" class="alert alert-light border mt-3 mb-0" role="note">
+          <i class="fa-solid fa-lock me-1" aria-hidden="true"></i>
+          <%= t('better_together.billing.plans.locked_note', fields: billing_locked_field_names(@plan).to_sentence) %>
+        </div>
+      <% end %>
+
+      <% if @plan.linked? && @plan.sync_supported? && policy(@plan).snapshot? %>
+        <div class="mt-3">
+          <%= turbo_frame_tag 'billing-plan-processor-snapshot',
+                              src: snapshot_billing_plan_path(@plan, locale: I18n.locale),
+                              loading: :lazy do %>
+            <p class="text-muted small mb-0"><%= t('better_together.billing.plans.snapshot_loading') %></p>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
     <div class="col-lg-6">
       <div id="<%= dom_id(@plan, :metadata_card) %>" class="card">
         <div class="card-header">
-          <strong><%= t('better_together.billing.plans.metadata_section_title', default: 'Plan metadata') %></strong>
+          <strong><%= t('better_together.billing.plans.metadata_section_title') %></strong>
         </div>
         <div class="card-body">
           <dl id="<%= dom_id(@plan, :metadata_details) %>" class="row mb-0">
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_summary', default: 'Participant summary') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_summary') %></dt>
             <dd id="<%= dom_id(@plan, :participant_summary) %>" class="col-sm-7"><%= @plan.participant_summary.presence || '—' %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_benefits', default: 'Benefits') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_benefits') %></dt>
             <dd id="<%= dom_id(@plan, :participant_benefits) %>" class="col-sm-7">
               <% if @plan.participant_benefits.any? %>
                 <ul class="mb-0 ps-3">
@@ -70,19 +112,19 @@
               <% end %>
             </dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_beneficiary_label', default: 'Beneficiary label') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_beneficiary_label') %></dt>
             <dd id="<%= dom_id(@plan, :beneficiary_label) %>" class="col-sm-7"><%= @plan.beneficiary_label.presence || '—' %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_hosted_access_level', default: 'Hosted access level') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_hosted_access_level') %></dt>
             <dd id="<%= dom_id(@plan, :hosted_access_level) %>" class="col-sm-7"><%= @plan.hosted_access_level.presence || '—' %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_support_tier', default: 'Support tier') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_support_tier') %></dt>
             <dd id="<%= dom_id(@plan, :support_tier) %>" class="col-sm-7"><%= @plan.support_tier.presence || '—' %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_community_capacity_tier', default: 'Capacity tier') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_community_capacity_tier') %></dt>
             <dd id="<%= dom_id(@plan, :community_capacity_tier) %>" class="col-sm-7"><%= @plan.community_capacity_tier.presence || '—' %></dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_eligible_owner_types', default: 'Eligible for') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_eligible_owner_types') %></dt>
             <dd id="<%= dom_id(@plan, :eligible_owner_types) %>" class="col-sm-7">
               <% @plan.eligible_billable_owner_types.each do |type| %>
                 <span class="badge bg-light text-dark border me-1">
@@ -91,15 +133,14 @@
               <% end %>
             </dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_pricing_tier', default: 'Pricing tier') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_pricing_tier') %></dt>
             <dd id="<%= dom_id(@plan, :pricing_tier) %>" class="col-sm-7">
               <span class="badge <%= @plan.solidarity_tier? ? 'bg-info text-dark' : 'bg-secondary' %>">
-                <%= t("better_together.billing.plans.pricing_tier_#{@plan.pricing_tier}",
-                      default: @plan.pricing_tier.humanize) %>
+                <%= t("better_together.billing.plans.pricing_tier_#{@plan.pricing_tier}") %>
               </span>
             </dd>
 
-            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_solidarity_description', default: 'Solidarity description') %></dt>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_solidarity_description') %></dt>
             <dd id="<%= dom_id(@plan, :solidarity_description) %>" class="col-sm-7"><%= @plan.solidarity_description.presence || '—' %></dd>
           </dl>
         </div>

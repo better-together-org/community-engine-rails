@@ -9,3 +9,16 @@ RSpec.shared_context 'with clean billing processors' do
     BetterTogether.clear_adapters!(BetterTogether::Billing::ADAPTER_GROUP)
   end
 end
+
+# Billing is off unless the host switches it on (BT_BILLING_ENABLED). Request specs for
+# the billing screens need it on; the identity variables come from
+# spec/support/better_together/billing_configuration.rb.
+RSpec.shared_context 'with billing switched on' do
+  around do |example|
+    previous = ENV.fetch('BT_BILLING_ENABLED', nil)
+    ENV['BT_BILLING_ENABLED'] = 'true'
+    example.run
+  ensure
+    previous.nil? ? ENV.delete('BT_BILLING_ENABLED') : ENV['BT_BILLING_ENABLED'] = previous
+  end
+end

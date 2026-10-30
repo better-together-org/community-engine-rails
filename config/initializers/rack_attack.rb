@@ -111,6 +111,13 @@ module Rack
       req.ip if req.path.include?('/bot-defense/challenges/') && req.get?
     end
 
+    # The billing plan form asks the payment processor for option lists as a steward types.
+    # Each uncached request is a processor API call, so cap it per IP (the controller also
+    # caches results for a minute).
+    throttle('billing/processor_options/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.get? && req.path.include?('/billing/processor_options')
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).

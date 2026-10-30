@@ -905,6 +905,12 @@ es:
         personal_beneficiary_label: Acceso personal
         recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
       plans:
+        actions_heading: Acciones
+        beneficiary_placeholder: Acceso alojado
+        benefits_placeholder: |-
+          Acceso comunitario alojado
+          Apoyo continuo de administración
+        change_price: Cambiar el precio
         create_submit: Crear plan
         created: Plan de facturacion creado exitosamente.
         deactivate_confirm: "¿Desactivar este plan? Los suscriptores existentes no
@@ -928,6 +934,9 @@ es:
         field_participant_benefits: Beneficios
         field_participant_benefits_hint: Un beneficio por linea.
         field_participant_summary: Resumen para participantes
+        field_price: Precio existente
+        field_price_hint: Elija un precio que ya exista en su cuenta del procesador
+          de pagos. Su importe, moneda, intervalo y producto se copian del procesador.
         field_pricing_tier: Nivel de precio
         field_pricing_tier_hint: Los niveles solidarios permiten que las cooperativas
           mas pequenas accedan a la plataforma a un costo reducido.
@@ -935,28 +944,70 @@ es:
         field_processor_price_id: ID de precio del procesador
         field_processor_price_id_hint: Desde el panel de su procesador de pagos. No
           se puede cambiar después de la creación.
+        field_processor_product_id: Producto
+        field_processor_product_id_hint: Elija un producto existente, o déjelo vacío
+          para crear uno nuevo en su procesador de pagos.
         field_solidarity_description: Descripcion de solidaridad
         field_solidarity_description_hint: Se muestra a los posibles suscriptores
           para explicar a quien va dirigido este nivel.
         field_support_tier: Nivel de soporte
+        hosted_access_placeholder: Estándar
+        identifier_placeholder: p. ej. hosted_stewardship_monthly
         index_title: Planes de facturacion
         interval_month: Mensual
         interval_one_time: Unico
         interval_year: Anual
+        locked_label: Se fijó al crear el precio
+        locked_note: "%{fields} no se pueden cambiar aquí: el procesador de pagos
+          los fija al crear el precio. Para usar otro precio, cree uno nuevo."
+        lookup_search: Buscar…
+        lookup_unavailable: No se pudo contactar con el procesador de pagos. Inténtelo
+          de nuevo en un momento.
         metadata_section_hint: Mostrado en paginas de facturacion y tarjetas de derechos
         metadata_section_title: Metadatos del plan
+        mode_create: Crear en el procesador de pagos
+        mode_heading: "¿Cómo quiere añadir este plan?"
+        mode_link: Vincular un precio existente
         new_plan: Nuevo plan
         new_title: Nuevo plan de facturacion
         no_plans: Aun no se han creado planes de facturacion.
         owner_type_community: Comunidad
         owner_type_person: Persona
+        price_section_title: Precio
         pricing_tier_solidarity_medium: Solidaridad — Mediana
         pricing_tier_solidarity_premium: Prima de solidaridad
         pricing_tier_solidarity_small: Solidaridad — Pequena
         pricing_tier_standard: Estandar
+        product_none: Crear un producto nuevo
+        retry_sync: Reintentar la sincronización
+        select_required: Elija un valor.
         show_title: Plan de facturacion
+        snapshot_drift: 'Diferente en el procesador de pagos: %{fields}.'
+        snapshot_loading: Cargando los detalles del procesador de pagos…
+        snapshot_not_found: Este precio no se encontró en el procesador de pagos.
+        snapshot_not_linked: Este plan aún no está vinculado a un precio del procesador
+          de pagos.
+        snapshot_title: Procesador de pagos (%{processor})
+        snapshot_unavailable: No se pudo contactar con el procesador de pagos.
+        solidarity_placeholder: p. ej. Para cooperativas con ingresos anuales inferiores
+          a 100 000 $
         status_active: Activo
         status_inactive: Inactivo
+        support_tier_placeholder: Comunitario
+        sync_errors:
+          not_configured: La facturación no está configurada para esta plataforma
+            y este procesador.
+          processor_error: El procesador de pagos no aceptó este plan. Revise los
+            detalles y reintente la sincronización.
+          processor_unavailable: No se pudo contactar con el procesador de pagos.
+            Use «Reintentar la sincronización» para volver a intentarlo.
+        sync_requested: Se solicitó la sincronización con el procesador de pagos.
+        sync_status_failed: Error de sincronización
+        sync_status_heading: Estado de la sincronización
+        sync_status_pending: Sincronización pendiente
+        sync_status_synced: Sincronizado
+        sync_unsupported: Este procesador de pagos no admite la sincronización de
+          planes.
         toggle_activate: Activar
         toggle_deactivate: Desactivar
         update_submit: Actualizar plan
@@ -4989,6 +5040,7 @@ es:
       model_invalid: 'La validación falló: %{errors}'
       not_a_number: no es un número
       not_an_integer: debe ser un entero
+      not_configured: no está configurado para esta plataforma
       not_found: no se ha encontrado
       not_found_at_processor: no se encontró en el procesador de pagos
       not_installed: no es un procesador de pagos instalado
@@ -4999,6 +5051,7 @@ es:
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
+      price_inactive: está archivado en el procesador de pagos
       required: debe existir
       taken: ya está en uso
       too_long:
@@ -5007,6 +5060,8 @@ es:
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      unknown_owner_types: 'incluye tipos que no se pueden facturar: %{types}'
+      used_by_another_platform: ya lo usa otra plataforma
       weak_password: no es lo suficientemente fuerte. Considera agregar un número,
         símbolos o más letras para hacerla más fuerte. Evita usar la palabra 'contraseña',
         tu fecha de nacimiento o otras contraseñas comunes fáciles de adivinar.

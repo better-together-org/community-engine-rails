@@ -43,3 +43,23 @@ is deliberately left for later.
 - Every new billing table is platform-bound and ties children to parents with composite
   foreign keys.
 - Keep maintenance sweeps per record; they are the only cross-tenant operations.
+
+## Diagram
+
+```mermaid
+flowchart LR
+  PA[Platform A, host] --> PLA[Billing plans]
+  PA -->|context_for| CA[ProcessorContext<br/>environment-backed]
+  CA -->|every adapter call| PROC[(Processor account)]
+  PB[Platform B] --> PLB[Billing plans]
+  PB -.->|context_for returns nil| CB[Billing off]
+  SELLER[Community seller, deferred] -.->|owns plans| PLA
+  CFG[Per-platform configuration, deferred] -.->|context_for reads it| CB
+```
+
+**Diagram Files:**
+- [Mermaid source](../diagrams/source/billing_tenancy_and_ownership_model.mmd) - editable source (with the steward permissions)
+- [PNG export](../diagrams/exports/png/billing_tenancy_and_ownership_model.png) - high-resolution image
+- [SVG export](../diagrams/exports/svg/billing_tenancy_and_ownership_model.svg) - vector graphics
+
+Plan screens and rules: [plan_catalog.md](plan_catalog.md).

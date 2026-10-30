@@ -4,10 +4,12 @@
 %% can never belong to a different platform than its parent. pay_webhooks is transient (Pay
 %% deletes a row once its event is processed) and has no platform.
 %% Columns marked "encrypted" are Active Record Encryption ciphertext in a text column.
-%% The event log is platform-bound too, with its payload and error text encrypted. The plan catalog
-%% is added with the plans PR.
+%% The event log is platform-bound too, with its payload and error text encrypted. Plans are
+%% platform-bound: the identifier is unique per platform, a processor price id is unique per
+%% processor, and a product may be shared by several plans of ONE platform (never by another's).
 erDiagram
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
   EXT_COMMUNITY o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
 
@@ -123,4 +125,26 @@ erDiagram
     uuid billable_owner_id
     string beneficiary_type
     uuid beneficiary_id
+  }
+
+  BILLING_PLANS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, read-only after create"
+    string identifier "unique per platform"
+    string name
+    text description
+    string billing_interval "month | year | one_time"
+    integer amount_cents
+    string currency "no default"
+    boolean active
+    string processor "must be configured for the platform"
+    string processor_price_id "NULL until the processor has created it; unique per processor"
+    string processor_product_id "NOT unique: one product, several prices"
+    boolean manages_processor_product "false when an existing product was chosen"
+    string sync_status "pending | synced | failed"
+    string sync_error "short code, never vendor text"
+    datetime sync_attempted_at
+    datetime synced_to_processor_at
+    string latest_processor_event_id
+    jsonb metadata "participant text, owner-type allow-list"
   }

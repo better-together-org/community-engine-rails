@@ -1,0 +1,126 @@
+  <div id="billing-plan-metadata-card" class="card mb-4">
+    <div class="card-header">
+      <strong><%= t('better_together.billing.plans.metadata_section_title') %></strong>
+      <span class="text-muted small ms-2"><%= t('better_together.billing.plans.metadata_section_hint') %></span>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <%= form.label 'metadata[participant_summary]',
+                       t('better_together.billing.plans.field_participant_summary'),
+                       class: 'form-label' %>
+        <%= form.text_area 'metadata[participant_summary]',
+                           value: billing_plan.metadata.to_h['participant_summary'],
+                           class: 'form-control',
+                           rows: 2 %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label 'metadata[participant_benefits]',
+                       t('better_together.billing.plans.field_participant_benefits'),
+                       class: 'form-label' %>
+        <%= form.text_area 'metadata[participant_benefits][]',
+                           value: Array(billing_plan.metadata.to_h['participant_benefits']).join("\n"),
+                           class: 'form-control',
+                           rows: 3,
+                           placeholder: t('better_together.billing.plans.benefits_placeholder') %>
+        <div class="form-text"><%= t('better_together.billing.plans.field_participant_benefits_hint') %></div>
+      </div>
+
+      <div id="billing-plan-metadata-fields" class="row g-3">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[beneficiary_label]',
+                           t('better_together.billing.plans.field_beneficiary_label'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[beneficiary_label]',
+                                value: billing_plan.metadata.to_h['beneficiary_label'],
+                                class: 'form-control',
+                                placeholder: t('better_together.billing.plans.beneficiary_placeholder') %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[hosted_access_level]',
+                           t('better_together.billing.plans.field_hosted_access_level'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[hosted_access_level]',
+                                value: billing_plan.metadata.to_h['hosted_access_level'],
+                                class: 'form-control',
+                                placeholder: t('better_together.billing.plans.hosted_access_placeholder') %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[support_tier]',
+                           t('better_together.billing.plans.field_support_tier'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[support_tier]',
+                                value: billing_plan.metadata.to_h['support_tier'],
+                                class: 'form-control',
+                                placeholder: t('better_together.billing.plans.support_tier_placeholder') %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[community_capacity_tier]',
+                           t('better_together.billing.plans.field_community_capacity_tier'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[community_capacity_tier]',
+                                value: billing_plan.metadata.to_h['community_capacity_tier'],
+                                class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[pricing_tier]',
+                           t('better_together.billing.plans.field_pricing_tier'),
+                           class: 'form-label' %>
+            <%= form.select 'metadata[pricing_tier]',
+                            BetterTogether::Billing::Plan::PLAN_PRICING_TIERS.map { |tier|
+                              [t("better_together.billing.plans.pricing_tier_#{tier}"), tier]
+                            },
+                            { selected: billing_plan.metadata.to_h['pricing_tier'].presence || 'standard' },
+                            class: 'form-select' %>
+            <div class="form-text">
+              <%= t('better_together.billing.plans.field_pricing_tier_hint') %>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <%= form.label 'metadata[solidarity_description]',
+                           t('better_together.billing.plans.field_solidarity_description'),
+                           class: 'form-label' %>
+            <%= form.text_field 'metadata[solidarity_description]',
+                                value: billing_plan.metadata.to_h['solidarity_description'],
+                                class: 'form-control',
+                                placeholder: t('better_together.billing.plans.solidarity_placeholder') %>
+            <div class="form-text">
+              <%= t('better_together.billing.plans.field_solidarity_description_hint') %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="billing-plan-eligibility-fields" class="mb-0">
+        <label class="form-label">
+          <%= t('better_together.billing.plans.field_eligible_owner_types') %>
+        </label>
+        <% current_types = billing_plan.eligible_billable_owner_types %>
+        <div class="d-flex flex-wrap gap-3">
+          <% BetterTogether::Billing::Plan.assignable_owner_types.each do |type| %>
+            <% box_id = "owner_type_#{type.demodulize.underscore}" %>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="billing_plan[metadata][eligible_billable_owner_types][]"
+                     value="<%= type %>" id="<%= box_id %>" <%= 'checked' if current_types.include?(type) %>>
+              <label class="form-check-label" for="<%= box_id %>"><%= t("better_together.billing.plans.owner_type_#{type.demodulize.underscore}", default: type.demodulize) %></label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+

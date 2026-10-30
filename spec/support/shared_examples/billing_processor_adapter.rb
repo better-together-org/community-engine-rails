@@ -41,4 +41,27 @@ RSpec.shared_examples 'a billing processor adapter' do
       end
     end
   end
+
+  describe 'processor-backed fields' do
+    it 'declares only known rules, for plan fields' do
+      rules = adapter.field_rules(:plan)
+
+      expect(rules).to be_a(Hash)
+      expect(rules.values - BetterTogether::Billing::ProcessorAdapter::FIELD_RULES).to be_empty
+      expect(rules.keys - BetterTogether::Billing::Plan::PRICE_FIELDS - BetterTogether::Billing::Plan::DESCRIPTIVE_FIELDS -
+             %i[processor processor_product_id processor_price_id]).to be_empty
+    end
+
+    it 'names the lookup kinds it serves when it advertises lookups' do
+      next unless adapter.supports?(:lookups)
+
+      expect(adapter.lookup_kinds).to be_present
+      expect(adapter.lookup_kinds).to all(be_a(Symbol))
+    end
+
+    it 'offers fallback lists of the right shape, or nil for core\'s own' do
+      expect(adapter.supported_currencies).to be_nil.or all(be_a(String))
+      expect(adapter.supported_intervals).to be_nil.or all(be_a(String))
+    end
+  end
 end

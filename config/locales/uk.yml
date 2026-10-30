@@ -890,6 +890,12 @@ uk:
         personal_beneficiary_label: Osobystyi dostup
         recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
       plans:
+        actions_heading: Дії
+        beneficiary_placeholder: Хостинговий доступ
+        benefits_placeholder: |-
+          Хостинговий доступ для спільноти
+          Постійна підтримка керування
+        change_price: Змінити ціну
         create_submit: Stvoriti plan
         created: Plan bilingu uspishno stvoreno.
         deactivate_confirm: Deaktuvuvaty tsej plan? Isnuyuchi peredplatnyky ne postrazhdayut'.
@@ -911,6 +917,9 @@ uk:
         field_participant_benefits: Perevagy
         field_participant_benefits_hint: Odna perevaga na ryadok.
         field_participant_summary: Kharakterystyka dlya uchasnykiv
+        field_price: Наявна ціна
+        field_price_hint: Виберіть ціну, яка вже існує у вашому обліковому записі
+          платіжного процесора. Її сума, валюта, інтервал і продукт копіюються з процесора.
         field_pricing_tier: Taryfnyj riven'
         field_pricing_tier_hint: Taryfy solidarnosti dozvolyayut' menshym kooperatyvam
           otrymaty dostup do platformy za znyzhenoyu vartistyu.
@@ -918,29 +927,69 @@ uk:
         field_processor_price_id: Ідентифікатор ціни в процесорі
         field_processor_price_id_hint: З панелі вашого платіжного процесора. Не можна
           змінити після створення.
+        field_processor_product_id: Продукт
+        field_processor_product_id_hint: Виберіть наявний продукт або залиште порожнім,
+          щоб створити новий у вашому платіжному процесорі.
         field_solidarity_description: Opys solidarnosti
         field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
           shchob poyasnyty, dlya koho pryznachenyj tsej riven'.
         field_support_tier: Riven' pidtrymky
+        hosted_access_placeholder: Стандартний
+        identifier_placeholder: наприклад, hosted_stewardship_monthly
         index_title: Plany bilingu
         interval_month: Shchomisyachno
         interval_one_time: Odnorazovo
         interval_year: Shchorichno
+        locked_label: Встановлено під час створення ціни
+        locked_note: "%{fields} тут змінити не можна: платіжний процесор фіксує їх
+          під час створення ціни. Щоб використати іншу ціну, створіть нову."
+        lookup_search: Пошук…
+        lookup_unavailable: Не вдалося зв’язатися з платіжним процесором. Спробуйте
+          ще раз за мить.
         metadata_section_hint: Vidobrazhayet'sya na storinkakh bilingu ta kartochkakh
           prav
         metadata_section_title: Metadani planu
+        mode_create: Створити в платіжному процесорі
+        mode_heading: Як ви хочете додати цей план?
+        mode_link: Прив’язати наявну ціну
         new_plan: Novyj plan
         new_title: Novyj plan bilingu
         no_plans: Plany bilingu shche ne stvoren.
         owner_type_community: Spilnota
         owner_type_person: Osobystist'
+        price_section_title: Ціна
         pricing_tier_solidarity_medium: Solidarnist' — Serednij
         pricing_tier_solidarity_premium: Premiyum solidarnosti
         pricing_tier_solidarity_small: Solidarnist' — Malyj
         pricing_tier_standard: Standartnyj
+        product_none: Створити новий продукт
+        retry_sync: Повторити синхронізацію
+        select_required: Виберіть значення.
         show_title: Plan bilingu
+        snapshot_drift: 'Відрізняється в платіжному процесорі: %{fields}.'
+        snapshot_loading: Завантаження даних платіжного процесора…
+        snapshot_not_found: Цю ціну не знайдено в платіжному процесорі.
+        snapshot_not_linked: Цей план ще не прив’язано до ціни платіжного процесора.
+        snapshot_title: Платіжний процесор (%{processor})
+        snapshot_unavailable: Не вдалося зв’язатися з платіжним процесором.
+        solidarity_placeholder: наприклад, для кооперативів із річним доходом до 100
+          тис. $
         status_active: Aktyvnyj
         status_inactive: Neaktyvnyj
+        support_tier_placeholder: Спільнотний
+        sync_errors:
+          not_configured: Виставлення рахунків не налаштовано для цієї платформи та
+            цього процесора.
+          processor_error: Платіжний процесор не прийняв цей план. Перевірте дані
+            та повторіть синхронізацію.
+          processor_unavailable: Платіжний процесор недоступний. Скористайтеся «Повторити
+            синхронізацію», щоб спробувати ще раз.
+        sync_requested: Синхронізацію з платіжним процесором запрошено.
+        sync_status_failed: Помилка синхронізації
+        sync_status_heading: Стан синхронізації
+        sync_status_pending: Синхронізація очікує
+        sync_status_synced: Синхронізовано
+        sync_unsupported: Цей платіжний процесор не підтримує синхронізацію планів.
         toggle_activate: Aktuvuvaty
         toggle_deactivate: Deaktuvuvaty
         update_submit: Onovyty plan
@@ -4998,6 +5047,7 @@ uk:
       model_invalid: 'Перевірка не вдалася: %{errors}'
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
+      not_configured: не налаштовано для цієї платформи
       not_found: не знайдено
       not_found_at_processor: не знайдено в платіжному процесорі
       not_installed: не є встановленим платіжним процесором
@@ -5010,6 +5060,7 @@ uk:
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
+      price_inactive: архівовано в платіжному процесорі
       required: має існувати
       taken: вже зайнято
       too_long:
@@ -5022,6 +5073,8 @@ uk:
         many: занадто короткий (мінімум %{count} символів)
         one: занадто короткий (мінімум %{count} символ)
         other: занадто короткий (мінімум %{count} символів)
+      unknown_owner_types: 'містить типи, які не можна виставляти до оплати: %{types}'
+      used_by_another_platform: уже використовується іншою платформою
       weak_password: недостатньо сильний. Розгляньте додавання цифри, символів або
         більше літер, щоб зробити його сильнішим. Уникайте використання слова 'password',
         свого дня народження, або інших звичайних легко вгадуваних паролів.
