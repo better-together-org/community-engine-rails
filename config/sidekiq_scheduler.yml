@@ -64,3 +64,8 @@
   cron: "40 4 * * *" # daily at 04:40 UTC
   class: "BetterTogether::Billing::PruneStalePayWebhooksJob"
   description: "Delete Pay webhook deliveries that were never processed once the replay window has passed"
+
+"better_together:billing:expire_orders_hourly":
+  cron: "10 * * * *" # hourly at :10 UTC
+  class: "BetterTogether::Billing::ExpireOrdersJob"
+  description: "Let orders that were not paid in time lapse and release what they held"

@@ -22,6 +22,7 @@ module BetterTogether
     class Plan < ApplicationRecord # rubocop:disable Metrics/ClassLength
       include PlatformBound
       include SellerScoped
+      include Purchasable
 
       self.table_name = 'better_together_billing_plans'
 
@@ -123,6 +124,12 @@ module BetterTogether
       # ---- the processor side ----------------------------------------------------
 
       def linked? = processor_price_id.present?
+
+      # Purchasable: a plan is what an order line is for.
+      def purchasable_description = name
+      def purchasable_amount_cents = amount_cents
+      def purchasable_currency = currency
+      def purchasable? = active?
 
       # Held by an online payment processor (as opposed to paid only by cash, cheque,
       # e-transfer or store credit).

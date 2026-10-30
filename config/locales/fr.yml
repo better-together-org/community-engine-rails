@@ -902,6 +902,48 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      orders:
+        field_amount: Montant
+        field_buyer: Acheteur
+        field_expires: À payer avant
+        field_item: Article
+        field_method: Mode
+        field_number: Commande
+        field_paid: Payé
+        field_placed: Passée le
+        field_purpose: Pour
+        field_quantity: Quantité
+        field_status: État
+        field_total: Total
+        index_title: Mes commandes
+        lines_heading: Ce qui a été commandé
+        no_orders: Vous n'avez pas encore de commande.
+        no_payments: Aucun paiement n'a encore été effectué.
+        no_sales: Il n'y a pas encore de commande.
+        order_number: Commande %{number}
+        payment_status_cancelled: Annulé
+        payment_status_failed: Échoué
+        payment_status_partially_refunded: Partiellement remboursé
+        payment_status_pending: En attente
+        payment_status_refunded: Remboursé
+        payment_status_succeeded: Reçu
+        payments_heading: Paiements
+        placed_by: Passée par %{name}
+        purpose_exchange: Échange
+        purpose_one_time: Achat unique
+        purpose_subscription: Abonnement ou adhésion
+        purpose_ticket: Billets d'événement
+        sales_intro: Les commandes pour ce que vend cette plateforme, et où en est
+          chaque paiement.
+        sales_title: Ventes
+        status_awaiting_payment: En attente de paiement
+        status_cancelled: Annulée
+        status_draft: Brouillon
+        status_expired: Expirée
+        status_paid: Payée
+        status_partially_paid: Partiellement payée
+        status_partially_refunded: Partiellement remboursée
+        status_refunded: Remboursée
       plan_defaults:
         community_beneficiary_label: Acces communautaire
         hosted_beneficiary_label: Acces heberge
@@ -5128,6 +5170,7 @@ fr:
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
       country_not_supported: n'est pas disponible en %{country}
+      currency_mismatch: doit correspondre à la devise de sa commande
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
@@ -5135,6 +5178,7 @@ fr:
       expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      greater_than_refundable: dépasse ce qui peut encore être remboursé
       immutable_after_processor_link: ne peut plus être modifié une fois le plan lié
         à un prix du processeur
       in: doit être dans l'intervalle %{count}
@@ -5175,6 +5219,7 @@ fr:
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)
+      transition_not_allowed: ne peut pas passer de %{from} à %{to}
       unknown_owner_types: 'comprend des types qui ne peuvent pas être facturés :
         %{types}'
       unknown_setting: 'contient des champs que ce mode n''utilise pas : %{fields}'

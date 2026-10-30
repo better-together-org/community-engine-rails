@@ -71,6 +71,19 @@ RSpec.describe BetterTogether::NavigationItem, '#visible_to?' do
     end
   end
 
+  describe 'the sales link' do
+    let(:sales_item) do
+      build(:better_together_navigation_item, route_name: 'billing_sales_url', privacy: 'public', visible: true,
+                                              item_type: 'link', linkable_type: nil, linkable_id: nil, url: nil)
+    end
+
+    it 'is a valid route name, and visible only where billing is enabled' do
+      expect(described_class.route_name_urls).to include('billing_sales_url')
+      expect(sales_item.visible_to?(nil, platform: host_platform)).to be(true)
+      expect(sales_item.visible_to?(nil, platform: other_platform)).to be(false)
+    end
+  end
+
   it 'leaves every other route unaffected' do
     other = build(:better_together_navigation_item, route_name: 'pages_url', privacy: 'public', visible: true, item_type: 'link',
                                                     linkable_type: nil, linkable_id: nil, url: nil)

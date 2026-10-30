@@ -898,6 +898,48 @@ es:
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
     billing:
+      orders:
+        field_amount: Importe
+        field_buyer: Comprador
+        field_expires: Pagar antes de
+        field_item: Artículo
+        field_method: Método
+        field_number: Pedido
+        field_paid: Pagado
+        field_placed: Realizado
+        field_purpose: Para
+        field_quantity: Cantidad
+        field_status: Estado
+        field_total: Total
+        index_title: Mis pedidos
+        lines_heading: Lo que se pidió
+        no_orders: Todavía no tiene pedidos.
+        no_payments: Todavía no se ha hecho ningún pago.
+        no_sales: Todavía no hay pedidos.
+        order_number: Pedido %{number}
+        payment_status_cancelled: Cancelado
+        payment_status_failed: Fallido
+        payment_status_partially_refunded: Reembolsado en parte
+        payment_status_pending: Pendiente
+        payment_status_refunded: Reembolsado
+        payment_status_succeeded: Recibido
+        payments_heading: Pagos
+        placed_by: Realizado por %{name}
+        purpose_exchange: Intercambio
+        purpose_one_time: Compra única
+        purpose_subscription: Suscripción o membresía
+        purpose_ticket: Entradas a eventos
+        sales_intro: Los pedidos de lo que vende esta plataforma y en qué punto está
+          cada pago.
+        sales_title: Ventas
+        status_awaiting_payment: Pendiente de pago
+        status_cancelled: Cancelado
+        status_draft: Borrador
+        status_expired: Caducado
+        status_paid: Pagado
+        status_partially_paid: Pagado en parte
+        status_partially_refunded: Reembolsado en parte
+        status_refunded: Reembolsado
       plan_defaults:
         community_beneficiary_label: Acceso comunitario
         hosted_beneficiary_label: Acceso alojado
@@ -5087,6 +5129,7 @@ es:
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
         solicita una nueva
       country_not_supported: no está disponible en %{country}
+      currency_mismatch: debe coincidir con la moneda de su pedido
       empty: no puede estar vacío
       equal_to: debe ser igual a %{count}
       even: debe ser par
@@ -5094,6 +5137,7 @@ es:
       expired: ha expirado, por favor solicita una nueva
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
+      greater_than_refundable: es más de lo que aún se puede reembolsar
       immutable_after_processor_link: no se puede cambiar una vez que el plan está
         vinculado a un precio del procesador
       in: debe estar en %{count}
@@ -5132,6 +5176,7 @@ es:
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
+      transition_not_allowed: no puede pasar de %{from} a %{to}
       unknown_owner_types: 'incluye tipos que no se pueden facturar: %{types}'
       unknown_setting: 'tiene campos que este método no usa: %{fields}'
       used_by_another_platform: ya lo usa otra plataforma

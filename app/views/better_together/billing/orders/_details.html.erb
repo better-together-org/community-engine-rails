@@ -1,0 +1,79 @@
+<%# One order: its state, what is on it, and its payments. Shared by the buyer's and the steward's pages. %>
+<div id="<%= dom_id(order, :details) %>" class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong><%= t('better_together.billing.orders.order_number', number: order.number) %></strong>
+    <%= billing_order_status_badge(order) %>
+  </div>
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-4"><%= t('better_together.billing.orders.field_placed') %></dt>
+      <dd id="<%= dom_id(order, :placed_at) %>" class="col-sm-8"><%= order.placed_at ? l(order.placed_at, format: :long) : '—' %></dd>
+
+      <dt class="col-sm-4"><%= t('better_together.billing.orders.field_purpose') %></dt>
+      <dd id="<%= dom_id(order, :purpose) %>" class="col-sm-8"><%= t("better_together.billing.orders.purpose_#{order.purpose}") %></dd>
+
+      <dt class="col-sm-4"><%= t('better_together.billing.orders.field_total') %></dt>
+      <dd id="<%= dom_id(order, :total) %>" class="col-sm-8"><%= billing_amount(order.total_cents, order.currency) %></dd>
+
+      <dt class="col-sm-4"><%= t('better_together.billing.orders.field_paid') %></dt>
+      <dd id="<%= dom_id(order, :paid) %>" class="col-sm-8"><%= billing_amount(order.paid_cents, order.currency) %></dd>
+
+      <% if order.open? && order.expires_at %>
+        <dt class="col-sm-4"><%= t('better_together.billing.orders.field_expires') %></dt>
+        <dd id="<%= dom_id(order, :expires_at) %>" class="col-sm-8"><%= l(order.expires_at, format: :long) %></dd>
+      <% end %>
+    </dl>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header"><strong><%= t('better_together.billing.orders.lines_heading') %></strong></div>
+  <div class="table-responsive">
+    <table id="billing-order-lines" class="table mb-0">
+      <thead class="table-light">
+        <tr>
+          <th scope="col"><%= t('better_together.billing.orders.field_item') %></th>
+          <th scope="col"><%= t('better_together.billing.orders.field_quantity') %></th>
+          <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_amount') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% order.lines.each do |line| %>
+          <tr id="<%= dom_id(line) %>">
+            <td><%= line.description %></td>
+            <td><%= line.quantity %></td>
+            <td class="text-end"><%= billing_amount(line.total_cents, line.currency) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header"><strong><%= t('better_together.billing.orders.payments_heading') %></strong></div>
+  <% if order.payments.any? %>
+    <div class="table-responsive">
+      <table id="billing-order-payments" class="table mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('better_together.billing.orders.field_method') %></th>
+            <th scope="col"><%= t('better_together.billing.orders.field_status') %></th>
+            <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_amount') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.payments.each do |payment| %>
+            <tr id="<%= dom_id(payment) %>">
+              <td><%= billing_payment_method_label(payment.processor) %></td>
+              <td><%= t("better_together.billing.orders.payment_status_#{payment.status}") %></td>
+              <td class="text-end"><%= billing_amount(payment.amount_cents, payment.currency) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="card-body text-body-secondary" id="billing-order-no-payments"><%= t('better_together.billing.orders.no_payments') %></div>
+  <% end %>
+</div>

@@ -288,11 +288,17 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::Event
         BetterTogether::Billing::Plan
         BetterTogether::Billing::ProcessorSetting
+        BetterTogether::Billing::Order
+        BetterTogether::Billing::OrderLine
+        BetterTogether::Billing::Payment
+        BetterTogether::Billing::Refund
       ],
       controllers: %w[
         BetterTogether::Billing::PlansController
         BetterTogether::Billing::ProcessorOptionsController
         BetterTogether::Billing::ProcessorSettingsController
+        BetterTogether::Billing::OrdersController
+        BetterTogether::Billing::SalesController
       ]
     },
     {

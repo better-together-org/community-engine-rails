@@ -904,6 +904,47 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      orders:
+        field_amount: Amount
+        field_buyer: Buyer
+        field_expires: Pay by
+        field_item: Item
+        field_method: Method
+        field_number: Order
+        field_paid: Paid
+        field_placed: Placed
+        field_purpose: For
+        field_quantity: Quantity
+        field_status: Status
+        field_total: Total
+        index_title: My orders
+        lines_heading: What was ordered
+        no_orders: You have no orders yet.
+        no_payments: No payment has been made yet.
+        no_sales: There are no orders yet.
+        order_number: Order %{number}
+        payment_status_cancelled: Cancelled
+        payment_status_failed: Failed
+        payment_status_partially_refunded: Partly refunded
+        payment_status_pending: Pending
+        payment_status_refunded: Refunded
+        payment_status_succeeded: Received
+        payments_heading: Payments
+        placed_by: Placed by %{name}
+        purpose_exchange: Exchange
+        purpose_one_time: One-time purchase
+        purpose_subscription: Subscription or membership
+        purpose_ticket: Event tickets
+        sales_intro: Orders for what this platform sells, and where each payment stands.
+        sales_title: Sales
+        status_awaiting_payment: Awaiting payment
+        status_cancelled: Cancelled
+        status_draft: Draft
+        status_expired: Expired
+        status_paid: Paid
+        status_partially_paid: Partly paid
+        status_partially_refunded: Partly refunded
+        status_refunded: Refunded
       plan_defaults:
         community_beneficiary_label: Community access
         hosted_beneficiary_label: Hosted access
@@ -5003,6 +5044,7 @@ en:
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
       country_not_supported: is not available in %{country}
+      currency_mismatch: must match the currency of its order
       empty: can't be empty
       equal_to: must be equal to %{count}
       even: must be even
@@ -5010,6 +5052,7 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      greater_than_refundable: is more than can still be refunded
       immutable_after_processor_link: cannot be changed once the plan is linked to
         a processor price
       in: must be in %{count}
@@ -5047,6 +5090,7 @@ en:
       too_short:
         one: is too short (minimum is %{count} character)
         other: is too short (minimum is %{count} characters)
+      transition_not_allowed: cannot change from %{from} to %{to}
       unknown_owner_types: 'includes types that cannot be billed: %{types}'
       unknown_setting: 'has fields this method does not use: %{fields}'
       used_by_another_platform: is already used by another platform

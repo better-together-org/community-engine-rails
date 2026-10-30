@@ -1,0 +1,12 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.orders.order_number', number: @order.number) %>
+<% end %>
+
+<div id="<%= dom_id(@order, :show_page) %>" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_sales_path(locale: I18n.locale), edit_path: nil %>
+  <h1 class="mb-1"><%= t('better_together.billing.orders.order_number', number: @order.number) %></h1>
+  <p id="<%= dom_id(@order, :buyer) %>" class="text-body-secondary mb-4">
+    <%= t('better_together.billing.orders.placed_by', name: @order.buyer.name) %>
+  </p>
+  <%= render 'better_together/billing/orders/details', order: @order %>
+</div>

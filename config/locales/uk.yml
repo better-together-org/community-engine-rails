@@ -883,6 +883,47 @@ uk:
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
+      orders:
+        field_amount: Сума
+        field_buyer: Покупець
+        field_expires: Сплатити до
+        field_item: Позиція
+        field_method: Спосіб
+        field_number: Замовлення
+        field_paid: Сплачено
+        field_placed: Оформлено
+        field_purpose: Для
+        field_quantity: Кількість
+        field_status: Стан
+        field_total: Разом
+        index_title: Мої замовлення
+        lines_heading: Що замовлено
+        no_orders: У вас ще немає замовлень.
+        no_payments: Жодного платежу ще не здійснено.
+        no_sales: Замовлень ще немає.
+        order_number: Замовлення %{number}
+        payment_status_cancelled: Скасовано
+        payment_status_failed: Невдало
+        payment_status_partially_refunded: Частково повернено
+        payment_status_pending: Очікує
+        payment_status_refunded: Повернено
+        payment_status_succeeded: Отримано
+        payments_heading: Платежі
+        placed_by: Оформив(ла) %{name}
+        purpose_exchange: Обмін
+        purpose_one_time: Разова покупка
+        purpose_subscription: Підписка або членство
+        purpose_ticket: Квитки на події
+        sales_intro: Замовлення на те, що продає ця платформа, і стан кожного платежу.
+        sales_title: Продажі
+        status_awaiting_payment: Очікує оплати
+        status_cancelled: Скасовано
+        status_draft: Чернетка
+        status_expired: Термін минув
+        status_paid: Сплачено
+        status_partially_paid: Частково сплачено
+        status_partially_refunded: Частково повернено
+        status_refunded: Повернено
       plan_defaults:
         community_beneficiary_label: Dostup spilnoty
         hosted_beneficiary_label: Hosted-dostup
@@ -5092,6 +5133,7 @@ uk:
       confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
         запросіть новий
       country_not_supported: недоступно в %{country}
+      currency_mismatch: має збігатися з валютою замовлення
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -5099,6 +5141,7 @@ uk:
       expired: закінчився, будь ласка, запросіть новий
       greater_than: має бути більше %{count}
       greater_than_or_equal_to: має бути більше або дорівнювати %{count}
+      greater_than_refundable: більше, ніж ще можна повернути
       immutable_after_processor_link: не можна змінити після прив’язки плану до ціни
         в процесорі
       in: має бути в %{count}
@@ -5142,6 +5185,7 @@ uk:
         many: занадто короткий (мінімум %{count} символів)
         one: занадто короткий (мінімум %{count} символ)
         other: занадто короткий (мінімум %{count} символів)
+      transition_not_allowed: не може змінитися з %{from} на %{to}
       unknown_owner_types: 'містить типи, які не можна виставляти до оплати: %{types}'
       unknown_setting: 'містить поля, які цей спосіб не використовує: %{fields}'
       used_by_another_platform: уже використовується іншою платформою

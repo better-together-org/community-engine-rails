@@ -51,7 +51,8 @@ module BetterTogether
       users: 'users_url',
       webhook_endpoints: 'webhook_endpoints_url',
       billing_plans: 'billing_plans_url',
-      billing_processor_settings: 'billing_processor_settings_url'
+      billing_processor_settings: 'billing_processor_settings_url',
+      billing_sales: 'billing_sales_url'
     }
 
     # Items whose target only exists when a subsystem is switched on for the platform.
@@ -59,7 +60,8 @@ module BetterTogether
     # answers 404.
     ROUTE_AVAILABILITY = {
       'billing_plans_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) },
-      'billing_processor_settings_url' => ->(platform) { BetterTogether::Billing.configurable?(platform) }
+      'billing_processor_settings_url' => ->(platform) { BetterTogether::Billing.configurable?(platform) },
+      'billing_sales_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) }
     }.freeze
 
     belongs_to :navigation_area, touch: true

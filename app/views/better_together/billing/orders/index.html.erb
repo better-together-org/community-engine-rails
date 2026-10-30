@@ -1,0 +1,40 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.orders.index_title') %>
+<% end %>
+
+<div id="billing-orders-page" class="container my-4">
+  <h1 class="mb-4"><%= t('better_together.billing.orders.index_title') %></h1>
+
+  <% if @orders.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-orders-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.orders.field_number') %></th>
+              <th scope="col"><%= t('better_together.billing.orders.field_placed') %></th>
+              <th scope="col"><%= t('better_together.billing.orders.field_status') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_total') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @orders.each do |order| %>
+              <tr id="<%= dom_id(order) %>">
+                <th scope="row"><code><%= order.number %></code></th>
+                <td><%= order.placed_at ? l(order.placed_at.to_date, format: :long) : '—' %></td>
+                <td><%= billing_order_status_badge(order) %></td>
+                <td class="text-end"><%= billing_amount(order.total_cents, order.currency) %></td>
+                <td class="text-end">
+                  <%= link_to t('globals.view'), billing_order_path(order, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-orders-empty" class="text-body-secondary"><%= t('better_together.billing.orders.no_orders') %></p>
+  <% end %>
+</div>

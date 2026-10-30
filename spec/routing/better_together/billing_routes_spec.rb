@@ -93,6 +93,15 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
                                                                       :billing_processor_settings_url)
     end
 
+    it 'has read-only order pages for the buyer and for stewards' do
+      expect(get: '/en/billing/orders').to route_to(controller: 'better_together/billing/orders', action: 'index', locale: 'en')
+      expect(get: '/en/billing/orders/abc').to route_to(controller: 'better_together/billing/orders', action: 'show', locale: 'en', id: 'abc')
+      expect(get: '/en/billing/sales').to route_to(controller: 'better_together/billing/sales', action: 'index', locale: 'en')
+      expect(get: '/en/billing/sales/abc').to route_to(controller: 'better_together/billing/sales', action: 'show', locale: 'en', id: 'abc')
+      [{ post: '/en/billing/orders' }, { patch: '/en/billing/orders/abc' }, { delete: '/en/billing/orders/abc' }, { post: '/en/billing/sales' }]
+        .each { |verb_path| expect(verb_path).not_to be_routable }
+    end
+
     it 'has payment method settings, addressed by method name, that can be listed, edited and updated only' do
       expect(get: '/en/billing/processor_settings')
         .to route_to(controller: 'better_together/billing/processor_settings', action: 'index', locale: 'en')

@@ -15,12 +15,12 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
   # `find` / `find_by(id:` take a single id the caller holds; the id is then used with the
   # record's own platform. Everything else on the class itself is a cross-tenant read.
   let(:bare_read) do
-    /\b(?:Billing::)?(?:Plan|Event|ProcessorSetting)\.
+    /\b(?:Billing::)?(?:Plan|Event|ProcessorSetting|Order|OrderLine|Payment|Refund)\.
       (?!find\(|find_by\(id:|permitted_attributes|assignable_owner_types|new\b|name\b|model_name\b)\w+/x
   end
   let(:pay_read) { /\bPay::(?:Customer|Subscription|Charge)\.(?!find\(|find_by\(id:)\w+/ }
   # Maintenance sweeps are the only cross-tenant operations; each acts on one record at a time.
-  let(:sweep_jobs) { %w[dead_letter_stale_billing_events_job redact_expired_event_payloads_job prune_stale_pay_webhooks_job] }
+  let(:sweep_jobs) { %w[dead_letter_stale_billing_events_job redact_expired_event_payloads_job prune_stale_pay_webhooks_job expire_orders_job] }
 
   def guarded_files
     guarded.flat_map { |dir| Dir[root.join(dir, '**/*.rb')] }.sort
@@ -36,6 +36,8 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
     expect(bare_read.match?('billing_owner.billing_plans.find(id)')).to be(false)
     expect(bare_read.match?('Plan.find(params[:id])')).to be(false)
     expect(bare_read.match?('Billing::ProcessorSetting.enabled')).to be(true)
+    expect(bare_read.match?('Billing::Order.where(id: 1)')).to be(true)
+    expect(bare_read.match?('Payment.find(id)')).to be(false)
     expect(pay_read.match?('Pay::Customer.where(id: 1)')).to be(true)
   end
 
