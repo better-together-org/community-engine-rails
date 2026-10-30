@@ -4,12 +4,12 @@
 
 ## Prerequisites
 - Docker Engine running (all DB-dependent commands must use `bin/dc-run`)
-- Ruby 3.4.10 (managed by `rbenv` in the setup scripts)
+- Ruby 3.4.12 (managed by `rbenv` in the setup scripts)
 - Node 20
 
 ## Initial Setup
 1. **Install dependencies**  
-   Run the repository setup script (bundler, yarn, PostgreSQL + PostGIS, Elasticsearch).
+   Run the repository setup script (bundler, yarn, PostgreSQL + PostGIS).
 2. **Prepare databases**  
    Use the provided Docker helpers to ensure commands run inside the containers:
    - `bin/dc-run bundle exec rails db:prepare`
@@ -26,8 +26,8 @@
 
 ## Notes
 - Avoid using Rails console for debugging; prefer writing or refining tests.
-- Keep Docker running; database and Elasticsearch services are provided by the compose environment.
+- Keep Docker running; database and Redis services are provided by the compose environment. Search uses Postgres by default; the optional Elasticsearch lane (`SEARCH_BACKEND=elasticsearch`, extension gem) needs its own service.
 - Use `bin/dc-run-dummy` for commands that must run in the dummy app context.
-- Worktrees reuse the shared Docker Postgres, Redis, and Elasticsearch containers through published host ports.
+- Worktrees reuse the shared Docker Postgres and Redis containers through published host ports.
 - Linked git worktrees get their own database suffix automatically via `CE_WORKTREE_DB_SUFFIX`, so test and development databases stay isolated while the shared infra stays reusable.
 - Ordinary checkouts and non-worktree clones do not receive a worktree suffix just because the directory name differs; `bin/dc-run` now detects linked worktrees from git metadata instead of path naming.

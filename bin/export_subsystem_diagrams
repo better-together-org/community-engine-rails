@@ -1,5 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-bin/dc-run-dummy bundle exec rails runner export_subsystem_diagrams.rb
-bin/render_diagrams "$@"
+cd "$(dirname "$0")/.."
+
+# --since=REF scopes the regen to only the subsystems whose own model/controller files
+# changed since that git ref (tracked diff + untracked new files); every other
+# subsystem's exports are left exactly as they are on disk. Omit it for a full regen
+# (the default, and what CI's "Schema Diagrams" staleness check always uses).
+#
+# The changed-file list is computed here, on the host, not inside the container that
+# runs scripts/export_subsystem_diagrams.rb: in a git worktree checkout, .git is a file
+# pointing at an absolute host path into the main checkout that the container never has
+# mounted, so `git` commands run from inside it silently fail.
+SINCE_REF=""
+render_args=()
+for arg in "$@"; do
+  case "$arg" in
+    --since=*) SINCE_REF="${arg#--since=}" ;;
+    *) render_args+=("$arg") ;;
+  esac
+done
+
+CHANGED_PATHS_ARG=""
+if [ -n "$SINCE_REF" ]; then
+  CHANGED_PATHS_FILE="tmp/diagram_changed_paths.txt"
+  mkdir -p tmp
+  {
+    git diff --name-only "$SINCE_REF"
+    git ls-files --others --exclude-standard
+  } | sort -u > "$CHANGED_PATHS_FILE"
+  CHANGED_PATHS_ARG="$CHANGED_PATHS_FILE"
+fi
+
+bin/dc-run-dummy bundle exec rails runner export_subsystem_diagrams.rb "$CHANGED_PATHS_ARG"
+[ -n "$CHANGED_PATHS_ARG" ] && rm -f "$CHANGED_PATHS_ARG"
+
+bin/render_diagrams "${render_args[@]}"

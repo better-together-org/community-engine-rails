@@ -1,0 +1,83 @@
+{
+  "name": "community_show_tabs_about",
+  "device": "desktop",
+  "url": "/en/c/community-a3ab588f08a233c861cb",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_tabs",
+  "flow": "about",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#communityTabs",
+      "title": "Tabs",
+      "bullets": [
+        "Driven by the tabs controller; Contact has its own tab."
+      ],
+      "target": {
+        "x": 73.5,
+        "y": 828.796875,
+        "width": 838.0,
+        "height": 41.0,
+        "right": 911.5,
+        "bottom": 869.796875,
+        "center_x": 492.5,
+        "center_y": 849.296875
+      },
+      "avoid": {
+        "x": 73.5,
+        "y": 828.796875,
+        "width": 838.0,
+        "height": 41.0,
+        "right": 911.5,
+        "bottom": 869.796875,
+        "center_x": 492.5,
+        "center_y": 849.296875
+      },
+      "placement": {
+        "side": "above",
+        "x": 302.5,
+        "y": 650.8,
+        "width": 380,
+        "height": 158,
+        "score": 828.796875
+      }
+    },
+    {
+      "selector": "#community-map",
+      "title": "Map",
+      "bullets": [
+        "Beside the tabs; shows the place the community is located at."
+      ],
+      "target": {
+        "x": 932.5,
+        "y": 819.796875,
+        "width": 440.0,
+        "height": 508.0,
+        "right": 1372.5,
+        "bottom": 1327.796875,
+        "center_x": 1152.5,
+        "center_y": 1073.796875
+      },
+      "avoid": {
+        "x": 932.5,
+        "y": 819.796875,
+        "width": 440.0,
+        "height": 508.0,
+        "right": 1372.5,
+        "bottom": 1327.796875,
+        "center_x": 1152.5,
+        "center_y": 1073.796875
+      },
+      "placement": {
+        "side": "left",
+        "x": 532.5,
+        "y": 994.8,
+        "width": 380,
+        "height": 158,
+        "score": 932.5
+      }
+    }
+  ]
+}

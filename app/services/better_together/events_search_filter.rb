@@ -6,7 +6,7 @@ module BetterTogether
   # order, and paginates. Inherits common search logic from ContentSearchFilter.
   class EventsSearchFilter < ContentSearchFilter
     def self.call(relation:, params:)
-      new(resource_class: BetterTogether::Event, relation:, params:).call
+      new(resource_class: BetterTogether::Event, relation: relation.where(series: false), params:).call
     end
 
     private

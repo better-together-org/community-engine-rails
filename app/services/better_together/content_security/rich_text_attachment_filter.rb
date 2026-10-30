@@ -23,6 +23,7 @@ module BetterTogether
       attr_reader :content
 
       def attachment_renderable?(attachment)
+        return true if AttachableRegistry.renderable?(attachment.attachable)
         return false unless attachment.attachable.is_a?(::ActiveStorage::Blob)
         return true unless BetterTogether::ContentSecurity::Configuration.enabled?
 

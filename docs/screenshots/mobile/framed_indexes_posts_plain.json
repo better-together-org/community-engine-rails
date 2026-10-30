@@ -1,0 +1,11 @@
+{
+  "name": "framed_indexes_posts_plain",
+  "device": "mobile",
+  "url": "/en/posts?community_id=community-af8b8ee25db9794df59a",
+  "title": "Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_scoped_indexes",
+  "flow": "posts_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/framed_indexes_spec.rb"
+}

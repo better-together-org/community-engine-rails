@@ -1,0 +1,13 @@
+---
+title: Cancel or delete a series
+audience:
+- community_member
+- developer
+journey_step: As an organizer, I decide what happens to the dates.
+callouts:
+- :id: disposition
+  :title: Disposition
+  :description: Cancel, delete or keep the dates as events.
+accessibility_notes: Links carry their text; the panel is a labelled fieldset.
+slug: event_series_disposition
+device: desktop

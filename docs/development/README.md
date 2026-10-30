@@ -6,6 +6,7 @@
 ## Getting Started
 
 - [Development Setup](dev-setup.md) - Complete local development environment setup guide
+- [Cloud Agent Session Environment](cloud_session_environment.md) - Running dev/test in Claude Code cloud sessions via `bin/cloud-session-env`
 - [Rails Version Branch Maintenance](rails_version_branch_maintenance.md) - Branch strategy, CI flow, and dependency update procedure for Rails compatibility lines
 
 ## Quick Links
@@ -18,11 +19,10 @@
 ## Development Tools
 
 ### Required Tools
-- Ruby 3.4.10 via rbenv
+- Ruby 3.4.12 via rbenv
 - Node.js 20.x
 - PostgreSQL 14+ with PostGIS
 - Redis (for caching and Sidekiq)
-- Elasticsearch 7.17.23
 - Docker & Docker Compose
 
 ### Development Commands

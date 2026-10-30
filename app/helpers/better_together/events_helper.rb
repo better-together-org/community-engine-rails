@@ -12,6 +12,16 @@ module BetterTogether
       event.event_hosts.map { |eh| eh.host if policy(eh.host).show? }.compact
     end
 
+    # Cache key for the event card fragment. The card draws each host's name and avatar, so the key carries the
+    # hosts' versions: editing a host (name, profile image) or changing who hosts refreshes the card without the
+    # event being saved. next_occurrence_at is refreshed with update_column, which does not touch updated_at.
+    # A session's card also names its series (when show_series), so the series' version is part of the key.
+    def event_card_cache_key(event, show_series: true)
+      host_versions = event.event_hosts.map { |event_host| event_host.host&.cache_key_with_version }
+      [event.cache_key_with_version, event.next_occurrence_at, host_versions, show_series,
+       event.parent_series&.cache_key_with_version]
+    end
+
     # Intelligently displays event time based on duration and date span
     #
     # Rules:
@@ -232,34 +242,6 @@ module BetterTogether
       # Convert to event timezone and format for datetime-local input
       datetime.in_time_zone(event_timezone).strftime('%Y-%m-%dT%H:%M')
     end
-
-    # SlimSelect options-value for the event location picker. AJAX mixed search
-    # plus opt-in "Create new address" / "Use typed text" result rows (see
-    # slim_select_controller.js createOptions). `q: '%{q}'` keeps the %{q}
-    # placeholder literal in the label so the Stimulus controller can substitute
-    # the live search term client-side.
-    # rubocop:disable Style/FormatStringToken, Metrics/MethodLength, Metrics/AbcSize
-    def location_picker_slim_select_options
-      address_model = BetterTogether::Address.model_name.human
-
-      {
-        ajax: { url: available_locations_events_path },
-        createOptions: {
-          simple: {
-            label: t('better_together.events.location_picker.create_row.use_typed_name', q: '%{q}')
-          },
-          types: [
-            {
-              type: 'address',
-              label: t('better_together.events.actions.create_new', model: address_model),
-              labelWithQuery: t('better_together.events.location_picker.create_row.new_named_with_query',
-                                model: address_model, q: '%{q}')
-            }
-          ]
-        }
-      }
-    end
-    # rubocop:enable Style/FormatStringToken, Metrics/MethodLength, Metrics/AbcSize
   end
   # rubocop:enable Metrics/ModuleLength
 end

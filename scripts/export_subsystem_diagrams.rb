@@ -390,10 +390,91 @@ module CeSubsystemDiagramExport
 
   module_function
 
+  # Full regen by default (same as always). Pass the path to a file listing changed
+  # repo-relative paths (one per line) as ARGV[0] to scope the write to only the
+  # subsystems whose own model/controller source files appear in that list - every
+  # other subsystem's exports are left exactly as they are on disk. This exists because
+  # subsystem content is discovered from a live reflection pass over the *whole* app, so
+  # an unscoped run also surfaces any backlog drift accumulated since these diagrams were
+  # last regenerated (unrelated feature work merged to main in the meantime), not just
+  # the change the caller is actually trying to document.
+  #
+  # The list is computed on the host by bin/export_subsystem_diagrams, not with `git`
+  # here: this script runs inside the dev container via `rails runner`, and a git
+  # worktree's .git file points at an absolute host path into the main checkout that
+  # does not exist inside the container, so `git` commands run from here silently fail.
   def run!
+    changed_paths_file = ARGV.first
     inventory = build_inventory
+    inventory = scope_to_changed_subsystems(inventory, changed_paths_file) if changed_paths_file.present?
     write_inventory_exports(inventory)
     write_mermaid_exports(inventory)
+  end
+
+  def scope_to_changed_subsystems(fresh_inventory, changed_paths_file)
+    previous = load_previous_inventory
+    unless previous
+      warn 'Scoped run requested but no existing ce_subsystem_inventory.json found; doing a full regen.'
+      return fresh_inventory
+    end
+
+    changed = Set.new(PROJECT_ROOT.join(changed_paths_file).readlines(chomp: true))
+    previous_by_key = previous.fetch(:subsystems, []).index_by { |s| s.fetch(:key) }
+    affected_keys = Set.new
+
+    scoped_subsystems = fresh_inventory.fetch(:subsystems).map do |subsystem|
+      key = subsystem.fetch(:key)
+      if subsystem_affected?(subsystem, changed) || !previous_by_key.key?(key)
+        puts "export_subsystem_diagrams: regenerating '#{key}' (touched files changed)"
+        affected_keys << key
+        subsystem
+      else
+        # Taken verbatim, outbound_relationships and inbound_references included: these
+        # feed the per-subsystem erd/layers diagrams (via outbound_relationships only)
+        # and the aggregate interaction/polymorphic maps. Recomputing them here would
+        # reorder them to match models_inventory's *display* sort (alphabetical by
+        # label), which differs from the natural reflection order they were originally
+        # built in - a content-free diff on every untouched subsystem. New cross-edges
+        # *into* an untouched subsystem, from a subsystem that did change, are merged in
+        # below instead, without disturbing this order.
+        previous_by_key.fetch(key)
+      end
+    end
+
+    subsystem_map = scoped_subsystems.index_by { |s| s.fetch(:key) }
+    affected_keys.each do |key|
+      subsystem = subsystem_map.fetch(key)
+      subsystem.fetch(:outbound_relationships).each do |edge|
+        target = subsystem_map.fetch(edge.fetch(:target_subsystem))
+        next if affected_keys.include?(target.fetch(:key))
+
+        inbound = target.fetch(:inbound_references)
+        new_edge = { from: edge.fetch(:from), to: edge.fetch(:to), label: edge.fetch(:label), source_subsystem: key }
+        inbound << new_edge unless inbound.any? do |existing|
+          existing[:from] == new_edge[:from] && existing[:to] == new_edge[:to] && existing[:label] == new_edge[:label]
+        end
+      end
+    end
+
+    fresh_inventory.merge(subsystems: subsystem_map.values)
+  end
+
+  def subsystem_affected?(subsystem, changed_paths)
+    return true if changed_paths.empty? # unknown diff base - fail open to a full regen for safety
+
+    (subsystem.fetch(:models_inventory) + subsystem.fetch(:controllers_inventory)).any? do |entry|
+      path = entry[:source_path]
+      path && changed_paths.include?(path)
+    end
+  end
+
+  def load_previous_inventory
+    path = PROJECT_ROOT.join('docs/diagrams/reference/ce_subsystem_inventory.json')
+    return unless path.exist?
+
+    JSON.parse(path.read, symbolize_names: true)
+  rescue JSON::ParserError
+    nil
   end
 
   def build_inventory
@@ -774,9 +855,9 @@ module CeSubsystemDiagramExport
     reference_root = PROJECT_ROOT.join('docs/diagrams/reference')
     FileUtils.mkdir_p(reference_root)
 
-    File.write(reference_root.join('ce_subsystem_inventory.json'), JSON.pretty_generate(inventory))
-    File.write(reference_root.join('ce_subsystem_inventory.md'), inventory_markdown(inventory))
-    File.write(reference_root.join('ce_concern_capability_assessment.md'), concern_markdown(inventory))
+    write_if_changed(reference_root.join('ce_subsystem_inventory.json'), JSON.pretty_generate(inventory))
+    write_if_changed(reference_root.join('ce_subsystem_inventory.md'), inventory_markdown(inventory))
+    write_if_changed(reference_root.join('ce_concern_capability_assessment.md'), concern_markdown(inventory))
   end
 
   def write_mermaid_exports(inventory)
@@ -784,12 +865,21 @@ module CeSubsystemDiagramExport
     FileUtils.mkdir_p(source_root)
 
     inventory.fetch(:subsystems).each do |subsystem|
-      File.write(source_root.join("#{subsystem.fetch(:prefix)}_schema_erd.mmd"), erd_mermaid(subsystem))
-      File.write(source_root.join("#{subsystem.fetch(:prefix)}_rails_layers.mmd"), layers_mermaid(subsystem))
+      write_if_changed(source_root.join("#{subsystem.fetch(:prefix)}_schema_erd.mmd"), erd_mermaid(subsystem))
+      write_if_changed(source_root.join("#{subsystem.fetch(:prefix)}_rails_layers.mmd"), layers_mermaid(subsystem))
     end
 
-    File.write(source_root.join('ce_subsystem_interaction_map.mmd'), interaction_map_mermaid(inventory))
-    File.write(source_root.join('ce_polymorphic_association_map.mmd'), polymorphic_map_mermaid(inventory))
+    write_if_changed(source_root.join('ce_subsystem_interaction_map.mmd'), interaction_map_mermaid(inventory))
+    write_if_changed(source_root.join('ce_polymorphic_association_map.mmd'), polymorphic_map_mermaid(inventory))
+  end
+
+  # Skips the write (and the mtime bump) when content is byte-identical, so
+  # bin/render_diagrams' own up-to-date check doesn't needlessly re-render a diagram
+  # whose source we rewrote with the exact same content.
+  def write_if_changed(path, content)
+    return if path.exist? && path.read == content
+
+    File.write(path, content)
   end
 
   def inventory_markdown(inventory)

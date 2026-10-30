@@ -33,7 +33,7 @@ classDiagram
       <<Model>>
       table: better_together_events
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, Categorizable, Creatable +23
+      concerns: Attachments::Images, Base64ImageInput, BetterTogetherId, BlockAttachments +28
       weak refs: owner: seeds, owner: federation_content_grants, owner: slugs, owner: geospatial_space +16
     }
     class BetterTogether__EventAttendance["EventAttendance"] {
@@ -46,7 +46,7 @@ classDiagram
       <<Model>>
       table: better_together_categories
       translates: description, name, slug
-      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +8
+      concerns: Attachments::Images, BetterTogetherId, FriendlySlug, Identifier +10
       weak refs: owner: seeds, owner: slugs, owner: views, owner: cover_image_attachment +7
     }
     class BetterTogether__EventHost["EventHost"] {
@@ -58,7 +58,7 @@ classDiagram
     class BetterTogether__EventInvitation["EventInvitation"] {
       <<Model>>
       table: better_together_invitations
-      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
+      concerns: BetterTogetherId, BlockAwareInvitation, Creatable, PlatformScoped +1
       weak refs: target: invitable, target: inviter, target: invitee, owner: seeds
     }
     class BetterTogether__Recurrence["Recurrence"] {

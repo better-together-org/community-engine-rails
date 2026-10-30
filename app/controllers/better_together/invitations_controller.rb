@@ -4,6 +4,10 @@ module BetterTogether
   # Unified polymorphic controller for managing invitations across all invitable types
   # Handles both authenticated invitation management and token-based invitation acceptance
   class InvitationsController < ApplicationController # rubocop:todo Style/Documentation, Metrics/ClassLength
+    include PerUserThrottling
+
+    throttle_per_user :invitation_create, only: :create
+
     # Token-based invitation handling (public access)
     # rubocop:todo Metrics/ClassLength
     # rubocop:todo Lint/CopDirectiveSyntax

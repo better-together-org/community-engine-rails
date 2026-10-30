@@ -1,7 +1,7 @@
 {
   "name": "content_reporting_actions_community_menu",
   "device": "mobile",
-  "url": "/en/c/community-663d9eb24971f2c5adfb",
+  "url": "/en/c/community-a32cd2e4e9c9241bd732",
   "title": "Harbour Neighbours | Communities | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -42,7 +42,7 @@
         "y": 542.39,
         "width": 270.0,
         "height": 430,
-        "score": 738.609375
+        "score": 734.609375
       }
     }
   ]

@@ -3,6 +3,10 @@
 module BetterTogether
   # Handles creating and removing comments on commentable records (MVP: posts).
   class CommentsController < ApplicationController
+    include PerUserThrottling
+
+    throttle_per_user :comment_create, only: :create
+
     include ChecksRequiredAgreements
 
     before_action :authenticate_user!
@@ -81,6 +85,7 @@ module BetterTogether
       commentable = comment.commentable
       recipients = commentable.respond_to?(:agent_authors) ? commentable.agent_authors : [commentable.try(:creator)]
       recipients = recipients.compact.uniq - [comment.creator]
+      recipients.reject! { |recipient| comment.creator&.block_between?(recipient) }
       return if recipients.empty?
 
       BetterTogether::CommentAddedNotifier.with(record: comment, comment: comment).deliver_later(recipients)

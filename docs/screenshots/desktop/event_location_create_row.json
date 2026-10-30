@@ -2,7 +2,7 @@
   "name": "event_location_create_row",
   "device": "desktop",
   "url": "/en/events/new",
-  "title": "Community Engine",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_location_picker",

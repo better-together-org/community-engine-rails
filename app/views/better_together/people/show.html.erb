@@ -198,7 +198,7 @@
           <div id="contact" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="contact-tab">
             <div class="row">
               <div class="col-md-12">
-                <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource } %>
+                <%= render partial: 'better_together/contact_details/about_section', locals: { contactable: @resource, include_private: policy(@resource).update? } %>
               </div>
             </div>
           </div>

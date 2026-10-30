@@ -67,6 +67,23 @@ RSpec.describe BetterTogether::PersonHardDeletionExecutor do
     expect(enqueued_jobs.map { |job| job[:job] }).not_to include(BetterTogether::CleanupNotificationsJob)
   end
 
+  it "erases the person's quota ledger and drops them as actor on other owners' usage" do
+    other_community = create(:better_together_community)
+    BetterTogether::Quotas.settle!(type: 'media_storage', owner: person, amount: 100, idempotency_key: 'hd:own')
+    shared = BetterTogether::Quotas.settle!(
+      type: 'media_storage', owner: other_community, actor: person, amount: 50, idempotency_key: 'hd:shared'
+    )
+    quota_id = BetterTogether::Quota.find_by(owner: person).id
+    clear_enqueued_jobs
+
+    described_class.call(person:, person_deletion_request: deletion_request, reviewed_by: reviewer, reason: 'quota')
+
+    expect(BetterTogether::Quota.where(id: quota_id)).to be_empty
+    expect(BetterTogether::QuotaUsage.where(quota_id:)).to be_empty
+    expect(BetterTogether::QuotaBalance.where(quota_id:)).to be_empty
+    expect(BetterTogether::QuotaUsage.find(shared.id).actor_id).to be_nil
+  end
+
   it "captures the deletion request's platform on the audit before both are destroyed" do
     federated_platform = create(:better_together_platform, :public, host: false)
     deletion_request.update!(platform: federated_platform)

@@ -1,8 +1,8 @@
 {
   "name": "membership_request_review_detail",
   "device": "desktop",
-  "url": "/en/c/test-host-community/membership_requests/membership-request-from-mrs-hortencia-cremin",
-  "title": "Test Host Community",
+  "url": "/en/c/test-host-community/membership_requests/membership-request-from-joselyn-heidenreich",
+  "title": "Community Engine Host",
   "locale": "en",
   "role": "community_manager",
   "feature_set": "membership_request_workflow",

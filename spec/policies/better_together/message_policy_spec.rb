@@ -43,6 +43,32 @@ RSpec.describe BetterTogether::MessagePolicy, type: :policy do
     end
   end
 
+  describe '#create? with blocks' do
+    before { conversation.participants << other_person }
+
+    it 'denies the sender when they blocked another participant' do
+      create(:person_block, blocker: sender_person, blocked: other_person)
+
+      expect(described_class.new(sender_user, message).create?).to be false
+    end
+
+    it 'denies the sender when another participant blocked them' do
+      create(:person_block, blocker: other_person, blocked: sender_person)
+
+      expect(described_class.new(sender_user, message).create?).to be false
+    end
+
+    it 'still lets participants read the history' do
+      create(:person_block, blocker: other_person, blocked: sender_person)
+
+      expect(described_class.new(sender_user, message).show?).to be true
+    end
+
+    it 'allows messages when no block exists' do
+      expect(described_class.new(sender_user, message).create?).to be true
+    end
+  end
+
   describe '#update?' do
     it 'allows the sender to update their message' do
       expect(described_class.new(sender_user, message).update?).to be true

@@ -11,17 +11,18 @@ Instructions for GitHub Copilot and other automated contributors working in this
 > **Note**: This file complements `.github/copilot-instructions.md`. While that file focuses on *what* to build and *how* to structure code, this file focuses on *how* to run, test, and validate your changes.
 
 ## Project
-- Ruby: 3.4.10 (installed via rbenv in setup)
-- Rails: 7.2
+- Ruby: 3.4.12 (installed via rbenv in setup)
+- Rails: 8.1 (gemspec supports `>= 7.2, < 8.2`)
 - Node: 20
 - DB: PostgreSQL + PostGIS
-- Search: Elasticsearch 7.17.23
+- Search: Postgres-native `pg_search` (default); Elasticsearch is the optional `better_together-elasticsearch` extension gem
 - Test app: `spec/dummy`
 
 ## Setup
-- Environment runs a setup script that installs Ruby 3.4.10, Node 20, Postgres + PostGIS, and ES7, then prepares databases.
+- Environment runs a setup script that installs Ruby 3.4.12, Node 20, and Postgres + PostGIS, then prepares databases.
 - **Host Ruby**: `bin/install-ruby-version` bootstraps the host toolchain — rbenv, the `ruby-build` and `rbenv-gemset` plugins, and the Ruby pinned in `.ruby-version` (refreshing the `ruby-build` definition list if needed). Idempotent; run it if `ruby`/`bundle` on the host error with `rbenv: version '...' is not installed`.
 - **Docker Environment**: All commands requiring database access must use `bin/dc-run` to execute within the containerized environment.
+- **Cloud agent sessions** (Claude Code on the web / GitHub-triggered runs): the `bin/dc-*` workflow can't build its image there. Use `bin/cloud-session-env` (`setup`, then `run <cmd>` in place of `bin/dc-run`, `db-setup` in place of `bin/parallel-setup`, `diagrams` in place of `bin/export_schema_diagrams`). See [`docs/development/cloud_session_environment.md`](docs/development/cloud_session_environment.md) for the reasons and the spec groups that fail there for environmental reasons.
 - **Dummy App Commands**: Use `bin/dc-run-dummy` for Rails commands that need the dummy app context (e.g., `bin/dc-run-dummy rails console`, `bin/dc-run-dummy rails db:migrate`).
 - Databases:
   - development: `community_engine_development`
@@ -168,6 +169,13 @@ Required elements and their patterns:
 or other structural pseudo-selectors. Always target a stable `id` or semantic `class`. If the target
 element lacks one, add it to the view first.
 
+## Screenshots And Diagrams Are Required (CRITICAL)
+
+- **Every new or modified view** (ERB/HAML, partial, CSS, or JS that changes rendering) ships screenshots in the same PR: a `spec/docs_screenshots/better_together/<feature>_spec.rb` capturing desktop and mobile, annotated and plain, plus stable DOM ids and a `spec/dom_contracts` spec. Capture with `bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec <spec>'`.
+- **Targets must be in frame.** Scroll to the element before capture and open the generated PNGs to confirm it is visible and not hidden by its own callout.
+- **Every model, association, or table change** adds or updates a Mermaid diagram in `docs/diagrams/source`, rendered with `bin/render_diagrams`.
+- Commit the assets, embed them in the PR body, and state which were produced. If a change has nothing visual, say so in the PR. See `skills/ce-pr-docs` in management-tool for the full workflow.
+
 ## String Enum Design Standards
 - **Always use string enums** for human-readable accessibility when reviewing database entries.
 - **Follow existing pattern**: Use full English words as enum values (current average: ~7 characters).
@@ -243,6 +251,7 @@ element lacks one, add it to the view first.
   - For model/association changes: update Mermaid diagrams (e.g., `docs/diagrams/source/*_diagram.mmd` or add a new one).
 - Keep diagrams in Mermaid (`.mmd`) format in `docs/diagrams/source/` and render to exports for convenience.
   - Preferred: run `bin/render_diagrams` to regenerate images for all `docs/diagrams/source/*.mmd` files.
+  - After any migration or `schema.rb` change, run `bin/export_schema_diagrams` (regenerates the DBML, the full-schema ERD and the subsystem ERDs); the `Schema Diagrams` workflow fails PRs that skip it.
   - Fallback: `npx -y @mermaid-js/mermaid-cli -i docs/diagrams/source/your_diagram.mmd -o docs/diagrams/exports/png/your_diagram.png`.
 - PRs that add/modify models, associations, or flows must include corresponding docs and diagrams.
 - When notifications, policies, or routes change, ensure affected docs and diagrams are updated to match behavior.
@@ -277,7 +286,7 @@ element lacks one, add it to the view first.
 
 ## Privacy Practices for Platform Organizers
 - Default posture: keep `requires_invitation` enabled unless there is a clear, consented need to open registration.
-- Privacy policy: publish and maintain a platform‑specific privacy policy; disclose any third‑party trackers (e.g., GA, Sentry) and their purposes.
+- Privacy policy: publish and maintain a platform‑specific privacy policy; disclose any third‑party trackers (e.g., Google Analytics or Sentry via their extension gems) and their purposes.
 - Consent/cookies: add a cookie/consent banner before enabling third‑party trackers; anonymize IPs; disable ad personalization; respect regional requirements.
 - Data minimization:
   - Avoid placing PII in URLs, block identifiers, or public content.
@@ -924,7 +933,7 @@ Each major system must include:
 - **Debugging Approach**: When testing errors occur in only one spec, compare its type and setup to working specs
 
 ## Docker Environment Usage
-- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL, Redis, or Elasticsearch
+- **All database-dependent commands must use `bin/dc-run`**: This includes tests, generators, and any command that connects to PostgreSQL or Redis
 - **After any DB schema change**: Run `bin/parallel-setup` to recreate parallel test databases. This is REQUIRED whenever you run `db:migrate`, `db:drop`, `db:create`, `db:schema:load`, or modify `spec/dummy/db/schema.rb`. Without this, `prspec` parallel workers will fail with `PG::UndefinedTable` errors.
 - **Dummy app commands use `bin/dc-run-dummy`**: For Rails commands that need the dummy app context (console, migrations specific to dummy app)
 - **Examples of commands requiring `bin/dc-run`**:

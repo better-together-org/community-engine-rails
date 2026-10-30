@@ -12,6 +12,10 @@ This project embodies our vision of a world where collaboration leads to greater
 
 This project is the core community building portion of the Better Together platform.
 
+![A Community Engine community page with a branded banner, a request-to-join control, tabs for About, Posts and Events, and share buttons](docs/screenshots/desktop/community_access_mode_request_to_join.png)
+
+Community Engine 0.11.0 adds multi-tenant platforms, federation, member data rights, stronger safety and privacy controls, and a larger content toolkit. See the [0.11.0 release notes](docs/releases/0.11.0.md).
+
 ## Documentation
 
 For system overviews, flows, and diagrams, see the docs index:
@@ -60,7 +64,7 @@ end
 Add this gem to your Gemfile:
 
 ```ruby
-gem 'better_together', '~> 0.8.0',
+gem 'better_together', '~> 0.11.0',
     github: 'better-together-org/community-engine-rails',
     branch: 'main'
 ```

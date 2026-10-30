@@ -13,6 +13,7 @@ Project instructions for Claude Code sessions in this repository.
 - **GitHub comments/PRs**: Use `gh_with_bts_robot.sh` — never bare `gh api graphql`. Posts as `bettertogether-bts-robot`, not `rsmithlal`.
 - **Migrations**: Use `create_bt_table :name`, not `create_table :better_together_name`. Guard all additive migrations with `table_exists?`, `column_exists?`, `index_name_exists?`.
 - **Run `bin/dc-ci` locally before pushing**. Full `bin/dc-ci` before any push that touches CI.
+- **Cloud agent sessions** (claude.ai/code containers): `bin/dc-run` cannot work there (no Docker daemon at start, Docker Hub rate limits, dev image cannot be built). Use `bin/cloud-session-env setup` once, then `bin/cloud-session-env run bundle exec prspec …` in place of `bin/dc-run`; read `docs/development/cloud_session_environment.md` first for known environmental spec failures.
 - **Never reference or ingest Colibri Software code** — proprietary third-party, no BTS relationship.
 - **HAProxy routing changes require T3 full PR review**. DNS never changes.
 

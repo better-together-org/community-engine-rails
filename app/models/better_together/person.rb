@@ -23,6 +23,7 @@ module BetterTogether
     include Member
     include PrimaryCommunity
     include Privacy
+    include Quotas::Owner
     include Reportable
     include Seedable
     include TimezoneAttributeAliasing
@@ -51,6 +52,16 @@ module BetterTogether
     has_many :blocked_people, through: :person_blocks, source: :blocked
     has_many :blocked_by_person_blocks, foreign_key: :blocked_id, dependent: :destroy, class_name: 'BetterTogether::PersonBlock'
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
+
+    # Ids of people this person has blocked or who have blocked them.
+    def block_related_person_ids
+      person_blocks.pluck(:blocked_id) | blocked_by_person_blocks.pluck(:blocker_id)
+    end
+
+    # True when either person has blocked the other.
+    def block_between?(other)
+      other.present? && block_related_person_ids.include?(other.id)
+    end
 
     has_many :reports_made, foreign_key: :reporter_id, class_name: 'BetterTogether::Report', dependent: :destroy
     # Overrides Reportable's default (no dependent:) to preserve this model's pre-existing
