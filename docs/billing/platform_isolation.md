@@ -22,6 +22,11 @@ Billing records use `BetterTogether::Billing::PlatformBound` instead:
 - `platform_id` is read-only once the record exists, and changing it is a validation error.
 - `for_platform(platform)` is the scope to use. There is no default scope.
 
+Billing models inherit `BetterTogether::Billing::ApplicationRecord` (and Pay's models
+inherit `BetterTogether::Billing::PayRecord`, which builds on it). That base does **not**
+include `Seedable`, so a billing record, with its decrypted payment data, cannot be written
+into a seed with `export_as_seed`.
+
 ## Where the platform is enforced
 
 | Layer | Rule |
