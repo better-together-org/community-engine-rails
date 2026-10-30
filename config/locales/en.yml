@@ -899,6 +899,69 @@ en:
         subject_removed_by: "%{actor_name} removed your authorship from %{page}"
         view_page: View the page
         view_page_link: Click here to view the page
+    billing:
+      plan_defaults:
+        community_beneficiary_label: Community access
+        hosted_beneficiary_label: Hosted access
+        one_time_participant_summary: One-time hosted contribution
+        personal_beneficiary_label: Personal access
+        recurring_participant_summary: Ongoing hosted access and stewardship support
+      plans:
+        create_submit: Create plan
+        created: Billing plan created successfully.
+        deactivate_confirm: Deactivate this plan? Existing subscribers are unaffected.
+        edit_title: Edit Billing Plan
+        field_active: Active (visible to subscribers)
+        field_amount_cents: Amount (smallest currency unit)
+        field_amount_cents_hint: e.g. 4500 = 45.00 for most currencies; 4500 = 4500
+          for zero-decimal currencies such as JPY
+        field_beneficiary_label: Beneficiary label
+        field_billing_interval: Billing interval
+        field_community_capacity_tier: Capacity tier
+        field_currency: Currency
+        field_description: Description
+        field_eligible_owner_types: Eligible for
+        field_hosted_access_level: Hosted access level
+        field_identifier: Identifier
+        field_identifier_hint: Unique machine-readable key. Cannot be changed after
+          creation.
+        field_name: Name
+        field_participant_benefits: Benefits
+        field_participant_benefits_hint: One benefit per line.
+        field_participant_summary: Participant summary
+        field_pricing_tier: Pricing tier
+        field_pricing_tier_hint: Solidarity tiers let smaller co-ops access the platform
+          at a reduced contribution.
+        field_processor: Processor
+        field_processor_price_id: Processor price ID
+        field_processor_price_id_hint: From your payment processor dashboard. Cannot
+          be changed after creation.
+        field_solidarity_description: Solidarity description
+        field_solidarity_description_hint: Shown to potential subscribers to explain
+          who this tier is for.
+        field_support_tier: Support tier
+        index_title: Billing Plans
+        interval_month: Monthly
+        interval_one_time: One-time
+        interval_year: Yearly
+        metadata_section_hint: Shown on billing pages and entitlement cards
+        metadata_section_title: Plan metadata
+        new_plan: New plan
+        new_title: New Billing Plan
+        no_plans: No billing plans have been created yet.
+        owner_type_community: Community
+        owner_type_person: Person
+        pricing_tier_solidarity_medium: Solidarity — Medium
+        pricing_tier_solidarity_premium: Solidarity Premium
+        pricing_tier_solidarity_small: Solidarity — Small
+        pricing_tier_standard: Standard
+        show_title: Billing Plan
+        status_active: Active
+        status_inactive: Inactive
+        toggle_activate: Activate
+        toggle_deactivate: Deactivate
+        update_submit: Update plan
+        updated: Billing plan updated successfully.
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and
@@ -4829,16 +4892,22 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      immutable_after_processor_link: cannot be changed once the plan is linked to
+        a processor price
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
+      invalid_pricing_tier: 'pricing tier ''%{tier}'' is not one of: %{allowed}'
       invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
+      lookup_failed: could not be verified with the payment processor
       model_invalid: 'Validation failed: %{errors}'
       not_a_number: is not a number
       not_an_integer: must be an integer
       not_found: not found
+      not_found_at_processor: was not found at the payment processor
+      not_installed: is not an installed payment processor
       not_locked: was not locked
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'

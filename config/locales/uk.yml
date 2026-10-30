@@ -878,6 +878,69 @@ uk:
         subject_removed_by: "%{actor_name} видалив ваше авторство з %{page}"
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
+    billing:
+      plan_defaults:
+        community_beneficiary_label: Dostup spilnoty
+        hosted_beneficiary_label: Hosted-dostup
+        one_time_participant_summary: Razovyi vnesok na hosted-dostup
+        personal_beneficiary_label: Osobystyi dostup
+        recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
+      plans:
+        create_submit: Stvoriti plan
+        created: Plan bilingu uspishno stvoreno.
+        deactivate_confirm: Deaktuvuvaty tsej plan? Isnuyuchi peredplatnyky ne postrazhdayut'.
+        edit_title: Redaguvaty plan bilingu
+        field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
+        field_amount_cents: Сума (найменша одиниця валюти)
+        field_amount_cents_hint: напр., 4500 = 45,00 для більшості валют; 4500 = 4500
+          для валют без десяткових знаків, як JPY
+        field_beneficiary_label: Marka benefitsiariya
+        field_billing_interval: Interval bilingu
+        field_community_capacity_tier: Riven' potshnosty
+        field_currency: Valyuta
+        field_description: Opys
+        field_eligible_owner_types: Pidkhodyashchi dlya
+        field_hosted_access_level: Riven' hostingovoho dostupu
+        field_identifier: Identyfikator
+        field_identifier_hint: Unikalnyj klyuch. Ne mozhna zminyty pislia stvorennya.
+        field_name: Nazva
+        field_participant_benefits: Perevagy
+        field_participant_benefits_hint: Odna perevaga na ryadok.
+        field_participant_summary: Kharakterystyka dlya uchasnykiv
+        field_pricing_tier: Taryfnyj riven'
+        field_pricing_tier_hint: Taryfy solidarnosti dozvolyayut' menshym kooperatyvam
+          otrymaty dostup do platformy za znyzhenoyu vartistyu.
+        field_processor: Платіжний процесор
+        field_processor_price_id: Ідентифікатор ціни в процесорі
+        field_processor_price_id_hint: З панелі вашого платіжного процесора. Не можна
+          змінити після створення.
+        field_solidarity_description: Opys solidarnosti
+        field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
+          shchob poyasnyty, dlya koho pryznachenyj tsej riven'.
+        field_support_tier: Riven' pidtrymky
+        index_title: Plany bilingu
+        interval_month: Shchomisyachno
+        interval_one_time: Odnorazovo
+        interval_year: Shchorichno
+        metadata_section_hint: Vidobrazhayet'sya na storinkakh bilingu ta kartochkakh
+          prav
+        metadata_section_title: Metadani planu
+        new_plan: Novyj plan
+        new_title: Novyj plan bilingu
+        no_plans: Plany bilingu shche ne stvoren.
+        owner_type_community: Spilnota
+        owner_type_person: Osobystist'
+        pricing_tier_solidarity_medium: Solidarnist' — Serednij
+        pricing_tier_solidarity_premium: Premiyum solidarnosti
+        pricing_tier_solidarity_small: Solidarnist' — Malyj
+        pricing_tier_standard: Standartnyj
+        show_title: Plan bilingu
+        status_active: Aktyvnyj
+        status_inactive: Neaktyvnyj
+        toggle_activate: Aktuvuvaty
+        toggle_deactivate: Deaktuvuvaty
+        update_submit: Onovyty plan
+        updated: Plan bilingu uspishno onovleno.
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму
@@ -4918,16 +4981,22 @@ uk:
       expired: закінчився, будь ласка, запросіть новий
       greater_than: має бути більше %{count}
       greater_than_or_equal_to: має бути більше або дорівнювати %{count}
+      immutable_after_processor_link: не можна змінити після прив’язки плану до ціни
+        в процесорі
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: неправильний
+      invalid_pricing_tier: 'рівень ціноутворення ''%{tier}'' не входить до: %{allowed}'
       invalid_url: не є дійсною URL-адресою
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
+      lookup_failed: не вдалося перевірити в платіжному процесорі
       model_invalid: 'Перевірка не вдалася: %{errors}'
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
       not_found: не знайдено
+      not_found_at_processor: не знайдено в платіжному процесорі
+      not_installed: не є встановленим платіжним процесором
       not_locked: не було заблоковано
       not_saved:
         few: "%{count} помилки заборонили збереження цього %{resource}:"

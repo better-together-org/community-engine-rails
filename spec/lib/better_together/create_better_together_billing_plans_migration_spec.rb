@@ -1,0 +1,45 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+require BetterTogether::Engine.root.join('db/migrate/20261015140000_create_better_together_billing_plans')
+
+RSpec.describe 'Create Better Together billing plans migration' do # rubocop:disable RSpec/DescribeClass
+  subject(:migration) { CreateBetterTogetherBillingPlans.new }
+
+  let(:connection) { ActiveRecord::Base.connection }
+  let(:columns) { connection.columns(:better_together_billing_plans).index_by(&:name) }
+
+  around do |example|
+    previous = ActiveRecord::Migration.verbose
+    migration.verbose = false
+    example.run
+  ensure
+    ActiveRecord::Migration.verbose = previous
+  end
+
+  it 'is a no-op when the table already exists' do
+    expect { migration.up }.not_to raise_error
+  end
+
+  it 'uses processor-neutral columns and no currency default' do
+    expect(columns.keys).to include('processor', 'processor_price_id', 'processor_product_id', 'synced_to_processor_at')
+    expect(columns.keys.grep(/stripe/)).to be_empty
+    expect(columns['currency'].default).to be_nil
+    expect(columns['currency'].null).to be false
+  end
+
+  it 'makes a price unique per processor and a product unique per processor when present' do
+    indexes = connection.indexes(:better_together_billing_plans).index_by(&:name)
+
+    expect(indexes['idx_bt_billing_plans_processor_price']).to have_attributes(unique: true, columns: %w[processor processor_price_id])
+    expect(indexes['idx_bt_billing_plans_processor_product']).to have_attributes(unique: true,
+                                                                                 where: a_string_matching(/processor_product_id IS NOT NULL/))
+  end
+
+  it 'drops and recreates cleanly' do
+    migration.down
+    expect(connection.table_exists?(:better_together_billing_plans)).to be false
+    migration.up
+    expect(connection.table_exists?(:better_together_billing_plans)).to be true
+  end
+end

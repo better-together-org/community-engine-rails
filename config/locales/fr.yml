@@ -896,6 +896,71 @@ fr:
         subject_removed_by: "%{actor_name} a retiré votre autorat de %{page}"
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
+    billing:
+      plan_defaults:
+        community_beneficiary_label: Acces communautaire
+        hosted_beneficiary_label: Acces heberge
+        one_time_participant_summary: Contribution unique a l'hebergement
+        personal_beneficiary_label: Acces personnel
+        recurring_participant_summary: Acces heberge continu et soutien de stewardship
+      plans:
+        create_submit: Creer le plan
+        created: Plan de facturation cree avec succes.
+        deactivate_confirm: Desactiver ce plan ? Les abonnes existants ne seront pas
+          affectes.
+        edit_title: Modifier le plan de facturation
+        field_active: Actif (visible pour les abonnes)
+        field_amount_cents: Montant (plus petite unité monétaire)
+        field_amount_cents_hint: p. ex. 4500 = 45,00 pour la plupart des devises;
+          4500 = 4500 pour les devises sans décimales comme le JPY
+        field_beneficiary_label: Etiquette du beneficiaire
+        field_billing_interval: Intervalle de facturation
+        field_community_capacity_tier: Niveau de capacite
+        field_currency: Devise
+        field_description: Description
+        field_eligible_owner_types: Eligible pour
+        field_hosted_access_level: Niveau d''acces heberge
+        field_identifier: Identifiant
+        field_identifier_hint: Cle unique lisible par machine. Ne peut pas etre modifiee
+          apres la creation.
+        field_name: Nom
+        field_participant_benefits: Avantages
+        field_participant_benefits_hint: Un avantage par ligne.
+        field_participant_summary: Resume pour les participants
+        field_pricing_tier: Niveau tarifaire
+        field_pricing_tier_hint: Les niveaux solidaires permettent aux plus petites
+          cooperatives d''acceder a la plateforme a cout reduit.
+        field_processor: Processeur de paiement
+        field_processor_price_id: ID de prix du processeur
+        field_processor_price_id_hint: Depuis le tableau de bord de votre processeur
+          de paiement. Ne peut pas être modifié après la création.
+        field_solidarity_description: Description de solidarite
+        field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
+          a qui ce niveau s''adresse.
+        field_support_tier: Niveau de support
+        index_title: Plans de facturation
+        interval_month: Mensuel
+        interval_one_time: Unique
+        interval_year: Annuel
+        metadata_section_hint: Affiche sur les pages de facturation et les cartes
+          de droits
+        metadata_section_title: Metadonnees du plan
+        new_plan: Nouveau plan
+        new_title: Nouveau plan de facturation
+        no_plans: Aucun plan de facturation n''a encore ete cree.
+        owner_type_community: Communaute
+        owner_type_person: Personne
+        pricing_tier_solidarity_medium: Solidarite — Moyenne
+        pricing_tier_solidarity_premium: Prime de solidarite
+        pricing_tier_solidarity_small: Solidarite — Petite
+        pricing_tier_standard: Standard
+        show_title: Plan de facturation
+        status_active: Actif
+        status_inactive: Inactif
+        toggle_activate: Activer
+        toggle_deactivate: Desactiver
+        update_submit: Mettre a jour le plan
+        updated: Plan de facturation mis a jour avec succes.
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
@@ -4944,16 +5009,23 @@ fr:
       expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      immutable_after_processor_link: ne peut plus être modifié une fois le plan lié
+        à un prix du processeur
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_pricing_tier: 'le niveau de tarification « %{tier} » ne figure pas parmi
+        : %{allowed}'
       invalid_url: n'est pas une URL valide
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
       not_found: n’a pas été trouvé(e)
+      not_found_at_processor: est introuvable chez le processeur de paiement
+      not_installed: n'est pas un processeur de paiement installé
       not_locked: n’était pas verrouillé(e)
       not_saved:
         one: 'une erreur a empêché ce (cet ou cette) %{resource} d’être enregistré(e) :'
