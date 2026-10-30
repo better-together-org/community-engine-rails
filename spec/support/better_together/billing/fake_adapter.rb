@@ -40,7 +40,8 @@ module BetterTogether
         outcome = event.payload['outcome'].to_s
         raise 'fake processor failure' if outcome == 'boom'
 
-        EventResult.new(status: outcome.presence || 'processed', retry_reason: ('prerequisite_missing' if outcome == 'retry'))
+        EventResult.new(status: outcome.presence || 'processed', retry_reason: ('prerequisite_missing' if outcome == 'retry'),
+                        outcome_kind: event.payload['outcome_kind'].presence)
       end
 
       def sanitize_payload(payload) = payload.to_h.slice('id', 'type')

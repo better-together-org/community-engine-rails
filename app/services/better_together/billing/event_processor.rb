@@ -76,10 +76,17 @@ module BetterTogether
       # gave up on the event must not leave it looking dead-lettered.
       def final_attributes(event, result)
         {
-          processing_status: result.status.to_s, billable_owner: result.billable_owner || event.billable_owner,
-          beneficiary: result.beneficiary || event.beneficiary,
-          error_message: result.message&.to_s&.truncate(Event::ERROR_MESSAGE_LIMIT),
+          processing_status: result.status.to_s, error_message: result.message&.to_s&.truncate(Event::ERROR_MESSAGE_LIMIT),
           processed_at: Time.current, claimed_at: nil, dead_lettered_at: nil, dead_letter_reason: nil
+        }.merge(reported_references(event, result))
+      end
+
+      # What the adapter says the outcome was and who and what it concerned, falling back
+      # to what the event already had.
+      def reported_references(event, result)
+        {
+          billable_owner: result.billable_owner || event.billable_owner, beneficiary: result.beneficiary || event.beneficiary,
+          subject: result.subject || event.subject, outcome_kind: result.outcome_kind&.to_s || event.outcome_kind
         }
       end
 
