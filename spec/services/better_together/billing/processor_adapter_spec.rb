@@ -36,6 +36,53 @@ module BetterTogether
         expect(keywords).to all(include(:context))
       end
 
+      describe 'settlement' do
+        it 'treats a plain adapter as a remote, automatically renewing, fee-collecting processor' do
+          expect(adapter).to have_attributes(settlement_kind: :remote, recurring_mode: :automatic, supported_countries: nil,
+                                             fee_collectible?: true, instruction_fields: [])
+        end
+
+        it 'accepts a manual method that advertises offline_settlement' do
+          manual = FakeAdapter.new(capabilities: %i[offline_settlement], settlement: :manual, countries: %w[CA])
+
+          expect(described_class.verify!(manual)).to eq(manual)
+          expect(manual).to have_attributes(recurring_mode: :manual, fee_collectible?: false)
+        end
+
+        it 'rejects offline_settlement on a remote method, and a manual method without it' do
+          remote = FakeAdapter.new(capabilities: %i[offline_settlement])
+          manual = FakeAdapter.new(capabilities: %i[checkout], settlement: :manual)
+
+          expect { described_class.verify!(remote) }.to raise_error(described_class::ContractError, /go together/)
+          expect { described_class.verify!(manual) }.to raise_error(described_class::ContractError, /go together/)
+        end
+
+        it 'rejects unknown settlement kinds, recurring modes and malformed countries' do
+          expect { described_class.verify!(FakeAdapter.new(settlement: :barter)) }
+            .to raise_error(described_class::ContractError, /unknown settlement_kind/)
+          expect { described_class.verify!(FakeAdapter.new(countries: %w[Canada])) }
+            .to raise_error(described_class::ContractError, /ISO 3166/)
+
+          odd = FakeAdapter.new
+          allow(odd).to receive(:recurring_mode).and_return(:sometimes)
+          expect { described_class.verify!(odd) }.to raise_error(described_class::ContractError, /unknown recurring_mode/)
+        end
+
+        it 'fails closed on the new capability methods' do
+          bare = Class.new(described_class) { def processor_name = :bare }.new
+
+          %i[refund transfer instructions_for].each do |name|
+            expect { bare.public_send(name) }.to raise_error(described_class::UnsupportedCapabilityError)
+          end
+        end
+
+        it 'documents context: for the new capability methods' do
+          methods = described_class::CAPABILITY_METHODS.slice(:refunds, :transfers, :offline_settlement).values.flat_map(&:values)
+
+          expect(methods).to all(include(:context))
+        end
+      end
+
       it 'fails closed on abstract and unsupported methods' do
         bare = Class.new(described_class) { def processor_name = :bare }.new
 
