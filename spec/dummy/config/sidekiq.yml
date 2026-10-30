@@ -1,6 +1,11 @@
 default: &default
   url: <%= ENV["REDIS_URL"] || 'redis://localhost:6379' %>
+  # Sidekiq reads [name, N] as a fetch WEIGHT: the queue is added to the poll list
+  # N times, so a HIGHER number is polled first more often. Plain names weigh 1.
+  # Billing is the heaviest queue, and also has a dedicated capsule (below) whose
+  # reserved threads only ever work billing jobs, so payment work never waits.
   queues:
+    - [billing, 10]
     - default
     - platform_sync
     - mailers
@@ -11,6 +16,11 @@ default: &default
     - notifications
     - webhooks
     - low_priority
+  capsules:
+    billing:
+      concurrency: 2
+      queues:
+        - [billing, 1]
 
 development:
   <<: *default

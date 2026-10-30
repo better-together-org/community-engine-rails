@@ -6,22 +6,29 @@ module BetterTogether
     class FakeAdapter < ProcessorAdapter
       attr_reader :calls, :capabilities
 
-      def initialize(capabilities: %i[checkout])
+      def initialize(capabilities: %i[checkout], processor: :fake)
         super()
         @capabilities = capabilities
+        @processor = processor
         @calls = []
       end
 
-      def processor_name = :fake
-      def webhook_event_types = ['fake.invoice.paid']
+      def processor_name = @processor
+      def webhook_event_types = ["#{@processor}.invoice.paid"]
 
+      # A vendor event may name the platform it is for ('platform_id'), the processor
+      # account it came from ('account'), and when it happened ('created').
       def normalize_webhook(vendor_event)
-        { event_id: vendor_event['id'], event_type: vendor_event['type'], payload: vendor_event.to_h }
+        {
+          event_id: vendor_event['id'], event_type: vendor_event['type'], payload: vendor_event.to_h,
+          platform_id: vendor_event['platform_id'], account_ref: vendor_event['account'],
+          occurred_at: (Time.zone.at(vendor_event['created']) if vendor_event['created'])
+        }.compact
       end
 
       # The event payload's 'outcome' picks the result; 'boom' raises.
-      def process_event(event:)
-        @calls << [:process_event, event.id]
+      def process_event(event:, context:)
+        @calls << [:process_event, event.id, context]
         outcome = event.payload['outcome'].to_s
         raise 'fake processor failure' if outcome == 'boom'
 
@@ -30,13 +37,13 @@ module BetterTogether
 
       def sanitize_payload(payload) = payload.to_h.slice('id', 'type')
 
-      def create_checkout_session(**args)
-        @calls << [:create_checkout_session, args]
+      def create_checkout_session(context:, **args)
+        @calls << [:create_checkout_session, context, args]
         { url: "https://fake.test/checkout/#{args[:idempotency_key]}" }
       end
 
-      def sync_checkout_session(**args)
-        @calls << [:sync_checkout_session, args]
+      def sync_checkout_session(context:, **args)
+        @calls << [:sync_checkout_session, context, args]
         { status: 'paid' }
       end
     end

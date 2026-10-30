@@ -11,24 +11,35 @@ module BetterTogether
 
       # Methods an adapter must override for each capability it advertises, and the
       # keywords each accepts. Money-moving calls always carry an idempotency_key.
+      # Every call carries `context:` (a Billing::ProcessorContext): the platform
+      # and processor account the call is for. Adapters must use it instead of
+      # reading global environment variables, so one platform never acts through
+      # another platform's account.
       CAPABILITY_METHODS = {
-        checkout: { create_checkout_session: %i[owner plan success_url cancel_url idempotency_key metadata],
-                    sync_checkout_session: %i[checkout_session_id] },
-        portal: { create_portal_session: %i[owner return_url] },
-        plan_sync: { sync_plan: %i[plan] },
-        stored_value_credit: { credit_balance: %i[beneficiary amount_cents currency idempotency_key metadata],
-                               reverse_credit: %i[credit_reference amount_cents idempotency_key reason] },
-        merchant_accounts: { merchant_onboarding_link: %i[owner refresh_url return_url],
-                             sync_merchant_account: %i[merchant_account] }
+        checkout: { create_checkout_session: %i[context owner plan success_url cancel_url idempotency_key metadata],
+                    sync_checkout_session: %i[context checkout_session_id] },
+        portal: { create_portal_session: %i[context owner return_url] },
+        plan_sync: { sync_plan: %i[context plan] },
+        stored_value_credit: { credit_balance: %i[context beneficiary amount_cents currency idempotency_key metadata],
+                               reverse_credit: %i[context credit_reference amount_cents idempotency_key reason] },
+        merchant_accounts: { merchant_onboarding_link: %i[context owner refresh_url return_url],
+                             sync_merchant_account: %i[context merchant_account] }
       }.freeze
 
       class ContractError < StandardError; end
       class UnsupportedCapabilityError < StandardError; end
 
-      def self.verify!(adapter)
-        raise ContractError, "#{adapter.class} must inherit #{name}" unless adapter.is_a?(self)
+      # Checks an adapter is usable: it inherits this contract, implements the
+      # supported contract version, and (when `name` is the name it was registered
+      # under) reports that same processor name, so events and plans stored under
+      # the registered name always resolve back to the adapter that handles them.
+      def self.verify!(adapter, name: nil)
+        raise ContractError, "#{adapter.class} must inherit #{self.name}" unless adapter.is_a?(self)
         unless adapter.contract_version == CONTRACT_VERSION
           raise ContractError, "#{adapter.class} implements contract #{adapter.contract_version}, core expects #{CONTRACT_VERSION}"
+        end
+        if name && adapter.processor_name.to_s != name.to_s
+          raise ContractError, "#{adapter.class} is registered as #{name} but reports processor_name #{adapter.processor_name}"
         end
 
         adapter
