@@ -11,6 +11,7 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
+  EXT_PLATFORM o|--o{ BILLING_EVENTS : "subject (polymorphic, optional): the hosted platform a hosting event is about"
   EXT_COMMUNITY o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
 
   EXT_PLATFORM ||--o{ PAY_CUSTOMERS : "platform / platform_id"
@@ -125,6 +126,9 @@ erDiagram
     uuid billable_owner_id
     string beneficiary_type
     uuid beneficiary_id
+    string subject_type "what the event is about; types opt in with Billing::Subjectable"
+    uuid subject_id
+    string outcome_kind "processor-neutral meaning: payment_failed, refund_issued, ..."
   }
 
   BILLING_PLANS {

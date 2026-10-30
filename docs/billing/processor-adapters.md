@@ -40,6 +40,26 @@ Implement `processor_name` (it must equal the name you register under; a mismatc
 
 Core owns idempotency keys and money state. Money-moving calls always receive an `idempotency_key` that the adapter must pass through to the processor.
 
+## Settlement kinds: remote, manual and internal
+
+Not every way of paying goes through a payment vendor. An adapter says how money reaches the seller with `settlement_kind`, and the contract treats the three kinds differently.
+
+| Kind | Examples | Who knows the payment happened |
+|---|---|---|
+| `remote` (default) | Stripe, Braintree | The processor, by webhook |
+| `manual` | cash, cheque, e-transfer | The seller, who confirms receipt. Core owns the state machine; the adapter only describes the method |
+| `internal` | store credit | A ledger inside Community Engine |
+
+A manual adapter advertises the `offline_settlement` capability (and only a manual adapter may). `verify!` rejects the mismatch. Manual adapters also declare:
+
+- `recurring_mode`: `automatic` (the processor renews), `manual` (each period is a new pending payment the seller confirms) or `none`. Manual methods are `manual`.
+- `supported_countries`: ISO 3166 alpha-2 codes, or `nil` for anywhere (e-transfer is `['CA']`). Core hides the method or refuses to enable it outside them.
+- `fee_collectible?`: false for every manual method, because the platform can neither track nor take a fee on a payment made outside it. Reports show such sales as uncollected rather than zero.
+- `instruction_fields`: the `Billing::InstructionField`s a seller fills in so buyers know how to pay (a payee name, an e-transfer address). Values are stored encrypted and shown only on the buyer's own order.
+- `instructions_for(context:, setting:, order:)`: what the buyer is shown. It must never be logged or put in an email.
+
+The contract also gains two capabilities used by every payment kind: `refunds` (`refund`) and `transfers` (`transfer`, for paying a seller out). Both carry `context:` and an `idempotency_key`.
+
 ## Event pipeline
 
 Processors deliver webhooks through Pay. Core logs, attributes, retries and replays them; the adapter only understands the vendor payload.
@@ -57,6 +77,15 @@ Status values: `pending`, `processed`, `ignored`, `alerted`, `failed`, `dead_let
 Nothing is guessed. An event is attributed, in order, by the `platform_id:` the adapter reports, by the `account_ref:` matched to a platform whose context names that account, or, with neither, to the only platform that has billing configured for the processor. If that does not single out one platform (none, or several), no tenant row is created: the dispatcher reports the error and raises `Billing::UnattributableWebhookError`. Pay deletes a webhook row only after successful processing, so the delivery stays, encrypted, and an operator can replay it after fixing the mapping. Pay's job discards the error (retrying cannot change the answer).
 
 A duplicate delivery that matches an event already logged for a **different** platform is refused (`EventIngest::PlatformConflictError`), because vendor event ids are globally unique.
+
+### What an outcome says happened
+
+`Billing::EventResult` carries two optional, processor-neutral fields so the rest of the system never reads a vendor's event names:
+
+- `outcome_kind`, one of `EventResult::OUTCOME_KINDS`. Processor adapters report `payment_succeeded`, `payment_failed`, `payment_action_required`, `refund_issued`, `dispute_opened`, `dispute_resolved`, `subscription_renewing`, `subscription_canceled`, `trial_ending` and `trial_ended` (the same messages Pay's own mailers would have sent). Core's own services report `payment_claimed`, `payment_confirmed`, `payment_rejected`, `payment_expired` and `refund_recorded` for manual methods such as cash, cheque and e-transfer, which log events named `<method>.payment_claimed`, `<method>.payment_confirmed` and so on. An unknown kind raises, so a vendor name cannot leak in.
+- `subject`: the record the event is about (an order, a Joatu agreement, a hosted platform). Only models that include `Billing::Subjectable` are accepted, the same opt-in idea as `Billable` for owners, and a platform-bound subject must be on the event's platform.
+
+The processor stores both on the event (`outcome_kind`, `subject`), so notifications, reports and the operator queue read them from there.
 
 ### Writing `process_event`
 

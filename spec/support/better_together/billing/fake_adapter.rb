@@ -10,15 +10,23 @@ module BetterTogether
     class FakeAdapter < ProcessorAdapter # rubocop:disable Metrics/ClassLength
       attr_reader :calls, :capabilities, :products, :prices
 
-      def initialize(capabilities: %i[checkout], processor: :fake, rules: nil)
+      # `settlement:` and `countries:` let specs stand in for a manual (offline) method.
+      def initialize(capabilities: %i[checkout], processor: :fake, rules: nil, settlement: :remote, countries: nil) # rubocop:disable Metrics/ParameterLists
         super()
         @capabilities = capabilities
         @processor = processor
         @rules = rules || default_rules
+        @settlement = settlement
+        @countries = countries
         @calls = []
         @products = {}
         @prices = {}
       end
+
+      def settlement_kind = @settlement
+      def supported_countries = @countries
+      def recurring_mode = @settlement == :manual ? :manual : super
+      def instruction_fields = supports?(:offline_settlement) ? [InstructionField.new(name: :note, type: :text)] : []
 
       def processor_name = @processor
       def webhook_event_types = ["#{@processor}.invoice.paid"]
@@ -41,7 +49,8 @@ module BetterTogether
         outcome = event.payload['outcome'].to_s
         raise 'fake processor failure' if outcome == 'boom'
 
-        EventResult.new(status: outcome.presence || 'processed', retry_reason: ('prerequisite_missing' if outcome == 'retry'))
+        EventResult.new(status: outcome.presence || 'processed', retry_reason: ('prerequisite_missing' if outcome == 'retry'),
+                        outcome_kind: event.payload['outcome_kind'].presence)
       end
 
       def sanitize_payload(payload) = payload.to_h.slice('id', 'type')
@@ -94,6 +103,21 @@ module BetterTogether
       def sync_checkout_session(context:, **args)
         @calls << [:sync_checkout_session, context, args]
         { status: 'paid' }
+      end
+
+      def refund(context:, **args)
+        @calls << [:refund, context, args]
+        { reference: "re_#{args[:idempotency_key]}" }
+      end
+
+      def transfer(context:, **args)
+        @calls << [:transfer, context, args]
+        { reference: "tr_#{args[:idempotency_key]}" }
+      end
+
+      def instructions_for(context:, setting:, order:)
+        @calls << [:instructions_for, context, order]
+        { 'note' => setting.to_h['note'] }
       end
 
       private

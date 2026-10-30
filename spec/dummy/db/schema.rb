@@ -232,6 +232,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.uuid "billable_owner_id"
     t.string "beneficiary_type"
     t.uuid "beneficiary_id"
+    t.string "subject_type"
+    t.uuid "subject_id"
+    t.string "outcome_kind"
     t.string "processor", null: false
     t.string "event_type", null: false
     t.string "event_id", null: false
@@ -255,10 +258,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["billable_owner_type", "billable_owner_id"], name: "idx_bt_billing_events_owner"
     t.index ["dead_lettered_at"], name: "idx_bt_billing_events_dead_lettered_at"
     t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
+    t.index ["outcome_kind"], name: "idx_bt_billing_events_outcome_kind"
     t.index ["payload_redacted_at"], name: "idx_bt_billing_events_payload_redacted_at"
     t.index ["platform_id"], name: "idx_bt_billing_events_platform"
     t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
     t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
+    t.index ["subject_type", "subject_id"], name: "idx_bt_billing_events_subject"
   end
 
   create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

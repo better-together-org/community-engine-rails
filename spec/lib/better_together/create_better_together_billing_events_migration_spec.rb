@@ -20,6 +20,14 @@ RSpec.describe 'Create Better Together billing events migration' do # rubocop:di
     expect { migration.up }.not_to raise_error
   end
 
+  it 'records what an event is about and what it meant, in processor-neutral terms' do
+    names = connection.columns(:better_together_billing_events).map(&:name)
+    indexes = connection.indexes(:better_together_billing_events).map(&:name)
+
+    expect(names).to include('subject_type', 'subject_id', 'outcome_kind')
+    expect(indexes).to include('idx_bt_billing_events_subject', 'idx_bt_billing_events_outcome_kind')
+  end
+
   it 'enforces one row per processor event at the database level' do
     columns = connection.indexes(:better_together_billing_events).find { |i| i.name == 'idx_bt_billing_events_processor_event' }
 
