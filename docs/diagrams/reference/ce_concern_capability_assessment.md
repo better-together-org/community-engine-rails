@@ -17,7 +17,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Attachments::Images` | Images | `Category`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Author` | Author | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Authorable` | Adds author/authorship associations and creator-aware authorship workflow. | `Page`, `Post` | Author visibility and blocked-author behavior must stay aligned with policy scopes. |
-| `Base64ImageInput` | Base64imageinput | `Content::Image`, `Content::Hero` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Base64ImageInput` | Base64imageinput | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BetterTogetherId` | Bettertogetherid | `PersonPurgeAudit`, `PersonPlatformIntegration`, `PersonLinkedSeed`, `PersonLink`, `PersonAccessGrant`, `PersonPlatformMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAttachments` | Blockattachments | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAwareInvitation` | Blockawareinvitation | `GuestAccess`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -30,7 +30,9 @@ This assessment is generated from the current live class set and the concern cap
 | `Commentable` | Commentable | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Communicator` | Communicator | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `CommunityAssignable` | Communityassignable | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `ContactData` | Contactdata | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Contactable` | Adds contact detail, website, phone, and social-link associations. | `Person` | Directory/admin surfaces can over-disclose private contact details if policies are too coarse. |
+| `Content::AttachableBlock` | Attachableblock | `Content::VideoBlock`, `Content::Image` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Content::BlockAttributes` | Blockattributes | `Content::Block`, `Content::VideoBlock`, `Content::Template`, `Content::StatisticsBlock`, `Content::RichText`, `Content::QuoteBlock` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Content::ResourceBlockAttributes` | Resourceblockattributes | `Content::PostsBlock`, `Content::PeopleBlock`, `Content::NavigationAreaBlock`, `Content::EventsBlock`, `Content::CommunitiesBlock`, `Content::ChecklistBlock` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `ContentSecurity::ActiveStorageGate` | Activestoragegate | `ContentSecurity::ActiveStorage::Representations::ProxyController`, `ContentSecurity::ActiveStorage::Blobs::ProxyController` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -41,10 +43,15 @@ This assessment is generated from the current live class set and the concern cap
 | `DeviseUser` | Deviseuser | `User`, `OauthUser` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `EventHosting` | Eventhosting | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `EventSeries` | Eventseries | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `EventSeriesActions` | Eventseriesactions | `EventsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `EventSeriesDisposition` | Eventseriesdisposition | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Federatable` | Federatable | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `FramedIndex` | Framedindex | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `FriendlySlug` | Adds translated/human-friendly slugs for routes and lookup. | `ResourcePermission`, `User`, `Role`, `Person`, `OauthUser` | Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved. |
 | `Geography::Geospatial::One` | One | `Geography::Settlement`, `Geography::Region`, `Geography::State`, `Geography::Country`, `Geography::Continent`, `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Geography::Locatable::AddressData` | Addressdata | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Geography::Locatable::LocatedIn` | Locatedin | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Geography::Locatable::LocationMapPoints` | Locationmappoints | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::Many` | Many | `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::One` | One | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Mappable` | Mappable | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -66,6 +73,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Labelable` | Labelable | `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Member` | Adds person/community/platform membership associations and convenience helpers. | `Person` | Membership-derived access must stay community-scoped rather than falling back to global signed-in checks. |
 | `Membership` | Membership | `PersonPlatformMembership`, `PersonCommunityMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `MentionPrefetch` | Mentionprefetch | `PersonSeedsController`, `PersonPlatformMembershipsController`, `PersonPlatformIntegrationsController`, `PersonLinksController`, `PersonLinkedSeedsController`, `PersonDeletionRequestsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::DatetimeFilterable` | Datetimefilterable | `Metrics::ReportsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::PlatformContext` | Platformcontext | `UploadsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Metrics::PlatformScoped` | Platformscoped | `Metrics::Share`, `Metrics::RichTextLink`, `Metrics::PageView`, `Metrics::Download` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -96,6 +104,7 @@ This assessment is generated from the current live class set and the concern cap
 | `PrivacyCeilingValidatable` | Privacyceilingvalidatable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Protected` | Adds protected-record safeguards for records that should resist accidental mutation/deletion. | `ResourcePermission`, `Role` | Protected status can be mistaken for an authorization model when it is only a lifecycle safeguard. |
 | `Publishable` | Adds publication timing/state helpers for user-facing publishing flows. | `Page`, `Post` | Publish state can leak intent or draft timing if query scopes ignore privacy. |
+| `Quotas::Owner` | Owner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `RecurringSchedulable` | Recurringschedulable | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `RemoveableAttachment` | Removeableattachment | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Reportable` | Reportable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |

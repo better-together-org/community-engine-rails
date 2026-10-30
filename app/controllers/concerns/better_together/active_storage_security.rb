@@ -117,11 +117,7 @@ module BetterTogether
     # which would otherwise both 401 anonymous visitors unconditionally and silently
     # wave through any signed-in user regardless of the real record's privacy.
     def resolve_authorizable_record(record)
-      return record.record if record.is_a?(ActionText::RichText)
-
-      record
-    rescue StandardError
-      nil
+      BetterTogether::ActiveStorageAttachmentRecord.resolve(record)
     end
 
     def publicly_accessible?(record)

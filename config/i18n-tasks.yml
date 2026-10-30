@@ -81,6 +81,8 @@ ignore_unused:
   - 'activerecord.errors.messages.**'
   - 'activerecord.errors.models.**'
   - 'activerecord.models.**'
+  # SeedCatalog::GeographyCatalog#localized_label builds these from each category's :key.
+  - 'seed_catalog.geography.categories.*'
 
   # Common app-wide keys that are often referenced dynamically
   - 'devise.**'

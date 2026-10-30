@@ -35,6 +35,7 @@ Environment Variables:
   OUTPUT_FORMATS              Space-separated output formats (default: "png svg")
   DEBUG                       Show complexity detection details (set to 1)
   FORCE                       Force re-render all (set to 1)
+  MERMAID_PUPPETEER_CONFIG    Puppeteer config JSON passed to mmdc via -p (auto --no-sandbox when root)
   
 Complexity Detection Thresholds:
   COMPLEXITY_LINE_THRESHOLD   Lines of code threshold (default: 80)
@@ -113,11 +114,22 @@ COMPLEXITY_SUBGRAPH_THRESHOLD=${COMPLEXITY_SUBGRAPH_THRESHOLD:-5}
 if command -v mmdc >/dev/null 2>&1; then
   RENDERER=(mmdc)
 elif command -v npx >/dev/null 2>&1; then
-  RENDERER=(npx -y @mermaid-js/mermaid-cli)
+  # Pinned to 11.x: mermaid-cli 12 dropped the -w/-H size flags this script relies on.
+  RENDERER=(npx -y @mermaid-js/mermaid-cli@11)
 else
   echo "Error: Neither mermaid-cli (mmdc) nor npx is available in PATH." >&2
-  echo "Install mermaid-cli or run: npx -y @mermaid-js/mermaid-cli ..." >&2
+  echo "Install mermaid-cli or run: npx -y @mermaid-js/mermaid-cli@11 ..." >&2
   exit 1
+fi
+
+# Chromium refuses to start as root without --no-sandbox (containers, cloud agent
+# sessions), so hand mermaid-cli a puppeteer config that disables the sandbox there.
+if [[ "$(id -u)" -eq 0 && -z "${MERMAID_PUPPETEER_CONFIG:-}" ]]; then
+  MERMAID_PUPPETEER_CONFIG="$(mktemp)"
+  echo '{"args":["--no-sandbox"]}' > "$MERMAID_PUPPETEER_CONFIG"
+fi
+if [[ -n "${MERMAID_PUPPETEER_CONFIG:-}" ]]; then
+  RENDERER+=(-p "$MERMAID_PUPPETEER_CONFIG")
 fi
 
 normalize_mermaid_file() {
