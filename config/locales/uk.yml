@@ -962,6 +962,10 @@ uk:
         no_plans: Plany bilingu shche ne stvoren.
         owner_type_community: Spilnota
         owner_type_person: Osobystist'
+        payment_method_names:
+          cash: Готівка
+          cheque: Чек
+          etransfer: Переказ Interac
         price_section_title: Ціна
         pricing_tier_solidarity_medium: Solidarnist' — Serednij
         pricing_tier_solidarity_premium: Premiyum solidarnosti
@@ -1000,6 +1004,59 @@ uk:
         toggle_deactivate: Deaktuvuvaty
         update_submit: Onovyty plan
         updated: Plan bilingu uspishno onovleno.
+      processor_settings:
+        acknowledge_label: Я розумію та приймаю ці обмеження.
+        acknowledged_on: Ви прийняли ці обмеження %{date}.
+        available_anywhere: Будь-де
+        available_only_in: Лише в %{countries} (%{currencies})
+        disclosure_country: Працює лише в %{countries}, у %{currencies}.
+        disclosure_no_fee: З цих платежів не можна стягувати комісію.
+        disclosure_no_protection: Покупець не має захисту від повернення платежу чи
+          спорів, а ви несете ризик платежу, який так і не надійшов.
+        disclosure_reconcile: Ви звіряєте їх вручну. Автоматичних квитанцій чи повернень
+          немає.
+        disclosure_title: Перш ніж увімкнути
+        disclosure_untracked: Оплата відбувається поза цією платформою. Її не можна
+          відстежити, тому кожну ви підтверджуєте самі.
+        field_enabled: Приймати цей спосіб оплати
+        field_grant_on: Надавати доступ, коли платіж
+        field_grant_on_hint: Чек можуть повернути. Безпечніше дочекатися його проведення.
+        field_hold_hours: Утримувати неоплачене замовлення (годин)
+        field_hold_hours_hint: Якщо за цей час оплати немає, замовлення спливає, а
+          те, що воно утримувало, вивільняється.
+        field_method: Спосіб
+        field_purposes: Приймати для
+        field_status: Стан
+        field_where: Де працює
+        fields:
+          cash:
+            instructions: Де і коли передати готівку
+          cheque:
+            address: Куди надіслати або віднести чек
+            instructions: Що ще варто знати покупцям
+            payee_name: Виписати чек на ім’я
+          etransfer:
+            instructions: Посилання або інші інструкції
+            recipient_email: Надіслати переказ на цю адресу
+            recipient_phone: або на цей номер телефону
+        grant_on_cleared: проведено
+        grant_on_confirmed: підтверджено
+        grant_on_received: отримано
+        how_to_pay: Що бачать покупці
+        how_to_pay_hint: Показується покупцеві лише у його власному замовленні, після
+          прийняття умов. Зберігається зашифрованим і ніколи не потрапляє в електронний
+          лист.
+        index_intro: Способи отримати оплату поза платіжним процесором. Кожен установлений
+          для всіх платформ, але працює лише після ввімкнення.
+        index_title: Способи оплати
+        purpose_exchange: Обміни
+        purpose_one_time: Разові покупки
+        purpose_subscription: Підписки та членства
+        purpose_ticket: Квитки на події
+        saved: Спосіб оплати збережено.
+        status_disabled: Вимкнено
+        status_enabled: Увімкнено
+        status_not_set_up: Не налаштовано
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму
@@ -5028,11 +5085,13 @@ uk:
       title: 500 - Внутрішня помилка сервера
     messages:
       accepted: має бути прийнято
+      acknowledgement_required: потрібно прийняти, перш ніж увімкнути цей спосіб
       already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
       blank: не може бути пустим
       confirmation: не співпадає з %{attribute}
       confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
         запросіть новий
+      country_not_supported: недоступно в %{country}
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -5070,6 +5129,7 @@ uk:
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
       price_inactive: архівовано в платіжному процесорі
+      recipient_missing: потрібна адреса електронної пошти або номер телефону
       required: має існувати
       taken: вже зайнято
       too_long:
@@ -5083,6 +5143,7 @@ uk:
         one: занадто короткий (мінімум %{count} символ)
         other: занадто короткий (мінімум %{count} символів)
       unknown_owner_types: 'містить типи, які не можна виставляти до оплати: %{types}'
+      unknown_setting: 'містить поля, які цей спосіб не використовує: %{fields}'
       used_by_another_platform: уже використовується іншою платформою
       weak_password: недостатньо сильний. Розгляньте додавання цифри, символів або
         більше літер, щоб зробити його сильнішим. Уникайте використання слова 'password',

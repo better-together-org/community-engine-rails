@@ -89,7 +89,19 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
     end
 
     it 'keeps the helper names the navigation items call' do
-      expect(BetterTogether::Engine.routes.url_helpers).to respond_to(:billing_plans_url, :billing_plans_path)
+      expect(BetterTogether::Engine.routes.url_helpers).to respond_to(:billing_plans_url, :billing_plans_path,
+                                                                      :billing_processor_settings_url)
+    end
+
+    it 'has payment method settings, addressed by method name, that can be listed, edited and updated only' do
+      expect(get: '/en/billing/processor_settings')
+        .to route_to(controller: 'better_together/billing/processor_settings', action: 'index', locale: 'en')
+      expect(get: '/en/billing/processor_settings/cash/edit')
+        .to route_to(controller: 'better_together/billing/processor_settings', action: 'edit', locale: 'en', id: 'cash')
+      expect(patch: '/en/billing/processor_settings/cash')
+        .to route_to(controller: 'better_together/billing/processor_settings', action: 'update', locale: 'en', id: 'cash')
+      expect(post: '/en/billing/processor_settings').not_to be_routable
+      expect(delete: '/en/billing/processor_settings/cash').not_to be_routable
     end
   end
 end

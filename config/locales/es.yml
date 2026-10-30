@@ -979,6 +979,10 @@ es:
         no_plans: Aun no se han creado planes de facturacion.
         owner_type_community: Comunidad
         owner_type_person: Persona
+        payment_method_names:
+          cash: Efectivo
+          cheque: Cheque
+          etransfer: Transferencia Interac
         price_section_title: Precio
         pricing_tier_solidarity_medium: Solidaridad — Mediana
         pricing_tier_solidarity_premium: Prima de solidaridad
@@ -1019,6 +1023,60 @@ es:
         toggle_deactivate: Desactivar
         update_submit: Actualizar plan
         updated: Plan de facturacion actualizado exitosamente.
+      processor_settings:
+        acknowledge_label: Entiendo y acepto estos límites.
+        acknowledged_on: Aceptó estos límites el %{date}.
+        available_anywhere: En cualquier lugar
+        available_only_in: Solo en %{countries} (%{currencies})
+        disclosure_country: Solo funciona en %{countries}, en %{currencies}.
+        disclosure_no_fee: No se puede cobrar ninguna comisión de aplicación en estos
+          pagos.
+        disclosure_no_protection: El comprador no tiene protección contra contracargos
+          ni disputas, y usted asume el riesgo de un pago que nunca llega.
+        disclosure_reconcile: Los concilia a mano. No hay recibos ni reembolsos automáticos.
+        disclosure_title: Antes de activarlo
+        disclosure_untracked: El pago ocurre fuera de esta plataforma. No se puede
+          rastrear, así que usted confirma cada uno.
+        field_enabled: Aceptar este método de pago
+        field_grant_on: Dar acceso cuando el pago esté
+        field_grant_on_hint: Un cheque puede ser rechazado. Esperar a que se cobre
+          es más seguro.
+        field_hold_hours: Retener un pedido sin pagar durante (horas)
+        field_hold_hours_hint: Pasado este tiempo sin pago, el pedido caduca y se
+          libera lo que retenía.
+        field_method: Método
+        field_purposes: Aceptar para
+        field_status: Estado
+        field_where: Dónde funciona
+        fields:
+          cash:
+            instructions: Dónde y cuándo entregar el efectivo
+          cheque:
+            address: Dónde enviar o entregar el cheque
+            instructions: Algo más que los compradores deban saber
+            payee_name: Extender el cheque a nombre de
+          etransfer:
+            instructions: Referencia u otras instrucciones
+            recipient_email: Enviar la transferencia a este correo
+            recipient_phone: o a este número de teléfono
+        grant_on_cleared: cobrado
+        grant_on_confirmed: confirmado
+        grant_on_received: recibido
+        how_to_pay: Lo que ven los compradores
+        how_to_pay_hint: Se muestra al comprador solo en su propio pedido, después
+          de aceptar las condiciones. Se guarda cifrado y nunca se incluye en un correo.
+        index_intro: Formas de cobrar fuera de un procesador de pagos. Cada una está
+          instalada para todas las plataformas, pero solo funciona una vez que la
+          activa.
+        index_title: Métodos de pago
+        purpose_exchange: Intercambios
+        purpose_one_time: Compras únicas
+        purpose_subscription: Suscripciones y membresías
+        purpose_ticket: Entradas a eventos
+        saved: Método de pago guardado.
+        status_disabled: Desactivado
+        status_enabled: Activado
+        status_not_set_up: Sin configurar
     bot_defense:
       errors:
         expired_challenge: La verificación de seguridad venció. Recarga el formulario
@@ -5022,11 +5080,13 @@ es:
       title: 500 - Error interno del servidor
     messages:
       accepted: debe ser aceptado
+      acknowledgement_required: debe aceptarse antes de activar este método
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       blank: no puede estar en blanco
       confirmation: no coincide con %{attribute}
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
         solicita una nueva
+      country_not_supported: no está disponible en %{country}
       empty: no puede estar vacío
       equal_to: debe ser igual a %{count}
       even: debe ser par
@@ -5063,6 +5123,7 @@ es:
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
       price_inactive: está archivado en el procesador de pagos
+      recipient_missing: necesita un correo electrónico o un número de teléfono
       required: debe existir
       taken: ya está en uso
       too_long:
@@ -5072,6 +5133,7 @@ es:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)
       unknown_owner_types: 'incluye tipos que no se pueden facturar: %{types}'
+      unknown_setting: 'tiene campos que este método no usa: %{fields}'
       used_by_another_platform: ya lo usa otra plataforma
       weak_password: no es lo suficientemente fuerte. Considera agregar un número,
         símbolos o más letras para hacerla más fuerte. Evita usar la palabra 'contraseña',

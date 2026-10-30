@@ -50,14 +50,16 @@ module BetterTogether
       safety_cases: 'safety_cases_url',
       users: 'users_url',
       webhook_endpoints: 'webhook_endpoints_url',
-      billing_plans: 'billing_plans_url'
+      billing_plans: 'billing_plans_url',
+      billing_processor_settings: 'billing_processor_settings_url'
     }
 
     # Items whose target only exists when a subsystem is switched on for the platform.
     # Without it a platform that has not set billing up would show a link to a page that
     # answers 404.
     ROUTE_AVAILABILITY = {
-      'billing_plans_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) }
+      'billing_plans_url' => ->(platform) { BetterTogether::Billing.enabled?(platform) },
+      'billing_processor_settings_url' => ->(platform) { BetterTogether::Billing.configurable?(platform) }
     }.freeze
 
     belongs_to :navigation_area, touch: true

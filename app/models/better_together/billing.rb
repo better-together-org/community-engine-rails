@@ -24,6 +24,36 @@ module BetterTogether
         ProcessorAdapter.verify!(entry[:adapter].call, name: entry[:name])
       end
 
+      # An installed method that does not go through a vendor (settlement manual or
+      # internal), like cash. False for an unknown name or an adapter that fails the contract.
+      def offline_method?(name)
+        return false unless processor_names.map(&:to_s).include?(name.to_s)
+
+        processor_adapter(name)&.settlement_kind != :remote
+      rescue ProcessorAdapter::ContractError
+        false
+      end
+
+      # The methods core ships, registered once at boot. They are available to every
+      # platform but work for a seller only after a steward enables them
+      # (see ProcessorSetting).
+      def register_builtin_processors!
+        builtin_processors.each { |name, adapter_class| register_processor(name, -> { adapter_class.new }) }
+      end
+
+      # Name => adapter class, for the methods core ships. A method so classes load lazily.
+      def builtin_processors
+        { cash: Processors::Cash, cheque: Processors::Cheque, etransfer: Processors::ETransfer }
+      end
+
+      # Whether a steward can configure billing for a platform: the host switched it on and
+      # configured an identity, and at least one method is installed. Unlike #enabled?,
+      # this does not need a method to be enabled already, so the settings page can be
+      # reached to enable the first one.
+      def configurable?(platform = Current.platform, env: ENV)
+        platform.present? && Configuration.requested?(env) && Configuration.ready?(env) && processor_names.any?
+      end
+
       # Billing is on for a platform only with the host's flag, a configured
       # identity, and a registered processor that has a context for that platform.
       # With no platform (a job or console with no tenant in hand) it is off.

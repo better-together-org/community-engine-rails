@@ -230,6 +230,7 @@ module BetterTogether
 
     # After every initializer, so processor extension gems have registered their adapters.
     config.after_initialize do
+      BetterTogether::Billing.register_builtin_processors!
       BetterTogether::Billing::WebhookSubscriptions.subscribe_all!
     end
 

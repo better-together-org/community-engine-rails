@@ -45,6 +45,32 @@ RSpec.describe BetterTogether::NavigationItem, '#visible_to?' do
     expect(item.visible_to?(nil, platform: host_platform)).to be(false)
   end
 
+  describe 'the payment methods link' do
+    let(:methods_item) do
+      build(:better_together_navigation_item, route_name: 'billing_processor_settings_url', privacy: 'public', visible: true,
+                                              item_type: 'link', linkable_type: nil, linkable_id: nil, url: nil)
+    end
+
+    it 'is a valid route name' do
+      expect(described_class.route_name_urls).to include('billing_processor_settings_url')
+    end
+
+    it 'is visible before any method is on, so the first one can be turned on' do
+      BetterTogether.clear_adapters!(BetterTogether::Billing::ADAPTER_GROUP)
+      BetterTogether::Billing.register_builtin_processors!
+
+      expect(BetterTogether::Billing.enabled?(host_platform)).to be(false)
+      expect(methods_item.visible_to?(nil, platform: host_platform)).to be(true)
+    end
+
+    it 'is hidden while billing is not switched on' do
+      BetterTogether::Billing.register_builtin_processors!
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+      expect(methods_item.visible_to?(nil, platform: host_platform)).to be(false)
+    end
+  end
+
   it 'leaves every other route unaffected' do
     other = build(:better_together_navigation_item, route_name: 'pages_url', privacy: 'public', visible: true, item_type: 'link',
                                                     linkable_type: nil, linkable_id: nil, url: nil)

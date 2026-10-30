@@ -12,6 +12,11 @@ module BetterTogether
           'PAY_SUPPORT_EMAIL' => 'support@example.org' }
       end
 
+      def enable_method(platform, method = 'cash', **attrs)
+        platform.billing_processor_settings.create!({ processor: method, enabled: true, acknowledge: true,
+                                                      settings: { 'instructions' => 'At the hall' } }.merge(attrs))
+      end
+
       it 'is ready when the business identity keys are present' do
         expect(described_class.ready?(full_env)).to be true
       end
@@ -97,6 +102,58 @@ module BetterTogether
 
         it 'lists the registered processors a platform has a context for' do
           expect(described_class.processors_for(host_platform)).to eq([:fake])
+        end
+      end
+
+      describe 'processor contexts for methods outside a vendor' do
+        include_context 'with builtin billing processors'
+
+        let(:host_platform) { configure_host_platform }
+        let(:other_platform) { create(:better_together_platform) }
+        let(:community) { create(:better_together_community) }
+
+        it 'has none until a steward turns the method on' do
+          expect(described_class.context_for(host_platform, :cash)).to be_nil
+          expect(described_class.processors_for(host_platform)).to be_empty
+        end
+
+        it 'has one for any platform that turned it on, with no credentials' do
+          enable_method(other_platform)
+
+          context = described_class.context_for(other_platform, :cash)
+
+          expect(context).to have_attributes(platform: other_platform, processor: :cash, source: :setting, credentials: nil)
+          expect(described_class.processors_for(other_platform)).to eq([:cash])
+        end
+
+        it 'does not give the host platform a method another platform turned on' do
+          enable_method(other_platform)
+
+          expect(described_class.context_for(host_platform, :cash)).to be_nil
+        end
+
+        it 'goes again when the method is turned off' do
+          setting = enable_method(host_platform)
+          setting.update!(enabled: false)
+
+          expect(described_class.context_for(host_platform, :cash)).to be_nil
+        end
+
+        it 'keeps the platform and each seller apart' do
+          BetterTogether::Billing::Billable.model_names << 'BetterTogether::Community'
+          enable_method(host_platform, 'cheque', settings: { 'payee_name' => 'A', 'address' => 'B' }, seller: community)
+
+          expect(described_class.context_for(host_platform, :cheque)).to be_nil
+          expect(described_class.context_for(host_platform, :cheque, seller: community)).to be_present
+          expect(described_class.context_for(host_platform, :cash, seller: community)).to be_nil
+        end
+
+        it 'does not depend on the host environment, but a vendor processor still does' do
+          Billing.register_processor(:fake, -> { FakeAdapter.new })
+          enable_method(other_platform)
+
+          expect(described_class.context_for(other_platform, :fake)).to be_nil
+          expect(described_class.context_for(other_platform, :cash)).to be_present
         end
       end
 

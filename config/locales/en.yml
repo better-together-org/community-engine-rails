@@ -984,6 +984,10 @@ en:
         no_plans: No billing plans have been created yet.
         owner_type_community: Community
         owner_type_person: Person
+        payment_method_names:
+          cash: Cash
+          cheque: Cheque
+          etransfer: Interac e-Transfer
         price_section_title: Price
         pricing_tier_solidarity_medium: Solidarity — Medium
         pricing_tier_solidarity_premium: Solidarity Premium
@@ -1021,6 +1025,58 @@ en:
         toggle_deactivate: Deactivate
         update_submit: Update plan
         updated: Billing plan updated successfully.
+      processor_settings:
+        acknowledge_label: I understand and accept these limits.
+        acknowledged_on: You accepted these limits on %{date}.
+        available_anywhere: Anywhere
+        available_only_in: Only in %{countries} (%{currencies})
+        disclosure_country: It works only in %{countries}, in %{currencies}.
+        disclosure_no_fee: No application fee can be collected on these payments.
+        disclosure_no_protection: The buyer has no chargeback or dispute protection,
+          and you carry the risk of a payment that never arrives.
+        disclosure_reconcile: You reconcile them by hand. There are no automatic receipts
+          or refunds.
+        disclosure_title: Before you turn this on
+        disclosure_untracked: The payment happens outside this platform. It cannot
+          be tracked, so you confirm each one yourself.
+        field_enabled: Accept this payment method
+        field_grant_on: Start access when the payment is
+        field_grant_on_hint: A cheque can bounce. Waiting until it clears is safer.
+        field_hold_hours: Hold an unpaid order for (hours)
+        field_hold_hours_hint: After this long without payment, the order expires
+          and what it held is released.
+        field_method: Method
+        field_purposes: Accept it for
+        field_status: Status
+        field_where: Where it works
+        fields:
+          cash:
+            instructions: Where and when to hand over the cash
+          cheque:
+            address: Where to send or drop off the cheque
+            instructions: Anything else buyers should know
+            payee_name: Make the cheque out to
+          etransfer:
+            instructions: Reference or other instructions
+            recipient_email: Send the e-transfer to this email
+            recipient_phone: or to this phone number
+        grant_on_cleared: cleared
+        grant_on_confirmed: confirmed
+        grant_on_received: received
+        how_to_pay: What buyers are told
+        how_to_pay_hint: Shown to a buyer only on their own order, after they accept
+          the terms. It is stored encrypted and never put in an email.
+        index_intro: Ways to be paid outside a payment processor. Each is installed
+          for every platform but works only after you turn it on.
+        index_title: Payment methods
+        purpose_exchange: Exchanges
+        purpose_one_time: One-time purchases
+        purpose_subscription: Subscriptions and memberships
+        purpose_ticket: Event tickets
+        saved: Payment method saved.
+        status_disabled: 'Off'
+        status_enabled: 'On'
+        status_not_set_up: Not set up
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and
@@ -4939,11 +4995,14 @@ en:
       title: 500 - Internal Server Error
     messages:
       accepted: must be accepted
+      acknowledgement_required: must be accepted before this method can be turned
+        on
       already_confirmed: was already confirmed, please try signing in
       blank: can't be blank
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
+      country_not_supported: is not available in %{country}
       empty: can't be empty
       equal_to: must be equal to %{count}
       even: must be even
@@ -4979,6 +5038,7 @@ en:
       other_than: must be other than %{count}
       present: must be blank
       price_inactive: is archived at the payment processor
+      recipient_missing: needs an email address or a phone number
       required: must exist
       taken: has already been taken
       too_long:
@@ -4988,6 +5048,7 @@ en:
         one: is too short (minimum is %{count} character)
         other: is too short (minimum is %{count} characters)
       unknown_owner_types: 'includes types that cannot be billed: %{types}'
+      unknown_setting: 'has fields this method does not use: %{fields}'
       used_by_another_platform: is already used by another platform
       weak_password: not strong enough. Consider adding a number, symbols or more
         letters to make it stronger. Avoid using the word 'password', your birthday,

@@ -301,6 +301,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["sync_status"], name: "idx_bt_billing_plans_sync_status"
   end
 
+  create_table "better_together_billing_processor_settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "seller_type"
+    t.uuid "seller_id"
+    t.string "processor", null: false
+    t.boolean "enabled", default: false, null: false
+    t.integer "hold_hours", default: 72, null: false
+    t.string "grant_on"
+    t.string "purposes", default: ["subscription", "one_time", "ticket", "exchange"], null: false, array: true
+    t.text "settings", null: false
+    t.datetime "acknowledged_at"
+    t.uuid "acknowledged_by_id"
+    t.index ["acknowledged_by_id"], name: "idx_bt_billing_proc_settings_ack_by"
+    t.index ["enabled"], name: "idx_bt_billing_proc_settings_enabled"
+    t.index ["platform_id", "processor"], name: "idx_bt_billing_proc_settings_platform_method", unique: true, where: "(seller_id IS NULL)"
+    t.index ["platform_id", "seller_type", "seller_id", "processor"], name: "idx_bt_billing_proc_settings_seller_method", unique: true, where: "(seller_id IS NOT NULL)"
+    t.index ["platform_id"], name: "idx_bt_billing_proc_settings_platform"
+    t.index ["seller_type", "seller_id"], name: "idx_bt_billing_proc_settings_seller"
+  end
+
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2795,6 +2818,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_processor_settings", "better_together_people", column: "acknowledged_by_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_processor_settings", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"

@@ -1,0 +1,39 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.processor_settings.index_title') %>
+<% end %>
+
+<div id="billing-processor-settings-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.processor_settings.index_title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.processor_settings.index_intro') %></p>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table id="billing-processor-settings-table" class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_method') %></th>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_status') %></th>
+            <th scope="col"><%= t('better_together.billing.processor_settings.field_where') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @methods.each do |name, setting| %>
+            <% adapter = BetterTogether::Billing.processor_adapter(name) %>
+            <tr id="billing-processor-setting-<%= name %>">
+              <th scope="row"><%= billing_payment_method_label(name) %></th>
+              <td><%= billing_processor_setting_badge(setting) %></td>
+              <td><%= billing_method_availability(adapter) %></td>
+              <td class="text-end">
+                <%= link_to t('globals.edit'),
+                            edit_billing_processor_setting_path(name, locale: I18n.locale),
+                            class: 'btn btn-outline-primary btn-sm',
+                            id: "billing-processor-edit-#{name}" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

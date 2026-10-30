@@ -1,0 +1,120 @@
+<% adapter = @setting.adapter %>
+<% name = @setting.processor %>
+<% content_for :page_title do %>
+  <%= billing_payment_method_label(name) %> | <%= t('better_together.billing.processor_settings.index_title') %>
+<% end %>
+
+<div id="billing-processor-setting-edit-page" class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <%= link_to t('better_together.billing.processor_settings.index_title'), billing_processor_settings_path(locale: I18n.locale) %>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page"><%= billing_payment_method_label(name) %></li>
+    </ol>
+  </nav>
+
+  <h1 class="mb-3"><%= billing_payment_method_label(name) %></h1>
+  <p class="text-body-secondary"><%= billing_method_availability(adapter) %></p>
+
+  <%= form_with(model: @setting, scope: :billing_processor_setting,
+                url: billing_processor_setting_path(name, locale: I18n.locale), method: :patch,
+                id: 'billing-processor-setting-form') do |form| %>
+    <% if @setting.errors.any? %>
+      <div class="alert alert-danger" role="alert" id="billing-processor-setting-errors">
+        <ul class="mb-0">
+          <% @setting.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div id="billing-processor-setting-fields" class="card mb-4">
+      <div class="card-header"><strong><%= t('better_together.billing.processor_settings.how_to_pay') %></strong></div>
+      <div class="card-body">
+        <p class="form-text"><%= t('better_together.billing.processor_settings.how_to_pay_hint') %></p>
+        <% adapter.instruction_fields.each do |field| %>
+          <% field_id = "billing-processor-setting-#{name}-#{field.name}" %>
+          <div class="mb-3">
+            <%= label_tag field_id, billing_instruction_field_label(name, field), class: 'form-label' %>
+            <% value = @setting.settings[field.name.to_s] %>
+            <% if field.type == :text %>
+              <%= text_area_tag "billing_processor_setting[settings][#{field.name}]", value, id: field_id, rows: 3, class: 'form-control',
+                                                                                           required: field.required? %>
+            <% else %>
+              <%= text_field_tag "billing_processor_setting[settings][#{field.name}]", value, id: field_id, class: 'form-control',
+                                                                                            type: field.type == :string ? 'text' : (field.type == :phone ? 'tel' : 'email'),
+                                                                                            required: field.required? %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div id="billing-processor-setting-options" class="card mb-4">
+      <div class="card-body">
+        <div class="mb-3">
+          <%= form.label :hold_hours, t('better_together.billing.processor_settings.field_hold_hours'), class: 'form-label' %>
+          <%= form.number_field :hold_hours, class: 'form-control', min: BetterTogether::Billing::ProcessorSetting::MIN_HOLD_HOURS,
+                                             max: BetterTogether::Billing::ProcessorSetting::MAX_HOLD_HOURS, id: 'billing-processor-hold-hours' %>
+          <div class="form-text"><%= t('better_together.billing.processor_settings.field_hold_hours_hint') %></div>
+        </div>
+
+        <% if adapter.grant_on_options.many? %>
+          <div class="mb-3">
+            <%= form.label :grant_on, t('better_together.billing.processor_settings.field_grant_on'), class: 'form-label' %>
+            <%= form.select :grant_on, adapter.grant_on_options.map { |option| [t("better_together.billing.processor_settings.grant_on_#{option}"), option] },
+                            {}, class: 'form-select', id: 'billing-processor-grant-on' %>
+            <div class="form-text"><%= t('better_together.billing.processor_settings.field_grant_on_hint') %></div>
+          </div>
+        <% end %>
+
+        <fieldset id="billing-processor-purposes" class="mb-0">
+          <legend class="form-label fs-6"><%= t('better_together.billing.processor_settings.field_purposes') %></legend>
+          <%= form.collection_check_boxes :purposes, BetterTogether::Billing::ProcessorSetting::PURPOSES.map { |purpose| [t("better_together.billing.processor_settings.purpose_#{purpose}"), purpose] }, :last, :first do |box| %>
+            <div class="form-check">
+              <%= box.check_box(class: 'form-check-input', id: "billing-processor-purpose-#{box.value}") %>
+              <%= box.label(class: 'form-check-label', for: "billing-processor-purpose-#{box.value}") %>
+            </div>
+          <% end %>
+        </fieldset>
+      </div>
+    </div>
+
+    <div id="billing-processor-disclosure" class="alert alert-warning" role="note">
+      <h2 class="h6"><%= t('better_together.billing.processor_settings.disclosure_title') %></h2>
+      <ul class="mb-2">
+        <% %w[untracked no_fee reconcile no_protection].each do |item| %>
+          <li><%= t("better_together.billing.processor_settings.disclosure_#{item}") %></li>
+        <% end %>
+        <% if adapter.supported_countries.present? %>
+          <li><%= t('better_together.billing.processor_settings.disclosure_country', countries: adapter.supported_countries.to_sentence,
+                                                                               currencies: Array(adapter.supported_currencies).to_sentence) %></li>
+        <% end %>
+      </ul>
+      <% if @setting.acknowledged? %>
+        <p class="mb-0 small" id="billing-processor-acknowledged">
+          <%= t('better_together.billing.processor_settings.acknowledged_on', date: l(@setting.acknowledged_at.to_date, format: :long)) %>
+        </p>
+      <% else %>
+        <div class="form-check">
+          <%= form.check_box :acknowledge, class: 'form-check-input', id: 'billing-processor-acknowledge' %>
+          <%= form.label :acknowledge, t('better_together.billing.processor_settings.acknowledge_label'), class: 'form-check-label',
+                                                                                                           for: 'billing-processor-acknowledge' %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="form-check form-switch mb-4">
+      <%= form.check_box :enabled, class: 'form-check-input', id: "billing-processor-enable-#{name}", role: 'switch' %>
+      <%= form.label :enabled, t('better_together.billing.processor_settings.field_enabled'), class: 'form-check-label',
+                                                                                             for: "billing-processor-enable-#{name}" %>
+    </div>
+
+    <div id="billing-processor-setting-actions" class="d-flex gap-2">
+      <%= form.submit t('globals.save'), class: 'btn btn-primary', id: 'billing-processor-setting-save-btn' %>
+      <%= link_to t('globals.cancel'), billing_processor_settings_path(locale: I18n.locale), class: 'btn btn-outline-secondary' %>
+    </div>
+  <% end %>
+</div>

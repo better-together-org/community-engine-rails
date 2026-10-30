@@ -287,10 +287,12 @@ module CeSubsystemDiagramExport
       models: %w[
         BetterTogether::Billing::Event
         BetterTogether::Billing::Plan
+        BetterTogether::Billing::ProcessorSetting
       ],
       controllers: %w[
         BetterTogether::Billing::PlansController
         BetterTogether::Billing::ProcessorOptionsController
+        BetterTogether::Billing::ProcessorSettingsController
       ]
     },
     {

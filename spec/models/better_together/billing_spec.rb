@@ -19,6 +19,45 @@ module BetterTogether
       expect(described_class.enabled?(host_platform, env:)).to be false
     end
 
+    describe 'methods outside a vendor' do
+      include_context 'with builtin billing processors'
+
+      it 'registers cash, cheque and e-transfer' do
+        expect(described_class.processor_names).to contain_exactly(:cash, :cheque, :etransfer)
+        expect(described_class.builtin_processors.keys).to contain_exactly(:cash, :cheque, :etransfer)
+      end
+
+      it 'tells them apart from a vendor processor' do
+        described_class.register_processor(:fake, -> { Billing::FakeAdapter.new })
+
+        expect(described_class.offline_method?(:cash)).to be(true)
+        expect(described_class.offline_method?('etransfer')).to be(true)
+        expect(described_class.offline_method?(:fake)).to be(false)
+        expect(described_class.offline_method?(:ghost)).to be(false)
+      end
+
+      it 'is not enabled for anyone until a steward turns a method on' do
+        expect(described_class.enabled?(host_platform, env:)).to be(false)
+
+        host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                         settings: { 'instructions' => 'At the hall' })
+
+        expect(described_class.enabled?(host_platform, env:)).to be(true)
+        expect(described_class.enabled?(other_platform, env:)).to be(false)
+      end
+
+      it 'can be configured before any method is on, but only when the host asked for billing' do
+        expect(described_class.configurable?(host_platform, env:)).to be(true)
+        expect(described_class.configurable?(host_platform, env: env.merge('BT_BILLING_ENABLED' => 'false'))).to be(false)
+        expect(described_class.configurable?(host_platform, env: env.except('PAY_SUPPORT_EMAIL'))).to be(false)
+        expect(described_class.configurable?(nil, env:)).to be(false)
+      end
+    end
+
+    it 'cannot be configured with nothing installed' do
+      expect(described_class.configurable?(host_platform, env:)).to be(false)
+    end
+
     it 'resolves a registered processor by name and verifies the contract' do
       described_class.register_processor(:fake, -> { Billing::FakeAdapter.new })
 

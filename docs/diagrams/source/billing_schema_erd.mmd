@@ -11,6 +11,9 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_COMMUNITY o|--o{ BILLING_PLANS : "seller (polymorphic, optional; person too)"
+  EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
+  EXT_COMMUNITY o|--o{ BILLING_PROCESSOR_SETTINGS : "seller (polymorphic, optional; person too)"
+  EXT_PLATFORM o|--o{ BILLING_EVENTS : "subject: a setting is the subject of its audit events"
   EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
   EXT_PLATFORM o|--o{ BILLING_EVENTS : "subject (polymorphic, optional): the hosted platform a hosting event is about"
   EXT_COMMUNITY o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
@@ -155,4 +158,19 @@ erDiagram
     datetime synced_to_processor_at
     string latest_processor_event_id
     jsonb metadata "participant text, owner-type allow-list"
+  }
+
+  BILLING_PROCESSOR_SETTINGS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, read-only after create"
+    string seller_type "NULL when the platform itself; community or person otherwise"
+    uuid seller_id
+    string processor "cash | cheque | etransfer; unique per seller (partial indexes)"
+    boolean enabled "false by default"
+    integer hold_hours "how long an unpaid order is held; 72"
+    string grant_on "confirmed | received | cleared"
+    string purposes "array: subscription, one_time, ticket, exchange"
+    text settings "encrypted JSON: where and how to pay; no default, no limit"
+    datetime acknowledged_at "the drawbacks were accepted"
+    uuid acknowledged_by_id FK "nullified if the person is removed"
   }

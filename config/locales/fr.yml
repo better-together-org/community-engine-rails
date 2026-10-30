@@ -986,6 +986,10 @@ fr:
         no_plans: Aucun plan de facturation n''a encore ete cree.
         owner_type_community: Communaute
         owner_type_person: Personne
+        payment_method_names:
+          cash: Argent comptant
+          cheque: Chèque
+          etransfer: Virement Interac
         price_section_title: Prix
         pricing_tier_solidarity_medium: Solidarite — Moyenne
         pricing_tier_solidarity_premium: Prime de solidarite
@@ -1026,6 +1030,61 @@ fr:
         toggle_deactivate: Desactiver
         update_submit: Mettre a jour le plan
         updated: Plan de facturation mis a jour avec succes.
+      processor_settings:
+        acknowledge_label: Je comprends et j'accepte ces limites.
+        acknowledged_on: Vous avez accepté ces limites le %{date}.
+        available_anywhere: Partout
+        available_only_in: Seulement en %{countries} (%{currencies})
+        disclosure_country: Il ne fonctionne que dans %{countries}, en %{currencies}.
+        disclosure_no_fee: Aucuns frais d'application ne peuvent être perçus sur ces
+          paiements.
+        disclosure_no_protection: L'acheteur n'a aucune protection contre les rétrofacturations
+          ou les litiges, et vous assumez le risque d'un paiement qui n'arrive jamais.
+        disclosure_reconcile: Vous les rapprochez à la main. Il n'y a ni reçus ni
+          remboursements automatiques.
+        disclosure_title: Avant de l’activer
+        disclosure_untracked: 'Le paiement se fait en dehors de cette plateforme.
+          Il ne peut pas être suivi : vous confirmez chacun vous-même.'
+        field_enabled: Accepter ce mode de paiement
+        field_grant_on: Donner l'accès quand le paiement est
+        field_grant_on_hint: Un chèque peut être refusé. Attendre son encaissement
+          est plus sûr.
+        field_hold_hours: Garder une commande impayée pendant (heures)
+        field_hold_hours_hint: Passé ce délai sans paiement, la commande expire et
+          ce qu'elle retenait est libéré.
+        field_method: Mode
+        field_purposes: Accepter pour
+        field_status: État
+        field_where: Où il fonctionne
+        fields:
+          cash:
+            instructions: Où et quand remettre l'argent comptant
+          cheque:
+            address: Où envoyer ou déposer le chèque
+            instructions: Autre chose que les acheteurs doivent savoir
+            payee_name: Libeller le chèque à l’ordre de
+          etransfer:
+            instructions: Référence ou autres instructions
+            recipient_email: Envoyer le virement Interac à ce courriel
+            recipient_phone: ou à ce numéro de téléphone
+        grant_on_cleared: encaissé
+        grant_on_confirmed: confirmé
+        grant_on_received: reçu
+        how_to_pay: Ce que les acheteurs voient
+        how_to_pay_hint: Montré à un acheteur seulement sur sa propre commande, après
+          qu'il a accepté les conditions. Stocké chiffré et jamais mis dans un courriel.
+        index_intro: Façons d'être payé en dehors d'un processeur de paiement. Chacune
+          est installée pour toutes les plateformes, mais ne fonctionne qu'une fois
+          activée.
+        index_title: Modes de paiement
+        purpose_exchange: Échanges
+        purpose_one_time: Achats uniques
+        purpose_subscription: Abonnements et adhésions
+        purpose_ticket: Billets d'événement
+        saved: Mode de paiement enregistré.
+        status_disabled: Désactivé
+        status_enabled: Activé
+        status_not_set_up: Non configuré
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
@@ -5062,11 +5121,13 @@ fr:
       title: 500 - Erreur interne du serveur
     messages:
       accepted: doit être accepté(e)
+      acknowledgement_required: doit être accepté avant que ce mode puisse être activé
       already_confirmed: a déjà été confirmé(e)
       blank: doit être rempli(e)
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
+      country_not_supported: n'est pas disponible en %{country}
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
@@ -5105,6 +5166,7 @@ fr:
       other_than: doit être différent de %{count}
       present: doit être vide
       price_inactive: est archivé chez le processeur de paiement
+      recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
       required: doit exister
       taken: est déjà utilisé(e)
       too_long:
@@ -5115,6 +5177,7 @@ fr:
         other: est trop court (au moins %{count} caractères)
       unknown_owner_types: 'comprend des types qui ne peuvent pas être facturés :
         %{types}'
+      unknown_setting: 'contient des champs que ce mode n''utilise pas : %{fields}'
       used_by_another_platform: est déjà utilisé par une autre plateforme
       weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
         ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',
