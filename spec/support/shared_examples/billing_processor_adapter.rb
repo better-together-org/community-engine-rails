@@ -17,13 +17,20 @@ RSpec.shared_examples 'a billing processor adapter' do
     expect(adapter.sanitize_payload(payload)).not_to include('customer_email')
   end
 
-  it 'overrides and accepts the documented keywords for each advertised capability' do
+  # An adapter may name its keywords or take a named catch-all (`**args`). An
+  # anonymous `**` does not count: it accepts anything without ever reading it,
+  # which is how the base class stubs are written.
+  it 'overrides and accepts the documented keywords, including context:, for each advertised capability' do
     BetterTogether::Billing::ProcessorAdapter::CAPABILITY_METHODS.slice(*adapter.capabilities).each_value do |methods|
       methods.each do |name, keywords|
-        params = adapter.method(name).parameters
-        expect(adapter.method(name).owner).not_to eq(BetterTogether::Billing::ProcessorAdapter), "#{name} not overridden"
-        expect(params.any? { |type, _| type == :keyrest } || keywords.all? { |k| params.include?([:keyreq, k]) || params.include?([:key, k]) })
-          .to be(true), "#{name} must accept #{keywords.inspect}"
+        method = adapter.method(name)
+        params = method.parameters
+        named_catch_all = params.any? { |type, param| type == :keyrest && param != :** }
+        explicit = keywords.all? { |keyword| params.include?([:keyreq, keyword]) || params.include?([:key, keyword]) }
+
+        expect(method.owner).not_to eq(BetterTogether::Billing::ProcessorAdapter), "#{name} not overridden"
+        expect(named_catch_all || explicit)
+          .to be(true), "#{name} must accept #{keywords.inspect} (an anonymous ** does not count)"
       end
     end
   end

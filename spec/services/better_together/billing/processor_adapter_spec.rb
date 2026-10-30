@@ -20,6 +20,22 @@ module BetterTogether
         expect { described_class.verify!(stale) }.to raise_error(described_class::ContractError, /contract/)
       end
 
+      it 'accepts an adapter registered under the name it reports' do
+        expect(described_class.verify!(adapter, name: :fake)).to eq(adapter)
+        expect(described_class.verify!(adapter, name: 'fake')).to eq(adapter)
+      end
+
+      it 'rejects an adapter registered under a name it does not report' do
+        expect { described_class.verify!(adapter, name: :stripe) }
+          .to raise_error(described_class::ContractError, /registered as stripe but reports processor_name fake/)
+      end
+
+      it 'documents a context for every capability method, so no call is made without a tenant' do
+        keywords = described_class::CAPABILITY_METHODS.values.flat_map(&:values)
+
+        expect(keywords).to all(include(:context))
+      end
+
       it 'fails closed on abstract and unsupported methods' do
         bare = Class.new(described_class) { def processor_name = :bare }.new
 
