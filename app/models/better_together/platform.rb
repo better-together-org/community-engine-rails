@@ -141,6 +141,9 @@ module BetterTogether
     # billing history is refused rather than silently dropping payment records.
     has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
 
+    # A hosted platform is what hosting-subscription events are about.
+    include BetterTogether::Billing::Subjectable
+
     has_many :storage_configurations,
              class_name: 'BetterTogether::StorageConfiguration',
              dependent: :destroy

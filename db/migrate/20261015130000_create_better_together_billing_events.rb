@@ -10,6 +10,11 @@
 #   so a jsonb column cannot hold it, and an encrypted column takes no default.
 # * The vendor's own event time is kept separately from when we received it, so a stale
 #   event can be told apart from a newer one.
+# * subject is what the event is about (an order, a Joatu agreement, a platform...): a
+#   polymorphic reference limited to types that opted in with Billing::Subjectable.
+#   outcome_kind is the processor-neutral meaning of the outcome (payment_failed,
+#   refund_issued...) that notifications and reports key off; processor event names
+#   never leave the adapter.
 # * claimed_at is a short lease taken while a job processes the event, so two jobs for
 #   the same event (a duplicate delivery, a replay) never run the processor at once.
 class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
@@ -18,13 +23,16 @@ class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
   def up
     return if table_exists?(TABLE)
 
-    create_bt_table :billing_events do |t|
+    create_bt_table :billing_events do |t| # rubocop:disable Metrics/BlockLength
       t.references :platform, null: false, type: :uuid, index: { name: 'idx_bt_billing_events_platform' },
                               foreign_key: { to_table: :better_together_platforms }
       t.string :billable_owner_type
       t.uuid :billable_owner_id
       t.string :beneficiary_type
       t.uuid :beneficiary_id
+      t.string :subject_type
+      t.uuid :subject_id
+      t.string :outcome_kind
       t.string :processor, null: false
       t.string :event_type, null: false
       t.string :event_id, null: false
@@ -61,6 +69,8 @@ class CreateBetterTogetherBillingEvents < ActiveRecord::Migration[7.2]
     add_index TABLE, %i[processor event_id], unique: true, name: 'idx_bt_billing_events_processor_event'
     add_index TABLE, %i[billable_owner_type billable_owner_id], name: 'idx_bt_billing_events_owner'
     add_index TABLE, %i[beneficiary_type beneficiary_id], name: 'idx_bt_billing_events_beneficiary'
+    add_index TABLE, %i[subject_type subject_id], name: 'idx_bt_billing_events_subject'
+    add_index TABLE, :outcome_kind, name: 'idx_bt_billing_events_outcome_kind'
     add_index TABLE, :processing_status, name: 'idx_bt_billing_events_processing_status'
     add_index TABLE, :last_attempted_at, name: 'idx_bt_billing_events_last_attempted_at'
     add_index TABLE, :payload_redacted_at, name: 'idx_bt_billing_events_payload_redacted_at'

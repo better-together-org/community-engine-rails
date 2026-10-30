@@ -29,6 +29,48 @@ module BetterTogether
         expect(build(:better_together_billing_event, processor: 'other', event_id: 'evt_1')).to be_valid
       end
 
+      describe 'subject' do
+        let(:subject_platform) { create(:better_together_platform) }
+
+        it 'accepts only registered subject types' do
+          expect(Subjectable.model_names).to include('BetterTogether::Platform')
+          expect(build(:better_together_billing_event, subject: subject_platform)).to be_valid
+
+          Subjectable.model_names.delete('BetterTogether::Platform')
+          expect(build(:better_together_billing_event, subject: subject_platform)).not_to be_valid
+        ensure
+          Subjectable.model_names << 'BetterTogether::Platform'
+        end
+
+        it 'finds the events about a record' do
+          about = create(:better_together_billing_event, subject: subject_platform)
+          create(:better_together_billing_event)
+
+          expect(described_class.about(subject_platform)).to contain_exactly(about)
+        end
+
+        it 'does not re-check the subject type when something else changes' do
+          event = create(:better_together_billing_event, subject: subject_platform)
+          Subjectable.model_names.delete('BetterTogether::Platform')
+
+          expect { event.dead_letter!(reason: 'stale_unresolved_drift') }.not_to raise_error
+        ensure
+          Subjectable.model_names << 'BetterTogether::Platform'
+        end
+
+        it 'is optional' do
+          expect(build(:better_together_billing_event, subject: nil)).to be_valid
+        end
+      end
+
+      describe 'outcome_kind' do
+        it 'accepts the shared vocabulary or nothing, and nothing else' do
+          EventResult::OUTCOME_KINDS.each { |kind| expect(build(:better_together_billing_event, outcome_kind: kind.to_s)).to be_valid }
+          expect(build(:better_together_billing_event, outcome_kind: nil)).to be_valid
+          expect(build(:better_together_billing_event, outcome_kind: 'stripe_invoice_paid')).not_to be_valid
+        end
+      end
+
       describe 'owners' do
         let(:community) { create(:better_together_community) }
 

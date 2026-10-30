@@ -26,6 +26,37 @@ RSpec.describe BetterTogether::Billing::EventProcessor do
     end
   end
 
+  describe 'what the outcome says happened' do
+    it 'keeps the processor-neutral outcome kind on the event' do
+      event = create(:better_together_billing_event,
+                     payload: { 'id' => 'evt_k', 'type' => 'fake.invoice.payment_failed', 'outcome' => 'alerted',
+                                'outcome_kind' => 'payment_failed' })
+
+      described_class.call(event)
+
+      expect(event.reload).to have_attributes(processing_status: 'alerted', outcome_kind: 'payment_failed')
+    end
+
+    it 'keeps the subject the adapter reports' do
+      subject_platform = create(:better_together_platform)
+      result = BetterTogether::Billing::EventResult.new(status: :processed, outcome_kind: :payment_succeeded, subject: subject_platform)
+      allow(adapter).to receive(:process_event).and_return(result)
+      event = event_with('processed')
+
+      described_class.call(event)
+
+      expect(event.reload).to have_attributes(subject: subject_platform, outcome_kind: 'payment_succeeded')
+    end
+
+    it 'leaves the outcome kind empty when the adapter reports none' do
+      event = event_with('processed')
+
+      described_class.call(event)
+
+      expect(event.reload.outcome_kind).to be_nil
+    end
+  end
+
   it 'gives the adapter the platform context of the event, not an ambient one' do
     event = event_with('processed')
     Current.platform = create(:better_together_platform)

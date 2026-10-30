@@ -30,11 +30,14 @@ module BetterTogether
 
       belongs_to :billable_owner, polymorphic: true, optional: true
       belongs_to :beneficiary, polymorphic: true, optional: true
+      belongs_to :subject, polymorphic: true, optional: true
 
       validates :processor, format: { with: /\A[a-z][a-z0-9_]*\z/ }
       validates :event_type, :event_id, presence: true
       validates :event_id, uniqueness: { scope: :processor }
       validates :processing_status, inclusion: { in: PROCESSING_STATUSES }
+      validates :outcome_kind, inclusion: { in: EventResult::OUTCOME_KINDS.map(&:to_s) }, allow_nil: true
+      validate :subject_type_registered, if: :subject_changed?
       validate :owner_types_registered, if: :owners_changed?
       validate :owners_on_this_platform, if: :owners_changed?
 
@@ -48,6 +51,7 @@ module BetterTogether
       scope :with_retries, -> { where(arel_table[:attempt_count].gt(1)) }
       scope :repeated_failures, -> { failed.where(arel_table[:attempt_count].gteq(REPEATED_FAILURE_ATTEMPT_THRESHOLD)) }
       scope :payload_unredacted, -> { where(payload_redacted_at: nil) }
+      scope :about, ->(record) { where(subject_type: record.class.name, subject_id: record.id) }
       scope :for_owner_or_beneficiary, lambda { |record|
         owner_match = arel_table[:billable_owner_type].eq(record.class.name).and(arel_table[:billable_owner_id].eq(record.id))
         beneficiary_match = arel_table[:beneficiary_type].eq(record.class.name).and(arel_table[:beneficiary_id].eq(record.id))
@@ -172,6 +176,14 @@ module BetterTogether
 
       def minimal_payload = payload.to_h.slice('id', 'type')
 
+      def subject_changed?
+        subject_type_changed? || subject_id_changed?
+      end
+
+      def subject_type_registered
+        errors.add(:subject_type, :inclusion) if subject_type.present? && Billing::Subjectable.model_names.exclude?(subject_type)
+      end
+
       def owners_changed?
         billable_owner_type_changed? || billable_owner_id_changed? || beneficiary_type_changed? || beneficiary_id_changed?
       end
@@ -187,7 +199,7 @@ module BetterTogether
 
       # An owner that is bound to one platform must be on this event's platform.
       def owners_on_this_platform
-        [billable_owner, beneficiary].compact.each do |owner|
+        [billable_owner, beneficiary, subject].compact.each do |owner|
           bound = owner.try(:billing_bound_platform_id)
           errors.add(:platform, :platform_owner_mismatch) if bound.present? && platform_id.present? && bound != platform_id
         end
