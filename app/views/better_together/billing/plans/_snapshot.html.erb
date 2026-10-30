@@ -1,0 +1,33 @@
+<turbo-frame id="billing-plan-processor-snapshot">
+  <div class="card">
+    <div class="card-header">
+      <strong><%= t('better_together.billing.plans.snapshot_title', processor: plan.processor) %></strong>
+    </div>
+    <div class="card-body" id="<%= dom_id(plan, :snapshot_details) %>">
+      <% if snapshot.error == :unavailable %>
+        <p class="text-warning mb-0 billing-plan-snapshot-error"><%= t('better_together.billing.plans.snapshot_unavailable') %></p>
+      <% elsif snapshot.error == :not_linked %>
+        <p class="text-muted mb-0"><%= t('better_together.billing.plans.snapshot_not_linked') %></p>
+      <% elsif snapshot.price.nil? %>
+        <p class="text-danger mb-0 billing-plan-snapshot-error"><%= t('better_together.billing.plans.snapshot_not_found') %></p>
+      <% else %>
+        <dl class="row mb-0">
+          <dt class="col-sm-5"><%= t('better_together.billing.plans.field_amount_cents') %></dt>
+          <dd class="col-sm-7"><%= billing_amount(snapshot.price.amount_cents, snapshot.price.currency) %> / <%= billing_interval_label(snapshot.price.interval) %></dd>
+          <dt class="col-sm-5"><%= t('better_together.billing.plans.field_active') %></dt>
+          <dd class="col-sm-7"><%= snapshot.price.active? ? t('better_together.billing.plans.status_active') : t('better_together.billing.plans.status_inactive') %></dd>
+          <% if snapshot.product %>
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor_product_id') %></dt>
+            <dd class="col-sm-7"><%= snapshot.product.name.presence || snapshot.product.product_id %></dd>
+          <% end %>
+        </dl>
+        <% if snapshot.drift.any? %>
+          <div class="alert alert-warning mt-3 mb-0 billing-plan-snapshot-drift" role="alert">
+            <%= t('better_together.billing.plans.snapshot_drift',
+                  fields: snapshot.drift.map { |field| t("better_together.billing.plans.field_#{field}") }.to_sentence) %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

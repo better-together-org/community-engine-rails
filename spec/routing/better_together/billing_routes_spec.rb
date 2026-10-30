@@ -55,4 +55,41 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
       end
     end
   end
+
+  describe 'the plan routes' do
+    it 'live under /:locale/billing, not under the host dashboard' do
+      expect(get: '/en/billing/plans').to route_to(controller: 'better_together/billing/plans', action: 'index', locale: 'en')
+      expect(get: '/en/billing/plans/abc').to route_to(controller: 'better_together/billing/plans', action: 'show', locale: 'en', id: 'abc')
+      expect(get: '/en/host/billing/plans').not_to route_to(controller: 'better_together/billing/plans', action: 'index', locale: 'en')
+    end
+
+    it 'resolves an HTML GET to the plans controller, not the pages catch-all' do
+      expect(get: '/en/billing/plans/new').to route_to(controller: 'better_together/billing/plans', action: 'new', locale: 'en')
+    end
+
+    it 'has member routes to retry a sync and to read the processor snapshot' do
+      expect(post: '/en/billing/plans/abc/sync').to route_to(controller: 'better_together/billing/plans', action: 'sync', locale: 'en',
+                                                             id: 'abc')
+      expect(get: '/en/billing/plans/abc/snapshot').to route_to(controller: 'better_together/billing/plans', action: 'snapshot', locale: 'en',
+                                                                id: 'abc')
+    end
+
+    it 'has no destroy route' do
+      expect(delete: '/en/billing/plans/abc').not_to be_routable
+    end
+
+    it 'serves option lists from one index endpoint' do
+      expect(get: '/en/billing/processor_options')
+        .to route_to(controller: 'better_together/billing/processor_options', action: 'index', locale: 'en')
+      expect(post: '/en/billing/processor_options').not_to be_routable
+    end
+
+    it 'is constrained to the available locales' do
+      expect(get: '/zz/billing/plans').not_to route_to(controller: 'better_together/billing/plans', action: 'index', locale: 'zz')
+    end
+
+    it 'keeps the helper names the navigation items call' do
+      expect(BetterTogether::Engine.routes.url_helpers).to respond_to(:billing_plans_url, :billing_plans_path)
+    end
+  end
 end

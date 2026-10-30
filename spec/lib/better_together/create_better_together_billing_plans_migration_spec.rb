@@ -28,12 +28,25 @@ RSpec.describe 'Create Better Together billing plans migration' do # rubocop:dis
     expect(columns['currency'].null).to be false
   end
 
-  it 'makes a price unique per processor and a product unique per processor when present' do
+  it 'makes a price unique per processor and leaves a product shareable between prices' do
     indexes = connection.indexes(:better_together_billing_plans).index_by(&:name)
 
     expect(indexes['idx_bt_billing_plans_processor_price']).to have_attributes(unique: true, columns: %w[processor processor_price_id])
-    expect(indexes['idx_bt_billing_plans_processor_product']).to have_attributes(unique: true,
-                                                                                 where: a_string_matching(/processor_product_id IS NOT NULL/))
+    expect(indexes['idx_bt_billing_plans_processor_product']).to have_attributes(unique: false, columns: %w[processor processor_product_id])
+  end
+
+  it 'requires a platform, with a foreign key, and makes the identifier unique per platform' do
+    indexes = connection.indexes(:better_together_billing_plans).index_by(&:name)
+
+    expect(columns['platform_id'].null).to be false
+    expect(connection.foreign_keys(:better_together_billing_plans).map(&:to_table)).to include('better_together_platforms')
+    expect(indexes['idx_bt_billing_plans_platform_identifier']).to have_attributes(unique: true, columns: %w[platform_id identifier])
+  end
+
+  it 'lets the price be empty until the processor has created it, and tracks the sync' do
+    expect(columns['processor_price_id'].null).to be true
+    expect(columns['sync_status']).to have_attributes(null: false, default: 'pending')
+    expect(columns.keys).to include('sync_error', 'sync_attempted_at', 'manages_processor_product')
   end
 
   it 'drops and recreates cleanly' do

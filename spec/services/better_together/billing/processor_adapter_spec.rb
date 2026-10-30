@@ -36,6 +36,26 @@ module BetterTogether
         expect(keywords).to all(include(:context))
       end
 
+      it 'lists plan_sync and lookups methods with the context keyword' do
+        methods = described_class::CAPABILITY_METHODS
+
+        expect(methods[:plan_sync].keys).to contain_exactly(:sync_plan, :fetch_price, :fetch_product)
+        expect(methods[:lookups].keys).to eq([:lookup])
+        expect(described_class::CAPABILITIES).to include(:lookups)
+      end
+
+      it 'treats every processor-backed field as create-only unless told otherwise' do
+        bare = Class.new(described_class) { def processor_name = :bare }.new
+
+        expect(bare.field_rules).to eq({})
+        expect(bare.lookup_kinds).to eq([])
+        expect(bare.supported_currencies).to be_nil
+        expect { bare.lookup(context: nil, kind: :products, search: nil, scope: {}, limit: 1) }
+          .to raise_error(described_class::UnsupportedCapabilityError, /lookups/)
+        expect { bare.sync_plan(context: nil, plan: nil, idempotency_key: 'k') }
+          .to raise_error(described_class::UnsupportedCapabilityError, /plan_sync/)
+      end
+
       describe 'settlement' do
         it 'treats a plain adapter as a remote, automatically renewing, fee-collecting processor' do
           expect(adapter).to have_attributes(settlement_kind: :remote, recurring_mode: :automatic, supported_countries: nil,

@@ -1,0 +1,35 @@
+%% Billing — tenancy and ownership. Solid lines exist today. Dashed lines are the designed-for,
+%% not-yet-built shape: a per-platform processor configuration and community-defined plans.
+flowchart LR
+  subgraph Platform_A[Platform A host]
+    PA[Platform]
+    CA[ProcessorContext<br/>environment-backed, host only]
+    PLA[Billing plans]
+    EA[Billing events]
+    PYA[Pay customers, subscriptions,<br/>charges, payment methods]
+  end
+  subgraph Platform_B[Platform B]
+    PB[Platform]
+    CB[No context today:<br/>billing is off]
+    PLB[Billing plans]
+    EB[Billing events]
+  end
+  PROC[(Payment processor account)]
+  PA --> PLA
+  PA --> EA
+  PA --> PYA
+  PB --> PLB
+  PB --> EB
+  PA -->|context_for| CA
+  CA -->|every adapter call| PROC
+  PB -.->|context_for returns nil| CB
+  CB -.->|cannot reach| PROC
+  PLA -.- X1[Rows of one platform never join rows of another:<br/>platform_id NOT NULL, composite foreign keys,<br/>access only through platform.billing_plans]
+  SELLER[Community seller<br/>deferred]
+  SELLER -.->|owns plans, nullable seller column| PLA
+  CFG[Per-platform processor configuration<br/>deferred, encrypted credentials]
+  CFG -.->|context_for reads it| CB
+  MGR[Steward<br/>manage_platform]
+  MGR -->|manage_billing? owner| PA
+  CMGR[Community steward<br/>manage_community_billing, deferred]
+  CMGR -.->|manage_billing? community| SELLER

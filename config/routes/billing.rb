@@ -21,3 +21,26 @@
 if [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
   mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/pay/webhooks/') }
 end
+
+# What a billing owner can manage. Declared as a concern so a community-scoped mount
+# (`resources :communities, only: [] { concerns :billing_plans }`) can reuse it later.
+# Not nested under the host dashboard and carrying no route-level permission check:
+# access is sign-in plus Pundit on the billing owner (see Billing::OwnerScoped).
+concern :billing_plans do
+  namespace :billing do
+    resources :plans, except: :destroy do
+      member do
+        post :sync
+        get :snapshot
+      end
+    end
+    resources :processor_options, only: :index
+  end
+end
+
+# Same locale and base-path scopes as the localized block in routes.rb.
+scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
+  scope path: BetterTogether.route_scope_path do
+    concerns :billing_plans
+  end
+end
