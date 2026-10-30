@@ -11,7 +11,7 @@ Instructions for GitHub Copilot and other automated contributors working in this
 > **Note**: This file complements `.github/copilot-instructions.md`. While that file focuses on *what* to build and *how* to structure code, this file focuses on *how* to run, test, and validate your changes.
 
 ## Project
-- Ruby: 3.4.10 (installed via rbenv in setup)
+- Ruby: 3.4.12 (installed via rbenv in setup)
 - Rails: 8.1 (gemspec supports `>= 7.2, < 8.2`)
 - Node: 20
 - DB: PostgreSQL + PostGIS
@@ -19,9 +19,10 @@ Instructions for GitHub Copilot and other automated contributors working in this
 - Test app: `spec/dummy`
 
 ## Setup
-- Environment runs a setup script that installs Ruby 3.4.10, Node 20, and Postgres + PostGIS, then prepares databases.
+- Environment runs a setup script that installs Ruby 3.4.12, Node 20, and Postgres + PostGIS, then prepares databases.
 - **Host Ruby**: `bin/install-ruby-version` bootstraps the host toolchain — rbenv, the `ruby-build` and `rbenv-gemset` plugins, and the Ruby pinned in `.ruby-version` (refreshing the `ruby-build` definition list if needed). Idempotent; run it if `ruby`/`bundle` on the host error with `rbenv: version '...' is not installed`.
 - **Docker Environment**: All commands requiring database access must use `bin/dc-run` to execute within the containerized environment.
+- **Cloud agent sessions** (Claude Code on the web / GitHub-triggered runs): the `bin/dc-*` workflow can't build its image there. Use `bin/cloud-session-env` (`setup`, then `run <cmd>` in place of `bin/dc-run`, `db-setup` in place of `bin/parallel-setup`, `diagrams` in place of `bin/export_schema_diagrams`). See [`docs/development/cloud_session_environment.md`](docs/development/cloud_session_environment.md) for the reasons and the spec groups that fail there for environmental reasons.
 - **Dummy App Commands**: Use `bin/dc-run-dummy` for Rails commands that need the dummy app context (e.g., `bin/dc-run-dummy rails console`, `bin/dc-run-dummy rails db:migrate`).
 - Databases:
   - development: `community_engine_development`

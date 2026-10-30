@@ -20,6 +20,7 @@ module BetterTogether
     include Privacy
     include Metrics::Shareable
     include Metrics::Viewable
+    include Quotas::Owner
     include Reportable
     include Searchable
     include Shortlinkable
@@ -104,6 +105,10 @@ module BetterTogether
     # The community's own place. A plain association, not Locatable::One (which also makes a record Mappable).
     has_one :location, class_name: 'BetterTogether::Geography::LocatableLocation', as: :locatable,
                        dependent: :destroy, autosave: true
+
+    # Adds the located_in(place) scope (settlement pages list the communities located in them) without making the
+    # community Mappable; it works off the has_one :location above.
+    include Geography::Locatable::LocatedIn
 
     accepts_base64_image :logo_data, attachment: :logo, filename_field: :logo_filename, default_name: 'logo'
     accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,

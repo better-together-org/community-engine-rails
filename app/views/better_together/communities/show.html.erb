@@ -6,15 +6,8 @@
 
 <div class="container-fluid mb-3 px-0">
 
-  <div class="profile-header position-relative">
-    <!-- Cover Image Section -->
-    <div class="cover-image-container">
-      <%= cover_image_tag(@resource) %>
-    </div>
-
-    <div class="profile-image-wrapper">
-      <%= profile_image_tag(@resource) %>
-    </div>
+  <div class="profile-header position-relative" id="<%= dom_id(@resource, :profile_header) %>">
+    <%= render 'better_together/communities/header_media', community: @resource %>
   </div>
 
   <!-- Profile Information Section -->
@@ -99,12 +92,8 @@
               <%= @resource.description.presence || t('better_together.communities.show.about.no_description') %>
             </div>
 
-            <% if @resource.location&.display_name.present? %>
-              <p class="community-location card-text" id="community-location">
-                <i class="fas fa-map-marker-alt me-1" aria-hidden="true"></i>
-                <%= @resource.location.display_name %>
-              </p>
-            <% end %>
+            <%= render 'better_together/communities/location_line', community: @resource %>
+            <%= render 'better_together/communities/about_extra', community: @resource %>
 
             <%= share_buttons(shareable: @resource) if @resource.privacy_public? %>
           </div>

@@ -169,8 +169,8 @@ fr:
         identifier: Identifiant
         lock_version: Version de verrouillage
         protected: Protégé
-        region_settlements: Établissements régionaux
-        settlements: Établissements
+        region_settlements: Localités de la région
+        settlements: Localités
         slug: Identifiant URL
         slugs: Identifiants URL
         state: :activerecord.models.state
@@ -187,7 +187,7 @@ fr:
         identifier: Identifiant
         lock_version: Version de verrouillage
         protected: Protégé
-        region_settlements: Établissements régionaux
+        region_settlements: Localités de la région
         regions: Régions
         slug: Identifiant URL
         slugs: Identifiants URL
@@ -202,7 +202,7 @@ fr:
         lock_version: Version de verrouillage
         protected: Protégé
         regions: Régions
-        settlements: Établissements
+        settlements: Localités
         slug: Identifiant URL
         slugs: Identifiants URL
         string_translations: Traductions de chaînes
@@ -654,8 +654,8 @@ fr:
       better_together/geography/country: Pays
       better_together/geography/country_continent: Pays Continent
       better_together/geography/region: Région
-      better_together/geography/region_settlement: Établissement Régional
-      better_together/geography/settlement: Établissement
+      better_together/geography/region_settlement: Localité de la région
+      better_together/geography/settlement: Localité
       better_together/geography/state: État
       better_together/guest_access: Accès Invité
       better_together/identification: Identification
@@ -1132,6 +1132,10 @@ fr:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Pages associées
+        attachment_preview:
+          image: 'Image : %{caption}'
+          opens_in_new_tab: "(s'ouvre dans un nouvel onglet)"
+          video: 'Vidéo : %{url}'
         checklist_block:
           not_found: Liste de vérification introuvable.
           select_prompt: "— Sélectionner une liste de vérification —"
@@ -1246,6 +1250,7 @@ fr:
           default: Modèle par défaut
           host_community_contact_details: Coordonnées de la communauté hôte
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: Aucune URL de vidéo configurée.
           title: Lecteur vidéo YouTube
           url_help: Accepte les URL YouTube, Vimeo ou tout URL d'intégration direct.
@@ -1657,16 +1662,6 @@ fr:
         status_draft: Brouillon
         status_label: Statut
       location: Lieu
-      location_picker:
-        announcements:
-          cancelled: Nouvelle adresse annulée. Retour au champ de recherche de lieu.
-          creating: Création d'une nouvelle adresse. Remplissez les champs d'adresse
-            ci-dessous, puis enregistrez l'événement.
-        cancel_new_address: Annuler la nouvelle adresse
-        create_row:
-          new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
-          use_typed_name: Utiliser « %{q} » comme nom de lieu personnalisé
-        new_address_legend: Nouvelle adresse
       login_required: Veuillez vous connecter pour gérer les confirmations de présence.
       model_invalid: 'La validation a échoué : %{errors}'
       no_attendees: Aucun participant pour l'instant
@@ -2028,20 +2023,40 @@ fr:
       locatable_location:
         errors:
           no_location_source: Vous devez préciser soit un nom, soit un emplacement
+      place_scoped_index:
+        events_heading: Événements à %{name}
+        posts_heading: Publications à %{name}
       regions:
         index:
           title: Régions
-      settlements:
-        index:
-          title: Établissements
         show:
-          destroy: Détruire l'établissement
-          edit-settlement: Modifier l'établissement
-          view-all-settlements: Voir tous les établissements
+          settlements_heading: Localités dans %{name}
+      settlements:
+        edit:
+          heading: Modification de la localité
+          page_title: Modifier %{name} | %{resources}
+        index:
+          description: Villes, villages, hameaux, communautés autochtones et autres
+            lieux nommés.
+          new: Nouvelle localité
+          title: Localités
+        new:
+          back: Retour aux localités
+          heading: Nouvelle localité
+        show:
+          destroy: Détruire la localité
+          edit-settlement: Modifier la localité
+          events_loading: Chargement des événements...
+          posts_loading: Chargement des publications...
+          sections_aria: Sections de la localité
+          view-all-settlements: Voir toutes les localités
         toolbar:
-          back_to_geography_settlements: Retour aux établissements
-          save_geography_settlement: Sauvegarder l'établissement
-          view_geography_settlement: Voir l'établissement
+          back_to_geography_settlements: Retour aux localités
+          save_geography_settlement: Sauvegarder la localité
+          view_geography_settlement: Voir la localité
+      states:
+        show:
+          settlements_tab: Localités
     global:
       add: Ajouter
     globals:
@@ -2311,6 +2326,22 @@ fr:
     labelable:
       custom-label-placeholder: Votre étiquette personnalisée
     loading: Chargement...
+    locations:
+      picker:
+        announcements:
+          cancelled: Nouvelle adresse annulée. Retour au champ de recherche de lieu.
+          creating: Création d'une nouvelle adresse. Remplissez les champs d'adresse
+            ci-dessous, puis enregistrez.
+        cancel_new_address: Annuler la nouvelle adresse
+        create_new: Créer un(e) nouveau/nouvelle %{model}
+        hint: Recherchez une adresse, un bâtiment ou une localité existante (ville,
+          village, hameau, communauté autochtone ou autre lieu nommé). S'il n'est
+          pas répertorié, choisissez « Créer une nouvelle adresse » ou utilisez le
+          texte saisi comme nom personnalisé.
+        label: Lieu
+        new_address_legend: Nouvelle adresse
+        new_named_with_query: 'Créer un(e) nouveau/nouvelle %{model} : « %{q} »'
+        use_typed_name: Utiliser « %{q} » comme nom de lieu personnalisé
     mailer:
       footer:
         no_reply: Ceci est un message automatisé. Veuillez ne pas répondre à cet e-mail.
@@ -2765,7 +2796,7 @@ fr:
         geography_countries: Pays
         geography_maps: Cartes
         geography_regions: Régions
-        geography_settlements: Établissements
+        geography_settlements: Localités
         geography_states: États
         host_dashboard: Tableau de bord de l'hôte
         host_dashboard_membership_review: Revue des adhésions
@@ -5065,6 +5096,7 @@ fr:
     tabs:
       about: À propos
       attendees: Participants
+      communities: Communautés
       contact: Contact
       events: Événements
       federation: Fédération
@@ -5518,12 +5550,12 @@ fr:
     platform: Plateforme
     profile: Profil
     region: Région
-    region_settlement: Établissement Régional
+    region_settlement: Localité de la région
     report: Rapport
     resource_permission: Permission de ressource
     role: Rôle
     seed: Seed
-    settlement: Établissement
+    settlement: Localité
     state: État
     user: Utilisateur
   roles:
@@ -5532,6 +5564,17 @@ fr:
     button: Rechercher
     placeholder: Rechercher...
   seed_catalog:
+    geography:
+      categories:
+        continents: Continents
+        countries: Pays
+        provinces: Provinces et territoires
+        regions: Régions
+        settlements: Localités
+      description: Continents, pays, provinces et territoires, régions et localités
+        (villes, villages, hameaux, communautés autochtones et autres lieux nommés)
+        utilisés pour situer les emplacements dans la hiérarchie géographique.
+      label: Données de référence géographiques
     index:
       actions: Actions
       category: Catégorie

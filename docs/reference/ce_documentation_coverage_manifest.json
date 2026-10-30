@@ -8727,9 +8727,9 @@
     },
     {
       "route": [
-        "GET /:locale/events/available_locations(.:format)"
+        "GET /:locale/locations/available(.:format)"
       ],
-      "controller_action": "better_together/events#available_locations",
+      "controller_action": "better_together/locations#available",
       "audience": "end_user",
       "html_view": false,
       "views": [],

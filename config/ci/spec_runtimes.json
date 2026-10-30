@@ -688,7 +688,7 @@
   "spec/requests/better_together/events/recurrence_form_integration_spec.rb": 20.8,
   "spec/requests/better_together/events/timezone_display_spec.rb": 3.4,
   "spec/requests/better_together/events/timezone_selector_spec.rb": 3.7,
-  "spec/requests/better_together/events_available_locations_spec.rb": 6.5,
+  "spec/requests/better_together/locations_available_spec.rb": 6.5,
   "spec/requests/better_together/events_controller_spec.rb": 25.8,
   "spec/requests/better_together/events_datetime_partial_spec.rb": 1.0,
   "spec/requests/better_together/events_status_field_spec.rb": 1.0,

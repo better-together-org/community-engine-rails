@@ -1,0 +1,13 @@
+---
+title: Location line
+audience:
+- community_member
+- developer
+journey_step: 'As a visitor, I open a community page: location line.'
+callouts:
+- :id: hook
+  :title: Location line
+  :description: The location line is its own partial; a host can link the place.
+accessibility_notes: The default markup is unchanged; hooks only add override points.
+slug: community_show_hooks_location
+device: mobile

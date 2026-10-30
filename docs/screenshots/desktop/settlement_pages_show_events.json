@@ -1,0 +1,11 @@
+{
+  "name": "settlement_pages_show_events",
+  "device": "desktop",
+  "url": "/en/g/settlements/harbour-cove",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "settlement_page_tabs",
+  "flow": "events",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_page_tabs_spec.rb"
+}
