@@ -7,6 +7,7 @@ RSpec.describe BetterTogether::Billing::ReplayEvent do
 
   include_context 'with clean billing processors'
 
+  let!(:host_platform) { configure_host_platform }
   let(:requester) { create(:better_together_person) }
   let(:event) do
     create(:better_together_billing_event, processing_status: 'dead_lettered', dead_lettered_at: 1.hour.ago,
@@ -23,6 +24,22 @@ RSpec.describe BetterTogether::Billing::ReplayEvent do
     expect(result).to have_attributes(enqueued: true, reason: :enqueued)
     expect(event.reload).to have_attributes(processing_status: 'replayed', replay_count: 1, dead_letter_reason: nil,
                                             last_replay_requested_by_id: requester.id)
+  end
+
+  it 'starts the replay with a fresh attempt count' do
+    event.update!(attempt_count: 5)
+
+    described_class.call(billing_event: event, requested_by: requester)
+
+    expect(event.reload.attempt_count).to eq(0)
+  end
+
+  it 'refuses events whose platform no longer has billing configured for the processor' do
+    elsewhere = create(:better_together_billing_event, platform: create(:better_together_platform), processing_status: 'dead_lettered',
+                                                       dead_lettered_at: 1.hour.ago, dead_letter_reason: 'retries_exhausted')
+
+    expect(described_class.call(billing_event: elsewhere, requested_by: requester))
+      .to have_attributes(enqueued: false, reason: :platform_not_configured)
   end
 
   it 'refuses events that are not dead-lettered' do

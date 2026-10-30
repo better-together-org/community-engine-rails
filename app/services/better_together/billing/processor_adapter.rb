@@ -57,12 +57,23 @@ module BetterTogether
       # Pay webhook event names this adapter wants delivered, e.g. "stripe.invoice.paid".
       def webhook_event_types = []
 
-      # Turns a vendor webhook event (as Pay delivers it) into
-      # { event_id:, event_type:, payload: Hash } for the event log.
+      # Turns a vendor webhook event (as Pay delivers it) into a Hash for the event log:
+      #   event_id:, event_type:, payload: Hash   (required)
+      #   occurred_at:  when the processor says the event happened (ordering input)
+      #   platform_id:  the platform it is for, when the event names one
+      #   account_ref:  the processor account it came from, to be matched to a platform
+      # With neither platform_id nor account_ref, the event goes to the only platform that
+      # has billing configured for this processor; if that is ambiguous it is refused
+      # (see Billing::WebhookDispatcher). Take no tenant from global state here.
       def normalize_webhook(_vendor_event) = raise(NotImplementedError, "#{self.class}#normalize_webhook")
 
-      # Processes one logged event (read event.payload) and returns a Billing::EventResult.
-      def process_event(event:) = raise(NotImplementedError, "#{self.class}#process_event")
+      # Processes one logged event (read event.payload) for the platform and processor
+      # account in `context`, and returns a Billing::EventResult.
+      #
+      # This MUST be idempotent: a job that fails after the adapter acted is retried, and
+      # a replayed event runs again. Use the event id (and, for a write, a key derived from
+      # it) to make repeating it harmless.
+      def process_event(event:, context:) = raise(NotImplementedError, "#{self.class}#process_event")
 
       # Returns a copy of a raw webhook payload that is safe to store (no PII, no secrets).
       def sanitize_payload(_payload) = raise(NotImplementedError, "#{self.class}#sanitize_payload")

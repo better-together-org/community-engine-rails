@@ -7,8 +7,10 @@ RSpec.describe BetterTogether::Billing::RedactExpiredEventPayloadsJob do
 
   before { BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new }) }
 
-  it 'uses the maintenance queue' do
-    expect(described_class.new.queue_name).to eq('maintenance')
+  let!(:host_platform) { configure_host_platform }
+
+  it 'uses the billing queue' do
+    expect(described_class.new.queue_name).to eq('billing')
   end
 
   it 'redacts only payloads older than the retention window' do

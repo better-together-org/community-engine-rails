@@ -62,6 +62,24 @@ module BetterTogether
           Billing.processor_names.select { |name| context_for(platform, name) }
         end
 
+        # Platforms that have a context for this processor (the host platform, today).
+        def platforms_with_context(processor)
+          BetterTogether::Platform.where(host: true).select { |platform| context_for(platform, processor) }
+        end
+
+        # Which platform a webhook is for, or nil when that cannot be told.
+        #
+        # An event may name its platform (`platform_id`) or the processor account it came
+        # from (`account_ref`). Without either, it is attributed to the only platform that
+        # has a context for the processor; if more than one does, that is ambiguous and
+        # nothing is guessed. A platform without a context never receives events.
+        def platform_for_webhook(processor, platform_id: nil, account_ref: nil)
+          candidates = platforms_with_context(processor)
+          candidates = candidates.select { |platform| platform.id.to_s == platform_id.to_s } if platform_id.present?
+          candidates = match_account(candidates, processor, account_ref) if account_ref.present?
+          candidates.one? ? candidates.first : nil
+        end
+
         # Warns once at boot, and only for a host that asked for billing.
         def log_missing!(logger = Rails.logger, env = ENV)
           return unless requested?(env)
@@ -70,6 +88,17 @@ module BetterTogether
           return if missing.empty?
 
           logger.warn("[billing] disabled until configured; missing: #{missing.join(', ')}")
+        end
+
+        private
+
+        # Contexts that know their processor account must match it; contexts that do
+        # not (account_ref nil) are only usable when they are the single candidate.
+        def match_account(candidates, processor, account_ref)
+          known = candidates.select { |platform| context_for(platform, processor).account_ref.present? }
+          return candidates if known.empty?
+
+          known.select { |platform| context_for(platform, processor).account_ref.to_s == account_ref.to_s }
         end
       end
     end

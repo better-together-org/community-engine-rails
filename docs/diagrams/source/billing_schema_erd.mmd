@@ -4,8 +4,13 @@
 %% can never belong to a different platform than its parent. pay_webhooks is transient (Pay
 %% deletes a row once its event is processed) and has no platform.
 %% Columns marked "encrypted" are Active Record Encryption ciphertext in a text column.
-%% Later billing PRs extend this file with the event log and the plan catalog.
+%% The event log is platform-bound too, with its payload and error text encrypted. The plan catalog
+%% is added with the plans PR.
 erDiagram
+  EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
+  EXT_COMMUNITY o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
+
   EXT_PLATFORM ||--o{ PAY_CUSTOMERS : "platform / platform_id"
   EXT_PLATFORM ||--o{ PAY_MERCHANTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ PAY_SUBSCRIPTIONS : "platform / platform_id"
@@ -93,4 +98,29 @@ erDiagram
     string processor
     string event_type
     text event "encrypted JSON; no platform; deleted once processed"
+  }
+
+  BILLING_EVENTS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, read-only after create"
+    string processor "unique with event_id, across platforms"
+    string event_id "vendor event id, globally unique"
+    string event_type
+    text payload "encrypted JSON; redacted after retention"
+    text error_message "encrypted"
+    string processing_status "pending | processed | ignored | alerted | failed | dead_lettered | replayed"
+    integer attempt_count
+    integer replay_count
+    datetime first_received_at
+    datetime processor_event_created_at "when the processor says it happened"
+    datetime claimed_at "short lease while a job processes it"
+    datetime last_attempted_at
+    datetime processed_at
+    datetime payload_redacted_at
+    datetime dead_lettered_at
+    string dead_letter_reason "retries_exhausted | stale_unresolved_drift"
+    string billable_owner_type
+    uuid billable_owner_id
+    string beneficiary_type
+    uuid beneficiary_id
   }

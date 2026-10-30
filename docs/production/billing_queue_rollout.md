@@ -93,11 +93,15 @@ other numbers are, but the existing numbers are worth revisiting separately.
 
 ## Scheduled jobs
 
-`config/sidekiq_scheduler.yml` entries for billing jobs name `queue: "billing"`. Check
-on the host that sidekiq-scheduler enqueues scheduled ActiveJob classes into the
-prefixed queue; if a host sets a queue prefix and scheduled billing jobs appear in an
-unprefixed `billing` queue that nothing subscribes to, drop the `queue:` key from those
-entries so the job class decides.
+`config/sidekiq_scheduler.yml` entries for billing jobs deliberately have **no `queue:`
+key**. sidekiq-scheduler enqueues an ActiveJob class with
+`enqueue(queue: config['queue'])` (`SidekiqScheduler::Utils.enqueue_with_active_job`, checked
+in sidekiq-scheduler 6.0.2), which sets the queue name literally and skips the host's
+`queue_name_prefix`. With a prefix configured, `queue: "billing"` would put the job in an
+unprefixed `billing` queue that nothing works. Without the key, `Billing::ApplicationJob`
+(`queue_as :billing`) decides and the prefix applies. A spec fails if a scheduled billing
+job names a queue. Other scheduled jobs in the file that name a queue have the same
+characteristic on a prefixed host; that is outside billing.
 
 ## Rollout steps
 

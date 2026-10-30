@@ -227,6 +227,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
     t.string "billable_owner_type"
     t.uuid "billable_owner_id"
     t.string "beneficiary_type"
@@ -234,7 +235,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.string "processor", null: false
     t.string "event_type", null: false
     t.string "event_id", null: false
-    t.jsonb "payload", default: {}, null: false
+    t.text "payload", null: false
     t.string "processing_status", default: "pending", null: false
     t.text "error_message"
     t.integer "attempt_count", default: 0, null: false
@@ -243,7 +244,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.string "last_replay_requested_by_type"
     t.uuid "last_replay_requested_by_id"
     t.datetime "first_received_at"
+    t.datetime "processor_event_created_at"
     t.datetime "last_attempted_at"
+    t.datetime "claimed_at"
     t.datetime "processed_at"
     t.datetime "payload_redacted_at"
     t.datetime "dead_lettered_at"
@@ -253,6 +256,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["dead_lettered_at"], name: "idx_bt_billing_events_dead_lettered_at"
     t.index ["last_attempted_at"], name: "idx_bt_billing_events_last_attempted_at"
     t.index ["payload_redacted_at"], name: "idx_bt_billing_events_payload_redacted_at"
+    t.index ["platform_id"], name: "idx_bt_billing_events_platform"
     t.index ["processing_status"], name: "idx_bt_billing_events_processing_status"
     t.index ["processor", "event_id"], name: "idx_bt_billing_events_processor_event", unique: true
   end
@@ -2749,6 +2753,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_ai_log_translations", "better_together_people", column: "initiator_id"
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"
