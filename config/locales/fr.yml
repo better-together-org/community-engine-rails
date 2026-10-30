@@ -554,6 +554,11 @@ fr:
       messages:
         file_not_found: le fichier n'existe pas
         invalid_file_type: doit être un fichier markdown (.md ou .markdown)
+        platform_owner_mismatch: doit être la plateforme à laquelle appartient le
+          propriétaire
+        platform_parent_mismatch: doit être la même plateforme que le client ou l'abonnement
+          auquel il appartient
+        platform_readonly: ne peut pas être modifiée après la création de l'enregistrement
         record_invalid: 'La validation a échoué : %{errors}'
         restrict_dependent_destroy:
           has_many: Vous ne pouvez pas supprimer l'enregistrement parce que les %{record}

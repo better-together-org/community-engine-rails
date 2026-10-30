@@ -1,0 +1,32 @@
+%% Billing queue topology. Every billing job (and Pay's own jobs) runs on one queue, "billing".
+%% Sidekiq reads [queue, N] as a fetch WEIGHT: the queue is added to the poll list N times, so a
+%% higher N is polled first more often. The billing queue is the heaviest, and a dedicated
+%% capsule gives it reserved threads, so payment work never waits behind other queues.
+%% ActiveJob's queue_name_prefix applies, so a prefixed host runs <prefix>_billing.
+flowchart LR
+  subgraph producers["Producers"]
+    W[Processor webhook<br/>POST /pay/webhooks/:processor]
+    S[Sidekiq scheduler<br/>billing maintenance jobs]
+    A[Application code<br/>plan sync, replay]
+  end
+
+  W --> PJ[Pay::Webhooks::ProcessJob<br/>BillingQueueRouting]
+  PJ --> Q
+  S --> Q
+  A --> Q
+
+  Q[(billing queue<br/>prefix_billing)]
+
+  subgraph sidekiq["Sidekiq process"]
+    direction TB
+    subgraph shared["Shared workers, default capsule"]
+      SW[queues: billing weight 10<br/>default, mailers, maintenance, metrics, ...]
+    end
+    subgraph reserved["Billing capsule, reserved threads"]
+      BW[queues: billing<br/>concurrency 2]
+    end
+  end
+
+  Q --> SW
+  Q --> BW
+  SW -.-> O[Other queues<br/>maintenance, metrics, platform_sync, ...]

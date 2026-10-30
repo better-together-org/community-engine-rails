@@ -554,6 +554,10 @@ uk:
       messages:
         file_not_found: файл не існує
         invalid_file_type: має бути файл markdown (.md або .markdown)
+        platform_owner_mismatch: має бути платформою, до якої належить власник
+        platform_parent_mismatch: має бути тією самою платформою, що й клієнт або
+          підписка, до яких він належить
+        platform_readonly: не можна змінити після створення запису
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist

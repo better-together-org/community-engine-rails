@@ -554,6 +554,10 @@ en:
       messages:
         file_not_found: file does not exist
         invalid_file_type: must be a markdown file (.md or .markdown)
+        platform_owner_mismatch: must be the platform the owner belongs to
+        platform_parent_mismatch: must be the same platform as the customer or subscription
+          it belongs to
+        platform_readonly: cannot be changed once the record is created
         record_invalid: 'Validation failed: %{errors}'
         restrict_dependent_destroy:
           has_many: Cannot delete record because dependent %{record} exist

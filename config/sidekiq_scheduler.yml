@@ -46,14 +46,21 @@
   queue: "maintenance"
   description: "Regenerate per-platform XML sitemaps for all locally-hosted platforms"
 
+# Billing jobs name no `queue:` on purpose. sidekiq-scheduler enqueues an ActiveJob class
+# with `enqueue(queue: <this value>)`, which sets the queue name literally and skips the
+# host's queue_name_prefix, so a prefixed host would never see the job. Leaving it out lets
+# BetterTogether::Billing::ApplicationJob (queue_as :billing) decide, prefix included.
 "better_together:billing:redact_expired_event_payloads_daily":
   cron: "20 4 * * *" # daily at 04:20 UTC
   class: "BetterTogether::Billing::RedactExpiredEventPayloadsJob"
-  queue: "maintenance"
   description: "Redact retained billing event payloads after the replay window expires"
 
 "better_together:billing:dead_letter_stale_events_hourly":
   cron: "15 * * * *" # hourly at :15 UTC
   class: "BetterTogether::Billing::DeadLetterStaleBillingEventsJob"
-  queue: "maintenance"
   description: "Promote exhausted or stale billing events into a dead-letter state for operator review"
+
+"better_together:billing:prune_stale_pay_webhooks_daily":
+  cron: "40 4 * * *" # daily at 04:40 UTC
+  class: "BetterTogether::Billing::PruneStalePayWebhooksJob"
+  description: "Delete Pay webhook deliveries that were never processed once the replay window has passed"

@@ -5,6 +5,10 @@ Pay.setup do |config|
   config.application_name = ENV.fetch('PAY_APPLICATION_NAME', 'Community Engine')
   config.send_emails = false
 
+  # Pay's records inherit from this abstract class instead of the host's
+  # ApplicationRecord; see BetterTogether::Billing::PayRecord for why.
+  config.model_parent_class = 'BetterTogether::Billing::PayRecord'
+
   # Host identity has no built-in default; see BetterTogether::Billing::Configuration.
   config.business_name = ENV['PAY_BUSINESS_NAME'].presence
   config.business_address = ENV['PAY_BUSINESS_ADDRESS'].presence

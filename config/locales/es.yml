@@ -554,6 +554,10 @@ es:
       messages:
         file_not_found: el archivo no existe
         invalid_file_type: debe ser un archivo markdown (.md o .markdown)
+        platform_owner_mismatch: debe ser la plataforma a la que pertenece el propietario
+        platform_parent_mismatch: debe ser la misma plataforma que el cliente o la
+          suscripción a la que pertenece
+        platform_readonly: no se puede cambiar después de crear el registro
         record_invalid: 'La validación falló: %{errors}'
         restrict_dependent_destroy:
           has_many: No se puede eliminar el registro porque existen %{record} dependientes

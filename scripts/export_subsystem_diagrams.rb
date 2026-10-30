@@ -280,6 +280,15 @@ module CeSubsystemDiagramExport
       ]
     },
     {
+      key: 'billing',
+      title: 'Billing and payment processors',
+      prefix: 'ce_billing',
+      description: 'Vendor-neutral billing: the platform-bound processor event log (payloads encrypted at rest). Pay\'s own tables are described in docs/diagrams/source/billing_schema_erd.mmd. Plans join with the plan catalog.',
+      models: %w[
+        BetterTogether::Billing::Event
+      ]
+    },
+    {
       key: 'shared_supporting',
       title: 'Shared and supporting runtime surfaces',
       prefix: 'ce_shared_supporting',
