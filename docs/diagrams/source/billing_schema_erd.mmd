@@ -12,6 +12,13 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_COMMUNITY o|--o{ BILLING_PLANS : "seller (polymorphic, optional; person too)"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_ORDERS : "platform / platform_id"
+  EXT_PERSON ||--o{ BILLING_ORDERS : "buyer"
+  EXT_COMMUNITY o|--o{ BILLING_ORDERS : "seller / on_behalf_of (polymorphic, optional; person too)"
+  BILLING_ORDERS ||--o{ BILLING_ORDER_LINES : "(order_id, platform_id) composite FK"
+  BILLING_ORDERS ||--o{ BILLING_PAYMENTS : "(order_id, platform_id) composite FK"
+  BILLING_PAYMENTS ||--o{ BILLING_REFUNDS : "(payment_id, platform_id) composite FK"
+  BILLING_PLANS o|--o{ BILLING_ORDER_LINES : "purchasable (polymorphic, opt-in)"
   EXT_COMMUNITY o|--o{ BILLING_PROCESSOR_SETTINGS : "seller (polymorphic, optional; person too)"
   EXT_PLATFORM o|--o{ BILLING_EVENTS : "subject: a setting is the subject of its audit events"
   EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
@@ -173,4 +180,66 @@ erDiagram
     text settings "encrypted JSON: where and how to pay; no default, no limit"
     datetime acknowledged_at "the drawbacks were accepted"
     uuid acknowledged_by_id FK "nullified if the person is removed"
+  }
+
+  BILLING_ORDERS {
+    uuid id PK "unique with platform_id (composite FK target)"
+    uuid platform_id FK "NOT NULL, read-only after create"
+    string seller_type "NULL when the platform sells; community or person otherwise"
+    uuid seller_id
+    uuid buyer_id FK "a person"
+    string on_behalf_of_type
+    uuid on_behalf_of_id
+    string subject_type "what the order is about; opt in with Billing::Subjectable"
+    uuid subject_id
+    string number "BT-XXXXXXXX, unique per platform"
+    string purpose "subscription | one_time | ticket | exchange"
+    string status "draft | awaiting_payment | partially_paid | paid | cancelled | expired | partially_refunded | refunded"
+    string currency
+    integer subtotal_cents
+    integer total_cents
+    datetime placed_at
+    datetime expires_at "end of the payment hold"
+    datetime paid_at
+    datetime cancelled_at
+  }
+
+  BILLING_ORDER_LINES {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, must equal the order's"
+    uuid order_id FK
+    string purchasable_type "allow-listed by Billing::Purchasable"
+    uuid purchasable_id
+    string description "copied when the order was placed"
+    integer quantity
+    integer unit_amount_cents "copied when the order was placed"
+    string currency
+    integer position
+  }
+
+  BILLING_PAYMENTS {
+    uuid id PK "unique with platform_id (composite FK target)"
+    uuid platform_id FK "NOT NULL, must equal the order's"
+    uuid order_id FK
+    string processor "the method: a vendor, cash, ..."
+    string status "pending | succeeded | failed | cancelled | partially_refunded | refunded"
+    integer amount_cents
+    string currency
+    string idempotency_key "unique per platform"
+    string processor_reference
+    datetime paid_at
+    datetime failed_at
+  }
+
+  BILLING_REFUNDS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, must equal the payment's"
+    uuid payment_id FK
+    uuid recorded_by_id FK "nullified if the person is removed"
+    integer amount_cents "never more than is left to refund"
+    string currency
+    string status "pending | succeeded | failed | recorded"
+    string reason
+    string idempotency_key "unique per platform"
+    string processor_reference
   }

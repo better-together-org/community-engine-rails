@@ -71,6 +71,18 @@ module BetterTogether
                              .map { |name| [billing_payment_method_label(name), name] }
     end
 
+    ORDER_BADGE_CLASSES = {
+      'draft' => 'bg-secondary', 'awaiting_payment' => 'bg-warning text-dark', 'partially_paid' => 'bg-info text-dark',
+      'paid' => 'bg-success', 'cancelled' => 'bg-secondary', 'expired' => 'bg-dark',
+      'partially_refunded' => 'bg-info text-dark', 'refunded' => 'bg-secondary'
+    }.freeze
+
+    def billing_order_status_badge(order)
+      content_tag(:span, t("better_together.billing.orders.status_#{order.status}"),
+                  class: "badge billing-order-status-badge #{ORDER_BADGE_CLASSES.fetch(order.status, 'bg-secondary')}",
+                  id: dom_id(order, :status_badge))
+    end
+
     # On, off, or not set up yet; the page lists every installed method.
     def billing_processor_setting_badge(setting)
       state = if setting.nil? then 'not_set_up'

@@ -1,0 +1,40 @@
+%% Billing — how an order and its payments move. An order's status is derived from its payments
+%% by Orders::Settle and can only follow these paths. A late payment can still pay an expired
+%% order (a cheque that arrives after the hold ran out).
+stateDiagram-v2
+  direction LR
+  state "Order" as order {
+    [*] --> draft
+    draft --> awaiting_payment : Orders::Place<br/>lines saved, purchasables held
+    draft --> cancelled
+    awaiting_payment --> partially_paid : a payment succeeds, part of the total
+    awaiting_payment --> paid : payments cover the total
+    awaiting_payment --> cancelled : Orders::Cancel (nothing paid)
+    awaiting_payment --> expired : Orders::Expire (hold ran out)
+    partially_paid --> paid
+    partially_paid --> expired
+    expired --> paid : late payment
+    expired --> partially_paid
+    expired --> cancelled
+    paid --> partially_refunded : a refund is recorded
+    paid --> refunded : fully refunded
+    partially_refunded --> partially_refunded
+    partially_refunded --> refunded
+    cancelled --> [*]
+    refunded --> [*]
+  }
+  state "Payment" as payment {
+    [*] --> pending
+    pending --> succeeded : Payments::Succeed
+    pending --> failed : Payments::Fail
+    pending --> cancelled_payment : order cancelled or expired
+    failed --> pending : tried again
+    succeeded --> partially_refunded_payment : Refunds::Record
+    succeeded --> refunded_payment
+    partially_refunded_payment --> refunded_payment
+  }
+  note right of order
+    Released on cancel or expiry:
+    Purchasable#release!
+    Sweep: ExpireOrdersJob, hourly, billing queue
+  end note
