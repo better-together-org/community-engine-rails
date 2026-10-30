@@ -82,6 +82,12 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Content Security Ingress System](developers/systems/content_security_ingress_system.md) - Attachment gating, malware scanning, review records
 - [Safety and Federation Review Workflow](developers/systems/safety_and_federation_review_workflow.md) - Reviewer surfaces, safety cases, actions and notes
 
+##### **Billing** - [`billing/`](billing/)
+- [Billing Foundation and Processor Adapters](billing/processor-adapters.md) - Vendor-neutral billing core, host configuration and the adapter contract
+- [Billing Platform Isolation](billing/platform_isolation.md) - How billing records are bound to exactly one platform
+- [Billing Data Encryption](billing/encryption.md) - What is encrypted at rest, the rules, and key rotation
+- [Hosted Billing Roadmap](billing/hosted_billing_roadmap.md) - What is in place for per-platform processors and community-managed plans, and what is left
+
 ##### **Architecture Documentation** - [`developers/architecture/`](developers/architecture/)
 - [Models and Concerns](developers/architecture/models_and_concerns.md) - Data model architecture
 - [Model Concerns Reference](reference/model_concerns_reference.md) - Concerns new or changed in 0.11.0
@@ -150,6 +156,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 *Mermaid (.mmd) source files*
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
+- [Billing Queue Topology](diagrams/source/billing_queue_topology.mmd)
+- [Billing Schema ERD](diagrams/source/billing_schema_erd.mmd)
 - [⚡ Caching Performance Flow](diagrams/source/caching_performance_flow.mmd)
 - [Community Action Network Governance Flow](diagrams/source/community_action_network_governance_flow.mmd)
 - [Community Social System Flow](diagrams/source/community_social_system_flow.mmd)
@@ -192,6 +200,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Multi-Platform Deployment](production/multi_platform_deployment.md) - Running multiple platforms on a single instance
 - [⚙️ External Services Configuration](production/external-services-to-configure.md) - Third-party integrations
 - [Raspberry Pi Setup](production/raspberry-pi-setup.md) - Self-hosting guide
+- [Billing Queue Rollout](production/billing_queue_rollout.md) - Dedicated high-priority Sidekiq queue and capsule for payment jobs
 
 #### **Scripts** - [`scripts/`](scripts/)
 *Documentation maintenance and automation scripts*

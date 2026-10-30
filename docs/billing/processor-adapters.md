@@ -4,13 +4,15 @@ Community Engine core ships a vendor-neutral billing foundation: the `pay` gem, 
 
 ## Host requirements
 
-- A top-level `ApplicationRecord` (every `rails new` app has one). `Pay::ApplicationRecord` inherits from it.
-- uuid primary keys, like every CE table. The Pay migration creates uuid keys.
-- Run the engine migrations (`20261015120000_create_better_together_pay_tables`). It is safe on a schema that already has Pay tables.
+- Active Record Encryption keys (`bin/rails db:encryption:init`, stored in credentials or environment variables). Billing encrypts payment data at rest; see [encryption.md](encryption.md).
+- A `billing` Sidekiq queue with a high weight and ideally a dedicated capsule; see [../production/billing_queue_rollout.md](../production/billing_queue_rollout.md).
+- Run the engine migrations (`20261015120000_create_better_together_pay_tables`). The Pay tables are owned by Community Engine: uuid keys, a required `platform_id` on every table that holds tenant data, and encrypted columns stored as `text`. No billing data exists to migrate, so the migration does not reconcile older Pay installs.
+
+Pay's models inherit from `BetterTogether::Billing::PayRecord`, an abstract class the engine provides (`Pay.model_parent_class`), so a host does **not** need a top-level `ApplicationRecord` for billing.
 
 ## Configuration
 
-Billing identity has no built-in defaults. Until the three required variables are set, `BetterTogether::Billing::Configuration.ready?` is false and a one-line warning is logged at boot.
+Billing identity has no built-in defaults. Until the three required variables are set, `BetterTogether::Billing::Configuration.ready?` is false. A host that has switched billing on (`BT_BILLING_ENABLED`) but is missing variables gets a one-line warning at boot; a host that never asked for billing sees nothing.
 
 | Variable | Required | Purpose |
 |---|---|---|
@@ -22,7 +24,7 @@ Billing identity has no built-in defaults. Until the three required variables ar
 | `BT_BILLING_DEFAULT_COUNTRY` | by feature | Used when an owner has no country (merchant onboarding) |
 | `PAY_APPLICATION_NAME` | no | Defaults to `Community Engine` |
 
-`BetterTogether::Billing.enabled?` is true only when the flag is on, the identity is configured, and at least one processor is registered.
+`BetterTogether::Billing.enabled?(platform)` is true only when the flag is on, the identity is configured, and a registered processor has a **context** for that platform. Today only the host platform has one, so billing is off for every other platform. See [platform_isolation.md](platform_isolation.md).
 
 ## Writing an adapter
 
@@ -34,6 +36,6 @@ initializer 'my_processor.register' do
 end
 ```
 
-Implement `processor_name`, `sanitize_payload`, `capabilities`, `webhook_event_types`, and the methods for each capability you advertise. `ProcessorAdapter::CAPABILITY_METHODS` lists the methods and keywords per capability. The contract version is checked when the adapter is built; a mismatch raises `ContractError`. Run the shared examples in `spec/support/shared_examples/billing_processor_adapter.rb` against your adapter.
+Implement `processor_name` (it must equal the name you register under; a mismatch raises `ContractError`), `sanitize_payload`, `capabilities`, `webhook_event_types`, and the methods for each capability you advertise. Every capability method receives `context:`, a `BetterTogether::Billing::ProcessorContext` naming the platform and processor account the call is for; use it instead of reading global environment variables, so one platform never acts through another's account. `ProcessorAdapter::CAPABILITY_METHODS` lists the methods and keywords per capability. The contract version is checked when the adapter is built; a mismatch raises `ContractError`. Run the shared examples in `spec/support/shared_examples/billing_processor_adapter.rb` against your adapter.
 
 Core owns idempotency keys and money state. Money-moving calls always receive an `idempotency_key` that the adapter must pass through to the processor.
