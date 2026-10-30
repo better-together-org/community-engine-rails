@@ -45,3 +45,15 @@
   class: "BetterTogether::SitemapRefreshScanJob"
   queue: "maintenance"
   description: "Regenerate per-platform XML sitemaps for all locally-hosted platforms"
+
+"better_together:billing:redact_expired_event_payloads_daily":
+  cron: "20 4 * * *" # daily at 04:20 UTC
+  class: "BetterTogether::Billing::RedactExpiredEventPayloadsJob"
+  queue: "maintenance"
+  description: "Redact retained billing event payloads after the replay window expires"
+
+"better_together:billing:dead_letter_stale_events_hourly":
+  cron: "15 * * * *" # hourly at :15 UTC
+  class: "BetterTogether::Billing::DeadLetterStaleBillingEventsJob"
+  queue: "maintenance"
+  description: "Promote exhausted or stale billing events into a dead-letter state for operator review"

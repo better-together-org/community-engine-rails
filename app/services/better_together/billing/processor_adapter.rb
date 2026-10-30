@@ -46,6 +46,13 @@ module BetterTogether
       # Pay webhook event names this adapter wants delivered, e.g. "stripe.invoice.paid".
       def webhook_event_types = []
 
+      # Turns a vendor webhook event (as Pay delivers it) into
+      # { event_id:, event_type:, payload: Hash } for the event log.
+      def normalize_webhook(_vendor_event) = raise(NotImplementedError, "#{self.class}#normalize_webhook")
+
+      # Processes one logged event (read event.payload) and returns a Billing::EventResult.
+      def process_event(event:) = raise(NotImplementedError, "#{self.class}#process_event")
+
       # Returns a copy of a raw webhook payload that is safe to store (no PII, no secrets).
       def sanitize_payload(_payload) = raise(NotImplementedError, "#{self.class}#sanitize_payload")
 
