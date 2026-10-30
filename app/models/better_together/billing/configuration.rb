@@ -46,13 +46,17 @@ module BetterTogether
 
         # The processor context for `platform`, or nil when that platform has none.
         #
-        # Today the only credentials are the host deployment's environment, which
-        # belong to the host platform. Any other platform gets nil, so it cannot
-        # use the host's processor account; billing is simply off for it until it
-        # has configuration of its own.
-        def context_for(platform, processor)
-          return if platform.nil? || !platform.host?
-          return unless Billing.processor_names.include?(processor.to_sym)
+        # A vendor processor's credentials are the host deployment's environment, which
+        # belong to the host platform. Any other platform gets nil, so it cannot use the
+        # host's processor account.
+        #
+        # A method outside a vendor (cash, cheque, e-transfer) has no credentials. It has a
+        # context for a platform (or one of its sellers) only while a steward has it enabled
+        # (see ProcessorSetting), so it is installed for everyone and on for no one by default.
+        def context_for(platform, processor, seller: nil)
+          return if platform.nil? || Billing.processor_names.map(&:to_s).exclude?(processor.to_s)
+          return setting_context(platform, processor, seller) if Billing.offline_method?(processor)
+          return unless platform.host?
 
           ProcessorContext.new(platform:, processor:)
         end
@@ -91,6 +95,12 @@ module BetterTogether
         end
 
         private
+
+        def setting_context(platform, processor, seller)
+          settings = platform.billing_processor_settings.enabled.where(processor: processor.to_s)
+          settings = seller ? settings.sold_by(seller) : settings.sold_by_platform
+          ProcessorContext.new(platform:, processor:, source: :setting) if settings.exists?
+        end
 
         # Contexts that know their processor account must match it; contexts that do
         # not (account_ref nil) are only usable when they are the single candidate.

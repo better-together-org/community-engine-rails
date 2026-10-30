@@ -1,0 +1,72 @@
+%% Billing — payment methods outside a vendor. The adapters only describe a method; core owns
+%% what happens to a payment (see billing_offline_payment_state_machine.mmd). A method is
+%% installed for everyone and works for a seller only while an enabled ProcessorSetting exists.
+classDiagram
+  class ProcessorAdapter {
+    +settlement_kind() Symbol
+    +recurring_mode() Symbol
+    +supported_countries() Array
+    +fee_collectible?() Boolean
+  }
+  class OfflineProcessorAdapter {
+    +settlement_kind manual
+    +recurring_mode manual
+    +fee_collectible? false
+    +instruction_fields() Array
+    +settings_errors(values) Hash
+    +grant_on_options() Array
+    +instructions_for(setting) Hash
+  }
+  class Cash {
+    +instruction_fields instructions
+  }
+  class Cheque {
+    +instruction_fields payee_name, address, instructions
+    +grant_on_options cleared, received
+  }
+  class ETransfer {
+    +supported_countries CA
+    +supported_currencies CAD
+    +instruction_fields recipient_email, recipient_phone, instructions
+  }
+  class InstructionField {
+    +name
+    +type string, text, email, phone
+    +required
+  }
+  class ProcessorSetting {
+    +platform_id
+    +seller_type, seller_id
+    +processor
+    +enabled false by default
+    +hold_hours 72
+    +grant_on
+    +purposes
+    +settings encrypted text
+    +acknowledged_at
+    +acknowledged_by_id
+  }
+  class Configuration {
+    +context_for(platform, method, seller) ProcessorContext
+    +processors_for(platform) Array
+  }
+  class Billing {
+    +offline_method?(name) Boolean
+    +enabled?(platform) Boolean
+    +configurable?(platform) Boolean
+    +register_builtin_processors!()
+  }
+  class Event {
+    +event_type method.settings_changed
+    +outcome_kind settings_changed
+    +payload field names, never values
+  }
+  ProcessorAdapter <|-- OfflineProcessorAdapter
+  OfflineProcessorAdapter <|-- Cash
+  OfflineProcessorAdapter <|-- Cheque
+  OfflineProcessorAdapter <|-- ETransfer
+  OfflineProcessorAdapter o-- InstructionField : declares
+  ProcessorSetting ..> OfflineProcessorAdapter : validated and described by
+  Configuration ..> ProcessorSetting : context only while enabled
+  Billing ..> Configuration : enabled? needs a context
+  ProcessorSetting ..> Event : every change is audited

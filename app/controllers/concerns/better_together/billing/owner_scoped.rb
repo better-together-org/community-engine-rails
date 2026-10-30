@@ -25,8 +25,12 @@ module BetterTogether
       def billing_owner = Current.platform
 
       def require_billing_enabled
-        render_not_found unless BetterTogether::Billing.enabled?(billing_owner)
+        render_not_found unless billing_available?
       end
+
+      # Billing is on for the owner. A controller that has to work before any method is
+      # enabled (the settings that turn the first one on) overrides this.
+      def billing_available? = BetterTogether::Billing.enabled?(billing_owner)
     end
   end
 end

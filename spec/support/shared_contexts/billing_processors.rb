@@ -22,3 +22,9 @@ RSpec.shared_context 'with billing switched on' do
     previous.nil? ? ENV.delete('BT_BILLING_ENABLED') : ENV['BT_BILLING_ENABLED'] = previous
   end
 end
+
+# The methods core ships (cash, cheque, e-transfer). 'with clean billing processors' empties
+# the registry, so a spec that needs them registers them after it.
+RSpec.shared_context 'with builtin billing processors' do
+  before { BetterTogether::Billing.register_builtin_processors! }
+end

@@ -35,6 +35,7 @@ concern :billing_plans do
       end
     end
     resources :processor_options, only: :index
+    resources :processor_settings, only: %i[index edit update]
   end
 end
 

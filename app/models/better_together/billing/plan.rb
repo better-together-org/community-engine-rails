@@ -21,6 +21,7 @@ module BetterTogether
     # creation are locked here (see #locked_field?).
     class Plan < ApplicationRecord # rubocop:disable Metrics/ClassLength
       include PlatformBound
+      include SellerScoped
 
       self.table_name = 'better_together_billing_plans'
 
@@ -34,11 +35,6 @@ module BetterTogether
         AUD BRL CAD CHF CNY DKK EUR GBP HKD INR
         JPY KRW MXN NOK NZD PLN SEK SGD USD ZAR
       ].freeze
-
-      # Who may sell a plan besides the platform itself. Names only; nothing is resolved
-      # from a string. Classes that opt in with Billing::Billable are added (see
-      # .assignable_seller_types).
-      DEFAULT_SELLER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
 
       PLAN_PRICING_TIERS = %w[standard solidarity_small solidarity_medium solidarity_premium].freeze
       SYNC_STATUSES = %w[pending synced failed].freeze
@@ -69,9 +65,6 @@ module BetterTogether
       # The steward chose to link a price that already exists instead of creating one.
       attribute :link_existing, :boolean, default: false
 
-      belongs_to :seller, polymorphic: true, optional: true
-      attr_readonly :seller_type, :seller_id
-
       before_validation :normalize_payment_fields
 
       validates :identifier, :name, :currency, presence: true
@@ -80,7 +73,6 @@ module BetterTogether
       validates :processor, presence: true, if: :link_existing
       validate :payable_some_way
       validate :accepted_methods_are_not_online_processors
-      validate :seller_is_allowed
       validates :processor_price_id, presence: true, if: :price_id_required?
       validates :processor_price_id, uniqueness: { scope: :processor }, allow_blank: true
       validates :sync_status, inclusion: { in: SYNC_STATUSES }
@@ -100,9 +92,6 @@ module BetterTogether
       after_commit :enqueue_processor_sync, on: %i[create update]
 
       scope :active, -> { where(active: true) }
-      # What the platform itself sells (no seller), and what one seller sells.
-      scope :sold_by_platform, -> { where(seller_id: nil) }
-      scope :sold_by, ->(seller) { where(seller_type: seller.class.name, seller_id: seller.id) }
       scope :needs_processor_product_id, -> { where(processor_product_id: nil).where.not(processor_price_id: nil) }
 
       # Permitted attributes for update, as a baseline. Which of them a given plan will
@@ -138,8 +127,6 @@ module BetterTogether
       # Held by an online payment processor (as opposed to paid only by cash, cheque,
       # e-transfer or store credit).
       def online? = processor.present?
-
-      def sold_by_platform? = seller_id.nil?
 
       # Every way this plan can be paid: its online processor, then the others.
       def payment_methods = [processor.presence, *accepted_payment_methods].compact.uniq
@@ -232,17 +219,7 @@ module BetterTogether
       end
 
       # An installed method that does not go through a vendor (settlement manual or internal).
-      def self.offline_method?(name)
-        return false unless Billing.processor_names.map(&:to_s).include?(name.to_s)
-
-        Billing.processor_adapter(name)&.settlement_kind != :remote
-      rescue ProcessorAdapter::ContractError
-        false
-      end
-
-      def self.assignable_seller_types
-        (DEFAULT_SELLER_TYPES + Billable.model_names.to_a).uniq
-      end
+      def self.offline_method?(name) = Billing.offline_method?(name)
 
       def participant_summary
         metadata.to_h['participant_summary'].presence || description.presence || default_participant_summary
@@ -308,20 +285,6 @@ module BetterTogether
 
           errors.add(:accepted_payment_methods, :not_an_offline_method, method: name)
         end
-      end
-
-      def seller_is_allowed
-        return if seller_id.blank? && seller_type.blank?
-
-        # Never load a seller whose type is not on the allow-list.
-        return errors.add(:seller_type, :inclusion) unless self.class.assignable_seller_types.include?(seller_type)
-
-        errors.add(:platform, :platform_owner_mismatch) if seller_on_another_platform?
-      end
-
-      def seller_on_another_platform?
-        bound = seller.try(:billing_bound_platform_id) || seller.try(:platform_id)
-        bound.present? && platform_id.present? && bound != platform_id
       end
 
       # A plan on a processor that cannot push has nothing to wait for; one that can, starts
