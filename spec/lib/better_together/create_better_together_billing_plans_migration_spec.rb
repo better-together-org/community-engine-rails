@@ -35,12 +35,26 @@ RSpec.describe 'Create Better Together billing plans migration' do # rubocop:dis
     expect(indexes['idx_bt_billing_plans_processor_product']).to have_attributes(unique: false, columns: %w[processor processor_product_id])
   end
 
-  it 'requires a platform, with a foreign key, and makes the identifier unique per platform' do
-    indexes = connection.indexes(:better_together_billing_plans).index_by(&:name)
-
+  it 'requires a platform, with a foreign key' do
     expect(columns['platform_id'].null).to be false
     expect(connection.foreign_keys(:better_together_billing_plans).map(&:to_table)).to include('better_together_platforms')
-    expect(indexes['idx_bt_billing_plans_platform_identifier']).to have_attributes(unique: true, columns: %w[platform_id identifier])
+  end
+
+  it 'makes the identifier unique per seller: one index for the platform itself, one for each other seller' do
+    indexes = connection.indexes(:better_together_billing_plans).index_by(&:name)
+
+    expect(indexes['idx_bt_billing_plans_platform_identifier'])
+      .to have_attributes(unique: true, columns: %w[platform_id identifier], where: a_string_matching(/seller_id IS NULL/))
+    expect(indexes['idx_bt_billing_plans_seller_identifier'])
+      .to have_attributes(unique: true, columns: %w[platform_id seller_type seller_id identifier],
+                          where: a_string_matching(/seller_id IS NOT NULL/))
+  end
+
+  it 'lets a plan have no online processor and lists the other ways to pay' do
+    expect(columns['processor'].null).to be true
+    expect(columns['accepted_payment_methods']).to have_attributes(null: false, array: true)
+    expect(columns['accepted_payment_methods'].default).to eq('{}')
+    expect(columns.keys).to include('seller_type', 'seller_id')
   end
 
   it 'lets the price be empty until the processor has created it, and tracks the sync' do

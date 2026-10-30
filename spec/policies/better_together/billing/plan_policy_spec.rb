@@ -55,6 +55,31 @@ RSpec.describe BetterTogether::Billing::PlanPolicy do
     expect(described_class.new(steward, foreign).show?).to be(false)
   end
 
+  describe 'plans sold by a community or person' do
+    let(:community) { create(:better_together_community) }
+    let(:seller_plan) do
+      BetterTogether::Billing::Billable.model_names << 'BetterTogether::Community'
+      create(:better_together_billing_plan, seller: community)
+    end
+
+    it 'are not managed through the platform by a platform steward' do
+      %i[show? edit? update? sync? snapshot? lookup?].each do |action|
+        expect(described_class.new(steward, seller_plan).public_send(action)).to be(false), "#{action} should be refused"
+      end
+    end
+
+    it 'cannot be managed by naming a non-platform owner' do
+      expect(described_class.new(steward, plan).manage_billing?(community)).to be(false)
+    end
+
+    it 'are left out of the scope, which holds only what the platform sells' do
+      seller_plan
+      plan
+
+      expect(described_class::Scope.new(steward, BetterTogether::Billing::Plan).resolve).to contain_exactly(plan)
+    end
+  end
+
   describe '#manage_billing?' do
     it 'refuses an owner that cannot be named, rather than defaulting to the host' do
       expect(described_class.new(steward, BetterTogether::Billing::Plan).manage_billing?(nil)).to be(false)

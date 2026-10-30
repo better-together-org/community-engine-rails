@@ -29,6 +29,15 @@ RSpec.describe 'Billing plans DOM contract', :as_platform_manager, type: :reques
     expect(response.body).to include('billing-plan-actions')
   end
 
+  it 'exposes the accepted-payment-methods fieldset when a non-vendor method is installed' do
+    cash = BetterTogether::Billing::FakeAdapter.new(capabilities: %i[offline_settlement], processor: :cash, settlement: :manual)
+    BetterTogether::Billing.register_processor(:cash, -> { cash })
+
+    get "/#{locale}/billing/plans/new"
+
+    expect_ids('billing-plan-payment-methods', 'billing-plan-payment-method-cash')
+  end
+
   it 'exposes the create-in-processor form identifiers' do
     get "/#{locale}/billing/plans/new"
 

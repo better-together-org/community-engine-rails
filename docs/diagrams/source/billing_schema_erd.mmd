@@ -10,6 +10,7 @@
 erDiagram
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
+  EXT_COMMUNITY o|--o{ BILLING_PLANS : "seller (polymorphic, optional; person too)"
   EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
   EXT_PLATFORM o|--o{ BILLING_EVENTS : "subject (polymorphic, optional): the hosted platform a hosting event is about"
   EXT_COMMUNITY o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
@@ -134,14 +135,17 @@ erDiagram
   BILLING_PLANS {
     uuid id PK
     uuid platform_id FK "NOT NULL, read-only after create"
-    string identifier "unique per platform"
+    string seller_type "NULL when the platform sells it; community or person otherwise"
+    uuid seller_id "read-only after create"
+    string identifier "unique per seller: partial index for platform-sold, another for sellers"
     string name
     text description
     string billing_interval "month | year | one_time"
     integer amount_cents
     string currency "no default"
     boolean active
-    string processor "must be configured for the platform"
+    string processor "online processor holding the price; NULL for cash/cheque/e-transfer/credit-only plans"
+    string accepted_payment_methods "array: non-vendor methods the plan accepts"
     string processor_price_id "NULL until the processor has created it; unique per processor"
     string processor_product_id "NOT unique: one product, several prices"
     boolean manages_processor_product "false when an existing product was chosen"

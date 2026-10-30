@@ -62,6 +62,102 @@ RSpec.describe BetterTogether::Billing::PlansController do
     end
   end
 
+  describe 'plans sold by a community' do
+    let(:community) { create(:better_together_community) }
+    let!(:seller_plan) do
+      BetterTogether::Billing::Billable.model_names << 'BetterTogether::Community'
+      create(:better_together_billing_plan, seller: community, name: 'Community seller secret')
+    end
+
+    before { sign_in platform_manager }
+
+    it 'are not listed among the platform\'s plans' do
+      get plans_path
+
+      expect(response.body).not_to include('Community seller secret')
+    end
+
+    it 'are not reachable through the platform screens' do
+      get plan_path(seller_plan)
+      expect(response).to have_http_status(:not_found)
+
+      patch plan_path(seller_plan), params: { billing_plan: { name: 'Hijacked' } }
+      expect(response).to have_http_status(:not_found)
+      expect(seller_plan.reload.name).to eq('Community seller secret')
+    end
+
+    it 'are not created by the platform form, whatever seller is sent' do
+      post plans_path, params: { billing_plan: { identifier: 'x', name: 'X', processor: 'fake', amount_cents: 1, currency: 'USD',
+                                                 seller_type: 'BetterTogether::Community', seller_id: community.id } }
+
+      expect(BetterTogether::Billing::Plan.sold_by(community).where(identifier: 'x')).to be_empty
+    end
+  end
+
+  describe 'paying some way other than the online processor' do
+    let(:cash) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[offline_settlement], processor: :cash, settlement: :manual) }
+
+    before do
+      sign_in platform_manager
+      BetterTogether::Billing.register_processor(:cash, -> { cash })
+    end
+
+    it 'offers the installed non-vendor methods as check boxes, and keeps them out of the processor list' do
+      get better_together.new_billing_plan_path(locale:)
+
+      expect(response.body).to include('billing-plan-payment-methods', 'billing-plan-payment-method-cash')
+      expect(response.body).not_to include('<option value="cash">')
+    end
+
+    it 'saves the accepted methods with the plan' do
+      post plans_path, params: { billing_plan: { identifier: 'with-cash', name: 'With cash', processor: 'fake', amount_cents: 4500,
+                                                 currency: 'USD', accepted_payment_methods: ['', 'cash'] } }
+
+      expect(BetterTogether::Billing::Plan.find_by(identifier: 'with-cash').accepted_payment_methods).to eq(%w[cash])
+    end
+
+    it 'creates a plan that is paid only by an accepted method, with no online processor' do
+      expect do
+        post plans_path, params: { billing_plan: { identifier: 'cash-only', name: 'Cash only', processor: '', amount_cents: 2000,
+                                                   currency: 'CAD', accepted_payment_methods: ['cash'] } }
+      end.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+
+      expect(BetterTogether::Billing::Plan.find_by(identifier: 'cash-only')).to have_attributes(processor: nil, sync_status: 'synced')
+    end
+
+    it 'refuses a plan nobody could pay for' do
+      expect do
+        post plans_path, params: { billing_plan: { identifier: 'nothing', name: 'Nothing', processor: '', amount_cents: 1, currency: 'USD' } }
+      end.not_to change(BetterTogether::Billing::Plan, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it 'lets the accepted methods change on a linked plan, whose price is locked' do
+      patch plan_path(billing_plan), params: { billing_plan: { accepted_payment_methods: %w[cash], amount_cents: 1 } }
+
+      expect(billing_plan.reload).to have_attributes(accepted_payment_methods: %w[cash])
+      expect(billing_plan.amount_cents).not_to eq(1)
+    end
+
+    it 'shows the accepted methods on the plan page' do
+      billing_plan.update!(accepted_payment_methods: %w[cash])
+
+      get plan_path(billing_plan)
+
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(billing_plan, :payment_methods))
+    end
+
+    it 'shows a plan with no online processor' do
+      plan = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash])
+
+      get plan_path(plan)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(I18n.t('better_together.billing.plans.processor_none'))
+    end
+  end
+
   describe 'GET /:locale/billing/plans' do
     before { sign_in platform_manager }
 

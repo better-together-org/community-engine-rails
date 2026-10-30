@@ -2,8 +2,13 @@
 
 module BetterTogether
   module Billing
-    # Catalog entry for a billable plan: one price at one payment processor, on one
-    # platform. See docs/billing/plan_catalog.md.
+    # Catalog entry for a billable plan: one price on one platform, sold by the platform or
+    # by one of its communities or people (`seller`). See docs/billing/plan_catalog.md.
+    #
+    # The price can be held by one ONLINE payment processor (`processor`, with the
+    # processor-side product and price below) and/or be payable by methods outside a
+    # vendor (`accepted_payment_methods`: cash, cheque, e-transfer, store credit). A plan
+    # needs at least one of the two.
     #
     # A plan comes into being one of two ways:
     # * created here: the steward describes it and the sync job creates the processor-side
@@ -30,6 +35,11 @@ module BetterTogether
         JPY KRW MXN NOK NZD PLN SEK SGD USD ZAR
       ].freeze
 
+      # Who may sell a plan besides the platform itself. Names only; nothing is resolved
+      # from a string. Classes that opt in with Billing::Billable are added (see
+      # .assignable_seller_types).
+      DEFAULT_SELLER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
+
       PLAN_PRICING_TIERS = %w[standard solidarity_small solidarity_medium solidarity_premium].freeze
       SYNC_STATUSES = %w[pending synced failed].freeze
 
@@ -44,6 +54,9 @@ module BetterTogether
       # Editable while no processor-side price exists yet.
       PRE_LINK_FIELDS = %i[amount_cents currency billing_interval].freeze
 
+      # Not part of the processor-backed price, so editable at any time.
+      PAYMENT_METHOD_PARAMS = { accepted_payment_methods: [] }.freeze
+
       METADATA_KEYS = [:participant_summary, :beneficiary_label, :hosted_access_level,
                        :support_tier, :community_capacity_tier,
                        :pricing_tier, :solidarity_description,
@@ -56,9 +69,18 @@ module BetterTogether
       # The steward chose to link a price that already exists instead of creating one.
       attribute :link_existing, :boolean, default: false
 
-      validates :identifier, :name, :currency, :processor, presence: true
-      validates :identifier, uniqueness: { scope: :platform_id }
-      validates :processor, format: { with: /\A[a-z][a-z0-9_]*\z/ }
+      belongs_to :seller, polymorphic: true, optional: true
+      attr_readonly :seller_type, :seller_id
+
+      before_validation :normalize_payment_fields
+
+      validates :identifier, :name, :currency, presence: true
+      validates :identifier, uniqueness: { scope: %i[platform_id seller_type seller_id] }
+      validates :processor, format: { with: /\A[a-z][a-z0-9_]*\z/ }, allow_blank: true
+      validates :processor, presence: true, if: :link_existing
+      validate :payable_some_way
+      validate :accepted_methods_are_not_online_processors
+      validate :seller_is_allowed
       validates :processor_price_id, presence: true, if: :price_id_required?
       validates :processor_price_id, uniqueness: { scope: :processor }, allow_blank: true
       validates :sync_status, inclusion: { in: SYNC_STATUSES }
@@ -78,12 +100,15 @@ module BetterTogether
       after_commit :enqueue_processor_sync, on: %i[create update]
 
       scope :active, -> { where(active: true) }
+      # What the platform itself sells (no seller), and what one seller sells.
+      scope :sold_by_platform, -> { where(seller_id: nil) }
+      scope :sold_by, ->(seller) { where(seller_type: seller.class.name, seller_id: seller.id) }
       scope :needs_processor_product_id, -> { where(processor_product_id: nil).where.not(processor_price_id: nil) }
 
       # Permitted attributes for update, as a baseline. Which of them a given plan will
       # accept also depends on what is locked; see #permitted_update_attributes.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
-        [*DESCRIPTIVE_FIELDS, { metadata: METADATA_KEYS }]
+        [*DESCRIPTIVE_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       # Permitted attributes for create: everything that describes or links the price.
@@ -95,7 +120,7 @@ module BetterTogether
       # controller permits exactly this, so a crafted request cannot change a locked field.
       def permitted_update_attributes
         fields = DESCRIPTIVE_FIELDS + (linked? ? [] : PRE_LINK_FIELDS)
-        [*fields.reject { |field| locked_field?(field) }, { metadata: METADATA_KEYS }]
+        [*fields.reject { |field| locked_field?(field) }, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       def recurring?
@@ -109,6 +134,15 @@ module BetterTogether
       # ---- the processor side ----------------------------------------------------
 
       def linked? = processor_price_id.present?
+
+      # Held by an online payment processor (as opposed to paid only by cash, cheque,
+      # e-transfer or store credit).
+      def online? = processor.present?
+
+      def sold_by_platform? = seller_id.nil?
+
+      # Every way this plan can be paid: its online processor, then the others.
+      def payment_methods = [processor.presence, *accepted_payment_methods].compact.uniq
 
       SYNC_STATUSES.each do |status|
         define_method(:"sync_#{status}?") { sync_status == status }
@@ -197,6 +231,19 @@ module BetterTogether
         (DEFAULT_ELIGIBLE_OWNER_TYPES + Billable.model_names.to_a).uniq
       end
 
+      # An installed method that does not go through a vendor (settlement manual or internal).
+      def self.offline_method?(name)
+        return false unless Billing.processor_names.map(&:to_s).include?(name.to_s)
+
+        Billing.processor_adapter(name)&.settlement_kind != :remote
+      rescue ProcessorAdapter::ContractError
+        false
+      end
+
+      def self.assignable_seller_types
+        (DEFAULT_SELLER_TYPES + Billable.model_names.to_a).uniq
+      end
+
       def participant_summary
         metadata.to_h['participant_summary'].presence || description.presence || default_participant_summary
       end
@@ -238,7 +285,43 @@ module BetterTogether
       private
 
       def price_id_required?
-        link_existing || (new_record? && !sync_supported?)
+        online? && (link_existing || (new_record? && !sync_supported?))
+      end
+
+      # An empty processor means "none", stored as NULL like every other absent value.
+      def normalize_payment_fields
+        self.processor = processor.presence
+        self.accepted_payment_methods = Array(accepted_payment_methods).map { |name| name.to_s.strip }.compact_blank.uniq
+      end
+
+      # A plan nobody could pay for is a mistake: it needs an online processor or at least
+      # one other way to pay.
+      def payable_some_way
+        errors.add(:base, :no_payment_method) if processor.blank? && accepted_payment_methods.empty?
+      end
+
+      # Accepted methods are the ones outside a vendor. They must be installed, and the online
+      # processor is chosen in its own field, so it does not belong in this list.
+      def accepted_methods_are_not_online_processors
+        accepted_payment_methods.each do |name|
+          next if name != processor && self.class.offline_method?(name)
+
+          errors.add(:accepted_payment_methods, :not_an_offline_method, method: name)
+        end
+      end
+
+      def seller_is_allowed
+        return if seller_id.blank? && seller_type.blank?
+
+        # Never load a seller whose type is not on the allow-list.
+        return errors.add(:seller_type, :inclusion) unless self.class.assignable_seller_types.include?(seller_type)
+
+        errors.add(:platform, :platform_owner_mismatch) if seller_on_another_platform?
+      end
+
+      def seller_on_another_platform?
+        bound = seller.try(:billing_bound_platform_id) || seller.try(:platform_id)
+        bound.present? && platform_id.present? && bound != platform_id
       end
 
       # A plan on a processor that cannot push has nothing to wait for; one that can, starts
@@ -285,7 +368,7 @@ module BetterTogether
 
       def processor_configured_for_platform
         return if processor.blank?
-        return errors.add(:processor, :not_installed) unless Billing.processor_names.include?(processor.to_sym)
+        return errors.add(:processor, :not_installed) unless Billing.processor_names.map(&:to_s).include?(processor)
 
         errors.add(:processor, :not_configured) unless processor_context
       end

@@ -418,4 +418,149 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect(plan.errors.details[:base]).to include(a_hash_including(error: :invalid_pricing_tier, tier: 'platinum'))
     end
   end
+
+  describe 'paying some way other than an online processor' do
+    let(:cash) { BetterTogether::Billing::FakeAdapter.new(capabilities: %i[offline_settlement], processor: :cash, settlement: :manual) }
+
+    before { BetterTogether::Billing.register_processor(:cash, -> { cash }) }
+
+    it 'can have no online processor when it accepts another way to pay' do
+      plan = new_plan(processor: nil, accepted_payment_methods: %w[cash])
+
+      expect(plan).to be_valid
+      expect(plan).not_to be_online
+      expect(plan.payment_methods).to eq(%w[cash])
+    end
+
+    it 'is already synced and never pushed, since there is no processor-side price' do
+      plan = new_plan(processor: nil, accepted_payment_methods: %w[cash])
+
+      expect { plan.save! }.not_to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+      expect(plan.reload).to have_attributes(sync_status: 'synced', processor_price_id: nil)
+      expect(plan).not_to be_sync_supported
+    end
+
+    it 'does not need a price id without an online processor' do
+      expect(new_plan(processor: nil, accepted_payment_methods: %w[cash])).to be_valid
+    end
+
+    it 'is refused when nothing can pay for it' do
+      plan = new_plan(processor: nil, accepted_payment_methods: [])
+
+      expect(plan).not_to be_valid
+      expect(plan.errors.details[:base]).to include(a_hash_including(error: :no_payment_method))
+    end
+
+    it 'cannot link an existing price without a processor' do
+      plan = new_plan(processor: nil, accepted_payment_methods: %w[cash], link_existing: true)
+
+      expect(plan).not_to be_valid
+      expect(plan.errors.details[:processor]).to include(a_hash_including(error: :blank))
+    end
+
+    it 'can accept other ways to pay beside its online processor, in any order, without duplicates or blanks' do
+      plan = new_plan(accepted_payment_methods: ['', 'cash', 'cash'])
+
+      expect(plan).to be_valid
+      expect(plan.accepted_payment_methods).to eq(%w[cash])
+      expect(plan.payment_methods).to eq(%w[fake cash])
+    end
+
+    it 'accepts only installed methods that do not go through a vendor' do
+      unknown = new_plan(accepted_payment_methods: %w[bitcoin])
+      remote = new_plan(accepted_payment_methods: %w[fake])
+
+      expect(unknown).not_to be_valid
+      expect(remote).not_to be_valid
+      expect(unknown.errors.details[:accepted_payment_methods]).to include(a_hash_including(error: :not_an_offline_method))
+    end
+
+    it 'lets the accepted methods change after the plan is linked, since the processor does not hold them' do
+      plan = create(:better_together_billing_plan)
+
+      expect(plan.locked_field?(:accepted_payment_methods)).to be(false)
+      expect(plan.permitted_update_attributes.last).to include(accepted_payment_methods: [])
+      expect(plan.update(accepted_payment_methods: %w[cash])).to be(true)
+    end
+
+    it 'treats an installed method whose adapter fails the contract as not usable' do
+      broken = BetterTogether::Billing::FakeAdapter.new(capabilities: %i[offline_settlement], processor: :cheque)
+      BetterTogether::Billing.register_processor(:cheque, -> { broken })
+
+      expect(described_class.offline_method?('cheque')).to be(false)
+    end
+  end
+
+  describe 'who sells the plan' do
+    let(:community) { create(:better_together_community) }
+
+    before { BetterTogether::Billing::Billable.model_names << 'BetterTogether::Community' }
+
+    it 'defaults to the platform itself' do
+      plan = create(:better_together_billing_plan)
+
+      expect(plan).to be_sold_by_platform
+      expect(described_class.sold_by_platform).to include(plan)
+    end
+
+    it 'can be a community or a person, found with sold_by' do
+      plan = create(:better_together_billing_plan, seller: community)
+
+      expect(plan).not_to be_sold_by_platform
+      expect(described_class.sold_by(community)).to contain_exactly(plan)
+      expect(described_class.sold_by_platform).not_to include(plan)
+    end
+
+    it 'keeps the identifier unique for each seller, so two sellers can use the same one' do
+      create(:better_together_billing_plan, identifier: 'supporter')
+      create(:better_together_billing_plan, identifier: 'supporter', seller: community)
+      other = create(:better_together_community)
+
+      expect(build(:better_together_billing_plan, identifier: 'supporter')).not_to be_valid
+      expect(build(:better_together_billing_plan, identifier: 'supporter', seller: community)).not_to be_valid
+      expect(build(:better_together_billing_plan, identifier: 'supporter', seller: other)).to be_valid
+    end
+
+    it 'backs the per-seller uniqueness with the database' do
+      create(:better_together_billing_plan, identifier: 'dup')
+      duplicate = build(:better_together_billing_plan, identifier: 'dup')
+
+      expect { duplicate.save!(validate: false) }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it 'refuses a seller type that is not on the allow-list, without loading it' do
+      plan = build(:better_together_billing_plan)
+      plan.assign_attributes(seller_type: 'Kernel', seller_id: SecureRandom.uuid)
+
+      expect(plan).not_to be_valid
+      expect(plan.errors.details[:seller_type]).to include(a_hash_including(error: :inclusion))
+    end
+
+    it 'refuses a seller that belongs to another platform' do
+      other = create(:better_together_platform)
+      foreign = create(:better_together_community)
+      foreign.define_singleton_method(:billing_bound_platform_id) { other.id }
+
+      plan = build(:better_together_billing_plan, seller: foreign)
+
+      expect(plan).not_to be_valid
+      expect(plan.errors.details[:platform]).to include(a_hash_including(error: :platform_owner_mismatch))
+    end
+
+    it 'cannot change seller once saved' do
+      plan = create(:better_together_billing_plan, seller: community)
+
+      begin
+        plan.update!(seller: create(:better_together_community))
+      rescue ActiveRecord::ReadonlyAttributeError
+        nil # raised on assignment where Rails is configured to; otherwise the write is ignored
+      end
+
+      expect(plan.reload.seller).to eq(community)
+    end
+
+    it 'lists the seller types a plan may have' do
+      expect(described_class.assignable_seller_types).to include('BetterTogether::Community', 'BetterTogether::Person')
+    end
+  end
 end

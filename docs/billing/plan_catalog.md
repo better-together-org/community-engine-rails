@@ -1,6 +1,6 @@
 # Billing plan catalog
 
-A **plan** is one price at one payment processor, owned by one platform. Stewards create and
+A **plan** is one price on one platform, sold by the platform itself or by one of its communities or people, and paid through an online payment processor, through methods outside any vendor, or both. Stewards create and
 edit plans in Community Engine; they should not need the processor's dashboard once the
 host has configured the processor's API keys. This page describes the plan model, how plans
 reach the processor, which fields become fixed, and what a processor extension must
@@ -16,17 +16,23 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
   is on for the owner **and** the person has `manage_platform` for it. The owner is the
   current platform today; communities can be added later without changing callers (see
   [hosted_billing_roadmap.md](hosted_billing_roadmap.md)).
-- Plans are reached only through the owner: `billing_owner.billing_plans.find(id)`. Another
+- Plans are reached only through the owner: `billing_owner.billing_plans.sold_by_platform.find(id)`. Another
   platform's plan is a 404 for show, edit, update, sync and snapshot, whatever id is sent.
+- The platform's screens manage only what **the platform itself sells**. A plan sold by a community or
+  person (its `seller`) belongs to that seller: it is left out of the list, is a 404 here, and is
+  refused by `PlanPolicy#manage_billing?`, which accepts only a platform as owner until community
+  billing (with its own `manage_community_billing` permission) is built.
 
 ## Fields
 
 | Field | Notes |
 |---|---|
-| `identifier` | Unique **per platform**. |
+| `seller` | Empty when the platform sells the plan; otherwise a community or person on the platform (type allow-list, read-only after create). |
+| `identifier` | Unique **per seller** (one partial index for the platform's own plans, one for each other seller's). |
 | `name`, `description`, `active` | Descriptive. |
 | `amount_cents`, `currency`, `billing_interval` | The price. No currency default: the host or steward chooses. |
-| `processor` | Must be a registered processor with a context for the platform. |
+| `processor` | The **online** processor that holds the price: a registered processor with a context for the platform. Empty for a plan paid only by the methods below. |
+| `accepted_payment_methods` | Installed methods that do not go through a vendor (cash, cheque, e-transfer, store credit). Each must still be enabled for the seller before buyers can use it. Editable at any time, since no processor holds them. A plan needs a processor or at least one accepted method. |
 | `processor_price_id` | Empty until the processor has created the price. Unique per processor. |
 | `processor_product_id` | **Not** unique: a product commonly has a monthly and a yearly price. A product may not be used by another platform's plan. |
 | `manages_processor_product` | False when an existing product was chosen; Community Engine then never renames it. |
@@ -44,6 +50,8 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
    processor does not know, an archived price, or a processor that cannot be reached is
    rejected on the price field. Any price id on a new plan is looked up this way, whether or
    not the form said "link", so a crafted request cannot attach an unchecked price.
+
+A plan with **no online processor** has nothing to push or link: it starts `synced`, needs no price id, and is paid by its accepted methods.
 
 A processor that cannot push plans (no `plan_sync` capability) still works: the price id is
 then required, because nothing will create it, and the plan starts `synced`.
