@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe 'better_together/events/_host.html.erb' do
   before do
     configure_host_platform
+    view.extend(BetterTogether::CommunityMarkHelper)
   end
 
   def stub_profile_image_tag(host, image_src)

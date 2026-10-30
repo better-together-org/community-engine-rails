@@ -1,5 +1,9 @@
 # [SYSTEM NAME] Documentation Template
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22 (last edited 2026-03-09). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 ## Overview
 
 [Brief description of the system's purpose and role within Better Together Community Engine]

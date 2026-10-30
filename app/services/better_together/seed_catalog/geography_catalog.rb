@@ -32,20 +32,24 @@ module BetterTogether
         end
 
         def label
-          'Geography Reference Data'
+          I18n.t('seed_catalog.geography.label', default: 'Geography Reference Data')
         end
 
+        # The settlements gloss (what counts as a settlement) lives in the locale files so that
+        # it can be worded per locale; see docs/assessments/settlement_to_town_rename_assessment.md.
         def description
-          'Continents, countries, provinces/territories, regions, and settlements used to ' \
-            'place locations in the geography hierarchy.'
+          I18n.t('seed_catalog.geography.description',
+                 default: 'Continents, countries, provinces/territories, regions, and settlements used to ' \
+                          'place locations in the geography hierarchy.')
         end
 
+        # CATEGORIES' English `label:` is the fallback; the displayed label is translated per locale.
         def categories
-          CATEGORIES
+          CATEGORIES.map { |entry| entry.merge(label: localized_label(entry)) }
         end
 
         def category(category_key)
-          CATEGORIES.find { |entry| entry[:key] == category_key.to_s.to_sym }
+          categories.find { |entry| entry[:key] == category_key.to_s.to_sym }
         end
 
         # Coarse signal ("does at least one row exist"), not "is every seed-source entry
@@ -103,6 +107,10 @@ module BetterTogether
                         ::BetterTogether::Geography::RegionSettlement.none?
 
           ::BetterTogether::GeographyBuilder.seed_region_settlements
+        end
+
+        def localized_label(entry)
+          I18n.t("seed_catalog.geography.categories.#{entry[:key]}", default: entry[:label])
         end
 
         # Geospatial::One's class_methods (an ActiveSupport::Concern block) mix into includers,

@@ -169,8 +169,8 @@ uk:
         identifier: Ідентифікатор
         lock_version: Версія блокування
         protected: Захищено
-        region_settlements: Поселення регіону
-        settlements: Поселення
+        region_settlements: Населені пункти регіону
+        settlements: Населені пункти
         slug: Слаг
         slugs: Слаги
         state: :activerecord.models.state
@@ -187,7 +187,7 @@ uk:
         identifier: Ідентифікатор
         lock_version: Версія блокування
         protected: Захищено
-        region_settlements: Поселення регіону
+        region_settlements: Населені пункти регіону
         regions: Регіони
         slug: Слаг
         slugs: Слаги
@@ -202,7 +202,7 @@ uk:
         lock_version: Версія блокування
         protected: Захищено
         regions: Регіони
-        settlements: Поселення
+        settlements: Населені пункти
         slug: Слаг
         slugs: Слаги
         string_translations: Переклади рядків
@@ -643,8 +643,8 @@ uk:
       better_together/geography/country: Країна
       better_together/geography/country_continent: Континент країни
       better_together/geography/region: Регіон
-      better_together/geography/region_settlement: Поселення регіону
-      better_together/geography/settlement: Поселення
+      better_together/geography/region_settlement: Населений пункт регіону
+      better_together/geography/settlement: Населений пункт
       better_together/geography/state: Штат
       better_together/guest_access: Гостьовий доступ
       better_together/identification: Ідентифікація
@@ -1093,10 +1093,9 @@ uk:
         actions:
           destroy_aria: Видалити спільноту
           edit_aria: Редагувати спільноту
-        create_event: Створити подію
         events:
-          create_event: Створити подію
-          draft_heading: Чернетка
+          loading: Завантаження подій...
+        map_aria: 'Карта: %{name}'
         members:
           add_member_modal:
             close: Закрити
@@ -1106,9 +1105,7 @@ uk:
             submit: Додати
             title: Додати нового учасника
         posts:
-          create_post: Створити допис
-          empty_description: Дописи, створені для цієї спільноти, з'являться тут.
-          empty_title: Поки що немає дописів
+          loading: Завантаження дописів...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1188,6 +1185,10 @@ uk:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Associated Pages
+        attachment_preview:
+          image: 'Зображення: %{caption}'
+          opens_in_new_tab: "(відкривається в новій вкладці)"
+          video: 'Відео: %{url}'
         checklist_block:
           not_found: Контрольний список не знайдено.
           select_prompt: "— Виберіть контрольний список —"
@@ -1296,6 +1297,7 @@ uk:
           default: Типовий шаблон
           host_community_contact_details: Контактні дані спільноти-хоста
         video_block:
+          aspect_ratio_portrait: 9:16 (Вертикальне)
           missing_url: URL відео не налаштовано.
           title: Відеопрогравач YouTube
           url_help: Приймає URL YouTube, Vimeo або будь-який прямий URL вбудовування.
@@ -1711,16 +1713,6 @@ uk:
         status_draft: Чернетка
         status_label: Статус
       location: Місце
-      location_picker:
-        announcements:
-          cancelled: Створення нової адреси скасовано. Повернення до поля пошуку місцезнаходження.
-          creating: Створення нової адреси. Заповніть поля адреси нижче, потім збережіть
-            подію.
-        cancel_new_address: Скасувати нову адресу
-        create_row:
-          new_named_with_query: 'Створити новий %{model}: «%{q}»'
-          use_typed_name: Використати «%{q}» як власну назву місцезнаходження
-        new_address_legend: Нова адреса
       login_required: Будь ласка, увійдіть для управління RSVP.
       model_invalid: 'Помилка валідації: %{errors}'
       no_attendees: Учасників поки що немає.
@@ -1825,6 +1817,35 @@ uk:
       rsvp_saved: RSVP збережено
       rsvp_unavailable_draft: RSVP буде доступним після планування цієї події.
       save_event: Зберегти подію
+      series:
+        disposed: Серію оновлено.
+        disposition:
+          cancel_legend: Скасувати серію
+          cancel_sessions: Скасувати також майбутні дати
+          cancel_submit: Скасувати серію
+          delete_legend: Видалити серію
+          delete_sessions: Видалити також дати
+          delete_submit: Видалити серію
+          explain: У цій серії %{count} дат. Вкажіть, що станеться з ними, перш ніж
+            скасувати або видалити серію.
+          open: Скасувати або видалити цю серію
+          promote_sessions: Залишити дати окремими подіями
+        no_sessions: До цієї серії ще не додано жодної дати.
+        other_dates: Інші дати
+        part_of: Частина серії %{name}
+        part_of_run:
+          few: Частина серії з %{count} дат
+          many: Частина серії з %{count} дат
+          one: Частина серії з %{count} дати
+          other: Частина серії з %{count} дати
+        sessions_heading: Дати
+        show_all_dates:
+          few: Показати ще %{count} дати
+          many: Показати ще %{count} дат
+          one: Показати ще %{count} дату
+          other: Показати ще %{count} дати
+      show:
+        map_label: 'Карта: %{name}'
       statuses:
         cancelled: Скасовано
         confirmed: Підтверджено
@@ -2071,20 +2092,40 @@ uk:
       locatable_location:
         errors:
           no_location_source: Потрібно вказати або ім'я, або місцезнаходження
+      place_scoped_index:
+        events_heading: Події в %{name}
+        posts_heading: Дописи в %{name}
       regions:
         index:
-          title: Regions
-      settlements:
-        index:
-          title: Поселення
+          title: Регіони
         show:
-          destroy: Зруйнувати поселення
-          edit-settlement: Редагувати поселення
-          view-all-settlements: Переглянути всі поселення
+          settlements_heading: Населені пункти в %{name}
+      settlements:
+        edit:
+          heading: Редагування населеного пункту
+          page_title: Редагувати %{name} | %{resources}
+        index:
+          description: Міста, містечка, села, хутори, громади корінних народів та
+            інші місця з власною назвою.
+          new: Новий населений пункт
+          title: Населені пункти
+        new:
+          back: Назад до населених пунктів
+          heading: Новий населений пункт
+        show:
+          destroy: Зруйнувати населений пункт
+          edit-settlement: Редагувати населений пункт
+          events_loading: Завантаження подій...
+          posts_loading: Завантаження дописів...
+          sections_aria: Розділи населеного пункту
+          view-all-settlements: Переглянути всі населені пункти
         toolbar:
-          back_to_geography_settlements: Назад до Поселень
-          save_geography_settlement: Зберегти поселення
-          view_geography_settlement: Переглянути поселення
+          back_to_geography_settlements: Назад до населених пунктів
+          save_geography_settlement: Зберегти населений пункт
+          view_geography_settlement: Переглянути населений пункт
+      states:
+        show:
+          settlements_tab: Населені пункти
     global:
       add: Додати
     globals:
@@ -2170,6 +2211,7 @@ uk:
       invitee: Запрошений
       invitee_email: Електронна пошта
       invitee_type: Тип запрошеного
+      invitee_unavailable: Цю особу не можна запросити.
       login_to_respond: Будь ласка, увійдіть до системи, щоб відповісти на ваше запрошення.
       no_invitations: Запрошень не знайдено
       no_role: Без ролі
@@ -2221,6 +2263,7 @@ uk:
       categories:
         index:
           new_btn_text: Нова категорія
+      exchange_unavailable: Цей обмін недоступний.
       help:
         agreements:
           index: Agreements connect one Offer and one Request. Use this list to review
@@ -2351,6 +2394,21 @@ uk:
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
+    locations:
+      picker:
+        announcements:
+          cancelled: Створення нової адреси скасовано. Повернення до поля пошуку місцезнаходження.
+          creating: Створення нової адреси. Заповніть поля адреси нижче, потім збережіть.
+        cancel_new_address: Скасувати нову адресу
+        create_new: Створити новий %{model}
+        hint: Знайдіть наявну адресу, будівлю або населений пункт (місто, містечко,
+          село, хутір, громаду корінних народів чи інше місце з власною назвою). Якщо
+          його немає у списку, виберіть «Створити нову адресу» або використайте введений
+          текст як власну назву.
+        label: Місце
+        new_address_legend: Нова адреса
+        new_named_with_query: 'Створити новий %{model}: «%{q}»'
+        use_typed_name: Використати «%{q}» як власну назву місцезнаходження
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
@@ -2793,7 +2851,7 @@ uk:
         geography_countries: Countries
         geography_maps: Maps
         geography_regions: Regions
-        geography_settlements: Settlements
+        geography_settlements: Населені пункти
         geography_states: States
         host_dashboard: Host Dashboard
         host_dashboard_membership_review: Membership Review
@@ -3463,8 +3521,10 @@ uk:
         table_headers:
           authors: Автори
           categories: Категорії
+          community: Спільнота
           published: Опубліковано
           title: Заголовок
+        toggle_filters: Фільтри
       labels:
         privacy: Конфіденційність
       list_form:
@@ -3977,12 +4037,32 @@ uk:
       share: Share
       whatsapp: Share on WhatsApp
     shared:
+      community_chip:
+        label: Спільнота
+        title: Опубліковано у спільноті %{community}
       community_creation_agreement_notice:
         accept_link: Перегляньте і прийміть угоду про створення спільноти
         message: Щоб створити спільноту, спочатку потрібно прийняти угоду про створення
           спільноти.
       event_status_level: 'Статус події: %{status}'
       event_status_tooltip: 'Статус події: %{status}'
+      map:
+        buttons:
+          geolocate: Визначити моє місцезнаходження
+          map: Карта
+          satellite: Супутник
+        geolocation:
+          denied: Доступ до місцезнаходження заблоковано. Дозвольте його для цього
+            сайту в налаштуваннях браузера та спробуйте ще раз.
+          located: Показано ваше місцезнаходження.
+          locating: Визначаємо ваше місцезнаходження...
+          timeout: Визначення місцезнаходження зайняло надто багато часу. Спробуйте
+            ще раз.
+          unavailable: Не вдалося визначити ваше місцезнаходження. Перевірте, чи ввімкнено
+            служби геолокації, і спробуйте ще раз.
+          unsupported: Ваш браузер не підтримує визначення місцезнаходження.
+          you_are_here: Ви тут
+        show_on_map: Показати на карті
       privacy_level: 'Конфіденційність: %{privacy}'
       privacy_tooltip: Цей вміст %{privacy}
       publishing_agreement_notice:
@@ -4997,8 +5077,8 @@ uk:
     joatu:
       agreement:
         accepted: Угоду прийнято
-        cancelled: Угоду скасовано — зарезервовані насіння повернено.
-        fulfilled: Угоду виконано — C3 передано творцю пропозиції.
+        cancelled: Угоду скасовано.
+        fulfilled: Угоду виконано.
         rejected: Угоду відхилено
       response_links:
         offer_created: Пропозицію створено у відповідь на запит.
@@ -5067,6 +5147,7 @@ uk:
     tabs:
       about: Про
       attendees: Учасники
+      communities: Спільноти
       contact: Контакт
       events: Події
       federation: Федерація
@@ -5536,12 +5617,12 @@ uk:
     platform: Платформа
     profile: Профіль
     region: Регіон
-    region_settlement: Регіональне поселення
+    region_settlement: Населений пункт регіону
     report: Звіт
     resource_permission: Дозвіл ресурсу
     role: Роль
     seed: Seed
-    settlement: Поселення
+    settlement: Населений пункт
     state: Штат/Область
     user: Користувач
   roles:
@@ -5550,6 +5631,18 @@ uk:
     button: Пошук
     placeholder: Пошук...
   seed_catalog:
+    geography:
+      categories:
+        continents: Континенти
+        countries: Країни
+        provinces: Провінції та території
+        regions: Регіони
+        settlements: Населені пункти
+      description: Континенти, країни, провінції та території, регіони й населені
+        пункти (міста, містечка, села, хутори, громади корінних народів та інші місця
+        з власною назвою), які використовуються для розміщення локацій у географічній
+        ієрархії.
+      label: Географічні довідкові дані
     index:
       actions: Дії
       category: Категорія

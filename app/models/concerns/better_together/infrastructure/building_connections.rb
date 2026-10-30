@@ -52,10 +52,12 @@ module BetterTogether
             )
           end
 
-          place_link = "<a href='#{place_url}' class='text-decoration-none'><strong>#{name}#{place_label}</strong></a>"
+          # Names and addresses are user supplied: escape them before they go into popup markup.
+          place_link = "<a href='#{place_url}' class='text-decoration-none'>" \
+                       "<strong>#{ERB::Util.html_escape("#{name}#{place_label}")}</strong></a>"
 
-          address_label = building.address.to_formatted_s(
-            excluded: [:display_label]
+          address_label = ERB::Util.html_escape(
+            building.address.to_formatted_s(excluded: [:display_label])
           )
 
           point.merge(

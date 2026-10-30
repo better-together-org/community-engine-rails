@@ -25,6 +25,7 @@ module BetterTogether
 
       def validate_supported_embeds_for_content_security
         unsupported_attachables = body&.attachables.to_a.grep_v(::ActiveStorage::Blob)
+                                      .reject { |attachable| BetterTogether::ContentSecurity::AttachableRegistry.allowed?(attachable) }
         return if unsupported_attachables.blank?
 
         errors.add(:body, 'contains unsupported attachments; upload files into CE so they can be reviewed first')

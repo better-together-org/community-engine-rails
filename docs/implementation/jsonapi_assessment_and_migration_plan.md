@@ -1,5 +1,9 @@
 # JSONAPI Implementation Assessment & Migration Plan
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2026-01-27. It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Date:** January 27, 2026  
 **Status:** Ready for Production Migration  
 **Priority:** High

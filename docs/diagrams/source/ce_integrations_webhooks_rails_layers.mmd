@@ -5,11 +5,11 @@ classDiagram
   namespace Controllers {
     class BetterTogether__Api__V1__PostsController["Api::V1::PostsController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__Api__V1__WebhooksController["Api::V1::WebhooksController"] {
       <<Controller>>
-      concerns: Api::OauthAuthorization
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
     class BetterTogether__WebhookEndpointsController["WebhookEndpointsController"] {
       <<Controller>>

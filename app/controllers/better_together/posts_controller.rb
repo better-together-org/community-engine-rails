@@ -6,6 +6,8 @@ module BetterTogether
   class PostsController < FriendlyResourceController
     include PostsIndexPreload
     include ChecksRequiredAgreements
+    include FramedIndex
+    prepend PlaceScopedIndex # ?settlement=<identifier> lists only what is located in that place
 
     # Prepended so this runs before the inherited :authorize_resource
     # before_action — otherwise Pundit's plain 404 (via authorize_resource's

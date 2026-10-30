@@ -7,6 +7,12 @@ module BetterTogether
       'type of content provided. Only return the translated text without any added explanation ' \
       'or commentary.'
 
+    # Idempotency key for one translation's ai_translation_tokens charge, shared by
+    # #settle_translation_tokens_quota and Quotas::Backfill.
+    def self.translation_charge_key(log_id)
+      "ai_translation_tokens:settle:log:#{log_id}"
+    end
+
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/AbcSize
     # rubocop:todo Metrics/ParameterLists
@@ -49,10 +55,17 @@ module BetterTogether
       response_model = response[:model].presence || model_name.presence || model
       estimated_cost = estimate_cost(prompt_tokens, completion_tokens, response_model)
 
+      # Tokens are spent at the provider whether or not anyone initiated the call, so
+      # metering happens for every translation; only the log row needs an initiator.
+      # log_id is generated here so the usage row and the async log row share one
+      # identity (see #settle_translation_tokens_quota).
+      log_id = SecureRandom.uuid
+      settle_translation_tokens_quota(initiator, log_id, prompt_tokens, completion_tokens)
+
       # Log the translation request
       if initiator
         log_translation(content, translated_content, initiator, start_time, end_time, source_locale, target_locale,
-                        estimated_cost, prompt_tokens:, completion_tokens:, response_model:)
+                        estimated_cost, prompt_tokens:, completion_tokens:, response_model:, log_id:)
       end
 
       translated_content
@@ -73,9 +86,11 @@ module BetterTogether
     # rubocop:todo Metrics/MethodLength
     # rubocop:todo Metrics/ParameterLists
     def log_translation(request_content, response_content, initiator, start_time, end_time, source_locale,
-                        target_locale, estimated_cost, prompt_tokens:, completion_tokens:, response_model:)
+                        target_locale, estimated_cost, prompt_tokens:, completion_tokens:, response_model:,
+                        log_id: nil)
       # rubocop:enable Metrics/ParameterLists
       BetterTogether::Ai::Log::TranslationLoggerJob.perform_later(
+        log_id:,
         request_content:,
         response_content:,
         prompt_tokens:,
@@ -96,6 +111,26 @@ module BetterTogether
       )
     end
     # rubocop:enable Metrics/MethodLength
+
+    # Settle-only, no pre-call reserve!: token counts are only known after the
+    # provider call returns (see #translate above). subject: nil because the
+    # Ai::Log::Translation row doesn't exist yet, created async with id log_id. The
+    # idempotency key is built from that id, the same key Quotas::Backfill uses for
+    # the log row, so the backfill never charges these tokens a second time, and
+    # every call gets its own key however many run at once. With no initiator the
+    # owner resolves to the Platform. Errors are caught non-fatally, a
+    # quota-tracking bug must never break translation.
+    def settle_translation_tokens_quota(initiator, log_id, prompt_tokens, completion_tokens)
+      BetterTogether::Quotas.settle!(
+        type: 'ai_translation_tokens',
+        owner: BetterTogether::Quotas::OwnerResolver.resolve(initiator),
+        amount: prompt_tokens + completion_tokens,
+        idempotency_key: self.class.translation_charge_key(log_id),
+        actor: initiator
+      )
+    rescue StandardError => e
+      Rails.logger.warn("[Quotas] settle! failed non-fatally for ai_translation_tokens: #{e.class}: #{e.message}")
+    end
 
     def estimate_cost(prompt_tokens, completion_tokens, model)
       rates = {

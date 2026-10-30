@@ -1,0 +1,48 @@
+{
+  "name": "block_attachments_video",
+  "device": "mobile",
+  "url": "/en/posts/sample-post-1",
+  "title": "Blocks inside a post | Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "block_attachments",
+  "flow": "block_attachments_video",
+  "source_spec": "./spec/docs_screenshots/better_together/block_attachments_spec.rb",
+  "callouts": [
+    {
+      "selector": ".post-content .attached-video",
+      "title": "Video block",
+      "bullets": [
+        "Privacy-enhanced embed, narrow for a 9:16 video."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 308.203125,
+        "width": 427.0,
+        "height": 640.0,
+        "right": 456.0,
+        "bottom": 948.203125,
+        "center_x": 242.5,
+        "center_y": 628.203125
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 308.203125,
+        "width": 427.0,
+        "height": 640.0,
+        "right": 456.0,
+        "bottom": 948.203125,
+        "center_x": 242.5,
+        "center_y": 628.203125
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 968.2,
+        "width": 270.0,
+        "height": 158,
+        "score": 308.796875
+      }
+    }
+  ]
+}

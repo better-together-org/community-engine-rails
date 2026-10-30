@@ -1,0 +1,9 @@
+flowchart LR
+  Init["Host initializer<br/>MapLayer.register(key, attribution, licence, url)"] --> Reg[(MapLayer registry)]
+  Mappable["Mappable#map_layers"] --> MapLayers["Map#layers"]
+  Local["_map partial<br/>layers: and boundary_attribution:"] --> Resolve
+  MapLayers --> Resolve["MapLayer.resolve<br/>merge by key"]
+  Reg --> Resolve
+  Resolve --> Values["data-...-layers-value<br/>(JSON with escaped attribution)"]
+  Values --> JS["map_controller#addDataLayers<br/>L.geoJSON(data or fetch url, attribution)"]
+  JS --> Ctl["Leaflet attribution control<br/>credit shown while layer is on the map"]

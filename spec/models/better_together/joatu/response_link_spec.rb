@@ -18,4 +18,24 @@ RSpec.describe BetterTogether::Joatu::ResponseLink do
     described_class.create!(source: offer, response: request, creator_id: create(:person).id)
     expect(offer.reload.status).to eq('matched')
   end
+
+  describe 'match notifications and blocks' do
+    let(:match_events) { Noticed::Event.where(type: 'BetterTogether::Joatu::MatchNotifier') }
+
+    it 'notifies the source creator when no block exists' do
+      expect do
+        described_class.create!(source: offer, response: request, creator_id: create(:person).id)
+      end.to change(match_events, :count).by(1)
+    end
+
+    it 'refuses to link responses between people with a block, in either direction' do
+      create(:person_block, blocker: request.creator, blocked: offer.creator)
+
+      expect do
+        link = described_class.new(source: offer, response: request, creator_id: create(:person).id)
+        expect(link).not_to be_valid
+        expect(link.errors[:base]).to include(I18n.t('better_together.joatu.exchange_unavailable'))
+      end.not_to(change(match_events, :count))
+    end
+  end
 end

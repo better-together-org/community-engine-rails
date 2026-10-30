@@ -43,6 +43,27 @@ module BetterTogether
         end
       end
 
+      describe '#attachment_embed_url and #portrait?' do
+        it 'uses the privacy-enhanced youtube host for youtube videos' do
+          expect(block.attachment_embed_url).to eq('https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ')
+        end
+
+        it 'leaves vimeo and raw embed urls unchanged', :aggregate_failures do
+          block.video_url = 'https://vimeo.com/123456789'
+          expect(block.attachment_embed_url).to eq(block.embed_url)
+
+          block.video_url = 'https://example.test/embed/1'
+          expect(block.attachment_embed_url).to eq('https://example.test/embed/1')
+        end
+
+        it 'is portrait only for 9x16', :aggregate_failures do
+          expect(block).not_to be_portrait
+          block.aspect_ratio = '9x16'
+          expect(block).to be_portrait
+          expect(block).to be_valid
+        end
+      end
+
       describe '#provider' do
         it 'identifies youtube.com watch URLs' do
           block.video_url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'

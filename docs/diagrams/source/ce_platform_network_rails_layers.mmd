@@ -42,7 +42,7 @@ classDiagram
     class BetterTogether__PlatformInvitationsController["PlatformInvitationsController"] {
       <<Controller>>
       models: PlatformInvitation
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, PerUserThrottling
     }
     class BetterTogether__PlatformsController["PlatformsController"] {
       <<Controller>>
@@ -94,7 +94,7 @@ classDiagram
     class BetterTogether__CommunityInvitation["CommunityInvitation"] {
       <<Model>>
       table: better_together_invitations
-      concerns: BetterTogetherId, Creatable, PlatformScoped, Seedable
+      concerns: BetterTogetherId, BlockAwareInvitation, Creatable, PlatformScoped +1
       weak refs: target: invitable, target: inviter, target: invitee, owner: seeds
     }
     class BetterTogether__FederationAccessToken["FederationAccessToken"] {
@@ -139,7 +139,7 @@ classDiagram
     class BetterTogether__PlatformInvitation["PlatformInvitation"] {
       <<Model>>
       table: better_together_platform_invitations
-      concerns: BetterTogetherId, Seedable
+      concerns: BetterTogetherId, BlockAwareInvitation, Seedable
       weak refs: owner: seeds, owner: rich_text_greeting
     }
     class BetterTogether__Robot["Robot"] {

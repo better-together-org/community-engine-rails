@@ -169,8 +169,8 @@ es:
         identifier: Identificador
         lock_version: Versión de bloqueo
         protected: Protegido
-        region_settlements: Asentamientos regionales
-        settlements: Asentamientos
+        region_settlements: Localidades de la región
+        settlements: Localidades
         slug: Identificador
         slugs: Identificadors
         state: :activerecord.models.state
@@ -187,7 +187,7 @@ es:
         identifier: Identificador
         lock_version: Versión de bloqueo
         protected: Protegido
-        region_settlements: Asentamientos regionales
+        region_settlements: Localidades de la región
         regions: Regiones
         slug: Identificador
         slugs: Identificadors
@@ -202,7 +202,7 @@ es:
         lock_version: Versión de bloqueo
         protected: Protegido
         regions: Regiones
-        settlements: Asentamientos
+        settlements: Localidades
         slug: Identificador
         slugs: Identificadors
         string_translations: Traducciones de cadenas
@@ -653,8 +653,8 @@ es:
       better_together/geography/country: País
       better_together/geography/country_continent: País Continente
       better_together/geography/region: Región
-      better_together/geography/region_settlement: Asentamiento Regional
-      better_together/geography/settlement: Asentamiento
+      better_together/geography/region_settlement: Localidad de la región
+      better_together/geography/settlement: Localidad
       better_together/geography/state: Estado
       better_together/guest_access: Acceso de invitado
       better_together/identification: Identificación
@@ -1104,10 +1104,9 @@ es:
         actions:
           destroy_aria: Eliminar la comunidad
           edit_aria: Editar la comunidad
-        create_event: Crear un evento
         events:
-          create_event: Crear un evento
-          draft_heading: Borrador
+          loading: Cargando eventos...
+        map_aria: Mapa de %{name}
         members:
           add_member_modal:
             close: Cerrar
@@ -1117,10 +1116,7 @@ es:
             submit: Agregar
             title: Agregar nuevo miembro
         posts:
-          create_post: Crear publicación
-          empty_description: Las publicaciones creadas para esta comunidad aparecerán
-            aquí.
-          empty_title: Sin publicaciones
+          loading: Cargando publicaciones...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1198,6 +1194,10 @@ es:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Páginas asociadas
+        attachment_preview:
+          image: 'Imagen: %{caption}'
+          opens_in_new_tab: "(se abre en una pestaña nueva)"
+          video: 'Video: %{url}'
         checklist_block:
           not_found: Lista de verificación no encontrada.
           select_prompt: "— Seleccionar una lista de verificación —"
@@ -1307,6 +1307,7 @@ es:
           default: Plantilla predeterminada
           host_community_contact_details: Detalles de contacto de la comunidad anfitriona
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: No se ha configurado ninguna URL de video.
           title: Reproductor de video de YouTube
           url_help: Acepta URLs de YouTube, Vimeo o cualquier URL de inserción directa.
@@ -1717,17 +1718,6 @@ es:
         status_draft: Borrador
         status_label: Estado
       location: Ubicación
-      location_picker:
-        announcements:
-          cancelled: Nueva dirección cancelada. Has vuelto al campo de búsqueda de
-            ubicación.
-          creating: Creando una nueva dirección. Rellena los campos de dirección a
-            continuación y luego guarda el evento.
-        cancel_new_address: Cancelar nueva dirección
-        create_row:
-          new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
-          use_typed_name: Usar «%{q}» como nombre de ubicación personalizado
-        new_address_legend: Nueva dirección
       login_required: Por favor, inicia sesión para gestionar las confirmaciones de
         asistencia.
       model_invalid: 'La validación falló: %{errors}'
@@ -1830,6 +1820,31 @@ es:
       rsvp_unavailable_draft: RSVP estará disponible una vez que este evento esté
         programado.
       save_event: Save Event
+      series:
+        disposed: Serie actualizada.
+        disposition:
+          cancel_legend: Cancelar la serie
+          cancel_sessions: Cancelar también las próximas fechas
+          cancel_submit: Cancelar serie
+          delete_legend: Eliminar la serie
+          delete_sessions: Eliminar también las fechas
+          delete_submit: Eliminar serie
+          explain: Esta serie tiene %{count} fechas. Indica qué ocurre con ellas antes
+            de cancelarla o eliminarla.
+          open: Cancelar o eliminar esta serie
+          promote_sessions: Conservar las fechas como eventos independientes
+        no_sessions: Todavía no se han añadido fechas a esta serie.
+        other_dates: Otras fechas
+        part_of: Parte de %{name}
+        part_of_run:
+          one: Parte de una serie de %{count} fecha
+          other: Parte de una serie de %{count} fechas
+        sessions_heading: Fechas
+        show_all_dates:
+          one: Mostrar %{count} fecha más
+          other: Mostrar %{count} fechas más
+      show:
+        map_label: Mapa de %{name}
       statuses:
         cancelled: Cancelado
         confirmed: Confirmado
@@ -2059,20 +2074,40 @@ es:
       locatable_location:
         errors:
           no_location_source: Debes especificar un nombre o una ubicación
+      place_scoped_index:
+        events_heading: Eventos en %{name}
+        posts_heading: Publicaciones en %{name}
       regions:
         index:
           title: Regiones
-      settlements:
-        index:
-          title: Asentamientos
         show:
-          destroy: Destruir asentamiento
-          edit-settlement: Editar asentamiento
-          view-all-settlements: Ver todos los asentamientos
+          settlements_heading: Localidades en %{name}
+      settlements:
+        edit:
+          heading: Editando localidad
+          page_title: Editar %{name} | %{resources}
+        index:
+          description: Ciudades, pueblos, aldeas, caseríos, comunidades indígenas
+            y otros lugares con nombre.
+          new: Nueva localidad
+          title: Localidades
+        new:
+          back: Volver a las localidades
+          heading: Nueva localidad
+        show:
+          destroy: Destruir localidad
+          edit-settlement: Editar localidad
+          events_loading: Cargando eventos...
+          posts_loading: Cargando publicaciones...
+          sections_aria: Secciones de la localidad
+          view-all-settlements: Ver todas las localidades
         toolbar:
-          back_to_geography_settlements: Volver a los asentamientos
-          save_geography_settlement: Guardar asentamiento
-          view_geography_settlement: Ver el asentamiento
+          back_to_geography_settlements: Volver a las localidades
+          save_geography_settlement: Guardar localidad
+          view_geography_settlement: Ver la localidad
+      states:
+        show:
+          settlements_tab: Localidades
     global:
       add: Agregar
     globals:
@@ -2159,6 +2194,7 @@ es:
       invitee: Invitado
       invitee_email: Correo electrónico
       invitee_type: Tipo de invitado
+      invitee_unavailable: No se puede invitar a esta persona.
       login_to_respond: Por favor, inicia sesión para responder a tu invitación.
       no_invitations: No se encontraron invitaciones
       no_role: Sin rol
@@ -2210,6 +2246,7 @@ es:
       categories:
         index:
           new_btn_text: Nueva categoría
+      exchange_unavailable: Este intercambio no está disponible.
       help:
         agreements:
           index: Los acuerdos conectan una oferta y una solicitud. Usa esta lista
@@ -2339,6 +2376,23 @@ es:
     labelable:
       custom-label-placeholder: Tu etiqueta personalizada
     loading: Cargando...
+    locations:
+      picker:
+        announcements:
+          cancelled: Nueva dirección cancelada. Has vuelto al campo de búsqueda de
+            ubicación.
+          creating: Creando una nueva dirección. Rellena los campos de dirección a
+            continuación y luego guarda.
+        cancel_new_address: Cancelar nueva dirección
+        create_new: Crear nuevo %{model}
+        hint: Busca una dirección, un edificio o una localidad que ya exista (ciudad,
+          pueblo, aldea, comunidad indígena u otro lugar con nombre). Si no está en
+          la lista, elige «Crear nueva dirección» o usa el texto que escribiste como
+          nombre personalizado.
+        label: Ubicación
+        new_address_legend: Nueva dirección
+        new_named_with_query: 'Crear nuevo %{model}: «%{q}»'
+        use_typed_name: Usar «%{q}» como nombre de ubicación personalizado
     mailer:
       footer:
         no_reply: Este es un mensaje automatizado. Por favor, no respondas a este
@@ -2789,7 +2843,7 @@ es:
         geography_countries: Países
         geography_maps: Mapas
         geography_regions: Regiones
-        geography_settlements: Asentamientos
+        geography_settlements: Localidades
         geography_states: Estados
         host_dashboard: Panel de control del anfitrión
         host_dashboard_membership_review: Revisión de membresías
@@ -3463,8 +3517,10 @@ es:
         table_headers:
           authors: Autores
           categories: Categorías
+          community: Comunidad
           published: Publicado
           title: Título
+        toggle_filters: Filtros
       labels:
         privacy: Privacidad
       list_form:
@@ -3982,12 +4038,31 @@ es:
       share: Compartir
       whatsapp: Compartir en WhatsApp
     shared:
+      community_chip:
+        label: Comunidad
+        title: Publicado en la comunidad %{community}
       community_creation_agreement_notice:
         accept_link: Review and accept the community creation agreement
         message: To create a community, you need to accept the community creation
           agreement first.
       event_status_level: 'Estado del evento: %{status}'
       event_status_tooltip: 'Estado del evento: %{status}'
+      map:
+        buttons:
+          geolocate: Ubicarme
+          map: Mapa
+          satellite: Satélite
+        geolocation:
+          denied: El acceso a la ubicación está bloqueado. Permítalo para este sitio
+            en la configuración del navegador e inténtelo de nuevo.
+          located: Mostrando su ubicación.
+          locating: Buscando su ubicación...
+          timeout: Encontrar su ubicación tardó demasiado. Inténtelo de nuevo.
+          unavailable: No se pudo determinar su ubicación. Compruebe que los servicios
+            de ubicación estén activados e inténtelo de nuevo.
+          unsupported: Su navegador no admite la ubicación.
+          you_are_here: Usted está aquí
+        show_on_map: Mostrar en el mapa
       privacy_level: 'Privacidad: %{privacy}'
       privacy_tooltip: Este contenido es %{privacy}
       publishing_agreement_notice:
@@ -4982,8 +5057,8 @@ es:
     joatu:
       agreement:
         accepted: Acuerdo aceptado
-        cancelled: Acuerdo cancelado — las Semillas reservadas han sido devueltas.
-        fulfilled: Acuerdo cumplido — C3 transferido al creador de la oferta.
+        cancelled: Acuerdo cancelado.
+        fulfilled: Acuerdo cumplido.
         rejected: Acuerdo rechazado
       response_links:
         offer_created: Oferta creada en respuesta a la solicitud.
@@ -5053,6 +5128,7 @@ es:
     tabs:
       about: Acerca de
       attendees: Asistentes
+      communities: Comunidades
       contact: Contacto
       events: Eventos
       federation: Federación
@@ -5508,12 +5584,12 @@ es:
     platform: Plataforma
     profile: Perfil
     region: Región
-    region_settlement: Asentamiento Regional
+    region_settlement: Localidad de la región
     report: Informe
     resource_permission: Permiso de recurso
     role: Rol
     seed: Seed
-    settlement: Asentamiento
+    settlement: Localidad
     state: Estado
     user: Usuario
   roles:
@@ -5522,6 +5598,17 @@ es:
     button: Buscar
     placeholder: Buscar...
   seed_catalog:
+    geography:
+      categories:
+        continents: Continentes
+        countries: Países
+        provinces: Provincias y territorios
+        regions: Regiones
+        settlements: Localidades
+      description: Continentes, países, provincias y territorios, regiones y localidades
+        (ciudades, pueblos, aldeas, comunidades indígenas y otros lugares con nombre)
+        que se usan para situar ubicaciones en la jerarquía geográfica.
+      label: Datos de referencia geográficos
     index:
       actions: Acciones
       category: Categoría

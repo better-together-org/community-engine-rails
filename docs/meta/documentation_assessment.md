@@ -1,5 +1,9 @@
 # Better Together Community Engine - Documentation Assessment & Progress Tracker
 
+<!-- historical-doc-banner -->
+> **Historical document.** Written on 2025-08-22 (last edited 2026-09-04). It records the code, plans and findings as they stood then and is not maintained for later releases. For current behaviour see the [documentation index](../table_of_contents.md).
+<!-- /historical-doc-banner -->
+
 **Last Updated:** September 04, 2026
 **Assessment Date:** August 21, 2025  
 **Schema Analysis Version:** 2025_08_21_121500

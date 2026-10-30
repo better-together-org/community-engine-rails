@@ -1,0 +1,16 @@
+---
+title: Located
+audience:
+- visitor
+- developer
+journey_step: As a visitor, I can tell that the locate button is working and when
+  it has found me.
+callouts:
+- :id: locate_button
+  :title: Located
+  :description: A check on a green button confirms the map is framed on the accuracy
+    circle.
+accessibility_notes: State is also exposed through aria-busy and the polite map status
+  message.
+slug: map_locate_located
+device: mobile

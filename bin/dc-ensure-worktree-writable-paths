@@ -19,6 +19,7 @@ host_gid="$(id -g)"
 
 repair_roots=(
   "coverage"
+  "tmp"
   "spec/dummy/log"
   "spec/dummy/tmp"
 )
@@ -34,13 +35,13 @@ done
 if [[ "$needs_repair" == "1" ]]; then
   docker compose "${compose_files[@]}" run --rm --no-deps --user root app bash -lc "
     set -euo pipefail
-    mkdir -p coverage spec/dummy/log spec/dummy/tmp
-    chown -R $host_uid:$host_gid coverage spec/dummy/log spec/dummy/tmp
-    chmod -R u+rwX coverage spec/dummy/log spec/dummy/tmp
+    mkdir -p coverage tmp spec/dummy/log spec/dummy/tmp
+    chown -R $host_uid:$host_gid coverage tmp spec/dummy/log spec/dummy/tmp
+    chmod -R u+rwX coverage tmp spec/dummy/log spec/dummy/tmp
   " >/dev/null
 fi
 
-mkdir -p coverage spec/dummy/log spec/dummy/tmp
+mkdir -p coverage tmp spec/dummy/log spec/dummy/tmp
 
 for path in "${repair_roots[@]}"; do
   if [[ ! -w "$path" ]]; then

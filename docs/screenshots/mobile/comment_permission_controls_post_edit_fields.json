@@ -1,7 +1,7 @@
 {
   "name": "comment_permission_controls_post_edit_fields",
   "device": "mobile",
-  "url": "/en/posts/sample-post-1/edit",
+  "url": "/en/posts/sample-post-7/edit",
   "title": "Edit Post | Test Host Community",
   "locale": "en",
   "role": "user",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/comment_permission_controls_spec.rb",
   "callouts": [
     {
-      "selector": "#post_05cbf9d6-b9bf-4173-8659-da5cd768da8e_comment_permission",
+      "selector": "#post_c48116d6-0257-45b8-a8f5-bb978ec06307_comment_permission",
       "title": "Who can comment",
       "bullets": [
         "Nested comment_config fieldset added next to the existing privacy field.",
@@ -18,35 +18,35 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 611.4375,
+        "y": 609.4375,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 649.4375,
+        "bottom": 647.4375,
         "center_x": 242.5,
-        "center_y": 630.4375
+        "center_y": 628.4375
       },
       "avoid": {
         "x": 12.0,
-        "y": 611.4375,
+        "y": 609.4375,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 649.4375,
+        "bottom": 647.4375,
         "center_x": 242.5,
-        "center_y": 630.4375
+        "center_y": 628.4375
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 669.44,
+        "y": 667.44,
         "width": 270.0,
         "height": 366,
-        "score": 611.5625
+        "score": 609.5625
       }
     },
     {
-      "selector": "#post_05cbf9d6-b9bf-4173-8659-da5cd768da8e_comment_visibility",
+      "selector": "#post_c48116d6-0257-45b8-a8f5-bb978ec06307_comment_visibility",
       "title": "Who can see the comment thread",
       "bullets": [
         "Independent from the posting permission above — a thread can stay visible to everyone while restricting who may add to it.",
@@ -54,23 +54,23 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 713.4375,
+        "y": 711.4375,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 751.4375,
+        "bottom": 749.4375,
         "center_x": 242.5,
-        "center_y": 732.4375
+        "center_y": 730.4375
       },
       "avoid": {
         "x": 12.0,
-        "y": 713.4375,
+        "y": 711.4375,
         "width": 461.0,
         "height": 38.0,
         "right": 473.0,
-        "bottom": 751.4375,
+        "bottom": 749.4375,
         "center_x": 242.5,
-        "center_y": 732.4375
+        "center_y": 730.4375
       },
       "placement": {
         "side": "right",

@@ -14,3 +14,39 @@
     z-index: 401;
   }
 }
+
+.map-status { position: absolute; }
+
+// Typed pins (points with color and icon) and cluster markers. leaflet.markercluster's own stylesheet is not used:
+// these rules cover its animation classes and draw the clusters without images.
+.map-pin span {
+  display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  border-radius: 50%; color: #fff; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+}
+
+.map-cluster span {
+  display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+  border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .45); background: #0d6efd;
+
+  b { background: #fff; color: #212529; min-width: 22px; height: 22px; line-height: 22px; border-radius: 11px;
+      text-align: center; font-size: .8rem; }
+}
+.map-cluster-small span { width: 34px; height: 34px; }
+.map-cluster-large span { width: 46px; height: 46px; }
+
+.map-legend {
+  background: #fff; color: #212529; padding: .4rem .6rem; margin: 0 0 1.5rem .6rem; border: 0; border-radius: .375rem;
+
+  .map-legend-row { display: flex; align-items: center; gap: .35rem; font-size: .85rem; margin: 0; }
+  .map-legend-swatch { display: inline-block; width: .9rem; height: .9rem; border-radius: 50%; }
+}
+
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+  transition: transform .3s ease-out, opacity .3s ease-in;
+}
+.leaflet-cluster-spider-leg { transition: stroke-dashoffset .3s ease-out, stroke-opacity .3s ease-in; }
+
+@media (prefers-reduced-motion: reduce) {
+  .leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow,
+  .leaflet-cluster-spider-leg { transition: none; }
+}

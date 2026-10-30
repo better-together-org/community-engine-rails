@@ -16,6 +16,10 @@ module BetterTogether
     #
     # @note This class is used for creating a map of events and rendered on the events index view.
     class EventCollectionMap < LocatableMap
+      # The events the viewer may see (a policy scope). Without it every event with a location is mapped, so
+      # callers rendering this map for a viewer must set it (MapsHelper#events_map does).
+      attr_writer :visible_scope
+
       def self.mappable_class
         ::BetterTogether::Event
       end
@@ -35,14 +39,24 @@ module BetterTogether
       # preload: Rails only applies each entry to the polymorphic subtypes that
       # actually have a matching reflection, so this works across a mixed result
       # set without raising for any type (confirmed for all 6 Placeable types).
-      def self.records
-        mappable_class.joins(:location)
-                      .includes(location: { location: [:space, { building: :space }] })
-                      .order(created_at: :desc)
+      # visible_scope is used as a subquery on ids, so a policy scope's own joins, includes and ordering do not
+      # interfere with the eager loading below.
+      def self.records(visible_scope = nil)
+        scope = if visible_scope
+                  mappable_class.where(id: visible_scope.except(:includes, :preload, :eager_load,
+                                                                :order).select(:id))
+                else
+                  mappable_class
+                end
+        # A series sits where its sessions are and would only add a duplicate pin.
+        scope = scope.where(series: false)
+        scope.joins(:location)
+             .includes(location: { location: [:space, { building: :space }] })
+             .order(created_at: :desc)
       end
 
       def records
-        @records ||= self.class.records
+        @records ||= self.class.records(@visible_scope)
       end
 
       def leaflet_points

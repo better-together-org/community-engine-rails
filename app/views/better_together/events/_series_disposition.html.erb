@@ -1,0 +1,46 @@
+<%# locals: (event:) %>
+<%# Cancelling or deleting a series needs a choice for its sessions; nothing is preselected. %>
+<% live = event.sessions.reject(&:status_cancelled?) %>
+<section class="event-series-disposition mb-3" id="<%= dom_id(event, :disposition) %>">
+  <button class="btn btn-outline-danger btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(event, :disposition_panel) %>" aria-expanded="false" aria-controls="<%= dom_id(event, :disposition_panel) %>">
+    <i class="fas fa-ban me-2" aria-hidden="true"></i><%= t('better_together.events.series.disposition.open') %>
+  </button>
+  <div class="collapse mt-3" id="<%= dom_id(event, :disposition_panel) %>">
+    <div class="card card-body">
+      <p class="mb-3"><%= t('better_together.events.series.disposition.explain', count: event.sessions.size) %></p>
+      <% if policy(event).update? && !event.status_cancelled? %>
+        <%= form_with url: event_path(event), method: :patch, class: 'mb-4', id: dom_id(event, :cancel_form) do |form| %>
+          <%= hidden_field_tag 'series_action', 'cancel' %>
+          <fieldset>
+            <legend class="h6"><%= t('better_together.events.series.disposition.cancel_legend') %></legend>
+            <div class="form-check">
+              <%= radio_button_tag 'session_disposition', 'cancel', false, class: 'form-check-input', required: true, id: dom_id(event, :cancel_cancel) %>
+              <%= label_tag dom_id(event, :cancel_cancel), t('better_together.events.series.disposition.cancel_sessions'), class: 'form-check-label' %>
+            </div>
+            <div class="form-check">
+              <%= radio_button_tag 'session_disposition', 'promote', false, class: 'form-check-input', required: true, id: dom_id(event, :cancel_promote) %>
+              <%= label_tag dom_id(event, :cancel_promote), t('better_together.events.series.disposition.promote_sessions'), class: 'form-check-label' %>
+            </div>
+          </fieldset>
+          <%= form.submit t('better_together.events.series.disposition.cancel_submit'), class: 'btn btn-warning btn-sm mt-2' %>
+        <% end %>
+      <% end %>
+      <% if policy(event).destroy? %>
+        <%= form_with url: event_path(event), method: :delete, id: dom_id(event, :delete_form) do |form| %>
+          <fieldset>
+            <legend class="h6"><%= t('better_together.events.series.disposition.delete_legend') %></legend>
+            <div class="form-check">
+              <%= radio_button_tag 'session_disposition', 'delete', false, class: 'form-check-input', required: true, id: dom_id(event, :delete_delete) %>
+              <%= label_tag dom_id(event, :delete_delete), t('better_together.events.series.disposition.delete_sessions'), class: 'form-check-label' %>
+            </div>
+            <div class="form-check">
+              <%= radio_button_tag 'session_disposition', 'promote', false, class: 'form-check-input', required: true, id: dom_id(event, :delete_promote) %>
+              <%= label_tag dom_id(event, :delete_promote), t('better_together.events.series.disposition.promote_sessions'), class: 'form-check-label' %>
+            </div>
+          </fieldset>
+          <%= form.submit t('better_together.events.series.disposition.delete_submit'), class: 'btn btn-danger btn-sm mt-2', data: { turbo_confirm: t('globals.confirm_delete') } %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>

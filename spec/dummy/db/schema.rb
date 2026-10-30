@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -725,6 +725,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
     t.index ["event_id"], name: "bt_event_occurrences_by_event"
   end
 
+  create_table "better_together_event_series_sessions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "series_id", null: false
+    t.uuid "session_id", null: false
+    t.integer "position", default: 0, null: false
+    t.index ["series_id"], name: "bt_event_series_sessions_by_series"
+    t.index ["session_id"], name: "bt_event_series_sessions_by_session", unique: true
+  end
+
   create_table "better_together_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -745,6 +756,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
     t.string "status", default: "draft", null: false
     t.string "federation_visibility", limit: 50, default: "platform_default", null: false
     t.datetime "next_occurrence_at"
+    t.boolean "series", default: false, null: false
     t.index ["creator_id"], name: "by_better_together_events_creator"
     t.index ["ends_at"], name: "bt_events_by_ends_at"
     t.index ["federation_visibility"], name: "by_better_together_events_federation_visibility"
@@ -753,6 +765,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
     t.index ["platform_id", "source_id"], name: "index_bt_events_on_platform_and_source_id", unique: true, where: "(source_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_events_on_platform_id"
     t.index ["privacy"], name: "by_better_together_events_privacy"
+    t.index ["series"], name: "bt_events_by_series"
     t.index ["starts_at"], name: "bt_events_by_starts_at"
     t.index ["status"], name: "by_better_together_events_status"
     t.index ["timezone"], name: "index_better_together_events_on_timezone"
@@ -2009,6 +2022,98 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
     t.index ["published_at"], name: "by_post_publication_date"
   end
 
+  create_table "better_together_quota", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.string "quota_type", null: false
+    t.bigint "limit", null: false
+    t.bigint "soft_limit"
+    t.string "period", default: "cumulative", null: false
+    t.string "status", default: "active", null: false
+    t.string "enforcement_mode", default: "shadow", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.uuid "platform_id"
+    t.index ["owner_type", "owner_id", "quota_type"], name: "index_bt_quota_on_owner_and_type", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_bt_quota_on_owner"
+    t.index ["platform_id"], name: "index_bt_quota_on_platform"
+  end
+
+  create_table "better_together_quota_balances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "quota_id", null: false
+    t.string "period_key", null: false
+    t.bigint "consumed", default: 0, null: false
+    t.bigint "reserved", default: 0, null: false
+    t.datetime "recalculated_at"
+    t.uuid "platform_id"
+    t.index ["platform_id"], name: "index_better_together_quota_balances_on_platform_id"
+    t.index ["quota_id", "period_key"], name: "index_bt_quota_balances_on_quota_and_period", unique: true
+    t.index ["quota_id"], name: "index_bt_quota_balances_on_quota"
+  end
+
+  create_table "better_together_quota_reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "quota_id", null: false
+    t.string "quota_type", null: false
+    t.bigint "amount", null: false
+    t.string "period_key", null: false
+    t.string "subject_type"
+    t.uuid "subject_id"
+    t.string "actor_type"
+    t.uuid "actor_id"
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.string "status", default: "held", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "settled_at"
+    t.datetime "released_at"
+    t.string "idempotency_key", null: false
+    t.jsonb "context", default: {}, null: false
+    t.uuid "platform_id"
+    t.index ["actor_type", "actor_id"], name: "index_bt_quota_reservations_on_actor"
+    t.index ["idempotency_key"], name: "index_bt_quota_reservations_on_idempotency_key", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_bt_quota_reservations_on_owner"
+    t.index ["platform_id"], name: "index_better_together_quota_reservations_on_platform_id"
+    t.index ["quota_id"], name: "index_bt_quota_reservations_on_quota"
+    t.index ["status", "expires_at"], name: "index_bt_quota_reservations_on_status_and_expiry"
+    t.index ["subject_type", "subject_id"], name: "index_bt_quota_reservations_on_subject"
+  end
+
+  create_table "better_together_quota_usages", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "quota_id", null: false
+    t.string "quota_type", null: false
+    t.bigint "amount", null: false
+    t.string "period_key", null: false
+    t.string "subject_type"
+    t.uuid "subject_id"
+    t.string "actor_type"
+    t.uuid "actor_id"
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.uuid "platform_id"
+    t.jsonb "context", default: {}, null: false
+    t.string "idempotency_key", null: false
+    t.string "event", null: false
+    t.index ["actor_type", "actor_id"], name: "index_bt_quota_usages_on_actor"
+    t.index ["idempotency_key"], name: "index_bt_quota_usages_on_idempotency_key", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_bt_quota_usages_on_owner"
+    t.index ["period_key"], name: "index_better_together_quota_usages_on_period_key"
+    t.index ["platform_id"], name: "index_better_together_quota_usages_on_platform_id"
+    t.index ["quota_id"], name: "index_bt_quota_usages_on_quota"
+    t.index ["subject_type", "subject_id", "event"], name: "index_bt_quota_usages_on_subject_and_event", unique: true
+    t.index ["subject_type", "subject_id"], name: "index_bt_quota_usages_on_subject"
+  end
+
   create_table "better_together_recurrences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "schedulable_type", null: false
     t.uuid "schedulable_id", null: false
@@ -2707,6 +2812,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
   add_foreign_key "better_together_event_hosts", "better_together_events", column: "event_id"
   add_foreign_key "better_together_event_hosts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_event_occurrences", "better_together_events", column: "event_id"
+  add_foreign_key "better_together_event_series_sessions", "better_together_events", column: "series_id"
+  add_foreign_key "better_together_event_series_sessions", "better_together_events", column: "session_id"
   add_foreign_key "better_together_events", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_feature_access_grants", "better_together_people", column: "granted_by_person_id"
@@ -2866,6 +2973,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_10_15_140000) do
   add_foreign_key "better_together_posts", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_quota", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_quota_balances", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_quota_balances", "better_together_quota", column: "quota_id"
+  add_foreign_key "better_together_quota_reservations", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_quota_reservations", "better_together_quota", column: "quota_id"
+  add_foreign_key "better_together_quota_usages", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_quota_usages", "better_together_quota", column: "quota_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_reports", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_resource_permissions", "better_together_platforms", column: "platform_id"

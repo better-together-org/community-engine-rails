@@ -25,25 +25,21 @@
     <%= link_to t('.view-all-settlements'), geography_settlements_path(locale: I18n.locale), class: "btn btn-secondary me-2" %>
   </div>
 
-  <!-- geography_settlement tabbed section with members -->
-  <section class="card tabbed-section" data-controller="better_together--tabs">
+  <%= render 'better_together/geography/settlements/header_extra', settlement: @geography_settlement %>
+
+  <!-- geography_settlement tabbed section: About, Posts, Events and Communities, plus any host tabs -->
+  <section class="card tabbed-section" id="settlement-tabbed-section" data-controller="better_together--tabs">
     <div class="card-header">
       <!-- Navigation tabs -->
       <%# Initialize the active tab state with accessible attributes %>
-      <%= content_tag :div, id: 'geography-settlement', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria_label: 'geography-settlement Sections' do %>
+      <%= content_tag :div, id: 'geography-settlement', class: 'nav nav-tabs card-header-tabs', role: 'tablist', aria: { label: t('.sections_aria') } do %>
         <%= link_to t('globals.tabs.about'), '#about', class: 'nav-link active', id: 'about-tab', data: { bs_toggle: 'tab', bs_target: '#about', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'about', selected: 'true' }, tabindex: '0' %>
-              
-
-        <%# COMMENTED OUT UNTIL NEEDED  --------------
-        <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'posts', selected: 'false' }, tabindex: '0' 
-        <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'events', selected: 'false' }, tabindex: '0' 
-        <%= link_to t('globals.tabs.weather'), '#weather', class: 'nav-link', id: 'weather-tab', data: { bs_toggle: 'tab', bs_target: '#weather', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'weather', selected: 'false' }, tabindex: '0' 
-        <%= link_to t('globals.tabs.live_cam_views'), '#live_cam_views', class: 'nav-link', id: 'live_cam_views-tab', data: { bs_toggle: 'tab', bs_target: '#live_cam_views', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'live_cam_views', selected: 'false' }, tabindex: '0' 
-        <%= link_to t('globals.tabs.mutual_aid_hub'), '#mutual_aid_hub', class: 'nav-link', id: 'mutual_aid_hub-tab', data: { bs_toggle: 'tab', bs_target: '#mutual_aid_hub', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'mutual_aid_hub', selected: 'false' }, tabindex: '0'        
-        <%= link_to t('globals.tabs.alerts'), '#alerts', class: 'nav-link', id: 'alerts-tab', data: { bs_toggle: 'tab', bs_target: '#alerts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'alerts', selected: 'false' }, tabindex: '0'      
-        ------------------------------------------------ADD CLOSING TO EACH LINE WHEN UNCOMMENTING %>    
-      
-      
+        <%= link_to t('globals.tabs.posts'), '#posts', class: 'nav-link', id: 'posts-tab', data: { bs_toggle: 'tab', bs_target: '#posts', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'posts', selected: 'false' }, tabindex: '-1' %>
+        <%= link_to t('globals.tabs.events'), '#events', class: 'nav-link', id: 'events-tab', data: { bs_toggle: 'tab', bs_target: '#events', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'events', selected: 'false' }, tabindex: '-1' %>
+        <% if @located_communities.present? %>
+          <%= link_to t('globals.tabs.communities'), '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'communities', selected: 'false' }, tabindex: '-1' %>
+        <% end %>
+        <%= render 'better_together/geography/settlements/tab_links_extra', settlement: @geography_settlement %>
       <% end %>
     </div>
 
@@ -57,64 +53,33 @@
               <div class="row mb-3">
                 <div class="col-md-12"><%= @geography_settlement.description %></div>
               </div>
+              <%= render 'better_together/geography/settlements/about_extra', settlement: @geography_settlement %>
             </div>
           </div>
         </div>
 
- 
-        <%# COMMENTED OUT UNTIL NEEDED  --------------
+        <%# Posts and events located here: the posts and events indexes scoped to this settlement, loaded when the tab is first shown. %>
         <div id="posts" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="posts-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <p>This is a test tab for posts section</p>
-
+          <%= turbo_frame_tag 'settlement-posts', src: posts_path(settlement: @geography_settlement.identifier, locale: I18n.locale), loading: :lazy, target: '_top' do %>
+            <p class="text-muted"><%= t('.posts_loading') %></p>
+          <% end %>
         </div>
-          </div>
-            </div>      
 
         <div id="events" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="events-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <p>This is a test tab for events section</p>
+          <%= turbo_frame_tag 'settlement-events', src: events_path(settlement: @geography_settlement.identifier, locale: I18n.locale), loading: :lazy, target: '_top' do %>
+            <p class="text-muted"><%= t('.events_loading') %></p>
+          <% end %>
         </div>
-          </div>
-            </div>   
 
-        <div id="weather" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="weather-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <p>This is a test tab for weather section</p>
-        </div>
-          </div>
-            </div>   
-
-        <div id="live_cam_views" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="live_cam_views-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <p>This is a test tab for live cam views section</p>
-        </div>
-          </div>
-            </div>   
-
-        <div id="mutual_aid_hub" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="mutual_aid_hub-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <p>This is a test tab for mutual aid hub section</p>
-        </div>
-          </div>
-            </div>   
-
-        <div id="alerts" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="alerts-tab">
-          <div class="row">
-            <div class="col-md-12">
-              <p>This is a test tab for alerts section</p>
-
-              <!-- <div class="geography-settlement-datetime card-text text-muted mt-2">
-                <i class="fas fa-eye me-2"></i> <%= privacy_display_value(@geography_settlement) 
+        <% if @located_communities.present? %>
+          <div id="communities" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="communities-tab">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4" id="settlement-communities">
+              <%= render partial: 'better_together/communities/community', collection: @located_communities, as: :community %>
             </div>
           </div>
-        </div> 
-------------------------------------------------------------------ADD CLOSING TO LAST LINE (PRIVACY_DISPLAY_VALUE(@geography_settlement) WHEN UNCOMMENTING %>
+        <% end %>
+
+        <%= render 'better_together/geography/settlements/tab_panes_extra', settlement: @geography_settlement %>
       </div>
     </div>
   </section>

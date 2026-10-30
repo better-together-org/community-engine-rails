@@ -11,6 +11,6 @@
       <%= link_to t('globals.view'), settlement, class: 'btn btn-info' %>
     <% end %>
     <% if policy(settlement).edit? %>
-      <%= link_to 'Edit', edit_geography_settlement_path(settlement), class: 'btn btn-primary' %>
+      <%= link_to t('globals.edit'), edit_geography_settlement_path(settlement), class: 'btn btn-primary' %>
     <% end %>
   </td>

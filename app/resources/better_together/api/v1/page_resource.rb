@@ -18,6 +18,7 @@ module BetterTogether
         # Regular attributes
         attributes :slug, :privacy, :layout, :published_at
         attribute :show_title
+        attribute :category_identifiers
         attribute :content_excerpt
         attribute :contributions_attributes
         CONTRIBUTOR_ID_ATTRIBUTES.each { |attribute_name| attribute attribute_name }
@@ -61,7 +62,7 @@ module BetterTogether
 
         def self.creatable_fields(_context)
           %i[
-            title content slug privacy layout show_title published_at
+            title content slug privacy layout show_title published_at category_identifiers
             community creator sidebar_nav contributions
             contributions_attributes
           ] + CONTRIBUTOR_ID_ATTRIBUTES

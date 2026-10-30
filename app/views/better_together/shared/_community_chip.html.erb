@@ -1,0 +1,10 @@
+<%# Pill with the community image, a trailing community icon, a screen reader label and a tooltip, so it reads differently from contributor mentions. %>
+<%= link_to community,
+            class: 'community-chip d-inline-flex align-items-center gap-1 px-2 small rounded-pill border text-decoration-none text-body-secondary',
+            data: { bs_toggle: 'tooltip', bs_placement: 'top' },
+            title: t('better_together.shared.community_chip.title', community: community.name) do %>
+  <%= community_mark_tag(community, size: 20, alt: '', title: community.name) %>
+  <span class="visually-hidden"><%= t('better_together.shared.community_chip.label') %>:</span>
+  <span class="community-chip-name"><%= community.name %></span>
+  <i class="fa-solid fa-people-group" aria-hidden="true"></i>
+<% end %>

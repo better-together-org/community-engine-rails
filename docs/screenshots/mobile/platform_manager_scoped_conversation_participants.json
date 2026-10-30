@@ -2,7 +2,7 @@
   "name": "platform_manager_scoped_conversation_participants",
   "device": "mobile",
   "url": "/en/conversations/new",
-  "title": "Test Host Community",
+  "title": "Community Engine Host",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "platform_manager_least_privilege_review",
@@ -27,13 +27,23 @@
         "center_x": 250.0,
         "center_y": 342.1875
       },
+      "avoid": {
+        "x": 17.0,
+        "y": 323.1875,
+        "width": 466.0,
+        "height": 38.0,
+        "right": 483.0,
+        "bottom": 361.1875,
+        "center_x": 250.0,
+        "center_y": 342.1875
+      },
       "placement": {
         "side": "below",
         "x": 115.0,
         "y": 381.19,
         "width": 270.0,
         "height": 670,
-        "score": 899.8125
+        "score": 895.8125
       }
     }
   ]
