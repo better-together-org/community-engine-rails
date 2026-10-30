@@ -53,9 +53,26 @@ module BetterTogether
             .map { |field| t("better_together.billing.plans.field_#{field}") }
     end
 
-    # The processors this platform can create plans with, as select options.
+    # The processors this platform can create plans with, as select options. Only online
+    # processors: methods outside a vendor are chosen separately (see
+    # #billing_offline_method_choices).
     def billing_processor_choices
-      BetterTogether::Billing::Configuration.processors_for(billing_owner).map { |name| [name.to_s, name.to_s] }
+      BetterTogether::Billing::Configuration.processors_for(billing_owner)
+                                            .map(&:to_s)
+                                            .reject { |name| BetterTogether::Billing::Plan.offline_method?(name) }
+                                            .map { |name| [name, name] }
+    end
+
+    # Installed methods that do not go through a vendor (cash, cheque, e-transfer, store
+    # credit), as [label, name] pairs for the "also accept" check boxes.
+    def billing_offline_method_choices
+      BetterTogether::Billing.processor_names.map(&:to_s)
+                             .select { |name| BetterTogether::Billing::Plan.offline_method?(name) }
+                             .map { |name| [billing_payment_method_label(name), name] }
+    end
+
+    def billing_payment_method_label(name)
+      t("better_together.billing.plans.payment_method_names.#{name}", default: name.to_s.humanize)
     end
   end
 end

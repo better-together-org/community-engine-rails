@@ -14,7 +14,7 @@ module BetterTogether
 
       def index
         authorize BetterTogether::Billing::Plan
-        @plans = policy_scope(billing_owner.billing_plans).order(:identifier)
+        @plans = policy_scope(platform_plans).order(:identifier)
       end
 
       def show
@@ -22,12 +22,12 @@ module BetterTogether
       end
 
       def new
-        @plan = billing_owner.billing_plans.build(next_plan_defaults.merge(link_existing: params[:mode] == 'link'))
+        @plan = platform_plans.build(next_plan_defaults.merge(link_existing: params[:mode] == 'link'))
         authorize @plan
       end
 
       def create
-        @plan = billing_owner.billing_plans.build(plan_params_for_create)
+        @plan = platform_plans.build(plan_params_for_create)
         authorize @plan
 
         if @plan.save
@@ -75,14 +75,18 @@ module BetterTogether
 
       private
 
+      # What the platform sells itself. Plans sold by one of its communities or people belong
+      # to that seller and are not managed from here (see PlanPolicy#manage_billing?).
+      def platform_plans = billing_owner.billing_plans.sold_by_platform
+
       def set_plan
-        @plan = billing_owner.billing_plans.find(params[:id])
+        @plan = platform_plans.find(params[:id])
       end
 
       # "Change price": a processor price cannot be edited, so the next price is a new plan
       # that starts from this one and shares its product.
       def next_plan_defaults
-        source = billing_owner.billing_plans.find_by(id: params[:from])
+        source = platform_plans.find_by(id: params[:from])
         return {} unless source
 
         { identifier: "#{source.identifier}-next", name: source.name, description: source.description,

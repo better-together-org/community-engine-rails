@@ -900,6 +900,9 @@ uk:
         created: Plan bilingu uspishno stvoreno.
         deactivate_confirm: Deaktuvuvaty tsej plan? Isnuyuchi peredplatnyky ne postrazhdayut'.
         edit_title: Redaguvaty plan bilingu
+        field_accepted_payment_methods: Також приймати
+        field_accepted_payment_methods_hint: Способи оплати поза платіжним процесором.
+          Кожен потрібно ще ввімкнути для продавця, перш ніж покупці зможуть ним скористатися.
         field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
         field_amount_cents: Сума (найменша одиниця валюти)
         field_amount_cents_hint: напр., 4500 = 45,00 для більшості валют; 4500 = 4500
@@ -924,6 +927,8 @@ uk:
         field_pricing_tier_hint: Taryfy solidarnosti dozvolyayut' menshym kooperatyvam
           otrymaty dostup do platformy za znyzhenoyu vartistyu.
         field_processor: Платіжний процесор
+        field_processor_hint: Онлайн-процесор платежів, у якому зберігається ця ціна.
+          Залиште порожнім для плану, який оплачується лише способами нижче.
         field_processor_price_id: Ідентифікатор ціни в процесорі
         field_processor_price_id_hint: З панелі вашого платіжного процесора. Не можна
           змінити після створення.
@@ -962,6 +967,7 @@ uk:
         pricing_tier_solidarity_premium: Premiyum solidarnosti
         pricing_tier_solidarity_small: Solidarnist' — Malyj
         pricing_tier_standard: Standartnyj
+        processor_none: Без онлайн-процесора
         product_none: Створити новий продукт
         retry_sync: Повторити синхронізацію
         select_required: Виберіть значення.
@@ -5045,8 +5051,11 @@ uk:
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       lookup_failed: не вдалося перевірити в платіжному процесорі
       model_invalid: 'Перевірка не вдалася: %{errors}'
+      no_payment_method: потребує онлайн-процесора або принаймні ще одного способу
+        оплати
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
+      not_an_offline_method: "%{method} не є встановленим способом оплати поза процесором"
       not_configured: не налаштовано для цієї платформи
       not_found: не знайдено
       not_found_at_processor: не знайдено в платіжному процесорі

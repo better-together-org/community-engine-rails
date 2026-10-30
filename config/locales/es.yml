@@ -916,6 +916,10 @@ es:
         deactivate_confirm: "¿Desactivar este plan? Los suscriptores existentes no
           se veran afectados."
         edit_title: Editar plan de facturacion
+        field_accepted_payment_methods: Aceptar también
+        field_accepted_payment_methods_hint: Formas de pago fuera de un procesador
+          de pagos. Cada una debe activarse para el vendedor antes de que los compradores
+          puedan usarla.
         field_active: Activo (visible para suscriptores)
         field_amount_cents: Importe (unidad monetaria más pequeña)
         field_amount_cents_hint: p. ej., 4500 = 45,00 en la mayoría de las monedas;
@@ -941,6 +945,8 @@ es:
         field_pricing_tier_hint: Los niveles solidarios permiten que las cooperativas
           mas pequenas accedan a la plataforma a un costo reducido.
         field_processor: Procesador de pagos
+        field_processor_hint: El procesador de pagos en línea que contiene este precio.
+          Déjelo vacío para un plan que se paga solo con los métodos siguientes.
         field_processor_price_id: ID de precio del procesador
         field_processor_price_id_hint: Desde el panel de su procesador de pagos. No
           se puede cambiar después de la creación.
@@ -978,6 +984,7 @@ es:
         pricing_tier_solidarity_premium: Prima de solidaridad
         pricing_tier_solidarity_small: Solidaridad — Pequena
         pricing_tier_standard: Estandar
+        processor_none: Sin procesador en línea
         product_none: Crear un producto nuevo
         retry_sync: Reintentar la sincronización
         select_required: Elija un valor.
@@ -5038,8 +5045,12 @@ es:
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       lookup_failed: no se pudo verificar con el procesador de pagos
       model_invalid: 'La validación falló: %{errors}'
+      no_payment_method: necesita un procesador en línea o al menos otra forma de
+        pago
       not_a_number: no es un número
       not_an_integer: debe ser un entero
+      not_an_offline_method: "%{method} no es un método de pago instalado fuera de
+        un procesador"
       not_configured: no está configurado para esta plataforma
       not_found: no se ha encontrado
       not_found_at_processor: no se encontró en el procesador de pagos

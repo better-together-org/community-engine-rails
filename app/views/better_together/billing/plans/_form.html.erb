@@ -72,12 +72,26 @@
       <%= form.label :processor, t('better_together.billing.plans.field_processor'), class: 'form-label' %>
       <%= form.select :processor,
                       billing_processor_choices,
-                      billing_plan.processor.blank? ? { include_blank: true } : {},
+                      { include_blank: t('better_together.billing.plans.processor_none') },
                       class: 'form-select',
-                      required: true,
                       disabled: persisted %>
+      <div class="form-text"><%= t('better_together.billing.plans.field_processor_hint') %></div>
     </div>
   </div>
+
+  <% offline_methods = billing_offline_method_choices %>
+  <% if offline_methods.any? %>
+    <fieldset id="billing-plan-payment-methods" class="border rounded p-3 mb-4">
+      <legend class="h6 w-auto px-2"><%= t('better_together.billing.plans.field_accepted_payment_methods') %></legend>
+      <div class="form-text mb-2"><%= t('better_together.billing.plans.field_accepted_payment_methods_hint') %></div>
+      <%= form.collection_check_boxes :accepted_payment_methods, offline_methods, :last, :first do |box| %>
+        <div class="form-check">
+          <%= box.check_box(class: 'form-check-input', id: "billing-plan-payment-method-#{box.value}") %>
+          <%= box.label(class: 'form-check-label', for: "billing-plan-payment-method-#{box.value}") %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
 
   <fieldset id="billing-plan-price-fields" class="border rounded p-3 mb-4">
     <legend class="float-none w-auto fs-6 px-2"><%= t('better_together.billing.plans.price_section_title') %></legend>

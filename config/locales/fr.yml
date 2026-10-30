@@ -920,6 +920,10 @@ fr:
         deactivate_confirm: Desactiver ce plan ? Les abonnes existants ne seront pas
           affectes.
         edit_title: Modifier le plan de facturation
+        field_accepted_payment_methods: Accepter aussi
+        field_accepted_payment_methods_hint: Modes de paiement en dehors d'un processeur
+          de paiement. Chacun doit encore être activé pour le vendeur avant que les
+          acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
         field_amount_cents: Montant (plus petite unité monétaire)
         field_amount_cents_hint: p. ex. 4500 = 45,00 pour la plupart des devises;
@@ -946,6 +950,8 @@ fr:
         field_pricing_tier_hint: Les niveaux solidaires permettent aux plus petites
           cooperatives d''acceder a la plateforme a cout reduit.
         field_processor: Processeur de paiement
+        field_processor_hint: Le processeur de paiement en ligne qui détient ce prix.
+          Laissez vide pour un plan payé uniquement par les modes ci-dessous.
         field_processor_price_id: ID de prix du processeur
         field_processor_price_id_hint: Depuis le tableau de bord de votre processeur
           de paiement. Ne peut pas être modifié après la création.
@@ -985,6 +991,7 @@ fr:
         pricing_tier_solidarity_premium: Prime de solidarite
         pricing_tier_solidarity_small: Solidarite — Petite
         pricing_tier_standard: Standard
+        processor_none: Aucun processeur en ligne
         product_none: Créer un nouveau produit
         retry_sync: Relancer la synchronisation
         select_required: Veuillez choisir une valeur.
@@ -5079,8 +5086,12 @@ fr:
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
+      no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
+        de paiement
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
+      not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
+        dehors d'un processeur"
       not_configured: n'est pas configuré pour cette plateforme
       not_found: n’a pas été trouvé(e)
       not_found_at_processor: est introuvable chez le processeur de paiement

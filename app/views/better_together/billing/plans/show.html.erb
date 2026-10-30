@@ -37,7 +37,12 @@
             </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor') %></dt>
-            <dd id="<%= dom_id(@plan, :processor) %>" class="col-sm-7"><%= @plan.processor %></dd>
+            <dd id="<%= dom_id(@plan, :processor) %>" class="col-sm-7"><%= @plan.processor.presence || t('better_together.billing.plans.processor_none') %></dd>
+
+            <dt class="col-sm-5"><%= t('better_together.billing.plans.field_accepted_payment_methods') %></dt>
+            <dd id="<%= dom_id(@plan, :payment_methods) %>" class="col-sm-7">
+              <%= @plan.accepted_payment_methods.map { |name| billing_payment_method_label(name) }.to_sentence.presence || '—' %>
+            </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_processor_product_id') %></dt>
             <dd id="<%= dom_id(@plan, :processor_product_id) %>" class="col-sm-7"><code><%= @plan.processor_product_id.presence || '—' %></code></dd>
