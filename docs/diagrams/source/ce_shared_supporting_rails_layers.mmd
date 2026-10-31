@@ -9,26 +9,26 @@ classDiagram
     }
     class BetterTogether__Api__Auth__ConfirmationsController["Api::Auth::ConfirmationsController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Api__Auth__PasswordsController["Api::Auth::PasswordsController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Api__Auth__RegistrationsController["Api::Auth::RegistrationsController"] {
       <<Controller>>
-      concerns: Api::Auth::RegistrationHelpers, BotProtectedSubmissions, DeviseLocales, InvitationSessionManagement +2
+      concerns: Api::Auth::RegistrationHelpers, BotProtectedSubmissions, DeviseLocales, InvitationSessionManagement +3
     }
     class BetterTogether__Api__Auth__SessionsController["Api::Auth::SessionsController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Api__Doorkeeper__AuthorizationsController["Api::Doorkeeper::AuthorizationsController"] {
       <<Controller>>
     }
     class BetterTogether__Api__Oauth__ApplicationsController["Api::Oauth::ApplicationsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Api__V1__AuthorshipsController["Api::V1::AuthorshipsController"] {
       <<Controller>>
@@ -160,19 +160,19 @@ classDiagram
     }
     class BetterTogether__ApplicationController["ApplicationController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__BotDefense__ChallengesController["BotDefense::ChallengesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__CommentsController["CommentsController"] {
       <<Controller>>
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__Content__PageBlocksController["Content::PageBlocksController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ContentSecurity__ActiveStorage__Blobs__ProxyController["ContentSecurity::ActiveStorage::Blobs::ProxyController"] {
       <<Controller>>
@@ -185,201 +185,205 @@ classDiagram
     class BetterTogether__EventOccurrencesController["EventOccurrencesController"] {
       <<Controller>>
       models: EventOccurrence
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__FeatureAccessGrantsController["FeatureAccessGrantsController"] {
       <<Controller>>
       models: FeatureAccessGrant
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Federation__ApiController["Federation::ApiController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Federation__ContentFeedController["Federation::ContentFeedController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Federation__LinkedSeedsController["Federation::LinkedSeedsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Federation__OauthTokensController["Federation::OauthTokensController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__FederationHubController["FederationHubController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__FriendlyResourceController["FriendlyResourceController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__ContinentsController["Geography::ContinentsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__CountriesController["Geography::CountriesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__MapsController["Geography::MapsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__RegionSettlementsController["Geography::RegionSettlementsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__RegionsController["Geography::RegionsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__SettlementsController["Geography::SettlementsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Geography__StatesController["Geography::StatesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__InboundEmailsController["InboundEmailsController"] {
       <<Controller>>
     }
     class BetterTogether__Joatu__CategoriesController["Joatu::CategoriesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Joatu__HubController["Joatu::HubController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Joatu__JoatuController["Joatu::JoatuController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Joatu__ResponseLinksController["Joatu::ResponseLinksController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+    }
+    class BetterTogether__LocationsController["LocationsController"] {
+      <<Controller>>
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__MessageRequestsController["MessageRequestsController"] {
       <<Controller>>
       models: MessageRequest
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Metrics__LinkCheckerReportsController["Metrics::LinkCheckerReportsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__LinkClickReportsController["Metrics::LinkClickReportsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__LinkClicksController["Metrics::LinkClicksController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__PageViewReportsController["Metrics::PageViewReportsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__PageViewsController["Metrics::PageViewsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__ReportsController["Metrics::ReportsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::DatetimeFilterable +1
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +2
     }
     class BetterTogether__Metrics__SearchQueriesController["Metrics::SearchQueriesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__SharesController["Metrics::SharesController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__Metrics__UserAccountReportsController["Metrics::UserAccountReportsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, Metrics::PlatformContext
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__NewPlatformSetupController["NewPlatformSetupController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__NewPlatformSetupStepsController["NewPlatformSetupStepsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, WizardMethods
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
     }
     class BetterTogether__OmniauthCallbacksController["OmniauthCallbacksController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__PlatformDomainsController["PlatformDomainsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ReportFollowupsController["ReportFollowupsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ResourceController["ResourceController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__RobotsController["RobotsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__RobotsTxtController["RobotsTxtController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Safety__ActionsController["Safety::ActionsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Safety__AgreementsController["Safety::AgreementsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__SeedCatalogController["SeedCatalogController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ShortLinkRedirectsController["ShortLinkRedirectsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__ShortLinksController["ShortLinksController"] {
       <<Controller>>
       models: ShortLink
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
     class BetterTogether__Users__ConfirmationsController["Users::ConfirmationsController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Users__OmniauthCallbacksController["Users::OmniauthCallbacksController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Users__PasswordsController["Users::PasswordsController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Users__RegistrationsController["Users::RegistrationsController"] {
       <<Controller>>
-      concerns: BotProtectedSubmissions, DeviseLocales, InvitationSessionManagement, InvitationTokenSession +1
+      concerns: BotProtectedSubmissions, DeviseLocales, InvitationSessionManagement, InvitationTokenSession +2
     }
     class BetterTogether__Users__SessionsController["Users::SessionsController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Users__UnlocksController["Users::UnlocksController"] {
       <<Controller>>
-      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: DeviseLocales, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
   }
 
@@ -447,7 +451,7 @@ classDiagram
     class BetterTogether__EventOccurrence["EventOccurrence"] {
       <<Model>>
       table: better_together_event_occurrences
-      concerns: BetterTogetherId, Commentable, Geography::Locatable::One, Geography::Mappable +1
+      concerns: BetterTogetherId, Commentable, Geography::Locatable::AddressData, Geography::Locatable::LocatedIn +3
       weak refs: owner: seeds, owner: comments, owner: comment_config, owner: map +2
     }
     class BetterTogether__EventSeriesSession["EventSeriesSession"] {
@@ -533,7 +537,7 @@ classDiagram
     }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
-      table: better_together_quota
+      table: better_together_quotas
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: target: owner, owner: seeds
     }
@@ -649,6 +653,7 @@ classDiagram
   BetterTogether__Joatu__HubController --|> BetterTogether__ApplicationController
   BetterTogether__Joatu__JoatuController --|> BetterTogether__FriendlyResourceController
   BetterTogether__Joatu__ResponseLinksController --|> BetterTogether__Joatu__JoatuController
+  BetterTogether__LocationsController --|> BetterTogether__ApplicationController
   BetterTogether__MessageRequestsController ..> BetterTogether__MessageRequest : manages
   BetterTogether__MessageRequestsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkCheckerReportsController --|> BetterTogether__ApplicationController
