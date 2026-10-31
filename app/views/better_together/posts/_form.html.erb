@@ -77,6 +77,8 @@
     <% end %>
   </div>
 
+  <%= render 'better_together/posts/form_extra', form: form, post: post %>
+
   <div class="mb-3">
     <%= form.label :published_at %>
     <%= form.datetime_field :published_at, include_seconds: false, class: 'form-control' %>

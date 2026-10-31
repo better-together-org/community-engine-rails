@@ -1,0 +1,16 @@
+---
+title: Mentions in a post byline
+audience:
+- community_member
+- developer
+journey_step: As a reader, I see who wrote a post.
+callouts:
+- :id: person
+  :title: Person mention
+  :description: Avatar, gap, name.
+- :id: robot
+  :title: Robot mention
+  :description: Circle avatar, gap, name.
+accessibility_notes: The robot avatar carries visually hidden "Robot author" text.
+slug: mention_avatar_spacing
+device: desktop
