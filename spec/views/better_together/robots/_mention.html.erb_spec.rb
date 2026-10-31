@@ -18,7 +18,7 @@ RSpec.describe 'better_together/robots/_mention' do
   it 'keeps the avatar a fixed circle instead of letting a flex row or h-50 squash it', :aggregate_failures do
     expect(avatar[:class].split).to include('rounded-circle', 'flex-shrink-0')
     expect(avatar[:class].split).not_to include('h-50')
-    expect(avatar[:style]).to include('width: 50px', 'height: 50px')
+    expect(avatar[:style]).to include('width: 2rem', 'height: 2rem')
   end
 
   it 'leaves a gap between the avatar and the name' do
