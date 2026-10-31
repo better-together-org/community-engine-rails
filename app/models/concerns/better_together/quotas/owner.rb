@@ -16,7 +16,7 @@ module BetterTogether
         # and block person/community/platform deletion. erase_quota_ledger below
         # removes the owner's whole ledger instead, and is prepended so it runs ahead
         # of any other dependent callbacks.
-        has_many :quota, as: :owner, class_name: 'BetterTogether::Quota'
+        has_many :quotas, as: :owner, class_name: 'BetterTogether::Quota'
 
         before_destroy :erase_quota_ledger, prepend: true
       end
