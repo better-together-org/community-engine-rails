@@ -6,6 +6,8 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
   let(:locale) { I18n.default_locale }
 
   context 'when viewing calendar show page' do
+    # The month grid defaults to the current month, so "2 days from now" lands
+    # outside it in the last two days of any month. The before block pins mid-month.
     let(:calendar) { create('better_together/calendar', privacy: 'public') }
     let(:upcoming_event) do
       create(:better_together_event,
@@ -26,6 +28,7 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
     end
 
     before do
+      travel_to(Time.zone.local(2026, 3, 10, 12))
       BetterTogether::CalendarEntry.create!(calendar:, event: upcoming_event, starts_at: upcoming_event.starts_at)
       BetterTogether::CalendarEntry.create!(calendar:, event: past_event, starts_at: past_event.starts_at)
     end
