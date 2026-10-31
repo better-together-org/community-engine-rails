@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Rewrites ActiveRecord::Schema[8.x] and ActiveRecord::Migration[8.x] to the required
+# version (default 7.2) so schema and migrations load on every supported Rails lane.
+# Shared by bin/git-hooks/pre-commit and .github/workflows/compat-branch-sync.yml.
+#
+# Usage: bin/normalize-ar-versions [-v VERSION] [file...]
+# With no files, scans spec/dummy/db/schema.rb and db/migrate/*.rb.
+# Prints each changed file on stdout; exits 0 whether or not anything changed.
+set -euo pipefail
+
+version="7.2"
+if [[ "${1:-}" == "-v" ]]; then version="$2"; shift 2; fi
+
+if [[ $# -eq 0 ]]; then
+  set -- spec/dummy/db/schema.rb
+  for f in db/migrate/*.rb; do [[ -e "$f" ]] && set -- "$@" "$f"; done
+fi
+
+pattern='ActiveRecord::(Schema|Migration)\[8\.[0-9]+\]'
+for file in "$@"; do
+  [[ -f "$file" ]] || continue
+  if grep -Eq "$pattern" "$file"; then
+    sed -E -i "s/ActiveRecord::(Schema|Migration)\[8\.[0-9]+\]/ActiveRecord::\1[${version}]/g" "$file"
+    echo "$file"
+  fi
+done
