@@ -49,7 +49,7 @@ RSpec.describe 'Documentation screenshots for mention avatar spacing', # rubocop
                                   { id: 'person', selector: "##{person_id}", title: 'Person mention',
                                     bullets: ['The avatar sits clear of the name (me-2).'] },
                                   { id: 'robot', selector: "##{robot_id}", title: 'Robot mention',
-                                    bullets: ['A round 50px avatar that does not squash, with the same gap.'] }
+                                    bullets: ['A round avatar, sized like the person mention, with the same gap.'] }
                                 ],
                                 narrative: {
                                   title: 'Mentions in a post byline',
