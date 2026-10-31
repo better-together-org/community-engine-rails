@@ -22,6 +22,7 @@ module BetterTogether
       }.freeze
 
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :payments, optional: false
+      has_one :offline_payment, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :payment, dependent: :restrict_with_error
       has_many :refunds, class_name: 'BetterTogether::Billing::Refund', inverse_of: :payment, dependent: :restrict_with_error
 
       validates :processor, presence: true

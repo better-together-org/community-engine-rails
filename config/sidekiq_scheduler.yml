@@ -69,3 +69,13 @@
   cron: "10 * * * *" # hourly at :10 UTC
   class: "BetterTogether::Billing::ExpireOrdersJob"
   description: "Let orders that were not paid in time lapse and release what they held"
+
+"better_together:billing:expire_offline_payments_hourly":
+  cron: "20 * * * *" # hourly at :20 UTC
+  class: "BetterTogether::Billing::ExpireOfflinePaymentsJob"
+  description: "Close offline payments whose hold ran out and align any left waiting beside a closed order"
+
+"better_together:billing:remind_offline_confirmations_daily":
+  cron: "15 14 * * *" # daily at 14:15 UTC
+  class: "BetterTogether::Billing::RemindOfflineConfirmationsJob"
+  description: "Remind sellers of offline payments waiting for them and buyers whose hold is about to run out"

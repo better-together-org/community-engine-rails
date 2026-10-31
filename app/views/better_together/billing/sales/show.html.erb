@@ -9,4 +9,5 @@
     <%= t('better_together.billing.orders.placed_by', name: @order.buyer.name) %>
   </p>
   <%= render 'better_together/billing/orders/details', order: @order %>
+  <%= render 'offline_payment', order: @order %>
 </div>

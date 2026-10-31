@@ -5,7 +5,7 @@ module BetterTogether
     module Orders
       # Cancels an order nobody has paid for, cancels what was waiting to be paid, and gives back
       # what the order held. An order that has money against it cannot be cancelled: it is
-      # refunded instead.
+      # refunded instead. Neither can one with a cheque the seller has received and not yet seen clear.
       class Cancel
         class Refused < StandardError; end
 
@@ -31,7 +31,8 @@ module BetterTogether
         attr_reader :order
 
         def cancellable?
-          order.can_become?('cancelled') && order.payments.where(status: %w[succeeded partially_refunded refunded]).none?
+          order.can_become?('cancelled') && order.payments.where(status: %w[succeeded partially_refunded refunded]).none? &&
+            order.offline_payments.received.none?
         end
       end
     end

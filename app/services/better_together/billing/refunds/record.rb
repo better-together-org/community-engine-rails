@@ -13,7 +13,8 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        def initialize(payment:, amount_cents:, idempotency_key:, status: 'recorded', reason: nil, recorded_by: nil, processor_reference: nil) # rubocop:disable Metrics/ParameterLists
+        def initialize(payment:, amount_cents:, idempotency_key:, status: 'recorded', reason: nil, recorded_by: nil, # rubocop:disable Metrics/ParameterLists
+                       processor_reference: nil, notify: true)
           @payment = payment
           @amount_cents = amount_cents
           @idempotency_key = idempotency_key.to_s
@@ -21,6 +22,7 @@ module BetterTogether
           @reason = reason
           @recorded_by = recorded_by
           @processor_reference = processor_reference
+          @notify = notify
         end
 
         def call
@@ -38,7 +40,7 @@ module BetterTogether
 
         private
 
-        attr_reader :payment, :amount_cents, :idempotency_key, :status, :reason, :recorded_by, :processor_reference
+        attr_reader :payment, :amount_cents, :idempotency_key, :status, :reason, :recorded_by, :processor_reference, :notify
 
         def refund_attributes
           { platform_id: payment.platform_id, amount_cents:, currency: payment.currency, idempotency_key:, status:, reason:,
@@ -50,6 +52,8 @@ module BetterTogether
           payment.reload
           payment.update!(status: payment.refundable_cents.zero? ? 'refunded' : 'partially_refunded')
           Orders::Settle.call(payment.order)
+          return unless notify
+
           Notifications.deliver(refund.status == 'recorded' ? 'refund_recorded' : 'refund_issued', subject: refund, actor: recorded_by)
         end
       end

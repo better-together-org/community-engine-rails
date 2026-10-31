@@ -42,7 +42,7 @@ module BetterTogether
         def order
           @order ||= case subject
                      when Order then subject
-                     when Payment then subject.order
+                     when Payment, OfflinePayment then subject.order
                      when Refund then subject.payment.order
                      end
         end

@@ -18,9 +18,16 @@ module BetterTogether
       def update? = false
       def destroy? = false
 
+      # The buyer tells the seller they sent a payment made outside the platform.
+      def claim? = bought_by_user?
+
       # A steward looking at what the platform sells.
       def sales? = manage_billing?
       def sale? = manage_billing? && record.try(:sold_by_platform?) != false
+      # The seller records money given back.
+      def refund? = sale?
+      # A sale made in person.
+      def walk_up? = manage_billing?
 
       # The buyer's own orders on the current platform.
       class Scope < ApplicationPolicy::Scope

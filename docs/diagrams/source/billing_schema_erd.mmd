@@ -22,6 +22,10 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_NOTIFICATION_RECEIPTS : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_NOTIFICATION_RECEIPTS : "recipient (cascade delete)"
+  EXT_PLATFORM ||--o{ BILLING_OFFLINE_PAYMENTS : "platform / platform_id"
+  BILLING_ORDERS ||--o{ BILLING_OFFLINE_PAYMENTS : "(order_id, platform_id) composite FK"
+  BILLING_PAYMENTS ||--o| BILLING_OFFLINE_PAYMENTS : "(payment_id, platform_id) composite FK, one each"
+  EXT_PERSON o|--o{ BILLING_OFFLINE_PAYMENTS : "confirmed_by (nullify)"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
   BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
@@ -286,4 +290,33 @@ erDiagram
     string kind "order_paid, payment_failed, ... (see the catalog)"
     string audience "buyer | seller | operator"
     string dedupe_key "what it is about; never personal data; unique with platform, recipient and kind"
+  }
+
+  BILLING_OFFLINE_PAYMENTS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, read-only after create"
+    uuid order_id FK "composite with platform_id"
+    uuid payment_id FK "composite with platform_id; unique"
+    uuid confirmed_by_id FK "the person who said the money arrived"
+    string processor "cash | cheque | etransfer"
+    string status "awaiting | claimed | received | confirmed | cleared | bounced | rejected | expired | cancelled"
+    string grant_on "confirmed | received | cleared; taken from the setting when the order is placed"
+    boolean seller_assisted "a sale in person"
+    integer platform_fee_cents "always 0: the platform never sees the money"
+    integer claim_count "how many times the buyer said they sent it"
+    string rejection_reason "shown to the buyer"
+    date received_on "the date the seller says it arrived"
+    text buyer_reference "encrypted; optional note from the buyer"
+    text seller_reference "encrypted; optional reference from the seller"
+    text instructions_snapshot "encrypted; what the buyer was told, as it was when the order was placed"
+    datetime expires_at "the order's hold"
+    datetime claimed_at
+    datetime confirmed_at
+    datetime received_at
+    datetime cleared_at
+    datetime bounced_at
+    datetime rejected_at
+    datetime expired_at
+    datetime cancelled_at
+    datetime last_reminded_at
   }

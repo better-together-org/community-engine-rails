@@ -12,7 +12,7 @@ module BetterTogether
         def order_of(record)
           case record
           when Order then record
-          when Payment then record.order
+          when Payment, OfflinePayment then record.order
           when Refund then record.payment.order
           end
         end

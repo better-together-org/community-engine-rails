@@ -1,0 +1,65 @@
+<%# How to pay, for an order the buyer pays outside the platform (cash, a cheque, an e-transfer). %>
+<%# The instructions are shown only on the buyer's own order, after the agreements were accepted when it was placed. %>
+<% offline = order.offline_payments.newest_first.first %>
+<% if offline %>
+  <div id="<%= dom_id(offline) %>" class="card mb-4 billing-offline-payment-card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <strong id="billing-offline-heading"><%= t('better_together.billing.offline_payments.heading', method: billing_payment_method_label(offline.processor)) %></strong>
+      <%= billing_offline_status_badge(offline) %>
+    </div>
+    <div class="card-body">
+      <p id="billing-offline-status-message" class="mb-3"><%= t("better_together.billing.offline_payments.status_message_#{offline.status}") %></p>
+
+      <% if offline.waiting? || offline.expired? %>
+        <% if offline.waiting? %>
+          <h2 class="h6"><%= t('better_together.billing.offline_payments.instructions_heading') %></h2>
+          <dl id="billing-offline-instructions" class="row">
+            <% billing_offline_instruction_rows(offline).each do |label, value| %>
+              <dt class="col-sm-4"><%= label %></dt>
+              <dd class="col-sm-8"><%= simple_format(value, {}, sanitize: true) %></dd>
+            <% end %>
+          </dl>
+          <p id="billing-offline-amount" class="fw-bold">
+            <%= t('better_together.billing.offline_payments.amount_to_pay', amount: billing_amount(order.balance_cents, order.currency)) %>
+            <% if order.expires_at %>
+              <span class="fw-normal text-body-secondary"><%= t('better_together.billing.offline_payments.hold_until', date: l(order.expires_at, format: :long)) %></span>
+            <% end %>
+          </p>
+        <% end %>
+
+        <div id="billing-offline-disclosure" class="alert alert-warning" role="note">
+          <strong><%= t('better_together.billing.offline_payments.disclosure_heading') %></strong>
+          <ul class="mb-0">
+            <% billing_offline_disclosure_keys(offline).each do |key| %>
+              <li><%= t(key, hours: ((order.expires_at - order.placed_at) / 1.hour).round) %></li>
+            <% end %>
+          </ul>
+        </div>
+
+        <%= form_with url: billing_order_claim_path(order, locale: I18n.locale), method: :post, id: 'billing-offline-claim-form' do %>
+          <p id="billing-offline-claim-hint" class="form-text">
+            <%= t('better_together.billing.offline_payments.claim_hint') %>
+          </p>
+          <% if offline.claimed_by_buyer? %>
+            <p id="billing-offline-claimed-note" class="text-success">
+              <%= t('better_together.billing.offline_payments.claimed_note', date: l(offline.claimed_at, format: :long)) %>
+            </p>
+          <% end %>
+          <div class="mb-3">
+            <%= label_tag :reference, t('better_together.billing.offline_payments.reference_label'), class: 'form-label', for: 'billing-offline-claim-reference' %>
+            <%= text_field_tag :reference, nil, id: 'billing-offline-claim-reference', class: 'form-control', maxlength: BetterTogether::Billing::OfflinePayment::REFERENCE_LIMIT,
+                                                autocomplete: 'off' %>
+          </div>
+          <%= submit_tag t(offline.claimed_by_buyer? ? 'better_together.billing.offline_payments.claim_again' : 'better_together.billing.offline_payments.claim'),
+                         id: 'billing-offline-claim-btn', class: 'btn btn-outline-primary', data: { disable_with: false } %>
+        <% end %>
+      <% end %>
+
+      <% if offline.rejected? && offline.rejection_reason.present? %>
+        <p id="billing-offline-rejection-reason" class="mb-0">
+          <%= t('better_together.billing.offline_payments.rejection_reason', reason: offline.rejection_reason) %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+<% end %>

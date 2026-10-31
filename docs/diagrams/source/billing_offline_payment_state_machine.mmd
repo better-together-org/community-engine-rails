@@ -1,0 +1,40 @@
+%% Billing — the life of a payment made outside the platform (cash, cheque, e-transfer).
+%% THE SELLER DECIDES: confirmation works from awaiting, claimed or expired, whether or not the
+%% buyer ever claimed. The buyer's claim only flags the payment and tells the seller.
+stateDiagram-v2
+  [*] --> awaiting: order placed, agreements accepted<br/>seller told, buyer shown how to pay
+
+  awaiting --> claimed: buyer says "I sent it" (optional)<br/>seller told once
+  claimed --> claimed: buyer adds a note (limited)
+
+  awaiting --> confirmed: seller marks received (cash, e-transfer)<br/>NO buyer claim needed
+  claimed --> confirmed: seller marks received
+  expired --> confirmed: seller marks received late<br/>the place is taken again first
+
+  awaiting --> received: seller marks a cheque received
+  claimed --> received: seller marks a cheque received
+  expired --> received: late cheque
+  received --> cleared: cheque clears
+  received --> bounced: cheque bounces<br/>what it granted is reversed
+
+  awaiting --> rejected: seller says it did not arrive
+  claimed --> rejected: seller says it did not arrive
+
+  awaiting --> expired: the hold runs out
+  claimed --> expired: the hold runs out
+
+  awaiting --> cancelled: the order is cancelled
+  claimed --> cancelled: the order is cancelled
+
+  confirmed --> [*]: payment succeeds, order paid
+  cleared --> [*]: payment succeeds (if it was waiting for clearing), order paid
+  bounced --> [*]: refund recorded, or payment failed and order cancelled
+  rejected --> [*]: payment failed, order cancelled
+  cancelled --> [*]
+  expired --> [*]: unless the seller confirms later
+
+  note right of claimed
+    A claim made after the seller confirmed is ignored.
+    A claim after the hold ran out is recorded without
+    changing status, so the seller can still confirm.
+  end note

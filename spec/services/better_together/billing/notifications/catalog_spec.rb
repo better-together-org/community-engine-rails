@@ -13,8 +13,31 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
     critical = described_class::KINDS.keys.select { |kind| described_class.critical?(kind) }
 
     expect(critical).to contain_exactly('payment_failed', 'payment_action_required', 'dispute_opened', 'settings_changed',
-                                        'event_dead_lettered', 'plan_sync_failed')
+                                        'event_dead_lettered', 'plan_sync_failed', 'cheque_bounced', 'hold_expiring')
     expect(described_class.critical?('order_paid')).to be(false)
+  end
+
+  it 'tells the right side about a payment made outside the platform' do
+    expect(described_class.audiences('payment_claimed')).to eq(%i[seller])
+    expect(described_class.audiences('payment_confirmed')).to eq(%i[buyer])
+    expect(described_class.audiences('payment_rejected')).to eq(%i[buyer])
+    expect(described_class.audiences('cheque_bounced')).to eq(%i[buyer seller])
+    expect(described_class.audiences('confirmation_reminder')).to eq(%i[seller])
+    expect(described_class.audiences('hold_expiring')).to eq(%i[buyer])
+  end
+
+  it 'has words, in every language, for every kind and audience' do
+    I18n.available_locales.each do |locale|
+      described_class::KINDS.each do |kind, details|
+        details[:audiences].each do |audience|
+          %i[title body].each do |part|
+            fallback = :"better_together.billing.notifications.#{kind}.#{part}"
+            text = I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}", locale:, default: [fallback, ''])
+            expect(text).to be_present, "no #{locale} #{part} for #{kind} (#{audience})"
+          end
+        end
+      end
+    end
   end
 
   it 'knows which kinds exist, and takes none that are not there' do

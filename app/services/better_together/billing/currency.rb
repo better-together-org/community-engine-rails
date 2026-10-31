@@ -18,6 +18,14 @@ module BetterTogether
         amount_minor.to_i / (10**exponent(code)).to_f
       end
 
+      # Whole minor units from what a person typed ("12.50"), or nil when it is not a plain amount.
+      def to_minor(text, code)
+        text = text.to_s.strip
+        return unless text.match?(/\A\d+(\.\d+)?\z/)
+
+        (BigDecimal(text) * (10**exponent(code))).round.to_i
+      end
+
       def unit(code)
         return '' if code.blank?
 

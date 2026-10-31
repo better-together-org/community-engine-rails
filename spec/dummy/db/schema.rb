@@ -297,6 +297,44 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["recipient_id"], name: "idx_bt_billing_notif_receipts_recipient"
   end
 
+  create_table "better_together_billing_offline_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "order_id", null: false
+    t.uuid "payment_id", null: false
+    t.uuid "confirmed_by_id"
+    t.string "processor", null: false
+    t.string "status", default: "awaiting", null: false
+    t.string "grant_on", default: "confirmed", null: false
+    t.boolean "seller_assisted", default: false, null: false
+    t.integer "platform_fee_cents", default: 0, null: false
+    t.integer "claim_count", default: 0, null: false
+    t.string "rejection_reason"
+    t.date "received_on"
+    t.text "buyer_reference"
+    t.text "seller_reference"
+    t.text "instructions_snapshot"
+    t.datetime "expires_at"
+    t.datetime "claimed_at"
+    t.datetime "confirmed_at"
+    t.datetime "received_at"
+    t.datetime "cleared_at"
+    t.datetime "bounced_at"
+    t.datetime "rejected_at"
+    t.datetime "expired_at"
+    t.datetime "cancelled_at"
+    t.datetime "last_reminded_at"
+    t.index ["confirmed_by_id"], name: "idx_bt_billing_offline_payments_confirmed_by"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_offline_payments_id_platform", unique: true
+    t.index ["order_id"], name: "idx_bt_billing_offline_payments_order"
+    t.index ["payment_id"], name: "idx_bt_billing_offline_payments_payment", unique: true
+    t.index ["platform_id", "status"], name: "idx_bt_billing_offline_payments_status"
+    t.index ["platform_id"], name: "idx_bt_billing_offline_payments_platform"
+    t.index ["status", "expires_at"], name: "idx_bt_billing_offline_payments_status_expires"
+  end
+
   create_table "better_together_billing_order_agreement_acceptances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2964,6 +3002,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_notification_receipts", "better_together_people", column: "recipient_id", on_delete: :cascade
   add_foreign_key "better_together_billing_notification_receipts", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_offline_payments", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_offline_payments_order_platform"
+  add_foreign_key "better_together_billing_offline_payments", "better_together_billing_payments", column: ["payment_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_offline_payments_payment_platform"
+  add_foreign_key "better_together_billing_offline_payments", "better_together_people", column: "confirmed_by_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_offline_payments", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_acc_order_platform"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"

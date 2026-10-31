@@ -46,6 +46,8 @@ module BetterTogether
       has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
                                        dependent: :restrict_with_error
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
+      has_many :offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :order,
+                                  dependent: :restrict_with_error
 
       before_validation :set_number, on: :create
       before_validation :total_up

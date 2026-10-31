@@ -18,8 +18,10 @@ module BetterTogether
         def call
           order.with_lock do
             next false unless order.hold_expired? && order.can_become?('expired')
+            # A cheque the seller has received but not yet seen clear keeps the order open.
+            next false if order.offline_payments.received.exists?
 
-            Release.call(order)
+            Release.call(order, outcome: 'expired')
             order.update!(status: 'expired')
             Notifications.deliver('order_expired', subject: order)
             true
