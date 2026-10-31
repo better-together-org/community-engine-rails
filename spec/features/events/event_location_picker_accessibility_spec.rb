@@ -72,12 +72,12 @@ RSpec.describe 'Event location picker accessibility', :accessibility, :as_platfo
 
       it 'labels and describes the picker', :aggregate_failures do
         label = find('label[for="event_location_picker"]')
-        expect(label.text).to eq(I18n.t('better_together.events.labels.location', locale:))
+        expect(label.text).to eq(I18n.t('better_together.locations.picker.label', locale:))
 
         described_by = find('select#event_location_picker', visible: :all)['aria-describedby']
         expect(described_by).to include('event_location_picker_hint')
         hint = find('#event_location_picker_hint')
-        expect(hint.text).to eq(I18n.t('better_together.events.hints.location', locale:))
+        expect(hint.text).to eq(I18n.t('better_together.locations.picker.hint', locale:))
         expect(hint.text).not_to match(/translation missing/i)
       end
 
@@ -87,7 +87,7 @@ RSpec.describe 'Event location picker accessibility', :accessibility, :as_platfo
         panel = find('#event_location_new_address')
         expect(panel).to be_visible
         expect(panel).to have_css('legend',
-                                  text: I18n.t('better_together.events.location_picker.new_address_legend', locale:))
+                                  text: I18n.t('better_together.locations.picker.new_address_legend', locale:))
         expect(page.evaluate_script('document.activeElement.closest("#event_location_new_address") !== null')).to be(true)
 
         expect(page).to be_axe_clean
@@ -95,11 +95,11 @@ RSpec.describe 'Event location picker accessibility', :accessibility, :as_platfo
           .according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
 
         within('#event_location_new_address') do
-          click_button I18n.t('better_together.events.location_picker.cancel_new_address', locale:)
+          click_button I18n.t('better_together.locations.picker.cancel_new_address', locale:)
         end
         expect(page.evaluate_script('document.activeElement.classList.contains("ss-main")')).to be(true)
         expect(page).to have_css('[data-better_together--location-selector-target="announcement"]',
-                                 text: I18n.t('better_together.events.location_picker.announcements.cancelled', locale:),
+                                 text: I18n.t('better_together.locations.picker.announcements.cancelled', locale:),
                                  visible: :all, wait: 5)
       end
     end

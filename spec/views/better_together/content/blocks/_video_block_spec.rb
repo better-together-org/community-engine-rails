@@ -40,4 +40,22 @@ RSpec.describe 'better_together/content/blocks/_video_block.html.erb' do
     expect(rendered).not_to include(I18n.t('better_together.content.blocks.embeds.blocked_title'))
     expect(rendered).to include('https://www.youtube.com')
   end
+
+  it 'narrows a vertical video with the portrait modifier', :aggregate_failures do
+    video_block = create(:content_video_block, creator:, aspect_ratio: '9x16')
+
+    render partial: 'better_together/content/blocks/video_block', locals: { video_block: }
+
+    page = Capybara.string(rendered)
+
+    expect(page).to have_css('figure.iframe-block.iframe-block--portrait .ratio.ratio-9x16 iframe')
+  end
+
+  it 'leaves a widescreen video without the portrait modifier' do
+    video_block = create(:content_video_block, creator:)
+
+    render partial: 'better_together/content/blocks/video_block', locals: { video_block: }
+
+    expect(Capybara.string(rendered)).to have_no_css('.iframe-block--portrait')
+  end
 end

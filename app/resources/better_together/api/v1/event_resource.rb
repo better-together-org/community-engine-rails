@@ -19,9 +19,13 @@ module BetterTogether
         attribute :cover_image_url
 
         # Publisher inputs: hosts (EventHosting), lifecycle status, a base64 cover image and blocks appended to the
-        # description (BlockAttachments), and a street address for the location (Locatable::One#address_spec). The
+        # description (BlockAttachments), and a street address for the location (Locatable::One#address_data). The
         # write-only ones are never returned.
-        attributes :hosts, :status, :cover_image_data, :cover_image_filename, :attachment_block_ids, :address_spec
+        attributes :hosts, :status, :cover_image_data, :cover_image_filename, :attachment_block_ids, :address_data
+
+        # Series membership (EventSeries): +series+ at creation, +session_of+ (a series identifier) at creation or on
+        # an event in no series, +series_identifier+ to read it back.
+        attributes :series, :session_of, :series_identifier
 
         # Virtual attributes for computed fields
         attribute :local_starts_at
@@ -100,7 +104,7 @@ module BetterTogether
         end
 
         def fetchable_fields
-          super - %i[cover_image_data cover_image_filename attachment_block_ids address_spec]
+          super - %i[cover_image_data cover_image_filename attachment_block_ids session_of address_data]
         end
 
         # As in the event form, a host must be the person or a community they belong to; platform managers may
@@ -119,9 +123,13 @@ module BetterTogether
           @model.status = value
         end
 
+        def series_identifier
+          @model.parent_series&.identifier
+        end
+
         # Creatable and updatable fields
         def self.creatable_fields(context)
-          super - %i[slug local_starts_at local_ends_at timezone_display cover_image_url]
+          super - %i[slug local_starts_at local_ends_at timezone_display cover_image_url series_identifier]
         end
 
         def self.updatable_fields(context)

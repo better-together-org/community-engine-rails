@@ -1,0 +1,48 @@
+{
+  "name": "community_show_tabs_events",
+  "device": "desktop",
+  "url": "/en/c/community-595ffd96f4dfabef606c",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_tabs",
+  "flow": "events",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#events",
+      "title": "Events",
+      "bullets": [
+        "The events index, scoped to the community, in a lazy frame."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 406.796875,
+        "width": 822.0,
+        "height": 765.046875,
+        "right": 903.5,
+        "bottom": 1171.84375,
+        "center_x": 492.5,
+        "center_y": 789.3203125
+      },
+      "avoid": {
+        "x": 81.5,
+        "y": 406.796875,
+        "width": 822.0,
+        "height": 765.046875,
+        "right": 903.5,
+        "bottom": 1171.84375,
+        "center_x": 492.5,
+        "center_y": 789.3203125
+      },
+      "placement": {
+        "side": "right",
+        "x": 923.5,
+        "y": 710.32,
+        "width": 380,
+        "height": 158,
+        "score": 536.5
+      }
+    }
+  ]
+}

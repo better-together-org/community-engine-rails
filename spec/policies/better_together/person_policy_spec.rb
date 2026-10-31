@@ -136,6 +136,25 @@ RSpec.describe BetterTogether::PersonPolicy do
 
       expect(resolved).to include(people_reviewer.person, public_person, private_person)
     end
+
+    context 'with blocks between a directory reviewer and other people' do
+      let(:blocked_person) { create(:better_together_person, privacy: 'public') }
+      let(:blocker_person) { create(:better_together_person, privacy: 'public') }
+
+      before do
+        public_person && private_person
+        grant_platform_permission(people_reviewer, 'list_person')
+        create(:person_block, blocker: people_reviewer.person, blocked: blocked_person)
+        create(:person_block, blocker: blocker_person, blocked: people_reviewer.person)
+      end
+
+      it 'omits people the reviewer blocked and people who blocked the reviewer', :aggregate_failures do
+        resolved = described_class::Scope.new(people_reviewer, scope).resolve
+
+        expect(resolved).not_to include(blocked_person, blocker_person)
+        expect(resolved).to include(public_person, private_person)
+      end
+    end
   end
 
   describe 'cross-tenant isolation (platform steward boundaries)' do

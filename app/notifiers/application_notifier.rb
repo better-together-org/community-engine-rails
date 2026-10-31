@@ -5,6 +5,18 @@ class ApplicationNotifier < Noticed::Event # rubocop:todo Style/Documentation
     deliver(recipient)
   end
 
+  # Robots are never notification recipients: they have no inbox, locale or email, so nothing is saved or queued
+  # for them. Noticed aliases deliver_later to its own deliver, so both are overridden here.
+  def deliver(recipients = nil, **)
+    requested = Array.wrap(recipients || evaluate_recipients)
+    recipients = requested.grep_v(BetterTogether::Robot)
+    # Only stop when robots were the whole audience; a notifier with no recipients keeps Noticed's behaviour.
+    return self if recipients.empty? && requested.any?
+
+    super
+  end
+  alias deliver_later deliver
+
   # Noticed::Deliverable#deliver bulk-inserts Notification rows via
   # notifications.insert_all!, which never runs ActiveRecord callbacks -
   # Noticed::Notification's before_create :stamp_platform_id (see

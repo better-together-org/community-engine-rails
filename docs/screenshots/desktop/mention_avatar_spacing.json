@@ -1,0 +1,83 @@
+{
+  "name": "mention_avatar_spacing",
+  "device": "desktop",
+  "url": "/en/posts/harbour-update",
+  "title": "Harbour Update | Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "mention_avatar_spacing",
+  "flow": "annotated",
+  "source_spec": "./spec/docs_screenshots/better_together/mention_avatar_spacing_spec.rb",
+  "callouts": [
+    {
+      "selector": "#mention_person_5e20c3c6-c8d9-41ad-bd7c-1b6a821dae4b",
+      "title": "Person mention",
+      "bullets": [
+        "The avatar sits clear of the name (me-2)."
+      ],
+      "target": {
+        "x": 569.78125,
+        "y": 788.796875,
+        "width": 160.921875,
+        "height": 48.0,
+        "right": 730.703125,
+        "bottom": 836.796875,
+        "center_x": 650.2421875,
+        "center_y": 812.796875
+      },
+      "avoid": {
+        "x": 569.78125,
+        "y": 788.796875,
+        "width": 160.921875,
+        "height": 48.0,
+        "right": 730.703125,
+        "bottom": 836.796875,
+        "center_x": 650.2421875,
+        "center_y": 812.796875
+      },
+      "placement": {
+        "side": "above",
+        "x": 460.24,
+        "y": 636.8,
+        "width": 380,
+        "height": 132,
+        "score": 788.796875
+      }
+    },
+    {
+      "selector": "#mention_robot_18d3a564-e1ac-456f-9d1d-7a303cad13aa",
+      "title": "Robot mention",
+      "bullets": [
+        "A round 50px avatar that does not squash, with the same gap."
+      ],
+      "target": {
+        "x": 738.703125,
+        "y": 779.796875,
+        "width": 206.109375,
+        "height": 66.0,
+        "right": 944.8125,
+        "bottom": 845.796875,
+        "center_x": 841.7578125,
+        "center_y": 812.796875
+      },
+      "avoid": {
+        "x": 738.703125,
+        "y": 779.796875,
+        "width": 206.109375,
+        "height": 66.0,
+        "right": 944.8125,
+        "bottom": 845.796875,
+        "center_x": 841.7578125,
+        "center_y": 812.796875
+      },
+      "placement": {
+        "side": "below",
+        "x": 651.76,
+        "y": 865.8,
+        "width": 380,
+        "height": 158,
+        "score": 611.203125
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+---
+title: Header media
+audience:
+- community_member
+- developer
+journey_step: 'As a visitor, I open a community page: header media.'
+callouts:
+- :id: hook
+  :title: Header media
+  :description: The cover and profile image render through a partial a host can replace.
+accessibility_notes: The default markup is unchanged; hooks only add override points.
+slug: community_show_hooks_header
+device: mobile

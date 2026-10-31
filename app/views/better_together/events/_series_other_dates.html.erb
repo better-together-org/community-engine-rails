@@ -1,0 +1,26 @@
+<%# locals: (event:) %>
+<%# In a session's About pane: the series' other dates. The next three show; the rest open on request. %>
+<% series = event.parent_series %>
+<% if series && policy(series).show? %>
+  <% others = series.sessions.reject { |other| other == event || !policy(other).show? }.sort_by { |other| other.starts_at || Time.zone.at(0) } %>
+  <% if others.any? %>
+    <div class="event-series-other-dates card-text text-muted mt-2" id="<%= dom_id(event, :series_other_dates) %>">
+      <i class="fas fa-layer-group me-2" aria-hidden="true"></i><%= t('better_together.events.series.other_dates') %>
+      <ul class="list-unstyled mb-0 ms-4 small">
+        <% others.first(3).each do |other| %>
+          <li><%= link_to display_event_time(other), event_path(other) %><% unless other.status_confirmed? %> <%= event_status_badge(other) %><% end %></li>
+        <% end %>
+      </ul>
+      <% if others.size > 3 %>
+        <details class="ms-4 small">
+          <summary><%= t('better_together.events.series.show_all_dates', count: others.size - 3) %></summary>
+          <ul class="list-unstyled mb-0">
+            <% others.drop(3).each do |other| %>
+              <li><%= link_to display_event_time(other), event_path(other) %><% unless other.status_confirmed? %> <%= event_status_badge(other) %><% end %></li>
+            <% end %>
+          </ul>
+        </details>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

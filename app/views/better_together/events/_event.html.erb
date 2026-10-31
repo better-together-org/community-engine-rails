@@ -1,9 +1,9 @@
 <%# Template Dependency: better_together/shared/card %>
-<%# locals: (event:) %>
+<%# locals: (event:, show_series: true) %>
 
 <%# See EventsHelper#event_card_cache_key: it adds next_occurrence_at (refreshed without touching %>
 <%# updated_at) and the hosts' versions (the card shows their names and avatars). %>
-<%= cache event_card_cache_key(event) do %>
+<%= cache event_card_cache_key(event, show_series:) do %>
 	<% if policy(event).show? %>
 		<%= render 'better_together/shared/card', entity: event, card_classes: 'hover-effect event-card' do %>
 			<%= event_hosts_display(event) %>
@@ -27,6 +27,7 @@
 				<i class="fas fa-map-marker-alt me-2 icon-above-stretched-link" aria-hidden="true" data-bs-toggle="tooltip" title="<%= t('better_together.events.location') %>"></i> <%= event.location %>
 				</div>
 			<% end %>
+			<%= render 'better_together/events/series_mention', event: event if show_series && event.session? %>
 			<div class="event-categories">
 				<%= categories_badge(event) %>
 				<%= recurring_badge(event) %>

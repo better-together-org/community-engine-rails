@@ -6,17 +6,17 @@ classDiagram
     class BetterTogether__ConversationsController["ConversationsController"] {
       <<Controller>>
       models: Conversation
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, NotificationReadable +1
     }
     class BetterTogether__MessagesController["MessagesController"] {
       <<Controller>>
       models: Message
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, PerUserThrottling
     }
     class BetterTogether__ReportsController["ReportsController"] {
       <<Controller>>
       models: Report
-      concerns: BotProtectedSubmissions, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup
+      concerns: BotProtectedSubmissions, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
     class BetterTogether__Safety__CasesController["Safety::CasesController"] {
       <<Controller>>
