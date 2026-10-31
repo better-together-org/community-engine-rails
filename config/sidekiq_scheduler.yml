@@ -45,3 +45,9 @@
   class: "BetterTogether::SitemapRefreshScanJob"
   queue: "maintenance"
   description: "Regenerate per-platform XML sitemaps for all locally-hosted platforms"
+
+"better_together:quotas:reservation_sweep_5min":
+  cron: "*/5 * * * *" # every 5 minutes
+  class: "BetterTogether::Quotas::ReservationSweeperJob"
+  queue: "maintenance"
+  description: "Expire held quota reservations past their TTL, matching reserve!'s default 5-minute window"

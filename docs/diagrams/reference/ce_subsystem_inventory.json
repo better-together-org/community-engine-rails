@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T20:56:41Z",
+  "generated_at": "2026-10-31T19:50:59Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7450,6 +7450,12 @@
         },
         {
           "from": "BetterTogether::Quota",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -26046,6 +26052,8 @@
           "concerns": [
             "BetterTogether::BetterTogetherId",
             "BetterTogether::Commentable",
+            "BetterTogether::Geography::Locatable::AddressData",
+            "BetterTogether::Geography::Locatable::LocatedIn",
             "BetterTogether::Geography::Locatable::One",
             "BetterTogether::Geography::Mappable",
             "BetterTogether::Seedable"
@@ -29392,6 +29400,500 @@
           "shared_table_group_size": 21
         },
         {
+          "name": "BetterTogether::Quota",
+          "label": "Quota",
+          "source_path": "app/models/better_together/quota.rb",
+          "table_name": "better_together_quotas",
+          "columns": [
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "enforcement_mode",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "limit",
+              "integer"
+            ],
+            [
+              "soft_limit",
+              "integer"
+            ],
+            [
+              "metadata",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "InclusionValidator: quota_type (in=dynamic)",
+            "PresenceValidator: limit",
+            "NumericalityValidator: limit (greater_than_or_equal_to=0)",
+            "UniquenessValidator: owner_id (scope=[:owner_type, :quota_type])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaBalance",
+          "label": "QuotaBalance",
+          "source_path": "app/models/better_together/quota_balance.rb",
+          "table_name": "better_together_quota_balances",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "period_key",
+              "string"
+            ],
+            [
+              "consumed",
+              "integer"
+            ],
+            [
+              "reserved",
+              "integer"
+            ],
+            [
+              "recalculated_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: period_key",
+            "UniquenessValidator: quota_id (scope=:period_key)",
+            "NumericalityValidator: consumed, reserved (only_integer=true)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaGrant",
+          "label": "QuotaGrant",
+          "source_path": "app/models/better_together/quota_grant.rb",
+          "table_name": "better_together_quota_grants",
+          "columns": [
+            [
+              "granted_by_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "granted_by_type",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "reason",
+              "text"
+            ],
+            [
+              "limit",
+              "integer"
+            ],
+            [
+              "expires_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "InclusionValidator: quota_type (in=dynamic)",
+            "PresenceValidator: limit",
+            "NumericalityValidator: limit (greater_than_or_equal_to=0)",
+            "InclusionValidator: granted_by_type (allow_nil=true, in=[\"BetterTogether::Person\", \"BetterTogether::Robot\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "granted_by",
+              "foreign_key": "granted_by_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaReservation",
+          "label": "QuotaReservation",
+          "source_path": "app/models/better_together/quota_reservation.rb",
+          "table_name": "better_together_quota_reservations",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "actor_type",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period_key",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "PresenceValidator: amount",
+            "NumericalityValidator: amount (only_integer=true)",
+            "PresenceValidator: period_key",
+            "PresenceValidator: expires_at",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::QuotaUsage",
+          "label": "QuotaUsage",
+          "source_path": "app/models/better_together/quota_usage.rb",
+          "table_name": "better_together_quota_usages",
+          "columns": [
+            [
+              "actor_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "quota_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "actor_type",
+              "string"
+            ],
+            [
+              "event",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "period_key",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "PresenceValidator: amount",
+            "NumericalityValidator: amount (only_integer=true)",
+            "PresenceValidator: period_key",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key",
+            "InclusionValidator: event (in=[\"reserve\", \"settle\", \"reverse\", \"backfill\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "quota",
+              "foreign_key": "quota_id",
+              "target": "BetterTogether::Quota",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "actor",
+              "foreign_key": "actor_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::SafetyReportDigestNotifier",
           "label": "SafetyReportDigestNotifier",
           "source_path": "app/notifiers/better_together/safety_report_digest_notifier.rb",
@@ -29903,404 +30405,6 @@
               "target_subsystem": "platform_network"
             }
           ]
-        },
-        {
-          "name": "BetterTogether::Quota",
-          "label": "Quota",
-          "source_path": "app/models/better_together/quota.rb",
-          "table_name": "better_together_quota",
-          "columns": [
-            [
-              "owner_id",
-              "uuid FK"
-            ],
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "enforcement_mode",
-              "string"
-            ],
-            [
-              "owner_type",
-              "string"
-            ],
-            [
-              "period",
-              "string"
-            ],
-            [
-              "quota_type",
-              "string"
-            ],
-            [
-              "status",
-              "string"
-            ],
-            [
-              "limit",
-              "integer"
-            ],
-            [
-              "soft_limit",
-              "integer"
-            ],
-            [
-              "metadata",
-              "jsonb"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "PresenceValidator: quota_type",
-            "InclusionValidator: quota_type (in=dynamic)",
-            "PresenceValidator: limit",
-            "NumericalityValidator: limit (greater_than_or_equal_to=0)",
-            "UniquenessValidator: owner_id (scope=[:owner_type, :quota_type])"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "belongs_to",
-              "name": "owner",
-              "foreign_key": "owner_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::PlatformScoped",
-            "BetterTogether::Seedable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            }
-          ]
-        },
-        {
-          "name": "BetterTogether::QuotaBalance",
-          "label": "QuotaBalance",
-          "source_path": "app/models/better_together/quota_balance.rb",
-          "table_name": "better_together_quota_balances",
-          "columns": [
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "quota_id",
-              "uuid FK"
-            ],
-            [
-              "period_key",
-              "string"
-            ],
-            [
-              "consumed",
-              "integer"
-            ],
-            [
-              "reserved",
-              "integer"
-            ],
-            [
-              "recalculated_at",
-              "datetime"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "PresenceValidator: period_key",
-            "UniquenessValidator: quota_id (scope=:period_key)",
-            "NumericalityValidator: consumed, reserved (only_integer=true)"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
-            {
-              "name": "quota",
-              "foreign_key": "quota_id",
-              "target": "BetterTogether::Quota",
-              "optional": false
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::PlatformScoped",
-            "BetterTogether::Seedable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            }
-          ]
-        },
-        {
-          "name": "BetterTogether::QuotaReservation",
-          "label": "QuotaReservation",
-          "source_path": "app/models/better_together/quota_reservation.rb",
-          "table_name": "better_together_quota_reservations",
-          "columns": [
-            [
-              "actor_id",
-              "uuid FK"
-            ],
-            [
-              "owner_id",
-              "uuid FK"
-            ],
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "quota_id",
-              "uuid FK"
-            ],
-            [
-              "subject_id",
-              "uuid FK"
-            ],
-            [
-              "actor_type",
-              "string"
-            ],
-            [
-              "idempotency_key",
-              "string"
-            ],
-            [
-              "owner_type",
-              "string"
-            ],
-            [
-              "period_key",
-              "string"
-            ],
-            [
-              "quota_type",
-              "string"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "PresenceValidator: quota_type",
-            "PresenceValidator: amount",
-            "NumericalityValidator: amount (only_integer=true)",
-            "PresenceValidator: period_key",
-            "PresenceValidator: expires_at",
-            "PresenceValidator: idempotency_key",
-            "UniquenessValidator: idempotency_key"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
-            {
-              "name": "quota",
-              "foreign_key": "quota_id",
-              "target": "BetterTogether::Quota",
-              "optional": false
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "belongs_to",
-              "name": "subject",
-              "foreign_key": "subject_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "belongs_to",
-              "name": "actor",
-              "foreign_key": "actor_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "belongs_to",
-              "name": "owner",
-              "foreign_key": "owner_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::PlatformScoped",
-            "BetterTogether::Seedable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            }
-          ]
-        },
-        {
-          "name": "BetterTogether::QuotaUsage",
-          "label": "QuotaUsage",
-          "source_path": "app/models/better_together/quota_usage.rb",
-          "table_name": "better_together_quota_usages",
-          "columns": [
-            [
-              "actor_id",
-              "uuid FK"
-            ],
-            [
-              "owner_id",
-              "uuid FK"
-            ],
-            [
-              "platform_id",
-              "uuid FK"
-            ],
-            [
-              "quota_id",
-              "uuid FK"
-            ],
-            [
-              "subject_id",
-              "uuid FK"
-            ],
-            [
-              "actor_type",
-              "string"
-            ],
-            [
-              "event",
-              "string"
-            ],
-            [
-              "idempotency_key",
-              "string"
-            ],
-            [
-              "owner_type",
-              "string"
-            ],
-            [
-              "period_key",
-              "string"
-            ]
-          ],
-          "validations": [
-            "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "PresenceValidator: quota_type",
-            "PresenceValidator: amount",
-            "NumericalityValidator: amount (only_integer=true)",
-            "PresenceValidator: period_key",
-            "PresenceValidator: idempotency_key",
-            "UniquenessValidator: idempotency_key",
-            "InclusionValidator: event (in=[\"reserve\", \"settle\", \"reverse\", \"backfill\"])"
-          ],
-          "belongs_to": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true
-            },
-            {
-              "name": "quota",
-              "foreign_key": "quota_id",
-              "target": "BetterTogether::Quota",
-              "optional": false
-            }
-          ],
-          "polymorphic": [
-            {
-              "direction": "belongs_to",
-              "name": "subject",
-              "foreign_key": "subject_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "belongs_to",
-              "name": "actor",
-              "foreign_key": "actor_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "belongs_to",
-              "name": "owner",
-              "foreign_key": "owner_id",
-              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
-            },
-            {
-              "direction": "has_many",
-              "name": "seeds",
-              "as": "seedable",
-              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
-            }
-          ],
-          "translated_attributes": [],
-          "concerns": [
-            "BetterTogether::BetterTogetherId",
-            "BetterTogether::PlatformScoped",
-            "BetterTogether::Seedable"
-          ],
-          "concern_notes": [],
-          "cross_subsystem_targets": [
-            {
-              "name": "platform",
-              "foreign_key": "platform_id",
-              "target": "BetterTogether::Platform",
-              "optional": true,
-              "target_subsystem": "platform_network"
-            }
-          ]
         }
       ],
       "controllers_inventory": [
@@ -30325,7 +30429,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30338,7 +30443,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30353,7 +30459,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30366,7 +30473,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30386,7 +30494,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30689,6 +30798,39 @@
           ]
         },
         {
+          "name": "BetterTogether::Api::V1::QuotaBalancesController",
+          "label": "Api::V1::QuotaBalancesController",
+          "source_path": "app/controllers/better_together/api/v1/quota_balances_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::LocaleScoping",
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
+          "name": "BetterTogether::Api::V1::QuotaUsagesController",
+          "label": "Api::V1::QuotaUsagesController",
+          "source_path": "app/controllers/better_together/api/v1/quota_usages_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::LocaleScoping",
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
+          "name": "BetterTogether::Api::V1::QuotasController",
+          "label": "Api::V1::QuotasController",
+          "source_path": "app/controllers/better_together/api/v1/quotas_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::LocaleScoping",
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
           "name": "BetterTogether::Api::V1::RobotsController",
           "label": "Api::V1::RobotsController",
           "source_path": "app/controllers/better_together/api/v1/robots_controller.rb",
@@ -30752,7 +30894,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30766,7 +30909,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30782,6 +30926,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::PerUserThrottling"
           ]
         },
@@ -30796,7 +30941,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30835,7 +30981,8 @@
             "BetterTogether::ChecksRequiredAgreements",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30849,7 +30996,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30861,7 +31009,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30873,7 +31022,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30885,7 +31035,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30897,7 +31048,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30911,7 +31063,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30923,7 +31076,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30937,7 +31091,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30951,7 +31106,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30965,7 +31121,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30979,7 +31136,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -30993,7 +31151,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31007,7 +31166,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31021,7 +31181,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31043,7 +31204,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31055,7 +31217,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31068,6 +31231,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
           ]
         },
@@ -31083,7 +31247,21 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable"
+          ]
+        },
+        {
+          "name": "BetterTogether::LocationsController",
+          "label": "LocationsController",
+          "source_path": "app/controllers/better_together/locations_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31097,7 +31275,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31112,6 +31291,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31127,6 +31307,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31142,6 +31323,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31157,6 +31339,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31172,6 +31355,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31185,6 +31369,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::DatetimeFilterable",
             "BetterTogether::Metrics::PlatformContext"
           ]
@@ -31201,6 +31386,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31216,6 +31402,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31231,6 +31418,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::PlatformContext"
           ]
         },
@@ -31243,7 +31431,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31256,6 +31445,7 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -31268,7 +31458,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31282,7 +31473,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31294,7 +31486,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31306,7 +31499,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31320,7 +31514,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31332,7 +31527,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31346,7 +31542,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31360,7 +31557,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31374,7 +31572,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31386,7 +31585,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31400,7 +31600,8 @@
           "concerns": [
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31413,7 +31614,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31426,7 +31628,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31439,7 +31642,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31453,7 +31657,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31466,7 +31671,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         },
         {
@@ -31479,7 +31685,8 @@
             "BetterTogether::DeviseLocales",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
-            "BetterTogether::InvitationUserSetup"
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
           ]
         }
       ],
@@ -31525,6 +31732,9 @@
             "Api::V1::ShortLinksController",
             "Api::V1::RolesController",
             "Api::V1::RobotsController",
+            "Api::V1::QuotasController",
+            "Api::V1::QuotaUsagesController",
+            "Api::V1::QuotaBalancesController",
             "Api::V1::PersonDeletionRequestsController",
             "Api::V1::PersonDataExportsController",
             "Api::V1::PersonCommunityMembershipsController",
@@ -31566,6 +31776,9 @@
             "Api::V1::ShortLinksController",
             "Api::V1::RolesController",
             "Api::V1::RobotsController",
+            "Api::V1::QuotasController",
+            "Api::V1::QuotaUsagesController",
+            "Api::V1::QuotaBalancesController",
             "Api::V1::PersonDeletionRequestsController",
             "Api::V1::PersonDataExportsController",
             "Api::V1::PersonCommunityMembershipsController",
@@ -31616,6 +31829,11 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
+            "QuotaReservation",
+            "QuotaUsage",
+            "QuotaGrant",
+            "QuotaBalance",
+            "Quota",
             "PhoneNumber",
             "PersonMessagingGrant",
             "MessageRequest",
@@ -31624,11 +31842,7 @@
             "JwtDenylist",
             "FeatureAccessGrant",
             "EmailAddress",
-            "ContactDetail",
-            "QuotaUsage",
-            "QuotaReservation",
-            "QuotaBalance",
-            "Quota"
+            "ContactDetail"
           ]
         },
         {
@@ -31733,6 +31947,24 @@
           ]
         },
         {
+          "name": "BetterTogether::Geography::Locatable::AddressData",
+          "label": "Geography::Locatable::AddressData",
+          "capability": "Addressdata",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventOccurrence"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::Locatable::LocatedIn",
+          "label": "Geography::Locatable::LocatedIn",
+          "capability": "Locatedin",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventOccurrence"
+          ]
+        },
+        {
           "name": "BetterTogether::Geography::Locatable::Many",
           "label": "Geography::Locatable::Many",
           "capability": "Many",
@@ -31815,6 +32047,7 @@
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
+            "LocationsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -31880,6 +32113,7 @@
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
+            "LocationsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -31945,6 +32179,7 @@
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
+            "LocationsController",
             "FederationHubController",
             "FeatureAccessGrantsController",
             "EventOccurrencesController",
@@ -31985,6 +32220,72 @@
             "WebsiteLink",
             "PhoneNumber",
             "EmailAddress"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ApplicationController",
+            "Api::Oauth::ApplicationsController",
+            "Safety::AgreementsController",
+            "Safety::ActionsController",
+            "Metrics::UserAccountReportsController",
+            "Metrics::SharesController",
+            "Metrics::SearchQueriesController",
+            "Metrics::ReportsController",
+            "Metrics::PageViewsController",
+            "Metrics::PageViewReportsController",
+            "Metrics::LinkClicksController",
+            "Metrics::LinkClickReportsController",
+            "Metrics::LinkCheckerReportsController",
+            "Joatu::HubController",
+            "Geography::StatesController",
+            "Geography::RegionSettlementsController",
+            "Geography::ContinentsController",
+            "Federation::ApiController",
+            "Content::PageBlocksController",
+            "BotDefense::ChallengesController",
+            "ShortLinkRedirectsController",
+            "SeedCatalogController",
+            "RobotsTxtController",
+            "RobotsController",
+            "ReportFollowupsController",
+            "PlatformDomainsController",
+            "NewPlatformSetupController",
+            "MessageRequestsController",
+            "LocationsController",
+            "FederationHubController",
+            "FeatureAccessGrantsController",
+            "EventOccurrencesController",
+            "CommentsController",
+            "ResourceController",
+            "Federation::OauthTokensController",
+            "Federation::LinkedSeedsController",
+            "Federation::ContentFeedController",
+            "Users::UnlocksController",
+            "Users::SessionsController",
+            "Api::Auth::SessionsController",
+            "Users::RegistrationsController",
+            "Api::Auth::RegistrationsController",
+            "Users::PasswordsController",
+            "Api::Auth::PasswordsController",
+            "Users::ConfirmationsController",
+            "Api::Auth::ConfirmationsController",
+            "OmniauthCallbacksController",
+            "Users::OmniauthCallbacksController",
+            "NewPlatformSetupStepsController",
+            "ShortLinksController",
+            "FriendlyResourceController",
+            "Joatu::JoatuController",
+            "Geography::SettlementsController",
+            "Geography::RegionsController",
+            "Geography::MapsController",
+            "Geography::CountriesController",
+            "Joatu::ResponseLinksController",
+            "Joatu::CategoriesController"
           ]
         },
         {
@@ -32049,6 +32350,11 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
+            "QuotaReservation",
+            "QuotaUsage",
+            "QuotaGrant",
+            "QuotaBalance",
+            "Quota",
             "PhoneNumber",
             "PersonMessagingGrant",
             "MessageRequest",
@@ -32058,11 +32364,7 @@
             "FeatureAccessGrant",
             "EmailAddress",
             "ContactDetail",
-            "Activity",
-            "QuotaUsage",
-            "QuotaReservation",
-            "QuotaBalance",
-            "Quota"
+            "Activity"
           ]
         },
         {
@@ -32148,6 +32450,11 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
+            "QuotaReservation",
+            "QuotaUsage",
+            "QuotaGrant",
+            "QuotaBalance",
+            "Quota",
             "PhoneNumber",
             "PersonMessagingGrant",
             "MessageRequest",
@@ -32156,11 +32463,7 @@
             "JwtDenylist",
             "FeatureAccessGrant",
             "EmailAddress",
-            "ContactDetail",
-            "QuotaUsage",
-            "QuotaReservation",
-            "QuotaBalance",
-            "Quota"
+            "ContactDetail"
           ]
         },
         {
@@ -32457,6 +32760,36 @@
           "target_subsystem": "identity_access"
         },
         {
+          "from": "BetterTogether::QuotaReservation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaGrant",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaBalance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Quota",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::PhoneNumber",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -32554,30 +32887,6 @@
         },
         {
           "from": "BetterTogether::Activity",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::QuotaUsage",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::QuotaReservation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::QuotaBalance",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Quota",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

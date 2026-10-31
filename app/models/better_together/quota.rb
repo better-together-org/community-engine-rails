@@ -5,10 +5,9 @@ module BetterTogether
   # Rows are created lazily from each type's declared defaults the first time usage is
   # attributed to an owner, following the same lazy-row pattern as CommentConfig.
   class Quota < PlatformRecord
-    # No table_name override needed: this app's inflections leave "quota".pluralize
-    # unchanged, so Rails' own default table-name inference already lands on
-    # "better_together_quota" (singular), matching the migration. Verified directly
-    # against ActiveRecord::Base.table_name, not just the raw Inflector call.
+    # No table_name override needed: config/initializers/inflections.rb pins
+    # "quota"/"quotas" as a regular pair, so Rails' default table-name inference
+    # already lands on "better_together_quotas".
     belongs_to :owner, polymorphic: true
 
     # :restrict_with_exception, not :destroy: quota_usages is an append-only ledger;
@@ -33,6 +32,14 @@ module BetterTogether
     validates :limit, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :owner_id, uniqueness: { scope: %i[owner_type quota_type] }
     validate :owner_is_quota_owner
+
+    # The limit actually in effect: the highest active QuotaGrant for this owner+type,
+    # or the stored `limit` when no grant applies. Nothing in this phase reads this to
+    # make a blocking decision (Quotas.check! stays permissive); it exists so a later
+    # enforcement phase has a single, already-correct place to read from.
+    def effective_limit
+      QuotaGrant.for_owner_and_type(owner, quota_type).active.maximum(:limit) || limit
+    end
 
     private
 
