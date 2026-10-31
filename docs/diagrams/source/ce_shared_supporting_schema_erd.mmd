@@ -50,13 +50,13 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
-  EXT_PLATFORM o|--o{ QUOTA : "platform / platform_id"
+  EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
-  QUOTA ||--o{ QUOTA_BALANCES : "quota / quota_id"
+  QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
   EXT_PLATFORM o|--o{ QUOTA_RESERVATIONS : "platform / platform_id"
-  QUOTA ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
+  QUOTAS ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
   EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
-  QUOTA ||--o{ QUOTA_USAGES : "quota / quota_id"
+  QUOTAS ||--o{ QUOTA_USAGES : "quota / quota_id"
   EXT_PLATFORM o|--o{ SHORT_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
@@ -299,7 +299,7 @@ erDiagram
     primary_flag boolean
   }
 
-  QUOTA {
+  QUOTAS {
     owner_id uuid
     platform_id uuid
     enforcement_mode string
