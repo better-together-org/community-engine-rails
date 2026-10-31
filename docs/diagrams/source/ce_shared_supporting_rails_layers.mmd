@@ -138,6 +138,18 @@ classDiagram
       <<Controller>>
       concerns: Api::LocaleScoping, Api::OauthAuthorization
     }
+    class BetterTogether__Api__V1__QuotaBalancesController["Api::V1::QuotaBalancesController"] {
+      <<Controller>>
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
+    }
+    class BetterTogether__Api__V1__QuotaUsagesController["Api::V1::QuotaUsagesController"] {
+      <<Controller>>
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
+    }
+    class BetterTogether__Api__V1__QuotasController["Api::V1::QuotasController"] {
+      <<Controller>>
+      concerns: Api::LocaleScoping, Api::OauthAuthorization
+    }
     class BetterTogether__Api__V1__RobotsController["Api::V1::RobotsController"] {
       <<Controller>>
       concerns: Api::LocaleScoping, Api::OauthAuthorization
@@ -547,6 +559,12 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__QuotaGrant["QuotaGrant"] {
+      <<Model>>
+      table: better_together_quota_grants
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: target: owner, target: granted_by, owner: seeds
+    }
     class BetterTogether__QuotaReservation["QuotaReservation"] {
       <<Model>>
       table: better_together_quota_reservations
@@ -624,6 +642,9 @@ classDiagram
   BetterTogether__Api__V1__PersonCommunityMembershipsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__PersonDataExportsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__PersonDeletionRequestsController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__QuotaBalancesController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__QuotaUsagesController --|> BetterTogether__Api__ApplicationController
+  BetterTogether__Api__V1__QuotasController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__RobotsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__RolesController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__ShortLinksController --|> BetterTogether__Api__ApplicationController
@@ -732,6 +753,7 @@ classDiagram
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota
+  BetterTogether__QuotaGrant --> BetterTogether__Platform : platform
   BetterTogether__QuotaReservation --> BetterTogether__Platform : platform
   BetterTogether__QuotaReservation --> BetterTogether__Quota : quota
   BetterTogether__QuotaUsage --> BetterTogether__Platform : platform

@@ -1980,6 +1980,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_164300) do
     t.index ["quota_id"], name: "index_bt_quota_balances_on_quota"
   end
 
+  create_table "better_together_quota_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.string "quota_type", null: false
+    t.bigint "limit", null: false
+    t.string "granted_by_type"
+    t.uuid "granted_by_id"
+    t.text "reason"
+    t.datetime "expires_at"
+    t.uuid "platform_id"
+    t.index ["granted_by_type", "granted_by_id"], name: "index_bt_quota_grants_on_granted_by"
+    t.index ["owner_type", "owner_id", "quota_type"], name: "index_bt_quota_grants_on_owner_and_type"
+    t.index ["owner_type", "owner_id"], name: "index_bt_quota_grants_on_owner"
+    t.index ["platform_id"], name: "index_bt_quota_grants_on_platform"
+  end
+
   create_table "better_together_quota_reservations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2819,6 +2838,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_164300) do
   add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_balances", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_balances", "better_together_quotas", column: "quota_id"
+  add_foreign_key "better_together_quota_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_reservations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_reservations", "better_together_quotas", column: "quota_id"
   add_foreign_key "better_together_quota_usages", "better_together_platforms", column: "platform_id"
