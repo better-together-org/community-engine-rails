@@ -43,9 +43,13 @@ module BetterTogether
         BetterTogether::QuotaReservation.where(quota_id: quota_ids).delete_all
         BetterTogether::QuotaBalance.where(quota_id: quota_ids).delete_all
         BetterTogether::Quota.where(owner: self).delete_all
+        # QuotaGrant is keyed by owner+quota_type directly, not quota_id, so it is not
+        # reachable via quota_ids above and needs its own cleanup here.
+        BetterTogether::QuotaGrant.where(owner: self).delete_all
 
         BetterTogether::QuotaUsage.where(actor: self).update_all(actor_type: nil, actor_id: nil)
         BetterTogether::QuotaReservation.where(actor: self).update_all(actor_type: nil, actor_id: nil)
+        BetterTogether::QuotaGrant.where(granted_by: self).update_all(granted_by_type: nil, granted_by_id: nil)
       end
       # rubocop:enable Metrics/AbcSize
     end
