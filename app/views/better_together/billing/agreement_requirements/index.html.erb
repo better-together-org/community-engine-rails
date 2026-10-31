@@ -1,0 +1,95 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.requirements.index_title') %>
+<% end %>
+
+<div id="billing-agreement-requirements-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.requirements.index_title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.requirements.index_intro') %></p>
+
+  <%= render 'better_together/billing/shared/readiness' %>
+
+  <div class="card mb-4">
+    <% if @requirements.any? %>
+      <div class="table-responsive">
+        <table id="billing-agreement-requirements-table" class="table mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.requirements.field_agreement') %></th>
+              <th scope="col"><%= t('better_together.billing.requirements.field_applies_to') %></th>
+              <th scope="col"><%= t('better_together.billing.requirements.field_purpose') %></th>
+              <th scope="col"><%= t('better_together.billing.requirements.field_payment_method') %></th>
+              <th scope="col"><%= t('better_together.billing.requirements.field_mode') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @requirements.each do |requirement| %>
+              <tr id="<%= dom_id(requirement) %>">
+                <th scope="row">
+                  <%= requirement.agreement.title %>
+                  <span class="badge <%= requirement.agreement.lifecycle_state_active? ? 'bg-success' : 'bg-warning text-dark' %> billing-agreement-state-badge">
+                    <%= t("better_together.billing.requirements.state_#{requirement.agreement.lifecycle_state}") %>
+                  </span>
+                </th>
+                <td><%= requirement.target ? requirement.target.try(:name) || requirement.target.try(:identifier) : t('better_together.billing.requirements.applies_to_everything') %></td>
+                <td><%= requirement.purpose ? t("better_together.billing.orders.purpose_#{requirement.purpose}") : t('better_together.billing.requirements.any') %></td>
+                <td><%= requirement.payment_method ? billing_payment_method_label(requirement.payment_method) : t('better_together.billing.requirements.any') %></td>
+                <td><%= t("better_together.billing.requirements.mode_#{requirement.mode}") %></td>
+                <td class="text-end">
+                  <%= button_to t('better_together.billing.requirements.remove'), billing_agreement_requirement_path(requirement, locale: I18n.locale),
+                                method: :delete, class: 'btn btn-outline-danger btn-sm', id: "#{dom_id(requirement)}_remove" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="card-body text-body-secondary" id="billing-agreement-requirements-empty"><%= t('better_together.billing.requirements.none') %></div>
+    <% end %>
+  </div>
+
+  <%= form_with(model: @requirement, scope: :billing_agreement_requirement, url: billing_agreement_requirements_path(locale: I18n.locale),
+                id: 'billing-agreement-requirement-form') do |form| %>
+    <div class="card mb-4">
+      <div class="card-header"><strong><%= t('better_together.billing.requirements.add_title') %></strong></div>
+      <div class="card-body">
+        <% if @requirement.errors.any? %>
+          <div class="alert alert-danger" role="alert" id="billing-agreement-requirement-errors">
+            <ul class="mb-0"><% @requirement.errors.full_messages.each do |message| %><li><%= message %></li><% end %></ul>
+          </div>
+        <% end %>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <%= form.label :agreement_id, t('better_together.billing.requirements.field_agreement'), class: 'form-label' %>
+            <%= form.select :agreement_id, @agreements.map { |agreement| ["#{agreement.title} (#{t("better_together.billing.requirements.state_#{agreement.lifecycle_state}")})", agreement.id] },
+                            { include_blank: true }, class: 'form-select', id: 'billing-requirement-agreement', required: true %>
+          </div>
+          <div class="col-md-6">
+            <%= form.label :target_plan_id, t('better_together.billing.requirements.field_applies_to'), class: 'form-label' %>
+            <%= select_tag 'billing_agreement_requirement[target_plan_id]', options_for_select(@plans.map { |plan| [plan.name, plan.id] }),
+                           include_blank: t('better_together.billing.requirements.applies_to_everything'), class: 'form-select', id: 'billing-requirement-plan' %>
+          </div>
+          <div class="col-md-4">
+            <%= form.label :purpose, t('better_together.billing.requirements.field_purpose'), class: 'form-label' %>
+            <%= form.select :purpose, BetterTogether::Billing::ProcessorSetting::PURPOSES.map { |purpose| [t("better_together.billing.orders.purpose_#{purpose}"), purpose] },
+                            { include_blank: t('better_together.billing.requirements.any') }, class: 'form-select', id: 'billing-requirement-purpose' %>
+          </div>
+          <div class="col-md-4">
+            <%= form.label :payment_method, t('better_together.billing.requirements.field_payment_method'), class: 'form-label' %>
+            <%= form.select :payment_method, billing_offline_method_choices,
+                            { include_blank: t('better_together.billing.requirements.any') }, class: 'form-select', id: 'billing-requirement-method' %>
+          </div>
+          <div class="col-md-4">
+            <%= form.label :mode, t('better_together.billing.requirements.field_mode'), class: 'form-label' %>
+            <%= form.select :mode, BetterTogether::Billing::AgreementRequirement::MODES.map { |mode| [t("better_together.billing.requirements.mode_#{mode}"), mode] },
+                            {}, class: 'form-select', id: 'billing-requirement-mode' %>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <%= form.submit t('better_together.billing.requirements.add'), class: 'btn btn-primary', id: 'billing-requirement-add-btn' %>
+      </div>
+    </div>
+  <% end %>
+</div>

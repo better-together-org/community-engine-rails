@@ -30,8 +30,9 @@ RSpec.describe 'Billing orders DOM contract', :as_platform_manager, type: :reque
   end
 
   it 'exposes the buyer\'s empty list' do
-    order.payments.destroy_all
-    order.destroy!
+    # An order with evidence on it cannot be deleted, so it is moved to someone else.
+    someone_else = create(:better_together_person)
+    BetterTogether::Billing::Order.connection.execute("UPDATE better_together_billing_orders SET buyer_id = '#{someone_else.id}'")
 
     get "/#{locale}/billing/orders"
 

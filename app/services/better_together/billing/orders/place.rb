@@ -9,16 +9,35 @@ module BetterTogether
       # nothing held). It refuses what could not be sold: no lines, a purchasable that is not
       # for sale or belongs to another platform or seller, or lines in different currencies.
       #
-      #   Orders::Place.call(platform:, buyer:, purpose: 'one_time', lines: [{ purchasable: plan }])
+      # It also refuses until the purchase agreements are in order: every agreement that applies
+      # must exist, be in force, and have been accepted by the `signer` (the buyer unless told
+      # otherwise) as it reads now. The acceptance is copied onto the order as its evidence. This
+      # is checked here, on the server, whatever the screens did.
+      #
+      #   Orders::Place.call(platform:, buyer:, purpose: 'one_time', payment_method: 'cash',
+      #                      lines: [{ purchasable: plan }])
       class Place
         class Refused < StandardError; end
+
+        # The agreements are not in order; `gate` says what is missing or not in force.
+        class AgreementsRequired < Refused
+          attr_reader :gate
+
+          def initialize(gate)
+            @gate = gate
+            super('the purchase agreements have not been accepted')
+          end
+        end
 
         def self.call(...) = new(...).call
 
         # `lines` are hashes with `purchasable:` and an optional `quantity:`.
-        def initialize(platform:, buyer:, purpose:, lines:, seller: nil, on_behalf_of: nil, subject: nil, hold_hours: nil) # rubocop:disable Metrics/ParameterLists
+        def initialize(platform:, buyer:, purpose:, lines:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists
+                       on_behalf_of: nil, subject: nil, hold_hours: nil)
           @platform = platform
           @buyer = buyer
+          @signer = signer || buyer
+          @payment_method = payment_method
           @purpose = purpose.to_s
           @lines = Array(lines)
           @seller = seller
@@ -29,14 +48,27 @@ module BetterTogether
 
         def call
           check_lines!
-          Order.transaction { open_for_payment(build_order.tap(&:save!)) }
+          raise AgreementsRequired, gate unless gate.satisfied?
+
+          Order.transaction { open_for_payment(record_acceptances(build_order.tap(&:save!))) }
         rescue ActiveRecord::RecordInvalid => e
           raise Refused, e.record.errors.full_messages.to_sentence
         end
 
         private
 
-        attr_reader :platform, :buyer, :purpose, :lines, :seller, :on_behalf_of, :subject
+        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject
+
+        def gate
+          @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:, payment_method:)
+        end
+
+        # The signer's acceptances are copied onto the order, so what applied to this purchase is
+        # kept even if the agreements change or are accepted again later.
+        def record_acceptances(order)
+          gate.agreements.each { |agreement| OrderAgreementAcceptance.record!(order:, agreement:, signer:, on_behalf_of:) }
+          order
+        end
 
         def open_for_payment(order)
           reserve(order)
@@ -48,6 +80,7 @@ module BetterTogether
         def hold_hours = @hold_hours || Order::DEFAULT_HOLD_HOURS
 
         def check_lines!
+          raise Refused, "that is not a kind of purchase: #{purpose}" unless Order::PURPOSES.include?(purpose)
           raise Refused, 'an order needs at least one line' if lines.empty?
 
           purchasables.each { |purchasable| check_purchasable!(purchasable) }

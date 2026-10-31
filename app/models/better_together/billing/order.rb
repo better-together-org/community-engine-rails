@@ -43,6 +43,8 @@ module BetterTogether
 
       has_many :lines, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::OrderLine',
                                                              inverse_of: :order, dependent: :destroy
+      has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
+                                       dependent: :restrict_with_error
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
 
       before_validation :set_number, on: :create
@@ -116,7 +118,7 @@ module BetterTogether
       def on_behalf_of_allowed
         return if on_behalf_of_type.blank? && on_behalf_of_id.blank?
         # Never load an owner whose type is not on the allow-list.
-        return errors.add(:on_behalf_of_type, :inclusion) unless Billable.model_names.include?(on_behalf_of_type)
+        return errors.add(:on_behalf_of_type, :inclusion) unless SellerScoped.assignable_types.include?(on_behalf_of_type)
 
         errors.add(:platform, :platform_owner_mismatch) if on_behalf_of_on_another_platform?
       end

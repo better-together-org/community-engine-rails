@@ -41,6 +41,12 @@ module BetterTogether
         builtin_processors.each { |name, adapter_class| register_processor(name, -> { adapter_class.new }) }
       end
 
+      # Registers any built-in method that is not installed yet (it never replaces one that is).
+      def ensure_builtin_processors!
+        missing = builtin_processors.except(*processor_names)
+        missing.each { |name, adapter_class| register_processor(name, -> { adapter_class.new }) }
+      end
+
       # Name => adapter class, for the methods core ships. A method so classes load lazily.
       def builtin_processors
         { cash: Processors::Cash, cheque: Processors::Cheque, etransfer: Processors::ETransfer }

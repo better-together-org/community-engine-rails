@@ -37,6 +37,13 @@ module BetterTogether
         self.platform = Current.platform if Current.platform.present?
       end
 
+      # Whether `record` is bound to a platform other than this record's own. A record that says
+      # nothing about a platform is not.
+      def bound_to_another_platform?(record)
+        bound = record.try(:billing_bound_platform_id) || record.try(:platform_id)
+        bound.present? && platform_id.present? && bound != platform_id
+      end
+
       def platform_unchanged
         return unless platform_id_changed?
 

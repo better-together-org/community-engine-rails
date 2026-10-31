@@ -292,6 +292,8 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::OrderLine
         BetterTogether::Billing::Payment
         BetterTogether::Billing::Refund
+        BetterTogether::Billing::AgreementRequirement
+        BetterTogether::Billing::OrderAgreementAcceptance
       ],
       controllers: %w[
         BetterTogether::Billing::PlansController
@@ -299,6 +301,8 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::ProcessorSettingsController
         BetterTogether::Billing::OrdersController
         BetterTogether::Billing::SalesController
+        BetterTogether::Billing::CheckoutsController
+        BetterTogether::Billing::AgreementRequirementsController
       ]
     },
     {

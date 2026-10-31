@@ -43,7 +43,8 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     end
 
     it 'says so when there are none' do
-      order.destroy!
+      # An order with evidence on it cannot be deleted, so it is moved to someone else.
+      BetterTogether::Billing::Order.connection.execute("UPDATE better_together_billing_orders SET buyer_id = '#{stranger.person.id}'")
 
       get orders_path
 
@@ -60,6 +61,13 @@ RSpec.describe BetterTogether::Billing::OrdersController do
       expect(response.body).to include(dom_id.dom_id(order, :details), dom_id.dom_id(order, :status_badge), 'billing-order-lines',
                                        'billing-order-payments', dom_id.dom_id(order, :total))
       expect_html_content(plan.name)
+    end
+
+    it 'lists the agreements accepted for the order, with who and when' do
+      get order_path(order)
+
+      expect(response.body).to include('billing-order-agreements', ActionView::RecordIdentifier.dom_id(order.agreement_acceptances.first))
+      expect_html_content(order.agreement_acceptances.first.agreement_title)
     end
 
     it 'shows when there is no payment yet' do

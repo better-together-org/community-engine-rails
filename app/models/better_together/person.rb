@@ -10,6 +10,8 @@ module BetterTogether
     end
 
     include Author
+    # A person who sells can ask buyers for terms of their own (see Billing::AgreementRequirement).
+    include Billing::AgreementTarget
     include Communicator
     include Contactable
     include CreatedRecords

@@ -102,6 +102,22 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
         .each { |verb_path| expect(verb_path).not_to be_routable }
     end
 
+    it 'has one checkout, and steward-managed purchase terms that can be listed, added and removed only' do
+      expect(get: '/en/billing/checkout/new').to route_to(controller: 'better_together/billing/checkouts', action: 'new', locale: 'en')
+      expect(post: '/en/billing/checkout').to route_to(controller: 'better_together/billing/checkouts', action: 'create', locale: 'en')
+      expect(get: '/en/billing/agreement_requirements').to route_to(controller: 'better_together/billing/agreement_requirements',
+                                                                    action: 'index', locale: 'en')
+      expect(post: '/en/billing/agreement_requirements').to route_to(controller: 'better_together/billing/agreement_requirements',
+                                                                     action: 'create', locale: 'en')
+      expect(delete: '/en/billing/agreement_requirements/abc')
+        .to route_to(controller: 'better_together/billing/agreement_requirements', action: 'destroy', locale: 'en', id: 'abc')
+      expect(patch: '/en/billing/agreement_requirements/abc').not_to be_routable
+      # An unmatched GET falls through to the pages catch-all, never to a billing controller.
+      expect(get: '/en/billing/checkout').not_to route_to(controller: 'better_together/billing/checkouts', action: 'show', locale: 'en')
+      expect(get: '/en/billing/agreement_requirements/abc')
+        .not_to route_to(controller: 'better_together/billing/agreement_requirements', action: 'show', locale: 'en', id: 'abc')
+    end
+
     it 'has payment method settings, addressed by method name, that can be listed, edited and updated only' do
       expect(get: '/en/billing/processor_settings')
         .to route_to(controller: 'better_together/billing/processor_settings', action: 'index', locale: 'en')
