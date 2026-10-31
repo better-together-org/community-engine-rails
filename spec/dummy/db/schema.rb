@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_31_164300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1965,25 +1965,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["published_at"], name: "by_post_publication_date"
   end
 
-  create_table "better_together_quota", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "owner_type", null: false
-    t.uuid "owner_id", null: false
-    t.string "quota_type", null: false
-    t.bigint "limit", null: false
-    t.bigint "soft_limit"
-    t.string "period", default: "cumulative", null: false
-    t.string "status", default: "active", null: false
-    t.string "enforcement_mode", default: "shadow", null: false
-    t.jsonb "metadata", default: {}, null: false
-    t.uuid "platform_id"
-    t.index ["owner_type", "owner_id", "quota_type"], name: "index_bt_quota_on_owner_and_type", unique: true
-    t.index ["owner_type", "owner_id"], name: "index_bt_quota_on_owner"
-    t.index ["platform_id"], name: "index_bt_quota_on_platform"
-  end
-
   create_table "better_together_quota_balances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2055,6 +2036,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["quota_id"], name: "index_bt_quota_usages_on_quota"
     t.index ["subject_type", "subject_id", "event"], name: "index_bt_quota_usages_on_subject_and_event", unique: true
     t.index ["subject_type", "subject_id"], name: "index_bt_quota_usages_on_subject"
+  end
+
+  create_table "better_together_quotas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "owner_type", null: false
+    t.uuid "owner_id", null: false
+    t.string "quota_type", null: false
+    t.bigint "limit", null: false
+    t.bigint "soft_limit"
+    t.string "period", default: "cumulative", null: false
+    t.string "status", default: "active", null: false
+    t.string "enforcement_mode", default: "shadow", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.uuid "platform_id"
+    t.index ["owner_type", "owner_id", "quota_type"], name: "index_bt_quota_on_owner_and_type", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_bt_quota_on_owner"
+    t.index ["platform_id"], name: "index_bt_quota_on_platform"
   end
 
   create_table "better_together_recurrences", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2817,13 +2817,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_posts", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_posts", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_posts", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_quota", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_balances", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_quota_balances", "better_together_quota", column: "quota_id"
+  add_foreign_key "better_together_quota_balances", "better_together_quotas", column: "quota_id"
   add_foreign_key "better_together_quota_reservations", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_quota_reservations", "better_together_quota", column: "quota_id"
+  add_foreign_key "better_together_quota_reservations", "better_together_quotas", column: "quota_id"
   add_foreign_key "better_together_quota_usages", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_quota_usages", "better_together_quota", column: "quota_id"
+  add_foreign_key "better_together_quota_usages", "better_together_quotas", column: "quota_id"
+  add_foreign_key "better_together_quotas", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_reports", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_resource_permissions", "better_together_platforms", column: "platform_id"
