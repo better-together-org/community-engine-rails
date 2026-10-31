@@ -147,6 +147,8 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
 
     it 'asks for the payment method\'s own terms too' do
       BetterTogether::Billing.register_builtin_processors!
+      host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                       settings: { 'instructions' => 'Hall' })
       purchase_agreements_for(host_platform)
 
       expect { place_order(agreements: false, payment_method: 'cash') }.to raise_error(described_class::AgreementsRequired)

@@ -1,0 +1,62 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.offline_payments.queue_title') %>
+<% end %>
+
+<div id="billing-offline-queue-page" class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to t('better_together.billing.orders.sales_title'), billing_sales_path(locale: I18n.locale) %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= t('better_together.billing.offline_payments.queue_title') %></li>
+    </ol>
+  </nav>
+  <h1 class="mb-2"><%= t('better_together.billing.offline_payments.queue_title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.offline_payments.queue_intro') %></p>
+
+  <% if @offline_payments.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-offline-queue" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.orders.field_number') %></th>
+              <th scope="col"><%= t('better_together.billing.orders.field_buyer') %></th>
+              <th scope="col"><%= t('better_together.billing.orders.field_method') %></th>
+              <th scope="col"><%= t('better_together.billing.orders.field_status') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_total') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @offline_payments.each do |offline| %>
+              <% order = offline.order %>
+              <tr id="<%= dom_id(offline) %>" class="<%= 'table-warning billing-offline-claimed' if offline.claimed_by_buyer? && offline.waiting? %>">
+                <th scope="row"><code><%= order.number %></code></th>
+                <td><%= order.buyer.name %></td>
+                <td><%= billing_payment_method_label(offline.processor) %></td>
+                <td>
+                  <%= billing_offline_status_badge(offline) %>
+                  <% if offline.claimed_by_buyer? && offline.waiting? %>
+                    <span class="badge bg-info text-dark billing-offline-claimed-badge" id="<%= dom_id(offline, :claimed_badge) %>">
+                      <%= t('better_together.billing.offline_payments.buyer_says_sent') %>
+                    </span>
+                  <% end %>
+                </td>
+                <td class="text-end"><%= billing_amount(order.total_cents, order.currency) %></td>
+                <td class="text-end text-nowrap">
+                  <% if offline.waiting? || offline.expired? %>
+                    <%= button_to t(offline.cheque? ? 'better_together.billing.offline_payments.mark_cheque_received' : 'better_together.billing.offline_payments.mark_received'),
+                                  receive_billing_offline_payment_path(offline, locale: I18n.locale), method: :patch,
+                                  id: "billing-offline-confirm-btn-#{order.id}", class: 'btn btn-success btn-sm', form: { class: 'd-inline' } %>
+                  <% end %>
+                  <%= link_to t('globals.view'), billing_sale_path(order, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-offline-queue-empty" class="text-body-secondary"><%= t('better_together.billing.offline_payments.queue_empty') %></p>
+  <% end %>
+</div>

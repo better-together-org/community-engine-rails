@@ -16,12 +16,16 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
   # record's own platform. Everything else on the class itself is a cross-tenant read.
   let(:bare_read) do
     /\b(?:Billing::)?
-      (?:Plan|Event|ProcessorSetting|Order|OrderLine|OrderAgreementAcceptance|AgreementRequirement|NotificationReceipt|Payment|Refund)\.
+      (?:Plan|Event|ProcessorSetting|Order|OrderLine|OrderAgreementAcceptance|AgreementRequirement|NotificationReceipt|
+         OfflinePayment|Payment|Refund)\.
       (?!find\(|find_by\(id:|permitted_attributes|assignable_owner_types|new\b|name\b|model_name\b)\w+/x
   end
   let(:pay_read) { /\bPay::(?:Customer|Subscription|Charge)\.(?!find\(|find_by\(id:)\w+/ }
   # Maintenance sweeps are the only cross-tenant operations; each acts on one record at a time.
-  let(:sweep_jobs) { %w[dead_letter_stale_billing_events_job redact_expired_event_payloads_job prune_stale_pay_webhooks_job expire_orders_job] }
+  let(:sweep_jobs) do
+    %w[dead_letter_stale_billing_events_job redact_expired_event_payloads_job prune_stale_pay_webhooks_job expire_orders_job
+       expire_offline_payments_job remind_offline_confirmations_job]
+  end
 
   def guarded_files
     guarded.flat_map { |dir| Dir[root.join(dir, '**/*.rb')] }.sort

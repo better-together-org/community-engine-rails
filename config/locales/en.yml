@@ -928,6 +928,24 @@ en:
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
       notifications:
+        cheque_bounced:
+          buyer:
+            body: The cheque for %{amount} did not clear, so the payment was reversed.
+              Please contact the seller.
+            title: A cheque for order %{number} did not clear
+          seller:
+            body: The cheque for %{amount} did not clear. The payment was reversed.
+            title: A cheque for order %{number} did not clear
+        cheque_cleared:
+          body: The cheque for %{amount} cleared. Thank you.
+          title: Your cheque for order %{number} cleared
+        cheque_received:
+          body: The seller has your cheque and will confirm once it clears.
+          title: Your cheque for order %{number} was received
+        confirmation_reminder:
+          body: A payment of %{amount} by %{method} is waiting. If you received it,
+            mark it received; if not, you can reject it.
+          title: Order %{number} is still waiting for you
         dispute_opened:
           body: A buyer disputed a payment for order %{number}. Please review it.
           title: A payment was disputed
@@ -938,6 +956,10 @@ en:
           body: A billing event could not be processed after several tries. Please
             review it.
           title: A billing event needs attention
+        hold_expiring:
+          body: We are holding order %{number} for you, but the hold ends soon. Pay
+            %{amount} by %{method} before then, or the order will lapse.
+          title: Your hold on order %{number} ends soon
         order_cancelled:
           buyer:
             body: Nothing was charged for it.
@@ -969,10 +991,31 @@ en:
         payment_action_required:
           body: Your bank needs you to confirm this payment before it can go through.
           title: Action needed to pay for order %{number}
+        payment_claimed:
+          body: The buyer says they sent %{amount} by %{method}. Check that you received
+            it, then mark it received.
+          title: Payment claimed for order %{number}
+        payment_confirmed:
+          body: The seller confirmed they received your %{method} payment of %{amount}.
+            Thank you.
+          title: Payment received for order %{number}
         payment_failed:
           body: The payment did not go through. Please check your payment details
             and try again.
           title: Your payment for order %{number} failed
+        payment_place_gone:
+          buyer:
+            body: The order had expired and what it held is no longer available. The
+              seller will be in touch about your payment.
+            title: Your late payment for order %{number} could not be placed
+          seller:
+            body: The order had expired and what it held is no longer available, so
+              the payment was not recorded. If you were paid, give the money back.
+            title: A late payment could not be placed (order %{number})
+        payment_rejected:
+          body: The seller did not accept your %{method} payment, so the order was
+            cancelled. Contact the seller if you think this is a mistake.
+          title: Your payment for order %{number} was not accepted
         payment_succeeded:
           body: Your payment of %{amount} was received.
           title: Receipt for order %{number}
@@ -1010,6 +1053,99 @@ en:
         trial_ending:
           body: Your trial is about to end.
           title: Your trial ends soon
+      offline_payments:
+        amount_to_pay: Pay %{amount}.
+        bounce_confirm: Mark this cheque as bounced? Anything it granted will be reversed.
+        buyer_says_sent: Buyer says sent
+        claim: I sent it
+        claim_again: Update my note
+        claim_hint: Telling the seller you sent it is optional. They can confirm your
+          payment either way.
+        claimed: The seller has been told you sent it.
+        claimed_note: You told the seller on %{date}.
+        disclosure_cash_in_person: Cash is handed over in person. Keep a note of when
+          and to whom.
+        disclosure_cheque_clearing: A cheque can take days to clear and can bounce.
+          Access may start only once it clears.
+        disclosure_etransfer_canada: Interac e-Transfer needs a Canadian bank account
+          and is in Canadian dollars only.
+        disclosure_heading: 'Before you pay, please understand:'
+        disclosure_hold: We hold your order for %{hours} hours. If the seller has
+          not confirmed by then, it lapses.
+        disclosure_no_tracking: The platform cannot see, track or protect this payment,
+          and there is no automatic receipt, refund or dispute process.
+        disclosure_outside: You pay the seller directly, outside this platform.
+        disclosure_seller_confirms: Your order is paid only when the seller confirms
+          they received your payment.
+        done:
+          bounce: Marked bounced. What it granted has been reversed.
+          clear: Marked cleared.
+          receive: Marked received. The buyer has been told.
+          reject: Rejected. The order was cancelled and the buyer has been told.
+        fee_uncollected: 'Uncollected: the platform cannot take a fee on a payment
+          it never sees.'
+        field_buyer_reference: Buyer’s note
+        field_claimed: Buyer says they sent it
+        field_fee: Platform fee
+        field_in_person: Sold in person
+        heading: Pay by %{method}
+        hold_until: "(We are holding your order until %{date}.)"
+        in_person_note: The agreements were recorded as accepted in person with you.
+        instructions_heading: How to pay
+        mark_bounced: Mark bounced
+        mark_cheque_received: Mark cheque received
+        mark_cleared: Mark cleared
+        mark_received: Mark received
+        not_claimed: No (you can still confirm)
+        queue_empty: Nothing is waiting for you.
+        queue_intro: Payments made outside the platform. Mark one received when the
+          money reaches you, whether or not the buyer says they sent it.
+        queue_link: Payments waiting for you
+        queue_title: Payments waiting for you
+        receive_hint: Mark this received when the money has reached you. You do not
+          need to wait for the buyer to say they sent it.
+        received_on_label: Date received (optional)
+        reference_label: A note for the seller (optional)
+        refused:
+          invalid: That could not be saved. Check what you entered.
+          not_allowed: That payment cannot be changed that way now.
+          place_gone: The order had expired and what it held is no longer available,
+            so nothing was recorded. If you were paid, give the money back.
+          refused: That could not be done.
+          self_confirmation: You cannot confirm a payment for your own purchase.
+          too_many_claims: That has been sent too many times.
+        reject: Not received, reject
+        reject_reason_label: If you did not receive it, say why (the buyer will see
+          this)
+        rejection_reason: 'The seller said: %{reason}'
+        seller_heading: "%{method} payment"
+        seller_reference_label: Your reference (optional)
+        status_awaiting: Waiting for payment
+        status_bounced: Cheque bounced
+        status_cancelled: Cancelled
+        status_claimed: Sent, waiting for the seller
+        status_cleared: Cheque cleared
+        status_confirmed: Confirmed
+        status_expired: Hold ran out
+        status_message_awaiting: Your order is being held while you pay. Follow the
+          instructions below; the seller will confirm when they have your payment.
+        status_message_bounced: Your cheque did not clear and the payment was reversed.
+          Please contact the seller.
+        status_message_cancelled: This order was cancelled.
+        status_message_claimed: You told the seller you sent it. The seller will confirm
+          when they have your payment.
+        status_message_cleared: Your cheque cleared. Thank you.
+        status_message_confirmed: The seller confirmed your payment. Thank you.
+        status_message_expired: 'The hold on your order ran out. If you already paid,
+          tell the seller below: they can still confirm your payment.'
+        status_message_received: The seller has your cheque and will confirm once
+          it clears.
+        status_message_rejected: The seller did not accept this payment, so the order
+          was cancelled.
+        status_received: Cheque received
+        status_rejected: Not accepted
+        too_many_claims: You have already told the seller several times. They will
+          confirm when they have your payment.
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted
@@ -1261,6 +1397,41 @@ en:
         state_active: In force
         state_draft: Draft
         state_retired: Retired
+      sales:
+        refund_amount_label: Amount given back (up to %{max}; blank for all)
+        refund_heading: Record a refund
+        refund_hint: The platform cannot move this money. Record it here once you
+          have given it back.
+        refund_reason_bounced: Cheque bounced
+        refund_reason_cancelled_event: Event cancelled
+        refund_reason_cancelled_order: Order cancelled
+        refund_reason_duplicate: Paid twice
+        refund_reason_error: Mistake
+        refund_reason_label: Reason
+        refund_reason_other: Other
+        refund_reason_requested_by_buyer: Buyer asked
+        refund_record: Record refund
+        refund_recorded: Refund recorded. The buyer has been told.
+        refund_refused: That refund could not be recorded. Check the amount.
+      walk_up:
+        agreements_label: The buyer has read and accepted the purchase agreements
+          with me, in person
+        buyer_hint: The buyer must already be a member of this platform. Enter their
+          exact handle.
+        buyer_label: Buyer’s handle
+        error_refused: That sale could not be recorded. Check the buyer, the way of
+          paying and the agreements.
+        intro: Record a sale made face to face. The buyer does not need to do anything;
+          they are told afterwards.
+        method_label: How it is paid
+        new_link: New sale in person
+        placed: Sale recorded.
+        plan_label: What was sold
+        received_label: 'The money has already changed hands: mark it received'
+        submit: Record sale
+        title: Sale in person
+        unavailable: You need an active plan and a payment method outside the platform
+          that is switched on before you can record a sale in person.
     billing_mailer:
       notification:
         greeting: Hello %{name},

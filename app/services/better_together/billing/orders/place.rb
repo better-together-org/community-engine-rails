@@ -14,6 +14,10 @@ module BetterTogether
       # otherwise) as it reads now. The acceptance is copied onto the order as its evidence. This
       # is checked here, on the server, whatever the screens did.
       #
+      # A method outside a vendor (cash, a cheque, an e-transfer) must also be switched on for the
+      # seller and allowed for this kind of purchase and currency; then the order opens a payment
+      # waiting for the seller to say the money arrived (see OfflinePayments::Open).
+      #
       #   Orders::Place.call(platform:, buyer:, purpose: 'one_time', payment_method: 'cash',
       #                      lines: [{ purchasable: plan }])
       class Place
@@ -33,7 +37,7 @@ module BetterTogether
 
         # `lines` are hashes with `purchasable:` and an optional `quantity:`.
         def initialize(platform:, buyer:, purpose:, lines:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists
-                       on_behalf_of: nil, subject: nil, hold_hours: nil)
+                       on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false)
           @platform = platform
           @buyer = buyer
           @signer = signer || buyer
@@ -44,6 +48,7 @@ module BetterTogether
           @on_behalf_of = on_behalf_of
           @subject = subject
           @hold_hours = hold_hours
+          @seller_assisted = seller_assisted
         end
 
         def call
@@ -57,7 +62,7 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject
+        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject, :seller_assisted
 
         def gate
           @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:, payment_method:)
@@ -74,19 +79,48 @@ module BetterTogether
           reserve(order)
           order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: hold_hours.hours.from_now)
           Settle.call(order) if order.total_cents.zero?
+          OfflinePayments::Open.call(order:, setting: offline_setting, seller_assisted:) if offline_setting && order.total_cents.positive?
           Notifications.deliver('order_placed', subject: order)
           order
         end
 
-        def hold_hours = @hold_hours || Order::DEFAULT_HOLD_HOURS
+        # The seller's own hold time for a method outside a vendor, else the default.
+        def hold_hours = @hold_hours || offline_setting&.hold_hours || Order::DEFAULT_HOLD_HOURS
+
+        # The switched-on setting for the chosen method, when it is one outside a vendor.
+        def offline_setting
+          return unless payment_method.present? && Billing.offline_method?(payment_method)
+
+          @offline_setting ||= sellers_settings.enabled.find_by(processor: payment_method.to_s)
+        end
+
+        def sellers_settings
+          seller ? platform.billing_processor_settings.sold_by(seller) : platform.billing_processor_settings.sold_by_platform
+        end
 
         def check_lines!
           raise Refused, "that is not a kind of purchase: #{purpose}" unless Order::PURPOSES.include?(purpose)
           raise Refused, 'an order needs at least one line' if lines.empty?
 
+          check_purchasables!
+          check_payment_method!
+        end
+
+        def check_purchasables!
           purchasables.each { |purchasable| check_purchasable!(purchasable) }
           raise Refused, 'all lines must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
         end
+
+        # A method outside a vendor works only when the seller switched it on for this kind of purchase.
+        def check_payment_method!
+          return unless payment_method.present? && Billing.offline_method?(payment_method)
+          raise Refused, 'that way of paying is not available' unless offline_setting&.allows?(purpose)
+
+          currencies = Billing.processor_adapter(payment_method).supported_currencies
+          raise Refused, 'that way of paying does not work in that currency' if currencies && !currencies.include?(order_currency)
+        end
+
+        def order_currency = purchasables.first&.purchasable_currency
 
         def purchasables = @purchasables ||= lines.map { |line| line.fetch(:purchasable) }
 

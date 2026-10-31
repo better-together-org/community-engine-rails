@@ -36,16 +36,37 @@ concern :billing_plans do
     end
     resources :processor_options, only: :index
     resources :processor_settings, only: %i[index edit update]
-    resources :orders, only: %i[index show]
+    resources :orders, only: %i[index show] do
+      # The buyer says they sent a payment made outside the platform. Optional: the seller can confirm without it.
+      resource :claim, only: :create, controller: 'order_claims'
+    end
     resource :checkout, only: %i[new create]
     resources :agreement_requirements, only: %i[index create destroy]
-    resources :sales, only: %i[index show]
+    resources :sales, only: %i[index show] do
+      # The seller records that they gave money back for a payment made outside the platform.
+      resource :refund, only: :create, controller: 'sale_refunds'
+    end
+  end
+end
+
+# What a seller has to do about payments made outside the platform (cash, cheque, e-transfer).
+concern :billing_offline_payments do
+  namespace :billing do
+    resources :offline_payments, only: :index do
+      member do
+        patch :receive
+        patch :reject
+        patch :clear
+        patch :bounce
+      end
+    end
+    resource :walk_up_sale, only: %i[new create]
   end
 end
 
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans
+    concerns :billing_plans, :billing_offline_payments
   end
 end

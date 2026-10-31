@@ -927,6 +927,24 @@ fr:
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
       notifications:
+        cheque_bounced:
+          buyer:
+            body: Le chèque de %{amount} n’a pas été encaissé; le paiement a donc
+              été annulé. Veuillez contacter le vendeur.
+            title: Un chèque pour la commande %{number} n’a pas été encaissé
+          seller:
+            body: Le chèque de %{amount} n’a pas été encaissé. Le paiement a été annulé.
+            title: Un chèque pour la commande %{number} n’a pas été encaissé
+        cheque_cleared:
+          body: Le chèque de %{amount} a été encaissé. Merci.
+          title: Votre chèque pour la commande %{number} a été encaissé
+        cheque_received:
+          body: Le vendeur a votre chèque et confirmera une fois qu’il sera encaissé.
+          title: Votre chèque pour la commande %{number} a été reçu
+        confirmation_reminder:
+          body: Un paiement de %{amount} par %{method} est en attente. Si vous l’avez
+            reçu, marquez-le comme reçu; sinon, vous pouvez le refuser.
+          title: La commande %{number} vous attend toujours
         dispute_opened:
           body: Un acheteur a contesté un paiement pour la commande %{number}. Veuillez
             l’examiner.
@@ -938,6 +956,11 @@ fr:
           body: Un événement de facturation n’a pas pu être traité après plusieurs
             essais. Veuillez l’examiner.
           title: Un événement de facturation demande votre attention
+        hold_expiring:
+          body: Nous gardons la commande %{number} pour vous, mais la réservation
+            se termine bientôt. Payez %{amount} par %{method} avant, sinon la commande
+            expirera.
+          title: Votre réservation de la commande %{number} se termine bientôt
         order_cancelled:
           buyer:
             body: Rien n’a été débité.
@@ -970,10 +993,34 @@ fr:
           body: Votre banque doit vous demander de confirmer ce paiement avant qu’il
             puisse aboutir.
           title: Action requise pour payer la commande %{number}
+        payment_claimed:
+          body: L’acheteur dit avoir envoyé %{amount} par %{method}. Vérifiez que
+            vous l’avez reçu, puis marquez-le comme reçu.
+          title: Paiement déclaré pour la commande %{number}
+        payment_confirmed:
+          body: Le vendeur a confirmé avoir reçu votre paiement de %{amount} par %{method}.
+            Merci.
+          title: Paiement reçu pour la commande %{number}
         payment_failed:
           body: Le paiement n’a pas abouti. Vérifiez vos informations de paiement
             et réessayez.
           title: Votre paiement pour la commande %{number} a échoué
+        payment_place_gone:
+          buyer:
+            body: La commande avait expiré et ce qu’elle retenait n’est plus disponible.
+              Le vendeur vous contactera au sujet de votre paiement.
+            title: Votre paiement tardif pour la commande %{number} n’a pas pu être
+              pris en compte
+          seller:
+            body: La commande avait expiré et ce qu’elle retenait n’est plus disponible;
+              le paiement n’a donc pas été enregistré. Si vous avez été payé, rendez
+              l’argent.
+            title: Un paiement tardif n’a pas pu être pris en compte (commande %{number})
+        payment_rejected:
+          body: Le vendeur n’a pas accepté votre paiement par %{method}; la commande
+            a donc été annulée. Contactez le vendeur si vous pensez qu’il s’agit d’une
+            erreur.
+          title: Votre paiement pour la commande %{number} n’a pas été accepté
         payment_succeeded:
           body: Votre paiement de %{amount} a été reçu.
           title: Reçu pour la commande %{number}
@@ -1011,6 +1058,107 @@ fr:
         trial_ending:
           body: Votre période d’essai est sur le point de se terminer.
           title: Votre période d’essai se termine bientôt
+      offline_payments:
+        amount_to_pay: Payez %{amount}.
+        bounce_confirm: Marquer ce chèque comme refusé? Tout ce qu’il a accordé sera
+          annulé.
+        buyer_says_sent: L’acheteur dit l’avoir envoyé
+        claim: Je l’ai envoyé
+        claim_again: Mettre à jour ma note
+        claim_hint: Dire au vendeur que vous l’avez envoyé est facultatif. Il peut
+          confirmer votre paiement dans tous les cas.
+        claimed: Le vendeur a été informé que vous l’avez envoyé.
+        claimed_note: Vous l’avez dit au vendeur le %{date}.
+        disclosure_cash_in_person: L’argent comptant se remet en personne. Notez quand
+          et à qui.
+        disclosure_cheque_clearing: Un chèque peut prendre des jours à être encaissé
+          et peut être refusé. L’accès peut ne commencer qu’une fois le chèque encaissé.
+        disclosure_etransfer_canada: Interac e-Transfer nécessite un compte bancaire
+          canadien et se fait uniquement en dollars canadiens.
+        disclosure_heading: 'Avant de payer, veuillez comprendre :'
+        disclosure_hold: Nous gardons votre commande pendant %{hours} heures. Si le
+          vendeur n’a pas confirmé d’ici là, elle expire.
+        disclosure_no_tracking: La plateforme ne peut ni voir, ni suivre, ni protéger
+          ce paiement; il n’y a ni reçu automatique, ni remboursement, ni processus
+          de contestation.
+        disclosure_outside: Vous payez directement le vendeur, en dehors de cette
+          plateforme.
+        disclosure_seller_confirms: Votre commande n’est payée que lorsque le vendeur
+          confirme avoir reçu votre paiement.
+        done:
+          bounce: Marqué comme refusé. Ce qu’il avait accordé a été annulé.
+          clear: Marqué comme encaissé.
+          receive: Marqué comme reçu. L’acheteur a été informé.
+          reject: Refusé. La commande a été annulée et l’acheteur a été informé.
+        fee_uncollected: 'Non perçus : la plateforme ne peut pas prélever de frais
+          sur un paiement qu’elle ne voit jamais.'
+        field_buyer_reference: Note de l’acheteur
+        field_claimed: L’acheteur dit l’avoir envoyé
+        field_fee: Frais de la plateforme
+        field_in_person: Vendu en personne
+        heading: Payer par %{method}
+        hold_until: "(Nous gardons votre commande jusqu’au %{date}.)"
+        in_person_note: Les ententes ont été enregistrées comme acceptées en personne
+          avec vous.
+        instructions_heading: Comment payer
+        mark_bounced: Marquer comme refusé
+        mark_cheque_received: Marquer le chèque comme reçu
+        mark_cleared: Marquer comme encaissé
+        mark_received: Marquer comme reçu
+        not_claimed: Non (vous pouvez quand même confirmer)
+        queue_empty: Rien ne vous attend.
+        queue_intro: Paiements effectués en dehors de la plateforme. Marquez-en un
+          comme reçu quand l’argent vous parvient, que l’acheteur dise ou non l’avoir
+          envoyé.
+        queue_link: Paiements qui vous attendent
+        queue_title: Paiements qui vous attendent
+        receive_hint: Marquez ceci comme reçu quand l’argent vous est parvenu. Vous
+          n’avez pas à attendre que l’acheteur dise l’avoir envoyé.
+        received_on_label: Date de réception (facultatif)
+        reference_label: Une note pour le vendeur (facultatif)
+        refused:
+          invalid: Cela n’a pas pu être enregistré. Vérifiez ce que vous avez saisi.
+          not_allowed: Ce paiement ne peut plus être modifié ainsi.
+          place_gone: La commande avait expiré et ce qu’elle retenait n’est plus disponible;
+            rien n’a été enregistré. Si vous avez été payé, rendez l’argent.
+          refused: Cela n’a pas pu être fait.
+          self_confirmation: Vous ne pouvez pas confirmer un paiement pour votre propre
+            achat.
+          too_many_claims: Cela a été envoyé trop de fois.
+        reject: Non reçu, refuser
+        reject_reason_label: Si vous ne l’avez pas reçu, dites pourquoi (l’acheteur
+          le verra)
+        rejection_reason: 'Le vendeur a indiqué : %{reason}'
+        seller_heading: Paiement par %{method}
+        seller_reference_label: Votre référence (facultatif)
+        status_awaiting: En attente de paiement
+        status_bounced: Chèque refusé
+        status_cancelled: Annulé
+        status_claimed: Envoyé, en attente du vendeur
+        status_cleared: Chèque encaissé
+        status_confirmed: Confirmé
+        status_expired: Réservation expirée
+        status_message_awaiting: Votre commande est réservée pendant que vous payez.
+          Suivez les instructions ci-dessous; le vendeur confirmera quand il aura
+          reçu votre paiement.
+        status_message_bounced: Votre chèque n’a pas été encaissé et le paiement a
+          été annulé. Veuillez contacter le vendeur.
+        status_message_cancelled: Cette commande a été annulée.
+        status_message_claimed: Vous avez dit au vendeur que vous l’avez envoyé. Le
+          vendeur confirmera quand il aura reçu votre paiement.
+        status_message_cleared: Votre chèque a été encaissé. Merci.
+        status_message_confirmed: Le vendeur a confirmé votre paiement. Merci.
+        status_message_expired: 'La réservation de votre commande a expiré. Si vous
+          avez déjà payé, dites-le au vendeur ci-dessous : il peut encore confirmer
+          votre paiement.'
+        status_message_received: Le vendeur a votre chèque et confirmera une fois
+          qu’il sera encaissé.
+        status_message_rejected: Le vendeur n’a pas accepté ce paiement; la commande
+          a donc été annulée.
+        status_received: Chèque reçu
+        status_rejected: Non accepté
+        too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
+          quand il aura reçu votre paiement.
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées
@@ -1275,6 +1423,41 @@ fr:
         state_active: En vigueur
         state_draft: Brouillon
         state_retired: Retirée
+      sales:
+        refund_amount_label: Montant remboursé (jusqu’à %{max}; vide pour tout)
+        refund_heading: Enregistrer un remboursement
+        refund_hint: La plateforme ne peut pas déplacer cet argent. Enregistrez-le
+          ici une fois rendu.
+        refund_reason_bounced: Chèque refusé
+        refund_reason_cancelled_event: Événement annulé
+        refund_reason_cancelled_order: Commande annulée
+        refund_reason_duplicate: Payé deux fois
+        refund_reason_error: Erreur
+        refund_reason_label: Motif
+        refund_reason_other: Autre
+        refund_reason_requested_by_buyer: Demandé par l’acheteur
+        refund_record: Enregistrer le remboursement
+        refund_recorded: Remboursement enregistré. L’acheteur a été informé.
+        refund_refused: Ce remboursement n’a pas pu être enregistré. Vérifiez le montant.
+      walk_up:
+        agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
+          en personne
+        buyer_hint: L’acheteur doit déjà être membre de cette plateforme. Saisissez
+          son identifiant exact.
+        buyer_label: Identifiant de l’acheteur
+        error_refused: Cette vente n’a pas pu être enregistrée. Vérifiez l’acheteur,
+          le mode de paiement et les ententes.
+        intro: Enregistrez une vente faite en personne. L’acheteur n’a rien à faire;
+          il est informé ensuite.
+        method_label: Mode de paiement
+        new_link: Nouvelle vente en personne
+        placed: Vente enregistrée.
+        plan_label: Ce qui a été vendu
+        received_label: 'L’argent a déjà été remis : le marquer comme reçu'
+        submit: Enregistrer la vente
+        title: Vente en personne
+        unavailable: Il vous faut un forfait actif et un mode de paiement hors plateforme
+          activé avant de pouvoir enregistrer une vente en personne.
     billing_mailer:
       notification:
         greeting: Bonjour %{name},

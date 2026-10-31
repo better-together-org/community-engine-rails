@@ -118,6 +118,12 @@ module Rack
       req.ip if req.get? && req.path.include?('/billing/processor_options')
     end
 
+    # A buyer telling a seller they sent a payment made outside the platform. Each claim can notify
+    # the seller, so cap it per IP (the service also limits claims per payment).
+    throttle('billing/offline_claims/ip', limit: 20, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/claim\z})
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).
