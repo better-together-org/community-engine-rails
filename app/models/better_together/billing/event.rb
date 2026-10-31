@@ -128,6 +128,7 @@ module BetterTogether
 
       def dead_letter!(reason:)
         update!(processing_status: 'dead_lettered', dead_lettered_at: Time.current, dead_letter_reason: reason)
+        Notifications.deliver('event_dead_lettered', subject: self, dedupe_key: "dead-letter:#{id}:#{dead_lettered_at.to_i}")
       end
 
       # The hourly sweep. Locks the row and re-checks that it is still stuck, so an

@@ -19,9 +19,9 @@ module BetterTogether
           order.with_lock do
             raise Refused, 'only an unpaid order can be cancelled' unless cancellable?
 
-            order.payments.pending.find_each { |payment| payment.update!(status: 'cancelled') }
             Release.call(order)
             order.update!(status: 'cancelled', cancelled_at: Time.current)
+            Notifications.deliver('order_cancelled', subject: order)
           end
           order
         end

@@ -927,6 +927,89 @@ en:
         unavailable_currency_not_supported: Not available in this currency.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+      notifications:
+        dispute_opened:
+          body: A buyer disputed a payment for order %{number}. Please review it.
+          title: A payment was disputed
+        dispute_resolved:
+          body: The dispute for order %{number} has been resolved.
+          title: A payment dispute was resolved
+        event_dead_lettered:
+          body: A billing event could not be processed after several tries. Please
+            review it.
+          title: A billing event needs attention
+        order_cancelled:
+          buyer:
+            body: Nothing was charged for it.
+            title: Order %{number} was cancelled
+          seller:
+            body: An order for %{amount} was cancelled before it was paid.
+            title: Order %{number} was cancelled
+        order_expired:
+          buyer:
+            body: It was not paid in time, so what it held has been released.
+            title: Order %{number} expired
+          seller:
+            body: An order for %{amount} was not paid in time and has lapsed.
+            title: Order %{number} expired
+        order_paid:
+          buyer:
+            body: Thank you. Your payment of %{amount} was received.
+            title: Order %{number} is paid
+          seller:
+            body: An order for %{amount} has been paid.
+            title: Order %{number} is paid
+        order_placed:
+          buyer:
+            body: We are holding it for you. Pay %{amount} to complete it.
+            title: Your order %{number} was placed
+          seller:
+            body: A new order for %{amount} is waiting for payment.
+            title: New order %{number}
+        payment_action_required:
+          body: Your bank needs you to confirm this payment before it can go through.
+          title: Action needed to pay for order %{number}
+        payment_failed:
+          body: The payment did not go through. Please check your payment details
+            and try again.
+          title: Your payment for order %{number} failed
+        payment_succeeded:
+          body: Your payment of %{amount} was received.
+          title: Receipt for order %{number}
+        plan_sync_failed:
+          body: Syncing a plan failed. Open the plan to retry.
+          title: A plan could not be sent to the payment processor
+        refund_issued:
+          buyer:
+            body: A refund was issued for your order.
+            title: Refund for order %{number}
+          seller:
+            body: A refund was issued for an order.
+            title: Refund issued for order %{number}
+        refund_recorded:
+          body: The seller recorded a refund for your order.
+          title: Refund for order %{number}
+        settings_changed:
+          body: Someone changed how buyers pay (%{method}). If you did not expect
+            this, check it now.
+          title: A payment method was changed
+        subscription_canceled:
+          buyer:
+            body: Your subscription has been cancelled.
+            title: Your subscription was cancelled
+          seller:
+            body: A subscription has been cancelled.
+            title: A subscription was cancelled
+        subscription_renewing:
+          body: Your subscription will renew shortly. You can manage it from your
+            account.
+          title: Your subscription renews soon
+        trial_ended:
+          body: Your trial has ended.
+          title: Your trial has ended
+        trial_ending:
+          body: Your trial is about to end.
+          title: Your trial ends soon
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted
@@ -1178,6 +1261,13 @@ en:
         state_active: In force
         state_draft: Draft
         state_retired: Retired
+    billing_mailer:
+      notification:
+        greeting: Hello %{name},
+        safety: We never include payment details in an email. To pay or change anything,
+          sign in and open the link above.
+        support: Questions? Contact %{email}.
+        view: View it
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and

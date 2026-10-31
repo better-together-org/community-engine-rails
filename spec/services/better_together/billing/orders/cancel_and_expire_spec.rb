@@ -10,7 +10,7 @@ RSpec.describe 'Cancelling and expiring orders' do # rubocop:disable RSpec/Descr
   describe BetterTogether::Billing::Orders::Cancel do
     it 'cancels an unpaid order, what was waiting to be paid, and gives back what it held' do
       waiting = create(:better_together_billing_payment, order:, amount_cents: 4500)
-      allow(BetterTogether::Billing::Orders::Release).to receive(:call)
+      allow(BetterTogether::Billing::Orders::Release).to receive(:call).and_call_original
 
       described_class.call(order)
 
@@ -47,6 +47,16 @@ RSpec.describe 'Cancelling and expiring orders' do # rubocop:disable RSpec/Descr
       described_class.call(two)
 
       expect(held).to eq([2])
+    end
+
+    it 'cancels the payments still waiting before giving the lines back' do
+      waiting = create(:better_together_billing_payment, order:, amount_cents: 4500)
+      settled = create(:better_together_billing_payment, order:, amount_cents: 100, status: 'succeeded')
+
+      described_class.call(order)
+
+      expect(waiting.reload).to be_cancelled
+      expect(settled.reload).not_to be_cancelled
     end
   end
 

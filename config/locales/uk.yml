@@ -906,6 +906,87 @@ uk:
         unavailable_currency_not_supported: Недоступно в цій валюті.
         unavailable_not_enabled: Наразі тут недоступно.
         unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
+      notifications:
+        dispute_opened:
+          body: Покупець оскаржив платіж за замовлення %{number}. Перегляньте його.
+          title: Платіж оскаржено
+        dispute_resolved:
+          body: Спір за замовленням %{number} вирішено.
+          title: Спір щодо платежу вирішено
+        event_dead_lettered:
+          body: Подію не вдалося обробити після кількох спроб. Перегляньте її.
+          title: Подія виставлення рахунків потребує уваги
+        order_cancelled:
+          buyer:
+            body: Нічого не списано.
+            title: Замовлення %{number} скасовано
+          seller:
+            body: Замовлення на %{amount} скасовано до оплати.
+            title: Замовлення %{number} скасовано
+        order_expired:
+          buyer:
+            body: Його не сплатили вчасно, тому те, що воно утримувало, вивільнено.
+            title: Термін замовлення %{number} минув
+          seller:
+            body: Замовлення на %{amount} не сплатили вчасно, воно втратило чинність.
+            title: Термін замовлення %{number} минув
+        order_paid:
+          buyer:
+            body: Дякуємо. Ваш платіж на %{amount} отримано.
+            title: Замовлення %{number} сплачено
+          seller:
+            body: Замовлення на %{amount} сплачено.
+            title: Замовлення %{number} сплачено
+        order_placed:
+          buyer:
+            body: Ми утримуємо його для вас. Сплатіть %{amount}, щоб завершити.
+            title: Замовлення %{number} оформлено
+          seller:
+            body: Нове замовлення на %{amount} очікує оплати.
+            title: Нове замовлення %{number}
+        payment_action_required:
+          body: Ваш банк просить підтвердити цей платіж, щоб він міг пройти.
+          title: Потрібна дія для оплати замовлення %{number}
+        payment_failed:
+          body: Платіж не пройшов. Перевірте платіжні дані та спробуйте ще раз.
+          title: Платіж за замовлення %{number} не вдався
+        payment_succeeded:
+          body: Ваш платіж на %{amount} отримано.
+          title: Квитанція за замовлення %{number}
+        plan_sync_failed:
+          body: Не вдалося синхронізувати план. Відкрийте план, щоб повторити.
+          title: Не вдалося надіслати план до платіжного процесора
+        refund_issued:
+          buyer:
+            body: За вашим замовленням оформлено повернення коштів.
+            title: Повернення коштів за замовлення %{number}
+          seller:
+            body: За замовленням оформлено повернення коштів.
+            title: Оформлено повернення за замовлення %{number}
+        refund_recorded:
+          body: Продавець записав повернення коштів за вашим замовленням.
+          title: Повернення коштів за замовлення %{number}
+        settings_changed:
+          body: Хтось змінив, як платять покупці (%{method}). Якщо ви цього не очікували,
+            перевірте зараз.
+          title: Змінено спосіб оплати
+        subscription_canceled:
+          buyer:
+            body: Вашу підписку скасовано.
+            title: Вашу підписку скасовано
+          seller:
+            body: Підписку скасовано.
+            title: Підписку скасовано
+        subscription_renewing:
+          body: Ваша підписка незабаром поновиться. Керувати нею можна у вашому обліковому
+            записі.
+          title: Невдовзі ваша підписка поновиться
+        trial_ended:
+          body: Ваш пробний період закінчився.
+          title: Пробний період закінчився
+        trial_ending:
+          body: Ваш пробний період добігає кінця.
+          title: Пробний період скоро закінчиться
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         agreements_heading: Прийняті угоди
@@ -1157,6 +1238,13 @@ uk:
         state_active: Чинна
         state_draft: Чернетка
         state_retired: Виведена з дії
+    billing_mailer:
+      notification:
+        greeting: Вітаємо, %{name}!
+        safety: Ми ніколи не додаємо платіжні дані до листа. Щоб сплатити чи щось
+          змінити, увійдіть і відкрийте посилання вище.
+        support: Питання? Пишіть на %{email}.
+        view: Переглянути
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму

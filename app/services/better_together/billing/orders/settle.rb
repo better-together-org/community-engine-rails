@@ -57,6 +57,13 @@ module BetterTogether
           attributes = { status: target }
           attributes[:paid_at] = Time.current if target == 'paid' && order.paid_at.nil?
           order.update!(attributes)
+          notify(target)
+        end
+
+        # Told once per order and outcome, however many times the order is settled.
+        def notify(target)
+          kind = { 'paid' => 'order_paid' }[target]
+          Notifications.deliver(kind, subject: order) if kind
         end
       end
     end

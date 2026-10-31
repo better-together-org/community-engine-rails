@@ -19,9 +19,9 @@ module BetterTogether
           order.with_lock do
             next false unless order.hold_expired? && order.can_become?('expired')
 
-            order.payments.pending.find_each { |payment| payment.update!(status: 'cancelled') }
             Release.call(order)
             order.update!(status: 'expired')
+            Notifications.deliver('order_expired', subject: order)
             true
           end
         end
