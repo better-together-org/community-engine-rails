@@ -1,0 +1,118 @@
+{
+  "name": "framed_indexes_events",
+  "device": "desktop",
+  "url": "/en/events?community_id=community-8316450e850cb6dd0b77",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_scoped_indexes",
+  "flow": "events",
+  "source_spec": "./spec/docs_screenshots/better_together/framed_indexes_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-event-btn",
+      "title": "New event",
+      "bullets": [
+        "Pre-selects the community as the host."
+      ],
+      "target": {
+        "x": 1237.09375,
+        "y": 125.0,
+        "width": 130.90625,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 163.0,
+        "center_x": 1302.546875,
+        "center_y": 144.0
+      },
+      "avoid": {
+        "x": 1237.09375,
+        "y": 125.0,
+        "width": 130.90625,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 163.0,
+        "center_x": 1302.546875,
+        "center_y": 144.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 183.0,
+        "width": 380,
+        "height": 132,
+        "score": 1294.0
+      }
+    },
+    {
+      "selector": "#events-filter-toggle",
+      "title": "Filters",
+      "bullets": [
+        "Keeps ?community_id= when applied or cleared."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 297.0,
+        "width": 306.0,
+        "height": 540.0,
+        "right": 378.0,
+        "bottom": 837.0,
+        "center_x": 225.0,
+        "center_y": 567.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 297.0,
+        "width": 306.0,
+        "height": 540.0,
+        "right": 378.0,
+        "bottom": 837.0,
+        "center_x": 225.0,
+        "center_y": 567.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 398.0,
+        "y": 501.0,
+        "width": 380,
+        "height": 132,
+        "score": 1062.0
+      }
+    },
+    {
+      "selector": "#events",
+      "title": "Hosted events",
+      "bullets": [
+        "Only events this community hosts, through the policy scope."
+      ],
+      "target": {
+        "x": 390.0,
+        "y": 337.0,
+        "width": 990.0,
+        "height": 407.0,
+        "right": 1380.0,
+        "bottom": 744.0,
+        "center_x": 885.0,
+        "center_y": 540.5
+      },
+      "avoid": {
+        "x": 390.0,
+        "y": 337.0,
+        "width": 990.0,
+        "height": 407.0,
+        "right": 1380.0,
+        "bottom": 744.0,
+        "center_x": 885.0,
+        "center_y": 540.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 695.0,
+        "y": 764.0,
+        "width": 380,
+        "height": 158,
+        "score": 713.0
+      }
+    }
+  ]
+}

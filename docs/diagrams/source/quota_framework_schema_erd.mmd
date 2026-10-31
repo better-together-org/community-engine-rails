@@ -1,0 +1,99 @@
+%% Quota Framework, Phase 5a (shadow mode) — entity/schema view. Table name is singular
+%% "better_together_quota" (not "quotas"): ActiveSupport's pluralize is a no-op for "quota" in
+%% this app, verified consistent across Inflector and ActiveRecord::Base.table_name, so the
+%% table/migration/model embrace that instead of forcing an override.
+erDiagram
+  EXT_PERSON o|--o{ QUOTA : "owner / owner_id (polymorphic, via Quotas::Owner)"
+  EXT_COMMUNITY o|--o{ QUOTA : "owner / owner_id (polymorphic, via Quotas::Owner)"
+  EXT_PLATFORM o|--o{ QUOTA : "owner / owner_id (polymorphic, via Quotas::Owner)"
+  QUOTA ||--o{ QUOTA_USAGES : "quota / quota_id (restrict_with_exception — append-only ledger)"
+  QUOTA ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
+  QUOTA ||--o{ QUOTA_BALANCES : "quota / quota_id (materialized per period_key)"
+  EXT_ACTIVE_STORAGE_ATTACHMENT o|--o| QUOTA_USAGES : "subject / subject_id (media_storage settle/reverse)"
+  EXT_AI_LOG_TRANSLATION o|--o| QUOTA_USAGES : "subject / subject_id (nil on live settle; key shares the log id)"
+
+  QUOTA {
+    uuid id PK
+    string owner_type "Person | Community | Platform — includes Quotas::Owner"
+    uuid owner_id FK
+    string quota_type "registry key, e.g. media_storage, ai_translation_tokens"
+    bigint limit
+    bigint soft_limit "nullable"
+    string period "cumulative | monthly | daily, default cumulative"
+    string status "active | suspended, default active"
+    string enforcement_mode "off | shadow | soft | hard, default shadow — inert this phase"
+    jsonb metadata
+    uuid platform_id FK
+  }
+
+  QUOTA_USAGES {
+    uuid id PK
+    uuid quota_id FK
+    string quota_type
+    bigint amount "signed: positive=consumption, negative=reversal"
+    string period_key
+    string subject_type "polymorphic, nullable"
+    uuid subject_id FK "nullable"
+    string actor_type "Person | Robot, nullable"
+    uuid actor_id FK "nullable"
+    string owner_type "polymorphic, duplicated from quota.owner"
+    uuid owner_id FK
+    uuid platform_id FK
+    jsonb context
+    string idempotency_key "unique index — the real idempotency guarantee"
+    string event "reserve | settle | reverse | backfill (plain string, not enum — avoids Relation#reverse collision)"
+  }
+
+  QUOTA_RESERVATIONS {
+    uuid id PK
+    uuid quota_id FK
+    string quota_type
+    bigint amount
+    string period_key
+    string subject_type "polymorphic, nullable"
+    uuid subject_id FK "nullable"
+    string actor_type "nullable"
+    uuid actor_id FK "nullable"
+    string owner_type "polymorphic"
+    uuid owner_id FK
+    string status "held | settled | released | expired, default held"
+    datetime expires_at
+    datetime settled_at "nullable"
+    datetime released_at "nullable"
+    string idempotency_key "unique"
+    jsonb context
+    uuid platform_id FK
+  }
+
+  QUOTA_BALANCES {
+    uuid id PK
+    uuid quota_id FK
+    string period_key
+    bigint consumed
+    bigint reserved
+    datetime recalculated_at "nullable"
+    uuid platform_id FK
+  }
+
+  EXT_PERSON {
+    uuid id PK
+  }
+
+  EXT_COMMUNITY {
+    uuid id PK
+  }
+
+  EXT_PLATFORM {
+    uuid id PK
+  }
+
+  EXT_ACTIVE_STORAGE_ATTACHMENT {
+    uuid id PK
+    string record_type "polymorphic owner, ActionText::RichText hopped via OwnerResolver"
+    uuid record_id FK
+  }
+
+  EXT_AI_LOG_TRANSLATION {
+    uuid id PK
+    uuid initiator_id FK "creator-equivalent, used by OwnerResolver"
+  }

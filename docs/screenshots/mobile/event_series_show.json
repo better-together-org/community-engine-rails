@@ -1,0 +1,47 @@
+{
+  "name": "event_series_show",
+  "device": "mobile",
+  "url": "/en/events/604f3931-05f8-494c-98fd-bb06ab00e03c",
+  "title": "A Tribute to Fleetwood Mac | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_series",
+  "flow": "series",
+  "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb",
+  "callouts": [
+    {
+      "selector": "#sessions_event_add61d2e-94fa-4ba0-a0a3-b5daad237681",
+      "title": "Dates",
+      "bullets": [
+        "Each date is a card linking to its own page."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 159.390625,
+        "width": 427.0,
+        "height": 937.3125,
+        "right": 456.0,
+        "bottom": 1096.703125,
+        "center_x": 242.5,
+        "center_y": 628.046875
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 159.390625,
+        "width": 427.0,
+        "height": 937.3125,
+        "right": 456.0,
+        "bottom": 1096.703125,
+        "center_x": 242.5,
+        "center_y": 628.046875
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 158
+      }
+    }
+  ]
+}

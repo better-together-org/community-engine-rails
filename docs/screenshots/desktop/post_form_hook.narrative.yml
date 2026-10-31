@@ -1,0 +1,13 @@
+---
+title: Post form extra
+audience:
+- platform_manager
+- developer
+journey_step: 'As a host app developer, I add content here: post form extra.'
+callouts:
+- :id: hook
+  :title: Post form extra
+  :description: Before the publishing date; empty unless a host overrides the partial.
+accessibility_notes: The default markup is unchanged; hooks only add override points.
+slug: post_form_hook
+device: desktop

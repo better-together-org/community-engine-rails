@@ -1,0 +1,15 @@
+<%# locals: (video_block:, in_gallery: false) -%>
+<%# Rich text can render outside the engine's controllers (the API, a host's own), where the helper is not mixed in. -%>
+<% extend BetterTogether::Content::BlocksHelper unless respond_to?(:iframe_embed_state) %>
+<div class="attached-video attached-video--<%= video_block.portrait? ? 'portrait' : 'landscape' %> mb-4">
+  <%= render partial: 'better_together/content/blocks/iframe_embed',
+             locals: {
+               block: video_block,
+               iframe_url: video_block.attachment_embed_url,
+               aspect_ratio: video_block.aspect_ratio,
+               title: video_block.embed_title,
+               caption: video_block.caption,
+               iframe_allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+               allow_fullscreen: true
+             } %>
+</div>

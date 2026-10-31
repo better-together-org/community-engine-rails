@@ -2,7 +2,7 @@
   "name": "event_location_create_row",
   "device": "mobile",
   "url": "/en/events/new",
-  "title": "Community Engine",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "event_organizer",
   "feature_set": "event_location_picker",
@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 25.0,
-        "y": 1131.390625,
+        "y": 1171.390625,
         "width": 411.0,
         "height": 41.0,
         "right": 436.0,
-        "bottom": 1172.390625,
+        "bottom": 1212.390625,
         "center_x": 230.5,
-        "center_y": 1151.890625
+        "center_y": 1191.890625
       },
       "avoid": {
         "x": 25.0,
-        "y": 1131.390625,
+        "y": 1171.390625,
         "width": 411.0,
         "height": 41.0,
         "right": 436.0,
-        "bottom": 1172.390625,
+        "bottom": 1212.390625,
         "center_x": 230.5,
-        "center_y": 1151.890625
+        "center_y": 1191.890625
       },
       "placement": {
         "side": "above",
         "x": 95.5,
-        "y": 713.39,
+        "y": 753.39,
         "width": 270.0,
         "height": 398,
-        "score": 1131.390625
+        "score": 1171.390625
       }
     }
   ]

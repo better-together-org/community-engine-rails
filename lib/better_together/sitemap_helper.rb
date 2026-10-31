@@ -56,7 +56,7 @@ module BetterTogether
       # @param platform [BetterTogether::Platform] restricts to this platform's own communities
       def add_communities(sitemap, locale = I18n.default_locale, platform: default_platform)
         sitemap.add helpers.communities_path(locale: locale), lastmod: false
-        BetterTogether::Community.for_platform(platform).privacy_public.find_each do |community|
+        BetterTogether::Community.sitemap_listable(platform).find_each do |community|
           sitemap.add helpers.community_path(community, locale: locale),
                       lastmod: community.updated_at
         end

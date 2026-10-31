@@ -1,0 +1,11 @@
+{
+  "name": "community_show_tabs_about_plain",
+  "device": "mobile",
+  "url": "/en/c/community-c2f157c90fa886a004d3",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_tabs",
+  "flow": "about_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_tabs_spec.rb"
+}

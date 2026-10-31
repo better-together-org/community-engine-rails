@@ -1,0 +1,48 @@
+{
+  "name": "community_marks_host",
+  "device": "desktop",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_marks",
+  "flow": "community_marks_host",
+  "source_spec": "./spec/docs_screenshots/better_together/community_marks_spec.rb",
+  "callouts": [
+    {
+      "selector": ".event-host .community-mark-tile",
+      "title": "Host mark",
+      "bullets": [
+        "A hosting community shows its logo as a tile."
+      ],
+      "target": {
+        "x": 440.0,
+        "y": 494.0,
+        "width": 61.59375,
+        "height": 28.0,
+        "right": 501.59375,
+        "bottom": 522.0,
+        "center_x": 470.796875,
+        "center_y": 508.0
+      },
+      "avoid": {
+        "x": 440.0,
+        "y": 494.0,
+        "width": 61.59375,
+        "height": 28.0,
+        "right": 501.59375,
+        "bottom": 522.0,
+        "center_x": 470.796875,
+        "center_y": 508.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 521.59,
+        "y": 442.0,
+        "width": 380,
+        "height": 132,
+        "score": 938.40625
+      }
+    }
+  ]
+}

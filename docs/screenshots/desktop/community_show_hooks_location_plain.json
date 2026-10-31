@@ -1,0 +1,11 @@
+{
+  "name": "community_show_hooks_location_plain",
+  "device": "desktop",
+  "url": "/en/c/community-9f4edec0f928811124d7",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_hooks",
+  "flow": "location_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_hooks_spec.rb"
+}

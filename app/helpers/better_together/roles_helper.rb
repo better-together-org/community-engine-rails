@@ -10,9 +10,12 @@ module BetterTogether
     }.freeze
 
     def role_resource_type_label(resource_type)
+      registered_label = BetterTogether::Resourceful.label_for(resource_type)
+      return registered_label if registered_label
+
       resource_klass = BetterTogether::SafeClassResolver.resolve(
         resource_type,
-        allowed: BetterTogether::Resourceful::RESOURCE_CLASSES
+        allowed: BetterTogether::Resourceful.allowed_resource_classes
       )
 
       return resource_type unless resource_klass
@@ -34,7 +37,8 @@ module BetterTogether
     end
 
     def role_permission_summary(role, limit: 3)
-      permissions = role.resource_permissions.order(:resource_type, :position, :identifier)
+      # Sorted in Ruby so the preloaded association is used; `.order` would query once per role.
+      permissions = role.resource_permissions.sort_by { |p| [p.resource_type.to_s, p.position.to_i, p.identifier.to_s] }
       labels = permissions.first(limit).map { |permission| permission_display_name(permission) }
       remaining = permissions.size - labels.size
 
