@@ -21,6 +21,10 @@ RSpec.describe 'better_together/robots/_mention' do
     expect(avatar[:style]).to include('width: 50px', 'height: 50px')
   end
 
+  it 'leaves a gap between the avatar and the name' do
+    expect(avatar[:class].split).to include('me-2')
+  end
+
   it 'labels the avatar for assistive technology' do
     expect(avatar).to have_css('.visually-hidden', text: 'Robot author')
   end
