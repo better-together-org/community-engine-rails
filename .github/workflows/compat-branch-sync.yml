@@ -76,10 +76,24 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "${sync_branch}" "origin/${TARGET_BRANCH}"
-          if ! git merge --no-ff origin/main -m "chore(compat): merge main into ${TARGET_BRANCH}"; then
-            git merge --abort || true
-            echo "::error::Merging main into ${TARGET_BRANCH} conflicts. Resolve it by hand on a branch off ${TARGET_BRANCH}."
-            exit 1
+          merge_msg="chore(compat): merge main into ${TARGET_BRANCH}"
+          if ! git merge --no-ff origin/main -m "${merge_msg}"; then
+            # The schema header (ActiveRecord::Schema[x.y]) and version differ per lane, so
+            # both sides edit the same lines. The schema is generated from migrations and
+            # the lane's version is rewritten afterwards, so take main's file when that is
+            # the only conflict. Anything else still needs a human.
+            conflicts="$(git diff --name-only --diff-filter=U)"
+            if [[ "${conflicts}" == "spec/dummy/db/schema.rb" ]]; then
+              git checkout --theirs spec/dummy/db/schema.rb
+              git add spec/dummy/db/schema.rb
+              git commit --no-edit -q
+              echo "::notice::Resolved schema.rb conflict in favor of main for ${TARGET_BRANCH}."
+            else
+              echo "Conflicting files: ${conflicts}"
+              git merge --abort || true
+              echo "::error::Merging main into ${TARGET_BRANCH} conflicts. Resolve it by hand on a branch off ${TARGET_BRANCH}."
+              exit 1
+            fi
           fi
 
           # Skip the push (and the CI re-run) when the remote sync branch is
