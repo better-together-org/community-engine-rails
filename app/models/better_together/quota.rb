@@ -33,6 +33,14 @@ module BetterTogether
     validates :owner_id, uniqueness: { scope: %i[owner_type quota_type] }
     validate :owner_is_quota_owner
 
+    # The limit actually in effect: the highest active QuotaGrant for this owner+type,
+    # or the stored `limit` when no grant applies. Nothing in this phase reads this to
+    # make a blocking decision (Quotas.check! stays permissive); it exists so a later
+    # enforcement phase has a single, already-correct place to read from.
+    def effective_limit
+      QuotaGrant.for_owner_and_type(owner, quota_type).active.maximum(:limit) || limit
+    end
+
     private
 
     # A direct module check rather than Owner.included_in_models, which eager-loads

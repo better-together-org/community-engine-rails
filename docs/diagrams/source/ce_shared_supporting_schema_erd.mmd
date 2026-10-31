@@ -53,6 +53,7 @@ erDiagram
   EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
+  EXT_PLATFORM o|--o{ QUOTA_GRANTS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_RESERVATIONS : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
   EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
@@ -319,6 +320,18 @@ erDiagram
     consumed integer
     reserved integer
     recalculated_at datetime
+  }
+
+  QUOTA_GRANTS {
+    granted_by_id uuid
+    owner_id uuid
+    platform_id uuid
+    granted_by_type string
+    owner_type string
+    quota_type string
+    reason text
+    limit integer
+    expires_at datetime
   }
 
   QUOTA_RESERVATIONS {
