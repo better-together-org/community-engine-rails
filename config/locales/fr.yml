@@ -819,7 +819,9 @@ fr:
         acceptance_methods:
           agreement_review: examen de l’accord
           api: API
+          checkout: Passage en caisse
           legacy: enregistrement hérité
+          seller_assisted: Enregistré par le vendeur
           sign_up: inscription
           system: système
         accepted_via: Accepté via %{method}
@@ -902,7 +904,31 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      checkout:
+        accept: J’ai lu et j’accepte %{title}
+        already_accepted: Vous avez déjà accepté la version actuelle.
+        continue: Continuer
+        error_accept_all: Acceptez chaque entente pour continuer.
+        error_method_not_available: Choisissez un des modes de paiement disponibles.
+        error_not_ready: 'Cet achat ne peut pas être effectué pour le moment : les
+          conditions n’ont pas été configurées. Veuillez contacter les personnes qui
+          gèrent cette plateforme.'
+        error_refused: Votre commande n’a pas pu être passée. Rien n’a été débité.
+          Veuillez réessayer.
+        how_to_pay: Comment souhaitez-vous payer ?
+        no_methods: Il n’y a aucun moyen de payer pour le moment.
+        place_order: Passer la commande
+        placed: Votre commande a été passée.
+        review_intro: Lisez ces documents avant de passer votre commande. Vous devez
+          les accepter pour continuer.
+        review_title: Lire et accepter
+        title: Obtenir %{plan}
+        unavailable_currency_not_supported: Non disponible dans cette devise.
+        unavailable_not_enabled: Non disponible ici pour le moment.
+        unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
       orders:
+        accepted_by: Acceptée par %{name} le %{date}
+        agreements_heading: Ententes acceptées
         field_amount: Montant
         field_buyer: Acheteur
         field_expires: À payer avant
@@ -1127,6 +1153,43 @@ fr:
         status_disabled: Désactivé
         status_enabled: Activé
         status_not_set_up: Non configuré
+      readiness:
+        check_agreements: Les ententes d’achat sont en vigueur pour %{purpose}.
+        check_configured: La facturation est activée et les coordonnées de votre organisation
+          sont définies.
+        check_method_enabled: Au moins un mode de paiement est activé.
+        detail_no_agreement: Aucune entente n’est encore exigée pour ce type d’achat.
+        detail_not_in_force: Une entente est encore un brouillon ou retirée. Relisez
+          son texte et passez-la à active.
+        done: 'Fait :'
+        not_ready: Pas prêt
+        ready: Prêt
+        title: Prêt à vendre ?
+        todo: 'Reste à faire :'
+      requirements:
+        add: Ajouter
+        add_title: Ajouter une exigence
+        any: Tous
+        applies_to_everything: Tout ce que vend la plateforme
+        created: Exigence ajoutée.
+        field_agreement: Entente
+        field_applies_to: S’applique à
+        field_mode: Application
+        field_payment_method: Mode de paiement
+        field_purpose: Type d’achat
+        index_intro: Choisissez les ententes qu’un acheteur doit accepter avant de
+          payer. Les valeurs par défaut s’appliquent à tout; un plan ou un mode de
+          paiement peut ajouter les siennes.
+        index_title: Conditions d’achat
+        mode_additional: Ajoutée aux valeurs par défaut
+        mode_replaces_default: Remplace les valeurs par défaut
+        none: Aucune entente n’est encore exigée. Rien ne peut être vendu tant qu’il
+          n’y en a pas.
+        remove: Retirer
+        removed: Exigence retirée.
+        state_active: En vigueur
+        state_draft: Brouillon
+        state_retired: Retirée
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
@@ -5194,6 +5257,7 @@ fr:
       no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
         de paiement
       not_a_number: n'est pas un nombre
+      not_a_purchase_agreement: doit être une entente d’achat
       not_an_integer: doit être un nombre entier
       not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
         dehors d'un processeur"

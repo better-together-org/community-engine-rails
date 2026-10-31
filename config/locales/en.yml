@@ -824,7 +824,9 @@ en:
         acceptance_methods:
           agreement_review: agreement review
           api: API
+          checkout: Checkout
           legacy: legacy record
+          seller_assisted: Recorded by the seller
           sign_up: sign up
           system: system
         accepted_via: Accepted via %{method}
@@ -904,7 +906,30 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      checkout:
+        accept: I have read and accept %{title}
+        already_accepted: You have already accepted the current version.
+        continue: Continue
+        error_accept_all: Accept every agreement to continue.
+        error_method_not_available: Choose one of the ways to pay that are available.
+        error_not_ready: 'This purchase cannot be completed yet: the terms for it
+          have not been set up. Please contact the people who run this platform.'
+        error_refused: Your order could not be placed. Nothing has been charged. Please
+          try again.
+        how_to_pay: How would you like to pay?
+        no_methods: There is no way to pay for this right now.
+        place_order: Place order
+        placed: Your order has been placed.
+        review_intro: Read these before you place your order. You have to accept them
+          to continue.
+        review_title: Review and accept
+        title: Get %{plan}
+        unavailable_currency_not_supported: Not available in this currency.
+        unavailable_not_enabled: Not available here right now.
+        unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
       orders:
+        accepted_by: Accepted by %{name} on %{date}
+        agreements_heading: Agreements accepted
         field_amount: Amount
         field_buyer: Buyer
         field_expires: Pay by
@@ -1118,6 +1143,41 @@ en:
         status_disabled: 'Off'
         status_enabled: 'On'
         status_not_set_up: Not set up
+      readiness:
+        check_agreements: Purchase agreements are in force for %{purpose}.
+        check_configured: Billing is switched on and your organisation details are
+          set.
+        check_method_enabled: At least one payment method is turned on.
+        detail_no_agreement: No agreement is required for this kind of purchase yet.
+        detail_not_in_force: An agreement is still a draft or retired. Review its
+          text and set it to active.
+        done: 'Done:'
+        not_ready: Not ready
+        ready: Ready
+        title: Ready to sell?
+        todo: 'Still to do:'
+      requirements:
+        add: Add
+        add_title: Add a requirement
+        any: Any
+        applies_to_everything: Everything the platform sells
+        created: Requirement added.
+        field_agreement: Agreement
+        field_applies_to: Applies to
+        field_mode: How it applies
+        field_payment_method: Payment method
+        field_purpose: Kind of purchase
+        index_intro: Choose the agreements a buyer must accept before they pay. Defaults
+          apply to everything; a plan or a payment method can add its own.
+        index_title: Purchase terms
+        mode_additional: Added to the defaults
+        mode_replaces_default: Replaces the defaults
+        none: No agreement is required yet. Nothing can be sold until there is one.
+        remove: Remove
+        removed: Requirement removed.
+        state_active: In force
+        state_draft: Draft
+        state_retired: Retired
     bot_defense:
       errors:
         expired_challenge: Security verification expired. Please reload the form and
@@ -5066,6 +5126,7 @@ en:
       model_invalid: 'Validation failed: %{errors}'
       no_payment_method: needs an online processor or at least one other way to pay
       not_a_number: is not a number
+      not_a_purchase_agreement: must be a purchase agreement
       not_an_integer: must be an integer
       not_an_offline_method: "%{method} is not an installed payment method outside
         a processor"

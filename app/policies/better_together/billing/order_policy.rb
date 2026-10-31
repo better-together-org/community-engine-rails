@@ -11,6 +11,8 @@ module BetterTogether
     class OrderPolicy < OwnerPolicy
       def index? = user.present?
       def show? = bought_by_user?
+      # Any signed-in person may start a checkout; what they may buy is decided by the plan and the agreements.
+      def checkout? = user.present?
       def new? = false
       def create? = false
       def update? = false

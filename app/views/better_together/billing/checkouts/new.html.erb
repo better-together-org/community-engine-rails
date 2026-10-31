@@ -1,0 +1,80 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.checkout.title', plan: @plan.name) %>
+<% end %>
+
+<div id="billing-checkout-page" class="container my-4">
+  <h1 class="mb-3"><%= t('better_together.billing.checkout.title', plan: @plan.name) %></h1>
+
+  <% if @error %>
+    <div class="alert alert-danger" role="alert" id="billing-checkout-error"><%= t("better_together.billing.checkout.error_#{@error}") %></div>
+  <% end %>
+
+  <div id="billing-checkout-summary" class="card mb-4">
+    <div class="card-body d-flex justify-content-between">
+      <span><strong><%= @plan.name %></strong><span class="d-block text-body-secondary"><%= billing_interval_label(@plan.billing_interval) %></span></span>
+      <span class="fs-5"><%= billing_amount(@plan.amount_cents, @plan.currency) %></span>
+    </div>
+  </div>
+
+  <%# Step 1: how to pay. A method that is not available is listed with the reason. %>
+  <%= form_with(url: new_billing_checkout_path(locale: I18n.locale), method: :get, id: 'billing-checkout-method-form') do %>
+    <%= hidden_field_tag :plan_id, @plan.id %>
+    <fieldset id="billing-checkout-methods" class="mb-4">
+      <legend class="h5"><%= t('better_together.billing.checkout.how_to_pay') %></legend>
+      <% @choices.each do |choice| %>
+        <div class="form-check mb-2">
+          <%= radio_button_tag :payment_method, choice.name, @method == choice.name, disabled: !choice.available?, class: 'form-check-input',
+                                                                                    id: "billing-checkout-method-#{choice.name}" %>
+          <%= label_tag "billing-checkout-method-#{choice.name}", class: 'form-check-label' do %>
+            <%= billing_payment_method_label(choice.name) %>
+            <% unless choice.available? %>
+              <span class="d-block small text-body-secondary" id="billing-checkout-method-<%= choice.name %>-reason">
+                <%= t("better_together.billing.checkout.unavailable_#{choice.reason}") %>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <% if @choices.none?(&:available?) %>
+        <p id="billing-checkout-no-methods" class="text-body-secondary"><%= t('better_together.billing.checkout.no_methods') %></p>
+      <% else %>
+        <%= submit_tag t('better_together.billing.checkout.continue'), class: 'btn btn-outline-primary', id: 'billing-checkout-continue-btn', name: nil %>
+      <% end %>
+    </fieldset>
+  <% end %>
+
+  <%# Step 2: the agreements that apply to this plan and method, accepted before anything is placed. %>
+  <% if @method && @gate %>
+    <% if @gate.ready? %>
+      <%= form_with(url: billing_checkout_path(locale: I18n.locale), method: :post, id: 'billing-checkout-form') do %>
+        <%= hidden_field_tag :plan_id, @plan.id %>
+        <%= hidden_field_tag :payment_method, @method %>
+        <section id="billing-agreement-review" class="card mb-4" aria-labelledby="billing-agreement-review-title">
+          <div class="card-header"><strong id="billing-agreement-review-title"><%= t('better_together.billing.checkout.review_title') %></strong></div>
+          <div class="card-body">
+            <p class="text-body-secondary"><%= t('better_together.billing.checkout.review_intro') %></p>
+            <% @gate.agreements.each do |agreement| %>
+              <div class="mb-3 border-bottom pb-3" id="<%= dom_id(agreement, :review) %>">
+                <h2 class="h6"><%= link_to agreement.title, agreement_path(agreement, locale: I18n.locale), target: '_blank', rel: 'noopener' %></h2>
+                <% agreement.agreement_terms.each do |term| %>
+                  <div class="small"><%= term.content %></div>
+                <% end %>
+                <% if @gate.missing.include?(agreement) %>
+                  <div class="form-check mt-2">
+                    <%= check_box_tag 'accepted_agreement_ids[]', agreement.id, false, class: 'form-check-input', id: "billing-agreement-accept-#{agreement.identifier}" %>
+                    <%= label_tag "billing-agreement-accept-#{agreement.identifier}", t('better_together.billing.checkout.accept', title: agreement.title), class: 'form-check-label' %>
+                  </div>
+                <% else %>
+                  <p class="small text-success mb-0" id="billing-agreement-accepted-<%= agreement.identifier %>"><%= t('better_together.billing.checkout.already_accepted') %></p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </section>
+        <%= submit_tag t('better_together.billing.checkout.place_order'), class: 'btn btn-primary', id: 'billing-checkout-place-btn', name: nil %>
+      <% end %>
+    <% else %>
+      <div class="alert alert-warning" role="alert" id="billing-checkout-not-ready"><%= t('better_together.billing.checkout.error_not_ready') %></div>
+    <% end %>
+  <% end %>
+</div>

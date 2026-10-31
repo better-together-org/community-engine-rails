@@ -84,6 +84,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 
 ##### **Billing** - [`billing/`](billing/)
 - [Billing Foundation and Processor Adapters](billing/processor-adapters.md) - Vendor-neutral billing core, host configuration and the adapter contract
+- [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Billing Payment Methods](billing/payment_methods.md) - Cash, cheque and e-transfer: how a seller turns them on, what buyers are told, the limits
 - [Billing Plan Catalog](billing/plan_catalog.md) - Plans, creating them at the processor, fields the processor fixes, async option lists
@@ -164,6 +165,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Payment Methods Model](diagrams/source/billing_payment_methods_model.mmd)
 - [Billing Plan Processor Sync Flow](diagrams/source/billing_plan_processor_sync_flow.mmd)
 - [Billing Processor Adapter Contract Model](diagrams/source/billing_processor_adapter_contract_model.mmd)
+- [Billing Purchase Agreement Flow](diagrams/source/billing_purchase_agreement_flow.mmd)
 - [Billing Queue Topology](diagrams/source/billing_queue_topology.mmd)
 - [Billing Schema ERD](diagrams/source/billing_schema_erd.mmd)
 - [Billing Tenancy and Ownership Model](diagrams/source/billing_tenancy_and_ownership_model.mmd)

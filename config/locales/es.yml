@@ -819,7 +819,9 @@ es:
         acceptance_methods:
           agreement_review: revisión del acuerdo
           api: API
+          checkout: Pago
           legacy: registro heredado
+          seller_assisted: Registrado por el vendedor
           sign_up: registro
           system: sistema
         accepted_via: Aceptado mediante %{method}
@@ -898,7 +900,29 @@ es:
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
     billing:
+      checkout:
+        accept: He leído y acepto %{title}
+        already_accepted: Ya aceptó la versión actual.
+        continue: Continuar
+        error_accept_all: Acepte todos los acuerdos para continuar.
+        error_method_not_available: Elija una de las formas de pago disponibles.
+        error_not_ready: 'Esta compra no se puede completar todavía: no se han configurado
+          sus condiciones. Póngase en contacto con quienes gestionan esta plataforma.'
+        error_refused: No se pudo hacer su pedido. No se ha cobrado nada. Inténtelo
+          de nuevo.
+        how_to_pay: "¿Cómo desea pagar?"
+        no_methods: Ahora mismo no hay forma de pagar esto.
+        place_order: Hacer el pedido
+        placed: Su pedido se ha realizado.
+        review_intro: Lea esto antes de hacer su pedido. Debe aceptarlo para continuar.
+        review_title: Revisar y aceptar
+        title: Obtener %{plan}
+        unavailable_currency_not_supported: No disponible en esta moneda.
+        unavailable_not_enabled: No disponible aquí por ahora.
+        unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
       orders:
+        accepted_by: Aceptado por %{name} el %{date}
+        agreements_heading: Acuerdos aceptados
         field_amount: Importe
         field_buyer: Comprador
         field_expires: Pagar antes de
@@ -1119,6 +1143,44 @@ es:
         status_disabled: Desactivado
         status_enabled: Activado
         status_not_set_up: Sin configurar
+      readiness:
+        check_agreements: Los acuerdos de compra están en vigor para %{purpose}.
+        check_configured: La facturación está activada y los datos de su organización
+          están definidos.
+        check_method_enabled: Al menos un método de pago está activado.
+        detail_no_agreement: Todavía no se exige ningún acuerdo para este tipo de
+          compra.
+        detail_not_in_force: Un acuerdo sigue siendo un borrador o está retirado.
+          Revise su texto y póngalo en activo.
+        done: 'Hecho:'
+        not_ready: No está listo
+        ready: Listo
+        title: "¿Listo para vender?"
+        todo: 'Pendiente:'
+      requirements:
+        add: Añadir
+        add_title: Añadir un requisito
+        any: Cualquiera
+        applies_to_everything: Todo lo que vende la plataforma
+        created: Requisito añadido.
+        field_agreement: Acuerdo
+        field_applies_to: Se aplica a
+        field_mode: Cómo se aplica
+        field_payment_method: Método de pago
+        field_purpose: Tipo de compra
+        index_intro: Elija los acuerdos que un comprador debe aceptar antes de pagar.
+          Los predeterminados se aplican a todo; un plan o un método de pago puede
+          añadir los suyos.
+        index_title: Condiciones de compra
+        mode_additional: Se añade a los predeterminados
+        mode_replaces_default: Sustituye a los predeterminados
+        none: Todavía no se exige ningún acuerdo. No se puede vender nada hasta que
+          haya uno.
+        remove: Quitar
+        removed: Requisito quitado.
+        state_active: En vigor
+        state_draft: Borrador
+        state_retired: Retirado
     bot_defense:
       errors:
         expired_challenge: La verificación de seguridad venció. Recarga el formulario
@@ -5152,6 +5214,7 @@ es:
       no_payment_method: necesita un procesador en línea o al menos otra forma de
         pago
       not_a_number: no es un número
+      not_a_purchase_agreement: debe ser un acuerdo de compra
       not_an_integer: debe ser un entero
       not_an_offline_method: "%{method} no es un método de pago instalado fuera de
         un procesador"

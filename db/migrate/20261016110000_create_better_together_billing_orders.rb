@@ -22,8 +22,9 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
   end
 
   def down
+    # CASCADE also drops the foreign keys later tables (such as agreement acceptances) hold on orders.
     %i[better_together_billing_refunds better_together_billing_payments better_together_billing_order_lines
-       better_together_billing_orders].each { |table| drop_table table if table_exists?(table) }
+       better_together_billing_orders].each { |table| drop_table table, force: :cascade if table_exists?(table) }
   end
 
   private

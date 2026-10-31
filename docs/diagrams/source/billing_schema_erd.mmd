@@ -19,6 +19,12 @@ erDiagram
   BILLING_ORDERS ||--o{ BILLING_PAYMENTS : "(order_id, platform_id) composite FK"
   BILLING_PAYMENTS ||--o{ BILLING_REFUNDS : "(payment_id, platform_id) composite FK"
   BILLING_PLANS o|--o{ BILLING_ORDER_LINES : "purchasable (polymorphic, opt-in)"
+  EXT_PLATFORM ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "platform / platform_id"
+  EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
+  BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
+  BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
+  EXT_AGREEMENT ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "agreement (restrict delete)"
+  EXT_PERSON ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "signer"
   EXT_COMMUNITY o|--o{ BILLING_PROCESSOR_SETTINGS : "seller (polymorphic, optional; person too)"
   EXT_PLATFORM o|--o{ BILLING_EVENTS : "subject: a setting is the subject of its audit events"
   EXT_PERSON o|--o{ BILLING_EVENTS : "billable_owner / beneficiary (polymorphic, optional)"
@@ -242,4 +248,31 @@ erDiagram
     string reason
     string idempotency_key "unique per platform"
     string processor_reference
+  }
+
+  BILLING_AGREEMENT_REQUIREMENTS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, read-only after create"
+    uuid agreement_id FK "a purchase (transactional) agreement of the same platform"
+    string target_type "NULL = platform default; seller or plan otherwise"
+    uuid target_id
+    string purpose "NULL = any: subscription | one_time | ticket | exchange"
+    string payment_method "NULL = any: cash | cheque | etransfer"
+    string mode "additional | replaces_default"
+    integer position
+  }
+
+  BILLING_ORDER_AGREEMENT_ACCEPTANCES {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, must equal the order's"
+    uuid order_id FK
+    uuid agreement_id FK
+    uuid signer_id FK "the person who accepted"
+    string on_behalf_of_type "optional: the community or person it was for"
+    uuid on_behalf_of_id
+    string agreement_identifier "as it read then"
+    string agreement_title "as it read then"
+    string agreement_content_digest "as it read then; never rewritten"
+    string acceptance_method "checkout | seller_assisted | ..."
+    datetime accepted_at
   }

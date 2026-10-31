@@ -803,7 +803,9 @@ uk:
         acceptance_methods:
           agreement_review: перегляд угоди
           api: API
+          checkout: Оформлення замовлення
           legacy: застарілий запис
+          seller_assisted: Записано продавцем
           sign_up: реєстрація
           system: система
         accepted_via: Прийнято через %{method}
@@ -883,7 +885,30 @@ uk:
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
+      checkout:
+        accept: Я прочитав(ла) і приймаю «%{title}»
+        already_accepted: Ви вже прийняли поточну версію.
+        continue: Продовжити
+        error_accept_all: Прийміть усі угоди, щоб продовжити.
+        error_method_not_available: Виберіть один із доступних способів оплати.
+        error_not_ready: 'Цю покупку поки не можна завершити: умови для неї не налаштовано.
+          Зверніться до тих, хто керує цією платформою.'
+        error_refused: Не вдалося оформити замовлення. Нічого не списано. Спробуйте
+          ще раз.
+        how_to_pay: Як ви хочете заплатити?
+        no_methods: Наразі немає способу сплатити за це.
+        place_order: Оформити замовлення
+        placed: Ваше замовлення оформлено.
+        review_intro: Прочитайте це перед оформленням замовлення. Щоб продовжити,
+          їх потрібно прийняти.
+        review_title: Перегляньте та прийміть
+        title: Отримати %{plan}
+        unavailable_currency_not_supported: Недоступно в цій валюті.
+        unavailable_not_enabled: Наразі тут недоступно.
+        unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
       orders:
+        accepted_by: Прийняв(ла) %{name}, %{date}
+        agreements_heading: Прийняті угоди
         field_amount: Сума
         field_buyer: Покупець
         field_expires: Сплатити до
@@ -1098,6 +1123,40 @@ uk:
         status_disabled: Вимкнено
         status_enabled: Увімкнено
         status_not_set_up: Не налаштовано
+      readiness:
+        check_agreements: 'Угоди про покупку чинні для: %{purpose}.'
+        check_configured: Виставлення рахунків увімкнено, дані вашої організації задано.
+        check_method_enabled: Увімкнено принаймні один спосіб оплати.
+        detail_no_agreement: Для цього виду покупки ще не вимагається жодна угода.
+        detail_not_in_force: Угода досі чернетка або виведена з дії. Перегляньте її
+          текст і зробіть чинною.
+        done: 'Зроблено:'
+        not_ready: Не готово
+        ready: Готово
+        title: Готові продавати?
+        todo: 'Ще треба зробити:'
+      requirements:
+        add: Додати
+        add_title: Додати вимогу
+        any: Будь-який
+        applies_to_everything: Усе, що продає платформа
+        created: Вимогу додано.
+        field_agreement: Угода
+        field_applies_to: Застосовується до
+        field_mode: Як застосовується
+        field_payment_method: Спосіб оплати
+        field_purpose: Вид покупки
+        index_intro: Виберіть угоди, які покупець має прийняти перед оплатою. Типові
+          застосовуються до всього; план або спосіб оплати може додати власні.
+        index_title: Умови покупки
+        mode_additional: Додається до типових
+        mode_replaces_default: Замінює типові
+        none: Жодна угода ще не вимагається. Нічого не можна продавати, поки її немає.
+        remove: Прибрати
+        removed: Вимогу прибрано.
+        state_active: Чинна
+        state_draft: Чернетка
+        state_retired: Виведена з дії
     bot_defense:
       errors:
         expired_challenge: Термін дії перевірки безпеки минув. Перезавантажте форму
@@ -5156,6 +5215,7 @@ uk:
       no_payment_method: потребує онлайн-процесора або принаймні ще одного способу
         оплати
       not_a_number: не є числом
+      not_a_purchase_agreement: має бути угодою про покупку
       not_an_integer: має бути цілим числом
       not_an_offline_method: "%{method} не є встановленим способом оплати поза процесором"
       not_configured: не налаштовано для цієї платформи

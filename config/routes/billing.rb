@@ -37,6 +37,8 @@ concern :billing_plans do
     resources :processor_options, only: :index
     resources :processor_settings, only: %i[index edit update]
     resources :orders, only: %i[index show]
+    resource :checkout, only: %i[new create]
+    resources :agreement_requirements, only: %i[index create destroy]
     resources :sales, only: %i[index show]
   end
 end

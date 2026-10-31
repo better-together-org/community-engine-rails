@@ -12,9 +12,13 @@ module BetterTogether
         build_code_of_conduct
         build_content_publishing_agreement
         build_community_creation_agreement
+        build_purchase_agreements
       end
 
       def clear_existing
+        # Which agreements a purchase needs is configuration and goes with them. The evidence of what
+        # a buyer accepted is not: if any exists, deleting its agreement fails rather than erasing it.
+        BetterTogether::Billing::AgreementRequirement.delete_all
         BetterTogether::AgreementParticipant.delete_all
         BetterTogether::AgreementTerm.delete_all
         BetterTogether::Agreement.delete_all
@@ -180,6 +184,12 @@ module BetterTogether
             and must not expose other people or communities without authorization.
           CONTENT
         end
+      end
+
+      # Draft purchase agreements and the purchases they cover, for the current (else host) platform.
+      # See Billing::PurchaseAgreementSeeds.
+      def build_purchase_agreements(platform: Current.platform || BetterTogether::Platform.find_by(host: true))
+        BetterTogether::Billing::PurchaseAgreementSeeds.call(platform) if platform
       end
 
       def build_community_creation_agreement # rubocop:todo Metrics/AbcSize, Metrics/MethodLength

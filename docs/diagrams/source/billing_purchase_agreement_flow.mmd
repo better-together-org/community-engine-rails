@@ -1,0 +1,17 @@
+%% Billing — where a purchase agreement is required. The check is made on the screen and again,
+%% on the server, when the order is placed; the second one is the one that cannot be skipped.
+flowchart TD
+  S[Buyer opens checkout for a plan] --> M[Step 1: choose how to pay<br/>unavailable methods explain why]
+  M --> G{AgreementGate:<br/>every agreement that applies<br/>exists and is in force?}
+  G -->|No: missing or still a draft| NR[Page says the purchase cannot be<br/>completed yet; nothing to accept]
+  G -->|Yes| RV[Step 2: Review and accept<br/>platform, seller, product and method terms]
+  RV --> T{Every agreement<br/>not yet accepted is ticked?}
+  T -->|No| ER[Order refused, 422<br/>nothing recorded]
+  T -->|Yes| AC[AgreementAcceptanceRecorder<br/>records the acceptances]
+  AC --> PL[Orders::Place re-checks on the server<br/>in force and accepted as it reads now]
+  PL -->|Not satisfied| RF[Refused: AgreementsRequired]
+  PL -->|Satisfied| OR[Order placed, awaiting payment<br/>acceptances copied onto the order]
+  OR --> EV[Order page lists the agreements,<br/>who accepted and when]
+  OR --> PI[Payment instructions are shown<br/>only now, after acceptance]
+  SA[Seller places an order for a buyer] -->|acceptance method seller_assisted| AC
+  RS[Renewal] -.->|carries the acceptance already given| OR

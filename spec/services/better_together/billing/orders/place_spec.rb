@@ -5,6 +5,8 @@ require 'rails_helper'
 RSpec.describe BetterTogether::Billing::Orders::Place do
   include_context 'with orders fixtures'
 
+  def draft_agreements = BetterTogether::Billing::PurchaseAgreementSeeds.call(host_platform)
+
   it 'places an order waiting for payment, with a snapshot of what it holds' do
     order = place_order
 
@@ -68,7 +70,7 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
     it 'a purchasable of another platform' do
       other_platform = create(:better_together_platform)
 
-      expect { place_order(platform: other_platform) }.to raise_error(described_class::Refused, /another platform/)
+      expect { place_order(agreements: false, platform: other_platform) }.to raise_error(described_class::Refused, /another platform/)
     end
 
     it 'a purchasable sold by someone else' do
@@ -93,7 +95,63 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
     end
 
     it 'a purpose that is not known' do
-      expect { place_order(purpose: 'barter') }.to raise_error(described_class::Refused, /Purpose/)
+      expect { place_order(agreements: false, purpose: 'barter') }.to raise_error(described_class::Refused, /not a kind of purchase/)
+    end
+  end
+
+  describe 'the purchase agreements' do
+    it 'refuses while they are only drafts, however the screens behaved' do
+      draft_agreements
+
+      expect { place_order(agreements: false) }.to raise_error(described_class::AgreementsRequired) { |error|
+        expect(error.gate.problems.map(&:code)).to eq([:not_in_force])
+      }
+      expect(host_platform.billing_orders.reload).to be_empty
+    end
+
+    it 'refuses when the buyer has not accepted them' do
+      draft_agreements.each_value { |agreement| agreement.update!(lifecycle_state: 'active') }
+
+      expect { place_order(agreements: false) }.to raise_error(described_class::AgreementsRequired) { |error|
+        expect(error.gate.missing.map(&:identifier)).to eq(['one_time_purchase_agreement'])
+      }
+    end
+
+    it 'refuses when the platform requires no agreement at all (fail closed)' do
+      host_platform.billing_agreement_requirements.destroy_all
+
+      expect { place_order(agreements: false) }.to raise_error(described_class::AgreementsRequired)
+    end
+
+    it 'refuses a zero-total order too, since it is still a purchase' do
+      free = create(:better_together_billing_plan, amount_cents: 0, currency: 'USD')
+
+      expect { place_order(agreements: false, lines: [{ purchasable: free }]) }.to raise_error(described_class::AgreementsRequired)
+    end
+
+    it 'copies the buyer\'s acceptance onto the order as its evidence' do
+      order = place_order
+
+      expect(order.agreement_acceptances.map(&:agreement_identifier)).to eq(['one_time_purchase_agreement'])
+      expect(order.agreement_acceptances.first).to have_attributes(signer: buyer, platform_id: host_platform.id)
+    end
+
+    it 'checks the signer, who may be someone other than the buyer, and copies theirs' do
+      signer = create(:better_together_person)
+
+      order = place_order(signer:)
+
+      expect(order.agreement_acceptances.first.signer).to eq(signer)
+      expect(order.buyer).to eq(buyer)
+    end
+
+    it 'asks for the payment method\'s own terms too' do
+      BetterTogether::Billing.register_builtin_processors!
+      purchase_agreements_for(host_platform)
+
+      expect { place_order(agreements: false, payment_method: 'cash') }.to raise_error(described_class::AgreementsRequired)
+      order = place_order(payment_method: 'cash')
+      expect(order.agreement_acceptances.map(&:agreement_identifier)).to contain_exactly('one_time_purchase_agreement', 'offline_payment_terms')
     end
   end
 end
