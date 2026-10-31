@@ -62,7 +62,13 @@ module BetterTogether
       # of per-model opt-in. The raw-count cross-check proves it agrees with the
       # live global ActiveStorage::Attachment hook's own coverage.
       def backfill_attachments
-        Rails.application.eager_load! unless Rails.env.production?
+        # Always eager_load, including production: verified on NLO that a `rails
+        # <task>` boot does not fully populate ActiveRecord::Base.descendants even
+        # with config.eager_load = true, unlike a `rails runner` boot. Skipping this
+        # here silently dropped whole STI families from discovery (confirmed:
+        # re-running via `rails runner` instead of the rake task found every
+        # attachment; the task alone found well under half).
+        Rails.application.eager_load!
 
         count = 0
         attachment_bearing_classes.each do |klass|
