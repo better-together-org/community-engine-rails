@@ -40,7 +40,14 @@ RSpec.describe 'BetterTogether::CalendarsController', :as_user do
       # Regression test: the month/week/day calendar tabs used to render an
       # empty grid — passed blocks never received or displayed day_events,
       # so no event ever appeared no matter what was on the calendar.
-      get better_together.calendar_path(calendar, locale:)
+      #
+      # start_date pins the displayed month-grid to the one actually containing
+      # upcoming_event: simple_calendar's month grid only pads into the next
+      # month enough to complete its last week row, so without this, "today"
+      # being near month-end (e.g. the last day of a week-ending month) can
+      # leave a 2-days-from-now event just outside the default (today's month)
+      # grid entirely - a flake, not a product bug.
+      get better_together.calendar_path(calendar, locale:, start_date: upcoming_event.starts_at.to_date.iso8601)
 
       expect(response).to have_http_status(:ok)
       day_cell_id = "calendar-day-#{upcoming_event.starts_at.to_date.iso8601}-events"
