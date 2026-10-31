@@ -132,6 +132,26 @@ RSpec.describe 'BetterTogether::Api::V1 publisher inputs', :no_auth do
       BetterTogether::ContentSecurity::AttachableRegistry.reset!
     end
 
+    it 'creates a post with a base64 cover image and a featured block', :aggregate_failures do
+      BetterTogether::Content::Image.include(ActionText::Attachable)
+      BetterTogether::Content::Image.include(Module.new { def to_attachable_partial_path = 'better_together/test_support/attachable' })
+      BetterTogether::ContentSecurity::AttachableRegistry.register('BetterTogether::Content::Image')
+      block = BetterTogether::Content::Image.create!(platform: BetterTogether::Platform.find_by(host: true), privacy: 'public',
+                                                     identifier: 'pv-img', creator: user.person, caption: 'Launch',
+                                                     media_data: data, media_filename: 'l.png')
+      post '/api/v1/posts', params: jsonapi('posts', title: 'Launch', content: '<p>Launch</p>', privacy: 'public',
+                                                     cover_image_data: data, cover_image_filename: 'launch.png',
+                                                     video_block_id: block.id), headers: headers
+
+      expect(response).to have_http_status(:created), response.body
+      record = BetterTogether::Post.find(JSON.parse(response.body).dig('data', 'id'))
+      expect(record.cover_image).to be_attached
+      expect(record.content.body.attachables.map(&:id)).to eq([block.id])
+      expect(JSON.parse(response.body).dig('data', 'attributes').keys).not_to include('video_block_id', 'cover_image_data')
+    ensure
+      BetterTogether::ContentSecurity::AttachableRegistry.reset!
+    end
+
     it 'never rewrites created_at after creation', :aggregate_failures do
       record = create(:better_together_post, privacy: 'public', creator: user.person)
       created = record.created_at

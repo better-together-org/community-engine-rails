@@ -5,8 +5,12 @@ module BetterTogether
   # rubocop:disable Metrics/ClassLength
   class Event < PlatformRecord
     include Attachments::Images
+    include Base64ImageInput
+    include BlockAttachments
     include Categorizable
     include Creatable
+    include EventHosting
+    include EventSeries
     include Federatable
     include FriendlySlug
     include Identifier
@@ -28,6 +32,9 @@ module BetterTogether
     include TrackedActivity
 
     attachable_cover_image
+    accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
+                                            default_name: 'cover'
+    attaches_blocks_to :description, at: :end
 
     has_many :event_attendances, class_name: 'BetterTogether::EventAttendance',
                                  foreign_key: :event_id, inverse_of: :event, dependent: :destroy
@@ -160,8 +167,9 @@ module BetterTogether
     # aware) rather than starts_at, so a recurring event whose original
     # starts_at is long past still shows as upcoming for as long as it keeps
     # recurring. See Event#refresh_next_occurrence_at!.
+    # Lists show sessions, not the series that groups them (see EventSeries).
     scope :upcoming, lambda {
-      where(arel_table[:next_occurrence_at].gteq(Time.current))
+      where(arel_table[:next_occurrence_at].gteq(Time.current)).where(series: false)
     }
 
     scope :ongoing, lambda {
@@ -221,6 +229,7 @@ module BetterTogether
 
       where(recurrence_exhausted_or_absent)
         .where(explicit_end_passed.or(no_end_no_duration).or(calculated_end_passed))
+        .where(series: false)
     }
 
     def self.permitted_attributes(id: false, destroy: false)

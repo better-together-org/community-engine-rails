@@ -636,7 +636,7 @@ GEM
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.6)
+    rack (3.2.8)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-cors (3.0.0)
@@ -1038,7 +1038,7 @@ DEPENDENCIES
   webmock
 
 RUBY VERSION
-   ruby 3.4.10p104
+   ruby 3.4.12p148
 
 BUNDLED WITH
    2.4.13

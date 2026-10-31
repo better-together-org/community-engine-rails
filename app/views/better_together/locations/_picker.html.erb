@@ -1,0 +1,78 @@
+<%# Shared location picker for any locatable form (a record with a has_one :location).
+    Locals: form (the record's form builder), record (the locatable record), optional label and hint overrides.
+    Ids derive from the record's param_key: <key>_location_picker, _hint, _error and _new_address.
+    The Stimulus controllers better_together--location-selector and better_together--slim-select drive it;
+    on selection the composite "ClassName:id" value is split into the hidden location_id/location_type fields
+    (or the hidden name field for a typed name), and the select's own value is discarded server-side. %>
+<% prefix = "#{record.model_name.param_key}_location" %>
+<% picker_id = "#{prefix}_picker" %>
+<% type_map = location_picker_type_map %>
+<% error_messages = location_picker_errors(record) %>
+<% describedby = ["#{picker_id}_hint", ("#{picker_id}_error" if error_messages.any?)].compact.join(' ') %>
+<% scope = BetterTogether::LocationPickerHelper::LOCALE_SCOPE %>
+<% label = local_assigns[:label] || t("#{scope}.label") %>
+<% hint = local_assigns[:hint] || t("#{scope}.hint") %>
+
+<div class="location-fields mb-3" data-controller="better_together--location-selector"
+     data-better_together--location-selector-location-type-map-value="<%= type_map.to_json %>"
+     data-better_together--location-selector-new-record-opened-announcement-value="<%= t("#{scope}.announcements.creating") %>"
+     data-better_together--location-selector-new-record-cancelled-announcement-value="<%= t("#{scope}.announcements.cancelled") %>">
+  <%= form.fields_for :location, (record.location || record.build_location) do |location_form| %>
+    <%= location_form.hidden_field :locatable_id %>
+    <%= location_form.hidden_field :locatable_type %>
+
+    <%= label_tag picker_id, label, class: 'form-label' %>
+
+    <% initial = location_picker_initial_option(record, type_map) %>
+    <%# Literal 'data-...' keys: a data: hash would dasherize the better_together-- Stimulus namespace. %>
+    <%= select_tag picker_id,
+        options_for_select(initial, initial.first&.last),
+        include_blank: true,
+        class: 'form-select',
+        id: picker_id,
+        'aria-describedby': describedby,
+        'aria-invalid': (error_messages.any? ? 'true' : nil),
+        'data-controller': 'better_together--slim-select',
+        'data-better_together--location-selector-target': 'locationSelect',
+        'data-action': 'change->better_together--location-selector#applyLocationSelection better_together--slim-select:create->better_together--location-selector#revealNewRecord',
+        'data-better_together--slim-select-options-value': location_picker_slim_select_options.to_json %>
+
+    <%= location_form.hidden_field :location_id, 'data-better_together--location-selector-target': 'locationIdField' %>
+    <%= location_form.hidden_field :location_type, 'data-better_together--location-selector-target': 'locationTypeField' %>
+    <%= location_form.hidden_field :name, 'data-better_together--location-selector-target': 'simpleNameField' %>
+
+    <% if error_messages.any? %>
+      <div id="<%= picker_id %>_error" class="text-danger small mt-1" role="alert"><%= error_messages.to_sentence %></div>
+    <% end %>
+
+    <small id="<%= picker_id %>_hint" class="form-text text-muted d-block"><%= hint %></small>
+
+    <div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"
+         data-better_together--location-selector-target="announcement"></div>
+
+    <% if policy(BetterTogether::Address).create? %>
+      <% picked = location_form.object.location %>
+      <% inline_address = (picked if picked.is_a?(BetterTogether::Address) && picked.new_record?) || BetterTogether::Address.new %>
+      <% panel_open = inline_address.new_record? && (error_messages.any? || inline_address.line1.present?) %>
+      <fieldset id="<%= prefix %>_new_address" class="border rounded p-3 mt-3"
+                data-better_together--location-selector-target="newRecordBlock"
+                data-location-type="address"
+                data-new-record-query="<%= inline_address.line1 %>"
+                <%= 'hidden' unless panel_open %>>
+        <legend class="fs-6 fw-semibold">
+          <%= t("#{scope}.new_address_legend") %>
+          <span class="fw-normal text-muted ms-1"
+                data-better_together--location-selector-target="newRecordQuery"><%= "\"#{inline_address.line1}\"" if inline_address.line1.present? %></span>
+        </legend>
+        <%= location_form.fields_for :location, inline_address do |new_form| %>
+          <%= render 'better_together/addresses/address_fields', form: new_form, destroy: false, only_primary: true, inline: true %>
+        <% end %>
+        <div class="mt-2">
+          <%= button_tag t("#{scope}.cancel_new_address"), type: 'button', class: 'btn btn-outline-secondary btn-sm',
+              'data-action': 'click->better_together--location-selector#cancelNewRecord',
+              'data-better_together--location-selector-target': 'cancelNewRecordButton' %>
+        </div>
+      </fieldset>
+    <% end %>
+  <% end %>
+</div>

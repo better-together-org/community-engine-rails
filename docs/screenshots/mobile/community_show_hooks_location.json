@@ -1,0 +1,48 @@
+{
+  "name": "community_show_hooks_location",
+  "device": "mobile",
+  "url": "/en/c/community-0908192a83281854accd",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_hooks",
+  "flow": "community_show_hooks_location",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_hooks_spec.rb",
+  "callouts": [
+    {
+      "selector": "#community-location",
+      "title": "Location line",
+      "bullets": [
+        "The location line is its own partial; a host can link the place."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 765.390625,
+        "width": 427.0,
+        "height": 48.0,
+        "right": 456.0,
+        "bottom": 813.390625,
+        "center_x": 242.5,
+        "center_y": 789.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 765.390625,
+        "width": 427.0,
+        "height": 48.0,
+        "right": 456.0,
+        "bottom": 813.390625,
+        "center_x": 242.5,
+        "center_y": 789.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 561.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 765.390625
+      }
+    }
+  ]
+}

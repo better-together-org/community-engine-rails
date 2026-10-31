@@ -18,6 +18,8 @@ erDiagram
   EXT_PLATFORM o|--o{ EMAIL_ADDRESSES : "platform / platform_id"
   CONTACT_DETAILS ||--o{ EMAIL_ADDRESSES : "contact_detail / contact_detail_id"
   EXT_EVENT ||--o{ EVENT_OCCURRENCES : "event / event_id"
+  EXT_EVENT ||--o{ EVENT_SERIES_SESSIONS : "series / series_id"
+  EXT_EVENT ||--o{ EVENT_SERIES_SESSIONS : "session / session_id"
   EXT_PLATFORM o|--o{ FEATURE_ACCESS_GRANTS : "platform / platform_id"
   EXT_PERSON ||--o{ FEATURE_ACCESS_GRANTS : "person / person_id"
   EXT_PERSON o|--o{ FEATURE_ACCESS_GRANTS : "granted_by_person / granted_by_person_id"
@@ -48,6 +50,13 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM o|--o{ QUOTA : "platform / platform_id"
+  EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
+  QUOTA ||--o{ QUOTA_BALANCES : "quota / quota_id"
+  EXT_PLATFORM o|--o{ QUOTA_RESERVATIONS : "platform / platform_id"
+  QUOTA ||--o{ QUOTA_RESERVATIONS : "quota / quota_id"
+  EXT_PLATFORM o|--o{ QUOTA_USAGES : "platform / platform_id"
+  QUOTA ||--o{ QUOTA_USAGES : "quota / quota_id"
   EXT_PLATFORM o|--o{ SHORT_LINKS : "platform / platform_id"
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
@@ -171,6 +180,12 @@ erDiagram
     occurrence_date date
   }
 
+  EVENT_SERIES_SESSIONS {
+    series_id uuid
+    session_id uuid
+    position integer
+  }
+
   FEATURE_ACCESS_GRANTS {
     granted_by_person_id uuid
     person_id uuid
@@ -282,6 +297,54 @@ erDiagram
     number string
     privacy string
     primary_flag boolean
+  }
+
+  QUOTA {
+    owner_id uuid
+    platform_id uuid
+    enforcement_mode string
+    owner_type string
+    period string
+    quota_type string
+    status string
+    limit integer
+    soft_limit integer
+    metadata jsonb
+  }
+
+  QUOTA_BALANCES {
+    platform_id uuid
+    quota_id uuid
+    period_key string
+    consumed integer
+    reserved integer
+    recalculated_at datetime
+  }
+
+  QUOTA_RESERVATIONS {
+    actor_id uuid
+    owner_id uuid
+    platform_id uuid
+    quota_id uuid
+    subject_id uuid
+    actor_type string
+    idempotency_key string
+    owner_type string
+    period_key string
+    quota_type string
+  }
+
+  QUOTA_USAGES {
+    actor_id uuid
+    owner_id uuid
+    platform_id uuid
+    quota_id uuid
+    subject_id uuid
+    actor_type string
+    event string
+    idempotency_key string
+    owner_type string
+    period_key string
   }
 
   SHORT_LINKS {

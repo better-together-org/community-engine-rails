@@ -1,0 +1,82 @@
+{
+  "name": "community_show_tabs_about",
+  "device": "mobile",
+  "url": "/en/c/community-a3ab588f08a233c861cb",
+  "title": "Harbour Arts Collective | Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_show_tabs",
+  "flow": "about",
+  "source_spec": "./spec/docs_screenshots/better_together/community_show_tabs_spec.rb",
+  "callouts": [
+    {
+      "selector": "#communityTabs",
+      "title": "Tabs",
+      "bullets": [
+        "Driven by the tabs controller; Contact has its own tab."
+      ],
+      "target": {
+        "x": 21.0,
+        "y": 159.0625,
+        "width": 443.0,
+        "height": 82.0,
+        "right": 464.0,
+        "bottom": 241.0625,
+        "center_x": 242.5,
+        "center_y": 200.0625
+      },
+      "avoid": {
+        "x": 21.0,
+        "y": 159.0625,
+        "width": 443.0,
+        "height": 82.0,
+        "right": 464.0,
+        "bottom": 241.0625,
+        "center_x": 242.5,
+        "center_y": 200.0625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 261.06,
+        "width": 270.0,
+        "height": 158,
+        "score": 1015.9375
+      }
+    },
+    {
+      "selector": "#community-map",
+      "title": "Map",
+      "bullets": [
+        "Beside the tabs; shows the place the community is located at."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 589.84375,
+        "width": 485.0,
+        "height": 508.0,
+        "right": 485.0,
+        "bottom": 1097.84375,
+        "center_x": 242.5,
+        "center_y": 843.84375
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 589.84375,
+        "width": 485.0,
+        "height": 508.0,
+        "right": 485.0,
+        "bottom": 1097.84375,
+        "center_x": 242.5,
+        "center_y": 843.84375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 439.06,
+        "width": 270.0,
+        "height": 184
+      }
+    }
+  ]
+}

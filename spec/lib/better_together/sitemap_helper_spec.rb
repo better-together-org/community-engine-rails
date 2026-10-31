@@ -41,6 +41,18 @@ RSpec.describe BetterTogether::SitemapHelper do
 
       expect(sitemap.paths.join).not_to include(other.slug)
     end
+
+    it 'indexes only the communities the model lists for the sitemap' do
+      listed = create(:better_together_community, platform: host_platform, privacy: 'public')
+      unlisted = create(:better_together_community, platform: host_platform, privacy: 'public')
+      allow(BetterTogether::Community).to receive(:sitemap_listable).and_return(
+        BetterTogether::Community.where(id: listed.id)
+      )
+
+      described_class.add_communities(sitemap, I18n.default_locale, platform: host_platform)
+
+      expect(sitemap.paths.join).to include(listed.slug).and(satisfy { |paths| paths.exclude?(unlisted.slug) })
+    end
   end
 
   describe '.add_posts' do

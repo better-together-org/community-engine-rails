@@ -1,7 +1,7 @@
 <%# locals: (block:, iframe_url:, aspect_ratio:, title:, caption: nil, iframe_allow: nil, allow_fullscreen: true) -%>
 <% embed_state = iframe_embed_state(iframe_url) %>
 
-<figure class="iframe-block">
+<figure class="iframe-block<%= ' iframe-block--portrait' if aspect_ratio == '9x16' %>">
   <% if embed_state[:status] == :allowed %>
     <div class="ratio ratio-<%= aspect_ratio %>">
       <iframe src="<%= iframe_url %>"

@@ -1,8 +1,8 @@
 <% content_for :page_title do %>
-  Edit <%= @resource.name %> | <%= resource_class.model_name.human.pluralize %>
+  <%= t('.page_title', name: @resource.name, resources: t('better_together.geography.settlements.index.title')) %>
 <% end %>
 
 <div class="container mt-5">
-  <h1 class="mb-4">Editing settlement</h1>
+  <h1 class="mb-4"><%= t('.heading') %></h1>
   <%= render "form", geography_settlement: @geography_settlement %>
 </div>

@@ -5,7 +5,10 @@ require 'storext'
 module BetterTogether
   # A gathering
   class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
+    include Base64ImageInput
     include Contactable
+    include ContactData
+    include Geography::Locatable::AddressData
     include HostsEvents
     include Identifier
     include Infrastructure::BuildingConnections
@@ -17,11 +20,13 @@ module BetterTogether
     include Privacy
     include Metrics::Shareable
     include Metrics::Viewable
+    include Quotas::Owner
     include Reportable
     include Searchable
     include Shortlinkable
     include SitemapRefreshable
     include ::Storext.model
+    include Geography::Locatable::LocationMapPoints
 
     belongs_to :creator,
                class_name: '::BetterTogether::Person',
@@ -97,6 +102,20 @@ module BetterTogether
       }
     }
 
+    # The community's own place. A plain association, not Locatable::One (which also makes a record Mappable).
+    has_one :location, class_name: 'BetterTogether::Geography::LocatableLocation', as: :locatable,
+                       dependent: :destroy, autosave: true
+
+    # Adds the located_in(place) scope (settlement pages list the communities located in them) without making the
+    # community Mappable; it works off the has_one :location above.
+    include Geography::Locatable::LocatedIn
+
+    accepts_base64_image :logo_data, attachment: :logo, filename_field: :logo_filename, default_name: 'logo'
+    accepts_base64_image :cover_image_data, attachment: :cover_image, filename_field: :cover_image_filename,
+                                            default_name: 'cover'
+    accepts_base64_image :profile_image_data, attachment: :profile_image, filename_field: :profile_image_filename,
+                                              default_name: 'profile'
+
     has_one_attached :profile_image do |attachable|
       attachable.variant :optimized_jpeg, resize_to_limit: [200, 200],
                                           # rubocop:todo Layout/LineLength
@@ -155,6 +174,11 @@ module BetterTogether
 
     def self.extra_permitted_attributes
       super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
+    end
+
+    # Communities the sitemap indexes for a platform. Host apps narrow this to keep communities out of it.
+    def self.sitemap_listable(platform)
+      for_platform(platform).privacy_public
     end
 
     def self.host_community

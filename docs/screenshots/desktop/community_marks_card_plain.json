@@ -1,0 +1,11 @@
+{
+  "name": "community_marks_card_plain",
+  "device": "desktop",
+  "url": "/en/communities",
+  "title": "Communities | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "community_marks",
+  "flow": "card_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/community_marks_spec.rb"
+}

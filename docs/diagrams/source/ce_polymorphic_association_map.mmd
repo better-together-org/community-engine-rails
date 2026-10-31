@@ -10,7 +10,7 @@ flowchart TB
     BetterTogether__OauthAccessGrant_polymorphic_summary["OauthAccessGrant\nowner: seeds"]
     BetterTogether__OauthAccessToken_polymorphic_summary["OauthAccessToken\nowner: seeds"]
     BetterTogether__OauthApplication_polymorphic_summary["OauthApplication\nowner: seeds"]
-    BetterTogether__Person_polymorphic_summary["Person\nowner: seeds, owner: contributions, owner: authorships, owner: page_contributions, owner: post_contributions +23"]
+    BetterTogether__Person_polymorphic_summary["Person\nowner: seeds, owner: contributions, owner: authorships, owner: page_contributions, owner: post_contributions +24"]
     BetterTogether__PersonAccessGrant_polymorphic_summary["PersonAccessGrant\nowner: seeds"]
     BetterTogether__PersonBlock_polymorphic_summary["PersonBlock\nowner: seeds"]
     BetterTogether__PersonChecklistItem_polymorphic_summary["PersonChecklistItem\nowner: seeds"]
@@ -53,12 +53,12 @@ flowchart TB
   subgraph platform_network["Platforms, communities, routing, and federation"]
     direction TB
     platform_network_polymorphic_anchor:::hidden
-    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +16"]
+    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +18"]
     BetterTogether__CommunityInvitation_polymorphic_summary["CommunityInvitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
     BetterTogether__FederationAccessToken_polymorphic_summary["FederationAccessToken\nowner: seeds"]
     BetterTogether__NavigationArea_polymorphic_summary["NavigationArea\ntarget: navigable, owner: seeds, owner: slugs, owner: string_translations"]
     BetterTogether__NavigationItem_polymorphic_summary["NavigationItem\ntarget: linkable, owner: seeds, owner: slugs, owner: string_translations"]
-    BetterTogether__Platform_polymorphic_summary["Platform\nowner: seeds, owner: slugs, owner: views, owner: rich_text_translations, owner: rich_text_description +7"]
+    BetterTogether__Platform_polymorphic_summary["Platform\nowner: seeds, owner: slugs, owner: views, owner: rich_text_translations, owner: rich_text_description +8"]
     BetterTogether__PlatformConnection_polymorphic_summary["PlatformConnection\nowner: seeds"]
     BetterTogether__PlatformDomain_polymorphic_summary["PlatformDomain\nowner: seeds"]
     BetterTogether__PlatformInvitation_polymorphic_summary["PlatformInvitation\nowner: seeds, owner: rich_text_greeting"]
@@ -272,6 +272,7 @@ flowchart TB
     BetterTogether__ContentSecurity__Subject_polymorphic_summary["ContentSecurity::Subject\ntarget: subject, owner: seeds"]
     BetterTogether__EmailAddress_polymorphic_summary["EmailAddress\nowner: seeds"]
     BetterTogether__EventOccurrence_polymorphic_summary["EventOccurrence\nowner: seeds, owner: comments, owner: comment_config, owner: map, owner: location +1"]
+    BetterTogether__EventSeriesSession_polymorphic_summary["EventSeriesSession\nowner: seeds"]
     BetterTogether__FeatureAccessGrant_polymorphic_summary["FeatureAccessGrant\nowner: seeds"]
     BetterTogether__FederationContentGrant_polymorphic_summary["FederationContentGrant\ntarget: federatable, owner: seeds"]
     BetterTogether__InboundEmailMessage_polymorphic_summary["InboundEmailMessage\ntarget: target, target: routed_record, owner: seeds"]
@@ -284,6 +285,10 @@ flowchart TB
     BetterTogether__MessageRequest_polymorphic_summary["MessageRequest\nowner: seeds"]
     BetterTogether__PersonMessagingGrant_polymorphic_summary["PersonMessagingGrant\nowner: seeds"]
     BetterTogether__PhoneNumber_polymorphic_summary["PhoneNumber\nowner: seeds"]
+    BetterTogether__Quota_polymorphic_summary["Quota\ntarget: owner, owner: seeds"]
+    BetterTogether__QuotaBalance_polymorphic_summary["QuotaBalance\nowner: seeds"]
+    BetterTogether__QuotaReservation_polymorphic_summary["QuotaReservation\ntarget: subject, target: actor, target: owner, owner: seeds"]
+    BetterTogether__QuotaUsage_polymorphic_summary["QuotaUsage\ntarget: subject, target: actor, target: owner, owner: seeds"]
     BetterTogether__ShortLink_polymorphic_summary["ShortLink\ntarget: linkable, owner: seeds, owner: string_translations"]
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
@@ -298,7 +303,8 @@ flowchart TB
     BetterTogether__ContentSecurity__ScanEvent_polymorphic_summary ~~~ BetterTogether__ContentSecurity__Subject_polymorphic_summary
     BetterTogether__ContentSecurity__Subject_polymorphic_summary ~~~ BetterTogether__EmailAddress_polymorphic_summary
     BetterTogether__EmailAddress_polymorphic_summary ~~~ BetterTogether__EventOccurrence_polymorphic_summary
-    BetterTogether__EventOccurrence_polymorphic_summary ~~~ BetterTogether__FeatureAccessGrant_polymorphic_summary
+    BetterTogether__EventOccurrence_polymorphic_summary ~~~ BetterTogether__EventSeriesSession_polymorphic_summary
+    BetterTogether__EventSeriesSession_polymorphic_summary ~~~ BetterTogether__FeatureAccessGrant_polymorphic_summary
     BetterTogether__FeatureAccessGrant_polymorphic_summary ~~~ BetterTogether__FederationContentGrant_polymorphic_summary
     BetterTogether__FederationContentGrant_polymorphic_summary ~~~ BetterTogether__InboundEmailMessage_polymorphic_summary
     BetterTogether__InboundEmailMessage_polymorphic_summary ~~~ BetterTogether__InboundEmailReplyToken_polymorphic_summary
@@ -310,7 +316,11 @@ flowchart TB
     BetterTogether__JwtDenylist_polymorphic_summary ~~~ BetterTogether__MessageRequest_polymorphic_summary
     BetterTogether__MessageRequest_polymorphic_summary ~~~ BetterTogether__PersonMessagingGrant_polymorphic_summary
     BetterTogether__PersonMessagingGrant_polymorphic_summary ~~~ BetterTogether__PhoneNumber_polymorphic_summary
-    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
+    BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__Quota_polymorphic_summary
+    BetterTogether__Quota_polymorphic_summary ~~~ BetterTogether__QuotaBalance_polymorphic_summary
+    BetterTogether__QuotaBalance_polymorphic_summary ~~~ BetterTogether__QuotaReservation_polymorphic_summary
+    BetterTogether__QuotaReservation_polymorphic_summary ~~~ BetterTogether__QuotaUsage_polymorphic_summary
+    BetterTogether__QuotaUsage_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
     BetterTogether__ShortLink_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary
     BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__WebsiteLink_polymorphic_summary
   end

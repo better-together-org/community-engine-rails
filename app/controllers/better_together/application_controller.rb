@@ -7,6 +7,7 @@ module BetterTogether
     include PublicActivity::StoreController
     include Pundit::Authorization
     include InvitationSessionManagement
+    include MentionPrefetch
     include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception

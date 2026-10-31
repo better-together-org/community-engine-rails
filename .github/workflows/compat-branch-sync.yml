@@ -36,6 +36,7 @@ jobs:
     env:
       TARGET_BRANCH: ${{ matrix.target_branch }}
       GH_TOKEN: ${{ secrets.COMPAT_SYNC_TOKEN }}
+      NORMALIZE_HEADLINE: "chore(compat): normalize ActiveRecord versions to 7.2"
     steps:
       - name: Require sync token
         shell: bash
@@ -83,9 +84,16 @@ jobs:
 
           # Skip the push (and the CI re-run) when the remote sync branch is
           # already the merge of the same two tips.
-          if git fetch origin "${sync_branch}" 2>/dev/null \
-            && [[ "$(git rev-parse "origin/${sync_branch}^1" 2>/dev/null)" == "$(git rev-parse "origin/${TARGET_BRANCH}")" ]] \
-            && [[ "$(git rev-parse "origin/${sync_branch}^2" 2>/dev/null)" == "$(git rev-parse origin/main)" ]]; then
+          # A signed "normalize" commit may sit on top of the merge; look through it.
+          if git fetch origin "${sync_branch}" 2>/dev/null; then
+            merge_ref="origin/${sync_branch}"
+            if [[ "$(git log -1 --format=%s "${merge_ref}")" == "${NORMALIZE_HEADLINE}" ]]; then
+              merge_ref="${merge_ref}~1"
+            fi
+          fi
+          if [[ -n "${merge_ref:-}" ]] \
+            && [[ "$(git rev-parse "${merge_ref}^1" 2>/dev/null)" == "$(git rev-parse "origin/${TARGET_BRANCH}")" ]] \
+            && [[ "$(git rev-parse "${merge_ref}^2" 2>/dev/null)" == "$(git rev-parse origin/main)" ]]; then
             echo "::notice::${sync_branch} is already current."
             echo "action=reuse" >> "${GITHUB_OUTPUT}"
             exit 0
@@ -93,6 +101,24 @@ jobs:
 
           git push --force origin "${sync_branch}"
           echo "action=pushed" >> "${GITHUB_OUTPUT}"
+
+      # main uses the newest ActiveRecord schema/migration version (8.x); the 7.2 and
+      # 8.0 lanes cannot load it. Rewrite it to 7.2 as a GitHub-signed commit (a
+      # runner-side git commit would be unsigned), the same way i18n-health does.
+      - name: Normalize ActiveRecord versions (Rails 7.2 and 8.0 lanes)
+        if: steps.build.outputs.action == 'pushed' && (matrix.target_branch == 'compat/rails-7.2' || matrix.target_branch == 'compat/rails-8.0')
+        shell: bash
+        env:
+          BRANCH: ${{ steps.build.outputs.sync_branch }}
+        run: |
+          set -euo pipefail
+          changed="$(bin/normalize-ar-versions -v 7.2)"
+          if [[ -z "${changed}" ]]; then
+            echo "::notice::No ActiveRecord version rewrites needed on ${BRANCH}."
+            exit 0
+          fi
+          echo "Rewrote: ${changed}"
+          bin/ci-signed-commit "${NORMALIZE_HEADLINE}" spec/dummy/db/schema.rb db/migrate
 
       - name: Open PR if none exists
         if: steps.build.outputs.action == 'pushed' || steps.build.outputs.action == 'reuse'

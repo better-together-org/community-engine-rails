@@ -3,6 +3,10 @@
 module BetterTogether
   # helper methods for file uploads
   module UploadsHelper
+    # Deliberately not a read of BetterTogether::Quotas: this is "total size of the
+    # uploads shown in this list", a narrower question than the Person's owner-wide
+    # media_storage QuotaBalance (every attachment type, the whole account).
+    # Surfacing that broader number is a future usage-page decision, not a swap here.
     def total_upload_size(uploads)
       number_to_human_size(uploads.sum(&:byte_size))
     end

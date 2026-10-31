@@ -1,0 +1,10 @@
+<%# locals: (event:) %>
+<%# On a session page, under the date: the series it belongs to. Both names are shown only when they differ. %>
+<% series = event.parent_series %>
+<% if series && policy(series).show? %>
+  <div class="event-series-banner card-text text-muted my-2" id="<%= dom_id(event, :series_banner) %>">
+    <i class="fas fa-layer-group me-2" aria-hidden="true"></i>
+    <%= link_to (series.name == event.name ? t('better_together.events.series.part_of_run', count: series.sessions.size) : t('better_together.events.series.part_of', name: series.name)),
+                event_path(series), class: 'fw-semibold' %>
+  </div>
+<% end %>

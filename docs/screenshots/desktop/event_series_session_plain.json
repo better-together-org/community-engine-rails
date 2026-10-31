@@ -1,0 +1,11 @@
+{
+  "name": "event_series_session_plain",
+  "device": "desktop",
+  "url": "/en/events/e6f04fd4-a850-4cb0-8711-ec76a9ef81d6",
+  "title": "Fleetwood Mac Tribute: Matinee | Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_series",
+  "flow": "session_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb"
+}
