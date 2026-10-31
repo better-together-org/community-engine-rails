@@ -1,0 +1,48 @@
+{
+  "name": "geography_index_hook",
+  "device": "mobile",
+  "url": "/en/host/geography/regions",
+  "title": "Regions | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "geography_index_and_post_form_hooks",
+  "flow": "geography_index_hook",
+  "source_spec": "./spec/docs_screenshots/better_together/geography_index_and_post_form_hooks_spec.rb",
+  "callouts": [
+    {
+      "selector": "#host-index-extra",
+      "title": "Index extra",
+      "bullets": [
+        "Between the heading and the list; empty unless a host overrides the partial."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 173.390625,
+        "width": 461.0,
+        "height": 58.0,
+        "right": 473.0,
+        "bottom": 231.390625,
+        "center_x": 242.5,
+        "center_y": 202.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 173.390625,
+        "width": 461.0,
+        "height": 58.0,
+        "right": 473.0,
+        "bottom": 231.390625,
+        "center_x": 242.5,
+        "center_y": 202.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 251.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 1025.609375
+      }
+    }
+  ]
+}
