@@ -1,0 +1,35 @@
+<%# locals: (image:, in_gallery: false) -%>
+<%# Action Text passes the attachment, whose own #caption is not the block's caption. -%>
+<% block = image.try(:attachable) || image %>
+<%# A plain same-origin path: image_tag would prefix the asset host, which does not serve blobs, and the
+    view-context route helper is missing when the API renders rich text. -%>
+<% source = Rails.application.routes.url_helpers.rails_storage_proxy_path(block.media, only_path: true) %>
+<%# Rich text sanitizing drops id and data attributes, so the stable hooks here are classes. -%>
+<% alt = block.alt_text.presence || block.caption %>
+<% if block.caption.present? || block.attribution.present? %>
+  <figure class="figure text-center w-100 attached-image mb-4">
+    <%= tag.img src: source, class: 'figure-img img-fluid d-block mx-auto', alt:, loading: 'lazy' %>
+    <figcaption class="figure-caption text-center">
+      <% if block.caption.present? %>
+        <p class="mb-1"><%= block.caption %></p>
+      <% end %>
+      <% if block.attribution.present? %>
+        <p class="text-muted small attached-image__attribution">
+          <% if block.attribution_url.present? %>
+            <a href="<%= block.attribution_url %>" target="_blank" rel="noopener noreferrer">
+              <%= block.attribution %>
+              <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+              <span class="sr-only"><%= t('better_together.content.blocks.attachment_preview.opens_in_new_tab') %></span>
+            </a>
+          <% else %>
+            <%= block.attribution %>
+          <% end %>
+        </p>
+      <% end %>
+    </figcaption>
+  </figure>
+<% else %>
+  <figure class="attached-image mb-4">
+    <%= tag.img src: source, class: 'img-fluid d-block mx-auto', alt:, loading: 'lazy' %>
+  </figure>
+<% end %>

@@ -1,8 +1,8 @@
 %% render.orientation: portrait
 flowchart TD
   A[Organizer opens the event form] --> B["Mixed-search picker\n(single field, no type radio)"]
-  B --> C["GET /events/available_locations?search=..."]
-  C --> D["EventsController#available_locations\n(location_type omitted)"]
+  B --> C["GET /locations/available?search=..."]
+  C --> D["LocationsController#available\n(location_type omitted)"]
   D --> E{Per Placeable type}
   E -->|Address / Building| F["Policy-scoped:\norganizer's own + public records"]
   E -->|Settlement / Region| G[Unscoped: full curated reference list]

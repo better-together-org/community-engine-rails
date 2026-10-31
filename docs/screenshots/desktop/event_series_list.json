@@ -1,0 +1,48 @@
+{
+  "name": "event_series_list",
+  "device": "desktop",
+  "url": "/en/events",
+  "title": "Events | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "event_series",
+  "flow": "list",
+  "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb",
+  "callouts": [
+    {
+      "selector": "#series_mention_event_d33a92eb-c1b1-4e13-8753-c6ddbc8a6911",
+      "title": "Series mention",
+      "bullets": [
+        "A session says which series it is part of."
+      ],
+      "target": {
+        "x": 418.0,
+        "y": 712.0,
+        "width": 274.0,
+        "height": 24.0,
+        "right": 692.0,
+        "bottom": 736.0,
+        "center_x": 555.0,
+        "center_y": 724.0
+      },
+      "avoid": {
+        "x": 418.0,
+        "y": 712.0,
+        "width": 274.0,
+        "height": 24.0,
+        "right": 692.0,
+        "bottom": 736.0,
+        "center_x": 555.0,
+        "center_y": 724.0
+      },
+      "placement": {
+        "side": "right",
+        "x": 712.0,
+        "y": 658.0,
+        "width": 380,
+        "height": 132,
+        "score": 748.0
+      }
+    }
+  ]
+}

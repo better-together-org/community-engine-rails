@@ -1,0 +1,48 @@
+{
+  "name": "post_form_hook",
+  "device": "desktop",
+  "url": "/en/posts/new",
+  "title": "New Post | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "geography_index_and_post_form_hooks",
+  "flow": "post_form_hook",
+  "source_spec": "./spec/docs_screenshots/better_together/geography_index_and_post_form_hooks_spec.rb",
+  "callouts": [
+    {
+      "selector": "#host-post-form-extra",
+      "title": "Post form extra",
+      "bullets": [
+        "Before the publishing date; empty unless a host overrides the partial."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 1313.0,
+        "width": 1296.0,
+        "height": 58.0,
+        "right": 1360.5,
+        "bottom": 1371.0,
+        "center_x": 712.5,
+        "center_y": 1342.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 1313.0,
+        "width": 1296.0,
+        "height": 58.0,
+        "right": 1360.5,
+        "bottom": 1371.0,
+        "center_x": 712.5,
+        "center_y": 1342.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 1135.0,
+        "width": 380,
+        "height": 158,
+        "score": 1313.0
+      }
+    }
+  ]
+}

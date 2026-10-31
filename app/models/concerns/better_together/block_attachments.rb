@@ -36,8 +36,13 @@ module BetterTogether
 
     private
 
+    # A model can put one more block in front of attachment_block_ids (a post's featured video).
+    def leading_attachment_ids
+      []
+    end
+
     def attachment_ids_to_attach
-      Array(attachment_block_ids).compact_blank
+      (leading_attachment_ids + Array(attachment_block_ids)).compact_blank
     end
 
     def attaching_blocks?
@@ -50,7 +55,7 @@ module BetterTogether
     end
 
     def attachment_blocks_must_be_attachable
-      return unless attachment_ids_to_attach.any? { |id| attachable_block(id).nil? }
+      return unless Array(attachment_block_ids).compact_blank.any? { |id| attachable_block(id).nil? }
 
       errors.add(:attachment_block_ids, :invalid)
     end

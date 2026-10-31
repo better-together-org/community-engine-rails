@@ -1,0 +1,14 @@
+---
+title: Index extra
+audience:
+- platform_manager
+- developer
+journey_step: 'As a host app developer, I add content here: index extra.'
+callouts:
+- :id: hook
+  :title: Index extra
+  :description: Between the heading and the list; empty unless a host overrides the
+    partial.
+accessibility_notes: The default markup is unchanged; hooks only add override points.
+slug: geography_index_hook
+device: mobile

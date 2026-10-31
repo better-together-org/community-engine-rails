@@ -1,0 +1,17 @@
+<%# locals: (series:) %>
+<%# A series' sessions as event cards, between its description and its hosts. Each card links to the session's own page. %>
+<% sessions = series.sessions.select { |session| policy(session).show? }.sort_by { |session| session.starts_at || Time.zone.at(0) } %>
+<section class="event-series-sessions my-4" id="<%= dom_id(series, :sessions) %>">
+  <h2 class="h5 mb-3"><%= t('better_together.events.series.sessions_heading') %></h2>
+  <%= render 'better_together/events/series_disposition', event: series if policy(series).update? || policy(series).destroy? %>
+  <% if sessions.any? %>
+    <%# Same row as the events list: the card supplies its own column. %>
+    <div class="row row-cols-1 row-cols-md-2">
+      <% sessions.each do |session| %>
+        <%= render 'better_together/events/event', event: session, show_series: false %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted"><%= t('better_together.events.series.no_sessions') %></p>
+  <% end %>
+</section>

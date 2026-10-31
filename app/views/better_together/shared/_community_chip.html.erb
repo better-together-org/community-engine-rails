@@ -3,8 +3,7 @@
             class: 'community-chip d-inline-flex align-items-center gap-1 px-2 small rounded-pill border text-decoration-none text-body-secondary',
             data: { bs_toggle: 'tooltip', bs_placement: 'top' },
             title: t('better_together.shared.community_chip.title', community: community.name) do %>
-  <%= profile_image_tag(community, size: 32, alt: '', title: community.name,
-                                   style: 'width: 1.25rem; height: 1.25rem; object-fit: cover;') %>
+  <%= community_mark_tag(community, size: 20, alt: '', title: community.name) %>
   <span class="visually-hidden"><%= t('better_together.shared.community_chip.label') %>:</span>
   <span class="community-chip-name"><%= community.name %></span>
   <i class="fa-solid fa-people-group" aria-hidden="true"></i>

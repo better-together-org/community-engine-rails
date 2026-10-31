@@ -1,0 +1,19 @@
+%% render.orientation: landscape
+erDiagram
+  EVENT ||--o{ EVENT_SERIES_SESSION : "series has (series_id)"
+  EVENT ||--o| EVENT_SERIES_SESSION : "session is in (session_id, unique)"
+  EVENT {
+    uuid id PK
+    bool series "true: dateless parent, fixed at creation"
+    datetime starts_at "series: derived from sessions"
+    datetime ends_at "series: derived from sessions"
+    string identifier "publisher key"
+    string privacy
+    string federation_visibility "series: no_federate"
+  }
+  EVENT_SERIES_SESSION {
+    uuid id PK
+    uuid series_id FK
+    uuid session_id FK
+    int position
+  }

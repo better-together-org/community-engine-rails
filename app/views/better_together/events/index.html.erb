@@ -1,12 +1,16 @@
 <% content_for :page_title do %>
-  <%= resource_class.model_name.human.pluralize %>
+  <%= index_heading %>
 <% end %>
 
+<%# Inside a turbo-frame (a community page tab) the list lays out for the pane: filters stack above a card grid,
+    the heading is an h2 because the host page owns the h1, and links leave the frame. -%>
+<% frame_id = index_frame_id %>
+<%= content_tag(frame_id ? :'turbo-frame' : :div, id: frame_id, target: ('_top' if frame_id)) do %>
 <div class="container my-3">
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h1 class="mb-0"><%= resource_class.model_name.human.pluralize %></h1>
+    <%= content_tag(frame_id ? :h2 : :h1, index_heading, class: 'mb-0') %>
     <% if policy(resource_class.new).create? %>
-      <%= link_to new_event_path, class: 'btn btn-success', id: 'new-event-btn',
+      <%= link_to new_event_path(**(scoped_community ? { host_id: scoped_community.id, host_type: scoped_community.class.name } : {})), class: 'btn btn-success', id: 'new-event-btn',
                   'aria-label' => t('.new_btn_text') do %>
         <i class="fas fa-plus"></i> <%= t('.new_btn_text') %>
       <% end %>
@@ -16,7 +20,8 @@
     <%= render 'better_together/shared/publishing_agreement_notice' %>
   <% end %>
 
-  <% if events_map && events_map.spaces.any? %>
+  <%# A community page shows the community's own map beside its tabs; a place-scoped list would map every event. %>
+  <% if events_map && events_map.spaces.any? && !scoped_community && !scoped_place %>
     <section class="events-map my-4">
       <%= render partial: 'better_together/shared/map', locals: { map: events_map, use_label_as_popup: true } %>
     </section>
@@ -24,19 +29,19 @@
 
   <div class="row">
     <!-- Filter Sidebar -->
-    <div class="col-lg-3 mb-4">
-      <button id="events-filter-toggle" class="btn btn-outline-secondary d-lg-none mb-2 sidebar-toggle" type="button"
+    <div class="<%= frame_id ? 'col-12' : 'col-lg-3' %> mb-4">
+      <button id="events-filter-toggle" class="btn btn-outline-secondary <%= 'd-lg-none' unless frame_id %> mb-2 sidebar-toggle" type="button"
               data-bs-toggle="collapse" data-bs-target="#events-filter-sidebar"
               aria-expanded="false" aria-controls="events-filter-sidebar">
         <i class="fas fa-filter" aria-hidden="true"></i> <%= t('.toggle_filters') %>
       </button>
-      <div id="events-filter-sidebar" class="collapse d-lg-block sidebar">
+      <div id="events-filter-sidebar" class="collapse <%= 'd-lg-block' unless frame_id %> sidebar">
         <%= render 'list_form' %>
       </div>
     </div>
 
     <!-- Events List -->
-    <div class="col-lg-9">
+    <div class="<%= frame_id ? 'col-12' : 'col-lg-9' %>">
 
       <!-- Pagination -->
       <% if @events.respond_to?(:total_pages) && @events.total_pages > 1 %>
@@ -55,7 +60,7 @@
       <% end %>
 
       <% if @events.any? %>
-        <div id="events" class="row row-cols-1 row-cols-md-2">
+        <div id="events" class="<%= frame_id ? 'frame-card-grid' : 'row row-cols-1 row-cols-md-2' %>">
           <%= render @events %>
         </div>
       <% else %>
@@ -71,3 +76,4 @@
     </div>
   </div>
 </div>
+<% end %>

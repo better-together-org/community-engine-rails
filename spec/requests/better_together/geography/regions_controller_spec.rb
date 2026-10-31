@@ -19,5 +19,13 @@ RSpec.describe 'BetterTogether::Geography::RegionsController', :as_platform_mana
       get better_together.geography_region_path(locale:, id: region.slug)
       expect(response).to have_http_status(:ok)
     end
+
+    it 'renders the translated settlements heading' do
+      get better_together.geography_region_path(locale:, id: region.slug)
+
+      expect_html_content(
+        I18n.t('better_together.geography.regions.show.settlements_heading', name: region.name, locale:)
+      )
+    end
   end
 end

@@ -1044,10 +1044,9 @@ en:
         actions:
           destroy_aria: Delete community
           edit_aria: Edit community
-        create_event: Create an Event
         events:
-          create_event: Create an Event
-          draft_heading: Draft
+          loading: Loading events...
+        map_aria: Map of %{name}
         members:
           add_member_modal:
             close: Close
@@ -1057,9 +1056,7 @@ en:
             submit: Add
             title: Add New Member
         posts:
-          create_post: Create Post
-          empty_description: Posts created for this community will show up here.
-          empty_title: No posts yet
+          loading: Loading posts...
         roles:
           empty_title: No community roles defined
           member_count_aria:
@@ -1137,6 +1134,10 @@ en:
           question: Question
           question_placeholder: What is the question?
         associated_pages: Associated Pages
+        attachment_preview:
+          image: 'Image: %{caption}'
+          opens_in_new_tab: "(opens in a new tab)"
+          video: 'Video: %{url}'
         checklist_block:
           not_found: Checklist not found.
           select_prompt: "— Select a checklist —"
@@ -1243,6 +1244,7 @@ en:
           default: Default template
           host_community_contact_details: Host community contact details
         video_block:
+          aspect_ratio_portrait: 9:16 (Vertical)
           missing_url: No video URL configured.
           title: YouTube video player
           url_help: Accepts YouTube, Vimeo, or any direct embed URL.
@@ -1642,16 +1644,6 @@ en:
         status_draft: Draft
         status_label: Status
       location: Location
-      location_picker:
-        announcements:
-          cancelled: New address cancelled. Returned to the location search field.
-          creating: Creating a new address. Fill in the address fields below, then
-            save the event.
-        cancel_new_address: Cancel new address
-        create_row:
-          new_named_with_query: 'Create new %{model}: "%{q}"'
-          use_typed_name: Use "%{q}" as a custom location name
-        new_address_legend: New address
       login_required: Please log in to manage RSVPs.
       model_invalid: 'Validation failed: %{errors}'
       no_attendees: No attendees yet.
@@ -1751,6 +1743,29 @@ en:
       rsvp_saved: RSVP saved
       rsvp_unavailable_draft: RSVP will be available once this event is scheduled.
       save_event: Save Event
+      series:
+        disposed: Series updated.
+        disposition:
+          cancel_legend: Cancel the series
+          cancel_sessions: Cancel the upcoming dates too
+          cancel_submit: Cancel series
+          delete_legend: Delete the series
+          delete_sessions: Delete the dates too
+          delete_submit: Delete series
+          explain: This series has %{count} dates. Say what happens to them before
+            cancelling or deleting it.
+          open: Cancel or delete this series
+          promote_sessions: Keep the dates as separate events
+        no_sessions: No dates have been added to this series yet.
+        other_dates: Other dates
+        part_of: Part of %{name}
+        part_of_run:
+          one: Part of a series of %{count} date
+          other: Part of a series of %{count} dates
+        sessions_heading: Dates
+        show_all_dates:
+          one: Show %{count} more date
+          other: Show %{count} more dates
       show:
         map_label: Map of %{name}
       statuses:
@@ -1980,20 +1995,40 @@ en:
       locatable_location:
         errors:
           no_location_source: Must specify either a name or location
+      place_scoped_index:
+        events_heading: Events in %{name}
+        posts_heading: Posts in %{name}
       regions:
         index:
           title: Regions
+        show:
+          settlements_heading: Settlements in %{name}
       settlements:
+        edit:
+          heading: Editing settlement
+          page_title: Edit %{name} | %{resources}
         index:
+          description: Cities, towns, villages, hamlets, Indigenous communities and
+            other named places.
+          new: New settlement
           title: Settlements
+        new:
+          back: Back to settlements
+          heading: New settlement
         show:
           destroy: Destroy Settlement
           edit-settlement: Edit Settlement
+          events_loading: Loading events...
+          posts_loading: Loading posts...
+          sections_aria: Settlement sections
           view-all-settlements: View All Settlements
         toolbar:
           back_to_geography_settlements: Back to Settlements
           save_geography_settlement: Save Settlement
           view_geography_settlement: View Settlement
+      states:
+        show:
+          settlements_tab: Settlements
     global:
       add: Add
     globals:
@@ -2262,6 +2297,21 @@ en:
     labelable:
       custom-label-placeholder: Your custom label
     loading: Loading...
+    locations:
+      picker:
+        announcements:
+          cancelled: New address cancelled. Returned to the location search field.
+          creating: Creating a new address. Fill in the address fields below, then
+            save.
+        cancel_new_address: Cancel new address
+        create_new: Create new %{model}
+        hint: Search for an existing address, building, or settlement (a city, town,
+          village, hamlet, Indigenous community or other named place). If it is not
+          listed, choose "Create new address" or use your typed text as a custom name.
+        label: Location
+        new_address_legend: New address
+        new_named_with_query: 'Create new %{model}: "%{q}"'
+        use_typed_name: Use "%{q}" as a custom location name
     mailer:
       footer:
         no_reply: This is an automated message. Please do not reply to this email.
@@ -3355,6 +3405,7 @@ en:
           community: Community
           published: Published
           title: Title
+        toggle_filters: Filters
       labels:
         privacy: Privacy
       list_form:
@@ -4927,6 +4978,7 @@ en:
     tabs:
       about: About
       attendees: Attendees
+      communities: Communities
       contact: Contact
       events: Events
       federation: Federation
@@ -5387,6 +5439,17 @@ en:
     button: Search
     placeholder: Search...
   seed_catalog:
+    geography:
+      categories:
+        continents: Continents
+        countries: Countries
+        provinces: Provinces & Territories
+        regions: Regions
+        settlements: Settlements
+      description: Continents, countries, provinces/territories, regions, and settlements
+        (cities, towns, villages, hamlets, Indigenous communities and other named
+        places) used to place locations in the geography hierarchy.
+      label: Geography Reference Data
     index:
       actions: Actions
       category: Category
