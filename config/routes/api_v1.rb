@@ -52,6 +52,11 @@ namespace :v1 do # rubocop:disable Metrics/BlockLength
   # Metrics (custom summary endpoint, read-only)
   get 'metrics/summary', to: 'metrics_summary#show'
 
+  # Quotas (read-only - usage/limit numbers an external poller or dashboard reads)
+  jsonapi_resources :quotas, only: %i[index show]
+  jsonapi_resources :quota_usages, only: %i[index show]
+  jsonapi_resources :quota_balances, only: %i[index show]
+
   # Pages and Content Blocks
   jsonapi_resources :pages
   jsonapi_resources :authorships

@@ -53,7 +53,7 @@ flowchart TB
   subgraph platform_network["Platforms, communities, routing, and federation"]
     direction TB
     platform_network_polymorphic_anchor:::hidden
-    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +18"]
+    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +17"]
     BetterTogether__CommunityInvitation_polymorphic_summary["CommunityInvitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
     BetterTogether__FederationAccessToken_polymorphic_summary["FederationAccessToken\nowner: seeds"]
     BetterTogether__NavigationArea_polymorphic_summary["NavigationArea\ntarget: navigable, owner: seeds, owner: slugs, owner: string_translations"]
@@ -287,6 +287,7 @@ flowchart TB
     BetterTogether__PhoneNumber_polymorphic_summary["PhoneNumber\nowner: seeds"]
     BetterTogether__Quota_polymorphic_summary["Quota\ntarget: owner, owner: seeds"]
     BetterTogether__QuotaBalance_polymorphic_summary["QuotaBalance\nowner: seeds"]
+    BetterTogether__QuotaGrant_polymorphic_summary["QuotaGrant\ntarget: owner, target: granted_by, owner: seeds"]
     BetterTogether__QuotaReservation_polymorphic_summary["QuotaReservation\ntarget: subject, target: actor, target: owner, owner: seeds"]
     BetterTogether__QuotaUsage_polymorphic_summary["QuotaUsage\ntarget: subject, target: actor, target: owner, owner: seeds"]
     BetterTogether__ShortLink_polymorphic_summary["ShortLink\ntarget: linkable, owner: seeds, owner: string_translations"]
@@ -318,7 +319,8 @@ flowchart TB
     BetterTogether__PersonMessagingGrant_polymorphic_summary ~~~ BetterTogether__PhoneNumber_polymorphic_summary
     BetterTogether__PhoneNumber_polymorphic_summary ~~~ BetterTogether__Quota_polymorphic_summary
     BetterTogether__Quota_polymorphic_summary ~~~ BetterTogether__QuotaBalance_polymorphic_summary
-    BetterTogether__QuotaBalance_polymorphic_summary ~~~ BetterTogether__QuotaReservation_polymorphic_summary
+    BetterTogether__QuotaBalance_polymorphic_summary ~~~ BetterTogether__QuotaGrant_polymorphic_summary
+    BetterTogether__QuotaGrant_polymorphic_summary ~~~ BetterTogether__QuotaReservation_polymorphic_summary
     BetterTogether__QuotaReservation_polymorphic_summary ~~~ BetterTogether__QuotaUsage_polymorphic_summary
     BetterTogether__QuotaUsage_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
     BetterTogether__ShortLink_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary

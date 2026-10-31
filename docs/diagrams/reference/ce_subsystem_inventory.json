@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-31T19:12:50Z",
+  "generated_at": "2026-10-31T19:50:59Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7450,6 +7450,12 @@
         },
         {
           "from": "BetterTogether::Quota",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::QuotaGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -29564,6 +29570,102 @@
           ]
         },
         {
+          "name": "BetterTogether::QuotaGrant",
+          "label": "QuotaGrant",
+          "source_path": "app/models/better_together/quota_grant.rb",
+          "table_name": "better_together_quota_grants",
+          "columns": [
+            [
+              "granted_by_id",
+              "uuid FK"
+            ],
+            [
+              "owner_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "granted_by_type",
+              "string"
+            ],
+            [
+              "owner_type",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "reason",
+              "text"
+            ],
+            [
+              "limit",
+              "integer"
+            ],
+            [
+              "expires_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: quota_type",
+            "InclusionValidator: quota_type (in=dynamic)",
+            "PresenceValidator: limit",
+            "NumericalityValidator: limit (greater_than_or_equal_to=0)",
+            "InclusionValidator: granted_by_type (allow_nil=true, in=[\"BetterTogether::Person\", \"BetterTogether::Robot\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "owner",
+              "foreign_key": "owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "granted_by",
+              "foreign_key": "granted_by_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::QuotaReservation",
           "label": "QuotaReservation",
           "source_path": "app/models/better_together/quota_reservation.rb",
@@ -30696,6 +30798,39 @@
           ]
         },
         {
+          "name": "BetterTogether::Api::V1::QuotaBalancesController",
+          "label": "Api::V1::QuotaBalancesController",
+          "source_path": "app/controllers/better_together/api/v1/quota_balances_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::LocaleScoping",
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
+          "name": "BetterTogether::Api::V1::QuotaUsagesController",
+          "label": "Api::V1::QuotaUsagesController",
+          "source_path": "app/controllers/better_together/api/v1/quota_usages_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::LocaleScoping",
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
+          "name": "BetterTogether::Api::V1::QuotasController",
+          "label": "Api::V1::QuotasController",
+          "source_path": "app/controllers/better_together/api/v1/quotas_controller.rb",
+          "superclass": "BetterTogether::Api::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Api::LocaleScoping",
+            "BetterTogether::Api::OauthAuthorization"
+          ]
+        },
+        {
           "name": "BetterTogether::Api::V1::RobotsController",
           "label": "Api::V1::RobotsController",
           "source_path": "app/controllers/better_together/api/v1/robots_controller.rb",
@@ -31597,6 +31732,9 @@
             "Api::V1::ShortLinksController",
             "Api::V1::RolesController",
             "Api::V1::RobotsController",
+            "Api::V1::QuotasController",
+            "Api::V1::QuotaUsagesController",
+            "Api::V1::QuotaBalancesController",
             "Api::V1::PersonDeletionRequestsController",
             "Api::V1::PersonDataExportsController",
             "Api::V1::PersonCommunityMembershipsController",
@@ -31638,6 +31776,9 @@
             "Api::V1::ShortLinksController",
             "Api::V1::RolesController",
             "Api::V1::RobotsController",
+            "Api::V1::QuotasController",
+            "Api::V1::QuotaUsagesController",
+            "Api::V1::QuotaBalancesController",
             "Api::V1::PersonDeletionRequestsController",
             "Api::V1::PersonDataExportsController",
             "Api::V1::PersonCommunityMembershipsController",
@@ -31688,8 +31829,9 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
-            "QuotaUsage",
             "QuotaReservation",
+            "QuotaUsage",
+            "QuotaGrant",
             "QuotaBalance",
             "Quota",
             "PhoneNumber",
@@ -32208,8 +32350,9 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
-            "QuotaUsage",
             "QuotaReservation",
+            "QuotaUsage",
+            "QuotaGrant",
             "QuotaBalance",
             "Quota",
             "PhoneNumber",
@@ -32307,8 +32450,9 @@
             "WebsiteLink",
             "SocialMediaAccount",
             "ShortLink",
-            "QuotaUsage",
             "QuotaReservation",
+            "QuotaUsage",
+            "QuotaGrant",
             "QuotaBalance",
             "Quota",
             "PhoneNumber",
@@ -32616,13 +32760,19 @@
           "target_subsystem": "identity_access"
         },
         {
+          "from": "BetterTogether::QuotaReservation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::QuotaUsage",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::QuotaReservation",
+          "from": "BetterTogether::QuotaGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

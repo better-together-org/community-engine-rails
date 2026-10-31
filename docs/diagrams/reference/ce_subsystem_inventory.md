@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-10-31T19:12:50Z`.
+Generated from live Rails reflections at `2026-10-31T19:50:59Z`.
 
 ## Identity, access, and memberships
 
@@ -683,6 +683,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PlatformConnectionSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | Quota | `better_together_quotas` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`enforcement_mode` (string)<br>`owner_type` (string)<br>`period` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>UniquenessValidator: owner_id (scope=[:owner_type, :quota_type]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaBalance | `better_together_quota_balances` | `platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`period_key` (string)<br>`consumed` (integer)<br>`reserved` (integer)<br>`recalculated_at` (datetime) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: period_key<br>UniquenessValidator: quota_id (scope=:period_key)<br>NumericalityValidator: consumed, reserved (only_integer=true) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
+| QuotaGrant | `better_together_quota_grants` | `granted_by_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`granted_by_type` (string)<br>`owner_type` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>InclusionValidator: granted_by_type (allow_nil=true, in=["BetterTogether::Person", "BetterTogether::Robot"]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaReservation | `better_together_quota_reservations` | `actor_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`actor_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>PresenceValidator: amount<br>NumericalityValidator: amount (only_integer=true)<br>PresenceValidator: period_key<br>PresenceValidator: expires_at | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaUsage | `better_together_quota_usages` | `actor_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`subject_id` (uuid FK)<br>`actor_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>PresenceValidator: amount<br>NumericalityValidator: amount (only_integer=true)<br>PresenceValidator: period_key<br>PresenceValidator: idempotency_key | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | SafetyReportDigestNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
@@ -749,6 +750,9 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Api::V1::PersonCommunityMembershipsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::PersonDataExportsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::PersonDeletionRequestsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
+| Api::V1::QuotaBalancesController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
+| Api::V1::QuotaUsagesController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
+| Api::V1::QuotasController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::RobotsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::RolesController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::ShortLinksController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
@@ -875,6 +879,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `PlatformConnectionSubmittedNotifier::Notification`: `recipient` (belongs_to)
 - `Quota`: `owner` (belongs_to), `seeds` (has_many)
 - `QuotaBalance`: `seeds` (has_many)
+- `QuotaGrant`: `owner` (belongs_to), `granted_by` (belongs_to), `seeds` (has_many)
 - `QuotaReservation`: `subject` (belongs_to), `actor` (belongs_to), `owner` (belongs_to), `seeds` (has_many)
 - `QuotaUsage`: `subject` (belongs_to), `actor` (belongs_to), `owner` (belongs_to), `seeds` (has_many)
 - `SafetyReportDigestNotifier`: `record` (belongs_to)

@@ -10,6 +10,9 @@ erDiagram
   QUOTA ||--o{ QUOTA_BALANCES : "quota / quota_id (materialized per period_key)"
   EXT_ACTIVE_STORAGE_ATTACHMENT o|--o| QUOTA_USAGES : "subject / subject_id (media_storage settle/reverse)"
   EXT_AI_LOG_TRANSLATION o|--o| QUOTA_USAGES : "subject / subject_id (nil on live settle; key shares the log id)"
+  EXT_PERSON o|--o{ QUOTA_GRANTS : "owner / owner_id (polymorphic, via Quotas::Owner)"
+  EXT_COMMUNITY o|--o{ QUOTA_GRANTS : "owner / owner_id (polymorphic, via Quotas::Owner)"
+  EXT_PLATFORM o|--o{ QUOTA_GRANTS : "owner / owner_id (polymorphic, via Quotas::Owner)"
 
   QUOTA {
     uuid id PK
@@ -71,6 +74,19 @@ erDiagram
     bigint consumed
     bigint reserved
     datetime recalculated_at "nullable"
+    uuid platform_id FK
+  }
+
+  QUOTA_GRANTS {
+    uuid id PK
+    string owner_type "polymorphic, via Quotas::Owner"
+    uuid owner_id FK
+    string quota_type
+    bigint limit
+    string granted_by_type "Person | Robot, nullable"
+    uuid granted_by_id FK "nullable"
+    text reason "nullable"
+    datetime expires_at "nullable"
     uuid platform_id FK
   }
 

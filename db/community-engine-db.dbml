@@ -2389,6 +2389,29 @@ Table "better_together_quota_balances" {
   }
 }
 
+Table "better_together_quota_grants" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "owner_type" varchar [not null]
+  "owner_id" uuid [not null]
+  "quota_type" varchar [not null]
+  "limit" bigint [not null]
+  "granted_by_type" varchar
+  "granted_by_id" uuid
+  "reason" text
+  "expires_at" timestamp
+  "platform_id" uuid
+
+  indexes {
+    ("granted_by_type", "granted_by_id") [name: "index_bt_quota_grants_on_granted_by"]
+    ("owner_type", "owner_id", "quota_type") [name: "index_bt_quota_grants_on_owner_and_type"]
+    ("owner_type", "owner_id") [name: "index_bt_quota_grants_on_owner"]
+    "platform_id" [name: "index_bt_quota_grants_on_platform"]
+  }
+}
+
 Table "better_together_quota_reservations" {
   "id" uuid [pk]
   "lock_version" integer [not null, default: 0]
@@ -3586,6 +3609,8 @@ Ref: "better_together_posts"."platform_id" > "better_together_platforms"."id"
 Ref: "better_together_quota_balances"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_quota_balances"."quota_id" > "better_together_quotas"."id"
+
+Ref: "better_together_quota_grants"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_quota_reservations"."platform_id" > "better_together_platforms"."id"
 
