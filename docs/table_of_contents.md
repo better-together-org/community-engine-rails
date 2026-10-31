@@ -84,6 +84,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 
 ##### **Billing** - [`billing/`](billing/)
 - [Billing Foundation and Processor Adapters](billing/processor-adapters.md) - Vendor-neutral billing core, host configuration and the adapter contract
+- [Billing Notifications](billing/notifications.md) - Who is told what about orders, payments and billing operations, never twice, never with payment details
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Billing Payment Methods](billing/payment_methods.md) - Cash, cheque and e-transfer: how a seller turns them on, what buyers are told, the limits
@@ -161,6 +162,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
 - [Billing Event Pipeline Flow](diagrams/source/billing_event_pipeline_flow.mmd)
+- [Billing Notification Flow](diagrams/source/billing_notification_flow.mmd)
 - [Billing Order Lifecycle Flow](diagrams/source/billing_order_lifecycle_flow.mmd)
 - [Billing Payment Methods Model](diagrams/source/billing_payment_methods_model.mmd)
 - [Billing Plan Processor Sync Flow](diagrams/source/billing_plan_processor_sync_flow.mmd)

@@ -1,0 +1,19 @@
+%% Billing — how a notification is decided, deduplicated and sent. Pay's own mailers stay off
+%% (Pay.send_emails = false); this is the only path.
+flowchart TD
+  A[Core services<br/>order placed, paid, cancelled, expired<br/>refund recorded, method changed<br/>event dead-lettered, plan sync failed] --> N
+  E[EventProcessor: final outcome<br/>with a neutral outcome_kind and a subject] --> K{Kind is in the Catalog<br/>and there is a subject?}
+  K -->|No| IG[Ignored]
+  K -->|Yes| N[Notifications.deliver kind, subject, dedupe_key, actor]
+  N --> CM[After the surrounding transaction commits]
+  CM --> AU[For each audience of the kind:<br/>buyer, seller, operator]
+  AU --> RC[Recipients: the buyer, or people with manage_platform<br/>on the subject's platform; not the actor, not robots]
+  RC --> DD{Receipt for this person,<br/>kind and key already exists?}
+  DD -->|Yes| SK[Skip: already told]
+  DD -->|No| TX[One transaction:<br/>write the receipt and queue the notifier]
+  TX -->|queueing fails| RB[Receipt rolls back<br/>error reported, work not failed]
+  TX --> NT[Billing::Notifier on the billing queue<br/>stamped with the record's platform]
+  NT --> AP[In-app message<br/>title, body and link in the reader's language]
+  NT --> EM{Critical kind,<br/>or notify_by_email on?}
+  EM -->|Yes| ML[BillingMailer<br/>no instructions, no payee details, no payloads]
+  EM -->|No| NE[No email]

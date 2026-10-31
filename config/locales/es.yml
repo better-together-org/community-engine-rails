@@ -920,6 +920,87 @@ es:
         unavailable_currency_not_supported: No disponible en esta moneda.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
+      notifications:
+        dispute_opened:
+          body: Un comprador disputó un pago del pedido %{number}. Revíselo.
+          title: Se disputó un pago
+        dispute_resolved:
+          body: Se resolvió la disputa del pedido %{number}.
+          title: Se resolvió una disputa de pago
+        event_dead_lettered:
+          body: Un evento de facturación no se pudo procesar tras varios intentos.
+            Revíselo.
+          title: Un evento de facturación necesita atención
+        order_cancelled:
+          buyer:
+            body: No se cobró nada.
+            title: El pedido %{number} se canceló
+          seller:
+            body: Se canceló un pedido de %{amount} antes de pagarse.
+            title: El pedido %{number} se canceló
+        order_expired:
+          buyer:
+            body: No se pagó a tiempo, así que se liberó lo que retenía.
+            title: El pedido %{number} caducó
+          seller:
+            body: Un pedido de %{amount} no se pagó a tiempo y ha caducado.
+            title: El pedido %{number} caducó
+        order_paid:
+          buyer:
+            body: Gracias. Recibimos su pago de %{amount}.
+            title: El pedido %{number} está pagado
+          seller:
+            body: Se ha pagado un pedido de %{amount}.
+            title: El pedido %{number} está pagado
+        order_placed:
+          buyer:
+            body: Lo estamos reservando para usted. Pague %{amount} para completarlo.
+            title: Su pedido %{number} se realizó
+          seller:
+            body: Un nuevo pedido de %{amount} espera su pago.
+            title: Nuevo pedido %{number}
+        payment_action_required:
+          body: Su banco necesita que confirme este pago antes de que pueda completarse.
+          title: Se necesita una acción para pagar el pedido %{number}
+        payment_failed:
+          body: El pago no se completó. Revise sus datos de pago e inténtelo de nuevo.
+          title: Falló su pago del pedido %{number}
+        payment_succeeded:
+          body: Recibimos su pago de %{amount}.
+          title: Recibo del pedido %{number}
+        plan_sync_failed:
+          body: Falló la sincronización de un plan. Abra el plan para reintentar.
+          title: No se pudo enviar un plan al procesador de pagos
+        refund_issued:
+          buyer:
+            body: Se emitió un reembolso de su pedido.
+            title: Reembolso del pedido %{number}
+          seller:
+            body: Se emitió un reembolso de un pedido.
+            title: Reembolso emitido del pedido %{number}
+        refund_recorded:
+          body: El vendedor registró un reembolso de su pedido.
+          title: Reembolso del pedido %{number}
+        settings_changed:
+          body: Alguien cambió cómo pagan los compradores (%{method}). Si no lo esperaba,
+            compruébelo ahora.
+          title: Se cambió un método de pago
+        subscription_canceled:
+          buyer:
+            body: Su suscripción ha sido cancelada.
+            title: Su suscripción se canceló
+          seller:
+            body: Se ha cancelado una suscripción.
+            title: Se canceló una suscripción
+        subscription_renewing:
+          body: Su suscripción se renovará en breve. Puede gestionarla desde su cuenta.
+          title: Su suscripción se renovará pronto
+        trial_ended:
+          body: Su período de prueba ha terminado.
+          title: Su prueba ha terminado
+        trial_ending:
+          body: Su período de prueba está por terminar.
+          title: Su prueba termina pronto
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         agreements_heading: Acuerdos aceptados
@@ -1181,6 +1262,13 @@ es:
         state_active: En vigor
         state_draft: Borrador
         state_retired: Retirado
+    billing_mailer:
+      notification:
+        greeting: 'Hola %{name}:'
+        safety: Nunca incluimos datos de pago en un correo. Para pagar o cambiar algo,
+          inicie sesión y abra el enlace de arriba.
+        support: "¿Preguntas? Escriba a %{email}."
+        view: Verlo
     bot_defense:
       errors:
         expired_challenge: La verificación de seguridad venció. Recarga el formulario

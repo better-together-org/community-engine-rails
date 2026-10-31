@@ -1,0 +1,11 @@
+<%= @title %>
+
+<%= t('better_together.billing_mailer.notification.greeting', name: @recipient.name) %>
+
+<%= @body %>
+
+<%= t('better_together.billing_mailer.notification.view') %>: <%= @url %>
+
+<%= t('better_together.billing_mailer.notification.safety') %>
+<% if @support_email %><%= t('better_together.billing_mailer.notification.support', email: @support_email) %>
+<% end %><%= @business %>

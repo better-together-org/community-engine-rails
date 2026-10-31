@@ -48,7 +48,18 @@ module BetterTogether
 
       def record_failure(error)
         plan = BetterTogether::Billing::Plan.find_by(id: arguments.first)
-        plan&.record_sync_failure!(ERROR_CODES.fetch(error.class.name, 'processor_error'))
+        return unless plan
+
+        plan.record_sync_failure!(ERROR_CODES.fetch(error.class.name, 'processor_error'))
+        tell_stewards(plan)
+      end
+
+      # The platform's stewards are told a plan could not be pushed, once per failed attempt. A plan
+      # a community or person sells is theirs to hear about.
+      def tell_stewards(plan)
+        return unless plan.sold_by_platform?
+
+        Notifications.deliver('plan_sync_failed', subject: plan, dedupe_key: "plan-sync:#{plan.id}:#{plan.sync_attempted_at.to_i}")
       end
     end
   end

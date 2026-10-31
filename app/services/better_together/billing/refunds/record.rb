@@ -46,10 +46,11 @@ module BetterTogether
         end
 
         # The payment is refunded in part or in full, then so is its order.
-        def settle(_refund)
+        def settle(refund)
           payment.reload
           payment.update!(status: payment.refundable_cents.zero? ? 'refunded' : 'partially_refunded')
           Orders::Settle.call(payment.order)
+          Notifications.deliver(refund.status == 'recorded' ? 'refund_recorded' : 'refund_issued', subject: refund, actor: recorded_by)
         end
       end
     end

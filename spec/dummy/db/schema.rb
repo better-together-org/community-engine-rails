@@ -283,6 +283,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.index ["subject_type", "subject_id"], name: "idx_bt_billing_events_subject"
   end
 
+  create_table "better_together_billing_notification_receipts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "recipient_id", null: false
+    t.string "kind", null: false
+    t.string "audience", null: false
+    t.string "dedupe_key", null: false
+    t.index ["platform_id", "recipient_id", "kind", "dedupe_key"], name: "idx_bt_billing_notif_receipts_unique", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_notif_receipts_platform"
+    t.index ["recipient_id"], name: "idx_bt_billing_notif_receipts_recipient"
+  end
+
   create_table "better_together_billing_order_agreement_acceptances", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2948,6 +2962,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_billing_agreement_requirements", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_billing_agreement_requirements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_notification_receipts", "better_together_people", column: "recipient_id", on_delete: :cascade
+  add_foreign_key "better_together_billing_notification_receipts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_acc_order_platform"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"

@@ -142,6 +142,8 @@ module BetterTogether
     has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
     has_many :billing_agreement_requirements, class_name: 'BetterTogether::Billing::AgreementRequirement',
                                               dependent: :restrict_with_error
+    has_many :billing_notification_receipts, class_name: 'BetterTogether::Billing::NotificationReceipt',
+                                             dependent: :restrict_with_error
     has_many :billing_orders, class_name: 'BetterTogether::Billing::Order', dependent: :restrict_with_error
     has_many :billing_processor_settings, class_name: 'BetterTogether::Billing::ProcessorSetting',
                                           dependent: :restrict_with_error

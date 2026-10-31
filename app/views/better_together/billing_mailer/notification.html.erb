@@ -1,0 +1,21 @@
+<h1 style="font-size: 20px; margin: 0 0 16px;"><%= @title %></h1>
+
+<p><%= t('better_together.billing_mailer.notification.greeting', name: @recipient.name) %></p>
+
+<p><%= @body %></p>
+
+<p>
+  <a href="<%= @url %>" style="display: inline-block; padding: 10px 18px; background-color: #0d6efd; color: #ffffff; text-decoration: none; border-radius: 4px;">
+    <%= t('better_together.billing_mailer.notification.view') %>
+  </a>
+</p>
+
+<p style="color: #6c757d; font-size: 13px;">
+  <%= t('better_together.billing_mailer.notification.safety') %>
+  <% if @support_email %>
+    <%= t('better_together.billing_mailer.notification.support', email: @support_email) %>
+  <% end %>
+</p>
+<% if @business %>
+  <p style="color: #6c757d; font-size: 13px;"><%= @business %></p>
+<% end %>

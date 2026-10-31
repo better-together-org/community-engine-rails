@@ -74,6 +74,7 @@ module BetterTogether
           reserve(order)
           order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: hold_hours.hours.from_now)
           Settle.call(order) if order.total_cents.zero?
+          Notifications.deliver('order_placed', subject: order)
           order
         end
 

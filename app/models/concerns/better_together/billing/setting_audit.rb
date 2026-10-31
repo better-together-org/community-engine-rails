@@ -22,6 +22,9 @@ module BetterTogether
         return if changes.empty?
 
         platform.billing_events.create!(audit_event_attributes(changes))
+        # The other stewards are told a payment destination or a method changed; the person who
+        # changed it knows. The key is per change, so a later change is told about too.
+        Notifications.deliver('settings_changed', subject: self, dedupe_key: "setting:#{id}:#{lock_version}", actor: changed_by)
       end
 
       def changed_field_names

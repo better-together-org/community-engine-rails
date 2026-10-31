@@ -926,6 +926,91 @@ fr:
         unavailable_currency_not_supported: Non disponible dans cette devise.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+      notifications:
+        dispute_opened:
+          body: Un acheteur a contesté un paiement pour la commande %{number}. Veuillez
+            l’examiner.
+          title: Un paiement a été contesté
+        dispute_resolved:
+          body: Le litige pour la commande %{number} a été réglé.
+          title: Un litige de paiement a été réglé
+        event_dead_lettered:
+          body: Un événement de facturation n’a pas pu être traité après plusieurs
+            essais. Veuillez l’examiner.
+          title: Un événement de facturation demande votre attention
+        order_cancelled:
+          buyer:
+            body: Rien n’a été débité.
+            title: La commande %{number} a été annulée
+          seller:
+            body: Une commande de %{amount} a été annulée avant d’être payée.
+            title: La commande %{number} a été annulée
+        order_expired:
+          buyer:
+            body: Elle n’a pas été payée à temps; ce qu’elle retenait a été libéré.
+            title: La commande %{number} a expiré
+          seller:
+            body: Une commande de %{amount} n’a pas été payée à temps et a expiré.
+            title: La commande %{number} a expiré
+        order_paid:
+          buyer:
+            body: Merci. Votre paiement de %{amount} a été reçu.
+            title: La commande %{number} est payée
+          seller:
+            body: Une commande de %{amount} a été payée.
+            title: La commande %{number} est payée
+        order_placed:
+          buyer:
+            body: Nous la gardons pour vous. Payez %{amount} pour la terminer.
+            title: Votre commande %{number} a été passée
+          seller:
+            body: Une nouvelle commande de %{amount} attend son paiement.
+            title: Nouvelle commande %{number}
+        payment_action_required:
+          body: Votre banque doit vous demander de confirmer ce paiement avant qu’il
+            puisse aboutir.
+          title: Action requise pour payer la commande %{number}
+        payment_failed:
+          body: Le paiement n’a pas abouti. Vérifiez vos informations de paiement
+            et réessayez.
+          title: Votre paiement pour la commande %{number} a échoué
+        payment_succeeded:
+          body: Votre paiement de %{amount} a été reçu.
+          title: Reçu pour la commande %{number}
+        plan_sync_failed:
+          body: La synchronisation d’un plan a échoué. Ouvrez le plan pour réessayer.
+          title: Un plan n’a pas pu être envoyé au processeur de paiement
+        refund_issued:
+          buyer:
+            body: Un remboursement a été émis pour votre commande.
+            title: Remboursement de la commande %{number}
+          seller:
+            body: Un remboursement a été émis pour une commande.
+            title: Remboursement émis pour la commande %{number}
+        refund_recorded:
+          body: Le vendeur a enregistré un remboursement pour votre commande.
+          title: Remboursement de la commande %{number}
+        settings_changed:
+          body: Quelqu’un a modifié la façon dont les acheteurs paient (%{method}).
+            Si vous ne vous y attendiez pas, vérifiez-le maintenant.
+          title: Un mode de paiement a été modifié
+        subscription_canceled:
+          buyer:
+            body: Votre abonnement a été annulé.
+            title: Votre abonnement a été annulé
+          seller:
+            body: Un abonnement a été annulé.
+            title: Un abonnement a été annulé
+        subscription_renewing:
+          body: Votre abonnement sera renouvelé sous peu. Vous pouvez le gérer depuis
+            votre compte.
+          title: Votre abonnement sera bientôt renouvelé
+        trial_ended:
+          body: Votre période d’essai est terminée.
+          title: Votre période d’essai est terminée
+        trial_ending:
+          body: Votre période d’essai est sur le point de se terminer.
+          title: Votre période d’essai se termine bientôt
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées
@@ -1190,6 +1275,13 @@ fr:
         state_active: En vigueur
         state_draft: Brouillon
         state_retired: Retirée
+    billing_mailer:
+      notification:
+        greeting: Bonjour %{name},
+        safety: Nous n’incluons jamais de détails de paiement dans un courriel. Pour
+          payer ou modifier quoi que ce soit, connectez-vous et ouvrez le lien ci-dessus.
+        support: Des questions ? Écrivez à %{email}.
+        view: Voir
     bot_defense:
       errors:
         expired_challenge: La vérification de sécurité a expiré. Rechargez le formulaire
