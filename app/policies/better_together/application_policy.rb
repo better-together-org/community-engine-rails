@@ -41,6 +41,21 @@ module BetterTogether
     end
 
     class Scope # rubocop:todo Style/Documentation, Metrics/ClassLength
+      # Bounds every scope's result by the credential community, including
+      # subclasses that override #resolve without calling super.
+      module CredentialBound
+        def resolve
+          BetterTogether::CredentialCommunityBound.apply(super)
+        end
+      end
+
+      prepend CredentialBound
+
+      def self.inherited(subclass)
+        super
+        subclass.prepend(CredentialBound)
+      end
+
       attr_reader :user, :scope, :agent, :robot, :invitation_token, :options
 
       def initialize(user, scope, invitation_token: nil, **options)

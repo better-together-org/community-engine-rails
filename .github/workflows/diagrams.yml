@@ -4,31 +4,45 @@ on:
   pull_request:
     branches: [ "**" ]
 
+# A newer push to the same PR makes the older run pointless; cancel it.
+concurrency:
+  group: diagrams-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   render-and-verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v7
         with:
           node-version: '20'
 
+      # Sources are skipped when their recorded content hash matches (docs/diagrams/exports/.source-hashes).
+      # The renderer or this workflow changing can alter every export, so those changes re-render everything.
       - name: Render Mermaid diagrams
         run: |
           chmod +x bin/render_diagrams || true
-          ./bin/render_diagrams || true
+          FORCE_ARG=""
+          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep -qE '^(bin/render_diagrams|\.github/workflows/diagrams\.yml)$'; then
+            FORCE_ARG="--force"
+          fi
+          ./bin/render_diagrams $FORCE_ARG
+        shell: bash
 
       - name: Verify rendered PNGs are up to date
         run: |
-          CHANGED=$(git status --porcelain -- docs/diagrams/exports/png/*.png docs/diagrams/exports/svg/*.svg | wc -l)
+          CHANGED=$(git status --porcelain -- docs/diagrams/exports | wc -l)
           if [ "$CHANGED" -gt 0 ]; then
             echo "Diagram exports are out of date. Please run bin/render_diagrams and commit the updated files." >&2
             echo "Changed files:" >&2
-            git status --porcelain -- docs/diagrams/exports/png/*.png docs/diagrams/exports/svg/*.svg >&2 || true
+            git status --porcelain -- docs/diagrams/exports >&2 || true
             exit 1
           fi
         shell: bash
-
