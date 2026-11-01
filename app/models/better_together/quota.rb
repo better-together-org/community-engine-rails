@@ -21,10 +21,12 @@ module BetterTogether
          prefix: true, default: 'cumulative'
     enum :status, { active: 'active', suspended: 'suspended' },
          prefix: true, default: 'active'
-    # off/shadow/soft/hard. Phase 5a never evaluates this as blocking: Quotas.check!
-    # is hardcoded permissive regardless of the value stored here. Reversibility is
-    # a separate, type-level flag (Quotas::Type#reversible?), not stored per-row,
-    # since it is a fact about the resource being metered, not this specific quota.
+    # off/shadow/soft/hard. Still never evaluated as blocking as of Phase 5b:
+    # Quotas.check! is hardcoded permissive regardless of the value stored here.
+    # Flipping this column alone does nothing until check! gains real branching
+    # logic - not yet built. Reversibility is a separate, type-level flag
+    # (Quotas::Type#reversible?), not stored per-row, since it is a fact about
+    # the resource being metered, not this specific quota.
     enum :enforcement_mode, { off: 'off', shadow: 'shadow', soft: 'soft', hard: 'hard' },
          prefix: true, default: 'shadow'
 
