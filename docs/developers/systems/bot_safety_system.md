@@ -90,6 +90,11 @@ Key additions live in:
 - token format: `<identifier>.<secret>`
 - digest stored in `settings['bot_access_token_digest']`
 
+> The bot-access token is distinct from agent credentials for the REST API and MCP, which
+> are delegated to a human operator and scoped per platform and community. See
+> [agent credentials design](../../assessments/agent_credentials_g1_design_2026-10-20.md)
+> for the comparison.
+
 ### Scope model
 
 Supported scopes now include:
