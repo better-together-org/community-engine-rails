@@ -15,7 +15,7 @@ module BetterTogether
 
     validates :robot, :platform, :operator, presence: true
     validate :scopes_known
-    validate :scopes_within_operator_authority
+    validate :scopes_within_operator_authority, if: :authority_check_needed?
 
     scope :active, lambda {
       where(revoked_at: nil).where(arel_table[:expires_at].eq(nil).or(arel_table[:expires_at].gt(Time.current)))
@@ -25,7 +25,17 @@ module BetterTogether
       revoked_at.nil? && (expires_at.nil? || expires_at.future?)
     end
 
+    # Skips the operator-authority check so a grant can always be revoked,
+    # including after its operator has been demoted.
+    def revoke!(at: Time.current)
+      update_columns(revoked_at: at, updated_at: at) # rubocop:disable Rails/SkipsModelValidations
+    end
+
     private
+
+    def authority_check_needed?
+      new_record? || will_save_change_to_scopes? || will_save_change_to_community_id?
+    end
 
     def scopes_known
       unknown = scopes.to_a - OauthApplication.available_scopes.map(&:to_s)

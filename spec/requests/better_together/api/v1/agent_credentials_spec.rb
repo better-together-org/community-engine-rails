@@ -76,7 +76,6 @@ RSpec.describe 'Agent credentials on the REST API', :no_auth do
       expect(listed_ids).to include(endpoint_other.id)
 
       operator.person_platform_memberships.destroy_all
-      Rails.cache.clear
       get '/api/v1/webhook_endpoints', headers: headers
 
       expect(listed_ids).not_to include(endpoint_other.id)
@@ -86,11 +85,11 @@ RSpec.describe 'Agent credentials on the REST API', :no_auth do
   describe 'grant lifecycle' do
     it 'fails closed once the grant is revoked' do
       headers = agent_headers
-      grant.update!(revoked_at: Time.current)
+      grant.revoke!
 
       get '/api/v1/webhook_endpoints', headers: headers
 
-      expect(response.status).to be_in([401, 403])
+      expect(response).to have_http_status(:forbidden)
     end
 
     it 'fails closed once the grant has expired' do
@@ -99,7 +98,39 @@ RSpec.describe 'Agent credentials on the REST API', :no_auth do
 
       get '/api/v1/webhook_endpoints', headers: headers
 
-      expect(response.status).to be_in([401, 403])
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe 'token lifecycle' do
+    # /communities declares no scopes, so only the token check can stop these.
+    it 'rejects a revoked access token' do
+      headers = agent_headers
+      application.access_tokens.update_all(revoked_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
+
+      get '/api/v1/communities', headers: headers
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it 'rejects an expired access token' do
+      headers = agent_headers
+      application.access_tokens.update_all(created_at: 1.day.ago) # rubocop:disable Rails/SkipsModelValidations
+
+      get '/api/v1/communities', headers: headers
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'fail closed on actor resolution errors' do
+    it 'denies instead of acting as the application owner' do
+      headers = agent_headers
+      allow(BetterTogether::Api::TokenActor).to receive(:from_token).and_raise(ActiveRecord::StatementInvalid)
+
+      get '/api/v1/communities', headers: headers
+
+      expect(response).to have_http_status(:forbidden)
     end
   end
 

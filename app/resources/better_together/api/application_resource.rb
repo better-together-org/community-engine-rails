@@ -36,13 +36,7 @@ module BetterTogether
       # Prepended on every subclass so resources that override `records` are covered.
       module CredentialCommunityScoping
         def records(options = {})
-          relation = super
-          community = Current.credential_community
-          return relation if community.nil?
-          return relation.where(id: community.id) if _model_class <= BetterTogether::Community
-          return relation.where(community_id: community.id) if _model_class.column_names.include?('community_id')
-
-          relation.none
+          BetterTogether::CredentialCommunityBound.apply(super)
         end
       end
 

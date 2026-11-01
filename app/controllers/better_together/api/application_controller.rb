@@ -45,7 +45,7 @@ module BetterTogether
       # Check if the current request is authenticated via OAuth2 token
       # @return [Boolean]
       def oauth2_authenticated?
-        doorkeeper_token.present?
+        doorkeeper_token.present? && doorkeeper_token.accessible?
       rescue StandardError
         false
       end
@@ -54,8 +54,8 @@ module BetterTogether
       # Devise JWT uses the :api_user scope (from namespace :api + devise_for :users),
       # so fall back to current_api_user when no Doorkeeper token is present.
       def current_user # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/AbcSize
-        if token_actor
-          token_actor.user
+        if agent_credential?
+          token_actor&.active? ? token_actor.user : nil
         elsif oauth2_authenticated? && doorkeeper_token.resource_owner_id.present?
           @current_user ||= BetterTogether::User.find_by(id: doorkeeper_token.resource_owner_id)
         elsif oauth2_authenticated?
@@ -66,21 +66,30 @@ module BetterTogether
         end
       end
 
+      def agent_credential?
+        oauth2_authenticated? && doorkeeper_token.application&.agent? == true
+      end
+
       # Resolved from the bearer token only; nil for non-agent credentials.
+      # Agent credentials never fall back to the owner path: a failure to
+      # resolve leaves the actor nil and the request is denied.
       def token_actor
         return @token_actor if defined?(@token_actor)
 
-        @token_actor = oauth2_authenticated? ? BetterTogether::Api::TokenActor.from_token(doorkeeper_token) : nil
-      rescue StandardError
-        @token_actor = nil
+        @token_actor = begin
+          agent_credential? ? BetterTogether::Api::TokenActor.from_token(doorkeeper_token) : nil
+        rescue StandardError => e
+          Rails.logger.error("Agent credential resolution failed: #{e.class}")
+          nil
+        end
       end
 
       # Fail closed: an agent credential needs a live grant and scopes that
       # cover the request method, even where a controller declares no scopes.
       def enforce_agent_credential
-        return unless token_actor
+        return unless agent_credential?
 
-        return render_agent_forbidden unless token_actor.active?
+        return render_agent_forbidden unless token_actor&.active?
         return if self.class.required_scopes_for_action(action_name).any?
         return if token_actor.allows_http_method?(request.request_method)
 

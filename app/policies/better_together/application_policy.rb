@@ -88,7 +88,7 @@ module BetterTogether
           result = result.where(query)
         end
 
-        result
+        BetterTogether::CredentialCommunityBound.apply(result)
       end
 
       def permitted_to?(permission_identifier, record = nil)
