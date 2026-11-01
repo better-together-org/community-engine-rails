@@ -48,6 +48,16 @@ An agent request is accepted only when all of these hold on every request:
 - If the actor cannot be resolved, the request is refused with 403. It never falls back to
   acting as the application owner.
 
+## Grant integrity
+
+- A grant's robot must be global or belong to the grant platform, and a community limit must
+  belong to that platform (communities with no platform belong to the host platform).
+- The operator and, when present, the grantor must hold the authority being delegated.
+- The grant used by a credential must have been made by the application's owner, so an
+  application cannot inherit a grant someone else made for the same robot.
+- Only one open (unrevoked) grant may exist per robot, platform and community scope. This is
+  enforced by validation and by the partial unique index `idx_bt_agent_grants_one_open`.
+
 ## Scope granularity (known limit)
 
 Only controllers that declare required scopes (`webhooks`, `webhook_endpoints`) are checked
@@ -63,11 +73,8 @@ scopes and default-deny for unscoped endpoints are queued for G2.
   unscoped endpoints.
 - Credential and grant management endpoints, `GET /api/v1/me/credential`, per-token throttles.
 - Populate `last_used_at` and `rotated_at`.
-- Tie each application to its grant (validate robot is global or on the grant platform,
-  community belongs to the platform, grantor holds the authority) and make grant selection
-  deterministic (partial unique index on active grants). Follow-up PR before G2 endpoints.
-- Foreign key `on_delete` for `robot_id` and `platform_id`, and a `(robot_id, platform_id)`
-  active-grant index.
+- Foreign key `on_delete` for `robot_id` and `platform_id`. Robot deletion is already
+  blocked at model level while grants exist.
 
 ## Not in this slice
 

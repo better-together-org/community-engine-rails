@@ -77,9 +77,13 @@ module BetterTogether
         @request_platform_id.present? && @request_platform_id == application.platform_id
       end
 
+      # The grant must be the one the application's owner delegated, so an
+      # application cannot inherit a robot's grant made by someone else.
       def find_grant
-        candidates = AgentGrant.active.where(robot_id: robot.id, platform_id: application.platform_id)
-        candidates.where(community_id: [community&.id, nil].uniq).order(Arel.sql('community_id IS NULL')).first
+        candidates = AgentGrant.active.where(robot_id: robot.id, platform_id: application.platform_id,
+                                             operator_id: application.owner_id)
+        candidates.where(community_id: [community&.id, nil].uniq)
+                  .order(Arel.sql('community_id IS NULL'), updated_at: :desc).first
       end
     end
   end

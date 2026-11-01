@@ -46,6 +46,13 @@ RSpec.describe BetterTogether::Api::TokenActor do
     expect(described_class.from_token(token)).not_to be_active
   end
 
+  it 'ignores a grant that was made by someone other than the application owner' do
+    other_operator = create(:better_together_user, :confirmed, :platform_manager).person
+    application.update_columns(owner_id: other_operator.id) # rubocop:disable Rails/SkipsModelValidations
+
+    expect(described_class.from_token(token.reload)).not_to be_active
+  end
+
   it 'is inactive while the operator account is unconfirmed' do
     operator.user.update_columns(confirmed_at: nil) # rubocop:disable Rails/SkipsModelValidations
 
