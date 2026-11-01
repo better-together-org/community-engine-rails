@@ -15,6 +15,8 @@ erDiagram
   OAUTH_APPLICATIONS o|--o{ OAUTH_ACCESS_TOKENS : "application / application_id"
   PEOPLE o|--o{ OAUTH_APPLICATIONS : "owner / owner_id"
   EXT_PLATFORM o|--o{ OAUTH_APPLICATIONS : "platform / platform_id"
+  EXT_ROBOT o|--o{ OAUTH_APPLICATIONS : "robot / robot_id"
+  EXT_COMMUNITY o|--o{ OAUTH_APPLICATIONS : "community / community_id"
   EXT_PLATFORM o|--o{ USERS : "platform / platform_id"
   EXT_PLATFORM o|--o{ PEOPLE : "platform / platform_id"
   EXT_COMMUNITY ||--o{ PEOPLE : "community / community_id"
@@ -119,8 +121,10 @@ erDiagram
   }
 
   OAUTH_APPLICATIONS {
+    community_id uuid
     owner_id uuid
     platform_id uuid
+    robot_id uuid
     name string
     scopes string
     secret string
@@ -307,6 +311,10 @@ erDiagram
   }
 
   EXT_CHECKLIST_ITEM {
+    string export_ref
+  }
+
+  EXT_ROBOT {
     string export_ref
   }
 
