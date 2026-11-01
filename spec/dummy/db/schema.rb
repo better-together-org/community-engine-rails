@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_31_164300) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_01_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -126,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_31_164300) do
     t.index ["granted_by_id"], name: "idx_bt_agent_grants_granted_by"
     t.index ["operator_id"], name: "idx_bt_agent_grants_operator"
     t.index ["platform_id"], name: "idx_bt_agent_grants_platform"
+    t.index "robot_id, platform_id, COALESCE(community_id, '00000000-0000-0000-0000-000000000000'::uuid)", name: "idx_bt_agent_grants_one_open", unique: true, where: "(revoked_at IS NULL)"
     t.index ["robot_id"], name: "idx_bt_agent_grants_robot"
   end
 
