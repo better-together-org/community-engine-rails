@@ -19,7 +19,7 @@ jobs:
       - name: Render Mermaid diagrams
         run: |
           chmod +x bin/render_diagrams || true
-          ./bin/render_diagrams || true
+          ./bin/render_diagrams --force || true
 
       - name: Verify rendered PNGs are up to date
         run: |

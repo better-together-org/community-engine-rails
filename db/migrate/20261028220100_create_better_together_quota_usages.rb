@@ -5,7 +5,13 @@ class CreateBetterTogetherQuotaUsages < ActiveRecord::Migration[7.2]
     return if table_exists?(:better_together_quota_usages)
 
     create_bt_table :quota_usages do |t|
-      t.bt_references :quota, null: false, index: { name: 'index_bt_quota_usages_on_quota' }
+      # target_table pinned to the singular table: on a from-empty migrate, this runs
+      # before RenameBetterTogetherQuotaToQuotas, so the plural table the default
+      # pluralize-based resolution would look for doesn't exist yet. Already-deployed
+      # apps are unaffected - Postgres tracks the resulting FK constraint by OID, so the
+      # later rename carries it forward regardless of the name used here.
+      t.bt_references :quota, target_table: :better_together_quota, null: false,
+                              index: { name: 'index_bt_quota_usages_on_quota' }
       t.string :quota_type, null: false
       t.bigint :amount, null: false
       t.string :period_key, null: false

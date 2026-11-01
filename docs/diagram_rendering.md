@@ -88,6 +88,21 @@ HIGH_RES_WIDTH=6400 HIGH_RES_HEIGHT=4800 bin/render_diagrams --force
 COMPLEXITY_LINE_THRESHOLD=50 bin/render_diagrams
 ```
 
+## Content-Hash Skip
+
+`bin/render_diagrams` decides whether to re-render from a hash of the diagram source plus the
+render settings (sizes, orientation mode, thresholds, `RENDER_HASH_VERSION`), recorded in
+`docs/diagrams/exports/.source-hashes`. File timestamps are ignored, so a fresh checkout, a
+rebase or a `touch` never re-renders a diagram whose content did not change, and a PR only
+carries export changes for diagrams it actually edited.
+
+- The manifest is committed. Rendering updates it; commit it with the exports.
+- `bin/render_diagrams --force` re-renders everything (CI uses this to verify the exports).
+- `bin/render_diagrams --seed-hashes` records hashes for existing exports without rendering.
+  Use it only after confirming the exports are current.
+- Bump `RENDER_HASH_VERSION` in the script when rendering logic changes and all diagrams
+  should be regenerated.
+
 ## Configuration Variables
 
 | Variable | Default | Description |
