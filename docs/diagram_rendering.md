@@ -97,7 +97,7 @@ rebase or a `touch` never re-renders a diagram whose content did not change, and
 carries export changes for diagrams it actually edited.
 
 - The manifest is committed. Rendering updates it; commit it with the exports.
-- `bin/render_diagrams --force` re-renders everything (CI uses this to verify the exports).
+- `bin/render_diagrams --force` re-renders everything. CI uses the hash skip, and forces only when `bin/render_diagrams` or the workflow changes. A newer push cancels the older run.
 - `bin/render_diagrams --seed-hashes` records hashes for existing exports without rendering.
   Use it only after confirming the exports are current.
 - Bump `RENDER_HASH_VERSION` in the script when rendering logic changes and all diagrams

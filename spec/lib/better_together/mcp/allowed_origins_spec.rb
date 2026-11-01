@@ -65,7 +65,10 @@ RSpec.describe BetterTogether::Mcp::AllowedOrigins do
 
   describe 'fail closed' do
     it 'allows nothing when no domain, url or extra hostname resolves' do
-      BetterTogether::Platform.update_all(url: 'not a url') # rubocop:disable Rails/SkipsModelValidations
+      # The url column is unique, so give each row its own unparseable value.
+      BetterTogether::Platform.find_each.with_index do |platform, index|
+        platform.update_column(:url, "not a url #{index}") # rubocop:disable Rails/SkipsModelValidations
+      end
       described_class.reset_cache!
 
       expect(described_class.hostnames).to be_empty
