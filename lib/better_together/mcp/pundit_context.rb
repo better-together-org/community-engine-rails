@@ -113,6 +113,7 @@ module BetterTogether
         else
           Current.token_actor = nil
           Current.credential_community = nil
+          Current.robot = nil
         end
       end
 

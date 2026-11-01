@@ -123,6 +123,25 @@ RSpec.describe 'Agent credentials on the REST API', :no_auth do
     end
   end
 
+  describe 'platform binding' do
+    let(:other_platform) { create(:better_together_platform) }
+    let(:robot) { create(:robot, platform: other_platform) }
+    let!(:grant) do
+      create(:better_together_agent_grant, robot: robot, operator: operator, platform: other_platform,
+                                           scopes: grant_scopes)
+    end
+    let(:application) do
+      create(:better_together_oauth_application, owner: operator, robot: robot, platform: other_platform,
+                                                 scopes: app_scopes, redirect_uri: 'urn:ietf:wg:oauth:2.0:oob')
+    end
+
+    it 'rejects a credential used on a host that resolves to a different platform' do
+      get '/api/v1/webhook_endpoints', headers: agent_headers
+
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
   describe 'fail closed on actor resolution errors' do
     it 'denies instead of acting as the application owner' do
       headers = agent_headers

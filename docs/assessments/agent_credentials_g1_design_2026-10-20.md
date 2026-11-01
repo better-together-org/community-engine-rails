@@ -1,6 +1,6 @@
 # Agent credentials, delegation and attribution: G1 design
 
-Status: draft for review (2026-10-20). No code yet.
+Status: G1a implemented in PR #1971 (review fixes applied 2026-10-31). G1b and G2 pending.
 
 ## Goal
 

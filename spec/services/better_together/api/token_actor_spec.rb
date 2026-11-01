@@ -17,6 +17,10 @@ RSpec.describe BetterTogether::Api::TokenActor do
   end
   let(:token) { create(:better_together_oauth_access_token, :client_credentials, application: application, scopes: 'read write mcp_access') }
 
+  before { Current.platform = platform }
+
+  after { Current.reset }
+
   it 'resolves robot, operator and community from the token only' do
     actor = described_class.from_token(token)
 
@@ -38,6 +42,24 @@ RSpec.describe BetterTogether::Api::TokenActor do
 
   it 'is inactive without a live grant' do
     grant.update!(revoked_at: Time.current)
+
+    expect(described_class.from_token(token)).not_to be_active
+  end
+
+  it 'is inactive while the operator account is unconfirmed' do
+    operator.user.update_columns(confirmed_at: nil) # rubocop:disable Rails/SkipsModelValidations
+
+    expect(described_class.from_token(token)).not_to be_active
+  end
+
+  it 'is inactive when the request arrives on another platform' do
+    Current.platform = create(:better_together_platform)
+
+    expect(described_class.from_token(token)).not_to be_active
+  end
+
+  it 'is inactive when the request platform is unknown' do
+    Current.platform = nil
 
     expect(described_class.from_token(token)).not_to be_active
   end

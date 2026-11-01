@@ -24,12 +24,15 @@ module BetterTogether
         @robot = application.robot
         @community = application.community
         @token_scopes = token.scopes.to_a
+        @request_platform_id = Current.platform&.id
         @grant = find_grant
         @operator = @grant&.operator
       end
 
+      # Live grant, a confirmed operator, an active robot, and a request that
+      # arrived on the platform the credential was issued for.
       def active?
-        grant.present? && operator&.user.present? && robot&.active != false
+        grant.present? && operator_confirmed? && robot&.active != false && platform_matches_request?
       end
 
       # Token scopes narrowed to what the live grant carries.
@@ -64,6 +67,15 @@ module BetterTogether
       end
 
       private
+
+      def operator_confirmed?
+        operator&.user.present? && operator.user.confirmed?
+      end
+
+      # Fails closed when the request platform is unknown.
+      def platform_matches_request?
+        @request_platform_id.present? && @request_platform_id == application.platform_id
+      end
 
       def find_grant
         candidates = AgentGrant.active.where(robot_id: robot.id, platform_id: application.platform_id)
