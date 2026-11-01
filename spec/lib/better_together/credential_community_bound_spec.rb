@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::CredentialCommunityBound do
-  let!(:community_a) { create(:better_together_community) }
-  let!(:community_b) { create(:better_together_community) }
+  let!(:community_a) { create(:better_together_community, privacy: 'public') }
+  let!(:community_b) { create(:better_together_community, privacy: 'public') }
 
   it 'leaves queries alone without a credential community' do
     expect(described_class.apply(BetterTogether::Community.all, nil).to_a).to include(community_a, community_b)
