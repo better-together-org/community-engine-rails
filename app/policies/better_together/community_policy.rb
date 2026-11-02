@@ -76,6 +76,15 @@ module BetterTogether
       permitted_to?('manage_community_roles', record) || can_manage_community?
     end
 
+    # Reuses can_manage_community? directly - no separate quota-usage permission exists
+    # (or is needed) yet; anyone who can already manage this community's settings or
+    # members can see its usage too.
+    def view_quota_usage?
+      return false unless user.present?
+
+      can_manage_community?
+    end
+
     def edit?
       update?
     end

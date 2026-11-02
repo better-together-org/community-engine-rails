@@ -72,6 +72,9 @@
           <% if policy(@resource).manage_roles? %>
             <%= link_to t('globals.tabs.roles_and_permissions'), '#roles-and-permissions', class: 'nav-link', id: 'roles-and-permissions-tab', data: { bs_toggle: 'tab', bs_target: '#roles-and-permissions', turbo: false }, 'data-better_together--tabs-target' => 'tab', role: 'tab', aria: { controls: 'roles-and-permissions', selected: 'false' }, tabindex: '-1' %>
           <% end %>
+          <% if policy(@resource).view_quota_usage? %>
+            <%= link_to t('globals.tabs.usage'), '#usage', class: 'nav-link', id: 'usage-tab', data: { bs_toggle: 'tab', bs_target: '#usage', turbo: false }, 'data-better_together--tabs-target' => 'tab', role: 'tab', aria: { controls: 'usage', selected: 'false' }, tabindex: '-1' %>
+          <% end %>
           <% if @community_pages.any? %>
             <%= link_to BetterTogether::Page.model_name.human.pluralize, '#pages', class: 'nav-link', id: 'pages-tab', data: { bs_toggle: 'tab', bs_target: '#pages', turbo: false }, 'data-better_together--tabs-target' => 'tab', role: 'tab', aria: { controls: 'pages', selected: 'false' }, tabindex: '-1' %>
           <% end %>
@@ -183,6 +186,12 @@
                        community: @community,
                        community_roles: @community_roles,
                        memberships_by_role: @community_memberships_by_role %>
+          </div>
+        <% end %>
+
+        <% if policy(@resource).view_quota_usage? %>
+          <div id="usage" class="tab-pane fade" role="tabpanel" aria-labelledby="usage-tab">
+            <%= render 'better_together/communities/quota_usage_tab', quotas: @community_quotas %>
           </div>
         <% end %>
 

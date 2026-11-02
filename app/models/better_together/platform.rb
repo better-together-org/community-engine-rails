@@ -146,6 +146,9 @@ module BetterTogether
     has_many :feature_access_grants,
              class_name: 'BetterTogether::FeatureAccessGrant',
              dependent: :destroy
+    has_many :quota_grants,
+             class_name: 'BetterTogether::QuotaGrant',
+             dependent: :destroy
 
     belongs_to :active_storage_configuration,
                class_name: 'BetterTogether::StorageConfiguration',

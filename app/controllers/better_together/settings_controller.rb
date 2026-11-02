@@ -40,6 +40,12 @@ module BetterTogether
       render json: { success: true, marked_read: count }
     end
 
+    def usage
+      @quotas = @person.quotas.includes(:quota_balances)
+
+      render 'better_together/settings/usage', layout: false
+    end
+
     def my_data
       @person_data_exports = @person.person_data_exports.with_attached_export_file.latest_first.limit(10)
       @show_person_links = policy(::BetterTogether::PersonLink).index?
