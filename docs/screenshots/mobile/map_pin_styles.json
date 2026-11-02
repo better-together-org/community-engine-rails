@@ -1,0 +1,48 @@
+{
+  "name": "map_pin_styles",
+  "device": "mobile",
+  "url": "/en/communities",
+  "title": "Communities | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "map_pin_styles",
+  "flow": "map_pin_styles",
+  "source_spec": "./spec/docs_screenshots/better_together/map_pin_styles_spec.rb",
+  "callouts": [
+    {
+      "selector": ".map",
+      "title": "Pin styles",
+      "bullets": [
+        "Stacked icons, shapes and sizes, set per point or per type."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 189.390625,
+        "width": 461.0,
+        "height": 500.0,
+        "right": 473.0,
+        "bottom": 689.390625,
+        "center_x": 242.5,
+        "center_y": 439.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 189.390625,
+        "width": 461.0,
+        "height": 500.0,
+        "right": 473.0,
+        "bottom": 689.390625,
+        "center_x": 242.5,
+        "center_y": 439.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 709.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 567.609375
+      }
+    }
+  ]
+}
