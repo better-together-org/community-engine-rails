@@ -51,3 +51,21 @@
   class: "BetterTogether::Quotas::ReservationSweeperJob"
   queue: "maintenance"
   description: "Expire held quota reservations past their TTL, matching reserve!'s default 5-minute window"
+
+"better_together:weather:refresh_hourly":
+  cron: "10 * * * *" # hourly at :10 UTC
+  class: "BetterTogether::Weather::RefreshScanJob"
+  queue: "weather"
+  description: "Refresh current conditions and forecasts for every enabled weather location"
+
+"better_together:weather:backfill_daily":
+  cron: "30 6 * * *" # daily at 06:30 UTC
+  class: "BetterTogether::Weather::BackfillScanJob"
+  queue: "weather"
+  description: "Fill gaps in stored weather observations from the source history API"
+
+"better_together:weather:purge_daily":
+  cron: "45 4 * * *" # daily at 04:45 UTC
+  class: "BetterTogether::Weather::PurgeJob"
+  queue: "maintenance"
+  description: "Apply weather retention windows to observations and superseded forecasts"
