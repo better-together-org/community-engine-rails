@@ -1,0 +1,14 @@
+---
+title: 'Settlement weather: current'
+audience:
+- end_user
+journey_step: As a visitor, I can see current conditions, the forecast and recent
+  weather.
+callouts:
+- :id: current
+  :title: Current conditions
+  :description: From the latest stored observation, with its time.
+accessibility_notes: Charts have a text alternative and a data table with the same
+  values.
+slug: settlement_weather_current
+device: mobile

@@ -28,6 +28,11 @@ module BetterTogether
           capabilities.include?(capability.to_sym)
         end
 
+        # Credit line and licence link a page must show next to this source's data.
+        def attribution; end
+
+        def licence_url; end
+
         def fetch_snapshot(_location)
           raise NotImplementedError, "#{self.class} must implement #fetch_snapshot"
         end

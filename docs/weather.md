@@ -56,6 +56,30 @@ returning plain Hashes (see the contract comment in `adapters/base.rb`). Adapter
   Canada" with a link to the licence, and never alter alert text (relevant when alerts ship).
   Set `WEATHER_CONTACT` so the User-Agent identifies the operator.
 
+## Settlement page
+
+A settlement with an enabled `Weather::Location` gets a Weather tab on its show page. The tab holds a lazy
+turbo-frame (`#settlement-weather`) that loads `GET /g/settlements/:id/weather` when the tab is opened. The route
+is public like the settlement page, and returns 404 when the settlement has no enabled location.
+
+The panel is built by `Weather::SettlementPanel` from stored rows only. It never calls the source, so a slow or
+failing source cannot slow or break the page.
+
+- **Current conditions** from `CurrentCondition`, with the observation time.
+- **Next 24 hours** from the latest hourly `Forecast`, dropping hours that have finished.
+- **7-day forecast** from the latest daily `Forecast`.
+- **Past 14 days** from `Weather::HistorySeries`: the previous 14 local days plus today (marked "so far").
+  An official daily observation wins; hourly rows fill whatever it lacks. A measurement no row reported stays nil.
+  It shows as "Not reported" and is never charted as zero. A chart with no values at all is replaced by a note.
+
+Charts use Chart.js through the `better-together--weather-charts` Stimulus controller. The server renders the series,
+dataset names and axis units as JSON values, and each chart has a text alternative plus a data table
+(`#weather-history-table`) with the same values.
+
+Stale data (current conditions older than three hours) and a failed last update each show a notice. Attribution and a
+licence link are always shown. Condition and forecast text comes from the source in English only, and is not
+translated; the surrounding interface is translated into en, es, fr and uk.
+
 ## Operations
 
 Jobs run on the `weather` queue (the host must list it in its Sidekiq queues) and `maintenance`.
