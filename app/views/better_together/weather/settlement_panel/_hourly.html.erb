@@ -1,0 +1,24 @@
+<%# locals: (panel:, zone:, source_lang:) -%>
+<section id="weather-hourly" class="mb-4" aria-labelledby="weather-hourly-heading">
+  <h2 id="weather-hourly-heading" class="h4"><%= t('better_together.weather.panel.hourly.heading') %></h2>
+  <% if panel.hourly_periods.any? %>
+    <div class="overflow-auto pb-2" role="region" tabindex="0" aria-label="<%= t('better_together.weather.panel.hourly.scroll_label') %>">
+      <ol id="weather-hourly-list" class="list-unstyled d-flex gap-2 mb-0">
+        <% panel.hourly_periods.each do |period| %>
+          <li class="weather-hour card flex-shrink-0 text-center" style="min-width: 6.5rem;">
+            <div class="card-body p-2">
+              <time class="d-block small text-muted" datetime="<%= period['starts_at'] %>"><%= weather_period_time(period, zone) %></time>
+              <strong class="d-block"><%= weather_value(period['temperature_c'], :celsius) %></strong>
+              <span class="d-block small" lang="<%= source_lang %>"><%= period['condition'] %></span>
+              <% unless period['pop_pct'].nil? %>
+                <span class="d-block small text-muted"><%= t('better_together.weather.panel.hourly.chance', value: period['pop_pct'].to_i) %></span>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  <% else %>
+    <p id="weather-hourly-empty" class="text-muted"><%= t('better_together.weather.panel.hourly.empty') %></p>
+  <% end %>
+</section>

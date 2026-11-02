@@ -2027,6 +2027,7 @@ en:
           posts_loading: Loading posts...
           sections_aria: Settlement sections
           view-all-settlements: View All Settlements
+          weather_loading: Loading weather
         toolbar:
           back_to_geography_settlements: Back to Settlements
           save_geography_settlement: Save Settlement
@@ -4199,6 +4200,90 @@ en:
         list: List
         map: Map
         table: Table
+    weather:
+      panel:
+        current:
+          dew_point: Dew point
+          feels_like: Feels like
+          gusts: Gusts
+          heading: Current conditions
+          humidity: Humidity
+          observed: Observed %{time}
+          pressure: Pressure
+          sun: Sun
+          sun_times: Sunrise %{rise}, sunset %{set}
+          unavailable: Current conditions are not available right now.
+          visibility: Visibility
+          wind: Wind
+        daily:
+          caption: Forecast by day and night
+          chance: Chance of precipitation
+          conditions: Conditions
+          empty: The 7-day forecast is not available right now.
+          heading: 7-day forecast
+          high: High %{value}
+          low: Low %{value}
+          period: Period
+          temperature: Temperature
+        disclaimer: Weather information is provided for convenience and may be delayed
+          or incomplete. In an emergency, follow official local guidance and warnings.
+        history:
+          axis:
+            celsius: Temperature (°C)
+            kmh: Wind (km/h)
+            mm: Precipitation (mm)
+          chart_alt:
+            precipitation: Bar chart of daily precipitation for the past 14 days.
+              The same values are in the table below.
+            temperature: Line chart of the daily high, low and mean temperature for
+              the past 14 days. The same values are in the table below.
+            wind: Line chart of the daily peak wind speed and gust for the past 14
+              days. The same values are in the table below.
+          charts:
+            precipitation: Precipitation
+            temperature: Temperature
+            wind: Wind
+          columns:
+            date: Date
+          description: Recorded daily weather for this settlement, from stored observations.
+          empty: No past weather has been recorded for this settlement yet.
+          heading: Past 14 days
+          series:
+            precip_mm: Precipitation
+            snow_cm: Snowfall
+            temperature_max_c: Daily high
+            temperature_mean_c: Daily mean
+            temperature_min_c: Daily low
+            wind_gust_kmh: Peak gust
+            wind_speed_kmh: Peak wind speed
+          show_table: Show the recorded values as a table
+          so_far: so far
+          table_caption: Recorded daily weather for the past 14 days and today so
+            far
+          unreported:
+            precipitation: This weather station does not report precipitation.
+            temperature: No temperature readings are recorded for this period.
+            wind: No wind readings are recorded for this period.
+        hourly:
+          chance: Precipitation %{value}%
+          empty: The hourly forecast is not available right now.
+          heading: Next 24 hours
+          scroll_label: Hourly forecast, scrolls sideways
+        licence: data licence
+        never: not yet
+        no_data: Weather information is not available for this settlement yet.
+        not_reported: Not reported
+        source_error: The weather source could not be reached on the last update.
+          The information shown may be out of date.
+        stale: These conditions were last updated %{time} and may be out of date.
+        units:
+          celsius: "%{value} °C"
+          cm: "%{value} cm"
+          km: "%{value} km"
+          kmh: "%{value} km/h"
+          kpa: "%{value} kPa"
+          mm: "%{value} mm"
+          percent: "%{value}%"
     webhook_endpoints:
       actions_aria: Webhook actions
       active_help: Enable or disable webhook delivery for this endpoint.
@@ -5054,6 +5139,7 @@ en:
       safety: Safety
       sessions: Sessions
       usage: Usage
+      weather: Weather
     to: To
     'true': true
     undo_clear: Undo Clear

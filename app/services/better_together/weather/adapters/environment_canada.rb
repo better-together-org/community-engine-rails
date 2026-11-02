@@ -20,6 +20,14 @@ module BetterTogether
           %i[current hourly_forecast daily_forecast observations]
         end
 
+        def attribution
+          ATTRIBUTION
+        end
+
+        def licence_url
+          LICENCE_URL
+        end
+
         def fetch_snapshot(location)
           xml = @citypage.fetch(site_ref: location.external_ref, language: language)
           parsed = CitypageParser.parse(xml)

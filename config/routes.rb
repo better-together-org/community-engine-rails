@@ -131,7 +131,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       end
 
       namespace :geography, path: :g do
-        resources :settlements, only: %i[index show]
+        resources :settlements, only: %i[index show] do
+          get :weather, on: :member
+        end
 
         authenticated :user, ->(u) { u.permitted_to?('manage_platform') } do
           resources :settlements, except: %i[index show]
