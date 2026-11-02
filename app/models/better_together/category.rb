@@ -27,10 +27,11 @@ module BetterTogether
 
     validates :name, presence: true
     validates :type, presence: true
+    validates :color, format: { with: /\A#\h{6}\z/ }, allow_blank: true
 
     def self.permitted_attributes(id: false, destroy: false)
       super + %i[
-        type icon
+        type icon color
       ]
     end
 
@@ -64,6 +65,11 @@ module BetterTogether
                      .select(:category_id)
 
       where(id: category_ids).with_translations.to_a.sort_by { |category| category.name.to_s.downcase }
+    end
+
+    # Readable text colour (white or near-black) for chips drawn in this category's colour.
+    def color_text
+      ColorContrast.text_color_for(color) if color.present?
     end
 
     def as_category

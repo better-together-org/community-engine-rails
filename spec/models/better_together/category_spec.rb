@@ -16,6 +16,33 @@ module BetterTogether # :nodoc:
       end
     end
 
+    describe 'color' do
+      it 'is optional' do
+        expect(build(:category, color: nil)).to be_valid
+      end
+
+      it 'accepts a six digit hex value' do
+        expect(build(:category, color: '#0072B2')).to be_valid
+      end
+
+      it 'rejects anything else' do
+        %w[red #fff #0072B2ff url(x)].each do |value|
+          expect(build(:category, color: value)).not_to be_valid, value
+        end
+      end
+
+      it 'gives readable text for any background' do
+        %w[#ffffff #000000 #0072B2 #E69F00 #6b6b6b].each do |value|
+          text = build(:category, color: value).color_text
+          expect(ColorContrast.contrast_ratio(value, text)).to be >= 4.5
+        end
+      end
+
+      it 'has no text colour without a colour' do
+        expect(build(:category, color: nil).color_text).to be_nil
+      end
+    end
+
     describe 'associations' do
       it { is_expected.to have_many(:categorizations).dependent(:destroy) }
       it { is_expected.to have_many(:pages).through(:categorizations) }

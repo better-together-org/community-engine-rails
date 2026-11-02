@@ -39,4 +39,13 @@ RSpec.describe 'Event detail ordering', type: :request do # rubocop:disable RSpe
 
     expect(in_order?(card, ['.event-datetime', '.event-location'])).to be(true)
   end
+
+  it 'spaces the hosts block from the description' do
+    event.event_hosts.destroy_all
+    event.event_hosts.create!(host: create(:better_together_community, privacy: 'public'))
+    get better_together.event_path(event, locale:)
+    hosts = Nokogiri::HTML(response.body).at_css("##{ActionView::RecordIdentifier.dom_id(event, :event_hosts)}")
+
+    expect(hosts['class'].split).to include('mt-2')
+  end
 end
