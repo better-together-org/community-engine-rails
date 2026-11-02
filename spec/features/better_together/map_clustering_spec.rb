@@ -74,6 +74,33 @@ RSpec.feature 'Map clustering and layers', :js do
     expect(page).to have_css('.map .map-pin', count: 2)
   end
 
+  scenario 'stacks several icons in one pin, with its shape, size and colors' do
+    pin = { color: '#6f42c1', shape: 'square', size: 'lg',
+            icons: ['fa-landmark', { icon: 'fa-star', color: '#ffd43b', style: 'far' }] }
+    show_points([point(1, lat: 48.90, lng: -57.90, pin:)])
+
+    expect(page).to have_css('.map .map-pin .map-pin-square[style*="38px"] .fa-stack', count: 1)
+    expect(page).to have_css('.map .map-pin .fa-stack i.fa-stack-2x.fa-landmark', count: 1)
+    expect(page).to have_css('.map .map-pin .fa-stack i.fa-stack-1x.far.fa-star[style*="color"]', count: 1)
+  end
+
+  scenario 'gives the points of a type the pin of that type unless they carry their own' do
+    types = [{ key: 'Venue', label: 'Venues', color: '#198754', pin: { shape: 'rounded', icons: %w[fa-music fa-circle] } }]
+    show_points([point(1, lat: 48.90, lng: -57.90, type: 'Venue'),
+                 point(2, lat: 49.40, lng: -56.50, type: 'Venue', pin: { icons: ['fa-guitar'] })], types:)
+
+    expect(page).to have_css('.map .map-pin-rounded .fa-stack i.fa-music', count: 1)
+    expect(page).to have_css('.map .map-pin-rounded i.fa-guitar:not(.fa-stack-1x)', count: 1)
+    expect(page).to have_css('.map .map-legend .map-pin .map-pin-rounded', count: 1)
+  end
+
+  scenario 'never turns pin data into markup' do
+    show_points([point(1, lat: 48.90, lng: -57.90, pin: { color: 'red;x:y', icons: ['fa-star" onclick="alert(1)', '<img src=x>'] })])
+
+    expect(page).to have_css('.map .map-pin i.fa-location-dot')
+    expect(page).not_to have_css('.map .map-pin [onclick], .map .map-pin img')
+  end
+
   scenario 'draws a cluster as a pie of its types' do
     types = [{ key: 'Post', label: 'Posts', color: '#0d6efd' }, { key: 'Event', label: 'Events', color: '#198754' }]
     show_points([point(1, lat: 48.9517, lng: -57.9474, type: 'Post'),

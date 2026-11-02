@@ -5,6 +5,7 @@ import 'leaflet-gesture-handling' // loaded for its side effect on L.Map (gestur
 import 'leaflet-providers'
 import 'leaflet-extensible'
 import 'leaflet.markercluster'
+import { pinElement, pinFrom, pinIcon } from 'better_together/map_pin'
 
 // Plugins attach to the extensible global set up by leaflet-extensible, so use it rather than the module namespace.
 const L = window.L
@@ -290,18 +291,13 @@ export default class extends Controller {
     return L.layerGroup()
   }
 
-  // A point may carry type, color and icon (a Font Awesome class); without them it is the default Leaflet pin.
+  // A point may carry a pin ({ color, shape, size, icons }, see better_together/map_pin), or the older color and icon.
+  // Its type's pin is the default for the points of that type. Without any of them it is the default Leaflet pin.
   buildMarker(point) {
     const { lat, lng, label, popup_html, type, color, icon } = point
     const options = {}
-    if (color || icon) {
-      options.icon = L.divIcon({
-        className: 'map-pin',
-        html: `<span style="background:${color || '#6c757d'}"><i class="fas ${icon || 'fa-location-dot'}" aria-hidden="true"></i></span>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-      })
-    }
+    const typePin = this.typesValue.find((entry) => entry.key === type)?.pin
+    if (point.pin || typePin || color || icon) options.icon = pinIcon(L, pinFrom(point, typePin))
 
     const marker = L.marker([lat, lng], options)
     marker.pointType = type
@@ -383,8 +379,12 @@ export default class extends Controller {
         input.checked = true
         input.value = type.key
         input.addEventListener('change', () => this.toggleType(type.key, input.checked))
-        const swatch = L.DomUtil.create('span', 'map-legend-swatch', row)
-        swatch.style.background = type.color
+        if (type.pin) {
+          L.DomUtil.create('span', 'map-pin', row).appendChild(pinElement({ ...type.pin, size: 'sm' }).element)
+        } else {
+          const swatch = L.DomUtil.create('span', 'map-legend-swatch', row)
+          swatch.style.background = type.color
+        }
         row.appendChild(document.createTextNode(` ${type.label}`))
       })
       L.DomEvent.disableClickPropagation(container)
