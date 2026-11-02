@@ -1,0 +1,40 @@
+<%# locals: (panel:, source_lang:) -%>
+<section id="weather-daily" class="mb-4" aria-labelledby="weather-daily-heading">
+  <h2 id="weather-daily-heading" class="h4"><%= t('better_together.weather.panel.daily.heading') %></h2>
+  <% if panel.daily_periods.any? %>
+    <div class="table-responsive">
+      <table id="weather-daily-table" class="table table-sm align-middle">
+        <caption class="visually-hidden"><%= t('better_together.weather.panel.daily.caption') %></caption>
+        <thead>
+          <tr>
+            <th scope="col"><%= t('better_together.weather.panel.daily.period') %></th>
+            <th scope="col"><%= t('better_together.weather.panel.daily.conditions') %></th>
+            <th scope="col"><%= t('better_together.weather.panel.daily.temperature') %></th>
+            <th scope="col"><%= t('better_together.weather.panel.daily.chance') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% panel.daily_periods.each do |period| %>
+            <tr class="weather-day-period">
+              <th scope="row" lang="<%= source_lang %>"><%= period['label'].presence || period['name'] %></th>
+              <td lang="<%= source_lang %>">
+                <%= period['short_summary'] %>
+                <% if period['summary'].present? %><span class="d-block small text-muted"><%= period['summary'] %></span><% end %>
+              </td>
+              <td>
+                <% if %w[high low].include?(period['temperature_class']) %>
+                  <%= t("better_together.weather.panel.daily.#{period['temperature_class']}", value: weather_value(period['temperature_c'], :celsius)) %>
+                <% else %>
+                  <%= weather_value(period['temperature_c'], :celsius) %>
+                <% end %>
+              </td>
+              <td><%= period['pop_pct'].nil? ? t('better_together.weather.panel.not_reported') : t('better_together.weather.panel.units.percent', value: period['pop_pct'].to_i) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p id="weather-daily-empty" class="text-muted"><%= t('better_together.weather.panel.daily.empty') %></p>
+  <% end %>
+</section>
