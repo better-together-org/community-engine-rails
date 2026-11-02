@@ -19,10 +19,15 @@
 
 // Typed pins (points with color and icon) and cluster markers. leaflet.markercluster's own stylesheet is not used:
 // these rules cover its animation classes and draw the clusters without images.
-.map-pin span {
+.map-pin span:not(.fa-stack) {
   display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;
   border-radius: 50%; color: #fff; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+  box-sizing: border-box;
 }
+.map-pin .map-pin-rounded { border-radius: 28%; }
+.map-pin .map-pin-square { border-radius: 2px; }
+.map-pin .fa-stack { width: 2em; height: 2em; line-height: 2em; }
+.map-legend .map-pin { display: inline-block; vertical-align: middle; }
 
 .map-cluster span {
   display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;

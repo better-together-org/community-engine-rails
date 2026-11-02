@@ -1,7 +1,9 @@
 <%# locals: (map:, enable_popups: true, use_label_as_popup: false, cluster: true, types: [], boundary: nil, boundary_attribution: nil, layers: [], extra_controllers: nil, attributes: {}) %>
 <%# attributes: extra HTML attributes for the map element, with full data attribute names as keys (for example
     'data-better_together--space-fields-target' => 'map'). extra_controllers: more Stimulus controllers to attach.
-    types: [{ key:, label:, color: }] for points that carry a type (drives the legend and cluster pies).
+    types: [{ key:, label:, color:, pin: }] for points that carry a type (drives the legend and cluster pies; pin is the
+    default look of the type's points).
+    Points may carry pin: { color:, shape:, size:, icons: [...] } (see BetterTogether::Geography::MapPin).
     boundary: GeoJSON drawn as an outline; boundary_attribution: its credit (a MapLayer attribute hash or HTML-safe text).
     layers: MapLayers, registered layer keys or attribute hashes drawn with their attribution, in addition to the
     map's own (Map#layers). cluster: group nearby points by density. %>
@@ -24,13 +26,13 @@
       class: 'map',
       'data-controller' => ['better_together--map', *extra_controllers].join(' '),
       'data-better_together--map-center-value' => map.center_for_leaflet,
-      'data-better_together--map-spaces-value' => map.leaflet_points.to_json,
+      'data-better_together--map-spaces-value' => map.leaflet_points.map { |point| BetterTogether::Geography::MapPin.point(point) }.to_json,
       'data-better_together--map-zoom-value' => map.zoom,
       'data-better_together--map-extent-value' => map.viewport,
       'data-better_together--map-enable-popups-value' => enable_popups,
       'data-better_together--map-use-label-as-popup-value' => use_label_as_popup,
       'data-better_together--map-cluster-value' => cluster,
-      'data-better_together--map-types-value' => types.to_json,
+      'data-better_together--map-types-value' => types.map { |entry| BetterTogether::Geography::MapPin.type(entry) }.to_json,
       'data-better_together--map-labels-value' => labels.to_json
     }
     map_attributes['data-better_together--map-boundary-value'] = boundary.to_json if boundary.present?
