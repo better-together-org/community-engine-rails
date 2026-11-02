@@ -1,0 +1,14 @@
+---
+title: 'Settlement weather: history'
+audience:
+- end_user
+journey_step: As a visitor, I can see current conditions, the forecast and recent
+  weather.
+callouts:
+- :id: charts
+  :title: Same values as a table
+  :description: Every chart has a text alternative.
+accessibility_notes: Charts have a text alternative and a data table with the same
+  values.
+slug: settlement_weather_history
+device: desktop

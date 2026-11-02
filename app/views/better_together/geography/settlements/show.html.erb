@@ -39,6 +39,9 @@
         <% if @located_communities.present? %>
           <%= link_to t('globals.tabs.communities'), '#communities', class: 'nav-link', id: 'communities-tab', data: { bs_toggle: 'tab', bs_target: '#communities', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'communities', selected: 'false' }, tabindex: '-1' %>
         <% end %>
+        <% if @weather_location.present? %>
+          <%= link_to t('globals.tabs.weather'), '#weather', class: 'nav-link', id: 'weather-tab', data: { bs_toggle: 'tab', bs_target: '#weather', turbo: false, 'better_together--tabs-target': 'tab' }, role: 'tab', aria: { controls: 'weather', selected: 'false' }, tabindex: '-1' %>
+        <% end %>
         <%= render 'better_together/geography/settlements/tab_links_extra', settlement: @geography_settlement %>
       <% end %>
     </div>
@@ -76,6 +79,15 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4" id="settlement-communities">
               <%= render partial: 'better_together/communities/community', collection: @located_communities, as: :community %>
             </div>
+          </div>
+        <% end %>
+
+        <% if @weather_location.present? %>
+          <%# Weather: the panel for this settlement, loaded when the tab is first shown. Stored data only, no live source calls. %>
+          <div id="weather" class="nav-tab-pane tab-pane fade" role="tabpanel" aria-labelledby="weather-tab">
+            <%= turbo_frame_tag 'settlement-weather', src: weather_geography_settlement_path(@geography_settlement, locale: I18n.locale), loading: :lazy do %>
+              <p class="text-muted"><%= t('.weather_loading') %></p>
+            <% end %>
           </div>
         <% end %>
 

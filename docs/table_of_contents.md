@@ -68,6 +68,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Settlement naming and wording assessment](assessments/settlement_to_town_rename_assessment.md) - Why "Settlement" stays, where the gloss lives, and the edit-point map for a future rename
 - [I18n Mobility Localization System](developers/systems/i18n_mobility_localization_system.md) - Internationalization
 - [Metrics System](developers/systems/metrics_system.md) - Analytics and reporting
+- [Settlement Weather](weather.md) - Weather sources, adapters, stored observation history and ingest jobs
 - [Navigation System](developers/systems/navigation_system.md) - Site navigation
 - [Notifications System](developers/systems/notifications_system.md) - Notification delivery
 - [Search Backend Adapter System](developers/systems/search_backend_adapter_system.md) - Adapterized backend selection across pg_search (default) and database search modes, with Elasticsearch as an optional extension gem

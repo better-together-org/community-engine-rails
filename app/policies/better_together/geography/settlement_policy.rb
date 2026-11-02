@@ -11,6 +11,11 @@ module BetterTogether
         true
       end
 
+      # The weather tab is public like the settlement page itself.
+      def weather?
+        show?
+      end
+
       def create?
         false
       end
