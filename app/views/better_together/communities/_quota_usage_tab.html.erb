@@ -1,0 +1,14 @@
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <h3 class="card-title h5"><%= t('.title') %></h3>
+    <p class="text-muted mb-4"><%= t('.description') %></p>
+
+    <% if quotas.present? && quotas.any? %>
+      <% quotas.each do |quota| %>
+        <%= render 'better_together/quotas/usage_meter', quota: quota %>
+      <% end %>
+    <% else %>
+      <p class="text-muted mb-0"><%= t('.none') %></p>
+    <% end %>
+  </div>
+</div>

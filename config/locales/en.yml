@@ -1038,6 +1038,11 @@ en:
       new:
         title: Communities
       none-yet: None-yet
+      quota_usage_tab:
+        description: How much of this community's storage allowance is currently in
+          use.
+        none: This community has no recorded usage yet.
+        title: Usage
       show:
         about:
           no_description: No description available.
@@ -3443,6 +3448,59 @@ en:
         privacy_limited_by_platform: Some privacy options are disabled because the
           platform is not public. Content can only be visible to community members
           or the author.
+    quota_grants:
+      created: Quota grant created.
+      edit:
+        title: Edit Quota Grant
+      form:
+        community: Community (if owner type is Community)
+        community_prompt: Select a community
+        expires_at: Expires at
+        expires_at_hint: Leave blank for a grant that never expires.
+        limit: Limit
+        owner: Owner
+        owner_hint: Only the field matching the owner type above is used.
+        owner_type: Owner type
+        owner_type_community: Community
+        owner_type_person: Person
+        person: Person (if owner type is Person)
+        person_prompt: Search for a person
+        quota_type: Quota type
+        reason: Reason
+      index:
+        description: See who is using how much, and grant an owner a higher limit
+          without changing the platform default.
+        grant_override: Grant override
+        grants_empty: No quota grants have been created for this platform yet.
+        grants_title: Existing grants
+        new: New grant
+        overview_empty: No usage recorded on this platform yet.
+        overview_title: Usage overview (busiest first)
+        revoke: Revoke
+        revoke_confirm: Revoke this quota grant?
+        title: Quota Grants
+      new:
+        title: New Quota Grant
+      revoked: Quota grant revoked.
+      status:
+        active: Active
+        expired: Expired
+      table:
+        actions: Actions
+        expires_at: Expires
+        granted_by: Granted by %{name}
+        limit: Limit
+        no_expiry: No expiry
+        owner: Owner
+        quota_type: Quota type
+        status: Status
+        usage: Usage
+      updated: Quota grant updated.
+    quotas:
+      usage_meter:
+        types:
+          ai_translation_tokens: AI Translation Tokens
+          media_storage: Storage
     rbac:
       nav:
         resource_permissions: Resource permissions
@@ -3889,7 +3947,14 @@ en:
           platform: Platform
           preferences: Preferences
           privacy: Privacy
+          usage: Usage
         title: Settings
+        usage:
+          description: How much of your storage and other quota-governed limits you
+            are currently using.
+          title: Usage
+      usage:
+        none: You have no recorded usage yet.
     setup_wizard_steps:
       already_completed: This platform has already been set up. Please sign in to
         manage your platform.
@@ -4988,6 +5053,7 @@ en:
       roles_and_permissions: Roles & Permissions
       safety: Safety
       sessions: Sessions
+      usage: Usage
     to: To
     'true': true
     undo_clear: Undo Clear
@@ -5373,6 +5439,7 @@ en:
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
         platform_domains: Domains
+        quota_grants: Quota grants
         robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations
