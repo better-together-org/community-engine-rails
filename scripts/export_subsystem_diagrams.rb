@@ -514,6 +514,10 @@ module CeSubsystemDiagramExport
       subsystem[:concerns_inventory].sort_by! { |entry| entry.fetch(:name) }
       subsystem[:outbound_relationships].uniq! { |edge| [edge[:from], edge[:to], edge[:label]] }
       subsystem[:inbound_references].uniq! { |edge| [edge[:from], edge[:to], edge[:label]] }
+      # Reflection order follows constant load order, which differs between machines and CI.
+      %i[outbound_relationships inbound_references].each do |key|
+        subsystem[key].sort_by! { |edge| edge.values_at(:from, :to, :label).map(&:to_s) }
+      end
       annotate_shared_tables!(subsystem)
     end
 

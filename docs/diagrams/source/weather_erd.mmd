@@ -1,0 +1,46 @@
+%% render.orientation: landscape
+erDiagram
+  SETTLEMENT ||--o{ WEATHER_LOCATION : "is tracked as"
+  WEATHER_SOURCE ||--o{ WEATHER_LOCATION : "supplies"
+  WEATHER_LOCATION ||--o| WEATHER_CURRENT_CONDITION : "latest"
+  WEATHER_LOCATION ||--o{ WEATHER_FORECAST : "issued"
+  WEATHER_LOCATION ||--o{ WEATHER_OBSERVATION : "history"
+  WEATHER_SOURCE {
+    string identifier
+    string adapter_key
+    jsonb config
+    boolean enabled
+  }
+  WEATHER_LOCATION {
+    uuid settlement_id
+    uuid source_id
+    string external_ref
+    string observation_station_ref
+    string precip_station_ref
+    string time_zone
+    datetime last_current_fetched_at
+    datetime last_observations_backfilled_at
+    text last_error
+  }
+  WEATHER_CURRENT_CONDITION {
+    uuid location_id
+    datetime observed_at
+    datetime fetched_at
+    jsonb payload
+  }
+  WEATHER_FORECAST {
+    uuid location_id
+    string kind
+    datetime issued_at
+    jsonb payload
+  }
+  WEATHER_OBSERVATION {
+    uuid location_id
+    string granularity
+    datetime observed_at
+    string origin
+    float temperature_c
+    float precip_mm
+    float wind_speed_kmh
+    jsonb source_flags
+  }

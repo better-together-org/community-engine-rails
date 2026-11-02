@@ -1,0 +1,45 @@
+<%# locals: (panel:, zone:, source_lang:) -%>
+<% values = panel.current_values %>
+<% extras = panel.current_extras %>
+<% feels_like = values['humidex'] || values['wind_chill'] %>
+<section id="weather-current" class="card mb-4" aria-labelledby="weather-current-heading">
+  <div class="card-body">
+    <h2 id="weather-current-heading" class="h4 card-title"><%= t('better_together.weather.panel.current.heading') %></h2>
+    <% if panel.current %>
+      <p class="mb-3">
+        <span id="weather-current-temperature" class="display-5 fw-semibold"><%= weather_value(values['temperature_c'], :celsius, digits: 1) %></span>
+        <% if panel.current_condition_text.present? %>
+          <span id="weather-current-condition" class="fs-5 ms-2" lang="<%= source_lang %>"><%= panel.current_condition_text %></span>
+        <% end %>
+      </p>
+      <dl id="weather-current-details" class="row mb-2">
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.feels_like') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-feels-like"><%= weather_value(feels_like, :celsius) %></dd>
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.humidity') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-humidity"><%= weather_value(values['humidity_pct'], :percent) %></dd>
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.wind') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-wind">
+          <%= weather_value(values['wind_speed_kmh'], :kmh) %>
+          <% if extras['wind_direction'].present? %><span lang="<%= source_lang %>"><%= extras['wind_direction'] %></span><% end %>
+        </dd>
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.gusts') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-gusts"><%= weather_value(values['wind_gust_kmh'], :kmh) %></dd>
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.pressure') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-pressure"><%= weather_value(values['pressure_kpa'], :kpa, digits: 1) %></dd>
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.dew_point') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-dew-point"><%= weather_value(values['dew_point_c'], :celsius) %></dd>
+        <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.visibility') %></dt>
+        <dd class="col-6 col-md-3" id="weather-current-visibility"><%= weather_value(values['visibility_km'], :km) %></dd>
+        <% if extras['sunrise'].present? && extras['sunset'].present? %>
+          <dt class="col-6 col-md-3"><%= t('better_together.weather.panel.current.sun') %></dt>
+          <dd class="col-6 col-md-3" id="weather-current-sun"><%= t('better_together.weather.panel.current.sun_times', rise: weather_time(extras['sunrise'], zone), set: weather_time(extras['sunset'], zone)) %></dd>
+        <% end %>
+      </dl>
+      <p id="weather-current-observed" class="small text-muted mb-0">
+        <%= t('better_together.weather.panel.current.observed', time: weather_datetime(panel.current.observed_at, zone)) %>
+      </p>
+    <% else %>
+      <p class="text-muted mb-0"><%= t('better_together.weather.panel.current.unavailable') %></p>
+    <% end %>
+  </div>
+</section>

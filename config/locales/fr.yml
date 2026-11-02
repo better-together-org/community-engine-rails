@@ -2055,6 +2055,7 @@ fr:
           posts_loading: Chargement des publications...
           sections_aria: Sections de la localité
           view-all-settlements: Voir toutes les localités
+          weather_loading: Chargement de la météo
         toolbar:
           back_to_geography_settlements: Retour aux localités
           save_geography_settlement: Sauvegarder la localité
@@ -4289,6 +4290,99 @@ fr:
         list: Liste
         map: Carte
         table: Tableau
+    weather:
+      panel:
+        current:
+          dew_point: Point de rosée
+          feels_like: Ressenti
+          gusts: Rafales
+          heading: Conditions actuelles
+          humidity: Humidité
+          observed: Observé %{time}
+          pressure: Pression
+          sun: Soleil
+          sun_times: Lever %{rise}, coucher %{set}
+          unavailable: Les conditions actuelles ne sont pas disponibles pour le moment.
+          visibility: Visibilité
+          wind: Vent
+        daily:
+          caption: Prévisions par jour et par nuit
+          chance: Probabilité de précipitations
+          conditions: Conditions
+          empty: Les prévisions sur 7 jours ne sont pas disponibles pour le moment.
+          heading: Prévisions sur 7 jours
+          high: Max. %{value}
+          low: Min. %{value}
+          period: Période
+          temperature: Température
+        disclaimer: Les informations météo sont fournies à titre indicatif et peuvent
+          être retardées ou incomplètes. En cas d'urgence, suivez les consignes et
+          les alertes officielles locales.
+        history:
+          axis:
+            celsius: Température (°C)
+            kmh: Vent (km/h)
+            mm: Précipitations (mm)
+          chart_alt:
+            precipitation: Graphique à barres des précipitations quotidiennes des
+              14 derniers jours. Les mêmes valeurs figurent dans le tableau ci-dessous.
+            temperature: Graphique linéaire des températures maximale, minimale et
+              moyenne quotidiennes des 14 derniers jours. Les mêmes valeurs figurent
+              dans le tableau ci-dessous.
+            wind: Graphique linéaire de la vitesse maximale du vent et des rafales
+              quotidiennes des 14 derniers jours. Les mêmes valeurs figurent dans
+              le tableau ci-dessous.
+          charts:
+            precipitation: Précipitations
+            temperature: Température
+            wind: Vent
+          columns:
+            date: Date
+          description: Météo quotidienne enregistrée pour cette localité, à partir
+            des observations conservées.
+          empty: Aucune donnée météo passée n'a encore été enregistrée pour cette
+            localité.
+          heading: Les 14 derniers jours
+          series:
+            precip_mm: Précipitations
+            snow_cm: Chute de neige
+            temperature_max_c: Maximum quotidien
+            temperature_mean_c: Moyenne quotidienne
+            temperature_min_c: Minimum quotidien
+            wind_gust_kmh: Rafale maximale
+            wind_speed_kmh: Vent maximal
+          show_table: Afficher les valeurs enregistrées sous forme de tableau
+          so_far: jusqu'à présent
+          table_caption: Météo quotidienne enregistrée pour les 14 derniers jours
+            et aujourd'hui jusqu'à présent
+          unreported:
+            precipitation: Cette station météo ne mesure pas les précipitations.
+            temperature: Aucun relevé de température n'est enregistré pour cette période.
+            wind: Aucun relevé de vent n'est enregistré pour cette période.
+        hourly:
+          chance: Précipitations %{value} %
+          empty: Les prévisions horaires ne sont pas disponibles pour le moment.
+          heading: Prochaines 24 heures
+          scroll_label: Prévisions horaires, défilement horizontal
+        licence: licence des données
+        never: pas encore
+        no_data: Les données météo ne sont pas encore disponibles pour cette localité.
+        not_reported: Non communiqué
+        source_error: La source météo n'a pas pu être jointe lors de la dernière mise
+          à jour. Les informations affichées peuvent être périmées.
+        stale: Ces conditions ont été mises à jour pour la dernière fois %{time} et
+          peuvent être périmées.
+        summary:
+          heading: La météo maintenant
+          view_full: Voir la météo complète
+        units:
+          celsius: "%{value} °C"
+          cm: "%{value} cm"
+          km: "%{value} km"
+          kmh: "%{value} km/h"
+          kpa: "%{value} kPa"
+          mm: "%{value} mm"
+          percent: "%{value} %"
     webhook_endpoints:
       actions_aria: Actions du webhook
       active_help: Activer ou désactiver la livraison de webhooks pour ce point de
@@ -5174,6 +5268,7 @@ fr:
       safety: Sécurité
       sessions: Séances
       usage: Utilisation
+      weather: Météo
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement

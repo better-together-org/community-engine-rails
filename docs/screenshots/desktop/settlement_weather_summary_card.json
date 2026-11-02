@@ -1,0 +1,48 @@
+{
+  "name": "settlement_weather_summary_card",
+  "device": "desktop",
+  "url": "/en/g/settlements/settlement-1",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "weather",
+  "flow": "summary_card",
+  "source_spec": "./spec/docs_screenshots/better_together/settlement_weather_spec.rb",
+  "callouts": [
+    {
+      "selector": "#weather-summary-card",
+      "title": "Current conditions card",
+      "bullets": [
+        "Links to the full weather tab."
+      ],
+      "target": {
+        "x": 89.0,
+        "y": 675.0,
+        "width": 1262.0,
+        "height": 175.0,
+        "right": 1351.0,
+        "bottom": 850.0,
+        "center_x": 720.0,
+        "center_y": 762.5
+      },
+      "avoid": {
+        "x": 89.0,
+        "y": 675.0,
+        "width": 1262.0,
+        "height": 175.0,
+        "right": 1351.0,
+        "bottom": 850.0,
+        "center_x": 720.0,
+        "center_y": 762.5
+      },
+      "placement": {
+        "side": "above",
+        "x": 530.0,
+        "y": 491.0,
+        "width": 380,
+        "height": 164,
+        "score": 675.0
+      }
+    }
+  ]
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_02_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_02_150100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2456,6 +2456,92 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_02_120000) do
     t.index ["unlock_token"], name: "index_better_together_users_on_unlock_token", unique: true
   end
 
+  create_table "better_together_weather_current_conditions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "location_id"
+    t.datetime "observed_at"
+    t.datetime "fetched_at", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.index ["location_id"], name: "bt_weather_current_by_location", unique: true
+  end
+
+  create_table "better_together_weather_forecasts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "location_id"
+    t.string "kind", limit: 20, null: false
+    t.datetime "issued_at", null: false
+    t.datetime "fetched_at", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.index ["location_id", "kind", "issued_at"], name: "bt_weather_forecast_unique_issue", unique: true
+    t.index ["location_id"], name: "bt_weather_forecast_by_location"
+  end
+
+  create_table "better_together_weather_locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "settlement_id"
+    t.uuid "source_id"
+    t.string "external_ref", null: false
+    t.string "observation_station_ref"
+    t.string "precip_station_ref"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "time_zone", default: "UTC", null: false
+    t.boolean "enabled", default: true, null: false
+    t.datetime "last_current_fetched_at"
+    t.datetime "last_forecast_fetched_at"
+    t.datetime "last_observations_backfilled_at"
+    t.datetime "last_error_at"
+    t.text "last_error"
+    t.index ["settlement_id", "source_id"], name: "bt_weather_location_unique_settlement_source", unique: true
+    t.index ["settlement_id"], name: "bt_weather_location_by_settlement"
+    t.index ["source_id"], name: "bt_weather_location_by_source"
+  end
+
+  create_table "better_together_weather_observations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "location_id"
+    t.string "granularity", limit: 10, null: false
+    t.datetime "observed_at", null: false
+    t.string "origin", limit: 20, null: false
+    t.float "temperature_c"
+    t.float "temperature_min_c"
+    t.float "temperature_max_c"
+    t.float "dew_point_c"
+    t.float "humidex"
+    t.float "wind_chill"
+    t.float "humidity_pct"
+    t.float "pressure_kpa"
+    t.float "wind_speed_kmh"
+    t.float "wind_gust_kmh"
+    t.float "wind_direction_deg"
+    t.float "visibility_km"
+    t.float "precip_mm"
+    t.float "snow_cm"
+    t.string "condition"
+    t.jsonb "source_flags", default: {}, null: false
+    t.index ["location_id", "granularity", "observed_at"], name: "bt_weather_observation_unique_reading", unique: true
+    t.index ["location_id"], name: "bt_weather_observation_by_location"
+  end
+
+  create_table "better_together_weather_sources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "identifier", limit: 100, null: false
+    t.string "adapter_key", null: false
+    t.jsonb "config", default: {}, null: false
+    t.boolean "enabled", default: true, null: false
+    t.index ["identifier"], name: "index_better_together_weather_sources_on_identifier", unique: true
+  end
+
   create_table "better_together_webhook_deliveries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2908,6 +2994,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_02_120000) do
   add_foreign_key "better_together_uploads", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_uploads", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_users", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_weather_current_conditions", "better_together_weather_locations", column: "location_id"
+  add_foreign_key "better_together_weather_forecasts", "better_together_weather_locations", column: "location_id"
+  add_foreign_key "better_together_weather_locations", "better_together_geography_settlements", column: "settlement_id"
+  add_foreign_key "better_together_weather_locations", "better_together_weather_sources", column: "source_id"
+  add_foreign_key "better_together_weather_observations", "better_together_weather_locations", column: "location_id"
   add_foreign_key "better_together_webhook_deliveries", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_webhook_deliveries", "better_together_webhook_endpoints", column: "webhook_endpoint_id"
   add_foreign_key "better_together_webhook_endpoints", "better_together_communities", column: "community_id"

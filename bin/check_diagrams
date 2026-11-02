@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Pre-push check that mirrors the two diagram CI jobs (schema-diagrams.yml and diagrams.yml).
+# It regenerates every diagram, then fails if that changed any file in the working tree, so
+# stale sources, exports or hashes are caught before CI sees them. Run it after your last
+# schema, model, association or .mmd change, then commit whatever it rewrote.
+#
+#   bin/check_diagrams
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# The reference inventory carries a generation timestamp and no CI job checks it, so it is not compared.
+PATHS=(db/community-engine-db.dbml docs/diagrams/source docs/diagrams/exports)
+
+fingerprint() {
+  { git ls-files -co --exclude-standard -- "${PATHS[@]}" | sort | xargs -r sha256sum; } | sha256sum
+}
+
+before=$(fingerprint)
+bin/export_schema_diagrams
+bin/render_diagrams
+after=$(fingerprint)
+
+if [ "$before" != "$after" ]; then
+  echo "Diagrams were stale. Regeneration rewrote files; review and commit them:" >&2
+  git status --short -- "${PATHS[@]}" >&2
+  exit 1
+fi
+echo "Diagrams are current."
