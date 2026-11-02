@@ -62,6 +62,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'omniauth'
   spec.add_dependency 'omniauth-github', '~> 2.0.0'
   spec.add_dependency 'omniauth-rails_csrf_protection'
+  spec.add_dependency 'pay', '~> 11.6'
   spec.add_dependency 'pg_search'
   spec.add_dependency 'premailer-rails'
   spec.add_dependency 'public_activity'
