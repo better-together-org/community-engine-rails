@@ -1,0 +1,14 @@
+%% render.orientation: landscape
+flowchart LR
+  Scheduler[Sidekiq scheduler] -->|hourly :10| RefreshScan[RefreshScanJob]
+  RefreshScan --> RefreshLoc[RefreshLocationJob]
+  RefreshLoc --> Adapter[Adapter fetch_snapshot]
+  Adapter -->|citypage XML| Store[(current, forecasts, hourly live_feed observation)]
+  Scheduler -->|daily 06:30| BackfillScan[BackfillScanJob]
+  BackfillScan --> BackfillLoc[BackfillLocationJob]
+  BackfillLoc --> History[Adapter fetch_observations]
+  History -->|climate-hourly, climate-daily| Gaps{missing or null?}
+  Gaps -->|create or fill only| Store
+  Store --> Pages[Settlement pages and charts read stored rows only]
+  Scheduler -->|daily 04:45| Purge[PurgeJob retention]
+  Purge --> Store

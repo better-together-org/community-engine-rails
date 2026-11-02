@@ -601,6 +601,36 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Privacy, PrivacyCeilingValidatable +1
       weak refs: owner: seeds
     }
+    class BetterTogether__Weather__CurrentCondition["Weather::CurrentCondition"] {
+      <<Model>>
+      table: better_together_weather_current_conditions
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__Weather__Forecast["Weather::Forecast"] {
+      <<Model>>
+      table: better_together_weather_forecasts
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__Weather__Location["Weather::Location"] {
+      <<Model>>
+      table: better_together_weather_locations
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__Weather__Observation["Weather::Observation"] {
+      <<Model>>
+      table: better_together_weather_observations
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__Weather__Source["Weather::Source"] {
+      <<Model>>
+      table: better_together_weather_sources
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__WebsiteLink["WebsiteLink"] {
       <<Model>>
       table: better_together_website_links
@@ -780,5 +810,10 @@ classDiagram
   BetterTogether__ShortLink --> BetterTogether__Person : creator
   BetterTogether__SocialMediaAccount --> BetterTogether__Platform : platform
   BetterTogether__SocialMediaAccount --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__Weather__CurrentCondition --> BetterTogether__Weather__Location : location
+  BetterTogether__Weather__Forecast --> BetterTogether__Weather__Location : location
+  BetterTogether__Weather__Location --> BetterTogether__Geography__Settlement : settlement
+  BetterTogether__Weather__Location --> BetterTogether__Weather__Source : source
+  BetterTogether__Weather__Observation --> BetterTogether__Weather__Location : location
   BetterTogether__WebsiteLink --> BetterTogether__Platform : platform
   BetterTogether__WebsiteLink --> BetterTogether__ContactDetail : contact_detail
