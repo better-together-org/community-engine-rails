@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_01_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_02_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -318,6 +318,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_01_120000) do
     t.string "icon", default: "fas fa-icons", null: false
     t.uuid "platform_id"
     t.string "privacy", limit: 50, default: "public", null: false
+    t.string "color"
     t.index ["identifier", "type", "platform_id"], name: "idx_bt_categories_on_identifier_type_platform_id", unique: true, where: "(platform_id IS NOT NULL)"
     t.index ["platform_id"], name: "index_better_together_categories_on_platform_id"
     t.index ["privacy"], name: "by_better_together_categories_privacy"
