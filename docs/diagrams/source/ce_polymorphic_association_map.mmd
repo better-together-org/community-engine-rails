@@ -53,7 +53,7 @@ flowchart TB
   subgraph platform_network["Platforms, communities, routing, and federation"]
     direction TB
     platform_network_polymorphic_anchor:::hidden
-    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +17"]
+    BetterTogether__Community_polymorphic_summary["Community\nowner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts, owner: slugs +18"]
     BetterTogether__CommunityInvitation_polymorphic_summary["CommunityInvitation\ntarget: invitable, target: inviter, target: invitee, owner: seeds"]
     BetterTogether__FederationAccessToken_polymorphic_summary["FederationAccessToken\nowner: seeds"]
     BetterTogether__NavigationArea_polymorphic_summary["NavigationArea\ntarget: navigable, owner: seeds, owner: slugs, owner: string_translations"]
@@ -262,6 +262,7 @@ flowchart TB
     direction TB
     shared_supporting_polymorphic_anchor:::hidden
     BetterTogether__Activity_polymorphic_summary["Activity\ntarget: trackable, target: owner, target: recipient"]
+    BetterTogether__AgentGrant_polymorphic_summary["AgentGrant\nowner: seeds"]
     BetterTogether__CommentAddedNotifier_polymorphic_summary["CommentAddedNotifier\nfamily: 21 models\ntarget: record"]
     BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary["CommentAddedNotifier::Notification\nfamily: 21 models\ntarget: recipient"]
     BetterTogether__CommentConfig_polymorphic_summary["CommentConfig\ntarget: commentable, owner: seeds"]
@@ -294,7 +295,8 @@ flowchart TB
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
     shared_supporting_polymorphic_anchor ~~~ BetterTogether__Activity_polymorphic_summary
-    BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
+    BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__AgentGrant_polymorphic_summary
+    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
     BetterTogether__CommentAddedNotifier_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary
     BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary ~~~ BetterTogether__CommentConfig_polymorphic_summary
     BetterTogether__CommentConfig_polymorphic_summary ~~~ BetterTogether__ContactDetail_polymorphic_summary

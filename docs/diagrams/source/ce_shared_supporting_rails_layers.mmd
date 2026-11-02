@@ -336,6 +336,11 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__QuotaGrantsController["QuotaGrantsController"] {
+      <<Controller>>
+      models: QuotaGrant
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
     class BetterTogether__ReportFollowupsController["ReportFollowupsController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
@@ -405,6 +410,12 @@ classDiagram
       table: better_together_activities
       concerns: PlatformScoped
       weak refs: target: trackable, target: owner, target: recipient
+    }
+    class BetterTogether__AgentGrant["AgentGrant"] {
+      <<Model>>
+      table: better_together_agent_grants
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
     }
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
@@ -689,6 +700,8 @@ classDiagram
   BetterTogether__NewPlatformSetupController --|> BetterTogether__ApplicationController
   BetterTogether__NewPlatformSetupStepsController --|> BetterTogether__WizardStepsController
   BetterTogether__PlatformDomainsController --|> BetterTogether__ApplicationController
+  BetterTogether__QuotaGrantsController ..> BetterTogether__QuotaGrant : manages
+  BetterTogether__QuotaGrantsController --|> BetterTogether__ApplicationController
   BetterTogether__ReportFollowupsController --|> BetterTogether__ApplicationController
   BetterTogether__ResourceController --|> BetterTogether__ApplicationController
   BetterTogether__RobotsController --|> BetterTogether__ApplicationController
@@ -701,6 +714,11 @@ classDiagram
   BetterTogether__ShortLinksController --|> BetterTogether__ResourceController
   BetterTogether__Users__OmniauthCallbacksController --|> BetterTogether__OmniauthCallbacksController
   BetterTogether__Activity --> BetterTogether__Platform : platform
+  BetterTogether__AgentGrant --> BetterTogether__Robot : robot
+  BetterTogether__AgentGrant --> BetterTogether__Platform : platform
+  BetterTogether__AgentGrant --> BetterTogether__Person : operator
+  BetterTogether__AgentGrant --> BetterTogether__Community : community
+  BetterTogether__AgentGrant --> BetterTogether__Person : granted_by
   BetterTogether__CommentAddedNotifier__Notification --> Noticed__Event : event
   BetterTogether__CommentAddedNotifier__Notification --> BetterTogether__Platform : platform
   BetterTogether__ContactDetail --> BetterTogether__Platform : platform
