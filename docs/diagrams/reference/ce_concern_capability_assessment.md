@@ -50,7 +50,7 @@ This assessment is generated from the current live class set and the concern cap
 | `FriendlySlug` | Adds translated/human-friendly slugs for routes and lookup. | `ResourcePermission`, `User`, `Role`, `Person`, `OauthUser` | Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved. |
 | `Geography::Geospatial::One` | One | `Geography::Settlement`, `Geography::Region`, `Geography::State`, `Geography::Country`, `Geography::Continent`, `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::AddressData` | Addressdata | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
-| `Geography::Locatable::LocatedIn` | Locatedin | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Geography::Locatable::LocatedIn` | Locatedin | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::LocationMapPoints` | Locationmappoints | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::Many` | Many | `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::One` | One | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
@@ -86,6 +86,7 @@ This assessment is generated from the current live class set and the concern cap
 | `PerUserThrottling` | Peruserthrottling | `PersonBlocksController`, `InvitationsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Permissible` | Adds role/resource-permission linkage for policy checks and platform governance. | `Platform`, `Community` | Permission bundling can create god-mode reads unless capabilities are split carefully. |
 | `PinnableTimestamps` | Pinnabletimestamps | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlaceScopedIndex` | Placescopedindex | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionFederationPolicy` | Platformconnectionfederationpolicy | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionOauthCredentials` | Platformconnectionoauthcredentials | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionSyncTracking` | Platformconnectionsynctracking | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
