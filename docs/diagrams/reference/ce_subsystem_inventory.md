@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-02T13:32:14Z`.
+Generated from live Rails reflections at `2026-11-02T18:16:58Z`.
 
 ## Identity, access, and memberships
 
@@ -693,6 +693,11 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | SafetyReportSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | ShortLink | `better_together_short_links` | `creator_id` (uuid FK)<br>`linkable_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`code` (string)<br>`linkable_type` (string)<br>`status` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: code<br>UniquenessValidator: code (scope=:platform_id, case_sensitive=false)<br>FormatValidator: code (with=/\A[a-z0-9-]+\z/)<br>PresenceValidator: target_url | `BetterTogetherId`<br>`Creatable`<br>`PlatformScoped`<br>`Seedable`<br>`Translatable` | `platform` -> `Platform` (platform_network)<br>`creator` -> `Person` (identity_access) |
 | SocialMediaAccount | `better_together_social_media_accounts` | `contact_detail_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`handle` (string)<br>`platform_name` (string)<br>`privacy` (string)<br>`url` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: privacy<br>InclusionValidator: privacy (in=["public", "community", "private"])<br>PresenceValidator: platform_name<br>InclusionValidator: platform_name (in=["Facebook", "Instagram", "LinkedIn", "YouTube", "TikTok", "Reddit", "What'sApp"])<br>UniquenessValidator: platform_name (scope=:contact_detail_id, message="account already exists for this contact") | `BetterTogetherId`<br>`PlatformScoped`<br>`Privacy`<br>`PrivacyCeilingValidatable`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
+| Weather::CurrentCondition | `better_together_weather_current_conditions` | `location_id` (uuid FK)<br>`fetched_at` (datetime)<br>`observed_at` (datetime)<br>`payload` (jsonb) | PresenceValidator: fetched_at | `BetterTogetherId`<br>`Seedable` | — |
+| Weather::Forecast | `better_together_weather_forecasts` | `location_id` (uuid FK)<br>`kind` (string)<br>`fetched_at` (datetime)<br>`issued_at` (datetime)<br>`payload` (jsonb) | InclusionValidator: kind (in=["hourly", "daily"])<br>PresenceValidator: issued_at, fetched_at | `BetterTogetherId`<br>`Seedable` | — |
+| Weather::Location | `better_together_weather_locations` | `settlement_id` (uuid FK)<br>`source_id` (uuid FK)<br>`external_ref` (string)<br>`observation_station_ref` (string)<br>`precip_station_ref` (string)<br>`time_zone` (string) | PresenceValidator: external_ref<br>UniquenessValidator: settlement_id (scope=:source_id)<br>InclusionValidator: time_zone (in=dynamic) | `BetterTogetherId`<br>`Seedable` | `settlement` -> `Geography::Settlement` (geography_and_places) |
+| Weather::Observation | `better_together_weather_observations` | `location_id` (uuid FK)<br>`condition` (string)<br>`granularity` (string)<br>`origin` (string)<br>`observed_at` (datetime)<br>`source_flags` (jsonb) | InclusionValidator: granularity (in=["hourly", "daily"])<br>InclusionValidator: origin (in=["live_feed", "backfill_api"])<br>PresenceValidator: observed_at<br>UniquenessValidator: observed_at (scope=[:location_id, :granularity]) | `BetterTogetherId`<br>`Seedable` | — |
+| Weather::Source | `better_together_weather_sources` | `adapter_key` (string)<br>`identifier` (string)<br>`enabled` (boolean)<br>`config` (jsonb) | PresenceValidator: identifier<br>UniquenessValidator: identifier<br>PresenceValidator: adapter_key | `BetterTogetherId`<br>`Seedable` | — |
 | WebsiteLink | `better_together_website_links` | `contact_detail_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`label` (string)<br>`privacy` (string)<br>`url` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: privacy<br>InclusionValidator: privacy (in=["public", "community", "private"])<br>PresenceValidator: label<br>PresenceValidator: url<br>FormatValidator: url (with=/(?=(?i:http|https):)
         ([a-zA-Z][\-+.a-zA-Z\d]*):                           (?# 1: scheme)
         (?:
@@ -891,6 +896,11 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `SafetyReportSubmittedNotifier::Notification`: `recipient` (belongs_to)
 - `ShortLink`: `linkable` (belongs_to), `seeds` (has_many), `string_translations` (has_many)
 - `SocialMediaAccount`: `seeds` (has_many)
+- `Weather::CurrentCondition`: `seeds` (has_many)
+- `Weather::Forecast`: `seeds` (has_many)
+- `Weather::Location`: `seeds` (has_many)
+- `Weather::Observation`: `seeds` (has_many)
+- `Weather::Source`: `seeds` (has_many)
 - `WebsiteLink`: `seeds` (has_many)
 
 ### Concern notes
