@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T17:38:39Z",
+  "generated_at": "2026-11-02T18:16:58Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3207,67 +3207,73 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::PersonPurgeAudit",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonPlatformIntegration",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonLinkedSeed",
-          "to": "BetterTogether::Platform",
-          "label": "source_platform (source_platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonLink",
-          "to": "BetterTogether::PlatformConnection",
-          "label": "platform_connection (platform_connection_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonPlatformMembership",
-          "to": "BetterTogether::Platform",
-          "label": "joinable (joinable_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
           "from": "BetterTogether::GuestAccess",
           "to": "BetterTogether::Platform",
           "label": "invitable (invitable_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::RoleResourcePermission",
+          "from": "BetterTogether::Identification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::ResourcePermission",
+          "from": "BetterTogether::Invitation",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::PersonDeletionRequest",
+          "from": "BetterTogether::OauthAccessGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::PersonDataExport",
+          "from": "BetterTogether::OauthAccessToken",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::PersonChecklistItem",
+          "from": "BetterTogether::OauthApplication",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OauthApplication",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OauthApplication",
+          "to": "BetterTogether::Robot",
+          "label": "robot (robot_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::OauthUser",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Person",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Person",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonBlock",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -3285,13 +3291,7 @@
           "target_subsystem": "exchange_governance"
         },
         {
-          "from": "BetterTogether::Invitation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonCommunityMembership",
+          "from": "BetterTogether::PersonChecklistItem",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -3303,7 +3303,55 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::User",
+          "from": "BetterTogether::PersonCommunityMembership",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonDataExport",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonDeletionRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonLink",
+          "to": "BetterTogether::PlatformConnection",
+          "label": "platform_connection (platform_connection_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonLinkedSeed",
+          "to": "BetterTogether::Platform",
+          "label": "source_platform (source_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformIntegration",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformMembership",
+          "to": "BetterTogether::Platform",
+          "label": "joinable (joinable_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonPurgeAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::ResourcePermission",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -3315,61 +3363,13 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::PersonBlock",
+          "from": "BetterTogether::RoleResourcePermission",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Person",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Person",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::OauthAccessGrant",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::OauthAccessToken",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::OauthApplication",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::OauthApplication",
-          "to": "BetterTogether::Robot",
-          "label": "robot (robot_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::OauthApplication",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Identification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::OauthUser",
+          "from": "BetterTogether::User",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -6589,6 +6589,30 @@
       ],
       "outbound_relationships": [
         {
+          "from": "BetterTogether::Community",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::CommunityInvitation",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::CommunityInvitation",
+          "to": "BetterTogether::Role",
+          "label": "role (role_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Platform",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
           "from": "BetterTogether::PlatformInvitation",
           "to": "BetterTogether::Person",
           "label": "invitee (invitee_id)",
@@ -6613,67 +6637,13 @@
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Platform",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
           "from": "BetterTogether::WizardStep",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Community",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::CommunityInvitation",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::CommunityInvitation",
-          "to": "BetterTogether::Role",
-          "label": "role (role_id)",
-          "target_subsystem": "identity_access"
         }
       ],
       "inbound_references": [
-        {
-          "from": "BetterTogether::PersonPurgeAudit",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonPlatformIntegration",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonLinkedSeed",
-          "to": "BetterTogether::Platform",
-          "label": "source_platform (source_platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonLink",
-          "to": "BetterTogether::PlatformConnection",
-          "label": "platform_connection (platform_connection_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonPlatformMembership",
-          "to": "BetterTogether::Platform",
-          "label": "joinable (joinable_id)",
-          "source_subsystem": "identity_access"
-        },
         {
           "from": "BetterTogether::GuestAccess",
           "to": "BetterTogether::Platform",
@@ -6681,31 +6651,7 @@
           "source_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::RoleResourcePermission",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::ResourcePermission",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonDeletionRequest",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonDataExport",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonChecklistItem",
+          "from": "BetterTogether::Identification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "identity_access"
@@ -6714,48 +6660,6 @@
           "from": "BetterTogether::Invitation",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonCommunityMembership",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonCommunityMembership",
-          "to": "BetterTogether::Community",
-          "label": "joinable (joinable_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::User",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Role",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Person",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Person",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
           "source_subsystem": "identity_access"
         },
         {
@@ -6772,6 +6676,12 @@
         },
         {
           "from": "BetterTogether::OauthApplication",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::OauthApplication",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "identity_access"
@@ -6783,19 +6693,109 @@
           "source_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::OauthApplication",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "source_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Identification",
+          "from": "BetterTogether::OauthUser",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::OauthUser",
+          "from": "BetterTogether::Person",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Person",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonChecklistItem",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonCommunityMembership",
+          "to": "BetterTogether::Community",
+          "label": "joinable (joinable_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonCommunityMembership",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonDataExport",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonDeletionRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonLink",
+          "to": "BetterTogether::PlatformConnection",
+          "label": "platform_connection (platform_connection_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonLinkedSeed",
+          "to": "BetterTogether::Platform",
+          "label": "source_platform (source_platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformIntegration",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformMembership",
+          "to": "BetterTogether::Platform",
+          "label": "joinable (joinable_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonPurgeAudit",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::ResourcePermission",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Role",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::RoleResourcePermission",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::User",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "identity_access"
@@ -13362,37 +13362,25 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::Content::PlatformBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Upload",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Upload",
+          "from": "BetterTogether::Authorship",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Comment",
+          "from": "BetterTogether::Authorship",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Comment",
+          "from": "BetterTogether::CallForInterest",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Category",
+          "from": "BetterTogether::CallForInterest",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -13404,19 +13392,289 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::CallForInterest",
+          "from": "BetterTogether::Category",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::CallForInterest",
+          "from": "BetterTogether::Comment",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Page",
+          "from": "BetterTogether::Comment",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::AccordionBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::AccordionBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::AlertBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::AlertBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Block",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Block",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::CallToActionBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::CallToActionBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::ChecklistBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::ChecklistBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::CommunitiesBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::CommunitiesBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Css",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Css",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::EventsBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::EventsBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Hero",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Hero",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Html",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Html",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::IframeBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::IframeBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Image",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Image",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Markdown",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Markdown",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::MermaidDiagram",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::MermaidDiagram",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::NavigationAreaBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::NavigationAreaBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::PeopleBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::PeopleBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::PlatformBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::PostsBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::PostsBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::QuoteBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::QuoteBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::RichText",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::RichText",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::StatisticsBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::StatisticsBlock",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::Template",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::Template",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Content::VideoBlock",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Content::VideoBlock",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -13440,28 +13698,10 @@
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Content::Block",
+          "from": "BetterTogether::Page",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Block",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Post",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Post",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
         },
         {
           "from": "BetterTogether::Post",
@@ -13470,268 +13710,28 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Authorship",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Authorship",
+          "from": "BetterTogether::Post",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Content::VideoBlock",
+          "from": "BetterTogether::Post",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Content::VideoBlock",
+          "from": "BetterTogether::Upload",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Content::Template",
+          "from": "BetterTogether::Upload",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Template",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::StatisticsBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::StatisticsBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::RichText",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::RichText",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::QuoteBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::QuoteBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::PostsBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::PostsBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::PeopleBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::PeopleBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::NavigationAreaBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::NavigationAreaBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::MermaidDiagram",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::MermaidDiagram",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::Markdown",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Markdown",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::Image",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Image",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::IframeBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::IframeBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::Html",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Html",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::Hero",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Hero",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::EventsBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::EventsBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::Css",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::Css",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::CommunitiesBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::CommunitiesBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::ChecklistBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::ChecklistBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::CallToActionBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::CallToActionBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::AlertBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::AlertBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Content::AccordionBlock",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Content::AccordionBlock",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
         }
       ],
       "inbound_references": [
@@ -16309,31 +16309,43 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::Geography::Space",
+          "from": "BetterTogether::Address",
+          "to": "BetterTogether::ContactDetail",
+          "label": "contact_detail (contact_detail_id)",
+          "target_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Address",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Geography::CommunityCollectionMap",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Geography::LocatableLocation",
+          "from": "BetterTogether::Geography::CommunityCollectionMap",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Geography::CommunityMap",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Geography::Settlement",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
+          "from": "BetterTogether::Geography::CommunityMap",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Geography::Region",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::State",
+          "from": "BetterTogether::Geography::Continent",
           "to": "BetterTogether::Community",
           "label": "community (community_id)",
           "target_subsystem": "platform_network"
@@ -16345,73 +16357,7 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Geography::Continent",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::Map",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::Map",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Place",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Place",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Place",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Address",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Address",
-          "to": "BetterTogether::ContactDetail",
-          "label": "contact_detail (contact_detail_id)",
-          "target_subsystem": "shared_supporting"
-        },
-        {
-          "from": "BetterTogether::Geography::LocatableMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::LocatableMap",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityMap",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Geography::CommunityMap",
+          "from": "BetterTogether::Geography::EventCollectionMap",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
@@ -16423,22 +16369,76 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Geography::EventCollectionMap",
+          "from": "BetterTogether::Geography::LocatableLocation",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Geography::CommunityCollectionMap",
+          "from": "BetterTogether::Geography::LocatableMap",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Geography::LocatableMap",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Geography::CommunityCollectionMap",
+          "from": "BetterTogether::Geography::Map",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Geography::Map",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Geography::Region",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Geography::Settlement",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Geography::Space",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Geography::State",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Place",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Place",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Place",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         }
       ],
       "inbound_references": [
@@ -18057,16 +18057,46 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::EventHost",
+          "from": "BetterTogether::Calendar",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Calendar",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Calendar",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::CalendarEntry",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Event",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Event",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::EventAttendance",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
+          "to": "BetterTogether::EventOccurrence",
+          "label": "event_occurrence (event_occurrence_id)",
+          "target_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::EventAttendance",
@@ -18076,69 +18106,39 @@
         },
         {
           "from": "BetterTogether::EventAttendance",
-          "to": "BetterTogether::EventOccurrence",
-          "label": "event_occurrence (event_occurrence_id)",
-          "target_subsystem": "shared_supporting"
-        },
-        {
-          "from": "BetterTogether::CalendarEntry",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Calendar",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Calendar",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Calendar",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Event",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Event",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::EventInvitation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::EventInvitation",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::EventInvitation",
-          "to": "BetterTogether::Role",
-          "label": "role (role_id)",
-          "target_subsystem": "identity_access"
         },
         {
           "from": "BetterTogether::EventCategory",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EventHost",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EventInvitation",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::EventInvitation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EventInvitation",
+          "to": "BetterTogether::Role",
+          "label": "role (role_id)",
+          "target_subsystem": "identity_access"
         }
       ],
       "inbound_references": [
@@ -19177,43 +19177,49 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::Safety::Note",
+          "from": "BetterTogether::Conversation",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Conversation",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Safety::Note",
+          "from": "BetterTogether::ConversationParticipant",
           "to": "BetterTogether::Person",
-          "label": "author (author_id)",
+          "label": "person (person_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Safety::Case",
+          "from": "BetterTogether::ConversationParticipant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Safety::Case",
+          "from": "BetterTogether::Message",
           "to": "BetterTogether::Person",
-          "label": "assigned_reviewer (assigned_reviewer_id)",
+          "label": "sender (sender_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Safety::Agreement",
+          "from": "BetterTogether::Message",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Safety::Agreement",
+          "from": "BetterTogether::Report",
           "to": "BetterTogether::Person",
-          "label": "created_by (created_by_id)",
+          "label": "reporter (reporter_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Safety::Action",
+          "from": "BetterTogether::Report",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -19231,52 +19237,46 @@
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Message",
+          "from": "BetterTogether::Safety::Action",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Message",
+          "from": "BetterTogether::Safety::Agreement",
           "to": "BetterTogether::Person",
-          "label": "sender (sender_id)",
+          "label": "created_by (created_by_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::ConversationParticipant",
+          "from": "BetterTogether::Safety::Agreement",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::ConversationParticipant",
+          "from": "BetterTogether::Safety::Case",
           "to": "BetterTogether::Person",
-          "label": "person (person_id)",
+          "label": "assigned_reviewer (assigned_reviewer_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Conversation",
+          "from": "BetterTogether::Safety::Case",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Conversation",
+          "from": "BetterTogether::Safety::Note",
           "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
+          "label": "author (author_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Report",
+          "from": "BetterTogether::Safety::Note",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Report",
-          "to": "BetterTogether::Person",
-          "label": "reporter (reporter_id)",
-          "target_subsystem": "identity_access"
         }
       ],
       "inbound_references": [
@@ -23253,127 +23253,19 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::Joatu::MatchNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
+          "from": "BetterTogether::Agreement",
+          "to": "BetterTogether::Page",
+          "label": "page (page_id)",
+          "target_subsystem": "content_publishing"
         },
         {
-          "from": "BetterTogether::Joatu::AgreementStatusNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Joatu::AgreementNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::SeedPlanting",
+          "from": "BetterTogether::Agreement",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::SeedPlanting",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Seed",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Joatu::ResponseLink",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Joatu::ResponseLink",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Joatu::Offer",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Joatu::Offer",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Joatu::Offer",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Joatu::Request",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Joatu::Request",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Joatu::Request",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Joatu::Agreement",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ChecklistItem",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ChecklistItem",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Checklist",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Checklist",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::AgreementTerm",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::AgreementParticipant",
+          "from": "BetterTogether::Agreement",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -23385,97 +23277,205 @@
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Agreement",
+          "from": "BetterTogether::AgreementParticipant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Agreement",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Agreement",
-          "to": "BetterTogether::Page",
-          "label": "page (page_id)",
-          "target_subsystem": "content_publishing"
-        },
-        {
-          "from": "BetterTogether::Joatu::PersonLinkRequest",
+          "from": "BetterTogether::AgreementTerm",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Joatu::PersonLinkRequest",
+          "from": "BetterTogether::Checklist",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Joatu::PersonLinkRequest",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Joatu::PersonAccessGrantRequest",
+          "from": "BetterTogether::Checklist",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Joatu::PersonAccessGrantRequest",
+          "from": "BetterTogether::ChecklistItem",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Joatu::PersonAccessGrantRequest",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Joatu::MembershipRequest",
+          "from": "BetterTogether::ChecklistItem",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Joatu::MembershipRequest",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Joatu::MembershipRequest",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::Joatu::ConnectionRequest",
+          "from": "BetterTogether::Joatu::Agreement",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Joatu::ConnectionRequest",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
+          "from": "BetterTogether::Joatu::AgreementNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Joatu::ConnectionRequest",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
+          "from": "BetterTogether::Joatu::AgreementStatusNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::Joatu::Category",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::ConnectionRequest",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Joatu::ConnectionRequest",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::ConnectionRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::MatchNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::MembershipRequest",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Joatu::MembershipRequest",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::MembershipRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::Offer",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Joatu::Offer",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::Offer",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::PersonAccessGrantRequest",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Joatu::PersonAccessGrantRequest",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::PersonAccessGrantRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::PersonLinkRequest",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Joatu::PersonLinkRequest",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::PersonLinkRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::Request",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Joatu::Request",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::Request",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Joatu::ResponseLink",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Joatu::ResponseLink",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Seed",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::SeedPlanting",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::SeedPlanting",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -24771,25 +24771,13 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::Metrics::Share",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
+          "from": "BetterTogether::Ai::Log::Translation",
+          "to": "BetterTogether::Person",
+          "label": "initiator (initiator_id)",
+          "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Metrics::RichTextLink",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::RichTextLink",
-          "to": "BetterTogether::Content::Link",
-          "label": "link (link_id)",
-          "target_subsystem": "content_publishing"
-        },
-        {
-          "from": "BetterTogether::Metrics::PageView",
+          "from": "BetterTogether::Ai::Log::Translation",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -24801,28 +24789,76 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Ai::Log::Translation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Ai::Log::Translation",
-          "to": "BetterTogether::Person",
-          "label": "initiator (initiator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Metrics::UserAccountReport",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::UserAccountReport",
+          "from": "BetterTogether::Metrics::LinkCheckerReport",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Metrics::LinkCheckerReport",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::LinkClick",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::LinkClickReport",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Metrics::LinkClickReport",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::PageView",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::PageViewReport",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Metrics::PageViewReport",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::RichTextLink",
+          "to": "BetterTogether::Content::Link",
+          "label": "link (link_id)",
+          "target_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Metrics::RichTextLink",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::SearchQuery",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::Share",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::Metrics::ShortLinkVisit",
@@ -24837,52 +24873,16 @@
           "target_subsystem": "shared_supporting"
         },
         {
-          "from": "BetterTogether::Metrics::SearchQuery",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::PageViewReport",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::PageViewReport",
+          "from": "BetterTogether::Metrics::UserAccountReport",
           "to": "BetterTogether::Person",
           "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Metrics::LinkClickReport",
+          "from": "BetterTogether::Metrics::UserAccountReport",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::LinkClickReport",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Metrics::LinkClick",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::LinkCheckerReport",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Metrics::LinkCheckerReport",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
         }
       ],
       "inbound_references": []
@@ -25233,18 +25233,6 @@
       "outbound_relationships": [
         {
           "from": "BetterTogether::WebhookEndpoint",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::WebhookEndpoint",
-          "to": "BetterTogether::Person",
-          "label": "person (person_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::WebhookEndpoint",
           "to": "BetterTogether::Community",
           "label": "community (community_id)",
           "target_subsystem": "platform_network"
@@ -25254,6 +25242,18 @@
           "to": "BetterTogether::OauthApplication",
           "label": "oauth_application (oauth_application_id)",
           "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::WebhookEndpoint",
+          "to": "BetterTogether::Person",
+          "label": "person (person_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::WebhookEndpoint",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         }
       ],
       "inbound_references": []
@@ -33408,121 +33408,43 @@
       ],
       "outbound_relationships": [
         {
-          "from": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
+          "from": "BetterTogether::Activity",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::SafetyReportDigestNotifier::Notification",
+          "from": "BetterTogether::AgentGrant",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::AgentGrant",
+          "to": "BetterTogether::Person",
+          "label": "granted_by (granted_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::AgentGrant",
+          "to": "BetterTogether::Person",
+          "label": "operator (operator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PlatformConnectionStatusNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PlatformConnectionDigestNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PageAuthorshipNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::NewMessageNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::MembershipUpdatedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::MembershipRequestSubmittedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::MembershipRequestDigestNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::MembershipRequestDeclinedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::MembershipRemovedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::MembershipCreatedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::FederationVisibilityStatusNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::EventUpdateNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::EventReminderNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::InvitationNotifierBase::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
+          "from": "BetterTogether::AgentGrant",
+          "to": "BetterTogether::Robot",
+          "label": "robot (robot_id)",
           "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::CommentAddedNotifier::Notification",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::EventInvitationNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -33534,15 +33456,69 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Weather::Location",
-          "to": "BetterTogether::Geography::Settlement",
-          "label": "settlement (settlement_id)",
-          "target_subsystem": "geography_and_places"
+          "from": "BetterTogether::ContactDetail",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::FederationContentGrant",
-          "to": "BetterTogether::PlatformConnection",
-          "label": "platform_connection (platform_connection_id)",
+          "from": "BetterTogether::ContentSecurity::Finding",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::ContentSecurity::Finding",
+          "to": "BetterTogether::Safety::Case",
+          "label": "safety_case (safety_case_id)",
+          "target_subsystem": "conversations_safety"
+        },
+        {
+          "from": "BetterTogether::ContentSecurity::Item",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::ContentSecurity::Item",
+          "to": "BetterTogether::Safety::Case",
+          "label": "safety_case (safety_case_id)",
+          "target_subsystem": "conversations_safety"
+        },
+        {
+          "from": "BetterTogether::ContentSecurity::ScanEvent",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::ContentSecurity::Subject",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EmailAddress",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EventInvitationNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::EventOccurrence",
+          "to": "BetterTogether::Event",
+          "label": "event (event_id)",
+          "target_subsystem": "events_calendar"
+        },
+        {
+          "from": "BetterTogether::EventReminderNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
@@ -33558,229 +33534,37 @@
           "target_subsystem": "events_calendar"
         },
         {
-          "from": "BetterTogether::EventOccurrence",
-          "to": "BetterTogether::Event",
-          "label": "event (event_id)",
-          "target_subsystem": "events_calendar"
-        },
-        {
-          "from": "BetterTogether::AgentGrant",
-          "to": "BetterTogether::Robot",
-          "label": "robot (robot_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::AgentGrant",
+          "from": "BetterTogether::EventUpdateNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::AgentGrant",
+          "from": "BetterTogether::FeatureAccessGrant",
           "to": "BetterTogether::Person",
-          "label": "operator (operator_id)",
+          "label": "granted_by_person (granted_by_person_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::AgentGrant",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::AgentGrant",
+          "from": "BetterTogether::FeatureAccessGrant",
           "to": "BetterTogether::Person",
-          "label": "granted_by (granted_by_id)",
+          "label": "person (person_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::Infrastructure::Room",
+          "from": "BetterTogether::FeatureAccessGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Infrastructure::Room",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Room",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
+          "from": "BetterTogether::FederationContentGrant",
+          "to": "BetterTogether::PlatformConnection",
+          "label": "platform_connection (platform_connection_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Infrastructure::Floor",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Floor",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Floor",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Building",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Building",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Building",
-          "to": "BetterTogether::Community",
-          "label": "community (community_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Infrastructure::Building",
-          "to": "BetterTogether::Address",
-          "label": "address (address_id)",
-          "target_subsystem": "geography_and_places"
-        },
-        {
-          "from": "BetterTogether::ContentSecurity::Subject",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ContentSecurity::ScanEvent",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ContentSecurity::Item",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ContentSecurity::Item",
-          "to": "BetterTogether::Safety::Case",
-          "label": "safety_case (safety_case_id)",
-          "target_subsystem": "conversations_safety"
-        },
-        {
-          "from": "BetterTogether::ContentSecurity::Finding",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ContentSecurity::Finding",
-          "to": "BetterTogether::Safety::Case",
-          "label": "safety_case (safety_case_id)",
-          "target_subsystem": "conversations_safety"
-        },
-        {
-          "from": "BetterTogether::WebsiteLink",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::SocialMediaAccount",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ShortLink",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::ShortLink",
-          "to": "BetterTogether::Person",
-          "label": "creator (creator_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::QuotaReservation",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::QuotaBalance",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::Quota",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PhoneNumber",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonMessagingGrant",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::PersonMessagingGrant",
-          "to": "BetterTogether::Person",
-          "label": "grantor (grantor_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::PersonMessagingGrant",
-          "to": "BetterTogether::Person",
-          "label": "grantee (grantee_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::MessageRequest",
-          "to": "BetterTogether::Person",
-          "label": "sender (sender_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::MessageRequest",
-          "to": "BetterTogether::Person",
-          "label": "recipient (recipient_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::MessageRequest",
-          "to": "BetterTogether::Platform",
-          "label": "platform (platform_id)",
-          "target_subsystem": "platform_network"
-        },
-        {
-          "from": "BetterTogether::InboundEmailReplyToken",
-          "to": "BetterTogether::Person",
-          "label": "recipient (recipient_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::InboundEmailReplyToken",
+          "from": "BetterTogether::FederationVisibilityStatusNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -33792,13 +33576,211 @@
           "target_subsystem": "platform_network"
         },
         {
+          "from": "BetterTogether::InboundEmailReplyToken",
+          "to": "BetterTogether::Person",
+          "label": "recipient (recipient_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::InboundEmailReplyToken",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Building",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Building",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Building",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Building",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Floor",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Floor",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Floor",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Room",
+          "to": "BetterTogether::Community",
+          "label": "community (community_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Room",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Infrastructure::Room",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::InvitationNotifierBase::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::JwtDenylist",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::QuotaUsage",
+          "from": "BetterTogether::MembershipCreatedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MembershipRemovedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MembershipRequestDeclinedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MembershipRequestDigestNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MembershipRequestSubmittedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MembershipUpdatedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::MessageRequest",
+          "to": "BetterTogether::Person",
+          "label": "recipient (recipient_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::MessageRequest",
+          "to": "BetterTogether::Person",
+          "label": "sender (sender_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::MessageRequest",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::NewMessageNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PageAuthorshipNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonMessagingGrant",
+          "to": "BetterTogether::Person",
+          "label": "grantee (grantee_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonMessagingGrant",
+          "to": "BetterTogether::Person",
+          "label": "grantor (grantor_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonMessagingGrant",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PhoneNumber",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformConnectionDigestNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformConnectionStatusNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Quota",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::QuotaBalance",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -33810,37 +33792,55 @@
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::FeatureAccessGrant",
+          "from": "BetterTogether::QuotaReservation",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::FeatureAccessGrant",
+          "from": "BetterTogether::QuotaUsage",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::SafetyReportDigestNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::ShortLink",
           "to": "BetterTogether::Person",
-          "label": "person (person_id)",
+          "label": "creator (creator_id)",
           "target_subsystem": "identity_access"
         },
         {
-          "from": "BetterTogether::FeatureAccessGrant",
-          "to": "BetterTogether::Person",
-          "label": "granted_by_person (granted_by_person_id)",
-          "target_subsystem": "identity_access"
-        },
-        {
-          "from": "BetterTogether::EmailAddress",
+          "from": "BetterTogether::ShortLink",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::ContactDetail",
+          "from": "BetterTogether::SocialMediaAccount",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {
-          "from": "BetterTogether::Activity",
+          "from": "BetterTogether::Weather::Location",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "settlement (settlement_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::WebsiteLink",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
