@@ -43,6 +43,21 @@ module BetterTogether
       QuotaGrant.for_owner_and_type(owner, quota_type).active.maximum(:limit) || limit
     end
 
+    # The period_key for "right now", in the same format lib/better_together/quotas.rb's
+    # private period_key_for uses - mirrored here on the instance (via the already-resolved
+    # `period` attribute) rather than exposing that private module method.
+    def current_period_key
+      case period
+      when 'monthly' then Time.current.strftime('%Y-%m')
+      when 'daily' then Time.current.strftime('%Y-%m-%d')
+      else 'cumulative'
+      end
+    end
+
+    def current_balance
+      quota_balances.find_by(period_key: current_period_key)
+    end
+
     private
 
     # A direct module check rather than Owner.included_in_models, which eager-loads
