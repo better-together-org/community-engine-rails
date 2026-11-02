@@ -1,0 +1,49 @@
+{
+  "name": "category_color",
+  "device": "mobile",
+  "url": "/en/host/categories/event-category-1-632e11da/edit",
+  "title": "Edit Regular Council Meeting | Category | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "category_color",
+  "flow": "category_color",
+  "source_spec": "./spec/docs_screenshots/better_together/category_color_spec.rb",
+  "callouts": [
+    {
+      "selector": "#category_color",
+      "title": "Colour",
+      "bullets": [
+        "A six digit hex value such as #0072B2, or empty for none.",
+        "Text on the colour is chosen for readable contrast."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 1155.78125,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1193.78125,
+        "center_x": 242.5,
+        "center_y": 1174.78125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 1155.78125,
+        "width": 461.0,
+        "height": 38.0,
+        "right": 473.0,
+        "bottom": 1193.78125,
+        "center_x": 242.5,
+        "center_y": 1174.78125
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 873.78,
+        "width": 270.0,
+        "height": 262,
+        "score": 1155.78125
+      }
+    }
+  ]
+}

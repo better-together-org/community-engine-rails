@@ -1,0 +1,13 @@
+---
+title: Category colour
+audience:
+- host_admin
+journey_step: As a platform manager, I can give a category a colour.
+callouts:
+- :id: color
+  :title: Colour
+  :description: Used for chips and badges of the category.
+accessibility_notes: Colour is never the only cue, the category name and icon are
+  shown too.
+slug: category_color
+device: mobile
