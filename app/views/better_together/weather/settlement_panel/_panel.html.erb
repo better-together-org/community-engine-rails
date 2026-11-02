@@ -1,0 +1,18 @@
+<%# locals: (panel:, settlement:) -%>
+<%# Settlement weather: current conditions, forecasts and stored history. Reads stored rows only. -%>
+<% zone = panel.time_zone %>
+<% source_lang = panel.location.source.config['language'].presence || 'en' %>
+<div id="weather-panel" class="weather-panel">
+  <%= render 'better_together/weather/settlement_panel/status', panel: panel, zone: zone %>
+
+  <% if panel.data? %>
+    <%= render 'better_together/weather/settlement_panel/current', panel: panel, zone: zone, source_lang: source_lang %>
+    <%= render 'better_together/weather/settlement_panel/hourly', panel: panel, zone: zone, source_lang: source_lang %>
+    <%= render 'better_together/weather/settlement_panel/daily', panel: panel, source_lang: source_lang %>
+    <%= render 'better_together/weather/settlement_panel/history', panel: panel %>
+  <% else %>
+    <p id="weather-empty" class="text-muted"><%= t('better_together.weather.panel.no_data') %></p>
+  <% end %>
+
+  <%= render 'better_together/weather/settlement_panel/attribution', panel: panel %>
+</div>

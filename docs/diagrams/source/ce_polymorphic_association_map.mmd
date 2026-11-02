@@ -293,6 +293,11 @@ flowchart TB
     BetterTogether__QuotaUsage_polymorphic_summary["QuotaUsage\ntarget: subject, target: actor, target: owner, owner: seeds"]
     BetterTogether__ShortLink_polymorphic_summary["ShortLink\ntarget: linkable, owner: seeds, owner: string_translations"]
     BetterTogether__SocialMediaAccount_polymorphic_summary["SocialMediaAccount\nowner: seeds"]
+    BetterTogether__Weather__CurrentCondition_polymorphic_summary["Weather::CurrentCondition\nowner: seeds"]
+    BetterTogether__Weather__Forecast_polymorphic_summary["Weather::Forecast\nowner: seeds"]
+    BetterTogether__Weather__Location_polymorphic_summary["Weather::Location\nowner: seeds"]
+    BetterTogether__Weather__Observation_polymorphic_summary["Weather::Observation\nowner: seeds"]
+    BetterTogether__Weather__Source_polymorphic_summary["Weather::Source\nowner: seeds"]
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
     shared_supporting_polymorphic_anchor ~~~ BetterTogether__Activity_polymorphic_summary
     BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__AgentGrant_polymorphic_summary
@@ -326,7 +331,12 @@ flowchart TB
     BetterTogether__QuotaReservation_polymorphic_summary ~~~ BetterTogether__QuotaUsage_polymorphic_summary
     BetterTogether__QuotaUsage_polymorphic_summary ~~~ BetterTogether__ShortLink_polymorphic_summary
     BetterTogether__ShortLink_polymorphic_summary ~~~ BetterTogether__SocialMediaAccount_polymorphic_summary
-    BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__WebsiteLink_polymorphic_summary
+    BetterTogether__SocialMediaAccount_polymorphic_summary ~~~ BetterTogether__Weather__CurrentCondition_polymorphic_summary
+    BetterTogether__Weather__CurrentCondition_polymorphic_summary ~~~ BetterTogether__Weather__Forecast_polymorphic_summary
+    BetterTogether__Weather__Forecast_polymorphic_summary ~~~ BetterTogether__Weather__Location_polymorphic_summary
+    BetterTogether__Weather__Location_polymorphic_summary ~~~ BetterTogether__Weather__Observation_polymorphic_summary
+    BetterTogether__Weather__Observation_polymorphic_summary ~~~ BetterTogether__Weather__Source_polymorphic_summary
+    BetterTogether__Weather__Source_polymorphic_summary ~~~ BetterTogether__WebsiteLink_polymorphic_summary
   end
 
   identity_access_polymorphic_anchor ~~~ platform_network_polymorphic_anchor
