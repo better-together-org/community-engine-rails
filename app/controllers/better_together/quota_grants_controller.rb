@@ -83,9 +83,10 @@ module BetterTogether
     end
 
     def find_prefill_owner
-      return nil unless OWNER_TYPES.include?(params[:owner_type])
+      owner_type = params[:owner_type].to_s
+      return nil unless OWNER_TYPES.include?(owner_type)
 
-      params[:owner_type].constantize.find_by(id: params[:owner_id])
+      owner_type.constantize.find_by(id: params[:owner_id])
     end
 
     def percent_used(quota)
