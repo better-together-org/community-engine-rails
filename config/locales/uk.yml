@@ -1024,6 +1024,11 @@ uk:
       new:
         title: Спільноти
       none-yet: Поки що немає
+      quota_usage_tab:
+        description: Скільки з виділеного цій спільноті обсягу зберігання використовується
+          зараз.
+        none: У цієї спільноти ще немає зафіксованого використання.
+        title: Використання
       show:
         about:
           no_description: Опис відсутній.
@@ -3499,6 +3504,59 @@ uk:
         privacy_limited_by_platform: Деякі параметри конфіденційності вимкнено, оскільки
           платформа не є публічною. Вміст можуть бачити лише учасники спільноти або
           автор.
+    quota_grants:
+      created: Грант квоти створено.
+      edit:
+        title: Редагувати грант квоти
+      form:
+        community: Спільнота (якщо тип власника — Спільнота)
+        community_prompt: Виберіть спільноту
+        expires_at: Діє до
+        expires_at_hint: Залиште порожнім для гранту, який не має строку дії.
+        limit: Ліміт
+        owner: Власник
+        owner_hint: Використовується лише поле, що відповідає типу власника вище.
+        owner_type: Тип власника
+        owner_type_community: Спільнота
+        owner_type_person: Людина
+        person: Людина (якщо тип власника — Людина)
+        person_prompt: Знайти людину
+        quota_type: Тип квоти
+        reason: Причина
+      index:
+        description: Перегляньте, хто скільки використовує, і надайте власнику вищий
+          ліміт без зміни стандартного значення платформи.
+        grant_override: Надати виняток
+        grants_empty: Для цієї платформи ще не створено жодного гранту квоти.
+        grants_title: Наявні гранти
+        new: Новий грант
+        overview_empty: На цій платформі ще не зафіксовано використання.
+        overview_title: Огляд використання (від найбільшого)
+        revoke: Відкликати
+        revoke_confirm: Відкликати цей грант квоти?
+        title: Гранти квоти
+      new:
+        title: Новий грант квоти
+      revoked: Грант квоти відкликано.
+      status:
+        active: Активний
+        expired: Закінчився
+      table:
+        actions: Дії
+        expires_at: Діє до
+        granted_by: Надано %{name}
+        limit: Ліміт
+        no_expiry: Без строку дії
+        owner: Власник
+        quota_type: Тип квоти
+        status: Статус
+        usage: Використання
+      updated: Грант квоти оновлено.
+    quotas:
+      usage_meter:
+        types:
+          ai_translation_tokens: Токени перекладу ШІ
+          media_storage: Зберігання
     rbac:
       nav:
         resource_permissions: Дозволи ресурсів
@@ -3951,7 +4009,14 @@ uk:
           platform: Платформа
           preferences: Налаштування
           privacy: Конфіденційність
+          usage: Використання
         title: Settings
+        usage:
+          description: Скільки з вашого обсягу зберігання та інших лімітів квоти ви
+            використовуєте зараз.
+          title: Використання
+      usage:
+        none: У вас ще немає зафіксованого використання.
     setup_wizard_steps:
       already_completed: Цю платформу вже налаштовано. Будь ласка, увійдіть, щоб керувати
         своєю платформою.
@@ -5088,6 +5153,7 @@ uk:
       roles_and_permissions: Roles & Permissions
       safety: Безпека
       sessions: Сесії
+      usage: Використання
     to: До
     'true': так
     undo_clear: Скасувати очищення
@@ -5496,6 +5562,7 @@ uk:
         feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
         platform_domains: Домени
+        quota_grants: Гранти квоти
         robot_management: Керувати LLM-роботами
         storage_configurations: Керувати сховищем
         title: Операції платформи

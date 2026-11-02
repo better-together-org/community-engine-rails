@@ -370,6 +370,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         resources :person_deletion_requests, only: %i[create destroy]
         patch 'settings/preferences', to: 'settings#update_preferences', as: :update_settings_preferences
         get 'settings/my_data', to: 'settings#my_data', as: :settings_my_data
+        get 'settings/usage', to: 'settings#usage', as: :settings_usage
         post 'settings/mark_integration_notifications_read', to: 'settings#mark_integration_notifications_read',
                                                              as: :mark_integration_notifications_read
 
@@ -509,6 +510,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 get :available_people
               end
               resources :feature_access_grants, except: :show
+              resources :quota_grants, except: :show
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
