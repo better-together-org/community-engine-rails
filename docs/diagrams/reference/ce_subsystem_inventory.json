@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T13:32:14Z",
+  "generated_at": "2026-11-02T17:38:39Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -16479,6 +16479,12 @@
           "source_subsystem": "exchange_governance"
         },
         {
+          "from": "BetterTogether::Weather::Location",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "settlement (settlement_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Infrastructure::Building",
           "to": "BetterTogether::Address",
           "label": "address (address_id)",
@@ -30894,6 +30900,323 @@
           ]
         },
         {
+          "name": "BetterTogether::Weather::CurrentCondition",
+          "label": "Weather::CurrentCondition",
+          "source_path": "app/models/better_together/weather/current_condition.rb",
+          "table_name": "better_together_weather_current_conditions",
+          "columns": [
+            [
+              "location_id",
+              "uuid FK"
+            ],
+            [
+              "fetched_at",
+              "datetime"
+            ],
+            [
+              "observed_at",
+              "datetime"
+            ],
+            [
+              "payload",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: fetched_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "location",
+              "foreign_key": "location_id",
+              "target": "BetterTogether::Weather::Location",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
+        },
+        {
+          "name": "BetterTogether::Weather::Forecast",
+          "label": "Weather::Forecast",
+          "source_path": "app/models/better_together/weather/forecast.rb",
+          "table_name": "better_together_weather_forecasts",
+          "columns": [
+            [
+              "location_id",
+              "uuid FK"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "fetched_at",
+              "datetime"
+            ],
+            [
+              "issued_at",
+              "datetime"
+            ],
+            [
+              "payload",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: kind (in=[\"hourly\", \"daily\"])",
+            "PresenceValidator: issued_at, fetched_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "location",
+              "foreign_key": "location_id",
+              "target": "BetterTogether::Weather::Location",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
+        },
+        {
+          "name": "BetterTogether::Weather::Location",
+          "label": "Weather::Location",
+          "source_path": "app/models/better_together/weather/location.rb",
+          "table_name": "better_together_weather_locations",
+          "columns": [
+            [
+              "settlement_id",
+              "uuid FK"
+            ],
+            [
+              "source_id",
+              "uuid FK"
+            ],
+            [
+              "external_ref",
+              "string"
+            ],
+            [
+              "observation_station_ref",
+              "string"
+            ],
+            [
+              "precip_station_ref",
+              "string"
+            ],
+            [
+              "time_zone",
+              "string"
+            ],
+            [
+              "last_error",
+              "text"
+            ],
+            [
+              "enabled",
+              "boolean"
+            ],
+            [
+              "last_current_fetched_at",
+              "datetime"
+            ],
+            [
+              "last_error_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: external_ref",
+            "UniquenessValidator: settlement_id (scope=:source_id)",
+            "InclusionValidator: time_zone (in=dynamic)"
+          ],
+          "belongs_to": [
+            {
+              "name": "settlement",
+              "foreign_key": "settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
+              "optional": false
+            },
+            {
+              "name": "source",
+              "foreign_key": "source_id",
+              "target": "BetterTogether::Weather::Source",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "settlement",
+              "foreign_key": "settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
+              "optional": false,
+              "target_subsystem": "geography_and_places"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Weather::Observation",
+          "label": "Weather::Observation",
+          "source_path": "app/models/better_together/weather/observation.rb",
+          "table_name": "better_together_weather_observations",
+          "columns": [
+            [
+              "location_id",
+              "uuid FK"
+            ],
+            [
+              "condition",
+              "string"
+            ],
+            [
+              "granularity",
+              "string"
+            ],
+            [
+              "origin",
+              "string"
+            ],
+            [
+              "observed_at",
+              "datetime"
+            ],
+            [
+              "source_flags",
+              "jsonb"
+            ],
+            [
+              "dew_point_c",
+              "float"
+            ],
+            [
+              "humidex",
+              "float"
+            ],
+            [
+              "humidity_pct",
+              "float"
+            ],
+            [
+              "precip_mm",
+              "float"
+            ]
+          ],
+          "validations": [
+            "InclusionValidator: granularity (in=[\"hourly\", \"daily\"])",
+            "InclusionValidator: origin (in=[\"live_feed\", \"backfill_api\"])",
+            "PresenceValidator: observed_at",
+            "UniquenessValidator: observed_at (scope=[:location_id, :granularity])"
+          ],
+          "belongs_to": [
+            {
+              "name": "location",
+              "foreign_key": "location_id",
+              "target": "BetterTogether::Weather::Location",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
+        },
+        {
+          "name": "BetterTogether::Weather::Source",
+          "label": "Weather::Source",
+          "source_path": "app/models/better_together/weather/source.rb",
+          "table_name": "better_together_weather_sources",
+          "columns": [
+            [
+              "adapter_key",
+              "string"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "enabled",
+              "boolean"
+            ],
+            [
+              "config",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: identifier",
+            "UniquenessValidator: identifier",
+            "PresenceValidator: adapter_key"
+          ],
+          "belongs_to": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": []
+        },
+        {
           "name": "BetterTogether::WebsiteLink",
           "label": "WebsiteLink",
           "source_path": "app/models/better_together/website_link.rb",
@@ -32393,6 +32716,11 @@
           "capability": "Bettertogetherid",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Weather::Source",
+            "Weather::Observation",
+            "Weather::Location",
+            "Weather::Forecast",
+            "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
             "FederationContentGrant",
             "EventSeriesSession",
@@ -33019,6 +33347,11 @@
           "capability": "Adds seed/import/export helper behavior for reusable content and onboarding flows.",
           "risk": "Seed portability can carry stale permissions or provenance unless metadata stays explicit.",
           "included_by": [
+            "Weather::Source",
+            "Weather::Observation",
+            "Weather::Location",
+            "Weather::Forecast",
+            "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
             "FederationContentGrant",
             "EventSeriesSession",
@@ -33199,6 +33532,12 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Weather::Location",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "settlement (settlement_id)",
+          "target_subsystem": "geography_and_places"
         },
         {
           "from": "BetterTogether::FederationContentGrant",

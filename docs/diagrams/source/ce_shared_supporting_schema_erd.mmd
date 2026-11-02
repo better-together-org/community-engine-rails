@@ -67,6 +67,11 @@ erDiagram
   EXT_PERSON o|--o{ SHORT_LINKS : "creator / creator_id"
   EXT_PLATFORM o|--o{ SOCIAL_MEDIA_ACCOUNTS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ SOCIAL_MEDIA_ACCOUNTS : "contact_detail / contact_detail_id"
+  WEATHER_LOCATIONS ||--o{ WEATHER_CURRENT_CONDITIONS : "location / location_id"
+  WEATHER_LOCATIONS ||--o{ WEATHER_FORECASTS : "location / location_id"
+  EXT_GEOGRAPHY_SETTLEMENT ||--o{ WEATHER_LOCATIONS : "settlement / settlement_id"
+  WEATHER_SOURCES ||--o{ WEATHER_LOCATIONS : "source / source_id"
+  WEATHER_LOCATIONS ||--o{ WEATHER_OBSERVATIONS : "location / location_id"
   EXT_PLATFORM o|--o{ WEBSITE_LINKS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ WEBSITE_LINKS : "contact_detail / contact_detail_id"
 
@@ -397,6 +402,54 @@ erDiagram
     url string
   }
 
+  WEATHER_CURRENT_CONDITIONS {
+    location_id uuid
+    fetched_at datetime
+    observed_at datetime
+    payload jsonb
+  }
+
+  WEATHER_FORECASTS {
+    location_id uuid
+    kind string
+    fetched_at datetime
+    issued_at datetime
+    payload jsonb
+  }
+
+  WEATHER_LOCATIONS {
+    settlement_id uuid
+    source_id uuid
+    external_ref string
+    observation_station_ref string
+    precip_station_ref string
+    time_zone string
+    last_error text
+    enabled boolean
+    last_current_fetched_at datetime
+    last_error_at datetime
+  }
+
+  WEATHER_OBSERVATIONS {
+    location_id uuid
+    condition string
+    granularity string
+    origin string
+    observed_at datetime
+    source_flags jsonb
+    dew_point_c float
+    humidex float
+    humidity_pct float
+    precip_mm float
+  }
+
+  WEATHER_SOURCES {
+    adapter_key string
+    identifier string
+    enabled boolean
+    config jsonb
+  }
+
   WEBSITE_LINKS {
     contact_detail_id uuid
     platform_id uuid
@@ -406,6 +459,10 @@ erDiagram
   }
 
   EXT_PLATFORM {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_SETTLEMENT {
     string export_ref
   }
 
