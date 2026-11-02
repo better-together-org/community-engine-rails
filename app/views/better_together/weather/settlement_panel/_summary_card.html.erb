@@ -1,0 +1,38 @@
+<%# locals: (settlement:) -%>
+<%# Current conditions card for the settlement About tab. Host apps render it above their own content. Links to the Weather tab. -%>
+<% panel = weather_summary_panel(settlement) %>
+<% if panel %>
+  <% values = panel.current_values %>
+  <% extras = panel.current_extras %>
+  <% zone = panel.time_zone %>
+  <% source_lang = panel.location.source.config['language'].presence || 'en' %>
+  <% feels_like = values['humidex'] || values['wind_chill'] %>
+  <section id="weather-summary-card" class="card mb-3" aria-labelledby="weather-summary-heading">
+    <div class="card-body">
+      <h2 id="weather-summary-heading" class="h5 card-title"><%= t('better_together.weather.panel.summary.heading') %></h2>
+      <p class="mb-2">
+        <span id="weather-summary-temperature" class="display-6 fw-semibold"><%= weather_value(values['temperature_c'], :celsius, digits: 1) %></span>
+        <% if panel.current_condition_text.present? %>
+          <span id="weather-summary-condition" class="fs-5 ms-2" lang="<%= source_lang %>"><%= panel.current_condition_text %></span>
+        <% end %>
+      </p>
+      <p id="weather-summary-details" class="mb-2">
+        <%= t('better_together.weather.panel.current.feels_like') %> <span id="weather-summary-feels-like"><%= weather_value(feels_like, :celsius) %></span>
+        <span aria-hidden="true">&middot;</span>
+        <%= t('better_together.weather.panel.current.wind') %>
+        <span id="weather-summary-wind"><%= weather_value(values['wind_speed_kmh'], :kmh) %><% if extras['wind_direction'].present? %> <span lang="<%= source_lang %>"><%= extras['wind_direction'] %></span><% end %></span>
+      </p>
+      <% if panel.stale? %>
+        <p id="weather-summary-stale" class="small text-warning-emphasis mb-2">
+          <%= t('better_together.weather.panel.stale', time: weather_datetime(panel.last_updated, zone) || t('better_together.weather.panel.never')) %>
+        </p>
+      <% end %>
+      <p id="weather-summary-observed" class="small text-muted mb-2">
+        <%= t('better_together.weather.panel.current.observed', time: weather_datetime(panel.current.observed_at, zone)) %>
+        <span id="weather-summary-attribution">&middot; <%= panel.attribution %></span>
+      </p>
+      <%= link_to t('better_together.weather.panel.summary.view_full'), '#weather', id: 'weather-summary-link',
+                  class: 'stretched-link', data: { controller: 'better-together--weather-tab-link', action: 'click->better-together--weather-tab-link#open' } %>
+    </div>
+  </section>
+<% end %>

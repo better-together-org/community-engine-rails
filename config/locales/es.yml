@@ -4343,6 +4343,9 @@ es:
           La información mostrada puede estar desactualizada.
         stale: Estas condiciones se actualizaron por última vez %{time} y pueden estar
           desactualizadas.
+        summary:
+          heading: El clima ahora
+          view_full: Ver el clima completo
         units:
           celsius: "%{value} °C"
           cm: "%{value} cm"

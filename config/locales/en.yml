@@ -4276,6 +4276,9 @@ en:
         source_error: The weather source could not be reached on the last update.
           The information shown may be out of date.
         stale: These conditions were last updated %{time} and may be out of date.
+        summary:
+          heading: Weather now
+          view_full: See the full weather
         units:
           celsius: "%{value} °C"
           cm: "%{value} cm"

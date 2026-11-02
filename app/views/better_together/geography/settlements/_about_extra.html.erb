@@ -1,2 +1,4 @@
 <%# locals: (settlement:) -%>
-<%# Hook: empty in the engine. Host apps override this partial to add content below the description in the About tab. -%>
+<%# Hook: host apps override this partial to add content below the description in the About tab. -%>
+<%# The engine shows the current weather card here; hosts that override it render the same partial where they want it. -%>
+<%= render 'better_together/weather/settlement_panel/summary_card', settlement: settlement %>

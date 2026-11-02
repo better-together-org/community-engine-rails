@@ -15,6 +15,17 @@ module BetterTogether
     CHART_SERIES = %i[temperature_max_c temperature_min_c temperature_mean_c precip_mm snow_cm
                       wind_speed_kmh wind_gust_kmh].freeze
 
+    # Panel for the current-conditions card, or nil when the settlement has no enabled location or no
+    # stored current conditions. Reads stored rows only.
+    def weather_summary_panel(settlement)
+      location = @weather_location if @weather_location&.settlement_id == settlement.id
+      location ||= BetterTogether::Weather::Location.enabled.includes(:source, :current_condition)
+                                                     .find_by(settlement: settlement)
+      return unless location&.current_condition
+
+      BetterTogether::Weather::SettlementPanel.new(location)
+    end
+
     def weather_value(value, unit, digits: 0)
       return t('better_together.weather.panel.not_reported') if value.nil?
 
