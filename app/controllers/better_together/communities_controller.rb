@@ -43,6 +43,7 @@ module BetterTogether
       set_membership_request_review_state
       load_community_roles_data
       load_community_memberships
+      load_community_quotas
 
       mark_match_notifications_read_for(resource_instance)
     end
@@ -320,6 +321,12 @@ module BetterTogether
         { cover_image_attachment: { blob: { variant_records: [] } } },
         { buildings: %i[space address] }
       ]
+    end
+
+    def load_community_quotas
+      return unless policy(@resource).view_quota_usage?
+
+      @community_quotas = @community.quotas.includes(:quota_balances)
     end
 
     def load_community_memberships

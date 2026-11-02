@@ -57,6 +57,10 @@
           <i class="fa-solid fa-database me-2" aria-hidden="true"></i>
           <%= t('.tabs.my_data') %>
         </button>
+        <button class="nav-link text-start" id="usage-tab" data-bs-toggle="pill" data-bs-target="#usage" type="button" role="tab" aria-controls="usage" aria-selected="false" data-better_together--tabs-target="tab">
+          <i class="fa-solid fa-gauge-high me-2" aria-hidden="true"></i>
+          <%= t('.tabs.usage') %>
+        </button>
         <!-- <button class="nav-link" id="privacy-tab" data-bs-toggle="pill" data-bs-target="#privacy" type="button" role="tab" aria-controls="privacy" aria-selected="false" data-better_together--tabs-target="tab">
           <i class="fa-solid fa-shield-alt me-2" aria-hidden="true"></i>
           <%= t('.tabs.privacy') %>
@@ -230,6 +234,30 @@
 
             <%= turbo_frame_tag 'my-data-settings',
                                 src: settings_my_data_path(locale: locale),
+                                loading: 'lazy',
+                                class: 'd-block' do %>
+              <div class="d-flex justify-content-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden"><%= t('globals.loading') %></span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Usage Tab -->
+      <div class="nav-tab-pane tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title h5">
+              <i class="fa-solid fa-gauge-high me-2" aria-hidden="true"></i>
+              <%= t('.usage.title') %>
+            </h3>
+            <p class="text-muted mb-4"><%= t('.usage.description') %></p>
+
+            <%= turbo_frame_tag 'usage-settings',
+                                src: settings_usage_path(locale: locale),
                                 loading: 'lazy',
                                 class: 'd-block' do %>
               <div class="d-flex justify-content-center py-4">

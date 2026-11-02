@@ -1,0 +1,26 @@
+<%#
+  Shared by the Person usage tab, the Community usage tab, and the platform
+  admin overview table. Expects a local `quota` (BetterTogether::Quota).
+%>
+<% balance = quota.current_balance %>
+<% consumed = balance&.consumed.to_i %>
+<% limit = quota.effective_limit %>
+<% percent = limit.zero? ? 0 : ((consumed.to_f / limit) * 100).round %>
+<% progress_class = case percent
+                    when 0..74 then 'bg-success'
+                    when 75..94 then 'bg-warning'
+                    else 'bg-danger'
+                    end %>
+<% unit = BetterTogether::Quotas::Type.find(quota.quota_type).unit %>
+<% formatted = lambda do |amount|
+     unit == :bytes ? number_to_human_size(amount) : number_with_delimiter(amount)
+   end %>
+<div class="mb-3" data-testid="quota-usage-meter-<%= quota.quota_type %>">
+  <div class="d-flex justify-content-between small mb-1">
+    <span><%= t(".types.#{quota.quota_type}", default: quota.quota_type.titleize) %></span>
+    <span><%= formatted.call(consumed) %> / <%= formatted.call(limit) %></span>
+  </div>
+  <div class="progress" role="progressbar" aria-label="<%= quota.quota_type %>" aria-valuenow="<%= percent %>" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar <%= progress_class %>" style="width: <%= percent.clamp(0, 100) %>%"></div>
+  </div>
+</div>
