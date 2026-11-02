@@ -351,7 +351,13 @@ export default class extends Controller {
 
     if (points.length === 1) {
       const singlePoint = points[0]
-      this.map.setView([singlePoint.lat, singlePoint.lng], this.zoomValue) // Adjust zoom level for a single point
+      if (this.boundaryLayer) {
+        // Frame the whole boundary (and the point) rather than zooming in on the point
+        const bounds = L.latLngBounds([[singlePoint.lat, singlePoint.lng]]).extend(this.boundaryLayer.getBounds())
+        this.map.fitBounds(bounds, { padding: [20, 20] })
+      } else {
+        this.map.setView([singlePoint.lat, singlePoint.lng], this.zoomValue) // Adjust zoom level for a single point
+      }
       const popupContent = this.useLabelAsPopupValue ? singlePoint.label : singlePoint.popup_html
       if (this.enablePopupsValue && popupContent) this.markers[0].openPopup() // Automatically open the popup
     } else {

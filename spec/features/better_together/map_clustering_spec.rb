@@ -120,6 +120,21 @@ RSpec.feature 'Map clustering and layers', :js do
     expect(leaflet_map_state).to include('markerCount')
   end
 
+  scenario 'frames the whole boundary when a single point is shown with one' do
+    geojson = { type: 'Polygon', coordinates: [[[-59.5, 48.0], [-56.0, 48.0], [-56.0, 50.0], [-59.5, 50.0], [-59.5, 48.0]]] }
+    page.execute_script(map_controller_script(<<~JS), '.map', geojson, [point(1, lat: 49.0, lng: -57.9)])
+      controller.boundaryValue = arguments[1]
+      controller.addBoundary()
+      controller.map.removeLayer(controller.markerLayer)
+      controller.addPointsWithLabels(arguments[2])
+    JS
+
+    contained = page.evaluate_script(map_controller_script(<<~JS), '.map')
+      return controller.map.getBounds().contains(controller.boundaryLayer.getBounds())
+    JS
+    expect(contained).to be(true)
+  end
+
   scenario 'keeps the layer toggle and a single pin popup working with clustering on' do
     find('.map .leaflet-marker-icon', match: :first).click
     expect(page).to have_css('.leaflet-popup', text: 'Mapped Community')
