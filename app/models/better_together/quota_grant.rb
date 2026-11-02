@@ -19,6 +19,13 @@ module BetterTogether
     scope :active, -> { where(expires_at: nil).or(where(QuotaGrant.arel_table[:expires_at].gt(Time.current))) }
     scope :for_owner_and_type, ->(owner, quota_type) { where(owner:, quota_type:) }
 
+    # Expires the grant rather than deleting it, preserving the audit-trail design
+    # (multiple grants per owner+type can coexist; Quota#effective_limit only
+    # considers the active ones).
+    def revoke!
+      update!(expires_at: Time.current)
+    end
+
     private
 
     # Same direct module check as Quota#owner_is_quota_owner, not Owner.included_in_models.

@@ -1034,6 +1034,11 @@ es:
       new:
         title: Comunidades
       none-yet: None-yet
+      quota_usage_tab:
+        description: La cantidad de almacenamiento asignado a esta comunidad que está
+          actualmente en uso.
+        none: Esta comunidad todavía no tiene uso registrado.
+        title: Uso
       show:
         about:
           no_description: No hay descripción disponible.
@@ -3494,6 +3499,59 @@ es:
         privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
           porque la plataforma no es pública. El contenido solo puede ser visible
           para miembros de la comunidad o el autor.
+    quota_grants:
+      created: Concesión de cuota creada.
+      edit:
+        title: Editar concesión de cuota
+      form:
+        community: Comunidad (si el tipo de propietario es Comunidad)
+        community_prompt: Seleccionar una comunidad
+        expires_at: Expira el
+        expires_at_hint: Déjelo en blanco para una concesión que nunca expira.
+        limit: Límite
+        owner: Propietario
+        owner_hint: Solo se usa el campo que coincide con el tipo de propietario anterior.
+        owner_type: Tipo de propietario
+        owner_type_community: Comunidad
+        owner_type_person: Persona
+        person: Persona (si el tipo de propietario es Persona)
+        person_prompt: Buscar una persona
+        quota_type: Tipo de cuota
+        reason: Motivo
+      index:
+        description: Vea quién está usando cuánto, y concédale a un propietario un
+          límite más alto sin cambiar el valor predeterminado de la plataforma.
+        grant_override: Conceder excepción
+        grants_empty: Todavía no se han creado concesiones de cuota para esta plataforma.
+        grants_title: Concesiones existentes
+        new: Nueva concesión
+        overview_empty: Todavía no se ha registrado uso en esta plataforma.
+        overview_title: Resumen de uso (de mayor a menor)
+        revoke: Revocar
+        revoke_confirm: "¿Revocar esta concesión de cuota?"
+        title: Concesiones de cuota
+      new:
+        title: Nueva concesión de cuota
+      revoked: Concesión de cuota revocada.
+      status:
+        active: Activa
+        expired: Expirada
+      table:
+        actions: Acciones
+        expires_at: Expira
+        granted_by: Concedido por %{name}
+        limit: Límite
+        no_expiry: Sin vencimiento
+        owner: Propietario
+        quota_type: Tipo de cuota
+        status: Estado
+        usage: Uso
+      updated: Concesión de cuota actualizada.
+    quotas:
+      usage_meter:
+        types:
+          ai_translation_tokens: Tokens de traducción con IA
+          media_storage: Almacenamiento
     rbac:
       nav:
         resource_permissions: Permisos de recursos
@@ -3951,7 +4009,14 @@ es:
           platform: Plataforma
           preferences: Preferencias
           privacy: Privacidad
+          usage: Uso
         title: Configuración
+        usage:
+          description: Cuánto de su almacenamiento y otros límites de cuota está utilizando
+            actualmente.
+          title: Uso
+      usage:
+        none: Todavía no tiene uso registrado.
     setup_wizard_steps:
       already_completed: Esta plataforma ya ha sido configurada. Por favor inicie
         sesión para administrar su plataforma.
@@ -5068,6 +5133,7 @@ es:
       roles_and_permissions: Roles & Permissions
       safety: Seguridad
       sessions: Sesiones
+      usage: Uso
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
@@ -5462,6 +5528,7 @@ es:
         feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
         platform_domains: Dominios
+        quota_grants: Concesiones de cuota
         robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento
         title: Operaciones de la plataforma
