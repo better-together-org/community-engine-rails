@@ -1,0 +1,125 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h1 class="h3 mb-1"><%= t('better_together.quota_grants.index.title', default: 'Quota Grants') %></h1>
+      <p class="text-muted mb-0">
+        <%= t('better_together.quota_grants.index.description',
+              default: 'See who is using how much, and grant an owner a higher limit without changing the platform default.') %>
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <%= link_to t('better_together.quota_grants.index.new', default: 'New grant'),
+                  new_platform_quota_grant_path(@platform),
+                  class: 'btn btn-primary' %>
+      <%= link_to t('actions.back_to_platform', default: 'Back to platform'),
+                  platform_path(@platform),
+                  class: 'btn btn-outline-secondary' %>
+    </div>
+  </div>
+
+  <h2 class="h5 mb-3"><%= t('better_together.quota_grants.index.overview_title', default: 'Usage overview (busiest first)') %></h2>
+  <% if @quotas_overview.any? %>
+    <div class="table-responsive mb-5">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th><%= t('better_together.quota_grants.table.owner', default: 'Owner') %></th>
+            <th><%= t('better_together.quota_grants.table.quota_type', default: 'Quota type') %></th>
+            <th><%= t('better_together.quota_grants.table.usage', default: 'Usage') %></th>
+            <th class="text-end"><%= t('better_together.quota_grants.table.actions', default: 'Actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @quotas_overview.each do |quota| %>
+            <tr id="<%= dom_id(quota) %>">
+              <td>
+                <%= quota.owner_type.demodulize %>:
+                <%= quota.owner.respond_to?(:select_option_title) ? quota.owner.select_option_title : quota.owner.name %>
+              </td>
+              <td><%= quota.quota_type.titleize %></td>
+              <td class="w-25">
+                <%= render 'better_together/quotas/usage_meter', quota: quota %>
+              </td>
+              <td class="text-end">
+                <%= link_to t('better_together.quota_grants.index.grant_override', default: 'Grant override'),
+                            new_platform_quota_grant_path(@platform, owner_type: quota.owner_type, owner_id: quota.owner_id),
+                            class: 'btn btn-outline-primary btn-sm' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-light border mb-5">
+      <%= t('better_together.quota_grants.index.overview_empty', default: 'No usage recorded on this platform yet.') %>
+    </div>
+  <% end %>
+
+  <h2 class="h5 mb-3"><%= t('better_together.quota_grants.index.grants_title', default: 'Existing grants') %></h2>
+  <% if @quota_grants.any? %>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th><%= t('better_together.quota_grants.table.owner', default: 'Owner') %></th>
+            <th><%= t('better_together.quota_grants.table.quota_type', default: 'Quota type') %></th>
+            <th><%= t('better_together.quota_grants.table.limit', default: 'Limit') %></th>
+            <th><%= t('better_together.quota_grants.table.status', default: 'Status') %></th>
+            <th><%= t('better_together.quota_grants.table.expires_at', default: 'Expires') %></th>
+            <th class="text-end"><%= t('better_together.quota_grants.table.actions', default: 'Actions') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @quota_grants.each do |grant| %>
+            <tr id="<%= dom_id(grant) %>">
+              <td>
+                <div class="fw-semibold">
+                  <%= grant.owner_type.demodulize %>:
+                  <%= grant.owner.respond_to?(:select_option_title) ? grant.owner.select_option_title : grant.owner.name %>
+                </div>
+                <% if grant.granted_by.present? %>
+                  <div class="small text-muted">
+                    <%= t('better_together.quota_grants.table.granted_by',
+                          default: 'Granted by %{name}',
+                          name: grant.granted_by.respond_to?(:select_option_title) ? grant.granted_by.select_option_title : grant.granted_by.to_s) %>
+                  </div>
+                <% end %>
+              </td>
+              <td><%= grant.quota_type.titleize %></td>
+              <td><%= number_with_delimiter(grant.limit) %></td>
+              <td>
+                <% if grant.expires_at.nil? || grant.expires_at.future? %>
+                  <span class="badge text-bg-success"><%= t('better_together.quota_grants.status.active', default: 'Active') %></span>
+                <% else %>
+                  <span class="badge text-bg-secondary"><%= t('better_together.quota_grants.status.expired', default: 'Expired') %></span>
+                <% end %>
+              </td>
+              <td><%= grant.expires_at.present? ? l(grant.expires_at, format: :short) : t('better_together.quota_grants.table.no_expiry', default: 'No expiry') %></td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <%= link_to t('globals.edit', default: 'Edit'),
+                              edit_platform_quota_grant_path(@platform, grant),
+                              class: 'btn btn-outline-primary btn-sm' %>
+                  <% if grant.expires_at.nil? || grant.expires_at.future? %>
+                    <%= button_to t('better_together.quota_grants.index.revoke', default: 'Revoke'),
+                                  platform_quota_grant_path(@platform, grant),
+                                  method: :delete,
+                                  class: 'btn btn-outline-danger btn-sm',
+                                  form: { data: { turbo_confirm: t('better_together.quota_grants.index.revoke_confirm',
+                                                                   default: 'Revoke this quota grant?') } } %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-light border">
+      <%= t('better_together.quota_grants.index.grants_empty', default: 'No quota grants have been created for this platform yet.') %>
+    </div>
+  <% end %>
+</div>
