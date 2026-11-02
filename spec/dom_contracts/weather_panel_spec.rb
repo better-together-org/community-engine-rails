@@ -57,6 +57,27 @@ RSpec.describe 'Settlement weather panel DOM contract', :as_platform_manager, ty
     end
   end
 
+  describe 'current conditions card on the about tab' do
+    it 'is absent without stored current conditions' do
+      create(:weather_location, settlement: settlement)
+      get show_path
+
+      expect(page_html.at_css('#weather-summary-card')).to be_nil
+    end
+
+    it 'shows conditions and links to the weather tab', :aggregate_failures do
+      seed_weather(create(:weather_location, settlement: settlement))
+      get show_path
+
+      card = page_html.at_css('#about #weather-summary-card')
+      expect(card).to be_present
+      %w[#weather-summary-temperature #weather-summary-condition #weather-summary-observed
+         #weather-summary-attribution].each { |selector| expect(card.at_css(selector)).to be_present }
+      expect(card.at_css('#weather-summary-details')).to be_nil
+      expect(card.at_css('#weather-summary-link')['href']).to eq('#weather')
+    end
+  end
+
   describe 'GET weather' do
     it 'is not found without an enabled weather location' do
       get weather_path

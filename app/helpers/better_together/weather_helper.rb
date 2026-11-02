@@ -20,7 +20,7 @@ module BetterTogether
     def weather_summary_panel(settlement)
       location = @weather_location if @weather_location&.settlement_id == settlement.id
       location ||= BetterTogether::Weather::Location.enabled.includes(:source, :current_condition)
-                                                     .find_by(settlement: settlement)
+                                                    .find_by(settlement: settlement)
       return unless location&.current_condition
 
       BetterTogether::Weather::SettlementPanel.new(location)

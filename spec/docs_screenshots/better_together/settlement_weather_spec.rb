@@ -31,7 +31,7 @@ RSpec.describe 'Documentation screenshots for the settlement weather tab',
 
   after { Current.platform = nil }
 
-  def capture(name, target, callouts) # rubocop:disable Metrics/AbcSize
+  def capture(name, target, callouts, open_tab: true) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     narrative = { title: "Settlement weather: #{name}", audience: %w[end_user],
                   journey_step: 'As a visitor, I can see current conditions, the forecast and recent weather.',
                   callouts: callouts.map { |c| { id: c[:id], title: c[:title], description: c[:bullets].first } },
@@ -42,9 +42,11 @@ RSpec.describe 'Documentation screenshots for the settlement weather tab',
     BetterTogether::CapybaraScreenshotEngine.capture("settlement_weather_#{name}", device: :both, metadata:, narrative:,
                                                                                    callouts:) do
       visit "/#{I18n.default_locale}/g/settlements/#{settlement.slug}"
-      find('#weather-tab').click
+      if open_tab
+        find('#weather-tab').click
+        expect(page).to have_css('#weather-chart-temperature', visible: :all, wait: 15)
+      end
       expect(page).to have_css(target, wait: 15)
-      expect(page).to have_css('#weather-chart-temperature', visible: :all, wait: 10)
       page.execute_script("document.querySelector('#{target}').scrollIntoView({block: 'start'})")
     end
   end
@@ -59,5 +61,11 @@ RSpec.describe 'Documentation screenshots for the settlement weather tab',
     capture('history', '#weather-history',
             [{ id: 'charts', selector: '#weather-history-data', title: 'Same values as a table',
                bullets: ['Every chart has a text alternative.'] }])
+  end
+
+  it 'captures the current conditions card on the about tab' do # rubocop:disable RSpec/NoExpectationExample
+    capture('summary_card', '#weather-summary-card',
+            [{ id: 'summary', selector: '#weather-summary-card', title: 'Current conditions card',
+               bullets: ['Links to the full weather tab.'] }], open_tab: false)
   end
 end

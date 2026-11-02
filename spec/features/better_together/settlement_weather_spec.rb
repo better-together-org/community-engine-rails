@@ -19,4 +19,12 @@ RSpec.describe 'Settlement weather tab', :accessibility, :js, :weather_seed, ret
     expect(page).to have_css('#weather-chart-precipitation-unreported')
     expect(page).to be_axe_clean.within('#weather').according_to(:wcag2a, :wcag2aa, :wcag21a, :wcag21aa)
   end
+
+  it 'opens the weather tab from the current conditions card' do
+    visit "/#{I18n.default_locale}/g/settlements/#{settlement.slug}"
+    find('#weather-summary-link').click
+
+    expect(page).to have_css('#weather-tab.active', wait: 10)
+    expect(page).to have_css('#weather-panel', wait: 15)
+  end
 end
