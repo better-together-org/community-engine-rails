@@ -228,8 +228,8 @@ module BetterTogether
         (DEFAULT_ELIGIBLE_OWNER_TYPES + Billable.model_names.to_a).uniq
       end
 
-      # An installed method that does not go through a vendor (settlement manual or internal).
-      def self.offline_method?(name) = Billing.offline_method?(name)
+      # An installed method Community Engine settles itself (settlement manual or internal).
+      def self.local_method?(name) = Billing.local_method?(name)
 
       def participant_summary
         metadata.to_h['participant_summary'].presence || description.presence || default_participant_summary
@@ -291,7 +291,7 @@ module BetterTogether
       # processor is chosen in its own field, so it does not belong in this list.
       def accepted_methods_are_not_online_processors
         accepted_payment_methods.each do |name|
-          next if name != processor && self.class.offline_method?(name)
+          next if name != processor && self.class.local_method?(name)
 
           errors.add(:accepted_payment_methods, :not_an_offline_method, method: name)
         end

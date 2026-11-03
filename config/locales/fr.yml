@@ -924,6 +924,8 @@ fr:
         review_title: Lire et accepter
         title: Obtenir %{plan}
         unavailable_currency_not_supported: Non disponible dans cette devise.
+        unavailable_insufficient_credit: Vous n'avez pas assez de crédit en magasin
+          pour cet achat.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
       notifications:
@@ -1313,6 +1315,7 @@ fr:
           cash: Argent comptant
           cheque: Chèque
           etransfer: Virement Interac
+          store_credit: Crédit en magasin
         price_section_title: Prix
         pricing_tier_solidarity_medium: Solidarite — Moyenne
         pricing_tier_solidarity_premium: Prime de solidarite
@@ -1359,6 +1362,15 @@ fr:
         available_anywhere: Partout
         available_only_in: Seulement en %{countries} (%{currencies})
         disclosure_country: Il ne fonctionne que dans %{countries}, en %{currencies}.
+        disclosure_credit_expires: Chaque montant de crédit peut avoir sa propre date
+          d'expiration ; le crédit qui expire en premier est dépensé en premier.
+        disclosure_credit_not_cash: Le crédit n'est pas de l'argent comptant. Il ne
+          peut être ni retiré ni envoyé à quelqu'un, et il paie une commande en entier
+          ou pas du tout.
+        disclosure_credit_platform_only: 'Le crédit est l''argent de la plateforme
+          : il ne paie que ce que la plateforme vend elle-même, jamais pour un vendeur.'
+        disclosure_credit_refund: Les remboursements d'une commande payée avec du
+          crédit retournent au crédit de l'acheteur, pas à sa banque.
         disclosure_no_fee: Aucuns frais d'application ne peuvent être perçus sur ces
           paiements.
         disclosure_no_protection: L'acheteur n'a aucune protection contre les rétrofacturations
@@ -1446,6 +1458,11 @@ fr:
         state_draft: Brouillon
         state_retired: Retirée
       sales:
+        credit_refund_heading: Retourner au crédit en magasin
+        credit_refund_hint: 'L''acheteur a payé avec du crédit en magasin : l''argent
+          retourne aussitôt sur son solde de crédit. Il ne peut pas être versé en
+          espèces.'
+        credit_refund_submit: Retourner au crédit
         refund_amount_label: Montant remboursé (jusqu’à %{max}; vide pour tout)
         refund_heading: Enregistrer un remboursement
         refund_hint: La plateforme ne peut pas déplacer cet argent. Enregistrez-le

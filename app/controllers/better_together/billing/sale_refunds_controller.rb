@@ -30,10 +30,11 @@ module BetterTogether
         @sale = billing_owner.billing_orders.sold_by_platform.find(params[:sale_id])
       end
 
-      # Only a payment made outside the platform: a vendor refund is made at the vendor.
+      # Only a payment Community Engine settles itself: a vendor refund is made at the vendor. Money handed
+      # back by the seller is recorded; credit goes back to the buyer's balance.
       def offline_payment
         payment = @sale.payments.find(params[:payment_id])
-        raise ActiveRecord::RecordNotFound unless Billing.offline_method?(payment.processor)
+        raise ActiveRecord::RecordNotFound unless Billing.local_method?(payment.processor)
 
         payment
       end

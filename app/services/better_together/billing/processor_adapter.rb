@@ -138,6 +138,13 @@ module BetterTogether
       # Array of Billing::InstructionField. Core stores the values encrypted.
       def instruction_fields = []
 
+      # What ProcessorSetting asks of any method Community Engine settles itself (manual or
+      # internal). The defaults say "nothing to choose, nothing to check", so a method that
+      # has no instructions (store credit) answers safely; OfflineProcessorAdapter overrides them.
+      def grant_on_options = []
+      def default_grant_on = grant_on_options.first
+      def settings_errors(_values) = {}
+
       # Turns a vendor webhook event (as Pay delivers it) into a Hash for the event log.
       #
       # What Pay delivers depends on the processor (Pay::Webhook#rehydrated_event): a

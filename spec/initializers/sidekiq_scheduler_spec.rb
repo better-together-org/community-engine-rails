@@ -49,7 +49,9 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
         'better_together:billing:remind_offline_confirmations_daily' =>
           ['15 14 * * *', 'BetterTogether::Billing::RemindOfflineConfirmationsJob'],
         'better_together:billing:expire_quota_reservations_hourly' =>
-          ['35 * * * *', 'BetterTogether::Billing::ExpireQuotaReservationsJob']
+          ['35 * * * *', 'BetterTogether::Billing::ExpireQuotaReservationsJob'],
+        'better_together:billing:expire_credit_lots_daily' =>
+          ['50 4 * * *', 'BetterTogether::Billing::ExpireCreditLotsJob']
       }.each do |key, (cron, job_class)|
         # No queue key: the job class (queue_as :billing) decides, and the host's queue
         # prefix applies; see spec/jobs/better_together/billing/application_job_spec.rb.

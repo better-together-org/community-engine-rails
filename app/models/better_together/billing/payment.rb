@@ -58,7 +58,7 @@ module BetterTogether
       def orphaned? = succeeded? && order.cancelled?
 
       # A payment that goes through a processor, not one core settles itself.
-      def remote? = !Billing.offline_method?(processor)
+      def remote? = !Billing.local_method?(processor)
 
       def refunded_cents = refunds.where(status: Refund::COUNTED).sum(:amount_cents)
 

@@ -925,6 +925,7 @@ en:
         review_title: Review and accept
         title: Get %{plan}
         unavailable_currency_not_supported: Not available in this currency.
+        unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
       notifications:
@@ -1295,6 +1296,7 @@ en:
           cash: Cash
           cheque: Cheque
           etransfer: Interac e-Transfer
+          store_credit: Store credit
         price_section_title: Price
         pricing_tier_solidarity_medium: Solidarity — Medium
         pricing_tier_solidarity_premium: Solidarity Premium
@@ -1338,6 +1340,14 @@ en:
         available_anywhere: Anywhere
         available_only_in: Only in %{countries} (%{currencies})
         disclosure_country: It works only in %{countries}, in %{currencies}.
+        disclosure_credit_expires: Each amount of credit can have its own expiry date;
+          credit that expires first is spent first.
+        disclosure_credit_not_cash: Credit is not cash. It cannot be withdrawn or
+          sent to anyone, and it pays an order in full or not at all.
+        disclosure_credit_platform_only: 'Credit is the platform''s own money: it
+          pays only for what the platform itself sells, never for a seller.'
+        disclosure_credit_refund: Refunds of an order paid with credit go back to
+          the buyer's credit, not to their bank.
         disclosure_no_fee: No application fee can be collected on these payments.
         disclosure_no_protection: The buyer has no chargeback or dispute protection,
           and you carry the risk of a payment that never arrives.
@@ -1420,6 +1430,10 @@ en:
         state_draft: Draft
         state_retired: Retired
       sales:
+        credit_refund_heading: Return to store credit
+        credit_refund_hint: The buyer paid with store credit, so the money goes back
+          onto their credit balance at once. It cannot be paid out as cash.
+        credit_refund_submit: Return to credit
         refund_amount_label: Amount given back (up to %{max}; blank for all)
         refund_heading: Record a refund
         refund_hint: The platform cannot move this money. Record it here once you

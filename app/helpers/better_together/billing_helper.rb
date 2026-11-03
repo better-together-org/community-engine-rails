@@ -59,7 +59,7 @@ module BetterTogether
     def billing_processor_choices
       BetterTogether::Billing::Configuration.processors_for(billing_owner)
                                             .map(&:to_s)
-                                            .reject { |name| BetterTogether::Billing::Plan.offline_method?(name) }
+                                            .reject { |name| BetterTogether::Billing::Plan.local_method?(name) }
                                             .map { |name| [name, name] }
     end
 
@@ -67,7 +67,7 @@ module BetterTogether
     # credit), as [label, name] pairs for the "also accept" check boxes.
     def billing_offline_method_choices
       BetterTogether::Billing.processor_names.map(&:to_s)
-                             .select { |name| BetterTogether::Billing::Plan.offline_method?(name) }
+                             .select { |name| BetterTogether::Billing::Plan.local_method?(name) }
                              .map { |name| [billing_payment_method_label(name), name] }
     end
 

@@ -24,14 +24,26 @@ module BetterTogether
         ProcessorAdapter.verify!(entry[:adapter].call, name: entry[:name])
       end
 
-      # An installed method that does not go through a vendor (settlement manual or
-      # internal), like cash. False for an unknown name or an adapter that fails the contract.
-      def offline_method?(name)
-        return false unless processor_names.map(&:to_s).include?(name.to_s)
+      # An installed method Community Engine settles itself, with no vendor: manual (cash, a
+      # cheque, an e-transfer) or internal (store credit). False for an unknown name or an
+      # adapter that fails the contract.
+      def local_method?(name) = settlement_kind_of(name).then { |kind| !kind.nil? && kind != :remote }
 
-        processor_adapter(name)&.settlement_kind != :remote
+      # An installed method the seller confirms by hand (cash, a cheque, an e-transfer). These,
+      # and only these, have instructions, an acknowledgement and an offline payment to confirm.
+      def manual_method?(name) = settlement_kind_of(name) == :manual
+
+      # An installed method that is a ledger inside Community Engine (store credit).
+      def internal_method?(name) = settlement_kind_of(name) == :internal
+
+      # The settlement kind of an installed method, or nil for an unknown name or an adapter
+      # that fails the contract.
+      def settlement_kind_of(name)
+        return unless processor_names.map(&:to_s).include?(name.to_s)
+
+        processor_adapter(name)&.settlement_kind
       rescue ProcessorAdapter::ContractError
-        false
+        nil
       end
 
       # The methods core ships, registered once at boot. They are available to every
@@ -49,7 +61,7 @@ module BetterTogether
 
       # Name => adapter class, for the methods core ships. A method so classes load lazily.
       def builtin_processors
-        { cash: Processors::Cash, cheque: Processors::Cheque, etransfer: Processors::ETransfer }
+        { cash: Processors::Cash, cheque: Processors::Cheque, etransfer: Processors::ETransfer, store_credit: Processors::StoreCredit }
       end
 
       # Whether a steward can configure billing for a platform: the host switched it on and

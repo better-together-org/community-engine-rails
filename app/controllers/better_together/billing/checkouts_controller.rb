@@ -42,8 +42,8 @@ module BetterTogether
       end
 
       def set_choices
-        @choices = Checkout::Methods.call(platform: billing_owner, plan: @plan)
         @purpose = Checkout::Methods.new(platform: billing_owner, plan: @plan).purpose
+        @choices = Checkout::Methods.call(platform: billing_owner, plan: @plan, buyer: current_user.person)
       end
 
       # Only a method this plan offers and the platform has switched on.

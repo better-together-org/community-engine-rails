@@ -26,6 +26,12 @@ erDiagram
   BILLING_ORDERS ||--o{ BILLING_OFFLINE_PAYMENTS : "(order_id, platform_id) composite FK"
   BILLING_PAYMENTS ||--o| BILLING_OFFLINE_PAYMENTS : "(payment_id, platform_id) composite FK, one each"
   EXT_PERSON o|--o{ BILLING_OFFLINE_PAYMENTS : "confirmed_by (nullify)"
+  EXT_PLATFORM ||--o{ BILLING_CREDIT_ACCOUNTS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_CREDIT_ACCOUNTS : "holder (nullify)"
+  BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_LOTS : "(credit_account_id, platform_id) composite FK"
+  BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_ENTRIES : "(credit_account_id, platform_id) composite FK"
+  BILLING_CREDIT_LOTS ||--o{ BILLING_CREDIT_ENTRIES : "(credit_lot_id, platform_id) composite FK"
+  BILLING_CREDIT_ENTRIES o|--o{ BILLING_CREDIT_ENTRIES : "reverses (reverses_entry_id, platform_id)"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
   BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
@@ -319,4 +325,35 @@ erDiagram
     datetime expired_at
     datetime cancelled_at
     datetime last_reminded_at
+  }
+  BILLING_CREDIT_ACCOUNTS {
+    uuid id PK
+    uuid platform_id FK
+    uuid holder_id FK
+    string currency
+    bigint balance_cents "cache of the lots, CHECK >= 0"
+  }
+  BILLING_CREDIT_LOTS {
+    uuid id PK
+    uuid platform_id FK
+    uuid credit_account_id FK
+    string origin
+    bigint amount_cents
+    bigint remaining_cents "CHECK 0..amount"
+    datetime expires_at
+    string_array purposes
+    boolean promotional
+  }
+  BILLING_CREDIT_ENTRIES {
+    uuid id PK
+    uuid platform_id FK
+    uuid credit_account_id FK
+    uuid credit_lot_id FK
+    uuid reverses_entry_id FK
+    string kind
+    string transaction_key
+    bigint amount_cents "signed, never 0"
+    bigint balance_after_cents
+    string source_type
+    uuid source_id
   }

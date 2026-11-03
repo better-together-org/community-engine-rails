@@ -9,6 +9,11 @@ RSpec.describe 'Checkout services' do # rubocop:disable RSpec/DescribeClass
   def agreements = BetterTogether::Billing::PurchaseAgreementSeeds.call(host_platform)
   def activate_all = agreements.each_value { |agreement| agreement.update!(lifecycle_state: 'active') }
 
+  def give_credit(amount, **attrs)
+    BetterTogether::Billing::Credit::Grant.call(platform: host_platform, holder: buyer, amount_cents: amount, currency: 'USD',
+                                                origin: 'promotion', idempotency_key: SecureRandom.uuid, **attrs)
+  end
+
   def choices(of_plan) = BetterTogether::Billing::Checkout::Methods.call(platform: host_platform, plan: of_plan).index_by(&:name)
 
   let(:details) do
@@ -142,6 +147,50 @@ RSpec.describe 'Checkout services' do # rubocop:disable RSpec/DescribeClass
       enable('cheque', settings: { 'payee_name' => 'A', 'address' => 'B' })
 
       expect(choices(cash_plan).keys).not_to include('cheque')
+    end
+
+    describe 'store credit' do
+      let(:credit_plan) do
+        create(:better_together_billing_plan, accepted_payment_methods: %w[store_credit], currency: 'USD', amount_cents: 3000,
+                                              billing_interval: 'one_time')
+      end
+      let(:credit_for_buyer) { described_class.call(platform: host_platform, plan: credit_plan, buyer:).index_by(&:name)['store_credit'] }
+
+      before do
+        host_platform.billing_processor_settings.create!(processor: 'store_credit', enabled: true, acknowledge: true,
+                                                         purposes: %w[one_time])
+      end
+
+      it 'is offered when the buyer has enough that is unexpired and allowed for this kind of purchase' do
+        give_credit(3000)
+
+        expect(credit_for_buyer).to be_available
+      end
+
+      it 'is listed with the reason when the buyer does not have enough, or has none' do
+        expect(credit_for_buyer).to have_attributes(available: false, reason: :insufficient_credit)
+
+        give_credit(2999)
+        give_credit(5000, expires_at: 1.day.ago)
+        give_credit(5000, purposes: %w[ticket])
+
+        expect(credit_for_buyer).to have_attributes(available: false, reason: :insufficient_credit)
+      end
+
+      it 'is judged on the platform setting alone when no buyer is known' do
+        expect(described_class.call(platform: host_platform, plan: credit_plan).first).to be_available
+      end
+
+      it 'is not offered when a steward has not switched it on' do
+        host_platform.billing_processor_settings.find_by!(processor: 'store_credit').update!(enabled: false)
+
+        expect(credit_for_buyer).to have_attributes(available: false, reason: :not_enabled)
+      end
+
+      it 'is never taken for cash: a plan may accept it like any method outside a vendor' do
+        expect(credit_plan).to be_valid
+        expect(BetterTogether::Billing.manual_method?('store_credit')).to be(false)
+      end
     end
 
     it 'calls a plan that renews a subscription, and any other a one-time purchase' do

@@ -67,6 +67,24 @@ RSpec.describe 'Built-in payment method adapters' do # rubocop:disable RSpec/Des
     end
   end
 
+  describe BetterTogether::Billing::Processors::StoreCredit do
+    let(:adapter) { described_class.new }
+
+    it_behaves_like 'a billing processor adapter'
+
+    it 'is an internal ledger: no vendor, no webhook, no seller to confirm, nothing to fill in' do
+      expect(adapter).to have_attributes(processor_name: :store_credit, settlement_kind: :internal, recurring_mode: :manual,
+                                         fee_collectible?: false, webhook_event_types: [], instruction_fields: [])
+      expect(adapter.supports?(:offline_settlement)).to be(false)
+    end
+
+    it 'answers what a setting asks of any local method, with nothing to choose or check' do
+      expect(adapter).to have_attributes(grant_on_options: [], default_grant_on: nil)
+      expect(adapter.settings_errors({})).to eq({})
+      expect(adapter.instructions_for(setting: {})).to eq({})
+    end
+  end
+
   describe BetterTogether::Billing::Processors::Cheque do
     it 'needs a payee and an address, and keeps nothing about a bank account' do
       adapter = described_class.new
