@@ -18,6 +18,16 @@ module BetterTogether
           # A webhook that matches no platform is reported by the dispatcher and its Pay
           # row is kept for replay; retrying it would only repeat the same refusal.
           discard_on BetterTogether::Billing::UnattributableWebhookError
+
+          # Pay publishes a webhook to every subscriber and lets each finish. When two of them
+          # fail, Rails raises ONE InstrumentationSubscriberError wrapping both, so the discard
+          # above would not match and Sidekiq would retry the refusal for weeks. Discard when
+          # any wrapped error is the refusal; anything else is re-raised to be retried.
+          rescue_from ActiveSupport::Notifications::InstrumentationSubscriberError do |error|
+            raise error unless error.exceptions.any?(BetterTogether::Billing::UnattributableWebhookError)
+
+            Rails.logger.warn('[billing] discarded a webhook the dispatcher refused to attribute')
+          end
         end
       end
     end

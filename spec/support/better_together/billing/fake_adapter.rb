@@ -38,7 +38,7 @@ module BetterTogether
       def normalize_webhook(vendor_event)
         {
           event_id: vendor_event['id'], event_type: vendor_event['type'], payload: vendor_event.to_h,
-          platform_id: vendor_event['platform_id'], account_ref: vendor_event['account'],
+          platform_id: vendor_event['platform_id'], account_ref: vendor_event['account'], customer_ref: vendor_event['customer'],
           occurred_at: (Time.zone.at(vendor_event['created']) if vendor_event['created'])
         }.compact
       end

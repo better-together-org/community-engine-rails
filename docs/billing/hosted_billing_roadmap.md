@@ -39,7 +39,7 @@ is deliberately left for later.
 
 ## Rules to carry forward
 
-- Never expose Pay's unscoped `payment_processor`; offer `billing_customer(platform:)`.
+- Never expose Pay's unscoped `payment_processor`: a person's `payment_processor` is refused, and `payment_processor_for(platform)`, `add_payment_processor(name, platform:)` and `set_payment_processor(name, platform:)` (see `Billing::PayCustomerOwner`) require a platform and never touch another platform's customers.
 - Every new billing table is platform-bound and ties children to parents with composite
   foreign keys.
 - Keep maintenance sweeps per record; they are the only cross-tenant operations.
