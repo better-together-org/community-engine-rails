@@ -54,8 +54,12 @@ prunes it.
   delivery is reported; nothing falls back to the host platform.
 - Maintenance sweeps (dead-letter, redaction, prune) are the only cross-tenant
   operations. Each acts on one record at a time and reads nothing across tenants.
-- Never use Pay's unscoped `owner.payment_processor` or `set_payment_processor` for an
-  owner that can be billed by more than one platform. Look the customer up for a platform.
+- Never use Pay's unscoped `owner.payment_processor`, `set_payment_processor` or
+  `add_payment_processor` for an owner that can be billed by more than one platform: Pay
+  clears `default` on all of an owner's customers and picks up another platform's row. A
+  person's versions of these (`Billing::PayCustomerOwner`) require `platform:`.
+- A Pay customer's `processor_id` is unique across all platforms (as in Pay itself: its
+  validation and every sync finder look a customer up by processor and id alone).
 - Every new billing table is platform-bound and ties children to their parent with a
   composite foreign key.
 

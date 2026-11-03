@@ -17,9 +17,14 @@
 # endpoints are reachable: Pay's engine also serves GET /payments/:id, an
 # unauthenticated page that calls the processor API with the host's key for a
 # caller-supplied id. Community Engine's checkout is processor-hosted and does not
-# use that page, so it stays closed until a feature needs it.
+# use that page, so it stays closed until a feature needs it (buyers are sent to
+# billing/orders/:id/pay instead, which is signed in and checks the order).
+#
+# The constraint sees the path AFTER the mount point: a mounted app's `path_info` is
+# rewritten to the remainder before constraints run, so '/pay/webhooks/stripe' arrives
+# as '/webhooks/stripe'. Testing for '/pay/webhooks/' here would 404 every webhook.
 if [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
-  mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/pay/webhooks/') }
+  mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/webhooks/') }
 end
 
 # What a billing owner can manage. Declared as a concern so a community-scoped mount

@@ -191,6 +191,11 @@ module BetterTogether
           expect(described_class.platform_for_webhook(:fake, account_ref: 'acct_b')).to eq(other_platform)
           expect(described_class.platform_for_webhook(:fake, account_ref: 'acct_other')).to be_nil
         end
+
+        it 'refuses an event from a processor account that no context names, rather than giving it to the host' do
+          expect(described_class.platform_for_webhook(:fake)).to eq(host_platform)
+          expect(described_class.platform_for_webhook(:fake, account_ref: 'acct_connected')).to be_nil
+        end
       end
     end
   end

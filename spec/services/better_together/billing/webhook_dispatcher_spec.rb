@@ -12,6 +12,10 @@ RSpec.describe BetterTogether::Billing::WebhookDispatcher do
 
   before { BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new }) }
 
+  def customer_on(platform, processor_id)
+    Pay::Customer.create!(owner: create(:better_together_person), platform:, processor: 'fake', processor_id:)
+  end
+
   it 'logs the event once for the platform and enqueues processing by id, never by payload' do
     expect { described_class.new(:fake).call(vendor_event) }.to have_enqueued_job(BetterTogether::Billing::ProcessBillingEventJob)
 
@@ -54,6 +58,33 @@ RSpec.describe BetterTogether::Billing::WebhookDispatcher do
     BetterTogether.clear_adapters!(BetterTogether::Billing::ADAPTER_GROUP)
 
     expect { described_class.new(:fake).call(vendor_event) }.not_to change(BetterTogether::Billing::Event, :count)
+  end
+
+  describe 'an event for a customer that lives on another platform' do
+    let(:other_platform) { create(:better_together_platform) }
+
+    before { allow(BetterTogether).to receive(:report_error) }
+
+    it 'is refused and reported, because Pay would attribute it to the customer\'s platform and the logs would disagree' do
+      customer_on(other_platform, 'cus_other')
+
+      expect { described_class.new(:fake).call(vendor_event.merge('customer' => 'cus_other')) }
+        .to raise_error(BetterTogether::Billing::UnattributableWebhookError, /customer of another platform/)
+      expect(BetterTogether::Billing::Event.where(event_id: 'evt_77')).to be_empty
+      expect(BetterTogether).to have_received(:report_error)
+    end
+
+    it 'is accepted when the customer is on the platform it resolves to' do
+      customer_on(host_platform, 'cus_host')
+
+      expect { described_class.new(:fake).call(vendor_event.merge('customer' => 'cus_host')) }
+        .to change(BetterTogether::Billing::Event, :count).by(1)
+    end
+
+    it 'is accepted when no such customer exists yet' do
+      expect { described_class.new(:fake).call(vendor_event.merge('customer' => 'cus_new')) }
+        .to change(BetterTogether::Billing::Event, :count).by(1)
+    end
   end
 
   describe 'attributing an event to a platform' do

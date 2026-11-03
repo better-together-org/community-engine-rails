@@ -12,6 +12,8 @@ module BetterTogether
     include Author
     # A person who sells can ask buyers for terms of their own (see Billing::AgreementRequirement).
     include Billing::AgreementTarget
+    # A person is the customer of every platform they pay (see Billing::PayCustomerOwner).
+    include Billing::PayCustomerOwner
     include Communicator
     include Contactable
     include CreatedRecords

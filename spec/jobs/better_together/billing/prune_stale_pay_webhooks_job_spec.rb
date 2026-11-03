@@ -22,12 +22,23 @@ RSpec.describe BetterTogether::Billing::PruneStalePayWebhooksJob do
     expect(Pay::Webhook.exists?(recent.id)).to be(true)
   end
 
-  it 'follows the configured payload retention window' do
-    kept_by_default = webhook(created_at: 10.days.ago)
+  it 'follows a longer configured payload retention window' do
+    kept_by_default = webhook(created_at: 40.days.ago)
+    stub_const('ENV', ENV.to_hash.merge('BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS' => '60'))
+
+    described_class.perform_now
+
+    expect(Pay::Webhook.exists?(kept_by_default.id)).to be(true)
+  end
+
+  it 'never prunes sooner than the delivery job is retried, however short the configured window' do
+    still_retrying = webhook(created_at: 10.days.ago)
+    past_retries = webhook(created_at: 23.days.ago)
     stub_const('ENV', ENV.to_hash.merge('BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS' => '7'))
 
     described_class.perform_now
 
-    expect(Pay::Webhook.exists?(kept_by_default.id)).to be(false)
+    expect(Pay::Webhook.exists?(still_retrying.id)).to be(true)
+    expect(Pay::Webhook.exists?(past_retries.id)).to be(false)
   end
 end

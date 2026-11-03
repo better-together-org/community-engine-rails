@@ -76,6 +76,21 @@ RSpec.describe 'Create Better Together Pay tables migration' do # rubocop:disabl
     expect(index.unique).to be(true)
   end
 
+  it 'keeps a processor id unique across platforms, as Pay itself assumes' do
+    index = connection.indexes(:pay_customers).find { |i| i.name == 'pay_customers_processor_index' }
+
+    expect(index.columns).to eq(%w[processor processor_id])
+    expect(index.unique).to be(true)
+    expect(connection.indexes(:pay_customers).map(&:name)).not_to include('pay_customers_platform_processor_index')
+  end
+
+  it 'lets a payment be tied to its charge\'s platform' do
+    index = connection.indexes(:pay_charges).find { |i| i.name == 'pay_charges_id_platform_index' }
+
+    expect(index.columns).to eq(%w[id platform_id])
+    expect(index.unique).to be(true)
+  end
+
   it 'rolls back by dropping the Pay tables, and can be run again' do
     migration.down
     expect(connection.table_exists?(:pay_customers)).to be false

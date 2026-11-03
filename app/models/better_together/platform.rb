@@ -19,6 +19,7 @@ module BetterTogether
     include PrimaryCommunity
     include Privacy
     include Protected
+    include Billing::Billable
     include Quotas::Owner
     include TimezoneAttributeAliasing
     include RemoveableAttachment

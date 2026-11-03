@@ -76,7 +76,8 @@ module BetterTogether
         # An event may name its platform (`platform_id`) or the processor account it came
         # from (`account_ref`). Without either, it is attributed to the only platform that
         # has a context for the processor; if more than one does, that is ambiguous and
-        # nothing is guessed. A platform without a context never receives events.
+        # nothing is guessed. A platform without a context never receives events, and an
+        # event from a processor account no context names is refused.
         def platform_for_webhook(processor, platform_id: nil, account_ref: nil)
           candidates = platforms_with_context(processor)
           candidates = candidates.select { |platform| platform.id.to_s == platform_id.to_s } if platform_id.present?
@@ -102,13 +103,12 @@ module BetterTogether
           ProcessorContext.new(platform:, processor:, source: :setting) if settings.exists?
         end
 
-        # Contexts that know their processor account must match it; contexts that do
-        # not (account_ref nil) are only usable when they are the single candidate.
+        # An event from a processor account (a Connect account) goes only to the platform whose
+        # context names that account. A context that names no account is the platform's own,
+        # whose events carry no account: it never receives another account's events, so an
+        # unknown account is refused rather than guessed onto the host.
         def match_account(candidates, processor, account_ref)
-          known = candidates.select { |platform| context_for(platform, processor).account_ref.present? }
-          return candidates if known.empty?
-
-          known.select { |platform| context_for(platform, processor).account_ref.to_s == account_ref.to_s }
+          candidates.select { |platform| context_for(platform, processor).account_ref.to_s == account_ref.to_s }
         end
       end
     end

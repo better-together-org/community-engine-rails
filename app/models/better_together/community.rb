@@ -8,6 +8,7 @@ module BetterTogether
     include Base64ImageInput
     # A community can ask buyers for terms of its own (see Billing::AgreementRequirement).
     include Billing::AgreementTarget
+    include Billing::Billable
     include Contactable
     include ContactData
     include Geography::Locatable::AddressData

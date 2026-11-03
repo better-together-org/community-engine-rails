@@ -104,7 +104,9 @@ module BetterTogether
 
       def supports?(capability) = capabilities.include?(capability.to_sym)
 
-      # Pay webhook event names this adapter wants delivered, e.g. "stripe.invoice.paid".
+      # Pay webhook event names this adapter wants delivered, e.g. "stripe.charge.refunded".
+      # Also Pay's ingestion allow-list: an event nobody subscribed to is dropped, and matching is
+      # by prefix. See docs/billing/processor-adapters.md for what Pay handles and what it ignores.
       def webhook_event_types = []
 
       # ---- Settlement ------------------------------------------------------------
@@ -126,14 +128,29 @@ module BetterTogether
       # Array of Billing::InstructionField. Core stores the values encrypted.
       def instruction_fields = []
 
-      # Turns a vendor webhook event (as Pay delivers it) into a Hash for the event log:
+      # Turns a vendor webhook event (as Pay delivers it) into a Hash for the event log.
+      #
+      # What Pay delivers depends on the processor (Pay::Webhook#rehydrated_event): a
+      # `::Stripe::Event` for Stripe (not a Hash: use its readers), the event's `data` only for
+      # Paddle Billing (so no envelope and no event id to read), a notification object for
+      # Braintree. Read what your processor really passes.
+      #
       #   event_id:, event_type:, payload: Hash   (required)
       #   occurred_at:  when the processor says the event happened (ordering input)
       #   platform_id:  the platform it is for, when the event names one
-      #   account_ref:  the processor account it came from, to be matched to a platform
+      #   account_ref:  the processor account it came from (Stripe Connect `account`), matched
+      #                 to the platform whose context names it; an unknown account is refused
+      #   customer_ref: the processor customer id, when the event has one; if a Pay customer
+      #                 with that id exists on a DIFFERENT platform than the one resolved, the
+      #                 event is refused (Pay's own handlers attribute by customer)
+      #   livemode:     false for a test-mode event (keep it in the payload)
       # With neither platform_id nor account_ref, the event goes to the only platform that
       # has billing configured for this processor; if that is ambiguous it is refused
       # (see Billing::WebhookDispatcher). Take no tenant from global state here.
+      #
+      # `webhook_event_types` is also Pay's ingestion allow-list: Pay's controllers drop any
+      # event nobody subscribed to, and matching is by prefix ("stripe.charge.dispute" covers
+      # its sub-events).
       def normalize_webhook(_vendor_event) = raise(NotImplementedError, "#{self.class}#normalize_webhook")
 
       # Processes one logged event (read event.payload) for the platform and processor
