@@ -4060,6 +4060,10 @@ es:
         privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
           porque la plataforma no es pública. El contenido solo puede ser visible
           para miembros de la comunidad o el autor.
+    quotas:
+      storage_limit_reached: Ha alcanzado su límite de almacenamiento, por lo que
+        no se puede subir este archivo. Elimine algo o pida más almacenamiento a un
+        administrador.
     rbac:
       nav:
         resource_permissions: Permisos de recursos

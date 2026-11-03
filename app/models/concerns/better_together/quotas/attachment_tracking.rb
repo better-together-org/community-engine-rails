@@ -50,7 +50,7 @@ module BetterTogether
           subject: self
         )
       rescue StandardError => e
-        Rails.logger.warn("[Quotas] reverse! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
+        BetterTogether::Quotas.record_failure(e, "media_storage reverse for attachment #{id}")
       end
 
       private
@@ -58,14 +58,14 @@ module BetterTogether
       def settle_media_storage_quota
         BetterTogether::Quotas.settle!(
           type: 'media_storage',
-          owner: BetterTogether::Quotas::OwnerResolver.resolve(record),
+          owner: BetterTogether::Quotas::OwnerResolver.resolve(record, type: 'media_storage'),
           amount: blob.byte_size,
           idempotency_key: AttachmentTracking.charge_key(id),
           subject: self
         )
         BetterTogether::Quotas.settle_reservations_for!(blob)
       rescue StandardError => e
-        Rails.logger.warn("[Quotas] settle! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
+        BetterTogether::Quotas.record_failure(e, "media_storage settle for attachment #{id}")
       end
     end
   end

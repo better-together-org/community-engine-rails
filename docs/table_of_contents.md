@@ -87,6 +87,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Notifications](billing/notifications.md) - Who is told what about orders, payments and billing operations, never twice, never with payment details
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
+- [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
 - [Billing Local Pay Processor](billing/local_pay_processor.md) - How cash, cheque, e-transfer and store credit appear in Pay: the customer, charge and subscription, and what stays in the workflow
 - [Billing Offline Payment Methods](billing/offline_payment_methods.md) - Paying a seller directly by cash, cheque or e-transfer: the buyer's screen, the seller's confirmation (no buyer claim needed), late payments, sales in person
 - [Billing Payment Methods](billing/payment_methods.md) - Cash, cheque and e-transfer: how a seller turns them on, what buyers are told, the limits

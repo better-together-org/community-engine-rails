@@ -4005,6 +4005,9 @@ en:
         privacy_limited_by_platform: Some privacy options are disabled because the
           platform is not public. Content can only be visible to community members
           or the author.
+    quotas:
+      storage_limit_reached: You have reached your storage limit, so this file cannot
+        be uploaded. Remove something or ask a steward about more storage.
     rbac:
       nav:
         resource_permissions: Resource permissions

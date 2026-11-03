@@ -4108,6 +4108,10 @@ fr:
         privacy_limited_by_platform: Certains paramètres de confidentialité sont désactivés
           car la plateforme n'est pas publique. Le contenu peut seulement être visible
           pour les membres de la communauté ou l'auteur.
+    quotas:
+      storage_limit_reached: Vous avez atteint votre limite de stockage; ce fichier
+        ne peut pas être téléversé. Supprimez quelque chose ou demandez plus de stockage
+        à un intendant.
     rbac:
       nav:
         resource_permissions: Autorisations de ressources
