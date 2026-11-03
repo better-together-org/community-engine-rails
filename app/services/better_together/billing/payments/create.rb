@@ -38,7 +38,7 @@ module BetterTogether
         attr_reader :order, :processor, :amount_cents, :idempotency_key
 
         # What other payments in flight already cover, so two parts cannot add up to more than owed.
-        def pending_cents = order.payments.pending.sum(:amount_cents)
+        def pending_cents = order.payments.in_flight.sum(:amount_cents)
       end
     end
   end

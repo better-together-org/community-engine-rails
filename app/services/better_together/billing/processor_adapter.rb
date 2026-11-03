@@ -7,8 +7,10 @@ module BetterTogether
     # methods. Core owns idempotency keys and money state, the adapter executes.
     class ProcessorAdapter
       CONTRACT_VERSION = 1
-      CAPABILITIES = %i[checkout portal plan_sync lookups stored_value_credit merchant_accounts refunds transfers
-                        offline_settlement].freeze
+      # `merchant_accounts` and `transfers` are reserved: the contract names them but core has no
+      # caller until payouts exist. (There is no stored-value capability: store credit is a ledger
+      # inside Community Engine, not something a processor does.)
+      CAPABILITIES = %i[checkout portal plan_sync lookups merchant_accounts refunds transfers offline_settlement].freeze
 
       # Methods an adapter must override for each capability it advertises, and the
       # keywords each accepts. Money-moving calls always carry an idempotency_key.
@@ -17,17 +19,25 @@ module BetterTogether
       # reading global environment variables, so one platform never acts through
       # another platform's account.
       CAPABILITY_METHODS = {
-        checkout: { create_checkout_session: %i[context owner plan success_url cancel_url idempotency_key metadata],
-                    sync_checkout_session: %i[context checkout_session_id] },
+        # A buyer pays an order through the processor. create_checkout_session returns a CheckoutSession;
+        # release_payment expires the session or cancels the intent when core lets the order go;
+        # reconcile_payment pulls the processor's state for a payment (never trust a payload alone);
+        # payment_action_url is where a buyer completes a payment that needs them (a bank confirmation),
+        # and receipt_url is the processor's hosted receipt: both return an https URL or nil.
+        checkout: { create_checkout_session: %i[context order payment success_url cancel_url idempotency_key metadata],
+                    sync_checkout_session: %i[context checkout_session_id],
+                    release_payment: %i[context payment idempotency_key],
+                    reconcile_payment: %i[context payment],
+                    payment_action_url: %i[context order],
+                    receipt_url: %i[context payment] },
         portal: { create_portal_session: %i[context owner return_url] },
         plan_sync: { sync_plan: %i[context plan idempotency_key],
                      fetch_price: %i[context processor_price_id],
                      fetch_product: %i[context processor_product_id] },
         lookups: { lookup: %i[context kind search scope limit] },
-        stored_value_credit: { credit_balance: %i[context beneficiary amount_cents currency idempotency_key metadata],
-                               reverse_credit: %i[context credit_reference amount_cents idempotency_key reason] },
         merchant_accounts: { merchant_onboarding_link: %i[context owner refresh_url return_url],
                              sync_merchant_account: %i[context merchant_account] },
+        # refund returns a RefundResult. Write it with the SDK and the idempotency key, then let Pay sync.
         refunds: { refund: %i[context payment_reference amount_cents currency idempotency_key reason] },
         transfers: { transfer: %i[context destination amount_cents currency idempotency_key metadata] },
         offline_settlement: { instructions_for: %i[context setting order] }
@@ -171,7 +181,7 @@ module BetterTogether
       # once the plan is linked, so a steward cannot change in Community Engine what the
       # processor will not change (and so the two cannot drift). A field not listed is
       # treated as :create_only, the safe default for processors that say nothing.
-      # Plan fields: name, description, active, amount_cents, currency, billing_interval,
+      # Plan fields: name, description, active, amount_cents, currency, billing_interval, interval_count,
       # processor_product_id, processor_price_id.
       def field_rules(_resource = :plan) = {}
 
@@ -208,9 +218,11 @@ module BetterTogether
 
       def create_checkout_session(**) = unsupported!(:checkout)
       def sync_checkout_session(**) = unsupported!(:checkout)
+      def release_payment(**) = unsupported!(:checkout)
+      def reconcile_payment(**) = unsupported!(:checkout)
+      def payment_action_url(**) = unsupported!(:checkout)
+      def receipt_url(**) = unsupported!(:checkout)
       def create_portal_session(**) = unsupported!(:portal)
-      def credit_balance(**) = unsupported!(:stored_value_credit)
-      def reverse_credit(**) = unsupported!(:stored_value_credit)
       def merchant_onboarding_link(**) = unsupported!(:merchant_accounts)
       def sync_merchant_account(**) = unsupported!(:merchant_accounts)
       def refund(**) = unsupported!(:refunds)

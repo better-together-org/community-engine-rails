@@ -1003,6 +1003,11 @@ en:
           body: The payment did not go through. Please check your payment details
             and try again.
           title: Your payment for order %{number} failed
+        payment_orphaned:
+          body: A payment of %{amount} was received for order %{number}, which was
+            already cancelled. It must be refunded; a refund has been recorded as
+            pending.
+          title: A payment arrived for a cancelled order
         payment_place_gone:
           buyer:
             body: The order had expired and what it held is no longer available. The
@@ -1022,6 +1027,10 @@ en:
         plan_sync_failed:
           body: Syncing a plan failed. Open the plan to retry.
           title: A plan could not be sent to the payment processor
+        refund_failed:
+          body: The processor could not complete a refund for order %{number}. The
+            buyer is still owed the money; please check it.
+          title: A refund did not go through
         refund_issued:
           buyer:
             body: A refund was issued for your order.
@@ -1167,10 +1176,19 @@ en:
         no_payments: No payment has been made yet.
         no_sales: There are no orders yet.
         order_number: Order %{number}
+        pay_button: Pay now
+        pay_heading: Pay %{amount}
+        pay_hint: You will pay on the payment provider’s secure page and come back
+          here.
+        pay_processing: Your payment is being processed. We will tell you when it
+          is confirmed.
+        pay_unavailable: That payment cannot be started right now. Please try again
+          later.
         payment_status_cancelled: Cancelled
         payment_status_failed: Failed
         payment_status_partially_refunded: Partly refunded
         payment_status_pending: Pending
+        payment_status_processing: Processing
         payment_status_refunded: Refunded
         payment_status_succeeded: Received
         payments_heading: Payments
@@ -1179,6 +1197,9 @@ en:
         purpose_one_time: One-time purchase
         purpose_subscription: Subscription or membership
         purpose_ticket: Event tickets
+        return_paid: Thank you. Your payment was received.
+        return_pending: Thank you. We are confirming your payment and will tell you
+          when it is done.
         sales_intro: Orders for what this platform sells, and where each payment stands.
         sales_title: Sales
         status_awaiting_payment: Awaiting payment
@@ -1223,6 +1244,7 @@ en:
         field_identifier: Identifier
         field_identifier_hint: Unique machine-readable key. Cannot be changed after
           creation.
+        field_interval_count: Billing period length
         field_name: Name
         field_participant_benefits: Benefits
         field_participant_benefits_hint: One benefit per line.
@@ -5400,6 +5422,7 @@ en:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
       odd: must be odd
+      one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}
       present: must be blank
       price_inactive: is archived at the payment processor
@@ -5415,6 +5438,8 @@ en:
       transition_not_allowed: cannot change from %{from} to %{to}
       unknown_owner_types: 'includes types that cannot be billed: %{types}'
       unknown_setting: 'has fields this method does not use: %{fields}'
+      unsupported_price: is a kind of price that cannot be used here (weekly, daily
+        or usage-based)
       used_by_another_platform: is already used by another platform
       weak_password: not strong enough. Consider adding a number, symbols or more
         letters to make it stronger. Avoid using the word 'password', your birthday,

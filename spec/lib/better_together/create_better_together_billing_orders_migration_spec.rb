@@ -46,6 +46,25 @@ RSpec.describe 'Create Better Together billing orders migration' do # rubocop:di
     end
   end
 
+  it 'ties a payment to its Pay charge, and an order to its Pay subscription, on the same platform' do
+    charge = connection.foreign_keys(:better_together_billing_payments).find { |key| key.to_table == 'pay_charges' }
+    subscription = connection.foreign_keys(:better_together_billing_orders).find { |key| key.to_table == 'pay_subscriptions' }
+
+    expect(charge).to have_attributes(column: %w[pay_charge_id platform_id], primary_key: %w[id platform_id])
+    expect(subscription).to have_attributes(column: %w[pay_subscription_id platform_id], primary_key: %w[id platform_id])
+  end
+
+  it 'lets a Pay charge pay for one payment only, and a processor refund be recorded once' do
+    expect(indexes(:better_together_billing_payments)['idx_bt_billing_payments_pay_charge']).to have_attributes(unique: true,
+                                                                                                                columns: %w[pay_charge_id])
+    expect(indexes(:better_together_billing_refunds)['idx_bt_billing_refunds_reference'])
+      .to have_attributes(unique: true, columns: %w[platform_id payment_id processor_reference])
+  end
+
+  it 'keeps the checkout session apart from the charge reference, so one cannot overwrite the other' do
+    expect(columns(:better_together_billing_payments).keys).to include('processor_reference', 'processor_session_reference', 'failure_code')
+  end
+
   it 'has the unique (id, platform_id) indexes those keys point at' do
     expect(indexes(:better_together_billing_orders)['idx_bt_billing_orders_id_platform']).to have_attributes(unique: true,
                                                                                                              columns: %w[

@@ -27,4 +27,13 @@ RSpec.shared_context 'with billing notifications' do
   def kinds_for(person) = inbox(person).map { |notification| notification.event.params['kind'] || notification.event.params[:kind] }
 
   def sent_mail = ActionMailer::Base.deliveries
+
+  # Starts from an empty inbox: placing an order tells people about it, which a spec is rarely about.
+  def clear_notices
+    clear_enqueued_jobs
+    Noticed::Notification.delete_all
+    Noticed::Event.delete_all
+    BetterTogether::Billing::NotificationReceipt.delete_all
+    ActionMailer::Base.deliveries.clear
+  end
 end

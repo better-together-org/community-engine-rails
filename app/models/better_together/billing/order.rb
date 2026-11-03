@@ -28,9 +28,10 @@ module BetterTogether
         'partially_paid' => %w[paid expired],
         'expired' => %w[paid partially_paid cancelled],
         'paid' => %w[partially_refunded refunded],
-        'partially_refunded' => %w[partially_refunded refunded],
-        'cancelled' => [],
-        'refunded' => []
+        # A refund can fail after it was recorded, which puts the order back where it was.
+        'partially_refunded' => %w[paid partially_refunded refunded],
+        'refunded' => %w[paid partially_refunded],
+        'cancelled' => []
       }.freeze
       # An order in one of these is waiting to be paid.
       OPEN_STATUSES = %w[awaiting_payment partially_paid].freeze
@@ -40,6 +41,8 @@ module BetterTogether
       belongs_to :buyer, class_name: 'BetterTogether::Person', optional: false
       belongs_to :on_behalf_of, polymorphic: true, optional: true
       belongs_to :subject, polymorphic: true, optional: true
+      # The Pay subscription this order is the first payment of, for a processor-backed plan.
+      belongs_to :pay_subscription, class_name: 'Pay::Subscription', optional: true
 
       has_many :lines, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::OrderLine',
                                                              inverse_of: :order, dependent: :destroy
@@ -59,6 +62,7 @@ module BetterTogether
       validates :subtotal_cents, :total_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :status_transition_allowed, on: :update
       validate :on_behalf_of_allowed
+      validate :pay_subscription_on_this_platform
       validate :subject_registered
 
       STATUSES.each do |status|
@@ -128,6 +132,12 @@ module BetterTogether
       def on_behalf_of_on_another_platform?
         bound = on_behalf_of.try(:billing_bound_platform_id) || on_behalf_of.try(:platform_id)
         bound.present? && platform_id.present? && bound != platform_id
+      end
+
+      def pay_subscription_on_this_platform
+        return if pay_subscription.blank? || pay_subscription.platform_id == platform_id
+
+        errors.add(:pay_subscription, :platform_owner_mismatch)
       end
 
       def subject_registered

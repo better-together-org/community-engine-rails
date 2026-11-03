@@ -38,13 +38,4 @@ RSpec.shared_context 'with offline payment fixtures' do
   def offline_for(order) = order.offline_payments.first
 
   def transition = BetterTogether::Billing::OfflinePayments::Transition
-
-  # The buyer's and steward's billing notices, oldest first, as their kinds.
-  def clear_notices
-    clear_enqueued_jobs
-    Noticed::Notification.delete_all
-    Noticed::Event.delete_all
-    BetterTogether::Billing::NotificationReceipt.delete_all
-    ActionMailer::Base.deliveries.clear
-  end
 end

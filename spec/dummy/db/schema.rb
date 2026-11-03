@@ -396,9 +396,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.datetime "expires_at"
     t.datetime "paid_at"
     t.datetime "cancelled_at"
+    t.uuid "pay_subscription_id"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
     t.index ["id", "platform_id"], name: "idx_bt_billing_orders_id_platform", unique: true
     t.index ["on_behalf_of_type", "on_behalf_of_id"], name: "idx_bt_billing_orders_on_behalf_of"
+    t.index ["pay_subscription_id"], name: "idx_bt_billing_orders_pay_subscription"
     t.index ["platform_id", "number"], name: "idx_bt_billing_orders_number", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_orders_platform"
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_orders_seller"
@@ -418,13 +420,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.string "currency", null: false
     t.string "idempotency_key", null: false
     t.string "processor_reference"
+    t.string "processor_session_reference"
+    t.string "failure_code"
+    t.uuid "pay_charge_id"
     t.datetime "paid_at"
     t.datetime "failed_at"
     t.index ["id", "platform_id"], name: "idx_bt_billing_payments_id_platform", unique: true
     t.index ["order_id"], name: "idx_bt_billing_payments_order"
+    t.index ["pay_charge_id"], name: "idx_bt_billing_payments_pay_charge", unique: true, where: "(pay_charge_id IS NOT NULL)"
     t.index ["platform_id", "idempotency_key"], name: "idx_bt_billing_payments_idempotency", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_payments_platform"
     t.index ["processor", "processor_reference"], name: "idx_bt_billing_payments_reference"
+    t.index ["processor", "processor_session_reference"], name: "idx_bt_billing_payments_session", where: "(processor_session_reference IS NOT NULL)"
     t.index ["status"], name: "idx_bt_billing_payments_status"
   end
 
@@ -439,6 +446,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.string "name", null: false
     t.text "description"
     t.string "billing_interval", default: "month", null: false
+    t.integer "interval_count", default: 1, null: false
     t.integer "amount_cents", default: 0, null: false
     t.string "currency", null: false
     t.boolean "active", default: true, null: false
@@ -501,6 +509,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
     t.string "processor_reference"
     t.index ["payment_id"], name: "idx_bt_billing_refunds_payment"
     t.index ["platform_id", "idempotency_key"], name: "idx_bt_billing_refunds_idempotency", unique: true
+    t.index ["platform_id", "payment_id", "processor_reference"], name: "idx_bt_billing_refunds_reference", unique: true, where: "(processor_reference IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_refunds_platform"
     t.index ["recorded_by_id"], name: "idx_bt_billing_refunds_recorded_by"
   end
@@ -3015,8 +3024,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_29_130000) do
   add_foreign_key "better_together_billing_order_lines", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_orders", "better_together_people", column: "buyer_id"
   add_foreign_key "better_together_billing_orders", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_orders", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_pay_subscription_platform"
   add_foreign_key "better_together_billing_payments", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_payments_order_platform"
   add_foreign_key "better_together_billing_payments", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_payments", "pay_charges", column: ["pay_charge_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_payments_pay_charge_platform"
   add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_processor_settings", "better_together_people", column: "acknowledged_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_processor_settings", "better_together_platforms", column: "platform_id"

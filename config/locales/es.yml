@@ -995,6 +995,10 @@ es:
         payment_failed:
           body: El pago no se completó. Revise sus datos de pago e inténtelo de nuevo.
           title: Falló su pago del pedido %{number}
+        payment_orphaned:
+          body: Se recibió un pago de %{amount} del pedido %{number}, que ya estaba
+            cancelado. Debe reembolsarse; se registró un reembolso pendiente.
+          title: Llegó un pago de un pedido cancelado
         payment_place_gone:
           buyer:
             body: El pedido había caducado y lo que retenía ya no está disponible.
@@ -1014,6 +1018,10 @@ es:
         plan_sync_failed:
           body: Falló la sincronización de un plan. Abra el plan para reintentar.
           title: No se pudo enviar un plan al procesador de pagos
+        refund_failed:
+          body: El procesador no pudo completar un reembolso del pedido %{number}.
+            Al comprador aún se le debe el dinero; revíselo.
+          title: Un reembolso no se completó
         refund_issued:
           buyer:
             body: Se emitió un reembolso de su pedido.
@@ -1158,10 +1166,17 @@ es:
         no_payments: Todavía no se ha hecho ningún pago.
         no_sales: Todavía no hay pedidos.
         order_number: Pedido %{number}
+        pay_button: Pagar ahora
+        pay_heading: Pagar %{amount}
+        pay_hint: Pagará en la página segura del proveedor de pagos y volverá aquí.
+        pay_processing: Su pago se está procesando. Le avisaremos cuando se confirme.
+        pay_unavailable: No se puede iniciar ese pago ahora. Inténtelo de nuevo más
+          tarde.
         payment_status_cancelled: Cancelado
         payment_status_failed: Fallido
         payment_status_partially_refunded: Reembolsado en parte
         payment_status_pending: Pendiente
+        payment_status_processing: Procesando
         payment_status_refunded: Reembolsado
         payment_status_succeeded: Recibido
         payments_heading: Pagos
@@ -1170,6 +1185,9 @@ es:
         purpose_one_time: Compra única
         purpose_subscription: Suscripción o membresía
         purpose_ticket: Entradas a eventos
+        return_paid: Gracias. Recibimos su pago.
+        return_pending: Gracias. Estamos confirmando su pago y se lo diremos cuando
+          esté listo.
         sales_intro: Los pedidos de lo que vende esta plataforma y en qué punto está
           cada pago.
         sales_title: Ventas
@@ -1217,6 +1235,7 @@ es:
         field_identifier: Identificador
         field_identifier_hint: Clave unica de maquina. No se puede cambiar despues
           de la creacion.
+        field_interval_count: Duración del período de facturación
         field_name: Nombre
         field_participant_benefits: Beneficios
         field_participant_benefits_hint: Un beneficio por linea.
@@ -5486,6 +5505,7 @@ es:
         one: 'Ocurrió un error al tratar de guardar %{resource}:'
         other: 'Ocurrieron %{count} errores al tratar de guardar %{resource}:'
       odd: debe ser impar
+      one_time_single: debe ser 1 para un precio único
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
       price_inactive: está archivado en el procesador de pagos
@@ -5501,6 +5521,8 @@ es:
       transition_not_allowed: no puede pasar de %{from} a %{to}
       unknown_owner_types: 'incluye tipos que no se pueden facturar: %{types}'
       unknown_setting: 'tiene campos que este método no usa: %{fields}'
+      unsupported_price: es un tipo de precio que no se puede usar aquí (semanal,
+        diario o por uso)
       used_by_another_platform: ya lo usa otra plataforma
       weak_password: no es lo suficientemente fuerte. Considera agregar un número,
         símbolos o más letras para hacerla más fuerte. Evita usar la palabra 'contraseña',

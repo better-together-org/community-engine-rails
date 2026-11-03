@@ -63,6 +63,10 @@ RSpec.describe 'Create Better Together billing plans migration' do # rubocop:dis
     expect(columns.keys).to include('sync_error', 'sync_attempted_at', 'manages_processor_product')
   end
 
+  it 'counts how many intervals make a period, one by default' do
+    expect(columns['interval_count']).to have_attributes(default: '1', null: false)
+  end
+
   it 'drops and recreates cleanly' do
     migration.down
     expect(connection.table_exists?(:better_together_billing_plans)).to be false

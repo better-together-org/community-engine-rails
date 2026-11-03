@@ -103,6 +103,25 @@ RSpec.describe BetterTogether::Billing::Plan do
     end
   end
 
+  describe 'how long a period is' do
+    it 'defaults to one interval, accepts a count of them, and refuses nonsense' do
+      expect(new_plan.interval_count).to eq(1)
+      expect(new_plan(interval_count: 3)).to be_valid
+      [0, -1, 37].each { |count| expect(new_plan(interval_count: count)).not_to be_valid }
+    end
+
+    it 'is one for a one-time price' do
+      plan = new_plan(billing_interval: 'one_time', interval_count: 2)
+
+      expect(plan).not_to be_valid
+      expect(plan.errors.details[:interval_count]).to include(a_hash_including(error: :one_time_single))
+    end
+
+    it 'is fixed once the processor has the price, like the amount and the interval' do
+      expect(BetterTogether::Billing::Plan::PRICE_FIELDS).to include(:interval_count)
+    end
+  end
+
   describe 'linking a price that already exists' do
     it 'copies the amount, currency, interval and product from the processor, whatever was typed' do
       adapter.prices['price_yearly'] = BetterTogether::Billing::PriceInfo.new(
@@ -113,6 +132,34 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect(plan).to be_valid
       expect(plan).to have_attributes(amount_cents: 99_000, currency: 'CAD', billing_interval: 'year', processor_product_id: 'prod_pro',
                                       manages_processor_product: false, sync_status: 'synced')
+    end
+
+    it 'copies how many intervals make a period, so a quarterly price is not shown as monthly' do
+      adapter.prices['price_quarterly'] = BetterTogether::Billing::PriceInfo.new(
+        price_id: 'price_quarterly', product_id: 'prod_pro', amount_cents: 12_000, currency: 'usd', interval: 'month', interval_count: 3
+      )
+
+      plan = link_plan('price_quarterly')
+
+      expect(plan).to be_valid
+      expect(plan).to have_attributes(billing_interval: 'month', interval_count: 3)
+    end
+
+    it 'refuses a price core cannot represent, instead of quietly showing it as a monthly price of nothing' do
+      {
+        'price_weekly' => { interval: 'week' },
+        'price_daily' => { interval: 'day' },
+        'price_metered' => { interval: 'month', usage_type: 'metered' },
+        'price_no_interval' => { interval: nil },
+        'price_no_amount' => { interval: 'month', amount_cents: nil }
+      }.each do |id, attrs|
+        adapter.prices[id] =
+          BetterTogether::Billing::PriceInfo.new(price_id: id, product_id: 'prod_pro', amount_cents: 500, currency: 'usd', **attrs)
+        plan = link_plan(id)
+
+        expect(plan).not_to be_valid, "#{id} should be refused"
+        expect(plan.errors.details[:processor_price_id]).to include(a_hash_including(error: :unsupported_price))
+      end
     end
 
     it 'is already synced, so nothing is pushed' do

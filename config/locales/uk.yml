@@ -981,6 +981,10 @@ uk:
         payment_failed:
           body: Платіж не пройшов. Перевірте платіжні дані та спробуйте ще раз.
           title: Платіж за замовлення %{number} не вдався
+        payment_orphaned:
+          body: Надійшла оплата %{amount} за замовленням %{number}, яке вже було скасовано.
+            Її потрібно повернути; повернення записано як очікуване.
+          title: Надійшла оплата за скасоване замовлення
         payment_place_gone:
           buyer:
             body: Термін замовлення минув, і те, що воно утримувало, вже недоступне.
@@ -1000,6 +1004,10 @@ uk:
         plan_sync_failed:
           body: Не вдалося синхронізувати план. Відкрийте план, щоб повторити.
           title: Не вдалося надіслати план до платіжного процесора
+        refund_failed:
+          body: Платіжна система не змогла завершити повернення за замовленням %{number}.
+            Покупцеві й досі належать гроші; перевірте це.
+          title: Повернення коштів не вдалося
         refund_issued:
           buyer:
             body: За вашим замовленням оформлено повернення коштів.
@@ -1142,10 +1150,17 @@ uk:
         no_payments: Жодного платежу ще не здійснено.
         no_sales: Замовлень ще немає.
         order_number: Замовлення %{number}
+        pay_button: Сплатити зараз
+        pay_heading: Сплатити %{amount}
+        pay_hint: Ви сплатите на захищеній сторінці платіжного сервісу й повернетеся
+          сюди.
+        pay_processing: Вашу оплату опрацьовують. Ми повідомимо, коли її буде підтверджено.
+        pay_unavailable: Цю оплату зараз неможливо розпочати. Спробуйте пізніше.
         payment_status_cancelled: Скасовано
         payment_status_failed: Невдало
         payment_status_partially_refunded: Частково повернено
         payment_status_pending: Очікує
+        payment_status_processing: Опрацьовується
         payment_status_refunded: Повернено
         payment_status_succeeded: Отримано
         payments_heading: Платежі
@@ -1154,6 +1169,9 @@ uk:
         purpose_one_time: Разова покупка
         purpose_subscription: Підписка або членство
         purpose_ticket: Квитки на події
+        return_paid: Дякуємо. Вашу оплату отримано.
+        return_pending: Дякуємо. Ми підтверджуємо вашу оплату й повідомимо, коли все
+          буде готово.
         sales_intro: Замовлення на те, що продає ця платформа, і стан кожного платежу.
         sales_title: Продажі
         status_awaiting_payment: Очікує оплати
@@ -1197,6 +1215,7 @@ uk:
         field_hosted_access_level: Riven' hostingovoho dostupu
         field_identifier: Identyfikator
         field_identifier_hint: Unikalnyj klyuch. Ne mozhna zminyty pislia stvorennya.
+        field_interval_count: Тривалість періоду виставлення рахунків
         field_name: Nazva
         field_participant_benefits: Perevagy
         field_participant_benefits_hint: Odna perevaga na ryadok.
@@ -5485,6 +5504,7 @@ uk:
         one: '1 помилка заборонила збереження цього %{resource}:'
         other: "%{count} помилок заборонили збереження цього %{resource}:"
       odd: має бути непарним
+      one_time_single: має бути 1 для одноразової ціни
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
       price_inactive: архівовано в платіжному процесорі
@@ -5504,6 +5524,8 @@ uk:
       transition_not_allowed: не може змінитися з %{from} на %{to}
       unknown_owner_types: 'містить типи, які не можна виставляти до оплати: %{types}'
       unknown_setting: 'містить поля, які цей спосіб не використовує: %{fields}'
+      unsupported_price: є типом ціни, який тут не можна використати (тижнева, щоденна
+        або за використанням)
       used_by_another_platform: уже використовується іншою платформою
       weak_password: недостатньо сильний. Розгляньте додавання цифри, символів або
         більше літер, щоб зробити його сильнішим. Уникайте використання слова 'password',
