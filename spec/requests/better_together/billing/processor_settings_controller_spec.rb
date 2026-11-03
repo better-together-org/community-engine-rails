@@ -109,6 +109,18 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
                                          'billing-processor-acknowledge', 'billing-processor-enable-cheque', 'billing-processor-grant-on')
       end
 
+      it 'asks nothing about instructions or holds for store credit, and says what credit is and is not' do
+        get edit_path('store_credit')
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('billing-processor-setting-form', 'billing-processor-acknowledge', 'billing-processor-purposes',
+                                         'billing-processor-enable-store_credit')
+        expect(response.body).not_to include('billing-processor-setting-fields', 'billing-processor-hold-hours', 'billing-processor-grant-on')
+        expect_html_content(I18n.t('better_together.billing.processor_settings.disclosure_credit_not_cash'))
+        expect_html_content(I18n.t('better_together.billing.processor_settings.disclosure_credit_refund'))
+        expect(response.body).not_to include(I18n.t('better_together.billing.processor_settings.disclosure_no_fee'))
+      end
+
       it 'offers a choice of when access starts only for a cheque' do
         get edit_path('cash')
 
@@ -160,6 +172,16 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
         expect(setting).to be_acknowledged
         expect(setting.acknowledged_by).to eq(steward.person)
         expect(BetterTogether::Billing.enabled?(host_platform)).to be(true)
+      end
+
+      it 'turns store credit on with nothing to say to buyers' do
+        patch setting_path('store_credit'), params: { billing_processor_setting: { enabled: '1', acknowledge: '1', purposes: ['', 'one_time'] } }
+
+        setting = host_platform.billing_processor_settings.find_by(processor: 'store_credit')
+        expect(response).to redirect_to(settings_path)
+        expect(setting).to have_attributes(enabled: true, purposes: %w[one_time], grant_on: nil)
+        expect(setting.settings).to eq({})
+        expect(setting.instructions).to eq({})
       end
 
       it 'refuses to turn a method on without accepting the drawbacks' do

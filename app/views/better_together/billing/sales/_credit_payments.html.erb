@@ -1,0 +1,26 @@
+<%# Payments the buyer made from store credit: a refund goes back onto their credit, at once. %>
+<% order.payments.select { |payment| BetterTogether::Billing.internal_method?(payment.processor) && payment.refundable_cents.positive? }.each do |payment| %>
+  <div id="<%= dom_id(payment, :credit_refund) %>" class="card mb-4 billing-credit-refund">
+    <div class="card-header"><strong><%= t('better_together.billing.sales.credit_refund_heading') %></strong></div>
+    <div class="card-body">
+      <p class="form-text"><%= t('better_together.billing.sales.credit_refund_hint') %></p>
+      <%= form_with url: billing_sale_refund_path(order, locale: I18n.locale), method: :post, id: "billing-sale-credit-refund-form-#{payment.id}" do %>
+        <%= hidden_field_tag :payment_id, payment.id %>
+        <%= hidden_field_tag :token, SecureRandom.hex(8) %>
+        <div class="row g-2">
+          <div class="col-md-4">
+            <%= label_tag "credit_refund_amount_#{payment.id}", t('better_together.billing.sales.refund_amount_label', max: billing_amount(payment.refundable_cents, payment.currency)),
+                          class: 'form-label' %>
+            <%= text_field_tag :amount, nil, id: "credit_refund_amount_#{payment.id}", class: 'form-control', inputmode: 'decimal', autocomplete: 'off' %>
+          </div>
+          <div class="col-md-4">
+            <%= label_tag "credit_refund_reason_#{payment.id}", t('better_together.billing.sales.refund_reason_label'), class: 'form-label' %>
+            <%= select_tag :reason, options_for_select(BetterTogether::Billing::Refund::REASONS.map { |reason| [t("better_together.billing.sales.refund_reason_#{reason}"), reason] }),
+                           id: "credit_refund_reason_#{payment.id}", class: 'form-select', include_blank: true %>
+          </div>
+        </div>
+        <%= submit_tag t('better_together.billing.sales.credit_refund_submit'), id: "billing-sale-credit-refund-btn-#{payment.id}", class: 'btn btn-outline-secondary mt-3' %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_04_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -238,6 +238,70 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_100000) do
     t.index ["agreement_id"], name: "idx_bt_billing_agr_req_agreement"
     t.index ["platform_id"], name: "idx_bt_billing_agr_req_platform"
     t.index ["target_type", "target_id"], name: "idx_bt_billing_agr_req_target"
+  end
+
+  create_table "better_together_billing_credit_accounts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "holder_id"
+    t.string "currency", null: false
+    t.bigint "balance_cents", default: 0, null: false
+    t.index ["holder_id"], name: "idx_bt_billing_credit_accounts_holder"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_credit_accounts_id_platform", unique: true
+    t.index ["platform_id", "holder_id", "currency"], name: "idx_bt_billing_credit_accounts_holder_currency", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_credit_accounts_platform"
+    t.check_constraint "balance_cents >= 0", name: "chk_bt_billing_credit_accounts_balance"
+  end
+
+  create_table "better_together_billing_credit_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "credit_account_id", null: false
+    t.uuid "credit_lot_id", null: false
+    t.uuid "reverses_entry_id"
+    t.uuid "actor_id"
+    t.string "kind", null: false
+    t.string "transaction_key", null: false
+    t.bigint "amount_cents", null: false
+    t.bigint "balance_after_cents", null: false
+    t.string "source_type"
+    t.uuid "source_id"
+    t.string "note"
+    t.index ["actor_id"], name: "idx_bt_billing_credit_entries_actor"
+    t.index ["credit_account_id", "created_at"], name: "idx_bt_billing_credit_entries_account_time"
+    t.index ["credit_lot_id"], name: "idx_bt_billing_credit_entries_lot"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_credit_entries_id_platform", unique: true
+    t.index ["platform_id", "transaction_key", "credit_lot_id"], name: "idx_bt_billing_credit_entries_transaction", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_credit_entries_platform"
+    t.index ["reverses_entry_id"], name: "idx_bt_billing_credit_entries_reverses", where: "(reverses_entry_id IS NOT NULL)"
+    t.index ["source_type", "source_id"], name: "idx_bt_billing_credit_entries_source"
+    t.check_constraint "amount_cents <> 0", name: "chk_bt_billing_credit_entries_amount"
+  end
+
+  create_table "better_together_billing_credit_lots", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "credit_account_id", null: false
+    t.uuid "granted_by_id"
+    t.string "origin", null: false
+    t.bigint "amount_cents", null: false
+    t.bigint "remaining_cents", null: false
+    t.string "purposes", default: [], null: false, array: true
+    t.boolean "promotional", default: false, null: false
+    t.string "note"
+    t.datetime "expires_at"
+    t.index ["credit_account_id", "expires_at"], name: "idx_bt_billing_credit_lots_account_expiry"
+    t.index ["expires_at"], name: "idx_bt_billing_credit_lots_expiring", where: "(remaining_cents > 0)"
+    t.index ["granted_by_id"], name: "idx_bt_billing_credit_lots_granted_by"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_credit_lots_id_platform", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_credit_lots_platform"
+    t.check_constraint "amount_cents > 0 AND remaining_cents >= 0 AND remaining_cents <= amount_cents", name: "chk_bt_billing_credit_lots_bounds"
   end
 
   create_table "better_together_billing_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3009,6 +3073,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_04_100000) do
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_agreement_requirements", "better_together_agreements", column: "agreement_id"
   add_foreign_key "better_together_billing_agreement_requirements", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_credit_accounts", "better_together_people", column: "holder_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_credit_accounts", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_credit_entries", "better_together_billing_credit_accounts", column: ["credit_account_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_credit_entries_account_platform"
+  add_foreign_key "better_together_billing_credit_entries", "better_together_billing_credit_entries", column: ["reverses_entry_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_credit_entries_reverses_platform"
+  add_foreign_key "better_together_billing_credit_entries", "better_together_billing_credit_lots", column: ["credit_lot_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_credit_entries_lot_platform"
+  add_foreign_key "better_together_billing_credit_entries", "better_together_people", column: "actor_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_credit_entries", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_credit_lots", "better_together_billing_credit_accounts", column: ["credit_account_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_credit_lots_account_platform"
+  add_foreign_key "better_together_billing_credit_lots", "better_together_people", column: "granted_by_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_credit_lots", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_notification_receipts", "better_together_people", column: "recipient_id", on_delete: :cascade
   add_foreign_key "better_together_billing_notification_receipts", "better_together_platforms", column: "platform_id"

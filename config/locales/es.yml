@@ -918,6 +918,8 @@ es:
         review_title: Revisar y aceptar
         title: Obtener %{plan}
         unavailable_currency_not_supported: No disponible en esta moneda.
+        unavailable_insufficient_credit: No tienes suficiente crédito de la tienda
+          para esta compra.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
       notifications:
@@ -1285,6 +1287,7 @@ es:
           cash: Efectivo
           cheque: Cheque
           etransfer: Transferencia Interac
+          store_credit: Crédito de la tienda
         price_section_title: Precio
         pricing_tier_solidarity_medium: Solidaridad — Mediana
         pricing_tier_solidarity_premium: Prima de solidaridad
@@ -1331,6 +1334,14 @@ es:
         available_anywhere: En cualquier lugar
         available_only_in: Solo en %{countries} (%{currencies})
         disclosure_country: Solo funciona en %{countries}, en %{currencies}.
+        disclosure_credit_expires: Cada cantidad de crédito puede tener su propia
+          fecha de vencimiento; el crédito que vence primero se gasta primero.
+        disclosure_credit_not_cash: El crédito no es dinero en efectivo. No se puede
+          retirar ni enviar a nadie, y paga un pedido por completo o no lo paga.
+        disclosure_credit_platform_only: 'El crédito es dinero de la propia plataforma:
+          solo paga lo que la plataforma vende, nunca lo de un vendedor.'
+        disclosure_credit_refund: Los reembolsos de un pedido pagado con crédito vuelven
+          al crédito del comprador, no a su banco.
         disclosure_no_fee: No se puede cobrar ninguna comisión de aplicación en estos
           pagos.
         disclosure_no_protection: El comprador no tiene protección contra contracargos
@@ -1418,6 +1429,10 @@ es:
         state_draft: Borrador
         state_retired: Retirado
       sales:
+        credit_refund_heading: Devolver al crédito de la tienda
+        credit_refund_hint: El comprador pagó con crédito de la tienda, así que el
+          dinero vuelve a su saldo de crédito al instante. No se puede pagar en efectivo.
+        credit_refund_submit: Devolver al crédito
         refund_amount_label: Importe devuelto (hasta %{max}; vacío para todo)
         refund_heading: Registrar un reembolso
         refund_hint: La plataforma no puede mover este dinero. Regístrelo aquí cuando

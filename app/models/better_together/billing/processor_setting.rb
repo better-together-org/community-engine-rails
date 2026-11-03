@@ -54,7 +54,7 @@ module BetterTogether
       scope :enabled, -> { where(enabled: true) }
 
       def adapter
-        @adapter ||= Billing.offline_method?(processor) ? Billing.processor_adapter(processor) : nil
+        @adapter ||= Billing.local_method?(processor) ? Billing.processor_adapter(processor) : nil
       end
 
       # When a buyer's access starts; the adapter's default until the seller chooses.

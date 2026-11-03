@@ -534,7 +534,7 @@ RSpec.describe BetterTogether::Billing::Plan do
       broken = BetterTogether::Billing::FakeAdapter.new(capabilities: %i[offline_settlement], processor: :cheque)
       BetterTogether::Billing.register_processor(:cheque, -> { broken })
 
-      expect(described_class.offline_method?('cheque')).to be(false)
+      expect(described_class.local_method?('cheque')).to be(false)
     end
   end
 

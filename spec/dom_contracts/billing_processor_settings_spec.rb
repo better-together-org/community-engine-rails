@@ -21,7 +21,7 @@ RSpec.describe 'Billing processor settings DOM contract', :as_platform_manager, 
 
     expect(response).to have_http_status(:ok)
     expect_ids('billing-processor-settings-page', 'billing-processor-settings-table')
-    %w[cash cheque etransfer].each { |name| expect_ids("billing-processor-setting-#{name}", "billing-processor-edit-#{name}") }
+    %w[cash cheque etransfer store_credit].each { |name| expect_ids("billing-processor-setting-#{name}", "billing-processor-edit-#{name}") }
     expect(response.body).to include('billing-processor-setting-status-badge')
   end
 
@@ -33,6 +33,15 @@ RSpec.describe 'Billing processor settings DOM contract', :as_platform_manager, 
                'billing-processor-purpose-one_time', 'billing-processor-disclosure', 'billing-processor-acknowledge',
                'billing-processor-enable-cash', 'billing-processor-setting-actions', 'billing-processor-setting-save-btn',
                'billing-processor-setting-cash-instructions')
+  end
+
+  it 'exposes the store credit form identifiers: no instructions or hold time, but the credit disclosure' do
+    get "/#{locale}/billing/processor_settings/store_credit/edit"
+
+    expect_ids('billing-processor-setting-edit-page', 'billing-processor-setting-form', 'billing-processor-setting-options',
+               'billing-processor-purposes', 'billing-processor-disclosure', 'billing-processor-acknowledge',
+               'billing-processor-enable-store_credit', 'billing-processor-setting-save-btn')
+    expect(response.body).not_to include('id="billing-processor-setting-fields"', 'id="billing-processor-hold-hours"')
   end
 
   it 'exposes the cheque fields and the choice of when access starts' do

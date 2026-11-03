@@ -56,6 +56,8 @@ Not every way of paying goes through a payment vendor. An adapter says how money
 | `manual` | cash, cheque, e-transfer | The seller, who confirms receipt. Core owns the state machine; the adapter only describes the method |
 | `internal` | store credit | A ledger inside Community Engine |
 
+`Billing.local_method?` is true for `manual` and `internal`, `Billing.manual_method?` only for `manual` and `Billing.internal_method?` only for `internal`; ask the narrowest question you mean, because instructions, acknowledgements and a seller's confirmation exist only for manual methods. An internal adapter (`InternalProcessorAdapter`) advertises no capability, has no webhooks and no instructions, and `ProcessorAdapter` gives `grant_on_options`, `default_grant_on` and `settings_errors` safe defaults so a setting never calls a manual-only method on it. See [store_credit.md](store_credit.md).
+
 A manual adapter advertises the `offline_settlement` capability (and only a manual adapter may). `verify!` rejects the mismatch. Manual adapters also declare:
 
 - `recurring_mode`: `automatic` (the processor renews), `manual` (each period is a new pending payment the seller confirms) or `none`. Manual methods are `manual`.

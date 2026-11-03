@@ -23,7 +23,6 @@ module BetterTogether
       # When the buyer's access starts: `confirmed` (the seller says the money arrived), or
       # for a cheque `received` or `cleared`. The first option is the default.
       def grant_on_options = %w[confirmed]
-      def default_grant_on = grant_on_options.first
 
       # { field => error code } for the values a seller entered, to be shown on the form.
       # Required fields first; subclasses add rules that span fields.

@@ -5,7 +5,8 @@ module BetterTogether
     module Refunds
       # Records money given back against a payment, then settles the order. For cash, a cheque or
       # an e-transfer the seller says they handed it back (`recorded`); for a vendor processor the
-      # refund is made there and recorded as `succeeded`.
+      # refund is made there and recorded as `succeeded`. A payment made with store credit is refunded
+      # to the buyer's credit, in the same transaction, and is `succeeded` at once (see Credit::Reverse).
       #
       # Repeating the same request (same idempotency key) returns the refund it already made. So does a
       # refund with the same processor reference: core asking the processor for a refund and the
@@ -15,7 +16,7 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        def initialize(payment:, amount_cents:, idempotency_key:, status: 'recorded', reason: nil, recorded_by: nil, # rubocop:disable Metrics/ParameterLists
+        def initialize(payment:, amount_cents:, idempotency_key:, status: nil, reason: nil, recorded_by: nil, # rubocop:disable Metrics/ParameterLists
                        processor_reference: nil, notify: true)
           @payment = payment
           @amount_cents = amount_cents
@@ -33,6 +34,7 @@ module BetterTogether
             next existing if existing
 
             refund = payment.refunds.create!(refund_attributes)
+            give_back_credit(refund)
             settle(refund)
             refund
           end
@@ -50,8 +52,25 @@ module BetterTogether
         end
 
         def refund_attributes
-          { platform_id: payment.platform_id, amount_cents:, currency: payment.currency, idempotency_key:, status:, reason:,
+          { platform_id: payment.platform_id, amount_cents:, currency: payment.currency, idempotency_key:, status: resolved_status, reason:,
             recorded_by:, processor_reference: }
+        end
+
+        # Credit goes back at once; money the seller hands back is recorded; a processor says what it did.
+        def resolved_status
+          return 'succeeded' if credit_payment?
+
+          status || 'recorded'
+        end
+
+        def credit_payment? = Billing.internal_method?(payment.processor)
+
+        def give_back_credit(refund)
+          return unless credit_payment?
+
+          Credit::Reverse.call(payment:, amount_cents:, idempotency_key: "reverse:#{refund.id}", refund:, actor: recorded_by)
+        rescue Credit::Refused => e
+          raise Refused, e.message
         end
 
         # The payment is refunded in part or in full, then so is its order.

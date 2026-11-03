@@ -106,4 +106,28 @@ RSpec.describe 'Documentation screenshots for payment methods', # rubocop:disabl
       expect(page).to have_css('#billing-processor-setting-etransfer-recipient_email')
     end
   end
+
+  it 'captures turning store credit on, with what credit is and is not' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_processor_settings_store_credit',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_processor_settings_store_credit'),
+      callouts: [{ id: 'disclosure', selector: '#billing-processor-disclosure', title: 'What credit is',
+                   bullets: ['Credit is the platform\'s own money, is not cash, can expire, and refunds go back onto it.'] },
+                 { id: 'purposes', selector: '#billing-processor-purposes', title: 'What it may pay for',
+                   bullets: ['Choose the kinds of purchase credit can pay for.'] }],
+      narrative: {
+        title: 'Turning on store credit',
+        audience: %w[platform_organizer],
+        journey_step: 'As a platform organizer, I let people pay for what the platform sells with credit they hold.',
+        callouts: [{ id: 'disclosure', title: 'Limits',
+                     description: 'Credit pays an order in full, never part of it, and only for what the platform itself sells.' }],
+        accessibility_notes: 'Each choice has a visible label; the limits are plain text.'
+      }
+    ) do
+      visit_settings('/store_credit/edit')
+      expect(page).to have_css('#billing-processor-disclosure')
+      page.execute_script("document.querySelector('#billing-processor-disclosure').scrollIntoView({block: 'center'})")
+    end
+  end
 end

@@ -47,7 +47,7 @@ module BetterTogether
 
       # Installed methods outside a vendor. Anything else named in the URL is a 404.
       def offline_method_names
-        BetterTogether::Billing.processor_names.map(&:to_s).select { |name| BetterTogether::Billing.offline_method?(name) }
+        BetterTogether::Billing.processor_names.map(&:to_s).select { |name| BetterTogether::Billing.local_method?(name) }
       end
 
       def set_setting

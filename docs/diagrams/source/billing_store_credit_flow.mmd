@@ -1,0 +1,15 @@
+%% Billing — paying an order with store credit, and refunding it.
+flowchart TD
+  A[Checkout: buyer picks store credit] --> B{Credit on, for this purpose,\nplatform-sold, and enough usable?}
+  B -- no --> X[Refused: order not placed, nothing held or spent]
+  B -- yes --> C[Orders::Place transaction]
+  C --> D[Payments::Create store_credit for the whole balance]
+  D --> E[Credit::Spend under the account lock:\nsoonest-expiring lot first, one entry per lot]
+  E -- not enough --> X
+  E --> F[Payments::Succeed]
+  F --> G[LocalSettlement writes a Pay::Local::Charge]
+  F --> H[Orders::Settle: order paid]
+  H --> R{Refund?}
+  R --> S[Refunds::Record status succeeded]
+  S --> T[Credit::Reverse: back to the original lot\nif still valid, else a new 30-day refund lot]
+  T --> U[Payment and order partially_refunded or refunded;\nPay charge amount_refunded kept equal]
