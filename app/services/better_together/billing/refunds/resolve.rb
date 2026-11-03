@@ -38,6 +38,7 @@ module BetterTogether
           refund.update!(status:)
           payment = refund.payment.reload
           payment.refresh_refund_status!
+          LocalSettlement.sync_refunds!(payment)
           Orders::Settle.call(payment.order)
           tell_operators if status == 'failed'
         end

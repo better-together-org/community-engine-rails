@@ -48,9 +48,9 @@ RSpec.describe 'Pay gem compatibility' do # rubocop:disable RSpec/DescribeClass
     expect(Pay::Customer.inheritance_column).to eq('type')
   end
 
-  it 'gives Pay\'s own subclasses our platform scoping and encryption' do
-    [Pay::FakeProcessor::Customer, Pay::FakeProcessor::Subscription, Pay::FakeProcessor::Charge,
-     Pay::FakeProcessor::PaymentMethod].each do |model|
+  it 'gives Pay\'s own subclasses, and our local processor\'s, our platform scoping and encryption' do
+    [Pay::FakeProcessor::Customer, Pay::FakeProcessor::Subscription, Pay::FakeProcessor::Charge, Pay::FakeProcessor::PaymentMethod,
+     Pay::Local::Customer, Pay::Local::Subscription, Pay::Local::Charge, Pay::Local::PaymentMethod].each do |model|
       expect(model.ancestors).to include(BetterTogether::Billing::PayExtensions::PlatformScoping,
                                          BetterTogether::Billing::PayExtensions::EncryptedBillingData)
     end

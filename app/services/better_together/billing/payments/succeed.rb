@@ -29,7 +29,7 @@ module BetterTogether
         end
 
         def call
-          payment.with_lock { payment.update!(success_attributes) if succeedable? }
+          payment.with_lock { settle_payment }
           orphan! if payment.orphaned?
           Orders::Settle.call(payment.order)
           payment
@@ -38,6 +38,14 @@ module BetterTogether
         private
 
         attr_reader :payment, :reference, :amount_cents, :pay_charge
+
+        # The payment, and, for money Community Engine settles itself, the Pay charge that records it.
+        def settle_payment
+          return unless succeedable?
+
+          payment.update!(success_attributes)
+          LocalSettlement.record!(payment)
+        end
 
         def succeedable?
           payment.in_flight? || ((payment.failed? || payment.cancelled?) && reference.present?)
