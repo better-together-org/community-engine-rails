@@ -87,6 +87,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Notifications](billing/notifications.md) - Who is told what about orders, payments and billing operations, never twice, never with payment details
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
+- [Billing Local Pay Processor](billing/local_pay_processor.md) - How cash, cheque, e-transfer and store credit appear in Pay: the customer, charge and subscription, and what stays in the workflow
 - [Billing Offline Payment Methods](billing/offline_payment_methods.md) - Paying a seller directly by cash, cheque or e-transfer: the buyer's screen, the seller's confirmation (no buyer claim needed), late payments, sales in person
 - [Billing Payment Methods](billing/payment_methods.md) - Cash, cheque and e-transfer: how a seller turns them on, what buyers are told, the limits
 - [Billing Plan Catalog](billing/plan_catalog.md) - Plans, creating them at the processor, fields the processor fixes, async option lists
@@ -163,6 +164,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Accounts Flow](diagrams/source/accounts_flow.mmd)
 - [Agreements System Flow](diagrams/source/agreements_system_flow.mmd)
 - [Billing Event Pipeline Flow](diagrams/source/billing_event_pipeline_flow.mmd)
+- [Billing Local Pay Processor Model](diagrams/source/billing_local_pay_processor_model.mmd)
 - [Billing Notification Flow](diagrams/source/billing_notification_flow.mmd)
 - [Billing Offline Payment State Machine](diagrams/source/billing_offline_payment_state_machine.mmd)
 - [Billing Order Lifecycle Flow](diagrams/source/billing_order_lifecycle_flow.mmd)

@@ -11,6 +11,10 @@ Rails.application.config.to_prepare do
     model.include(BetterTogether::Billing::PayExtensions::EncryptedBillingData)
   end
 
+  [Pay::Customer, Pay::Subscription, Pay::Charge].each do |model|
+    model.include(BetterTogether::Billing::PayExtensions::LocalProcessor)
+  end
+
   Pay::Webhook.include(BetterTogether::Billing::PayExtensions::EncryptedWebhookEvent)
   Pay::ApplicationJob.include(BetterTogether::Billing::PayExtensions::BillingQueueRouting)
 end

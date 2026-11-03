@@ -57,6 +57,7 @@ module BetterTogether
         # The payment is refunded in part or in full, then so is its order.
         def settle(refund)
           payment.reload.refresh_refund_status!
+          LocalSettlement.sync_refunds!(payment)
           Orders::Settle.call(payment.order)
           return unless notify
 
