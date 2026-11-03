@@ -39,6 +39,26 @@ RSpec.describe BetterTogether::TranslationBot do
       expect(usage.event).to eq('settle')
     end
 
+    it 'does not start a translation, or spend tokens, when the platform enforces its AI allowance and it is used up' do
+      host = BetterTogether::Platform.find_by!(host: true)
+      initiator = create(:better_together_person, platform: host)
+      BetterTogether::Quotas.settle!(type: 'ai_translation_tokens', owner: initiator, amount: 50_000, idempotency_key: 'used-up')
+      host.set_quota_enforcement!('ai_translation_tokens', 'hard')
+
+      result = described_class.new(platform:).translate('Hello', target_locale: 'fr', source_locale: 'en', initiator:)
+
+      expect(result).to eq('Translation unavailable')
+      expect(BetterTogether).not_to have_received(:llm_chat)
+      expect(BetterTogether::QuotaUsage.where(quota_type: 'ai_translation_tokens').count).to eq(1)
+    end
+
+    it 'translates normally in the default mode, however much has been used' do
+      initiator = create(:better_together_person)
+      BetterTogether::Quotas.settle!(type: 'ai_translation_tokens', owner: initiator, amount: 10**6, idempotency_key: 'lots')
+
+      expect(described_class.new(platform:).translate('Hello', target_locale: 'fr', source_locale: 'en', initiator:)).to eq('Bonjour')
+    end
+
     it 'still meters tokens when no initiator is given, charged to the host platform' do
       bot = described_class.new(platform:)
 

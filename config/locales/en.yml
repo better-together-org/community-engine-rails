@@ -4060,6 +4060,8 @@ en:
         usage: Usage
       updated: Quota grant updated.
     quotas:
+      storage_limit_reached: You have reached your storage limit, so this file cannot
+        be uploaded. Remove something or ask a steward about more storage.
       usage_meter:
         types:
           ai_translation_tokens: AI Translation Tokens

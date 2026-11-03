@@ -3,6 +3,35 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Quotas::OwnerResolver, type: :service do
+  describe 'a community with a pool' do
+    let(:community) { create(:better_together_community) }
+    let(:creator) { create(:better_together_person) }
+    let(:record) { Struct.new(:creator, :community).new(creator, community) }
+    let(:provider) do
+      pooled = community
+      Class.new do
+        define_method(:amount) { |**| 0 }
+        define_method(:pool?) { |owner:, type:| owner == pooled && type == 'media_storage' }
+      end.new
+    end
+
+    after { BetterTogether::Quotas::Allowances.reset! }
+
+    it 'is charged instead of whoever created the content, for the type it has a pool for' do
+      BetterTogether::Quotas::Allowances.register(:test, provider)
+
+      expect(described_class.resolve(record, type: 'media_storage')).to eq(community)
+      expect(described_class.resolve(record, type: 'ai_translation_tokens')).to eq(creator)
+    end
+
+    it 'is not charged when it has no pool, or when no type is given: the usual chain applies' do
+      expect(described_class.resolve(record, type: 'media_storage')).to eq(creator)
+
+      BetterTogether::Quotas::Allowances.register(:test, provider)
+      expect(described_class.resolve(record)).to eq(creator)
+    end
+  end
+
   describe '.resolve' do
     context 'when the record is itself a quota owner' do
       it 'returns a Person directly' do

@@ -21,6 +21,7 @@ module BetterTogether
     include Protected
     include Billing::Billable
     include Quotas::Owner
+    include Quotas::PlatformEnforcement
     include TimezoneAttributeAliasing
     include RemoveableAttachment
     include ::Storext.model
