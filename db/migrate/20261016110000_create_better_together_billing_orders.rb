@@ -53,6 +53,8 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.datetime :expires_at
       t.datetime :paid_at
       t.datetime :cancelled_at
+      # The Pay subscription this order is the first payment of (a processor-backed plan).
+      t.uuid :pay_subscription_id
     end
 
     add_index :better_together_billing_orders, %i[id platform_id], unique: true, name: 'idx_bt_billing_orders_id_platform'
@@ -61,6 +63,10 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
     add_index :better_together_billing_orders, %i[on_behalf_of_type on_behalf_of_id], name: 'idx_bt_billing_orders_on_behalf_of'
     add_index :better_together_billing_orders, %i[subject_type subject_id], name: 'idx_bt_billing_orders_subject'
     add_index :better_together_billing_orders, %i[status expires_at], name: 'idx_bt_billing_orders_status_expires'
+    add_index :better_together_billing_orders, :pay_subscription_id, name: 'idx_bt_billing_orders_pay_subscription'
+    add_foreign_key :better_together_billing_orders, :pay_subscriptions, column: %i[pay_subscription_id platform_id],
+                                                                         primary_key: %i[id platform_id],
+                                                                         name: 'fk_bt_billing_orders_pay_subscription_platform'
   end
 
   def create_order_lines
@@ -97,7 +103,12 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.integer :amount_cents, null: false
       t.string :currency, null: false
       t.string :idempotency_key, null: false
+      # The processor's id for the charge (Stripe `ch_...`, equal to Pay::Charge#processor_id) once
+      # there is one; `processor_session_reference` is the checkout session the buyer was sent to.
       t.string :processor_reference
+      t.string :processor_session_reference
+      t.string :failure_code
+      t.uuid :pay_charge_id
       t.datetime :paid_at
       t.datetime :failed_at
     end
@@ -108,9 +119,16 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
     add_index :better_together_billing_payments, %i[platform_id idempotency_key], unique: true, name: 'idx_bt_billing_payments_idempotency'
     add_index :better_together_billing_payments, %i[processor processor_reference], name: 'idx_bt_billing_payments_reference'
     add_index :better_together_billing_payments, :status, name: 'idx_bt_billing_payments_status'
+    add_index :better_together_billing_payments, %i[processor processor_session_reference], name: 'idx_bt_billing_payments_session',
+                                                                                            where: 'processor_session_reference IS NOT NULL'
+    # A Pay charge pays for exactly one payment.
+    add_index :better_together_billing_payments, :pay_charge_id, unique: true, name: 'idx_bt_billing_payments_pay_charge',
+                                                                 where: 'pay_charge_id IS NOT NULL'
     add_foreign_key :better_together_billing_payments, :better_together_platforms, column: :platform_id
     add_foreign_key :better_together_billing_payments, :better_together_billing_orders,
                     column: %i[order_id platform_id], primary_key: %i[id platform_id], name: 'fk_bt_billing_payments_order_platform'
+    add_foreign_key :better_together_billing_payments, :pay_charges, column: %i[pay_charge_id platform_id], primary_key: %i[id platform_id],
+                                                                     name: 'fk_bt_billing_payments_pay_charge_platform'
   end
 
   def create_refunds # rubocop:disable Metrics/MethodLength
@@ -132,6 +150,10 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
     add_index :better_together_billing_refunds, :platform_id, name: 'idx_bt_billing_refunds_platform'
     add_index :better_together_billing_refunds, :payment_id, name: 'idx_bt_billing_refunds_payment'
     add_index :better_together_billing_refunds, %i[platform_id idempotency_key], unique: true, name: 'idx_bt_billing_refunds_idempotency'
+    # A processor refund is recorded once, whether core asked for it or the processor reports it.
+    add_index :better_together_billing_refunds, %i[platform_id payment_id processor_reference], unique: true,
+                                                                                                name: 'idx_bt_billing_refunds_reference',
+                                                                                                where: 'processor_reference IS NOT NULL'
     add_foreign_key :better_together_billing_refunds, :better_together_platforms, column: :platform_id
     add_foreign_key :better_together_billing_refunds, :better_together_billing_payments,
                     column: %i[payment_id platform_id], primary_key: %i[id platform_id], name: 'fk_bt_billing_refunds_payment_platform'

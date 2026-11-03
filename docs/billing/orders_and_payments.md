@@ -44,7 +44,7 @@ stateDiagram-v2
 
 ## Status moves along set paths
 
-An order's status can only follow the paths above (`Order::TRANSITIONS`), enforced in the model, so a paid order cannot quietly become a draft again and a cancelled or refunded order is final. A **late payment can still pay an expired order**: a cheque that arrives after the hold ran out is not lost. A payment likewise follows `pending` to `succeeded`, `failed` or `cancelled`, then to `partially_refunded` or `refunded`; a failed payment can be tried again.
+An order's status can only follow the paths above (`Order::TRANSITIONS`), enforced in the model, so a paid order cannot quietly become a draft again and a cancelled order is final. (A refunded order is not: a refund can fail after it was recorded, which puts the order back to paid or part refunded.) A **late payment can still pay an expired order**: a cheque that arrives after the hold ran out is not lost. A payment likewise follows `pending` to `succeeded`, `failed` or `cancelled`, then to `partially_refunded` or `refunded`; a failed payment can be tried again.
 
 ## Services
 
@@ -54,8 +54,20 @@ All in `app/services/better_together/billing/`. Each is safe to call twice.
 - **`Orders::Settle`** works out where an order stands from its payments and refunds and moves it there, under a row lock, so two payments arriving together settle it one after the other.
 - **`Orders::Cancel`** cancels an order nobody has paid for, cancels what was waiting, and gives back what it held. An order with money against it is refunded instead.
 - **`Orders::Expire`** lets an order whose hold ran out lapse (re-checked under the lock, so one paid meanwhile is left alone). `ExpireOrdersJob` runs it hourly on the `billing` queue, one order at a time, so one bad row never stops the sweep. It is a maintenance sweep, like the event sweeps, and the only cross-tenant read here.
-- **`Payments::Create` / `Succeed` / `Fail`** start, confirm and fail a payment. `Create` refuses more than is owed, counting other payments in flight, so parts cannot add up to more than the total.
-- **`Refunds::Record`** records money given back, moves the payment to partly or fully refunded, and settles the order.
+- **`Payments::Create` / `Succeed` / `Fail` / `Cancel`** start, confirm, fail and let go of a payment. `Create` refuses more than is owed, counting other payments in flight (`pending` and `processing`), so parts cannot add up to more than the total. `Cancel` also tells the processor (after the change is saved; an unreachable processor is logged and does not stop the order being let go).
+- **`Refunds::Record`** records money given back, moves the payment to partly or fully refunded, and settles the order. A refund is recorded **once** whether core asked for it or the processor reported it: it is found by its idempotency key, then by its `processor_reference`. **`Refunds::Resolve`** finishes a `pending` refund as `succeeded` or `failed`; a failed one stops counting, the payment and order go back, and the operators are told.
+
+## Paying through a processor
+
+`Orders::Place` with a processor method (one the platform has configured and that takes a checkout) opens a **pending payment** for the balance, with the key `checkout:<order>:1`. The buyer's order page then shows **Pay now**, which goes to `GET /billing/orders/:id/pay` (signed in, and the order must be theirs):
+
+1. `Checkout::Start` asks the adapter for a `CheckoutSession` (url, reference, expires_at) for that payment, with the order, payment and platform ids as metadata, and keeps the session reference on the payment. A payment that needs the buyer to act (`failure_code: action_required`, for example a bank confirmation) is sent to the processor's own page for that instead. Only an **https** address is ever redirected to.
+2. The processor brings the buyer back to `GET /billing/orders/:id/checkout_return`. The session id in the address is believed only if it is the one we sent this buyer to for this order (Pay's own `Pay.sync` accepts any id). The adapter syncs the processor's state, which is optimistic; **the webhook decides** whether the payment succeeded.
+3. Pay's own payment page stays closed (it is not signed in and calls the processor with a caller-supplied id). This route replaces it as the way back to a payment that needs the buyer.
+
+Because the processor, not our hold, is the authority on whether money arrived, `Payments::Succeed` with a processor `reference` also succeeds a payment we had given up on: a card retried in the same session, or a session that outlived the hold. A late payment pays an expired order. **Money for an order that was cancelled** is recorded (it did arrive), the order stays cancelled, a refund is recorded as `pending` for the processor to make, and the operators are told (`payment_orphaned`). A payment the processor has **in flight** (`processing`, a bank debit) stops the order expiring. The charge Pay recorded is linked as `payment.pay_charge` (same platform, one payment per charge), and `processor_reference` is the processor's charge id, which equals `Pay::Charge#processor_id`.
+
+For a **trialing or active** Pay subscription an order that began it needs no payment: `Orders::Settle` marks it paid. Stripe renewals are not mirrored into orders: they stay the processor's invoices and `Pay::Charge` rows.
 
 ## What can be bought
 

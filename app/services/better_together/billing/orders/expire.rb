@@ -18,8 +18,7 @@ module BetterTogether
         def call
           order.with_lock do
             next false unless order.hold_expired? && order.can_become?('expired')
-            # A cheque the seller has received but not yet seen clear keeps the order open.
-            next false if order.offline_payments.received.exists?
+            next false if money_in_flight?
 
             Release.call(order, outcome: 'expired')
             order.update!(status: 'expired')
@@ -31,6 +30,10 @@ module BetterTogether
         private
 
         attr_reader :order
+
+        # A cheque the seller has received but not yet seen clear, or a payment the processor has in
+        # flight (a bank debit), keeps the order open.
+        def money_in_flight? = order.offline_payments.received.exists? || order.payments.processing.exists?
       end
     end
   end

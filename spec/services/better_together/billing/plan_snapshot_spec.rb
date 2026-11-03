@@ -36,6 +36,15 @@ RSpec.describe BetterTogether::Billing::PlanSnapshot do
     expect(described_class.call(plan).drift).to contain_exactly(:amount_cents, :billing_interval)
   end
 
+  it 'names a differing period length as drift too' do
+    adapter.prices['price_snap'] = BetterTogether::Billing::PriceInfo.new(
+      price_id: 'price_snap', product_id: plan.processor_product_id, amount_cents: plan.amount_cents, currency: plan.currency,
+      interval: plan.billing_interval, interval_count: 3
+    )
+
+    expect(described_class.call(plan).drift).to contain_exactly(:interval_count)
+  end
+
   it 'gives the adapter the plan platform context' do
     described_class.call(plan)
 

@@ -36,6 +36,8 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
       t.string :name, null: false
       t.text :description
       t.string :billing_interval, null: false, default: 'month'
+      # Every N intervals (3 months, 2 years). A Stripe price's recurring.interval_count.
+      t.integer :interval_count, null: false, default: 1
       t.integer :amount_cents, null: false, default: 0
       t.string :currency, null: false
       t.boolean :active, null: false, default: true

@@ -20,6 +20,7 @@ module BetterTogether
       OUTCOME_KINDS = %i[
         payment_succeeded payment_failed payment_action_required refund_issued dispute_opened dispute_resolved
         subscription_renewing subscription_canceled trial_ending trial_ended
+        subscription_started subscription_changed subscription_past_due payment_processing refund_failed
         payment_claimed payment_confirmed payment_rejected payment_expired cheque_received cheque_cleared cheque_bounced
         refund_recorded settings_changed
       ].freeze

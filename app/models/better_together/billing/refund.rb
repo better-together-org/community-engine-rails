@@ -14,7 +14,7 @@ module BetterTogether
       STATUSES = %w[pending succeeded failed recorded].freeze
       # The statuses that count as money already given back.
       COUNTED = %w[pending succeeded recorded].freeze
-      REASONS = %w[requested_by_buyer duplicate cancelled_event cancelled_order bounced error other].freeze
+      REASONS = %w[requested_by_buyer duplicate cancelled_event cancelled_order bounced dispute_lost fraudulent error other].freeze
 
       belongs_to :payment, class_name: 'BetterTogether::Billing::Payment', inverse_of: :refunds, optional: false
       belongs_to :recorded_by, class_name: 'BetterTogether::Person', optional: true
@@ -24,6 +24,7 @@ module BetterTogether
       validates :amount_cents, numericality: { only_integer: true, greater_than: 0 }
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :idempotency_key, presence: true, uniqueness: { scope: :platform_id }
+      validates :processor_reference, uniqueness: { scope: %i[platform_id payment_id] }, allow_nil: true
       validate :within_what_is_left, on: :create
 
       def counted? = COUNTED.include?(status)

@@ -13,7 +13,8 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
     critical = described_class::KINDS.keys.select { |kind| described_class.critical?(kind) }
 
     expect(critical).to contain_exactly('payment_failed', 'payment_action_required', 'dispute_opened', 'settings_changed',
-                                        'event_dead_lettered', 'plan_sync_failed', 'cheque_bounced', 'hold_expiring')
+                                        'event_dead_lettered', 'plan_sync_failed', 'cheque_bounced', 'hold_expiring',
+                                        'refund_failed', 'payment_orphaned')
     expect(described_class.critical?('order_paid')).to be(false)
   end
 

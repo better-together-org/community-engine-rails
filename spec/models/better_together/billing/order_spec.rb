@@ -86,14 +86,23 @@ RSpec.describe BetterTogether::Billing::Order do
       expect(order.update(status: 'awaiting_payment')).to be(false)
     end
 
-    it 'treats cancelled and refunded as final' do
-      %w[cancelled refunded].each do |status|
-        order = create(:better_together_billing_order)
-        order.update_columns(status:) # rubocop:disable Rails/SkipsModelValidations
+    it 'treats cancelled as final' do
+      order = create(:better_together_billing_order)
+      order.update_columns(status: 'cancelled') # rubocop:disable Rails/SkipsModelValidations
 
-        expect(order).to be_final
-        expect(order.update(status: 'paid')).to be(false)
-      end
+      expect(order).to be_final
+      expect(order.update(status: 'paid')).to be(false)
+    end
+
+    it 'lets a refunded order go back only to paid or partly refunded, when a refund turns out to have failed' do
+      order = create(:better_together_billing_order)
+      order.update_columns(status: 'refunded') # rubocop:disable Rails/SkipsModelValidations
+
+      expect(order).not_to be_final
+      expect(order.update(status: 'awaiting_payment')).to be(false)
+      expect(order.update(status: 'draft')).to be(false)
+      expect(order.update(status: 'partially_refunded')).to be(true)
+      expect(order.update(status: 'paid')).to be(true)
     end
 
     it 'lets a late payment pay an expired order' do

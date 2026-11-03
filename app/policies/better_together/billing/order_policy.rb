@@ -21,6 +21,10 @@ module BetterTogether
       # The buyer tells the seller they sent a payment made outside the platform.
       def claim? = bought_by_user?
 
+      # The buyer pays their own order through a processor, and returns from it.
+      def pay? = bought_by_user?
+      def checkout_return? = bought_by_user?
+
       # A steward looking at what the platform sells.
       def sales? = manage_billing?
       def sale? = manage_billing? && record.try(:sold_by_platform?) != false

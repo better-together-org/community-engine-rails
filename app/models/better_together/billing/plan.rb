@@ -43,7 +43,7 @@ module BetterTogether
 
       # Fields that define the processor-side price or link to it. Locked once linked unless
       # the adapter says the processor will change them (`field_rules`).
-      PRICE_FIELDS = %i[amount_cents currency billing_interval processor_product_id processor_price_id].freeze
+      PRICE_FIELDS = %i[amount_cents currency billing_interval interval_count processor_product_id processor_price_id].freeze
       # Fields editable here that a processor may also hold. Locked after linking only if the
       # adapter says the processor fixes them at creation.
       DESCRIPTIVE_FIELDS = %i[name description active].freeze
@@ -82,6 +82,8 @@ module BetterTogether
       validate :linked_price_usable, on: :create
       validates :amount_cents, numericality: { greater_than_or_equal_to: 0, only_integer: true }
       validates :billing_interval, inclusion: { in: BILLING_INTERVALS }
+      validates :interval_count, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 36 }
+      validate :one_time_has_a_single_period
       validates :currency, length: { is: 3 }, inclusion: { in: SUPPORTED_CURRENCY_CODES }
       validates :active, inclusion: { in: [true, false] }
       validate :processor_fields_locked_after_link, on: :update
@@ -323,14 +325,25 @@ module BetterTogether
       def copy_price(info)
         return @link_error = :not_found_at_processor if info.nil?
         return @link_error = :price_inactive unless info.active?
+        # A price core cannot represent (weekly, daily, metered, or one with no interval at all) is
+        # refused, never quietly shown as a monthly price of nothing.
+        return @link_error = :unsupported_price unless representable?(info)
 
         assign_attributes(
           { amount_cents: info.amount_cents, currency: info.currency, billing_interval: info.interval,
-            processor_product_id: info.product_id }.compact
+            interval_count: info.interval_count, processor_product_id: info.product_id }.compact
         )
         self.manages_processor_product = false
         self.sync_status = 'synced'
         self.synced_to_processor_at = Time.current
+      end
+
+      def representable?(info)
+        BILLING_INTERVALS.include?(info.interval.to_s) && !info.metered? && info.amount_cents.present? && info.currency.present?
+      end
+
+      def one_time_has_a_single_period
+        errors.add(:interval_count, :one_time_single) if billing_interval == 'one_time' && interval_count != 1
       end
 
       def linked_price_usable

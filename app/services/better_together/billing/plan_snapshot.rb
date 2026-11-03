@@ -9,7 +9,8 @@ module BetterTogether
       Result = Struct.new(:price, :product, :drift, :error, keyword_init: true)
 
       CACHE_TTL = 30.seconds
-      COMPARED = { amount_cents: :amount_cents, currency: :currency, billing_interval: :interval, active: :active }.freeze
+      COMPARED = { amount_cents: :amount_cents, currency: :currency, billing_interval: :interval, interval_count: :interval_count,
+                   active: :active }.freeze
 
       def self.call(plan) = new(plan).call
 

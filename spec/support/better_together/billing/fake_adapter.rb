@@ -64,7 +64,7 @@ module BetterTogether
         product_id = plan.processor_product_id.presence || "prod_#{idempotency_key.hash.abs}"
         price_id = plan.processor_price_id.presence || "price_#{idempotency_key.hash.abs}"
         price = PriceInfo.new(price_id:, product_id:, amount_cents: plan.amount_cents, currency: plan.currency,
-                              interval: plan.billing_interval, active: plan.active)
+                              interval: plan.billing_interval, interval_count: plan.interval_count, active: plan.active)
         @prices[price_id] = price
         PlanSyncResult.new(product_id:, price:)
       end
@@ -97,7 +97,8 @@ module BetterTogether
 
       def create_checkout_session(context:, **args)
         @calls << [:create_checkout_session, context, args]
-        { url: "https://fake.test/checkout/#{args[:idempotency_key]}" }
+        CheckoutSession.new(url: "https://fake.test/checkout/#{args[:idempotency_key]}", reference: "cs_#{args[:idempotency_key]}",
+                            expires_at: 24.hours.from_now)
       end
 
       def sync_checkout_session(context:, **args)
@@ -105,9 +106,29 @@ module BetterTogether
         { status: 'paid' }
       end
 
+      def release_payment(context:, payment:, idempotency_key:)
+        @calls << [:release_payment, context, payment.id, idempotency_key]
+        nil
+      end
+
+      def reconcile_payment(context:, payment:)
+        @calls << [:reconcile_payment, context, payment.id]
+        nil
+      end
+
+      def payment_action_url(context:, order:)
+        @calls << [:payment_action_url, context, order.id]
+        "https://fake.test/action/#{order.id}"
+      end
+
+      def receipt_url(context:, payment:)
+        @calls << [:receipt_url, context, payment.id]
+        "https://fake.test/receipt/#{payment.id}"
+      end
+
       def refund(context:, **args)
         @calls << [:refund, context, args]
-        { reference: "re_#{args[:idempotency_key]}" }
+        RefundResult.new(reference: "re_#{args[:idempotency_key]}", status: 'succeeded', amount_cents: args[:amount_cents])
       end
 
       def transfer(context:, **args)
@@ -125,7 +146,7 @@ module BetterTogether
       # Price and identity fields are fixed at creation; descriptive fields can be updated.
       def default_rules
         { name: :updatable, description: :updatable, active: :updatable,
-          amount_cents: :create_only, currency: :create_only, billing_interval: :create_only,
+          amount_cents: :create_only, currency: :create_only, billing_interval: :create_only, interval_count: :create_only,
           processor_product_id: :create_only, processor_price_id: :create_only }
       end
 

@@ -8,7 +8,7 @@ module BetterTogether
     class OrdersController < ApplicationController
       include OwnerScoped
 
-      before_action :set_order, only: :show
+      before_action :set_order, only: %i[show pay checkout_return]
       after_action :verify_authorized
 
       def index
@@ -18,6 +18,28 @@ module BetterTogether
 
       def show
         authorize @order
+      end
+
+      # Sends the buyer to pay through the processor: its hosted checkout, or its page for a payment
+      # that needs them. The address only ever comes from the adapter and is checked to be https.
+      def pay
+        authorize @order
+        redirect_to Checkout::Start.call(order: @order, success_url: checkout_return_billing_order_url(@order, locale: I18n.locale),
+                                         cancel_url: billing_order_url(@order, locale: I18n.locale)),
+                    allow_other_host: true
+      rescue Checkout::Start::Unavailable
+        redirect_to billing_order_path(@order, locale: I18n.locale), alert: t('better_together.billing.orders.pay_unavailable')
+      end
+
+      # Where the processor sends the buyer back to. The session in the address is believed only if it is
+      # the one we sent them to for this order; the webhook, not this page, decides whether they paid.
+      def checkout_return
+        authorize @order
+        status = Checkout::Return.call(order: @order, session_id: params[:stripe_checkout_session_id].presence || params[:session_id])
+        key = status.to_s == 'paid' ? 'return_paid' : 'return_pending'
+        redirect_to billing_order_path(@order, locale: I18n.locale), notice: t("better_together.billing.orders.#{key}")
+      rescue Checkout::Return::Unrecognised
+        redirect_to billing_order_path(@order, locale: I18n.locale), alert: t('better_together.billing.orders.pay_unavailable')
       end
 
       private
