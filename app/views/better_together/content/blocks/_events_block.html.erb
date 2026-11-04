@@ -1,9 +1,9 @@
 <%# locals: (events_block:) -%>
 <%
   order_scope = case events_block.event_scope
-                when 'upcoming' then ->(s) { s.where('starts_at >= ?', Time.current).order(starts_at: :asc) }
-                when 'recent'   then ->(s) { s.where('starts_at < ?', Time.current).order(starts_at: :desc) }
-                else                 ->(s) { s.order(starts_at: :desc) }
+                when 'upcoming' then ->(s) { s.where('starts_at >= ?', Time.current).reorder(starts_at: :asc) }
+                when 'recent'   then ->(s) { s.where('starts_at < ?', Time.current).reorder(starts_at: :desc) }
+                else                 ->(s) { s.reorder(starts_at: :desc) }
                 end
 
   events = resource_block_collection(events_block, BetterTogether::Event, extra_scope: order_scope)
