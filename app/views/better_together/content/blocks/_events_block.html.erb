@@ -3,7 +3,7 @@
   order_scope = case events_block.event_scope
                 when 'upcoming' then ->(s) { s.where('starts_at >= ?', Time.current).reorder(starts_at: :asc) }
                 when 'recent'   then ->(s) { s.where('starts_at < ?', Time.current).reorder(starts_at: :desc) }
-                else                 ->(s) { s }
+                else                 ->(s) { s.reorder(starts_at: :desc) }
                 end
 
   events = resource_block_collection(events_block, BetterTogether::Event, extra_scope: order_scope)
