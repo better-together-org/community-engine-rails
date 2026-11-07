@@ -1100,6 +1100,11 @@ fr:
       new:
         title: Nouvelle communauté
       none-yet: Aucune communauté pour l'instant
+      quota_usage_tab:
+        description: La quantité de l'allocation de stockage de cette communauté actuellement
+          utilisée.
+        none: Cette communauté n'a pas encore d'utilisation enregistrée.
+        title: Utilisation
       show:
         about:
           no_description: Aucune description disponible.
@@ -2115,6 +2120,7 @@ fr:
           posts_loading: Chargement des publications...
           sections_aria: Sections de la localité
           view-all-settlements: Voir toutes les localités
+          weather_loading: Chargement de la météo
         toolbar:
           back_to_geography_settlements: Retour aux localités
           save_geography_settlement: Sauvegarder la localité
@@ -3582,6 +3588,61 @@ fr:
         privacy_limited_by_platform: Certains paramètres de confidentialité sont désactivés
           car la plateforme n'est pas publique. Le contenu peut seulement être visible
           pour les membres de la communauté ou l'auteur.
+    quota_grants:
+      created: Dérogation de quota créée.
+      edit:
+        title: Modifier la dérogation de quota
+      form:
+        community: Communauté (si le type de propriétaire est Communauté)
+        community_prompt: Sélectionner une communauté
+        expires_at: Expire le
+        expires_at_hint: Laissez vide pour une dérogation qui n'expire jamais.
+        limit: Limite
+        owner: Propriétaire
+        owner_hint: Seul le champ correspondant au type de propriétaire ci-dessus
+          est utilisé.
+        owner_type: Type de propriétaire
+        owner_type_community: Communauté
+        owner_type_person: Personne
+        person: Personne (si le type de propriétaire est Personne)
+        person_prompt: Rechercher une personne
+        quota_type: Type de quota
+        reason: Motif
+      index:
+        description: Consultez qui utilise combien, et accordez à un propriétaire
+          une limite plus élevée sans modifier la valeur par défaut de la plateforme.
+        grant_override: Accorder une dérogation
+        grants_empty: Aucune dérogation de quota n'a encore été créée pour cette plateforme.
+        grants_title: Dérogations existantes
+        new: Nouvelle dérogation
+        overview_empty: Aucune utilisation enregistrée sur cette plateforme pour le
+          moment.
+        overview_title: Aperçu de l'utilisation (du plus élevé au plus faible)
+        revoke: Révoquer
+        revoke_confirm: Révoquer cette dérogation de quota ?
+        title: Dérogations de quota
+      new:
+        title: Nouvelle dérogation de quota
+      revoked: Dérogation de quota révoquée.
+      status:
+        active: Active
+        expired: Expirée
+      table:
+        actions: Actions
+        expires_at: Expire
+        granted_by: Accordé par %{name}
+        limit: Limite
+        no_expiry: Sans expiration
+        owner: Propriétaire
+        quota_type: Type de quota
+        status: Statut
+        usage: Utilisation
+      updated: Dérogation de quota mise à jour.
+    quotas:
+      usage_meter:
+        types:
+          ai_translation_tokens: Jetons de traduction IA
+          media_storage: Stockage
     rbac:
       nav:
         resource_permissions: Autorisations de ressources
@@ -4043,7 +4104,14 @@ fr:
           platform: Plateforme
           preferences: Préférences
           privacy: Confidentialité
+          usage: Utilisation
         title: Paramètres
+        usage:
+          description: La quantité de votre stockage et des autres limites de quota
+            que vous utilisez actuellement.
+          title: Utilisation
+      usage:
+        none: Vous n'avez pas encore d'utilisation enregistrée.
     setup_wizard_steps:
       already_completed: Cette plateforme a déjà été configurée. Veuillez vous connecter
         pour gérer votre plateforme.
@@ -4287,6 +4355,99 @@ fr:
         list: Liste
         map: Carte
         table: Tableau
+    weather:
+      panel:
+        current:
+          dew_point: Point de rosée
+          feels_like: Ressenti
+          gusts: Rafales
+          heading: Conditions actuelles
+          humidity: Humidité
+          observed: Observé %{time}
+          pressure: Pression
+          sun: Soleil
+          sun_times: Lever %{rise}, coucher %{set}
+          unavailable: Les conditions actuelles ne sont pas disponibles pour le moment.
+          visibility: Visibilité
+          wind: Vent
+        daily:
+          caption: Prévisions par jour et par nuit
+          chance: Probabilité de précipitations
+          conditions: Conditions
+          empty: Les prévisions sur 7 jours ne sont pas disponibles pour le moment.
+          heading: Prévisions sur 7 jours
+          high: Max. %{value}
+          low: Min. %{value}
+          period: Période
+          temperature: Température
+        disclaimer: Les informations météo sont fournies à titre indicatif et peuvent
+          être retardées ou incomplètes. En cas d'urgence, suivez les consignes et
+          les alertes officielles locales.
+        history:
+          axis:
+            celsius: Température (°C)
+            kmh: Vent (km/h)
+            mm: Précipitations (mm)
+          chart_alt:
+            precipitation: Graphique à barres des précipitations quotidiennes des
+              14 derniers jours. Les mêmes valeurs figurent dans le tableau ci-dessous.
+            temperature: Graphique linéaire des températures maximale, minimale et
+              moyenne quotidiennes des 14 derniers jours. Les mêmes valeurs figurent
+              dans le tableau ci-dessous.
+            wind: Graphique linéaire de la vitesse maximale du vent et des rafales
+              quotidiennes des 14 derniers jours. Les mêmes valeurs figurent dans
+              le tableau ci-dessous.
+          charts:
+            precipitation: Précipitations
+            temperature: Température
+            wind: Vent
+          columns:
+            date: Date
+          description: Météo quotidienne enregistrée pour cette localité, à partir
+            des observations conservées.
+          empty: Aucune donnée météo passée n'a encore été enregistrée pour cette
+            localité.
+          heading: Les 14 derniers jours
+          series:
+            precip_mm: Précipitations
+            snow_cm: Chute de neige
+            temperature_max_c: Maximum quotidien
+            temperature_mean_c: Moyenne quotidienne
+            temperature_min_c: Minimum quotidien
+            wind_gust_kmh: Rafale maximale
+            wind_speed_kmh: Vent maximal
+          show_table: Afficher les valeurs enregistrées sous forme de tableau
+          so_far: jusqu'à présent
+          table_caption: Météo quotidienne enregistrée pour les 14 derniers jours
+            et aujourd'hui jusqu'à présent
+          unreported:
+            precipitation: Cette station météo ne mesure pas les précipitations.
+            temperature: Aucun relevé de température n'est enregistré pour cette période.
+            wind: Aucun relevé de vent n'est enregistré pour cette période.
+        hourly:
+          chance: Précipitations %{value} %
+          empty: Les prévisions horaires ne sont pas disponibles pour le moment.
+          heading: Prochaines 24 heures
+          scroll_label: Prévisions horaires, défilement horizontal
+        licence: licence des données
+        never: pas encore
+        no_data: Les données météo ne sont pas encore disponibles pour cette localité.
+        not_reported: Non communiqué
+        source_error: La source météo n'a pas pu être jointe lors de la dernière mise
+          à jour. Les informations affichées peuvent être périmées.
+        stale: Ces conditions ont été mises à jour pour la dernière fois %{time} et
+          peuvent être périmées.
+        summary:
+          heading: La météo maintenant
+          view_full: Voir la météo complète
+        units:
+          celsius: "%{value} °C"
+          cm: "%{value} cm"
+          km: "%{value} km"
+          kmh: "%{value} km/h"
+          kpa: "%{value} kPa"
+          mm: "%{value} mm"
+          percent: "%{value} %"
     webhook_endpoints:
       actions_aria: Actions du webhook
       active_help: Activer ou désactiver la livraison de webhooks pour ce point de
@@ -5178,6 +5339,8 @@ fr:
       roles_and_permissions: Roles & Permissions
       safety: Sécurité
       sessions: Séances
+      usage: Utilisation
+      weather: Météo
     to: À
     'true': Oui
     undo_clear: Annuler l'effacement
@@ -5570,6 +5733,7 @@ fr:
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
         platform_domains: Domaines
+        quota_grants: Dérogations de quota
         robot_management: Gérer les robots LLM
         storage_configurations: Gérer le stockage
         title: Opérations de la plateforme

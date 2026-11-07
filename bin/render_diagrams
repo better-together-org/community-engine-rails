@@ -2,7 +2,11 @@
 set -euo pipefail
 
 FORCE=${FORCE:-0}
+SEED_HASHES=0
 SPECIFIED_FILES=()
+# Bump when the rendering logic changes in a way that should re-render every diagram.
+RENDER_HASH_VERSION=1
+HASH_MANIFEST="docs/diagrams/exports/.source-hashes"
 
 usage() {
   cat <<USAGE
@@ -17,9 +21,15 @@ Output: docs/diagrams/exports/png/*.png
         docs/diagrams/exports/svg/*.svg
 
 Options:
-  --force     Re-render all diagrams even if output files are up-to-date (or set FORCE=1)
+  --force        Re-render all diagrams even if their recorded source hash matches (or set FORCE=1)
+  --seed-hashes  Record the current source hashes for existing exports without rendering
+                 (use once to adopt hash tracking, or after verifying exports are current)
   -h, --help  Show this help
-  
+
+A diagram is skipped when its source content and render settings hash to the value recorded
+in docs/diagrams/exports/.source-hashes and its export exists. File timestamps are not used,
+so a fresh checkout or a touched file never triggers a re-render. Commit the manifest.
+
 Arguments:
   file1.mmd   Specific diagram files to render (relative to docs/diagrams/source/)
   file2.mmd   Can specify multiple files, or omit to render all *.mmd files
@@ -70,6 +80,9 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --force)
       FORCE=1
+      ;;
+    --seed-hashes)
+      SEED_HASHES=1
       ;;
     -h|--help)
       usage
@@ -541,6 +554,67 @@ detect_complexity() {
   fi
 }
 
+
+declare -A MANIFEST_HASHES=()
+MANIFEST_DIRTY=0
+
+load_manifest() {
+  [ -f "$HASH_MANIFEST" ] || return 0
+  local hash key
+  while read -r hash key; do
+    [ -n "${key:-}" ] && MANIFEST_HASHES["$key"]="$hash"
+  done < "$HASH_MANIFEST"
+}
+
+# Hash of what determines a diagram's output: the normalized source plus render settings.
+content_hash() {
+  local file="$1"
+  {
+    cat "$file"
+    printf '\n--settings--\n%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n' \
+      "$RENDER_HASH_VERSION" "$WIDTH" "$HEIGHT" "$HIGH_RES_WIDTH" "$HIGH_RES_HEIGHT" \
+      "$ORIENTATION_MODE" "$MIN_SHORT_SIDE_PX" "$COMPLEXITY_LINE_THRESHOLD" \
+      "$COMPLEXITY_NODE_THRESHOLD" "$COMPLEXITY_SUBGRAPH_THRESHOLD"
+  } | sha256sum | cut -d' ' -f1
+}
+
+record_hash() {
+  local key="$1" hash="$2"
+  if [ "${MANIFEST_HASHES[$key]:-}" != "$hash" ]; then
+    MANIFEST_HASHES["$key"]="$hash"
+    MANIFEST_DIRTY=1
+  fi
+}
+
+# Rewrites the manifest sorted, only when an entry changed, so reruns never churn it.
+# On a full run, entries for sources that no longer exist are dropped.
+save_manifest() {
+  local prune_missing="$1" key base
+  if [ "$prune_missing" = "1" ]; then
+    for key in "${!MANIFEST_HASHES[@]}"; do
+      base="${key%.*}"
+      if [ ! -f "docs/diagrams/source/${base}.mmd" ]; then
+        unset 'MANIFEST_HASHES[$key]'
+        MANIFEST_DIRTY=1
+      fi
+    done
+  fi
+  [ "$MANIFEST_DIRTY" = "1" ] || return 0
+  mkdir -p "$(dirname "$HASH_MANIFEST")"
+  for key in "${!MANIFEST_HASHES[@]}"; do
+    printf '%s %s\n' "${MANIFEST_HASHES[$key]}" "$key"
+  done | LC_ALL=C sort -k2 > "$HASH_MANIFEST"
+}
+
+# True when the export exists and was rendered from this exact content and settings.
+export_current() {
+  local key="$1" hash="$2" out="$3" format="$4"
+  [ "$FORCE" != "1" ] || return 1
+  [ -f "$out" ] || return 1
+  [ "${MANIFEST_HASHES[$key]:-}" = "$hash" ] || return 1
+  [ "$format" = "svg" ] || dimensions_meet_min_short_side "$out"
+}
+
 shopt -s nullglob
 
 # Determine which files to process
@@ -584,9 +658,39 @@ rendered=0
 skipped=0
 total_files=0
 
+load_manifest
+
 for f in "${files[@]}"; do
   normalized_input=$(mktemp --suffix=.mmd)
   normalize_mermaid_file "$f" "$normalized_input"
+
+  base_name=$(basename "${f%.*}")
+  source_hash="$(content_hash "$normalized_input")"
+
+  if [ "$SEED_HASHES" = "1" ]; then
+    for format in $OUTPUT_FORMATS; do
+      if [ -f "docs/diagrams/exports/${format}/${base_name}.${format}" ]; then
+        record_hash "${base_name}.${format}" "$source_hash"
+      fi
+    done
+    rm -f "$normalized_input"
+    continue
+  fi
+
+  # Skip the whole file (including the orientation probe renders) when every export is current.
+  all_current=1
+  for format in $OUTPUT_FORMATS; do
+    export_current "${base_name}.${format}" "$source_hash" "docs/diagrams/exports/${format}/${base_name}.${format}" "$format" || all_current=0
+  done
+  if [ "$all_current" = "1" ]; then
+    for format in $OUTPUT_FORMATS; do
+      total_files=$((total_files + 1))
+      skipped=$((skipped + 1))
+    done
+    echo "Up-to-date (content hash unchanged): $f"
+    rm -f "$normalized_input"
+    continue
+  fi
 
   orientation="$(choose_orientation "$normalized_input" "$WIDTH" "$HEIGHT")"
 
@@ -626,8 +730,7 @@ for f in "${files[@]}"; do
     
     echo "Rendering $f -> $out$complexity_note"
     
-    # Check if we need to render (skip if up-to-date and not forced)
-    if [ "$FORCE" != "1" ] && [ -f "$out" ] && [ "$out" -nt "$f" ] && { [ "$format" = "svg" ] || dimensions_meet_min_short_side "$out"; }; then
+    if export_current "${base_name}.${format}" "$source_hash" "$out" "$format"; then
       echo "Up-to-date (skipping)"
       skipped=$((skipped + 1))
       continue
@@ -646,11 +749,15 @@ for f in "${files[@]}"; do
       failed_files+=("$f -> $format")
     else
       rendered=$((rendered + 1))
+      record_hash "${base_name}.${format}" "$source_hash"
     fi
   done
 
   rm -f "$normalized_input"
 done
+
+# Only a full run knows every source, so only it may prune stale entries.
+if [ ${#SPECIFIED_FILES[@]} -eq 0 ]; then save_manifest 1; else save_manifest 0; fi
 
 echo "Done. Attempted $total_files output file(s) from ${#files[@]} source diagram(s). Rendered: $rendered, Skipped: $skipped. Force: ${FORCE}."
 

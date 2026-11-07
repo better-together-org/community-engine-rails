@@ -176,6 +176,11 @@ module BetterTogether
       super + %i[requires_invitation allow_membership_requests contributors_display_visibility]
     end
 
+    # Communities the sitemap indexes for a platform. Host apps narrow this to keep communities out of it.
+    def self.sitemap_listable(platform)
+      for_platform(platform).privacy_public
+    end
+
     def self.host_community
       @host_community ||= find_by(host: true)
     end

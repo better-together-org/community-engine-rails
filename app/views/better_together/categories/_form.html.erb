@@ -53,6 +53,11 @@
   </div>
 
   <div class="mb-3">
+    <%= form.label :color %>
+    <%= form.text_field :color, id: 'category_color', class: 'form-control', placeholder: '#0072B2', maxlength: 7, pattern: '#[0-9A-Fa-f]{6}', inputmode: 'text', autocomplete: 'off' %>
+  </div>
+
+  <div class="mb-3">
     <%= form.label :position %>
     <%= form.number_field :position, class: 'form-control' %>
   </div>

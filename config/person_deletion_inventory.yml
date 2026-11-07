@@ -229,6 +229,24 @@ entries:
     action: destroy
     reverse_association: oauth_applications
 
+  - key: BetterTogether::AgentGrant#operator
+    kind: model_reference
+    owner: person
+    model: BetterTogether::AgentGrant
+    association: operator
+    foreign_key: operator_id
+    action: destroy
+    reverse_association: agent_grants
+
+  - key: BetterTogether::AgentGrant#granted_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::AgentGrant
+    association: granted_by
+    foreign_key: granted_by_id
+    action: retain
+    reverse_association: granted_agent_grants
+
   - key: BetterTogether::Report#reporter
     kind: model_reference
     owner: person

@@ -1,0 +1,14 @@
+---
+title: 'Settlement weather: summary_card'
+audience:
+- end_user
+journey_step: As a visitor, I can see current conditions, the forecast and recent
+  weather.
+callouts:
+- :id: summary
+  :title: Current conditions card
+  :description: Links to the full weather tab.
+accessibility_notes: Charts have a text alternative and a data table with the same
+  values.
+slug: settlement_weather_summary_card
+device: mobile

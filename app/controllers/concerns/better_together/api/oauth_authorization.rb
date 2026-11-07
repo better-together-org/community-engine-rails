@@ -24,7 +24,7 @@ module BetterTogether
         end
 
         # Check if token has any of the required scopes
-        unless doorkeeper_token.acceptable?(required_scopes)
+        unless token_acceptable?(required_scopes)
           render_insufficient_scope(required_scopes)
         end
       rescue StandardError => e
@@ -53,8 +53,16 @@ module BetterTogether
         }, status: :forbidden
       end
 
+      # Agent credentials are bounded by their grant as well as the token.
+      def token_acceptable?(required_scopes)
+        actor = respond_to?(:token_actor, true) ? token_actor : nil
+        return actor.allows_any?(required_scopes) if actor
+
+        doorkeeper_token.acceptable?(required_scopes)
+      end
+
       def token_scopes
-        doorkeeper_token.scopes.to_a
+        (respond_to?(:token_actor, true) && token_actor&.scopes) || doorkeeper_token.scopes.to_a
       rescue StandardError
         []
       end

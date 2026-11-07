@@ -1098,6 +1098,11 @@ es:
       new:
         title: Comunidades
       none-yet: None-yet
+      quota_usage_tab:
+        description: La cantidad de almacenamiento asignado a esta comunidad que está
+          actualmente en uso.
+        none: Esta comunidad todavía no tiene uso registrado.
+        title: Uso
       show:
         about:
           no_description: No hay descripción disponible.
@@ -2101,6 +2106,7 @@ es:
           posts_loading: Cargando publicaciones...
           sections_aria: Secciones de la localidad
           view-all-settlements: Ver todas las localidades
+          weather_loading: Cargando el clima
         toolbar:
           back_to_geography_settlements: Volver a las localidades
           save_geography_settlement: Guardar localidad
@@ -3558,6 +3564,59 @@ es:
         privacy_limited_by_platform: Algunas opciones de privacidad están deshabilitadas
           porque la plataforma no es pública. El contenido solo puede ser visible
           para miembros de la comunidad o el autor.
+    quota_grants:
+      created: Concesión de cuota creada.
+      edit:
+        title: Editar concesión de cuota
+      form:
+        community: Comunidad (si el tipo de propietario es Comunidad)
+        community_prompt: Seleccionar una comunidad
+        expires_at: Expira el
+        expires_at_hint: Déjelo en blanco para una concesión que nunca expira.
+        limit: Límite
+        owner: Propietario
+        owner_hint: Solo se usa el campo que coincide con el tipo de propietario anterior.
+        owner_type: Tipo de propietario
+        owner_type_community: Comunidad
+        owner_type_person: Persona
+        person: Persona (si el tipo de propietario es Persona)
+        person_prompt: Buscar una persona
+        quota_type: Tipo de cuota
+        reason: Motivo
+      index:
+        description: Vea quién está usando cuánto, y concédale a un propietario un
+          límite más alto sin cambiar el valor predeterminado de la plataforma.
+        grant_override: Conceder excepción
+        grants_empty: Todavía no se han creado concesiones de cuota para esta plataforma.
+        grants_title: Concesiones existentes
+        new: Nueva concesión
+        overview_empty: Todavía no se ha registrado uso en esta plataforma.
+        overview_title: Resumen de uso (de mayor a menor)
+        revoke: Revocar
+        revoke_confirm: "¿Revocar esta concesión de cuota?"
+        title: Concesiones de cuota
+      new:
+        title: Nueva concesión de cuota
+      revoked: Concesión de cuota revocada.
+      status:
+        active: Activa
+        expired: Expirada
+      table:
+        actions: Acciones
+        expires_at: Expira
+        granted_by: Concedido por %{name}
+        limit: Límite
+        no_expiry: Sin vencimiento
+        owner: Propietario
+        quota_type: Tipo de cuota
+        status: Estado
+        usage: Uso
+      updated: Concesión de cuota actualizada.
+    quotas:
+      usage_meter:
+        types:
+          ai_translation_tokens: Tokens de traducción con IA
+          media_storage: Almacenamiento
     rbac:
       nav:
         resource_permissions: Permisos de recursos
@@ -4015,7 +4074,14 @@ es:
           platform: Plataforma
           preferences: Preferencias
           privacy: Privacidad
+          usage: Uso
         title: Configuración
+        usage:
+          description: Cuánto de su almacenamiento y otros límites de cuota está utilizando
+            actualmente.
+          title: Uso
+      usage:
+        none: Todavía no tiene uso registrado.
     setup_wizard_steps:
       already_completed: Esta plataforma ya ha sido configurada. Por favor inicie
         sesión para administrar su plataforma.
@@ -4260,6 +4326,98 @@ es:
         list: Lista
         map: Mapa
         table: Tabla
+    weather:
+      panel:
+        current:
+          dew_point: Punto de rocío
+          feels_like: Sensación térmica
+          gusts: Ráfagas
+          heading: Condiciones actuales
+          humidity: Humedad
+          observed: Observado %{time}
+          pressure: Presión
+          sun: Sol
+          sun_times: Amanecer %{rise}, atardecer %{set}
+          unavailable: Las condiciones actuales no están disponibles en este momento.
+          visibility: Visibilidad
+          wind: Viento
+        daily:
+          caption: Pronóstico por día y noche
+          chance: Probabilidad de precipitación
+          conditions: Condiciones
+          empty: El pronóstico de 7 días no está disponible en este momento.
+          heading: Pronóstico de 7 días
+          high: Máx. %{value}
+          low: Mín. %{value}
+          period: Periodo
+          temperature: Temperatura
+        disclaimer: La información del clima se ofrece como referencia y puede llegar
+          con retraso o estar incompleta. En una emergencia, siga las indicaciones
+          y avisos oficiales locales.
+        history:
+          axis:
+            celsius: Temperatura (°C)
+            kmh: Viento (km/h)
+            mm: Precipitación (mm)
+          chart_alt:
+            precipitation: Gráfico de barras de la precipitación diaria de los últimos
+              14 días. Los mismos valores están en la tabla de abajo.
+            temperature: Gráfico de líneas de la temperatura máxima, mínima y media
+              diaria de los últimos 14 días. Los mismos valores están en la tabla
+              de abajo.
+            wind: Gráfico de líneas de la velocidad máxima del viento y de las ráfagas
+              diarias de los últimos 14 días. Los mismos valores están en la tabla
+              de abajo.
+          charts:
+            precipitation: Precipitación
+            temperature: Temperatura
+            wind: Viento
+          columns:
+            date: Fecha
+          description: Clima diario registrado para esta localidad, a partir de observaciones
+            almacenadas.
+          empty: Todavía no se ha registrado clima pasado para esta localidad.
+          heading: Últimos 14 días
+          series:
+            precip_mm: Precipitación
+            snow_cm: Nevada
+            temperature_max_c: Máxima diaria
+            temperature_mean_c: Media diaria
+            temperature_min_c: Mínima diaria
+            wind_gust_kmh: Ráfaga máxima
+            wind_speed_kmh: Viento máximo
+          show_table: Mostrar los valores registrados en una tabla
+          so_far: hasta ahora
+          table_caption: Clima diario registrado de los últimos 14 días y de hoy hasta
+            ahora
+          unreported:
+            precipitation: Esta estación meteorológica no registra la precipitación.
+            temperature: No hay lecturas de temperatura registradas para este periodo.
+            wind: No hay lecturas de viento registradas para este periodo.
+        hourly:
+          chance: Precipitación %{value} %
+          empty: El pronóstico por hora no está disponible en este momento.
+          heading: Próximas 24 horas
+          scroll_label: Pronóstico por hora, se desplaza hacia los lados
+        licence: licencia de datos
+        never: todavía no
+        no_data: Todavía no hay información del clima para esta localidad.
+        not_reported: Sin datos
+        source_error: No se pudo contactar la fuente del clima en la última actualización.
+          La información mostrada puede estar desactualizada.
+        stale: Estas condiciones se actualizaron por última vez %{time} y pueden estar
+          desactualizadas.
+        summary:
+          heading: El clima ahora
+          view_full: Ver el clima completo
+        units:
+          celsius: "%{value} °C"
+          cm: "%{value} cm"
+          km: "%{value} km"
+          kmh: "%{value} km/h"
+          kpa: "%{value} kPa"
+          mm: "%{value} mm"
+          percent: "%{value} %"
     webhook_endpoints:
       actions_aria: Acciones del webhook
       active_help: Habilitar o deshabilitar la entrega de webhooks para este punto
@@ -5138,6 +5296,8 @@ es:
       roles_and_permissions: Roles & Permissions
       safety: Seguridad
       sessions: Sesiones
+      usage: Uso
+      weather: Clima
     to: Para
     'true': Sí
     undo_clear: Deshacer el borrado
@@ -5532,6 +5692,7 @@ es:
         feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
         platform_domains: Dominios
+        quota_grants: Concesiones de cuota
         robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento
         title: Operaciones de la plataforma

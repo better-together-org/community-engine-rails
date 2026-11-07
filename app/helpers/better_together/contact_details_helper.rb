@@ -2,29 +2,26 @@
 
 module BetterTogether
   module ContactDetailsHelper # rubocop:todo Style/Documentation
-    # rubocop:todo Metrics/MethodLength
-    def render_contact_details(contactable, options = {}) # rubocop:todo Metrics/AbcSize, Metrics/MethodLength
-      # Options
+    def render_contact_details(contactable, options = {})
       include_private = options.fetch(:include_private, false)
-
-      # Fetch the contact detail
       contact_detail = contactable.contact_detail
       return ''.html_safe unless contact_detail
 
-      # Render partials for each contact type
-      content = ''.html_safe
-      content << '<div class="name-and-role mb-3">'
-      content << content_tag(:strong, contact_detail.name).html_safe if contact_detail.name.present?
-      content << ", #{content_tag(:strong, contact_detail.role)}".html_safe if contact_detail.role.present?
-      content << '</div>'
-      content << render_social_media_accounts(contact_detail, include_private:)
-      content << render_website_links(contact_detail, include_private:)
-      content << render_email_addresses(contact_detail, include_private:)
-      content << render_phone_numbers(contact_detail, include_private:)
-      content << render_addresses(contact_detail, include_private:)
-      content
+      # safe_join, not String#<<: appending literal markup to a SafeBuffer escapes it and the page prints the tags.
+      safe_join([
+                  content_tag(:div, contact_name_and_role(contact_detail), class: 'name-and-role mb-3'),
+                  render_social_media_accounts(contact_detail, include_private:),
+                  render_website_links(contact_detail, include_private:),
+                  render_email_addresses(contact_detail, include_private:),
+                  render_phone_numbers(contact_detail, include_private:),
+                  render_addresses(contact_detail, include_private:)
+                ])
     end
-    # rubocop:enable Metrics/MethodLength
+
+    def contact_name_and_role(contact_detail)
+      parts = [contact_detail.name, contact_detail.role].compact_blank.map { |text| content_tag(:strong, text) }
+      safe_join(parts, ', ')
+    end
 
     def render_contacts(contactable, options = {})
       # Options

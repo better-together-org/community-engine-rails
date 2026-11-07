@@ -11,6 +11,18 @@ classDiagram
       +quota_usages
       +quota_reservations
       +quota_balances
+      +effective_limit() "highest active QuotaGrant for owner+type, else limit"
+    }
+
+    class QuotaGrant {
+      +owner
+      +quota_type
+      +limit
+      +granted_by
+      +reason
+      +expires_at
+      +self.for_owner_and_type(owner, quota_type)
+      +self.active "scope: no expiry or not yet expired"
     }
 
     class QuotaUsage {
@@ -52,9 +64,14 @@ classDiagram
 
     class Quotas_Owner {
       <<concern>>
-      +quota
+      +quotas
       +self.included_in_models()
-      -erase_quota_ledger() "before_destroy: deletes owned ledger, nullifies actor refs"
+      -erase_quota_ledger() "before_destroy: deletes owned ledger + grants, nullifies actor/granted_by refs"
+    }
+
+    class Quotas_ReservationSweeperJob {
+      <<job>>
+      +perform() "expires held reservations past their TTL, every 5 minutes"
     }
 
     class Quotas_Type {
@@ -132,6 +149,12 @@ classDiagram
     Person ..|> Quotas_Owner : includes
     Community ..|> Quotas_Owner : includes
     Platform ..|> Quotas_Owner : includes
+
+    QuotaGrant --> Quotas_Owner : owner (polymorphic)
+    Quota --> QuotaGrant : effective_limit() reads active grants for owner+type
+
+    Quotas_ReservationSweeperJob --> QuotaReservation : status_held past expires_at -> expired
+    Quotas_ReservationSweeperJob --> QuotaBalance : refresh_reserved!
 
     Quotas_Type <|-- MediaStorage
     Quotas_Type <|-- AiTranslationTokens

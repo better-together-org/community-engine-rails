@@ -37,6 +37,15 @@ module BetterTogether # :nodoc:
       end
     end
 
+    factory :better_together_agent_grant,
+            class: AgentGrant,
+            aliases: %i[agent_grant] do
+      association :robot, factory: :better_together_robot
+      association :operator, factory: :better_together_person
+      platform { BetterTogether::Platform.find_by(host: true) || association(:better_together_platform) }
+      scopes { %w[read] }
+    end
+
     factory :better_together_oauth_access_token,
             class: OauthAccessToken,
             aliases: %i[oauth_access_token] do

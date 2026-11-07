@@ -13,7 +13,7 @@ module BetterTogether
     # The MCP auth_token provides transport-level access control but does NOT
     # identify individual users.
     class PunditContext
-      attr_reader :user
+      attr_reader :user, :actor
 
       # Create context from Rack request using Warden/Devise session
       # @param request [Rack::Request] The HTTP request
@@ -32,8 +32,10 @@ module BetterTogether
         context = from_request(request)
         return context if context.authenticated?
 
-        user = extract_user_from_doorkeeper(request)
-        user ? new(user: user) : context
+        token = doorkeeper_token_from(request)
+        context = agent_context_for(token) || context_for_owner(token) || context
+        context.sync_current!
+        context
       end
 
       # Extract authenticated user from Warden session
@@ -54,6 +56,12 @@ module BetterTogether
       # @param request [Rack::Request] The HTTP request
       # @return [User, nil] The resource owner or nil
       def self.extract_user_from_doorkeeper(request)
+        context_for_owner(doorkeeper_token_from(request))&.user
+      end
+      private_class_method :extract_user_from_doorkeeper
+
+      # Accessible bearer token carrying the 'mcp_access' scope, or nil.
+      def self.doorkeeper_token_from(request)
         return nil unless defined?(Doorkeeper)
 
         # FastMCP passes a Rack::Request which lacks the #authorization helper
@@ -66,16 +74,47 @@ module BetterTogether
                              end
 
         token = Doorkeeper::OAuth::Token.authenticate(doorkeeper_request, :from_bearer_authorization)
-        return nil unless token&.accessible? && token.acceptable?('mcp_access')
-
-        BetterTogether::User.find_by(id: token.resource_owner_id)
+        token if token&.accessible? && token.acceptable?('mcp_access')
       end
-      private_class_method :extract_user_from_doorkeeper
+      private_class_method :doorkeeper_token_from
+
+      def self.context_for_owner(token)
+        return nil unless token
+
+        user = BetterTogether::User.find_by(id: token.resource_owner_id)
+        user ? new(user: user) : nil
+      end
+      private_class_method :context_for_owner
+
+      # Agent credentials act as their operator, bounded by the grant. A robot
+      # credential without a live grant covering mcp_access stays anonymous.
+      def self.agent_context_for(token)
+        actor = BetterTogether::Api::TokenActor.from_token(token)
+        return nil unless actor
+        return new(user: nil) unless actor.active? && actor.allows_any?('mcp_access')
+
+        new(user: actor.user, actor: actor)
+      end
+      private_class_method :agent_context_for
 
       # Initialize with user
       # @param user [User, nil] The authenticated user or nil for anonymous
-      def initialize(user:)
+      # @param actor [BetterTogether::Api::TokenActor, nil] Agent credential, if any
+      def initialize(user:, actor: nil)
         @user = user
+        @actor = actor
+      end
+
+      # Makes Current reflect this request's credential (and clears any left
+      # over from a previous request on the same thread).
+      def sync_current!
+        if actor
+          actor.apply_to_current!
+        else
+          Current.token_actor = nil
+          Current.credential_community = nil
+          Current.robot = nil
+        end
       end
 
       # Anonymous MCP clients (no browser session and no OAuth context)
