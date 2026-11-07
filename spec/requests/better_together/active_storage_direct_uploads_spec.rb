@@ -76,6 +76,16 @@ RSpec.describe 'ActiveStorage direct uploads', :no_auth do
       expect(BetterTogether::QuotaReservation.where(quota_type: 'media_storage')).to be_empty
     end
 
+    it 'refuses a declared size above the cap, however much room there is, and holds nothing' do
+      limit_to(10**15)
+      huge = blob_params.deep_merge(blob: { byte_size: BetterTogether::Quotas::DirectUploadReservation::MAX_DECLARED_BYTES + 1 })
+
+      expect { post direct_uploads_path, params: huge, headers:, as: :json }.not_to change(ActiveStorage::Blob, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(BetterTogether::QuotaReservation.where(quota_type: 'media_storage')).to be_empty
+    end
+
     it 'lets an upload that fits through, and ties the hold it made to the blob' do
       limit_to(100_000)
 
