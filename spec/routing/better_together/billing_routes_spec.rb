@@ -19,8 +19,6 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
 
   def pay_mount(route_set) = route_set.routes.find { |route| route.path.spec.to_s == '/pay' }
 
-  def request_for(path) = ActionDispatch::Request.new(Rack::MockRequest.env_for(path))
-
   it 'keeps billing routes out of routes.rb except the draw line' do
     billing_lines = routes_file.lines.grep(/billing|Pay::Engine/i).map(&:strip).reject { |line| line.start_with?('#') }
 
@@ -49,9 +47,19 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
         expect(mount.app.app).to eq(Pay::Engine)
       end
 
+      # Goes through the router, because a mounted app's path_info is rewritten before its
+      # constraint runs; asking the constraint directly with the full path proves nothing.
       it 'reaches only the webhook endpoints, not Pay payment confirmation pages' do
-        expect(mount.app.matches?(request_for('/pay/webhooks/stripe'))).to be(true)
-        expect(mount.app.matches?(request_for('/pay/payments/pi_123'))).to be(false)
+        reached = []
+        allow(Pay::Engine).to receive(:call) { |env| (reached << env['PATH_INFO']) && [200, {}, ['pay']] }
+        route_set = draw_billing_routes
+
+        webhook = route_set.call(Rack::MockRequest.env_for('/pay/webhooks/stripe', method: 'POST'))
+        payment = route_set.call(Rack::MockRequest.env_for('/pay/payments/pi_123'))
+
+        expect(webhook.first).to eq(200)
+        expect(payment.first).to eq(404)
+        expect(reached.size).to eq(1)
       end
     end
   end
