@@ -15,6 +15,10 @@ module BetterTogether
     module DirectUploadReservation
       extend ActiveSupport::Concern
 
+      # A declared size above this is refused outright: one request cannot hold a whole quota
+      # (or, for a pre-auth upload, the platform's) by claiming an absurd size.
+      MAX_DECLARED_BYTES = 5 * (1024**3)
+
       included do
         before_action :hold_media_storage_quota
         after_action :link_media_storage_hold
@@ -25,6 +29,7 @@ module BetterTogether
       def hold_media_storage_quota
         bytes = declared_upload_bytes
         return unless bytes.positive?
+        return render_storage_limit_reached if bytes > MAX_DECLARED_BYTES
 
         actor = direct_upload_person
         @media_storage_hold = BetterTogether::Quotas.reserve!(
@@ -32,9 +37,13 @@ module BetterTogether
           idempotency_key: "media_storage:hold:#{SecureRandom.uuid}", actor:, ttl: 10.minutes
         )
       rescue BetterTogether::Quotas::QuotaExceeded
-        render json: { error: I18n.t('better_together.quotas.storage_limit_reached') }, status: :unprocessable_content
+        render_storage_limit_reached
       rescue StandardError => e
         BetterTogether::Quotas.record_failure(e, 'media_storage direct upload hold')
+      end
+
+      def render_storage_limit_reached
+        render json: { error: I18n.t('better_together.quotas.storage_limit_reached') }, status: :unprocessable_content
       end
 
       def link_media_storage_hold

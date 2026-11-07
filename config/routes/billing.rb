@@ -44,7 +44,7 @@ concern :billing_plans do
     resources :orders, only: %i[index show] do
       member do
         # Send the buyer to pay through a processor, and take them back (signed in, checked against the order).
-        get :pay
+        post :pay
         get :checkout_return
       end
       # The buyer says they sent a payment made outside the platform. Optional: the seller can confirm without it.
