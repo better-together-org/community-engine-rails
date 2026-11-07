@@ -66,7 +66,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @accounts.includes(:holder).each do |account| %>
+            <% @accounts.each do |account| %>
               <tr id="<%= dom_id(account) %>">
                 <th scope="row"><%= account.holder&.name || t('better_together.billing.credit.deleted_holder') %></th>
                 <td><%= account.currency %></td>

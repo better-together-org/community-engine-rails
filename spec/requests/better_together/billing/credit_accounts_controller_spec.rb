@@ -35,6 +35,23 @@ RSpec.describe BetterTogether::Billing::CreditAccountsController do
   context 'when signed in as a steward' do
     before { sign_in steward_user }
 
+    it 'does not run more queries per extra account with a balance' do
+      count_queries = lambda do
+        count = 0
+        counter = lambda do |*, payload|
+          count += 1 unless %w[SCHEMA TRANSACTION].include?(payload[:name]) || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/)
+        end
+        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get accounts_path }
+        count
+      end
+      give(buyer, 1500)
+      count_queries.call # warm up
+      before_count = count_queries.call
+      4.times { give(create(:better_together_person), 1000) }
+
+      expect(count_queries.call).to be <= before_count + 1
+    end
+
     it 'lists accounts that hold a balance, and the lookup form' do
       give(buyer, 1500)
 

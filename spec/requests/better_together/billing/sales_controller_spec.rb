@@ -93,4 +93,38 @@ RSpec.describe BetterTogether::Billing::SalesController do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe 'many sales' do
+    let(:sales_query_count) do
+      lambda do
+        count = 0
+        counter = lambda do |*, payload|
+          count += 1 unless %w[SCHEMA TRANSACTION].include?(payload[:name]) || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/)
+        end
+        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get sales_path }
+        count
+      end
+    end
+
+    it 'does not run more queries per extra sale' do
+      sign_in steward
+      sales_query_count.call # warm up
+      before_count = sales_query_count.call
+      4.times { place_order(buyer: create(:better_together_person)) }
+
+      expect(sales_query_count.call).to be <= before_count + 1
+    end
+
+    it 'shows one page at a time' do
+      sign_in steward
+      stub_const('BetterTogether::Billing::SalesController::PER_PAGE', 1)
+      place_order(buyer: create(:better_together_person))
+
+      get sales_path
+
+      expect(response.body.scan('id="billing-sales-table"').size).to eq(1)
+      expect(response.parsed_body.css('#billing-sales-table tbody tr').size).to eq(1)
+      expect(response.body).to include('billing-sales-pagination')
+    end
+  end
 end

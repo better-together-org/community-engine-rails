@@ -12,17 +12,14 @@ module BetterTogether
       include OwnerScoped
 
       Transition = OfflinePayments::Transition
+      PER_PAGE = 50
 
       before_action :set_offline_payment, only: %i[receive reject clear bounce]
       after_action :verify_authorized
 
       def index
         authorize BetterTogether::Billing::OfflinePayment
-        @offline_payments = policy_scope(BetterTogether::Billing::OfflinePayment).needing_attention.includes(order: :buyer)
-                                                                                 .sort_by do |offline|
-          [offline.claimed_by_buyer? ? 0 : 1,
-           offline.created_at]
-        end
+        @offline_payments = queue_scope.page(params[:page]).per(PER_PAGE)
       end
 
       def receive
@@ -42,6 +39,13 @@ module BetterTogether
       end
 
       private
+
+      # Claimed payments first, then oldest first, sorted and cut in the database.
+      def queue_scope
+        policy_scope(BetterTogether::Billing::OfflinePayment).needing_attention
+                                                             .includes(order: { buyer: :string_translations })
+                                                             .order(OfflinePayment.arel_table[:claimed_at].eq(nil), :created_at)
+      end
 
       def set_offline_payment
         @offline_payment = policy_scope(BetterTogether::Billing::OfflinePayment).find(params[:id])

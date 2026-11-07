@@ -19,8 +19,6 @@ RSpec.describe 'Billing routes' do # rubocop:disable RSpec/DescribeClass
 
   def pay_mount(route_set) = route_set.routes.find { |route| route.path.spec.to_s == '/pay' }
 
-  def request_for(path) = ActionDispatch::Request.new(Rack::MockRequest.env_for(path))
-
   it 'keeps billing routes out of routes.rb except the draw line' do
     billing_lines = routes_file.lines.grep(/billing|Pay::Engine/i).map(&:strip).reject { |line| line.start_with?('#') }
 
