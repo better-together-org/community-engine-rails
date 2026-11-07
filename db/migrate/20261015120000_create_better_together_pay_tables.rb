@@ -18,7 +18,13 @@
 class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   PLATFORMS_TABLE = :better_together_platforms
 
+  # The tables that carry tenant data and so must have a platform_id.
+  PLATFORM_TABLES = %i[pay_customers pay_merchants pay_payment_methods pay_subscriptions pay_charges].freeze
+
+  class ForeignPayTablesError < StandardError; end
+
   def up
+    refuse_foreign_pay_tables!
     create_customers
     create_merchants
     create_payment_methods
@@ -36,6 +42,18 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
   end
 
   private
+
+  # A host that already ran Pay's own migrations has these tables without a platform_id, the
+  # composite keys or text columns for encrypted data. Skipping them per table would leave the
+  # platform and encryption concerns failing later, so stop here and say what to do.
+  def refuse_foreign_pay_tables!
+    foreign = PLATFORM_TABLES.select { |table| table_exists?(table) && !column_exists?(table, :platform_id) }
+    return if foreign.empty?
+
+    raise ForeignPayTablesError, "#{foreign.join(', ')} already exist without platform_id (created by Pay's own migrations). " \
+                                 'Community Engine billing needs platform-bound Pay tables; migrate or drop them (no billing data ' \
+                                 'may exist yet) before running this migration.'
+  end
 
   def platform_reference(table)
     table.references :platform, null: false, type: :uuid, index: true,
