@@ -21,7 +21,7 @@ module BetterTogether
             next if order.cancelled?
 
             target = target_status
-            move_to(target) if target && target != order.status
+            move_to(target) if target && target != order.status && holds_again?(target)
           end
           order
         end
@@ -68,6 +68,20 @@ module BetterTogether
         end
 
         def refund_status = refunded_cents >= paid_cents ? 'refunded' : 'partially_refunded'
+
+        # An expired order gave its holds back, so paying it must take them again. If a line can
+        # no longer be held the order stays expired: the money is recorded and a steward refunds it.
+        def holds_again?(target)
+          return true unless order.expired? && %w[paid partially_paid].include?(target)
+
+          Order.transaction(requires_new: true) do
+            order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) }
+          end
+          true
+        rescue StandardError => e
+          Rails.logger.warn("[billing] expired order #{order.id} not revived: #{e.message}")
+          false
+        end
 
         def move_to(target)
           attributes = { status: target }

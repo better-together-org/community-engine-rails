@@ -36,6 +36,22 @@ RSpec.describe BetterTogether::Billing::SubscribersController do
       sign_in steward_user
     end
 
+    it 'does not run more queries per extra subscriber' do
+      count_queries = lambda do
+        count = 0
+        counter = lambda do |*, payload|
+          count += 1 unless %w[SCHEMA TRANSACTION].include?(payload[:name]) || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/)
+        end
+        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get list_path }
+        count
+      end
+      count_queries.call # warm up
+      before_count = count_queries.call
+      4.times { start_subscription(payer: create(:better_together_person)) }
+
+      expect(count_queries.call).to be <= before_count + 2
+    end
+
     it 'lists subscribers with a filter for overdue, lapsed, active and ended' do
       get list_path
 

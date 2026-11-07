@@ -7,12 +7,14 @@ module BetterTogether
     class SalesController < ApplicationController
       include OwnerScoped
 
+      PER_PAGE = 50
+
       before_action :set_order, only: %i[show return_payments cancel]
       after_action :verify_authorized
 
       def index
         authorize BetterTogether::Billing::Order, :sales?
-        @orders = platform_orders.includes(:buyer).newest_first
+        @orders = platform_orders.includes(buyer: :string_translations).newest_first.page(params[:page]).per(PER_PAGE)
       end
 
       def show

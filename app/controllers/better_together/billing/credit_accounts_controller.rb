@@ -28,11 +28,13 @@ module BetterTogether
 
       def accounts = billing_owner.billing_credit_accounts
 
+      def listed_with_holders = accounts.includes(holder: :string_translations)
+
       # The found person's accounts, else the accounts that hold a balance.
       def listed_accounts
-        return accounts.where(holder: @holder).order(:currency) if @holder
+        return listed_with_holders.where(holder: @holder).order(:currency) if @holder
 
-        accounts.where.not(balance_cents: 0).order(updated_at: :desc).limit(50)
+        listed_with_holders.where.not(balance_cents: 0).order(updated_at: :desc).limit(50)
       end
 
       # Exactly the handle, never a partial match, so this cannot be used to browse people.

@@ -26,7 +26,7 @@ module BetterTogether
         authorize @order
         redirect_to Checkout::Start.call(order: @order, success_url: checkout_return_billing_order_url(@order, locale: I18n.locale),
                                          cancel_url: billing_order_url(@order, locale: I18n.locale), payment: chosen_payment),
-                    allow_other_host: true
+                    allow_other_host: true, status: :see_other
       rescue Checkout::Start::Unavailable
         redirect_to billing_order_path(@order, locale: I18n.locale), alert: t('better_together.billing.orders.pay_unavailable')
       end

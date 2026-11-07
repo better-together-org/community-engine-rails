@@ -129,6 +129,11 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/payments\z})
     end
 
+    # Starting a payment creates a checkout session at the processor (an API call), so cap it per IP.
+    throttle('billing/order_pay/ip', limit: 20, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/pay\z})
+    end
+
     # A steward finding a person's store credit by handle, and giving credit. Cap lookups so they cannot be
     # used to test handles in bulk, and grants because each one tells the holder.
     throttle('billing/credit_lookup/ip', limit: 30, period: 1.minute) do |req|

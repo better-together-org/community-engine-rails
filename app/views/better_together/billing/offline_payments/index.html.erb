@@ -56,6 +56,7 @@
         </table>
       </div>
     </div>
+    <div id="billing-offline-queue-pagination" class="mt-3"><%= paginate @offline_payments %></div>
   <% else %>
     <p id="billing-offline-queue-empty" class="text-body-secondary"><%= t('better_together.billing.offline_payments.queue_empty') %></p>
   <% end %>

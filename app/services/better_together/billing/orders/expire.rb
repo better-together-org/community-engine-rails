@@ -21,6 +21,12 @@ module BetterTogether
         # Returns true when the order lapsed, false when it was left alone (paid meanwhile, not
         # yet due, or not waiting for payment).
         def call
+          DeadlockRetry.run { expire }
+        end
+
+        private
+
+        def expire
           order.with_lock do
             next false unless order.hold_expired?
             next hold_open if order.partly_paid?
@@ -33,8 +39,6 @@ module BetterTogether
             true
           end
         end
-
-        private
 
         attr_reader :order
 

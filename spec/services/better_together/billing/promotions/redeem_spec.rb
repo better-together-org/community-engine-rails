@@ -122,6 +122,14 @@ RSpec.describe BetterTogether::Billing::Promotions::Redeem do
     expect(redeem).to be_present
   end
 
+  it 'counts each failure with an atomic increment, not a read then a write' do
+    allow(memory_cache).to receive(:increment).and_call_original
+
+    expect { redeem(with: 'NOPE-NOPE-NOPE-NOPE') }.to raise_error(invalid)
+
+    expect(memory_cache).to have_received(:increment).once
+  end
+
   it 'counts failures per person, so one person cannot lock out another' do
     described_class::MAX_FAILURES.times { expect { redeem(with: 'NOPE-NOPE-NOPE-NOPE') }.to raise_error(invalid) }
 

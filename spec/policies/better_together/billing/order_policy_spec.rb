@@ -91,6 +91,10 @@ RSpec.describe BetterTogether::Billing::OrderPolicy do
       expect(described_class.new(steward, seller_order).sale?).to be(false)
     end
 
+    it 'fail closed for a record that cannot say who sold it' do
+      expect(described_class.new(steward, Object.new).sale?).to be(false)
+    end
+
     it 'are refused while billing is off' do
       allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
 

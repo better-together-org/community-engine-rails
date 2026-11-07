@@ -30,7 +30,7 @@ module BetterTogether
 
       # A steward looking at what the platform sells.
       def sales? = manage_billing?
-      def sale? = manage_billing? && record.try(:sold_by_platform?) != false
+      def sale? = manage_billing? && record.try(:sold_by_platform?) == true
       # The seller records money given back.
       def refund? = sale?
       # The seller returns what was paid toward a sale, and cancels one that will not be completed.
