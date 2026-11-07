@@ -89,6 +89,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
+- [Billing Entitlements and Quota Allowances](billing/entitlements_and_allowances.md) - What a plan gives (roles, feature access, quota allowances), one derivation from Pay's status, what is taken away at a lapse and what never is
 - [Billing Subscriptions and Renewals](billing/subscriptions_and_renewals.md) - Pay::Subscription as the one record, local renewals, periods that never drift, grace and lapse, and the payer and steward actions
 - [Billing Store Credit](billing/store_credit.md) - A ledger of credit a person holds with a platform: lots that expire, spending soonest-expiring first, refunds back to credit, and why credit pays whole orders only
 - [Billing Promotions](billing/promotions.md) - Promotion codes that give store credit: keyed-digest storage, shown once, one answer to every failure, and the limits on guessing
@@ -181,6 +182,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Purchase Agreement Flow](diagrams/source/billing_purchase_agreement_flow.mmd)
 - [Billing Queue Topology](diagrams/source/billing_queue_topology.mmd)
 - [Billing Schema ERD](diagrams/source/billing_schema_erd.mmd)
+- [Billing Entitlement Lifecycle Flow](diagrams/source/billing_entitlement_lifecycle_flow.mmd)
+- [Billing Entitlement Model](diagrams/source/billing_entitlement_model.mmd)
 - [Billing Subscription Lifecycle Flow](diagrams/source/billing_subscription_lifecycle_flow.mmd)
 - [Billing Subscription Model](diagrams/source/billing_subscription_model.mmd)
 - [Billing Store Credit Flow](diagrams/source/billing_store_credit_flow.mmd)

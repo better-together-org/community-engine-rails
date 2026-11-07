@@ -52,7 +52,13 @@ module BetterTogether
           term.periods.create!(platform_id: order.platform_id, sequence: 0, starts_at: anchor, ends_at: term.period_end(0), status: 'paid',
                                order:, paid_at: anchor)
           order.update!(subject: term, pay_subscription: term.pay_subscription)
+          sync_entitlement(term)
           term
+        end
+
+        # The subscription is committed before its terms exist, so the change hook found nothing to give: ask once the terms are there.
+        def sync_entitlement(term)
+          ActiveRecord.after_all_transactions_commit { SyncEntitlementJob.perform_later(term.pay_subscription_id) }
         end
 
         def plan = @plan ||= self.class.single_plan(order)

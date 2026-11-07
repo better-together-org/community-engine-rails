@@ -885,6 +885,26 @@ uk:
         view_page: Переглянути сторінку
         view_page_link: Натисніть тут, щоб переглянути сторінку
     billing:
+      allowances:
+        enforcement: Застосування
+        field_owner: Власник
+        field_quota: Квота
+        field_state: Стан
+        field_usage: Використання
+        intro: Наскільки суворо діє кожна квота і хто скільки використовує. Платні
+          плани підвищують ліміт особи чи спільноти; нічого збереженого не видаляється.
+        mode: Режим
+        mode_hard: 'Суворий: відмовляє у новому використанні понад ліміт'
+        mode_off: 'Вимкнено: навіть не рахується'
+        mode_shadow: 'Тінь: рахується, ніколи не відмовляє'
+        mode_soft: 'М’який: рахується й попереджає про перевищення'
+        none: Ніхто не має платної квоти й не перевищує ліміт.
+        over: Понад ліміт
+        refused: Не вдалося зберегти.
+        saved: Застосування збережено.
+        title: Квоти та використання
+        usage: Платні квоти та ті, хто перевищив ліміт
+        within: У межах ліміту
       checkout:
         accept: Я прочитав(ла) і приймаю «%{title}»
         already_accepted: Ви вже прийняли поточну версію.
@@ -957,6 +977,22 @@ uk:
         steward_title: Рахунки кредиту магазину
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
+      entitlements:
+        allowances: Квоти
+        for: 'Для: %{name}'
+        grace_until: Ваш платіж прострочено. Усе працює до %{date}; оплатіть до цієї
+          дати, щоб зберегти.
+        intro: Що ви маєте завдяки плану, який оплачуєте, і скільки з кожної квоти
+          використано.
+        meter: "%{used} з %{limit} використано (%{percent}%)"
+        meter_unlimited: Без обмежень
+        none: Ви ще нічого не маєте від плану.
+        status_active: Активний
+        status_grace: Прострочений
+        status_lapsed: Завершений
+        status_revoked: Повернено
+        title: Мій доступ
+        until: Діє до %{date}.
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -993,6 +1029,16 @@ uk:
         dispute_resolved:
           body: Спір за замовленням %{number} вирішено.
           title: Спір щодо платежу вирішено
+        entitlement_granted:
+          buyer:
+            body: Усе, що входить до вашого плану %{plan}, готове до використання.
+              Перегляньте в розділі «Мій доступ».
+            title: Ваш доступ %{plan} активний
+        entitlement_lapsed:
+          buyer:
+            body: Усе, що входило до вашого плану %{plan}, прибрано, але нічого з
+              вашого створеного не видалено. Оплатіть знову, щоб повернути.
+            title: Ваш доступ %{plan} завершився
         event_dead_lettered:
           body: Подію не вдалося обробити після кількох спроб. Перегляньте її.
           title: Подія виставлення рахунків потребує уваги
@@ -1279,6 +1325,39 @@ uk:
         one_time_participant_summary: Razovyi vnesok na hosted-dostup
         personal_beneficiary_label: Osobystyi dostup
         recurring_participant_summary: Postiinyi hosted-dostup i pidtrymka stewardship
+      plan_grants:
+        add: Додати
+        add_feature: Доступ до функції
+        add_quota: Більше квоти
+        add_role: Роль
+        added: Додано до плану.
+        amount_hint: В одиницях квоти (байти для сховища, токени для ШІ).
+        field_amount: Додаткова кількість
+        field_community: Спільнота (якщо спільнота)
+        field_feature: Функція
+        field_level: Рівень доступу
+        field_quota: Квота
+        field_role: Роль
+        field_where: Де
+        intro: Ті, хто оплачує цей план, отримують це, поки він оплачений. Коли він
+          спливає, прибирається лише те, що дав сам план; ролі та доступ, які вже
+          були, залишаються, а створене не видаляється.
+        none: Цей план ще нічого не включає.
+        place_a_community: Спільнота
+        place_community: спільнота %{name}
+        place_platform: Платформа
+        place_unknown: спільнота, якої більше немає
+        refused: Не вдалося додати. Перевірте вибір; план не може надавати роль, що
+          дозволяє керувати.
+        remove: Прибрати
+        remove_confirm: Прибрати це з плану? Ті, хто це має, втратять, якщо цього
+          не було в них раніше.
+        removed: Прибрано з плану.
+        role_hint: Пропонуються лише ролі без прав керування.
+        summary_feature: Доступ до %{feature} (%{level})
+        summary_quota: На %{amount} %{unit} більше для %{quota}
+        summary_role: Роль %{role} у %{where}
+        title: Що входить до цього плану
       plans:
         actions_heading: Дії
         beneficiary_placeholder: Хостинговий доступ

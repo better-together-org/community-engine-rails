@@ -49,6 +49,14 @@ module BetterTogether
         decision
       end
 
+      # What an owner has used of a quota type this period, and the limit it has. Read-only: it holds and changes
+      # nothing, so it is safe for a page to ask. Unlike a Decision, `used` is exact when over the limit.
+      def usage_for(type:, owner:)
+        type_class = Type.find(type)
+        quota = find_or_build_quota(type_class, owner)
+        { limit: quota.limit, used: QuotaBalance.committed(quota, period_key_for(type_class, Time.current)) }
+      end
+
       # Holds `amount` against the quota until it is settled or the hold expires. In `hard` mode the check
       # and the hold happen under the quota's lock, so two reservations racing for the last bytes cannot
       # both succeed. `enforce: false` records the hold without ever refusing it.

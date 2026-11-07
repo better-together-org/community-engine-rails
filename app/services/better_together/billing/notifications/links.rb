@@ -24,11 +24,21 @@ module BetterTogether
           return subscription_path(routes, notifier, term, locale) if term
 
           order = order_of(record)
-          return routes.billing_order_path(order, locale:) if order && notifier.audience == :buyer
-          return routes.billing_sale_path(order, locale:) if order
+          return order_path(routes, notifier, order, locale) if order
+
+          holder_path(routes, record, locale) || steward_path(routes, record, locale)
+        end
+
+        # A buyer goes to their order; a steward to the sale.
+        def order_path(routes, notifier, order, locale)
+          notifier.audience == :buyer ? routes.billing_order_path(order, locale:) : routes.billing_sale_path(order, locale:)
+        end
+
+        # What is the holder's own: their credit, and what a plan gives them.
+        def holder_path(routes, record, locale)
           return routes.billing_credit_path(locale:) if record.is_a?(CreditLot) || record.is_a?(CreditAccount)
 
-          steward_path(routes, record, locale)
+          routes.billing_entitlements_path(locale:) if record.is_a?(Entitlement)
         end
 
         def term_of(record)

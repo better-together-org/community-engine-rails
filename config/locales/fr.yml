@@ -904,6 +904,27 @@ fr:
         view_page: Voir la page
         view_page_link: Cliquez ici pour voir la page
     billing:
+      allowances:
+        enforcement: Application
+        field_owner: Propriétaire
+        field_quota: Quota
+        field_state: État
+        field_usage: Utilisation
+        intro: La rigueur appliquée à chaque quota, et qui utilise quoi. Les forfaits
+          payants relèvent la limite d’une personne ou d’une communauté ; rien de
+          ce qui est déjà stocké n’est supprimé.
+        mode: Mode
+        mode_hard: 'Strict : refuse tout nouvel usage au-delà de la limite'
+        mode_off: 'Désactivé : pas même compté'
+        mode_shadow: 'Observation : compté, jamais refusé'
+        mode_soft: 'Souple : compté, avertit en cas de dépassement'
+        none: Personne n’a de quota payant ni ne dépasse une limite.
+        over: Au-delà de la limite
+        refused: Cela n’a pas pu être enregistré.
+        saved: Application enregistrée.
+        title: Quotas et utilisation
+        usage: Quotas payants et personnes au-delà de leur limite
+        within: Dans la limite
       checkout:
         accept: J’ai lu et j’accepte %{title}
         already_accepted: Vous avez déjà accepté la version actuelle.
@@ -977,6 +998,22 @@ fr:
         steward_title: Comptes de crédit en magasin
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
+      entitlements:
+        allowances: Quotas
+        for: 'Pour : %{name}'
+        grace_until: Votre paiement est en retard. Tout continue de fonctionner jusqu’au
+          %{date} ; payez avant pour le conserver.
+        intro: Ce que vous avez grâce à un forfait que vous payez, et la part de chaque
+          quota utilisée.
+        meter: "%{used} sur %{limit} utilisés (%{percent} %)"
+        meter_unlimited: Aucune limite
+        none: Vous n'avez encore rien grâce à un forfait.
+        status_active: Actif
+        status_grace: En retard
+        status_lapsed: Terminé
+        status_revoked: Remboursé
+        title: Mon accès
+        until: Valable jusqu’au %{date}.
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1014,6 +1051,16 @@ fr:
         dispute_resolved:
           body: Le litige pour la commande %{number} a été réglé.
           title: Un litige de paiement a été réglé
+        entitlement_granted:
+          buyer:
+            body: Ce que comprend votre forfait %{plan} est prêt à être utilisé. Consultez-le
+              dans Mon accès.
+            title: Votre accès %{plan} est actif
+        entitlement_lapsed:
+          buyer:
+            body: Ce que comprenait votre forfait %{plan} a été retiré, et rien de
+              ce que vous avez créé n’a été supprimé. Payez à nouveau pour le retrouver.
+            title: Votre accès %{plan} a pris fin
         event_dead_lettered:
           body: Un événement de facturation n’a pas pu être traité après plusieurs
             essais. Veuillez l’examiner.
@@ -1323,6 +1370,39 @@ fr:
         one_time_participant_summary: Contribution unique a l'hebergement
         personal_beneficiary_label: Acces personnel
         recurring_participant_summary: Acces heberge continu et soutien de stewardship
+      plan_grants:
+        add: Ajouter
+        add_feature: Accès à une fonctionnalité
+        add_quota: Plus d’un quota
+        add_role: Un rôle
+        added: Ajouté au forfait.
+        amount_hint: Dans l’unité du quota (octets pour le stockage, jetons pour l’IA).
+        field_amount: Quantité supplémentaire
+        field_community: Communauté (si une communauté)
+        field_feature: Fonctionnalité
+        field_level: Niveau d’accès
+        field_quota: Quota
+        field_role: Rôle
+        field_where: Où
+        intro: Les personnes qui paient ce forfait les obtiennent tant qu’il est payé.
+          À l’expiration, seul ce que le forfait a donné est retiré ; les rôles et
+          accès déjà détenus restent, et rien de ce qui a été créé n’est supprimé.
+        none: Ce forfait ne comprend encore rien.
+        place_a_community: Une communauté
+        place_community: la communauté %{name}
+        place_platform: La plateforme
+        place_unknown: une communauté qui n’existe plus
+        refused: Cela n’a pas pu être ajouté. Vérifiez les choix ; un rôle qui peut
+          gérer des éléments ne peut pas être donné par un forfait.
+        remove: Retirer
+        remove_confirm: Retirer ceci du forfait ? Les personnes qui l’ont le perdent,
+          sauf si elles l’avaient déjà avant.
+        removed: Retiré du forfait.
+        role_hint: Seuls les rôles qui ne peuvent pas gérer sont proposés.
+        summary_feature: Accès à %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} de plus pour %{quota}"
+        summary_role: Le rôle %{role} dans %{where}
+        title: Ce que comprend ce forfait
       plans:
         actions_heading: Actions
         beneficiary_placeholder: Accès hébergé

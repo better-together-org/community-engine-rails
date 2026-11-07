@@ -73,6 +73,11 @@ module BetterTogether
       # The steward chose to link a price that already exists instead of creating one.
       attribute :link_existing, :boolean, default: false
 
+      # What the plan includes (roles, feature access, quota allowances); see Entitlements.
+      has_many :plan_grants, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::PlanGrant', inverse_of: :plan,
+                                                                   dependent: :restrict_with_error
+      has_many :entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
+
       before_validation :normalize_payment_fields
 
       validates :identifier, :name, :currency, presence: true

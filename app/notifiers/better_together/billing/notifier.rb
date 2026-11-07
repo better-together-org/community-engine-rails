@@ -71,8 +71,10 @@ module BetterTogether
       def interpolations
         order = Notifications::Links.order_of(record)
         { number: order&.number.to_s, amount: amount_text(order), platform: record.try(:platform)&.name.to_s,
-          method: method_label, expires: expiry_text, plan: subscription_term&.plan&.name.to_s, date: date_text }
+          method: method_label, expires: expiry_text, plan: plan_name, date: date_text }
       end
+
+      def plan_name = (subscription_term&.plan || record.try(:plan))&.name.to_s
 
       # The subscription a renewal notice is about.
       def subscription_term
@@ -84,6 +86,8 @@ module BetterTogether
 
       # The date that matters for the kind: the end of the grace, of the subscription, or of the current period.
       def date_text
+        return entitlement_date_text if record.is_a?(Entitlement)
+
         term = subscription_term
         return '' unless term
 
@@ -92,6 +96,12 @@ module BetterTogether
                when 'subscription_canceled' then term.pay_subscription.ends_at
                else term.pay_subscription.current_period_end
                end
+        date ? I18n.l(date.to_date, format: :long, locale:) : ''
+      end
+
+      # When the access an entitlement gives runs out (or ran out), if it does.
+      def entitlement_date_text
+        date = record.grace_ends_at || record.ends_at
         date ? I18n.l(date.to_date, format: :long, locale:) : ''
       end
 

@@ -41,6 +41,13 @@ erDiagram
   BILLING_PLANS ||--o{ BILLING_SUBSCRIPTION_TERMS : "(plan_id, platform_id) composite FK"
   BILLING_SUBSCRIPTION_TERMS ||--o{ BILLING_SUBSCRIPTION_PERIODS : "(subscription_term_id, platform_id) composite FK"
   BILLING_ORDERS o|--o| BILLING_SUBSCRIPTION_PERIODS : "(order_id, platform_id) composite FK, invoices one period"
+  EXT_PLATFORM ||--o{ BILLING_PLAN_GRANTS : "platform / platform_id"
+  BILLING_PLANS ||--o{ BILLING_PLAN_GRANTS : "(plan_id, platform_id) composite FK"
+  EXT_PLATFORM ||--o{ BILLING_ENTITLEMENTS : "platform / platform_id"
+  BILLING_PLANS ||--o{ BILLING_ENTITLEMENTS : "(plan_id, platform_id) composite FK"
+  PAY_SUBSCRIPTIONS o|--o| BILLING_ENTITLEMENTS : "(pay_subscription_id, platform_id) composite FK, source"
+  BILLING_ORDERS o|--o| BILLING_ENTITLEMENTS : "(order_id, platform_id) composite FK, source (exactly one source)"
+  BILLING_ENTITLEMENTS ||--o{ BILLING_ENTITLEMENT_GRANTS : "(entitlement_id, platform_id) composite FK"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
   BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
@@ -405,5 +412,37 @@ erDiagram
     integer sequence "unique per subscription"
     datetime starts_at
     datetime ends_at
+    string status
+  }
+  BILLING_PLAN_GRANTS {
+    uuid id PK
+    uuid platform_id FK
+    uuid plan_id FK
+    string kind "allow-list"
+    jsonb parameters
+    integer position
+  }
+  BILLING_ENTITLEMENTS {
+    uuid id PK
+    uuid platform_id FK
+    uuid plan_id FK
+    string beneficiary_type
+    uuid beneficiary_id
+    uuid pay_subscription_id FK
+    uuid order_id FK
+    string status "active grace lapsed revoked"
+    datetime ends_at
+    datetime grace_ends_at
+  }
+  BILLING_ENTITLEMENT_GRANTS {
+    uuid id PK
+    uuid platform_id FK
+    uuid entitlement_id FK
+    string grant_key "unique per entitlement"
+    string kind
+    jsonb parameters
+    boolean owned "made by the entitlement, or only found"
+    string quota_type
+    bigint amount
     string status
   }
