@@ -34,10 +34,11 @@ Billing tells people what is happening through the same Noticed notifications th
 | `settings_changed` | operator | yes | a payment method or where buyers pay was changed |
 | `event_dead_lettered` | operator | yes | a billing event could not be processed after several tries |
 | `plan_sync_failed` | operator | yes | a plan could not be sent to the processor |
+| `credit_granted` | holder | no | a steward gave the person store credit (how much, and until when if it expires) |
 
 The offline payment kinds are written about in [offline_payment_methods.md](offline_payment_methods.md). An order that lapses is told to both sides by `order_expired`, so an expiring offline payment does not send a second notice. Neither side's notice gates the other's action: a seller is told of a new order the moment it is placed, and a buyer is told of a confirmation even if they never claimed.
 
-**Audiences.** `buyer` is the person who placed the order. `seller` is whoever may manage billing for the platform that sold it, found by the `manage_platform` permission (the question `PlanPolicy` asks), not by a role name. `operator` is the same people, for something about how billing itself is working. The person who just did the thing is left out. A person who is both buyer and steward is told once per thing, not twice. Orders sold by a community or person have no platform managers to tell; their sellers will be told when community billing exists.
+**Audiences.** `buyer` is the person who placed the order. `seller` is whoever may manage billing for the platform that sold it, found by the `manage_platform` permission (the question `PlanPolicy` asks), not by a role name. `operator` is the same people, for something about how billing itself is working. `holder` is the person whose store credit it is. The person who just did the thing is left out. A person who is both buyer and steward is told once per thing, not twice. Orders sold by a community or person have no platform managers to tell; their sellers will be told when community billing exists.
 
 **Critical.** A critical notice always shows in the app and is emailed even to someone who turned emails off: a failed payment, a payment that needs their action, a dispute, a changed payment destination, a broken pipeline. Everything else follows `notify_by_email`.
 

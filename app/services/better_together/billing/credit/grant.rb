@@ -44,8 +44,14 @@ module BetterTogether
 
         def grant
           lot = account.lots.create!(platform_id: platform.id, granted_by: actor, remaining_cents: amount_cents, **lot_attributes)
-          Credit.post!(account:, lot:, kind: 'grant', amount_cents:, transaction_key: idempotency_key, actor:, source:, note: lot.note)
+          record_entry(lot)
           lot
+        end
+
+        # The entry for the new lot; a person who gave it is the actor, and the holder is told.
+        def record_entry(lot)
+          Credit.post!(account:, lot:, kind: 'grant', amount_cents:, transaction_key: idempotency_key, actor:, source:, note: lot.note)
+          Notifications.deliver('credit_granted', subject: lot, actor:) if actor
         end
 
         def check!

@@ -312,6 +312,9 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::OrderClaimsController
         BetterTogether::Billing::SaleRefundsController
         BetterTogether::Billing::WalkUpSalesController
+        BetterTogether::Billing::CreditsController
+        BetterTogether::Billing::CreditAccountsController
+        BetterTogether::Billing::CreditGrantsController
       ]
     },
     {

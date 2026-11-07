@@ -61,6 +61,7 @@ module BetterTogether
       end
 
       def message_for(part)
+        part = :body_expiring if part == :body && expiring_credit?
         I18n.with_locale(locale) do
           I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}",
                  default: [:"better_together.billing.notifications.#{kind}.#{part}"], **interpolations)
@@ -69,9 +70,21 @@ module BetterTogether
 
       def interpolations
         order = Notifications::Links.order_of(record)
-        { number: order&.number.to_s, amount: money(order&.total_cents, order&.currency), platform: record.try(:platform)&.name.to_s,
-          method: method_label }
+        { number: order&.number.to_s, amount: amount_text(order), platform: record.try(:platform)&.name.to_s,
+          method: method_label, expires: expiry_text }
       end
+
+      # An order's total, or the amount of credit a lot adds.
+      def amount_text(order)
+        return money(record.amount_cents, record.account.currency) if record.is_a?(CreditLot)
+
+        money(order&.total_cents, order&.currency)
+      end
+
+      # Credit that lapses says when; credit that does not says nothing about it.
+      def expiring_credit? = record.is_a?(CreditLot) && record.expires_at.present?
+
+      def expiry_text = expiring_credit? ? I18n.l(record.expires_at.to_date, format: :long, locale:) : ''
 
       def method_label
         name = record.try(:processor)

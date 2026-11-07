@@ -23,6 +23,7 @@ module BetterTogether
           order = order_of(record)
           return routes.billing_order_path(order, locale:) if order && notifier.audience == :buyer
           return routes.billing_sale_path(order, locale:) if order
+          return routes.billing_credit_path(locale:) if record.is_a?(CreditLot) || record.is_a?(CreditAccount)
 
           steward_path(routes, record, locale)
         end

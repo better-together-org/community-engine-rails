@@ -922,6 +922,55 @@ es:
           para esta compra.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
+      credit:
+        any_purpose: Todo lo que vende la plataforma
+        balance_line: 'Saldo: %{amount} (%{currency})'
+        deleted_holder: "(persona eliminada)"
+        field_amount: Otorgado
+        field_balance: Saldo
+        field_currency: Moneda
+        field_expires: Vence
+        field_for: Puede pagar
+        field_holder: Persona
+        field_origin: De dónde viene
+        field_remaining: Queda
+        grant_amount: Importe
+        grant_currency: Moneda
+        grant_expires: Vence después de (días)
+        grant_expires_hint: Déjalo vacío para un crédito que no vence.
+        grant_note: Nota (opcional)
+        grant_refused: No se pudo otorgar ese crédito. Revisa el importe; no puedes
+          otorgarte crédito a ti mismo.
+        grant_submit: Otorgar crédito
+        granted: Crédito otorgado.
+        history: Historial
+        history_caption: Lo que ha pasado con este crédito, lo más reciente primero
+        intro: Crédito que tienes con %{platform}. Paga lo que la propia plataforma
+          vende, por completo, y una parte puede vencer.
+        kind_adjust: Ajustado
+        kind_expire: Vencido
+        kind_forfeit: Perdido
+        kind_grant: Crédito añadido
+        kind_spend: Gastado en un pedido
+        kind_spend_reversal: Devuelto tras un reembolso
+        lookup_failed: No hay nadie con ese identificador.
+        lookup_hint: El identificador completo, exacto. No hay búsqueda.
+        lookup_label: Identificador de la persona
+        lookup_submit: Buscar
+        lots_caption: Crédito que tienes, el que vence antes primero
+        never_expires: No vence
+        no_accounts: Nadie tiene crédito de la tienda todavía.
+        none: No tienes crédito de la tienda.
+        origin_adjustment: Ajuste
+        origin_promotion: Promoción
+        origin_refund: Reembolso
+        origin_steward_grant: Otorgado por un administrador
+        steward_intro: 'Encuentra a una persona por su identificador exacto para ver
+          su crédito y darle más. El crédito que otorgas es dinero de la plataforma:
+          no puedes dártelo a ti mismo.'
+        steward_title: Cuentas de crédito de la tienda
+        title: Crédito de la tienda
+        usable: Puedes gastar %{amount}
       notifications:
         cheque_bounced:
           buyer:
@@ -941,6 +990,12 @@ es:
           body: Hay un pago de %{amount} por %{method} pendiente. Si lo recibió, márquelo
             como recibido; si no, puede rechazarlo.
           title: El pedido %{number} sigue esperándole
+        credit_granted:
+          holder:
+            body: Es tuyo para gastar en lo que vende %{platform}.
+            body_expiring: Es tuyo para gastar en lo que vende %{platform}, hasta
+              el %{expires}.
+            title: Tienes %{amount} en crédito de la tienda
         dispute_opened:
           body: Un comprador disputó un pago del pedido %{number}. Revíselo.
           title: Se disputó un pago

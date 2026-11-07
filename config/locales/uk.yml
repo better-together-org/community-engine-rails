@@ -908,6 +908,55 @@ uk:
           покупки.
         unavailable_not_enabled: Наразі тут недоступно.
         unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
+      credit:
+        any_purpose: Усе, що продає платформа
+        balance_line: 'Баланс: %{amount} (%{currency})'
+        deleted_holder: "(особу видалено)"
+        field_amount: Надано
+        field_balance: Баланс
+        field_currency: Валюта
+        field_expires: Спливає
+        field_for: Може оплатити
+        field_holder: Особа
+        field_origin: Звідки він
+        field_remaining: Залишок
+        grant_amount: Сума
+        grant_currency: Валюта
+        grant_expires: Спливає через (днів)
+        grant_expires_hint: Залиште порожнім для кредиту, що не спливає.
+        grant_note: Примітка (необов'язково)
+        grant_refused: Цей кредит не вдалося надати. Перевірте суму; собі кредит надати
+          не можна.
+        grant_submit: Надати кредит
+        granted: Кредит надано.
+        history: Історія
+        history_caption: Що відбувалося з цим кредитом, спочатку найновіше
+        intro: Кредит, який ви маєте на %{platform}. Він повністю оплачує те, що продає
+          сама платформа, і частина може спливти.
+        kind_adjust: Скориговано
+        kind_expire: Спливло
+        kind_forfeit: Втрачено
+        kind_grant: Кредит додано
+        kind_spend: Витрачено на замовлення
+        kind_spend_reversal: Повернено після відшкодування
+        lookup_failed: Немає нікого з таким ідентифікатором.
+        lookup_hint: Повний ідентифікатор, точно. Пошуку немає.
+        lookup_label: Ідентифікатор особи
+        lookup_submit: Знайти
+        lots_caption: Кредит, який ви маєте, спочатку той, що спливає раніше
+        never_expires: Не спливає
+        no_accounts: Ніхто ще не має кредиту магазину.
+        none: У вас немає кредиту магазину.
+        origin_adjustment: Коригування
+        origin_promotion: Акція
+        origin_refund: Повернення
+        origin_steward_grant: Надано адміністратором
+        steward_intro: 'Знайдіть особу за точним ідентифікатором, щоб побачити її
+          кредит і надати більше. Наданий кредит — гроші платформи: собі його надати
+          не можна.'
+        steward_title: Рахунки кредиту магазину
+        title: Кредит магазину
+        usable: Ви можете витратити %{amount}
       notifications:
         cheque_bounced:
           buyer:
@@ -927,6 +976,12 @@ uk:
           body: Оплата %{amount} через %{method} очікує. Якщо ви її отримали, позначте
             як отриману; якщо ні, можете відхилити.
           title: Замовлення %{number} усе ще чекає на вас
+        credit_granted:
+          holder:
+            body: Ви можете витратити його на те, що продає %{platform}.
+            body_expiring: Ви можете витратити його на те, що продає %{platform},
+              до %{expires}.
+            title: У вас є %{amount} кредиту магазину
         dispute_opened:
           body: Покупець оскаржив платіж за замовлення %{number}. Перегляньте його.
           title: Платіж оскаржено
