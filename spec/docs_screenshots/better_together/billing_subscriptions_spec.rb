@@ -23,6 +23,8 @@ RSpec.describe 'Documentation screenshots for subscriptions', # rubocop:disable 
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                     settings: { 'instructions' => 'At the hall' })
   end
 
   after { Current.platform = nil }

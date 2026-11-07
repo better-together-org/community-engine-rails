@@ -269,6 +269,7 @@ flowchart TB
     BetterTogether__Billing__OrderLine_polymorphic_summary["Billing::OrderLine\ntarget: purchasable"]
     BetterTogether__Billing__Plan_polymorphic_summary["Billing::Plan\ntarget: seller"]
     BetterTogether__Billing__ProcessorSetting_polymorphic_summary["Billing::ProcessorSetting\ntarget: seller"]
+    BetterTogether__Billing__SubscriptionTerm_polymorphic_summary["Billing::SubscriptionTerm\ntarget: beneficiary"]
     billing_polymorphic_anchor ~~~ BetterTogether__Billing__AgreementRequirement_polymorphic_summary
     BetterTogether__Billing__AgreementRequirement_polymorphic_summary ~~~ BetterTogether__Billing__CreditEntry_polymorphic_summary
     BetterTogether__Billing__CreditEntry_polymorphic_summary ~~~ BetterTogether__Billing__Event_polymorphic_summary
@@ -277,6 +278,7 @@ flowchart TB
     BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary ~~~ BetterTogether__Billing__OrderLine_polymorphic_summary
     BetterTogether__Billing__OrderLine_polymorphic_summary ~~~ BetterTogether__Billing__Plan_polymorphic_summary
     BetterTogether__Billing__Plan_polymorphic_summary ~~~ BetterTogether__Billing__ProcessorSetting_polymorphic_summary
+    BetterTogether__Billing__ProcessorSetting_polymorphic_summary ~~~ BetterTogether__Billing__SubscriptionTerm_polymorphic_summary
   end
 
   subgraph shared_supporting["Shared and supporting runtime surfaces"]
