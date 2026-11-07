@@ -6,6 +6,15 @@
   <h1 class="mb-2"><%= t('better_together.billing.credit.title') %></h1>
   <p class="text-body-secondary mb-4"><%= t('better_together.billing.credit.intro', platform: billing_owner.name) %></p>
 
+  <%= form_with url: billing_promotion_redemptions_path(locale: I18n.locale), method: :post, id: 'billing-promotion-redeem-form', class: 'card card-body mb-4' do %>
+    <%= label_tag 'billing-promotion-code', t('better_together.billing.promotions.code_label'), class: 'form-label' %>
+    <div class="input-group">
+      <%= text_field_tag :promotion_code, nil, id: 'billing-promotion-code', class: 'form-control', autocomplete: 'off', autocapitalize: 'characters', spellcheck: false, required: true %>
+      <%= submit_tag t('better_together.billing.promotions.redeem'), id: 'billing-promotion-redeem-btn', class: 'btn btn-outline-primary', name: nil %>
+    </div>
+    <div class="form-text"><%= t('better_together.billing.promotions.code_hint') %></div>
+  <% end %>
+
   <% if @accounts.any? %>
     <% @accounts.each do |account| %>
       <section id="<%= dom_id(account) %>" class="card mb-4 billing-credit-account" aria-labelledby="<%= dom_id(account, :heading) %>">

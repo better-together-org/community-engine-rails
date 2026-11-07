@@ -149,6 +149,7 @@ module BetterTogether
                                              dependent: :restrict_with_error
     has_many :billing_offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', dependent: :restrict_with_error
     has_many :billing_orders, class_name: 'BetterTogether::Billing::Order', dependent: :restrict_with_error
+    has_many :billing_promotions, class_name: 'BetterTogether::Billing::Promotion', dependent: :restrict_with_error
     has_many :billing_processor_settings, class_name: 'BetterTogether::Billing::ProcessorSetting',
                                           dependent: :restrict_with_error
     has_many :billing_plans, class_name: 'BetterTogether::Billing::Plan', dependent: :restrict_with_error

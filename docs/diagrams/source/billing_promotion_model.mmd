@@ -1,0 +1,27 @@
+%% Billing — promotions. The code is never stored, only a keyed digest.
+classDiagram
+  class Promotion {
+    +name
+    +code_digest  HMAC-SHA256, unique per platform
+    +amount_cents
+    +currency
+    +credit_expires_after_days
+    +purposes[]
+    +starts_at / ends_at
+    +max_redemptions
+    +redemptions_count
+    +new_members_only
+    +active
+  }
+  class PromotionRedemption {
+    unique per promotion and person
+    append-only
+  }
+  class CreditLot {
+    +origin promotion
+    +promotional true
+  }
+  Platform "1" --> "*" Promotion
+  Promotion "1" --> "*" PromotionRedemption
+  PromotionRedemption "1" --> "1" CreditLot
+  Person "0..1" --> "*" PromotionRedemption

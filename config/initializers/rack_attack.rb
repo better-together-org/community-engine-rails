@@ -133,6 +133,12 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/credit_grants/?\z})
     end
 
+    # Redeeming a promotion code. Guessing a code is the attack, so cap attempts per address (the service
+    # also locks a person out after repeated failures).
+    throttle('billing/promotion_redemptions/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/promotion_redemptions/?\z})
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).

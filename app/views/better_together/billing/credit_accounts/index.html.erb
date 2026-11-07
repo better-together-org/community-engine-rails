@@ -4,7 +4,8 @@
 
 <div id="billing-credit-accounts-page" class="container my-4">
   <h1 class="mb-2"><%= t('better_together.billing.credit.steward_title') %></h1>
-  <p class="text-body-secondary mb-4"><%= t('better_together.billing.credit.steward_intro') %></p>
+  <p class="text-body-secondary mb-3"><%= t('better_together.billing.credit.steward_intro') %></p>
+  <p class="mb-4"><%= link_to t('better_together.billing.promotions.index_title'), billing_promotions_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-promotions-link' %></p>
 
   <%= form_with url: billing_credit_accounts_path(locale: I18n.locale), method: :get, id: 'billing-credit-lookup-form', class: 'row g-2 mb-4' do %>
     <div class="col-md-6">
