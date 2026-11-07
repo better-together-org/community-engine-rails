@@ -40,6 +40,26 @@ Implement `processor_name` (it must equal the name you register under; a mismatc
 
 Core owns idempotency keys and money state. Money-moving calls always receive an `idempotency_key` that the adapter must pass through to the processor.
 
+## Settlement kinds: remote, manual and internal
+
+Not every way of paying goes through a payment vendor. An adapter says how money reaches the seller with `settlement_kind`, and the contract treats the three kinds differently.
+
+| Kind | Examples | Who knows the payment happened |
+|---|---|---|
+| `remote` (default) | Stripe, Braintree | The processor, by webhook |
+| `manual` | cash, cheque, e-transfer | The seller, who confirms receipt. Core owns the state machine; the adapter only describes the method |
+| `internal` | store credit | A ledger inside Community Engine |
+
+A manual adapter advertises the `offline_settlement` capability (and only a manual adapter may). `verify!` rejects the mismatch. Manual adapters also declare:
+
+- `recurring_mode`: `automatic` (the processor renews), `manual` (each period is a new pending payment the seller confirms) or `none`. Manual methods are `manual`.
+- `supported_countries`: ISO 3166 alpha-2 codes, or `nil` for anywhere (e-transfer is `['CA']`). Core hides the method or refuses to enable it outside them.
+- `fee_collectible?`: false for every manual method, because the platform can neither track nor take a fee on a payment made outside it. Reports show such sales as uncollected rather than zero.
+- `instruction_fields`: the `Billing::InstructionField`s a seller fills in so buyers know how to pay (a payee name, an e-transfer address). Values are stored encrypted and shown only on the buyer's own order.
+- `instructions_for(context:, setting:, order:)`: what the buyer is shown. It must never be logged or put in an email.
+
+The contract also gains two capabilities used by every payment kind: `refunds` (`refund`) and `transfers` (`transfer`, for paying a seller out). Both carry `context:` and an `idempotency_key`.
+
 ## Event pipeline
 
 Processors deliver webhooks through Pay. Core logs, attributes, retries and replays them; the adapter only understands the vendor payload.
@@ -89,26 +109,6 @@ It **must be idempotent**. A job that fails after the adapter acted is retried, 
 Raw payloads are kept for `BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS` (default 30) after processing. A daily job then replaces each with `adapter.sanitize_payload(payload)`. Redaction fails closed: if the adapter is gone, cannot be built, raises, or returns something that is not a Hash, the payload is replaced with just `id` and `type`, so a broken adapter never leaves a raw payload behind. Sanitizers must remove personal data and secrets.
 
 Pay keeps the raw delivery in `pay_webhooks` until it is processed. A daily job (`PruneStalePayWebhooksJob`) deletes deliveries that are still there after the same retention window.
-
-## Settlement kinds: remote, manual and internal
-
-Not every way of paying goes through a payment vendor. An adapter says how money reaches the seller with `settlement_kind`, and the contract treats the three kinds differently.
-
-| Kind | Examples | Who knows the payment happened |
-|---|---|---|
-| `remote` (default) | Stripe, Braintree | The processor, by webhook |
-| `manual` | cash, cheque, e-transfer | The seller, who confirms receipt. Core owns the state machine; the adapter only describes the method |
-| `internal` | store credit | A ledger inside Community Engine |
-
-A manual adapter advertises the `offline_settlement` capability (and only a manual adapter may). `verify!` rejects the mismatch. Manual adapters also declare:
-
-- `recurring_mode`: `automatic` (the processor renews), `manual` (each period is a new pending payment the seller confirms) or `none`. Manual methods are `manual`.
-- `supported_countries`: ISO 3166 alpha-2 codes, or `nil` for anywhere (e-transfer is `['CA']`). Core hides the method or refuses to enable it outside them.
-- `fee_collectible?`: false for every manual method, because the platform can neither track nor take a fee on a payment made outside it. Reports show such sales as uncollected rather than zero.
-- `instruction_fields`: the `Billing::InstructionField`s a seller fills in so buyers know how to pay (a payee name, an e-transfer address). Values are stored encrypted and shown only on the buyer's own order.
-- `instructions_for(context:, setting:, order:)`: what the buyer is shown. It must never be logged or put in an email.
-
-The contract also gains two capabilities used by every payment kind: `refunds` (`refund`) and `transfers` (`transfer`, for paying a seller out). Both carry `context:` and an `idempotency_key`.
 
 ## Diagram
 
