@@ -1,0 +1,11 @@
+{
+  "name": "mention_avatar_spacing_plain",
+  "device": "mobile",
+  "url": "/en/posts/harbour-update",
+  "title": "Harbour Update | Posts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "mention_avatar_spacing",
+  "flow": "plain",
+  "source_spec": "./spec/docs_screenshots/better_together/mention_avatar_spacing_spec.rb"
+}

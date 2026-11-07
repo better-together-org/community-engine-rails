@@ -1,0 +1,12 @@
+<%# locals: (panel:) -%>
+<footer id="weather-attribution" class="small text-muted border-top pt-3">
+  <% if panel.attribution.present? %>
+    <p class="mb-1">
+      <%= panel.attribution %>
+      <% if panel.licence_url.present? %>
+        (<%= link_to t('better_together.weather.panel.licence'), panel.licence_url, rel: 'noopener noreferrer', target: '_blank', id: 'weather-licence-link' %>)
+      <% end %>
+    </p>
+  <% end %>
+  <p class="mb-0"><%= t('better_together.weather.panel.disclaimer') %></p>
+</footer>

@@ -37,7 +37,8 @@ module BetterTogether
     end
 
     def role_permission_summary(role, limit: 3)
-      permissions = role.resource_permissions.order(:resource_type, :position, :identifier)
+      # Sorted in Ruby so the preloaded association is used; `.order` would query once per role.
+      permissions = role.resource_permissions.sort_by { |p| [p.resource_type.to_s, p.position.to_i, p.identifier.to_s] }
       labels = permissions.first(limit).map { |permission| permission_display_name(permission) }
       remaining = permissions.size - labels.size
 

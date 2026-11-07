@@ -36,6 +36,7 @@ jobs:
     env:
       TARGET_BRANCH: ${{ matrix.target_branch }}
       GH_TOKEN: ${{ secrets.COMPAT_SYNC_TOKEN }}
+      NORMALIZE_HEADLINE: "chore(compat): normalize ActiveRecord versions to 7.2"
     steps:
       - name: Require sync token
         shell: bash
@@ -75,17 +76,38 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B "${sync_branch}" "origin/${TARGET_BRANCH}"
-          if ! git merge --no-ff origin/main -m "chore(compat): merge main into ${TARGET_BRANCH}"; then
-            git merge --abort || true
-            echo "::error::Merging main into ${TARGET_BRANCH} conflicts. Resolve it by hand on a branch off ${TARGET_BRANCH}."
-            exit 1
+          merge_msg="chore(compat): merge main into ${TARGET_BRANCH}"
+          if ! git merge --no-ff origin/main -m "${merge_msg}"; then
+            # The schema header (ActiveRecord::Schema[x.y]) and version differ per lane, so
+            # both sides edit the same lines. The schema is generated from migrations and
+            # the lane's version is rewritten afterwards, so take main's file when that is
+            # the only conflict. Anything else still needs a human.
+            conflicts="$(git diff --name-only --diff-filter=U)"
+            if [[ "${conflicts}" == "spec/dummy/db/schema.rb" ]]; then
+              git checkout --theirs spec/dummy/db/schema.rb
+              git add spec/dummy/db/schema.rb
+              git commit --no-edit -q
+              echo "::notice::Resolved schema.rb conflict in favor of main for ${TARGET_BRANCH}."
+            else
+              echo "Conflicting files: ${conflicts}"
+              git merge --abort || true
+              echo "::error::Merging main into ${TARGET_BRANCH} conflicts. Resolve it by hand on a branch off ${TARGET_BRANCH}."
+              exit 1
+            fi
           fi
 
           # Skip the push (and the CI re-run) when the remote sync branch is
           # already the merge of the same two tips.
-          if git fetch origin "${sync_branch}" 2>/dev/null \
-            && [[ "$(git rev-parse "origin/${sync_branch}^1" 2>/dev/null)" == "$(git rev-parse "origin/${TARGET_BRANCH}")" ]] \
-            && [[ "$(git rev-parse "origin/${sync_branch}^2" 2>/dev/null)" == "$(git rev-parse origin/main)" ]]; then
+          # A signed "normalize" commit may sit on top of the merge; look through it.
+          if git fetch origin "${sync_branch}" 2>/dev/null; then
+            merge_ref="origin/${sync_branch}"
+            if [[ "$(git log -1 --format=%s "${merge_ref}")" == "${NORMALIZE_HEADLINE}" ]]; then
+              merge_ref="${merge_ref}~1"
+            fi
+          fi
+          if [[ -n "${merge_ref:-}" ]] \
+            && [[ "$(git rev-parse "${merge_ref}^1" 2>/dev/null)" == "$(git rev-parse "origin/${TARGET_BRANCH}")" ]] \
+            && [[ "$(git rev-parse "${merge_ref}^2" 2>/dev/null)" == "$(git rev-parse origin/main)" ]]; then
             echo "::notice::${sync_branch} is already current."
             echo "action=reuse" >> "${GITHUB_OUTPUT}"
             exit 0
@@ -93,6 +115,24 @@ jobs:
 
           git push --force origin "${sync_branch}"
           echo "action=pushed" >> "${GITHUB_OUTPUT}"
+
+      # main uses the newest ActiveRecord schema/migration version (8.x); the 7.2 and
+      # 8.0 lanes cannot load it. Rewrite it to 7.2 as a GitHub-signed commit (a
+      # runner-side git commit would be unsigned), the same way i18n-health does.
+      - name: Normalize ActiveRecord versions (Rails 7.2 and 8.0 lanes)
+        if: steps.build.outputs.action == 'pushed' && (matrix.target_branch == 'compat/rails-7.2' || matrix.target_branch == 'compat/rails-8.0')
+        shell: bash
+        env:
+          BRANCH: ${{ steps.build.outputs.sync_branch }}
+        run: |
+          set -euo pipefail
+          changed="$(bin/normalize-ar-versions -v 7.2)"
+          if [[ -z "${changed}" ]]; then
+            echo "::notice::No ActiveRecord version rewrites needed on ${BRANCH}."
+            exit 0
+          fi
+          echo "Rewrote: ${changed}"
+          bin/ci-signed-commit "${NORMALIZE_HEADLINE}" spec/dummy/db/schema.rb db/migrate
 
       - name: Open PR if none exists
         if: steps.build.outputs.action == 'pushed' || steps.build.outputs.action == 'reuse'

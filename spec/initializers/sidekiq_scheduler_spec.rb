@@ -260,7 +260,7 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
       end
 
       it 'ensures queue names are valid' do
-        valid_queues = %w[default metrics notifications events maintenance platform_sync]
+        valid_queues = %w[default metrics notifications events maintenance platform_sync weather]
         engine_schedule.each do |job_name, job_config|
           expect(valid_queues).to include(job_config['queue']),
                                   "Job #{job_name} uses invalid queue: #{job_config['queue']}"

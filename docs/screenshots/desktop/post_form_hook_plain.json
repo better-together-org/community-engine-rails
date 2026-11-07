@@ -1,0 +1,11 @@
+{
+  "name": "post_form_hook_plain",
+  "device": "desktop",
+  "url": "/en/posts/new",
+  "title": "New Post | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "geography_index_and_post_form_hooks",
+  "flow": "form_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/geography_index_and_post_form_hooks_spec.rb"
+}

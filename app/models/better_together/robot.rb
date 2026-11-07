@@ -31,6 +31,8 @@ module BetterTogether
     belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
     has_many :authorships, as: :author, class_name: 'BetterTogether::Authorship', inverse_of: :author, dependent: :restrict_with_exception
 
+    has_many :agent_grants, class_name: 'BetterTogether::AgentGrant', dependent: :restrict_with_error
+
     has_many :agreement_participants, as: :participant, class_name: 'BetterTogether::AgreementParticipant', dependent: :destroy
     has_many :agreements, through: :agreement_participants
 

@@ -8,6 +8,16 @@ require_relative '../../../lib/better_together/configuration'
 RSpec.describe BetterTogether::Configuration do
   subject(:configuration) { described_class.new }
 
+  # These settings are process-wide; restore them so later specs in the worker see the originals.
+  around do |example|
+    keys = %i[base_url user_class new_user_password_path user_confirmation_path]
+    # Read the raw class variables: the `user_class` reader constantizes the stored string.
+    saved = keys.index_with { |key| BetterTogether.class_variable_get(:"@@#{key}") }
+    example.run
+  ensure
+    saved&.each { |key, value| BetterTogether.public_send(:"#{key}=", value) }
+  end
+
   describe 'attribute readers' do
     it { is_expected.to respond_to(:base_url) }
     it { is_expected.to respond_to(:new_user_password_path) }
