@@ -16,7 +16,9 @@ module BetterTogether
       def index
         authorize BetterTogether::Billing::SubscriptionTerm, :index?
         @filter = FILTERS.key?(params[:filter]) ? params[:filter] : nil
-        @terms = filtered(terms).includes(:plan, pay_subscription: :customer).order(created_at: :desc).limit(200)
+        @terms = filtered(terms).includes(:plan, pay_subscription: { customer: :owner })
+                                .order(created_at: :desc).limit(200).load
+        preload_payer_names(@terms)
       end
 
       def show
@@ -52,6 +54,12 @@ module BetterTogether
       end
 
       private
+
+      # Payers can be of more than one type, so their names are preloaded only where the type has them.
+      def preload_payer_names(records)
+        owners = records.map(&:payer).compact.select { |owner| owner.respond_to?(:string_translations) }
+        ActiveRecord::Associations::Preloader.new(records: owners, associations: :string_translations).call
+      end
 
       def terms = billing_owner.billing_subscription_terms.local.joins(pay_subscription: :customer)
 
