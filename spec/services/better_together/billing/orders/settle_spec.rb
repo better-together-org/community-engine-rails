@@ -58,6 +58,32 @@ RSpec.describe BetterTogether::Billing::Orders::Settle do
     expect(order.reload).to be_paid
   end
 
+  it 'holds an expired order\'s lines again when a late payment revives it' do
+    order.update!(status: 'expired')
+    held = instance_double(BetterTogether::Billing::Plan, reserve!: nil)
+    line = instance_double(BetterTogether::Billing::OrderLine, purchasable: held, quantity: 2,
+                                                               marked_for_destruction?: false, total_cents: 4500)
+    allow(order).to receive(:lines).and_return([line])
+    pay(4500)
+
+    described_class.call(order)
+
+    expect(held).to have_received(:reserve!).with(quantity: 2)
+    expect(order.reload).to be_paid
+  end
+
+  it 'leaves an expired order expired when its lines can no longer be held' do
+    order.update!(status: 'expired')
+    sold_out = instance_double(BetterTogether::Billing::Plan)
+    allow(sold_out).to receive(:reserve!).and_raise(StandardError, 'sold out')
+    allow(order).to receive(:lines).and_return([instance_double(BetterTogether::Billing::OrderLine, purchasable: sold_out, quantity: 1)])
+    pay(4500)
+
+    described_class.call(order)
+
+    expect(order.reload).to be_expired
+  end
+
   it 'marks the order refunded in part, then in full, as money goes back' do
     paid = pay(4500)
     described_class.call(order)

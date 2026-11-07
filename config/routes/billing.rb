@@ -18,8 +18,12 @@
 # unauthenticated page that calls the processor API with the host's key for a
 # caller-supplied id. Community Engine's checkout is processor-hosted and does not
 # use that page, so it stays closed until a feature needs it.
+#
+# A constraint on a mount sees the path with the mount point already removed, so
+# '/pay/webhooks/stripe' arrives as '/webhooks/stripe'. Testing for '/pay/webhooks/' would
+# answer 404 to every webhook.
 if [Pay::Stripe, Pay::Braintree, Pay::PaddleBilling, Pay::PaddleClassic, Pay::LemonSqueezy].any?(&:enabled?)
-  mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/pay/webhooks/') }
+  mount Pay::Engine, at: '/pay', constraints: ->(request) { request.path_info.start_with?('/webhooks/') }
 end
 
 # What a billing owner can manage. Declared as a concern so a community-scoped mount
