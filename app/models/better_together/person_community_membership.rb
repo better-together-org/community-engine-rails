@@ -15,6 +15,10 @@ module BetterTogether
 
     enum :status, STATUS_LEVELS, default: 'pending'
 
+    # Set by code that makes or removes a membership on a person's behalf without telling them (a paid role given
+    # or taken away by a plan; see Billing::Entitlements::Handlers::MembershipRole). Not stored.
+    attr_accessor :suppress_notifications
+
     after_create_commit :notify_member_of_creation_if_active
     after_commit :expire_member_permission_cache
     before_update :store_old_role_for_notification

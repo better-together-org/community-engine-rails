@@ -69,6 +69,15 @@ module BetterTogether
           order.update!(attributes)
           notify(target)
           follow_up_subscription if target == 'paid'
+          follow_up_entitlement if %w[paid refunded cancelled].include?(target)
+        end
+
+        # What a one-time plan includes is given when the order is paid and taken away if it is refunded. Queued
+        # after the change commits, like the subscription follow-up, so it can be retried and never undo a payment.
+        def follow_up_entitlement
+          return unless order.lines.any? { |line| line.purchasable.is_a?(Plan) && !line.purchasable.recurring? }
+
+          ActiveRecord.after_all_transactions_commit { SyncOrderEntitlementJob.perform_later(order) }
         end
 
         # A paid subscription order starts a subscription, or renews one. It runs after the payment is

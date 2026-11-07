@@ -1,0 +1,19 @@
+%% Billing — how what a plan gives follows the subscription. One derivation (Entitlements::State) for every way of paying.
+flowchart TD
+  A[Pay::Subscription changes\nstatus, period, ends_at, trial, pause] -->|after_commit| B[SyncEntitlementJob]
+  C[Terms made by Start or Adopt] --> B
+  D[One-time order paid / refunded] --> E[SyncOrderEntitlementJob]
+  F[Plan grants edited] --> G[SyncPlanEntitlementsJob]
+  B --> S{Entitlements::State}
+  E --> S
+  G --> S
+  S -- trialing/active --> ACT[active: Reconcile applies what the plan includes]
+  S -- past_due --> GR[grace: everything kept, holder warned]
+  S -- unpaid, canceled, paused, ended --> L[lapsed: ReleaseAll takes away only what we made]
+  S -- order refunded --> R[revoked: same]
+  S -- incomplete --> P[pending: nothing yet]
+  ACT --> N1[entitlement_granted notice]
+  L --> N2[entitlement_lapsed notice]
+  L -. paid again .-> ACT
+  ACT --> Q[Quotas.sync_limit!: default + live allowances]
+  L --> Q

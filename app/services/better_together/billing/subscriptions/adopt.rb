@@ -25,6 +25,7 @@ module BetterTogether
           SubscriptionTerm.transaction do
             term = build
             order.update!(pay_subscription:, subject: term)
+            ActiveRecord.after_all_transactions_commit { SyncEntitlementJob.perform_later(pay_subscription.id) }
             term
           end
         end

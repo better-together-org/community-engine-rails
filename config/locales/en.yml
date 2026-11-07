@@ -906,6 +906,27 @@ en:
         view_page: View the page
         view_page_link: Click here to view the page
     billing:
+      allowances:
+        enforcement: Enforcement
+        field_owner: Owner
+        field_quota: Quota
+        field_state: State
+        field_usage: Usage
+        intro: How strictly each quota is enforced, and who is using how much. Paid
+          plans raise a person’s or community’s limit; nothing already stored is ever
+          deleted.
+        mode: Mode
+        mode_hard: 'Hard: refuses new use past the limit'
+        mode_off: 'Off: not even counted'
+        mode_shadow: 'Shadow: counted, never refused'
+        mode_soft: 'Soft: counted, and warns when over'
+        none: No one has a paid allowance or is over a limit.
+        over: Over the limit
+        refused: That could not be saved.
+        saved: Enforcement saved.
+        title: Allowances and usage
+        usage: Paid allowances and anyone over their limit
+        within: Within the limit
       checkout:
         accept: I have read and accept %{title}
         already_accepted: You have already accepted the current version.
@@ -977,6 +998,22 @@ en:
         steward_title: Store credit accounts
         title: Store credit
         usable: You can spend %{amount}
+      entitlements:
+        allowances: Allowances
+        for: 'For: %{name}'
+        grace_until: Your payment is late. Everything keeps working until %{date};
+          pay before then to keep it.
+        intro: What you have because of a plan you pay for, and how much of each allowance
+          you have used.
+        meter: "%{used} of %{limit} used (%{percent}%)"
+        meter_unlimited: No limit
+        none: You have nothing from a plan yet.
+        status_active: Active
+        status_grace: Past due
+        status_lapsed: Ended
+        status_revoked: Refunded
+        title: My access
+        until: Runs until %{date}.
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1012,6 +1049,16 @@ en:
         dispute_resolved:
           body: The dispute for order %{number} has been resolved.
           title: A payment dispute was resolved
+        entitlement_granted:
+          buyer:
+            body: What your %{plan} plan includes is ready to use. See it under My
+              access.
+            title: Your %{plan} access is active
+        entitlement_lapsed:
+          buyer:
+            body: What your %{plan} plan included has been taken away, and nothing
+              you made was deleted. Pay again to get it back.
+            title: Your %{plan} access has ended
         event_dead_lettered:
           body: A billing event could not be processed after several tries. Please
             review it.
@@ -1305,6 +1352,39 @@ en:
         one_time_participant_summary: One-time hosted contribution
         personal_beneficiary_label: Personal access
         recurring_participant_summary: Ongoing hosted access and stewardship support
+      plan_grants:
+        add: Add
+        add_feature: Access to a feature
+        add_quota: More of a quota
+        add_role: A role
+        added: Added to the plan.
+        amount_hint: In the quota’s own unit (bytes for storage, tokens for AI).
+        field_amount: Extra amount
+        field_community: Community (if a community)
+        field_feature: Feature
+        field_level: Access level
+        field_quota: Quota
+        field_role: Role
+        field_where: Where
+        intro: People who pay for this plan get these while it is paid. When it lapses,
+          only what the plan itself gave is taken away; roles and access someone already
+          had stay, and nothing they made is deleted.
+        none: This plan includes nothing yet.
+        place_a_community: A community
+        place_community: the community %{name}
+        place_platform: The platform
+        place_unknown: a community that no longer exists
+        refused: That could not be added. Check the choices; a role that can manage
+          things cannot be given by a plan.
+        remove: Remove
+        remove_confirm: Remove this from the plan? People who have it lose it unless
+          they already had it before.
+        removed: Removed from the plan.
+        role_hint: Only roles that cannot manage things are offered.
+        summary_feature: Access to %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} more of %{quota}"
+        summary_role: The role %{role} in %{where}
+        title: What this plan includes
       plans:
         actions_heading: Actions
         beneficiary_placeholder: Hosted access

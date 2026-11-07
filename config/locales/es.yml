@@ -900,6 +900,26 @@ es:
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
     billing:
+      allowances:
+        enforcement: Aplicación
+        field_owner: Titular
+        field_quota: Cuota
+        field_state: Estado
+        field_usage: Uso
+        intro: Qué tan estricta es cada cuota y quién usa cuánto. Los planes de pago
+          elevan el límite de una persona o comunidad; nunca se elimina nada ya almacenado.
+        mode: Modo
+        mode_hard: 'Estricto: rechaza el uso nuevo más allá del límite'
+        mode_off: 'Desactivado: ni se cuenta'
+        mode_shadow: 'Sombra: se cuenta, nunca se rechaza'
+        mode_soft: 'Suave: se cuenta y avisa si se supera'
+        none: Nadie tiene una cuota de pago ni supera un límite.
+        over: Supera el límite
+        refused: No se pudo guardar.
+        saved: Aplicación guardada.
+        title: Cuotas y uso
+        usage: Cuotas de pago y quienes superan su límite
+        within: Dentro del límite
       checkout:
         accept: He leído y acepto %{title}
         already_accepted: Ya aceptó la versión actual.
@@ -971,6 +991,21 @@ es:
         steward_title: Cuentas de crédito de la tienda
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}
+      entitlements:
+        allowances: Cuotas
+        for: 'Para: %{name}'
+        grace_until: Tu pago está atrasado. Todo sigue funcionando hasta el %{date};
+          paga antes para conservarlo.
+        intro: Lo que tienes por un plan que pagas y cuánto has usado de cada cuota.
+        meter: "%{used} de %{limit} usados (%{percent}%)"
+        meter_unlimited: Sin límite
+        none: Todavía no tienes nada de un plan.
+        status_active: Activo
+        status_grace: Vencido
+        status_lapsed: Terminado
+        status_revoked: Reembolsado
+        title: Mi acceso
+        until: Vigente hasta el %{date}.
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1007,6 +1042,16 @@ es:
         dispute_resolved:
           body: Se resolvió la disputa del pedido %{number}.
           title: Se resolvió una disputa de pago
+        entitlement_granted:
+          buyer:
+            body: Lo que incluye tu plan %{plan} está listo para usarse. Míralo en
+              Mi acceso.
+            title: Tu acceso a %{plan} está activo
+        entitlement_lapsed:
+          buyer:
+            body: Lo que incluía tu plan %{plan} se ha retirado y nada de lo que creaste
+              se eliminó. Paga de nuevo para recuperarlo.
+            title: Tu acceso a %{plan} ha terminado
         event_dead_lettered:
           body: Un evento de facturación no se pudo procesar tras varios intentos.
             Revíselo.
@@ -1297,6 +1342,40 @@ es:
         one_time_participant_summary: Contribucion unica al alojamiento
         personal_beneficiary_label: Acceso personal
         recurring_participant_summary: Acceso alojado continuo y apoyo de cuidado
+      plan_grants:
+        add: Añadir
+        add_feature: Acceso a una función
+        add_quota: Más de una cuota
+        add_role: Un rol
+        added: Añadido al plan.
+        amount_hint: En la unidad de la cuota (bytes para almacenamiento, tokens para
+          IA).
+        field_amount: Cantidad adicional
+        field_community: Comunidad (si es una comunidad)
+        field_feature: Función
+        field_level: Nivel de acceso
+        field_quota: Cuota
+        field_role: Rol
+        field_where: Dónde
+        intro: Quienes pagan este plan obtienen esto mientras esté pagado. Al vencer,
+          solo se retira lo que dio el plan; los roles y accesos que ya tenían se
+          quedan y nada de lo que crearon se elimina.
+        none: Este plan todavía no incluye nada.
+        place_a_community: Una comunidad
+        place_community: la comunidad %{name}
+        place_platform: La plataforma
+        place_unknown: una comunidad que ya no existe
+        refused: No se pudo añadir. Revisa las opciones; un plan no puede dar un rol
+          que permita administrar.
+        remove: Quitar
+        remove_confirm: "¿Quitar esto del plan? Quienes lo tienen lo pierden, salvo
+          que ya lo tuvieran antes."
+        removed: Quitado del plan.
+        role_hint: Solo se ofrecen roles que no pueden administrar.
+        summary_feature: Acceso a %{feature} (%{level})
+        summary_quota: "%{amount} %{unit} más de %{quota}"
+        summary_role: El rol %{role} en %{where}
+        title: Qué incluye este plan
       plans:
         actions_heading: Acciones
         beneficiary_placeholder: Acceso alojado

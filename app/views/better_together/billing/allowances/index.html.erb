@@ -1,0 +1,57 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.allowances.title') %>
+<% end %>
+
+<div id="billing-allowances-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.allowances.title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.allowances.intro') %></p>
+
+  <section id="billing-allowances-enforcement" class="card mb-4" aria-labelledby="billing-allowances-enforcement-title">
+    <div class="card-header"><h2 id="billing-allowances-enforcement-title" class="h5 mb-0"><%= t('better_together.billing.allowances.enforcement') %></h2></div>
+    <ul class="list-group list-group-flush">
+      <% @types.each do |type| %>
+        <li id="billing-allowance-type-<%= type.key %>" class="list-group-item">
+          <%= form_with url: billing_allowance_path(type.key, locale: I18n.locale), method: :patch, id: "billing-allowance-form-#{type.key}", class: 'row g-2 align-items-end' do %>
+            <div class="col-md-5"><strong><%= type.key.humanize %></strong> <span class="text-body-secondary">(<%= type.unit %>)</span></div>
+            <div class="col-md-4">
+              <%= label_tag "billing-allowance-mode-#{type.key}", t('better_together.billing.allowances.mode'), class: 'form-label visually-hidden' %>
+              <%= select_tag :mode, options_for_select(BetterTogether::Quotas::PlatformEnforcement::MODES.map { |mode| [t("better_together.billing.allowances.mode_#{mode}"), mode] }, @modes[type.key]),
+                             id: "billing-allowance-mode-#{type.key}", class: 'form-select' %>
+            </div>
+            <div class="col-md-3"><%= submit_tag t('globals.save'), class: 'btn btn-outline-primary', id: "billing-allowance-save-#{type.key}", name: nil %></div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <h2 class="h5"><%= t('better_together.billing.allowances.usage') %></h2>
+  <% if @rows.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-allowances-table" class="table mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.allowances.field_owner') %></th>
+              <th scope="col"><%= t('better_together.billing.allowances.field_quota') %></th>
+              <th scope="col"><%= t('better_together.billing.allowances.field_usage') %></th>
+              <th scope="col"><%= t('better_together.billing.allowances.field_state') %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @rows.each do |row| %>
+              <tr id="<%= dom_id(row[:quota]) %>">
+                <th scope="row"><%= row[:quota].owner.try(:name) %></th>
+                <td><%= row[:quota].quota_type.humanize %></td>
+                <td><%= billing_meter_label(row[:reading]) %></td>
+                <td><%= row[:reading].over? ? t('better_together.billing.allowances.over') : t('better_together.billing.allowances.within') %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-allowances-empty" class="text-body-secondary"><%= t('better_together.billing.allowances.none') %></p>
+  <% end %>
+</div>
