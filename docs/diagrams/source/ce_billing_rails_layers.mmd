@@ -12,6 +12,19 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
+    class BetterTogether__Billing__CreditAccountsController["Billing::CreditAccountsController"] {
+      <<Controller>>
+      models: Billing::CreditAccount
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__CreditGrantsController["Billing::CreditGrantsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__CreditsController["Billing::CreditsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__OfflinePaymentsController["Billing::OfflinePaymentsController"] {
       <<Controller>>
       models: Billing::OfflinePayment
@@ -40,6 +53,16 @@ classDiagram
       models: Billing::ProcessorSetting
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
+    class BetterTogether__Billing__PromotionRedemptionsController["Billing::PromotionRedemptionsController"] {
+      <<Controller>>
+      models: Billing::PromotionRedemption
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__PromotionsController["Billing::PromotionsController"] {
+      <<Controller>>
+      models: Billing::Promotion
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__SaleRefundsController["Billing::SaleRefundsController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
@@ -60,6 +83,22 @@ classDiagram
       table: better_together_billing_agreement_requirements
       concerns: Billing::PlatformBound
       weak refs: target: target
+    }
+    class BetterTogether__Billing__CreditAccount["Billing::CreditAccount"] {
+      <<Model>>
+      table: better_together_billing_credit_accounts
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__CreditEntry["Billing::CreditEntry"] {
+      <<Model>>
+      table: better_together_billing_credit_entries
+      concerns: Billing::ParentBound, Billing::PlatformBound
+      weak refs: target: source
+    }
+    class BetterTogether__Billing__CreditLot["Billing::CreditLot"] {
+      <<Model>>
+      table: better_together_billing_credit_lots
+      concerns: Billing::ParentBound, Billing::PlatformBound
     }
     class BetterTogether__Billing__Event["Billing::Event"] {
       <<Model>>
@@ -112,6 +151,16 @@ classDiagram
       concerns: Billing::EncryptedAttributes, Billing::PlatformBound, Billing::SellerScoped, Billing::SettingAudit +1
       weak refs: target: seller
     }
+    class BetterTogether__Billing__Promotion["Billing::Promotion"] {
+      <<Model>>
+      table: better_together_billing_promotions
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__PromotionRedemption["Billing::PromotionRedemption"] {
+      <<Model>>
+      table: better_together_billing_promotion_redemptions
+      concerns: Billing::ParentBound, Billing::PlatformBound
+    }
     class BetterTogether__Billing__Refund["Billing::Refund"] {
       <<Model>>
       table: better_together_billing_refunds
@@ -131,6 +180,10 @@ classDiagram
   BetterTogether__Billing__AgreementRequirementsController ..> BetterTogether__Billing__AgreementRequirement : manages
   BetterTogether__Billing__AgreementRequirementsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__CheckoutsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__CreditAccountsController ..> BetterTogether__Billing__CreditAccount : manages
+  BetterTogether__Billing__CreditAccountsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__CreditGrantsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__CreditsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OfflinePaymentsController ..> BetterTogether__Billing__OfflinePayment : manages
   BetterTogether__Billing__OfflinePaymentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderClaimsController --|> BetterTogether__ApplicationController
@@ -141,11 +194,25 @@ classDiagram
   BetterTogether__Billing__ProcessorOptionsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__ProcessorSettingsController ..> BetterTogether__Billing__ProcessorSetting : manages
   BetterTogether__Billing__ProcessorSettingsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__PromotionRedemptionsController ..> BetterTogether__Billing__PromotionRedemption : manages
+  BetterTogether__Billing__PromotionRedemptionsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__PromotionsController ..> BetterTogether__Billing__Promotion : manages
+  BetterTogether__Billing__PromotionsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__SaleRefundsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__SalesController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__WalkUpSalesController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__AgreementRequirement --> BetterTogether__Platform : platform
   BetterTogether__Billing__AgreementRequirement --> BetterTogether__Agreement : agreement
+  BetterTogether__Billing__CreditAccount --> BetterTogether__Platform : platform
+  BetterTogether__Billing__CreditAccount --> BetterTogether__Person : holder
+  BetterTogether__Billing__CreditEntry --> BetterTogether__Platform : platform
+  BetterTogether__Billing__CreditEntry --> BetterTogether__Billing__CreditAccount : account
+  BetterTogether__Billing__CreditEntry --> BetterTogether__Billing__CreditLot : lot
+  BetterTogether__Billing__CreditEntry --> BetterTogether__Billing__CreditEntry : reverses_entry
+  BetterTogether__Billing__CreditEntry --> BetterTogether__Person : actor
+  BetterTogether__Billing__CreditLot --> BetterTogether__Platform : platform
+  BetterTogether__Billing__CreditLot --> BetterTogether__Billing__CreditAccount : account
+  BetterTogether__Billing__CreditLot --> BetterTogether__Person : granted_by
   BetterTogether__Billing__Event --> BetterTogether__Platform : platform
   BetterTogether__Billing__NotificationReceipt --> BetterTogether__Platform : platform
   BetterTogether__Billing__NotificationReceipt --> BetterTogether__Person : recipient
@@ -168,6 +235,12 @@ classDiagram
   BetterTogether__Billing__Plan --> BetterTogether__Platform : platform
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Platform : platform
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Person : acknowledged_by
+  BetterTogether__Billing__Promotion --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Promotion --> BetterTogether__Person : created_by
+  BetterTogether__Billing__PromotionRedemption --> BetterTogether__Platform : platform
+  BetterTogether__Billing__PromotionRedemption --> BetterTogether__Billing__Promotion : promotion
+  BetterTogether__Billing__PromotionRedemption --> BetterTogether__Person : person
+  BetterTogether__Billing__PromotionRedemption --> BetterTogether__Billing__CreditLot : credit_lot
   BetterTogether__Billing__Refund --> BetterTogether__Platform : platform
   BetterTogether__Billing__Refund --> BetterTogether__Billing__Payment : payment
   BetterTogether__Billing__Refund --> BetterTogether__Person : recorded_by

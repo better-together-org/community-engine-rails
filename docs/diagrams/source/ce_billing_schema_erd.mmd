@@ -2,6 +2,16 @@
 erDiagram
   EXT_PLATFORM ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "platform / platform_id"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement / agreement_id"
+  EXT_PLATFORM ||--o{ BILLING_CREDIT_ACCOUNTS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_CREDIT_ACCOUNTS : "holder / holder_id"
+  EXT_PLATFORM ||--o{ BILLING_CREDIT_ENTRIES : "platform / platform_id"
+  BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_ENTRIES : "account / credit_account_id"
+  BILLING_CREDIT_LOTS ||--o{ BILLING_CREDIT_ENTRIES : "lot / credit_lot_id"
+  BILLING_CREDIT_ENTRIES o|--o{ BILLING_CREDIT_ENTRIES : "reverses_entry / reverses_entry_id"
+  EXT_PERSON o|--o{ BILLING_CREDIT_ENTRIES : "actor / actor_id"
+  EXT_PLATFORM ||--o{ BILLING_CREDIT_LOTS : "platform / platform_id"
+  BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_LOTS : "account / credit_account_id"
+  EXT_PERSON o|--o{ BILLING_CREDIT_LOTS : "granted_by / granted_by_id"
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_NOTIFICATION_RECEIPTS : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_NOTIFICATION_RECEIPTS : "recipient / recipient_id"
@@ -24,6 +34,12 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_PROCESSOR_SETTINGS : "acknowledged_by / acknowledged_by_id"
+  EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_PROMOTIONS : "created_by / created_by_id"
+  EXT_PLATFORM ||--o{ BILLING_PROMOTION_REDEMPTIONS : "platform / platform_id"
+  BILLING_PROMOTIONS ||--o{ BILLING_PROMOTION_REDEMPTIONS : "promotion / promotion_id"
+  EXT_PERSON o|--o{ BILLING_PROMOTION_REDEMPTIONS : "person / person_id"
+  BILLING_CREDIT_LOTS ||--o{ BILLING_PROMOTION_REDEMPTIONS : "credit_lot / credit_lot_id"
   EXT_PLATFORM ||--o{ BILLING_REFUNDS : "platform / platform_id"
   BILLING_PAYMENTS ||--o{ BILLING_REFUNDS : "payment / payment_id"
   EXT_PERSON o|--o{ BILLING_REFUNDS : "recorded_by / recorded_by_id"
@@ -37,6 +53,39 @@ erDiagram
     purpose string
     target_type string
     position integer
+  }
+
+  BILLING_CREDIT_ACCOUNTS {
+    holder_id uuid
+    platform_id uuid
+    currency string
+    balance_cents integer
+  }
+
+  BILLING_CREDIT_ENTRIES {
+    actor_id uuid
+    credit_account_id uuid
+    credit_lot_id uuid
+    platform_id uuid
+    reverses_entry_id uuid
+    source_id uuid
+    kind string
+    note string
+    source_type string
+    transaction_key string
+  }
+
+  BILLING_CREDIT_LOTS {
+    credit_account_id uuid
+    granted_by_id uuid
+    platform_id uuid
+    note string
+    origin string
+    purposes string
+    promotional boolean
+    amount_cents integer
+    remaining_cents integer
+    expires_at datetime
   }
 
   BILLING_EVENTS {
@@ -148,6 +197,26 @@ erDiagram
     settings text
     enabled boolean
     hold_hours integer
+  }
+
+  BILLING_PROMOTIONS {
+    created_by_id uuid
+    platform_id uuid
+    code_digest string
+    currency string
+    name string
+    purposes string
+    active boolean
+    new_members_only boolean
+    amount_cents integer
+    credit_expires_after_days integer
+  }
+
+  BILLING_PROMOTION_REDEMPTIONS {
+    credit_lot_id uuid
+    person_id uuid
+    platform_id uuid
+    promotion_id uuid
   }
 
   BILLING_REFUNDS {

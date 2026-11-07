@@ -23,6 +23,8 @@ RSpec.describe 'Documentation screenshots for promotion codes', # rubocop:disabl
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                     settings: { 'instructions' => 'At the hall' })
     BetterTogether::Billing::Promotions::Create.call(platform: host_platform, actor: create(:better_together_person), name: 'Spring drive',
                                                      amount_cents: 1500, currency: 'USD', max_redemptions: 100, credit_expires_after_days: 30)
   end

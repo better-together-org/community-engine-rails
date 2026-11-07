@@ -1,0 +1,12 @@
+---
+title: Promotion codes
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I make codes that give members store credit.
+callouts:
+- :id: table
+  :title: Use
+  :description: Switch a promotion off to stop new redemptions.
+accessibility_notes: The table has column headers; the status is text as well as colour.
+slug: billing_promotions_index
+device: desktop
