@@ -18,9 +18,6 @@ Rails.application.config.to_prepare do
   # What a subscription gives follows the subscription, however it changes.
   Pay::Subscription.include(BetterTogether::Billing::PayExtensions::EntitlementSync)
 
-  # Paid plans set the quota limits: the allowance provider the quota framework asks (see Quotas::Allowances).
-  BetterTogether::Quotas::Allowances.register('billing_entitlements', BetterTogether::Billing::Entitlements::QuotaAllowances)
-
   Pay::Webhook.include(BetterTogether::Billing::PayExtensions::EncryptedWebhookEvent)
   Pay::ApplicationJob.include(BetterTogether::Billing::PayExtensions::BillingQueueRouting)
 end
