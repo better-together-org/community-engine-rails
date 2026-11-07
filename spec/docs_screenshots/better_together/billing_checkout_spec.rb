@@ -88,9 +88,7 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
       callouts: [{ id: 'checklist', selector: '#billing-readiness-checklist', title: 'Ready to sell?',
                    bullets: ['Draft agreements keep the platform from selling until they are reviewed and set to active.'] },
                  { id: 'table', selector: '#billing-agreement-requirements-table', title: 'Requirements',
-                   bullets: ['Defaults apply to everything; a plan or a payment method can add its own.'] },
-                 { id: 'form', selector: '#billing-agreement-requirement-form', title: 'Add a requirement',
-                   bullets: ['Pick an agreement and what it applies to.'] }]
+                   bullets: ['Defaults apply to everything; a plan or a payment method can add its own.'] }]
     ) do
       visit_billing('agreement_requirements')
       expect(page).to have_css('#billing-readiness-checklist')

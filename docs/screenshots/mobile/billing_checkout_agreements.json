@@ -1,0 +1,83 @@
+{
+  "name": "billing_checkout_agreements",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=8d1e1be7-1701-424a-a610-a566ce7e1fdc&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_checkout_agreements",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-agreement-review",
+      "title": "Review and accept",
+      "bullets": [
+        "The purchase terms and the terms that come with this way of paying."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 402.390625,
+        "width": 461.0,
+        "height": 451.375,
+        "right": 473.0,
+        "bottom": 853.765625,
+        "center_x": 242.5,
+        "center_y": 628.078125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 402.390625,
+        "width": 461.0,
+        "height": 451.375,
+        "right": 473.0,
+        "bottom": 853.765625,
+        "center_x": 242.5,
+        "center_y": 628.078125
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 873.77,
+        "width": 270.0,
+        "height": 184,
+        "score": 403.234375
+      }
+    },
+    {
+      "selector": "#billing-checkout-place-btn",
+      "title": "Place order",
+      "bullets": [
+        "Nothing is placed until every agreement is accepted."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 877.765625,
+        "width": 116.296875,
+        "height": 38.0,
+        "right": 128.296875,
+        "bottom": 915.765625,
+        "center_x": 70.1484375,
+        "center_y": 896.765625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 877.765625,
+        "width": 116.296875,
+        "height": 38.0,
+        "right": 128.296875,
+        "bottom": 915.765625,
+        "center_x": 70.1484375,
+        "center_y": 896.765625
+      },
+      "placement": {
+        "side": "right",
+        "x": 148.3,
+        "y": 24,
+        "width": 270.0,
+        "height": 184,
+        "score": 0
+      }
+    }
+  ]
+}

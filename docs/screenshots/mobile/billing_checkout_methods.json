@@ -1,0 +1,83 @@
+{
+  "name": "billing_checkout_methods",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=33f24299-a460-4d8c-ba9c-45248f391638",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_checkout_methods",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-summary",
+      "title": "What you are buying",
+      "bullets": [
+        "The plan and its price."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 141.390625,
+        "width": 476.0,
+        "height": 82.0,
+        "right": 488.0,
+        "bottom": 223.390625,
+        "center_x": 250.0,
+        "center_y": 182.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 141.390625,
+        "width": 476.0,
+        "height": 82.0,
+        "right": 488.0,
+        "bottom": 223.390625,
+        "center_x": 250.0,
+        "center_y": 182.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 243.39,
+        "width": 270.0,
+        "height": 164,
+        "score": 1033.609375
+      }
+    },
+    {
+      "selector": "#billing-checkout-methods",
+      "title": "Ways to pay",
+      "bullets": [
+        "A method that is not available says why."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 247.390625,
+        "width": 476.0,
+        "height": 102.0,
+        "right": 488.0,
+        "bottom": 349.390625,
+        "center_x": 250.0,
+        "center_y": 298.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 247.390625,
+        "width": 476.0,
+        "height": 102.0,
+        "right": 488.0,
+        "bottom": 349.390625,
+        "center_x": 250.0,
+        "center_y": 298.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 498,
+        "width": 270.0,
+        "height": 158,
+        "score": 0
+      }
+    }
+  ]
+}
