@@ -18,6 +18,11 @@
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_paid') %></dt>
       <dd id="<%= dom_id(order, :paid) %>" class="col-sm-8"><%= billing_amount(order.paid_cents, order.currency) %></dd>
 
+      <% if order.open? %>
+        <dt class="col-sm-4"><%= t('better_together.billing.orders.field_balance') %></dt>
+        <dd id="<%= dom_id(order, :balance) %>" class="col-sm-8"><%= billing_amount(order.balance_cents, order.currency) %></dd>
+      <% end %>
+
       <% if order.open? && order.expires_at %>
         <dt class="col-sm-4"><%= t('better_together.billing.orders.field_expires') %></dt>
         <dd id="<%= dom_id(order, :expires_at) %>" class="col-sm-8"><%= l(order.expires_at, format: :long) %></dd>

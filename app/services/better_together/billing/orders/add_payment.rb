@@ -10,8 +10,9 @@ module BetterTogether
       #   Orders::AddPayment.call(order:, payment_method: 'store_credit', idempotency_key: token)           # what credit can cover
       #   Orders::AddPayment.call(order:, payment_method: 'cash', amount_cents: 2500, idempotency_key: t2)  # a part
       #
-      # With no amount it is "the rest": the whole balance, or, for store credit, as much of it as the buyer can
-      # spend. An explicit amount can never pass the balance or, for credit, what the buyer can spend.
+      # With no amount it is "the rest": what the parts already waiting leave of the balance (the whole balance if they
+      # leave nothing, which is how a buyer switches the way they pay) or, for store credit, as much of the balance as the
+      # buyer can spend. An explicit amount can never pass the balance or, for credit, what the buyer can spend.
       #
       # * Whether the method can be used is decided by PaymentChoice, the same rules as placing the order (switched
       #   on for the seller and the kind of purchase, in the order's currency, credit only for what the platform
@@ -84,7 +85,7 @@ module BetterTogether
         def take_part
           return pay_with_credit if choice.credit_setting
 
-          amount = requested || order.balance_cents
+          amount = requested || rest_cents
           MakeRoom.call(order:, amount_cents: amount)
           choice.offline_setting ? open_offline(amount) : open_processor(amount)
         end
@@ -94,6 +95,12 @@ module BetterTogether
           amount = [requested || order.balance_cents, usable_credit].min
           MakeRoom.call(order:, amount_cents: amount)
           Credit::PayOrder.call(order:, amount_cents: requested || amount, idempotency_key: part_key)
+        end
+
+        # What is left to pay that no waiting part is already for; if the waiting parts cover it all, the whole balance.
+        def rest_cents
+          free = order.balance_cents - order.payments.in_flight.sum(:amount_cents)
+          free.positive? ? free : order.balance_cents
         end
 
         def usable_credit

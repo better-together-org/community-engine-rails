@@ -10,10 +10,11 @@ module BetterTogether
       # purchase, and works in the plan's currency. An unavailable method is still listed, with
       # the reason, so the buyer is never left wondering where an option went.
       #
-      # Store credit is offered only when the buyer (when known) has enough of it, unexpired and allowed for this
-      # kind of purchase, to pay the whole plan.
+      # Store credit is offered when the buyer (when known) has any of it, unexpired and allowed for this kind of
+      # purchase. It need not cover the plan: credit is one part of a payment among others, so the choice carries
+      # `cap_cents`, the most the buyer can spend, for the screen to show and bound the amount.
       class Methods
-        Choice = Data.define(:name, :available, :reason) do
+        Choice = Data.define(:name, :available, :reason, :cap_cents) do
           alias_method :available?, :available
         end
 
@@ -36,7 +37,7 @@ module BetterTogether
 
         def choice(name)
           reason = reason_unavailable(name)
-          Choice.new(name:, available: reason.nil?, reason:)
+          Choice.new(name:, available: reason.nil?, reason:, cap_cents: credit_cap(name))
         end
 
         def reason_unavailable(name)
@@ -47,11 +48,14 @@ module BetterTogether
           :insufficient_credit unless credit_covers?(name)
         end
 
-        # Anything but store credit is always covered; credit needs a balance that pays the whole plan.
-        def credit_covers?(name)
-          return true unless Billing.internal_method?(name) && buyer
+        # Anything but store credit is always covered; credit needs something to spend.
+        def credit_covers?(name) = credit_cap(name).nil? || credit_cap(name).positive?
 
-          Credit.usable_cents(platform:, holder: buyer, currency: plan.currency, purpose:) >= plan.amount_cents
+        # What the buyer can spend as credit, or nil for a way of paying that has no such limit (or no known buyer).
+        def credit_cap(name)
+          return unless Billing.internal_method?(name) && buyer
+
+          Credit.usable_cents(platform:, holder: buyer, currency: plan.currency, purpose:)
         end
 
         def purpose_allowed?(name)

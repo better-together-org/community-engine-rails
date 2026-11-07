@@ -71,7 +71,10 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       metadata: screenshot_metadata(flow: 'billing_offline_queue', role: 'platform_manager'),
       callouts: [{ id: 'queue', selector: '#billing-offline-queue', title: 'Waiting for you', avoid_container_selector: 'main',
                    bullets: ['Claimed payments come first and are marked.',
-                             'Unclaimed ones are here too: mark any of them received when the money arrives.'] }]
+                             'Unclaimed ones are here too: mark any of them received when the money arrives.'] },
+                 { id: 'confirm', selector: "#billing-offline-confirm-btn-#{offline_for(order).id}", title: 'Mark received',
+                   avoid_container_selector: 'main',
+                   bullets: ['Does not need the buyer to have said anything.'] }]
     ) do
       visit_as_manager('offline_payments')
       scroll_to(find('#billing-offline-queue'), align: :center)
@@ -84,16 +87,16 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       'billing_offline_sale',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_offline_sale', role: 'platform_manager'),
-      callouts: [{ id: 'receive', selector: "#billing-offline-receive-form-#{order.id}", title: 'Say it arrived',
+      callouts: [{ id: 'receive', selector: "#billing-offline-receive-form-#{offline_for(order).id}", title: 'Say it arrived',
                    avoid_container_selector: 'main',
                    bullets: ['An optional reference and date; nothing is required.'] },
-                 { id: 'reject', selector: "#billing-offline-reject-form-#{order.id}", title: 'Or say it did not',
+                 { id: 'reject', selector: "#billing-offline-reject-form-#{offline_for(order).id}", title: 'Or say it did not',
                    avoid_container_selector: 'main',
                    bullets: ['The buyer sees your reason.'] }]
     ) do
       visit_as_manager("sales/#{order.id}")
-      scroll_to(find("#billing-offline-receive-form-#{order.id}"), align: :center)
-      expect(page).to have_css("#billing-offline-reject-btn-#{order.id}")
+      scroll_to(find("#billing-offline-receive-form-#{offline_for(order).id}"), align: :center)
+      expect(page).to have_css("#billing-offline-reject-btn-#{offline_for(order).id}")
     end
   end
 

@@ -11,21 +11,21 @@ module BetterTogether
       #     # all the credit the buyer can spend, then the rest in cash
       #
       # Checked before anything is saved: each way is usable for this order (see PaymentChoice), amounts are
-      # positive and do not pass the total, and only one part, the last, takes "the rest" (store credit may say
-      # "all I can spend" anywhere before it).
+      # positive and do not pass the total, and only one part takes "the rest" (store credit may also say "all I can
+      # spend"; it is taken first, whatever order the parts are named in).
       class PaymentParts
         Part = Data.define(:payment_method, :amount_cents) do
           def credit? = Billing.internal_method?(payment_method)
           def rest? = amount_cents.nil?
         end
 
-        def initialize(parts, platform:, seller:, purpose:, currency:, total_cents:) # rubocop:disable Metrics/ParameterLists
+        def initialize(parts, platform:, seller:, purpose:, currency:, lines:) # rubocop:disable Metrics/ParameterLists
           @parts = Array(parts).map { |part| build(part) }
           @platform = platform
           @seller = seller
           @purpose = purpose
           @currency = currency
-          @total_cents = total_cents
+          @lines = lines
         end
 
         attr_reader :parts
@@ -52,7 +52,7 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :seller, :purpose, :currency, :total_cents
+        attr_reader :platform, :seller, :purpose, :currency, :lines
 
         def build(part)
           values = part.to_h.symbolize_keys
@@ -68,6 +68,11 @@ module BetterTogether
           part.credit? ? 1 : 2
         end
 
+        # What the lines come to, at the price each was sold at.
+        def total_cents
+          lines.sum { |line| line.fetch(:unit_amount_cents) { line.fetch(:purchasable).purchasable_amount_cents } * line.fetch(:quantity, 1) }
+        end
+
         def choice(part) = PaymentChoice.new(platform:, seller:, name: part.payment_method, purpose:, currency:)
 
         def shape_problem
@@ -80,7 +85,7 @@ module BetterTogether
         def amount_problem
           return 'the parts are more than the order' if parts.sum { |part| part.amount_cents.to_i } > total_cents
 
-          'only the last part can take the rest' if parts[0...-1].any? { |part| part.rest? && !part.credit? }
+          'only one part can take the rest' if parts.count { |part| part.rest? && !part.credit? } > 1
         end
       end
     end

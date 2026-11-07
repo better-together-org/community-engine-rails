@@ -107,6 +107,17 @@ module BetterTogether
       t("better_together.billing.processor_settings.fields.#{method_name}.#{field.name}", default: field.name.to_s.humanize)
     end
 
+    # The ways a buyer can still pay what is left on an order, each with the most they can spend by it (credit is
+    # capped by their balance and the balance of the order; nothing else is capped). Credit is for what the platform sells.
+    def billing_payable_methods(order)
+      plan = order.lines.first&.purchasable
+      return [] unless order.lines.one? && plan.respond_to?(:payment_methods)
+
+      choices = BetterTogether::Billing::Checkout::Methods.call(platform: order.platform, plan:, buyer: order.buyer).select(&:available?)
+      choices = choices.reject { |choice| BetterTogether::Billing.internal_method?(choice.name) } if order.seller.present?
+      choices
+    end
+
     def billing_payment_method_label(name)
       t("better_together.billing.plans.payment_method_names.#{name}", default: name.to_s.humanize)
     end

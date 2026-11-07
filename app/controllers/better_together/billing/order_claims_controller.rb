@@ -28,7 +28,12 @@ module BetterTogether
         @order = billing_owner.billing_orders.bought_by(current_user.person).find(params[:order_id])
       end
 
-      def offline_payment = @order.offline_payments.newest_first.first || raise(ActiveRecord::RecordNotFound)
+      # The payment the buyer means when an order has several (they all belong to this order), else the newest.
+      def offline_payment
+        return @order.offline_payments.find(params[:offline_id]) if params[:offline_id].present?
+
+        @order.offline_payments.newest_first.first || raise(ActiveRecord::RecordNotFound)
+      end
     end
   end
 end

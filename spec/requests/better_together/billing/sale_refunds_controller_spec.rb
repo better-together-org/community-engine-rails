@@ -88,11 +88,11 @@ RSpec.describe BetterTogether::Billing::SaleRefundsController do
 
     it 'shows the form only while there is something left to refund' do
       get sale_path
-      expect(response.body).to include("billing-sale-refund-form-#{order.id}")
+      expect(response.body).to include("billing-sale-refund-form-#{offline_for(order).id}")
 
       post refund_path, params: { payment_id: payment.id, token: 'a' }
       get sale_path
-      expect(response.body).not_to include("billing-sale-refund-form-#{order.id}")
+      expect(response.body).not_to include("billing-sale-refund-form-#{offline_for(order).id}")
     end
   end
 end

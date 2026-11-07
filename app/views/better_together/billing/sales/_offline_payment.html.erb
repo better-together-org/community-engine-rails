@@ -25,35 +25,35 @@
 
       <% if offline.waiting? || offline.expired? %>
         <%= form_with url: receive_billing_offline_payment_path(offline, locale: I18n.locale, from: 'sale'), method: :patch,
-                      id: "billing-offline-receive-form-#{order.id}", class: 'mb-3' do %>
+                      id: "billing-offline-receive-form-#{offline.id}", class: 'mb-3' do %>
           <p class="form-text"><%= t('better_together.billing.offline_payments.receive_hint') %></p>
           <div class="row g-2">
             <div class="col-md-5">
-              <%= label_tag "seller_reference_#{order.id}", t('better_together.billing.offline_payments.seller_reference_label'), class: 'form-label' %>
-              <%= text_field_tag :seller_reference, nil, id: "seller_reference_#{order.id}", class: 'form-control', autocomplete: 'off',
+              <%= label_tag "seller_reference_#{offline.id}", t('better_together.billing.offline_payments.seller_reference_label'), class: 'form-label' %>
+              <%= text_field_tag :seller_reference, nil, id: "seller_reference_#{offline.id}", class: 'form-control', autocomplete: 'off',
                                                          maxlength: BetterTogether::Billing::OfflinePayment::REFERENCE_LIMIT %>
             </div>
             <div class="col-md-4">
-              <%= label_tag "received_on_#{order.id}", t('better_together.billing.offline_payments.received_on_label'), class: 'form-label' %>
-              <%= date_field_tag :received_on, nil, id: "received_on_#{order.id}", class: 'form-control' %>
+              <%= label_tag "received_on_#{offline.id}", t('better_together.billing.offline_payments.received_on_label'), class: 'form-label' %>
+              <%= date_field_tag :received_on, nil, id: "received_on_#{offline.id}", class: 'form-control' %>
             </div>
           </div>
           <%= submit_tag t(offline.cheque? ? 'better_together.billing.offline_payments.mark_cheque_received' : 'better_together.billing.offline_payments.mark_received'),
-                         id: "billing-offline-confirm-btn-#{order.id}", class: 'btn btn-success mt-3' %>
+                         id: "billing-offline-confirm-btn-#{offline.id}", class: 'btn btn-success mt-3' %>
         <% end %>
 
         <%= form_with url: reject_billing_offline_payment_path(offline, locale: I18n.locale, from: 'sale'), method: :patch,
-                      id: "billing-offline-reject-form-#{order.id}" do %>
-          <%= label_tag "reject_reason_#{order.id}", t('better_together.billing.offline_payments.reject_reason_label'), class: 'form-label' %>
-          <%= text_field_tag :reason, nil, id: "reject_reason_#{order.id}", class: 'form-control mb-2', maxlength: BetterTogether::Billing::OfflinePayment::REASON_LIMIT %>
-          <%= submit_tag t('better_together.billing.offline_payments.reject'), id: "billing-offline-reject-btn-#{order.id}", class: 'btn btn-outline-danger' %>
+                      id: "billing-offline-reject-form-#{offline.id}" do %>
+          <%= label_tag "reject_reason_#{offline.id}", t('better_together.billing.offline_payments.reject_reason_label'), class: 'form-label' %>
+          <%= text_field_tag :reason, nil, id: "reject_reason_#{offline.id}", class: 'form-control mb-2', maxlength: BetterTogether::Billing::OfflinePayment::REASON_LIMIT %>
+          <%= submit_tag t('better_together.billing.offline_payments.reject'), id: "billing-offline-reject-btn-#{offline.id}", class: 'btn btn-outline-danger' %>
         <% end %>
       <% elsif offline.received? %>
-        <div id="billing-offline-cheque-actions-<%= order.id %>" class="d-flex gap-2">
+        <div id="billing-offline-cheque-actions-<%= offline.id %>" class="d-flex gap-2">
           <%= button_to t('better_together.billing.offline_payments.mark_cleared'), clear_billing_offline_payment_path(offline, locale: I18n.locale, from: 'sale'),
-                        method: :patch, id: "billing-offline-clear-btn-#{order.id}", class: 'btn btn-success' %>
+                        method: :patch, id: "billing-offline-clear-btn-#{offline.id}", class: 'btn btn-success' %>
           <%= button_to t('better_together.billing.offline_payments.mark_bounced'), bounce_billing_offline_payment_path(offline, locale: I18n.locale, from: 'sale'),
-                        method: :patch, id: "billing-offline-bounce-btn-#{order.id}", class: 'btn btn-outline-danger',
+                        method: :patch, id: "billing-offline-bounce-btn-#{offline.id}", class: 'btn btn-outline-danger',
                         form: { data: { turbo_confirm: t('better_together.billing.offline_payments.bounce_confirm') } } %>
         </div>
       <% end %>
@@ -66,22 +66,22 @@
       <div class="card-header"><strong><%= t('better_together.billing.sales.refund_heading') %></strong></div>
       <div class="card-body">
         <p class="form-text"><%= t('better_together.billing.sales.refund_hint') %></p>
-        <%= form_with url: billing_sale_refund_path(order, locale: I18n.locale), method: :post, id: "billing-sale-refund-form-#{order.id}" do %>
+        <%= form_with url: billing_sale_refund_path(order, locale: I18n.locale), method: :post, id: "billing-sale-refund-form-#{offline.id}" do %>
           <%= hidden_field_tag :payment_id, payment.id %>
           <%= hidden_field_tag :token, SecureRandom.hex(8) %>
           <div class="row g-2">
             <div class="col-md-4">
-              <%= label_tag "refund_amount_#{order.id}", t('better_together.billing.sales.refund_amount_label', max: billing_amount(payment.refundable_cents, payment.currency)),
+              <%= label_tag "refund_amount_#{offline.id}", t('better_together.billing.sales.refund_amount_label', max: billing_amount(payment.refundable_cents, payment.currency)),
                             class: 'form-label' %>
-              <%= text_field_tag :amount, nil, id: "refund_amount_#{order.id}", class: 'form-control', inputmode: 'decimal', autocomplete: 'off' %>
+              <%= text_field_tag :amount, nil, id: "refund_amount_#{offline.id}", class: 'form-control', inputmode: 'decimal', autocomplete: 'off' %>
             </div>
             <div class="col-md-4">
-              <%= label_tag "refund_reason_#{order.id}", t('better_together.billing.sales.refund_reason_label'), class: 'form-label' %>
+              <%= label_tag "refund_reason_#{offline.id}", t('better_together.billing.sales.refund_reason_label'), class: 'form-label' %>
               <%= select_tag :reason, options_for_select(BetterTogether::Billing::Refund::REASONS.map { |reason| [t("better_together.billing.sales.refund_reason_#{reason}"), reason] }),
-                             id: "refund_reason_#{order.id}", class: 'form-select', include_blank: true %>
+                             id: "refund_reason_#{offline.id}", class: 'form-select', include_blank: true %>
             </div>
           </div>
-          <%= submit_tag t('better_together.billing.sales.refund_record'), id: "billing-sale-refund-btn-#{order.id}", class: 'btn btn-outline-secondary mt-3' %>
+          <%= submit_tag t('better_together.billing.sales.refund_record'), id: "billing-sale-refund-btn-#{offline.id}", class: 'btn btn-outline-secondary mt-3' %>
         <% end %>
       </div>
     </div>

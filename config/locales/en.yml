@@ -935,12 +935,21 @@ en:
         error_method_not_available: Choose one of the ways to pay that are available.
         error_not_ready: 'This purchase cannot be completed yet: the terms for it
           have not been set up. Please contact the people who run this platform.'
+        error_parts_too_large: The amounts you entered cover the whole price. Leave
+          some for the way chosen above, or choose it for the whole amount.
         error_refused: Your order could not be placed. Nothing has been charged. Please
           try again.
         how_to_pay: How would you like to pay?
         no_methods: There is no way to pay for this right now.
+        parts_heading: Pay part of it another way
+        parts_hint: Optional. Enter an amount beside any way of paying to pay that
+          much with it now. The way chosen above pays the rest.
         place_order: Place order
         placed: Your order has been placed.
+        renew_with: Renew with
+        renew_with_default: The way I pay the largest share
+        renew_with_hint: Each renewal invoice will be paid this way. You can add other
+          payments to any invoice.
         review_intro: Read these before you place your order. You have to accept them
           to continue.
         review_title: Review and accept
@@ -1095,17 +1104,21 @@ en:
             title: Order %{number} is paid
         order_part_received:
           buyer:
-            body: "%{received} of %{amount} was received. Pay the remaining %{left} to complete it."
+            body: "%{received} of %{amount} was received. Pay the remaining %{left}
+              to complete it."
             title: A payment was received on order %{number}
           seller:
-            body: "%{received} of an order for %{amount} was received; %{left} is still to pay."
+            body: "%{received} of an order for %{amount} was received; %{left} is
+              still to pay."
             title: Part payment on order %{number}
         order_partial_stalled:
           buyer:
-            body: It is partly paid and stays open. Pay the remaining %{left} whenever you are ready.
+            body: It is partly paid and stays open. Pay the remaining %{left} whenever
+              you are ready.
             title: Order %{number} is waiting for the rest
           seller:
-            body: A part-paid order for %{amount} has stopped waiting on its unpaid parts. Wait for the rest, or return the parts and cancel it.
+            body: A part-paid order for %{amount} has stopped waiting on its unpaid
+              parts. Wait for the rest, or return the parts and cancel it.
             title: Order %{number} is part paid
         order_placed:
           buyer:
@@ -1305,10 +1318,23 @@ en:
         status_rejected: Not accepted
         too_many_claims: You have already told the seller several times. They will
           confirm when they have your payment.
+      order_payments:
+        added: The payment was added. Follow the instructions below to complete it.
+        paid: The payment was made.
+        refused: That payment could not be added. Check the amount and the way of
+          paying, and try again.
       orders:
         accepted_by: Accepted by %{name} on %{date}
+        add_payment_amount: Amount (leave empty to pay the rest)
+        add_payment_btn: Add payment
+        add_payment_cap: up to %{amount}
+        add_payment_heading: Pay the rest or add a payment
+        add_payment_hint: "%{balance} is left to pay. Pay it all one way, or part
+          of it now and the rest another way."
+        add_payment_method: Pay by
         agreements_heading: Agreements accepted
         field_amount: Amount
+        field_balance: Left to pay
         field_buyer: Buyer
         field_expires: Pay by
         field_item: Item
@@ -1662,6 +1688,11 @@ en:
         state_draft: Draft
         state_retired: Retired
       sales:
+        cancel_btn: Cancel this order
+        cancel_confirm: Cancel this order? What it held will be released.
+        cancel_refused: The order cannot be cancelled while money is still against
+          it. Return each payment first.
+        cancelled: The order was cancelled and what it held was released.
         credit_refund_heading: Return to store credit
         credit_refund_hint: The buyer paid with store credit, so the money goes back
           onto their credit balance at once. It cannot be paid out as cash.
@@ -1681,6 +1712,17 @@ en:
         refund_record: Record refund
         refund_recorded: Refund recorded. The buyer has been told.
         refund_refused: That refund could not be recorded. Check the amount.
+        return_credit_btn: Return the credit payments
+        return_heading: Return payments
+        return_hint: This order is part paid and stays open for the buyer to pay the
+          remaining %{balance}. To cancel it instead, give back each payment, then
+          cancel.
+        return_kind_credit: returned to their store credit
+        return_kind_manual: you hand it back, then record it in the refund form
+        return_kind_processor: refund it at the payment processor
+        return_refused: The payments could not be returned. Check the order and try
+          again.
+        returned: The credit was given back to the buyer.
       subscribers:
         cancel_at_end: Cancel at the end of the period
         cancel_now: Cancel now

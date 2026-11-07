@@ -49,10 +49,15 @@ concern :billing_plans do
       end
       # The buyer says they sent a payment made outside the platform. Optional: the seller can confirm without it.
       resource :claim, only: :create, controller: 'order_claims'
+      # The buyer adds a payment (the rest, or a part, by any way of paying) to an order that is not fully paid.
+      resources :payments, only: :create, controller: 'order_payments'
     end
     resource :checkout, only: %i[new create]
     resources :agreement_requirements, only: %i[index create destroy]
     resources :sales, only: %i[index show] do
+      # Return what was paid toward a sale that will not be completed, then cancel it.
+      post :return_payments, on: :member
+      post :cancel, on: :member
       # The seller records that they gave money back for a payment made outside the platform.
       resource :refund, only: :create, controller: 'sale_refunds'
     end

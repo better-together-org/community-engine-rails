@@ -124,6 +124,11 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/claim\z})
     end
 
+    # A buyer adding a payment to an order. Each one can spend credit or open something for a seller to confirm.
+    throttle('billing/order_payments/ip', limit: 20, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/payments\z})
+    end
+
     # A steward finding a person's store credit by handle, and giving credit. Cap lookups so they cannot be
     # used to test handles in bulk, and grants because each one tells the holder.
     throttle('billing/credit_lookup/ip', limit: 30, period: 1.minute) do |req|

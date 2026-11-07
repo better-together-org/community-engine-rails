@@ -97,6 +97,8 @@ module BetterTogether
           return parts.open(order, seller_assisted:) if parts.any?
 
           OpenPayment.call(order:, choice: payment_choice, seller_assisted:)
+        rescue AddPayment::Refused => e
+          raise Refused, e.message
         end
 
         # The seller's own hold time for a method outside a vendor, else the default.
@@ -104,11 +106,7 @@ module BetterTogether
 
         # Several ways of paying, asked for together (see PaymentParts).
         def parts
-          @parts ||= PaymentParts.new(@requested_parts, platform:, seller:, purpose:, currency: order_currency, total_cents: lines_total_cents)
-        end
-
-        def lines_total_cents
-          lines.sum { |line| line.fetch(:unit_amount_cents, line.fetch(:purchasable).purchasable_amount_cents) * line.fetch(:quantity, 1) }
+          @parts ||= PaymentParts.new(@requested_parts, platform:, seller:, purpose:, currency: order_currency, lines:)
         end
 
         def payment_choice = @payment_choice ||= PaymentChoice.new(platform:, seller:, name: payment_method, purpose:, currency: order_currency)
