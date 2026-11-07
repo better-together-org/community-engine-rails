@@ -28,6 +28,12 @@ module BetterTogether
         end
 
         def call
+          DeadlockRetry.run { record }
+        end
+
+        private
+
+        def record
           payment.with_lock do
             existing = already_recorded
             next existing if existing
@@ -39,8 +45,6 @@ module BetterTogether
         rescue ActiveRecord::RecordInvalid => e
           raise Refused, e.record.errors.full_messages.to_sentence
         end
-
-        private
 
         attr_reader :payment, :amount_cents, :idempotency_key, :status, :reason, :recorded_by, :processor_reference, :notify
 

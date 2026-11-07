@@ -20,7 +20,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
   def order_path(record = order) = better_together.billing_order_path(record, locale:)
 
   it 'sends a visitor to sign in' do
-    get pay_path
+    post pay_path
 
     expect(response).to have_http_status(:found)
     expect(response.location).not_to start_with('https://fake.test')
@@ -54,8 +54,15 @@ RSpec.describe BetterTogether::Billing::OrdersController do
       expect(response.body).not_to include('billing-order-pay-card')
     end
 
-    it 'redirects to the processor\'s checkout' do
+    it 'does not start a checkout from a plain link (GET)' do
       get pay_path
+
+      expect(response).to have_http_status(:not_found)
+      expect(adapter.calls.map(&:first)).not_to include(:create_checkout_session)
+    end
+
+    it 'redirects to the processor\'s checkout' do
+      post pay_path
 
       expect(response).to redirect_to("https://fake.test/checkout/checkout:#{payment.id}")
     end
@@ -64,14 +71,14 @@ RSpec.describe BetterTogether::Billing::OrdersController do
       allow(adapter).to receive(:create_checkout_session)
         .and_return(BetterTogether::Billing::CheckoutSession.new(url: 'http://evil.test/x', reference: 'cs_x'))
 
-      get pay_path
+      post pay_path
 
       expect(response).to redirect_to(order_path)
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.orders.pay_unavailable'))
     end
 
     it 'brings the buyer back to the order after the processor, saying whether it is paid yet' do
-      get pay_path
+      post pay_path
 
       get return_path(stripe_checkout_session_id: payment.reload.processor_session_reference)
 
@@ -80,7 +87,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     end
 
     it 'says it is confirming when the processor does not yet say paid' do
-      get pay_path
+      post pay_path
       allow(adapter).to receive(:sync_checkout_session).and_return({ status: 'unpaid' })
 
       get return_path(session_id: payment.reload.processor_session_reference)
@@ -97,7 +104,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     end
 
     it 'never marks the payment paid itself: the processor\'s webhook decides' do
-      get pay_path
+      post pay_path
       get return_path(session_id: payment.reload.processor_session_reference)
 
       expect(payment.reload).to be_pending
@@ -109,7 +116,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     before { sign_in stranger }
 
     it 'is a 404 for another buyer\'s order, to pay it or to return to it' do
-      get pay_path
+      post pay_path
       expect(response).to have_http_status(:not_found)
 
       get return_path(session_id: 'cs_x')
@@ -121,7 +128,7 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     sign_in member
     allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
 
-    get pay_path
+    post pay_path
 
     expect(response).to have_http_status(:not_found)
   end
