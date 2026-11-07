@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_05_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -556,6 +556,48 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_100000) do
     t.index ["platform_id", "seller_type", "seller_id", "processor"], name: "idx_bt_billing_proc_settings_seller_method", unique: true, where: "(seller_id IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_proc_settings_platform"
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_proc_settings_seller"
+  end
+
+  create_table "better_together_billing_promotion_redemptions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "promotion_id", null: false
+    t.uuid "credit_lot_id", null: false
+    t.uuid "person_id"
+    t.index ["credit_lot_id"], name: "idx_bt_billing_promo_redemptions_lot", unique: true
+    t.index ["person_id"], name: "idx_bt_billing_promo_redemptions_person"
+    t.index ["platform_id"], name: "idx_bt_billing_promo_redemptions_platform"
+    t.index ["promotion_id", "person_id"], name: "idx_bt_billing_promo_redemptions_once", unique: true
+  end
+
+  create_table "better_together_billing_promotions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "created_by_id"
+    t.string "name", null: false
+    t.string "code_digest", null: false
+    t.bigint "amount_cents", null: false
+    t.string "currency", null: false
+    t.integer "credit_expires_after_days"
+    t.string "purposes", default: [], null: false, array: true
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.integer "max_redemptions"
+    t.integer "redemptions_count", default: 0, null: false
+    t.boolean "new_members_only", default: false, null: false
+    t.boolean "active", default: true, null: false
+    t.index ["created_by_id"], name: "idx_bt_billing_promotions_created_by"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_promotions_id_platform", unique: true
+    t.index ["platform_id", "code_digest"], name: "idx_bt_billing_promotions_code", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_promotions_platform"
+    t.check_constraint "amount_cents > 0", name: "chk_bt_billing_promotions_amount"
+    t.check_constraint "credit_expires_after_days IS NULL OR credit_expires_after_days > 0", name: "chk_bt_billing_promotions_days"
+    t.check_constraint "max_redemptions IS NULL OR max_redemptions > 0 AND redemptions_count <= max_redemptions", name: "chk_bt_billing_promotions_cap"
+    t.check_constraint "redemptions_count >= 0", name: "chk_bt_billing_promotions_count"
   end
 
   create_table "better_together_billing_refunds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3105,6 +3147,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_05_100000) do
   add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_processor_settings", "better_together_people", column: "acknowledged_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_processor_settings", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_promotion_redemptions", "better_together_billing_credit_lots", column: ["credit_lot_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_promo_redemptions_lot_platform"
+  add_foreign_key "better_together_billing_promotion_redemptions", "better_together_billing_promotions", column: ["promotion_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_promo_redemptions_promotion_platform"
+  add_foreign_key "better_together_billing_promotion_redemptions", "better_together_people", column: "person_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_promotion_redemptions", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_promotions", "better_together_people", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_promotions", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_refunds", "better_together_billing_payments", column: ["payment_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_refunds_payment_platform"
   add_foreign_key "better_together_billing_refunds", "better_together_people", column: "recorded_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_refunds", "better_together_platforms", column: "platform_id"

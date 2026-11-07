@@ -89,6 +89,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
 - [Billing Store Credit](billing/store_credit.md) - A ledger of credit a person holds with a platform: lots that expire, spending soonest-expiring first, refunds back to credit, and why credit pays whole orders only
+- [Billing Promotions](billing/promotions.md) - Promotion codes that give store credit: keyed-digest storage, shown once, one answer to every failure, and the limits on guessing
 - [Billing Local Pay Processor](billing/local_pay_processor.md) - How cash, cheque, e-transfer and store credit appear in Pay: the customer, charge and subscription, and what stays in the workflow
 - [Billing Offline Payment Methods](billing/offline_payment_methods.md) - Paying a seller directly by cash, cheque or e-transfer: the buyer's screen, the seller's confirmation (no buyer claim needed), late payments, sales in person
 - [Billing Payment Methods](billing/payment_methods.md) - Cash, cheque and e-transfer: how a seller turns them on, what buyers are told, the limits
@@ -173,6 +174,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Payment Methods Model](diagrams/source/billing_payment_methods_model.mmd)
 - [Billing Plan Processor Sync Flow](diagrams/source/billing_plan_processor_sync_flow.mmd)
 - [Billing Processor Adapter Contract Model](diagrams/source/billing_processor_adapter_contract_model.mmd)
+- [Billing Promotion Model](diagrams/source/billing_promotion_model.mmd)
+- [Billing Promotion Redemption Flow](diagrams/source/billing_promotion_redemption_flow.mmd)
 - [Billing Purchase Agreement Flow](diagrams/source/billing_purchase_agreement_flow.mmd)
 - [Billing Queue Topology](diagrams/source/billing_queue_topology.mmd)
 - [Billing Schema ERD](diagrams/source/billing_schema_erd.mmd)

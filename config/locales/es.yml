@@ -1445,6 +1445,48 @@ es:
         status_disabled: Desactivado
         status_enabled: Activado
         status_not_set_up: Sin configurar
+      promotions:
+        activate: Activar
+        always_open: Siempre
+        back_to_list: Volver a las promociones
+        code_hint: Letras y números, con o sin guiones.
+        code_label: "¿Tienes un código promocional?"
+        create: Crear el código
+        created_title: Tu código promocional
+        created_warning: Copia este código ahora. Se muestra solo una vez y no se
+          podrá volver a consultar.
+        credit_days_hint: Déjalo vacío para un crédito que no vence.
+        deactivate: Desactivar
+        field_amount: Crédito
+        field_credit_days: El crédito dura (días)
+        field_ends: Cierra
+        field_max: Máximo de personas
+        field_name: Nombre
+        field_new_members: Solo para quien aún no ha pagado nada aquí
+        field_purposes: El crédito puede pagar
+        field_starts: Abre
+        field_status: Estado
+        field_used: Usado
+        field_window: Abierta
+        index_intro: Un código da crédito de la tienda cuando alguien lo canjea. Los
+          códigos se muestran una vez, al crearlos, y no se pueden volver a consultar.
+        index_title: Códigos promocionales
+        invalid: Ese código no es válido.
+        max_hint: Déjalo vacío para no poner límite. Cada persona puede usar un código
+          una sola vez.
+        name_hint: Para tus registros. Las personas no lo ven, solo el importe.
+        new_promotion: Nueva promoción
+        none: Todavía no hay promociones.
+        purposes_hint: Deja todo sin marcar para todo lo que vende la plataforma.
+        redeem: Canjear
+        redeemed: Código aceptado. Se ha añadido tu crédito.
+        status_ended: Terminada
+        status_off: Inactiva
+        status_on: Activa
+        status_scheduled: Aún no abierta
+        status_used_up: Agotada
+        switched: Promoción actualizada.
+        usage_of: "%{used} de %{max}"
       readiness:
         check_agreements: Los acuerdos de compra están en vigor para %{purpose}.
         check_configured: La facturación está activada y los datos de su organización

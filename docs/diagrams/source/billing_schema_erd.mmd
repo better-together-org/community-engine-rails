@@ -32,6 +32,10 @@ erDiagram
   BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_ENTRIES : "(credit_account_id, platform_id) composite FK"
   BILLING_CREDIT_LOTS ||--o{ BILLING_CREDIT_ENTRIES : "(credit_lot_id, platform_id) composite FK"
   BILLING_CREDIT_ENTRIES o|--o{ BILLING_CREDIT_ENTRIES : "reverses (reverses_entry_id, platform_id)"
+  EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
+  BILLING_PROMOTIONS ||--o{ BILLING_PROMOTION_REDEMPTIONS : "(promotion_id, platform_id) composite FK"
+  BILLING_CREDIT_LOTS ||--o| BILLING_PROMOTION_REDEMPTIONS : "(credit_lot_id, platform_id) composite FK, one each"
+  EXT_PERSON o|--o{ BILLING_PROMOTION_REDEMPTIONS : "person (nullify), one per promotion"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
   BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
@@ -356,4 +360,24 @@ erDiagram
     bigint balance_after_cents
     string source_type
     uuid source_id
+  }
+  BILLING_PROMOTIONS {
+    uuid id PK
+    uuid platform_id FK
+    string name
+    string code_digest "keyed HMAC-SHA256, never the code"
+    bigint amount_cents
+    string currency
+    integer credit_expires_after_days
+    integer max_redemptions
+    integer redemptions_count
+    boolean new_members_only
+    boolean active
+  }
+  BILLING_PROMOTION_REDEMPTIONS {
+    uuid id PK
+    uuid platform_id FK
+    uuid promotion_id FK
+    uuid credit_lot_id FK
+    uuid person_id FK
   }

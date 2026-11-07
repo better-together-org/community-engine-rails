@@ -1,0 +1,12 @@
+%% Billing — redeeming a promotion code. Every failure gets the same answer.
+flowchart TD
+  A[Person submits a code] --> B{Locked out?\n10 failures in the last hour}
+  B -- yes --> X[Same answer: that code is not valid]
+  B -- no --> C{Right length?\nlookup by keyed digest on this platform}
+  C -- no / not found --> F[Count a failure] --> X
+  C -- found --> D[Lock the promotion]
+  D --> E{Active, open, not used up,\nnot used by this person,\nnew member if required?}
+  E -- no --> F
+  E -- yes --> G[Credit::Grant: promotional lot,\nexpiry from days, purposes]
+  G --> H[Redemption row, unique per person\nredemptions_count + 1]
+  H --> I[Credit appears on the person's credit page]

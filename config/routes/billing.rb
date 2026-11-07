@@ -51,14 +51,28 @@ concern :billing_plans do
       resource :claim, only: :create, controller: 'order_claims'
     end
     resource :checkout, only: %i[new create]
-    # A person's own store credit, and what a steward can see and give.
-    resource :credit, only: :show, controller: 'credits'
-    resources :credit_accounts, only: %i[index show]
-    resources :credit_grants, only: :create
     resources :agreement_requirements, only: %i[index create destroy]
     resources :sales, only: %i[index show] do
       # The seller records that they gave money back for a payment made outside the platform.
       resource :refund, only: :create, controller: 'sale_refunds'
+    end
+  end
+end
+
+# Store credit: a person's own credit and promotion codes, and what a steward can see, give and make.
+concern :billing_credit do
+  namespace :billing do
+    # A person's own store credit, and what a steward can see and give.
+    resource :credit, only: :show, controller: 'credits'
+    resources :credit_accounts, only: %i[index show]
+    resources :credit_grants, only: :create
+    # A person redeems a promotion code; a steward makes and switches them.
+    resources :promotion_redemptions, only: :create
+    resources :promotions, only: %i[index new create] do
+      member do
+        patch :activate
+        patch :deactivate
+      end
     end
   end
 end
@@ -81,6 +95,6 @@ end
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans, :billing_offline_payments
+    concerns :billing_plans, :billing_offline_payments, :billing_credit
   end
 end

@@ -150,7 +150,7 @@ module BetterTogether
     # platform_connection_oauth_credentials.rb for the encrypted-storage side.
     initializer 'better_together.filter_sensitive_federation_params' do |app|
       app.config.filter_parameters += %i[
-        oauth_client_secret oauth_client_secret_digest client_secret authorization
+        oauth_client_secret oauth_client_secret_digest client_secret authorization promotion_code
       ]
     end
 
