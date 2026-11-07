@@ -25,6 +25,13 @@ RSpec.describe 'Create Better Together Pay tables migration' do # rubocop:disabl
     expect(connection.table_exists?(:pay_customers)).to be true
   end
 
+  it 'refuses to run over Pay tables that have no platform_id' do
+    # Inside the example's transaction, so the column comes back when it rolls back.
+    connection.execute('ALTER TABLE pay_merchants DROP COLUMN platform_id CASCADE')
+
+    expect { migration.up }.to raise_error(CreateBetterTogetherPayTables::ForeignPayTablesError, /pay_merchants/)
+  end
+
   it 'uses uuid keys like every other Community Engine table' do
     (platform_tables + [:pay_webhooks]).each do |table|
       expect(column(table, :id).sql_type).to eq('uuid')
