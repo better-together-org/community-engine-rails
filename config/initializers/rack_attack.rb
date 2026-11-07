@@ -124,6 +124,11 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/claim\z})
     end
 
+    # Starting a payment creates a checkout session at the processor (an API call), so cap it per IP.
+    throttle('billing/order_pay/ip', limit: 20, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/pay\z})
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).
