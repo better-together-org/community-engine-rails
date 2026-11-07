@@ -19,11 +19,14 @@ module BetterTogether
     belongs_to :platform,
                class_name: 'BetterTogether::Platform',
                optional: true
+    belongs_to :robot, class_name: 'BetterTogether::Robot', optional: true
+    belongs_to :community, class_name: 'BetterTogether::Community', optional: true
 
     scope :for_platform, ->(platform) { where(platform: platform) }
 
     validates :name, presence: true
     validate :validate_scopes_for_owner
+    validate :agent_credential_bound_to_platform
 
     TRUSTED_ONLY_SCOPES = %w[admin mcp_access].freeze
 
@@ -32,6 +35,12 @@ module BetterTogether
     # @return [Boolean]
     def trusted?
       !!owner&.permitted_to?('manage_platform')
+    end
+
+    # An agent credential authenticates as a Robot instead of its owner.
+    # @return [Boolean]
+    def agent?
+      robot_id.present?
     end
 
     # List of all available OAuth scopes for documentation
@@ -54,6 +63,12 @@ module BetterTogether
     end
 
     private
+
+    def agent_credential_bound_to_platform
+      return unless agent? && platform_id.blank?
+
+      errors.add(:platform, 'is required for agent credentials')
+    end
 
     def validate_scopes_for_owner
       return if trusted?

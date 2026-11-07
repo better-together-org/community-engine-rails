@@ -28,3 +28,4 @@ Project instructions for Claude Code sessions in this repository.
 | Rebuild parallel DBs | `bin/parallel-setup` |
 | Lint | `bin/dc-run bundle exec rubocop --parallel` |
 | i18n check | `bin/dc-run bin/i18n` |
+| Diagram check (before any push touching models, associations, migrations or `.mmd`) | `bin/check_diagrams`, then commit what it rewrote |

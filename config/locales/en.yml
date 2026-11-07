@@ -1038,6 +1038,11 @@ en:
       new:
         title: Communities
       none-yet: None-yet
+      quota_usage_tab:
+        description: How much of this community's storage allowance is currently in
+          use.
+        none: This community has no recorded usage yet.
+        title: Usage
       show:
         about:
           no_description: No description available.
@@ -2022,6 +2027,7 @@ en:
           posts_loading: Loading posts...
           sections_aria: Settlement sections
           view-all-settlements: View All Settlements
+          weather_loading: Loading weather
         toolbar:
           back_to_geography_settlements: Back to Settlements
           save_geography_settlement: Save Settlement
@@ -3443,6 +3449,59 @@ en:
         privacy_limited_by_platform: Some privacy options are disabled because the
           platform is not public. Content can only be visible to community members
           or the author.
+    quota_grants:
+      created: Quota grant created.
+      edit:
+        title: Edit Quota Grant
+      form:
+        community: Community (if owner type is Community)
+        community_prompt: Select a community
+        expires_at: Expires at
+        expires_at_hint: Leave blank for a grant that never expires.
+        limit: Limit
+        owner: Owner
+        owner_hint: Only the field matching the owner type above is used.
+        owner_type: Owner type
+        owner_type_community: Community
+        owner_type_person: Person
+        person: Person (if owner type is Person)
+        person_prompt: Search for a person
+        quota_type: Quota type
+        reason: Reason
+      index:
+        description: See who is using how much, and grant an owner a higher limit
+          without changing the platform default.
+        grant_override: Grant override
+        grants_empty: No quota grants have been created for this platform yet.
+        grants_title: Existing grants
+        new: New grant
+        overview_empty: No usage recorded on this platform yet.
+        overview_title: Usage overview (busiest first)
+        revoke: Revoke
+        revoke_confirm: Revoke this quota grant?
+        title: Quota Grants
+      new:
+        title: New Quota Grant
+      revoked: Quota grant revoked.
+      status:
+        active: Active
+        expired: Expired
+      table:
+        actions: Actions
+        expires_at: Expires
+        granted_by: Granted by %{name}
+        limit: Limit
+        no_expiry: No expiry
+        owner: Owner
+        quota_type: Quota type
+        status: Status
+        usage: Usage
+      updated: Quota grant updated.
+    quotas:
+      usage_meter:
+        types:
+          ai_translation_tokens: AI Translation Tokens
+          media_storage: Storage
     rbac:
       nav:
         resource_permissions: Resource permissions
@@ -3889,7 +3948,14 @@ en:
           platform: Platform
           preferences: Preferences
           privacy: Privacy
+          usage: Usage
         title: Settings
+        usage:
+          description: How much of your storage and other quota-governed limits you
+            are currently using.
+          title: Usage
+      usage:
+        none: You have no recorded usage yet.
     setup_wizard_steps:
       already_completed: This platform has already been set up. Please sign in to
         manage your platform.
@@ -4134,6 +4200,93 @@ en:
         list: List
         map: Map
         table: Table
+    weather:
+      panel:
+        current:
+          dew_point: Dew point
+          feels_like: Feels like
+          gusts: Gusts
+          heading: Current conditions
+          humidity: Humidity
+          observed: Observed %{time}
+          pressure: Pressure
+          sun: Sun
+          sun_times: Sunrise %{rise}, sunset %{set}
+          unavailable: Current conditions are not available right now.
+          visibility: Visibility
+          wind: Wind
+        daily:
+          caption: Forecast by day and night
+          chance: Chance of precipitation
+          conditions: Conditions
+          empty: The 7-day forecast is not available right now.
+          heading: 7-day forecast
+          high: High %{value}
+          low: Low %{value}
+          period: Period
+          temperature: Temperature
+        disclaimer: Weather information is provided for convenience and may be delayed
+          or incomplete. In an emergency, follow official local guidance and warnings.
+        history:
+          axis:
+            celsius: Temperature (°C)
+            kmh: Wind (km/h)
+            mm: Precipitation (mm)
+          chart_alt:
+            precipitation: Bar chart of daily precipitation for the past 14 days.
+              The same values are in the table below.
+            temperature: Line chart of the daily high, low and mean temperature for
+              the past 14 days. The same values are in the table below.
+            wind: Line chart of the daily peak wind speed and gust for the past 14
+              days. The same values are in the table below.
+          charts:
+            precipitation: Precipitation
+            temperature: Temperature
+            wind: Wind
+          columns:
+            date: Date
+          description: Recorded daily weather for this settlement, from stored observations.
+          empty: No past weather has been recorded for this settlement yet.
+          heading: Past 14 days
+          series:
+            precip_mm: Precipitation
+            snow_cm: Snowfall
+            temperature_max_c: Daily high
+            temperature_mean_c: Daily mean
+            temperature_min_c: Daily low
+            wind_gust_kmh: Peak gust
+            wind_speed_kmh: Peak wind speed
+          show_table: Show the recorded values as a table
+          so_far: so far
+          table_caption: Recorded daily weather for the past 14 days and today so
+            far
+          unreported:
+            precipitation: This weather station does not report precipitation.
+            temperature: No temperature readings are recorded for this period.
+            wind: No wind readings are recorded for this period.
+        hourly:
+          chance: Precipitation %{value}%
+          empty: The hourly forecast is not available right now.
+          heading: Next 24 hours
+          scroll_label: Hourly forecast, scrolls sideways
+        licence: data licence
+        never: not yet
+        no_data: Weather information is not available for this settlement yet.
+        not_reported: Not reported
+        source_error: The weather source could not be reached on the last update.
+          The information shown may be out of date.
+        stale: These conditions were last updated %{time} and may be out of date.
+        summary:
+          heading: Weather now
+          view_full: See the full weather
+        units:
+          celsius: "%{value} °C"
+          cm: "%{value} cm"
+          km: "%{value} km"
+          kmh: "%{value} km/h"
+          kpa: "%{value} kPa"
+          mm: "%{value} mm"
+          percent: "%{value}%"
     webhook_endpoints:
       actions_aria: Webhook actions
       active_help: Enable or disable webhook delivery for this endpoint.
@@ -4988,6 +5141,8 @@ en:
       roles_and_permissions: Roles & Permissions
       safety: Safety
       sessions: Sessions
+      usage: Usage
+      weather: Weather
     to: To
     'true': true
     undo_clear: Undo Clear
@@ -5373,6 +5528,7 @@ en:
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
         platform_domains: Domains
+        quota_grants: Quota grants
         robot_management: Manage LLM robots
         storage_configurations: Manage storage
         title: Platform operations

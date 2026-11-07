@@ -1,0 +1,11 @@
+{
+  "name": "geography_index_hook_plain",
+  "device": "desktop",
+  "url": "/en/host/geography/regions",
+  "title": "Regions | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "geography_index_and_post_form_hooks",
+  "flow": "index_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/geography_index_and_post_form_hooks_spec.rb"
+}

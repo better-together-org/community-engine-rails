@@ -44,7 +44,7 @@
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
-      <%= render host_platform.css_block if host_platform.css_block %>
+      <%= render partial: 'better_together/content/blocks/css', locals: { css: host_platform.css_block } if host_platform.css_block %>
     <% end %>
 
     <%= javascript_importmap_tags %>

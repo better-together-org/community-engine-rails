@@ -5,6 +5,7 @@ default: &default
     - platform_sync
     - mailers
     - metrics
+    - weather
     - maintenance
     - es_indexing
     - geocoding

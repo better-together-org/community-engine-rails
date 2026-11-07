@@ -78,6 +78,11 @@ module BetterTogether
 
       # Permission check against cached resource permissions, with optional record
       def permitted_to?(permission_identifier, record = nil) # rubocop:todo Metrics/MethodLength
+        if credential_limited?
+          record = credential_target_for(record)
+          return false unless record
+        end
+
         Rails.cache.fetch(cache_key_for(:permitted_to, permission_identifier, record), expires_in: 12.hours) do
           permissions_by_identifier = resource_permissions.index_by(&:identifier)
 
@@ -94,6 +99,20 @@ module BetterTogether
       end
 
       private
+
+      # While an agent credential limited to one community is acting for this
+      # member, every permission is evaluated against that community only.
+      def credential_limited?
+        Current.credential_community.present? && Current.person&.id == id
+      end
+
+      def credential_target_for(record)
+        community = Current.credential_community
+        return community if record.nil?
+
+        resolved = record.is_a?(BetterTogether::Community) ? record : record.try(:community)
+        record if resolved&.id == community.id
+      end
 
       # Global permission check
       def global_permission_granted?(resource_permission)

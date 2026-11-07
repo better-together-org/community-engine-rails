@@ -16,7 +16,7 @@ module BetterTogether
         # and block person/community/platform deletion. erase_quota_ledger below
         # removes the owner's whole ledger instead, and is prepended so it runs ahead
         # of any other dependent callbacks.
-        has_many :quota, as: :owner, class_name: 'BetterTogether::Quota'
+        has_many :quotas, as: :owner, class_name: 'BetterTogether::Quota'
 
         before_destroy :erase_quota_ledger, prepend: true
       end
@@ -43,9 +43,13 @@ module BetterTogether
         BetterTogether::QuotaReservation.where(quota_id: quota_ids).delete_all
         BetterTogether::QuotaBalance.where(quota_id: quota_ids).delete_all
         BetterTogether::Quota.where(owner: self).delete_all
+        # QuotaGrant is keyed by owner+quota_type directly, not quota_id, so it is not
+        # reachable via quota_ids above and needs its own cleanup here.
+        BetterTogether::QuotaGrant.where(owner: self).delete_all
 
         BetterTogether::QuotaUsage.where(actor: self).update_all(actor_type: nil, actor_id: nil)
         BetterTogether::QuotaReservation.where(actor: self).update_all(actor_type: nil, actor_id: nil)
+        BetterTogether::QuotaGrant.where(granted_by: self).update_all(granted_by_type: nil, granted_by_id: nil)
       end
       # rubocop:enable Metrics/AbcSize
     end

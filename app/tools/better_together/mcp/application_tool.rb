@@ -33,7 +33,8 @@ module BetterTogether
         previous_person = Current.person
         previous_agent = Current.agent
         Current.person = actor if actor.is_a?(BetterTogether::Person)
-        Current.agent = actor
+        # Under an agent credential the robot stays the acting agent.
+        Current.agent = actor unless Current.token_actor
         yield
       ensure
         Current.person = previous_person

@@ -5,7 +5,10 @@ class CreateBetterTogetherQuotaReservations < ActiveRecord::Migration[7.2]
     return if table_exists?(:better_together_quota_reservations)
 
     create_bt_table :quota_reservations do |t|
-      t.bt_references :quota, null: false, index: { name: 'index_bt_quota_reservations_on_quota' }
+      # target_table pinned to the singular table - see the identical comment in
+      # 20261028220100_create_better_together_quota_usages.rb for why.
+      t.bt_references :quota, target_table: :better_together_quota, null: false,
+                              index: { name: 'index_bt_quota_reservations_on_quota' }
       t.string :quota_type, null: false
       t.bigint :amount, null: false
       t.string :period_key, null: false
