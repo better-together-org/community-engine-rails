@@ -47,6 +47,7 @@ RSpec.describe 'Documentation screenshots for payment methods', # rubocop:disabl
       callouts: [{ id: 'methods', selector: '#billing-processor-settings-table', title: 'Payment methods',
                    bullets: ['Cash, cheque and e-transfer are installed for everyone and off until you turn them on.'] },
                  { id: 'etransfer_where', selector: '#billing-processor-setting-etransfer', title: 'Where it works',
+                   avoid_container_selector: 'main',
                    bullets: ['E-transfer works only in Canada, in Canadian dollars.'] }],
       narrative: {
         title: 'Payment methods',
@@ -67,10 +68,13 @@ RSpec.describe 'Documentation screenshots for payment methods', # rubocop:disabl
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_processor_settings_cash'),
       callouts: [{ id: 'instructions', selector: '#billing-processor-setting-fields', title: 'What buyers are told',
+                   avoid_container_selector: 'main',
                    bullets: ['Shown only on a buyer\'s own order, after they accept the terms. Stored encrypted.'] },
                  { id: 'disclosure', selector: '#billing-processor-disclosure', title: 'The drawbacks',
+                   avoid_container_selector: 'main',
                    bullets: ['No fee can be collected, nothing is tracked, and buyers have no dispute protection.'] },
                  { id: 'enable', selector: '#billing-processor-enable-cash', title: 'Turn it on',
+                   avoid_container_selector: 'main',
                    bullets: ['Off until you accept the drawbacks.'] }]
     ) do
       visit_settings('/cash/edit')
@@ -85,6 +89,7 @@ RSpec.describe 'Documentation screenshots for payment methods', # rubocop:disabl
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_processor_settings_cheque'),
       callouts: [{ id: 'grant_on', selector: '#billing-processor-grant-on', title: 'When access starts',
+                   avoid_container_selector: 'main',
                    bullets: ['A cheque can bounce, so waiting until it clears is the safer default.'] }]
     ) do
       visit_settings('/cheque/edit')
@@ -98,8 +103,10 @@ RSpec.describe 'Documentation screenshots for payment methods', # rubocop:disabl
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_processor_settings_etransfer'),
       callouts: [{ id: 'recipient', selector: '#billing-processor-setting-fields', title: 'Where buyers send it',
+                   avoid_container_selector: 'main',
                    bullets: ['An email address or a phone number, so buyers know where to send the e-transfer.'] },
                  { id: 'disclosure', selector: '#billing-processor-disclosure', title: 'Canada only',
+                   avoid_container_selector: 'main',
                    bullets: ['Available in Canada, in Canadian dollars.'] }]
     ) do
       visit_settings('/etransfer/edit')

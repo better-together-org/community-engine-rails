@@ -1,0 +1,81 @@
+{
+  "name": "billing_processor_settings_etransfer",
+  "device": "desktop",
+  "url": "/en/billing/processor_settings/etransfer/edit",
+  "title": "Interac e-Transfer | Payment methods | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_payment_methods",
+  "flow": "billing_processor_settings_etransfer",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_processor_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-processor-setting-fields",
+      "title": "Where buyers send it",
+      "bullets": [
+        "An email address or a phone number, so buyers know where to send the e-transfer."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 272.0,
+        "width": 1296.0,
+        "height": 422.0,
+        "right": 1360.5,
+        "bottom": 694.0,
+        "center_x": 712.5,
+        "center_y": 483.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 104.0,
+        "width": 1425.0,
+        "height": 1260.1875,
+        "right": 1425.0,
+        "bottom": 1364.1875,
+        "center_x": 712.5,
+        "center_y": 734.09375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 158
+      }
+    },
+    {
+      "selector": "#billing-processor-disclosure",
+      "title": "Canada only",
+      "bullets": [
+        "Available in Canada, in Canadian dollars."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 1023.0,
+        "width": 1296.0,
+        "height": 215.1875,
+        "right": 1360.5,
+        "bottom": 1238.1875,
+        "center_x": 712.5,
+        "center_y": 1130.59375
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 104.0,
+        "width": 1425.0,
+        "height": 1260.1875,
+        "right": 1425.0,
+        "bottom": 1364.1875,
+        "center_x": 712.5,
+        "center_y": 734.09375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 222,
+        "width": 380,
+        "height": 132
+      }
+    }
+  ]
+}
