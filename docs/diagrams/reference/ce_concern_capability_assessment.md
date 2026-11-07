@@ -117,6 +117,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Protected` | Adds protected-record safeguards for records that should resist accidental mutation/deletion. | `ResourcePermission`, `Role` | Protected status can be mistaken for an authorization model when it is only a lifecycle safeguard. |
 | `Publishable` | Adds publication timing/state helpers for user-facing publishing flows. | `Page`, `Post` | Publish state can leak intent or draft timing if query scopes ignore privacy. |
 | `Quotas::Owner` | Owner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Quotas::PlatformEnforcement` | Platformenforcement | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `RecurringSchedulable` | Recurringschedulable | `Event` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `RemoveableAttachment` | Removeableattachment | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Reportable` | Reportable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |

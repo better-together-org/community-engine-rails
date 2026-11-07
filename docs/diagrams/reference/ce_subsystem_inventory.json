@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-07T20:52:02Z",
+  "generated_at": "2026-11-07T20:59:13Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -4908,6 +4908,7 @@
             "BetterTogether::PrivacyCeilingValidatable",
             "BetterTogether::Protected",
             "BetterTogether::Quotas::Owner",
+            "BetterTogether::Quotas::PlatformEnforcement",
             "BetterTogether::RemoveableAttachment",
             "BetterTogether::Seedable",
             "BetterTogether::TimezoneAttributeAliasing",
@@ -6571,6 +6572,15 @@
           "included_by": [
             "Platform",
             "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::Quotas::PlatformEnforcement",
+          "label": "Quotas::PlatformEnforcement",
+          "capability": "Platformenforcement",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform"
           ]
         },
         {
