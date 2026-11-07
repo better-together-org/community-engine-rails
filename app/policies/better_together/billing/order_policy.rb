@@ -18,7 +18,7 @@ module BetterTogether
 
       # A steward looking at what the platform sells.
       def sales? = manage_billing?
-      def sale? = manage_billing? && record.try(:sold_by_platform?) != false
+      def sale? = manage_billing? && record.try(:sold_by_platform?) == true
 
       # The buyer's own orders on the current platform.
       class Scope < ApplicationPolicy::Scope
