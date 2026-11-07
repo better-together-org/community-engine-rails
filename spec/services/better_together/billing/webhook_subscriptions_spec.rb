@@ -25,4 +25,26 @@ RSpec.describe BetterTogether::Billing::WebhookSubscriptions do
 
     expect(delegator).not_to have_received(:subscribe)
   end
+
+  describe 'a processor that cannot be set up' do
+    before do
+      allow(BetterTogether).to receive(:report_error)
+      allow(Rails.logger).to receive(:error)
+      BetterTogether::Billing.register_processor(:broken, -> { raise 'cannot build' })
+      BetterTogether::Billing.register_processor(:fake, -> { BetterTogether::Billing::FakeAdapter.new })
+    end
+
+    it 'does not stop the application booting, and still subscribes the others' do
+      expect { described_class.subscribe_all! }.not_to raise_error
+
+      expect(delegator).to have_received(:subscribe).with('fake.invoice.paid', anything).once
+    end
+
+    it 'logs and reports the failure' do
+      described_class.subscribe_all!
+
+      expect(Rails.logger).to have_received(:error).with(/could not subscribe broken webhooks/)
+      expect(BetterTogether).to have_received(:report_error).with(an_instance_of(RuntimeError), context: { processor: :broken })
+    end
+  end
 end
