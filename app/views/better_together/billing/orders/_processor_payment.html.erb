@@ -10,8 +10,8 @@
         </p>
       </div>
       <% unless processor_payment.processing? %>
-        <%= link_to t('better_together.billing.orders.pay_button'), pay_billing_order_path(order, locale: I18n.locale),
-                    id: 'billing-order-pay-btn', class: 'btn btn-primary' %>
+        <%= button_to t('better_together.billing.orders.pay_button'), pay_billing_order_path(order, locale: I18n.locale),
+                      method: :post, id: 'billing-order-pay-btn', class: 'btn btn-primary', form: { id: 'billing-order-pay-form' } %>
       <% end %>
     </div>
   </div>

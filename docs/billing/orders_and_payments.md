@@ -59,7 +59,7 @@ All in `app/services/better_together/billing/`. Each is safe to call twice.
 
 ## Paying through a processor
 
-`Orders::Place` with a processor method (one the platform has configured and that takes a checkout) opens a **pending payment** for the balance, with the key `checkout:<order>:1`. The buyer's order page then shows **Pay now**, which goes to `GET /billing/orders/:id/pay` (signed in, and the order must be theirs):
+`Orders::Place` with a processor method (one the platform has configured and that takes a checkout) opens a **pending payment** for the balance, with the key `checkout:<order>:1`. The buyer's order page then shows **Pay now**, which goes to `POST /billing/orders/:id/pay` (a button, so a link or crawler cannot start a checkout; signed in, the order must be theirs, throttled per IP):
 
 1. `Checkout::Start` asks the adapter for a `CheckoutSession` (url, reference, expires_at) for that payment, with the order, payment and platform ids as metadata, and keeps the session reference on the payment. A payment that needs the buyer to act (`failure_code: action_required`, for example a bank confirmation) is sent to the processor's own page for that instead. Only an **https** address is ever redirected to.
 2. The processor brings the buyer back to `GET /billing/orders/:id/checkout_return`. The session id in the address is believed only if it is the one we sent this buyer to for this order (Pay's own `Pay.sync` accepts any id). The adapter syncs the processor's state, which is optimistic; **the webhook decides** whether the payment succeeded.
