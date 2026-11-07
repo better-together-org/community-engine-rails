@@ -1,6 +1,6 @@
 # Billing Store Credit
 
-Store credit is a balance a person holds with a platform. It pays **whole orders for what the platform itself sells**. It is the platform's own money, kept as a ledger in Community Engine, and sits beside Pay rather than inside a processor: a spend writes a `Pay::Local::Charge` like any other settled payment (see [local_pay_processor.md](local_pay_processor.md)).
+Store credit is a balance a person holds with a platform. It pays **all or part of an order for what the platform itself sells**; credit is one way of paying among others (see [partial_payments.md](partial_payments.md)). It is the platform's own money, kept as a ledger in Community Engine, and sits beside Pay rather than inside a processor: a spend writes a `Pay::Local::Charge` like any other settled payment (see [local_pay_processor.md](local_pay_processor.md)).
 
 This page covers the ledger, how credit is spent and given back, the screens and the notice, and the rules. Credit made by a promotion code is in [promotions.md](promotions.md).
 
@@ -39,7 +39,7 @@ Every change goes through a service, under the **account's lock**, and leaves en
 | `Reverse` | Gives credit back after a refund, to the lot it came from while that lot is still valid; otherwise as a **new refund lot that lasts 30 days**, so a refund never extends a promotion. Never more than was spent and not yet given back |
 | `ExpireLots` | Empties lots past their date, with an `expire` entry for what was lost. Run daily by `ExpireCreditLotsJob` (04:50 UTC) |
 | `Recalculate` | Checks the balance against the lots and the entries; `repair: true` resets the balance to what the lots say |
-| `PayOrder` | Used by `Orders::Place`: makes the payment, spends, succeeds it |
+| `PayOrder` | Used by `Orders::AddPayment` (and so `Orders::Place`): makes a payment for an amount, spends, succeeds it |
 
 Each is **idempotent**: repeating a request with the same key returns what it already made.
 
@@ -48,10 +48,10 @@ Each is **idempotent**: repeating a request with the same key returns what it al
 Credit is a payment method like cash, with its own `ProcessorSetting` a steward turns on (no instructions, no hold time, and a different acknowledgement: it is not cash, it can expire, refunds go back onto it). `Orders::Place` with `payment_method: 'store_credit'`:
 
 1. refuses unless credit is on for this kind of purchase, the sale is the platform's own (credit never pays a seller) and the currency matches;
-2. in the placement transaction makes the payment for the **whole balance**, spends it, and succeeds it, so the order is `paid` when `Place` returns;
-3. refuses, leaving **no order, no hold and no spend**, if the usable credit does not cover it.
+2. in the placement transaction makes the payment for the amount asked (the whole balance by default), spends it, and succeeds it, so the order is `paid` when `Place` returns if credit covered it;
+3. spends **no more than the buyer can usefully spend**: with no amount it takes as much of the balance as the usable credit covers, with an amount it refuses (leaving **no order, no hold and no spend**) if the credit does not cover that amount.
 
-**No split tender.** Credit pays an order in full or not at all. A part-payment would leave an order half paid that has to be unwound if it is cancelled or lapses; refusing keeps every order either unpaid or paid. A buyer who is short is told so at checkout (`Checkout::Methods` lists credit as unavailable with the reason `insufficient_credit` when they have not enough usable credit) and can pay the whole price another way.
+**Split tender is normal.** Credit can be one part of a payment and any other way the rest (`Orders::AddPayment`, at checkout or later from the order page). A part-paid order stays open; nothing is granted until it is paid in full. `Checkout::Methods` lists credit as available when the buyer has **any** usable credit, with the most they can spend (`cap_cents`); it is unavailable with the reason `insufficient_credit` only when they have none. Returning a credit part goes back to the lots it came from, in one click, from the sale page.
 
 A sale in person (a seller-assisted walk-up) never uses credit: it is the buyer's to spend, not a seller's to record.
 

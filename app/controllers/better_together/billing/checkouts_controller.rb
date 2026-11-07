@@ -83,7 +83,7 @@ module BetterTogether
       def chosen_renewal_method
         return unless @purpose == 'subscription'
 
-        @choices.find { |choice| choice.available? && Billing.local_method?(choice.name) && choice.name == params[:renew_with].to_s }&.name
+        @choices.find { |choice| choice.renewable? && choice.name == params[:renew_with].to_s }&.name
       end
 
       # Every agreement still missing has its box ticked. Anything the buyer already accepted in its

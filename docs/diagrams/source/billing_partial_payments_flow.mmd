@@ -1,0 +1,28 @@
+%% Billing — an order paid in parts. Any way of paying (store credit, cash, cheque, e-transfer, a processor)
+%% can be one part. A part-paid order is a normal state: it stays open until it is paid in full, or a steward
+%% returns each part and cancels it. A part ending (rejected, bounced, lapsed) never cancels an order that has
+%% other parts.
+flowchart TD
+  place["Orders::Place<br/>payments: [{method, amount}…]"] --> add
+  buyer["Buyer: 'Pay the rest / add a payment'<br/>OrderPaymentsController"] --> add
+  add["Orders::AddPayment<br/>(under the order lock, one key per part)"]
+  add --> room{"Waiting parts leave<br/>too little of the balance?"}
+  room -- yes --> make["MakeRoom: newest waiting part shrinks or is let go<br/>never one claimed, received or processing"]
+  room -- no --> kind
+  make --> kind{"Kind of method"}
+  kind -- "store credit" --> credit["Credit::PayOrder<br/>spend now, up to what the buyer can spend"]
+  kind -- "cash / cheque / e-transfer" --> manual["OfflinePayments::Open<br/>seller confirms the part"]
+  kind -- "processor" --> remote["Payments::Create<br/>buyer completes at the processor"]
+  credit --> succeed
+  manual --> succeed["Payments::Succeed"]
+  remote --> succeed
+  succeed --> settle["Orders::Settle<br/>net paid = paid − refunded"]
+  settle -- "net = total" --> paid["paid<br/>entitlements and subscriptions follow"]
+  settle -- "0 < net < total" --> part["partially_paid<br/>order_part_received notice"]
+  settle -- "net = 0" --> awaiting["awaiting_payment"]
+  part -- "hold runs out" --> stalled["Orders::Expire keeps it open<br/>unpaid parts end · order_partial_stalled"]
+  stalled --> add
+  part --> add
+  part -- "steward: Return payments" --> back["ReturnPayments<br/>credit: automatic · cash: seller records · card: refunded at the processor"]
+  back --> awaiting
+  awaiting -- "steward: Cancel" --> cancelled["cancelled<br/>place released"]

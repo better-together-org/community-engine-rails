@@ -30,4 +30,12 @@ RSpec.describe 'Billing credit throttles' do # rubocop:disable RSpec/DescribeCla
     expect(throttle.block.call(request_for('/en/billing/promotion_redemptions', method: 'POST'))).to be_present
     expect(throttle.block.call(request_for('/en/billing/promotion_redemptions'))).to be_nil
   end
+
+  it 'limits adding a payment to an order, per address' do
+    throttle = throttles.fetch('billing/order_payments/ip')
+
+    expect(throttle.limit).to eq(20)
+    expect(throttle.block.call(request_for('/en/billing/orders/abc/payments', method: 'POST'))).to be_present
+    expect(throttle.block.call(request_for('/en/billing/orders/abc/payments'))).to be_nil
+  end
 end

@@ -59,7 +59,7 @@
       <% end %>
 
       <%# A subscription renews by a way the platform settles itself; the buyer picks which. %>
-      <% if @purpose == 'subscription' && (renewal_choices = @choices.select { |choice| choice.available? && BetterTogether::Billing.local_method?(choice.name) }).any? %>
+      <% if @purpose == 'subscription' && (renewal_choices = @choices.select(&:renewable?)).any? %>
         <div id="billing-checkout-renew-with" class="mb-3">
           <%= label_tag :renew_with, t('better_together.billing.checkout.renew_with'), class: 'form-label', for: 'billing-checkout-renew-with-select' %>
           <%= select_tag :renew_with, options_for_select([[t('better_together.billing.checkout.renew_with_default'), '']] + renewal_choices.map { |choice| [billing_payment_method_label(choice.name), choice.name] }, @renew_with),

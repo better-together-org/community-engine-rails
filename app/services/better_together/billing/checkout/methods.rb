@@ -16,6 +16,10 @@ module BetterTogether
       class Methods
         Choice = Data.define(:name, :available, :reason, :cap_cents) do
           alias_method :available?, :available
+
+          # Whether a subscription can be renewed by this way: one Community Engine settles itself, and in use. Store
+          # credit counts even when the buyer has none today, because what matters is the balance when a renewal falls due.
+          def renewable? = Billing.local_method?(name) && (available? || reason == :insufficient_credit)
         end
 
         def self.call(...) = new(...).call

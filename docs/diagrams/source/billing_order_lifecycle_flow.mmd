@@ -12,7 +12,9 @@ stateDiagram-v2
     awaiting_payment --> cancelled : Orders.Cancel (nothing paid)
     awaiting_payment --> expired : Orders.Expire (hold ran out)
     partially_paid --> paid
-    partially_paid --> expired
+    partially_paid --> awaiting_payment : every part paid was returned (net money is 0)
+    partially_paid --> cancelled : Orders.Cancel, once the parts are returned
+    %% a part-paid order never expires: Orders.Expire ends the unpaid parts and keeps it open
     expired --> paid : late payment
     expired --> partially_paid
     expired --> cancelled

@@ -45,6 +45,8 @@ module BetterTogether
         # Opens every part on the placed order, explicit amounts first, then the credit that takes all it can, then the rest.
         def open(order, seller_assisted: false)
           ordered.each_with_index do |part, index|
+            next if part.rest? && !part.credit? && order.reload.balance_cents.zero? # credit already covered it all
+
             AddPayment.call(order:, payment_method: part.payment_method, amount_cents: part.amount_cents, seller_assisted:,
                             idempotency_key: "placed-#{index}")
           end
@@ -85,7 +87,7 @@ module BetterTogether
         def amount_problem
           return 'the parts are more than the order' if parts.sum { |part| part.amount_cents.to_i } > total_cents
 
-          'only one part can take the rest' if parts.count { |part| part.rest? && !part.credit? } > 1
+          'only one part can take the rest' if parts.many? { |part| part.rest? && !part.credit? }
         end
       end
     end

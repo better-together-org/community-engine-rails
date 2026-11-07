@@ -91,7 +91,8 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
 - [Billing Entitlements and Quota Allowances](billing/entitlements_and_allowances.md) - What a plan gives (roles, feature access, quota allowances), one derivation from Pay's status, what is taken away at a lapse and what never is
 - [Billing Subscriptions and Renewals](billing/subscriptions_and_renewals.md) - Pay::Subscription as the one record, local renewals, periods that never drift, grace and lapse, and the payer and steward actions
-- [Billing Store Credit](billing/store_credit.md) - A ledger of credit a person holds with a platform: lots that expire, spending soonest-expiring first, refunds back to credit, and why credit pays whole orders only
+- [Billing Store Credit](billing/store_credit.md) - A ledger of credit a person holds with a platform: lots that expire, spending soonest-expiring first, refunds back to credit, and credit as one part of a payment
+- [Billing Partial Payments](billing/partial_payments.md) - Paying an order in parts by any method, net-paid status, part-paid orders that stay open, returning parts and cancelling, renew-with
 - [Billing Promotions](billing/promotions.md) - Promotion codes that give store credit: keyed-digest storage, shown once, one answer to every failure, and the limits on guessing
 - [Billing Local Pay Processor](billing/local_pay_processor.md) - How cash, cheque, e-transfer and store credit appear in Pay: the customer, charge and subscription, and what stays in the workflow
 - [Billing Offline Payment Methods](billing/offline_payment_methods.md) - Paying a seller directly by cash, cheque or e-transfer: the buyer's screen, the seller's confirmation (no buyer claim needed), late payments, sales in person
@@ -174,6 +175,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Notification Flow](diagrams/source/billing_notification_flow.mmd)
 - [Billing Offline Payment State Machine](diagrams/source/billing_offline_payment_state_machine.mmd)
 - [Billing Order Lifecycle Flow](diagrams/source/billing_order_lifecycle_flow.mmd)
+- [Billing Partial Payments Flow](diagrams/source/billing_partial_payments_flow.mmd)
 - [Billing Payment Methods Model](diagrams/source/billing_payment_methods_model.mmd)
 - [Billing Plan Processor Sync Flow](diagrams/source/billing_plan_processor_sync_flow.mmd)
 - [Billing Processor Adapter Contract Model](diagrams/source/billing_processor_adapter_contract_model.mmd)

@@ -139,7 +139,8 @@ RSpec.describe 'Part-paid orders' do # rubocop:disable RSpec/DescribeClass
 
     it 'goes back to awaiting payment when every part paid is returned, and can then be paid another way' do
       credit_payment = order.payments.find_by(processor: 'store_credit')
-      billing::Refunds::Record.call(payment: credit_payment, amount_cents: 1000, idempotency_key: 'back', reason: 'requested_by_buyer', notify: false)
+      billing::Refunds::Record.call(payment: credit_payment, amount_cents: 1000, idempotency_key: 'back', reason: 'requested_by_buyer',
+                                    notify: false)
 
       expect(order.reload).to be_awaiting_payment
       expect(order.net_paid_cents).to eq(0)
@@ -234,7 +235,8 @@ RSpec.describe 'Part-paid orders' do # rubocop:disable RSpec/DescribeClass
 
     it 'is refused while money is against it, and lists how each part goes back' do
       expect { billing::Orders::Cancel.call(order) }.to raise_error(billing::Orders::Cancel::Refused, /return what was paid/)
-      expect(billing::Orders::ReturnPayments.pending(order).map { |part| [part.payment.processor, part.kind] }).to eq([[ 'store_credit', :credit ]])
+      pending = billing::Orders::ReturnPayments.pending(order).map { |part| [part.payment.processor, part.kind] }
+      expect(pending).to eq([['store_credit', :credit]])
     end
 
     it 'returns credit parts to the original lots, then cancels and releases the place' do

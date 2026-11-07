@@ -102,6 +102,16 @@ RSpec.describe BetterTogether::Billing::Orders::AddPayment do
     end
   end
 
+  it 'cannot put more waiting against the order than is left, even from two stale copies of it' do
+    stale = BetterTogether::Billing::Order.find(order.id)
+
+    add('cash', 3000)
+    add('cheque', 3000, to: stale)
+
+    expect(order.payments.reload.in_flight.sum(:amount_cents)).to be <= 4500
+    expect(order.payments.in_flight.pluck(:amount_cents)).to contain_exactly(1500, 3000)
+  end
+
   describe 'making room' do
     let!(:waiting_cash) { add('cash') }
 
