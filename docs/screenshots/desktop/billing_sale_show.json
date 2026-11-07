@@ -1,0 +1,83 @@
+{
+  "name": "billing_sale_show",
+  "device": "desktop",
+  "url": "/en/billing/sales/fc39c43c-d957-4ac2-a189-c5bdfc45c409",
+  "title": "Order BT-OUR56OU4 | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_orders",
+  "flow": "billing_sale_show",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_orders_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-order-lines",
+      "title": "What was ordered",
+      "bullets": [
+        "Price and name as they were when the order was placed."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 560.0,
+        "width": 1294.0,
+        "height": 82.0,
+        "right": 1367.0,
+        "bottom": 642.0,
+        "center_x": 720.0,
+        "center_y": 601.0
+      },
+      "avoid": {
+        "x": 73.0,
+        "y": 560.0,
+        "width": 1294.0,
+        "height": 82.0,
+        "right": 1367.0,
+        "bottom": 642.0,
+        "center_x": 720.0,
+        "center_y": 601.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 662.0,
+        "width": 380,
+        "height": 132,
+        "score": 815.0
+      }
+    },
+    {
+      "selector": "#billing-order-payments",
+      "title": "Payments",
+      "bullets": [
+        "An order can be paid in parts, by different methods."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 709.0,
+        "width": 1294.0,
+        "height": 82.0,
+        "right": 1367.0,
+        "bottom": 791.0,
+        "center_x": 720.0,
+        "center_y": 750.0
+      },
+      "avoid": {
+        "x": 73.0,
+        "y": 709.0,
+        "width": 1294.0,
+        "height": 82.0,
+        "right": 1367.0,
+        "bottom": 791.0,
+        "center_x": 720.0,
+        "center_y": 750.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 811.0,
+        "width": 380,
+        "height": 132,
+        "score": 666.0
+      }
+    }
+  ]
+}

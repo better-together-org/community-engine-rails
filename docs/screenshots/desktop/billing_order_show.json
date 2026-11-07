@@ -1,0 +1,48 @@
+{
+  "name": "billing_order_show",
+  "device": "desktop",
+  "url": "/en/billing/orders/e9b8edc4-48e6-47ea-ad23-e3fe39a4e2e2",
+  "title": "Order BT-SKH4XJO0 | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_orders",
+  "flow": "billing_order_show",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_orders_spec.rb",
+  "callouts": [
+    {
+      "selector": ".billing-order-status-badge",
+      "title": "Status",
+      "bullets": [
+        "Where the order stands."
+      ],
+      "target": {
+        "x": 1212.59375,
+        "y": 241.8125,
+        "width": 138.40625,
+        "height": 20.375,
+        "right": 1351.0,
+        "bottom": 262.1875,
+        "center_x": 1281.796875,
+        "center_y": 252.0
+      },
+      "avoid": {
+        "x": 1212.59375,
+        "y": 241.8125,
+        "width": 138.40625,
+        "height": 20.375,
+        "right": 1351.0,
+        "bottom": 262.1875,
+        "center_x": 1281.796875,
+        "center_y": 252.0
+      },
+      "placement": {
+        "side": "left",
+        "x": 812.59,
+        "y": 199.0,
+        "width": 380,
+        "height": 106,
+        "score": 1212.59375
+      }
+    }
+  ]
+}

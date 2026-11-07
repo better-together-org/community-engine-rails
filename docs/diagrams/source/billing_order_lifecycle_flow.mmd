@@ -5,12 +5,12 @@ stateDiagram-v2
   direction LR
   state "Order" as order {
     [*] --> draft
-    draft --> awaiting_payment : Orders::Place<br/>lines saved, purchasables held
+    draft --> awaiting_payment : Orders.Place, lines saved, purchasables held
     draft --> cancelled
     awaiting_payment --> partially_paid : a payment succeeds, part of the total
     awaiting_payment --> paid : payments cover the total
-    awaiting_payment --> cancelled : Orders::Cancel (nothing paid)
-    awaiting_payment --> expired : Orders::Expire (hold ran out)
+    awaiting_payment --> cancelled : Orders.Cancel (nothing paid)
+    awaiting_payment --> expired : Orders.Expire (hold ran out)
     partially_paid --> paid
     partially_paid --> expired
     expired --> paid : late payment
@@ -25,16 +25,16 @@ stateDiagram-v2
   }
   state "Payment" as payment {
     [*] --> pending
-    pending --> succeeded : Payments::Succeed
-    pending --> failed : Payments::Fail
+    pending --> succeeded : Payments.Succeed
+    pending --> failed : Payments.Fail
     pending --> cancelled_payment : order cancelled or expired
     failed --> pending : tried again
-    succeeded --> partially_refunded_payment : Refunds::Record
+    succeeded --> partially_refunded_payment : Refunds.Record
     succeeded --> refunded_payment
     partially_refunded_payment --> refunded_payment
   }
   note right of order
     Released on cancel or expiry:
-    Purchasable#release!
+    Purchasable.release!
     Sweep: ExpireOrdersJob, hourly, billing queue
   end note

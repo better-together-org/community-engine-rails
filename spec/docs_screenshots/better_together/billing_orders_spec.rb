@@ -16,7 +16,7 @@ RSpec.describe 'Documentation screenshots for billing orders', # rubocop:disable
   include_context 'with orders fixtures'
   include_context 'with billing switched on'
 
-  let(:buyer) { create(:better_together_person) }
+  let(:buyer) { find_or_create_test_user('user@example.test').person }
   let!(:order) { place_order(lines: [{ purchasable: plan, quantity: 1 }]) }
 
   before do
@@ -33,8 +33,8 @@ RSpec.describe 'Documentation screenshots for billing orders', # rubocop:disable
       source_spec: self.class.metadata[:file_path] }
   end
 
-  def visit_page(path)
-    capybara_login_as_platform_manager
+  def visit_page(path, as: :manager)
+    as == :buyer ? capybara_login_as_user : capybara_login_as_platform_manager
     visit "/#{I18n.default_locale}/billing/#{path}"
   end
 
@@ -81,7 +81,7 @@ RSpec.describe 'Documentation screenshots for billing orders', # rubocop:disable
       metadata: screenshot_metadata(flow: 'billing_order_show'),
       callouts: [{ id: 'status', selector: '.billing-order-status-badge', title: 'Status', bullets: ['Where the order stands.'] }]
     ) do
-      visit_page("orders/#{order.id}")
+      visit_page("orders/#{order.id}", as: :buyer)
       expect(page).to have_css('.billing-order-status-badge')
     end
   end

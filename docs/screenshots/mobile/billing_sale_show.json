@@ -1,0 +1,83 @@
+{
+  "name": "billing_sale_show",
+  "device": "mobile",
+  "url": "/en/billing/sales/fc39c43c-d957-4ac2-a189-c5bdfc45c409",
+  "title": "Order BT-OUR56OU4 | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_orders",
+  "flow": "billing_sale_show",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_orders_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-order-lines",
+      "title": "What was ordered",
+      "bullets": [
+        "Price and name as they were when the order was placed."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 653.390625,
+        "width": 459.0,
+        "height": 82.0,
+        "right": 472.0,
+        "bottom": 735.390625,
+        "center_x": 242.5,
+        "center_y": 694.390625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 653.390625,
+        "width": 459.0,
+        "height": 82.0,
+        "right": 472.0,
+        "bottom": 735.390625,
+        "center_x": 242.5,
+        "center_y": 694.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 475.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 653.390625
+      }
+    },
+    {
+      "selector": "#billing-order-payments",
+      "title": "Payments",
+      "bullets": [
+        "An order can be paid in parts, by different methods."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 794.390625,
+        "width": 459.0,
+        "height": 82.0,
+        "right": 472.0,
+        "bottom": 876.390625,
+        "center_x": 242.5,
+        "center_y": 835.390625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 794.390625,
+        "width": 459.0,
+        "height": 82.0,
+        "right": 472.0,
+        "bottom": 876.390625,
+        "center_x": 242.5,
+        "center_y": 835.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 896.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 380.609375
+      }
+    }
+  ]
+}
