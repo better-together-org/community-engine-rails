@@ -21,10 +21,23 @@ RSpec.describe 'Cancelling and expiring orders' do # rubocop:disable RSpec/Descr
     end
 
     it 'refuses an order that has money against it' do
-      create(:better_together_billing_payment, order:, amount_cents: 4500, status: 'succeeded')
+      create(:better_together_billing_payment, order:, amount_cents: 1000, status: 'succeeded')
 
-      expect { described_class.call(order) }.to raise_error(described_class::Refused, /unpaid/)
+      expect { described_class.call(order) }.to raise_error(described_class::Refused, /return what was paid/)
       expect(order.reload).not_to be_cancelled
+    end
+
+    it 'cancels a part-paid order once every part has been returned' do
+      part = create(:better_together_billing_payment, order:, amount_cents: 1000, status: 'succeeded')
+      BetterTogether::Billing::Orders::Settle.call(order)
+      expect(order.reload).to be_partially_paid
+      BetterTogether::Billing::Refunds::Record.call(payment: part, amount_cents: 1000, idempotency_key: 'return-1', reason: 'cancelled_order',
+                                                    notify: false)
+      expect(order.reload).to be_awaiting_payment
+
+      described_class.call(order)
+
+      expect(order.reload).to be_cancelled
     end
 
     it 'refuses an order that is already final' do

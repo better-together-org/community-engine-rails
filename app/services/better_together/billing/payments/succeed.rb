@@ -32,6 +32,7 @@ module BetterTogether
           payment.with_lock { settle_payment }
           orphan! if payment.orphaned?
           Orders::Settle.call(payment.order)
+          part_received if payment.succeeded?
           payment
         end
 
@@ -55,6 +56,15 @@ module BetterTogether
           { status: 'succeeded', paid_at: Time.current, failure_code: nil,
             processor_reference: reference.presence || payment.processor_reference,
             amount_cents: amount_cents.presence || payment.amount_cents, pay_charge: pay_charge || payment.pay_charge }
+        end
+
+        # A part that leaves the order still unpaid tells both sides how much came in and how much is left; the payment
+        # that completes the order is told as "paid" (Settle), so it is not announced twice. Once per payment.
+        def part_received
+          order = payment.order.reload
+          return unless order.partially_paid?
+
+          Notifications.deliver('order_part_received', subject: payment, dedupe_key: "part-received:#{payment.id}")
         end
 
         # The refund is recorded once (a fixed key), whatever number of times this runs.

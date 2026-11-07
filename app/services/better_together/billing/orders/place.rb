@@ -39,8 +39,9 @@ module BetterTogether
         # `lines` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
         # subscriber was sold at, when it differs from the plan's today). A renewal (`renewal: true`) may be for a
         # purchasable that is no longer for sale, and holds the order until `expires_at` instead of for a number of hours.
-        def initialize(platform:, buyer:, purpose:, lines:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists
-                       on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false, expires_at: nil, renewal: false)
+        def initialize(platform:, buyer:, purpose:, lines:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
+                       on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false, expires_at: nil, renewal: false,
+                       payments: nil, renewal_payment_method: nil)
           @platform = platform
           @buyer = buyer
           @signer = signer || buyer
@@ -54,6 +55,8 @@ module BetterTogether
           @seller_assisted = seller_assisted
           @expires_at = expires_at
           @renewal = renewal
+          @requested_parts = payments
+          @renewal_payment_method = renewal_payment_method.presence
         end
 
         def call
@@ -70,7 +73,8 @@ module BetterTogether
         attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject, :seller_assisted, :renewal
 
         def gate
-          @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:, payment_method:)
+          @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:,
+                                                payment_method: parts.any? ? parts.methods_named : payment_method)
         end
 
         # The signer's acceptances are copied onto the order, so what applied to this purchase is
@@ -84,52 +88,66 @@ module BetterTogether
           reserve(order)
           order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: @expires_at || hold_hours.hours.from_now)
           Settle.call(order) if order.total_cents.zero?
-          OpenPayment.call(order:, choice: payment_choice, seller_assisted:)
+          open_payments(order)
           Notifications.deliver('order_placed', subject: order)
           order
         end
 
-        # The seller's own hold time for a method outside a vendor, else the default.
-        def hold_hours = @hold_hours || payment_choice.offline_setting&.hold_hours || Order::DEFAULT_HOLD_HOURS
+        def open_payments(order)
+          return parts.open(order, seller_assisted:) if parts.any?
 
-        def payment_choice
-          @payment_choice ||= PaymentChoice.new(platform:, seller:, name: payment_method, purpose:, currency: order_currency)
+          OpenPayment.call(order:, choice: payment_choice, seller_assisted:)
         end
+
+        # The seller's own hold time for a method outside a vendor, else the default.
+        def hold_hours = @hold_hours || parts.hold_hours || payment_choice.offline_setting&.hold_hours || Order::DEFAULT_HOLD_HOURS
+
+        # Several ways of paying, asked for together (see PaymentParts).
+        def parts
+          @parts ||= PaymentParts.new(@requested_parts, platform:, seller:, purpose:, currency: order_currency, total_cents: lines_total_cents)
+        end
+
+        def lines_total_cents
+          lines.sum { |line| line.fetch(:unit_amount_cents, line.fetch(:purchasable).purchasable_amount_cents) * line.fetch(:quantity, 1) }
+        end
+
+        def payment_choice = @payment_choice ||= PaymentChoice.new(platform:, seller:, name: payment_method, purpose:, currency: order_currency)
 
         def check_lines!
           raise Refused, "that is not a kind of purchase: #{purpose}" unless Order::PURPOSES.include?(purpose)
           raise Refused, 'an order needs at least one line' if lines.empty?
 
           check_purchasables!
-          problem = payment_choice.problem
+          check_payment_methods!
+        end
+
+        def check_payment_methods!
+          problem = parts.any? ? parts.problem : payment_choice.problem
           raise Refused, problem if problem
+          raise Refused, 'that is not a way of paying to renew by' unless renewal_method_usable?
+        end
+
+        # What a subscription renews by must be a method Community Engine settles itself, switched on for subscriptions.
+        def renewal_method_usable?
+          return true if @renewal_payment_method.blank?
+
+          Billing.local_method?(@renewal_payment_method) && PaymentChoice.new(platform:, seller:, name: @renewal_payment_method, purpose:,
+                                                                              currency: order_currency).problem.nil?
         end
 
         def check_purchasables!
-          purchasables.each { |purchasable| check_purchasable!(purchasable) }
-          raise Refused, 'all lines must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
+          problem = LineProblem.new(platform:, seller:, renewal:).for(purchasables)
+          raise Refused, problem if problem
         end
 
         def order_currency = purchasables.first&.purchasable_currency
 
         def purchasables = @purchasables ||= lines.map { |line| line.fetch(:purchasable) }
 
-        def check_purchasable!(purchasable)
-          raise Refused, 'that cannot be bought' unless Purchasable.model_names.include?(purchasable.class.name)
-          raise Refused, 'that is not for sale' unless renewal || purchasable.purchasable?
-          raise Refused, 'that belongs to another platform' if purchasable.try(:platform_id) != platform.id
-          raise Refused, 'that is sold by someone else' unless same_seller?(purchasable)
-        end
-
-        def same_seller?(purchasable)
-          return seller.nil? if purchasable.try(:seller_id).blank?
-
-          seller.present? && purchasable.seller_type == seller.class.name && purchasable.seller_id == seller.id
-        end
-
         def build_order
-          order = platform.billing_orders.build(buyer:, purpose:, seller:, on_behalf_of:, subject:,
-                                                currency: purchasables.first.purchasable_currency, status: 'draft')
+          order = platform.billing_orders.build(buyer:, purpose:, seller:, on_behalf_of:, subject:, status: 'draft',
+                                                renewal_payment_method: @renewal_payment_method,
+                                                currency: purchasables.first.purchasable_currency)
           lines.each_with_index { |line, index| order.lines.build(line_attributes(line, index)) }
           order
         end

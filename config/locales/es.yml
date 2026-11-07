@@ -1086,6 +1086,20 @@ es:
           seller:
             body: Se ha pagado un pedido de %{amount}.
             title: El pedido %{number} está pagado
+        order_part_received:
+          buyer:
+            body: Se recibieron %{received} de %{amount}. Pague los %{left} restantes para completarlo.
+            title: Se recibió un pago del pedido %{number}
+          seller:
+            body: Se recibieron %{received} de un pedido de %{amount}; faltan %{left} por pagar.
+            title: Pago parcial del pedido %{number}
+        order_partial_stalled:
+          buyer:
+            body: Está pagado en parte y sigue abierto. Pague los %{left} restantes cuando quiera.
+            title: El pedido %{number} espera el resto
+          seller:
+            body: Un pedido de %{amount} pagado en parte ya no espera sus partes sin pagar. Espere el resto, o devuelva las partes y cancélelo.
+            title: El pedido %{number} está pagado en parte
         order_placed:
           buyer:
             body: Lo estamos reservando para usted. Pague %{amount} para completarlo.

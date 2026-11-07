@@ -12,21 +12,25 @@ module BetterTogether
       class Open
         def self.call(...) = new(...).call
 
-        def initialize(order:, setting:, seller_assisted: false)
+        # `amount_cents` is the part to be paid this way (the whole balance by default), and `idempotency_key` names
+        # this part, so an order paid in several parts opens one offline payment for each.
+        def initialize(order:, setting:, seller_assisted: false, amount_cents: nil, idempotency_key: nil) # rubocop:disable Metrics/ParameterLists
           @order = order
           @setting = setting
           @seller_assisted = seller_assisted
+          @amount_cents = amount_cents
+          @idempotency_key = idempotency_key
         end
 
         def call
-          payment = Payments::Create.call(order:, processor: setting.processor, amount_cents: order.balance_cents,
-                                          idempotency_key: "offline:#{order.id}")
+          payment = Payments::Create.call(order:, processor: setting.processor, amount_cents: amount_cents || order.balance_cents,
+                                          idempotency_key: idempotency_key || "offline:#{order.id}")
           payment.offline_payment || create_offline_payment(payment)
         end
 
         private
 
-        attr_reader :order, :setting, :seller_assisted
+        attr_reader :order, :setting, :seller_assisted, :amount_cents, :idempotency_key
 
         def create_offline_payment(payment)
           order.offline_payments.create!(

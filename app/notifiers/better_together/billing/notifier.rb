@@ -71,7 +71,14 @@ module BetterTogether
       def interpolations
         order = Notifications::Links.order_of(record)
         { number: order&.number.to_s, amount: amount_text(order), platform: record.try(:platform)&.name.to_s,
-          method: method_label, expires: expiry_text, plan: plan_name, date: date_text }
+          method: method_label, expires: expiry_text, plan: plan_name, date: date_text }.merge(part_interpolations(order))
+      end
+
+      # For a part payment: what this payment brought in and what is left to pay on the order.
+      def part_interpolations(order)
+        return {} unless order
+
+        { received: record.is_a?(Payment) ? money(record.amount_cents, order.currency) : '', left: money(order.balance_cents, order.currency) }
       end
 
       def plan_name = (subscription_term&.plan || record.try(:plan))&.name.to_s

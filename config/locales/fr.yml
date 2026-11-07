@@ -1096,6 +1096,20 @@ fr:
           seller:
             body: Une commande de %{amount} a été payée.
             title: La commande %{number} est payée
+        order_part_received:
+          buyer:
+            body: "%{received} sur %{amount} ont été reçus. Payez les %{left} restants pour la terminer."
+            title: Un paiement a été reçu pour la commande %{number}
+          seller:
+            body: "%{received} d'une commande de %{amount} ont été reçus ; il reste %{left} à payer."
+            title: Paiement partiel de la commande %{number}
+        order_partial_stalled:
+          buyer:
+            body: Elle est partiellement payée et reste ouverte. Payez les %{left} restants quand vous le souhaitez.
+            title: La commande %{number} attend le solde
+          seller:
+            body: Une commande partiellement payée de %{amount} n'attend plus ses parts impayées. Attendez le solde, ou remboursez les parts et annulez-la.
+            title: La commande %{number} est partiellement payée
         order_placed:
           buyer:
             body: Nous la gardons pour vous. Payez %{amount} pour la terminer.

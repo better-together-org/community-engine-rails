@@ -1093,6 +1093,20 @@ en:
           seller:
             body: An order for %{amount} has been paid.
             title: Order %{number} is paid
+        order_part_received:
+          buyer:
+            body: "%{received} of %{amount} was received. Pay the remaining %{left} to complete it."
+            title: A payment was received on order %{number}
+          seller:
+            body: "%{received} of an order for %{amount} was received; %{left} is still to pay."
+            title: Part payment on order %{number}
+        order_partial_stalled:
+          buyer:
+            body: It is partly paid and stays open. Pay the remaining %{left} whenever you are ready.
+            title: Order %{number} is waiting for the rest
+          seller:
+            body: A part-paid order for %{amount} has stopped waiting on its unpaid parts. Wait for the rest, or return the parts and cancel it.
+            title: Order %{number} is part paid
         order_placed:
           buyer:
             body: We are holding it for you. Pay %{amount} to complete it.

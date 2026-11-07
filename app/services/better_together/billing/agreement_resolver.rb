@@ -30,7 +30,7 @@ module BetterTogether
         @purpose = purpose.to_s
         @seller = seller
         @purchasables = Array(purchasables)
-        @payment_method = payment_method&.to_s
+        @payment_method = Array(payment_method).filter_map { |method| method.presence&.to_s }.presence
       end
 
       def call

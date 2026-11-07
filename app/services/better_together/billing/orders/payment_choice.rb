@@ -47,6 +47,9 @@ module BetterTogether
           @credit_setting ||= sellers_settings.enabled.find_by(processor: name)
         end
 
+        # Whether the name is an installed method at all.
+        def known? = adapter.present?
+
         # Whether the method is store credit.
         def store_credit? = credit?
 

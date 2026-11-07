@@ -39,12 +39,18 @@ module BetterTogether
 
         def refunded_cents = payments.sum(&:refunded_cents)
 
-        def target_status
-          return refund_status if refunded_cents.positive? && paid_cents.positive?
-          return 'paid' if fully_paid? || covered_by_subscription?
-          return 'partially_paid' if paid_cents.positive? && !order.paid?
+        # What is still against the order. Parts that were returned no longer count.
+        def net_paid_cents = paid_cents - refunded_cents
 
-          nil
+        # Where the order stands. Paid in full is judged on what is still against it, so returning one part of a
+        # partly paid order puts it back to partly paid (or waiting), and an order that was once paid in full and
+        # then returned keeps the refund states.
+        def target_status
+          return 'paid' if fully_paid? || covered_by_subscription?
+          return refund_status if order.paid_at.present? && refunded_cents.positive?
+          return 'partially_paid' if net_paid_cents.positive?
+
+          'awaiting_payment' if order.partially_paid?
         end
 
         # The first payment of a subscription that is on a trial (or fully discounted) is paid by no
@@ -58,7 +64,7 @@ module BetterTogether
         def fully_paid?
           return order.open? if order.total_cents.zero?
 
-          paid_cents >= order.total_cents
+          net_paid_cents >= order.total_cents
         end
 
         def refund_status = refunded_cents >= paid_cents ? 'refunded' : 'partially_refunded'

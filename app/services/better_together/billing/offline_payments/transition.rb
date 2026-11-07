@@ -179,7 +179,7 @@ module BetterTogether
         # An expired payment is paid late: its hold was let go, so take the place again and open
         # a fresh payment for it. If the place is gone, nothing changes.
         def take_the_place_again
-          order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) }
+          order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) } if order.expired?
           offline.update!(payment: late_payment)
         rescue StandardError => e
           raise PlaceGone, e.message
@@ -206,11 +206,20 @@ module BetterTogether
                                recorded_by: actor, notify: false)
         end
 
+        # Only this payment ends. The order is cancelled with it only when nothing else is paying for it (no other part in
+        # flight, no money against it); an order with other parts stays open for them, or for another way of paying.
         def drop_payment
           Payments::Fail.call(offline.payment)
+          return Orders::Settle.call(order) if other_parts_live?
+
           Orders::Cancel.call(order)
         rescue Orders::Cancel::Refused
-          nil # some other payment has money against the order; it stays open
+          nil # money is still against the order; it stays open
+        end
+
+        def other_parts_live?
+          others = order.payments.where.not(id: offline.payment_id)
+          others.in_flight.exists? || others.where(status: %w[succeeded partially_refunded]).exists?
         end
 
         # Logs the event and, when asked, tells the other side. The person acting is never told.

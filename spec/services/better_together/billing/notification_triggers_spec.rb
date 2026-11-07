@@ -47,12 +47,32 @@ RSpec.describe 'Billing notification triggers' do # rubocop:disable RSpec/Descri
       expect(kinds_for(steward)).to eq(['order_paid'])
     end
 
-    it 'does not announce a part payment as paid' do
+    it 'tells both sides a part arrived, not that the order is paid, and tells the last part as paid' do
       order = place_order
       Noticed::Notification.delete_all
       deliver_now { settle_with_payment(order, amount: 1000) }
 
-      expect(kinds_for(buyer)).to be_empty
+      expect(kinds_for(buyer)).to eq(['order_part_received'])
+      expect(kinds_for(steward)).to eq(['order_part_received'])
+      expect(inbox(buyer).first.event.body).to include('$10.00', '$45.00', '$35.00')
+
+      Noticed::Notification.delete_all
+      deliver_now { settle_with_payment(order, amount: 3500) }
+
+      expect(kinds_for(buyer)).to eq(['order_paid'])
+    end
+
+    it 'tells both sides once that a part-paid order stays open when its hold runs out' do
+      order = place_order
+      settle_with_payment(order, amount: 1000)
+      order.reload.update!(expires_at: 1.hour.ago)
+      Noticed::Notification.delete_all
+
+      deliver_now { 2.times { BetterTogether::Billing::Orders::Expire.call(order) } }
+
+      expect(order.reload).to be_partially_paid
+      expect(kinds_for(buyer)).to eq(['order_partial_stalled'])
+      expect(kinds_for(steward)).to eq(['order_partial_stalled'])
     end
 
     it 'tells both sides when it is cancelled and when it lapses' do
