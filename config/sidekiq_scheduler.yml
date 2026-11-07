@@ -113,3 +113,18 @@
   cron: "50 4 * * *" # daily at 04:50 UTC
   class: "BetterTogether::Billing::ExpireCreditLotsJob"
   description: "Let store credit past its date go, with an entry for what was lost"
+
+"better_together:billing:generate_renewals_daily":
+  cron: "10 5 * * *" # daily at 05:10 UTC
+  class: "BetterTogether::Billing::GenerateRenewalsJob"
+  description: "Make the invoice for the next period of each subscription Community Engine renews"
+
+"better_together:billing:advance_subscriptions_hourly":
+  cron: "25 * * * *" # hourly at :25 UTC
+  class: "BetterTogether::Billing::AdvanceSubscriptionsJob"
+  description: "Move subscriptions through past due, unpaid and cancelled as their dates arrive"
+
+"better_together:billing:remind_renewals_daily":
+  cron: "30 14 * * *" # daily at 14:30 UTC
+  class: "BetterTogether::Billing::RemindRenewalsJob"
+  description: "Remind payers of unpaid renewal invoices, and warn before the grace runs out"

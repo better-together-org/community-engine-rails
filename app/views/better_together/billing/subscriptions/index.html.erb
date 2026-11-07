@@ -1,0 +1,40 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.subscriptions.index_title') %>
+<% end %>
+
+<div id="billing-subscriptions-page" class="container my-4">
+  <h1 class="mb-4"><%= t('better_together.billing.subscriptions.index_title') %></h1>
+
+  <% if @terms.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-subscriptions-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.subscriptions.field_plan') %></th>
+              <th scope="col"><%= t('better_together.billing.subscriptions.field_status') %></th>
+              <th scope="col"><%= t('better_together.billing.subscriptions.field_through') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.subscriptions.field_price') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @terms.each do |term| %>
+              <tr id="<%= dom_id(term) %>">
+                <th scope="row"><%= term.plan.name %></th>
+                <td><%= billing_subscription_status_badge(term.pay_subscription) %></td>
+                <td><%= l(term.pay_subscription.current_period_end.to_date, format: :long) %></td>
+                <td class="text-end"><%= billing_amount(term.unit_amount_cents, term.currency) %></td>
+                <td class="text-end">
+                  <%= link_to t('globals.view'), billing_subscription_path(term, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-subscriptions-empty" class="text-body-secondary"><%= t('better_together.billing.subscriptions.none') %></p>
+  <% end %>
+</div>

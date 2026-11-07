@@ -68,6 +68,15 @@ module BetterTogether
           attributes[:paid_at] = Time.current if target == 'paid' && order.paid_at.nil?
           order.update!(attributes)
           notify(target)
+          follow_up_subscription if target == 'paid'
+        end
+
+        # A paid subscription order starts a subscription, or renews one. It runs after the payment is
+        # committed, as a job that can be retried, so a failure there can never undo a recorded payment.
+        def follow_up_subscription
+          return unless order.purpose == 'subscription'
+
+          ActiveRecord.after_all_transactions_commit { SubscriptionOrderPaidJob.perform_later(order) }
         end
 
         # Told once per order and outcome, however many times the order is settled.

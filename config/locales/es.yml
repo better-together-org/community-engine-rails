@@ -972,6 +972,11 @@ es:
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}
       notifications:
+        agreement_reacceptance_needed:
+          buyer:
+            body: Cambiaron los términos de tu suscripción de %{plan}. Acéptalos para
+              recibir tu próxima factura de renovación.
+            title: Revisa nuestros términos actualizados
         cheque_bounced:
           buyer:
             body: El cheque de %{amount} no se cobró, así que el pago se revirtió.
@@ -1006,6 +1011,11 @@ es:
           body: Un evento de facturación no se pudo procesar tras varios intentos.
             Revíselo.
           title: Un evento de facturación necesita atención
+        grace_ending:
+          buyer:
+            body: Tu tiempo adicional termina el %{date}. Paga tu renovación antes
+              para conservar tu suscripción.
+            title: Tu suscripción de %{plan} está a punto de vencer
         hold_expiring:
           body: Estamos reservando el pedido %{number} para usted, pero la reserva
             termina pronto. Pague %{amount} por %{method} antes, o el pedido caducará.
@@ -1089,6 +1099,31 @@ es:
         refund_recorded:
           body: El vendedor registró un reembolso de su pedido.
           title: Reembolso del pedido %{number}
+        renewal_credit_insufficient:
+          buyer:
+            body: Tu renovación de %{plan} por %{amount} se paga con crédito de la
+              tienda y no tienes suficiente. Añade crédito y lo intentaremos cada
+              día.
+            title: No hay suficiente crédito para tu renovación
+        renewal_invoice_issued:
+          buyer:
+            body: Tu renovación de %{plan} por %{amount} está lista para pagar. Tu
+              periodo actual termina el %{date}.
+            title: Factura de renovación %{number}
+        renewal_overdue:
+          buyer:
+            body: Tu periodo terminó y la renovación no se ha pagado. Todo sigue funcionando
+              hasta el %{date}; paga antes para seguir suscrito.
+            title: Tu renovación de %{plan} está vencida
+          seller:
+            body: La renovación de un suscriptor no se pagó a tiempo. Vence el %{date}
+              salvo que se pague o se le dé más tiempo.
+            title: Una suscripción de %{plan} está vencida
+        renewal_reminder:
+          buyer:
+            body: Tu renovación de %{plan} por %{amount} sigue sin pagarse. Tu periodo
+              actual termina el %{date}.
+            title: 'Recordatorio: la renovación %{number} no está pagada'
         settings_changed:
           body: Alguien cambió cómo pagan los compradores (%{method}). Si no lo esperaba,
             compruébelo ahora.
@@ -1288,6 +1323,9 @@ es:
         field_currency: Moneda
         field_description: Descripcion
         field_eligible_owner_types: Elegible para
+        field_grace_days: Días adicionales si no se paga
+        field_grace_days_hint: Todo sigue funcionando este tiempo tras un periodo
+          sin pagar. 0 significa ninguno. El contenido nunca se elimina.
         field_hosted_access_level: Nivel de acceso alojado
         field_identifier: Identificador
         field_identifier_hint: Clave unica de maquina. No se puede cambiar despues
@@ -1312,6 +1350,9 @@ es:
         field_processor_product_id: Producto
         field_processor_product_id_hint: Elija un producto existente, o déjelo vacío
           para crear uno nuevo en su procesador de pagos.
+        field_renewal_lead_days: Facturar con estos días de antelación
+        field_renewal_lead_days_hint: Cuánto antes de que termine un periodo se hace
+          su factura de renovación.
         field_solidarity_description: Descripcion de solidaridad
         field_solidarity_description_hint: Se muestra a los posibles suscriptores
           para explicar a quien va dirigido este nivel.
@@ -1350,6 +1391,9 @@ es:
         pricing_tier_standard: Estandar
         processor_none: Sin procesador en línea
         product_none: Crear un producto nuevo
+        renewal_section_hint: Para suscriptores que pagan con un método que no es
+          un procesador de pagos. Un procesador renueva sus propias suscripciones.
+        renewal_section_title: Renovaciones
         retry_sync: Reintentar la sincronización
         select_required: Elija un valor.
         show_title: Plan de facturacion
@@ -1545,6 +1589,70 @@ es:
         refund_record: Registrar reembolso
         refund_recorded: Reembolso registrado. Se informó al comprador.
         refund_refused: No se pudo registrar ese reembolso. Revise el importe.
+      subscribers:
+        cancel_at_end: Cancelar al final del periodo
+        cancel_now: Cancelar ahora
+        cancel_now_confirm: "¿Terminar esta suscripción ahora? No se reembolsa nada
+          de lo ya pagado."
+        cancelled: La suscripción está cancelada.
+        extend: Dar más tiempo
+        extend_days: Dar más días antes de que caduque
+        field_subscriber: Suscriptor
+        filter_active: Activas
+        filter_all: Todos
+        filter_ended: Terminadas
+        filter_lapsed: Caducadas
+        filter_overdue: Vencidas
+        filters: Filtrar suscriptores
+        grace_extended: Se dio más tiempo.
+        index_intro: 'Personas cuyas suscripciones renueva Community Engine. Su estado
+          sigue a Pay: vencida mientras una factura sin pagar está dentro de su tiempo
+          adicional, caducada después.'
+        index_title: Suscriptores
+        move_to_current_price: Pasar al precio actual
+        none: Ningún suscriptor coincide.
+        price_line: Vendida a %{price}. El plan cuesta %{current} hoy.
+        price_moved: El suscriptor pasa al precio actual desde la próxima factura.
+        refused: No se pudo hacer eso con esta suscripción.
+        waive: Cubrir este periodo sin pago
+        waive_confirm: "¿Cubrir el siguiente periodo sin pago? Su factura se cancela."
+        waived: El periodo está cubierto.
+      subscriptions:
+        accept: Aceptar y continuar
+        accept_all: Acepta todos los términos mostrados.
+        cancel: Cancelar al final de este periodo
+        cancel_confirm: "¿Cancelar esta suscripción al final del periodo pagado?"
+        cancelled: Tu suscripción terminará cuando termine el periodo pagado.
+        cannot_resume: Esa suscripción no se puede reanudar.
+        field_grace: Tiempo adicional hasta
+        field_method: Pagado con
+        field_period: Periodo
+        field_plan: Plan
+        field_price: Precio
+        field_status: Estado
+        field_through: Pagado hasta
+        index_title: Suscripciones
+        invoice: Factura %{number}
+        none: No tienes suscripciones.
+        period_blocked: En espera
+        period_lapsed: Caducado
+        period_needs_agreement: Necesita que aceptes los términos
+        period_paid: Pagado
+        period_pending: Esperando el pago
+        period_waived: Cubierto
+        periods_caption: Cada periodo de esta suscripción y su factura
+        periods_title: Periodos y facturas
+        resume: Mantener mi suscripción
+        resumed: Tu suscripción continuará.
+        review_intro: Los términos de esta suscripción cambiaron. Acéptalos y haremos
+          tu próxima factura de renovación.
+        review_title: Revisar y aceptar
+        state_active: Activa
+        state_canceled: Terminada
+        state_ending: Termina al final de este periodo
+        state_past_due: Vencida
+        state_unpaid: Caducada
+        terms_accepted: Gracias. Tu factura de renovación está lista.
       walk_up:
         agreements_label: El comprador ha leído y aceptado los acuerdos de compra
           conmigo, en persona
@@ -5735,7 +5843,9 @@ es:
       title: 500 - Error interno del servidor
     messages:
       accepted: debe ser aceptado
+      account_mismatch: debe pertenecer a la misma cuenta
       acknowledgement_required: debe aceptarse antes de activar este método
+      after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       blank: no puede estar en blanco
       confirmation: no coincide con %{attribute}
@@ -5803,6 +5913,7 @@ es:
       wrong_length:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
+      wrong_sign: tiene el signo equivocado para este tipo de asiento
     models:
       address_missing_type: La dirección debe ser física, postal o ambas.
       better_together/navigation_item:

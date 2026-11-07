@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
 
     expect(critical).to contain_exactly('payment_failed', 'payment_action_required', 'dispute_opened', 'settings_changed',
                                         'event_dead_lettered', 'plan_sync_failed', 'cheque_bounced', 'hold_expiring',
-                                        'refund_failed', 'payment_orphaned')
+                                        'refund_failed', 'payment_orphaned', 'renewal_overdue', 'grace_ending')
     expect(described_class.critical?('order_paid')).to be(false)
   end
 
@@ -66,7 +66,7 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
             %w[title body].each do |part|
               text = I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}",
                             default: [:"better_together.billing.notifications.#{kind}.#{part}"], number: 'N', amount: 'A', method: 'M',
-                            platform: 'P', expires: 'E')
+                            platform: 'P', expires: 'E', plan: 'L', date: 'D')
               expect(text).to be_a(String), "missing #{locale} #{kind}.#{audience}.#{part}"
               expect(text).not_to include('translation missing')
             end

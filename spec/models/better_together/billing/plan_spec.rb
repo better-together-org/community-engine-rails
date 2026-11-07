@@ -323,7 +323,7 @@ RSpec.describe BetterTogether::Billing::Plan do
       linked_keys = plan.permitted_update_attributes.grep_v(Hash)
       unlinked_keys = create(:better_together_billing_plan, :unlinked).permitted_update_attributes.grep_v(Hash)
 
-      expect(linked_keys).to contain_exactly(:name, :description, :active)
+      expect(linked_keys).to contain_exactly(:name, :description, :active, :grace_days, :renewal_lead_days)
       expect(unlinked_keys).to include(:amount_cents, :currency, :billing_interval)
     end
   end

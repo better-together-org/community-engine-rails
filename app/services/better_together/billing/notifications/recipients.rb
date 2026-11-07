@@ -32,7 +32,7 @@ module BetterTogether
 
         def people
           case audience
-          when :buyer then [order&.buyer]
+          when :buyer then [order&.buyer || term&.payer]
           when :holder then [credit_holder]
           when :seller, :operator then managers
           else []
@@ -47,11 +47,19 @@ module BetterTogether
           end
         end
 
+        # The subscription a renewal period or its terms belong to.
+        def term
+          @term ||= case subject
+                    when SubscriptionTerm then subject
+                    when SubscriptionPeriod then subject.term
+                    end
+        end
+
         # The order a payment, a refund or the order itself belongs to.
         def order
           @order ||= case subject
                      when Order then subject
-                     when Payment, OfflinePayment then subject.order
+                     when Payment, OfflinePayment, SubscriptionPeriod then subject.order
                      when Refund then subject.payment.order
                      end
         end

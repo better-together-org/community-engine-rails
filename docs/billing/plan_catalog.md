@@ -30,6 +30,7 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
 | `seller` | Empty when the platform sells the plan; otherwise a community or person on the platform (type allow-list, read-only after create). |
 | `identifier` | Unique **per seller** (one partial index for the platform's own plans, one for each other seller's). |
 | `name`, `description`, `active` | Descriptive. |
+| `grace_days`, `renewal_lead_days` | How a subscription Community Engine renews itself is run: days it keeps working after a period ends unpaid (default 7, 0 = none), and days before a period ends that its invoice is made (default 14). Not held by any processor, so editable at any time. See [subscriptions_and_renewals.md](subscriptions_and_renewals.md). |
 | `amount_cents`, `currency`, `billing_interval`, `interval_count` | The price. No currency default: the host or steward chooses. `interval_count` is how many intervals make a period (3 months), 1 by default and always 1 for a one-time price; it is a price field, so it is locked once the processor holds the price. |
 | `processor` | The **online** processor that holds the price: a registered processor with a context for the platform. Empty for a plan paid only by the methods below. |
 | `accepted_payment_methods` | Installed methods that do not go through a vendor (cash, cheque, e-transfer, store credit). Each must still be enabled for the seller before buyers can use it. Editable at any time, since no processor holds them. A plan needs a processor or at least one accepted method. |
