@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-07T21:58:40Z",
+  "generated_at": "2026-11-07T22:20:19Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -35034,6 +35034,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::OrderPaymentsController",
+          "label": "Billing::OrderPaymentsController",
+          "source_path": "app/controllers/better_together/billing/order_payments_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::BotDefense::ChallengesController",
           "label": "BotDefense::ChallengesController",
           "source_path": "app/controllers/better_together/bot_defense/challenges_controller.rb",
@@ -36002,6 +36016,15 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::OwnerScoped",
+          "label": "Billing::OwnerScoped",
+          "capability": "Ownerscoped",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::OrderPaymentsController"
+          ]
+        },
+        {
           "name": "BetterTogether::BotProtectedSubmissions",
           "label": "BotProtectedSubmissions",
           "capability": "Botprotectedsubmissions",
@@ -36195,6 +36218,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36262,6 +36286,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36329,6 +36354,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -36407,6 +36433,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",

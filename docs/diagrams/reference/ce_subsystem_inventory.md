@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-07T21:58:40Z`.
+Generated from live Rails reflections at `2026-11-07T22:20:19Z`.
 
 ## Identity, access, and memberships
 
@@ -844,6 +844,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Api::V1::UploadsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::WebhookEndpointsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | ApplicationController | `ActionController::Base` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::OrderPaymentsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | BotDefense::ChallengesController | `BetterTogether::ApplicationController` | `BotDefense::Challenge` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | CommentsController | `BetterTogether::ApplicationController` | `Comment` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
 | Content::PageBlocksController | `BetterTogether::ApplicationController` | `Content::PageBlock` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |

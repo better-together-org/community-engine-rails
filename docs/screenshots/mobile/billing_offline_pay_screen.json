@@ -1,8 +1,8 @@
 {
   "name": "billing_offline_pay_screen",
   "device": "mobile",
-  "url": "/en/billing/orders/9f86fed5-b0ba-4966-94d1-9f51346fb8dd",
-  "title": "Order BT-EWE3G1Z0 | Test Host Community",
+  "url": "/en/billing/orders/6f2ee6d8-caa3-4340-9f69-a9e7565f79ae",
+  "title": "Order BT-7BP4YCUS | Test Host Community",
   "locale": "en",
   "role": "member",
   "feature_set": "billing_offline_payments",
@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
   "callouts": [
     {
-      "selector": "#billing-offline-instructions",
+      "selector": "#billing-offline-instructions-69abbb84-d813-411f-9192-1f0a0d792f11",
       "title": "How to pay",
       "bullets": [
         "Shown only on your own order, after you accepted the agreements."
@@ -44,7 +44,7 @@
       }
     },
     {
-      "selector": "#billing-offline-disclosure",
+      "selector": "#billing-offline-disclosure-69abbb84-d813-411f-9192-1f0a0d792f11",
       "title": "Before you pay",
       "bullets": [
         "What the platform cannot do for a payment made outside it."
@@ -78,7 +78,7 @@
       }
     },
     {
-      "selector": "#billing-offline-claim-btn",
+      "selector": "#billing-offline-claim-btn-69abbb84-d813-411f-9192-1f0a0d792f11",
       "title": "I sent it",
       "bullets": [
         "Optional. The seller can confirm your payment either way."

@@ -1,0 +1,13 @@
+---
+title: Return payments
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I give back what was paid toward an order that
+  will not be completed, then cancel it.
+callouts:
+- :id: return
+  :title: Return payments
+  :description: The order can be cancelled once nothing is held against it.
+accessibility_notes: The list names each way of paying in text.
+slug: billing_sale_return_payments
+device: desktop

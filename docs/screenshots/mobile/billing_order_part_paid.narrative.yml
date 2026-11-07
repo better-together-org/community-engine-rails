@@ -1,0 +1,14 @@
+---
+title: A part-paid order
+audience:
+- end_user
+journey_step: As a buyer, I pay part of an order now and the rest another way, whenever
+  I am ready.
+callouts:
+- :id: add
+  :title: Add a payment
+  :description: Leave the amount empty to pay the rest.
+accessibility_notes: Every field has a visible label; the amount hint is read with
+  the field.
+slug: billing_order_part_paid
+device: mobile

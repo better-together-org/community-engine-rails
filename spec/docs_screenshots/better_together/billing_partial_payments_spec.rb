@@ -16,6 +16,10 @@ RSpec.describe 'Documentation screenshots for billing partial payments', # ruboc
   include_context 'with subscription fixtures'
   include_context 'with billing switched on'
 
+  let(:password) { 'SecureTest123!@#' }
+  let(:buyer_user) { find_or_create_test_user("part-buyer-#{SecureRandom.hex(4)}@example.test", password) }
+  let(:buyer) { buyer_user.person }
+
   let(:order) do
     give_credit(1000, holder: buyer)
     place_order(payment_method: nil,
@@ -27,6 +31,9 @@ RSpec.describe 'Documentation screenshots for billing partial payments', # ruboc
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    host_platform.billing_processor_settings.find_or_create_by!(processor: 'cash') do |setting|
+      setting.assign_attributes(enabled: true, acknowledge: true, settings: { 'instructions' => 'At the hall' })
+    end
   end
 
   after { Current.platform = nil }
@@ -40,9 +47,7 @@ RSpec.describe 'Documentation screenshots for billing partial payments', # ruboc
       'billing_order_part_paid',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_order_part_paid', role: 'user'),
-      callouts: [{ id: 'balance', selector: "##{ActionView::RecordIdentifier.dom_id(order, :balance)}", title: 'Left to pay',
-                   bullets: ['What is still to pay after the parts already received.'] },
-                 { id: 'add', selector: '#billing-order-add-payment-form', title: 'Add a payment',
+      callouts: [{ id: 'add', selector: '#billing-order-add-payment-btn', title: 'Add a payment',
                    bullets: ['Pay the rest, or part of it, by any way of paying that is open, store credit included.'] }],
       narrative: {
         title: 'A part-paid order',
@@ -52,9 +57,10 @@ RSpec.describe 'Documentation screenshots for billing partial payments', # ruboc
         accessibility_notes: 'Every field has a visible label; the amount hint is read with the field.'
       }
     ) do
-      capybara_login_as_platform_manager
+      capybara_sign_in_user(buyer_user.email, password)
       visit "/#{I18n.default_locale}/billing/orders/#{order.id}"
       expect(page).to have_css('#billing-order-add-payment-form')
+      scroll_to(find('#billing-order-add-payment-form'), align: :center)
     end
   end
 
@@ -63,7 +69,7 @@ RSpec.describe 'Documentation screenshots for billing partial payments', # ruboc
       'billing_sale_return_payments',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_sale_return_payments', role: 'platform_manager'),
-      callouts: [{ id: 'return', selector: "##{ActionView::RecordIdentifier.dom_id(order, :return_payments)}", title: 'Return payments',
+      callouts: [{ id: 'return', selector: '#billing-sale-return-credit-btn', title: 'Return payments',
                    bullets: ['Each paid part, and how it goes back: credit with one click, cash by the seller, a card at the processor.'] }],
       narrative: {
         title: 'Return payments',
