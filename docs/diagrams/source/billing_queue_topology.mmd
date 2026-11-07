@@ -19,10 +19,10 @@ flowchart LR
 
   subgraph sidekiq["Sidekiq process"]
     direction TB
-    subgraph shared["Shared workers, default capsule"]
+    subgraph shared["Default capsule"]
       SW[queues: billing weight 10<br/>default, mailers, maintenance, metrics, ...]
     end
-    subgraph reserved["Billing capsule, reserved threads"]
+    subgraph reserved["Billing capsule"]
       BW[queues: billing<br/>concurrency 2]
     end
   end
