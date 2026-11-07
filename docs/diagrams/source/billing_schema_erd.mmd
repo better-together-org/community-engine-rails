@@ -36,6 +36,11 @@ erDiagram
   BILLING_PROMOTIONS ||--o{ BILLING_PROMOTION_REDEMPTIONS : "(promotion_id, platform_id) composite FK"
   BILLING_CREDIT_LOTS ||--o| BILLING_PROMOTION_REDEMPTIONS : "(credit_lot_id, platform_id) composite FK, one each"
   EXT_PERSON o|--o{ BILLING_PROMOTION_REDEMPTIONS : "person (nullify), one per promotion"
+  EXT_PLATFORM ||--o{ BILLING_SUBSCRIPTION_TERMS : "platform / platform_id"
+  PAY_SUBSCRIPTIONS ||--o| BILLING_SUBSCRIPTION_TERMS : "(pay_subscription_id, platform_id) composite FK, one each"
+  BILLING_PLANS ||--o{ BILLING_SUBSCRIPTION_TERMS : "(plan_id, platform_id) composite FK"
+  BILLING_SUBSCRIPTION_TERMS ||--o{ BILLING_SUBSCRIPTION_PERIODS : "(subscription_term_id, platform_id) composite FK"
+  BILLING_ORDERS o|--o| BILLING_SUBSCRIPTION_PERIODS : "(order_id, platform_id) composite FK, invoices one period"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
   BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
@@ -380,4 +385,25 @@ erDiagram
     uuid promotion_id FK
     uuid credit_lot_id FK
     uuid person_id FK
+  }
+  BILLING_SUBSCRIPTION_TERMS {
+    uuid id PK
+    uuid platform_id FK
+    uuid pay_subscription_id FK
+    uuid plan_id FK
+    string payment_method
+    bigint unit_amount_cents "price it was sold at"
+    datetime anchor_at
+    integer anchor_sequence
+    datetime grace_ends_at
+  }
+  BILLING_SUBSCRIPTION_PERIODS {
+    uuid id PK
+    uuid platform_id FK
+    uuid subscription_term_id FK
+    uuid order_id FK
+    integer sequence "unique per subscription"
+    datetime starts_at
+    datetime ends_at
+    string status
   }

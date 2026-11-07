@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_07_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -511,6 +511,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
     t.text "description"
     t.string "billing_interval", default: "month", null: false
     t.integer "interval_count", default: 1, null: false
+    t.integer "grace_days", default: 7, null: false
+    t.integer "renewal_lead_days", default: 14, null: false
     t.integer "amount_cents", default: 0, null: false
     t.string "currency", null: false
     t.boolean "active", default: true, null: false
@@ -526,6 +528,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
     t.string "latest_processor_event_id"
     t.jsonb "metadata", default: {}, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_plans_id_platform", unique: true
     t.index ["platform_id", "identifier"], name: "idx_bt_billing_plans_platform_identifier", unique: true, where: "(seller_id IS NULL)"
     t.index ["platform_id", "seller_type", "seller_id", "identifier"], name: "idx_bt_billing_plans_seller_identifier", unique: true, where: "(seller_id IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_plans_platform"
@@ -598,6 +601,51 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
     t.check_constraint "credit_expires_after_days IS NULL OR credit_expires_after_days > 0", name: "chk_bt_billing_promotions_days"
     t.check_constraint "max_redemptions IS NULL OR max_redemptions > 0 AND redemptions_count <= max_redemptions", name: "chk_bt_billing_promotions_cap"
     t.check_constraint "redemptions_count >= 0", name: "chk_bt_billing_promotions_count"
+  end
+
+  create_table "better_together_billing_subscription_periods", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "subscription_term_id", null: false
+    t.uuid "order_id"
+    t.integer "sequence", null: false
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.string "status", default: "pending", null: false
+    t.string "blocked_reason"
+    t.datetime "paid_at"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_sub_periods_id_platform", unique: true
+    t.index ["order_id"], name: "idx_bt_billing_sub_periods_order", unique: true, where: "(order_id IS NOT NULL)"
+    t.index ["platform_id"], name: "idx_bt_billing_sub_periods_platform"
+    t.index ["status", "ends_at"], name: "idx_bt_billing_sub_periods_status_ends"
+    t.index ["subscription_term_id", "sequence"], name: "idx_bt_billing_sub_periods_sequence", unique: true
+    t.check_constraint "sequence >= 0 AND ends_at > starts_at", name: "chk_bt_billing_sub_periods_shape"
+  end
+
+  create_table "better_together_billing_subscription_terms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "pay_subscription_id", null: false
+    t.uuid "plan_id", null: false
+    t.string "beneficiary_type"
+    t.uuid "beneficiary_id"
+    t.string "payment_method", null: false
+    t.bigint "unit_amount_cents", null: false
+    t.string "currency", null: false
+    t.datetime "anchor_at", null: false
+    t.integer "anchor_sequence", default: 0, null: false
+    t.datetime "grace_ends_at"
+    t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_sub_terms_beneficiary"
+    t.index ["grace_ends_at"], name: "idx_bt_billing_sub_terms_grace", where: "(grace_ends_at IS NOT NULL)"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_sub_terms_id_platform", unique: true
+    t.index ["pay_subscription_id"], name: "idx_bt_billing_sub_terms_subscription", unique: true
+    t.index ["plan_id"], name: "idx_bt_billing_sub_terms_plan"
+    t.index ["platform_id"], name: "idx_bt_billing_sub_terms_platform"
+    t.check_constraint "unit_amount_cents >= 0 AND anchor_sequence >= 0", name: "chk_bt_billing_sub_terms_amounts"
   end
 
   create_table "better_together_billing_refunds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3153,6 +3201,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_100000) do
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_promotions", "better_together_people", column: "created_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_promotions", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_subscription_periods", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_periods_order_platform"
+  add_foreign_key "better_together_billing_subscription_periods", "better_together_billing_subscription_terms", column: ["subscription_term_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_periods_term_platform"
+  add_foreign_key "better_together_billing_subscription_periods", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_subscription_terms", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_terms_plan_platform"
+  add_foreign_key "better_together_billing_subscription_terms", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_subscription_terms", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_terms_subscription_platform"
   add_foreign_key "better_together_billing_refunds", "better_together_billing_payments", column: ["payment_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_refunds_payment_platform"
   add_foreign_key "better_together_billing_refunds", "better_together_people", column: "recorded_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_refunds", "better_together_platforms", column: "platform_id"

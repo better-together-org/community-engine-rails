@@ -93,6 +93,25 @@
     </fieldset>
   <% end %>
 
+  <% if form.object.recurring? %>
+    <fieldset id="billing-plan-renewal-fields" class="border rounded p-3 mb-4">
+      <legend class="h6 w-auto px-2"><%= t('better_together.billing.plans.renewal_section_title') %></legend>
+      <div class="form-text mb-2"><%= t('better_together.billing.plans.renewal_section_hint') %></div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= form.label :renewal_lead_days, t('better_together.billing.plans.field_renewal_lead_days'), class: 'form-label' %>
+          <%= form.number_field :renewal_lead_days, class: 'form-control', min: 1, max: BetterTogether::Billing::Plan::MAX_LEAD_DAYS, id: 'billing-plan-renewal-lead-days' %>
+          <div class="form-text"><%= t('better_together.billing.plans.field_renewal_lead_days_hint') %></div>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :grace_days, t('better_together.billing.plans.field_grace_days'), class: 'form-label' %>
+          <%= form.number_field :grace_days, class: 'form-control', min: 0, max: BetterTogether::Billing::Plan::MAX_GRACE_DAYS, id: 'billing-plan-grace-days' %>
+          <div class="form-text"><%= t('better_together.billing.plans.field_grace_days_hint') %></div>
+        </div>
+      </div>
+    </fieldset>
+  <% end %>
+
   <fieldset id="billing-plan-price-fields" class="border rounded p-3 mb-4">
     <legend class="float-none w-auto fs-6 px-2"><%= t('better_together.billing.plans.price_section_title') %></legend>
 

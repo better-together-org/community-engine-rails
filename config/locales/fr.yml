@@ -978,6 +978,11 @@ fr:
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
       notifications:
+        agreement_reacceptance_needed:
+          buyer:
+            body: Les conditions de votre abonnement %{plan} ont changé. Acceptez-les
+              pour recevoir votre prochaine facture de renouvellement.
+            title: Veuillez examiner nos conditions mises à jour
         cheque_bounced:
           buyer:
             body: Le chèque de %{amount} n’a pas été encaissé; le paiement a donc
@@ -1013,6 +1018,11 @@ fr:
           body: Un événement de facturation n’a pas pu être traité après plusieurs
             essais. Veuillez l’examiner.
           title: Un événement de facturation demande votre attention
+        grace_ending:
+          buyer:
+            body: Votre délai supplémentaire se termine le %{date}. Payez votre renouvellement
+              avant cette date pour garder votre abonnement.
+            title: Votre abonnement %{plan} est sur le point d’expirer
         hold_expiring:
           body: Nous gardons la commande %{number} pour vous, mais la réservation
             se termine bientôt. Payez %{amount} par %{method} avant, sinon la commande
@@ -1103,6 +1113,32 @@ fr:
         refund_recorded:
           body: Le vendeur a enregistré un remboursement pour votre commande.
           title: Remboursement de la commande %{number}
+        renewal_credit_insufficient:
+          buyer:
+            body: Votre renouvellement de %{plan} de %{amount} se paie avec votre
+              crédit en magasin et vous n’en avez pas assez. Ajoutez du crédit et
+              nous réessaierons chaque jour.
+            title: Pas assez de crédit en magasin pour votre renouvellement
+        renewal_invoice_issued:
+          buyer:
+            body: Votre renouvellement de %{plan} de %{amount} est prêt à payer. Votre
+              période en cours se termine le %{date}.
+            title: Facture de renouvellement %{number}
+        renewal_overdue:
+          buyer:
+            body: Votre période est terminée et le renouvellement n’a pas été payé.
+              Tout continue de fonctionner jusqu’au %{date} ; payez avant cette date
+              pour rester abonné.
+            title: Votre renouvellement de %{plan} est en retard
+          seller:
+            body: Le renouvellement d’un abonné n’a pas été payé à temps. Il expire
+              le %{date} sauf s’il est payé ou prolongé.
+            title: Un abonnement %{plan} est en retard
+        renewal_reminder:
+          buyer:
+            body: Votre renouvellement de %{plan} de %{amount} n’est toujours pas
+              payé. Votre période en cours se termine le %{date}.
+            title: 'Rappel : le renouvellement %{number} n’est pas payé'
         settings_changed:
           body: Quelqu’un a modifié la façon dont les acheteurs paient (%{method}).
             Si vous ne vous y attendiez pas, vérifiez-le maintenant.
@@ -1313,6 +1349,9 @@ fr:
         field_currency: Devise
         field_description: Description
         field_eligible_owner_types: Eligible pour
+        field_grace_days: Jours supplémentaires en cas d’impayé
+        field_grace_days_hint: Tout continue de fonctionner pendant ce délai après
+          une période impayée. 0 signifie aucun. Le contenu n’est jamais supprimé.
         field_hosted_access_level: Niveau d''acces heberge
         field_identifier: Identifiant
         field_identifier_hint: Cle unique lisible par machine. Ne peut pas etre modifiee
@@ -1338,6 +1377,9 @@ fr:
         field_processor_product_id: Produit
         field_processor_product_id_hint: Choisissez un produit existant, ou laissez
           vide pour en créer un nouveau dans votre processeur de paiement.
+        field_renewal_lead_days: Facturer autant de jours à l’avance
+        field_renewal_lead_days_hint: Combien de temps avant la fin d’une période
+          sa facture de renouvellement est créée.
         field_solidarity_description: Description de solidarite
         field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
           a qui ce niveau s''adresse.
@@ -1378,6 +1420,9 @@ fr:
         pricing_tier_standard: Standard
         processor_none: Aucun processeur en ligne
         product_none: Créer un nouveau produit
+        renewal_section_hint: Pour les abonnés qui paient par un moyen autre qu’un
+          processeur de paiement. Un processeur renouvelle ses propres abonnements.
+        renewal_section_title: Renouvellements
         retry_sync: Relancer la synchronisation
         select_required: Veuillez choisir une valeur.
         show_title: Plan de facturation
@@ -1577,6 +1622,71 @@ fr:
         refund_record: Enregistrer le remboursement
         refund_recorded: Remboursement enregistré. L’acheteur a été informé.
         refund_refused: Ce remboursement n’a pas pu être enregistré. Vérifiez le montant.
+      subscribers:
+        cancel_at_end: Annuler à la fin de la période
+        cancel_now: Annuler maintenant
+        cancel_now_confirm: Mettre fin à cet abonnement maintenant ? Rien de ce qui
+          a été payé n’est remboursé.
+        cancelled: L’abonnement est annulé.
+        extend: Accorder plus de temps
+        extend_days: Accorder plus de jours avant l’expiration
+        field_subscriber: Abonné
+        filter_active: Actifs
+        filter_all: Tous
+        filter_ended: Terminés
+        filter_lapsed: Expirés
+        filter_overdue: En retard
+        filters: Filtrer les abonnés
+        grace_extended: Délai supplémentaire accordé.
+        index_intro: 'Personnes dont Community Engine renouvelle les abonnements.
+          Leur état suit Pay : en retard tant qu’une facture est impayée pendant le
+          délai supplémentaire, expiré ensuite.'
+        index_title: Abonnés
+        move_to_current_price: Passer au prix actuel
+        none: Aucun abonné ne correspond.
+        price_line: Vendu à %{price}. Le forfait coûte %{current} aujourd’hui.
+        price_moved: L’abonné passe au prix actuel dès la prochaine facture.
+        refused: Cela n’a pas pu être fait pour cet abonnement.
+        waive: Couvrir cette période sans paiement
+        waive_confirm: Couvrir la prochaine période sans paiement ? Sa facture est
+          annulée.
+        waived: La période est couverte.
+      subscriptions:
+        accept: Accepter et continuer
+        accept_all: Veuillez accepter toutes les conditions affichées.
+        cancel: Annuler à la fin de cette période
+        cancel_confirm: Annuler cet abonnement à la fin de la période payée ?
+        cancelled: Votre abonnement prendra fin à la fin de la période payée.
+        cannot_resume: Cet abonnement ne peut pas être repris.
+        field_grace: Délai supplémentaire jusqu’au
+        field_method: Payé par
+        field_period: Période
+        field_plan: Forfait
+        field_price: Prix
+        field_status: Statut
+        field_through: Payé jusqu’au
+        index_title: Abonnements
+        invoice: Facture %{number}
+        none: Vous n'avez aucun abonnement.
+        period_blocked: En suspens
+        period_lapsed: Expiré
+        period_needs_agreement: Vous devez accepter les conditions
+        period_paid: Payé
+        period_pending: En attente de paiement
+        period_waived: Couvert
+        periods_caption: Chaque période de cet abonnement et sa facture
+        periods_title: Périodes et factures
+        resume: Conserver mon abonnement
+        resumed: Votre abonnement continuera.
+        review_intro: Les conditions de cet abonnement ont changé. Acceptez-les et
+          nous créerons votre prochaine facture de renouvellement.
+        review_title: Examiner et accepter
+        state_active: Actif
+        state_canceled: Terminé
+        state_ending: Se termine à la fin de cette période
+        state_past_due: En retard
+        state_unpaid: Expiré
+        terms_accepted: Merci. Votre facture de renouvellement est prête.
       walk_up:
         agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
           en personne
@@ -5643,7 +5753,9 @@ fr:
       title: 500 - Erreur interne du serveur
     messages:
       accepted: doit être accepté(e)
+      account_mismatch: doit appartenir au même compte
       acknowledgement_required: doit être accepté avant que ce mode puisse être activé
+      after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
       blank: doit être rempli(e)
       confirmation: ne concorde pas avec %{attribute}
@@ -5714,6 +5826,7 @@ fr:
       wrong_length:
         one: ne fait pas la bonne longueur (doit comporter %{count} caractère)
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
+      wrong_sign: a le mauvais signe pour ce type d’écriture
     models:
       address_missing_type: L'adresse doit être physique, postale ou les deux.
       better_together/navigation_item:

@@ -1,0 +1,84 @@
+<% subscription = @term.pay_subscription %>
+<% content_for :page_title do %>
+  <%= @term.plan.name %>
+<% end %>
+
+<div id="<%= dom_id(@term, :show_page) %>" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_subscriptions_path(locale: I18n.locale), edit_path: nil %>
+  <h1 class="mb-1"><%= @term.plan.name %></h1>
+  <p class="mb-4"><%= billing_subscription_status_badge(subscription) %></p>
+
+  <dl id="<%= dom_id(@term, :details) %>" class="row mb-4">
+    <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_through') %></dt>
+    <dd class="col-sm-9" id="subscription-through"><%= l(subscription.current_period_end.to_date, format: :long) %></dd>
+    <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_price') %></dt>
+    <dd class="col-sm-9" id="subscription-price"><%= billing_amount(@term.unit_amount_cents, @term.currency) %></dd>
+    <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_method') %></dt>
+    <dd class="col-sm-9" id="subscription-method"><%= billing_payment_method_label(@term.payment_method) %></dd>
+    <% if @term.grace_ends_at && subscription.status == 'past_due' %>
+      <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_grace') %></dt>
+      <dd class="col-sm-9" id="subscription-grace"><%= l(@term.grace_ends_at.to_date, format: :long) %></dd>
+    <% end %>
+  </dl>
+
+  <div id="subscription-actions" class="d-flex gap-2 mb-4">
+    <% if billing_subscription_cancelable?(subscription) %>
+      <%= button_to t('better_together.billing.subscriptions.cancel'), cancel_billing_subscription_path(@term, locale: I18n.locale), method: :patch,
+                    class: 'btn btn-outline-danger', id: 'subscription-cancel-btn',
+                    form: { data: { turbo_confirm: t('better_together.billing.subscriptions.cancel_confirm') } } %>
+    <% elsif billing_subscription_resumable?(subscription) %>
+      <%= button_to t('better_together.billing.subscriptions.resume'), resume_billing_subscription_path(@term, locale: I18n.locale), method: :patch,
+                    class: 'btn btn-outline-primary', id: 'subscription-resume-btn' %>
+    <% end %>
+  </div>
+
+  <% if @gate && @gate.missing.any? %>
+    <section id="subscription-agreements" class="card mb-4" aria-labelledby="subscription-agreements-title">
+      <div class="card-header"><strong id="subscription-agreements-title"><%= t('better_together.billing.subscriptions.review_title') %></strong></div>
+      <div class="card-body">
+        <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.review_intro') %></p>
+        <%= form_with url: accept_agreements_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-agreements-form' do %>
+          <% @gate.missing.each do |agreement| %>
+            <div class="form-check mb-2" id="<%= dom_id(agreement, :review) %>">
+              <%= check_box_tag 'accepted_agreement_ids[]', agreement.id, false, id: "accept-agreement-#{agreement.id}", class: 'form-check-input', required: true %>
+              <%= label_tag "accept-agreement-#{agreement.id}", class: 'form-check-label' do %>
+                <%= link_to agreement.title, agreement_path(agreement, locale: I18n.locale), target: '_blank', rel: 'noopener' %>
+              <% end %>
+            </div>
+          <% end %>
+          <%= submit_tag t('better_together.billing.subscriptions.accept'), class: 'btn btn-primary mt-2', id: 'subscription-accept-btn' %>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
+  <h2 class="h5"><%= t('better_together.billing.subscriptions.periods_title') %></h2>
+  <div class="card">
+    <div class="table-responsive">
+      <table id="<%= dom_id(@term, :periods) %>" class="table mb-0">
+        <caption class="visually-hidden"><%= t('better_together.billing.subscriptions.periods_caption') %></caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('better_together.billing.subscriptions.field_period') %></th>
+            <th scope="col"><%= t('better_together.billing.subscriptions.field_status') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @term.periods.to_a.reverse.each do |period| %>
+            <tr id="<%= dom_id(period) %>">
+              <th scope="row"><%= billing_period_range(period) %></th>
+              <td><%= billing_period_status_badge(period) %></td>
+              <td class="text-end">
+                <% if period.order %>
+                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_order_path(period.order, locale: I18n.locale),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

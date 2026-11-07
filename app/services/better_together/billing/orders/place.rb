@@ -36,9 +36,11 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        # `lines` are hashes with `purchasable:` and an optional `quantity:`.
+        # `lines` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
+        # subscriber was sold at, when it differs from the plan's today). A renewal (`renewal: true`) may be for a
+        # purchasable that is no longer for sale, and holds the order until `expires_at` instead of for a number of hours.
         def initialize(platform:, buyer:, purpose:, lines:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists
-                       on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false)
+                       on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false, expires_at: nil, renewal: false)
           @platform = platform
           @buyer = buyer
           @signer = signer || buyer
@@ -50,6 +52,8 @@ module BetterTogether
           @subject = subject
           @hold_hours = hold_hours
           @seller_assisted = seller_assisted
+          @expires_at = expires_at
+          @renewal = renewal
         end
 
         def call
@@ -63,7 +67,7 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject, :seller_assisted
+        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject, :seller_assisted, :renewal
 
         def gate
           @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:, payment_method:)
@@ -78,7 +82,7 @@ module BetterTogether
 
         def open_for_payment(order)
           reserve(order)
-          order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: hold_hours.hours.from_now)
+          order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: @expires_at || hold_hours.hours.from_now)
           Settle.call(order) if order.total_cents.zero?
           OpenPayment.call(order:, choice: payment_choice, seller_assisted:)
           Notifications.deliver('order_placed', subject: order)
@@ -112,7 +116,7 @@ module BetterTogether
 
         def check_purchasable!(purchasable)
           raise Refused, 'that cannot be bought' unless Purchasable.model_names.include?(purchasable.class.name)
-          raise Refused, 'that is not for sale' unless purchasable.purchasable?
+          raise Refused, 'that is not for sale' unless renewal || purchasable.purchasable?
           raise Refused, 'that belongs to another platform' if purchasable.try(:platform_id) != platform.id
           raise Refused, 'that is sold by someone else' unless same_seller?(purchasable)
         end
@@ -133,8 +137,8 @@ module BetterTogether
         def line_attributes(line, index)
           purchasable = line.fetch(:purchasable)
           { platform_id: platform.id, position: index, purchasable:, quantity: line.fetch(:quantity, 1),
-            description: purchasable.purchasable_description, unit_amount_cents: purchasable.purchasable_amount_cents,
-            currency: purchasable.purchasable_currency }
+            description: purchasable.purchasable_description, currency: purchasable.purchasable_currency,
+            unit_amount_cents: line.fetch(:unit_amount_cents, purchasable.purchasable_amount_cents) }
         end
 
         # Holds each purchasable for the order. If one refuses, the transaction rolls back and

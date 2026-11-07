@@ -54,6 +54,12 @@ module BetterTogether
 
       # Not part of the processor-backed price, so editable at any time.
       PAYMENT_METHOD_PARAMS = { accepted_payment_methods: [] }.freeze
+      # How a subscription to this plan is renewed by Community Engine (a method outside a processor): the days
+      # it keeps working after a period ends unpaid, and how many days before a period ends its invoice is made.
+      # Not held by any processor, so editable at any time; a change applies from the next renewal.
+      RENEWAL_FIELDS = %i[grace_days renewal_lead_days].freeze
+      MAX_GRACE_DAYS = 90
+      MAX_LEAD_DAYS = 60
 
       METADATA_KEYS = [:participant_summary, :beneficiary_label, :hosted_access_level,
                        :support_tier, :community_capacity_tier,
@@ -84,6 +90,8 @@ module BetterTogether
       validates :billing_interval, inclusion: { in: BILLING_INTERVALS }
       validates :interval_count, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 36 }
       validate :one_time_has_a_single_period
+      validates :grace_days, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: MAX_GRACE_DAYS }
+      validates :renewal_lead_days, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: MAX_LEAD_DAYS }
       validates :currency, length: { is: 3 }, inclusion: { in: SUPPORTED_CURRENCY_CODES }
       validates :active, inclusion: { in: [true, false] }
       validate :processor_fields_locked_after_link, on: :update
@@ -101,7 +109,7 @@ module BetterTogether
       # Permitted attributes for update, as a baseline. Which of them a given plan will
       # accept also depends on what is locked; see #permitted_update_attributes.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
-        [*DESCRIPTIVE_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+        [*DESCRIPTIVE_FIELDS, *RENEWAL_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       # Permitted attributes for create: everything that describes or links the price.
@@ -113,7 +121,7 @@ module BetterTogether
       # controller permits exactly this, so a crafted request cannot change a locked field.
       def permitted_update_attributes
         fields = DESCRIPTIVE_FIELDS + (linked? ? [] : PRE_LINK_FIELDS)
-        [*fields.reject { |field| locked_field?(field) }, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+        [*fields.reject { |field| locked_field?(field) }, *RENEWAL_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       def recurring?

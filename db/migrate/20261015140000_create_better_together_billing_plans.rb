@@ -38,6 +38,10 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
       t.string :billing_interval, null: false, default: 'month'
       # Every N intervals (3 months, 2 years). A Stripe price's recurring.interval_count.
       t.integer :interval_count, null: false, default: 1
+      # Days a subscription keeps working after a period ends unpaid, before it lapses (0 = none), and how
+      # many days before a period ends its renewal invoice is made.
+      t.integer :grace_days, null: false, default: 7
+      t.integer :renewal_lead_days, null: false, default: 14
       t.integer :amount_cents, null: false, default: 0
       t.string :currency, null: false
       t.boolean :active, null: false, default: true
@@ -58,7 +62,7 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
   end
 
   def down
-    drop_table TABLE if table_exists?(TABLE)
+    drop_table TABLE, force: :cascade if table_exists?(TABLE)
   end
 
   private
@@ -69,6 +73,8 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
     add_index TABLE, %i[platform_id seller_type seller_id identifier], unique: true, where: 'seller_id IS NOT NULL',
                                                                        name: 'idx_bt_billing_plans_seller_identifier'
     add_index TABLE, %i[seller_type seller_id], name: 'idx_bt_billing_plans_seller'
+    # Lets other tables point at a plan together with its platform (composite foreign keys).
+    add_index TABLE, %i[id platform_id], unique: true, name: 'idx_bt_billing_plans_id_platform'
     add_index TABLE, :active, name: 'idx_bt_billing_plans_active'
     add_index TABLE, :sync_status, name: 'idx_bt_billing_plans_sync_status'
     add_index TABLE, %i[processor processor_price_id], unique: true, name: 'idx_bt_billing_plans_processor_price'

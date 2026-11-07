@@ -26,7 +26,7 @@ module Pay
       end
 
       def cancel_now!(**)
-        return if canceled?
+        return if ended?
 
         now = Time.current
         update!(status: :canceled, trial_ends_at: (now if trial_ends_at?), ends_at: now)

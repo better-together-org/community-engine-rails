@@ -958,6 +958,11 @@ uk:
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
       notifications:
+        agreement_reacceptance_needed:
+          buyer:
+            body: Умови вашої підписки %{plan} змінилися. Прийміть їх, щоб отримати
+              наступний рахунок на продовження.
+            title: Перегляньте оновлені умови
         cheque_bounced:
           buyer:
             body: Чек на %{amount} не зараховано, тому оплату скасовано. Зв’яжіться
@@ -991,6 +996,11 @@ uk:
         event_dead_lettered:
           body: Подію не вдалося обробити після кількох спроб. Перегляньте її.
           title: Подія виставлення рахунків потребує уваги
+        grace_ending:
+          buyer:
+            body: Ваш додатковий час закінчується %{date}. Оплатіть продовження до
+              цієї дати, щоб зберегти підписку.
+            title: Ваша підписка %{plan} ось-ось спливе
         hold_expiring:
           body: Ми утримуємо замовлення %{number} для вас, але резервування скоро
             закінчується. Сплатіть %{amount} через %{method} до цього часу, інакше
@@ -1075,6 +1085,30 @@ uk:
         refund_recorded:
           body: Продавець записав повернення коштів за вашим замовленням.
           title: Повернення коштів за замовлення %{number}
+        renewal_credit_insufficient:
+          buyer:
+            body: Ваше продовження %{plan} на суму %{amount} оплачується кредитом
+              магазину, а його недостатньо. Поповніть кредит — ми спробуємо щодня.
+            title: Недостатньо кредиту магазину для продовження
+        renewal_invoice_issued:
+          buyer:
+            body: Ваше продовження %{plan} на суму %{amount} готове до оплати. Поточний
+              період закінчується %{date}.
+            title: Рахунок на продовження %{number}
+        renewal_overdue:
+          buyer:
+            body: Ваш період закінчився, а продовження не оплачено. Усе працює до
+              %{date}; оплатіть до цієї дати, щоб залишитися підписаним.
+            title: Ваше продовження %{plan} прострочене
+          seller:
+            body: Продовження підписника не оплачено вчасно. Воно спливе %{date},
+              якщо його не оплатять або не продовжать термін.
+            title: Підписка %{plan} прострочена
+        renewal_reminder:
+          buyer:
+            body: Ваше продовження %{plan} на суму %{amount} досі не оплачено. Поточний
+              період закінчується %{date}.
+            title: 'Нагадування: продовження %{number} не оплачено'
         settings_changed:
           body: Хтось змінив, як платять покупці (%{method}). Якщо ви цього не очікували,
             перевірте зараз.
@@ -1269,6 +1303,9 @@ uk:
         field_currency: Valyuta
         field_description: Opys
         field_eligible_owner_types: Pidkhodyashchi dlya
+        field_grace_days: Додаткові дні за несплати
+        field_grace_days_hint: Усе працює цей час після неоплаченого періоду. 0 —
+          без додаткових днів. Вміст ніколи не видаляється.
         field_hosted_access_level: Riven' hostingovoho dostupu
         field_identifier: Identyfikator
         field_identifier_hint: Unikalnyj klyuch. Ne mozhna zminyty pislia stvorennya.
@@ -1292,6 +1329,9 @@ uk:
         field_processor_product_id: Продукт
         field_processor_product_id_hint: Виберіть наявний продукт або залиште порожнім,
           щоб створити новий у вашому платіжному процесорі.
+        field_renewal_lead_days: Виставляти рахунок за стільки днів
+        field_renewal_lead_days_hint: За скільки до завершення періоду створюється
+          рахунок на продовження.
         field_solidarity_description: Opys solidarnosti
         field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
           shchob poyasnyty, dlya koho pryznachenyj tsej riven'.
@@ -1331,6 +1371,9 @@ uk:
         pricing_tier_standard: Standartnyj
         processor_none: Без онлайн-процесора
         product_none: Створити новий продукт
+        renewal_section_hint: Для підписників, що платять способом, який не є платіжним
+          процесором. Процесор сам поновлює свої підписки.
+        renewal_section_title: Поновлення
         retry_sync: Повторити синхронізацію
         select_required: Виберіть значення.
         show_title: Plan bilingu
@@ -1519,6 +1562,69 @@ uk:
         refund_record: Записати повернення
         refund_recorded: Повернення записано. Покупця повідомлено.
         refund_refused: Не вдалося записати це повернення. Перевірте суму.
+      subscribers:
+        cancel_at_end: Скасувати наприкінці періоду
+        cancel_now: Скасувати зараз
+        cancel_now_confirm: Завершити цю підписку зараз? Сплачене не повертається.
+        cancelled: Підписку скасовано.
+        extend: Додати час
+        extend_days: Додати днів до спливання
+        field_subscriber: Підписник
+        filter_active: Активні
+        filter_all: Усі
+        filter_ended: Завершені
+        filter_lapsed: Спливли
+        filter_overdue: Прострочені
+        filters: Фільтрувати підписників
+        grace_extended: Додатковий час надано.
+        index_intro: 'Особи, підписки яких поновлює Community Engine. Їхній стан відповідає
+          Pay: прострочена, поки рахунок не оплачено в межах додаткового часу, потім
+          — спливла.'
+        index_title: Підписники
+        move_to_current_price: Перейти на поточну ціну
+        none: Немає відповідних підписників.
+        price_line: Продано за %{price}. Сьогодні план коштує %{current}.
+        price_moved: Підписник переходить на поточну ціну з наступного рахунку.
+        refused: Цього не вдалося зробити для цієї підписки.
+        waive: Покрити цей період без оплати
+        waive_confirm: Покрити наступний період без оплати? Його рахунок буде скасовано.
+        waived: Період покрито.
+      subscriptions:
+        accept: Прийняти й продовжити
+        accept_all: Будь ласка, прийміть усі показані умови.
+        cancel: Скасувати наприкінці цього періоду
+        cancel_confirm: Скасувати цю підписку наприкінці оплаченого періоду?
+        cancelled: Вашу підписку буде завершено після закінчення оплаченого періоду.
+        cannot_resume: Цю підписку не можна відновити.
+        field_grace: Додатковий час до
+        field_method: Спосіб оплати
+        field_period: Період
+        field_plan: План
+        field_price: Ціна
+        field_status: Статус
+        field_through: Сплачено до
+        index_title: Підписки
+        invoice: Рахунок %{number}
+        none: У вас немає підписок.
+        period_blocked: Призупинено
+        period_lapsed: Спливло
+        period_needs_agreement: Потрібно прийняти умови
+        period_paid: Сплачено
+        period_pending: Очікує оплати
+        period_waived: Покрито
+        periods_caption: Кожен період цієї підписки та його рахунок
+        periods_title: Періоди та рахунки
+        resume: Зберегти мою підписку
+        resumed: Вашу підписку буде продовжено.
+        review_intro: Умови цієї підписки змінилися. Прийміть їх, і ми створимо наступний
+          рахунок на продовження.
+        review_title: Перегляньте та прийміть
+        state_active: Активна
+        state_canceled: Завершена
+        state_ending: Завершиться наприкінці цього періоду
+        state_past_due: Прострочена
+        state_unpaid: Спливла
+        terms_accepted: Дякуємо. Ваш рахунок на продовження готовий.
       walk_up:
         agreements_label: Покупець прочитав і прийняв угоди про купівлю зі мною особисто
         buyer_hint: Покупець уже має бути учасником цієї платформи. Введіть його точний
@@ -5575,7 +5681,9 @@ uk:
       title: 500 - Внутрішня помилка сервера
     messages:
       accepted: має бути прийнято
+      account_mismatch: має належати тому самому рахунку
       acknowledgement_required: потрібно прийняти, перш ніж увімкнути цей спосіб
+      after_start: має бути пізніше за початок
       already_confirmed: вже підтверджено, будь ласка, спробуйте увійти
       blank: не може бути пустим
       confirmation: не співпадає з %{attribute}
@@ -5650,6 +5758,7 @@ uk:
         many: неправильна довжина (має бути %{count} символів)
         one: неправильна довжина (має бути %{count} символ)
         other: неправильна довжина (має бути %{count} символів)
+      wrong_sign: має неправильний знак для цього запису
     models:
       address_missing_type: Адреса має бути фізичною, поштовою або обома.
       better_together/navigation_item:

@@ -5,7 +5,10 @@
 <div id="billing-orders-page" class="container my-4">
   <div class="d-flex justify-content-between align-items-start mb-4">
     <h1 class="mb-0"><%= t('better_together.billing.orders.index_title') %></h1>
-    <%= link_to t('better_together.billing.credit.title'), billing_credit_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-credit-link' %>
+    <div class="d-flex gap-2">
+      <%= link_to t('better_together.billing.subscriptions.index_title'), billing_subscriptions_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-subscriptions-link' %>
+      <%= link_to t('better_together.billing.credit.title'), billing_credit_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-credit-link' %>
+    </div>
   </div>
 
   <% if @orders.any? %>

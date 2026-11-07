@@ -37,7 +37,10 @@ module BetterTogether
         offline.update_columns(last_reminded_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
       end
 
+      # A renewal's hold runs to the end of the grace, and the payer is told about it in renewal notices instead.
       def warn(offline)
+        return if offline.order.subject_type == BetterTogether::Billing::SubscriptionTerm.name
+
         BetterTogether::Billing::Notifications.deliver('hold_expiring', subject: offline, dedupe_key: "hold-expiring:#{offline.id}")
       end
 
