@@ -110,14 +110,6 @@ Raw payloads are kept for `BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS` (default 30)
 
 Pay keeps the raw delivery in `pay_webhooks` until it is processed. A daily job (`PruneStalePayWebhooksJob`) deletes deliveries that are still there after the same retention window.
 
-## Plan catalog
-
-A `Billing::Plan` links one price at one processor (`processor` + `processor_price_id`; a price id is unique per processor). Platform stewards manage plans under the host dashboard (Billing Plans). Plans have no default currency; amounts are stored in the currency's smallest unit, and zero-decimal currencies such as JPY are displayed without dividing by 100 (`Billing::Currency`).
-
-- **Creating a plan** requires an installed processor. If the processor supports `plan_sync`, `verify_price` must confirm the price exists in your account, so a steward cannot link a price from someone else's account. A failed lookup rejects the plan (fail closed).
-- **Price fields** (amount, currency, interval) cannot change after a price is linked.
-- **Sync:** saving a plan enqueues `SyncPlanJob`, which calls `adapter.sync_plan(plan:)` when the processor supports `plan_sync`. Code applying a change that came from the processor sets `plan.skip_processor_sync = true` for that save, so it is not pushed straight back. The flag is not stored, so later admin edits always sync.
-
 ## Diagram
 
 ```mermaid
@@ -155,3 +147,9 @@ flowchart TD
 - [Mermaid source](../diagrams/source/billing_event_pipeline_flow.mmd) - editable source
 - [PNG export](../diagrams/exports/png/billing_event_pipeline_flow.png) - high-resolution image
 - [SVG export](../diagrams/exports/svg/billing_event_pipeline_flow.svg) - vector graphics
+
+## Plan catalog
+
+Plans, and the processor-backed fields of the plan form (async option lists, fields the
+processor only accepts at creation, creating and editing products and prices from
+Community Engine) are described in [plan_catalog.md](plan_catalog.md).
