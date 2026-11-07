@@ -27,6 +27,11 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
     expect(described_class.audiences('hold_expiring')).to eq(%i[buyer])
   end
 
+  it 'tells the holder, and only the holder, when store credit is given' do
+    expect(described_class.audiences('credit_granted')).to eq(%i[holder])
+    expect(described_class.critical?('credit_granted')).to be(false)
+  end
+
   it 'has words, in every language, for every kind and audience' do
     I18n.available_locales.each do |locale|
       described_class::KINDS.each do |kind, details|
@@ -60,7 +65,8 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
           config[:audiences].each do |audience|
             %w[title body].each do |part|
               text = I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}",
-                            default: [:"better_together.billing.notifications.#{kind}.#{part}"], number: 'N', amount: 'A', method: 'M')
+                            default: [:"better_together.billing.notifications.#{kind}.#{part}"], number: 'N', amount: 'A', method: 'M',
+                            platform: 'P', expires: 'E')
               expect(text).to be_a(String), "missing #{locale} #{kind}.#{audience}.#{part}"
               expect(text).not_to include('translation missing')
             end

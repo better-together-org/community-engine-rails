@@ -2,7 +2,7 @@
 
 Store credit is a balance a person holds with a platform. It pays **whole orders for what the platform itself sells**. It is the platform's own money, kept as a ledger in Community Engine, and sits beside Pay rather than inside a processor: a spend writes a `Pay::Local::Charge` like any other settled payment (see [local_pay_processor.md](local_pay_processor.md)).
 
-This page covers the ledger, how credit is spent and given back, and the rules. How credit is created by a promotion is in the promotions page; the buyer's and steward's screens are in the credit screens page (both arrive in later changes).
+This page covers the ledger, how credit is spent and given back, the screens and the notice, and the rules. How credit is created by a promotion arrives in a later change.
 
 ## The model
 
@@ -70,6 +70,18 @@ Credit forced the question "is this a method outside a vendor?" to be split, bec
 | `Billing.internal_method?` | store credit | Spending and returning credit |
 
 `ProcessorAdapter` has safe defaults (`grant_on_options`, `default_grant_on`, `settings_errors`) so a setting never calls a manual-only method on an internal adapter.
+
+## Screens and notice
+
+| Who | Where | What |
+|---|---|---|
+| The holder | `/:locale/billing/credit` | Per currency: what can be spent now, each amount left with when it expires and what it may pay for, and the newest 50 entries. Only their own accounts on this platform are ever loaded. Linked from the orders list |
+| A steward | `/:locale/billing/credit_accounts` | Find a person by their **exact handle** (there is no search and no list of everyone, and lookups are throttled per address), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
+| A steward | `/:locale/billing/credit_accounts/:id` | Every lot and entry, with who gave it and why |
+
+Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. Failures answer uniformly (an unknown handle and a handle with no match look the same), so the lookup is no oracle for who exists.
+
+The holder is told with the `credit_granted` notice (audience `holder`, not critical): how much, until when if it expires, and a link to their credit page. It is sent for credit a steward gives; credit the system gives (a refund, a promotion) is silent here. See [notifications.md](notifications.md).
 
 ## Rules
 

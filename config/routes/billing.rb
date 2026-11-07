@@ -51,6 +51,10 @@ concern :billing_plans do
       resource :claim, only: :create, controller: 'order_claims'
     end
     resource :checkout, only: %i[new create]
+    # A person's own store credit, and what a steward can see and give.
+    resource :credit, only: :show, controller: 'credits'
+    resources :credit_accounts, only: %i[index show]
+    resources :credit_grants, only: :create
     resources :agreement_requirements, only: %i[index create destroy]
     resources :sales, only: %i[index show] do
       # The seller records that they gave money back for a payment made outside the platform.

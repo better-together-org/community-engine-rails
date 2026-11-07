@@ -13,6 +13,24 @@ module BetterTogether
       )
     end
 
+    # "+$5.00" for money in, "-$5.00" for money out.
+    def billing_signed_amount(amount_minor, currency)
+      sign = amount_minor.negative? ? '-' : '+'
+      "#{sign}#{billing_amount(amount_minor.abs, currency)}"
+    end
+
+    # When a lot of credit expires, or that it does not.
+    def billing_credit_expiry(lot)
+      lot.expires_at ? l(lot.expires_at.to_date, format: :long) : t('better_together.billing.credit.never_expires')
+    end
+
+    # What a lot of credit may pay for; any kind of purchase when it names none.
+    def billing_credit_purposes(lot)
+      return t('better_together.billing.credit.any_purpose') if lot.purposes.empty?
+
+      lot.purposes.map { |purpose| t("better_together.billing.processor_settings.purpose_#{purpose}") }.to_sentence
+    end
+
     def billing_interval_label(interval)
       t("better_together.billing.plans.interval_#{interval}", default: interval.to_s.humanize)
     end
