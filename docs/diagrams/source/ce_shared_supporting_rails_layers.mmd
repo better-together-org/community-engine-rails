@@ -420,13 +420,13 @@ classDiagram
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
       table: noticed_events
-      variants: CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier, FederationVisibilityStatusNotifier +15
+      variants: Billing::Notifier, CommunityInvitationNotifier, EventInvitationNotifier, EventReminderNotifier, EventUpdateNotifier +16
       weak refs: target: record
     }
     class BetterTogether__CommentAddedNotifier__Notification["CommentAddedNotifier::Notification\n(shared table family)"] {
       <<Model>>
       table: noticed_notifications
-      variants: CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification, FederationVisibilityStatusNotifier::Notification +15
+      variants: Billing::Notifier::Notification, CommunityInvitationNotifier::Notification, EventInvitationNotifier::Notification, EventReminderNotifier::Notification, EventUpdateNotifier::Notification +16
       weak refs: target: recipient
     }
     class BetterTogether__CommentConfig["CommentConfig"] {
