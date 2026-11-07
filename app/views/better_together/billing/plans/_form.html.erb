@@ -8,7 +8,8 @@
       model: billing_plan,
       url: persisted ? billing_plan_path(billing_plan) : billing_plans_path,
       class: 'needs-validation',
-      id: 'billing-plan-form'
+      id: 'billing-plan-form',
+      skip_default_ids: false
     ) do |form| %>
   <% if billing_plan.errors.any? %>
     <div class="alert alert-danger" role="alert" id="billing-plan-errors">
