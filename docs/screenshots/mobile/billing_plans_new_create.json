@@ -1,0 +1,83 @@
+{
+  "name": "billing_plans_new_create",
+  "device": "mobile",
+  "url": "/en/billing/plans/new",
+  "title": "New Billing Plan | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_new_create",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-mode-tabs",
+      "title": "Create or link",
+      "bullets": [
+        "Create a new price at the processor, or link one that exists."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 221.390625,
+        "width": 461.0,
+        "height": 80.0,
+        "right": 473.0,
+        "bottom": 301.390625,
+        "center_x": 242.5,
+        "center_y": 261.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 221.390625,
+        "width": 461.0,
+        "height": 80.0,
+        "right": 473.0,
+        "bottom": 301.390625,
+        "center_x": 242.5,
+        "center_y": 261.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 321.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 955.609375
+      }
+    },
+    {
+      "selector": "#billing-plan-product-select",
+      "title": "Product",
+      "bullets": [
+        "Options come live from the processor as you type."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 852.390625,
+        "width": 427.0,
+        "height": 116.0,
+        "right": 456.0,
+        "bottom": 968.390625,
+        "center_x": 242.5,
+        "center_y": 910.390625
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 852.390625,
+        "width": 427.0,
+        "height": 116.0,
+        "right": 456.0,
+        "bottom": 968.390625,
+        "center_x": 242.5,
+        "center_y": 910.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 674.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 852.390625
+      }
+    }
+  ]
+}

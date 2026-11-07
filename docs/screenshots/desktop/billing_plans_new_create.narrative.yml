@@ -1,0 +1,13 @@
+---
+title: Create a plan in the processor
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I create a product and price from here.
+callouts:
+- :id: product
+  :title: Processor-backed fields
+  :description: Product, currency and interval are fetched from the processor, not
+    typed.
+accessibility_notes: Selects have labels and keyboard support from SlimSelect.
+slug: billing_plans_new_create
+device: desktop

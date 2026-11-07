@@ -107,13 +107,12 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
       'billing_plans_new_link',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_plans_new_link'),
-      callouts: [{ id: 'price', selector: '#billing-plan-price-select', title: 'Existing price',
-                   bullets: ['The amount, currency and interval are copied from the processor.'] }]
+      callouts: []
     ) do
       visit_plans('/new?mode=link')
       select 'fake', from: 'billing_plan_processor'
       open_select('#billing-plan-price-select')
-      expect(page).to have_css('.ss-option', wait: 10)
+      expect(page).to have_css('.ss-option', text: 'USD 45.00 / month', wait: 10)
     end
   end
 
@@ -125,9 +124,7 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
       callouts: [{ id: 'locked', selector: '#billing-plan-locked-fields-note', title: 'Fixed fields',
                    bullets: ['The processor will not change these after creation.'] },
                  { id: 'snapshot', selector: '#billing-plan-processor-snapshot', title: 'Processor snapshot',
-                   bullets: ['What the processor holds right now, with any drift flagged.'] },
-                 { id: 'change_price', selector: '#billing-plan-change-price-btn', title: 'Change price',
-                   bullets: ['Starts a new plan; the old price stays as it was.'] }]
+                   bullets: ['What the processor holds right now, with any drift flagged.'] }]
     ) do
       visit_plans("/#{linked_plan.id}")
       expect(page).to have_css('#billing-plan-processor-snapshot', wait: 10)
@@ -140,9 +137,9 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
       'billing_plans_show_failed',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_plans_show_failed'),
-      callouts: [{ id: 'status', selector: '.billing-plan-sync-status-badge', title: 'Sync status',
+      callouts: [{ id: 'status', selector: '.billing-plan-sync-status-badge', title: 'Sync status', avoid_container_selector: 'main',
                    bullets: ['A short reason is shown, never the processor\'s own text.'] },
-                 { id: 'retry', selector: '#billing-plan-retry-sync-btn', title: 'Retry sync',
+                 { id: 'retry', selector: '#billing-plan-retry-sync-btn', title: 'Retry sync', avoid_container_selector: 'main',
                    bullets: ['Queues the push again on the billing queue.'] }]
     ) do
       visit_plans("/#{failed_plan.id}")
