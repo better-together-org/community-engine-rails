@@ -91,8 +91,10 @@ module BetterTogether
 
         def locked_out? = Rails.cache.read(failures_key).to_i >= MAX_FAILURES
 
+        # One atomic increment, so concurrent guesses cannot all read the same count. Needs a shared
+        # cache store (Redis or memcached); a null or per-process store cannot hold the count.
         def count_failure
-          Rails.cache.write(failures_key, Rails.cache.read(failures_key).to_i + 1, expires_in: WINDOW)
+          Rails.cache.increment(failures_key, 1, expires_in: WINDOW, initial: 0)
         end
       end
     end
