@@ -1,0 +1,83 @@
+{
+  "name": "billing_credit_accounts_lookup",
+  "device": "desktop",
+  "url": "/en/billing/credit_accounts?handle=person-3ddaa8029c5aba1a31ad",
+  "title": "Store credit accounts | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_store_credit",
+  "flow": "billing_credit_accounts_lookup",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_credit_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-credit-lookup-form",
+      "title": "Find a person",
+      "bullets": [
+        "Type the whole handle. There is no search, so people cannot be browsed."
+      ],
+      "target": {
+        "x": 68.0,
+        "y": 224.0,
+        "width": 1304.0,
+        "height": 103.0,
+        "right": 1372.0,
+        "bottom": 327.0,
+        "center_x": 720.0,
+        "center_y": 275.5
+      },
+      "avoid": {
+        "x": 68.0,
+        "y": 224.0,
+        "width": 1304.0,
+        "height": 103.0,
+        "right": 1372.0,
+        "bottom": 327.0,
+        "center_x": 720.0,
+        "center_y": 275.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 347.0,
+        "width": 380,
+        "height": 158,
+        "score": 1130.0
+      }
+    },
+    {
+      "selector": "#billing-credit-grant-form",
+      "title": "Give credit",
+      "bullets": [
+        "Credit can expire after a number of days. You cannot give it to yourself."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 383.0,
+        "width": 1296.0,
+        "height": 204.0,
+        "right": 1368.0,
+        "bottom": 587.0,
+        "center_x": 720.0,
+        "center_y": 485.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 383.0,
+        "width": 1296.0,
+        "height": 204.0,
+        "right": 1368.0,
+        "bottom": 587.0,
+        "center_x": 720.0,
+        "center_y": 485.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 607.0,
+        "width": 380,
+        "height": 158,
+        "score": 870.0
+      }
+    }
+  ]
+}

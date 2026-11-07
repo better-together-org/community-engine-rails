@@ -1,0 +1,14 @@
+---
+title: Turning on store credit
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I let people pay for what the platform sells
+  with credit they hold.
+callouts:
+- :id: disclosure
+  :title: Limits
+  :description: Credit pays an order in full, never part of it, and only for what
+    the platform itself sells.
+accessibility_notes: Each choice has a visible label; the limits are plain text.
+slug: billing_processor_settings_store_credit
+device: desktop

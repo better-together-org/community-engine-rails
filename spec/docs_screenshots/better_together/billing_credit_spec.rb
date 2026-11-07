@@ -24,6 +24,8 @@ RSpec.describe 'Documentation screenshots for store credit', # rubocop:disable R
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                     settings: { 'instructions' => 'At the hall' })
     steward = create(:better_together_person)
     credit = BetterTogether::Billing::Credit
     credit::Grant.call(platform: host_platform, holder:, amount_cents: 5000, currency: 'USD', origin: 'steward_grant', actor: steward,
