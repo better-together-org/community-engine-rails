@@ -14,6 +14,7 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
   include BetterTogether::CapybaraFeatureHelpers
 
   include_context 'with offline payment fixtures'
+  include_context 'with billing switched on'
 
   let(:order) { place_offline('cash') }
 
@@ -40,11 +41,11 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       'billing_offline_pay_screen',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_offline_pay_screen', role: 'member'),
-      callouts: [{ id: 'instructions', selector: '#billing-offline-instructions', title: 'How to pay',
+      callouts: [{ id: 'instructions', selector: '#billing-offline-instructions', title: 'How to pay', avoid_container_selector: 'main',
                    bullets: ['Shown only on your own order, after you accepted the agreements.'] },
-                 { id: 'disclosure', selector: '#billing-offline-disclosure', title: 'Before you pay',
+                 { id: 'disclosure', selector: '#billing-offline-disclosure', title: 'Before you pay', avoid_container_selector: 'main',
                    bullets: ['What the platform cannot do for a payment made outside it.'] },
-                 { id: 'claim', selector: '#billing-offline-claim-btn', title: 'I sent it',
+                 { id: 'claim', selector: '#billing-offline-claim-btn', title: 'I sent it', avoid_container_selector: 'main',
                    bullets: ['Optional. The seller can confirm your payment either way.'] }],
       narrative: {
         title: 'Paying outside the platform',
@@ -68,11 +69,9 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       'billing_offline_queue',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_offline_queue', role: 'platform_manager'),
-      callouts: [{ id: 'queue', selector: '#billing-offline-queue', title: 'Waiting for you',
+      callouts: [{ id: 'queue', selector: '#billing-offline-queue', title: 'Waiting for you', avoid_container_selector: 'main',
                    bullets: ['Claimed payments come first and are marked.',
-                             'Unclaimed ones are here too: confirm any of them when the money arrives.'] },
-                 { id: 'confirm', selector: "#billing-offline-confirm-btn-#{order.id}", title: 'Mark received',
-                   bullets: ['Does not need the buyer to have said anything.'] }]
+                             'Unclaimed ones are here too: mark any of them received when the money arrives.'] }]
     ) do
       visit_as_manager('offline_payments')
       scroll_to(find('#billing-offline-queue'), align: :center)
@@ -86,8 +85,10 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_offline_sale', role: 'platform_manager'),
       callouts: [{ id: 'receive', selector: "#billing-offline-receive-form-#{order.id}", title: 'Say it arrived',
+                   avoid_container_selector: 'main',
                    bullets: ['An optional reference and date; nothing is required.'] },
                  { id: 'reject', selector: "#billing-offline-reject-form-#{order.id}", title: 'Or say it did not',
+                   avoid_container_selector: 'main',
                    bullets: ['The buyer sees your reason.'] }]
     ) do
       visit_as_manager("sales/#{order.id}")
@@ -104,9 +105,9 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       'billing_walk_up_sale',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_walk_up_sale', role: 'platform_manager'),
-      callouts: [{ id: 'form', selector: '#billing-walk-up-form', title: 'A sale in person',
+      callouts: [{ id: 'form', selector: '#billing-walk-up-form', title: 'A sale in person', avoid_container_selector: 'main',
                    bullets: ['The buyer does nothing; they are told afterwards.'] },
-                 { id: 'agreements', selector: '#billing-walk-up-agreements', title: 'Agreements',
+                 { id: 'agreements', selector: '#billing-walk-up-agreements', title: 'Agreements', avoid_container_selector: 'main',
                    bullets: ['Recorded as accepted in person, with you as the person who recorded it.'] }]
     ) do
       visit_as_manager('walk_up_sale/new')

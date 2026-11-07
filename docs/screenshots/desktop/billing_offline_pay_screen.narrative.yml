@@ -1,0 +1,13 @@
+---
+title: Paying outside the platform
+audience:
+- member
+journey_step: As a member, I see how to pay the seller directly and what that means.
+callouts:
+- :id: claim
+  :title: Telling the seller
+  :description: You never have to; it only lets the seller know to look.
+accessibility_notes: The disclosure is a note region; the claim field has a visible
+  label.
+slug: billing_offline_pay_screen
+device: desktop

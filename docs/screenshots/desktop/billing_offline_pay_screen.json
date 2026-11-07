@@ -1,0 +1,115 @@
+{
+  "name": "billing_offline_pay_screen",
+  "device": "desktop",
+  "url": "/en/billing/orders/9f86fed5-b0ba-4966-94d1-9f51346fb8dd",
+  "title": "Order BT-EWE3G1Z0 | Test Host Community",
+  "locale": "en",
+  "role": "member",
+  "feature_set": "billing_offline_payments",
+  "flow": "billing_offline_pay_screen",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-offline-instructions",
+      "title": "How to pay",
+      "bullets": [
+        "Shown only on your own order, after you accepted the agreements."
+      ],
+      "target": {
+        "x": 69.5,
+        "y": 745.1875,
+        "width": 1286.0,
+        "height": 48.0,
+        "right": 1355.5,
+        "bottom": 793.1875,
+        "center_x": 712.5,
+        "center_y": 769.1875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 158
+      }
+    },
+    {
+      "selector": "#billing-offline-disclosure",
+      "title": "Before you pay",
+      "bullets": [
+        "What the platform cannot do for a payment made outside it."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 849.1875,
+        "width": 1262.0,
+        "height": 178.0,
+        "right": 1343.5,
+        "bottom": 1027.1875,
+        "center_x": 712.5,
+        "center_y": 938.1875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 222,
+        "width": 380,
+        "height": 158
+      }
+    },
+    {
+      "selector": "#billing-offline-claim-btn",
+      "title": "I sent it",
+      "bullets": [
+        "Optional. The seller can confirm your payment either way."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 1166.1875,
+        "width": 86.203125,
+        "height": 38.0,
+        "right": 167.703125,
+        "bottom": 1204.1875,
+        "center_x": 124.6015625,
+        "center_y": 1185.1875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 400,
+        "width": 380,
+        "height": 158
+      }
+    }
+  ]
+}
