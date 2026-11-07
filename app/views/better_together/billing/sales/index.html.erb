@@ -43,6 +43,7 @@
         </table>
       </div>
     </div>
+    <div id="billing-sales-pagination" class="mt-3"><%= paginate @orders %></div>
   <% else %>
     <p id="billing-sales-empty" class="text-body-secondary"><%= t('better_together.billing.orders.no_sales') %></p>
   <% end %>

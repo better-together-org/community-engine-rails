@@ -153,4 +153,43 @@ RSpec.describe BetterTogether::Billing::OfflinePaymentsController do
       expect_html_content('ref')
     end
   end
+
+  describe 'a long queue' do
+    let(:queue_query_count) do
+      lambda do
+        count = 0
+        counter = lambda do |*, payload|
+          count += 1 unless %w[SCHEMA TRANSACTION].include?(payload[:name]) || payload[:sql].match?(/\A(BEGIN|COMMIT|SAVEPOINT|RELEASE)/)
+        end
+        ActiveSupport::Notifications.subscribed(counter, 'sql.active_record') { get queue_path }
+        count
+      end
+    end
+
+    it 'does not run more queries per extra payment' do
+      offline
+      sign_in steward_user
+      queue_query_count.call # warm up
+      before_count = queue_query_count.call
+      4.times { place_offline('cash', buyer: create(:better_together_person)) }
+
+      expect(queue_query_count.call).to be <= before_count + 1
+    end
+
+    it 'puts claimed payments first and shows one page at a time' do
+      first = offline
+      claimed = place_offline('cash', buyer: create(:better_together_person))
+      offline_for(claimed).update!(claimed_at: Time.current)
+      sign_in steward_user
+      stub_const('BetterTogether::Billing::OfflinePaymentsController::PER_PAGE', 1)
+
+      get queue_path
+
+      rows = response.parsed_body.css('#billing-offline-queue tbody tr')
+      expect(rows.size).to eq(1)
+      expect(rows.first['id']).to eq("billing_offline_payment_#{offline_for(claimed).id}")
+      expect(first).to be_present
+      expect(response.body).to include('billing-offline-queue-pagination')
+    end
+  end
 end
