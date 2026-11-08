@@ -14,7 +14,10 @@ module BetterTogether
     # (about 21 days): a retry that finds its row gone fails with a deserialization error and
     # the delivery is lost. A shorter configured retention is raised to that floor.
     class PruneStalePayWebhooksJob < ApplicationJob
-      MINIMUM_RETENTION_DAYS = 22
+      # Sidekiq's default retry schedule (25 attempts) spans about 21 days; one more day of margin.
+      # If the retry policy for Pay's delivery jobs changes, change this with it.
+      SIDEKIQ_RETRY_HORIZON_DAYS = 21
+      MINIMUM_RETENTION_DAYS = SIDEKIQ_RETRY_HORIZON_DAYS + 1
 
       def perform
         days = [BetterTogether::Billing::Event.payload_retention_days, MINIMUM_RETENTION_DAYS].max
