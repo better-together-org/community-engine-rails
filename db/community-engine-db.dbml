@@ -311,7 +311,6 @@ Table "better_together_billing_credit_accounts" {
   "holder_id" uuid
   "currency" varchar [not null]
   "balance_cents" bigint [not null, default: 0]
-  "balance_cents >= 0" check_constraint
 
   indexes {
     "holder_id" [name: "idx_bt_billing_credit_accounts_holder"]
@@ -338,7 +337,6 @@ Table "better_together_billing_credit_entries" {
   "source_type" varchar
   "source_id" uuid
   "note" varchar
-  "amount_cents <> 0" check_constraint
 
   indexes {
     "actor_id" [name: "idx_bt_billing_credit_entries_actor"]
@@ -367,7 +365,6 @@ Table "better_together_billing_credit_lots" {
   "promotional" boolean [not null, default: false]
   "note" varchar
   "expires_at" timestamp
-  "amount_cents > 0 AND remaining_cents >= 0 AND remaining_cents <= amount_cents" check_constraint
 
   indexes {
     ("credit_account_id", "expires_at") [name: "idx_bt_billing_credit_lots_account_expiry"]
