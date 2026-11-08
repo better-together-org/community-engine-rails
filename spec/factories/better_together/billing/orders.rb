@@ -12,8 +12,8 @@ FactoryBot.define do
     # An order with one line, waiting to be paid.
     trait :with_line do
       after(:build) do |order|
-        order.lines.build(platform_id: order.platform_id, purchasable: order.platform.billing_plans.first || raise('create a plan first'),
-                          description: 'Hosted', quantity: 1, unit_amount_cents: 4500, currency: order.currency)
+        order.line_items.build(platform_id: order.platform_id, purchasable: order.platform.billing_plans.first || raise('create a plan first'),
+                               description: 'Hosted', quantity: 1, unit_amount_cents: 4500, currency: order.currency)
       end
     end
 
@@ -24,7 +24,7 @@ FactoryBot.define do
     end
   end
 
-  factory 'better_together/billing/order_line', class: 'BetterTogether::Billing::OrderLine', aliases: %i[better_together_billing_order_line] do
+  factory 'better_together/billing/line_item', class: 'BetterTogether::Billing::LineItem', aliases: %i[better_together_billing_line_item] do
     order { association :better_together_billing_order }
     platform_id { order.platform_id }
     purchasable { association :better_together_billing_plan, platform: order.platform }

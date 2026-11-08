@@ -38,13 +38,13 @@ RSpec.describe 'Billing orders DOM contract', :as_platform_manager, type: :reque
     expect_ids('billing-orders-empty')
   end
 
-  it 'exposes an order: details, status, totals, lines and payments' do
+  it 'exposes an order: details, status, totals, line items and payments' do
     get "/#{locale}/billing/orders/#{order.id}"
 
     expect(response).to have_http_status(:ok)
     expect_ids(dom_id.dom_id(order, :show_page), dom_id.dom_id(order, :details), dom_id.dom_id(order, :status_badge),
                dom_id.dom_id(order, :placed_at), dom_id.dom_id(order, :purpose), dom_id.dom_id(order, :total), dom_id.dom_id(order, :paid),
-               dom_id.dom_id(order, :expires_at), 'billing-order-lines', dom_id.dom_id(order.lines.first),
+               dom_id.dom_id(order, :expires_at), 'billing-order-line-items', dom_id.dom_id(order.line_items.first),
                'billing-order-payments', dom_id.dom_id(order.payments.first))
   end
 
@@ -57,6 +57,6 @@ RSpec.describe 'Billing orders DOM contract', :as_platform_manager, type: :reque
   it 'exposes a sale with who placed it' do
     get "/#{locale}/billing/sales/#{order.id}"
 
-    expect_ids(dom_id.dom_id(order, :show_page), dom_id.dom_id(order, :buyer), dom_id.dom_id(order, :details), 'billing-order-lines')
+    expect_ids(dom_id.dom_id(order, :show_page), dom_id.dom_id(order, :buyer), dom_id.dom_id(order, :details), 'billing-order-line-items')
   end
 end

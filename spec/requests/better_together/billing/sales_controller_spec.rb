@@ -59,13 +59,13 @@ RSpec.describe BetterTogether::Billing::SalesController do
       expect(response.body).to include('billing-sales-empty')
     end
 
-    it 'shows one sale with who placed it, its lines and payments' do
+    it 'shows one sale with who placed it, its line items and payments' do
       BetterTogether::Billing::Payments::Create.call(order:, processor: 'fake', amount_cents: 4500, idempotency_key: 'k')
 
       get sale_path(order)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(order, :buyer), 'billing-order-lines', 'billing-order-payments')
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(order, :buyer), 'billing-order-line-items', 'billing-order-payments')
       expect_html_content(buyer.name)
     end
 

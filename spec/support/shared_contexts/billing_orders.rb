@@ -14,6 +14,6 @@ RSpec.shared_context 'with orders fixtures' do
 
   def place_order(**attrs)
     BetterTogether::Billing::Orders::Place.call(platform: host_platform, buyer:, purpose: 'one_time',
-                                                lines: [{ purchasable: plan }], **attrs)
+                                                line_items: [{ purchasable: plan }], **attrs)
   end
 end
