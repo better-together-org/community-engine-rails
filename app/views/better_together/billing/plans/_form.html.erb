@@ -100,12 +100,12 @@
       <div class="form-text mb-2"><%= t('better_together.billing.plans.renewal_section_hint') %></div>
       <div class="row g-3">
         <div class="col-md-4">
-          <%= form.label :renewal_lead_days, t('better_together.billing.plans.field_renewal_lead_days'), class: 'form-label' %>
+          <%= form.label :renewal_lead_days, t('better_together.billing.plans.field_renewal_lead_days'), class: 'form-label', for: 'billing-plan-renewal-lead-days' %>
           <%= form.number_field :renewal_lead_days, class: 'form-control', min: 1, max: BetterTogether::Billing::Plan::MAX_LEAD_DAYS, id: 'billing-plan-renewal-lead-days' %>
           <div class="form-text"><%= t('better_together.billing.plans.field_renewal_lead_days_hint') %></div>
         </div>
         <div class="col-md-4">
-          <%= form.label :grace_days, t('better_together.billing.plans.field_grace_days'), class: 'form-label' %>
+          <%= form.label :grace_days, t('better_together.billing.plans.field_grace_days'), class: 'form-label', for: 'billing-plan-grace-days' %>
           <%= form.number_field :grace_days, class: 'form-control', min: 0, max: BetterTogether::Billing::Plan::MAX_GRACE_DAYS, id: 'billing-plan-grace-days' %>
           <div class="form-text"><%= t('better_together.billing.plans.field_grace_days_hint') %></div>
         </div>
