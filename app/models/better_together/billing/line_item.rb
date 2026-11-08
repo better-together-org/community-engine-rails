@@ -4,13 +4,13 @@ module BetterTogether
   module Billing
     # One thing on an order. It copies what the purchasable was called and cost when the order was
     # placed, so changing a plan later never changes an order that already exists.
-    class OrderLine < ApplicationRecord
+    class LineItem < ApplicationRecord
       include PlatformBound
       include ParentBound
 
-      self.table_name = 'better_together_billing_order_lines'
+      self.table_name = 'better_together_billing_line_items'
 
-      belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :lines, optional: false
+      belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :line_items, optional: false
       belongs_to :purchasable, polymorphic: true, optional: true
 
       validates :description, presence: true

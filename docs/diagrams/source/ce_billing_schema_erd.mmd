@@ -3,6 +3,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "platform / platform_id"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement / agreement_id"
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_LINE_ITEMS : "platform / platform_id"
+  BILLING_ORDERS ||--o{ BILLING_LINE_ITEMS : "order / order_id"
   EXT_PLATFORM ||--o{ BILLING_NOTIFICATION_RECEIPTS : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_NOTIFICATION_RECEIPTS : "recipient / recipient_id"
   EXT_PLATFORM ||--o{ BILLING_OFFLINE_PAYMENTS : "platform / platform_id"
@@ -16,8 +18,6 @@ erDiagram
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "order / order_id"
   EXT_AGREEMENT ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "agreement / agreement_id"
   EXT_PERSON ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "signer / signer_id"
-  EXT_PLATFORM ||--o{ BILLING_ORDER_LINES : "platform / platform_id"
-  BILLING_ORDERS ||--o{ BILLING_ORDER_LINES : "order / order_id"
   EXT_PLATFORM ||--o{ BILLING_PAYMENTS : "platform / platform_id"
   BILLING_ORDERS ||--o{ BILLING_PAYMENTS : "order / order_id"
   EXT_PAY_CHARGE o|--o{ BILLING_PAYMENTS : "pay_charge / pay_charge_id"
@@ -50,6 +50,18 @@ erDiagram
     billable_owner_type string
     dead_letter_reason string
     event_type string
+  }
+
+  BILLING_LINE_ITEMS {
+    order_id uuid
+    platform_id uuid
+    purchasable_id uuid
+    currency string
+    description string
+    purchasable_type string
+    position integer
+    quantity integer
+    unit_amount_cents integer
   }
 
   BILLING_NOTIFICATION_RECEIPTS {
@@ -97,18 +109,6 @@ erDiagram
     agreement_identifier string
     agreement_title string
     on_behalf_of_type string
-  }
-
-  BILLING_ORDER_LINES {
-    order_id uuid
-    platform_id uuid
-    purchasable_id uuid
-    currency string
-    description string
-    purchasable_type string
-    position integer
-    quantity integer
-    unit_amount_cents integer
   }
 
   BILLING_PAYMENTS {

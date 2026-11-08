@@ -349,6 +349,28 @@ Table "better_together_billing_events" {
   }
 }
 
+Table "better_together_billing_line_items" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid [not null]
+  "order_id" uuid [not null]
+  "purchasable_type" varchar [not null]
+  "purchasable_id" uuid [not null]
+  "description" varchar [not null]
+  "quantity" integer [not null, default: 1]
+  "unit_amount_cents" integer [not null]
+  "currency" varchar [not null]
+  "position" integer [not null, default: 0]
+
+  indexes {
+    "order_id" [name: "idx_bt_billing_line_items_order"]
+    "platform_id" [name: "idx_bt_billing_line_items_platform"]
+    ("purchasable_type", "purchasable_id") [name: "idx_bt_billing_line_items_purchasable"]
+  }
+}
+
 Table "better_together_billing_notification_receipts" {
   "id" uuid [pk]
   "lock_version" integer [not null, default: 0]
@@ -431,28 +453,6 @@ Table "better_together_billing_order_agreement_acceptances" {
     ("order_id", "agreement_id") [unique, name: "idx_bt_billing_order_acc_unique"]
     "platform_id" [name: "idx_bt_billing_order_acc_platform"]
     "signer_id" [name: "idx_bt_billing_order_acc_signer"]
-  }
-}
-
-Table "better_together_billing_order_lines" {
-  "id" uuid [pk]
-  "lock_version" integer [not null, default: 0]
-  "created_at" timestamp [not null]
-  "updated_at" timestamp [not null]
-  "platform_id" uuid [not null]
-  "order_id" uuid [not null]
-  "purchasable_type" varchar [not null]
-  "purchasable_id" uuid [not null]
-  "description" varchar [not null]
-  "quantity" integer [not null, default: 1]
-  "unit_amount_cents" integer [not null]
-  "currency" varchar [not null]
-  "position" integer [not null, default: 0]
-
-  indexes {
-    "order_id" [name: "idx_bt_billing_order_lines_order"]
-    "platform_id" [name: "idx_bt_billing_order_lines_platform"]
-    ("purchasable_type", "purchasable_id") [name: "idx_bt_billing_order_lines_purchasable"]
   }
 }
 
@@ -3802,6 +3802,8 @@ Ref: "better_together_billing_agreement_requirements"."platform_id" > "better_to
 
 Ref: "better_together_billing_events"."platform_id" > "better_together_platforms"."id"
 
+Ref: "better_together_billing_line_items"."platform_id" > "better_together_platforms"."id"
+
 Ref: "better_together_billing_notification_receipts"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_billing_notification_receipts"."recipient_id" > "better_together_people"."id"
@@ -3815,8 +3817,6 @@ Ref: "better_together_billing_order_agreement_acceptances"."agreement_id" > "bet
 Ref: "better_together_billing_order_agreement_acceptances"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_billing_order_agreement_acceptances"."signer_id" > "better_together_people"."id"
-
-Ref: "better_together_billing_order_lines"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_billing_orders"."buyer_id" > "better_together_people"."id"
 
