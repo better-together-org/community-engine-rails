@@ -48,6 +48,7 @@ module BetterTogether
       # How long after it lapsed a payment still shows in the seller's queue.
       LATE_WINDOW = 30.days
       REFERENCE_LIMIT = 200
+      MAX_BACKDATE = 1.year
       REASON_LIMIT = 200
 
       encrypts_billing_attribute :buyer_reference
@@ -69,6 +70,7 @@ module BetterTogether
       validates :rejection_reason, length: { maximum: REASON_LIMIT }
       validate :method_is_offline
       validate :payment_is_this_orders
+      validate :received_on_is_plausible, if: :received_on_changed?
       validate :status_transition_allowed, on: :update
 
       STATUSES.each do |status|
@@ -117,6 +119,13 @@ module BetterTogether
         self.buyer_reference = buyer_reference.to_s.strip.presence
         self.seller_reference = seller_reference.to_s.strip.presence
         self.rejection_reason = rejection_reason.to_s.strip.presence
+      end
+
+      # Money cannot arrive in the future, and a date years back is almost certainly a typo.
+      def received_on_is_plausible
+        return if received_on.blank?
+
+        errors.add(:received_on, :invalid) if received_on > Date.current || received_on < MAX_BACKDATE.ago.to_date
       end
 
       def method_is_offline
