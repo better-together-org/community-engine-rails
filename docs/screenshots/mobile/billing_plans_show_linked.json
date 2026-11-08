@@ -1,0 +1,83 @@
+{
+  "name": "billing_plans_show_linked",
+  "device": "mobile",
+  "url": "/en/billing/plans/e1cedfc9-84f7-4db5-a190-7b1806dd0a52",
+  "title": "Hosted community | Billing Plans | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_show_linked",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-plan-locked-fields-note",
+      "title": "Fixed fields",
+      "bullets": [
+        "The processor will not change these after creation."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 551.0,
+        "width": 461.0,
+        "height": 154.0,
+        "right": 473.0,
+        "bottom": 705.0,
+        "center_x": 242.5,
+        "center_y": 628.0
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 551.0,
+        "width": 461.0,
+        "height": 154.0,
+        "right": 473.0,
+        "bottom": 705.0,
+        "center_x": 242.5,
+        "center_y": 628.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 725.0,
+        "width": 270.0,
+        "height": 158,
+        "score": 552.0
+      }
+    },
+    {
+      "selector": "#billing-plan-processor-snapshot",
+      "title": "Processor snapshot",
+      "bullets": [
+        "What the processor holds right now, with any drift flagged."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 721.0,
+        "width": 461.0,
+        "height": 21.0,
+        "right": 473.0,
+        "bottom": 742.0,
+        "center_x": 242.5,
+        "center_y": 731.5
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 721.0,
+        "width": 461.0,
+        "height": 21.0,
+        "right": 473.0,
+        "bottom": 742.0,
+        "center_x": 242.5,
+        "center_y": 731.5
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 184,
+        "score": 0
+      }
+    }
+  ]
+}

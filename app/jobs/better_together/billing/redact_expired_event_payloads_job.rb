@@ -4,12 +4,10 @@ module BetterTogether
   module Billing
     # Redacts retained billing event payloads after the replay window
     # expires so billing audit logs keep identifiers without indefinite raw data.
-    class RedactExpiredEventPayloadsJob < BetterTogether::ApplicationJob
+    class RedactExpiredEventPayloadsJob < ApplicationJob
       LOCK_KEY = 'bt:billing:redact_expired_event_payloads_lock'
       LOCK_TTL = 30.minutes.to_i
       BATCH_SIZE = 100
-
-      queue_as :maintenance
 
       def perform(batch_size: BATCH_SIZE)
         acquired = Sidekiq.redis { |redis| redis.set(LOCK_KEY, job_id, nx: true, ex: LOCK_TTL) }

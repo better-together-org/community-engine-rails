@@ -15,17 +15,33 @@ module BetterTogether
         BetterTogether.adapters_for(ADAPTER_GROUP).filter_map { |entry| entry[:name]&.to_sym }
       end
 
-      # Builds the named (or first registered) adapter and checks its contract version.
+      # Builds the named (or first registered) adapter and checks its contract
+      # version and that it reports the name it was registered under.
       def processor_adapter(name = nil)
         entry = BetterTogether.adapter_for(ADAPTER_GROUP, name)
         return if entry.blank?
 
-        ProcessorAdapter.verify!(entry[:adapter].call)
+        ProcessorAdapter.verify!(entry[:adapter].call, name: entry[:name])
       end
 
-      def enabled?(env = ENV)
-        ActiveModel::Type::Boolean.new.cast(env['BT_BILLING_ENABLED']) == true &&
-          Configuration.ready?(env) && processor_names.any?
+      # Billing is on for a platform only with the host's flag, a configured
+      # identity, and a registered processor that has a context for that platform.
+      # With no platform (a job or console with no tenant in hand) it is off.
+      # Answers for the real ENV are remembered per platform for the request or job.
+      def enabled?(platform = Current.platform, env: ENV)
+        return compute_enabled?(platform, env) unless env.equal?(ENV) && platform.respond_to?(:id)
+
+        memo = (Current.billing_enabled ||= {})
+        return memo[platform.id] if memo.key?(platform.id)
+
+        memo[platform.id] = compute_enabled?(platform, env)
+      end
+
+      def compute_enabled?(platform, env)
+        platform.present? &&
+          Configuration.requested?(env) &&
+          Configuration.ready?(env) &&
+          Configuration.processors_for(platform).any?
       end
     end
   end
