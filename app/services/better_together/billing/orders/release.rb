@@ -8,7 +8,7 @@ module BetterTogether
       class Release
         def self.call(order)
           order.payments.pending.find_each { |payment| payment.update!(status: 'cancelled') }
-          order.lines.each { |line| line.purchasable.release!(quantity: line.quantity) }
+          order.line_items.each { |line_item| line_item.purchasable.release!(quantity: line_item.quantity) }
         end
       end
     end

@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Billing
-    # For a billing record that hangs off a parent (an order line, a payment, a refund): it
+    # For a billing record that hangs off a parent (a line item, a payment, a refund): it
     # takes its platform from the parent, never from the request, and must agree with the
     # parent's platform and, where it has one, currency. The database enforces the platform with a composite
     # foreign key; this gives the clear error first.

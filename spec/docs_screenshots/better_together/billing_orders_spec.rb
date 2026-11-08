@@ -17,7 +17,7 @@ RSpec.describe 'Documentation screenshots for billing orders', # rubocop:disable
   include_context 'with billing switched on'
 
   let(:buyer) { find_or_create_test_user('user@example.test').person }
-  let!(:order) { place_order(lines: [{ purchasable: plan, quantity: 1 }]) }
+  let!(:order) { place_order(line_items: [{ purchasable: plan, quantity: 1 }]) }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
@@ -59,12 +59,12 @@ RSpec.describe 'Documentation screenshots for billing orders', # rubocop:disable
     end
   end
 
-  it 'captures one sale with its lines and payments' do
+  it 'captures one sale with its line items and payments' do
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_sale_show',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_sale_show'),
-      callouts: [{ id: 'lines', selector: '#billing-order-lines', title: 'What was ordered',
+      callouts: [{ id: 'line_items', selector: '#billing-order-line-items', title: 'What was ordered',
                    bullets: ['Price and name as they were when the order was placed.'] },
                  { id: 'payments', selector: '#billing-order-payments', title: 'Payments',
                    bullets: ['An order can be paid in parts, by different methods.'] }]
