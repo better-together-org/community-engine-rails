@@ -1,0 +1,83 @@
+{
+  "name": "billing_processor_settings_index",
+  "device": "mobile",
+  "url": "/en/billing/processor_settings",
+  "title": "Payment methods | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_payment_methods",
+  "flow": "billing_processor_settings_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_processor_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-processor-settings-table",
+      "title": "Payment methods",
+      "bullets": [
+        "Cash, cheque and e-transfer are installed for everyone and off until you turn them on."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 230.390625,
+        "width": 474.0,
+        "height": 226.0,
+        "right": 487.0,
+        "bottom": 456.390625,
+        "center_x": 250.0,
+        "center_y": 343.390625
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 230.390625,
+        "width": 474.0,
+        "height": 226.0,
+        "right": 487.0,
+        "bottom": 456.390625,
+        "center_x": 250.0,
+        "center_y": 343.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 476.39,
+        "width": 270.0,
+        "height": 236,
+        "score": 800.609375
+      }
+    },
+    {
+      "selector": "#billing-processor-setting-etransfer",
+      "title": "Where it works",
+      "bullets": [
+        "E-transfer works only in Canada, in Canadian dollars."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 390.890625,
+        "width": 474.0,
+        "height": 65.0,
+        "right": 487.0,
+        "bottom": 455.890625,
+        "center_x": 250.0,
+        "center_y": 423.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 66.0,
+        "width": 500.0,
+        "height": 801.0,
+        "right": 500.0,
+        "bottom": 867.0,
+        "center_x": 250.0,
+        "center_y": 466.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 887.0,
+        "width": 270.0,
+        "height": 158,
+        "score": 390.0
+      }
+    }
+  ]
+}

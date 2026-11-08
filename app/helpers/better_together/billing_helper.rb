@@ -71,6 +71,30 @@ module BetterTogether
                              .map { |name| [billing_payment_method_label(name), name] }
     end
 
+    # On, off, or not set up yet; the page lists every installed method.
+    def billing_processor_setting_badge(setting)
+      state = if setting.nil? then 'not_set_up'
+              elsif setting.enabled? then 'enabled'
+              else 'disabled'
+              end
+      classes = { 'enabled' => 'bg-success', 'disabled' => 'bg-secondary', 'not_set_up' => 'bg-light text-dark border' }
+      content_tag(:span, t("better_together.billing.processor_settings.status_#{state}"),
+                  class: "badge billing-processor-setting-status-badge #{classes.fetch(state)}")
+    end
+
+    # Where a method works, in words: anywhere, or only in some countries and currencies.
+    def billing_method_availability(adapter)
+      countries = adapter.supported_countries
+      return t('better_together.billing.processor_settings.available_anywhere') if countries.blank?
+
+      t('better_together.billing.processor_settings.available_only_in', countries: countries.to_sentence,
+                                                                        currencies: Array(adapter.supported_currencies).to_sentence)
+    end
+
+    def billing_instruction_field_label(method_name, field)
+      t("better_together.billing.processor_settings.fields.#{method_name}.#{field.name}", default: field.name.to_s.humanize)
+    end
+
     def billing_payment_method_label(name)
       t("better_together.billing.plans.payment_method_names.#{name}", default: name.to_s.humanize)
     end

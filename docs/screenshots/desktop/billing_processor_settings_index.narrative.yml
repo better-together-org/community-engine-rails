@@ -1,0 +1,13 @@
+---
+title: Payment methods
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I see which ways to be paid outside a processor
+  are on for my platform.
+callouts:
+- :id: methods
+  :title: Status
+  :description: Each row shows whether the method is on, off or not set up yet.
+accessibility_notes: The table has column headers; the state is text as well as colour.
+slug: billing_processor_settings_index
+device: desktop

@@ -140,6 +140,8 @@ module BetterTogether
     # read (see docs/billing/platform_isolation.md). Deleting a platform that has
     # billing history is refused rather than silently dropping payment records.
     has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
+    has_many :billing_processor_settings, class_name: 'BetterTogether::Billing::ProcessorSetting',
+                                          dependent: :restrict_with_error
     has_many :billing_plans, class_name: 'BetterTogether::Billing::Plan', dependent: :restrict_with_error
 
     # A hosted platform is what hosting-subscription events are about.

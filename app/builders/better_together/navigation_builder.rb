@@ -649,6 +649,17 @@ module BetterTogether
                 privacy: 'private',
                 visibility_strategy: 'permission',
                 permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-processor-settings',
+                title_en: 'Payment Methods',
+                slug_en: 'billing-payment-methods',
+                position: 13,
+                item_type: 'link',
+                route_name: 'billing_processor_settings_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
               }
             ]
 
