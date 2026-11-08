@@ -27,6 +27,7 @@ module BetterTogether
         'cancelled' => %w[succeeded],
         'refunded' => %w[succeeded partially_refunded]
       }.freeze
+      REVIVED_FROM = %w[failed cancelled].freeze
       # Not yet paid or failed: counted against what an order still owes.
       IN_FLIGHT = %w[pending processing].freeze
 
@@ -44,6 +45,7 @@ module BetterTogether
       validate :method_installed
       validate :pay_charge_on_this_platform
       validate :status_transition_allowed, on: :update
+      validate :revival_has_processor_reference, on: :update
 
       STATUSES.each do |status|
         scope status.to_sym, -> { where(status:) }
@@ -100,6 +102,13 @@ module BetterTogether
         return if TRANSITIONS.fetch(was, []).include?(status)
 
         errors.add(:status, :transition_not_allowed, from: was, to: status)
+      end
+
+      # Reviving a failed or cancelled payment is only the processor's call, so it needs a reference.
+      def revival_has_processor_reference
+        return unless status_changed? && status == 'succeeded' && REVIVED_FROM.include?(status_was)
+
+        errors.add(:processor_reference, :blank) if processor_reference.blank?
       end
     end
   end

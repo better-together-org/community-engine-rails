@@ -17,6 +17,7 @@ module BetterTogether
       after_action :verify_authorized
 
       CACHE_TTL = 1.minute
+      FAILURE_TTL = 15.seconds
       MAX_SEARCH = 100
       MAX_LIMIT = 50
       DEFAULT_LIMIT = 25
@@ -77,8 +78,15 @@ module BetterTogether
       # Only the narrowing keys a lookup understands, each a short string.
       def scope = params.fetch(:scope, {}).permit(:product).to_h.transform_values { |value| value.to_s.first(200) }
 
+      # A failure is remembered for a few seconds, so an outage at the processor is not
+      # called again on every keystroke.
       def options
+        raise ProcessorAdapter::LookupError, 'lookup failed recently' if Rails.cache.exist?(failure_key)
+
         Rails.cache.fetch(cache_key, expires_in: CACHE_TTL) { fetch_options }
+      rescue StandardError
+        Rails.cache.write(failure_key, true, expires_in: FAILURE_TTL) unless Rails.cache.exist?(failure_key)
+        raise
       end
 
       def fetch_options
@@ -86,6 +94,8 @@ module BetterTogether
         rows = core_rows if rows.empty? && core_kind?
         limit_to_what_core_accepts(rows).first(limit)
       end
+
+      def failure_key = ['billing-lookup-failed', *cache_key]
 
       # Currencies and intervals are checked by Plan's own validations, so offer only those.
       def limit_to_what_core_accepts(rows)
