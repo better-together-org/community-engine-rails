@@ -48,6 +48,10 @@ RSpec.describe BetterTogether::Billing::SaleRefundsController do
       expect(kinds_for(buyer)).to include('refund_recorded')
     end
 
+    it 'refuses a refund sent without its form token' do
+      expect { post refund_path, params: { payment_id: payment.id, token: '' } }.not_to change(BetterTogether::Billing::Refund, :count)
+    end
+
     it 'records part of it from an amount in dollars' do
       post refund_path, params: { payment_id: payment.id, token: 'a', amount: '12.50' }
 
