@@ -10,6 +10,7 @@ RSpec.describe DbmlWriter, :skip_host_setup do
       schema.define(version: 1) do
         create_table 'parents', id: :uuid do |t|
           t.string 'name'
+          t.check_constraint 'amount_cents >= 0', name: 'chk_amount'
         end
         create_table 'children', id: :uuid do |t|
           t.uuid 'parent_id'
@@ -26,5 +27,12 @@ RSpec.describe DbmlWriter, :skip_host_setup do
 
     expect(dbml.scan(/^Ref:/).size).to eq(1)
     expect(dbml).to include('Ref: "children"."parent_id" > "parents"."id"')
+  end
+
+  it 'does not draw a check constraint as a column' do
+    dbml = described_class.new(recorder).to_s
+
+    expect(dbml).not_to include('check_constraint')
+    expect(dbml).not_to include('amount_cents >= 0')
   end
 end
