@@ -51,14 +51,14 @@ RSpec.describe BetterTogether::Billing::OrdersController do
       expect(response.body).to include('billing-orders-empty')
     end
 
-    it 'shows an order with its lines, status and payments' do
+    it 'shows an order with its line items, status and payments' do
       BetterTogether::Billing::Payments::Create.call(order:, processor: 'fake', amount_cents: 4500, idempotency_key: 'k')
 
       get order_path(order)
 
       expect(response).to have_http_status(:ok)
       dom_id = ActionView::RecordIdentifier
-      expect(response.body).to include(dom_id.dom_id(order, :details), dom_id.dom_id(order, :status_badge), 'billing-order-lines',
+      expect(response.body).to include(dom_id.dom_id(order, :details), dom_id.dom_id(order, :status_badge), 'billing-order-line-items',
                                        'billing-order-payments', dom_id.dom_id(order, :total))
       expect_html_content(plan.name)
     end

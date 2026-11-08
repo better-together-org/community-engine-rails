@@ -367,6 +367,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_100000) do
     t.index ["subject_type", "subject_id"], name: "idx_bt_billing_events_subject"
   end
 
+  create_table "better_together_billing_line_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "order_id", null: false
+    t.string "purchasable_type", null: false
+    t.uuid "purchasable_id", null: false
+    t.string "description", null: false
+    t.integer "quantity", default: 1, null: false
+    t.integer "unit_amount_cents", null: false
+    t.string "currency", null: false
+    t.integer "position", default: 0, null: false
+    t.index ["order_id"], name: "idx_bt_billing_line_items_order"
+    t.index ["platform_id"], name: "idx_bt_billing_line_items_platform"
+    t.index ["purchasable_type", "purchasable_id"], name: "idx_bt_billing_line_items_purchasable"
+  end
+
   create_table "better_together_billing_notification_receipts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -438,24 +456,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_100000) do
     t.index ["order_id", "agreement_id"], name: "idx_bt_billing_order_acc_unique", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_order_acc_platform"
     t.index ["signer_id"], name: "idx_bt_billing_order_acc_signer"
-  end
-
-  create_table "better_together_billing_order_lines", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "platform_id", null: false
-    t.uuid "order_id", null: false
-    t.string "purchasable_type", null: false
-    t.uuid "purchasable_id", null: false
-    t.string "description", null: false
-    t.integer "quantity", default: 1, null: false
-    t.integer "unit_amount_cents", null: false
-    t.string "currency", null: false
-    t.integer "position", default: 0, null: false
-    t.index ["order_id"], name: "idx_bt_billing_order_lines_order"
-    t.index ["platform_id"], name: "idx_bt_billing_order_lines_platform"
-    t.index ["purchasable_type", "purchasable_id"], name: "idx_bt_billing_order_lines_purchasable"
   end
 
   create_table "better_together_billing_orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3311,6 +3311,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_100000) do
   add_foreign_key "better_together_billing_credit_lots", "better_together_people", column: "granted_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_credit_lots", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_line_items", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_line_items_order_platform"
+  add_foreign_key "better_together_billing_line_items", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_notification_receipts", "better_together_people", column: "recipient_id", on_delete: :cascade
   add_foreign_key "better_together_billing_notification_receipts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_offline_payments", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_offline_payments_order_platform"
@@ -3321,8 +3323,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_07_100000) do
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_acc_order_platform"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_billing_order_lines", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_lines_order_platform"
-  add_foreign_key "better_together_billing_order_lines", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_orders", "better_together_people", column: "buyer_id"
   add_foreign_key "better_together_billing_orders", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_orders", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_pay_subscription_platform"

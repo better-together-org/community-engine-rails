@@ -44,7 +44,7 @@ module BetterTogether
 
         def term_attributes
           { pay_subscription:, plan:, beneficiary: order.on_behalf_of, payment_method: pay_subscription.customer.processor,
-            unit_amount_cents: order.lines.first.unit_amount_cents, currency: order.currency, anchor_at: pay_subscription.created_at }
+            unit_amount_cents: order.line_items.first.unit_amount_cents, currency: order.currency, anchor_at: pay_subscription.created_at }
         end
       end
     end

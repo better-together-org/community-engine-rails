@@ -3,11 +3,11 @@
 module BetterTogether
   module Billing
     module Orders
-      # Places an order: a draft with its lines, the purchasables held, then waiting for payment.
+      # Places an order: a draft with its line items, the purchasables held, then waiting for payment.
       #
       # Everything happens in one transaction, so a refusal part-way leaves nothing behind (and
-      # nothing held). It refuses what could not be sold: no lines, a purchasable that is not
-      # for sale or belongs to another platform or seller, or lines in different currencies.
+      # nothing held). It refuses what could not be sold: no line items, a purchasable that is not
+      # for sale or belongs to another platform or seller, or line items in different currencies.
       #
       # It also refuses until the purchase agreements are in order: every agreement that applies
       # must exist, be in force, and have been accepted by the `signer` (the buyer unless told
@@ -20,7 +20,7 @@ module BetterTogether
       # in the same transaction and pays the whole order or the order is refused (see Credit::PayOrder).
       #
       #   Orders::Place.call(platform:, buyer:, purpose: 'one_time', payment_method: 'cash',
-      #                      lines: [{ purchasable: plan }])
+      #                      line_items: [{ purchasable: plan }])
       class Place
         class Refused < StandardError; end
 
@@ -36,17 +36,17 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        # `lines` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
+        # `line_items` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
         # subscriber was sold at, when it differs from the plan's today). A renewal (`renewal: true`) may be for a
         # purchasable that is no longer for sale, and holds the order until `expires_at` instead of for a number of hours.
-        def initialize(platform:, buyer:, purpose:, lines:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists
+        def initialize(platform:, buyer:, purpose:, line_items:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists
                        on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false, expires_at: nil, renewal: false)
           @platform = platform
           @buyer = buyer
           @signer = signer || buyer
           @payment_method = payment_method
           @purpose = purpose.to_s
-          @lines = Array(lines)
+          @line_items = Array(line_items)
           @seller = seller
           @on_behalf_of = on_behalf_of
           @subject = subject
@@ -67,7 +67,7 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :lines, :seller, :on_behalf_of, :subject, :seller_assisted, :renewal
+        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :line_items, :seller, :on_behalf_of, :subject, :seller_assisted, :renewal
 
         def gate
           @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:, payment_method:)
@@ -98,7 +98,7 @@ module BetterTogether
 
         def check_lines!
           raise Refused, "that is not a kind of purchase: #{purpose}" unless Order::PURPOSES.include?(purpose)
-          raise Refused, 'an order needs at least one line' if lines.empty?
+          raise Refused, 'an order needs at least one line' if line_items.empty?
 
           check_purchasables!
           problem = payment_choice.problem
@@ -107,12 +107,12 @@ module BetterTogether
 
         def check_purchasables!
           purchasables.each { |purchasable| check_purchasable!(purchasable) }
-          raise Refused, 'all lines must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
+          raise Refused, 'all line items must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
         end
 
         def order_currency = purchasables.first&.purchasable_currency
 
-        def purchasables = @purchasables ||= lines.map { |line| line.fetch(:purchasable) }
+        def purchasables = @purchasables ||= line_items.map { |line_item| line_item.fetch(:purchasable) }
 
         def check_purchasable!(purchasable)
           raise Refused, 'that cannot be bought' unless Purchasable.model_names.include?(purchasable.class.name)
@@ -130,21 +130,21 @@ module BetterTogether
         def build_order
           order = platform.billing_orders.build(buyer:, purpose:, seller:, on_behalf_of:, subject:,
                                                 currency: purchasables.first.purchasable_currency, status: 'draft')
-          lines.each_with_index { |line, index| order.lines.build(line_attributes(line, index)) }
+          line_items.each_with_index { |line_item, index| order.line_items.build(line_item_attributes(line_item, index)) }
           order
         end
 
-        def line_attributes(line, index)
-          purchasable = line.fetch(:purchasable)
-          { platform_id: platform.id, position: index, purchasable:, quantity: line.fetch(:quantity, 1),
+        def line_item_attributes(line_item, index)
+          purchasable = line_item.fetch(:purchasable)
+          { platform_id: platform.id, position: index, purchasable:, quantity: line_item.fetch(:quantity, 1),
             description: purchasable.purchasable_description, currency: purchasable.purchasable_currency,
-            unit_amount_cents: line.fetch(:unit_amount_cents, purchasable.purchasable_amount_cents) }
+            unit_amount_cents: line_item.fetch(:unit_amount_cents, purchasable.purchasable_amount_cents) }
         end
 
         # Holds each purchasable for the order. If one refuses, the transaction rolls back and
         # whatever was held before it is released with it.
         def reserve(order)
-          order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) }
+          order.line_items.each { |line_item| line_item.purchasable.reserve!(quantity: line_item.quantity) }
         rescue StandardError => e
           raise Refused, e.message
         end

@@ -114,6 +114,12 @@ classDiagram
       concerns: Billing::EncryptedAttributes, Billing::PlatformBound
       weak refs: target: billable_owner, target: beneficiary, target: subject
     }
+    class BetterTogether__Billing__LineItem["Billing::LineItem"] {
+      <<Model>>
+      table: better_together_billing_line_items
+      concerns: Billing::ParentBound, Billing::PlatformBound
+      weak refs: target: purchasable
+    }
     class BetterTogether__Billing__NotificationReceipt["Billing::NotificationReceipt"] {
       <<Model>>
       table: better_together_billing_notification_receipts
@@ -135,12 +141,6 @@ classDiagram
       table: better_together_billing_order_agreement_acceptances
       concerns: Billing::ParentBound, Billing::PlatformBound
       weak refs: target: on_behalf_of
-    }
-    class BetterTogether__Billing__OrderLine["Billing::OrderLine"] {
-      <<Model>>
-      table: better_together_billing_order_lines
-      concerns: Billing::ParentBound, Billing::PlatformBound
-      weak refs: target: purchasable
     }
     class BetterTogether__Billing__Payment["Billing::Payment"] {
       <<Model>>
@@ -235,6 +235,8 @@ classDiagram
   BetterTogether__Billing__CreditLot --> BetterTogether__Billing__CreditAccount : account
   BetterTogether__Billing__CreditLot --> BetterTogether__Person : granted_by
   BetterTogether__Billing__Event --> BetterTogether__Platform : platform
+  BetterTogether__Billing__LineItem --> BetterTogether__Platform : platform
+  BetterTogether__Billing__LineItem --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__NotificationReceipt --> BetterTogether__Platform : platform
   BetterTogether__Billing__NotificationReceipt --> BetterTogether__Person : recipient
   BetterTogether__Billing__OfflinePayment --> BetterTogether__Platform : platform
@@ -248,8 +250,6 @@ classDiagram
   BetterTogether__Billing__OrderAgreementAcceptance --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__OrderAgreementAcceptance --> BetterTogether__Agreement : agreement
   BetterTogether__Billing__OrderAgreementAcceptance --> BetterTogether__Person : signer
-  BetterTogether__Billing__OrderLine --> BetterTogether__Platform : platform
-  BetterTogether__Billing__OrderLine --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__Payment --> BetterTogether__Platform : platform
   BetterTogether__Billing__Payment --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__Payment --> Pay__Charge : pay_charge

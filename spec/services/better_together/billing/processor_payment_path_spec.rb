@@ -41,7 +41,7 @@ RSpec.describe 'Paying an order through a processor' do # rubocop:disable RSpec/
     it 'opens nothing for an order that costs nothing' do
       free = create(:better_together_billing_plan, amount_cents: 0)
 
-      expect(place_order(payment_method: 'fake', lines: [{ purchasable: free }]).payments).to be_empty
+      expect(place_order(payment_method: 'fake', line_items: [{ purchasable: free }]).payments).to be_empty
     rescue BetterTogether::Billing::Orders::Place::Refused
       skip 'a plan that costs nothing is not sold in this build'
     end

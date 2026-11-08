@@ -30,7 +30,7 @@ RSpec.shared_context 'with subscription fixtures' do
   def start_subscription(method: 'cash', at: start_time, plan: sub_plan, payer: buyer, **attrs)
     travel_to(at) do
       give_credit(plan.amount_cents, holder: payer) if method == 'store_credit'
-      order = place_order(buyer: payer, purpose: 'subscription', payment_method: method, lines: [{ purchasable: plan }], **attrs)
+      order = place_order(buyer: payer, purpose: 'subscription', payment_method: method, line_items: [{ purchasable: plan }], **attrs)
       pay_manually(order) unless method == 'store_credit'
       follow_up
       order.reload.subject

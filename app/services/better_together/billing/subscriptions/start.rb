@@ -23,8 +23,8 @@ module BetterTogether
         end
 
         def self.single_plan(order)
-          lines = order.lines.to_a
-          lines.first.purchasable if lines.one? && lines.first.purchasable.is_a?(Plan)
+          line_items = order.line_items.to_a
+          line_items.first.purchasable if line_items.one? && line_items.first.purchasable.is_a?(Plan)
         end
 
         def self.paid_locally?(order)
@@ -75,7 +75,7 @@ module BetterTogether
         def build_term(subscription)
           order.platform.billing_subscription_terms.create!(
             pay_subscription: subscription, plan:, beneficiary: order.on_behalf_of, payment_method: payment.processor,
-            unit_amount_cents: order.lines.first.unit_amount_cents, currency: order.currency, anchor_at: anchor
+            unit_amount_cents: order.line_items.first.unit_amount_cents, currency: order.currency, anchor_at: anchor
           )
         end
       end

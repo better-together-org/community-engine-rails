@@ -27,7 +27,7 @@ RSpec.describe BetterTogether::Billing::Purchasable do
   describe 'a plan' do
     include_context 'with orders fixtures'
 
-    it 'describes itself for an order line, and is for sale only while active' do
+    it 'describes itself for a line item, and is for sale only while active' do
       expect(plan).to have_attributes(purchasable_description: plan.name, purchasable_amount_cents: 4500, purchasable_currency: 'USD')
       expect(plan).to be_purchasable
       plan.update!(active: false)
