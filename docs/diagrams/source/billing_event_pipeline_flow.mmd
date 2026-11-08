@@ -1,0 +1,31 @@
+%% Billing event pipeline: a processor webhook becomes a logged, attributed, encrypted event that is
+%% processed once, retried with growing waits, dead-lettered when stuck, replayable, and redacted
+%% after the retention window. Platform attribution never guesses.
+flowchart TD
+  W[Processor webhook<br/>POST /pay/webhooks/:processor] --> P[Pay verifies the signature<br/>and stores the delivery, encrypted]
+  P --> PJ[Pay::Webhooks::ProcessJob<br/>billing queue]
+  PJ --> D[WebhookDispatcher<br/>adapter.normalize_webhook]
+  D --> A{One platform with billing<br/>configured owns the event?}
+  A -->|No| U[Report the error and raise<br/>UnattributableWebhookError<br/>nothing stored for any tenant]
+  U --> K[Pay keeps the delivery<br/>for operator replay]
+  K --> PR[PruneStalePayWebhooksJob<br/>after the retention window]
+  A -->|Yes| I[EventIngest<br/>once per processor and event id]
+  I --> X{Already logged for<br/>a different platform?}
+  X -->|Yes| C[PlatformConflictError]
+  X -->|No| L[Billing event: pending<br/>payload encrypted]
+  L --> Q[ProcessBillingEventJob<br/>event id only, billing queue]
+  Q --> T{Outcome already final?}
+  T -->|Yes| S[Skip]
+  T -->|No| CL[Take the lease under a row lock]
+  CL --> R[adapter.process_event<br/>with the platform context]
+  R --> O{Result}
+  O -->|processed, ignored, alerted| F[Final outcome<br/>clears any dead-letter state]
+  O -->|retry| RT[pending, wait 30s, 2m, 10m, 30m]
+  RT --> Q
+  O -->|error| FL[failed, up to 5 attempts]
+  FL --> Q
+  FL --> DL[Hourly sweep:<br/>dead_lettered after 5 attempts or 6 hours]
+  RT --> DL
+  DL --> RP[ReplayEvent resets attempts<br/>and enqueues again]
+  RP --> Q
+  F --> RD[Daily redaction after retention<br/>sanitizer, or id and type only]
