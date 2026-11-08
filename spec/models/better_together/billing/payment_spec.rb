@@ -90,4 +90,16 @@ RSpec.describe BetterTogether::Billing::Payment do
 
     expect { payment(platform_id: other.id).save!(validate: false) }.to raise_error(ActiveRecord::InvalidForeignKey)
   end
+
+  describe 'reviving a failed or cancelled payment' do
+    %w[failed cancelled].each do |from|
+      it "needs a processor reference to go from #{from} to succeeded" do
+        payment = create(:better_together_billing_payment, order:, status: from, processor_reference: nil)
+
+        expect(payment.update(status: 'succeeded')).to be(false)
+        expect(payment.errors[:processor_reference]).to be_present
+        expect(payment.update(status: 'succeeded', processor_reference: 'ch_123')).to be(true)
+      end
+    end
+  end
 end
