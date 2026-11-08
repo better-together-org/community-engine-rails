@@ -80,6 +80,9 @@ module BetterTogether
       Rails.logger.warn(
         "[BetterTogether::ActiveStorageSecurity] content signature sniff failed for blob #{blob.id}: #{e.class}: #{e.message}"
       )
+      # Failing open is deliberate, but a storage backend that always fails the
+      # read silently disables this check, so surface it to error reporting.
+      BetterTogether.report_error(e, context: { blob_id: blob.id, check: 'content_signature_sniff' })
       nil
     end
 
