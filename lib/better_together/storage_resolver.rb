@@ -16,6 +16,10 @@ module BetterTogether
   #   resolver.to_active_storage_config  # => hash suitable for ActiveStorage registration
   class StorageResolver
     SUPPORTED_ENV_SERVICES = %w[local amazon s3_compatible].freeze
+    S3_COMPATIBLE_CHECKSUM_OPTIONS = {
+      request_checksum_calculation: 'when_required',
+      response_checksum_validation: 'when_required'
+    }.freeze
 
     def initialize(platform = nil)
       @platform = platform
@@ -133,6 +137,9 @@ module BetterTogether
       if endpoint.present?
         config[:endpoint] = endpoint
         config[:force_path_style] = true
+        # Newer aws-sdk-s3 defaults to CRC checksums that S3-compatible stores
+        # such as Garage do not return in a form the SDK accepts.
+        config.merge!(S3_COMPATIBLE_CHECKSUM_OPTIONS)
       end
       config
     end
