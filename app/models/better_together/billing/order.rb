@@ -4,7 +4,7 @@ module BetterTogether
   module Billing
     # What a person is buying, from the platform or one of its sellers, and where it stands.
     #
-    # An order is processor-neutral: it has lines (what is bought), payments (how it is being
+    # An order is processor-neutral: it has line items (what is bought), payments (how it is being
     # paid, possibly in parts by different methods) and, if money is given back, refunds. Its
     # status is derived from its payments by Orders::Settle, and moves only along the paths in
     # TRANSITIONS, so a paid order cannot quietly become a draft again.
@@ -41,8 +41,8 @@ module BetterTogether
       belongs_to :on_behalf_of, polymorphic: true, optional: true
       belongs_to :subject, polymorphic: true, optional: true
 
-      has_many :lines, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::OrderLine',
-                                                             inverse_of: :order, dependent: :destroy
+      has_many :line_items, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::LineItem',
+                                                                  inverse_of: :order, dependent: :destroy
       has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
                                        dependent: :restrict_with_error
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
@@ -98,11 +98,11 @@ module BetterTogether
         end
       end
 
-      # Lines decide the totals while there are lines; an order with none keeps what it has.
+      # Line items decide the totals while there are line items; an order with none keeps what it has.
       def total_up
-        return if lines.empty?
+        return if line_items.empty?
 
-        self.subtotal_cents = lines.reject(&:marked_for_destruction?).sum(&:total_cents)
+        self.subtotal_cents = line_items.reject(&:marked_for_destruction?).sum(&:total_cents)
         self.total_cents = subtotal_cents
       end
 

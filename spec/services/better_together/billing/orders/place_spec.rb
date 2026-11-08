@@ -15,26 +15,26 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
     expect(order.number).to match(/\ABT-/)
     expect(order.placed_at).to be_present
     expect(order.expires_at).to be_within(1.minute).of(72.hours.from_now)
-    expect(order.lines.first).to have_attributes(purchasable: plan, description: plan.name, quantity: 1, unit_amount_cents: 4500)
+    expect(order.line_items.first).to have_attributes(purchasable: plan, description: plan.name, quantity: 1, unit_amount_cents: 4500)
   end
 
   it 'holds the order for as long as it is told to' do
     expect(place_order(hold_hours: 24).expires_at).to be_within(1.minute).of(24.hours.from_now)
   end
 
-  it 'multiplies quantity and adds up several lines' do
+  it 'multiplies quantity and adds up several line items' do
     other = create(:better_together_billing_plan, amount_cents: 1000, currency: 'USD')
 
-    order = place_order(lines: [{ purchasable: plan, quantity: 2 }, { purchasable: other }])
+    order = place_order(line_items: [{ purchasable: plan, quantity: 2 }, { purchasable: other }])
 
     expect(order.total_cents).to eq((2 * 4500) + 1000)
-    expect(order.lines.map(&:position)).to eq([0, 1])
+    expect(order.line_items.map(&:position)).to eq([0, 1])
   end
 
   it 'holds each purchasable it sells' do
     allow(plan).to receive(:reserve!)
 
-    place_order(lines: [{ purchasable: plan, quantity: 3 }])
+    place_order(line_items: [{ purchasable: plan, quantity: 3 }])
 
     expect(plan).to have_received(:reserve!).with(quantity: 3)
   end
@@ -49,16 +49,16 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
   it 'settles an order that costs nothing straight away' do
     free = create(:better_together_billing_plan, amount_cents: 0, currency: 'USD')
 
-    expect(place_order(lines: [{ purchasable: free }])).to be_paid
+    expect(place_order(line_items: [{ purchasable: free }])).to be_paid
   end
 
   describe 'what it refuses' do
-    it 'an order with no lines' do
-      expect { place_order(lines: []) }.to raise_error(described_class::Refused, /at least one line/)
+    it 'an order with no line items' do
+      expect { place_order(line_items: []) }.to raise_error(described_class::Refused, /at least one line/)
     end
 
     it 'something that cannot be bought' do
-      expect { place_order(lines: [{ purchasable: buyer }]) }.to raise_error(described_class::Refused, /cannot be bought/)
+      expect { place_order(line_items: [{ purchasable: buyer }]) }.to raise_error(described_class::Refused, /cannot be bought/)
     end
 
     it 'a plan that is not for sale' do
@@ -78,8 +78,8 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
       community = create(:better_together_community)
       seller_plan = create(:better_together_billing_plan, seller: community)
 
-      expect { place_order(lines: [{ purchasable: seller_plan }]) }.to raise_error(described_class::Refused, /sold by someone else/)
-      expect(place_order(lines: [{ purchasable: seller_plan }], seller: community).seller).to eq(community)
+      expect { place_order(line_items: [{ purchasable: seller_plan }]) }.to raise_error(described_class::Refused, /sold by someone else/)
+      expect(place_order(line_items: [{ purchasable: seller_plan }], seller: community).seller).to eq(community)
     end
 
     it 'a plan sold by the platform when a seller is named' do
@@ -88,10 +88,10 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
       expect { place_order(seller: create(:better_together_community)) }.to raise_error(described_class::Refused, /sold by someone else/)
     end
 
-    it 'lines in different currencies' do
+    it 'line items in different currencies' do
       cad = create(:better_together_billing_plan, currency: 'CAD')
 
-      expect { place_order(lines: [{ purchasable: plan }, { purchasable: cad }]) }.to raise_error(described_class::Refused, /same currency/)
+      expect { place_order(line_items: [{ purchasable: plan }, { purchasable: cad }]) }.to raise_error(described_class::Refused, /same currency/)
     end
 
     it 'a purpose that is not known' do
@@ -126,7 +126,7 @@ RSpec.describe BetterTogether::Billing::Orders::Place do
     it 'refuses a zero-total order too, since it is still a purchase' do
       free = create(:better_together_billing_plan, amount_cents: 0, currency: 'USD')
 
-      expect { place_order(agreements: false, lines: [{ purchasable: free }]) }.to raise_error(described_class::AgreementsRequired)
+      expect { place_order(agreements: false, line_items: [{ purchasable: free }]) }.to raise_error(described_class::AgreementsRequired)
     end
 
     it 'copies the buyer\'s acceptance onto the order as its evidence' do
