@@ -32,7 +32,7 @@ RSpec.shared_context 'with offline payment fixtures' do
   def place_offline(method = 'cash', purchasable: nil, **attrs)
     enable_offline(method)
     purchasable ||= method == 'etransfer' ? cad_plan : plan
-    place_order(payment_method: method, lines: [{ purchasable: }], **attrs)
+    place_order(payment_method: method, line_items: [{ purchasable: }], **attrs)
   end
 
   def offline_for(order) = order.offline_payments.first

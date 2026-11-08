@@ -16,7 +16,7 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
   # record's own platform. Everything else on the class itself is a cross-tenant read.
   let(:bare_read) do
     /\b(?:Billing::)?
-      (?:Plan|Event|ProcessorSetting|Order|OrderLine|OrderAgreementAcceptance|AgreementRequirement|NotificationReceipt|
+      (?:Plan|Event|ProcessorSetting|Order|LineItem|OrderAgreementAcceptance|AgreementRequirement|NotificationReceipt|
          OfflinePayment|Payment|Refund)\.
       (?!find\(|find_by\(id:|permitted_attributes|assignable_owner_types|new\b|name\b|model_name\b)\w+/x
   end

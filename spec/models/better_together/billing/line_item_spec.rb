@@ -2,13 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe BetterTogether::Billing::OrderLine do
+RSpec.describe BetterTogether::Billing::LineItem do
   include_context 'with orders fixtures'
 
   let(:order) { create(:better_together_billing_order) }
 
   def line(**attrs)
-    build(:better_together_billing_order_line, order:, purchasable: plan, **attrs)
+    build(:better_together_billing_line_item, order:, purchasable: plan, **attrs)
   end
 
   it 'is valid with what was bought, how many and at what price' do
@@ -36,7 +36,7 @@ RSpec.describe BetterTogether::Billing::OrderLine do
 
   it 'takes its order\'s platform, never the request\'s' do
     Current.platform = create(:better_together_platform)
-    built = order.lines.build(purchasable: plan, description: 'A', quantity: 1, unit_amount_cents: 1, currency: 'USD')
+    built = order.line_items.build(purchasable: plan, description: 'A', quantity: 1, unit_amount_cents: 1, currency: 'USD')
 
     expect(built).to be_valid
     expect(built.platform_id).to eq(order.platform_id)

@@ -61,7 +61,7 @@ RSpec.describe BetterTogether::Billing::OfflinePayments::Open do
     enable_offline('cash')
     free = create(:better_together_billing_plan, amount_cents: 0)
 
-    expect(place_order(payment_method: 'cash', lines: [{ purchasable: free }]).offline_payments).to be_empty
+    expect(place_order(payment_method: 'cash', line_items: [{ purchasable: free }]).offline_payments).to be_empty
   rescue BetterTogether::Billing::Orders::Place::Refused
     skip 'a plan that costs nothing is not sold in this build'
   end

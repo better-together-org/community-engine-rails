@@ -55,7 +55,7 @@ module BetterTogether
         end
 
         def place
-          Orders::Place.call(platform:, buyer:, purpose:, payment_method:, lines: [{ purchasable: plan }], seller_assisted: true)
+          Orders::Place.call(platform:, buyer:, purpose:, payment_method:, line_items: [{ purchasable: plan }], seller_assisted: true)
         end
       end
     end
