@@ -9,6 +9,10 @@ module BetterTogether
     included do
       skip_before_action :check_platform_setup
       skip_before_action :check_platform_privacy
+      # A wizard step must never become the post sign-in return location: a
+      # completed wizard redirects to sign-in, which would send a signed-in
+      # user straight back to the step in an endless redirect loop.
+      skip_before_action :store_user_location!
       before_action :determine_wizard_outcome
     end
 
