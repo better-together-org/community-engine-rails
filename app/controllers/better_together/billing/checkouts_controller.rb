@@ -95,7 +95,7 @@ module BetterTogether
 
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
-        order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose, lines: [{ purchasable: @plan }],
+        order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose, line_items: [{ purchasable: @plan }],
                                    renewal_payment_method: @renew_with, **how_to_pay)
         redirect_to billing_order_path(order, locale: I18n.locale), notice: t('better_together.billing.checkout.placed')
       rescue Orders::Place::Refused, Checkout::AgreementGate::NotReady => e

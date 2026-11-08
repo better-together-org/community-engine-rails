@@ -179,7 +179,7 @@ module BetterTogether
         # An expired payment is paid late: its hold was let go, so take the place again and open
         # a fresh payment for it. If the place is gone, nothing changes.
         def take_the_place_again
-          order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) } if order.expired?
+          order.line_items.each { |line_item| line_item.purchasable.reserve!(quantity: line_item.quantity) } if order.expired?
           offline.update!(payment: late_payment)
         rescue StandardError => e
           raise PlaceGone, e.message

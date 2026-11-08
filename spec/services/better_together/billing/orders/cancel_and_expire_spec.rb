@@ -49,9 +49,9 @@ RSpec.describe 'Cancelling and expiring orders' do # rubocop:disable RSpec/Descr
 
   describe BetterTogether::Billing::Orders::Release do
     it 'gives back what each line held, by the quantity ordered' do
-      two = place_order(lines: [{ purchasable: plan, quantity: 2 }])
+      two = place_order(line_items: [{ purchasable: plan, quantity: 2 }])
       held = []
-      two.lines.each do |line|
+      two.line_items.each do |line|
         held_plan = instance_double(BetterTogether::Billing::Plan)
         allow(held_plan).to receive(:release!) { |quantity:| held << quantity }
         allow(line).to receive(:purchasable).and_return(held_plan)
@@ -62,7 +62,7 @@ RSpec.describe 'Cancelling and expiring orders' do # rubocop:disable RSpec/Descr
       expect(held).to eq([2])
     end
 
-    it 'cancels the payments still waiting before giving the lines back' do
+    it 'cancels the payments still waiting before giving the line items back' do
       waiting = create(:better_together_billing_payment, order:, amount_cents: 4500)
       settled = create(:better_together_billing_payment, order:, amount_cents: 100, status: 'succeeded')
 

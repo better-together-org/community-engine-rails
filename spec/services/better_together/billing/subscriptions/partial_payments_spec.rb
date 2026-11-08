@@ -12,7 +12,7 @@ RSpec.describe 'Subscriptions paid in parts' do # rubocop:disable RSpec/Describe
   def start_in_parts(credit_cents: 1000, renewal: nil, at: start_time)
     travel_to(at) do
       give_credit(credit_cents)
-      order = place_order(buyer:, purpose: 'subscription', payment_method: nil, lines: [{ purchasable: sub_plan }],
+      order = place_order(buyer:, purpose: 'subscription', payment_method: nil, line_items: [{ purchasable: sub_plan }],
                           renewal_payment_method: renewal,
                           payments: [{ payment_method: 'store_credit', amount_cents: credit_cents }, { payment_method: 'cash' }])
       order.offline_payments.each { |offline| transition.receive(offline, by: steward) }
@@ -24,7 +24,7 @@ RSpec.describe 'Subscriptions paid in parts' do # rubocop:disable RSpec/Describe
   it 'does not start until the order is paid in full' do
     travel_to(start_time) do
       give_credit(1000)
-      order = place_order(buyer:, purpose: 'subscription', payment_method: nil, lines: [{ purchasable: sub_plan }],
+      order = place_order(buyer:, purpose: 'subscription', payment_method: nil, line_items: [{ purchasable: sub_plan }],
                           payments: [{ payment_method: 'store_credit', amount_cents: 1000 }, { payment_method: 'cash' }])
       follow_up
 
@@ -55,7 +55,7 @@ RSpec.describe 'Subscriptions paid in parts' do # rubocop:disable RSpec/Describe
   end
 
   it 'leaves a subscription whose first part went through a processor to the processor' do
-    order = place_order(purpose: 'subscription', payment_method: 'cash', lines: [{ purchasable: sub_plan }])
+    order = place_order(purpose: 'subscription', payment_method: 'cash', line_items: [{ purchasable: sub_plan }])
     pay_manually(order)
     order.payments.first.update!(processor: 'fake')
 
@@ -125,7 +125,7 @@ RSpec.describe 'Subscriptions paid in parts' do # rubocop:disable RSpec/Describe
     it 'are not given until the order is paid in full, and are given once' do
       travel_to(start_time) do
         give_credit(1000)
-        order = place_order(buyer:, purpose: 'subscription', payment_method: nil, lines: [{ purchasable: sub_plan }],
+        order = place_order(buyer:, purpose: 'subscription', payment_method: nil, line_items: [{ purchasable: sub_plan }],
                             payments: [{ payment_method: 'store_credit', amount_cents: 1000 }, { payment_method: 'cash' }])
         follow_up
         expect(platform_membership(buyer)).to be_nil
@@ -143,7 +143,7 @@ RSpec.describe 'Subscriptions paid in parts' do # rubocop:disable RSpec/Describe
     it 'are not given when one part of an unpaid order is refunded' do
       travel_to(start_time) do
         give_credit(1000)
-        order = place_order(buyer:, purpose: 'subscription', payment_method: nil, lines: [{ purchasable: sub_plan }],
+        order = place_order(buyer:, purpose: 'subscription', payment_method: nil, line_items: [{ purchasable: sub_plan }],
                             payments: [{ payment_method: 'store_credit', amount_cents: 1000 }, { payment_method: 'cash' }])
         billing::Orders::ReturnPayments.call(order:, actor: steward)
         follow_up

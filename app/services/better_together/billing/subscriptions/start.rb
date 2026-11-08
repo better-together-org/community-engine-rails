@@ -26,8 +26,8 @@ module BetterTogether
         end
 
         def self.single_plan(order)
-          lines = order.lines.to_a
-          lines.first.purchasable if lines.one? && lines.first.purchasable.is_a?(Plan)
+          line_items = order.line_items.to_a
+          line_items.first.purchasable if line_items.one? && line_items.first.purchasable.is_a?(Plan)
         end
 
         # Every part that paid it was settled by Community Engine; a part through a processor leaves the subscription to the processor.
@@ -97,7 +97,7 @@ module BetterTogether
         def build_term(subscription)
           order.platform.billing_subscription_terms.create!(
             pay_subscription: subscription, plan:, beneficiary: order.on_behalf_of, payment_method: renewal_method,
-            unit_amount_cents: order.lines.first.unit_amount_cents, currency: order.currency, anchor_at: anchor
+            unit_amount_cents: order.line_items.first.unit_amount_cents, currency: order.currency, anchor_at: anchor
           )
         end
       end

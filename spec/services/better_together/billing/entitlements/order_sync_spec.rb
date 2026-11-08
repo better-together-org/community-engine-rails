@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Billing::Entitlements::Sync, 'for a paid order' d
     travel_to(start_time) do
       add_grant('feature_access', { 'feature_key' => 'device_permissions', 'access_level' => 'beta' }, plan: once_plan)
       add_grant('quota_allowance', { 'quota_type' => 'media_storage', 'amount' => 700 }, plan: once_plan)
-      placed = place_order(purpose: 'one_time', payment_method: 'cash', lines: [{ purchasable: once_plan }])
+      placed = place_order(purpose: 'one_time', payment_method: 'cash', line_items: [{ purchasable: once_plan }])
       pay_manually(placed)
       follow_up
       placed.reload
@@ -57,7 +57,7 @@ RSpec.describe BetterTogether::Billing::Entitlements::Sync, 'for a paid order' d
     other = create(:better_together_person)
     paid_for = travel_to(start_time) do
       add_grant('feature_access', { 'feature_key' => 'device_permissions', 'access_level' => 'beta' }, plan: once_plan)
-      placed = place_order(purpose: 'one_time', payment_method: 'cash', on_behalf_of: other, lines: [{ purchasable: once_plan }])
+      placed = place_order(purpose: 'one_time', payment_method: 'cash', on_behalf_of: other, line_items: [{ purchasable: once_plan }])
       pay_manually(placed)
       follow_up
       placed

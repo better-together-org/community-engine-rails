@@ -6,7 +6,7 @@ module BetterTogether
       # Whether what is being bought can be sold to this order: it is a kind of thing that can be bought, is for sale
       # (a renewal may be for something no longer for sale), belongs to the platform and the seller, and all of it is
       # in one currency. Says why not, or nil.
-      class LineProblem
+      class LineItemProblem
         def initialize(platform:, seller:, renewal: false)
           @platform = platform
           @seller = seller
@@ -18,7 +18,7 @@ module BetterTogether
             problem = problem_with(purchasable)
             return problem if problem
           end
-          'all lines must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
+          'all line items must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
         end
 
         private

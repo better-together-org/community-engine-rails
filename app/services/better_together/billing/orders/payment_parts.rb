@@ -19,13 +19,13 @@ module BetterTogether
           def rest? = amount_cents.nil?
         end
 
-        def initialize(parts, platform:, seller:, purpose:, currency:, lines:) # rubocop:disable Metrics/ParameterLists
+        def initialize(parts, platform:, seller:, purpose:, currency:, line_items:) # rubocop:disable Metrics/ParameterLists
           @parts = Array(parts).map { |part| build(part) }
           @platform = platform
           @seller = seller
           @purpose = purpose
           @currency = currency
-          @lines = lines
+          @line_items = line_items
         end
 
         attr_reader :parts
@@ -54,7 +54,7 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :seller, :purpose, :currency, :lines
+        attr_reader :platform, :seller, :purpose, :currency, :line_items
 
         def build(part)
           values = part.to_h.symbolize_keys
@@ -70,9 +70,9 @@ module BetterTogether
           part.credit? ? 1 : 2
         end
 
-        # What the lines come to, at the price each was sold at.
+        # What the line items come to, at the price each was sold at.
         def total_cents
-          lines.sum { |line| line.fetch(:unit_amount_cents) { line.fetch(:purchasable).purchasable_amount_cents } * line.fetch(:quantity, 1) }
+          line_items.sum { |line_item| line_item.fetch(:unit_amount_cents) { line_item.fetch(:purchasable).purchasable_amount_cents } * line_item.fetch(:quantity, 1) }
         end
 
         def choice(part) = PaymentChoice.new(platform:, seller:, name: part.payment_method, purpose:, currency:)

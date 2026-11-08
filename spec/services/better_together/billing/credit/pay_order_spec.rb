@@ -110,14 +110,14 @@ RSpec.describe BetterTogether::Billing::Credit::PayOrder do # rubocop:disable RS
     seller = create(:better_together_community)
     seller_plan = create(:better_together_billing_plan, seller:)
 
-    expect { place_with_credit(seller:, lines: [{ purchasable: seller_plan }]) }.to raise_error(refused, /only for what the platform sells/)
+    expect { place_with_credit(seller:, line_items: [{ purchasable: seller_plan }]) }.to raise_error(refused, /only for what the platform sells/)
   end
 
   it 'opens no payment for an order that costs nothing, and leaves the credit alone' do
     free = create(:better_together_billing_plan, amount_cents: 0, currency: 'USD')
     grant_credit(100)
 
-    order = place_with_credit(lines: [{ purchasable: free }])
+    order = place_with_credit(line_items: [{ purchasable: free }])
 
     expect(order).to be_paid
     expect(order.payments).to be_empty

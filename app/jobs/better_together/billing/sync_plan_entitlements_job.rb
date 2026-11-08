@@ -15,7 +15,7 @@ module BetterTogether
 
       def paid_orders(platform, plan)
         platform.billing_orders.where(status: %w[paid partially_refunded refunded])
-                .where(id: OrderLine.where(purchasable_type: Plan.name, purchasable_id: plan.id).select(:order_id))
+                .where(id: LineItem.where(purchasable_type: Plan.name, purchasable_id: plan.id).select(:order_id))
       end
 
       def sync

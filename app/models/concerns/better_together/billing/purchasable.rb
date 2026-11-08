@@ -2,8 +2,8 @@
 
 module BetterTogether
   module Billing
-    # Marks a model as something an order line can be for (a plan, later a ticket type). The
-    # opt-in is the registry: an order line only accepts purchasable types registered here, so
+    # Marks a model as something a line item can be for (a plan, later a ticket type). The
+    # opt-in is the registry: a line item only accepts purchasable types registered here, so
     # a type name is never resolved from a string.
     #
     # A purchasable describes itself for the line (what it is called, what it costs now, in

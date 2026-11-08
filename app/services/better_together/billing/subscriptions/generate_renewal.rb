@@ -76,13 +76,13 @@ module BetterTogether
 
         def invoice_attributes
           { platform:, buyer: term.payer, signer: term.payer, purpose: 'subscription', subject: term, on_behalf_of: term.beneficiary,
-            renewal: true, payment_method: method_to_open, lines: [invoice_line] }
+            renewal: true, payment_method: method_to_open, line_items: [invoice_line_item] }
         end
 
         # Store credit is paid straight after the order is placed, so no payment is opened for it here.
         def method_to_open = (term.payment_method unless Billing.internal_method?(term.payment_method))
 
-        def invoice_line = { purchasable: plan, quantity: 1, unit_amount_cents: term.unit_amount_cents }
+        def invoice_line_item = { purchasable: plan, quantity: 1, unit_amount_cents: term.unit_amount_cents }
       end
     end
   end
