@@ -72,9 +72,9 @@ RSpec.describe BetterTogether::Billing::OfflinePayments::Transition do
     end
 
     it 'records the seller\'s reference and the date they received it' do
-      described_class.receive(offline, by: steward, reference: 'envelope 12', received_on: Date.new(2026, 10, 1))
+      described_class.receive(offline, by: steward, reference: 'envelope 12', received_on: 5.days.ago.to_date)
 
-      expect(offline.reload).to have_attributes(seller_reference: 'envelope 12', received_on: Date.new(2026, 10, 1))
+      expect(offline.reload).to have_attributes(seller_reference: 'envelope 12', received_on: 5.days.ago.to_date)
       expect(offline.payment.reload.processor_reference).to eq('envelope 12')
     end
 

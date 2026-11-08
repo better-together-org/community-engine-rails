@@ -68,6 +68,10 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
       expect(account_for.entries.count).to eq(1)
     end
 
+    it 'refuses a grant sent without its form token' do
+      expect { post grants_path, params: params_for(token: '') }.not_to change(BetterTogether::Billing::CreditEntry, :count)
+    end
+
     it 'gives it again for a new form' do
       post grants_path, params: params_for(token: 'a')
       post grants_path, params: params_for(token: 'b')

@@ -36,6 +36,21 @@ RSpec.describe BetterTogether::Billing::OfflinePayment do
   end
 
   describe 'validations' do
+    it 'accepts a received date from today back to a year ago' do
+      [Date.current, 1.year.ago.to_date + 1].each do |day|
+        offline.received_on = day
+        expect(offline).to be_valid
+      end
+    end
+
+    it 'rejects a received date in the future or more than a year back' do
+      [Date.current + 1, 2.years.ago.to_date].each do |day|
+        offline.received_on = day
+        expect(offline).not_to be_valid
+        expect(offline.errors).to be_added(:received_on, :invalid)
+      end
+    end
+
     it 'only knows the statuses of the state machine' do
       offline.status = 'paid'
 
