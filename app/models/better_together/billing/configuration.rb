@@ -17,6 +17,11 @@ module BetterTogether
           env[key.to_s].to_s.strip.presence
         end
 
+        # True when the host has switched billing on (BT_BILLING_ENABLED).
+        def requested?(env = ENV)
+          ActiveModel::Type::Boolean.new.cast(value('BT_BILLING_ENABLED', env)) == true
+        end
+
         def missing_keys(env = ENV)
           REQUIRED_KEYS.reject { |key| value(key, env) }
         end
@@ -39,8 +44,29 @@ module BetterTogether
           default_country(env) || raise(MissingConfigurationError, 'BT_BILLING_DEFAULT_COUNTRY is not set')
         end
 
-        def log_missing!(logger = Rails.logger)
-          missing = missing_keys
+        # The processor context for `platform`, or nil when that platform has none.
+        #
+        # Today the only credentials are the host deployment's environment, which
+        # belong to the host platform. Any other platform gets nil, so it cannot
+        # use the host's processor account; billing is simply off for it until it
+        # has configuration of its own.
+        def context_for(platform, processor)
+          return if platform.nil? || !platform.host?
+          return unless Billing.processor_names.include?(processor.to_sym)
+
+          ProcessorContext.new(platform:, processor:)
+        end
+
+        # Registered processors that have a context for `platform`.
+        def processors_for(platform)
+          Billing.processor_names.select { |name| context_for(platform, name) }
+        end
+
+        # Warns once at boot, and only for a host that asked for billing.
+        def log_missing!(logger = Rails.logger, env = ENV)
+          return unless requested?(env)
+
+          missing = missing_keys(env)
           return if missing.empty?
 
           logger.warn("[billing] disabled until configured; missing: #{missing.join(', ')}")
