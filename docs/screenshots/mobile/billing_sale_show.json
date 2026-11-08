@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/billing_orders_spec.rb",
   "callouts": [
     {
-      "selector": "#billing-order-lines",
+      "selector": "#billing-order-line-items",
       "title": "What was ordered",
       "bullets": [
         "Price and name as they were when the order was placed."

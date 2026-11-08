@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Processor-neutral orders, their lines, the payments made against them and the refunds of
+# Processor-neutral orders, their line items, the payments made against them and the refunds of
 # those payments. Final state; guarded so a re-run is a no-op.
 #
 # * Every table carries platform_id NOT NULL, and a child is tied to its parent's platform by a
@@ -16,14 +16,14 @@
 class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   def up
     create_orders
-    create_order_lines
+    create_line_items
     create_payments
     create_refunds
   end
 
   def down
     # CASCADE also drops the foreign keys later tables (such as agreement acceptances) hold on orders.
-    %i[better_together_billing_refunds better_together_billing_payments better_together_billing_order_lines
+    %i[better_together_billing_refunds better_together_billing_payments better_together_billing_line_items
        better_together_billing_orders].each { |table| drop_table table, force: :cascade if table_exists?(table) }
   end
 
@@ -69,10 +69,10 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
                                                                          name: 'fk_bt_billing_orders_pay_subscription_platform'
   end
 
-  def create_order_lines
-    return if table_exists?(:better_together_billing_order_lines)
+  def create_line_items
+    return if table_exists?(:better_together_billing_line_items)
 
-    create_bt_table :billing_order_lines do |t|
+    create_bt_table :billing_line_items do |t|
       t.uuid :platform_id, null: false
       t.uuid :order_id, null: false
       t.string :purchasable_type, null: false
@@ -84,12 +84,12 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.integer :position, null: false, default: 0
     end
 
-    add_index :better_together_billing_order_lines, :platform_id, name: 'idx_bt_billing_order_lines_platform'
-    add_index :better_together_billing_order_lines, :order_id, name: 'idx_bt_billing_order_lines_order'
-    add_index :better_together_billing_order_lines, %i[purchasable_type purchasable_id], name: 'idx_bt_billing_order_lines_purchasable'
-    add_foreign_key :better_together_billing_order_lines, :better_together_platforms, column: :platform_id
-    add_foreign_key :better_together_billing_order_lines, :better_together_billing_orders,
-                    column: %i[order_id platform_id], primary_key: %i[id platform_id], name: 'fk_bt_billing_order_lines_order_platform'
+    add_index :better_together_billing_line_items, :platform_id, name: 'idx_bt_billing_line_items_platform'
+    add_index :better_together_billing_line_items, :order_id, name: 'idx_bt_billing_line_items_order'
+    add_index :better_together_billing_line_items, %i[purchasable_type purchasable_id], name: 'idx_bt_billing_line_items_purchasable'
+    add_foreign_key :better_together_billing_line_items, :better_together_platforms, column: :platform_id
+    add_foreign_key :better_together_billing_line_items, :better_together_billing_orders,
+                    column: %i[order_id platform_id], primary_key: %i[id platform_id], name: 'fk_bt_billing_line_items_order_platform'
   end
 
   def create_payments # rubocop:disable Metrics/MethodLength

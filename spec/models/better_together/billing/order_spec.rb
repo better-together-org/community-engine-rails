@@ -42,12 +42,12 @@ RSpec.describe BetterTogether::Billing::Order do
       expect(build(:better_together_billing_order, currency: 'XXX')).not_to be_valid
     end
 
-    it 'takes its totals from its lines' do
+    it 'takes its totals from its line items' do
       order = build(:better_together_billing_order)
-      order.lines.build(platform_id: order.platform_id, purchasable: plan, description: 'A', quantity: 2, unit_amount_cents: 1500,
-                        currency: 'USD')
-      order.lines.build(platform_id: order.platform_id, purchasable: plan, description: 'B', quantity: 1, unit_amount_cents: 500,
-                        currency: 'USD')
+      order.line_items.build(platform_id: order.platform_id, purchasable: plan, description: 'A', quantity: 2, unit_amount_cents: 1500,
+                             currency: 'USD')
+      order.line_items.build(platform_id: order.platform_id, purchasable: plan, description: 'B', quantity: 1, unit_amount_cents: 500,
+                             currency: 'USD')
       order.save!
 
       expect(order).to have_attributes(subtotal_cents: 3500, total_cents: 3500)
@@ -163,7 +163,7 @@ RSpec.describe BetterTogether::Billing::Order do
 
     expect do
       described_class.connection.execute(<<~SQL.squish)
-        INSERT INTO better_together_billing_order_lines
+        INSERT INTO better_together_billing_line_items
           (platform_id, order_id, purchasable_type, purchasable_id, description, quantity, unit_amount_cents, currency, lock_version, created_at, updated_at)
         VALUES ('#{other_platform.id}', '#{order.id}', 'BetterTogether::Billing::Plan', '#{SecureRandom.uuid}', 'X', 1, 1, 'USD', 0, now(), now())
       SQL

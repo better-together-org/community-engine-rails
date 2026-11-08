@@ -38,7 +38,7 @@ RSpec.describe BetterTogether::Billing::Subscriptions::Start do
 
   it 'starts on the day the money really arrived when the seller recorded it' do
     travel_to(start_time) do
-      order = place_order(purpose: 'subscription', payment_method: 'cash', lines: [{ purchasable: sub_plan }])
+      order = place_order(purpose: 'subscription', payment_method: 'cash', line_items: [{ purchasable: sub_plan }])
       pay_manually(order, received_on: Date.new(2027, 1, 29))
       follow_up
       expect(order.reload.subject.anchor_at).to be_within(1.second).of(Time.utc(2027, 1, 29).end_of_day)
@@ -60,7 +60,7 @@ RSpec.describe BetterTogether::Billing::Subscriptions::Start do
   it 'only starts a subscription for a recurring plan sold by the platform and paid by Community Engine' do
     once = create(:better_together_billing_plan, :one_time, processor: nil, processor_price_id: nil, accepted_payment_methods: %w[cash])
     one_off = travel_to(start_time) do
-      order = place_order(purpose: 'one_time', payment_method: 'cash', lines: [{ purchasable: once }])
+      order = place_order(purpose: 'one_time', payment_method: 'cash', line_items: [{ purchasable: once }])
       pay_manually(order)
     end
 

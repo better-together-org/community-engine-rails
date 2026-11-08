@@ -69,7 +69,7 @@ module BetterTogether
           return true unless order.expired? && %w[paid partially_paid].include?(target)
 
           Order.transaction(requires_new: true) do
-            order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) }
+            order.line_items.each { |line_item| line_item.purchasable.reserve!(quantity: line_item.quantity) }
           end
           true
         rescue StandardError => e
@@ -89,7 +89,7 @@ module BetterTogether
         # What a one-time plan includes is given when the order is paid and taken away if it is refunded. Queued
         # after the change commits, like the subscription follow-up, so it can be retried and never undo a payment.
         def follow_up_entitlement
-          return unless order.lines.any? { |line| line.purchasable.is_a?(Plan) && !line.purchasable.recurring? }
+          return unless order.line_items.any? { |line_item| line_item.purchasable.is_a?(Plan) && !line_item.purchasable.recurring? }
 
           ActiveRecord.after_all_transactions_commit { SyncOrderEntitlementJob.perform_later(order) }
         end

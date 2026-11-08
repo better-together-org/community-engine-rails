@@ -110,7 +110,7 @@ RSpec.describe 'Subscription jobs' do # rubocop:disable RSpec/DescribeClass
 
     it 'runs after the payment, from the order being settled' do
       order = travel_to(start_time) do
-        pay_manually(place_order(purpose: 'subscription', payment_method: 'cash', lines: [{ purchasable: sub_plan }]))
+        pay_manually(place_order(purpose: 'subscription', payment_method: 'cash', line_items: [{ purchasable: sub_plan }]))
       end
 
       expect(enqueued_jobs.map { |job| job['job_class'] }).to include(described_class.name)
