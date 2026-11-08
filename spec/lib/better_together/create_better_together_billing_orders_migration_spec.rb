@@ -8,7 +8,7 @@ RSpec.describe 'Create Better Together billing orders migration' do # rubocop:di
 
   let(:connection) { ActiveRecord::Base.connection }
   let(:tables) do
-    %i[better_together_billing_orders better_together_billing_order_lines better_together_billing_payments better_together_billing_refunds]
+    %i[better_together_billing_orders better_together_billing_line_items better_together_billing_payments better_together_billing_refunds]
   end
 
   around do |example|
@@ -35,7 +35,7 @@ RSpec.describe 'Create Better Together billing orders migration' do # rubocop:di
 
   it 'ties each child to its parent\'s platform with a composite foreign key' do
     {
-      better_together_billing_order_lines: 'better_together_billing_orders',
+      better_together_billing_line_items: 'better_together_billing_orders',
       better_together_billing_payments: 'better_together_billing_orders',
       better_together_billing_refunds: 'better_together_billing_payments'
     }.each do |table, parent|
