@@ -126,7 +126,7 @@ module BetterTogether
 
       def linked? = processor_price_id.present?
 
-      # Purchasable: a plan is what an order line is for.
+      # Purchasable: a plan is what a line item is for.
       def purchasable_description = name
       def purchasable_amount_cents = amount_cents
       def purchasable_currency = currency

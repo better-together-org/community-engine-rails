@@ -59,7 +59,7 @@ module BetterTogether
           return true unless order.expired? && %w[paid partially_paid].include?(target)
 
           Order.transaction(requires_new: true) do
-            order.lines.each { |line| line.purchasable.reserve!(quantity: line.quantity) }
+            order.line_items.each { |line_item| line_item.purchasable.reserve!(quantity: line_item.quantity) }
           end
           true
         rescue StandardError => e

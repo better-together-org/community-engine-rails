@@ -10,7 +10,7 @@ module BetterTogether
         def self.call(order, outcome: 'cancelled')
           order.payments.pending.find_each { |payment| payment.update!(status: 'cancelled') }
           order.offline_payments.waiting.find_each { |offline| OfflinePayments::Transition.release(offline, outcome) }
-          order.lines.each { |line| line.purchasable.release!(quantity: line.quantity) }
+          order.line_items.each { |line_item| line_item.purchasable.release!(quantity: line_item.quantity) }
         end
       end
     end
