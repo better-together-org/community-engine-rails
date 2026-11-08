@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_02_150100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_08_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -552,7 +552,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_150100) do
     t.text "last_error_summary"
     t.jsonb "metadata", default: {}, null: false
     t.uuid "platform_id"
-    t.index ["attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_attachment", unique: true
+    t.index ["attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_attachment"
     t.index ["blob_id", "attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_blob_attachment", unique: true
     t.index ["lifecycle_state"], name: "idx_on_lifecycle_state_3c2bac98be"
     t.index ["platform_id"], name: "index_better_together_content_security_items_on_platform_id"
