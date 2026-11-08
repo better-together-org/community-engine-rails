@@ -18,6 +18,7 @@ module BetterTogether
           return summary unless Configuration.enabled?
 
           scannable_models.each { |model| backfill_model(model, summary, dry_run) }
+          backfill_catch_all(summary, dry_run)
           summary
         end
 
@@ -27,6 +28,19 @@ module BetterTogether
           Rails.application.eager_load!
           ActiveRecord::Base.descendants.select do |model|
             !model.abstract_class? && model.respond_to?(:scannable_attachments) && model.scannable_attachments.present?
+          end
+        end
+
+        def backfill_catch_all(summary, dry_run)
+          surface = AttachmentEnrollment::CATCH_ALL_SURFACE
+          return summary.skipped_surface_disabled += 1 unless Configuration.enabled_for_surface?(surface)
+
+          summary.models << "ActiveStorage::Attachment (#{surface})"
+          ::ActiveStorage::Attachment.includes(:record).find_each do |attachment|
+            next unless AttachmentEnrollment.catch_all_attachment?(attachment)
+
+            summary.enrolled += 1
+            AttachmentEnrollment.enroll_attachment!(attachment:) unless dry_run
           end
         end
 
