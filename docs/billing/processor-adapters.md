@@ -92,7 +92,7 @@ The processor stores both on the event (`outcome_kind`, `subject`), so notificat
 It **must be idempotent**. A job that fails after the adapter acted is retried, a duplicate delivery of a still-pending event is enqueued again, and a replay runs the event again. Use the event id (and, for a processor write, a key derived from it) so repeating it is harmless. Core helps but does not remove the need:
 
 - an event whose outcome is already final (`processed`, `ignored`, `alerted`) is skipped;
-- a job takes a short lease (`claimed_at`, ten minutes) under a row lock before calling the adapter, so two jobs never run the processor at once; a lease left by a crashed worker expires;
+- a job takes a short lease (`claimed_at`, ten minutes) under a row lock before calling the adapter, so two jobs never run the processor at once; a lease left by a crashed worker expires. The lease is a guard, not a guarantee: an adapter call that runs longer than the lease lets a second job start the same event, so keep the call well under ten minutes and rely on idempotency, not the lease;
 - the outcome is written under a row lock, so a sweep or replay that touched the row meanwhile cannot make the write fail, and a late success clears any dead-letter state;
 - a failure to record the outcome (for example an owner type that is not billable) is itself recorded as a failure, not left silently pending.
 
@@ -147,3 +147,9 @@ flowchart TD
 - [Mermaid source](../diagrams/source/billing_event_pipeline_flow.mmd) - editable source
 - [PNG export](../diagrams/exports/png/billing_event_pipeline_flow.png) - high-resolution image
 - [SVG export](../diagrams/exports/svg/billing_event_pipeline_flow.svg) - vector graphics
+
+## Plan catalog
+
+Plans, and the processor-backed fields of the plan form (async option lists, fields the
+processor only accepts at creation, creating and editing products and prices from
+Community Engine) are described in [plan_catalog.md](plan_catalog.md).

@@ -286,6 +286,41 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_150100) do
     t.index ["subject_type", "subject_id"], name: "idx_bt_billing_events_subject"
   end
 
+  create_table "better_together_billing_plans", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "seller_type"
+    t.uuid "seller_id"
+    t.string "identifier", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.string "billing_interval", default: "month", null: false
+    t.integer "amount_cents", default: 0, null: false
+    t.string "currency", null: false
+    t.boolean "active", default: true, null: false
+    t.string "processor"
+    t.string "accepted_payment_methods", default: [], null: false, array: true
+    t.string "processor_price_id"
+    t.string "processor_product_id"
+    t.boolean "manages_processor_product", default: true, null: false
+    t.string "sync_status", default: "pending", null: false
+    t.string "sync_error"
+    t.datetime "sync_attempted_at"
+    t.datetime "synced_to_processor_at"
+    t.string "latest_processor_event_id"
+    t.jsonb "metadata", default: {}, null: false
+    t.index ["active"], name: "idx_bt_billing_plans_active"
+    t.index ["platform_id", "identifier"], name: "idx_bt_billing_plans_platform_identifier", unique: true, where: "(seller_id IS NULL)"
+    t.index ["platform_id", "seller_type", "seller_id", "identifier"], name: "idx_bt_billing_plans_seller_identifier", unique: true, where: "(seller_id IS NOT NULL)"
+    t.index ["platform_id"], name: "idx_bt_billing_plans_platform"
+    t.index ["processor", "processor_price_id"], name: "idx_bt_billing_plans_processor_price", unique: true
+    t.index ["processor", "processor_product_id"], name: "idx_bt_billing_plans_processor_product"
+    t.index ["seller_type", "seller_id"], name: "idx_bt_billing_plans_seller"
+    t.index ["sync_status"], name: "idx_bt_billing_plans_sync_status"
+  end
+
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2896,6 +2931,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_02_150100) do
   add_foreign_key "better_together_ai_log_translations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_authorships", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"

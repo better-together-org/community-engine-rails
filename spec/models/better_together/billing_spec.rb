@@ -43,6 +43,17 @@ module BetterTogether
     describe '.enabled?' do
       before { described_class.register_processor(:fake, -> { Billing::FakeAdapter.new }) }
 
+      it 'works out the answer once per request for the real ENV' do
+        allow(BetterTogether::Billing::Configuration).to receive(:processors_for).and_return([:stripe])
+        allow(BetterTogether::Billing::Configuration).to receive_messages(requested?: true, ready?: true)
+        Current.reset
+
+        2.times { described_class.enabled?(host_platform) }
+
+        expect(BetterTogether::Billing::Configuration).to have_received(:processors_for).once
+        Current.reset
+      end
+
       it 'is on for the host platform only with the flag, host identity and a processor' do
         expect(described_class.enabled?(host_platform, env:)).to be true
         expect(described_class.enabled?(host_platform, env: env.merge('BT_BILLING_ENABLED' => 'false'))).to be false

@@ -33,7 +33,7 @@ is deliberately left for later.
 |---|---|
 | Per-platform processor configuration | A model modelled on `StorageConfiguration` (`belongs_to :platform`, credentials encrypted with `encrypts_billing_attribute`), a management page, and a `context_for` that reads it. |
 | Per-platform webhook endpoints | One signing secret per platform, so the endpoint can tell which platform a delivery is for before it parses it. |
-| Community-defined plans | A nullable polymorphic `seller` on plans (a community), the matching change to the `(platform_id, identifier)` uniqueness, a community-scoped route using the same `concern :billing_plans` in `config/routes/billing.rb`, and a community UI. |
+| Community-defined plans | The data shape is in place: a nullable polymorphic `seller` on plans with identifier uniqueness per seller, and the platform's screens already manage only platform-sold plans. Still needed: a community-scoped route using the same `concern :billing_plans` in `config/routes/billing.rb`, a community UI, and the community branch of `manage_billing?`. |
 | A community billing permission | `manage_community_billing`, separate from broader community editing or member management, used by `manage_billing?(community)`. The platform equivalent today is `manage_platform`. |
 | Connected / merchant accounts and fee splits | The merchant account chunk (A9) and the processor extension's Connect support. |
 
@@ -43,3 +43,23 @@ is deliberately left for later.
 - Every new billing table is platform-bound and ties children to parents with composite
   foreign keys.
 - Keep maintenance sweeps per record; they are the only cross-tenant operations.
+
+## Diagram
+
+```mermaid
+flowchart LR
+  PA[Platform A, host] --> PLA[Billing plans]
+  PA -->|context_for| CA[ProcessorContext<br/>environment-backed]
+  CA -->|every adapter call| PROC[(Processor account)]
+  PB[Platform B] --> PLB[Billing plans]
+  PB -.->|context_for returns nil| CB[Billing off]
+  SELLER[Community seller, deferred] -.->|owns plans| PLA
+  CFG[Per-platform configuration, deferred] -.->|context_for reads it| CB
+```
+
+**Diagram Files:**
+- [Mermaid source](../diagrams/source/billing_tenancy_and_ownership_model.mmd) - editable source (with the steward permissions)
+- [PNG export](../diagrams/exports/png/billing_tenancy_and_ownership_model.png) - high-resolution image
+- [SVG export](../diagrams/exports/svg/billing_tenancy_and_ownership_model.svg) - vector graphics
+
+Plan screens and rules: [plan_catalog.md](plan_catalog.md).

@@ -1,0 +1,81 @@
+{
+  "name": "billing_plans_show_failed",
+  "device": "mobile",
+  "url": "/en/billing/plans/94653393-a0ba-447f-935b-a5945c32538a",
+  "title": "Supporter | Billing Plans | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_plans",
+  "flow": "billing_plans_show_failed",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plans_spec.rb",
+  "callouts": [
+    {
+      "selector": ".billing-plan-sync-status-badge",
+      "title": "Sync status",
+      "bullets": [
+        "A short reason is shown, never the processor's own text."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 713.8125,
+        "width": 90.171875,
+        "height": 20.375,
+        "right": 119.171875,
+        "bottom": 734.1875,
+        "center_x": 74.0859375,
+        "center_y": 724.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 106.0,
+        "width": 485.0,
+        "height": 1151.0,
+        "right": 485.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 681.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 184
+      }
+    },
+    {
+      "selector": "#billing-plan-retry-sync-btn",
+      "title": "Retry sync",
+      "bullets": [
+        "Queues the push again on the billing queue."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 792.0,
+        "width": 91.84375,
+        "height": 31.0,
+        "right": 120.84375,
+        "bottom": 823.0,
+        "center_x": 74.921875,
+        "center_y": 807.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 106.0,
+        "width": 485.0,
+        "height": 1151.0,
+        "right": 485.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 681.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 248,
+        "width": 270.0,
+        "height": 158
+      }
+    }
+  ]
+}
