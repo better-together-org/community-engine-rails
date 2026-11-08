@@ -72,7 +72,11 @@ module BetterTogether
 
         # What the line items come to, at the price each was sold at.
         def total_cents
-          line_items.sum { |line_item| line_item.fetch(:unit_amount_cents) { line_item.fetch(:purchasable).purchasable_amount_cents } * line_item.fetch(:quantity, 1) }
+          line_items.sum do |line_item|
+            line_item.fetch(:unit_amount_cents) do
+              line_item.fetch(:purchasable).purchasable_amount_cents
+            end * line_item.fetch(:quantity, 1)
+          end
         end
 
         def choice(part) = PaymentChoice.new(platform:, seller:, name: part.payment_method, purpose:, currency:)
