@@ -93,11 +93,11 @@ RSpec.describe BetterTogether::Billing::OfflinePaymentsController do
 
     it 'marks a payment received, with a reference and a date, and tells the buyer' do
       clear_notices
-      deliver_now { patch act_path(:receive), params: { seller_reference: 'envelope 3', received_on: '2026-10-02' } }
+      deliver_now { patch act_path(:receive), params: { seller_reference: 'envelope 3', received_on: 3.days.ago.to_date.iso8601 } }
 
       expect(response).to redirect_to(queue_path)
       expect(flash[:notice]).to be_present
-      expect(offline.reload).to have_attributes(status: 'confirmed', seller_reference: 'envelope 3', received_on: Date.new(2026, 10, 2),
+      expect(offline.reload).to have_attributes(status: 'confirmed', seller_reference: 'envelope 3', received_on: 3.days.ago.to_date,
                                                 confirmed_by: steward)
       expect(order.reload).to be_paid
       expect(kinds_for(buyer)).to include('payment_confirmed')
