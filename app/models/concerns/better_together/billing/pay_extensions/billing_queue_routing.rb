@@ -14,6 +14,10 @@ module BetterTogether
 
         included do
           queue_as BetterTogether::Billing::ApplicationJob::QUEUE_NAME
+
+          # A webhook that matches no platform is reported by the dispatcher and its Pay
+          # row is kept for replay; retrying it would only repeat the same refusal.
+          discard_on BetterTogether::Billing::UnattributableWebhookError
         end
       end
     end

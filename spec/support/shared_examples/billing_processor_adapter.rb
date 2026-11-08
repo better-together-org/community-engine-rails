@@ -11,6 +11,13 @@ RSpec.shared_examples 'a billing processor adapter' do
     expect(adapter.capabilities - BetterTogether::Billing::ProcessorAdapter::CAPABILITIES).to be_empty
   end
 
+  it 'implements the event pipeline methods' do
+    base = BetterTogether::Billing::ProcessorAdapter
+    %i[normalize_webhook process_event sanitize_payload processor_name].each do |name|
+      expect(adapter.method(name).owner).not_to eq(base), "#{name} not overridden"
+    end
+  end
+
   it 'returns a sanitized copy of a payload' do
     payload = { 'id' => 'evt_1', 'type' => 'x', 'customer_email' => 'person@example.test' }
 

@@ -59,3 +59,91 @@ A manual adapter advertises the `offline_settlement` capability (and only a manu
 - `instructions_for(context:, setting:, order:)`: what the buyer is shown. It must never be logged or put in an email.
 
 The contract also gains two capabilities used by every payment kind: `refunds` (`refund`) and `transfers` (`transfer`, for paying a seller out). Both carry `context:` and an `idempotency_key`.
+
+## Event pipeline
+
+Processors deliver webhooks through Pay. Core logs, attributes, retries and replays them; the adapter only understands the vendor payload.
+
+1. After boot, core subscribes each registered adapter's `webhook_event_types` to Pay's delegator. A processor whose adapter cannot be built is logged and reported and skipped; it never stops the application booting.
+2. `adapter.normalize_webhook(vendor_event)` returns `{ event_id:, event_type:, payload: }`, and may add `occurred_at:` (when the processor says it happened), `platform_id:` and `account_ref:`.
+3. Core attributes the event to **one platform** (below) and records it once per `(processor, event_id)` in `better_together_billing_events`. The payload and error text are encrypted at rest ([encryption.md](encryption.md)).
+4. `ProcessBillingEventJob` is enqueued with the **event id only**, so payloads never appear in Redis or job logs. It runs on the `billing` queue ([queue rollout](../production/billing_queue_rollout.md)).
+5. `adapter.process_event(event:, context:)` reads `event.payload` and returns a `Billing::EventResult`: `processed`, `ignored`, `alerted` (handled, but an operator should look), or `retry` (a prerequisite such as a not-yet-synced subscription is missing). `context` is the platform and processor account the event belongs to.
+
+Status values: `pending`, `processed`, `ignored`, `alerted`, `failed`, `dead_lettered`, `replayed`. Only `failed` and `dead_lettered` count as problems, so unrelated or informational events do not raise alerts.
+
+### Which platform an event belongs to
+
+Nothing is guessed. An event is attributed, in order, by the `platform_id:` the adapter reports, by the `account_ref:` matched to a platform whose context names that account, or, with neither, to the only platform that has billing configured for the processor. If that does not single out one platform (none, or several), no tenant row is created: the dispatcher reports the error and raises `Billing::UnattributableWebhookError`. Pay deletes a webhook row only after successful processing, so the delivery stays, encrypted, and an operator can replay it after fixing the mapping. Pay's job discards the error (retrying cannot change the answer).
+
+A duplicate delivery that matches an event already logged for a **different** platform is refused (`EventIngest::PlatformConflictError`), because vendor event ids are globally unique.
+
+### What an outcome says happened
+
+`Billing::EventResult` carries two optional, processor-neutral fields so the rest of the system never reads a vendor's event names:
+
+- `outcome_kind`, one of `EventResult::OUTCOME_KINDS`. Processor adapters report `payment_succeeded`, `payment_failed`, `payment_action_required`, `refund_issued`, `dispute_opened`, `dispute_resolved`, `subscription_renewing`, `subscription_canceled`, `trial_ending` and `trial_ended` (the same messages Pay's own mailers would have sent). Core's own services report `payment_claimed`, `payment_confirmed`, `payment_rejected`, `payment_expired` and `refund_recorded` for manual methods such as cash, cheque and e-transfer, which log events named `<method>.payment_claimed`, `<method>.payment_confirmed` and so on. An unknown kind raises, so a vendor name cannot leak in.
+- `subject`: the record the event is about (an order, a Joatu agreement, a hosted platform). Only models that include `Billing::Subjectable` are accepted, the same opt-in idea as `Billable` for owners, and a platform-bound subject must be on the event's platform.
+
+The processor stores both on the event (`outcome_kind`, `subject`), so notifications, reports and the operator queue read them from there.
+
+### Writing `process_event`
+
+It **must be idempotent**. A job that fails after the adapter acted is retried, a duplicate delivery of a still-pending event is enqueued again, and a replay runs the event again. Use the event id (and, for a processor write, a key derived from it) so repeating it is harmless. Core helps but does not remove the need:
+
+- an event whose outcome is already final (`processed`, `ignored`, `alerted`) is skipped;
+- a job takes a short lease (`claimed_at`, ten minutes) under a row lock before calling the adapter, so two jobs never run the processor at once; a lease left by a crashed worker expires;
+- the outcome is written under a row lock, so a sweep or replay that touched the row meanwhile cannot make the write fail, and a late success clears any dead-letter state;
+- a failure to record the outcome (for example an owner type that is not billable) is itself recorded as a failure, not left silently pending.
+
+### Retries, dead letters and replay
+
+- A failed result is retried by ActiveJob up to `Billing::Event::MAX_ATTEMPTS` (5) times with growing waits. A `retry` result waits 30 seconds, 2 minutes, 10 minutes, then 30 minutes (about forty minutes in all), because the prerequisite it waits for (Pay's own sync, say) can lag. `processed_at` is set only on a final outcome.
+- Hourly, `DeadLetterStaleBillingEventsJob` moves events that exhausted their retries (`retries_exhausted`) or made no progress for 6 hours (`stale_unresolved_drift`) to `dead_lettered`. It handles one event at a time under a row lock that re-checks the event is still stuck, so an event a job finished meanwhile is left alone, and one bad row does not stop the sweep.
+- A duplicate delivery of an event that is still `pending` is enqueued again, in case the first enqueue was lost.
+- `Billing::ReplayEvent` resets the attempt count and re-enqueues a dead-lettered event. It refuses events whose payload was redacted, whose processor is no longer installed, or whose platform no longer has billing configured for the processor.
+- `occurred_at` is stored as `processor_event_created_at`. Receive time is not event time, so an adapter that must ignore a stale event compares this value.
+
+### Payload retention
+
+Raw payloads are kept for `BT_BILLING_EVENT_PAYLOAD_RETENTION_DAYS` (default 30) after processing. A daily job then replaces each with `adapter.sanitize_payload(payload)`. Redaction fails closed: if the adapter is gone, cannot be built, raises, or returns something that is not a Hash, the payload is replaced with just `id` and `type`, so a broken adapter never leaves a raw payload behind. Sanitizers must remove personal data and secrets.
+
+Pay keeps the raw delivery in `pay_webhooks` until it is processed. A daily job (`PruneStalePayWebhooksJob`) deletes deliveries that are still there after the same retention window.
+
+## Diagram
+
+```mermaid
+flowchart TD
+  W[Processor webhook<br/>POST /pay/webhooks/:processor] --> P[Pay verifies the signature<br/>and stores the delivery, encrypted]
+  P --> PJ[Pay::Webhooks::ProcessJob<br/>billing queue]
+  PJ --> D[WebhookDispatcher<br/>adapter.normalize_webhook]
+  D --> A{One platform with billing<br/>configured owns the event?}
+  A -->|No| U[Report the error and raise<br/>UnattributableWebhookError<br/>nothing stored for any tenant]
+  U --> K[Pay keeps the delivery<br/>for operator replay]
+  K --> PR[PruneStalePayWebhooksJob<br/>after the retention window]
+  A -->|Yes| I[EventIngest<br/>once per processor and event id]
+  I --> X{Already logged for<br/>a different platform?}
+  X -->|Yes| C[PlatformConflictError]
+  X -->|No| L[Billing event: pending<br/>payload encrypted]
+  L --> Q[ProcessBillingEventJob<br/>event id only, billing queue]
+  Q --> T{Outcome already final?}
+  T -->|Yes| S[Skip]
+  T -->|No| CL[Take the lease under a row lock]
+  CL --> R[adapter.process_event<br/>with the platform context]
+  R --> O{Result}
+  O -->|processed, ignored, alerted| F[Final outcome<br/>clears any dead-letter state]
+  O -->|retry| RT[pending, wait 30s, 2m, 10m, 30m]
+  RT --> Q
+  O -->|error| FL[failed, up to 5 attempts]
+  FL --> Q
+  FL --> DL[Hourly sweep:<br/>dead_lettered after 5 attempts or 6 hours]
+  RT --> DL
+  DL --> RP[ReplayEvent resets attempts<br/>and enqueues again]
+  RP --> Q
+  F --> RD[Daily redaction after retention<br/>sanitizer, or id and type only]
+```
+
+**Diagram Files:**
+- [Mermaid source](../diagrams/source/billing_event_pipeline_flow.mmd) - editable source
+- [PNG export](../diagrams/exports/png/billing_event_pipeline_flow.png) - high-resolution image
+- [SVG export](../diagrams/exports/svg/billing_event_pipeline_flow.svg) - vector graphics

@@ -30,10 +30,15 @@ RSpec.describe BetterTogether::Billing::ApplicationJob do
     expect(billing_job_classes.map { |klass| klass.new.queue_name }.uniq - [expected_queue]).to be_empty
   end
 
-  it 'schedules billing jobs only on the billing queue' do
+  # sidekiq-scheduler enqueues an ActiveJob class with `enqueue(queue: config['queue'])`,
+  # which sets the queue name literally and skips the host's queue_name_prefix. A
+  # `queue:` key on a scheduled billing job would therefore land in an unprefixed queue
+  # that a prefixed host never works. The job class decides instead.
+  it 'schedules billing jobs without a queue key, so the job class and queue prefix decide' do
     schedule = YAML.safe_load_file(BetterTogether::Engine.root.join('config/sidekiq_scheduler.yml'), aliases: true)
     billing_entries = schedule.select { |_name, entry| entry['class'].to_s.start_with?('BetterTogether::Billing::') }
 
-    expect(billing_entries.values.pluck('queue').uniq - ['billing', nil]).to be_empty
+    expect(billing_entries.values.pluck('queue').compact).to be_empty
+    expect(billing_entries.values.pluck('class').map(&:constantize)).to all(satisfy { |job| job < described_class })
   end
 end
