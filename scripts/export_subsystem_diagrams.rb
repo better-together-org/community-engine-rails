@@ -289,7 +289,7 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::Plan
         BetterTogether::Billing::ProcessorSetting
         BetterTogether::Billing::Order
-        BetterTogether::Billing::OrderLine
+        BetterTogether::Billing::LineItem
         BetterTogether::Billing::Payment
         BetterTogether::Billing::Refund
         BetterTogether::Billing::AgreementRequirement

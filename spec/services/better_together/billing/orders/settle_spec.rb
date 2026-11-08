@@ -58,12 +58,12 @@ RSpec.describe BetterTogether::Billing::Orders::Settle do
     expect(order.reload).to be_paid
   end
 
-  it 'holds an expired order\'s lines again when a late payment revives it' do
+  it 'holds an expired order\'s line items again when a late payment revives it' do
     order.update!(status: 'expired')
     held = instance_double(BetterTogether::Billing::Plan, reserve!: nil)
-    line = instance_double(BetterTogether::Billing::OrderLine, purchasable: held, quantity: 2,
-                                                               marked_for_destruction?: false, total_cents: 4500)
-    allow(order).to receive(:lines).and_return([line])
+    line = instance_double(BetterTogether::Billing::LineItem, purchasable: held, quantity: 2,
+                                                              marked_for_destruction?: false, total_cents: 4500)
+    allow(order).to receive(:line_items).and_return([line])
     pay(4500)
 
     described_class.call(order)
@@ -72,11 +72,11 @@ RSpec.describe BetterTogether::Billing::Orders::Settle do
     expect(order.reload).to be_paid
   end
 
-  it 'leaves an expired order expired when its lines can no longer be held' do
+  it 'leaves an expired order expired when its line items can no longer be held' do
     order.update!(status: 'expired')
     sold_out = instance_double(BetterTogether::Billing::Plan)
     allow(sold_out).to receive(:reserve!).and_raise(StandardError, 'sold out')
-    allow(order).to receive(:lines).and_return([instance_double(BetterTogether::Billing::OrderLine, purchasable: sold_out, quantity: 1)])
+    allow(order).to receive(:line_items).and_return([instance_double(BetterTogether::Billing::LineItem, purchasable: sold_out, quantity: 1)])
     pay(4500)
 
     described_class.call(order)
@@ -101,7 +101,7 @@ RSpec.describe BetterTogether::Billing::Orders::Settle do
 
   it 'settles an order that costs nothing' do
     free = create(:better_together_billing_plan, amount_cents: 0, currency: 'USD')
-    zero = place_order(lines: [{ purchasable: free }])
+    zero = place_order(line_items: [{ purchasable: free }])
     zero.update_columns(status: 'awaiting_payment', paid_at: nil) # rubocop:disable Rails/SkipsModelValidations
 
     described_class.call(zero)

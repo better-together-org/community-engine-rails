@@ -21,7 +21,7 @@ classDiagram
 
 | In Pay (`Pay::Local::*`) | Stays in Community Engine |
 |---|---|
-| The **customer**: one per buyer and platform, created with `person.add_payment_processor(:local, platform: platform)` | The **order**, its lines, holds and expiry |
+| The **customer**: one per buyer and platform, created with `person.add_payment_processor(:local, platform: platform)` | The **order**, its line items, holds and expiry |
 | The **charge**: written when the money has settled (the seller confirmed it, a cheque cleared, credit was spent), with how it was paid (`payment_method_type`) and the order and payment ids in its metadata | The **pending** part: `Billing::Payment` and `Billing::OfflinePayment` (awaiting, claimed, received...). Pay has no pending charge, so waiting for the seller cannot live there |
 | `amount_refunded`, kept equal to what the payment says was given back | The **refund ledger** (`Billing::Refund`), agreements, settings, notifications |
 | The **subscription** of a recurring plan paid this way (`Pay::Local::Subscription`) | Renewals: generating each period's order and settling it |
