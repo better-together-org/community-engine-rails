@@ -113,6 +113,14 @@ RSpec.describe BetterTogether::Billing::ProcessorOptionsController do
       expect(response.headers[described_class::UNAVAILABLE_HEADER]).to eq('unavailable')
     end
 
+    it 'does not call the processor again right after a failed lookup' do
+      lookup(kind: 'products', search: 'boom')
+      lookup(kind: 'products', search: 'boom')
+
+      expect(adapter.calls.count { |name, *| name == :lookup }).to eq(1)
+      expect(response.headers[described_class::UNAVAILABLE_HEADER]).to eq('unavailable')
+    end
+
     it 'reports an unexpected error and still answers an empty list, without the cause' do
       allow(adapter).to receive(:lookup).and_raise(NoMethodError, 'secret internals')
       allow(BetterTogether).to receive(:report_error)
