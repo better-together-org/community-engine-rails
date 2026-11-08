@@ -26,6 +26,8 @@ module BetterTogether
       end
 
       def grant(holder)
+        return if params[:token].to_s.strip.blank?
+
         currency = params[:currency].to_s.upcase
         cents = Currency.to_minor(params[:amount], currency)
         return unless cents&.positive? && Plan::SUPPORTED_CURRENCY_CODES.include?(currency)

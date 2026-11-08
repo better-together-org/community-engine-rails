@@ -22,6 +22,8 @@ module BetterTogether
       private
 
       def record_refund(payment)
+        raise Refunds::Record::Refused, 'a refund needs its form token' if params[:token].to_s.strip.blank?
+
         Refunds::Record.call(payment:, amount_cents: amount_cents(payment), idempotency_key: "refund:#{@sale.id}:#{params[:token]}",
                              reason:, recorded_by: current_user.person)
       end
