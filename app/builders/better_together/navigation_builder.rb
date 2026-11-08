@@ -660,6 +660,17 @@ module BetterTogether
                 privacy: 'private',
                 visibility_strategy: 'permission',
                 permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-sales',
+                title_en: 'Sales',
+                slug_en: 'billing-sales',
+                position: 14,
+                item_type: 'link',
+                route_name: 'billing_sales_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
               }
             ]
 
