@@ -54,6 +54,7 @@ PATH
       omniauth
       omniauth-github (~> 2.0.0)
       omniauth-rails_csrf_protection
+      pay (~> 11.6)
       pg_search
       premailer-rails
       public_activity
@@ -601,6 +602,8 @@ GEM
     parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
+    pay (11.8.0)
+      rails (>= 7.0.0)
     pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
     pg (1.6.3-x86_64-linux)
