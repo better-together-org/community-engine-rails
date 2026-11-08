@@ -17,6 +17,7 @@ module BetterTogether
       MAX_ATTEMPTS = 5
       REPEATED_FAILURE_ATTEMPT_THRESHOLD = 3
       UNRESOLVED_ALERT_WINDOW = 6.hours
+      # A guard, not a guarantee: a slower adapter call can overlap a second job (adapters must be idempotent).
       PROCESSING_LEASE = 10.minutes
       DEFAULT_PAYLOAD_RETENTION_DAYS = 30
       ERROR_MESSAGE_LIMIT = 500
