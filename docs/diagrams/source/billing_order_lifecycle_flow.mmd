@@ -5,7 +5,7 @@ stateDiagram-v2
   direction LR
   state "Order" as order {
     [*] --> draft
-    draft --> awaiting_payment : Orders.Place, lines saved, purchasables held
+    draft --> awaiting_payment : Orders.Place, line items saved, purchasables held
     draft --> cancelled
     awaiting_payment --> partially_paid : a payment succeeds, part of the total
     awaiting_payment --> paid : payments cover the total
