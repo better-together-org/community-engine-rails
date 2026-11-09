@@ -920,6 +920,7 @@ es:
         unavailable_currency_not_supported: No disponible en esta moneda.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
+        view_agreement: Ver el acuerdo
       notifications:
         cheque_bounced:
           buyer:
