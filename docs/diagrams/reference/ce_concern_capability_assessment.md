@@ -19,6 +19,17 @@ This assessment is generated from the current live class set and the concern cap
 | `Authorable` | Adds author/authorship associations and creator-aware authorship workflow. | `Page`, `Post` | Author visibility and blocked-author behavior must stay aligned with policy scopes. |
 | `Base64ImageInput` | Base64imageinput | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BetterTogetherId` | Bettertogetherid | `PersonPurgeAudit`, `PersonPlatformIntegration`, `PersonLinkedSeed`, `PersonLink`, `PersonAccessGrant`, `PersonPlatformMembership` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::AgreementTarget` | Agreementtarget | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Billable` | Billable | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::EncryptedAttributes` | Encryptedattributes | `Billing::OfflinePayment`, `Billing::ProcessorSetting`, `Billing::Event` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::OwnerScoped` | Ownerscoped | `Billing::WalkUpSalesController`, `Billing::SalesController`, `Billing::SaleRefundsController`, `Billing::ProcessorSettingsController`, `Billing::ProcessorOptionsController`, `Billing::PlansController` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::ParentBound` | Parentbound | `Billing::Refund`, `Billing::Payment`, `Billing::OrderAgreementAcceptance`, `Billing::OfflinePayment`, `Billing::LineItem` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PayCustomerOwner` | Paycustomerowner | `Person` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::PlatformBound` | Platformbound | `Billing::Refund`, `Billing::Payment`, `Billing::OrderAgreementAcceptance`, `Billing::Order`, `Billing::OfflinePayment`, `Billing::NotificationReceipt` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Purchasable` | Purchasable | `Billing::Plan` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SellerScoped` | Sellerscoped | `Billing::Order`, `Billing::Plan`, `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::SettingAudit` | Settingaudit | `Billing::ProcessorSetting` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `Billing::Subjectable` | Subjectable | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAttachments` | Blockattachments | `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockAwareInvitation` | Blockawareinvitation | `GuestAccess`, `Invitation` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `BlockFilterable` | Blockfilterable | `Comment`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |

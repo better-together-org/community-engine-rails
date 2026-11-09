@@ -1006,6 +1006,11 @@ fr:
           body: Le paiement n’a pas abouti. Vérifiez vos informations de paiement
             et réessayez.
           title: Votre paiement pour la commande %{number} a échoué
+        payment_orphaned:
+          body: Un paiement de %{amount} a été reçu pour la commande %{number}, déjà
+            annulée. Il doit être remboursé; un remboursement a été enregistré comme
+            en attente.
+          title: Un paiement est arrivé pour une commande annulée
         payment_place_gone:
           buyer:
             body: La commande avait expiré et ce qu’elle retenait n’est plus disponible.
@@ -1028,6 +1033,10 @@ fr:
         plan_sync_failed:
           body: La synchronisation d’un plan a échoué. Ouvrez le plan pour réessayer.
           title: Un plan n’a pas pu être envoyé au processeur de paiement
+        refund_failed:
+          body: Le processeur n’a pas pu effectuer un remboursement pour la commande
+            %{number}. L’acheteur attend toujours son argent; veuillez vérifier.
+          title: Un remboursement n’a pas abouti
         refund_issued:
           buyer:
             body: Un remboursement a été émis pour votre commande.
@@ -1182,10 +1191,19 @@ fr:
         no_payments: Aucun paiement n'a encore été effectué.
         no_sales: Il n'y a pas encore de commande.
         order_number: Commande %{number}
+        pay_button: Payer maintenant
+        pay_heading: Payer %{amount}
+        pay_hint: Vous paierez sur la page sécurisée du fournisseur de paiement et
+          reviendrez ici.
+        pay_processing: Votre paiement est en cours de traitement. Nous vous dirons
+          quand il sera confirmé.
+        pay_unavailable: Ce paiement ne peut pas être démarré pour le moment. Veuillez
+          réessayer plus tard.
         payment_status_cancelled: Annulé
         payment_status_failed: Échoué
         payment_status_partially_refunded: Partiellement remboursé
         payment_status_pending: En attente
+        payment_status_processing: En cours de traitement
         payment_status_refunded: Remboursé
         payment_status_succeeded: Reçu
         payments_heading: Paiements
@@ -1194,6 +1212,9 @@ fr:
         purpose_one_time: Achat unique
         purpose_subscription: Abonnement ou adhésion
         purpose_ticket: Billets d'événement
+        return_paid: Merci. Votre paiement a été reçu.
+        return_pending: Merci. Nous confirmons votre paiement et vous le dirons dès
+          que ce sera fait.
         sales_intro: Les commandes pour ce que vend cette plateforme, et où en est
           chaque paiement.
         sales_title: Ventes
@@ -1241,6 +1262,7 @@ fr:
         field_identifier: Identifiant
         field_identifier_hint: Cle unique lisible par machine. Ne peut pas etre modifiee
           apres la creation.
+        field_interval_count: Durée de la période de facturation
         field_name: Nom
         field_participant_benefits: Avantages
         field_participant_benefits_hint: Un avantage par ligne.
@@ -5709,6 +5731,7 @@ fr:
         other: "%{count} erreurs ont empêché ce (cet ou cette) %{resource} d’être
           enregistré(e) :"
       odd: doit être impair
+      one_time_single: doit être 1 pour un prix unique
       other_than: doit être différent de %{count}
       present: doit être vide
       price_inactive: est archivé chez le processeur de paiement
@@ -5725,6 +5748,8 @@ fr:
       unknown_owner_types: 'comprend des types qui ne peuvent pas être facturés :
         %{types}'
       unknown_setting: 'contient des champs que ce mode n''utilise pas : %{fields}'
+      unsupported_price: est un type de prix qui ne peut pas être utilisé ici (hebdomadaire,
+        quotidien ou à l’usage)
       used_by_another_platform: est déjà utilisé par une autre plateforme
       weak_password: n'est pas assez fort. Considérez ajouter un nombre, des symboles
         ou plus de lettres pour le renforcer. Évitez d'utiliser le mot 'mot de passe',

@@ -109,10 +109,11 @@ RSpec.describe BetterTogether::Billing::Orders::Settle do
     expect(zero.reload).to be_paid
   end
 
-  it 'never moves a cancelled order' do
+  it 'never moves a cancelled order, and does not fail on one: money that arrives for it is refunded elsewhere' do
     order.update!(status: 'cancelled')
     pay(4500)
 
-    expect { described_class.call(order) }.to raise_error(ActiveRecord::RecordInvalid)
+    expect { described_class.call(order) }.not_to raise_error
+    expect(order.reload).to be_cancelled
   end
 end

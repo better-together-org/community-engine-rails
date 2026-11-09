@@ -1,0 +1,18 @@
+<%# Paying an order through a processor: the buyer is sent to the processor's own page and comes back here. %>
+<% processor_payment = order.payments.in_flight.order(:created_at).find(&:remote?) %>
+<% if processor_payment %>
+  <div id="billing-order-pay-card" class="card mb-4">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <strong><%= t('better_together.billing.orders.pay_heading', amount: billing_amount(processor_payment.amount_cents, processor_payment.currency)) %></strong>
+        <p id="billing-order-pay-hint" class="mb-0 text-body-secondary">
+          <%= t(processor_payment.processing? ? 'better_together.billing.orders.pay_processing' : 'better_together.billing.orders.pay_hint') %>
+        </p>
+      </div>
+      <% unless processor_payment.processing? %>
+        <%= button_to t('better_together.billing.orders.pay_button'), pay_billing_order_path(order, locale: I18n.locale),
+                      method: :post, id: 'billing-order-pay-btn', class: 'btn btn-primary', form: { id: 'billing-order-pay-form' } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

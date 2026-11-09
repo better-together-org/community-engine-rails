@@ -11,17 +11,29 @@ module BetterTogether
 
       self.table_name = 'better_together_billing_payments'
 
-      STATUSES = %w[pending succeeded failed cancelled partially_refunded refunded].freeze
+      # `processing`: the processor has the money in flight (a bank debit); it is neither paid nor
+      # failed yet, so the order is not let go while it is.
+      STATUSES = %w[pending processing succeeded failed cancelled partially_refunded refunded].freeze
+      # A failed or cancelled payment can still succeed when the processor reports money for it (a
+      # declined card retried in the same session, a session that outlived the order's hold): the
+      # processor, not our hold, is the authority on whether money arrived. Refunds can fail, which
+      # moves a refunded payment back (see Payment#refresh_refund_status!).
       TRANSITIONS = {
-        'pending' => %w[succeeded failed cancelled],
+        'pending' => %w[processing succeeded failed cancelled],
+        'processing' => %w[succeeded failed cancelled],
         'succeeded' => %w[partially_refunded refunded],
-        'partially_refunded' => %w[partially_refunded refunded],
-        'failed' => %w[pending],
-        'cancelled' => [],
-        'refunded' => []
+        'partially_refunded' => %w[succeeded partially_refunded refunded],
+        'failed' => %w[pending succeeded],
+        'cancelled' => %w[succeeded],
+        'refunded' => %w[succeeded partially_refunded]
       }.freeze
+      REVIVED_FROM = %w[failed cancelled].freeze
+      # Not yet paid or failed: counted against what an order still owes.
+      IN_FLIGHT = %w[pending processing].freeze
 
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :payments, optional: false
+      # The charge Pay recorded for this payment (a processor payment, once there is one).
+      belongs_to :pay_charge, class_name: 'Pay::Charge', optional: true
       has_one :offline_payment, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :payment, dependent: :restrict_with_error
       has_many :refunds, class_name: 'BetterTogether::Billing::Refund', inverse_of: :payment, dependent: :restrict_with_error
 
@@ -31,14 +43,37 @@ module BetterTogether
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :idempotency_key, presence: true, uniqueness: { scope: :platform_id }
       validate :method_installed
+      validate :pay_charge_on_this_platform
       validate :status_transition_allowed, on: :update
+      validate :revival_has_processor_reference, on: :update
 
       STATUSES.each do |status|
         scope status.to_sym, -> { where(status:) }
         define_method(:"#{status}?") { self.status == status }
       end
 
+      scope :in_flight, -> { where(status: IN_FLIGHT) }
+
+      def in_flight? = IN_FLIGHT.include?(status)
+
+      # Money arrived for an order that was cancelled: nobody is owed it, so it has to go back.
+      def orphaned? = succeeded? && order.cancelled?
+
+      # A payment that goes through a processor, not one core settles itself.
+      def remote? = !Billing.offline_method?(processor)
+
       def refunded_cents = refunds.where(status: Refund::COUNTED).sum(:amount_cents)
+
+      # The payment's own status follows its refunds: none counted is `succeeded` again (a refund can
+      # fail after it was recorded), all of it is `refunded`, anything between is `partially_refunded`.
+      def refresh_refund_status!
+        counted = refunded_cents
+        target = if counted.zero? then 'succeeded'
+                 elsif counted >= amount_cents then 'refunded'
+                 else 'partially_refunded'
+                 end
+        update!(status: target) unless status == target
+      end
 
       def refundable_cents = succeeded_or_refunding? ? amount_cents - refunded_cents : 0
 
@@ -47,6 +82,12 @@ module BetterTogether
       def billing_parent = order
 
       def succeeded_or_refunding? = %w[succeeded partially_refunded].include?(status)
+
+      def pay_charge_on_this_platform
+        return if pay_charge.blank? || pay_charge.platform_id == platform_id
+
+        errors.add(:pay_charge, :platform_owner_mismatch)
+      end
 
       def method_installed
         return if processor.blank?
@@ -61,6 +102,13 @@ module BetterTogether
         return if TRANSITIONS.fetch(was, []).include?(status)
 
         errors.add(:status, :transition_not_allowed, from: was, to: status)
+      end
+
+      # Reviving a failed or cancelled payment is only the processor's call, so it needs a reference.
+      def revival_has_processor_reference
+        return unless status_changed? && status == 'succeeded' && REVIVED_FROM.include?(status_was)
+
+        errors.add(:processor_reference, :blank) if processor_reference.blank?
       end
     end
   end

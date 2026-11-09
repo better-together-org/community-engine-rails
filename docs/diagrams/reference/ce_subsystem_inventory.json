@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-02T18:16:58Z",
+  "generated_at": "2026-11-08T21:52:50Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -892,6 +892,18 @@
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             },
             {
+              "direction": "has_many",
+              "name": "pay_customers",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "payment_processor",
+              "as": "owner",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
               "direction": "has_one",
               "name": "contact_detail",
               "as": "contactable",
@@ -1033,6 +1045,9 @@
             "BetterTogether::Agentic",
             "BetterTogether::Author",
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::Billing::AgreementTarget",
+            "BetterTogether::Billing::Billable",
+            "BetterTogether::Billing::PayCustomerOwner",
             "BetterTogether::Communicator",
             "BetterTogether::Contactable",
             "BetterTogether::CreatedRecords",
@@ -2780,6 +2795,33 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::AgreementTarget",
+          "label": "Billing::AgreementTarget",
+          "capability": "Agreementtarget",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Person"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Billable",
+          "label": "Billing::Billable",
+          "capability": "Billable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Person"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PayCustomerOwner",
+          "label": "Billing::PayCustomerOwner",
+          "capability": "Paycustomerowner",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Person"
+          ]
+        },
+        {
           "name": "BetterTogether::BlockAwareInvitation",
           "label": "BlockAwareInvitation",
           "capability": "Blockawareinvitation",
@@ -3851,6 +3893,42 @@
           "source_subsystem": "integrations_webhooks"
         },
         {
+          "from": "BetterTogether::Billing::Refund",
+          "to": "BetterTogether::Person",
+          "label": "recorded_by (recorded_by_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "to": "BetterTogether::Person",
+          "label": "signer (signer_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Person",
+          "label": "buyer (buyer_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::OfflinePayment",
+          "to": "BetterTogether::Person",
+          "label": "confirmed_by (confirmed_by_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::NotificationReceipt",
+          "to": "BetterTogether::Person",
+          "label": "recipient (recipient_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::ProcessorSetting",
+          "to": "BetterTogether::Person",
+          "label": "acknowledged_by (acknowledged_by_id)",
+          "source_subsystem": "billing"
+        },
+        {
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Person",
           "label": "operator (operator_id)",
@@ -4191,6 +4269,8 @@
           "concerns": [
             "BetterTogether::Base64ImageInput",
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::Billing::AgreementTarget",
+            "BetterTogether::Billing::Billable",
             "BetterTogether::ContactData",
             "BetterTogether::Contactable",
             "BetterTogether::FriendlySlug",
@@ -4809,6 +4889,8 @@
           ],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::Billing::Billable",
+            "BetterTogether::Billing::Subjectable",
             "BetterTogether::Creatable",
             "BetterTogether::FriendlySlug",
             "BetterTogether::Identifier",
@@ -5978,6 +6060,34 @@
             "NavigationArea",
             "Community",
             "CommunityInvitation"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::AgreementTarget",
+          "label": "Billing::AgreementTarget",
+          "capability": "Agreementtarget",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Billable",
+          "label": "Billing::Billable",
+          "capability": "Billable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform",
+            "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Subjectable",
+          "label": "Billing::Subjectable",
+          "capability": "Subjectable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform"
           ]
         },
         {
@@ -7369,6 +7479,78 @@
           "to": "BetterTogether::Community",
           "label": "community (community_id)",
           "source_subsystem": "integrations_webhooks"
+        },
+        {
+          "from": "BetterTogether::Billing::Refund",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Payment",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::OfflinePayment",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::NotificationReceipt",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Plan",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::LineItem",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::ProcessorSetting",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::AgreementRequirement",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Event",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Notifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
         },
         {
           "from": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
@@ -19547,7 +19729,7 @@
           ],
           "validations": [
             "PresenceValidator: platform (unless=:platform_presence_optional?)",
-            "InclusionValidator: acceptance_method (in=[\"legacy\", \"sign_up\", \"agreement_review\", \"api\", \"system\"])",
+            "InclusionValidator: acceptance_method (in=[\"legacy\", \"sign_up\", \"agreement_review\", \"api\", \"system\", \"checkout\", \"seller_assisted\"])",
             "PresenceValidator: acceptance_method",
             "PresenceValidator: participant_type, participant_id",
             "UniquenessValidator: agreement_id (scope=[:participant_type, :participant_id])",
@@ -23493,6 +23675,18 @@
           "to": "BetterTogether::ChecklistItem",
           "label": "checklist_item (checklist_item_id)",
           "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "to": "BetterTogether::Agreement",
+          "label": "agreement (agreement_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::AgreementRequirement",
+          "to": "BetterTogether::Agreement",
+          "label": "agreement (agreement_id)",
+          "source_subsystem": "billing"
         }
       ]
     },
@@ -25259,6 +25453,1594 @@
       "inbound_references": []
     },
     {
+      "key": "billing",
+      "title": "Billing and payment processors",
+      "prefix": "ce_billing",
+      "description": "Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or linked from, the payment processor) and processor event log (payloads encrypted at rest). Pay's own tables are described in docs/diagrams/source/billing_schema_erd.mmd.",
+      "models": [
+        "BetterTogether::Billing::Event",
+        "BetterTogether::Billing::Plan",
+        "BetterTogether::Billing::ProcessorSetting",
+        "BetterTogether::Billing::Order",
+        "BetterTogether::Billing::LineItem",
+        "BetterTogether::Billing::Payment",
+        "BetterTogether::Billing::Refund",
+        "BetterTogether::Billing::AgreementRequirement",
+        "BetterTogether::Billing::OrderAgreementAcceptance",
+        "BetterTogether::Billing::NotificationReceipt",
+        "BetterTogether::Billing::OfflinePayment"
+      ],
+      "controllers": [
+        "BetterTogether::Billing::PlansController",
+        "BetterTogether::Billing::ProcessorOptionsController",
+        "BetterTogether::Billing::ProcessorSettingsController",
+        "BetterTogether::Billing::OrdersController",
+        "BetterTogether::Billing::SalesController",
+        "BetterTogether::Billing::CheckoutsController",
+        "BetterTogether::Billing::AgreementRequirementsController",
+        "BetterTogether::Billing::OfflinePaymentsController",
+        "BetterTogether::Billing::OrderClaimsController",
+        "BetterTogether::Billing::SaleRefundsController",
+        "BetterTogether::Billing::WalkUpSalesController"
+      ],
+      "models_inventory": [
+        {
+          "name": "BetterTogether::Billing::AgreementRequirement",
+          "label": "Billing::AgreementRequirement",
+          "source_path": "app/models/better_together/billing/agreement_requirement.rb",
+          "table_name": "better_together_billing_agreement_requirements",
+          "columns": [
+            [
+              "agreement_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "target_id",
+              "uuid FK"
+            ],
+            [
+              "mode",
+              "string"
+            ],
+            [
+              "payment_method",
+              "string"
+            ],
+            [
+              "purpose",
+              "string"
+            ],
+            [
+              "target_type",
+              "string"
+            ],
+            [
+              "position",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: agreement (message=:required)",
+            "InclusionValidator: mode (in=[\"additional\", \"replaces_default\"])",
+            "InclusionValidator: purpose (allow_nil=true, in=[\"subscription\", \"one_time\", \"ticket\", \"exchange\"])",
+            "NumericalityValidator: position (only_integer=true)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "agreement",
+              "foreign_key": "agreement_id",
+              "target": "BetterTogether::Agreement",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "target",
+              "foreign_key": "target_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "agreement",
+              "foreign_key": "agreement_id",
+              "target": "BetterTogether::Agreement",
+              "optional": false,
+              "target_subsystem": "exchange_governance"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Event",
+          "label": "Billing::Event",
+          "source_path": "app/models/better_together/billing/event.rb",
+          "table_name": "better_together_billing_events",
+          "columns": [
+            [
+              "event_id",
+              "string FK"
+            ],
+            [
+              "beneficiary_id",
+              "uuid FK"
+            ],
+            [
+              "billable_owner_id",
+              "uuid FK"
+            ],
+            [
+              "last_replay_requested_by_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "beneficiary_type",
+              "string"
+            ],
+            [
+              "billable_owner_type",
+              "string"
+            ],
+            [
+              "dead_letter_reason",
+              "string"
+            ],
+            [
+              "event_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "FormatValidator: processor (with=/\\A[a-z][a-z0-9_]*\\z/)",
+            "PresenceValidator: event_type, event_id",
+            "UniquenessValidator: event_id (scope=:processor)",
+            "InclusionValidator: processing_status (in=[\"pending\", \"processed\", \"failed\", \"ignored\", \"alerted\", \"dead_lettered\", \"replayed\"])",
+            "InclusionValidator: outcome_kind (allow_nil=true, in=[\"payment_succeeded\", \"payment_failed\", \"payment_action_required\", \"refund_issued\", \"dispute_opened\", \"dispute_resolved\", \"subscription_renewing\", \"subscription_canceled\", \"trial_ending\", \"trial_ended\", \"subscription_started\", \"subscription_changed\", \"subscription_past_due\", \"payment_processing\", \"refund_failed\", \"payment_claimed\", \"payment_confirmed\", \"payment_rejected\", \"payment_expired\", \"cheque_received\", \"cheque_cleared\", \"cheque_bounced\", \"refund_recorded\", \"settings_changed\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "billable_owner",
+              "foreign_key": "billable_owner_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "beneficiary",
+              "foreign_key": "beneficiary_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::EncryptedAttributes",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::LineItem",
+          "label": "Billing::LineItem",
+          "source_path": "app/models/better_together/billing/line_item.rb",
+          "table_name": "better_together_billing_line_items",
+          "columns": [
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "purchasable_id",
+              "uuid FK"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "description",
+              "string"
+            ],
+            [
+              "purchasable_type",
+              "string"
+            ],
+            [
+              "position",
+              "integer"
+            ],
+            [
+              "quantity",
+              "integer"
+            ],
+            [
+              "unit_amount_cents",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: order (message=:required)",
+            "PresenceValidator: description",
+            "NumericalityValidator: quantity (only_integer=true, greater_than=0)",
+            "NumericalityValidator: unit_amount_cents (only_integer=true, greater_than_or_equal_to=0)",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "PresenceValidator: purchasable_id"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "purchasable",
+              "foreign_key": "purchasable_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::NotificationReceipt",
+          "label": "Billing::NotificationReceipt",
+          "source_path": "app/models/better_together/billing/notification_receipt.rb",
+          "table_name": "better_together_billing_notification_receipts",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "recipient_id",
+              "uuid FK"
+            ],
+            [
+              "audience",
+              "string"
+            ],
+            [
+              "dedupe_key",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: recipient (message=:required)",
+            "PresenceValidator: kind, audience, dedupe_key",
+            "UniquenessValidator: dedupe_key (scope=[:platform_id, :recipient_id, :kind])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "recipient",
+              "foreign_key": "recipient_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "recipient",
+              "foreign_key": "recipient_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::OfflinePayment",
+          "label": "Billing::OfflinePayment",
+          "source_path": "app/models/better_together/billing/offline_payment.rb",
+          "table_name": "better_together_billing_offline_payments",
+          "columns": [
+            [
+              "confirmed_by_id",
+              "uuid FK"
+            ],
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "payment_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "grant_on",
+              "string"
+            ],
+            [
+              "processor",
+              "string"
+            ],
+            [
+              "rejection_reason",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "buyer_reference",
+              "text"
+            ],
+            [
+              "instructions_snapshot",
+              "text"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: order (message=:required)",
+            "PresenceValidator: payment (message=:required)",
+            "InclusionValidator: status (in=[\"awaiting\", \"claimed\", \"received\", \"confirmed\", \"cleared\", \"bounced\", \"rejected\", \"expired\", \"cancelled\"])",
+            "InclusionValidator: grant_on (in=[\"confirmed\", \"received\", \"cleared\"])",
+            "NumericalityValidator: platform_fee_cents (only_integer=true, equal_to=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false
+            },
+            {
+              "name": "payment",
+              "foreign_key": "payment_id",
+              "target": "BetterTogether::Billing::Payment",
+              "optional": false
+            },
+            {
+              "name": "confirmed_by",
+              "foreign_key": "confirmed_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::EncryptedAttributes",
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "confirmed_by",
+              "foreign_key": "confirmed_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Order",
+          "label": "Billing::Order",
+          "source_path": "app/models/better_together/billing/order.rb",
+          "table_name": "better_together_billing_orders",
+          "columns": [
+            [
+              "buyer_id",
+              "uuid FK"
+            ],
+            [
+              "on_behalf_of_id",
+              "uuid FK"
+            ],
+            [
+              "pay_subscription_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "seller_id",
+              "uuid FK"
+            ],
+            [
+              "subject_id",
+              "uuid FK"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "number",
+              "string"
+            ],
+            [
+              "on_behalf_of_type",
+              "string"
+            ],
+            [
+              "purpose",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: buyer (message=:required)",
+            "InclusionValidator: purpose (in=[\"subscription\", \"one_time\", \"ticket\", \"exchange\"])",
+            "InclusionValidator: status (in=[\"draft\", \"awaiting_payment\", \"partially_paid\", \"paid\", \"cancelled\", \"expired\", \"partially_refunded\", \"refunded\"])",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "PresenceValidator: number",
+            "UniquenessValidator: number (scope=:platform_id)",
+            "NumericalityValidator: subtotal_cents, total_cents (only_integer=true, greater_than_or_equal_to=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "buyer",
+              "foreign_key": "buyer_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "pay_subscription",
+              "foreign_key": "pay_subscription_id",
+              "target": "Pay::Subscription",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "seller",
+              "foreign_key": "seller_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "on_behalf_of",
+              "foreign_key": "on_behalf_of_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "belongs_to",
+              "name": "subject",
+              "foreign_key": "subject_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::SellerScoped",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "buyer",
+              "foreign_key": "buyer_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "label": "Billing::OrderAgreementAcceptance",
+          "source_path": "app/models/better_together/billing/order_agreement_acceptance.rb",
+          "table_name": "better_together_billing_order_agreement_acceptances",
+          "columns": [
+            [
+              "agreement_id",
+              "uuid FK"
+            ],
+            [
+              "on_behalf_of_id",
+              "uuid FK"
+            ],
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "signer_id",
+              "uuid FK"
+            ],
+            [
+              "acceptance_method",
+              "string"
+            ],
+            [
+              "agreement_content_digest",
+              "string"
+            ],
+            [
+              "agreement_identifier",
+              "string"
+            ],
+            [
+              "agreement_title",
+              "string"
+            ],
+            [
+              "on_behalf_of_type",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: order (message=:required)",
+            "PresenceValidator: agreement (message=:required)",
+            "PresenceValidator: signer (message=:required)",
+            "PresenceValidator: agreement_identifier, agreement_title, agreement_content_digest, accepted_at",
+            "InclusionValidator: acceptance_method (in=[\"legacy\", \"sign_up\", \"agreement_review\", \"api\", \"system\", \"checkout\", \"seller_assisted\"])",
+            "UniquenessValidator: agreement_id (scope=:order_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false
+            },
+            {
+              "name": "agreement",
+              "foreign_key": "agreement_id",
+              "target": "BetterTogether::Agreement",
+              "optional": false
+            },
+            {
+              "name": "signer",
+              "foreign_key": "signer_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "on_behalf_of",
+              "foreign_key": "on_behalf_of_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "agreement",
+              "foreign_key": "agreement_id",
+              "target": "BetterTogether::Agreement",
+              "optional": false,
+              "target_subsystem": "exchange_governance"
+            },
+            {
+              "name": "signer",
+              "foreign_key": "signer_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Payment",
+          "label": "Billing::Payment",
+          "source_path": "app/models/better_together/billing/payment.rb",
+          "table_name": "better_together_billing_payments",
+          "columns": [
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "pay_charge_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "failure_code",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "processor",
+              "string"
+            ],
+            [
+              "processor_reference",
+              "string"
+            ],
+            [
+              "processor_session_reference",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: order (message=:required)",
+            "PresenceValidator: processor",
+            "InclusionValidator: status (in=[\"pending\", \"processing\", \"succeeded\", \"failed\", \"cancelled\", \"partially_refunded\", \"refunded\"])",
+            "NumericalityValidator: amount_cents (only_integer=true, greater_than=0)",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key (scope=:platform_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false
+            },
+            {
+              "name": "pay_charge",
+              "foreign_key": "pay_charge_id",
+              "target": "Pay::Charge",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Plan",
+          "label": "Billing::Plan",
+          "source_path": "app/models/better_together/billing/plan.rb",
+          "table_name": "better_together_billing_plans",
+          "columns": [
+            [
+              "latest_processor_event_id",
+              "string FK"
+            ],
+            [
+              "processor_price_id",
+              "string FK"
+            ],
+            [
+              "processor_product_id",
+              "string FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "seller_id",
+              "uuid FK"
+            ],
+            [
+              "accepted_payment_methods",
+              "string"
+            ],
+            [
+              "billing_interval",
+              "string"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "identifier",
+              "string"
+            ],
+            [
+              "name",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: identifier, name, currency",
+            "UniquenessValidator: identifier (scope=[:platform_id, :seller_type, :seller_id])",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "FormatValidator: processor (allow_blank=true, with=/\\A[a-z][a-z0-9_]*\\z/)",
+            "PresenceValidator: processor (if=:link_existing)",
+            "PresenceValidator: processor_price_id (if=:price_id_required?)",
+            "UniquenessValidator: processor_price_id (allow_blank=true, scope=:processor)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "seller",
+              "foreign_key": "seller_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::AgreementTarget",
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Purchasable",
+            "BetterTogether::Billing::SellerScoped"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProcessorSetting",
+          "label": "Billing::ProcessorSetting",
+          "source_path": "app/models/better_together/billing/processor_setting.rb",
+          "table_name": "better_together_billing_processor_settings",
+          "columns": [
+            [
+              "acknowledged_by_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "seller_id",
+              "uuid FK"
+            ],
+            [
+              "grant_on",
+              "string"
+            ],
+            [
+              "processor",
+              "string"
+            ],
+            [
+              "purposes",
+              "string"
+            ],
+            [
+              "seller_type",
+              "string"
+            ],
+            [
+              "settings",
+              "text"
+            ],
+            [
+              "enabled",
+              "boolean"
+            ],
+            [
+              "hold_hours",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: processor",
+            "UniquenessValidator: processor (scope=[:platform_id, :seller_type, :seller_id])",
+            "NumericalityValidator: hold_hours (only_integer=true, greater_than_or_equal_to=1, less_than_or_equal_to=720)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "acknowledged_by",
+              "foreign_key": "acknowledged_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "seller",
+              "foreign_key": "seller_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::EncryptedAttributes",
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::SellerScoped",
+            "BetterTogether::Billing::SettingAudit",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "acknowledged_by",
+              "foreign_key": "acknowledged_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Refund",
+          "label": "Billing::Refund",
+          "source_path": "app/models/better_together/billing/refund.rb",
+          "table_name": "better_together_billing_refunds",
+          "columns": [
+            [
+              "payment_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "recorded_by_id",
+              "uuid FK"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "idempotency_key",
+              "string"
+            ],
+            [
+              "processor_reference",
+              "string"
+            ],
+            [
+              "reason",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "amount_cents",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: payment (message=:required)",
+            "InclusionValidator: status (in=[\"pending\", \"succeeded\", \"failed\", \"recorded\"])",
+            "InclusionValidator: reason (allow_blank=true, in=[\"requested_by_buyer\", \"duplicate\", \"cancelled_event\", \"cancelled_order\", \"bounced\", \"dispute_lost\", \"fraudulent\", \"error\", \"other\"])",
+            "NumericalityValidator: amount_cents (only_integer=true, greater_than=0)",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "PresenceValidator: idempotency_key",
+            "UniquenessValidator: idempotency_key (scope=:platform_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "payment",
+              "foreign_key": "payment_id",
+              "target": "BetterTogether::Billing::Payment",
+              "optional": false
+            },
+            {
+              "name": "recorded_by",
+              "foreign_key": "recorded_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "recorded_by",
+              "foreign_key": "recorded_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        }
+      ],
+      "controllers_inventory": [
+        {
+          "name": "BetterTogether::Billing::AgreementRequirementsController",
+          "label": "Billing::AgreementRequirementsController",
+          "source_path": "app/controllers/better_together/billing/agreement_requirements_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::AgreementRequirement"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::CheckoutsController",
+          "label": "Billing::CheckoutsController",
+          "source_path": "app/controllers/better_together/billing/checkouts_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Checkout"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::OfflinePaymentsController",
+          "label": "Billing::OfflinePaymentsController",
+          "source_path": "app/controllers/better_together/billing/offline_payments_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::OfflinePayment"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::OrderClaimsController",
+          "label": "Billing::OrderClaimsController",
+          "source_path": "app/controllers/better_together/billing/order_claims_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::OrdersController",
+          "label": "Billing::OrdersController",
+          "source_path": "app/controllers/better_together/billing/orders_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Order"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PlansController",
+          "label": "Billing::PlansController",
+          "source_path": "app/controllers/better_together/billing/plans_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Plan"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProcessorOptionsController",
+          "label": "Billing::ProcessorOptionsController",
+          "source_path": "app/controllers/better_together/billing/processor_options_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ProcessorSettingsController",
+          "label": "Billing::ProcessorSettingsController",
+          "source_path": "app/controllers/better_together/billing/processor_settings_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::ProcessorSetting"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SaleRefundsController",
+          "label": "Billing::SaleRefundsController",
+          "source_path": "app/controllers/better_together/billing/sale_refunds_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SalesController",
+          "label": "Billing::SalesController",
+          "source_path": "app/controllers/better_together/billing/sales_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::WalkUpSalesController",
+          "label": "Billing::WalkUpSalesController",
+          "source_path": "app/controllers/better_together/billing/walk_up_sales_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        }
+      ],
+      "concerns_inventory": [
+        {
+          "name": "BetterTogether::Billing::AgreementTarget",
+          "label": "Billing::AgreementTarget",
+          "capability": "Agreementtarget",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::EncryptedAttributes",
+          "label": "Billing::EncryptedAttributes",
+          "capability": "Encryptedattributes",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::OfflinePayment",
+            "Billing::ProcessorSetting",
+            "Billing::Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::OwnerScoped",
+          "label": "Billing::OwnerScoped",
+          "capability": "Ownerscoped",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::CheckoutsController",
+            "Billing::AgreementRequirementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::ParentBound",
+          "label": "Billing::ParentBound",
+          "capability": "Parentbound",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Refund",
+            "Billing::Payment",
+            "Billing::OrderAgreementAcceptance",
+            "Billing::OfflinePayment",
+            "Billing::LineItem"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PlatformBound",
+          "label": "Billing::PlatformBound",
+          "capability": "Platformbound",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Refund",
+            "Billing::Payment",
+            "Billing::OrderAgreementAcceptance",
+            "Billing::Order",
+            "Billing::OfflinePayment",
+            "Billing::NotificationReceipt",
+            "Billing::Plan",
+            "Billing::LineItem",
+            "Billing::ProcessorSetting",
+            "Billing::AgreementRequirement",
+            "Billing::Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Purchasable",
+          "label": "Billing::Purchasable",
+          "capability": "Purchasable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Plan"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SellerScoped",
+          "label": "Billing::SellerScoped",
+          "capability": "Sellerscoped",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Order",
+            "Billing::Plan",
+            "Billing::ProcessorSetting"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SettingAudit",
+          "label": "Billing::SettingAudit",
+          "capability": "Settingaudit",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::ProcessorSetting"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Subjectable",
+          "label": "Billing::Subjectable",
+          "capability": "Subjectable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Order",
+            "Billing::OfflinePayment",
+            "Billing::ProcessorSetting"
+          ]
+        },
+        {
+          "name": "BetterTogether::InvitationSessionManagement",
+          "label": "InvitationSessionManagement",
+          "capability": "Invitationsessionmanagement",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::CheckoutsController",
+            "Billing::AgreementRequirementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::InvitationTokenSession",
+          "label": "InvitationTokenSession",
+          "capability": "Invitationtokensession",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::CheckoutsController",
+            "Billing::AgreementRequirementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::InvitationUserSetup",
+          "label": "InvitationUserSetup",
+          "capability": "Invitationusersetup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::CheckoutsController",
+            "Billing::AgreementRequirementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::MentionPrefetch",
+          "label": "MentionPrefetch",
+          "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::CheckoutsController",
+            "Billing::AgreementRequirementsController"
+          ]
+        }
+      ],
+      "outbound_relationships": [
+        {
+          "from": "BetterTogether::Billing::AgreementRequirement",
+          "to": "BetterTogether::Agreement",
+          "label": "agreement (agreement_id)",
+          "target_subsystem": "exchange_governance"
+        },
+        {
+          "from": "BetterTogether::Billing::AgreementRequirement",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Event",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::LineItem",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::NotificationReceipt",
+          "to": "BetterTogether::Person",
+          "label": "recipient (recipient_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::NotificationReceipt",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::OfflinePayment",
+          "to": "BetterTogether::Person",
+          "label": "confirmed_by (confirmed_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::OfflinePayment",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Person",
+          "label": "buyer (buyer_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "to": "BetterTogether::Agreement",
+          "label": "agreement (agreement_id)",
+          "target_subsystem": "exchange_governance"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "to": "BetterTogether::Person",
+          "label": "signer (signer_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderAgreementAcceptance",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Payment",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Plan",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::ProcessorSetting",
+          "to": "BetterTogether::Person",
+          "label": "acknowledged_by (acknowledged_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::ProcessorSetting",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Refund",
+          "to": "BetterTogether::Person",
+          "label": "recorded_by (recorded_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::Refund",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        }
+      ],
+      "inbound_references": []
+    },
+    {
       "key": "shared_supporting",
       "title": "Shared and supporting runtime surfaces",
       "prefix": "ce_shared_supporting",
@@ -25484,6 +27266,127 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::Notifier",
+          "label": "Billing::Notifier",
+          "source_path": "app/notifiers/better_together/billing/notifier.rb",
+          "table_name": "noticed_events",
+          "columns": [
+            [
+              "record_id",
+              "uuid FK"
+            ],
+            [
+              "record_type",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "notifications_count",
+              "integer"
+            ],
+            [
+              "params",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: record"
+          ],
+          "belongs_to": [],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "record",
+              "foreign_key": "record_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [],
+          "concern_notes": [],
+          "cross_subsystem_targets": [],
+          "shared_table_reference": "CommentAddedNotifier",
+          "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
+          "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::Billing::Notifier::Notification",
+          "label": "Billing::Notifier::Notification",
+          "source_path": "../usr/local/bundle/gems/noticed-3.0.0/app/models/concerns/noticed/notification_methods.rb",
+          "table_name": "noticed_notifications",
+          "columns": [
+            [
+              "event_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "recipient_id",
+              "uuid FK"
+            ],
+            [
+              "recipient_type",
+              "string"
+            ],
+            [
+              "type",
+              "string"
+            ],
+            [
+              "read_at",
+              "datetime"
+            ],
+            [
+              "seen_at",
+              "datetime"
+            ]
+          ],
+          "validations": [],
+          "belongs_to": [
+            {
+              "name": "event",
+              "foreign_key": "event_id",
+              "target": "Noticed::Event",
+              "optional": false
+            },
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "recipient",
+              "foreign_key": "recipient_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            }
+          ],
+          "shared_table_reference": "CommentAddedNotifier::Notification",
+          "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
+          "shared_table_group_size": 22
+        },
+        {
           "name": "BetterTogether::CommentAddedNotifier",
           "label": "CommentAddedNotifier",
           "source_path": "app/notifiers/better_together/comment_added_notifier.rb",
@@ -25527,6 +27430,7 @@
           "concern_notes": [],
           "cross_subsystem_targets": [],
           "shared_table_variants": [
+            "Billing::Notifier",
             "CommunityInvitationNotifier",
             "EventInvitationNotifier",
             "EventReminderNotifier",
@@ -25549,6 +27453,7 @@
             "SafetyReportSubmittedNotifier"
           ],
           "shared_table_family_names": [
+            "BetterTogether::Billing::Notifier",
             "BetterTogether::CommentAddedNotifier",
             "BetterTogether::CommunityInvitationNotifier",
             "BetterTogether::EventInvitationNotifier",
@@ -25571,7 +27476,7 @@
             "BetterTogether::SafetyReportDigestNotifier",
             "BetterTogether::SafetyReportSubmittedNotifier"
           ],
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::CommentAddedNotifier::Notification",
@@ -25644,6 +27549,7 @@
             }
           ],
           "shared_table_variants": [
+            "Billing::Notifier::Notification",
             "CommunityInvitationNotifier::Notification",
             "EventInvitationNotifier::Notification",
             "EventReminderNotifier::Notification",
@@ -25666,6 +27572,7 @@
             "SafetyReportSubmittedNotifier::Notification"
           ],
           "shared_table_family_names": [
+            "BetterTogether::Billing::Notifier::Notification",
             "BetterTogether::CommentAddedNotifier::Notification",
             "BetterTogether::CommunityInvitationNotifier::Notification",
             "BetterTogether::EventInvitationNotifier::Notification",
@@ -25688,7 +27595,7 @@
             "BetterTogether::SafetyReportDigestNotifier::Notification",
             "BetterTogether::SafetyReportSubmittedNotifier::Notification"
           ],
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::CommentConfig",
@@ -25782,7 +27689,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::CommunityInvitationNotifier::Notification",
@@ -25856,7 +27763,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::ContactDetail",
@@ -26465,7 +28372,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventInvitationNotifier::Notification",
@@ -26539,7 +28446,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventOccurrence",
@@ -26684,7 +28591,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventReminderNotifier::Notification",
@@ -26758,7 +28665,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventSeriesSession",
@@ -26870,7 +28777,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::EventUpdateNotifier::Notification",
@@ -26944,7 +28851,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::FeatureAccessGrant",
@@ -27160,7 +29067,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::FederationVisibilityStatusNotifier::Notification",
@@ -27234,7 +29141,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::InboundEmailMessage",
@@ -28128,7 +30035,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::InvitationNotifierBase::Notification",
@@ -28202,7 +30109,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::JwtDenylist",
@@ -28304,7 +30211,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipCreatedNotifier::Notification",
@@ -28378,7 +30285,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRemovedNotifier",
@@ -28423,7 +30330,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRemovedNotifier::Notification",
@@ -28497,7 +30404,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDeclinedNotifier",
@@ -28544,7 +30451,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDeclinedNotifier::Notification",
@@ -28618,7 +30525,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDigestNotifier",
@@ -28665,7 +30572,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestDigestNotifier::Notification",
@@ -28739,7 +30646,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestSubmittedNotifier",
@@ -28786,7 +30693,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipRequestSubmittedNotifier::Notification",
@@ -28860,7 +30767,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipUpdatedNotifier",
@@ -28907,7 +30814,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MembershipUpdatedNotifier::Notification",
@@ -28981,7 +30888,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::MessageRequest",
@@ -29123,7 +31030,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::NewMessageNotifier::Notification",
@@ -29197,7 +31104,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier",
@@ -29244,7 +31151,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PageAuthorshipNotifier::Notification",
@@ -29318,7 +31225,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PersonMessagingGrant",
@@ -29448,7 +31355,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PersonPlatformIntegrationCreatedNotifier::Notification",
@@ -29522,7 +31429,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PhoneNumber",
@@ -29651,7 +31558,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionDigestNotifier::Notification",
@@ -29725,7 +31632,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionStatusNotifier",
@@ -29772,7 +31679,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionStatusNotifier::Notification",
@@ -29846,7 +31753,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionSubmittedNotifier",
@@ -29893,7 +31800,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
@@ -29967,7 +31874,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::Quota",
@@ -30508,7 +32415,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportDigestNotifier::Notification",
@@ -30582,7 +32489,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportSubmittedNotifier",
@@ -30629,7 +32536,7 @@
           "cross_subsystem_targets": [],
           "shared_table_reference": "CommentAddedNotifier",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::SafetyReportSubmittedNotifier::Notification",
@@ -30703,7 +32610,7 @@
           ],
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
-          "shared_table_group_size": 21
+          "shared_table_group_size": 22
         },
         {
           "name": "BetterTogether::ShortLink",
@@ -33441,6 +35348,12 @@
           "from": "BetterTogether::AgentGrant",
           "to": "BetterTogether::Robot",
           "label": "robot (robot_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Notifier::Notification",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
         },
         {

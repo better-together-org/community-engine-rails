@@ -17,6 +17,9 @@ module BetterTogether
         def call
           order.with_lock do
             order.reload
+            # A cancelled order stays cancelled: money that arrives for it is refunded (Payments::Succeed).
+            next if order.cancelled?
+
             target = target_status
             move_to(target) if target && target != order.status && holds_again?(target)
           end
@@ -38,10 +41,17 @@ module BetterTogether
 
         def target_status
           return refund_status if refunded_cents.positive? && paid_cents.positive?
-          return 'paid' if fully_paid?
+          return 'paid' if fully_paid? || covered_by_subscription?
           return 'partially_paid' if paid_cents.positive? && !order.paid?
 
           nil
+        end
+
+        # The first payment of a subscription that is on a trial (or fully discounted) is paid by no
+        # payment: Pay says the subscription is trialing or active, and nothing is owed yet.
+        def covered_by_subscription?
+          subscription = order.pay_subscription
+          subscription.present? && order.open? && payments.none? && (subscription.on_trial? || subscription.active?)
         end
 
         # An order that costs nothing is paid by no payment at all, once it is placed.

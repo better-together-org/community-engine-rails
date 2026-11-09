@@ -88,7 +88,7 @@ classDiagram
       <<Model>>
       table: better_together_communities
       translates: description, name, slug
-      concerns: Base64ImageInput, BetterTogetherId, ContactData, Contactable +27
+      concerns: Base64ImageInput, BetterTogetherId, Billing::AgreementTarget, Billing::Billable +29
       weak refs: owner: seeds, owner: contact_detail, owner: contacts, owner: event_hosts +19
     }
     class BetterTogether__CommunityInvitation["CommunityInvitation"] {
@@ -121,7 +121,7 @@ classDiagram
       <<Model>>
       table: better_together_platforms
       translates: description, name, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +19
+      concerns: BetterTogetherId, Billing::Billable, Billing::Subjectable, Creatable +21
       weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +9
     }
     class BetterTogether__PlatformConnection["PlatformConnection"] {

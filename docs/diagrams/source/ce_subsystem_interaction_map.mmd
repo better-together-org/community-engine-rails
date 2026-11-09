@@ -9,8 +9,12 @@ flowchart LR
   exchange_governance["Agreements, governance, exchange, and checklist flows"]
   metrics_search_ai["Metrics, search, notifications, and AI support"]
   integrations_webhooks["Integrations, webhooks, API, and automation"]
+  billing["Billing and payment processors"]
   shared_supporting["Shared and supporting runtime surfaces"]
 
+  billing -->|2 cross-subsystem refs| exchange_governance
+  billing -->|6 cross-subsystem refs| identity_access
+  billing -->|11 cross-subsystem refs| platform_network
   content_publishing -->|28 cross-subsystem refs| identity_access
   content_publishing -->|34 cross-subsystem refs| platform_network
   conversations_safety -->|9 cross-subsystem refs| identity_access
@@ -38,4 +42,4 @@ flowchart LR
   shared_supporting -->|3 cross-subsystem refs| events_calendar
   shared_supporting -->|2 cross-subsystem refs| geography_and_places
   shared_supporting -->|13 cross-subsystem refs| identity_access
-  shared_supporting -->|53 cross-subsystem refs| platform_network
+  shared_supporting -->|54 cross-subsystem refs| platform_network

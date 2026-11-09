@@ -7,7 +7,9 @@ module BetterTogether
       # an e-transfer the seller says they handed it back (`recorded`); for a vendor processor the
       # refund is made there and recorded as `succeeded`.
       #
-      # Repeating the same request (same idempotency key) returns the refund it already made.
+      # Repeating the same request (same idempotency key) returns the refund it already made. So does a
+      # refund with the same processor reference: core asking the processor for a refund and the
+      # processor then reporting that refund are one refund, not two.
       class Record
         class Refused < StandardError; end
 
@@ -33,7 +35,7 @@ module BetterTogether
 
         def record
           payment.with_lock do
-            existing = payment.refunds.find_by(idempotency_key:)
+            existing = already_recorded
             next existing if existing
 
             refund = payment.refunds.create!(refund_attributes)
@@ -46,6 +48,11 @@ module BetterTogether
 
         attr_reader :payment, :amount_cents, :idempotency_key, :status, :reason, :recorded_by, :processor_reference, :notify
 
+        def already_recorded
+          found = payment.refunds.find_by(idempotency_key:)
+          found || (payment.refunds.find_by(processor_reference:) if processor_reference.present?)
+        end
+
         def refund_attributes
           { platform_id: payment.platform_id, amount_cents:, currency: payment.currency, idempotency_key:, status:, reason:,
             recorded_by:, processor_reference: }
@@ -53,8 +60,7 @@ module BetterTogether
 
         # The payment is refunded in part or in full, then so is its order.
         def settle(refund)
-          payment.reload
-          payment.update!(status: payment.refundable_cents.zero? ? 'refunded' : 'partially_refunded')
+          payment.reload.refresh_refund_status!
           Orders::Settle.call(payment.order)
           return unless notify
 

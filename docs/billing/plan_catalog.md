@@ -30,7 +30,7 @@ and [platform_isolation.md](platform_isolation.md) for the tenancy rules.
 | `seller` | Empty when the platform sells the plan; otherwise a community or person on the platform (type allow-list, read-only after create). |
 | `identifier` | Unique **per seller** (one partial index for the platform's own plans, one for each other seller's). |
 | `name`, `description`, `active` | Descriptive. |
-| `amount_cents`, `currency`, `billing_interval` | The price. No currency default: the host or steward chooses. |
+| `amount_cents`, `currency`, `billing_interval`, `interval_count` | The price. No currency default: the host or steward chooses. `interval_count` is how many intervals make a period (3 months), 1 by default and always 1 for a one-time price; it is a price field, so it is locked once the processor holds the price. |
 | `processor` | The **online** processor that holds the price: a registered processor with a context for the platform. Empty for a plan paid only by the methods below. |
 | `accepted_payment_methods` | Installed methods that do not go through a vendor (cash, cheque, e-transfer, store credit). Each must still be enabled for the seller before buyers can use it. Editable at any time, since no processor holds them. A plan needs a processor or at least one accepted method. |
 | `processor_price_id` | Empty until the processor has created the price. Unique per processor. |
@@ -85,7 +85,8 @@ flowchart TD
 An adapter says what the processor will accept a change to, through `field_rules(:plan)`:
 `{ field => :create_only | :updatable }`. Once a plan is **linked** (it has a price id):
 
-- A price field (`amount_cents`, `currency`, `billing_interval`) or `processor` is locked
+- Linking an existing price **fails closed** for a price core cannot represent: a weekly or daily one, a usage-based (metered) one, or one with no interval, amount or currency is refused with "is a kind of price that cannot be used here", never shown as a monthly price of nothing. The interval count is copied from the price.
+- A price field (`amount_cents`, `currency`, `billing_interval`, `interval_count`) or `processor` is locked
   unless the adapter declares it `:updatable`. A processor that says nothing is assumed to
   fix them at creation.
 - A descriptive field (`name`, `description`, `active`) stays editable unless the adapter

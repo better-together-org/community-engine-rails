@@ -79,23 +79,30 @@ module BetterTogether
           reserve(order)
           order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: hold_hours.hours.from_now)
           Settle.call(order) if order.total_cents.zero?
-          OfflinePayments::Open.call(order:, setting: offline_setting, seller_assisted:) if offline_setting && order.total_cents.positive?
+          open_payment(order)
           Notifications.deliver('order_placed', subject: order)
           order
         end
 
-        # The seller's own hold time for a method outside a vendor, else the default.
-        def hold_hours = @hold_hours || offline_setting&.hold_hours || Order::DEFAULT_HOLD_HOURS
+        # What the buyer pays next. A method outside a vendor waits for the seller to confirm; a method
+        # through a processor starts a pending payment the buyer completes at the processor (see
+        # Checkout::Start). Nothing is opened for an order that costs nothing.
+        def open_payment(order)
+          return unless order.total_cents.positive?
 
-        # The switched-on setting for the chosen method, when it is one outside a vendor.
-        def offline_setting
-          return unless payment_method.present? && Billing.offline_method?(payment_method)
-
-          @offline_setting ||= sellers_settings.enabled.find_by(processor: payment_method.to_s)
+          if payment_choice.offline_setting
+            OfflinePayments::Open.call(order:, setting: payment_choice.offline_setting, seller_assisted:)
+          elsif payment_choice.processor_adapter
+            Payments::Create.call(order:, processor: payment_method.to_s, amount_cents: order.balance_cents,
+                                  idempotency_key: "checkout:#{order.id}:1")
+          end
         end
 
-        def sellers_settings
-          seller ? platform.billing_processor_settings.sold_by(seller) : platform.billing_processor_settings.sold_by_platform
+        # The seller's own hold time for a method outside a vendor, else the default.
+        def hold_hours = @hold_hours || payment_choice.offline_setting&.hold_hours || Order::DEFAULT_HOLD_HOURS
+
+        def payment_choice
+          @payment_choice ||= PaymentChoice.new(platform:, seller:, name: payment_method, purpose:, currency: order_currency)
         end
 
         def check_lines!
@@ -103,21 +110,13 @@ module BetterTogether
           raise Refused, 'an order needs at least one line' if line_items.empty?
 
           check_purchasables!
-          check_payment_method!
+          problem = payment_choice.problem
+          raise Refused, problem if problem
         end
 
         def check_purchasables!
           purchasables.each { |purchasable| check_purchasable!(purchasable) }
           raise Refused, 'all line items must be in the same currency' if purchasables.map(&:purchasable_currency).uniq.size > 1
-        end
-
-        # A method outside a vendor works only when the seller switched it on for this kind of purchase.
-        def check_payment_method!
-          return unless payment_method.present? && Billing.offline_method?(payment_method)
-          raise Refused, 'that way of paying is not available' unless offline_setting&.allows?(purpose)
-
-          currencies = Billing.processor_adapter(payment_method).supported_currencies
-          raise Refused, 'that way of paying does not work in that currency' if currencies && !currencies.include?(order_currency)
         end
 
         def order_currency = purchasables.first&.purchasable_currency

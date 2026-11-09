@@ -23,6 +23,8 @@ module BetterTogether
           'payment_action_required' => { audiences: %i[buyer], critical: true },
           'refund_issued' => { audiences: %i[buyer seller] },
           'refund_recorded' => { audiences: %i[buyer] },
+          'refund_failed' => { audiences: %i[operator], critical: true },
+          'payment_orphaned' => { audiences: %i[operator], critical: true },
           'payment_claimed' => { audiences: %i[seller] },
           'payment_confirmed' => { audiences: %i[buyer] },
           'payment_rejected' => { audiences: %i[buyer] },
