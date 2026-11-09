@@ -4167,6 +4167,9 @@ fr:
         usage: Utilisation
       updated: Dérogation de quota mise à jour.
     quotas:
+      storage_limit_reached: Vous avez atteint votre limite de stockage; ce fichier
+        ne peut pas être téléversé. Supprimez quelque chose ou demandez plus de stockage
+        à un intendant.
       usage_meter:
         types:
           ai_translation_tokens: Jetons de traduction IA

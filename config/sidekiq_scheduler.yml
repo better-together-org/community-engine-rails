@@ -103,3 +103,8 @@
   cron: "15 14 * * *" # daily at 14:15 UTC
   class: "BetterTogether::Billing::RemindOfflineConfirmationsJob"
   description: "Remind sellers of offline payments waiting for them and buyers whose hold is about to run out"
+
+"better_together:billing:expire_quota_reservations_hourly":
+  cron: "35 * * * *" # hourly at :35 UTC
+  class: "BetterTogether::Billing::ExpireQuotaReservationsJob"
+  description: "Release quota holds whose time ran out, so abandoned uploads stop counting against the limit"

@@ -10,6 +10,7 @@ module BetterTogether
       extend ActiveSupport::Concern
 
       included do
+        validate :media_storage_within_hold, on: :create
         after_create_commit :settle_media_storage_quota
         after_destroy_commit :reverse_media_storage_quota
       end
@@ -50,22 +51,37 @@ module BetterTogether
           subject: self
         )
       rescue StandardError => e
-        Rails.logger.warn("[Quotas] reverse! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
+        BetterTogether::Quotas.record_failure(e, "media_storage reverse for attachment #{id}")
       end
 
       private
 
+      # A direct upload held the size the client declared. If the blob being attached is bigger than
+      # that hold, the difference was never checked, so it is checked now (hard mode refuses the attach).
+      # A failure in this check itself never blocks the attach.
+      def media_storage_within_hold
+        held = BetterTogether::QuotaReservation.status_held.find_by(subject: blob)
+        excess = held ? blob.byte_size - held.amount : 0
+        return unless excess.positive?
+
+        BetterTogether::Quotas.check!(type: 'media_storage', owner: held.owner, amount: excess)
+      rescue BetterTogether::Quotas::QuotaExceeded
+        errors.add(:base, I18n.t('better_together.quotas.storage_limit_reached'))
+      rescue StandardError => e
+        BetterTogether::Quotas.record_failure(e, "media_storage hold check for attachment #{id}")
+      end
+
       def settle_media_storage_quota
         BetterTogether::Quotas.settle!(
           type: 'media_storage',
-          owner: BetterTogether::Quotas::OwnerResolver.resolve(record),
+          owner: BetterTogether::Quotas::OwnerResolver.resolve(record, type: 'media_storage'),
           amount: blob.byte_size,
           idempotency_key: AttachmentTracking.charge_key(id),
           subject: self
         )
         BetterTogether::Quotas.settle_reservations_for!(blob)
       rescue StandardError => e
-        Rails.logger.warn("[Quotas] settle! failed non-fatally for media_storage attachment #{id}: #{e.class}: #{e.message}")
+        BetterTogether::Quotas.record_failure(e, "media_storage settle for attachment #{id}")
       end
     end
   end
