@@ -1,8 +1,8 @@
 {
   "name": "feature_access_grant_retired_feature_edit",
   "device": "mobile",
-  "url": "/en/host/platforms/docs-feature-gate-platform-3136b9a5/feature_access_grants/d918e783-f6a9-438d-8fc0-f4fa34092c9d/edit",
-  "title": "Community Engine Host",
+  "url": "/en/host/platforms/docs-feature-gate-platform-a453daf2/feature_access_grants/eaed4cbb-1524-4da4-86a3-006d951aaa62/edit",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "feature_access_grants_and_developer_settings",

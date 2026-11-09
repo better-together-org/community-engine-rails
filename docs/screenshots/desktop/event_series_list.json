@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/event_series_spec.rb",
   "callouts": [
     {
-      "selector": "#series_mention_event_d33a92eb-c1b1-4e13-8753-c6ddbc8a6911",
+      "selector": "#series_mention_event_bf6dfab3-574c-46f4-81a8-c486f73d3ddc",
       "title": "Series mention",
       "bullets": [
         "A session says which series it is part of."
