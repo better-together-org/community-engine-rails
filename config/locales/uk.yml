@@ -957,6 +957,7 @@ uk:
         steward_title: Рахунки кредиту магазину
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
+        view_agreement: Переглянути угоду
       notifications:
         agreement_reacceptance_needed:
           buyer:

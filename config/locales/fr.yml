@@ -977,6 +977,7 @@ fr:
         steward_title: Comptes de crédit en magasin
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
+        view_agreement: Lire l’entente
       notifications:
         agreement_reacceptance_needed:
           buyer:
