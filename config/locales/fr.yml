@@ -926,6 +926,7 @@ fr:
         unavailable_currency_not_supported: Non disponible dans cette devise.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées

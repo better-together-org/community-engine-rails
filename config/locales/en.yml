@@ -927,6 +927,7 @@ en:
         unavailable_currency_not_supported: Not available in this currency.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        view_agreement: View the agreement
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted

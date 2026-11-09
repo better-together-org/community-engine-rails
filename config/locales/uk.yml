@@ -906,6 +906,7 @@ uk:
         unavailable_currency_not_supported: Недоступно в цій валюті.
         unavailable_not_enabled: Наразі тут недоступно.
         unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
+        view_agreement: Переглянути угоду
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         agreements_heading: Прийняті угоди
