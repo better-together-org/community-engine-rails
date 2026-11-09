@@ -1,7 +1,7 @@
 {
   "name": "billing_credit_accounts_lookup",
   "device": "desktop",
-  "url": "/en/billing/credit_accounts?handle=person-3ddaa8029c5aba1a31ad",
+  "url": "/en/billing/credit_accounts?person_id=f8b5153d-656a-47ef-bb98-78d78940deee",
   "title": "Store credit accounts | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -13,7 +13,7 @@
       "selector": "#billing-credit-lookup-form",
       "title": "Find a person",
       "bullets": [
-        "Type the whole handle. There is no search, so people cannot be browsed."
+        "Search by name or handle and pick the person. Only members of this platform are offered."
       ],
       "target": {
         "x": 68.0,
@@ -40,7 +40,7 @@
         "x": 530.0,
         "y": 347.0,
         "width": 380,
-        "height": 158,
+        "height": 184,
         "score": 1130.0
       }
     },

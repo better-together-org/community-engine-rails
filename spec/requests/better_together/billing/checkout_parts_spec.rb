@@ -31,9 +31,16 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
                                                          payment_method: methods).missing.map(&:id)
   end
 
+  # The shared agreement mechanism's tick box for each agreement still missing.
+  def ticks(ids)
+    BetterTogether::Agreement.where(id: ids).to_h do |agreement|
+      [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(agreement), '1']
+    end
+  end
+
   def post_checkout(chosen: plan, method: 'cash', parts: {}, purpose: 'one_time', **extra)
     post checkout_path, params: { plan_id: chosen.id, payment_method: method, part_amounts: parts, **extra,
-                                  accepted_agreement_ids: accepted_ids(chosen, [method, *parts.keys], purpose) }
+                                  **ticks(accepted_ids(chosen, [method, *parts.keys], purpose)) }
   end
 
   before do

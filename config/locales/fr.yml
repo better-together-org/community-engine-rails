@@ -990,9 +990,10 @@ fr:
         kind_grant: Crédit ajouté
         kind_spend: Dépensé pour une commande
         kind_spend_reversal: Rendu après un remboursement
-        lookup_failed: Il n'y a personne avec cet identifiant.
-        lookup_hint: L'identifiant complet, exactement. Il n'y a pas de recherche.
-        lookup_label: Identifiant de la personne
+        lookup_failed: Personne sur cette plateforme n'a cet id.
+        lookup_hint: Saisissez au moins deux lettres d'un nom ou d'un identifiant.
+        lookup_label: Personne
+        lookup_placeholder: Rechercher par nom ou identifiant
         lookup_submit: Trouver
         lots_caption: Crédit que vous détenez, le plus proche de l'expiration en premier
         never_expires: N'expire pas
@@ -1002,9 +1003,9 @@ fr:
         origin_promotion: Promotion
         origin_refund: Remboursement
         origin_steward_grant: Accordé par un responsable
-        steward_intro: 'Trouvez une personne par son identifiant exact pour voir son
-          crédit et lui en accorder. Le crédit accordé est l''argent de la plateforme
-          : vous ne pouvez pas vous en accorder.'
+        steward_intro: 'Recherchez une personne pour voir son crédit et lui en accorder.
+          Le crédit accordé est l''argent de la plateforme : vous ne pouvez pas vous
+          en accorder.'
         steward_title: Comptes de crédit en magasin
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
