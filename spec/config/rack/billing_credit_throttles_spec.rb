@@ -10,14 +10,14 @@ RSpec.describe 'Billing credit throttles' do # rubocop:disable RSpec/DescribeCla
     Rack::Attack::Request.new(Rack::MockRequest.env_for("#{path}#{"?#{query}" if query.present?}", method:, 'REMOTE_ADDR' => '203.0.113.9'))
   end
 
-  it 'limits lookups by handle and credit grants, per address' do
+  it 'limits person searches and credit grants, per address' do
     lookup = throttles.fetch('billing/credit_lookup/ip')
     grants = throttles.fetch('billing/credit_grants/ip')
 
-    expect(lookup.limit).to eq(30)
-    expect(lookup.block.call(request_for('/en/billing/credit_accounts', params: { handle: 'someone' }))).to be_present
+    expect(lookup.limit).to eq(60)
+    expect(lookup.block.call(request_for('/en/billing/credit_accounts/people', params: { search: 'someone' }))).to be_present
     expect(lookup.block.call(request_for('/en/billing/credit_accounts'))).to be_nil
-    expect(lookup.block.call(request_for('/en/billing/credit_accounts/abc', params: { handle: 'x' }))).to be_nil
+    expect(lookup.block.call(request_for('/en/billing/credit_accounts/abc', params: { search: 'x' }))).to be_nil
     expect(grants.limit).to eq(20)
     expect(grants.block.call(request_for('/en/billing/credit_grants', method: 'POST'))).to be_present
     expect(grants.block.call(request_for('/en/billing/credit_grants'))).to be_nil

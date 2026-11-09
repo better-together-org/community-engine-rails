@@ -33,10 +33,11 @@ RSpec.describe 'Billing store credit DOM contract', type: :request do # rubocop:
 
   it 'exposes the steward\'s lookup, grant form and account list' do
     sign_in steward_user
+    create(:better_together_person_platform_membership, joinable: host_platform, member: buyer)
 
-    get "/#{locale}/billing/credit_accounts?handle=#{buyer.identifier}"
+    get "/#{locale}/billing/credit_accounts?person_id=#{buyer.id}"
 
-    expect_ids('billing-credit-accounts-page', 'billing-credit-lookup-form', 'billing-credit-lookup-handle', 'billing-credit-lookup-btn',
+    expect_ids('billing-credit-accounts-page', 'billing-credit-lookup-form', 'billing-credit-lookup-person', 'billing-credit-lookup-btn',
                'billing-credit-holder', 'billing-credit-grant-form', 'billing-credit-grant-amount', 'billing-credit-grant-currency',
                'billing-credit-grant-expires', 'billing-credit-grant-note', 'billing-credit-grant-btn', 'billing-credit-accounts-table',
                dom_id(account))

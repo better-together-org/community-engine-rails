@@ -75,8 +75,8 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :line_items, :seller, :on_behalf_of, :subject, :seller_assisted,
-                    :renewal
+        attr_reader :platform, :buyer, :signer, :payment_method, :purpose, :line_items, :seller, :on_behalf_of, :subject,
+                    :seller_assisted, :renewal
 
         def gate
           @gate ||= Checkout::AgreementGate.new(platform:, purpose:, signer:, seller:, purchasables:,

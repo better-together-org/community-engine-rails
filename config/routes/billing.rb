@@ -69,6 +69,8 @@ concern :billing_credit do
   namespace :billing do
     # A person's own store credit, and what a steward can see and give.
     resource :credit, only: :show, controller: 'credits'
+    # The person select on the steward screen searches here (before :id so it is not read as one).
+    get 'credit_accounts/people', to: 'credit_accounts#people', as: :people_credit_accounts
     resources :credit_accounts, only: %i[index show]
     resources :credit_grants, only: :create
     # A person redeems a promotion code; a steward makes and switches them.

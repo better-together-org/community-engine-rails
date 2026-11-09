@@ -99,6 +99,11 @@ RSpec.describe 'Create Better Together Pay tables migration' do # rubocop:disabl
   end
 
   it 'rolls back by dropping the Pay tables, and can be run again' do
+    # Later billing migrations point composite keys at pay_subscriptions and pay_charges. A real
+    # rollback reverses them first; here they are removed inside the example's transaction.
+    connection.remove_foreign_key :better_together_billing_orders, name: 'fk_bt_billing_orders_pay_subscription_platform'
+    connection.remove_foreign_key :better_together_billing_payments, name: 'fk_bt_billing_payments_pay_charge_platform'
+
     migration.down
     expect(connection.table_exists?(:pay_customers)).to be false
     expect(connection.table_exists?(:pay_webhooks)).to be false
