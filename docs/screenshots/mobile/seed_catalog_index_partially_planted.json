@@ -2,7 +2,7 @@
   "name": "seed_catalog_index_partially_planted",
   "device": "mobile",
   "url": "/en/host/seeds/catalog",
-  "title": "Funk, Altenwerth and Bruen",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "seed_catalog",
@@ -18,31 +18,31 @@
       ],
       "target": {
         "x": 189.71875,
-        "y": 417.203125,
+        "y": 401.203125,
         "width": 67.609375,
         "height": 20.375,
         "right": 257.328125,
-        "bottom": 437.578125,
+        "bottom": 421.578125,
         "center_x": 223.5234375,
-        "center_y": 427.390625
+        "center_y": 411.390625
       },
       "avoid": {
         "x": 189.71875,
-        "y": 417.203125,
+        "y": 401.203125,
         "width": 67.609375,
         "height": 20.375,
         "right": 257.328125,
-        "bottom": 437.578125,
+        "bottom": 421.578125,
         "center_x": 223.5234375,
-        "center_y": 427.390625
+        "center_y": 411.390625
       },
       "placement": {
         "side": "below",
         "x": 88.52,
-        "y": 457.58,
+        "y": 441.58,
         "width": 270.0,
         "height": 288,
-        "score": 823.421875
+        "score": 835.421875
       }
     },
     {
@@ -54,23 +54,23 @@
       ],
       "target": {
         "x": 189.71875,
-        "y": 465.203125,
+        "y": 449.203125,
         "width": 95.609375,
         "height": 20.375,
         "right": 285.328125,
-        "bottom": 485.578125,
+        "bottom": 469.578125,
         "center_x": 237.5234375,
-        "center_y": 475.390625
+        "center_y": 459.390625
       },
       "avoid": {
         "x": 189.71875,
-        "y": 465.203125,
+        "y": 449.203125,
         "width": 95.609375,
         "height": 20.375,
         "right": 285.328125,
-        "bottom": 485.578125,
+        "bottom": 469.578125,
         "center_x": 237.5234375,
-        "center_y": 475.390625
+        "center_y": 459.390625
       },
       "placement": {
         "side": "right",

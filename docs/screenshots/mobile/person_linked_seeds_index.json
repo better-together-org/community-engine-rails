@@ -2,7 +2,7 @@
   "name": "person_linked_seeds_index",
   "device": "mobile",
   "url": "/en/linked-seeds",
-  "title": "Community Engine Host",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "person_linked_seeds",
