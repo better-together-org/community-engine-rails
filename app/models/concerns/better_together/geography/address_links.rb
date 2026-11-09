@@ -28,32 +28,39 @@ module BetterTogether
 
       private
 
+      # The explicit link only; the public readers fall back to resolved placements, which
+      # validation must not consult (it would also load locatable_locations early).
+      def linked(level)
+        association(level).reader
+      end
+
       # A chosen settlement implies its state and country, a chosen state its country; then the
       # chosen records overwrite the string columns.
       def sync_geography_strings
         derive_parent_links
         STRING_COLUMNS.each do |level, column|
-          record = association(level).reader
+          record = linked(level)
           self[column] = record.name if record
         end
       end
 
       def derive_parent_links
-        self.state = settlement.state if settlement && state_id.nil?
+        self.state = linked(:settlement).state if linked(:settlement) && state_id.nil?
         self.country = parent_country if country_id.nil?
       end
 
       def parent_country
-        state&.country || settlement&.country
+        linked(:state)&.country || linked(:settlement)&.country
       end
 
       def geography_is_consistent
-        errors.add(:state_id, :inclusion) if state && country_id && state.country_id != country_id
-        errors.add(:settlement_id, :inclusion) if settlement && settlement_outside_parents?
+        errors.add(:state_id, :inclusion) if linked(:state) && country_id && linked(:state).country_id != country_id
+        errors.add(:settlement_id, :inclusion) if linked(:settlement) && settlement_outside_parents?
       end
 
       def settlement_outside_parents?
         mismatched = ->(parent_id, settlement_parent_id) { parent_id && settlement_parent_id && parent_id != settlement_parent_id }
+        settlement = linked(:settlement)
         mismatched.call(state_id, settlement.state_id) || mismatched.call(country_id, settlement.country_id)
       end
     end
