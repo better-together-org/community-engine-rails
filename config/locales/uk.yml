@@ -1129,6 +1129,7 @@ uk:
         status_rejected: Не прийнято
         too_many_claims: Ви вже кілька разів повідомили продавця. Він підтвердить,
           щойно отримає оплату.
+        view_agreement: Переглянути угоду
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         agreements_heading: Прийняті угоди
