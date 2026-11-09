@@ -928,6 +928,7 @@ fr:
           pour cet achat.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        view_agreement: Lire l’entente
       credit:
         any_purpose: Tout ce que la plateforme vend
         balance_line: 'Solde : %{amount} (%{currency})'
@@ -977,7 +978,6 @@ fr:
         steward_title: Comptes de crédit en magasin
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
-        view_agreement: Lire l’entente
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1262,7 +1262,6 @@ fr:
         status_rejected: Non accepté
         too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
           quand il aura reçu votre paiement.
-        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées

@@ -928,6 +928,7 @@ en:
         unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        view_agreement: View the agreement
       credit:
         any_purpose: Anything the platform sells
         balance_line: 'Balance: %{amount} (%{currency})'
@@ -977,7 +978,6 @@ en:
         steward_title: Store credit accounts
         title: Store credit
         usable: You can spend %{amount}
-        view_agreement: View the agreement
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1245,7 +1245,6 @@ en:
         status_rejected: Not accepted
         too_many_claims: You have already told the seller several times. They will
           confirm when they have your payment.
-        view_agreement: View the agreement
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted
