@@ -993,6 +993,7 @@ uk:
         status_revoked: Повернено
         title: Мій доступ
         until: Діє до %{date}.
+        view_agreement: Переглянути угоду
       notifications:
         agreement_reacceptance_needed:
           buyer:
