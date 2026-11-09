@@ -849,7 +849,6 @@ uk:
         not_accepted: Обов'язково
         submit: Прийняти угоди і продовжити
         title: Переглянути необхідні угоди
-        view_agreement: Переглянути угоду
     application:
       name: Better Together
     authorable_contributor_visibility:
@@ -908,6 +907,7 @@ uk:
           покупки.
         unavailable_not_enabled: Наразі тут недоступно.
         unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
+        view_agreement: Переглянути угоду
       credit:
         any_purpose: Усе, що продає платформа
         balance_line: 'Баланс: %{amount} (%{currency})'
@@ -957,7 +957,6 @@ uk:
         steward_title: Рахунки кредиту магазину
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
-        view_agreement: Переглянути угоду
       notifications:
         cheque_bounced:
           buyer:
@@ -1187,7 +1186,6 @@ uk:
         status_rejected: Не прийнято
         too_many_claims: Ви вже кілька разів повідомили продавця. Він підтвердить,
           щойно отримає оплату.
-        view_agreement: Переглянути угоду
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         agreements_heading: Прийняті угоди
@@ -2902,7 +2900,6 @@ uk:
         save_offer: Save Offer
         source_request_heading: Responding to Request
         target_platform: Цільова платформа
-        view_agreement: Переглянути угоду
         view_offer: View Offer
         your_response_heading: Ваша відповідь
       requests:
