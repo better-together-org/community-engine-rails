@@ -39,11 +39,22 @@ module BetterTogether
         #   https://www.gov.mb.ca/finance/taxation/taxes/retail.html
         #   https://www.gov.mb.ca/finance/taxation/pubs/bulletins/030.pdf
         #
-        # NOT yet confirmed on an official page the tool could read: Revenu Quebec refused automated reads
-        # (HTTP 403), so the QST rate rests on the CRA table above, and the Quebec grocery rule and the
-        # Saskatchewan grocery rule (Information Bulletin PST-2, publications.saskatchewan.ca, TLS error) were not
-        # read. Until someone confirms them, the basic groceries category is treated as untaxed everywhere: the
-        # CRA, B.C. and Manitoba pages above say so for GST/HST, B.C. PST and Manitoba RST.
+        # Quebec QST, 9.975% "on the selling price excluding the GST", GST 5% on the selling price (Revenu Quebec,
+        # "Basic Rules for Applying the GST/HST and QST"; page last updated 2021-04-12). The rate history table
+        # shows 9.975% from January 1, 2013 to the present (same site, "Tables of GST and QST Rates", last
+        # updated 2021-04-12). Sales of basic groceries are zero-rated for the QST (same site, "Zero-Rated
+        # Supplies", last updated 2026-07-21). Revenu Quebec refuses plain automated reads (HTTP 403), so these
+        # pages were read with the repo's Camoufox browser session at a slow, one-page-at-a-time pace.
+        #   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/
+        #   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/tables-of-gst-and-qst-rates/
+        #   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/types-of-supplies/zero-rated-supplies/
+        #
+        # Saskatchewan groceries: basic groceries are exempt from PST, and food and drink are taxed for PST when
+        # they are taxed for GST. Even a GST small supplier of taxable food or drink must hold a PST licence
+        # (Information Bulletin PST-2, "Grocery, Convenience and Drug Stores", Revised: March 2025).
+        #   https://sets.saskatchewan.ca/rptp/wcm/connect/94a41317-34b9-46bf-9758-c27b18ee4b31/PST.002+Grocery+Convenience+and+Drug+Stores.pdf
+        #
+        # The basic groceries category is therefore untaxed everywhere: every page above says so for its tax.
         class Canada
           Province = Struct.new(:region, :name, :rates)
 
@@ -90,8 +101,13 @@ module BetterTogether
           #   https://gov.mb.ca/finance/taxation/pubs/bulletins/noticerst2401.pdf
           #   https://gov.mb.ca/finance/taxation/pubs/bulletins/004.pdf
           #
-          # Quebec QST: $30,000 over the same quarters as the GST, per a Revenu Quebec page this tool could not
-          # read directly (HTTP 403); confirm before use.
+          # Quebec QST: a small supplier's taxable supplies, zero-rated ones included, worldwide and with associates,
+          # do not exceed $30,000 in a calendar quarter or the four before it; financial services and capital
+          # property are left out. A small supplier need not register or collect. Taxis, and sellers of tobacco,
+          # fuel, alcohol, new tires and road vehicles, must register for the QST whatever their sales. Revenu
+          # Quebec, "Details Concerning Small Suppliers" (last updated 2024-11-22) and "Registering for the GST and
+          # QST" (last updated 2025-10-17).
+          #   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/registering-for-the-gst-and-qst/small-suppliers/
           #   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/registering-for-the-gst-and-qst/
           SMALL_SUPPLIER_DOLLARS = {
             'GST/HST' => { general: 30_000, public_service_body: 50_000, quarters: 4 },

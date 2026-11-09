@@ -65,7 +65,7 @@ The default for `prices_include_tax` comes from the country (`Tax::Defaults`): i
 
 Every figure carries its official source link and the date the page shows in the comments of `app/services/better_together/billing/tax/seeds/canada.rb`. That file also holds the small supplier limits (GST/HST $30,000, or $50,000 for a public service body; B.C. PST small seller $10,000; Saskatchewan small trader $10,000; Manitoba $30,000; Quebec $30,000) for the monitor planned in T5.
 
-Not confirmed from an official page this tool could read: Revenu Quebec refused automated reads, so the Quebec registration limit and grocery rule need a person to check them. The Saskatchewan grocery bulletin (PST-2) could not be opened either.
+Revenu Quebec refuses plain automated reads (HTTP 403). Its pages, and the Saskatchewan grocery bulletin PST-2, were read with the repo's Camoufox browser session, one page at a time with pauses, and the seed file records each page's date. Quebec: QST 9.975% on the price before GST, basic groceries zero-rated, small supplier limit $30,000. Saskatchewan: basic groceries exempt from PST.
 
 ### Who collects when a seller sells through the platform
 
