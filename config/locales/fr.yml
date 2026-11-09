@@ -764,6 +764,11 @@ fr:
       address: Adresse
       city_name: Ville
       country_name: Pays
+      geography:
+        country: Pays
+        settlement: Ville ou localité
+        state: État ou province
+        use_typed_text: Utiliser « %{q} » tel que saisi
       label: Libellé
       labels:
         billing: Facturation

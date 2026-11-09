@@ -765,6 +765,11 @@ es:
       address: Dirección
       city_name: Ciudad
       country_name: País
+      geography:
+        country: País
+        settlement: Ciudad o localidad
+        state: Estado o provincia
+        use_typed_text: Usar "%{q}" tal como se escribió
       label: Etiqueta
       labels:
         billing: Facturación

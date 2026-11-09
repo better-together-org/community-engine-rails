@@ -258,4 +258,59 @@ RSpec.describe BetterTogether::Address do
       expect(address.should_geocode?).to be(false)
     end
   end
+
+  describe 'geography links' do
+    let(:country) { create(:geography_country, name: 'Canada') }
+    let(:state) { create(:geography_state, country:, name: 'Newfoundland and Labrador') }
+    let(:settlement) { create(:geography_settlement, country:, state:, name: 'Corner Brook') }
+
+    it 'accepts all links as optional' do
+      expect(build(:address, country_id: nil, state_id: nil, settlement_id: nil)).to be_valid
+    end
+
+    it 'overwrites the string columns with the chosen records' do
+      address = build(:address, country_name: 'x', state_province_name: 'y', city_name: 'z',
+                                country:, state:, settlement:)
+      address.valid?
+
+      expect([address.country_name, address.state_province_name, address.city_name])
+        .to eq(['Canada', 'Newfoundland and Labrador', 'Corner Brook'])
+    end
+
+    it 'keeps typed text when no record is chosen' do
+      address = build(:address, city_name: 'Tiny Cove')
+      address.valid?
+
+      expect(address.city_name).to eq('Tiny Cove')
+    end
+
+    it 'derives state and country from a chosen settlement' do
+      address = build(:address, settlement:)
+      address.valid?
+
+      expect([address.state, address.country]).to eq([state, country])
+    end
+
+    it 'rejects a state outside the chosen country' do
+      other = create(:geography_state)
+
+      expect(build(:address, country:, state: other)).not_to be_valid
+    end
+
+    it 'rejects a settlement outside the chosen state' do
+      other = create(:geography_state, country:)
+
+      expect(build(:address, country:, state: other, settlement:)).not_to be_valid
+    end
+
+    it 'prefers the explicit link over a resolved placement' do
+      address = create(:address, country:)
+
+      expect(address.country).to eq(country)
+    end
+
+    it 'permits the link ids' do
+      expect(described_class.permitted_attributes).to include(:country_id, :state_id, :settlement_id)
+    end
+  end
 end

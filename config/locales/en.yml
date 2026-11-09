@@ -770,6 +770,11 @@ en:
       address: Address
       city_name: City
       country_name: Country
+      geography:
+        country: Country
+        settlement: City or settlement
+        state: State or province
+        use_typed_text: Use "%{q}" as typed
       label: Label
       labels:
         billing: Billing
