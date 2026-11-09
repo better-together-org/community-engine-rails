@@ -62,7 +62,11 @@ module BetterTogether
 
         # Plants every packet whose prerequisites are in place.
         def plant_all
-          CATEGORIES.each { |entry| plant(entry[:key]) }
+          CATEGORIES.each do |entry|
+            plant(entry[:key])
+          rescue Billing::Tax::Seeds::Planter::Missing => e
+            Rails.logger.warn("Tax packet #{entry[:packet]} not planted: #{e.message}")
+          end
           true
         end
         # rubocop:enable Naming/PredicateMethod

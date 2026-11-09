@@ -1,0 +1,16 @@
+---
+title: 'Tax seed packet: planted one packet'
+audience:
+- platform_manager
+- developer
+journey_step: After planting, the catalog shows the tax packet as planted.
+callouts:
+- :id: planted_badge
+  :title: Planted
+  :description: 'Green once every zone the packet names is on the platform: 13 zones
+    with their rates.'
+accessibility_notes: Plant buttons carry an aria-label naming the packet; a blocked
+  or planted packet has a real disabled attribute, and status is shown in text as
+  well as colour.
+slug: seed_catalog_billing_tax_planted_one
+device: desktop

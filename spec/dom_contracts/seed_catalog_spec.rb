@@ -58,4 +58,28 @@ RSpec.describe 'Seed catalog DOM contract', :as_platform_manager, :reduced_geogr
     expect(response).to have_http_status(:ok)
     expect(response.body).to include('id="seed-catalog-link"')
   end
+
+  it 'exposes the tax catalog, held back until the geography provinces are planted' do # rubocop:disable RSpec/MultipleExpectations
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+
+    expect(response.body).to include('id="seed-catalog-billing_tax"', 'id="seed-catalog-billing_tax-table"',
+                                     'id="seed-catalog-billing_tax-billing_tax_canada-row"', 'billing_tax_canada-status-badge',
+                                     'id="plant-all-billing_tax-btn"', 'id="plant-billing_tax_canada-missing-prerequisites"')
+    expect(response.body).to match(/id="plant-billing_tax_canada-btn"[^>]*disabled/)
+  end
+
+  it 'lets the tax packet be planted once the provinces are, and then shows it planted' do # rubocop:disable RSpec/MultipleExpectations
+    BetterTogether::SeedCatalog::GeographyCatalog.plant(:countries)
+    BetterTogether::SeedCatalog::GeographyCatalog.plant(:provinces)
+
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+    expect(response.body).not_to include('id="plant-billing_tax_canada-missing-prerequisites"')
+    expect(response.body).not_to match(/id="plant-billing_tax_canada-btn"[^>]*disabled/)
+
+    post "/#{I18n.default_locale}/host/seeds/catalog/billing_tax/plant/billing_tax_canada"
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+
+    expect(response.body).to include('billing_tax_canada-status-badge badge bg-success')
+    expect(BetterTogether::Billing::TaxZone.count).to eq(13)
+  end
 end

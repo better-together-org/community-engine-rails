@@ -1,0 +1,83 @@
+{
+  "name": "seed_catalog_billing_tax_blocked",
+  "device": "mobile",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog_billing_tax",
+  "flow": "seed_catalog_billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_billing_tax_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plant-billing_tax_canada-missing-prerequisites",
+      "title": "Held back",
+      "bullets": [
+        "Names the geography category to plant first."
+      ],
+      "target": {
+        "x": 280.796875,
+        "y": 964.390625,
+        "width": 183.203125,
+        "height": 42.0,
+        "right": 464.0,
+        "bottom": 1006.390625,
+        "center_x": 372.3984375,
+        "center_y": 985.390625
+      },
+      "avoid": {
+        "x": 280.796875,
+        "y": 964.390625,
+        "width": 183.203125,
+        "height": 42.0,
+        "right": 464.0,
+        "bottom": 1006.390625,
+        "center_x": 372.3984375,
+        "center_y": 985.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 206.0,
+        "y": 786.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 964.390625
+      }
+    },
+    {
+      "selector": "#plant-billing_tax_canada-btn",
+      "title": "Plant this packet (disabled)",
+      "bullets": [
+        "The button is disabled, not only styled."
+      ],
+      "target": {
+        "x": 410.71875,
+        "y": 1010.390625,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 464.0,
+        "bottom": 1041.390625,
+        "center_x": 437.359375,
+        "center_y": 1025.890625
+      },
+      "avoid": {
+        "x": 410.71875,
+        "y": 1010.390625,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 464.0,
+        "bottom": 1041.390625,
+        "center_x": 437.359375,
+        "center_y": 1025.890625
+      },
+      "placement": {
+        "side": "right",
+        "x": 206.0,
+        "y": 24,
+        "width": 270.0,
+        "height": 190,
+        "score": 0
+      }
+    }
+  ]
+}

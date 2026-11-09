@@ -1,0 +1,48 @@
+{
+  "name": "seed_catalog_billing_tax_ready_all",
+  "device": "mobile",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog_billing_tax",
+  "flow": "seed_catalog_billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_billing_tax_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plant-all-billing_tax-btn",
+      "title": "Plant All",
+      "bullets": [
+        "Skips a packet whose provinces are not planted."
+      ],
+      "target": {
+        "x": 196.875,
+        "y": 748.390625,
+        "width": 91.234375,
+        "height": 38.0,
+        "right": 288.109375,
+        "bottom": 786.390625,
+        "center_x": 242.4921875,
+        "center_y": 767.390625
+      },
+      "avoid": {
+        "x": 196.875,
+        "y": 748.390625,
+        "width": 91.234375,
+        "height": 38.0,
+        "right": 288.109375,
+        "bottom": 786.390625,
+        "center_x": 242.4921875,
+        "center_y": 767.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.49,
+        "y": 570.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 748.390625
+      }
+    }
+  ]
+}
