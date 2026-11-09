@@ -25,7 +25,24 @@ module BetterTogether
       render json: scope.limit(SINGLE_TYPE_RESULTS).map { |record| { value: record.id, text: label_for(record) } }
     end
 
+    # Options for the address form's country, state and settlement selects, narrowed by the level above.
+    def geography
+      authorize Geography::LocatableLocation, :available?
+
+      unless Geography::AddressLookup.level?(params[:level])
+        return render(json: { error: 'Invalid geography level' }, status: :unprocessable_content)
+      end
+
+      render json: geography_records.map { |record| { value: record.id, text: record.name } }
+    end
+
     private
+
+    def geography_records
+      Geography::AddressLookup.new(
+        level: params[:level], search: search_term, country_id: params[:country_id], state_id: params[:state_id]
+      ).scope.limit(SINGLE_TYPE_RESULTS)
+    end
 
     def requested_scope
       klass = placeable_models.find { |model| model.name == params[:location_type].to_s }

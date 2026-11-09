@@ -1,0 +1,15 @@
+---
+title: 'Address form: states narrowed by country'
+audience:
+- platform_manager
+- community_organizer
+- developer
+journey_step: After choosing Canada I only see Canadian provinces.
+callouts:
+- :id: state_list
+  :title: States of the chosen country
+  :description: After Canada is chosen the state search only offers its provinces.
+accessibility_notes: Each select has a visible label and the typed-text row is a normal
+  option, so the whole form works from the keyboard.
+slug: address_geography_narrowed
+device: desktop
