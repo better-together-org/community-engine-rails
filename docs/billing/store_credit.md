@@ -76,10 +76,27 @@ Credit forced the question "is this a method outside a vendor?" to be split, bec
 | Who | Where | What |
 |---|---|---|
 | The holder | `/:locale/billing/credit` | Per currency: what can be spent now, each amount left with when it expires and what it may pay for, and the newest 50 entries. Only their own accounts on this platform are ever loaded. Linked from the orders list |
-| A steward | `/:locale/billing/credit_accounts` | Pick a person from a **search** over this platform's members (name or the start of a handle, at least two characters, 20 results at most, never a full list; searches are throttled per address), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
+| A steward | `/:locale/billing/credit_accounts` | Pick a person from the shared **person search** (below), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
 | A steward | `/:locale/billing/credit_accounts/:id` | Every lot and entry, with who gave it and why |
 
-Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. The search is limited to members of the platform and needs steward permission, and an id that is not a member looks the same as one that does not exist.
+Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. 
+### The person search
+
+Every billing screen that picks a person uses one endpoint, `GET /:locale/billing/people?search=` (`Billing::PeopleController`), through the person slim-select (`better-together--slim-select`, ajax). Today that is the store credit lookup and the buyer of a sale in person ([offline_payment_methods.md](offline_payment_methods.md)); a new billing lookup reuses it rather than adding its own. It answers `[{ value: person id, text: name and handle }]`: members of this platform (on the host platform, its community's members too) whose name contains the term or whose handle starts with it, at least two characters, 20 results at most, never a full list. It needs permission to manage the platform's billing (`PersonLookupPolicy`), searches are throttled per address (`billing/people_lookup/ip`, 60 a minute), and an id that is not a member looks the same as one that does not exist. The membership rule is in the `PersonLookup` concern, shared with the screens that read the chosen id back.
+
+```mermaid
+flowchart LR
+  A[Person select on a billing screen] -->|ajax, search term| B[GET /billing/people]
+  B --> C{May manage this platform's billing?}
+  C -- no --> D[Refused]
+  C -- yes --> E{Term at least two characters?}
+  E -- no --> F[Empty list]
+  E -- yes --> G[Platform members matching the name or the start of the handle, 20 at most]
+  G --> H[Select shows the choices]
+  H -->|person id| I[Screen reads the id back through the same membership rule]
+```
+
+Diagram source: [billing_person_lookup_flow.mmd](../diagrams/source/billing_person_lookup_flow.mmd).
 
 The holder is told with the `credit_granted` notice (audience `holder`, not critical): how much, until when if it expires, and a link to their credit page. It is sent for credit a steward gives; credit the system gives (a refund, a promotion) is silent here. See [notifications.md](notifications.md).
 

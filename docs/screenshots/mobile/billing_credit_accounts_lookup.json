@@ -1,7 +1,7 @@
 {
   "name": "billing_credit_accounts_lookup",
   "device": "mobile",
-  "url": "/en/billing/credit_accounts?person_id=f8b5153d-656a-47ef-bb98-78d78940deee",
+  "url": "/en/billing/credit_accounts?person_id=e78f863a-3ea9-46f5-b45e-9f5edb0877e8",
   "title": "Store credit accounts | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 8.0,
-        "y": 261.390625,
+        "y": 312.390625,
         "width": 469.0,
         "height": 149.0,
         "right": 477.0,
-        "bottom": 410.390625,
+        "bottom": 461.390625,
         "center_x": 242.5,
-        "center_y": 335.890625
+        "center_y": 386.890625
       },
       "avoid": {
         "x": 8.0,
-        "y": 261.390625,
+        "y": 312.390625,
         "width": 469.0,
         "height": 149.0,
         "right": 477.0,
-        "bottom": 410.390625,
+        "bottom": 461.390625,
         "center_x": 242.5,
-        "center_y": 335.890625
+        "center_y": 386.890625
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 430.39,
+        "y": 481.39,
         "width": 270.0,
         "height": 210,
-        "score": 846.609375
+        "score": 795.609375
       }
     },
     {
@@ -52,31 +52,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 466.390625,
+        "y": 517.390625,
         "width": 461.0,
         "height": 417.0,
         "right": 473.0,
-        "bottom": 883.390625,
+        "bottom": 934.390625,
         "center_x": 242.5,
-        "center_y": 674.890625
+        "center_y": 725.890625
       },
       "avoid": {
         "x": 12.0,
-        "y": 466.390625,
+        "y": 517.390625,
         "width": 461.0,
         "height": 417.0,
         "right": 473.0,
-        "bottom": 883.390625,
+        "bottom": 934.390625,
         "center_x": 242.5,
-        "center_y": 674.890625
+        "center_y": 725.890625
       },
       "placement": {
         "side": "below",
         "x": 107.5,
-        "y": 903.39,
+        "y": 954.39,
         "width": 270.0,
         "height": 184,
-        "score": 373.609375
+        "score": 322.609375
       }
     }
   ]

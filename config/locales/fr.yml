@@ -1831,8 +1831,9 @@ fr:
         agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
           en personne
         buyer_hint: L’acheteur doit déjà être membre de cette plateforme. Saisissez
-          son identifiant exact.
-        buyer_label: Identifiant de l’acheteur
+          au moins deux lettres d’un nom ou d’un identifiant.
+        buyer_label: Acheteur
+        buyer_placeholder: Rechercher par nom ou identifiant
         error_refused: Cette vente n’a pas pu être enregistrée. Vérifiez l’acheteur,
           le mode de paiement et les ententes.
         intro: Enregistrez une vente faite en personne. L’acheteur n’a rien à faire;
