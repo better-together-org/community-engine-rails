@@ -65,8 +65,10 @@ RSpec.describe BetterTogether::Billing::Order do
 
       expect(build(:better_together_billing_order, on_behalf_of: community)).to be_valid
       other = build(:better_together_billing_order)
-      other.assign_attributes(on_behalf_of_type: 'BetterTogether::Platform', on_behalf_of_id: host_platform.id)
+      other.assign_attributes(on_behalf_of_type: 'BetterTogether::Page', on_behalf_of_id: SecureRandom.uuid)
       expect(other).not_to be_valid
+      # A hosted platform can be bought for: it opted in with Billable.
+      expect(build(:better_together_billing_order, on_behalf_of: host_platform)).to be_valid
       other_id = create(:better_together_platform).id
       community.define_singleton_method(:billing_bound_platform_id) { other_id }
       expect(build(:better_together_billing_order, on_behalf_of: community)).not_to be_valid

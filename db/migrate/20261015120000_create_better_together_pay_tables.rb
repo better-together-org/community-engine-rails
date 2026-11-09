@@ -77,7 +77,10 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
       t.timestamps
     end
     add_index :pay_customers, %i[platform_id owner_type owner_id deleted_at], unique: true, name: :pay_customer_owner_index
-    add_index :pay_customers, %i[platform_id processor processor_id], unique: true, name: :pay_customers_platform_processor_index
+    # Global, as in Pay itself: Pay's validation and every sync finder look a customer up by
+    # (processor, processor_id) alone, so a per-platform index would let two rows share one
+    # Stripe id and a sync land on the wrong platform. Stripe ids are unique across accounts.
+    add_index :pay_customers, %i[processor processor_id], unique: true, name: :pay_customers_processor_index
     add_index :pay_customers, %i[id platform_id], unique: true, name: :pay_customers_id_platform_index
   end
 
@@ -168,6 +171,8 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
       t.timestamps
     end
     add_index :pay_charges, %i[customer_id processor_id], unique: true
+    # The target of composite foreign keys from billing payments (a payment is tied to its charge's platform).
+    add_index :pay_charges, %i[id platform_id], unique: true, name: :pay_charges_id_platform_index
   end
 
   def create_webhooks

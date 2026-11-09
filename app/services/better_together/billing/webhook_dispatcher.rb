@@ -39,9 +39,24 @@ module BetterTogether
         platform = BetterTogether::Billing::Configuration.platform_for_webhook(
           @processor, platform_id: normalized[:platform_id], account_ref: normalized[:account_ref]
         )
-        return platform if platform
+        return platform if platform && customer_on?(platform, normalized[:customer_ref])
 
-        error = UnattributableWebhookError.new("#{@processor} event #{normalized[:event_id]} matches no platform with billing configured")
+        refuse(normalized, platform ? 'belongs to a customer of another platform' : 'matches no platform with billing configured')
+      end
+
+      # Pay's own handlers attribute an event through its customer. If that customer lives on a
+      # different platform than the one resolved here, the two logs would disagree about who
+      # the money belongs to, so the event is refused. An unknown customer is fine (it may not
+      # have been created yet).
+      def customer_on?(platform, customer_ref)
+        return true if customer_ref.blank?
+
+        customer = Pay::Customer.find_by(processor: @processor.to_s, processor_id: customer_ref.to_s)
+        customer.nil? || customer.platform_id == platform.id
+      end
+
+      def refuse(normalized, reason)
+        error = UnattributableWebhookError.new("#{@processor} event #{normalized[:event_id]} #{reason}")
         BetterTogether.report_error(error, context: { processor: @processor, event_id: normalized[:event_id] })
         raise error
       end

@@ -96,7 +96,7 @@ A cheque is received, then cleared or bounced. The seller's setting decides when
 
 ### Refunds
 
-The platform cannot move cash or a cheque. **Record a refund** records that the seller gave money back: a full or partial amount, a reason, and an idempotency token so a double click records once. It goes through `Refunds::Record`, settles the order, and tells the buyer (`refund_recorded`). Refunds for payments through a vendor are made at the vendor and are not recorded here.
+The platform cannot move cash or a cheque. **Record a refund** records that the seller gave money back: a full or partial amount, a reason, and an idempotency token so a double click records once. It goes through `Refunds::Record`, settles the order, and tells the buyer (`refund_recorded`). Refunds for payments through a vendor are made at the vendor and come back as processor refund events (see [processor-adapters.md](processor-adapters.md)); this form is for payments made outside the platform.
 
 ## A sale in person
 
