@@ -1,7 +1,7 @@
 {
   "name": "new_platform_setup_review_and_launch",
   "device": "desktop",
-  "url": "/en/w/new_platform_setup/new-platform-227c566e11ca/review_and_launch",
+  "url": "/en/w/new_platform_setup/new-platform-cb32b91b81ad/review_and_launch",
   "title": "Review &amp; Launch | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -41,7 +41,7 @@
         "y": 426.59,
         "width": 380,
         "height": 190,
-        "score": 1054.40625
+        "score": 1050.40625
       }
     },
     {
@@ -76,7 +76,7 @@
         "y": 704.59,
         "width": 380,
         "height": 132,
-        "score": 776.40625
+        "score": 772.40625
       }
     },
     {
@@ -111,7 +111,7 @@
         "y": 872.59,
         "width": 380,
         "height": 158,
-        "score": 608.40625
+        "score": 604.40625
       }
     }
   ]
