@@ -7,7 +7,7 @@
   "role": "platform_manager",
   "feature_set": "platform_domains",
   "flow": "platform_show_operations",
-  "source_spec": "/community-engine/spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_domains_admin_spec.rb",
   "callouts": [
     {
       "selector": "a[href='/en/host/platforms/test-host-community/platform_domains']",
