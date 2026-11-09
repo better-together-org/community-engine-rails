@@ -926,6 +926,7 @@ fr:
         unavailable_currency_not_supported: Non disponible dans cette devise.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        view_agreement: Lire l’entente
       notifications:
         dispute_opened:
           body: Un acheteur a contesté un paiement pour la commande %{number}. Veuillez
@@ -1011,7 +1012,6 @@ fr:
         trial_ending:
           body: Votre période d’essai est sur le point de se terminer.
           title: Votre période d’essai se termine bientôt
-        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées

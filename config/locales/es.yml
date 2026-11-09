@@ -920,6 +920,7 @@ es:
         unavailable_currency_not_supported: No disponible en esta moneda.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
+        view_agreement: Ver el acuerdo
       notifications:
         dispute_opened:
           body: Un comprador disputó un pago del pedido %{number}. Revíselo.
@@ -1001,7 +1002,6 @@ es:
         trial_ending:
           body: Su período de prueba está por terminar.
           title: Su prueba termina pronto
-        view_agreement: Ver el acuerdo
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         agreements_heading: Acuerdos aceptados
