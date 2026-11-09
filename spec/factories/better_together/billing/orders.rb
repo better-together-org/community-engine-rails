@@ -53,3 +53,15 @@ FactoryBot.define do
     idempotency_key { "refund-#{SecureRandom.hex(8)}" }
   end
 end
+
+FactoryBot.define do
+  factory 'better_together/billing/agreement_requirement', class: 'BetterTogether::Billing::AgreementRequirement',
+                                                           aliases: %i[better_together_billing_agreement_requirement] do
+    platform { BetterTogether::Platform.find_by(host: true) || association(:better_together_platform, :host) }
+    agreement do
+      association :better_together_agreement, agreement_kind: 'transactional_agreement', platform:,
+                                              identifier: "purchase-#{SecureRandom.hex(4)}"
+    end
+    mode { 'additional' }
+  end
+end

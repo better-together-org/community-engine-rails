@@ -1,0 +1,27 @@
+<%# What is still to do before the platform can sell. Shown to stewards. %>
+<% readiness = BetterTogether::Billing::Readiness.call(billing_owner) %>
+<div id="billing-readiness-checklist" class="card mb-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong><%= t('better_together.billing.readiness.title') %></strong>
+    <span class="badge <%= readiness.ready? ? 'bg-success' : 'bg-warning text-dark' %>" id="billing-readiness-status">
+      <%= t(readiness.ready? ? 'better_together.billing.readiness.ready' : 'better_together.billing.readiness.not_ready') %>
+    </span>
+  </div>
+  <ul class="list-group list-group-flush">
+    <% readiness.checks.each do |check| %>
+      <% item_id = ["billing-readiness", check.key, check.purpose].compact.join('-') %>
+      <li id="<%= item_id %>" class="list-group-item d-flex gap-2 align-items-start">
+        <span class="<%= check.ok ? 'text-success' : 'text-warning' %>" aria-hidden="true"><%= check.ok ? '✓' : '!' %></span>
+        <span>
+          <span class="visually-hidden"><%= t(check.ok ? 'better_together.billing.readiness.done' : 'better_together.billing.readiness.todo') %></span>
+          <%= t("better_together.billing.readiness.check_#{check.key}", purpose: (t("better_together.billing.orders.purpose_#{check.purpose}") if check.purpose)) %>
+          <% unless check.ok || check.detail.blank? %>
+            <span class="d-block small text-body-secondary">
+              <%= check.detail.map { |code| t("better_together.billing.readiness.detail_#{code}") }.to_sentence %>
+            </span>
+          <% end %>
+        </span>
+      </li>
+    <% end %>
+  </ul>
+</div>

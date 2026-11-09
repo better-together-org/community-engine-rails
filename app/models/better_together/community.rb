@@ -6,6 +6,8 @@ module BetterTogether
   # A gathering
   class Community < PlatformRecord # rubocop:todo Metrics/ClassLength
     include Base64ImageInput
+    # A community can ask buyers for terms of its own (see Billing::AgreementRequirement).
+    include Billing::AgreementTarget
     include Contactable
     include ContactData
     include Geography::Locatable::AddressData

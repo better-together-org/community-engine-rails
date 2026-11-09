@@ -50,6 +50,22 @@
   </div>
 </div>
 
+<% if order.agreement_acceptances.any? %>
+  <div class="card mb-4">
+    <div class="card-header"><strong><%= t('better_together.billing.orders.agreements_heading') %></strong></div>
+    <ul id="billing-order-agreements" class="list-group list-group-flush">
+      <% order.agreement_acceptances.each do |acceptance| %>
+        <li id="<%= dom_id(acceptance) %>" class="list-group-item">
+          <%= acceptance.agreement_title %>
+          <span class="d-block small text-body-secondary">
+            <%= t('better_together.billing.orders.accepted_by', name: acceptance.signer.name, date: l(acceptance.accepted_at, format: :long)) %>
+          </span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <div class="card mb-4">
   <div class="card-header"><strong><%= t('better_together.billing.orders.payments_heading') %></strong></div>
   <% if order.payments.any? %>

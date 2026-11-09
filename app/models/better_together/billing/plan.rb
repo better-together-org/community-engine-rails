@@ -23,6 +23,7 @@ module BetterTogether
       include PlatformBound
       include SellerScoped
       include Purchasable
+      include AgreementTarget
 
       self.table_name = 'better_together_billing_plans'
 

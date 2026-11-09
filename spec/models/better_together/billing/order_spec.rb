@@ -60,12 +60,13 @@ RSpec.describe BetterTogether::Billing::Order do
       expect(order).not_to be_valid
     end
 
-    it 'accepts an on-behalf-of owner only from the billable allow-list, on its platform' do
+    it 'accepts an on-behalf-of owner only from the allow-list, on its platform' do
       community = create(:better_together_community)
 
-      expect(build(:better_together_billing_order, on_behalf_of: community)).not_to be_valid
-      BetterTogether::Billing::Billable.model_names << 'BetterTogether::Community'
       expect(build(:better_together_billing_order, on_behalf_of: community)).to be_valid
+      other = build(:better_together_billing_order)
+      other.assign_attributes(on_behalf_of_type: 'BetterTogether::Platform', on_behalf_of_id: host_platform.id)
+      expect(other).not_to be_valid
       other_id = create(:better_together_platform).id
       community.define_singleton_method(:billing_bound_platform_id) { other_id }
       expect(build(:better_together_billing_order, on_behalf_of: community)).not_to be_valid

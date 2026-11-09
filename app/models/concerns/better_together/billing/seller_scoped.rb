@@ -26,10 +26,14 @@ module BetterTogether
         scope :sold_by, ->(seller) { where(seller_type: seller.class.name, seller_id: seller.id) }
       end
 
+      # The types that may sell, or own a purchase on behalf of: the defaults and any model that
+      # opted in with Billing::Billable. Names only.
+      def self.assignable_types
+        (DEFAULT_SELLER_TYPES + Billable.model_names.to_a).uniq
+      end
+
       class_methods do
-        def assignable_seller_types
-          (DEFAULT_SELLER_TYPES + Billable.model_names.to_a).uniq
-        end
+        def assignable_seller_types = SellerScoped.assignable_types
       end
 
       def sold_by_platform? = seller_id.nil?

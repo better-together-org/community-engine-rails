@@ -52,7 +52,10 @@ RSpec.describe BetterTogether::Billing::SalesController do
     end
 
     it 'says so when nothing was sold' do
-      order.destroy!
+      # An order with evidence on it cannot be deleted, so it is moved to a community's sales.
+      BetterTogether::Billing::Order.connection.execute(
+        "UPDATE better_together_billing_orders SET seller_type = 'BetterTogether::Community', seller_id = '#{SecureRandom.uuid}'"
+      )
 
       get sales_path
 

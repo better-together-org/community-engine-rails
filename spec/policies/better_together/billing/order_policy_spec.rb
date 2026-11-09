@@ -34,6 +34,11 @@ RSpec.describe BetterTogether::Billing::OrderPolicy do
     expect(described_class.new(nil, BetterTogether::Billing::Order).index?).to be(false)
   end
 
+  it 'lets any signed-in person start a checkout, and no visitor' do
+    expect(described_class.new(member, BetterTogether::Billing::Order).checkout?).to be(true)
+    expect(described_class.new(nil, BetterTogether::Billing::Order).checkout?).to be(false)
+  end
+
   it 'never lets anyone create, change or destroy an order through the screens' do
     policy = described_class.new(steward, order)
 

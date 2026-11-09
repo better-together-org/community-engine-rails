@@ -3,8 +3,14 @@
 <% end %>
 
 <div id="billing-processor-settings-page" class="container my-4">
-  <h1 class="mb-2"><%= t('better_together.billing.processor_settings.index_title') %></h1>
+  <div class="d-flex justify-content-between align-items-start">
+    <h1 class="mb-2"><%= t('better_together.billing.processor_settings.index_title') %></h1>
+    <%= link_to t('better_together.billing.requirements.index_title'), billing_agreement_requirements_path(locale: I18n.locale),
+                class: 'btn btn-outline-secondary', id: 'billing-purchase-terms-link' %>
+  </div>
   <p class="text-body-secondary mb-4"><%= t('better_together.billing.processor_settings.index_intro') %></p>
+
+  <%= render 'better_together/billing/shared/readiness' %>
 
   <div class="card">
     <div class="table-responsive">
