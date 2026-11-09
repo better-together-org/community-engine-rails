@@ -1,0 +1,70 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.promotions.new_promotion') %>
+<% end %>
+
+<div id="billing-promotion-new-page" class="container my-4">
+  <h1 class="mb-3"><%= t('better_together.billing.promotions.new_promotion') %></h1>
+
+  <% if @error %>
+    <div class="alert alert-danger" role="alert" id="billing-promotion-errors"><%= @error %></div>
+  <% end %>
+
+  <%= form_with url: billing_promotions_path(locale: I18n.locale), method: :post, id: 'billing-promotion-form' do %>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <%= label_tag 'billing-promotion-name', t('better_together.billing.promotions.field_name'), class: 'form-label' %>
+        <%= text_field_tag :name, params[:name], id: 'billing-promotion-name', class: 'form-control', maxlength: 120, required: true %>
+        <div class="form-text"><%= t('better_together.billing.promotions.name_hint') %></div>
+      </div>
+      <div class="col-md-3">
+        <%= label_tag 'billing-promotion-amount', t('better_together.billing.promotions.field_amount'), class: 'form-label' %>
+        <%= text_field_tag :amount, params[:amount], id: 'billing-promotion-amount', class: 'form-control', inputmode: 'decimal', autocomplete: 'off', required: true %>
+      </div>
+      <div class="col-md-3">
+        <%= label_tag 'billing-promotion-currency', t('better_together.billing.credit.field_currency'), class: 'form-label' %>
+        <%= select_tag :currency, options_for_select(BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES, params[:currency]), id: 'billing-promotion-currency', class: 'form-select' %>
+      </div>
+      <div class="col-md-4">
+        <%= label_tag 'billing-promotion-credit-days', t('better_together.billing.promotions.field_credit_days'), class: 'form-label' %>
+        <%= number_field_tag :credit_expires_after_days, params[:credit_expires_after_days], id: 'billing-promotion-credit-days', class: 'form-control', min: 1 %>
+        <div class="form-text"><%= t('better_together.billing.promotions.credit_days_hint') %></div>
+      </div>
+      <div class="col-md-4">
+        <%= label_tag 'billing-promotion-max', t('better_together.billing.promotions.field_max'), class: 'form-label' %>
+        <%= number_field_tag :max_redemptions, params[:max_redemptions], id: 'billing-promotion-max', class: 'form-control', min: 1 %>
+        <div class="form-text"><%= t('better_together.billing.promotions.max_hint') %></div>
+      </div>
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <%= label_tag 'billing-promotion-starts', t('better_together.billing.promotions.field_starts'), class: 'form-label' %>
+        <%= datetime_local_field_tag :starts_at, params[:starts_at], id: 'billing-promotion-starts', class: 'form-control' %>
+      </div>
+      <div class="col-md-4">
+        <%= label_tag 'billing-promotion-ends', t('better_together.billing.promotions.field_ends'), class: 'form-label' %>
+        <%= datetime_local_field_tag :ends_at, params[:ends_at], id: 'billing-promotion-ends', class: 'form-control' %>
+      </div>
+      <div class="col-12">
+        <fieldset id="billing-promotion-purposes">
+          <legend class="form-label fs-6"><%= t('better_together.billing.promotions.field_purposes') %></legend>
+          <% BetterTogether::Billing::ProcessorSetting::PURPOSES.each do |purpose| %>
+            <div class="form-check form-check-inline">
+              <%= check_box_tag 'purposes[]', purpose, Array(params[:purposes]).include?(purpose), id: "billing-promotion-purpose-#{purpose}", class: 'form-check-input' %>
+              <%= label_tag "billing-promotion-purpose-#{purpose}", t("better_together.billing.processor_settings.purpose_#{purpose}"), class: 'form-check-label' %>
+            </div>
+          <% end %>
+          <div class="form-text"><%= t('better_together.billing.promotions.purposes_hint') %></div>
+        </fieldset>
+      </div>
+      <div class="col-12">
+        <div class="form-check">
+          <%= check_box_tag :new_members_only, '1', params[:new_members_only] == '1', id: 'billing-promotion-new-members', class: 'form-check-input' %>
+          <%= label_tag 'billing-promotion-new-members', t('better_together.billing.promotions.field_new_members'), class: 'form-check-label' %>
+        </div>
+      </div>
+    </div>
+    <div id="billing-promotion-actions" class="d-flex gap-2 mt-4">
+      <%= submit_tag t('better_together.billing.promotions.create'), class: 'btn btn-primary', id: 'billing-promotion-save-btn' %>
+      <%= link_to t('globals.cancel'), billing_promotions_path(locale: I18n.locale), class: 'btn btn-outline-secondary' %>
+    </div>
+  <% end %>
+</div>

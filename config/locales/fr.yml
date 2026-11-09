@@ -1477,6 +1477,50 @@ fr:
         status_disabled: Désactivé
         status_enabled: Activé
         status_not_set_up: Non configuré
+      promotions:
+        activate: Activer
+        always_open: Toujours
+        back_to_list: Retour aux promotions
+        code_hint: Lettres et chiffres, avec ou sans tirets.
+        code_label: Vous avez un code promotionnel ?
+        create: Créer le code
+        created_title: Votre code promotionnel
+        created_warning: Copiez ce code maintenant. Il n'est affiché qu'une fois et
+          ne pourra plus être consulté.
+        credit_days_hint: Laissez vide pour un crédit qui n'expire pas.
+        deactivate: Désactiver
+        field_amount: Crédit
+        field_credit_days: Durée du crédit (jours)
+        field_ends: Ferme
+        field_max: Nombre maximal de personnes
+        field_name: Nom
+        field_new_members: Seulement pour les personnes qui n'ont encore rien payé
+          ici
+        field_purposes: Le crédit peut payer
+        field_starts: Ouvre
+        field_status: Statut
+        field_used: Utilisé
+        field_window: Ouvert
+        index_intro: Un code donne du crédit en magasin quand quelqu'un l'utilise.
+          Les codes ne sont affichés qu'une fois, à leur création, et ne peuvent plus
+          être consultés.
+        index_title: Codes promotionnels
+        invalid: Ce code n'est pas valide.
+        max_hint: Laissez vide pour aucune limite. Chaque personne ne peut utiliser
+          un code qu'une fois.
+        name_hint: Pour vos dossiers. Les gens ne le voient pas, seulement le montant.
+        new_promotion: Nouvelle promotion
+        none: Il n'y a pas encore de promotions.
+        purposes_hint: Ne cochez rien pour tout ce que la plateforme vend.
+        redeem: Utiliser
+        redeemed: Code accepté. Votre crédit a été ajouté.
+        status_ended: Terminé
+        status_off: Inactif
+        status_on: Actif
+        status_scheduled: Pas encore ouvert
+        status_used_up: Épuisé
+        switched: Promotion mise à jour.
+        usage_of: "%{used} sur %{max}"
       readiness:
         check_agreements: Les ententes d’achat sont en vigueur pour %{purpose}.
         check_configured: La facturation est activée et les coordonnées de votre organisation

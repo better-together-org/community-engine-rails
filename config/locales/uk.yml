@@ -1424,6 +1424,48 @@ uk:
         status_disabled: Вимкнено
         status_enabled: Увімкнено
         status_not_set_up: Не налаштовано
+      promotions:
+        activate: Увімкнути
+        always_open: Завжди
+        back_to_list: Назад до акцій
+        code_hint: Літери та цифри, з дефісами або без.
+        code_label: Маєте промокод?
+        create: Створити код
+        created_title: Ваш промокод
+        created_warning: Скопіюйте цей код зараз. Його показано лише один раз, і переглянути
+          його знову не можна.
+        credit_days_hint: Залиште порожнім для кредиту без терміну дії.
+        deactivate: Вимкнути
+        field_amount: Кредит
+        field_credit_days: Кредит діє (днів)
+        field_ends: Завершується
+        field_max: Максимум осіб
+        field_name: Назва
+        field_new_members: Лише для тих, хто ще нічого тут не оплачував
+        field_purposes: Кредит може оплатити
+        field_starts: Починається
+        field_status: Статус
+        field_used: Використано
+        field_window: Діє
+        index_intro: Код дає кредит магазину, коли хтось його використовує. Коди показуються
+          один раз, під час створення, і більше їх переглянути не можна.
+        index_title: Промокоди
+        invalid: Цей код недійсний.
+        max_hint: Залиште порожнім, щоб не обмежувати. Кожна особа може використати
+          код лише раз.
+        name_hint: Для ваших записів. Люди його не бачать, лише суму.
+        new_promotion: Нова акція
+        none: Акцій ще немає.
+        purposes_hint: Не відмічайте нічого — для всього, що продає платформа.
+        redeem: Використати
+        redeemed: Код прийнято. Ваш кредит додано.
+        status_ended: Завершено
+        status_off: Вимкнено
+        status_on: Увімкнено
+        status_scheduled: Ще не відкрито
+        status_used_up: Вичерпано
+        switched: Акцію оновлено.
+        usage_of: "%{used} з %{max}"
       readiness:
         check_agreements: 'Угоди про покупку чинні для: %{purpose}.'
         check_configured: Виставлення рахунків увімкнено, дані вашої організації задано.

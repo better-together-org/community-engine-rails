@@ -17,7 +17,7 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
   let(:bare_read) do
     /\b(?:Billing::)?
       (?:Plan|Event|ProcessorSetting|Order|LineItem|OrderAgreementAcceptance|AgreementRequirement|NotificationReceipt|
-         OfflinePayment|Payment|Refund|CreditAccount|CreditLot|CreditEntry)\.
+         OfflinePayment|Payment|Refund|CreditAccount|CreditLot|CreditEntry|Promotion|PromotionRedemption)\.
       (?!find\(|find_by\(id:|permitted_attributes|assignable_owner_types|arel_table\b|new\b|name\b|model_name\b)\w+/x
   end
   let(:pay_read) { /\bPay::(?:Customer|Subscription|Charge)\.(?!find\(|find_by\(id:)\w+/ }

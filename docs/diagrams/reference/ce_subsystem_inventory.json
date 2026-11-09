@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T23:18:26Z",
+  "generated_at": "2026-11-08T23:20:49Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3899,6 +3899,18 @@
           "source_subsystem": "billing"
         },
         {
+          "from": "BetterTogether::Billing::PromotionRedemption",
+          "to": "BetterTogether::Person",
+          "label": "person (person_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Promotion",
+          "to": "BetterTogether::Person",
+          "label": "created_by (created_by_id)",
+          "source_subsystem": "billing"
+        },
+        {
           "from": "BetterTogether::Billing::OrderAgreementAcceptance",
           "to": "BetterTogether::Person",
           "label": "signer (signer_id)",
@@ -7510,6 +7522,18 @@
         },
         {
           "from": "BetterTogether::Billing::Refund",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::PromotionRedemption",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Promotion",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "billing"
@@ -25517,7 +25541,9 @@
         "BetterTogether::Billing::OfflinePayment",
         "BetterTogether::Billing::CreditAccount",
         "BetterTogether::Billing::CreditLot",
-        "BetterTogether::Billing::CreditEntry"
+        "BetterTogether::Billing::CreditEntry",
+        "BetterTogether::Billing::Promotion",
+        "BetterTogether::Billing::PromotionRedemption"
       ],
       "controllers": [
         "BetterTogether::Billing::PlansController",
@@ -25533,7 +25559,9 @@
         "BetterTogether::Billing::WalkUpSalesController",
         "BetterTogether::Billing::CreditsController",
         "BetterTogether::Billing::CreditAccountsController",
-        "BetterTogether::Billing::CreditGrantsController"
+        "BetterTogether::Billing::CreditGrantsController",
+        "BetterTogether::Billing::PromotionsController",
+        "BetterTogether::Billing::PromotionRedemptionsController"
       ],
       "models_inventory": [
         {
@@ -26804,6 +26832,179 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::Promotion",
+          "label": "Billing::Promotion",
+          "source_path": "app/models/better_together/billing/promotion.rb",
+          "table_name": "better_together_billing_promotions",
+          "columns": [
+            [
+              "created_by_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "code_digest",
+              "string"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "name",
+              "string"
+            ],
+            [
+              "purposes",
+              "string"
+            ],
+            [
+              "active",
+              "boolean"
+            ],
+            [
+              "new_members_only",
+              "boolean"
+            ],
+            [
+              "amount_cents",
+              "integer"
+            ],
+            [
+              "credit_expires_after_days",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: name",
+            "PresenceValidator: code_digest",
+            "UniquenessValidator: code_digest (scope=:platform_id)",
+            "NumericalityValidator: amount_cents (only_integer=true, greater_than=0)",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "NumericalityValidator: credit_expires_after_days (allow_nil=true, only_integer=true, greater_than=0)",
+            "NumericalityValidator: max_redemptions (allow_nil=true, only_integer=true, greater_than=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "created_by",
+              "foreign_key": "created_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "created_by",
+              "foreign_key": "created_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PromotionRedemption",
+          "label": "Billing::PromotionRedemption",
+          "source_path": "app/models/better_together/billing/promotion_redemption.rb",
+          "table_name": "better_together_billing_promotion_redemptions",
+          "columns": [
+            [
+              "credit_lot_id",
+              "uuid FK"
+            ],
+            [
+              "person_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "promotion_id",
+              "uuid FK"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: promotion (message=:required)",
+            "PresenceValidator: credit_lot (message=:required)",
+            "UniquenessValidator: person_id (allow_nil=true, scope=:promotion_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "promotion",
+              "foreign_key": "promotion_id",
+              "target": "BetterTogether::Billing::Promotion",
+              "optional": false
+            },
+            {
+              "name": "person",
+              "foreign_key": "person_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            },
+            {
+              "name": "credit_lot",
+              "foreign_key": "credit_lot_id",
+              "target": "BetterTogether::Billing::CreditLot",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "person",
+              "foreign_key": "person_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::Refund",
           "label": "Billing::Refund",
           "source_path": "app/models/better_together/billing/refund.rb",
@@ -27073,6 +27274,38 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::PromotionRedemptionsController",
+          "label": "Billing::PromotionRedemptionsController",
+          "source_path": "app/controllers/better_together/billing/promotion_redemptions_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::PromotionRedemption"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PromotionsController",
+          "label": "Billing::PromotionsController",
+          "source_path": "app/controllers/better_together/billing/promotions_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Promotion"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::SaleRefundsController",
           "label": "Billing::SaleRefundsController",
           "source_path": "app/controllers/better_together/billing/sale_refunds_controller.rb",
@@ -27145,6 +27378,8 @@
             "Billing::WalkUpSalesController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
@@ -27165,6 +27400,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::Refund",
+            "Billing::PromotionRedemption",
             "Billing::Payment",
             "Billing::OrderAgreementAcceptance",
             "Billing::OfflinePayment",
@@ -27180,6 +27416,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::Refund",
+            "Billing::PromotionRedemption",
+            "Billing::Promotion",
             "Billing::Payment",
             "Billing::OrderAgreementAcceptance",
             "Billing::Order",
@@ -27244,6 +27482,8 @@
             "Billing::WalkUpSalesController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
@@ -27266,6 +27506,8 @@
             "Billing::WalkUpSalesController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
@@ -27288,6 +27530,8 @@
             "Billing::WalkUpSalesController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
@@ -27310,6 +27554,8 @@
             "Billing::WalkUpSalesController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
@@ -27459,6 +27705,30 @@
         },
         {
           "from": "BetterTogether::Billing::ProcessorSetting",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Promotion",
+          "to": "BetterTogether::Person",
+          "label": "created_by (created_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::Promotion",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::PromotionRedemption",
+          "to": "BetterTogether::Person",
+          "label": "person (person_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::PromotionRedemption",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

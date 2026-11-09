@@ -1,0 +1,83 @@
+{
+  "name": "billing_promotions_index",
+  "device": "mobile",
+  "url": "/en/billing/promotions",
+  "title": "Promotion codes | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_promotions",
+  "flow": "billing_promotions_index",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_promotions_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-promotions-table",
+      "title": "Promotions",
+      "bullets": [
+        "Each row shows how many people have used it and whether it is on. The code itself is never shown again."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 241.0,
+        "width": 479.46875,
+        "height": 106.0,
+        "right": 492.46875,
+        "bottom": 347.0,
+        "center_x": 252.734375,
+        "center_y": 294.0
+      },
+      "avoid": {
+        "x": 13.0,
+        "y": 241.0,
+        "width": 479.46875,
+        "height": 106.0,
+        "right": 492.46875,
+        "bottom": 347.0,
+        "center_x": 252.734375,
+        "center_y": 294.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 117.73,
+        "y": 367.0,
+        "width": 270.0,
+        "height": 236,
+        "score": 910.0
+      }
+    },
+    {
+      "selector": "#new-promotion-btn",
+      "title": "Make a promotion",
+      "bullets": [
+        "The code is shown once when you make it."
+      ],
+      "target": {
+        "x": 339.8125,
+        "y": 90.0,
+        "width": 148.1875,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 128.0,
+        "center_x": 413.90625,
+        "center_y": 109.0
+      },
+      "avoid": {
+        "x": 339.8125,
+        "y": 90.0,
+        "width": 148.1875,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 128.0,
+        "center_x": 413.90625,
+        "center_y": 109.0
+      },
+      "placement": {
+        "side": "left",
+        "x": 49.81,
+        "y": 30.0,
+        "width": 270.0,
+        "height": 158,
+        "score": 339.8125
+      }
+    }
+  ]
+}

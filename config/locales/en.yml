@@ -1449,6 +1449,47 @@ en:
         status_disabled: 'Off'
         status_enabled: 'On'
         status_not_set_up: Not set up
+      promotions:
+        activate: Switch on
+        always_open: Always
+        back_to_list: Back to promotions
+        code_hint: Letters and numbers, with or without dashes.
+        code_label: Have a promotion code?
+        create: Make the code
+        created_title: Your promotion code
+        created_warning: Copy this code now. It is shown only once and cannot be looked
+          up again.
+        credit_days_hint: Leave empty for credit that does not expire.
+        deactivate: Switch off
+        field_amount: Credit
+        field_credit_days: Credit lasts (days)
+        field_ends: Closes
+        field_max: Most people
+        field_name: Name
+        field_new_members: Only for people who have not paid for anything here yet
+        field_purposes: Credit can pay for
+        field_starts: Opens
+        field_status: Status
+        field_used: Used
+        field_window: Open
+        index_intro: A code gives store credit when someone redeems it. Codes are
+          shown once, when you make them, and cannot be looked up again.
+        index_title: Promotion codes
+        invalid: That code is not valid.
+        max_hint: Leave empty for no limit. Each person can use a code once.
+        name_hint: For your own records. People do not see it, only the amount.
+        new_promotion: New promotion
+        none: There are no promotions yet.
+        purposes_hint: Leave all unticked for anything the platform sells.
+        redeem: Redeem
+        redeemed: Code accepted. Your credit has been added.
+        status_ended: Ended
+        status_off: false
+        status_on: true
+        status_scheduled: Not open yet
+        status_used_up: Used up
+        switched: Promotion updated.
+        usage_of: "%{used} of %{max}"
       readiness:
         check_agreements: Purchase agreements are in force for %{purpose}.
         check_configured: Billing is switched on and your organisation details are

@@ -2,7 +2,7 @@
 
 Store credit is a balance a person holds with a platform. It pays **whole orders for what the platform itself sells**. It is the platform's own money, kept as a ledger in Community Engine, and sits beside Pay rather than inside a processor: a spend writes a `Pay::Local::Charge` like any other settled payment (see [local_pay_processor.md](local_pay_processor.md)).
 
-This page covers the ledger, how credit is spent and given back, the screens and the notice, and the rules. How credit is created by a promotion arrives in a later change.
+This page covers the ledger, how credit is spent and given back, the screens and the notice, and the rules. Credit made by a promotion code is in [promotions.md](promotions.md).
 
 ## The model
 

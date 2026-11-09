@@ -34,6 +34,12 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_PROCESSOR_SETTINGS : "acknowledged_by / acknowledged_by_id"
+  EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_PROMOTIONS : "created_by / created_by_id"
+  EXT_PLATFORM ||--o{ BILLING_PROMOTION_REDEMPTIONS : "platform / platform_id"
+  BILLING_PROMOTIONS ||--o{ BILLING_PROMOTION_REDEMPTIONS : "promotion / promotion_id"
+  EXT_PERSON o|--o{ BILLING_PROMOTION_REDEMPTIONS : "person / person_id"
+  BILLING_CREDIT_LOTS ||--o{ BILLING_PROMOTION_REDEMPTIONS : "credit_lot / credit_lot_id"
   EXT_PLATFORM ||--o{ BILLING_REFUNDS : "platform / platform_id"
   BILLING_PAYMENTS ||--o{ BILLING_REFUNDS : "payment / payment_id"
   EXT_PERSON o|--o{ BILLING_REFUNDS : "recorded_by / recorded_by_id"
@@ -191,6 +197,26 @@ erDiagram
     settings text
     enabled boolean
     hold_hours integer
+  }
+
+  BILLING_PROMOTIONS {
+    created_by_id uuid
+    platform_id uuid
+    code_digest string
+    currency string
+    name string
+    purposes string
+    active boolean
+    new_members_only boolean
+    amount_cents integer
+    credit_expires_after_days integer
+  }
+
+  BILLING_PROMOTION_REDEMPTIONS {
+    credit_lot_id uuid
+    person_id uuid
+    platform_id uuid
+    promotion_id uuid
   }
 
   BILLING_REFUNDS {

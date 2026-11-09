@@ -21,31 +21,16 @@ if (!pngPath) {
 const toolsRequire = createRequire(path.join(path.resolve(toolsDir), 'package.json'));
 const MAX_PNG_SIDE = 10000; // Chrome drops most of the drawing on larger canvases
 
-// neato can fail with "area too large for rtree" for some seeds once tables are added or renamed; the first
-// seed in this fixed list that lays the graph out is used, so the result is still the same on every run.
-const SEEDS = [2, 3, 4, 5, 6, 8, 9, 10];
-
 function dotFor(dbml) {
   const cli = path.join(path.resolve(toolsDir), 'node_modules', '.bin', 'dbml-renderer');
-  return execFileSync(cli, ['-i', dbml, '-f', 'dot'], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
-}
-
-function layoutFor(dot, seed) {
-  // `start` fixes neato's random seed so the layout is identical on every run.
-  return dot.replace('rankdir=LR;', `overlap=prism; overlap_scaling=3; splines=true; sep="+30"; K=3; start=${seed};`);
+  const dot = execFileSync(cli, ['-i', dbml, '-f', 'dot'], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+  // `start` fixes neato's random seed (2: seed 1 overflows its rtree on the billing tables) so the layout is identical on every run.
+  return dot.replace('rankdir=LR;', 'overlap=prism; overlap_scaling=3; splines=true; sep="+30"; K=3; start=2;');
 }
 
 function svgFor(dot) {
   const render = toolsRequire('@aduh95/viz.js/sync');
-  let lastError;
-  for (const seed of SEEDS) {
-    try {
-      return render(layoutFor(dot, seed), { format: 'svg', engine: 'neato' });
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  throw lastError;
+  return render(dot, { format: 'svg', engine: 'neato' });
 }
 
 function chromePath() {
