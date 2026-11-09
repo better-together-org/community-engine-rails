@@ -7,6 +7,7 @@ module BetterTogether
     # that it has. The buyer does nothing and is told afterwards.
     class WalkUpSalesController < ApplicationController
       include OwnerScoped
+      include PersonLookup
 
       before_action :set_choices
       after_action :verify_authorized
@@ -22,6 +23,7 @@ module BetterTogether
       rescue OfflinePayments::WalkUp::Refused, OfflinePayments::Transition::Refused => e
         Rails.logger.warn("[billing] walk-up sale refused: #{e.class}")
         @error = :refused
+        @buyer = find_platform_person(params[:buyer_id].to_s.strip)
         render :new, status: :unprocessable_content
       end
 
@@ -42,11 +44,9 @@ module BetterTogether
           payment_received: params[:payment_received] == '1' }
       end
 
-      # Someone who belongs to this platform, found by their exact handle: no searching through members.
+      # Someone who belongs to this platform, picked from the person select (see CreditAccountsController#people).
       def buyer
-        person = BetterTogether::Person.find_by(identifier: params[:buyer_identifier].to_s.strip)
-        member = person && BetterTogether::PersonPlatformMembership.active.exists?(member: person, joinable: billing_owner)
-        member ? person : raise(OfflinePayments::WalkUp::Refused, 'unknown buyer')
+        find_platform_person(params[:buyer_id].to_s.strip) || raise(OfflinePayments::WalkUp::Refused, 'unknown buyer')
       end
     end
   end

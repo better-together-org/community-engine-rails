@@ -21,19 +21,34 @@
   <% else %>
     <%= form_with url: billing_walk_up_sale_path(locale: I18n.locale), method: :post, id: 'billing-walk-up-form' do %>
       <div class="mb-3">
-        <%= label_tag :plan_id, t('better_together.billing.walk_up.plan_label'), class: 'form-label' %>
+        <%= label_tag 'billing-walk-up-plan', t('better_together.billing.walk_up.plan_label'), class: 'form-label' %>
         <%= select_tag :plan_id, options_for_select(@plans.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }, params[:plan_id]),
                        id: 'billing-walk-up-plan', class: 'form-select' %>
       </div>
       <div class="mb-3">
-        <%= label_tag :payment_method, t('better_together.billing.walk_up.method_label'), class: 'form-label' %>
+        <%= label_tag 'billing-walk-up-method', t('better_together.billing.walk_up.method_label'), class: 'form-label' %>
         <%= select_tag :payment_method, options_for_select(@methods.map { |name| [billing_payment_method_label(name), name] }, params[:payment_method]),
                        id: 'billing-walk-up-method', class: 'form-select' %>
       </div>
       <div class="mb-3">
-        <%= label_tag :buyer_identifier, t('better_together.billing.walk_up.buyer_label'), class: 'form-label' %>
-        <%= text_field_tag :buyer_identifier, params[:buyer_identifier], id: 'billing-walk-up-buyer', class: 'form-control', autocomplete: 'off',
-                                                                          'aria-describedby': 'billing-walk-up-buyer-hint' %>
+        <%= label_tag 'billing-walk-up-buyer', t('better_together.billing.walk_up.buyer_label'), class: 'form-label' %>
+        <%= select_tag :buyer_id,
+                       options_for_select(@buyer ? [[@buyer.select_option_title, @buyer.id]] : [], @buyer&.id),
+                       id: 'billing-walk-up-buyer',
+                       class: 'form-select',
+                       include_blank: true,
+                       required: true,
+                       'aria-describedby': 'billing-walk-up-buyer-hint',
+                       data: {
+                         controller: 'better-together--slim-select',
+                         'better-together--slim-select-options-value': {
+                           ajax: { url: billing_people_credit_accounts_path(locale: I18n.locale), fetch: true, delay: 300 },
+                           searchPlaceholder: t('better_together.billing.walk_up.buyer_placeholder'),
+                           searchHighlight: true,
+                           closeOnSelect: true,
+                           allowDeselect: true
+                         }.to_json
+                       } %>
         <div id="billing-walk-up-buyer-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_hint') %></div>
       </div>
       <div class="form-check mb-2">

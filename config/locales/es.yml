@@ -1736,9 +1736,10 @@ es:
       walk_up:
         agreements_label: El comprador ha leído y aceptado los acuerdos de compra
           conmigo, en persona
-        buyer_hint: El comprador ya debe ser miembro de esta plataforma. Escriba su
-          identificador exacto.
-        buyer_label: Identificador del comprador
+        buyer_hint: El comprador ya debe ser miembro de esta plataforma. Escriba al
+          menos dos letras de un nombre o identificador.
+        buyer_label: Comprador
+        buyer_placeholder: Buscar por nombre o identificador
         error_refused: No se pudo registrar esa venta. Revise el comprador, la forma
           de pago y los acuerdos.
         intro: Registre una venta hecha en persona. El comprador no tiene que hacer
