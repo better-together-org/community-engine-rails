@@ -13,7 +13,13 @@ FactoryBot.define do
                                               aliases: %i[better_together_billing_tax_zone] do
     platform { BetterTogether::Platform.find_by(host: true) || association(:better_together_platform, :host) }
     name { 'Canada' }
-    country_iso { 'CA' }
+    # The place is a set of geography rows; these say which, by ISO code, and `settlement` makes a municipal zone.
+    transient do
+      country_iso { 'CA' }
+      region_code { nil }
+    end
+    country { tax_geography_country(country_iso) }
+    state { region_code && tax_geography_state(country_iso, region_code) }
   end
 
   factory 'better_together/billing/tax_rate', class: 'BetterTogether::Billing::TaxRate',

@@ -51,6 +51,8 @@ module BetterTogether
       has_many :tax_lines, class_name: 'BetterTogether::Billing::TaxLine', inverse_of: :order, dependent: :destroy
       # The registration whose tax this order carries, if any.
       belongs_to :tax_registration, class_name: 'BetterTogether::Billing::TaxRegistration', optional: true
+      # The settlement the tax was worked out for, when the buyer's place was a city or town.
+      belongs_to :tax_settlement, class_name: 'BetterTogether::Geography::Settlement', optional: true
       has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
                                        dependent: :restrict_with_error
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error

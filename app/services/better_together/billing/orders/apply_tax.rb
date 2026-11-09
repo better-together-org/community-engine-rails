@@ -27,6 +27,7 @@ module BetterTogether
 
         def order_attributes
           { tax_registration: tax.registration, tax_country_iso: tax.country_iso, tax_region_code: tax.region_code,
+            tax_settlement: tax.settlement,
             prices_include_tax: tax.prices_include_tax, tax_cents: tax.tax_cents, included_tax_cents: tax.included_cents }
         end
 

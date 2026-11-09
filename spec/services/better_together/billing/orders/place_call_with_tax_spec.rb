@@ -22,6 +22,18 @@ RSpec.describe BetterTogether::Billing::Orders::Place, '.call with tax' do
     expect(order.tax_lines.map { |line| [line.label, line.rate.to_f, line.amount_cents] }).to eq([['GST', 0.05, 225]])
   end
 
+  it 'finds a municipal tax from the buyer settlement and keeps the settlement on the order' do
+    state = tax_geography_state('CA', 'AB')
+    town = create(:geography_settlement, country: state.country, state:)
+    municipal = create(:better_together_billing_tax_zone, platform: host_platform, settlement: town, country: nil, state: nil, name: town.name)
+    create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: municipal, label: 'City sales tax', rate: 0.02)
+
+    order = place_order(tax_address: { settlement: town })
+
+    expect(order).to have_attributes(tax_cents: 315, total_cents: 4815, tax_settlement: town, tax_country_iso: 'CA', tax_region_code: 'AB')
+    expect(order.tax_lines.map(&:label)).to contain_exactly('GST', 'City sales tax')
+  end
+
   it 'does not add tax that is already in the price' do
     registration.update!(prices_include_tax: true)
 

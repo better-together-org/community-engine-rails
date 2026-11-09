@@ -14,8 +14,9 @@ classDiagram
     +taxable  false means never taxed
   }
   class TaxZone {
-    +country_iso
-    +region_code  empty means the whole country
+    +country  geography row
+    +state  empty means the whole country
+    +settlement  empty unless a municipal zone
   }
   class TaxRate {
     +label  GST, PST, VAT
@@ -32,6 +33,7 @@ classDiagram
     +tax_cents
     +included_tax_cents
     +tax_country_iso / tax_region_code
+    +tax_settlement  when taxed for a city or town
     +prices_include_tax
   }
   class LineItem {
@@ -41,6 +43,10 @@ classDiagram
   Platform "1" --> "*" TaxRegistration
   Platform "1" --> "*" TaxCategory
   Platform "1" --> "*" TaxZone
+  GeographyCountry "1" --> "*" TaxZone
+  GeographyState "0..1" --> "*" TaxZone
+  GeographySettlement "0..1" --> "*" TaxZone : municipal
+  GeographySettlement "0..1" --> "*" Order : taxed for
   TaxZone "1" --> "*" TaxRate
   TaxCategory "0..1" --> "*" TaxRate : only this category
   TaxCategory "0..1" --> "*" Plan

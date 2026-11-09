@@ -36,8 +36,9 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        # `tax_address` is where the buyer is (`country_iso:`, `region_code:`); without it tax is worked out for the registrant's own
-        # place. Tax is added only when the seller (or else the platform) is registered to collect it (see Tax::Calculator).
+        # `tax_address` is where the buyer is: `country_iso:` and `region_code:`, or a `settlement:`, which brings its state and
+        # country and finds municipal tax too. Without it tax is worked out for the registrant's own place.
+        # Tax is added only when the seller (or else the platform) is registered to collect it (see Tax::Calculator).
         #
         # `line_items` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
         # subscriber was sold at, when it differs from the plan's today). A renewal (`renewal: true`) may be for a
@@ -147,7 +148,8 @@ module BetterTogether
         # The tax on this purchase, worked out once from the same amounts the order is built from.
         def tax
           @tax ||= Tax::Calculator.for_lines(line_items, platform:, seller:, country_iso: @tax_address[:country_iso],
-                                                         region_code: @tax_address[:region_code])
+                                                         region_code: @tax_address[:region_code],
+                                                         settlement: @tax_address[:settlement])
         end
 
         def order_currency = purchasables.first&.purchasable_currency

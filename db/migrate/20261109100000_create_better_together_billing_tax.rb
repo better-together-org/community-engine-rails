@@ -54,15 +54,22 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
     create_bt_table :billing_tax_zones do |t|
       t.uuid :platform_id, null: false
       t.string :name, null: false
-      t.string :country_iso, null: false
-      # Empty: the whole country.
-      t.string :region_code
+      # The place is a row of the geography tables, never a string: a country, one state or province of it, or one
+      # settlement (a city or town) in it, which is how a municipal tax is held. Tax at each level adds to the
+      # levels above it.
+      t.uuid :country_id, null: false
+      t.uuid :state_id
+      t.uuid :settlement_id
     end
 
     add_index :better_together_billing_tax_zones, :platform_id, name: 'idx_bt_billing_tax_zones_platform'
     add_index :better_together_billing_tax_zones, %i[id platform_id], unique: true, name: 'idx_bt_billing_tax_zones_id_platform'
-    add_index :better_together_billing_tax_zones, %i[platform_id country_iso region_code], name: 'idx_bt_billing_tax_zones_place'
+    add_index :better_together_billing_tax_zones, %i[platform_id country_id state_id settlement_id], name: 'idx_bt_billing_tax_zones_place'
+    add_index :better_together_billing_tax_zones, :settlement_id, name: 'idx_bt_billing_tax_zones_settlement'
     add_foreign_key :better_together_billing_tax_zones, :better_together_platforms, column: :platform_id
+    add_foreign_key :better_together_billing_tax_zones, :better_together_geography_countries, column: :country_id
+    add_foreign_key :better_together_billing_tax_zones, :better_together_geography_states, column: :state_id
+    add_foreign_key :better_together_billing_tax_zones, :better_together_geography_settlements, column: :settlement_id
   end
 
   def create_tax_rates # rubocop:disable Metrics/MethodLength
@@ -162,6 +169,7 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
     add_missing_column table, :included_tax_cents, :integer, null: false, default: 0
     add_missing_column table, :tax_country_iso, :string
     add_missing_column table, :tax_region_code, :string
+    add_tax_settlement_column(table)
     add_missing_column table, :prices_include_tax, :boolean
     return if column_exists?(table, :tax_registration_id)
 
@@ -170,6 +178,14 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
     add_foreign_key table, :better_together_billing_tax_registrations, column: %i[tax_registration_id platform_id],
                                                                        primary_key: %i[id platform_id],
                                                                        name: 'fk_bt_billing_orders_tax_registration_platform'
+  end
+
+  def add_tax_settlement_column(table)
+    return if column_exists?(table, :tax_settlement_id)
+
+    add_column table, :tax_settlement_id, :uuid
+    add_index table, :tax_settlement_id, name: 'idx_bt_billing_orders_tax_settlement'
+    add_foreign_key table, :better_together_geography_settlements, column: :tax_settlement_id
   end
 
   def add_missing_column(table, column, type, **)
@@ -187,9 +203,10 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
 
   def remove_tax_columns # rubocop:disable Metrics/MethodLength
     {
-      better_together_billing_orders => %i[tax_cents included_tax_cents tax_country_iso tax_region_code prices_include_tax tax_registration_id],
-      better_together_billing_line_items => %i[tax_cents included_tax_cents tax_category_id],
-      better_together_billing_plans => %i[tax_category_id]
+      better_together_billing_orders: %i[tax_cents included_tax_cents tax_country_iso tax_region_code tax_settlement_id
+                                         prices_include_tax tax_registration_id],
+      better_together_billing_line_items: %i[tax_cents included_tax_cents tax_category_id],
+      better_together_billing_plans: %i[tax_category_id]
     }.each do |table, columns|
       columns.each { |column| remove_column table, column if column_exists?(table, column) }
     end

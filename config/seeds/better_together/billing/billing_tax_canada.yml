@@ -1,0 +1,187 @@
+# frozen packet: BetterTogether::Seed envelope, loaded with Seed.load_seed / Seed.import_or_update!
+# Canadian sales tax as data: one zone per province or territory, with the rates that apply there today.
+# Planted by Billing::Tax::Seeds::Planter, which only adds what is missing and never changes a rate that exists (a rate
+# that moves is a new row with its own dates, so orders already placed keep the rate they were charged).
+#
+# Every figure below comes from an official government page, read in November 2026. The date after each
+# link is the one the page itself shows ("Date modified", "Last updated" or "Revised"), or says so when
+# the page shows none. Check the pages again before relying on a figure after those dates.
+#
+# GST/HST rates, by province and territory (CRA, "GST/HST calculator (and rates)", table "On or after
+# April 1, 2025", which also gives the PST/QST column used below). Date modified: 2025-04-01.
+#   https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate/calculator.html
+#   GST 5% is the rate where the province does not take part in the HST; HST is 13% in Ontario, 14% in Nova
+#   Scotia (down from 15% on April 1, 2025) and 15% in New Brunswick, Newfoundland and Labrador and
+#   Prince Edward Island. The same table lists the QST at 9.975%, the British Columbia and Manitoba PST/RST
+#   at 7% and the Saskatchewan PST at 6%.
+#
+# Basic groceries are zero-rated for GST/HST in every province and territory (CRA, "Which rate to
+# charge"). Page details date: 2026-04-08 (the page shows the date without a label).
+#   https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate.html
+#
+# British Columbia PST, 7% "generally" (Province of B.C., "Provincial Sales Tax (PST)"). Last updated on
+# September 21, 2026. Food for human consumption, such as basic groceries, is exempt (same site,
+# "PST exemptions", last updated on August 20, 2025).
+#   https://www2.gov.bc.ca/gov/content/taxes/sales-taxes/pst
+#   https://www2.gov.bc.ca/gov/content/taxes/sales-taxes/pst/exemptions
+#
+# Saskatchewan PST, 6% (Government of Saskatchewan, "Provincial Sales Tax"). The page shows no date.
+#   https://www.saskatchewan.ca/business/taxes-licensing-and-reporting/provincial-taxes-policies-and-bulletins/provincial-sales-tax
+#
+# Manitoba RST, 7%, worked out on the selling price before GST (Manitoba Finance, "Retail Sales Tax").
+# The page shows no date. Basic groceries and most other food are exempt (Information Bulletin RST 030,
+# Revised: July 2026).
+#   https://www.gov.mb.ca/finance/taxation/taxes/retail.html
+#   https://www.gov.mb.ca/finance/taxation/pubs/bulletins/030.pdf
+#
+# Quebec QST, 9.975% "on the selling price excluding the GST", GST 5% on the selling price (Revenu Quebec,
+# "Basic Rules for Applying the GST/HST and QST"; page last updated 2021-04-12). The rate history table
+# shows 9.975% from January 1, 2013 to the present (same site, "Tables of GST and QST Rates", last
+# updated 2021-04-12). Sales of basic groceries are zero-rated for the QST (same site, "Zero-Rated
+# Supplies", last updated 2026-07-21). Revenu Quebec refuses plain automated reads (HTTP 403), so these
+# pages were read with the repo's Camoufox browser session at a slow, one-page-at-a-time pace.
+#   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/
+#   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/tables-of-gst-and-qst-rates/
+#   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/basic-rules-for-applying-the-gsthst-and-qst/types-of-supplies/zero-rated-supplies/
+#
+# Saskatchewan groceries: basic groceries are exempt from PST, and food and drink are taxed for PST when
+# they are taxed for GST. Even a GST small supplier of taxable food or drink must hold a PST licence
+# (Information Bulletin PST-2, "Grocery, Convenience and Drug Stores", Revised: March 2025).
+#   https://sets.saskatchewan.ca/rptp/wcm/connect/94a41317-34b9-46bf-9758-c27b18ee4b31/PST.002+Grocery+Convenience+and+Drug+Stores.pdf
+#
+# The basic groceries category is therefore untaxed everywhere: every page above says so for its tax.
+
+better_together:
+  version: "1.0"
+  seed:
+    type: "BetterTogether::Seed"
+    identifier: "billing_tax_canada"
+    created_by: "Better Together Solutions"
+    created_at: "2026-11-09T12:00:00Z"
+    description: >
+      Canadian GST/HST, PST, RST and QST rates by province and territory, with the tax categories they need.
+      Zones are tied to the seeded Geography::State rows (iso_code CA-XX), so the geography provinces come first.
+    origin:
+      platforms:
+        - name: "Community Engine"
+          version: "1.0"
+          url: "https://bebettertogether.ca"
+      contributors:
+        - name: "Better Together Solutions"
+          role: "Creator"
+      license: "LGPLv3"
+      usage_notes: >
+        Rates were read from the official government pages named in the comments, in November 2026. Check them again before relying on them.
+
+  tax:
+    country_iso_code: "CA"
+    categories:
+      - { identifier: "standard", name: "Standard", taxable: true }
+      - { identifier: "basic_groceries", name: "Basic groceries", taxable: false }
+    zones:
+      - state_iso_code: "CA-AB"
+        name: "Alberta"
+        rates:
+          - { label: "GST", rate: "0.05" }
+      - state_iso_code: "CA-BC"
+        name: "British Columbia"
+        rates:
+          - { label: "GST", rate: "0.05" }
+          - { label: "PST", rate: "0.07" }
+      - state_iso_code: "CA-MB"
+        name: "Manitoba"
+        rates:
+          - { label: "GST", rate: "0.05" }
+          - { label: "RST", rate: "0.07" }
+      - state_iso_code: "CA-NB"
+        name: "New Brunswick"
+        rates:
+          - { label: "HST", rate: "0.15" }
+      - state_iso_code: "CA-NL"
+        name: "Newfoundland and Labrador"
+        rates:
+          - { label: "HST", rate: "0.15" }
+      - state_iso_code: "CA-NS"
+        name: "Nova Scotia"
+        rates:
+          - { label: "HST", rate: "0.14" }
+      - state_iso_code: "CA-NT"
+        name: "Northwest Territories"
+        rates:
+          - { label: "GST", rate: "0.05" }
+      - state_iso_code: "CA-NU"
+        name: "Nunavut"
+        rates:
+          - { label: "GST", rate: "0.05" }
+      - state_iso_code: "CA-ON"
+        name: "Ontario"
+        rates:
+          - { label: "HST", rate: "0.13" }
+      - state_iso_code: "CA-PE"
+        name: "Prince Edward Island"
+        rates:
+          - { label: "HST", rate: "0.15" }
+      - state_iso_code: "CA-QC"
+        name: "Quebec"
+        rates:
+          - { label: "GST", rate: "0.05" }
+          - { label: "QST", rate: "0.09975" }
+      - state_iso_code: "CA-SK"
+        name: "Saskatchewan"
+        rates:
+          - { label: "GST", rate: "0.05" }
+          - { label: "PST", rate: "0.06" }
+      - state_iso_code: "CA-YT"
+        name: "Yukon"
+        rates:
+          - { label: "GST", rate: "0.05" }
+
+    # Small supplier and marketplace limits, in whole dollars (the figures the governments print), for the
+    # small supplier monitor (T5).
+    small_supplier:
+      "GST/HST": { general: 30000, public_service_body: 50000, quarters: 4 }
+      "BC PST": { general: 10000, months: 12 }
+      "SK PST": { general: 10000 }
+      "MB RST": { general: 30000, months: 12 }
+      "QC QST": { general: 30000, quarters: 4 }
+
+# Small supplier and marketplace sources (dates as the pages show them):
+# When a seller must start collecting, in whole dollars of taxable sales (dollars, not cents: these
+# are the figures the governments print). Used by the small supplier monitor (T5).
+#
+# GST/HST: $30,000 ($50,000 for a public service body) in a single calendar quarter or over the last
+# four consecutive calendar quarters, worldwide, with associates; financial services, capital property
+# and goodwill are left out. Taxis and commercial ridesharing must register at once. The sale that
+# takes a seller over the limit is taxed. CRA, "General Information for GST/HST Registrants" (RC4022(E)
+# Rev. 25; the page date was not retrieved).
+#   https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4022/general-information-gst-hst-registrants.html
+#
+# B.C. PST small seller: $10,000 or less in the last 12 months and expected in the next 12, and no
+# established business premises, and not an online marketplace facilitator. Bulletin PST 003,
+# Revised: July 2026.
+#   https://www2.gov.bc.ca/assets/gov/taxes/sales-taxes/publications/pst-003-small-sellers.pdf
+#
+# Saskatchewan small trader: under $10,000 of sales, made from home; the guideline does not reach
+# sales at a farmers' market or on an online marketplace. Information Bulletin PST-5, Revised: July 2025.
+#   https://sets.saskatchewan.ca/rptp/wcm/connect/2f7bed69-f481-4fca-8b2d-f80c2acf7d99/PST.005+Registration+and+Reporting+Requirements.pdf?MOD=AJPERES
+#
+# Manitoba: annual taxable sales under $30,000 need not register; one month to register after going
+# over. Information Notice RST 24-01, Issued: April 2024; Bulletin RST 004, Revised: June 2024.
+#   https://gov.mb.ca/finance/taxation/pubs/bulletins/noticerst2401.pdf
+#   https://gov.mb.ca/finance/taxation/pubs/bulletins/004.pdf
+#
+# Quebec QST: a small supplier's taxable supplies, zero-rated ones included, worldwide and with associates,
+# do not exceed $30,000 in a calendar quarter or the four before it; financial services and capital
+# property are left out. A small supplier need not register or collect. Taxis, and sellers of tobacco,
+# fuel, alcohol, new tires and road vehicles, must register for the QST whatever their sales. Revenu
+# Quebec, "Details Concerning Small Suppliers" (last updated 2024-11-22) and "Registering for the GST and
+# QST" (last updated 2025-10-17).
+#   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/registering-for-the-gst-and-qst/small-suppliers/
+#   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/registering-for-the-gst-and-qst/
+# Marketplaces: a seller who sells only through a marketplace whose operator collects the buyer's
+# payment and the tax need not collect it. B.C., Saskatchewan and Manitoba each say so (Bulletin
+# PST 142, Revised: March 2025; Bulletin PST-5, Revised: July 2025; The Retail Sales Tax Act,
+# C.C.S.M. c. R130, s. 21.2(2), shown as current from 1 July 2026 to 28 October 2026). It is why a seller may stop collecting
+# only when payments do not go through the platform's own payment processors.
+#   https://www2.gov.bc.ca/assets/gov/taxes/sales-taxes/publications/pst-142-marketplace-facilitators.pdf
+#   https://web2.gov.mb.ca/laws/statutes/ccsm/_pdf.php?cap=r130

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T19:09:54Z",
+  "generated_at": "2026-11-09T19:36:17Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -16791,6 +16791,12 @@
           "source_subsystem": "exchange_governance"
         },
         {
+          "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "tax_settlement (tax_settlement_id)",
+          "source_subsystem": "billing"
+        },
+        {
           "from": "BetterTogether::Weather::Location",
           "to": "BetterTogether::Geography::Settlement",
           "label": "settlement (settlement_id)",
@@ -16800,6 +16806,24 @@
           "from": "BetterTogether::Infrastructure::Building",
           "to": "BetterTogether::Address",
           "label": "address (address_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxZone",
+          "to": "BetterTogether::Geography::Country",
+          "label": "country (country_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxZone",
+          "to": "BetterTogether::Geography::State",
+          "label": "state (state_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxZone",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "settlement (settlement_id)",
           "source_subsystem": "shared_supporting"
         }
       ]
@@ -26625,15 +26649,15 @@
               "uuid FK"
             ],
             [
+              "tax_settlement_id",
+              "uuid FK"
+            ],
+            [
               "currency",
               "string"
             ],
             [
               "number",
-              "string"
-            ],
-            [
-              "on_behalf_of_type",
               "string"
             ]
           ],
@@ -26670,6 +26694,12 @@
               "name": "tax_registration",
               "foreign_key": "tax_registration_id",
               "target": "BetterTogether::Billing::TaxRegistration",
+              "optional": true
+            },
+            {
+              "name": "tax_settlement",
+              "foreign_key": "tax_settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
               "optional": true
             }
           ],
@@ -26721,6 +26751,13 @@
               "target": "BetterTogether::Billing::TaxRegistration",
               "optional": true,
               "target_subsystem": "shared_supporting"
+            },
+            {
+              "name": "tax_settlement",
+              "foreign_key": "tax_settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
+              "optional": true,
+              "target_subsystem": "geography_and_places"
             }
           ]
         },
@@ -28357,6 +28394,12 @@
         },
         {
           "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "tax_settlement (tax_settlement_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Billing::Order",
           "to": "BetterTogether::Person",
           "label": "buyer (buyer_id)",
           "target_subsystem": "identity_access"
@@ -29158,26 +29201,29 @@
           "table_name": "better_together_billing_tax_zones",
           "columns": [
             [
+              "country_id",
+              "uuid FK"
+            ],
+            [
               "platform_id",
               "uuid FK"
             ],
             [
-              "country_iso",
-              "string"
+              "settlement_id",
+              "uuid FK"
+            ],
+            [
+              "state_id",
+              "uuid FK"
             ],
             [
               "name",
-              "string"
-            ],
-            [
-              "region_code",
               "string"
             ]
           ],
           "validations": [
             "PresenceValidator: platform (message=:required)",
-            "PresenceValidator: name",
-            "FormatValidator: country_iso (with=/\\A[A-Z]{2}\\z/)"
+            "PresenceValidator: name"
           ],
           "belongs_to": [
             {
@@ -29185,6 +29231,24 @@
               "foreign_key": "platform_id",
               "target": "BetterTogether::Platform",
               "optional": false
+            },
+            {
+              "name": "country",
+              "foreign_key": "country_id",
+              "target": "BetterTogether::Geography::Country",
+              "optional": false
+            },
+            {
+              "name": "state",
+              "foreign_key": "state_id",
+              "target": "BetterTogether::Geography::State",
+              "optional": true
+            },
+            {
+              "name": "settlement",
+              "foreign_key": "settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
+              "optional": true
             }
           ],
           "polymorphic": [],
@@ -29200,6 +29264,27 @@
               "target": "BetterTogether::Platform",
               "optional": false,
               "target_subsystem": "platform_network"
+            },
+            {
+              "name": "country",
+              "foreign_key": "country_id",
+              "target": "BetterTogether::Geography::Country",
+              "optional": false,
+              "target_subsystem": "geography_and_places"
+            },
+            {
+              "name": "state",
+              "foreign_key": "state_id",
+              "target": "BetterTogether::Geography::State",
+              "optional": true,
+              "target_subsystem": "geography_and_places"
+            },
+            {
+              "name": "settlement",
+              "foreign_key": "settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
+              "optional": true,
+              "target_subsystem": "geography_and_places"
             }
           ]
         },
@@ -37275,6 +37360,24 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxZone",
+          "to": "BetterTogether::Geography::Country",
+          "label": "country (country_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxZone",
+          "to": "BetterTogether::Geography::Settlement",
+          "label": "settlement (settlement_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxZone",
+          "to": "BetterTogether::Geography::State",
+          "label": "state (state_id)",
+          "target_subsystem": "geography_and_places"
         },
         {
           "from": "BetterTogether::Billing::TaxZone",

@@ -9,6 +9,9 @@ module BetterTogether
       #   Tax::Calculator.call(platform:, seller:, items: [Tax::Calculator::Item.new(amount_cents: 4500, tax_category: nil)],
       #                        country_iso: 'CA', region_code: 'NL')
       #
+      # The buyer's place can instead be a `settlement:` (a Geography::Settlement), which brings its state and country,
+      # so a municipal tax is found as well as the state's and the country's.
+      #
       # Whose tax: the seller's own registration if the seller has one, otherwise the platform's. If that
       # registration does not collect (small supplier, exempt, switched off), or there is none, there is no tax.
       # Where: the buyer's place if given, else the registrant's own place.
@@ -21,7 +24,7 @@ module BetterTogether
       class Calculator
         Item = Data.define(:amount_cents, :tax_category)
         Line = Data.define(:item_index, :tax_rate, :label, :rate, :amount_cents, :included)
-        Result = Data.define(:registration, :country_iso, :region_code, :prices_include_tax, :lines) do
+        Result = Data.define(:registration, :country_iso, :region_code, :settlement, :prices_include_tax, :lines) do
           def taxed? = lines.any?
           def tax_cents = lines.sum(&:amount_cents)
           def included_cents = lines.select(&:included).sum(&:amount_cents)
@@ -43,19 +46,20 @@ module BetterTogether
           call(items:, **)
         end
 
-        def initialize(platform:, items:, seller: nil, country_iso: nil, region_code: nil)
+        def initialize(platform:, items:, seller: nil, country_iso: nil, region_code: nil, settlement: nil) # rubocop:disable Metrics/ParameterLists
           @platform = platform
           @seller = seller
           @items = items
           @country_iso = country_iso.to_s.upcase.presence
           @region_code = region_code.to_s.upcase.presence
+          @settlement = settlement
           @at = Time.current
         end
 
         def call
           return none unless registration&.collects?
 
-          Result.new(registration:, country_iso: place_country, region_code: place_region,
+          Result.new(registration:, country_iso: place.country_iso, region_code: place.region_code, settlement: place.settlement,
                      prices_include_tax: registration.prices_include_tax?, lines: tax_lines)
         end
 
@@ -63,7 +67,10 @@ module BetterTogether
 
         attr_reader :platform, :seller, :items, :at
 
-        def none = Result.new(registration:, country_iso: place_country, region_code: place_region, prices_include_tax: nil, lines: [])
+        def none
+          Result.new(registration:, country_iso: place.country_iso, region_code: place.region_code, settlement: place.settlement,
+                     prices_include_tax: nil, lines: [])
+        end
 
         def registration
           return @registration if defined?(@registration)
@@ -72,12 +79,18 @@ module BetterTogether
           @registration = (seller && scope.sold_by(seller).order(:created_at).last) || scope.sold_by_platform.order(:created_at).last
         end
 
-        def place_country = @country_iso || registration&.country_iso
-        def place_region = @country_iso ? @region_code : registration&.region_code
+        # The buyer's place if one was given, else the registrant's own.
+        def place
+          @place ||= if @settlement || @country_iso
+                       Place.resolve(country_iso: @country_iso, region_code: @region_code, settlement: @settlement)
+                     else
+                       Place.resolve(country_iso: registration&.country_iso, region_code: registration&.region_code)
+                     end
+        end
 
         def rates = @rates ||= TaxRate.active_at(at).where(platform_id: platform.id, tax_zone_id: zones.select(:id)).order(:created_at).to_a
 
-        def zones = TaxZone.where(platform_id: platform.id).covering(place_country, place_region)
+        def zones = TaxZone.where(platform_id: platform.id).covering(place)
 
         def tax_lines
           items.each_with_index.flat_map { |item, index| item_lines(item, index) }

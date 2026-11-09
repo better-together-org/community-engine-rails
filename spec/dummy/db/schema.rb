@@ -538,6 +538,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.integer "included_tax_cents", default: 0, null: false
     t.string "tax_country_iso"
     t.string "tax_region_code"
+    t.uuid "tax_settlement_id"
     t.boolean "prices_include_tax"
     t.uuid "tax_registration_id"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
@@ -550,6 +551,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.index ["status", "expires_at"], name: "idx_bt_billing_orders_status_expires"
     t.index ["subject_type", "subject_id"], name: "idx_bt_billing_orders_subject"
     t.index ["tax_registration_id"], name: "idx_bt_billing_orders_tax_registration"
+    t.index ["tax_settlement_id"], name: "idx_bt_billing_orders_tax_settlement"
   end
 
   create_table "better_together_billing_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -836,11 +838,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
     t.string "name", null: false
-    t.string "country_iso", null: false
-    t.string "region_code"
+    t.uuid "country_id", null: false
+    t.uuid "state_id"
+    t.uuid "settlement_id"
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_zones_id_platform", unique: true
-    t.index ["platform_id", "country_iso", "region_code"], name: "idx_bt_billing_tax_zones_place"
+    t.index ["platform_id", "country_id", "state_id", "settlement_id"], name: "idx_bt_billing_tax_zones_place"
     t.index ["platform_id"], name: "idx_bt_billing_tax_zones_platform"
+    t.index ["settlement_id"], name: "idx_bt_billing_tax_zones_settlement"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3486,6 +3490,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_orders", "better_together_billing_tax_registrations", column: ["tax_registration_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_tax_registration_platform"
+  add_foreign_key "better_together_billing_orders", "better_together_geography_settlements", column: "tax_settlement_id"
   add_foreign_key "better_together_billing_orders", "better_together_people", column: "buyer_id"
   add_foreign_key "better_together_billing_orders", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_orders", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_pay_subscription_platform"
@@ -3522,6 +3527,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_zones", column: ["tax_zone_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_zone_platform"
   add_foreign_key "better_together_billing_tax_rates", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_tax_registrations", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_geography_settlements", column: "settlement_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_geography_states", column: "state_id"
   add_foreign_key "better_together_billing_tax_zones", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"

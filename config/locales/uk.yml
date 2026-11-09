@@ -6657,6 +6657,12 @@ uk:
     button: Пошук
     placeholder: Пошук...
   seed_catalog:
+    billing_tax:
+      categories:
+        billing_tax_canada: Канадські податки з продажів
+      description: Категорії, зони та ставки податків для місць, де продає платформа.
+        Зони пов'язані з провінціями географії, тому спочатку посадіть їх.
+      label: Довідкові дані про податки з продажів
     geography:
       categories:
         continents: Континенти

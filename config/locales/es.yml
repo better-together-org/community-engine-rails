@@ -6642,6 +6642,13 @@ es:
     button: Buscar
     placeholder: Buscar...
   seed_catalog:
+    billing_tax:
+      categories:
+        billing_tax_canada: Impuestos canadienses sobre las ventas
+      description: Categorías, zonas y tasas de impuestos para los lugares donde vende
+        una plataforma. Las zonas están ligadas a las provincias de la geografía,
+        así que plántelas primero.
+      label: Datos de referencia de impuestos sobre las ventas
     geography:
       categories:
         continents: Continentes

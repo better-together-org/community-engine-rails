@@ -17,13 +17,41 @@ RSpec.describe 'Billing tax models' do # rubocop:disable RSpec/DescribeClass
   end
 
   describe BetterTogether::Billing::TaxZone do
-    it 'upcases its place and covers the country and, when given, the region' do
-      create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'ca', region_code: 'bc')
-      country = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA')
+    let(:alberta) { tax_geography_state('CA', 'AB') }
+    let(:town) { create(:geography_settlement, country: alberta.country, state: alberta) }
 
-      expect(described_class.covering('CA', 'BC').count).to eq(2)
-      expect(described_class.covering('CA', nil)).to contain_exactly(country)
-      expect(build(:better_together_billing_tax_zone, country_iso: 'Canada')).not_to be_valid
+    let(:at_place) { ->(**args) { BetterTogether::Billing::Tax::Place.resolve(**args) } }
+
+    it 'is tied to geography rows and says whether it is a country, state or municipal zone' do
+      country = create(:better_together_billing_tax_zone, platform: host_platform)
+      state = create(:better_together_billing_tax_zone, platform: host_platform, region_code: 'AB')
+      municipal = create(:better_together_billing_tax_zone, platform: host_platform, settlement: town, state: nil, country: nil,
+                                                            region_code: nil)
+
+      expect([country.level, state.level, municipal.level]).to eq(%i[country state municipal])
+      expect(municipal).to have_attributes(state: alberta, country: alberta.country)
+    end
+
+    it 'covers the country, the state and the settlement a place is in, and no others' do
+      country = create(:better_together_billing_tax_zone, platform: host_platform)
+      state = create(:better_together_billing_tax_zone, platform: host_platform, region_code: 'AB')
+      municipal = create(:better_together_billing_tax_zone, platform: host_platform, settlement: town, state: nil, country: nil,
+                                                            region_code: nil)
+      other_state = create(:better_together_billing_tax_zone, platform: host_platform, region_code: 'BC')
+
+      expect(described_class.covering(at_place.call(country_iso: 'CA'))).to contain_exactly(country)
+      expect(described_class.covering(at_place.call(country_iso: 'CA', region_code: 'AB'))).to contain_exactly(country, state)
+      expect(described_class.covering(at_place.call(settlement: town))).to contain_exactly(country, state, municipal)
+      expect(described_class.covering(at_place.call(country_iso: 'CA', region_code: 'BC'))).to contain_exactly(country, other_state)
+    end
+
+    it 'refuses a state of another country, and a settlement outside its state' do
+      other_country = tax_geography_country('US')
+      elsewhere = create(:geography_settlement, country: other_country, state: create(:geography_state, country: other_country))
+
+      expect(build(:better_together_billing_tax_zone, platform: host_platform, state: alberta, country: other_country)).not_to be_valid
+      expect(build(:better_together_billing_tax_zone, platform: host_platform, state: alberta, country: alberta.country, settlement: elsewhere))
+        .not_to be_valid
     end
   end
 

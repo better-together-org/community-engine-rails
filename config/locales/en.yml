@@ -6540,6 +6540,12 @@ en:
     button: Search
     placeholder: Search...
   seed_catalog:
+    billing_tax:
+      categories:
+        billing_tax_canada: Canadian sales tax
+      description: Tax categories, zones and rates for the places a platform sells
+        in. Zones are tied to the geography provinces, so plant those first.
+      label: Sales Tax Reference Data
     geography:
       categories:
         continents: Continents

@@ -18,6 +18,9 @@ erDiagram
   BILLING_TAX_CATEGORIES o|--o{ BILLING_TAX_RATES : "tax_category / tax_category_id"
   EXT_PLATFORM ||--o{ BILLING_TAX_REGISTRATIONS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_TAX_ZONES : "platform / platform_id"
+  EXT_GEOGRAPHY_COUNTRY ||--o{ BILLING_TAX_ZONES : "country / country_id"
+  EXT_GEOGRAPHY_STATE o|--o{ BILLING_TAX_ZONES : "state / state_id"
+  EXT_GEOGRAPHY_SETTLEMENT o|--o{ BILLING_TAX_ZONES : "settlement / settlement_id"
   EXT_PLATFORM o|--o{ CONTACT_DETAILS : "platform / platform_id"
   EXT_PLATFORM o|--o{ CONTENT_SECURITY_FINDINGS : "platform / platform_id"
   CONTENT_SECURITY_ITEMS ||--o{ CONTENT_SECURITY_FINDINGS : "item / item_id"
@@ -169,10 +172,11 @@ erDiagram
   }
 
   BILLING_TAX_ZONES {
+    country_id uuid
     platform_id uuid
-    country_iso string
+    settlement_id uuid
+    state_id uuid
     name string
-    region_code string
   }
 
   COMMENT_CONFIGS {
@@ -540,6 +544,18 @@ erDiagram
     string export_ref
   }
 
+  EXT_GEOGRAPHY_COUNTRY {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_SETTLEMENT {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_STATE {
+    string export_ref
+  }
+
   EXT_SAFETY_CASE {
     string export_ref
   }
@@ -553,10 +569,6 @@ erDiagram
   }
 
   EXT_ADDRESS {
-    string export_ref
-  }
-
-  EXT_GEOGRAPHY_SETTLEMENT {
     string export_ref
   }
 

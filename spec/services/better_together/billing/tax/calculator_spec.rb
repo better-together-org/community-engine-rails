@@ -109,4 +109,35 @@ RSpec.describe BetterTogether::Billing::Tax::Calculator do
 
     expect(calculate(items: [item(1000)]).taxed?).to be(false)
   end
+
+  describe 'a municipal tax' do
+    let(:state) { tax_geography_state('CA', 'AB') }
+    let(:town) { create(:geography_settlement, country: state.country, state:) }
+    let(:other_town) { create(:geography_settlement, country: state.country, state:) }
+
+    before do
+      municipal = create(:better_together_billing_tax_zone, platform: host_platform, settlement: town, country: nil, state: nil, name: town.name)
+      create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: municipal, label: 'City sales tax', rate: 0.02)
+    end
+
+    it 'adds to the state and country tax for a buyer in that settlement' do
+      result = calculate(items: [item(10_000)], settlement: town)
+
+      expect(result.lines.map { |line| [line.label, line.amount_cents] }).to contain_exactly(['GST', 500], ['City sales tax', 200])
+      expect(result).to have_attributes(settlement: town, country_iso: 'CA', region_code: 'AB')
+    end
+
+    it 'does not apply to a buyer in another settlement, or in none' do
+      expect(calculate(items: [item(10_000)], settlement: other_town).tax_cents).to eq(500)
+      expect(calculate(items: [item(10_000)], country_iso: 'CA', region_code: 'AB').tax_cents).to eq(500)
+    end
+
+    it 'takes the tax out of the price with the others when prices include tax' do
+      registration.update!(prices_include_tax: true)
+
+      result = calculate(items: [item(10_700)], settlement: town)
+
+      expect(result).to have_attributes(tax_cents: 700, additional_cents: 0)
+    end
+  end
 end
