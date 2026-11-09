@@ -1,0 +1,107 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  module Billing
+    module Tax
+      # Works out the tax on what is being sold. It reads plain values and returns plain values, writes nothing,
+      # and can be run again with the same answer.
+      #
+      #   Tax::Calculator.call(platform:, seller:, items: [Tax::Calculator::Item.new(amount_cents: 4500, tax_category: nil)],
+      #                        country_iso: 'CA', region_code: 'NL')
+      #
+      # Whose tax: the seller's own registration if the seller has one, otherwise the platform's. If that
+      # registration does not collect (small supplier, exempt, switched off), or there is none, there is no tax.
+      # Where: the buyer's place if given, else the registrant's own place.
+      # How much: each rate that is in force for the place and fits the item's category, on the item's amount.
+      # An item in a category that is not taxable is not taxed. Store credit and other payments never change the
+      # amount tax is worked out on.
+      #
+      # Prices that include tax have it taken out of the price (the total does not change); otherwise it is
+      # added. Each amount is rounded half up to the minor unit.
+      class Calculator
+        Item = Data.define(:amount_cents, :tax_category)
+        Line = Data.define(:item_index, :tax_rate, :label, :rate, :amount_cents, :included)
+        Result = Data.define(:registration, :country_iso, :region_code, :prices_include_tax, :lines) do
+          def taxed? = lines.any?
+          def tax_cents = lines.sum(&:amount_cents)
+          def included_cents = lines.select(&:included).sum(&:amount_cents)
+          # What is added to the price.
+          def additional_cents = tax_cents - included_cents
+          def lines_for(index) = lines.select { |line| line.item_index == index }
+        end
+
+        def self.call(...) = new(...).call
+
+        # The tax on a purchase described the way Orders::Place is given it: hashes with a `purchasable:`, an optional
+        # `quantity:` and an optional `unit_amount_cents:` (the price it was sold at, when it differs from the purchasable's own).
+        def self.for_lines(line_items, **)
+          items = line_items.map do |line|
+            purchasable = line.fetch(:purchasable)
+            unit = line.fetch(:unit_amount_cents) { purchasable.purchasable_amount_cents }
+            Item.new(amount_cents: unit * line.fetch(:quantity, 1), tax_category: purchasable.purchasable_tax_category)
+          end
+          call(items:, **)
+        end
+
+        def initialize(platform:, items:, seller: nil, country_iso: nil, region_code: nil)
+          @platform = platform
+          @seller = seller
+          @items = items
+          @country_iso = country_iso.to_s.upcase.presence
+          @region_code = region_code.to_s.upcase.presence
+          @at = Time.current
+        end
+
+        def call
+          return none unless registration&.collects?
+
+          Result.new(registration:, country_iso: place_country, region_code: place_region,
+                     prices_include_tax: registration.prices_include_tax?, lines: tax_lines)
+        end
+
+        private
+
+        attr_reader :platform, :seller, :items, :at
+
+        def none = Result.new(registration:, country_iso: place_country, region_code: place_region, prices_include_tax: nil, lines: [])
+
+        def registration
+          return @registration if defined?(@registration)
+
+          scope = platform.billing_tax_registrations.in_force_at(at)
+          @registration = (seller && scope.sold_by(seller).order(:created_at).last) || scope.sold_by_platform.order(:created_at).last
+        end
+
+        def place_country = @country_iso || registration&.country_iso
+        def place_region = @country_iso ? @region_code : registration&.region_code
+
+        def rates = @rates ||= TaxRate.active_at(at).where(platform_id: platform.id, tax_zone_id: zones.select(:id)).order(:created_at).to_a
+
+        def zones = TaxZone.where(platform_id: platform.id).covering(place_country, place_region)
+
+        def tax_lines
+          items.each_with_index.flat_map { |item, index| item_lines(item, index) }
+        end
+
+        def item_lines(item, index)
+          return [] unless taxable?(item)
+
+          fitting = rates.select { |rate| rate.applies_to?(item.tax_category) }
+          divisor = included? ? 1 + fitting.sum(&:rate) : 1
+          fitting.map { |rate| line_for(item, index, rate, divisor) }
+        end
+
+        def line_for(item, index, rate, divisor)
+          Line.new(item_index: index, tax_rate: rate, label: rate.label, rate: rate.rate, included: included?,
+                   amount_cents: tax_amount(item.amount_cents, rate.rate, divisor))
+        end
+
+        def included? = registration.prices_include_tax?
+
+        def tax_amount(amount_cents, rate, divisor) = (BigDecimal(amount_cents) * rate / divisor).round(0, BigDecimal::ROUND_HALF_UP).to_i
+
+        def taxable?(item) = item.amount_cents.positive? && item.tax_category&.taxable != false
+      end
+    end
+  end
+end

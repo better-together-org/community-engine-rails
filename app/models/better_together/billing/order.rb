@@ -48,6 +48,9 @@ module BetterTogether
 
       has_many :line_items, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::LineItem',
                                                                   inverse_of: :order, dependent: :destroy
+      has_many :tax_lines, class_name: 'BetterTogether::Billing::TaxLine', inverse_of: :order, dependent: :destroy
+      # The registration whose tax this order carries, if any.
+      belongs_to :tax_registration, class_name: 'BetterTogether::Billing::TaxRegistration', optional: true
       has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
                                        dependent: :restrict_with_error
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
@@ -61,7 +64,8 @@ module BetterTogether
       validates :status, inclusion: { in: STATUSES }
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :number, presence: true, uniqueness: { scope: :platform_id }
-      validates :subtotal_cents, :total_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+      validates :subtotal_cents, :total_cents, :tax_cents, :included_tax_cents,
+                numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validate :status_transition_allowed, on: :update
       validate :on_behalf_of_allowed
       validate :pay_subscription_on_this_platform
@@ -97,6 +101,9 @@ module BetterTogether
       # Some of it is paid and some is not: a normal state, not a problem.
       def partly_paid? = open? && net_paid_cents.positive?
 
+      # The tax that comes on top of the line items.
+      def added_tax_cents = tax_cents.to_i - included_tax_cents.to_i
+
       def hold_expired? = open? && expires_at.present? && expires_at < Time.current
 
       private
@@ -114,12 +121,13 @@ module BetterTogether
         end
       end
 
-      # Line items decide the totals while there are line items; an order with none keeps what it has.
+      # Line items decide the totals while there are line items; an order with none keeps what it has. Tax that is
+      # added to the prices is part of the total; tax that is already inside the prices is not added again.
       def total_up
         return if line_items.empty?
 
         self.subtotal_cents = line_items.reject(&:marked_for_destruction?).sum(&:total_cents)
-        self.total_cents = subtotal_cents
+        self.total_cents = subtotal_cents + added_tax_cents
       end
 
       def status_transition_allowed
