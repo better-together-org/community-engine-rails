@@ -49,6 +49,34 @@
 # (Information Bulletin PST-2, "Grocery, Convenience and Drug Stores", Revised: March 2025).
 #   https://sets.saskatchewan.ca/rptp/wcm/connect/94a41317-34b9-46bf-9758-c27b18ee4b31/PST.002+Grocery+Convenience+and+Drug+Stores.pdf
 #
+# Platform operators, GST/HST (CRA, "GST/HST for digital-economy businesses", measures in effect July 1, 2021,
+# Excise Tax Act sections 211.21 and 211.25). A distribution platform operator is a person, other than the
+# supplier, who controls or sets the essential elements of the transaction or, failing that, is involved in
+# collecting the consideration and passing it to the supplier; a person who solely lists or advertises, or is
+# solely a payment processor, is excluded. A registered operator, resident or not, must charge and collect
+# GST/HST on the final sale price of "qualifying goods" (goods to be delivered in Canada, other than exempt or
+# zero-rated supplies and goods couriered from outside Canada) sold through its platform by vendors NOT
+# registered for the GST/HST, a Canadian small supplier included, and not on its own platform fees. A vendor
+# who is registered stays responsible for its own sales. For digital products and services the rule reaches
+# only non-resident suppliers. The CRA does not currently require the information returns from Budget 2021.
+# Page dates: "How to charge and collect the tax" 2025-10-16; "Supply of qualifying goods in Canada" 2024-10-16;
+# "Notification and information reporting" 2025-10-16; "Definitions" 2026-06-18.
+#   https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/digital-economy-gsthst/charge-collect/sales-good.html
+#   https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/digital-economy-gsthst/charge-collect/cross-border.html
+#   https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/digital-economy-gsthst/notification-information-reporting.html
+#   https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/digital-economy-gsthst/digital-economy-definitions.html
+#
+# Platform operators, QST (Revenu Quebec, "Collecting the QST", suppliers outside Quebec; the page shows no
+# date; read November 2026 with the Camoufox session). An operator of a distribution platform registered under
+# the general QST system must collect the QST on corporeal movable property delivered in Quebec that is
+# supplied through its platform by anyone not registered under the general QST system, and on incorporeal
+# movable property or services supplied in Quebec through its platform by suppliers outside Quebec who are not
+# registered under the general system. A buyer is a specified Quebec consumer when its usual place of residence
+# is in Quebec, shown by any two of: billing address, home address, business address, IP address or other
+# geolocation, payment information, SIM information, landline location, or other relevant information.
+# The Revenu Quebec screening questionnaires for platform operators were not completed.
+#   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/special-cases-gsthst-and-qst/suppliers-outside-quebec/collecting-the-qst/
+#
 # The basic groceries category is therefore untaxed everywhere: every page above says so for its tax.
 
 better_together:

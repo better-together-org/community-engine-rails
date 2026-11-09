@@ -82,6 +82,10 @@ Revenu Quebec refuses plain automated reads (HTTP 403). Its pages, and the Saska
 
 British Columbia (Bulletin PST 142), Saskatchewan (Bulletin PST-5) and Manitoba (The Retail Sales Tax Act, s. 21.2(2)) each say a seller who sells only through a marketplace need not collect the provincial tax when the marketplace operator collects the buyer's payment and the tax. Community Engine follows that: a seller may be `not_collecting` while the platform is the registrant only when the seller's payments do not go through the platform's own payment processors. That check is built with the seller settings in T2.
 
+### Platform operators and sellers who are not registered
+
+The CRA (Excise Tax Act, sections 211.21 and 211.25, in effect July 1, 2021) makes a registered distribution platform operator collect GST/HST on goods delivered in Canada that are sold through its platform by vendors who are not registered for the GST/HST, a Canadian small supplier included. An operator is a platform that controls the essential elements of the sale or collects and passes on the payment; a payment processor alone, or a listing alone, is not an operator. For digital products and services the rule reaches only non-resident suppliers. Revenu Quebec has a matching QST rule for goods delivered in Quebec, and for services and digital property supplied by sellers outside Quebec. Today's plans and line items are services and digital items by sellers on the platform, so these goods rules are not triggered. They will matter when shippable goods are added: a seller with `small_supplier_exempt` status selling goods through the platform will need the platform's registration applied instead of no tax. Sources and page dates are in the packet comments.
+
 ## Not built yet
 
 Registration and settings screens, the seller's agreement to collect tax, the buyer's address at checkout, processor adapter input and output, subscription renewal tax, refunds that split net and tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
