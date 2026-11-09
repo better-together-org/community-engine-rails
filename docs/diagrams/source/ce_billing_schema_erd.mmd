@@ -43,6 +43,12 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_REFUNDS : "platform / platform_id"
   BILLING_PAYMENTS ||--o{ BILLING_REFUNDS : "payment / payment_id"
   EXT_PERSON o|--o{ BILLING_REFUNDS : "recorded_by / recorded_by_id"
+  EXT_PLATFORM ||--o{ BILLING_SUBSCRIPTION_PERIODS : "platform / platform_id"
+  BILLING_SUBSCRIPTION_TERMS ||--o{ BILLING_SUBSCRIPTION_PERIODS : "term / subscription_term_id"
+  BILLING_ORDERS o|--o{ BILLING_SUBSCRIPTION_PERIODS : "order / order_id"
+  EXT_PLATFORM ||--o{ BILLING_SUBSCRIPTION_TERMS : "platform / platform_id"
+  EXT_PAY_SUBSCRIPTION ||--o{ BILLING_SUBSCRIPTION_TERMS : "pay_subscription / pay_subscription_id"
+  BILLING_PLANS ||--o{ BILLING_SUBSCRIPTION_TERMS : "plan / plan_id"
 
   BILLING_AGREEMENT_REQUIREMENTS {
     agreement_id uuid
@@ -229,6 +235,31 @@ erDiagram
     reason string
     status string
     amount_cents integer
+  }
+
+  BILLING_SUBSCRIPTION_PERIODS {
+    order_id uuid
+    platform_id uuid
+    subscription_term_id uuid
+    blocked_reason string
+    status string
+    sequence integer
+    ends_at datetime
+    paid_at datetime
+    starts_at datetime
+  }
+
+  BILLING_SUBSCRIPTION_TERMS {
+    beneficiary_id uuid
+    pay_subscription_id uuid
+    plan_id uuid
+    platform_id uuid
+    beneficiary_type string
+    currency string
+    payment_method string
+    anchor_sequence integer
+    unit_amount_cents integer
+    anchor_at datetime
   }
 
   EXT_AGREEMENT {

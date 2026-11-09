@@ -979,6 +979,11 @@ en:
         title: Store credit
         usable: You can spend %{amount}
       notifications:
+        agreement_reacceptance_needed:
+          buyer:
+            body: The terms for your %{plan} subscription changed. Accept them to
+              receive your next renewal invoice.
+            title: Please review our updated terms
         cheque_bounced:
           buyer:
             body: The cheque for %{amount} did not clear, so the payment was reversed.
@@ -1012,6 +1017,11 @@ en:
           body: A billing event could not be processed after several tries. Please
             review it.
           title: A billing event needs attention
+        grace_ending:
+          buyer:
+            body: Your extra time ends on %{date}. Pay your renewal before then to
+              keep your subscription.
+            title: Your %{plan} subscription is about to lapse
         hold_expiring:
           body: We are holding order %{number} for you, but the hold ends soon. Pay
             %{amount} by %{method} before then, or the order will lapse.
@@ -1097,6 +1107,30 @@ en:
         refund_recorded:
           body: The seller recorded a refund for your order.
           title: Refund for order %{number}
+        renewal_credit_insufficient:
+          buyer:
+            body: Your %{plan} renewal for %{amount} is paid from store credit and
+              you do not have enough. Add credit and we will try again each day.
+            title: Not enough store credit for your renewal
+        renewal_invoice_issued:
+          buyer:
+            body: Your %{plan} renewal for %{amount} is ready to pay. Your current
+              period ends on %{date}.
+            title: Renewal invoice %{number}
+        renewal_overdue:
+          buyer:
+            body: Your period ended and the renewal has not been paid. Everything
+              keeps working until %{date}; pay before then to stay subscribed.
+            title: Your %{plan} renewal is overdue
+          seller:
+            body: A subscriber’s renewal was not paid in time. It lapses on %{date}
+              unless it is paid or given more time.
+            title: A %{plan} subscription is overdue
+        renewal_reminder:
+          buyer:
+            body: Your %{plan} renewal for %{amount} is still unpaid. Your current
+              period ends on %{date}.
+            title: 'Reminder: renewal %{number} is unpaid'
         settings_changed:
           body: Someone changed how buyers pay (%{method}). If you did not expect
             this, check it now.
@@ -1296,6 +1330,9 @@ en:
         field_currency: Currency
         field_description: Description
         field_eligible_owner_types: Eligible for
+        field_grace_days: Extra days when unpaid
+        field_grace_days_hint: Everything keeps working this long after a period ends
+          unpaid. 0 means none. Content is never deleted.
         field_hosted_access_level: Hosted access level
         field_identifier: Identifier
         field_identifier_hint: Unique machine-readable key. Cannot be changed after
@@ -1321,6 +1358,9 @@ en:
         field_processor_product_id: Product
         field_processor_product_id_hint: Choose an existing product, or leave empty
           to create a new one in your payment processor.
+        field_renewal_lead_days: Invoice this many days ahead
+        field_renewal_lead_days_hint: How long before a period ends its renewal invoice
+          is made.
         field_solidarity_description: Solidarity description
         field_solidarity_description_hint: Shown to potential subscribers to explain
           who this tier is for.
@@ -1359,6 +1399,9 @@ en:
         pricing_tier_standard: Standard
         processor_none: No online processor
         product_none: Create a new product
+        renewal_section_hint: For subscribers paying by a method that is not a payment
+          processor. A processor renews its own subscriptions.
+        renewal_section_title: Renewals
         retry_sync: Retry sync
         select_required: Please choose a value.
         show_title: Billing Plan
@@ -1545,6 +1588,70 @@ en:
         refund_record: Record refund
         refund_recorded: Refund recorded. The buyer has been told.
         refund_refused: That refund could not be recorded. Check the amount.
+      subscribers:
+        cancel_at_end: Cancel at the end of the period
+        cancel_now: Cancel now
+        cancel_now_confirm: End this subscription now? Nothing already paid is refunded.
+        cancelled: The subscription is cancelled.
+        extend: Give more time
+        extend_days: Give more days before it lapses
+        field_subscriber: Subscriber
+        filter_active: Active
+        filter_all: All
+        filter_ended: Ended
+        filter_lapsed: Lapsed
+        filter_overdue: Past due
+        filters: Filter subscribers
+        grace_extended: More time given.
+        index_intro: 'People whose subscriptions Community Engine renews. Their state
+          follows Pay: past due while an invoice is unpaid inside its extra time,
+          lapsed after.'
+        index_title: Subscribers
+        move_to_current_price: Move to the current price
+        none: No subscribers match.
+        price_line: Sold at %{price}. The plan costs %{current} today.
+        price_moved: The subscriber is on the current price from the next invoice.
+        refused: That could not be done for this subscription.
+        waive: Cover this period without payment
+        waive_confirm: Cover the next period without payment? Its invoice is cancelled.
+        waived: The period is covered.
+      subscriptions:
+        accept: Accept and continue
+        accept_all: Please accept every term shown.
+        cancel: Cancel at the end of this period
+        cancel_confirm: Cancel this subscription at the end of the period you have
+          paid for?
+        cancelled: Your subscription will end when the period you paid for ends.
+        cannot_resume: That subscription cannot be resumed.
+        field_grace: Extra time until
+        field_method: Paid by
+        field_period: Period
+        field_plan: Plan
+        field_price: Price
+        field_status: Status
+        field_through: Paid through
+        index_title: Subscriptions
+        invoice: Invoice %{number}
+        none: You have no subscriptions.
+        period_blocked: On hold
+        period_lapsed: Lapsed
+        period_needs_agreement: Needs you to accept the terms
+        period_paid: Paid
+        period_pending: Waiting for payment
+        period_waived: Covered
+        periods_caption: Each period of this subscription and its invoice
+        periods_title: Periods and invoices
+        resume: Keep my subscription
+        resumed: Your subscription will continue.
+        review_intro: The terms for this subscription changed. Accept them and we
+          will make your next renewal invoice.
+        review_title: Review and accept
+        state_active: Active
+        state_canceled: Ended
+        state_ending: Ends at the end of this period
+        state_past_due: Past due
+        state_unpaid: Lapsed
+        terms_accepted: Thank you. Your renewal invoice is ready.
       walk_up:
         agreements_label: The buyer has read and accepted the purchase agreements
           with me, in person
@@ -5644,8 +5751,10 @@ en:
       title: 500 - Internal Server Error
     messages:
       accepted: must be accepted
+      account_mismatch: must belong to the same account
       acknowledgement_required: must be accepted before this method can be turned
         on
+      after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
       blank: can't be blank
       confirmation: doesn't match %{attribute}
@@ -5712,6 +5821,7 @@ en:
       wrong_length:
         one: is the wrong length (should be %{count} character)
         other: is the wrong length (should be %{count} characters)
+      wrong_sign: has the wrong sign for what this entry is
     models:
       address_missing_type: Address must be either physical, postal, or both.
       better_together/navigation_item:

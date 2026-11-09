@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-08T23:20:49Z`.
+Generated from live Rails reflections at `2026-11-08T23:22:18Z`.
 
 ## Identity, access, and memberships
 
@@ -637,6 +637,8 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 | Billing::Promotion | `better_together_billing_promotions` | `created_by_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`code_digest` (string)<br>`currency` (string)<br>`name` (string)<br>`purposes` (string) | PresenceValidator: platform (message=:required)<br>PresenceValidator: name<br>PresenceValidator: code_digest<br>UniquenessValidator: code_digest (scope=:platform_id)<br>NumericalityValidator: amount_cents (only_integer=true, greater_than=0)<br>InclusionValidator: currency (in=["AUD", "BRL", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "INR", "JPY", "KRW", "MXN", "NOK", "NZD", "PLN", "SEK", "SGD", "USD", "ZAR"]) | `Billing::PlatformBound` | `platform` -> `Platform` (platform_network)<br>`created_by` -> `Person` (identity_access) |
 | Billing::PromotionRedemption | `better_together_billing_promotion_redemptions` | `credit_lot_id` (uuid FK)<br>`person_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`promotion_id` (uuid FK) | PresenceValidator: platform (message=:required)<br>PresenceValidator: promotion (message=:required)<br>PresenceValidator: credit_lot (message=:required)<br>UniquenessValidator: person_id (allow_nil=true, scope=:promotion_id) | `Billing::ParentBound`<br>`Billing::PlatformBound` | `platform` -> `Platform` (platform_network)<br>`person` -> `Person` (identity_access) |
 | Billing::Refund | `better_together_billing_refunds` | `payment_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`recorded_by_id` (uuid FK)<br>`currency` (string)<br>`idempotency_key` (string)<br>`processor_reference` (string) | PresenceValidator: platform (message=:required)<br>PresenceValidator: payment (message=:required)<br>InclusionValidator: status (in=["pending", "succeeded", "failed", "recorded"])<br>InclusionValidator: reason (allow_blank=true, in=["requested_by_buyer", "duplicate", "cancelled_event", "cancelled_order", "bounced", "dispute_lost", "fraudulent", "error", "other"])<br>NumericalityValidator: amount_cents (only_integer=true, greater_than=0)<br>InclusionValidator: currency (in=["AUD", "BRL", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "INR", "JPY", "KRW", "MXN", "NOK", "NZD", "PLN", "SEK", "SGD", "USD", "ZAR"]) | `Billing::ParentBound`<br>`Billing::PlatformBound` | `platform` -> `Platform` (platform_network)<br>`recorded_by` -> `Person` (identity_access) |
+| Billing::SubscriptionPeriod | `better_together_billing_subscription_periods` | `order_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`subscription_term_id` (uuid FK)<br>`blocked_reason` (string)<br>`status` (string)<br>`sequence` (integer) | PresenceValidator: platform (message=:required)<br>PresenceValidator: term (message=:required)<br>NumericalityValidator: sequence (only_integer=true, greater_than_or_equal_to=0)<br>UniquenessValidator: sequence (scope=:subscription_term_id)<br>InclusionValidator: status (in=["pending", "needs_agreement", "blocked", "paid", "waived", "lapsed"])<br>PresenceValidator: starts_at, ends_at | `Billing::ParentBound`<br>`Billing::PlatformBound`<br>`Billing::Subjectable` | `platform` -> `Platform` (platform_network) |
+| Billing::SubscriptionTerm | `better_together_billing_subscription_terms` | `beneficiary_id` (uuid FK)<br>`pay_subscription_id` (uuid FK)<br>`plan_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`beneficiary_type` (string)<br>`currency` (string) | PresenceValidator: platform (message=:required)<br>PresenceValidator: pay_subscription (message=:required)<br>PresenceValidator: plan (message=:required)<br>PresenceValidator: payment_method<br>InclusionValidator: currency (in=["AUD", "BRL", "CAD", "CHF", "CNY", "DKK", "EUR", "GBP", "HKD", "INR", "JPY", "KRW", "MXN", "NOK", "NZD", "PLN", "SEK", "SGD", "USD", "ZAR"])<br>NumericalityValidator: unit_amount_cents (only_integer=true, greater_than_or_equal_to=0) | `Billing::PlatformBound`<br>`Billing::Subjectable` | `platform` -> `Platform` (platform_network) |
 
 ### Controllers
 
@@ -657,6 +659,8 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 | Billing::PromotionsController | `BetterTogether::ApplicationController` | `Billing::Promotion` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::SaleRefundsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::SalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::SubscribersController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::SubscriptionsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::WalkUpSalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 
 ### Polymorphic / weak-reference surfaces
@@ -669,6 +673,7 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 - `Billing::OrderAgreementAcceptance`: `on_behalf_of` (belongs_to)
 - `Billing::Plan`: `seller` (belongs_to)
 - `Billing::ProcessorSetting`: `seller` (belongs_to)
+- `Billing::SubscriptionTerm`: `beneficiary` (belongs_to)
 
 ### Concern notes
 

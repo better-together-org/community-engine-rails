@@ -67,6 +67,17 @@ RSpec.describe 'Create Better Together billing plans migration' do # rubocop:dis
     expect(columns['interval_count']).to have_attributes(default: '1', null: false)
   end
 
+  it 'says how long a lapsed payment keeps working and how early a renewal is invoiced' do
+    expect(columns['grace_days']).to have_attributes(default: '7', null: false)
+    expect(columns['renewal_lead_days']).to have_attributes(default: '14', null: false)
+  end
+
+  it 'can be pointed at together with its platform, so other tables cannot name another platform\'s plan' do
+    index = connection.indexes(:better_together_billing_plans).find { |item| item.name == 'idx_bt_billing_plans_id_platform' }
+
+    expect(index).to have_attributes(unique: true, columns: %w[id platform_id])
+  end
+
   it 'drops and recreates cleanly' do
     migration.down
     expect(connection.table_exists?(:better_together_billing_plans)).to be false

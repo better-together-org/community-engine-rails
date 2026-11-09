@@ -44,7 +44,13 @@ module BetterTogether
           'settings_changed' => { audiences: %i[operator], critical: true },
           'event_dead_lettered' => { audiences: %i[operator], critical: true },
           'plan_sync_failed' => { audiences: %i[operator], critical: true },
-          'credit_granted' => { audiences: %i[holder] }
+          'credit_granted' => { audiences: %i[holder] },
+          'renewal_invoice_issued' => { audiences: %i[buyer] },
+          'renewal_reminder' => { audiences: %i[buyer] },
+          'renewal_overdue' => { audiences: %i[buyer seller], critical: true },
+          'grace_ending' => { audiences: %i[buyer], critical: true },
+          'agreement_reacceptance_needed' => { audiences: %i[buyer] },
+          'renewal_credit_insufficient' => { audiences: %i[buyer] }
         }.freeze
 
         def self.kind?(kind) = KINDS.key?(kind.to_s)

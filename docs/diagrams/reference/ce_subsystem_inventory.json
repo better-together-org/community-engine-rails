@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T23:20:49Z",
+  "generated_at": "2026-11-08T23:22:18Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7519,6 +7519,18 @@
           "to": "BetterTogether::Community",
           "label": "community (community_id)",
           "source_subsystem": "integrations_webhooks"
+        },
+        {
+          "from": "BetterTogether::Billing::SubscriptionTerm",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::SubscriptionPeriod",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
         },
         {
           "from": "BetterTogether::Billing::Refund",
@@ -25543,7 +25555,9 @@
         "BetterTogether::Billing::CreditLot",
         "BetterTogether::Billing::CreditEntry",
         "BetterTogether::Billing::Promotion",
-        "BetterTogether::Billing::PromotionRedemption"
+        "BetterTogether::Billing::PromotionRedemption",
+        "BetterTogether::Billing::SubscriptionTerm",
+        "BetterTogether::Billing::SubscriptionPeriod"
       ],
       "controllers": [
         "BetterTogether::Billing::PlansController",
@@ -25561,7 +25575,9 @@
         "BetterTogether::Billing::CreditAccountsController",
         "BetterTogether::Billing::CreditGrantsController",
         "BetterTogether::Billing::PromotionsController",
-        "BetterTogether::Billing::PromotionRedemptionsController"
+        "BetterTogether::Billing::PromotionRedemptionsController",
+        "BetterTogether::Billing::SubscriptionsController",
+        "BetterTogether::Billing::SubscribersController"
       ],
       "models_inventory": [
         {
@@ -27100,6 +27116,196 @@
               "target_subsystem": "identity_access"
             }
           ]
+        },
+        {
+          "name": "BetterTogether::Billing::SubscriptionPeriod",
+          "label": "Billing::SubscriptionPeriod",
+          "source_path": "app/models/better_together/billing/subscription_period.rb",
+          "table_name": "better_together_billing_subscription_periods",
+          "columns": [
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "subscription_term_id",
+              "uuid FK"
+            ],
+            [
+              "blocked_reason",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "sequence",
+              "integer"
+            ],
+            [
+              "ends_at",
+              "datetime"
+            ],
+            [
+              "paid_at",
+              "datetime"
+            ],
+            [
+              "starts_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: term (message=:required)",
+            "NumericalityValidator: sequence (only_integer=true, greater_than_or_equal_to=0)",
+            "UniquenessValidator: sequence (scope=:subscription_term_id)",
+            "InclusionValidator: status (in=[\"pending\", \"needs_agreement\", \"blocked\", \"paid\", \"waived\", \"lapsed\"])",
+            "PresenceValidator: starts_at, ends_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "term",
+              "foreign_key": "subscription_term_id",
+              "target": "BetterTogether::Billing::SubscriptionTerm",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SubscriptionTerm",
+          "label": "Billing::SubscriptionTerm",
+          "source_path": "app/models/better_together/billing/subscription_term.rb",
+          "table_name": "better_together_billing_subscription_terms",
+          "columns": [
+            [
+              "beneficiary_id",
+              "uuid FK"
+            ],
+            [
+              "pay_subscription_id",
+              "uuid FK"
+            ],
+            [
+              "plan_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "beneficiary_type",
+              "string"
+            ],
+            [
+              "currency",
+              "string"
+            ],
+            [
+              "payment_method",
+              "string"
+            ],
+            [
+              "anchor_sequence",
+              "integer"
+            ],
+            [
+              "unit_amount_cents",
+              "integer"
+            ],
+            [
+              "anchor_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: pay_subscription (message=:required)",
+            "PresenceValidator: plan (message=:required)",
+            "PresenceValidator: payment_method",
+            "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
+            "NumericalityValidator: unit_amount_cents (only_integer=true, greater_than_or_equal_to=0)",
+            "NumericalityValidator: anchor_sequence (only_integer=true, greater_than_or_equal_to=0)",
+            "UniquenessValidator: pay_subscription_id"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "pay_subscription",
+              "foreign_key": "pay_subscription_id",
+              "target": "Pay::Subscription",
+              "optional": false
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "beneficiary",
+              "foreign_key": "beneficiary_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
         }
       ],
       "controllers_inventory": [
@@ -27334,6 +27540,34 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::SubscribersController",
+          "label": "Billing::SubscribersController",
+          "source_path": "app/controllers/better_together/billing/subscribers_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::SubscriptionsController",
+          "label": "Billing::SubscriptionsController",
+          "source_path": "app/controllers/better_together/billing/subscriptions_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::WalkUpSalesController",
           "label": "Billing::WalkUpSalesController",
           "source_path": "app/controllers/better_together/billing/walk_up_sales_controller.rb",
@@ -27376,6 +27610,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
             "Billing::PromotionsController",
@@ -27399,6 +27635,7 @@
           "capability": "Parentbound",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Billing::SubscriptionPeriod",
             "Billing::Refund",
             "Billing::PromotionRedemption",
             "Billing::Payment",
@@ -27415,6 +27652,8 @@
           "capability": "Platformbound",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Billing::SubscriptionTerm",
+            "Billing::SubscriptionPeriod",
             "Billing::Refund",
             "Billing::PromotionRedemption",
             "Billing::Promotion",
@@ -27468,6 +27707,8 @@
           "capability": "Subjectable",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Billing::SubscriptionTerm",
+            "Billing::SubscriptionPeriod",
             "Billing::Order",
             "Billing::OfflinePayment",
             "Billing::ProcessorSetting"
@@ -27480,6 +27721,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
             "Billing::PromotionsController",
@@ -27504,6 +27747,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
             "Billing::PromotionsController",
@@ -27528,6 +27773,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
             "Billing::PromotionsController",
@@ -27552,6 +27799,8 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
             "Billing::SalesController",
             "Billing::SaleRefundsController",
             "Billing::PromotionsController",
@@ -27741,6 +27990,18 @@
         },
         {
           "from": "BetterTogether::Billing::Refund",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::SubscriptionPeriod",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::SubscriptionTerm",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

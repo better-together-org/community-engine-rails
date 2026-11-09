@@ -1,0 +1,37 @@
+%% Billing — subscriptions. Pay::Subscription is THE subscription record; the terms and periods hold only
+%% what Pay has no place for (Pay keeps the current period only, and no history).
+classDiagram
+  class PaySubscription["Pay::Subscription"] {
+    +status active|past_due|unpaid|canceled
+    +current_period_start / current_period_end
+    +ends_at
+    +processor_plan
+  }
+  class PayLocalSubscription["Pay::Local::Subscription"] {
+    renewed by Community Engine
+    advance!(starts_at, ends_at)
+  }
+  class SubscriptionTerm {
+    +payment_method cash|cheque|etransfer|store_credit
+    +unit_amount_cents  price it was sold at
+    +anchor_at / anchor_sequence
+    +grace_ends_at
+  }
+  class SubscriptionPeriod {
+    +sequence  unique per subscription
+    +starts_at / ends_at
+    +status pending|needs_agreement|blocked|paid|waived|lapsed
+  }
+  class Plan {
+    +interval_count
+    +grace_days
+    +renewal_lead_days
+  }
+  class Order {
+    +subject SubscriptionTerm
+  }
+  PaySubscription <|-- PayLocalSubscription
+  PaySubscription "1" --> "0..1" SubscriptionTerm
+  SubscriptionTerm "*" --> "1" Plan
+  SubscriptionTerm "1" --> "*" SubscriptionPeriod
+  SubscriptionPeriod "0..1" --> "0..1" Order : invoice

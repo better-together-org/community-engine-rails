@@ -71,6 +71,14 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
+    class BetterTogether__Billing__SubscribersController["Billing::SubscribersController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__SubscriptionsController["Billing::SubscriptionsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__WalkUpSalesController["Billing::WalkUpSalesController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
@@ -166,6 +174,17 @@ classDiagram
       table: better_together_billing_refunds
       concerns: Billing::ParentBound, Billing::PlatformBound
     }
+    class BetterTogether__Billing__SubscriptionPeriod["Billing::SubscriptionPeriod"] {
+      <<Model>>
+      table: better_together_billing_subscription_periods
+      concerns: Billing::ParentBound, Billing::PlatformBound, Billing::Subjectable
+    }
+    class BetterTogether__Billing__SubscriptionTerm["Billing::SubscriptionTerm"] {
+      <<Model>>
+      table: better_together_billing_subscription_terms
+      concerns: Billing::PlatformBound, Billing::Subjectable
+      weak refs: target: beneficiary
+    }
   }
 
   namespace ExternalSubsystems {
@@ -200,6 +219,8 @@ classDiagram
   BetterTogether__Billing__PromotionsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__SaleRefundsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__SalesController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__SubscribersController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__SubscriptionsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__WalkUpSalesController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__AgreementRequirement --> BetterTogether__Platform : platform
   BetterTogether__Billing__AgreementRequirement --> BetterTogether__Agreement : agreement
@@ -244,3 +265,9 @@ classDiagram
   BetterTogether__Billing__Refund --> BetterTogether__Platform : platform
   BetterTogether__Billing__Refund --> BetterTogether__Billing__Payment : payment
   BetterTogether__Billing__Refund --> BetterTogether__Person : recorded_by
+  BetterTogether__Billing__SubscriptionPeriod --> BetterTogether__Platform : platform
+  BetterTogether__Billing__SubscriptionPeriod --> BetterTogether__Billing__SubscriptionTerm : term
+  BetterTogether__Billing__SubscriptionPeriod --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Platform : platform
+  BetterTogether__Billing__SubscriptionTerm --> Pay__Subscription : pay_subscription
+  BetterTogether__Billing__SubscriptionTerm --> BetterTogether__Billing__Plan : plan

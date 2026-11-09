@@ -79,6 +79,27 @@ concern :billing_credit do
   end
 end
 
+# Subscriptions Community Engine renews: a payer's own, and the platform's subscribers for stewards.
+concern :billing_subscriptions do
+  namespace :billing do
+    resources :subscriptions, only: %i[index show] do
+      member do
+        patch :cancel
+        patch :resume
+        post :accept_agreements
+      end
+    end
+    resources :subscribers, only: %i[index show] do
+      member do
+        patch :waive
+        patch :extend_grace
+        patch :cancel
+        patch :move_to_current_price
+      end
+    end
+  end
+end
+
 # What a seller has to do about payments made outside the platform (cash, cheque, e-transfer).
 concern :billing_offline_payments do
   namespace :billing do
@@ -97,6 +118,6 @@ end
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans, :billing_offline_payments, :billing_credit
+    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions
   end
 end

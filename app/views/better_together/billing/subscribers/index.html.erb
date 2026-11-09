@@ -1,0 +1,50 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.subscribers.index_title') %>
+<% end %>
+
+<div id="billing-subscribers-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.subscribers.index_title') %></h1>
+  <p class="text-body-secondary mb-3"><%= t('better_together.billing.subscribers.index_intro') %></p>
+
+  <nav id="billing-subscribers-filters" class="nav nav-pills mb-3" aria-label="<%= t('better_together.billing.subscribers.filters') %>">
+    <%= link_to t('better_together.billing.subscribers.filter_all'), billing_subscribers_path(locale: I18n.locale),
+                class: "nav-link #{'active' unless @filter}", id: 'billing-subscribers-filter-all' %>
+    <% BetterTogether::Billing::SubscribersController::FILTERS.each_key do |name| %>
+      <%= link_to t("better_together.billing.subscribers.filter_#{name}"), billing_subscribers_path(locale: I18n.locale, filter: name),
+                  class: "nav-link #{'active' if @filter == name}", id: "billing-subscribers-filter-#{name}" %>
+    <% end %>
+  </nav>
+
+  <% if @terms.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-subscribers-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.subscribers.field_subscriber') %></th>
+              <th scope="col"><%= t('better_together.billing.subscriptions.field_plan') %></th>
+              <th scope="col"><%= t('better_together.billing.subscriptions.field_status') %></th>
+              <th scope="col"><%= t('better_together.billing.subscriptions.field_through') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @terms.each do |term| %>
+              <tr id="<%= dom_id(term) %>">
+                <th scope="row"><%= term.payer&.name %></th>
+                <td><%= term.plan.name %></td>
+                <td><%= billing_subscription_status_badge(term.pay_subscription) %></td>
+                <td><%= l(term.pay_subscription.current_period_end.to_date, format: :long) %></td>
+                <td class="text-end">
+                  <%= link_to t('globals.view'), billing_subscriber_path(term, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <p id="billing-subscribers-empty" class="text-body-secondary"><%= t('better_together.billing.subscribers.none') %></p>
+  <% end %>
+</div>

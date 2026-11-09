@@ -71,14 +71,41 @@ module BetterTogether
       def interpolations
         order = Notifications::Links.order_of(record)
         { number: order&.number.to_s, amount: amount_text(order), platform: record.try(:platform)&.name.to_s,
-          method: method_label, expires: expiry_text }
+          method: method_label, expires: expiry_text, plan: subscription_term&.plan&.name.to_s, date: date_text }
+      end
+
+      # The subscription a renewal notice is about.
+      def subscription_term
+        case record
+        when SubscriptionTerm then record
+        when SubscriptionPeriod then record.term
+        end
+      end
+
+      # The date that matters for the kind: the end of the grace, of the subscription, or of the current period.
+      def date_text
+        term = subscription_term
+        return '' unless term
+
+        date = case kind
+               when 'renewal_overdue', 'grace_ending' then term.grace_ends_at
+               when 'subscription_canceled' then term.pay_subscription.ends_at
+               else term.pay_subscription.current_period_end
+               end
+        date ? I18n.l(date.to_date, format: :long, locale:) : ''
       end
 
       # An order's total, or the amount of credit a lot adds.
       def amount_text(order)
         return money(record.amount_cents, record.account.currency) if record.is_a?(CreditLot)
 
-        money(order&.total_cents, order&.currency)
+        order ? money(order.total_cents, order.currency) : term_amount_text
+      end
+
+      # What a subscription costs each period, for a notice that has no invoice yet.
+      def term_amount_text
+        term = subscription_term
+        term ? money(term.unit_amount_cents, term.currency) : ''
       end
 
       # Credit that lapses says when; credit that does not says nothing about it.

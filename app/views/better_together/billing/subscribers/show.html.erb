@@ -1,0 +1,71 @@
+<% subscription = @term.pay_subscription %>
+<% content_for :page_title do %>
+  <%= t('better_together.billing.subscribers.index_title') %>
+<% end %>
+
+<div id="<%= dom_id(@term, :subscriber_page) %>" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_subscribers_path(locale: I18n.locale), edit_path: nil %>
+  <h1 class="mb-1"><%= @term.payer&.name %></h1>
+  <p class="mb-1"><%= @term.plan.name %> <%= billing_subscription_status_badge(subscription) %></p>
+  <p class="text-body-secondary mb-4">
+    <%= t('better_together.billing.subscribers.price_line', price: billing_amount(@term.unit_amount_cents, @term.currency),
+                                                               current: billing_amount(@term.plan.amount_cents, @term.plan.currency)) %>
+  </p>
+
+  <dl id="<%= dom_id(@term, :details) %>" class="row mb-4">
+    <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_through') %></dt>
+    <dd class="col-sm-9" id="subscriber-through"><%= l(subscription.current_period_end.to_date, format: :long) %></dd>
+    <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_method') %></dt>
+    <dd class="col-sm-9" id="subscriber-method"><%= billing_payment_method_label(@term.payment_method) %></dd>
+    <% if @term.grace_ends_at %>
+      <dt class="col-sm-3"><%= t('better_together.billing.subscriptions.field_grace') %></dt>
+      <dd class="col-sm-9" id="subscriber-grace"><%= l(@term.grace_ends_at.to_date, format: :long) %></dd>
+    <% end %>
+  </dl>
+
+  <div id="subscriber-actions" class="d-flex flex-wrap gap-2 mb-4">
+    <%= button_to t('better_together.billing.subscribers.waive'), waive_billing_subscriber_path(@term, locale: I18n.locale), method: :patch,
+                  class: 'btn btn-outline-primary', id: 'subscriber-waive-btn',
+                  form: { data: { turbo_confirm: t('better_together.billing.subscribers.waive_confirm') } } %>
+    <%= button_to t('better_together.billing.subscribers.move_to_current_price'), move_to_current_price_billing_subscriber_path(@term, locale: I18n.locale),
+                  method: :patch, class: 'btn btn-outline-secondary', id: 'subscriber-price-btn' %>
+    <%= button_to t('better_together.billing.subscribers.cancel_at_end'), cancel_billing_subscriber_path(@term, locale: I18n.locale), method: :patch,
+                  class: 'btn btn-outline-danger', id: 'subscriber-cancel-btn' %>
+    <%= button_to t('better_together.billing.subscribers.cancel_now'), cancel_billing_subscriber_path(@term, locale: I18n.locale, now: '1'), method: :patch,
+                  class: 'btn btn-danger', id: 'subscriber-cancel-now-btn',
+                  form: { data: { turbo_confirm: t('better_together.billing.subscribers.cancel_now_confirm') } } %>
+  </div>
+
+  <%= form_with url: extend_grace_billing_subscriber_path(@term, locale: I18n.locale), method: :patch, id: 'subscriber-extend-form', class: 'row g-2 mb-4' do %>
+    <div class="col-md-3">
+      <%= label_tag 'subscriber-extend-days', t('better_together.billing.subscribers.extend_days'), class: 'form-label' %>
+      <%= number_field_tag :days, 7, id: 'subscriber-extend-days', class: 'form-control', min: 1, max: BetterTogether::Billing::Subscriptions::ExtendGrace::MAX_DAYS %>
+    </div>
+    <div class="col-md-3 d-flex align-items-end">
+      <%= submit_tag t('better_together.billing.subscribers.extend'), class: 'btn btn-outline-primary', id: 'subscriber-extend-btn', name: nil %>
+    </div>
+  <% end %>
+
+  <h2 class="h5"><%= t('better_together.billing.subscriptions.periods_title') %></h2>
+  <div class="card">
+    <div class="table-responsive">
+      <table id="<%= dom_id(@term, :periods) %>" class="table mb-0">
+        <caption class="visually-hidden"><%= t('better_together.billing.subscriptions.periods_caption') %></caption>
+        <tbody>
+          <% @term.periods.to_a.reverse.each do |period| %>
+            <tr id="<%= dom_id(period) %>">
+              <th scope="row"><%= billing_period_range(period) %></th>
+              <td><%= billing_period_status_badge(period) %></td>
+              <td class="text-end">
+                <% if period.order %>
+                  <%= link_to t('better_together.billing.subscriptions.invoice', number: period.order.number), billing_sale_path(period.order, locale: I18n.locale),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -301,6 +301,8 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::CreditEntry
         BetterTogether::Billing::Promotion
         BetterTogether::Billing::PromotionRedemption
+        BetterTogether::Billing::SubscriptionTerm
+        BetterTogether::Billing::SubscriptionPeriod
       ],
       controllers: %w[
         BetterTogether::Billing::PlansController
@@ -319,6 +321,8 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::CreditGrantsController
         BetterTogether::Billing::PromotionsController
         BetterTogether::Billing::PromotionRedemptionsController
+        BetterTogether::Billing::SubscriptionsController
+        BetterTogether::Billing::SubscribersController
       ]
     },
     {
