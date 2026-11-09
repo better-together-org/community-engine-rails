@@ -4,10 +4,11 @@ module BetterTogether
   module SeedCatalog
     # Seed-catalog entry for the tax packets (config/seeds/better_together/billing/*.yml), planted on the host platform.
     # A category is a packet. Zones are tied to the geography rows, so a packet needs the geography it names planted
-    # first; that is its prerequisite, and it lives in the geography catalog.
+    # first (the countries and the provinces); that is its prerequisite, and it lives in the geography catalog.
     class BillingTaxCatalog
       CATEGORIES = [
-        { key: :billing_tax_canada, label: 'Canadian sales tax', packet: 'billing_tax_canada', prerequisites: [:provinces] }
+        { key: :billing_tax_canada, label: 'Canadian sales tax', packet: 'billing_tax_canada',
+          prerequisites: %i[countries provinces] }
       ].freeze
 
       class << self

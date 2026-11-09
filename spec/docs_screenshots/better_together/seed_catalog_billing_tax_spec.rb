@@ -67,8 +67,8 @@ RSpec.describe 'Documentation screenshots for the tax seed catalog',
   it 'captures the tax packet held back until the geography provinces are planted' do
     callouts = [
       { id: 'blocked', selector: '#plant-billing_tax_canada-missing-prerequisites', title: 'Held back',
-        description: 'Zones are tied to the seeded provinces, so the packet cannot be planted until Provinces & Territories are.',
-        bullets: ['Names the geography category to plant first.'] },
+        description: 'Zones are tied to the seeded countries and provinces, so those are planted first.',
+        bullets: ['Names the geography categories to plant first.'] },
       { id: 'plant_button', selector: '#plant-billing_tax_canada-btn', title: 'Plant this packet (disabled)',
         description: 'Disabled while the provinces are missing; the server refuses a hand-made POST too.',
         bullets: ['The button is disabled, not only styled.'] }

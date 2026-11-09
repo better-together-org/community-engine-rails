@@ -14,16 +14,17 @@ RSpec.describe BetterTogether::SeedCatalog::BillingTaxCatalog do
     expect(BetterTogether::SeedCatalog::Registry.find(:billing_tax)).to eq(described_class)
   end
 
-  it 'needs the geography provinces first and says so by their label' do
-    allow(BetterTogether::SeedCatalog::GeographyCatalog).to receive(:planted?).with(:provinces).and_return(false)
+  it 'needs the geography countries and provinces first and says so by their label' do
+    allow(BetterTogether::SeedCatalog::GeographyCatalog).to receive(:planted?).and_return(false)
 
-    expect(described_class.missing_prerequisites(:billing_tax_canada)).to eq([:provinces])
+    expect(described_class.missing_prerequisites(:billing_tax_canada)).to eq(%i[countries provinces])
+    expect(described_class.category(:countries)[:label]).to eq('Countries')
     expect(described_class.category(:provinces)[:label]).to eq('Provinces & Territories')
     expect(described_class.plant(:billing_tax_canada)).to be(false)
   end
 
   it 'plants the packet on the host platform once, and reports it planted' do
-    allow(BetterTogether::SeedCatalog::GeographyCatalog).to receive(:planted?).with(:provinces).and_return(true)
+    allow(BetterTogether::SeedCatalog::GeographyCatalog).to receive(:planted?).and_return(true)
     expect(described_class.planted?(:billing_tax_canada)).to be(false)
 
     expect(described_class.plant(:billing_tax_canada)).to be(true)

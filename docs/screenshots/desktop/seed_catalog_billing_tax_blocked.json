@@ -13,31 +13,31 @@
       "selector": "#plant-billing_tax_canada-missing-prerequisites",
       "title": "Held back",
       "bullets": [
-        "Names the geography category to plant first."
+        "Names the geography categories to plant first."
       ],
       "target": {
-        "x": 772.25,
+        "x": 684.546875,
         "y": 807.0,
-        "width": 586.75,
+        "width": 674.453125,
         "height": 21.0,
         "right": 1359.0,
         "bottom": 828.0,
-        "center_x": 1065.625,
+        "center_x": 1021.7734375,
         "center_y": 817.5
       },
       "avoid": {
-        "x": 772.25,
+        "x": 684.546875,
         "y": 807.0,
-        "width": 586.75,
+        "width": 674.453125,
         "height": 21.0,
         "right": 1359.0,
         "bottom": 828.0,
-        "center_x": 1065.625,
+        "center_x": 1021.7734375,
         "center_y": 817.5
       },
       "placement": {
         "side": "above",
-        "x": 875.63,
+        "x": 831.77,
         "y": 655.0,
         "width": 380,
         "height": 132,

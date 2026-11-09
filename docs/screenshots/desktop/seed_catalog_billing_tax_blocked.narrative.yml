@@ -3,13 +3,12 @@ title: 'Tax seed packet: waiting on geography'
 audience:
 - platform_manager
 - developer
-journey_step: As a platform manager, I see the tax packet cannot be planted before
-  the provinces it names.
+journey_step: I see the tax packet waits on the provinces it names.
 callouts:
 - :id: blocked
   :title: Held back
-  :description: Zones are tied to the seeded provinces, so the packet cannot be planted
-    until Provinces & Territories are.
+  :description: Zones are tied to the seeded countries and provinces, so those are
+    planted first.
 - :id: plant_button
   :title: Plant this packet (disabled)
   :description: Disabled while the provinces are missing; the server refuses a hand-made
