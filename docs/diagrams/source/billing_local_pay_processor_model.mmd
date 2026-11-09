@@ -1,0 +1,38 @@
+%% Billing — how payments Community Engine settles itself (cash, cheque, e-transfer, store credit) appear in
+%% Pay. The pending/confirmation workflow stays in CE; a Pay::Local charge exists only for settled money.
+classDiagram
+  class Order
+  class Payment {
+    +status pending|processing|succeeded|...
+    +pay_charge_id
+  }
+  class OfflinePayment {
+    +status awaiting|claimed|confirmed|...
+  }
+  class PayCustomer["Pay::Customer"]
+  class PayLocalCustomer["Pay::Local::Customer"] {
+    +charge(amount, payment_method_type:)
+    +subscribe(name:, plan:, period)
+  }
+  class PayLocalCharge["Pay::Local::Charge"] {
+    +amount
+    +amount_refunded
+    +refund!(amount)
+  }
+  class PayLocalSubscription["Pay::Local::Subscription"] {
+    +status active|past_due|unpaid|canceled
+    +cancel() ends at paid period end
+    +advance!(starts_at, ends_at)
+  }
+  class LocalSettlement {
+    +record!(payment)
+    +sync_refunds!(payment)
+  }
+  PayCustomer <|-- PayLocalCustomer
+  PayLocalCustomer "1" --> "*" PayLocalCharge
+  PayLocalCustomer "1" --> "*" PayLocalSubscription
+  Order "1" --> "*" Payment
+  Payment "1" --> "0..1" OfflinePayment : manual methods only
+  Payment "0..1" --> "0..1" PayLocalCharge : written when the money settles
+  LocalSettlement ..> PayLocalCharge : creates, keeps amount_refunded equal
+  LocalSettlement ..> Payment : the succeed service calls it
