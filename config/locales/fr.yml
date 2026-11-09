@@ -1023,6 +1023,7 @@ fr:
         status_revoked: Remboursé
         title: Mon accès
         until: Valable jusqu’au %{date}.
+        view_agreement: Lire l’entente
       notifications:
         agreement_reacceptance_needed:
           buyer:

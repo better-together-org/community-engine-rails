@@ -1015,6 +1015,7 @@ es:
         status_revoked: Reembolsado
         title: Mi acceso
         until: Vigente hasta el %{date}.
+        view_agreement: Ver el acuerdo
       notifications:
         agreement_reacceptance_needed:
           buyer:

@@ -1023,6 +1023,7 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
+        view_agreement: View the agreement
       notifications:
         agreement_reacceptance_needed:
           buyer:
