@@ -26,14 +26,16 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
   def new_path(chosen = plan, **params) = better_together.new_billing_checkout_path(locale:, plan_id: chosen.id, **params)
   def checkout_path = better_together.billing_checkout_path(locale:)
 
-  def accepted_ids(chosen, methods, purpose)
-    BetterTogether::Billing::Checkout::AgreementGate.new(platform: host_platform, purpose:, signer: buyer, purchasables: [chosen],
-                                                         payment_method: methods).missing.map(&:id)
+  # The boxes are the shared agreement mechanism's: one `<identifier>_agreement=1` parameter per ticked agreement.
+  def ticks(chosen, methods, purpose)
+    missing = BetterTogether::Billing::Checkout::AgreementGate.new(platform: host_platform, purpose:, signer: buyer, purchasables: [chosen],
+                                                                   payment_method: methods).missing
+    missing.to_h { |agreement| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(agreement), '1'] }
   end
 
   def post_checkout(chosen: plan, method: 'cash', parts: {}, purpose: 'one_time', **extra)
     post checkout_path, params: { plan_id: chosen.id, payment_method: method, part_amounts: parts, **extra,
-                                  accepted_agreement_ids: accepted_ids(chosen, [method, *parts.keys], purpose) }
+                                  **ticks(chosen, [method, *parts.keys], purpose) }
   end
 
   before do
