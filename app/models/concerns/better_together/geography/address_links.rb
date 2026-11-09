@@ -44,18 +44,42 @@ module BetterTogether
         end
       end
 
+      # A parent is derived from a chosen child only when the user has not typed something else for it;
+      # a typed parent that disagrees with the child is a validation error, never silently replaced.
       def derive_parent_links
-        self.state = linked(:settlement).state if linked(:settlement) && state_id.nil?
-        self.country = parent_country if country_id.nil?
+        derive_parent(:state)
+        derive_parent(:country)
       end
 
-      def parent_country
+      def derive_parent(level)
+        expected = expected_parent(level)
+        return if expected.nil? || self["#{level}_id"].present? || !typed_matches?(level, expected)
+
+        public_send("#{level}=", expected)
+      end
+
+      def expected_parent(level)
+        return linked(:settlement)&.state if level == :state
+
         linked(:state)&.country || linked(:settlement)&.country
+      end
+
+      def typed_matches?(level, record)
+        typed = self[STRING_COLUMNS[level]].to_s.strip
+        typed.blank? || typed.casecmp?(record.name.to_s)
       end
 
       def geography_is_consistent
         errors.add(:state_id, :inclusion) if linked(:state) && country_id && linked(:state).country_id != country_id
         errors.add(:settlement_id, :inclusion) if linked(:settlement) && settlement_outside_parents?
+        %i[state country].each { |level| validate_typed_parent(level) }
+      end
+
+      def validate_typed_parent(level)
+        expected = expected_parent(level)
+        return if expected.nil? || self["#{level}_id"].present? || typed_matches?(level, expected)
+
+        errors.add(STRING_COLUMNS[level], I18n.t('errors.models.address_geography_conflict', selected: expected.name))
       end
 
       def settlement_outside_parents?

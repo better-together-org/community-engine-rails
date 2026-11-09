@@ -351,7 +351,7 @@ flowchart TD
 Rules (`Geography::AddressLinks`):
 
 - A chosen record is authoritative: on save it overwrites the matching string column. When no record is chosen, typed text is kept.
-- A chosen settlement fills in its state and country, and a chosen state its country, when those are blank.
+- A chosen settlement fills in its state and country, and a chosen state its country, when the typed parent text is blank or matches that record (case-insensitive). Typed parent text that disagrees with the chosen child is rejected with a validation error on `state_province_name` or `country_name` naming the expected value; nothing is silently replaced.
 - A state must belong to the chosen country, and a settlement to the chosen state and country.
 - `address.country`, `address.state` and `address.settlement` return the explicit link first, then the placement resolved by `HierarchyResolutionJob` (the `Locatable::Many` readers), so existing callers keep working.
 

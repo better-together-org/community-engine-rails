@@ -285,10 +285,26 @@ RSpec.describe BetterTogether::Address do
     end
 
     it 'derives state and country from a chosen settlement' do
-      address = build(:address, settlement:)
+      address = build(:address, settlement:, state_province_name: nil, country_name: nil)
       address.valid?
 
       expect([address.state, address.country]).to eq([state, country])
+    end
+
+    it 'rejects typed parent text that conflicts with the chosen child', :aggregate_failures do
+      address = build(:address, settlement:, state_province_name: 'Nova Scotia', country_name: 'Mexico')
+
+      expect(address).not_to be_valid
+      expect(address.errors[:state_province_name].first).to include('Newfoundland and Labrador')
+      expect(address.errors[:country_name].first).to include('Canada')
+      expect(address.state_id).to be_nil
+    end
+
+    it 'derives parents when the typed text matches the chosen child, ignoring case' do
+      address = build(:address, settlement:, state_province_name: ' newfoundland and labrador ', country_name: 'CANADA')
+
+      expect(address).to be_valid
+      expect([address.state_id, address.country_id]).to eq([state.id, country.id])
     end
 
     it 'rejects a state outside the chosen country' do

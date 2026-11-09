@@ -5119,6 +5119,8 @@ uk:
         one: неправильна довжина (має бути %{count} символ)
         other: неправильна довжина (має бути %{count} символів)
     models:
+      address_geography_conflict: 'Введений текст суперечить вибраному місцю: має
+        бути «%{selected}».'
       address_missing_type: Адреса має бути фізичною, поштовою або обома.
       better_together/navigation_item:
         attributes:

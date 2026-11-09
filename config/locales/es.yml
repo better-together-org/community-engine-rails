@@ -5103,6 +5103,8 @@ es:
         one: no tiene la longitud correcta (%{count} carácter exactos)
         other: no tiene la longitud correcta (%{count} caracteres exactos)
     models:
+      address_geography_conflict: 'El texto escrito no coincide con el lugar seleccionado:
+        debería ser "%{selected}".'
       address_missing_type: La dirección debe ser física, postal o ambas.
       better_together/navigation_item:
         attributes:
