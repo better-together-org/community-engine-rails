@@ -9,8 +9,22 @@
 
   <%= form_with url: billing_credit_accounts_path(locale: I18n.locale), method: :get, id: 'billing-credit-lookup-form', class: 'row g-2 mb-4' do %>
     <div class="col-md-6">
-      <%= label_tag 'billing-credit-lookup-handle', t('better_together.billing.credit.lookup_label'), class: 'form-label' %>
-      <%= text_field_tag :handle, @handle, id: 'billing-credit-lookup-handle', class: 'form-control', autocomplete: 'off' %>
+      <%= label_tag 'billing-credit-lookup-person', t('better_together.billing.credit.lookup_label'), class: 'form-label' %>
+      <%= select_tag :person_id,
+                     options_for_select(@holder ? [[@holder.select_option_title, @holder.id]] : [], @holder&.id),
+                     id: 'billing-credit-lookup-person',
+                     class: 'form-select',
+                     include_blank: true,
+                     data: {
+                       controller: 'better-together--slim-select',
+                       'better-together--slim-select-options-value': {
+                         ajax: { url: billing_people_credit_accounts_path(locale: I18n.locale), fetch: true, delay: 300 },
+                         searchPlaceholder: t('better_together.billing.credit.lookup_placeholder'),
+                         searchHighlight: true,
+                         closeOnSelect: true,
+                         allowDeselect: true
+                       }.to_json
+                     } %>
       <div class="form-text"><%= t('better_together.billing.credit.lookup_hint') %></div>
     </div>
     <div class="col-md-3 d-flex align-items-start pt-md-4">
@@ -27,7 +41,6 @@
       <h2 class="h5"><%= @holder.name %></h2>
       <%= form_with url: billing_credit_grants_path(locale: I18n.locale), method: :post, id: 'billing-credit-grant-form', class: 'card card-body mb-4' do %>
         <%= hidden_field_tag :person_id, @holder.id %>
-        <%= hidden_field_tag :handle, @handle %>
         <%= hidden_field_tag :token, SecureRandom.hex(8) %>
         <div class="row g-2">
           <div class="col-md-3">

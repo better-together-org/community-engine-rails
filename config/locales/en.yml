@@ -981,9 +981,10 @@ en:
         kind_grant: Credit added
         kind_spend: Spent on an order
         kind_spend_reversal: Returned after a refund
-        lookup_failed: There is no one with that handle.
-        lookup_hint: The whole handle, exactly. There is no search.
-        lookup_label: Person's handle
+        lookup_failed: There is no one on this platform with that id.
+        lookup_hint: Type at least two letters of a name or handle.
+        lookup_label: Person
+        lookup_placeholder: Search by name or handle
         lookup_submit: Find
         lots_caption: Credit you hold, soonest to expire first
         never_expires: Does not expire
@@ -993,9 +994,8 @@ en:
         origin_promotion: Promotion
         origin_refund: Refund
         origin_steward_grant: Given by a steward
-        steward_intro: 'Find a person by their exact handle to see their credit and
-          give them more. Credit you give is the platform''s money: you cannot give
-          it to yourself.'
+        steward_intro: 'Search for a person to see their credit and give them more.
+          Credit you give is the platform''s money: you cannot give it to yourself.'
         steward_title: Store credit accounts
         title: Store credit
         usable: You can spend %{amount}
