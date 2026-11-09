@@ -147,7 +147,8 @@ RSpec.describe 'Managing subscriptions' do # rubocop:disable RSpec/DescribeClass
     end
     let(:order) do
       travel_to(start_time) do
-        place_order(purpose: 'subscription', payment_method: 'cash', line_items: [{ purchasable: sub_plan }]).tap { |placed| pay_manually(placed) }
+        placed = place_order(purpose: 'subscription', payment_method: 'cash', line_items: [{ purchasable: sub_plan }])
+        placed.tap { pay_manually(placed) }
       end
     end
 
