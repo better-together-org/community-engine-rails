@@ -1145,6 +1145,7 @@ es:
         status_rejected: No aceptado
         too_many_claims: Ya se lo ha dicho al vendedor varias veces. Confirmará cuando
           reciba su pago.
+        view_agreement: Ver el acuerdo
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         agreements_heading: Acuerdos aceptados

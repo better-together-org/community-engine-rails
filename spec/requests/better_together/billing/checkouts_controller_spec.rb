@@ -32,7 +32,9 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
     ids = accepted || BetterTogether::Billing::Checkout::AgreementGate.new(platform: host_platform, purpose: 'one_time', signer: buyer,
                                                                            purchasables: [plan],
                                                                            payment_method: method).missing.map(&:id)
-    post checkout_path, params: { plan_id: plan.id, payment_method: method, accepted_agreement_ids: ids }
+    # The boxes are the shared agreement mechanism's: one `<identifier>_agreement=1` parameter per ticked agreement.
+    ticks = BetterTogether::Agreement.where(id: ids).to_h { |agreement| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(agreement), '1'] }
+    post checkout_path, params: { plan_id: plan.id, payment_method: method }.merge(ticks)
   end
 
   it 'sends a visitor to sign in' do
