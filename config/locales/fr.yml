@@ -1341,6 +1341,7 @@ fr:
         paid: Le paiement a été effectué.
         refused: Ce paiement n'a pas pu être ajouté. Vérifiez le montant et le mode
           de paiement, puis réessayez.
+        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         add_payment_amount: Montant (laissez vide pour payer le solde)

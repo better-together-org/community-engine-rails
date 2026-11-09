@@ -92,14 +92,20 @@
             <p class="text-body-secondary"><%= t('better_together.billing.checkout.review_intro') %></p>
             <% @gate.agreements.each do |agreement| %>
               <div class="mb-3 border-bottom pb-3" id="<%= dom_id(agreement, :review) %>">
-                <h2 class="h6"><%= link_to agreement.title, agreement_path(agreement, locale: I18n.locale), target: '_blank', rel: 'noopener' %></h2>
-                <% agreement.agreement_terms.each do |term| %>
-                  <div class="small"><%= term.content %></div>
-                <% end %>
+                <h2 class="h6"><%= agreement.title %></h2>
+                <% summary_id = dom_id(agreement, :summary) %>
+                <p class="small text-body-secondary mb-1" id="<%= summary_id %>"><%= agreement.description %></p>
+                <%# The shared agreement modal (layouts/better_together/_agreement_modal_shell). The box stays locked until the buyer has read to the end. %>
+                <%= link_to t('better_together.billing.checkout.view_agreement'), agreement_path(agreement, locale: I18n.locale),
+                            class: 'agreement-modal-link', role: 'button', id: "billing-agreement-view-#{agreement.identifier}",
+                            data: { agreement_identifier: agreement.identifier } %>
                 <% if @gate.missing.include?(agreement) %>
                   <div class="form-check mt-2">
-                    <%= check_box_tag 'accepted_agreement_ids[]', agreement.id, false, class: 'form-check-input', id: "billing-agreement-accept-#{agreement.identifier}" %>
-                    <%= label_tag "billing-agreement-accept-#{agreement.identifier}", t('better_together.billing.checkout.accept', title: agreement.title), class: 'form-check-label' %>
+                    <%= check_box_tag agreement_acceptance_param_name(agreement), '1', false, class: 'form-check-input agreement-checkbox', required: true,
+                                         data: { agreement_identifier: agreement.identifier }, aria: { describedby: summary_id, disabled: 'true' },
+                                         id: "billing-agreement-accept-#{agreement.identifier}" %>
+                    <%= label_tag agreement_acceptance_param_name(agreement), t('better_together.billing.checkout.accept', title: agreement.title), class: 'form-check-label',
+                                for: "billing-agreement-accept-#{agreement.identifier}" %>
                   </div>
                 <% else %>
                   <p class="small text-success mb-0" id="billing-agreement-accepted-<%= agreement.identifier %>"><%= t('better_together.billing.checkout.already_accepted') %></p>

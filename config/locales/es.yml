@@ -1314,6 +1314,7 @@ es:
         paid: Se realizó el pago.
         refused: No se pudo añadir ese pago. Revise el importe y la forma de pago,
           e inténtelo de nuevo.
+        view_agreement: Ver el acuerdo
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         add_payment_amount: Importe (déjelo vacío para pagar el resto)
