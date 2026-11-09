@@ -1,0 +1,49 @@
+{
+  "name": "billing_offline_queue",
+  "device": "mobile",
+  "url": "/en/billing/offline_payments",
+  "title": "Payments waiting for you | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_offline_payments",
+  "flow": "billing_offline_queue",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-offline-queue",
+      "title": "Waiting for you",
+      "bullets": [
+        "Claimed payments come first and are marked.",
+        "Unclaimed ones are here too: mark any of them received when the money arrives."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 310.390625,
+        "width": 487.0,
+        "height": 106.0,
+        "right": 500.0,
+        "bottom": 416.390625,
+        "center_x": 256.5,
+        "center_y": 363.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 106.0,
+        "width": 485.0,
+        "height": 761.0,
+        "right": 485.0,
+        "bottom": 867.0,
+        "center_x": 242.5,
+        "center_y": 486.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 887.0,
+        "width": 270.0,
+        "height": 288,
+        "score": 390.0
+      }
+    }
+  ]
+}

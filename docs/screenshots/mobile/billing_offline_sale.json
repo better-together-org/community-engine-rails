@@ -1,0 +1,81 @@
+{
+  "name": "billing_offline_sale",
+  "device": "mobile",
+  "url": "/en/billing/sales/9f63b4ba-38f0-4665-b2ef-bc97158611c7",
+  "title": "Order BT-FZVJDQRP | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_offline_payments",
+  "flow": "billing_offline_sale",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-offline-receive-form-9f63b4ba-38f0-4665-b2ef-bc97158611c7",
+      "title": "Say it arrived",
+      "bullets": [
+        "An optional reference and date; nothing is required."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 498.390625,
+        "width": 427.0,
+        "height": 260.0,
+        "right": 456.0,
+        "bottom": 758.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 158
+      }
+    },
+    {
+      "selector": "#billing-offline-reject-form-9f63b4ba-38f0-4665-b2ef-bc97158611c7",
+      "title": "Or say it did not",
+      "bullets": [
+        "The buyer sees your reason."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 774.390625,
+        "width": 427.0,
+        "height": 140.0,
+        "right": 456.0,
+        "bottom": 914.390625,
+        "center_x": 242.5,
+        "center_y": 844.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 222,
+        "width": 270.0,
+        "height": 132
+      }
+    }
+  ]
+}

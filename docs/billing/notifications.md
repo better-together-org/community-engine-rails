@@ -15,6 +15,15 @@ Billing tells people what is happening through the same Noticed notifications th
 | `payment_succeeded` | buyer | | the processor reports a payment (the receipt) |
 | `payment_failed` | buyer | yes | the processor reports a failed payment |
 | `payment_action_required` | buyer | yes | the processor needs the buyer to act (bank confirmation) |
+| `payment_claimed` | seller | | the buyer says they sent a payment made outside the platform (first time only) |
+| `payment_confirmed` | buyer | | the seller says the money arrived, whether or not the buyer ever said they sent it |
+| `payment_rejected` | buyer | | the seller did not accept the payment |
+| `payment_place_gone` | buyer, seller | | a late payment was confirmed but what the order held is gone |
+| `cheque_received` | buyer | | the seller has the cheque |
+| `cheque_cleared` | buyer | | the cheque cleared |
+| `cheque_bounced` | buyer, seller | yes | the cheque did not clear; what it granted is reversed |
+| `confirmation_reminder` | seller | | a payment has waited a day for the seller (once a day) |
+| `hold_expiring` | buyer | yes | the hold on an unpaid order ends within a day and the buyer has not said they paid |
 | `refund_issued` | buyer, seller | | a processor refund |
 | `refund_recorded` | buyer | | the seller recorded handing money back |
 | `subscription_renewing` | buyer | | a renewal is coming up |
@@ -26,7 +35,7 @@ Billing tells people what is happening through the same Noticed notifications th
 | `event_dead_lettered` | operator | yes | a billing event could not be processed after several tries |
 | `plan_sync_failed` | operator | yes | a plan could not be sent to the processor |
 
-The offline payment kinds (a buyer says they paid, a seller confirms, rejects or lets it expire; a cheque received, cleared or bounced) come with the offline methods ([offline_payment_methods.md](offline_payment_methods.md)); they are already in the shared outcome vocabulary.
+The offline payment kinds are written about in [offline_payment_methods.md](offline_payment_methods.md). An order that lapses is told to both sides by `order_expired`, so an expiring offline payment does not send a second notice. Neither side's notice gates the other's action: a seller is told of a new order the moment it is placed, and a buyer is told of a confirmation even if they never claimed.
 
 **Audiences.** `buyer` is the person who placed the order. `seller` is whoever may manage billing for the platform that sold it, found by the `manage_platform` permission (the question `PlanPolicy` asks), not by a role name. `operator` is the same people, for something about how billing itself is working. The person who just did the thing is left out. A person who is both buyer and steward is told once per thing, not twice. Orders sold by a community or person have no platform managers to tell; their sellers will be told when community billing exists.
 

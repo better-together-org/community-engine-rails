@@ -1,0 +1,81 @@
+{
+  "name": "billing_offline_sale",
+  "device": "desktop",
+  "url": "/en/billing/sales/9f63b4ba-38f0-4665-b2ef-bc97158611c7",
+  "title": "Order BT-FZVJDQRP | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_offline_payments",
+  "flow": "billing_offline_sale",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_offline_payments_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-offline-receive-form-9f63b4ba-38f0-4665-b2ef-bc97158611c7",
+      "title": "Say it arrived",
+      "bullets": [
+        "An optional reference and date; nothing is required."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 911.0,
+        "width": 1262.0,
+        "height": 161.0,
+        "right": 1343.5,
+        "bottom": 1072.0,
+        "center_x": 712.5,
+        "center_y": 991.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1374.0,
+        "right": 1425.0,
+        "bottom": 1374.0,
+        "center_x": 712.5,
+        "center_y": 687.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 132
+      }
+    },
+    {
+      "selector": "#billing-offline-reject-form-9f63b4ba-38f0-4665-b2ef-bc97158611c7",
+      "title": "Or say it did not",
+      "bullets": [
+        "The buyer sees your reason."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 1088.0,
+        "width": 1262.0,
+        "height": 116.0,
+        "right": 1343.5,
+        "bottom": 1204.0,
+        "center_x": 712.5,
+        "center_y": 1146.0
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1374.0,
+        "right": 1425.0,
+        "bottom": 1374.0,
+        "center_x": 712.5,
+        "center_y": 687.0
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 196,
+        "width": 380,
+        "height": 106
+      }
+    }
+  ]
+}

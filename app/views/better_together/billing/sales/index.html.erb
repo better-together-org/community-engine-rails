@@ -4,7 +4,13 @@
 
 <div id="billing-sales-page" class="container my-4">
   <h1 class="mb-2"><%= t('better_together.billing.orders.sales_title') %></h1>
-  <p class="text-body-secondary mb-4"><%= t('better_together.billing.orders.sales_intro') %></p>
+  <p class="text-body-secondary mb-3"><%= t('better_together.billing.orders.sales_intro') %></p>
+  <div id="billing-sales-actions" class="d-flex flex-wrap gap-2 mb-4">
+    <%= link_to t('better_together.billing.offline_payments.queue_link'), billing_offline_payments_path(locale: I18n.locale),
+                id: 'billing-sales-offline-queue-link', class: 'btn btn-outline-secondary' %>
+    <%= link_to t('better_together.billing.walk_up.new_link'), new_billing_walk_up_sale_path(locale: I18n.locale),
+                id: 'new-walk-up-sale-btn', class: 'btn btn-primary' %>
+  </div>
 
   <% if @orders.any? %>
     <div class="card">
