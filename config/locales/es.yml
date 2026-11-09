@@ -922,6 +922,7 @@ es:
           para esta compra.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
+        view_agreement: Ver el acuerdo
       credit:
         any_purpose: Todo lo que vende la plataforma
         balance_line: 'Saldo: %{amount} (%{currency})'
@@ -971,7 +972,6 @@ es:
         steward_title: Cuentas de crédito de la tienda
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}
-        view_agreement: Ver el acuerdo
       notifications:
         cheque_bounced:
           buyer:
@@ -1203,7 +1203,6 @@ es:
         status_rejected: No aceptado
         too_many_claims: Ya se lo ha dicho al vendedor varias veces. Confirmará cuando
           reciba su pago.
-        view_agreement: Ver el acuerdo
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         agreements_heading: Acuerdos aceptados
