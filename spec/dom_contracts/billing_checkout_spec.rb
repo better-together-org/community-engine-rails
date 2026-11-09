@@ -39,7 +39,8 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
     get "/#{locale}/billing/checkout/new", params: { plan_id: cash_plan.id, payment_method: 'cash' }
 
     expect_ids('billing-checkout-form', 'billing-agreement-review', 'billing-agreement-accept-one_time_purchase_agreement',
-               'billing-agreement-accept-offline_payment_terms', 'billing-checkout-place-btn',
+               'billing-agreement-accept-offline_payment_terms', 'billing-agreement-view-one_time_purchase_agreement',
+               'billing-agreement-view-offline_payment_terms', 'billing-checkout-place-btn',
                ActionView::RecordIdentifier.dom_id(one_time_agreement, :review))
   end
 
