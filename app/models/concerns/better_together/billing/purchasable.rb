@@ -26,6 +26,9 @@ module BetterTogether
       def purchasable_amount_cents = raise(NotImplementedError, "#{self.class}#purchasable_amount_cents")
       def purchasable_currency = raise(NotImplementedError, "#{self.class}#purchasable_currency")
 
+      # The tax category it is sold under; none means standard (taxed).
+      def purchasable_tax_category = nil
+
       # Whether it can be bought right now.
       def purchasable? = true
 

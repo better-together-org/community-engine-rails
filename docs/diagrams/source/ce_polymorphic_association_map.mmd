@@ -290,6 +290,7 @@ flowchart TB
     shared_supporting_polymorphic_anchor:::hidden
     BetterTogether__Activity_polymorphic_summary["Activity\ntarget: trackable, target: owner, target: recipient"]
     BetterTogether__AgentGrant_polymorphic_summary["AgentGrant\nowner: seeds"]
+    BetterTogether__Billing__TaxRegistration_polymorphic_summary["Billing::TaxRegistration\ntarget: seller"]
     BetterTogether__CommentAddedNotifier_polymorphic_summary["CommentAddedNotifier\nfamily: 22 models\ntarget: record"]
     BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary["CommentAddedNotifier::Notification\nfamily: 22 models\ntarget: recipient"]
     BetterTogether__CommentConfig_polymorphic_summary["CommentConfig\ntarget: commentable, owner: seeds"]
@@ -328,7 +329,8 @@ flowchart TB
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
     shared_supporting_polymorphic_anchor ~~~ BetterTogether__Activity_polymorphic_summary
     BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__AgentGrant_polymorphic_summary
-    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
+    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__Billing__TaxRegistration_polymorphic_summary
+    BetterTogether__Billing__TaxRegistration_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
     BetterTogether__CommentAddedNotifier_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary
     BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary ~~~ BetterTogether__CommentConfig_polymorphic_summary
     BetterTogether__CommentConfig_polymorphic_summary ~~~ BetterTogether__ContactDetail_polymorphic_summary

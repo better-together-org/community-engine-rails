@@ -155,6 +155,10 @@ module BetterTogether
     has_many :billing_processor_settings, class_name: 'BetterTogether::Billing::ProcessorSetting',
                                           dependent: :restrict_with_error
     has_many :billing_plans, class_name: 'BetterTogether::Billing::Plan', dependent: :restrict_with_error
+    has_many :billing_tax_categories, class_name: 'BetterTogether::Billing::TaxCategory', dependent: :restrict_with_error
+    has_many :billing_tax_zones, class_name: 'BetterTogether::Billing::TaxZone', dependent: :restrict_with_error
+    has_many :billing_tax_rates, class_name: 'BetterTogether::Billing::TaxRate', dependent: :restrict_with_error
+    has_many :billing_tax_registrations, class_name: 'BetterTogether::Billing::TaxRegistration', dependent: :restrict_with_error
 
     # A hosted platform is what hosting-subscription events are about.
     include BetterTogether::Billing::Subjectable

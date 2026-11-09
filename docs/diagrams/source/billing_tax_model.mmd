@@ -1,0 +1,58 @@
+%% Billing: tax. Who collects (registration), what is taxed (category), where and how much (zone, rate),
+%% and what was charged (tax lines). Orders with no collecting registration have no tax lines.
+classDiagram
+  class TaxRegistration {
+    +seller  none means the platform
+    +country_iso / region_code
+    +status registered, small_supplier_exempt, exempt, not_collecting
+    +prices_include_tax  empty means the country default
+    +registration_number  encrypted
+    +effective_from / effective_to
+  }
+  class TaxCategory {
+    +identifier
+    +taxable  false means never taxed
+  }
+  class TaxZone {
+    +country  geography row
+    +state  empty means the whole country
+    +settlement  empty unless a municipal zone
+  }
+  class TaxRate {
+    +label  GST, PST, VAT
+    +rate  a fraction
+    +starts_at / ends_at
+    +discarded_at
+  }
+  class TaxLine {
+    label and rate copied at placement
+    +amount_cents
+    +included
+  }
+  class Order {
+    +tax_cents
+    +included_tax_cents
+    +tax_country_iso / tax_region_code
+    +tax_settlement  when taxed for a city or town
+    +prices_include_tax
+  }
+  class LineItem {
+    +tax_cents
+    +included_tax_cents
+  }
+  Platform "1" --> "*" TaxRegistration
+  Platform "1" --> "*" TaxCategory
+  Platform "1" --> "*" TaxZone
+  GeographyCountry "1" --> "*" TaxZone
+  GeographyState "0..1" --> "*" TaxZone
+  GeographySettlement "0..1" --> "*" TaxZone : municipal
+  GeographySettlement "0..1" --> "*" Order : taxed for
+  TaxZone "1" --> "*" TaxRate
+  TaxCategory "0..1" --> "*" TaxRate : only this category
+  TaxCategory "0..1" --> "*" Plan
+  TaxCategory "0..1" --> "*" LineItem
+  TaxRegistration "0..1" --> "*" Order
+  Order "1" --> "*" LineItem
+  LineItem "1" --> "*" TaxLine
+  Order "1" --> "*" TaxLine
+  TaxRate "0..1" --> "*" TaxLine

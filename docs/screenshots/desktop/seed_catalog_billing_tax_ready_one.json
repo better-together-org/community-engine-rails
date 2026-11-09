@@ -1,0 +1,49 @@
+{
+  "name": "seed_catalog_billing_tax_ready_one",
+  "device": "desktop",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog_billing_tax",
+  "flow": "seed_catalog_billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_billing_tax_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plant-billing_tax_canada-btn",
+      "title": "Plant one packet",
+      "bullets": [
+        "Zones are tied to the Geography::State rows.",
+        "Adds what is missing; never changes a rate."
+      ],
+      "target": {
+        "x": 1305.71875,
+        "y": 757.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 788.0,
+        "center_x": 1332.359375,
+        "center_y": 772.5
+      },
+      "avoid": {
+        "x": 1305.71875,
+        "y": 757.0,
+        "width": 53.28125,
+        "height": 31.0,
+        "right": 1359.0,
+        "bottom": 788.0,
+        "center_x": 1332.359375,
+        "center_y": 772.5
+      },
+      "placement": {
+        "side": "left",
+        "x": 905.72,
+        "y": 680.5,
+        "width": 380,
+        "height": 184,
+        "score": 1305.71875
+      }
+    }
+  ]
+}

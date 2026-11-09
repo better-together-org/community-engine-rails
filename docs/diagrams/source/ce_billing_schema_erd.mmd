@@ -21,6 +21,7 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_LINE_ITEMS : "platform / platform_id"
   BILLING_ORDERS ||--o{ BILLING_LINE_ITEMS : "order / order_id"
+  EXT_BILLING_TAX_CATEGORY o|--o{ BILLING_LINE_ITEMS : "tax_category / tax_category_id"
   EXT_PLATFORM ||--o{ BILLING_NOTIFICATION_RECEIPTS : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_NOTIFICATION_RECEIPTS : "recipient / recipient_id"
   EXT_PLATFORM ||--o{ BILLING_OFFLINE_PAYMENTS : "platform / platform_id"
@@ -30,6 +31,8 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_ORDERS : "platform / platform_id"
   EXT_PERSON ||--o{ BILLING_ORDERS : "buyer / buyer_id"
   EXT_PAY_SUBSCRIPTION o|--o{ BILLING_ORDERS : "pay_subscription / pay_subscription_id"
+  EXT_BILLING_TAX_REGISTRATION o|--o{ BILLING_ORDERS : "tax_registration / tax_registration_id"
+  EXT_GEOGRAPHY_SETTLEMENT o|--o{ BILLING_ORDERS : "tax_settlement / tax_settlement_id"
   EXT_PLATFORM ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "platform / platform_id"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "order / order_id"
   EXT_AGREEMENT ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "agreement / agreement_id"
@@ -38,6 +41,7 @@ erDiagram
   BILLING_ORDERS ||--o{ BILLING_PAYMENTS : "order / order_id"
   EXT_PAY_CHARGE o|--o{ BILLING_PAYMENTS : "pay_charge / pay_charge_id"
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
+  EXT_BILLING_TAX_CATEGORY o|--o{ BILLING_PLANS : "tax_category / tax_category_id"
   EXT_PLATFORM ||--o{ BILLING_PLAN_GRANTS : "platform / platform_id"
   BILLING_PLANS ||--o{ BILLING_PLAN_GRANTS : "plan / plan_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
@@ -145,12 +149,13 @@ erDiagram
     order_id uuid
     platform_id uuid
     purchasable_id uuid
+    tax_category_id uuid
     currency string
     description string
     purchasable_type string
+    included_tax_cents integer
     position integer
     quantity integer
-    unit_amount_cents integer
   }
 
   BILLING_NOTIFICATION_RECEIPTS {
@@ -181,10 +186,10 @@ erDiagram
     platform_id uuid
     seller_id uuid
     subject_id uuid
+    tax_registration_id uuid
+    tax_settlement_id uuid
     currency string
     number string
-    on_behalf_of_type string
-    purpose string
   }
 
   BILLING_ORDER_AGREEMENT_ACCEPTANCES {
@@ -219,11 +224,11 @@ erDiagram
     processor_product_id string
     platform_id uuid
     seller_id uuid
+    tax_category_id uuid
     accepted_payment_methods string
     billing_interval string
     currency string
     identifier string
-    name string
   }
 
   BILLING_PLAN_GRANTS {
@@ -313,6 +318,18 @@ erDiagram
   }
 
   EXT_PERSON {
+    string export_ref
+  }
+
+  EXT_BILLING_TAX_CATEGORY {
+    string export_ref
+  }
+
+  EXT_BILLING_TAX_REGISTRATION {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_SETTLEMENT {
     string export_ref
   }
 

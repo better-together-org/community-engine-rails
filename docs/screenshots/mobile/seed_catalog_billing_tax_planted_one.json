@@ -1,0 +1,48 @@
+{
+  "name": "seed_catalog_billing_tax_planted_one",
+  "device": "mobile",
+  "url": "/en/host/seeds/catalog",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "seed_catalog_billing_tax",
+  "flow": "seed_catalog_billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/seed_catalog_billing_tax_spec.rb",
+  "callouts": [
+    {
+      "selector": ".billing_tax_canada-status-badge",
+      "title": "Planted",
+      "bullets": [
+        "Thirteen zones, one per province and territory."
+      ],
+      "target": {
+        "x": 261.265625,
+        "y": 878.203125,
+        "width": 67.609375,
+        "height": 20.375,
+        "right": 328.875,
+        "bottom": 898.578125,
+        "center_x": 295.0703125,
+        "center_y": 888.390625
+      },
+      "avoid": {
+        "x": 261.265625,
+        "y": 878.203125,
+        "width": 67.609375,
+        "height": 20.375,
+        "right": 328.875,
+        "bottom": 898.578125,
+        "center_x": 295.0703125,
+        "center_y": 888.390625
+      },
+      "placement": {
+        "side": "above",
+        "x": 160.07,
+        "y": 700.2,
+        "width": 270.0,
+        "height": 158,
+        "score": 878.203125
+      }
+    }
+  ]
+}

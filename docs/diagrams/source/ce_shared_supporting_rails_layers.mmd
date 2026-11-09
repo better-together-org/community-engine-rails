@@ -425,6 +425,32 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__Billing__TaxCategory["Billing::TaxCategory"] {
+      <<Model>>
+      table: better_together_billing_tax_categories
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__TaxLine["Billing::TaxLine"] {
+      <<Model>>
+      table: better_together_billing_tax_lines
+      concerns: Billing::ParentBound, Billing::PlatformBound
+    }
+    class BetterTogether__Billing__TaxRate["Billing::TaxRate"] {
+      <<Model>>
+      table: better_together_billing_tax_rates
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__TaxRegistration["Billing::TaxRegistration"] {
+      <<Model>>
+      table: better_together_billing_tax_registrations
+      concerns: Billing::EncryptedAttributes, Billing::PlatformBound, Billing::SellerScoped
+      weak refs: target: seller
+    }
+    class BetterTogether__Billing__TaxZone["Billing::TaxZone"] {
+      <<Model>>
+      table: better_together_billing_tax_zones
+      concerns: Billing::PlatformBound
+    }
     class BetterTogether__CommentAddedNotifier["CommentAddedNotifier\n(shared table family)"] {
       <<Model>>
       table: noticed_events
@@ -759,6 +785,19 @@ classDiagram
   BetterTogether__AgentGrant --> BetterTogether__Person : operator
   BetterTogether__AgentGrant --> BetterTogether__Community : community
   BetterTogether__AgentGrant --> BetterTogether__Person : granted_by
+  BetterTogether__Billing__TaxCategory --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxLine --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxLine --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__TaxLine --> BetterTogether__Billing__LineItem : line_item
+  BetterTogether__Billing__TaxLine --> BetterTogether__Billing__TaxRate : tax_rate
+  BetterTogether__Billing__TaxRate --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxRate --> BetterTogether__Billing__TaxZone : tax_zone
+  BetterTogether__Billing__TaxRate --> BetterTogether__Billing__TaxCategory : tax_category
+  BetterTogether__Billing__TaxRegistration --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxZone --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxZone --> BetterTogether__Geography__Country : country
+  BetterTogether__Billing__TaxZone --> BetterTogether__Geography__State : state
+  BetterTogether__Billing__TaxZone --> BetterTogether__Geography__Settlement : settlement
   BetterTogether__CommentAddedNotifier__Notification --> Noticed__Event : event
   BetterTogether__CommentAddedNotifier__Notification --> BetterTogether__Platform : platform
   BetterTogether__ContactDetail --> BetterTogether__Platform : platform

@@ -12,6 +12,9 @@ module BetterTogether
 
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :line_items, optional: false
       belongs_to :purchasable, polymorphic: true, optional: true
+      # The category the line was taxed under when the order was placed.
+      belongs_to :tax_category, class_name: 'BetterTogether::Billing::TaxCategory', optional: true
+      has_many :tax_lines, class_name: 'BetterTogether::Billing::TaxLine', inverse_of: :line_item, dependent: :destroy
 
       validates :description, presence: true
       validates :quantity, numericality: { only_integer: true, greater_than: 0 }

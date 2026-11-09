@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -427,9 +427,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.integer "unit_amount_cents", null: false
     t.string "currency", null: false
     t.integer "position", default: 0, null: false
+    t.integer "tax_cents", default: 0, null: false
+    t.integer "included_tax_cents", default: 0, null: false
+    t.uuid "tax_category_id"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_line_items_id_platform", unique: true
     t.index ["order_id"], name: "idx_bt_billing_line_items_order"
     t.index ["platform_id"], name: "idx_bt_billing_line_items_platform"
     t.index ["purchasable_type", "purchasable_id"], name: "idx_bt_billing_line_items_purchasable"
+    t.index ["tax_category_id"], name: "idx_bt_billing_line_items_tax_category"
   end
 
   create_table "better_together_billing_notification_receipts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -529,6 +534,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.datetime "cancelled_at"
     t.uuid "pay_subscription_id"
     t.string "renewal_payment_method"
+    t.integer "tax_cents", default: 0, null: false
+    t.integer "included_tax_cents", default: 0, null: false
+    t.string "tax_country_iso"
+    t.string "tax_region_code"
+    t.uuid "tax_settlement_id"
+    t.boolean "prices_include_tax"
+    t.uuid "tax_registration_id"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
     t.index ["id", "platform_id"], name: "idx_bt_billing_orders_id_platform", unique: true
     t.index ["on_behalf_of_type", "on_behalf_of_id"], name: "idx_bt_billing_orders_on_behalf_of"
@@ -538,6 +550,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_orders_seller"
     t.index ["status", "expires_at"], name: "idx_bt_billing_orders_status_expires"
     t.index ["subject_type", "subject_id"], name: "idx_bt_billing_orders_subject"
+    t.index ["tax_registration_id"], name: "idx_bt_billing_orders_tax_registration"
+    t.index ["tax_settlement_id"], name: "idx_bt_billing_orders_tax_settlement"
   end
 
   create_table "better_together_billing_payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -609,6 +623,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.datetime "synced_to_processor_at"
     t.string "latest_processor_event_id"
     t.jsonb "metadata", default: {}, null: false
+    t.uuid "tax_category_id"
     t.index ["active"], name: "idx_bt_billing_plans_active"
     t.index ["id", "platform_id"], name: "idx_bt_billing_plans_id_platform", unique: true
     t.index ["platform_id", "identifier"], name: "idx_bt_billing_plans_platform_identifier", unique: true, where: "(seller_id IS NULL)"
@@ -618,6 +633,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.index ["processor", "processor_product_id"], name: "idx_bt_billing_plans_processor_product"
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_plans_seller"
     t.index ["sync_status"], name: "idx_bt_billing_plans_sync_status"
+    t.index ["tax_category_id"], name: "idx_bt_billing_plans_tax_category"
   end
 
   create_table "better_together_billing_processor_settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -748,6 +764,87 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.index ["platform_id", "payment_id", "processor_reference"], name: "idx_bt_billing_refunds_reference", unique: true, where: "(processor_reference IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_refunds_platform"
     t.index ["recorded_by_id"], name: "idx_bt_billing_refunds_recorded_by"
+  end
+
+  create_table "better_together_billing_tax_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "identifier", null: false
+    t.string "name", null: false
+    t.boolean "taxable", default: true, null: false
+    t.index ["id", "platform_id"], name: "idx_bt_billing_tax_categories_id_platform", unique: true
+    t.index ["platform_id", "identifier"], name: "idx_bt_billing_tax_categories_identifier", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_tax_categories_platform"
+  end
+
+  create_table "better_together_billing_tax_lines", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "order_id", null: false
+    t.uuid "line_item_id", null: false
+    t.uuid "tax_rate_id"
+    t.string "label", null: false
+    t.decimal "rate", precision: 8, scale: 5, null: false
+    t.integer "amount_cents", null: false
+    t.boolean "included", default: false, null: false
+    t.index ["line_item_id"], name: "idx_bt_billing_tax_lines_line_item"
+    t.index ["order_id"], name: "idx_bt_billing_tax_lines_order"
+    t.index ["platform_id"], name: "idx_bt_billing_tax_lines_platform"
+  end
+
+  create_table "better_together_billing_tax_rates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "tax_zone_id", null: false
+    t.uuid "tax_category_id"
+    t.string "label", null: false
+    t.decimal "rate", precision: 8, scale: 5, null: false
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "discarded_at"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_tax_rates_id_platform", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_tax_rates_platform"
+    t.index ["tax_zone_id"], name: "idx_bt_billing_tax_rates_zone"
+  end
+
+  create_table "better_together_billing_tax_registrations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "seller_type"
+    t.uuid "seller_id"
+    t.string "country_iso", null: false
+    t.string "region_code"
+    t.string "status", default: "registered", null: false
+    t.boolean "prices_include_tax"
+    t.text "registration_number"
+    t.datetime "effective_from"
+    t.datetime "effective_to"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_tax_registrations_id_platform", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_tax_registrations_platform"
+    t.index ["seller_type", "seller_id"], name: "idx_bt_billing_tax_registrations_seller"
+  end
+
+  create_table "better_together_billing_tax_zones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "name", null: false
+    t.uuid "country_id", null: false
+    t.uuid "state_id"
+    t.uuid "settlement_id"
+    t.index ["id", "platform_id"], name: "idx_bt_billing_tax_zones_id_platform", unique: true
+    t.index ["platform_id", "country_id", "state_id", "settlement_id"], name: "idx_bt_billing_tax_zones_place"
+    t.index ["platform_id"], name: "idx_bt_billing_tax_zones_platform"
+    t.index ["settlement_id"], name: "idx_bt_billing_tax_zones_settlement"
   end
 
   create_table "better_together_calendar_entries", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3378,10 +3475,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
   add_foreign_key "better_together_billing_entitlements", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_plan_platform"
   add_foreign_key "better_together_billing_entitlements", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_entitlements", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_subscription_platform"
-  add_foreign_key "better_together_billing_plan_grants", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_plan_grants_plan_platform"
-  add_foreign_key "better_together_billing_plan_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_line_items", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_line_items_order_platform"
+  add_foreign_key "better_together_billing_line_items", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_line_items_tax_category_platform"
   add_foreign_key "better_together_billing_line_items", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_notification_receipts", "better_together_people", column: "recipient_id", on_delete: :cascade
   add_foreign_key "better_together_billing_notification_receipts", "better_together_platforms", column: "platform_id"
@@ -3393,12 +3489,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_acc_order_platform"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_orders", "better_together_billing_tax_registrations", column: ["tax_registration_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_tax_registration_platform"
+  add_foreign_key "better_together_billing_orders", "better_together_geography_settlements", column: "tax_settlement_id"
   add_foreign_key "better_together_billing_orders", "better_together_people", column: "buyer_id"
   add_foreign_key "better_together_billing_orders", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_orders", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_pay_subscription_platform"
   add_foreign_key "better_together_billing_payments", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_payments_order_platform"
   add_foreign_key "better_together_billing_payments", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_payments", "pay_charges", column: ["pay_charge_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_payments_pay_charge_platform"
+  add_foreign_key "better_together_billing_plan_grants", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_plan_grants_plan_platform"
+  add_foreign_key "better_together_billing_plan_grants", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_plans", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_plans_tax_category_platform"
   add_foreign_key "better_together_billing_plans", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_processor_settings", "better_together_people", column: "acknowledged_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_processor_settings", "better_together_platforms", column: "platform_id"
@@ -3408,15 +3509,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_promotions", "better_together_people", column: "created_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_promotions", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_refunds", "better_together_billing_payments", column: ["payment_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_refunds_payment_platform"
+  add_foreign_key "better_together_billing_refunds", "better_together_people", column: "recorded_by_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_refunds", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_subscription_periods", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_periods_order_platform"
   add_foreign_key "better_together_billing_subscription_periods", "better_together_billing_subscription_terms", column: ["subscription_term_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_periods_term_platform"
   add_foreign_key "better_together_billing_subscription_periods", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_subscription_terms", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_terms_plan_platform"
   add_foreign_key "better_together_billing_subscription_terms", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_subscription_terms", "pay_subscriptions", column: ["pay_subscription_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_terms_subscription_platform"
-  add_foreign_key "better_together_billing_refunds", "better_together_billing_payments", column: ["payment_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_refunds_payment_platform"
-  add_foreign_key "better_together_billing_refunds", "better_together_people", column: "recorded_by_id", on_delete: :nullify
-  add_foreign_key "better_together_billing_refunds", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_categories", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_lines", "better_together_billing_line_items", column: ["line_item_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_lines_line_item_platform"
+  add_foreign_key "better_together_billing_tax_lines", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_lines_order_platform"
+  add_foreign_key "better_together_billing_tax_lines", "better_together_billing_tax_rates", column: ["tax_rate_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_lines_rate_platform"
+  add_foreign_key "better_together_billing_tax_lines", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_category_platform"
+  add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_zones", column: ["tax_zone_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_zone_platform"
+  add_foreign_key "better_together_billing_tax_rates", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_registrations", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_geography_countries", column: "country_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_geography_settlements", column: "settlement_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_geography_states", column: "state_id"
+  add_foreign_key "better_together_billing_tax_zones", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_calendar_entries", "better_together_calendars", column: "calendar_id"
   add_foreign_key "better_together_calendar_entries", "better_together_events", column: "event_id"
   add_foreign_key "better_together_calendar_entries", "better_together_platforms", column: "platform_id"

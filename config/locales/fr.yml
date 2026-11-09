@@ -6719,6 +6719,12 @@ fr:
     button: Rechercher
     placeholder: Rechercher...
   seed_catalog:
+    billing_tax:
+      categories:
+        billing_tax_canada: Taxes de vente canadiennes
+      description: 'Catégories, zones et taux de taxes pour les lieux où une plateforme
+        vend. Les zones sont liées aux provinces de la géographie : plantez-les d''abord.'
+      label: Données de référence des taxes de vente
     geography:
       categories:
         continents: Continents

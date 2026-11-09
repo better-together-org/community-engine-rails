@@ -279,6 +279,7 @@ classDiagram
   BetterTogether__Billing__Event --> BetterTogether__Platform : platform
   BetterTogether__Billing__LineItem --> BetterTogether__Platform : platform
   BetterTogether__Billing__LineItem --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__LineItem --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__NotificationReceipt --> BetterTogether__Platform : platform
   BetterTogether__Billing__NotificationReceipt --> BetterTogether__Person : recipient
   BetterTogether__Billing__OfflinePayment --> BetterTogether__Platform : platform
@@ -288,6 +289,8 @@ classDiagram
   BetterTogether__Billing__Order --> BetterTogether__Platform : platform
   BetterTogether__Billing__Order --> BetterTogether__Person : buyer
   BetterTogether__Billing__Order --> Pay__Subscription : pay_subscription
+  BetterTogether__Billing__Order --> BetterTogether__Billing__TaxRegistration : tax_registration
+  BetterTogether__Billing__Order --> BetterTogether__Geography__Settlement : tax_settlement
   BetterTogether__Billing__OrderAgreementAcceptance --> BetterTogether__Platform : platform
   BetterTogether__Billing__OrderAgreementAcceptance --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__OrderAgreementAcceptance --> BetterTogether__Agreement : agreement
@@ -296,6 +299,7 @@ classDiagram
   BetterTogether__Billing__Payment --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__Payment --> Pay__Charge : pay_charge
   BetterTogether__Billing__Plan --> BetterTogether__Platform : platform
+  BetterTogether__Billing__Plan --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__PlanGrant --> BetterTogether__Platform : platform
   BetterTogether__Billing__PlanGrant --> BetterTogether__Billing__Plan : plan
   BetterTogether__Billing__ProcessorSetting --> BetterTogether__Platform : platform

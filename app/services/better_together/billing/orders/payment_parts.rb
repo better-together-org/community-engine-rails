@@ -19,13 +19,15 @@ module BetterTogether
           def rest? = amount_cents.nil?
         end
 
-        def initialize(parts, platform:, seller:, purpose:, currency:, line_items:) # rubocop:disable Metrics/ParameterLists
+        # `additional_tax_cents` is the tax that comes on top of the line items (none when prices already include it).
+        def initialize(parts, platform:, seller:, purpose:, currency:, line_items:, additional_tax_cents: 0) # rubocop:disable Metrics/ParameterLists
           @parts = Array(parts).map { |part| build(part) }
           @platform = platform
           @seller = seller
           @purpose = purpose
           @currency = currency
           @line_items = line_items
+          @additional_tax_cents = additional_tax_cents
         end
 
         attr_reader :parts
@@ -70,12 +72,12 @@ module BetterTogether
           part.credit? ? 1 : 2
         end
 
-        # What the line items come to, at the price each was sold at.
-        def total_cents
+        # What the line items come to, at the price each was sold at, with any tax added on top.
+        def total_cents = items_cents + @additional_tax_cents
+
+        def items_cents
           line_items.sum do |line_item|
-            line_item.fetch(:unit_amount_cents) do
-              line_item.fetch(:purchasable).purchasable_amount_cents
-            end * line_item.fetch(:quantity, 1)
+            line_item.fetch(:unit_amount_cents) { line_item.fetch(:purchasable).purchasable_amount_cents } * line_item.fetch(:quantity, 1)
           end
         end
 

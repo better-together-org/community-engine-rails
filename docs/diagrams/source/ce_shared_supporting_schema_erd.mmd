@@ -8,6 +8,19 @@ erDiagram
   EXT_PERSON o|--o{ AGENT_GRANTS : "granted_by / granted_by_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXT_PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_CATEGORIES : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_LINES : "platform / platform_id"
+  EXT_BILLING_ORDER ||--o{ BILLING_TAX_LINES : "order / order_id"
+  EXT_BILLING_LINE_ITEM ||--o{ BILLING_TAX_LINES : "line_item / line_item_id"
+  BILLING_TAX_RATES o|--o{ BILLING_TAX_LINES : "tax_rate / tax_rate_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_RATES : "platform / platform_id"
+  BILLING_TAX_ZONES ||--o{ BILLING_TAX_RATES : "tax_zone / tax_zone_id"
+  BILLING_TAX_CATEGORIES o|--o{ BILLING_TAX_RATES : "tax_category / tax_category_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_REGISTRATIONS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_TAX_ZONES : "platform / platform_id"
+  EXT_GEOGRAPHY_COUNTRY ||--o{ BILLING_TAX_ZONES : "country / country_id"
+  EXT_GEOGRAPHY_STATE o|--o{ BILLING_TAX_ZONES : "state / state_id"
+  EXT_GEOGRAPHY_SETTLEMENT o|--o{ BILLING_TAX_ZONES : "settlement / settlement_id"
   EXT_PLATFORM o|--o{ CONTACT_DETAILS : "platform / platform_id"
   EXT_PLATFORM o|--o{ CONTENT_SECURITY_FINDINGS : "platform / platform_id"
   CONTENT_SECURITY_ITEMS ||--o{ CONTENT_SECURITY_FINDINGS : "item / item_id"
@@ -115,6 +128,55 @@ erDiagram
     type string
     read_at datetime
     seen_at datetime
+  }
+
+  BILLING_TAX_CATEGORIES {
+    platform_id uuid
+    identifier string
+    name string
+    taxable boolean
+  }
+
+  BILLING_TAX_LINES {
+    line_item_id uuid
+    order_id uuid
+    platform_id uuid
+    tax_rate_id uuid
+    label string
+    included boolean
+    amount_cents integer
+    rate decimal
+  }
+
+  BILLING_TAX_RATES {
+    platform_id uuid
+    tax_category_id uuid
+    tax_zone_id uuid
+    label string
+    ends_at datetime
+    starts_at datetime
+    rate decimal
+  }
+
+  BILLING_TAX_REGISTRATIONS {
+    platform_id uuid
+    seller_id uuid
+    country_iso string
+    region_code string
+    seller_type string
+    status string
+    registration_number text
+    prices_include_tax boolean
+    effective_from datetime
+    effective_to datetime
+  }
+
+  BILLING_TAX_ZONES {
+    country_id uuid
+    platform_id uuid
+    settlement_id uuid
+    state_id uuid
+    name string
   }
 
   COMMENT_CONFIGS {
@@ -474,6 +536,26 @@ erDiagram
     string export_ref
   }
 
+  EXT_BILLING_LINE_ITEM {
+    string export_ref
+  }
+
+  EXT_BILLING_ORDER {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_COUNTRY {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_SETTLEMENT {
+    string export_ref
+  }
+
+  EXT_GEOGRAPHY_STATE {
+    string export_ref
+  }
+
   EXT_SAFETY_CASE {
     string export_ref
   }
@@ -487,10 +569,6 @@ erDiagram
   }
 
   EXT_ADDRESS {
-    string export_ref
-  }
-
-  EXT_GEOGRAPHY_SETTLEMENT {
     string export_ref
   }
 

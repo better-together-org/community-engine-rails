@@ -73,6 +73,9 @@ module BetterTogether
       # The steward chose to link a price that already exists instead of creating one.
       attribute :link_existing, :boolean, default: false
 
+      # How the plan is taxed; none means standard.
+      belongs_to :tax_category, class_name: 'BetterTogether::Billing::TaxCategory', optional: true
+
       # What the plan includes (roles, feature access, quota allowances); see Entitlements.
       has_many :plan_grants, -> { order(:position, :created_at) }, class_name: 'BetterTogether::Billing::PlanGrant', inverse_of: :plan,
                                                                    dependent: :restrict_with_error
@@ -145,6 +148,7 @@ module BetterTogether
       def purchasable_description = name
       def purchasable_amount_cents = amount_cents
       def purchasable_currency = currency
+      def purchasable_tax_category = tax_category
       def purchasable? = active?
 
       # Held by an online payment processor (as opposed to paid only by cash, cheque,
