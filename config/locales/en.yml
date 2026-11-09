@@ -1210,6 +1210,7 @@ en:
         status_rejected: Not accepted
         too_many_claims: You have already told the seller several times. They will
           confirm when they have your payment.
+        view_agreement: View the agreement
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted
