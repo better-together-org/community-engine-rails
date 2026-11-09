@@ -33,8 +33,17 @@ module BetterTogether
         def people
           case audience
           when :buyer then [order&.buyer]
+          when :holder then [credit_holder]
           when :seller, :operator then managers
           else []
+          end
+        end
+
+        # The person whose store credit a lot or account is.
+        def credit_holder
+          case subject
+          when CreditLot then subject.account.holder
+          when CreditAccount then subject.holder
           end
         end
 

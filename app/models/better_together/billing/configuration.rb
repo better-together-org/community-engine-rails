@@ -55,7 +55,7 @@ module BetterTogether
         # (see ProcessorSetting), so it is installed for everyone and on for no one by default.
         def context_for(platform, processor, seller: nil)
           return if platform.nil? || Billing.processor_names.map(&:to_s).exclude?(processor.to_s)
-          return setting_context(platform, processor, seller) if Billing.offline_method?(processor)
+          return setting_context(platform, processor, seller) if Billing.local_method?(processor)
           return unless platform.host?
 
           ProcessorContext.new(platform:, processor:)

@@ -22,18 +22,27 @@ module BetterTogether
     describe 'methods outside a vendor' do
       include_context 'with builtin billing processors'
 
-      it 'registers cash, cheque and e-transfer' do
-        expect(described_class.processor_names).to contain_exactly(:cash, :cheque, :etransfer)
-        expect(described_class.builtin_processors.keys).to contain_exactly(:cash, :cheque, :etransfer)
+      it 'registers cash, cheque, e-transfer and store credit' do
+        expect(described_class.processor_names).to contain_exactly(:cash, :cheque, :etransfer, :store_credit)
+        expect(described_class.builtin_processors.keys).to contain_exactly(:cash, :cheque, :etransfer, :store_credit)
       end
 
       it 'tells them apart from a vendor processor' do
         described_class.register_processor(:fake, -> { Billing::FakeAdapter.new })
 
-        expect(described_class.offline_method?(:cash)).to be(true)
-        expect(described_class.offline_method?('etransfer')).to be(true)
-        expect(described_class.offline_method?(:fake)).to be(false)
-        expect(described_class.offline_method?(:ghost)).to be(false)
+        expect(described_class.local_method?(:cash)).to be(true)
+        expect(described_class.local_method?('etransfer')).to be(true)
+        expect(described_class.local_method?(:store_credit)).to be(true)
+        expect(described_class.local_method?(:fake)).to be(false)
+        expect(described_class.local_method?(:ghost)).to be(false)
+      end
+
+      it 'tells a method the seller confirms from store credit, so credit is never treated as cash' do
+        expect(described_class.manual_method?(:cash)).to be(true)
+        expect(described_class.manual_method?(:store_credit)).to be(false)
+        expect(described_class.internal_method?(:store_credit)).to be(true)
+        expect(described_class.internal_method?(:cash)).to be(false)
+        expect(described_class.internal_method?(:ghost)).to be(false)
       end
 
       it 'is not enabled for anyone until a steward turns a method on' do

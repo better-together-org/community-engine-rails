@@ -54,7 +54,7 @@ module BetterTogether
       end
 
       def payment_method_installed
-        errors.add(:payment_method, :not_an_offline_method, method: payment_method) unless Billing.offline_method?(payment_method)
+        errors.add(:payment_method, :not_an_offline_method, method: payment_method) unless Billing.local_method?(payment_method)
       end
 
       # Never load a target whose type is not on the allow-list.

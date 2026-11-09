@@ -1,0 +1,98 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.credit.steward_title') %>
+<% end %>
+
+<div id="billing-credit-accounts-page" class="container my-4">
+  <h1 class="mb-2"><%= t('better_together.billing.credit.steward_title') %></h1>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.credit.steward_intro') %></p>
+
+  <%= form_with url: billing_credit_accounts_path(locale: I18n.locale), method: :get, id: 'billing-credit-lookup-form', class: 'row g-2 mb-4' do %>
+    <div class="col-md-6">
+      <%= label_tag 'billing-credit-lookup-person', t('better_together.billing.credit.lookup_label'), class: 'form-label' %>
+      <%= select_tag :person_id,
+                     options_for_select(@holder ? [[@holder.select_option_title, @holder.id]] : [], @holder&.id),
+                     id: 'billing-credit-lookup-person',
+                     class: 'form-select',
+                     include_blank: true,
+                     data: {
+                       controller: 'better-together--slim-select',
+                       'better-together--slim-select-options-value': {
+                         ajax: { url: billing_people_credit_accounts_path(locale: I18n.locale), fetch: true, delay: 300 },
+                         searchPlaceholder: t('better_together.billing.credit.lookup_placeholder'),
+                         searchHighlight: true,
+                         closeOnSelect: true,
+                         allowDeselect: true
+                       }.to_json
+                     } %>
+      <div class="form-text"><%= t('better_together.billing.credit.lookup_hint') %></div>
+    </div>
+    <div class="col-md-3 d-flex align-items-start pt-md-4">
+      <%= submit_tag t('better_together.billing.credit.lookup_submit'), class: 'btn btn-outline-primary mt-md-2', id: 'billing-credit-lookup-btn', name: nil %>
+    </div>
+  <% end %>
+
+  <% if @lookup_failed %>
+    <p id="billing-credit-lookup-failed" class="alert alert-warning" role="alert"><%= t('better_together.billing.credit.lookup_failed') %></p>
+  <% end %>
+
+  <% if @holder %>
+    <section id="billing-credit-holder" class="mb-4">
+      <h2 class="h5"><%= @holder.name %></h2>
+      <%= form_with url: billing_credit_grants_path(locale: I18n.locale), method: :post, id: 'billing-credit-grant-form', class: 'card card-body mb-4' do %>
+        <%= hidden_field_tag :person_id, @holder.id %>
+        <%= hidden_field_tag :token, SecureRandom.hex(8) %>
+        <div class="row g-2">
+          <div class="col-md-3">
+            <%= label_tag 'billing-credit-grant-amount', t('better_together.billing.credit.grant_amount'), class: 'form-label' %>
+            <%= text_field_tag :amount, nil, id: 'billing-credit-grant-amount', class: 'form-control', inputmode: 'decimal', autocomplete: 'off', required: true %>
+          </div>
+          <div class="col-md-2">
+            <%= label_tag 'billing-credit-grant-currency', t('better_together.billing.credit.grant_currency'), class: 'form-label' %>
+            <%= select_tag :currency, options_for_select(BetterTogether::Billing::Plan::SUPPORTED_CURRENCY_CODES), id: 'billing-credit-grant-currency', class: 'form-select' %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag 'billing-credit-grant-expires', t('better_together.billing.credit.grant_expires'), class: 'form-label' %>
+            <%= number_field_tag :expires_in_days, nil, id: 'billing-credit-grant-expires', class: 'form-control', min: 1, max: 3650 %>
+            <div class="form-text"><%= t('better_together.billing.credit.grant_expires_hint') %></div>
+          </div>
+          <div class="col-md-4">
+            <%= label_tag 'billing-credit-grant-note', t('better_together.billing.credit.grant_note'), class: 'form-label' %>
+            <%= text_field_tag :note, nil, id: 'billing-credit-grant-note', class: 'form-control', maxlength: 255 %>
+          </div>
+        </div>
+        <%= submit_tag t('better_together.billing.credit.grant_submit'), id: 'billing-credit-grant-btn', class: 'btn btn-primary mt-3 align-self-start' %>
+      <% end %>
+    </section>
+  <% end %>
+
+  <% if @accounts.any? %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-credit-accounts-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.credit.field_holder') %></th>
+              <th scope="col"><%= t('better_together.billing.credit.field_currency') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.credit.field_balance') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @accounts.each do |account| %>
+              <tr id="<%= dom_id(account) %>">
+                <th scope="row"><%= account.holder&.name || t('better_together.billing.credit.deleted_holder') %></th>
+                <td><%= account.currency %></td>
+                <td class="text-end"><%= billing_amount(account.balance_cents, account.currency) %></td>
+                <td class="text-end">
+                  <%= link_to t('globals.view'), billing_credit_account_path(account, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% elsif @holder.nil? && !@lookup_failed %>
+    <p id="billing-credit-accounts-empty" class="text-body-secondary"><%= t('better_together.billing.credit.no_accounts') %></p>
+  <% end %>
+</div>

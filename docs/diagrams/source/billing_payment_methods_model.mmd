@@ -51,7 +51,9 @@ classDiagram
     +processors_for(platform) Array
   }
   class Billing {
-    +offline_method?(name) Boolean
+    +local_method?(name) Boolean  manual or internal
+    +manual_method?(name) Boolean  the seller confirms
+    +internal_method?(name) Boolean  store credit
     +enabled?(platform) Boolean
     +configurable?(platform) Boolean
     +register_builtin_processors!()

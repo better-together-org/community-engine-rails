@@ -45,8 +45,10 @@ module BetterTogether
 
         def purpose = @purpose ||= Checkout::Methods.new(platform:, plan:).purpose
 
+        # A sale in person is paid by something the seller can confirm; store credit is the buyer's to spend.
         def method_available?
-          Checkout::Methods.call(platform:, plan:).any? { |choice| choice.available? && choice.name == payment_method }
+          Billing.manual_method?(payment_method) &&
+            Checkout::Methods.call(platform:, plan:).any? { |choice| choice.available? && choice.name == payment_method }
         end
 
         def record_in_person_acceptance

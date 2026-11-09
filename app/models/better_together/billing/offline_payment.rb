@@ -129,7 +129,7 @@ module BetterTogether
       end
 
       def method_is_offline
-        errors.add(:processor, :not_an_offline_method, method: processor) unless Billing.offline_method?(processor)
+        errors.add(:processor, :not_an_offline_method, method: processor) unless Billing.manual_method?(processor)
       end
 
       def payment_is_this_orders

@@ -1,0 +1,59 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.credit.steward_title') %>
+<% end %>
+
+<div id="<%= dom_id(@account, :show_page) %>" class="container my-4">
+  <%= render 'shared/resource_toolbar', back_to_list_path: billing_credit_accounts_path(locale: I18n.locale), edit_path: nil %>
+  <h1 class="mb-1"><%= @account.holder&.name || t('better_together.billing.credit.deleted_holder') %></h1>
+  <p id="<%= dom_id(@account, :balance) %>" class="text-body-secondary mb-4">
+    <%= t('better_together.billing.credit.balance_line', amount: billing_amount(@account.balance_cents, @account.currency), currency: @account.currency) %>
+  </p>
+
+  <div class="card mb-4">
+    <div class="table-responsive">
+      <table id="<%= dom_id(@account, :lots) %>" class="table mb-0 billing-credit-lots-table">
+        <caption class="visually-hidden"><%= t('better_together.billing.credit.lots_caption') %></caption>
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('better_together.billing.credit.field_origin') %></th>
+            <th scope="col" class="text-end"><%= t('better_together.billing.credit.field_amount') %></th>
+            <th scope="col" class="text-end"><%= t('better_together.billing.credit.field_remaining') %></th>
+            <th scope="col"><%= t('better_together.billing.credit.field_expires') %></th>
+            <th scope="col"><%= t('better_together.billing.credit.field_for') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @lots.each do |lot| %>
+            <tr id="<%= dom_id(lot) %>">
+              <th scope="row"><%= t("better_together.billing.credit.origin_#{lot.origin}") %></th>
+              <td class="text-end"><%= billing_amount(lot.amount_cents, @account.currency) %></td>
+              <td class="text-end"><%= billing_amount(lot.remaining_cents, @account.currency) %></td>
+              <td><%= billing_credit_expiry(lot) %></td>
+              <td><%= billing_credit_purposes(lot) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2 class="h5"><%= t('better_together.billing.credit.history') %></h2>
+  <div class="card">
+    <div class="table-responsive">
+      <table id="<%= dom_id(@account, :history) %>" class="table table-sm mb-0 billing-credit-history-table">
+        <caption class="visually-hidden"><%= t('better_together.billing.credit.history_caption') %></caption>
+        <tbody>
+          <% @entries.each do |entry| %>
+            <tr id="<%= dom_id(entry) %>">
+              <td><%= l(entry.created_at.to_date, format: :long) %></td>
+              <td><%= t("better_together.billing.credit.kind_#{entry.kind}") %></td>
+              <td class="text-end"><%= billing_signed_amount(entry.amount_cents, @account.currency) %></td>
+              <td><%= entry.actor&.name %></td>
+              <td><%= entry.note %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

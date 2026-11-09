@@ -16,7 +16,8 @@ module BetterTogether
       #
       # A method outside a vendor (cash, a cheque, an e-transfer) must also be switched on for the
       # seller and allowed for this kind of purchase and currency; then the order opens a payment
-      # waiting for the seller to say the money arrived (see OfflinePayments::Open).
+      # waiting for the seller to say the money arrived (see OfflinePayments::Open). Store credit is spent
+      # in the same transaction and pays the whole order or the order is refused (see Credit::PayOrder).
       #
       #   Orders::Place.call(platform:, buyer:, purpose: 'one_time', payment_method: 'cash',
       #                      line_items: [{ purchasable: plan }])
@@ -79,23 +80,9 @@ module BetterTogether
           reserve(order)
           order.update!(status: 'awaiting_payment', placed_at: Time.current, expires_at: hold_hours.hours.from_now)
           Settle.call(order) if order.total_cents.zero?
-          open_payment(order)
+          OpenPayment.call(order:, choice: payment_choice, seller_assisted:)
           Notifications.deliver('order_placed', subject: order)
           order
-        end
-
-        # What the buyer pays next. A method outside a vendor waits for the seller to confirm; a method
-        # through a processor starts a pending payment the buyer completes at the processor (see
-        # Checkout::Start). Nothing is opened for an order that costs nothing.
-        def open_payment(order)
-          return unless order.total_cents.positive?
-
-          if payment_choice.offline_setting
-            OfflinePayments::Open.call(order:, setting: payment_choice.offline_setting, seller_assisted:)
-          elsif payment_choice.processor_adapter
-            Payments::Create.call(order:, processor: payment_method.to_s, amount_cents: order.balance_cents,
-                                  idempotency_key: "checkout:#{order.id}:1")
-          end
         end
 
         # The seller's own hold time for a method outside a vendor, else the default.

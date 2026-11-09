@@ -68,6 +68,10 @@ class SchemaRecorder
       @table.indexes << Index.new(Array(columns), name, unique)
     end
 
+    # Check constraints are not columns; their SQL text would otherwise be drawn as one (and its `>`
+    # breaks the Graphviz label).
+    def check_constraint(*, **); end
+
     def method_missing(type, name = nil, **options, &)
       return super unless name.is_a?(String)
 

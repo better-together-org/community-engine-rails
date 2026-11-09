@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 73.0,
-        "y": 233.0,
+        "y": 505.0,
         "width": 1294.0,
-        "height": 185.0,
+        "height": 233.0,
         "right": 1367.0,
-        "bottom": 418.0,
+        "bottom": 738.0,
         "center_x": 720.0,
-        "center_y": 325.5
+        "center_y": 621.5
       },
       "avoid": {
         "x": 73.0,
-        "y": 233.0,
+        "y": 505.0,
         "width": 1294.0,
-        "height": 185.0,
+        "height": 233.0,
         "right": 1367.0,
-        "bottom": 418.0,
+        "bottom": 738.0,
         "center_x": 720.0,
-        "center_y": 325.5
+        "center_y": 621.5
       },
       "placement": {
         "side": "below",
         "x": 530.0,
-        "y": 438.0,
+        "y": 758.0,
         "width": 380,
         "height": 184,
-        "score": 1039.0
+        "score": 719.0
       }
     },
     {
@@ -52,13 +52,13 @@
       ],
       "target": {
         "x": 73.0,
-        "y": 369.5,
+        "y": 641.5,
         "width": 1294.0,
         "height": 48.0,
         "right": 1367.0,
-        "bottom": 417.5,
+        "bottom": 689.5,
         "center_x": 720.0,
-        "center_y": 393.5
+        "center_y": 665.5
       },
       "avoid": {
         "x": 0.0,

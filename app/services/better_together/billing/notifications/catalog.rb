@@ -8,6 +8,7 @@ module BetterTogether
       #   buyer     the person who placed the order
       #   seller    the people who manage billing for the platform that sold it
       #   operator  the same people, for something about how billing itself is working
+      #   holder    the person whose store credit it is
       #
       # `critical` kinds are always shown in the app and emailed even to a person who turned
       # emails off: a failed payment, a payment that needs their action, a dispute, a changed
@@ -42,7 +43,8 @@ module BetterTogether
           'dispute_resolved' => { audiences: %i[seller] },
           'settings_changed' => { audiences: %i[operator], critical: true },
           'event_dead_lettered' => { audiences: %i[operator], critical: true },
-          'plan_sync_failed' => { audiences: %i[operator], critical: true }
+          'plan_sync_failed' => { audiences: %i[operator], critical: true },
+          'credit_granted' => { audiences: %i[holder] }
         }.freeze
 
         def self.kind?(kind) = KINDS.key?(kind.to_s)

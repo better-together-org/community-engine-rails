@@ -904,9 +904,60 @@ uk:
         review_title: Перегляньте та прийміть
         title: Отримати %{plan}
         unavailable_currency_not_supported: Недоступно в цій валюті.
+        unavailable_insufficient_credit: У вас недостатньо кредиту магазину для цієї
+          покупки.
         unavailable_not_enabled: Наразі тут недоступно.
         unavailable_purpose_not_allowed: Не приймається для такого виду покупки.
         view_agreement: Переглянути угоду
+      credit:
+        any_purpose: Усе, що продає платформа
+        balance_line: 'Баланс: %{amount} (%{currency})'
+        deleted_holder: "(особу видалено)"
+        field_amount: Надано
+        field_balance: Баланс
+        field_currency: Валюта
+        field_expires: Спливає
+        field_for: Може оплатити
+        field_holder: Особа
+        field_origin: Звідки він
+        field_remaining: Залишок
+        grant_amount: Сума
+        grant_currency: Валюта
+        grant_expires: Спливає через (днів)
+        grant_expires_hint: Залиште порожнім для кредиту, що не спливає.
+        grant_note: Примітка (необов'язково)
+        grant_refused: Цей кредит не вдалося надати. Перевірте суму; собі кредит надати
+          не можна.
+        grant_submit: Надати кредит
+        granted: Кредит надано.
+        history: Історія
+        history_caption: Що відбувалося з цим кредитом, спочатку найновіше
+        intro: Кредит, який ви маєте на %{platform}. Він повністю оплачує те, що продає
+          сама платформа, і частина може спливти.
+        kind_adjust: Скориговано
+        kind_expire: Спливло
+        kind_forfeit: Втрачено
+        kind_grant: Кредит додано
+        kind_spend: Витрачено на замовлення
+        kind_spend_reversal: Повернено після відшкодування
+        lookup_failed: На цій платформі немає особи з таким id.
+        lookup_hint: Введіть щонайменше дві літери імені або ідентифікатора.
+        lookup_label: Особа
+        lookup_placeholder: Шукати за іменем або ідентифікатором
+        lookup_submit: Знайти
+        lots_caption: Кредит, який ви маєте, спочатку той, що спливає раніше
+        never_expires: Не спливає
+        no_accounts: Ніхто ще не має кредиту магазину.
+        none: У вас немає кредиту магазину.
+        origin_adjustment: Коригування
+        origin_promotion: Акція
+        origin_refund: Повернення
+        origin_steward_grant: Надано адміністратором
+        steward_intro: 'Знайдіть особу, щоб побачити її кредит і надати більше. Наданий
+          кредит — гроші платформи: собі його надати не можна.'
+        steward_title: Рахунки кредиту магазину
+        title: Кредит магазину
+        usable: Ви можете витратити %{amount}
       notifications:
         cheque_bounced:
           buyer:
@@ -926,6 +977,12 @@ uk:
           body: Оплата %{amount} через %{method} очікує. Якщо ви її отримали, позначте
             як отриману; якщо ні, можете відхилити.
           title: Замовлення %{number} усе ще чекає на вас
+        credit_granted:
+          holder:
+            body: Ви можете витратити його на те, що продає %{platform}.
+            body_expiring: Ви можете витратити його на те, що продає %{platform},
+              до %{expires}.
+            title: У вас є %{amount} кредиту магазину
         dispute_opened:
           body: Покупець оскаржив платіж за замовлення %{number}. Перегляньте його.
           title: Платіж оскаржено
@@ -1130,7 +1187,6 @@ uk:
         status_rejected: Не прийнято
         too_many_claims: Ви вже кілька разів повідомили продавця. Він підтвердить,
           щойно отримає оплату.
-        view_agreement: Переглянути угоду
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         agreements_heading: Прийняті угоди
@@ -1268,6 +1324,7 @@ uk:
           cash: Готівка
           cheque: Чек
           etransfer: Переказ Interac
+          store_credit: Кредит магазину
         price_section_title: Ціна
         pricing_tier_solidarity_medium: Solidarnist' — Serednij
         pricing_tier_solidarity_premium: Premiyum solidarnosti
@@ -1312,6 +1369,14 @@ uk:
         available_anywhere: Будь-де
         available_only_in: Лише в %{countries} (%{currencies})
         disclosure_country: Працює лише в %{countries}, у %{currencies}.
+        disclosure_credit_expires: Кожна сума кредиту може мати власний термін дії;
+          кредит, що спливає першим, витрачається першим.
+        disclosure_credit_not_cash: Кредит — не готівка. Його не можна зняти чи переказати,
+          і він оплачує замовлення повністю або не оплачує взагалі.
+        disclosure_credit_platform_only: 'Кредит — це власні кошти платформи: він
+          оплачує лише те, що продає сама платформа, а не продавці.'
+        disclosure_credit_refund: Повернення за замовлення, оплачене кредитом, надходить
+          на кредит покупця, а не в його банк.
         disclosure_no_fee: З цих платежів не можна стягувати комісію.
         disclosure_no_protection: Покупець не має захисту від повернення платежу чи
           спорів, а ви несете ризик платежу, який так і не надійшов.
@@ -1394,6 +1459,10 @@ uk:
         state_draft: Чернетка
         state_retired: Виведена з дії
       sales:
+        credit_refund_heading: Повернути на кредит магазину
+        credit_refund_hint: Покупець заплатив кредитом магазину, тому гроші одразу
+          повертаються на його баланс кредиту. Їх не можна виплатити готівкою.
+        credit_refund_submit: Повернути на кредит
         refund_amount_label: Сума повернення (до %{max}; порожньо — усе)
         refund_heading: Записати повернення
         refund_hint: Платформа не може переказати ці гроші. Запишіть це тут, коли

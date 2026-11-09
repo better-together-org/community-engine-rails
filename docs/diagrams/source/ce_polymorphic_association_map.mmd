@@ -262,6 +262,7 @@ flowchart TB
     direction TB
     billing_polymorphic_anchor:::hidden
     BetterTogether__Billing__AgreementRequirement_polymorphic_summary["Billing::AgreementRequirement\ntarget: target"]
+    BetterTogether__Billing__CreditEntry_polymorphic_summary["Billing::CreditEntry\ntarget: source"]
     BetterTogether__Billing__Event_polymorphic_summary["Billing::Event\ntarget: billable_owner, target: beneficiary, target: subject"]
     BetterTogether__Billing__LineItem_polymorphic_summary["Billing::LineItem\ntarget: purchasable"]
     BetterTogether__Billing__Order_polymorphic_summary["Billing::Order\ntarget: seller, target: on_behalf_of, target: subject"]
@@ -269,7 +270,8 @@ flowchart TB
     BetterTogether__Billing__Plan_polymorphic_summary["Billing::Plan\ntarget: seller"]
     BetterTogether__Billing__ProcessorSetting_polymorphic_summary["Billing::ProcessorSetting\ntarget: seller"]
     billing_polymorphic_anchor ~~~ BetterTogether__Billing__AgreementRequirement_polymorphic_summary
-    BetterTogether__Billing__AgreementRequirement_polymorphic_summary ~~~ BetterTogether__Billing__Event_polymorphic_summary
+    BetterTogether__Billing__AgreementRequirement_polymorphic_summary ~~~ BetterTogether__Billing__CreditEntry_polymorphic_summary
+    BetterTogether__Billing__CreditEntry_polymorphic_summary ~~~ BetterTogether__Billing__Event_polymorphic_summary
     BetterTogether__Billing__Event_polymorphic_summary ~~~ BetterTogether__Billing__LineItem_polymorphic_summary
     BetterTogether__Billing__LineItem_polymorphic_summary ~~~ BetterTogether__Billing__Order_polymorphic_summary
     BetterTogether__Billing__Order_polymorphic_summary ~~~ BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary

@@ -20,6 +20,8 @@ A card payment is seen by a processor, which tells us about it, takes a fee we c
 | When access starts | when the seller confirms | when it **clears** (default) or is **received** | when the seller confirms |
 | Stored about banks | nothing | nothing: never an account, transit or routing number | nothing |
 
+Store credit is a fourth built-in method but is not one a seller confirms: it is a ledger inside Community Engine, switched on the same way but with no instructions or hold time (see [store_credit.md](store_credit.md)).
+
 Each is a small class in `app/services/better_together/billing/processors/` that inherits `Billing::OfflineProcessorAdapter` and only **describes** the method: its `instruction_fields`, `supported_countries` / `supported_currencies`, `grant_on_options`, and `settings_errors` for rules that span fields (an e-transfer needs an email or a phone). Adding Zelle (United States, US dollars) or another method is one more class like these. The adapter contract is in [processor-adapters.md](processor-adapters.md#settlement-kinds-remote-manual-and-internal).
 
 ![Payment method model](../diagrams/exports/png/billing_payment_methods_model.png)

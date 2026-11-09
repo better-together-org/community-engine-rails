@@ -9,6 +9,9 @@ module BetterTogether
       # offered only if it is also switched on for the platform, allowed for this kind of
       # purchase, and works in the plan's currency. An unavailable method is still listed, with
       # the reason, so the buyer is never left wondering where an option went.
+      #
+      # Store credit is offered only when the buyer (when known) has enough of it, unexpired and allowed for this
+      # kind of purchase, to pay the whole plan.
       class Methods
         Choice = Data.define(:name, :available, :reason) do
           alias_method :available?, :available
@@ -16,9 +19,10 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        def initialize(platform:, plan:)
+        def initialize(platform:, plan:, buyer: nil)
           @platform = platform
           @plan = plan
+          @buyer = buyer
         end
 
         def call = plan.payment_methods.map { |name| choice(name) }
@@ -28,7 +32,7 @@ module BetterTogether
 
         private
 
-        attr_reader :platform, :plan
+        attr_reader :platform, :plan, :buyer
 
         def choice(name)
           reason = reason_unavailable(name)
@@ -38,12 +42,20 @@ module BetterTogether
         def reason_unavailable(name)
           return :not_enabled unless Configuration.context_for(platform, name)
           return :purpose_not_allowed unless purpose_allowed?(name)
+          return :currency_not_supported unless currency_supported?(name)
 
-          :currency_not_supported unless currency_supported?(name)
+          :insufficient_credit unless credit_covers?(name)
+        end
+
+        # Anything but store credit is always covered; credit needs a balance that pays the whole plan.
+        def credit_covers?(name)
+          return true unless Billing.internal_method?(name) && buyer
+
+          Credit.usable_cents(platform:, holder: buyer, currency: plan.currency, purpose:) >= plan.amount_cents
         end
 
         def purpose_allowed?(name)
-          return true unless Billing.offline_method?(name)
+          return true unless Billing.local_method?(name)
 
           platform.billing_processor_settings.sold_by_platform.find_by(processor: name)&.allows?(purpose)
         end

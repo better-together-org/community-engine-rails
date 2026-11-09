@@ -129,6 +129,15 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/pay\z})
     end
 
+    # A steward searching for a person to find their store credit, and giving credit. Cap searches so they
+    # cannot be used to browse people in bulk, and grants because each one tells the holder.
+    throttle('billing/credit_lookup/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.get? && req.path.match?(%r{/billing/credit_accounts/people/?\z})
+    end
+    throttle('billing/credit_grants/ip', limit: 20, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/credit_grants/?\z})
+    end
+
     # Throttle MCP tool call POSTs more aggressively (10 per minute -- tightened
     # from 30 as part of the 2026-09 federation/MCP hardening; a legitimate
     # single-agent tool-call sequence rarely needs more than a few calls/min).

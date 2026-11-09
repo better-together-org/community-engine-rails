@@ -37,7 +37,7 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
   # Children first, so foreign keys never block a drop.
   def down
     %i[pay_webhooks pay_charges pay_payment_methods pay_subscriptions pay_merchants pay_customers].each do |table|
-      drop_table table, if_exists: true
+      drop_table table, if_exists: true, force: :cascade
     end
   end
 

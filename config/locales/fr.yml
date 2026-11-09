@@ -924,9 +924,61 @@ fr:
         review_title: Lire et accepter
         title: Obtenir %{plan}
         unavailable_currency_not_supported: Non disponible dans cette devise.
+        unavailable_insufficient_credit: Vous n'avez pas assez de crédit en magasin
+          pour cet achat.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
         view_agreement: Lire l’entente
+      credit:
+        any_purpose: Tout ce que la plateforme vend
+        balance_line: 'Solde : %{amount} (%{currency})'
+        deleted_holder: "(personne supprimée)"
+        field_amount: Accordé
+        field_balance: Solde
+        field_currency: Devise
+        field_expires: Expire
+        field_for: Peut payer
+        field_holder: Personne
+        field_origin: D'où il vient
+        field_remaining: Reste
+        grant_amount: Montant
+        grant_currency: Devise
+        grant_expires: Expire après (jours)
+        grant_expires_hint: Laissez vide pour un crédit qui n'expire pas.
+        grant_note: Note (facultatif)
+        grant_refused: Ce crédit n'a pas pu être accordé. Vérifiez le montant ; vous
+          ne pouvez pas vous accorder de crédit.
+        grant_submit: Accorder le crédit
+        granted: Crédit accordé.
+        history: Historique
+        history_caption: Ce qui est arrivé à ce crédit, du plus récent au plus ancien
+        intro: Crédit que vous détenez auprès de %{platform}. Il paie ce que la plateforme
+          vend elle-même, en entier, et une partie peut expirer.
+        kind_adjust: Ajusté
+        kind_expire: Expiré
+        kind_forfeit: Perdu
+        kind_grant: Crédit ajouté
+        kind_spend: Dépensé pour une commande
+        kind_spend_reversal: Rendu après un remboursement
+        lookup_failed: Personne sur cette plateforme n'a cet id.
+        lookup_hint: Saisissez au moins deux lettres d'un nom ou d'un identifiant.
+        lookup_label: Personne
+        lookup_placeholder: Rechercher par nom ou identifiant
+        lookup_submit: Trouver
+        lots_caption: Crédit que vous détenez, le plus proche de l'expiration en premier
+        never_expires: N'expire pas
+        no_accounts: Personne ne détient encore de crédit en magasin.
+        none: Vous n'avez pas de crédit en magasin.
+        origin_adjustment: Ajustement
+        origin_promotion: Promotion
+        origin_refund: Remboursement
+        origin_steward_grant: Accordé par un responsable
+        steward_intro: 'Recherchez une personne pour voir son crédit et lui en accorder.
+          Le crédit accordé est l''argent de la plateforme : vous ne pouvez pas vous
+          en accorder.'
+        steward_title: Comptes de crédit en magasin
+        title: Crédit en magasin
+        usable: Vous pouvez dépenser %{amount}
       notifications:
         cheque_bounced:
           buyer:
@@ -946,6 +998,12 @@ fr:
           body: Un paiement de %{amount} par %{method} est en attente. Si vous l’avez
             reçu, marquez-le comme reçu; sinon, vous pouvez le refuser.
           title: La commande %{number} vous attend toujours
+        credit_granted:
+          holder:
+            body: Il est à vous pour acheter ce que %{platform} vend.
+            body_expiring: Il est à vous pour acheter ce que %{platform} vend, jusqu'au
+              %{expires}.
+            title: Vous avez %{amount} en crédit en magasin
         dispute_opened:
           body: Un acheteur a contesté un paiement pour la commande %{number}. Veuillez
             l’examiner.
@@ -1169,7 +1227,6 @@ fr:
         status_rejected: Non accepté
         too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
           quand il aura reçu votre paiement.
-        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées
@@ -1315,6 +1372,7 @@ fr:
           cash: Argent comptant
           cheque: Chèque
           etransfer: Virement Interac
+          store_credit: Crédit en magasin
         price_section_title: Prix
         pricing_tier_solidarity_medium: Solidarite — Moyenne
         pricing_tier_solidarity_premium: Prime de solidarite
@@ -1361,6 +1419,15 @@ fr:
         available_anywhere: Partout
         available_only_in: Seulement en %{countries} (%{currencies})
         disclosure_country: Il ne fonctionne que dans %{countries}, en %{currencies}.
+        disclosure_credit_expires: Chaque montant de crédit peut avoir sa propre date
+          d'expiration ; le crédit qui expire en premier est dépensé en premier.
+        disclosure_credit_not_cash: Le crédit n'est pas de l'argent comptant. Il ne
+          peut être ni retiré ni envoyé à quelqu'un, et il paie une commande en entier
+          ou pas du tout.
+        disclosure_credit_platform_only: 'Le crédit est l''argent de la plateforme
+          : il ne paie que ce que la plateforme vend elle-même, jamais pour un vendeur.'
+        disclosure_credit_refund: Les remboursements d'une commande payée avec du
+          crédit retournent au crédit de l'acheteur, pas à sa banque.
         disclosure_no_fee: Aucuns frais d'application ne peuvent être perçus sur ces
           paiements.
         disclosure_no_protection: L'acheteur n'a aucune protection contre les rétrofacturations
@@ -1448,6 +1515,11 @@ fr:
         state_draft: Brouillon
         state_retired: Retirée
       sales:
+        credit_refund_heading: Retourner au crédit en magasin
+        credit_refund_hint: 'L''acheteur a payé avec du crédit en magasin : l''argent
+          retourne aussitôt sur son solde de crédit. Il ne peut pas être versé en
+          espèces.'
+        credit_refund_submit: Retourner au crédit
         refund_amount_label: Montant remboursé (jusqu’à %{max}; vide pour tout)
         refund_heading: Enregistrer un remboursement
         refund_hint: La plateforme ne peut pas déplacer cet argent. Enregistrez-le

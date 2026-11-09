@@ -925,9 +925,59 @@ en:
         review_title: Review and accept
         title: Get %{plan}
         unavailable_currency_not_supported: Not available in this currency.
+        unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
         view_agreement: View the agreement
+      credit:
+        any_purpose: Anything the platform sells
+        balance_line: 'Balance: %{amount} (%{currency})'
+        deleted_holder: "(person deleted)"
+        field_amount: Given
+        field_balance: Balance
+        field_currency: Currency
+        field_expires: Expires
+        field_for: Can pay for
+        field_holder: Person
+        field_origin: Where it came from
+        field_remaining: Left
+        grant_amount: Amount
+        grant_currency: Currency
+        grant_expires: Expires after (days)
+        grant_expires_hint: Leave empty for credit that does not expire.
+        grant_note: Note (optional)
+        grant_refused: That credit could not be given. Check the amount, and note
+          that you cannot give credit to yourself.
+        grant_submit: Give credit
+        granted: Credit given.
+        history: History
+        history_caption: What has happened to this credit, newest first
+        intro: Credit you hold with %{platform}. It pays for what the platform itself
+          sells, in full, and some of it may expire.
+        kind_adjust: Adjusted
+        kind_expire: Expired
+        kind_forfeit: Forfeited
+        kind_grant: Credit added
+        kind_spend: Spent on an order
+        kind_spend_reversal: Returned after a refund
+        lookup_failed: There is no one on this platform with that id.
+        lookup_hint: Type at least two letters of a name or handle.
+        lookup_label: Person
+        lookup_placeholder: Search by name or handle
+        lookup_submit: Find
+        lots_caption: Credit you hold, soonest to expire first
+        never_expires: Does not expire
+        no_accounts: No one holds store credit yet.
+        none: You have no store credit.
+        origin_adjustment: Adjustment
+        origin_promotion: Promotion
+        origin_refund: Refund
+        origin_steward_grant: Given by a steward
+        steward_intro: 'Search for a person to see their credit and give them more.
+          Credit you give is the platform''s money: you cannot give it to yourself.'
+        steward_title: Store credit accounts
+        title: Store credit
+        usable: You can spend %{amount}
       notifications:
         cheque_bounced:
           buyer:
@@ -947,6 +997,11 @@ en:
           body: A payment of %{amount} by %{method} is waiting. If you received it,
             mark it received; if not, you can reject it.
           title: Order %{number} is still waiting for you
+        credit_granted:
+          holder:
+            body: It is yours to spend on what %{platform} sells.
+            body_expiring: It is yours to spend on what %{platform} sells, until %{expires}.
+            title: You have %{amount} in store credit
         dispute_opened:
           body: A buyer disputed a payment for order %{number}. Please review it.
           title: A payment was disputed
@@ -1156,7 +1211,6 @@ en:
         status_rejected: Not accepted
         too_many_claims: You have already told the seller several times. They will
           confirm when they have your payment.
-        view_agreement: View the agreement
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted
@@ -1297,6 +1351,7 @@ en:
           cash: Cash
           cheque: Cheque
           etransfer: Interac e-Transfer
+          store_credit: Store credit
         price_section_title: Price
         pricing_tier_solidarity_medium: Solidarity — Medium
         pricing_tier_solidarity_premium: Solidarity Premium
@@ -1340,6 +1395,14 @@ en:
         available_anywhere: Anywhere
         available_only_in: Only in %{countries} (%{currencies})
         disclosure_country: It works only in %{countries}, in %{currencies}.
+        disclosure_credit_expires: Each amount of credit can have its own expiry date;
+          credit that expires first is spent first.
+        disclosure_credit_not_cash: Credit is not cash. It cannot be withdrawn or
+          sent to anyone, and it pays an order in full or not at all.
+        disclosure_credit_platform_only: 'Credit is the platform''s own money: it
+          pays only for what the platform itself sells, never for a seller.'
+        disclosure_credit_refund: Refunds of an order paid with credit go back to
+          the buyer's credit, not to their bank.
         disclosure_no_fee: No application fee can be collected on these payments.
         disclosure_no_protection: The buyer has no chargeback or dispute protection,
           and you carry the risk of a payment that never arrives.
@@ -1422,6 +1485,10 @@ en:
         state_draft: Draft
         state_retired: Retired
       sales:
+        credit_refund_heading: Return to store credit
+        credit_refund_hint: The buyer paid with store credit, so the money goes back
+          onto their credit balance at once. It cannot be paid out as cash.
+        credit_refund_submit: Return to credit
         refund_amount_label: Amount given back (up to %{max}; blank for all)
         refund_heading: Record a refund
         refund_hint: The platform cannot move this money. Record it here once you
