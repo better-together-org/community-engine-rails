@@ -17,6 +17,8 @@ module BetterTogether
         KINDS = {
           'order_placed' => { audiences: %i[buyer seller] },
           'order_paid' => { audiences: %i[buyer seller] },
+          'order_part_received' => { audiences: %i[buyer seller] },
+          'order_partial_stalled' => { audiences: %i[buyer seller] },
           'order_cancelled' => { audiences: %i[buyer seller] },
           'order_expired' => { audiences: %i[buyer seller] },
           'payment_succeeded' => { audiences: %i[buyer] },

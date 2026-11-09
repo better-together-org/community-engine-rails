@@ -164,13 +164,18 @@ RSpec.describe 'Checkout services' do # rubocop:disable RSpec/DescribeClass
       it 'is offered when the buyer has enough that is unexpired and allowed for this kind of purchase' do
         give_credit(3000)
 
-        expect(credit_for_buyer).to be_available
+        expect(credit_for_buyer).to be_available.and have_attributes(cap_cents: 3000)
       end
 
-      it 'is listed with the reason when the buyer does not have enough, or has none' do
-        expect(credit_for_buyer).to have_attributes(available: false, reason: :insufficient_credit)
+      it 'is offered for part of the plan, with the most the buyer can spend as its cap' do
+        give_credit(1200)
 
-        give_credit(2999)
+        expect(credit_for_buyer).to be_available.and have_attributes(cap_cents: 1200)
+      end
+
+      it 'is listed with the reason when the buyer has nothing usable' do
+        expect(credit_for_buyer).to have_attributes(available: false, reason: :insufficient_credit, cap_cents: 0)
+
         give_credit(5000, expires_at: 1.day.ago)
         give_credit(5000, purposes: %w[ticket])
 

@@ -528,6 +528,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_08_100000) do
     t.datetime "paid_at"
     t.datetime "cancelled_at"
     t.uuid "pay_subscription_id"
+    t.string "renewal_payment_method"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
     t.index ["id", "platform_id"], name: "idx_bt_billing_orders_id_platform", unique: true
     t.index ["on_behalf_of_type", "on_behalf_of_id"], name: "idx_bt_billing_orders_on_behalf_of"

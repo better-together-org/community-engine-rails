@@ -934,12 +934,21 @@ fr:
         error_not_ready: 'Cet achat ne peut pas être effectué pour le moment : les
           conditions n’ont pas été configurées. Veuillez contacter les personnes qui
           gèrent cette plateforme.'
+        error_parts_too_large: Les montants saisis couvrent tout le prix. Laissez-en
+          une part au mode choisi ci-dessus, ou choisissez-le pour la totalité.
         error_refused: Votre commande n’a pas pu être passée. Rien n’a été débité.
           Veuillez réessayer.
         how_to_pay: Comment souhaitez-vous payer ?
         no_methods: Il n’y a aucun moyen de payer pour le moment.
+        parts_heading: Payer une partie autrement
+        parts_hint: Facultatif. Saisissez un montant à côté d'un mode de paiement
+          pour payer cette somme maintenant. Le mode choisi ci-dessus paie le reste.
         place_order: Passer la commande
         placed: Votre commande a été passée.
+        renew_with: Renouveler avec
+        renew_with_default: Le mode qui paie la plus grande part
+        renew_with_hint: Chaque facture de renouvellement sera payée ainsi. Vous pouvez
+          ajouter d'autres paiements à toute facture.
         review_intro: Lisez ces documents avant de passer votre commande. Vous devez
           les accepter pour continuer.
         review_title: Lire et accepter
@@ -1098,6 +1107,24 @@ fr:
           seller:
             body: Une commande de %{amount} a été payée.
             title: La commande %{number} est payée
+        order_part_received:
+          buyer:
+            body: "%{received} sur %{amount} ont été reçus. Payez les %{left} restants
+              pour la terminer."
+            title: Un paiement a été reçu pour la commande %{number}
+          seller:
+            body: "%{received} d'une commande de %{amount} ont été reçus ; il reste
+              %{left} à payer."
+            title: Paiement partiel de la commande %{number}
+        order_partial_stalled:
+          buyer:
+            body: Elle est partiellement payée et reste ouverte. Payez les %{left}
+              restants quand vous le souhaitez.
+            title: La commande %{number} attend le solde
+          seller:
+            body: Une commande partiellement payée de %{amount} n'attend plus ses
+              parts impayées. Attendez le solde, ou remboursez les parts et annulez-la.
+            title: La commande %{number} est partiellement payée
         order_placed:
           buyer:
             body: Nous la gardons pour vous. Payez %{amount} pour la terminer.
@@ -1310,10 +1337,24 @@ fr:
         status_rejected: Non accepté
         too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
           quand il aura reçu votre paiement.
+      order_payments:
+        added: Le paiement a été ajouté. Suivez les instructions ci-dessous pour le
+          terminer.
+        paid: Le paiement a été effectué.
+        refused: Ce paiement n'a pas pu être ajouté. Vérifiez le montant et le mode
+          de paiement, puis réessayez.
       orders:
         accepted_by: Acceptée par %{name} le %{date}
+        add_payment_amount: Montant (laissez vide pour payer le solde)
+        add_payment_btn: Ajouter le paiement
+        add_payment_cap: jusqu'à %{amount}
+        add_payment_heading: Payer le solde ou ajouter un paiement
+        add_payment_hint: Il reste %{balance} à payer. Payez tout d'une façon, ou
+          une partie maintenant et le reste autrement.
+        add_payment_method: Payer par
         agreements_heading: Ententes acceptées
         field_amount: Montant
+        field_balance: Reste à payer
         field_buyer: Acheteur
         field_expires: À payer avant
         field_item: Article
@@ -1684,6 +1725,11 @@ fr:
         state_draft: Brouillon
         state_retired: Retirée
       sales:
+        cancel_btn: Annuler cette commande
+        cancel_confirm: Annuler cette commande ? Ce qu'elle retenait sera libéré.
+        cancel_refused: La commande ne peut pas être annulée tant qu'il reste de l'argent
+          versé. Rendez d'abord chaque paiement.
+        cancelled: La commande a été annulée et ce qu'elle retenait a été libéré.
         credit_refund_heading: Retourner au crédit en magasin
         credit_refund_hint: 'L''acheteur a payé avec du crédit en magasin : l''argent
           retourne aussitôt sur son solde de crédit. Il ne peut pas être versé en
@@ -1704,6 +1750,18 @@ fr:
         refund_record: Enregistrer le remboursement
         refund_recorded: Remboursement enregistré. L’acheteur a été informé.
         refund_refused: Ce remboursement n’a pas pu être enregistré. Vérifiez le montant.
+        return_credit_btn: Rendre les paiements en crédit
+        return_heading: Rendre les paiements
+        return_hint: Cette commande est partiellement payée et reste ouverte pour
+          que l'acheteur règle les %{balance} restants. Pour l'annuler, rendez chaque
+          paiement puis annulez.
+        return_kind_credit: rendu à son crédit en magasin
+        return_kind_manual: vous le rendez, puis l'enregistrez dans le formulaire
+          de remboursement
+        return_kind_processor: remboursez-le auprès du processeur de paiement
+        return_refused: Les paiements n'ont pas pu être rendus. Vérifiez la commande
+          et réessayez.
+        returned: Le crédit a été rendu à l'acheteur.
       subscribers:
         cancel_at_end: Annuler à la fin de la période
         cancel_now: Annuler maintenant
@@ -1773,8 +1831,9 @@ fr:
         agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
           en personne
         buyer_hint: L’acheteur doit déjà être membre de cette plateforme. Saisissez
-          son identifiant exact.
-        buyer_label: Identifiant de l’acheteur
+          au moins deux lettres d’un nom ou d’un identifiant.
+        buyer_label: Acheteur
+        buyer_placeholder: Rechercher par nom ou identifiant
         error_refused: Cette vente n’a pas pu être enregistrée. Vérifiez l’acheteur,
           le mode de paiement et les ententes.
         intro: Enregistrez une vente faite en personne. L’acheteur n’a rien à faire;

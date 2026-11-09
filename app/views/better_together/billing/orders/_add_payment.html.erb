@@ -1,0 +1,28 @@
+<%# Pay the rest of an order, or a part of it, by any way of paying that is open: store credit, cash, a cheque, an e-transfer, a card. %>
+<%# Several parts can complete an order, now or later; a part-paid order stays open until it is paid in full. %>
+<% choices = policy(order).add_payment? ? billing_payable_methods(order) : [] %>
+<% if choices.any? %>
+  <div id="billing-order-add-payment" class="card mb-4">
+    <div class="card-header"><strong><%= t('better_together.billing.orders.add_payment_heading') %></strong></div>
+    <div class="card-body">
+      <p id="billing-order-add-payment-hint" class="text-body-secondary">
+        <%= t('better_together.billing.orders.add_payment_hint', balance: billing_amount(order.balance_cents, order.currency)) %>
+      </p>
+      <%= form_with url: billing_order_payments_path(order, locale: I18n.locale), method: :post, id: 'billing-order-add-payment-form' do %>
+        <%= hidden_field_tag :token, SecureRandom.hex(8), id: 'billing-order-add-payment-token' %>
+        <div class="mb-3">
+          <%= label_tag :payment_method, t('better_together.billing.orders.add_payment_method'), class: 'form-label', for: 'billing-order-add-payment-method' %>
+          <%= select_tag :payment_method,
+                         options_for_select(choices.map { |choice| [billing_payment_method_label(choice.name) + (choice.cap_cents ? " (#{t('better_together.billing.orders.add_payment_cap', amount: billing_amount([choice.cap_cents, order.balance_cents].min, order.currency))})" : ''), choice.name] }),
+                         id: 'billing-order-add-payment-method', class: 'form-select' %>
+        </div>
+        <div class="mb-3">
+          <%= label_tag :amount, t('better_together.billing.orders.add_payment_amount'), class: 'form-label', for: 'billing-order-add-payment-amount' %>
+          <%= text_field_tag :amount, nil, id: 'billing-order-add-payment-amount', class: 'form-control', inputmode: 'decimal', autocomplete: 'off',
+                                           placeholder: BetterTogether::Billing::Currency.to_major(order.balance_cents, order.currency).to_s %>
+        </div>
+        <%= submit_tag t('better_together.billing.orders.add_payment_btn'), id: 'billing-order-add-payment-btn', class: 'btn btn-primary', data: { disable_with: false } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

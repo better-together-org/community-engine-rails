@@ -12,13 +12,16 @@ module BetterTogether
       # order, after the order's owner was checked.
       #
       #   Checkout::Start.call(order:, success_url:, cancel_url:)  # => "https://..."
+      #
+      # An order paid in several parts can have more than one processor payment waiting; `payment:` says which.
       class Start
         class Unavailable < StandardError; end
 
         def self.call(...) = new(...).call
 
-        def initialize(order:, success_url:, cancel_url:)
+        def initialize(order:, success_url:, cancel_url:, payment: nil)
           @order = order
+          @chosen = payment
           @success_url = success_url
           @cancel_url = cancel_url
         end
@@ -34,9 +37,12 @@ module BetterTogether
 
         attr_reader :order, :success_url, :cancel_url
 
-        # The payment the buyer still has to make: the oldest one in flight through a processor.
+        # The payment the buyer still has to make: the one asked for, else the oldest one in flight through a processor.
         def payment
-          @payment ||= order.payments.in_flight.order(:created_at).find(&:remote?)
+          @payment ||= begin
+            remote = order.payments.in_flight.order(:created_at).select(&:remote?)
+            @chosen ? remote.find { |candidate| candidate.id == @chosen.id } : remote.first
+          end
         end
 
         def adapter = @adapter ||= Billing.processor_adapter(payment.processor)

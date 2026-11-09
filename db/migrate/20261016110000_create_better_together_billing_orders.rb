@@ -55,6 +55,8 @@ class CreateBetterTogetherBillingOrders < ActiveRecord::Migration[7.2] # rubocop
       t.datetime :cancelled_at
       # The Pay subscription this order is the first payment of (a processor-backed plan).
       t.uuid :pay_subscription_id
+      # For a subscription order: the method each renewal is paid by, chosen by the buyer (see Subscriptions::Start).
+      t.string :renewal_payment_method
     end
 
     add_index :better_together_billing_orders, %i[id platform_id], unique: true, name: 'idx_bt_billing_orders_id_platform'

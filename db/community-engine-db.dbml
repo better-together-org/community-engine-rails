@@ -606,6 +606,7 @@ Table "better_together_billing_orders" {
   "paid_at" timestamp
   "cancelled_at" timestamp
   "pay_subscription_id" uuid
+  "renewal_payment_method" varchar
 
   indexes {
     "buyer_id" [name: "idx_bt_billing_orders_buyer"]

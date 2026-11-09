@@ -1,0 +1,10 @@
+%% Billing: the shared person search behind every billing person select.
+flowchart LR
+  A[Person select on a billing screen] -->|ajax, search term| B[GET /billing/people]
+  B --> C{May manage this platform's billing?}
+  C -- no --> D[Refused]
+  C -- yes --> E{Term at least two characters?}
+  E -- no --> F[Empty list]
+  E -- yes --> G[Platform members matching the name or the start of the handle, 20 at most]
+  G --> H[Select shows the choices]
+  H -->|person id| I[Screen reads the id back through the same membership rule]

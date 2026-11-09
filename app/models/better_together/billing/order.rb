@@ -25,7 +25,9 @@ module BetterTogether
       TRANSITIONS = {
         'draft' => %w[awaiting_payment cancelled],
         'awaiting_payment' => %w[partially_paid paid cancelled expired],
-        'partially_paid' => %w[paid expired],
+        # Partly paid is an ordinary state. It never lapses on its own (money is against it); if the paid parts are
+        # returned it goes back to waiting for payment, and a steward may cancel it once nothing is left against it.
+        'partially_paid' => %w[paid awaiting_payment cancelled],
         'expired' => %w[paid partially_paid cancelled],
         'paid' => %w[partially_refunded refunded],
         # A refund can fail after it was recorded, which puts the order back where it was.
@@ -85,7 +87,15 @@ module BetterTogether
 
       def refunded_cents = payments.sum(&:refunded_cents)
 
-      def balance_cents = [total_cents - paid_cents, 0].max
+      # What is still against the order: paid, less what was given back. This is what decides whether it is paid,
+      # partly paid, or waiting.
+      def net_paid_cents = paid_cents - refunded_cents
+
+      # What is still to pay. Money given back is owed again, so a part that was returned can be paid another way.
+      def balance_cents = [total_cents - net_paid_cents, 0].max
+
+      # Some of it is paid and some is not: a normal state, not a problem.
+      def partly_paid? = open? && net_paid_cents.positive?
 
       def hold_expired? = open? && expires_at.present? && expires_at < Time.current
 

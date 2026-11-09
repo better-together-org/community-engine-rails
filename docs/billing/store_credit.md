@@ -1,6 +1,6 @@
 # Billing Store Credit
 
-Store credit is a balance a person holds with a platform. It pays **whole orders for what the platform itself sells**. It is the platform's own money, kept as a ledger in Community Engine, and sits beside Pay rather than inside a processor: a spend writes a `Pay::Local::Charge` like any other settled payment (see [local_pay_processor.md](local_pay_processor.md)).
+Store credit is a balance a person holds with a platform. It pays **all or part of an order for what the platform itself sells**; credit is one way of paying among others (see [partial_payments.md](partial_payments.md)). It is the platform's own money, kept as a ledger in Community Engine, and sits beside Pay rather than inside a processor: a spend writes a `Pay::Local::Charge` like any other settled payment (see [local_pay_processor.md](local_pay_processor.md)).
 
 This page covers the ledger, how credit is spent and given back, the screens and the notice, and the rules. Credit made by a promotion code is in [promotions.md](promotions.md).
 
@@ -39,7 +39,7 @@ Every change goes through a service, under the **account's lock**, and leaves en
 | `Reverse` | Gives credit back after a refund, to the lot it came from while that lot is still valid; otherwise as a **new refund lot that lasts 30 days**, so a refund never extends a promotion. Never more than was spent and not yet given back |
 | `ExpireLots` | Empties lots past their date, with an `expire` entry for what was lost. Run daily by `ExpireCreditLotsJob` (04:50 UTC) |
 | `Recalculate` | Checks the balance against the lots and the entries; `repair: true` resets the balance to what the lots say |
-| `PayOrder` | Used by `Orders::Place`: makes the payment, spends, succeeds it |
+| `PayOrder` | Used by `Orders::AddPayment` (and so `Orders::Place`): makes a payment for an amount, spends, succeeds it |
 
 Each is **idempotent**: repeating a request with the same key returns what it already made.
 
@@ -48,10 +48,10 @@ Each is **idempotent**: repeating a request with the same key returns what it al
 Credit is a payment method like cash, with its own `ProcessorSetting` a steward turns on (no instructions, no hold time, and a different acknowledgement: it is not cash, it can expire, refunds go back onto it). `Orders::Place` with `payment_method: 'store_credit'`:
 
 1. refuses unless credit is on for this kind of purchase, the sale is the platform's own (credit never pays a seller) and the currency matches;
-2. in the placement transaction makes the payment for the **whole balance**, spends it, and succeeds it, so the order is `paid` when `Place` returns;
-3. refuses, leaving **no order, no hold and no spend**, if the usable credit does not cover it.
+2. in the placement transaction makes the payment for the amount asked (the whole balance by default), spends it, and succeeds it, so the order is `paid` when `Place` returns if credit covered it;
+3. spends **no more than the buyer can usefully spend**: with no amount it takes as much of the balance as the usable credit covers, with an amount it refuses (leaving **no order, no hold and no spend**) if the credit does not cover that amount.
 
-**No split tender.** Credit pays an order in full or not at all. A part-payment would leave an order half paid that has to be unwound if it is cancelled or lapses; refusing keeps every order either unpaid or paid. A buyer who is short is told so at checkout (`Checkout::Methods` lists credit as unavailable with the reason `insufficient_credit` when they have not enough usable credit) and can pay the whole price another way.
+**Split tender is normal.** Credit can be one part of a payment and any other way the rest (`Orders::AddPayment`, at checkout or later from the order page). A part-paid order stays open; nothing is granted until it is paid in full. `Checkout::Methods` lists credit as available when the buyer has **any** usable credit, with the most they can spend (`cap_cents`); it is unavailable with the reason `insufficient_credit` only when they have none. Returning a credit part goes back to the lots it came from, in one click, from the sale page.
 
 A sale in person (a seller-assisted walk-up) never uses credit: it is the buyer's to spend, not a seller's to record.
 
@@ -76,10 +76,27 @@ Credit forced the question "is this a method outside a vendor?" to be split, bec
 | Who | Where | What |
 |---|---|---|
 | The holder | `/:locale/billing/credit` | Per currency: what can be spent now, each amount left with when it expires and what it may pay for, and the newest 50 entries. Only their own accounts on this platform are ever loaded. Linked from the orders list |
-| A steward | `/:locale/billing/credit_accounts` | Pick a person from a **search** over this platform's members (name or the start of a handle, at least two characters, 20 results at most, never a full list; searches are throttled per address), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
+| A steward | `/:locale/billing/credit_accounts` | Pick a person from the shared **person search** (below), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
 | A steward | `/:locale/billing/credit_accounts/:id` | Every lot and entry, with who gave it and why |
 
-Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. The search is limited to members of the platform and needs steward permission, and an id that is not a member looks the same as one that does not exist.
+Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. 
+### The person search
+
+Every billing screen that picks a person uses one endpoint, `GET /:locale/billing/people?search=` (`Billing::PeopleController`), through the person slim-select (`better-together--slim-select`, ajax). Today that is the store credit lookup and the buyer of a sale in person ([offline_payment_methods.md](offline_payment_methods.md)); a new billing lookup reuses it rather than adding its own. It answers `[{ value: person id, text: name and handle }]`: members of this platform (on the host platform, its community's members too) whose name contains the term or whose handle starts with it, at least two characters, 20 results at most, never a full list. It needs permission to manage the platform's billing (`PersonLookupPolicy`), searches are throttled per address (`billing/people_lookup/ip`, 60 a minute), and an id that is not a member looks the same as one that does not exist. The membership rule is in the `PersonLookup` concern, shared with the screens that read the chosen id back.
+
+```mermaid
+flowchart LR
+  A[Person select on a billing screen] -->|ajax, search term| B[GET /billing/people]
+  B --> C{May manage this platform's billing?}
+  C -- no --> D[Refused]
+  C -- yes --> E{Term at least two characters?}
+  E -- no --> F[Empty list]
+  E -- yes --> G[Platform members matching the name or the start of the handle, 20 at most]
+  G --> H[Select shows the choices]
+  H -->|person id| I[Screen reads the id back through the same membership rule]
+```
+
+Diagram source: [billing_person_lookup_flow.mmd](../diagrams/source/billing_person_lookup_flow.mmd).
 
 The holder is told with the `credit_granted` notice (audience `holder`, not critical): how much, until when if it expires, and a link to their credit page. It is sent for credit a steward gives; credit the system gives (a refund, a promotion) is silent here. See [notifications.md](notifications.md).
 

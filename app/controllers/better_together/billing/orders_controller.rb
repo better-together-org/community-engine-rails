@@ -25,7 +25,7 @@ module BetterTogether
       def pay
         authorize @order
         redirect_to Checkout::Start.call(order: @order, success_url: checkout_return_billing_order_url(@order, locale: I18n.locale),
-                                         cancel_url: billing_order_url(@order, locale: I18n.locale)),
+                                         cancel_url: billing_order_url(@order, locale: I18n.locale), payment: chosen_payment),
                     allow_other_host: true, status: :see_other
       rescue Checkout::Start::Unavailable
         redirect_to billing_order_path(@order, locale: I18n.locale), alert: t('better_together.billing.orders.pay_unavailable')
@@ -43,6 +43,9 @@ module BetterTogether
       end
 
       private
+
+      # Which processor payment to pay when an order has several waiting; only one of this order's own.
+      def chosen_payment = (@order.payments.find(params[:payment_id]) if params[:payment_id].present?)
 
       def set_order
         @order = billing_owner.billing_orders.bought_by(current_user.person).find(params[:id])

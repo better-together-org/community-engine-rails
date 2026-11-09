@@ -928,12 +928,21 @@ es:
         error_method_not_available: Elija una de las formas de pago disponibles.
         error_not_ready: 'Esta compra no se puede completar todavía: no se han configurado
           sus condiciones. Póngase en contacto con quienes gestionan esta plataforma.'
+        error_parts_too_large: Los importes que escribió cubren todo el precio. Deje
+          una parte a la forma elegida arriba, o elíjala para el total.
         error_refused: No se pudo hacer su pedido. No se ha cobrado nada. Inténtelo
           de nuevo.
         how_to_pay: "¿Cómo desea pagar?"
         no_methods: Ahora mismo no hay forma de pagar esto.
+        parts_heading: Pagar una parte de otra forma
+        parts_hint: Opcional. Escriba un importe junto a cualquier forma de pago para
+          pagar esa cantidad ahora. La forma elegida arriba paga el resto.
         place_order: Hacer el pedido
         placed: Su pedido se ha realizado.
+        renew_with: Renovar con
+        renew_with_default: La forma con la que pago la mayor parte
+        renew_with_hint: Cada factura de renovación se pagará así. Puede añadir otros
+          pagos a cualquier factura.
         review_intro: Lea esto antes de hacer su pedido. Debe aceptarlo para continuar.
         review_title: Revisar y aceptar
         title: Obtener %{plan}
@@ -1087,6 +1096,24 @@ es:
           seller:
             body: Se ha pagado un pedido de %{amount}.
             title: El pedido %{number} está pagado
+        order_part_received:
+          buyer:
+            body: Se recibieron %{received} de %{amount}. Pague los %{left} restantes
+              para completarlo.
+            title: Se recibió un pago del pedido %{number}
+          seller:
+            body: Se recibieron %{received} de un pedido de %{amount}; faltan %{left}
+              por pagar.
+            title: Pago parcial del pedido %{number}
+        order_partial_stalled:
+          buyer:
+            body: Está pagado en parte y sigue abierto. Pague los %{left} restantes
+              cuando quiera.
+            title: El pedido %{number} espera el resto
+          seller:
+            body: Un pedido de %{amount} pagado en parte ya no espera sus partes sin
+              pagar. Espere el resto, o devuelva las partes y cancélelo.
+            title: El pedido %{number} está pagado en parte
         order_placed:
           buyer:
             body: Lo estamos reservando para usted. Pague %{amount} para completarlo.
@@ -1283,10 +1310,23 @@ es:
         status_rejected: No aceptado
         too_many_claims: Ya se lo ha dicho al vendedor varias veces. Confirmará cuando
           reciba su pago.
+      order_payments:
+        added: Se añadió el pago. Siga las instrucciones de abajo para completarlo.
+        paid: Se realizó el pago.
+        refused: No se pudo añadir ese pago. Revise el importe y la forma de pago,
+          e inténtelo de nuevo.
       orders:
         accepted_by: Aceptado por %{name} el %{date}
+        add_payment_amount: Importe (déjelo vacío para pagar el resto)
+        add_payment_btn: Añadir pago
+        add_payment_cap: hasta %{amount}
+        add_payment_heading: Pagar el resto o añadir un pago
+        add_payment_hint: Faltan %{balance} por pagar. Pague todo de una forma, o
+          una parte ahora y el resto de otra.
+        add_payment_method: Pagar con
         agreements_heading: Acuerdos aceptados
         field_amount: Importe
+        field_balance: Falta por pagar
         field_buyer: Comprador
         field_expires: Pagar antes de
         field_item: Artículo
@@ -1650,6 +1690,11 @@ es:
         state_draft: Borrador
         state_retired: Retirado
       sales:
+        cancel_btn: Cancelar este pedido
+        cancel_confirm: "¿Cancelar este pedido? Se liberará lo que reservaba."
+        cancel_refused: El pedido no se puede cancelar mientras quede dinero pagado.
+          Devuelva primero cada pago.
+        cancelled: Se canceló el pedido y se liberó lo que reservaba.
         credit_refund_heading: Devolver al crédito de la tienda
         credit_refund_hint: El comprador pagó con crédito de la tienda, así que el
           dinero vuelve a su saldo de crédito al instante. No se puede pagar en efectivo.
@@ -1669,6 +1714,17 @@ es:
         refund_record: Registrar reembolso
         refund_recorded: Reembolso registrado. Se informó al comprador.
         refund_refused: No se pudo registrar ese reembolso. Revise el importe.
+        return_credit_btn: Devolver los pagos con crédito
+        return_heading: Devolver pagos
+        return_hint: Este pedido está pagado en parte y sigue abierto para que el
+          comprador pague los %{balance} restantes. Para cancelarlo, devuelva cada
+          pago y luego cancélelo.
+        return_kind_credit: se devuelve a su crédito de tienda
+        return_kind_manual: usted lo devuelve y lo registra en el formulario de reembolso
+        return_kind_processor: reembólselo en el procesador de pagos
+        return_refused: No se pudieron devolver los pagos. Revise el pedido e inténtelo
+          de nuevo.
+        returned: Se devolvió el crédito al comprador.
       subscribers:
         cancel_at_end: Cancelar al final del periodo
         cancel_now: Cancelar ahora
@@ -1736,9 +1792,10 @@ es:
       walk_up:
         agreements_label: El comprador ha leído y aceptado los acuerdos de compra
           conmigo, en persona
-        buyer_hint: El comprador ya debe ser miembro de esta plataforma. Escriba su
-          identificador exacto.
-        buyer_label: Identificador del comprador
+        buyer_hint: El comprador ya debe ser miembro de esta plataforma. Escriba al
+          menos dos letras de un nombre o identificador.
+        buyer_label: Comprador
+        buyer_placeholder: Buscar por nombre o identificador
         error_refused: No se pudo registrar esa venta. Revise el comprador, la forma
           de pago y los acuerdos.
         intro: Registre una venta hecha en persona. El comprador no tiene que hacer

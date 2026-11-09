@@ -66,7 +66,7 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
             %w[title body].each do |part|
               text = I18n.t("better_together.billing.notifications.#{kind}.#{audience}.#{part}",
                             default: [:"better_together.billing.notifications.#{kind}.#{part}"], number: 'N', amount: 'A', method: 'M',
-                            platform: 'P', expires: 'E', plan: 'L', date: 'D')
+                            platform: 'P', expires: 'E', plan: 'L', date: 'D', received: 'R', left: 'T')
               expect(text).to be_a(String), "missing #{locale} #{kind}.#{audience}.#{part}"
               expect(text).not_to include('translation missing')
             end

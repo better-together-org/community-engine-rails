@@ -236,6 +236,8 @@ erDiagram
     datetime expires_at "end of the payment hold"
     datetime paid_at
     datetime cancelled_at
+    uuid pay_subscription_id FK "the Pay subscription this order began or renewed"
+    string renewal_payment_method "what each renewal is paid by, chosen by the buyer (local methods only)"
   }
 
   BILLING_ORDER_LINES {

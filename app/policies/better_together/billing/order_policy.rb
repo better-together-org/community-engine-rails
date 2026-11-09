@@ -21,6 +21,9 @@ module BetterTogether
       # The buyer tells the seller they sent a payment made outside the platform.
       def claim? = bought_by_user?
 
+      # The buyer adds a payment, or the rest, to their own order while something is left to pay.
+      def add_payment? = bought_by_user? && record.try(:balance_cents).to_i.positive? && (record.open? || record.expired?)
+
       # The buyer pays their own order through a processor, and returns from it.
       def pay? = bought_by_user?
       def checkout_return? = bought_by_user?
@@ -30,6 +33,9 @@ module BetterTogether
       def sale? = manage_billing? && record.try(:sold_by_platform?) == true
       # The seller records money given back.
       def refund? = sale?
+      # The seller returns what was paid toward a sale, and cancels one that will not be completed.
+      def return_payments? = sale?
+      def cancel? = sale?
       # A sale made in person.
       def walk_up? = manage_billing?
 

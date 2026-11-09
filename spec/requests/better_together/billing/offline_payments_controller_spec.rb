@@ -148,8 +148,8 @@ RSpec.describe BetterTogether::Billing::OfflinePaymentsController do
       transition.claim(offline, reference: 'ref')
       get better_together.billing_sale_path(order, locale:)
 
-      expect(response.body).to include("billing-offline-receive-form-#{order.id}", "billing-offline-confirm-btn-#{order.id}",
-                                       "billing-offline-reject-btn-#{order.id}", ActionView::RecordIdentifier.dom_id(offline, :claimed_at))
+      expect(response.body).to include("billing-offline-receive-form-#{offline.id}", "billing-offline-confirm-btn-#{offline.id}",
+                                       "billing-offline-reject-btn-#{offline.id}", ActionView::RecordIdentifier.dom_id(offline, :claimed_at))
       expect_html_content('ref')
     end
   end

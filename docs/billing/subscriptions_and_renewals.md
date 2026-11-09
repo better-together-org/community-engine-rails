@@ -40,7 +40,7 @@ Every period is counted from the **anchor**, never from the period before (`Bill
 2. **Invoice.** `GenerateRenewalsJob` (daily 05:10 UTC) makes the next period and its invoice once within `renewal_lead_days` of the period ending: the period row first (unique), then the order, held until the period end **plus the grace**. A deactivated plan still renews its existing subscribers.
    - Agreements changed since the payer accepted them: the period waits as `needs_agreement`, the payer is told and accepts on their subscription page, the invoice follows.
    - Any other refusal (the method was switched off): `blocked`, with a reason, tried again each run.
-   - Store credit: paid at once if the credit covers the whole invoice; otherwise the invoice waits and the payer is told once a day (`AdvanceSubscriptionsJob` tries again, so topping up is enough).
+   - Store credit: spends what the credit covers at once (never a part the payer added); if that is not the whole invoice it stays part paid and the payer is told once a day (`AdvanceSubscriptionsJob` tries again, so topping up is enough). The payer can add other parts from the invoice page. See [partial_payments.md](partial_payments.md).
 3. **Paid.** The invoice's payment is confirmed (or credit spent) and `Subscriptions::Renew` moves the Pay subscription on, using the same columns Pay reads (`current_period_*`, `status`, `ends_at`).
    - Paid early or in time: it moves on at once.
    - Paid inside the grace: it runs on **from the old end**, not from the day paid.

@@ -31,7 +31,9 @@ module BetterTogether
 
       scope :platform_defaults, -> { where(target_id: nil) }
       scope :for_purpose, ->(purpose) { where(purpose: [nil, purpose.to_s]) }
-      scope :for_method, ->(method) { where(payment_method: [nil, method.presence&.to_s]) }
+      # The terms of any of the methods named (a purchase paid in parts brings the terms of each), and the terms
+      # that belong to no method.
+      scope :for_method, ->(methods) { where(payment_method: [nil, *Array(methods).filter_map { |method| method.presence&.to_s }]) }
 
       def platform_default? = target_id.nil?
 

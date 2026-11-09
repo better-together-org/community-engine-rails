@@ -3,10 +3,13 @@
 module BetterTogether
   module Billing
     module Subscriptions
-      # Starts a subscription from a paid order for a recurring plan, paid by a method Community Engine
-      # settles itself. It makes the Pay customer and subscription (a `Pay::Local::Subscription`, so Pay's
+      # Starts a subscription from a paid order for a recurring plan, paid by methods Community Engine settles
+      # itself (in one part or several: credit and cash, say). It makes the Pay customer and subscription (a `Pay::Local::Subscription`, so Pay's
       # scopes and everything built on Pay's records see it like any other), the terms that hold what Pay
       # has no place for, and the first period, already paid by this order.
+      #
+      # Renewals are paid by the way the buyer chose to "renew with" (stored on the order). If they did not choose,
+      # it is the way that paid the largest share of the first order, store credit only if nothing else did.
       #
       # The anchor every later period is counted from is when the order was really paid (see PaidTime).
       # Platform-sold plans only: a seller's subscription belongs to that seller.
@@ -27,9 +30,10 @@ module BetterTogether
           line_items.first.purchasable if line_items.one? && line_items.first.purchasable.is_a?(Plan)
         end
 
+        # Every part that paid it was settled by Community Engine; a part through a processor leaves the subscription to the processor.
         def self.paid_locally?(order)
-          payment = order.payments.find(&:succeeded?)
-          payment.present? && Billing.local_method?(payment.processor)
+          paid = order.payments.select(&:succeeded?)
+          paid.any? && paid.all? { |payment| Billing.local_method?(payment.processor) }
         end
 
         def initialize(order:)
@@ -65,7 +69,19 @@ module BetterTogether
 
         def anchor = @anchor ||= PaidTime.for(order)
 
-        def payment = order.payments.find(&:succeeded?)
+        # What each renewal is paid by: what the buyer chose, else the way that paid the most (credit last).
+        def renewal_method
+          order.renewal_payment_method.presence || largest_share
+        end
+
+        def largest_share
+          cash = paid_by_method.reject { |method, _| Billing.internal_method?(method) }
+          (cash.presence || paid_by_method).max_by(&:last).first
+        end
+
+        def paid_by_method
+          order.payments.select(&:succeeded?).group_by(&:processor).transform_values { |parts| parts.sum(&:amount_cents) }
+        end
 
         def time_zone = order.platform.time_zone.presence || 'UTC'
 
@@ -80,7 +96,7 @@ module BetterTogether
 
         def build_term(subscription)
           order.platform.billing_subscription_terms.create!(
-            pay_subscription: subscription, plan:, beneficiary: order.on_behalf_of, payment_method: payment.processor,
+            pay_subscription: subscription, plan:, beneficiary: order.on_behalf_of, payment_method: renewal_method,
             unit_amount_cents: order.line_items.first.unit_amount_cents, currency: order.currency, anchor_at: anchor
           )
         end

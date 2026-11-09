@@ -35,6 +35,39 @@
           <% end %>
         </div>
       <% end %>
+      <%# Optionally pay part of it now by another way (store credit up to the balance, or cash and the like); the way chosen above takes the rest. %>
+      <% if @choices.count(&:available?) > 1 %>
+        <div id="billing-checkout-parts" class="mt-3 mb-3">
+          <h2 class="h6"><%= t('better_together.billing.checkout.parts_heading') %></h2>
+          <p id="billing-checkout-parts-hint" class="small text-body-secondary"><%= t('better_together.billing.checkout.parts_hint') %></p>
+          <% @choices.select(&:available?).each do |choice| %>
+            <% existing = @parts&.find { |part| part[:payment_method] == choice.name } %>
+            <div class="row g-2 align-items-center mb-2">
+              <%= label_tag "billing-checkout-part-#{choice.name}", billing_payment_method_label(choice.name), class: 'col-sm-4 col-form-label' %>
+              <div class="col-sm-4">
+                <%= text_field_tag "part_amounts[#{choice.name}]", (BetterTogether::Billing::Currency.to_major(existing[:amount_cents], @plan.currency) if existing),
+                                   id: "billing-checkout-part-#{choice.name}", class: 'form-control', inputmode: 'decimal', autocomplete: 'off' %>
+              </div>
+              <% if choice.cap_cents %>
+                <div class="col-sm-4 small text-body-secondary" id="billing-checkout-part-<%= choice.name %>-cap">
+                  <%= t('better_together.billing.orders.add_payment_cap', amount: billing_amount([choice.cap_cents, @plan.amount_cents].min, @plan.currency)) %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# A subscription renews by a way the platform settles itself; the buyer picks which. %>
+      <% if @purpose == 'subscription' && (renewal_choices = @choices.select(&:renewable?)).any? %>
+        <div id="billing-checkout-renew-with" class="mb-3">
+          <%= label_tag :renew_with, t('better_together.billing.checkout.renew_with'), class: 'form-label', for: 'billing-checkout-renew-with-select' %>
+          <%= select_tag :renew_with, options_for_select([[t('better_together.billing.checkout.renew_with_default'), '']] + renewal_choices.map { |choice| [billing_payment_method_label(choice.name), choice.name] }, @renew_with),
+                         id: 'billing-checkout-renew-with-select', class: 'form-select' %>
+          <div id="billing-checkout-renew-with-hint" class="form-text"><%= t('better_together.billing.checkout.renew_with_hint') %></div>
+        </div>
+      <% end %>
+
       <% if @choices.none?(&:available?) %>
         <p id="billing-checkout-no-methods" class="text-body-secondary"><%= t('better_together.billing.checkout.no_methods') %></p>
       <% else %>
@@ -49,6 +82,10 @@
       <%= form_with(url: billing_checkout_path(locale: I18n.locale), method: :post, id: 'billing-checkout-form') do %>
         <%= hidden_field_tag :plan_id, @plan.id %>
         <%= hidden_field_tag :payment_method, @method %>
+        <% @parts.each do |part| %>
+          <%= hidden_field_tag "part_amounts[#{part[:payment_method]}]", BetterTogether::Billing::Currency.to_major(part[:amount_cents], @plan.currency), id: "billing-checkout-part-hidden-#{part[:payment_method]}" %>
+        <% end %>
+        <%= hidden_field_tag :renew_with, @renew_with, id: 'billing-checkout-renew-with-hidden' if @renew_with %>
         <section id="billing-agreement-review" class="card mb-4" aria-labelledby="billing-agreement-review-title">
           <div class="card-header"><strong id="billing-agreement-review-title"><%= t('better_together.billing.checkout.review_title') %></strong></div>
           <div class="card-body">

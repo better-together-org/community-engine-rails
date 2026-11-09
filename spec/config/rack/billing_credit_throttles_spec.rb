@@ -11,13 +11,14 @@ RSpec.describe 'Billing credit throttles' do # rubocop:disable RSpec/DescribeCla
   end
 
   it 'limits person searches and credit grants, per address' do
-    lookup = throttles.fetch('billing/credit_lookup/ip')
+    lookup = throttles.fetch('billing/people_lookup/ip')
     grants = throttles.fetch('billing/credit_grants/ip')
 
     expect(lookup.limit).to eq(60)
-    expect(lookup.block.call(request_for('/en/billing/credit_accounts/people', params: { search: 'someone' }))).to be_present
+    expect(lookup.block.call(request_for('/en/billing/people', params: { search: 'someone' }))).to be_present
     expect(lookup.block.call(request_for('/en/billing/credit_accounts'))).to be_nil
-    expect(lookup.block.call(request_for('/en/billing/credit_accounts/abc', params: { search: 'x' }))).to be_nil
+    expect(lookup.block.call(request_for('/en/billing/people', method: 'POST'))).to be_nil
+    expect(lookup.block.call(request_for('/en/billing/people/abc', params: { search: 'x' }))).to be_nil
     expect(grants.limit).to eq(20)
     expect(grants.block.call(request_for('/en/billing/credit_grants', method: 'POST'))).to be_present
     expect(grants.block.call(request_for('/en/billing/credit_grants'))).to be_nil
@@ -29,5 +30,13 @@ RSpec.describe 'Billing credit throttles' do # rubocop:disable RSpec/DescribeCla
     expect(throttle.limit).to eq(10)
     expect(throttle.block.call(request_for('/en/billing/promotion_redemptions', method: 'POST'))).to be_present
     expect(throttle.block.call(request_for('/en/billing/promotion_redemptions'))).to be_nil
+  end
+
+  it 'limits adding a payment to an order, per address' do
+    throttle = throttles.fetch('billing/order_payments/ip')
+
+    expect(throttle.limit).to eq(20)
+    expect(throttle.block.call(request_for('/en/billing/orders/abc/payments', method: 'POST'))).to be_present
+    expect(throttle.block.call(request_for('/en/billing/orders/abc/payments'))).to be_nil
   end
 end

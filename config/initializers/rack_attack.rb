@@ -124,15 +124,20 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/claim\z})
     end
 
+    # A buyer adding a payment to an order. Each one can spend credit or open something for a seller to confirm.
+    throttle('billing/order_payments/ip', limit: 20, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/payments\z})
+    end
+
     # Starting a payment creates a checkout session at the processor (an API call), so cap it per IP.
     throttle('billing/order_pay/ip', limit: 20, period: 1.minute) do |req|
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/pay\z})
     end
 
-    # A steward searching for a person to find their store credit, and giving credit. Cap searches so they
+    # A steward searching for a person on a billing screen (store credit, sale in person), and giving credit. Cap searches so they
     # cannot be used to browse people in bulk, and grants because each one tells the holder.
-    throttle('billing/credit_lookup/ip', limit: 60, period: 1.minute) do |req|
-      req.ip if req.get? && req.path.match?(%r{/billing/credit_accounts/people/?\z})
+    throttle('billing/people_lookup/ip', limit: 60, period: 1.minute) do |req|
+      req.ip if req.get? && req.path.match?(%r{/billing/people/?\z})
     end
     throttle('billing/credit_grants/ip', limit: 20, period: 1.minute) do |req|
       req.ip if req.post? && req.path.match?(%r{/billing/credit_grants/?\z})

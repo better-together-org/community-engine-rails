@@ -29,7 +29,8 @@ RSpec.shared_context 'with orders fixtures' do
     purchase_agreements_for(options.fetch(:platform))
     gate = BetterTogether::Billing::Checkout::AgreementGate.new(
       platform: options.fetch(:platform), purpose: options.fetch(:purpose), signer: options[:signer] || options.fetch(:buyer),
-      seller: options[:seller], purchasables: options.fetch(:line_items).pluck(:purchasable), payment_method: options[:payment_method]
+      seller: options[:seller], purchasables: options.fetch(:line_items).pluck(:purchasable),
+      payment_method: options[:payments] ? options[:payments].pluck(:payment_method) : options[:payment_method]
     )
     gate.accept!
   end

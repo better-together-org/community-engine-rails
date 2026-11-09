@@ -13,6 +13,9 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
   let(:order) { place_offline('cash') }
   let(:offline) { offline_for(order) }
 
+  # An order paid in parts can show several of these cards, so each one's ids end with the offline payment's id.
+  def part_id(name) = "billing-offline-#{name}-#{offline.id}"
+
   def expect_ids(*ids)
     ids.each { |id| expect(response.body).to include(%(id="#{id}")), "expected id=#{id.inspect} in the page" }
   end
@@ -23,10 +26,10 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
     it 'exposes how to pay, the disclosures and the optional claim' do
       get "/#{locale}/billing/orders/#{order.id}"
 
-      expect_ids(ActionView::RecordIdentifier.dom_id(offline), 'billing-offline-heading',
-                 ActionView::RecordIdentifier.dom_id(offline, :status_badge), 'billing-offline-status-message',
-                 'billing-offline-instructions', 'billing-offline-amount', 'billing-offline-disclosure',
-                 'billing-offline-claim-form', 'billing-offline-claim-hint', 'billing-offline-claim-reference', 'billing-offline-claim-btn')
+      expect_ids(ActionView::RecordIdentifier.dom_id(offline), ActionView::RecordIdentifier.dom_id(offline, :status_badge),
+                 *%w[heading status-message instructions amount disclosure claim-form claim-hint claim-reference claim-btn].map do |name|
+                   part_id(name)
+                 end)
     end
 
     it 'exposes the buyer\'s own note once they have claimed' do
@@ -34,7 +37,7 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
 
       get "/#{locale}/billing/orders/#{order.id}"
 
-      expect_ids('billing-offline-claimed-note')
+      expect_ids(part_id('claimed-note'))
     end
 
     it 'exposes the seller\'s reason when a payment was not accepted' do
@@ -42,7 +45,7 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
 
       get "/#{locale}/billing/orders/#{order.id}"
 
-      expect_ids('billing-offline-rejection-reason')
+      expect_ids(part_id('rejection-reason'))
     end
   end
 
@@ -73,18 +76,19 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
 
       expect_ids(ActionView::RecordIdentifier.dom_id(offline), ActionView::RecordIdentifier.dom_id(offline, :details),
                  ActionView::RecordIdentifier.dom_id(offline, :claimed_at), ActionView::RecordIdentifier.dom_id(offline, :fee),
-                 "billing-offline-receive-form-#{order.id}", "billing-offline-confirm-btn-#{order.id}",
-                 "billing-offline-reject-form-#{order.id}", "billing-offline-reject-btn-#{order.id}")
+                 "billing-offline-receive-form-#{offline.id}", "billing-offline-confirm-btn-#{offline.id}",
+                 "billing-offline-reject-form-#{offline.id}", "billing-offline-reject-btn-#{offline.id}")
     end
 
     it 'exposes the cheque buttons once a cheque is received' do
       cheque_order = place_offline('cheque')
-      transition.receive(offline_for(cheque_order), by: steward)
+      cheque = offline_for(cheque_order)
+      transition.receive(cheque, by: steward)
 
       get "/#{locale}/billing/sales/#{cheque_order.id}"
 
-      expect_ids("billing-offline-cheque-actions-#{cheque_order.id}", "billing-offline-clear-btn-#{cheque_order.id}",
-                 "billing-offline-bounce-btn-#{cheque_order.id}")
+      expect_ids("billing-offline-cheque-actions-#{cheque.id}", "billing-offline-clear-btn-#{cheque.id}",
+                 "billing-offline-bounce-btn-#{cheque.id}")
     end
 
     it 'exposes the refund form once something was paid' do
@@ -92,8 +96,8 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
 
       get "/#{locale}/billing/sales/#{order.id}"
 
-      expect_ids(ActionView::RecordIdentifier.dom_id(offline.payment, :refund), "billing-sale-refund-form-#{order.id}",
-                 "billing-sale-refund-btn-#{order.id}")
+      expect_ids(ActionView::RecordIdentifier.dom_id(offline.payment, :refund), "billing-sale-refund-form-#{offline.id}",
+                 "billing-sale-refund-btn-#{offline.id}")
     end
 
     it 'exposes the links to the queue and to a sale in person on the sales list' do

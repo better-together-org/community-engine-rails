@@ -53,18 +53,21 @@ RSpec.describe BetterTogether::Billing::Credit::PayOrder do # rubocop:disable RS
       other = create(:better_together_person)
       grant_credit(9000, holder: other, purposes: %w[ticket])
 
-      expect { place_with_credit(buyer: other) }.to raise_error(refused, /not enough credit/)
+      expect { place_with_credit(buyer: other) }.to raise_error(refused, /no credit to spend/)
     end
   end
 
   context 'without enough credit' do
-    it 'refuses and leaves nothing behind: no order, no hold, no spend' do
+    it 'pays what it can and leaves the order partly paid, to be completed another way' do
       grant_credit(4499)
 
-      expect { place_with_credit }.to raise_error(refused, /credit/)
-        .and(not_change(BetterTogether::Billing::Order, :count))
-        .and(not_change(BetterTogether::Billing::CreditEntry, :count))
-      expect(account_of.balance_cents).to eq(4499)
+      order = place_with_credit
+
+      expect(order.reload).to be_partially_paid
+      expect(order.payments.sole).to have_attributes(processor: 'store_credit', status: 'succeeded', amount_cents: 4499)
+      expect(order.balance_cents).to eq(1)
+      expect(account_of.reload.balance_cents).to eq(0)
+      expect(account_of).to be_consistent
     end
 
     it 'refuses a buyer who has never had credit' do

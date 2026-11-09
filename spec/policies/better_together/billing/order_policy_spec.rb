@@ -39,6 +39,30 @@ RSpec.describe BetterTogether::Billing::OrderPolicy do
     expect(described_class.new(nil, BetterTogether::Billing::Order).checkout?).to be(false)
   end
 
+  describe 'adding a payment' do
+    it 'is for the buyer, while something is left to pay' do
+      expect(described_class.new(member, order).add_payment?).to be(true)
+      expect(described_class.new(stranger, order).add_payment?).to be(false)
+      expect(described_class.new(steward, order).add_payment?).to be(false)
+      expect(described_class.new(nil, order).add_payment?).to be(false)
+    end
+
+    it 'is closed once the order is paid in full or cancelled' do
+      order.update!(status: 'cancelled')
+
+      expect(described_class.new(member, order).add_payment?).to be(false)
+    end
+  end
+
+  describe 'returning payments and cancelling' do
+    it 'is for a steward of the platform that sells the order, and not for the buyer' do
+      expect(described_class.new(steward, order).cancel?).to be(true)
+      expect(described_class.new(steward, order).return_payments?).to be(true)
+      expect(described_class.new(member, order).cancel?).to be(false)
+      expect(described_class.new(member, order).return_payments?).to be(false)
+    end
+  end
+
   it 'never lets anyone create, change or destroy an order through the screens' do
     policy = described_class.new(steward, order)
 

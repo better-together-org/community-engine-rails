@@ -41,11 +41,14 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       'billing_offline_pay_screen',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_offline_pay_screen', role: 'member'),
-      callouts: [{ id: 'instructions', selector: '#billing-offline-instructions', title: 'How to pay', avoid_container_selector: 'main',
+      callouts: [{ id: 'instructions', selector: "#billing-offline-instructions-#{offline_for(order).id}", title: 'How to pay',
+                   avoid_container_selector: 'main',
                    bullets: ['Shown only on your own order, after you accepted the agreements.'] },
-                 { id: 'disclosure', selector: '#billing-offline-disclosure', title: 'Before you pay', avoid_container_selector: 'main',
+                 { id: 'disclosure', selector: "#billing-offline-disclosure-#{offline_for(order).id}", title: 'Before you pay',
+                   avoid_container_selector: 'main',
                    bullets: ['What the platform cannot do for a payment made outside it.'] },
-                 { id: 'claim', selector: '#billing-offline-claim-btn', title: 'I sent it', avoid_container_selector: 'main',
+                 { id: 'claim', selector: "#billing-offline-claim-btn-#{offline_for(order).id}", title: 'I sent it',
+                   avoid_container_selector: 'main',
                    bullets: ['Optional. The seller can confirm your payment either way.'] }],
       narrative: {
         title: 'Paying outside the platform',
@@ -57,8 +60,8 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
     ) do
       capybara_sign_in_user(buyer_user.email, password)
       visit "/#{I18n.default_locale}/billing/orders/#{order.id}"
-      scroll_to(find('#billing-offline-disclosure'), align: :center)
-      expect(page).to have_css('#billing-offline-claim-btn')
+      scroll_to(find("#billing-offline-disclosure-#{offline_for(order).id}"), align: :center)
+      expect(page).to have_css("#billing-offline-claim-btn-#{offline_for(order).id}")
     end
   end
 
@@ -84,16 +87,16 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       'billing_offline_sale',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_offline_sale', role: 'platform_manager'),
-      callouts: [{ id: 'receive', selector: "#billing-offline-receive-form-#{order.id}", title: 'Say it arrived',
+      callouts: [{ id: 'receive', selector: "#billing-offline-receive-form-#{offline_for(order).id}", title: 'Say it arrived',
                    avoid_container_selector: 'main',
                    bullets: ['An optional reference and date; nothing is required.'] },
-                 { id: 'reject', selector: "#billing-offline-reject-form-#{order.id}", title: 'Or say it did not',
+                 { id: 'reject', selector: "#billing-offline-reject-form-#{offline_for(order).id}", title: 'Or say it did not',
                    avoid_container_selector: 'main',
                    bullets: ['The buyer sees your reason.'] }]
     ) do
       visit_as_manager("sales/#{order.id}")
-      scroll_to(find("#billing-offline-receive-form-#{order.id}"), align: :center)
-      expect(page).to have_css("#billing-offline-reject-btn-#{order.id}")
+      scroll_to(find("#billing-offline-receive-form-#{offline_for(order).id}"), align: :center)
+      expect(page).to have_css("#billing-offline-reject-btn-#{offline_for(order).id}")
     end
   end
 

@@ -51,7 +51,7 @@ Because the instructions are copied, a seller who edits their payment details ca
 
 ## Placing the order
 
-`Orders::Place` checks, on the server, that the chosen method is switched on for the seller, allowed for this kind of purchase (subscription, one-time, ticket, exchange) and works in the order's currency (an e-transfer is Canadian dollars only). It then opens the payment (`OfflinePayments::Open`): a **pending** `Payment` for the whole balance and an `awaiting` offline payment, held for the seller's own `hold_hours` (72 hours if they have not chosen).
+`Orders::Place` checks, on the server, that the chosen method is switched on for the seller, allowed for this kind of purchase (subscription, one-time, ticket, exchange) and works in the order's currency (an e-transfer is Canadian dollars only). It then opens the payment (`OfflinePayments::Open`): a **pending** `Payment` for the amount asked (the whole balance unless the order is paid in parts, see [partial_payments.md](partial_payments.md)) and an `awaiting` offline payment, held for the seller's own `hold_hours` (72 hours if they have not chosen).
 
 The agreements come first and are enforced in `Place`, whatever the screens did. The instructions are shown only on the buyer's own order page, which exists only after the order was placed with the agreements accepted.
 
@@ -100,7 +100,7 @@ The platform cannot move cash or a cheque. **Record a refund** records that the 
 
 ## A sale in person
 
-A seller who takes cash across a counter does not want the buyer to have to do anything. **Sale in person** (`/billing/walk_up_sale/new`) lets a steward choose the plan, the way of paying and the buyer (by exact handle; the buyer must already be a member of the platform, and nothing searches members), tick that the buyer read and accepted the purchase agreements with them, and optionally tick that the money has already changed hands.
+A seller who takes cash across a counter does not want the buyer to have to do anything. **Sale in person** (`/billing/walk_up_sale/new`) lets a steward choose the plan, the way of paying and the buyer (picked from the same person search as the store credit screen, over this platform's members only; the buyer must already be a member of the platform), tick that the buyer read and accepted the purchase agreements with them, and optionally tick that the money has already changed hands.
 
 - The agreements are **still required**. They are recorded as accepted in person (`acceptance_method: seller_assisted`, with the steward who recorded it), so they are never mistaken for the buyer's own acceptance. Without the tick, nothing is recorded at all.
 - The order is placed for the buyer (`seller_assisted: true`); if the money has changed hands it is confirmed at once. The buyer is told afterwards.

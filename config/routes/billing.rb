@@ -49,13 +49,26 @@ concern :billing_plans do
       end
       # The buyer says they sent a payment made outside the platform. Optional: the seller can confirm without it.
       resource :claim, only: :create, controller: 'order_claims'
+      # The buyer adds a payment (the rest, or a part, by any way of paying) to an order that is not fully paid.
+      resources :payments, only: :create, controller: 'order_payments'
     end
     resource :checkout, only: %i[new create]
     resources :agreement_requirements, only: %i[index create destroy]
     resources :sales, only: %i[index show] do
+      # Return what was paid toward a sale that will not be completed, then cancel it.
+      post :return_payments, on: :member
+      post :cancel, on: :member
       # The seller records that they gave money back for a payment made outside the platform.
       resource :refund, only: :create, controller: 'sale_refunds'
     end
+  end
+end
+
+# The searches behind the selects on billing screens, shared by every screen that picks something.
+concern :billing_lookups do
+  namespace :billing do
+    # People of this platform (store credit lookup, buyer of a sale in person).
+    resources :people, only: :index
   end
 end
 
@@ -64,8 +77,6 @@ concern :billing_credit do
   namespace :billing do
     # A person's own store credit, and what a steward can see and give.
     resource :credit, only: :show, controller: 'credits'
-    # The person select on the steward screen searches here (before :id so it is not read as one).
-    get 'credit_accounts/people', to: 'credit_accounts#people', as: :people_credit_accounts
     resources :credit_accounts, only: %i[index show]
     resources :credit_grants, only: :create
     # A person redeems a promotion code; a steward makes and switches them.
@@ -129,6 +140,6 @@ end
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions, :billing_entitlements
+    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions, :billing_entitlements, :billing_lookups
   end
 end
