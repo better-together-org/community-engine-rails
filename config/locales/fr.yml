@@ -1168,6 +1168,7 @@ fr:
         status_rejected: Non accepté
         too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
           quand il aura reçu votre paiement.
+        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées
