@@ -77,7 +77,7 @@ RSpec.describe 'Documentation screenshots for the tax seed catalog',
       'seed_catalog_billing_tax_blocked', device: :both, metadata: screenshot_metadata(flow: 'seed_catalog_billing_tax'),
                                           callouts: callouts.map { |callout| callout.except(:description) },
                                           narrative: narrative(title: 'Tax seed packet: waiting on geography', callouts:,
-                                                               step: 'As a platform manager, I see the tax packet waits on the provinces it names.')
+                                                               step: 'I see the tax packet waits on the provinces it names.')
     ) do
       open_catalog
       expect(page).to have_css('#plant-billing_tax_canada-missing-prerequisites')
