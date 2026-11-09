@@ -294,6 +294,7 @@ module CeSubsystemDiagramExport
         BetterTogether::Billing::Refund
         BetterTogether::Billing::AgreementRequirement
         BetterTogether::Billing::OrderAgreementAcceptance
+        BetterTogether::Billing::NotificationReceipt
       ],
       controllers: %w[
         BetterTogether::Billing::PlansController

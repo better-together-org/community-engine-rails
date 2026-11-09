@@ -20,6 +20,8 @@ erDiagram
   BILLING_PAYMENTS ||--o{ BILLING_REFUNDS : "(payment_id, platform_id) composite FK"
   BILLING_PLANS o|--o{ BILLING_ORDER_LINES : "purchasable (polymorphic, opt-in)"
   EXT_PLATFORM ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_NOTIFICATION_RECEIPTS : "platform / platform_id"
+  EXT_PERSON ||--o{ BILLING_NOTIFICATION_RECEIPTS : "recipient (cascade delete)"
   EXT_AGREEMENT ||--o{ BILLING_AGREEMENT_REQUIREMENTS : "agreement"
   BILLING_PLANS o|--o{ BILLING_AGREEMENT_REQUIREMENTS : "target (polymorphic: seller or plan; none = platform default)"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "(order_id, platform_id) composite FK"
@@ -275,4 +277,13 @@ erDiagram
     string agreement_content_digest "as it read then; never rewritten"
     string acceptance_method "checkout | seller_assisted | ..."
     datetime accepted_at
+  }
+
+  BILLING_NOTIFICATION_RECEIPTS {
+    uuid id PK
+    uuid platform_id FK "NOT NULL, read-only after create"
+    uuid recipient_id FK "the person told; the receipt goes with them"
+    string kind "order_paid, payment_failed, ... (see the catalog)"
+    string audience "buyer | seller | operator"
+    string dedupe_key "what it is about; never personal data; unique with platform, recipient and kind"
   }

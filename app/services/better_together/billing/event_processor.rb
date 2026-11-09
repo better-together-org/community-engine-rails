@@ -56,6 +56,7 @@ module BetterTogether
         raise TypeError, "#{adapter.class}#process_event must return EventResult" unless result.is_a?(EventResult)
 
         record_outcome(event, result)
+        notify(event)
         result
       rescue StandardError => e
         record_failure(event, e)
@@ -88,6 +89,16 @@ module BetterTogether
           billable_owner: result.billable_owner || event.billable_owner, beneficiary: result.beneficiary || event.beneficiary,
           subject: result.subject || event.subject, outcome_kind: result.outcome_kind&.to_s || event.outcome_kind
         }
+      end
+
+      # Tells the people the outcome concerns, once per event: a replay of the same event finds the
+      # receipts already there. Kinds core does not announce are left alone.
+      def notify(event)
+        event.reload
+        kind = event.outcome_kind
+        return unless kind && event.subject && Notifications::Catalog.kind?(kind) && event.terminal?
+
+        Notifications.deliver(kind, subject: event.subject, dedupe_key: "event:#{event.id}")
       end
 
       def fail_with(event, error)
