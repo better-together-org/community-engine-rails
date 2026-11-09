@@ -971,6 +971,7 @@ es:
         steward_title: Cuentas de crédito de la tienda
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}
+        view_agreement: Ver el acuerdo
       notifications:
         cheque_bounced:
           buyer:

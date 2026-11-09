@@ -977,6 +977,7 @@ en:
         steward_title: Store credit accounts
         title: Store credit
         usable: You can spend %{amount}
+        view_agreement: View the agreement
       notifications:
         cheque_bounced:
           buyer:
