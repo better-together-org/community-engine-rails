@@ -1040,3 +1040,7 @@ bin/dc ps                                        # Check service status
 bin/dc logs -f                                   # View logs
 bin/dc down                                      # Stop services
 ```
+
+## Agreements
+
+Any flow where a person reads and accepts an agreement must reuse the shared modal and recorder. Read `.claude/skills/agreement-mechanism/SKILL.md` first.

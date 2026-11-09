@@ -57,10 +57,9 @@ module BetterTogether
       end
 
       # Every agreement still missing has its box ticked. Anything the buyer already accepted in its
-      # current form needs no tick.
+      # current form needs no tick. The boxes and their names are the shared agreement mechanism's.
       def accepted_everything_missing?
-        ticked = Array(params[:accepted_agreement_ids]).map(&:to_s)
-        @gate.missing.all? { |agreement| ticked.include?(agreement.id) }
+        @gate.missing.all? { |agreement| params[helpers.agreement_acceptance_param_name(agreement)] == '1' }
       end
 
       def place_order
