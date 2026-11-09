@@ -1001,6 +1001,7 @@ es:
         trial_ending:
           body: Su período de prueba está por terminar.
           title: Su prueba termina pronto
+        view_agreement: Ver el acuerdo
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         agreements_heading: Acuerdos aceptados

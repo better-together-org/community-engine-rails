@@ -1011,6 +1011,7 @@ fr:
         trial_ending:
           body: Votre période d’essai est sur le point de se terminer.
           title: Votre période d’essai se termine bientôt
+        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         agreements_heading: Ententes acceptées

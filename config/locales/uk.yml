@@ -987,6 +987,7 @@ uk:
         trial_ending:
           body: Ваш пробний період добігає кінця.
           title: Пробний період скоро закінчиться
+        view_agreement: Переглянути угоду
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         agreements_heading: Прийняті угоди

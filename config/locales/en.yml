@@ -1010,6 +1010,7 @@ en:
         trial_ending:
           body: Your trial is about to end.
           title: Your trial ends soon
+        view_agreement: View the agreement
       orders:
         accepted_by: Accepted by %{name} on %{date}
         agreements_heading: Agreements accepted
