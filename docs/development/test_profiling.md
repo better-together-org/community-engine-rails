@@ -8,13 +8,16 @@ development machine (2026-10-08) running the full suite (9,532 examples) in Dock
 | Workers | Full suite (`Finished in`) | Notes |
 |---|---|---|
 | 4 | 14 min 46 s | CI setting |
-| 8 (bts-0 default) | **9 min 16 s** | best on 12 cores with other work running |
+| 8 (fastest, uses about 16 GiB) | **9 min 16 s** | best on 12 cores with other work running |
 | 10 | 10 min 17 s | load average peaked near 37; Chrome-heavy specs oversubscribe the host |
 
 (Before the 2026-10 speed fixes the same suite took about 37 min with 4 workers.)
 
-The worker count defaults to two thirds of the host cores, between 4 and 8 (`bin/docker-compose-env.sh`), so
-a 12-core machine such as bts-0 runs 8 workers with no setup. Databases for the chosen count are created on
+The worker count defaults to a quarter of the host cores, between 2 and 4 (`bin/docker-compose-env.sh`), so
+a 12-core machine such as bts-0 runs 3 workers with no setup. The container is capped at 4 CPUs and 8 GiB
+(`CE_TEST_CPUS`, `CE_TEST_MEM_LIMIT`): 8 workers used about 16 GiB and 600% CPU and pushed bts-0 into
+out-of-memory kills. The table above shows 8 workers as the fastest setting for an otherwise idle host;
+set `WORKERS=8 CE_TEST_CPUS=10 CE_TEST_MEM_LIMIT=20g` for that. Databases for the chosen count are created on
 demand the first time you run `bin/dc-run ... prspec` (`bin/dc-prepare-worktree-test-dbs`). Override with
 `WORKERS=N`; more workers than cores slows the run down.
 
