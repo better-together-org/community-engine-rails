@@ -53,7 +53,7 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
     it 'offers the person select for the buyer, searching the same members as the store credit screen' do
       get new_path
 
-      expect(response.body).to include('better-together--slim-select', '/billing/credit_accounts/people')
+      expect(response.body).to include('better-together--slim-select', '/billing/people')
     end
 
     it 'keeps the chosen buyer on the form when the sale is refused' do

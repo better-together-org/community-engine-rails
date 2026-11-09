@@ -51,6 +51,8 @@ concern :billing_plans do
       resource :claim, only: :create, controller: 'order_claims'
     end
     resource :checkout, only: %i[new create]
+    # The search behind every person select on a billing screen (store credit lookup, buyer of a sale in person).
+    resources :people, only: :index
     resources :agreement_requirements, only: %i[index create destroy]
     resources :sales, only: %i[index show] do
       # The seller records that they gave money back for a payment made outside the platform.
@@ -64,8 +66,6 @@ concern :billing_credit do
   namespace :billing do
     # A person's own store credit, and what a steward can see and give.
     resource :credit, only: :show, controller: 'credits'
-    # The person select on the steward screen searches here (before :id so it is not read as one).
-    get 'credit_accounts/people', to: 'credit_accounts#people', as: :people_credit_accounts
     resources :credit_accounts, only: %i[index show]
     resources :credit_grants, only: :create
     # A person redeems a promotion code; a steward makes and switches them.

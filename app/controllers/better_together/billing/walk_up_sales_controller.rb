@@ -44,7 +44,7 @@ module BetterTogether
           payment_received: params[:payment_received] == '1' }
       end
 
-      # Someone who belongs to this platform, picked from the person select (see CreditAccountsController#people).
+      # Someone who belongs to this platform, picked from the person select (see PeopleController).
       def buyer
         find_platform_person(params[:buyer_id].to_s.strip) || raise(OfflinePayments::WalkUp::Refused, 'unknown buyer')
       end

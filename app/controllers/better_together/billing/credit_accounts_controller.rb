@@ -2,7 +2,7 @@
 
 module BetterTogether
   module Billing
-    # A steward picks a person (a search over this platform's members, see #people), sees their credit, every
+    # A steward picks a person (a search over this platform's members, see PeopleController), sees their credit, every
     # lot and entry, and can give credit from there (see CreditGrantsController).
     class CreditAccountsController < ApplicationController
       include OwnerScoped
@@ -16,14 +16,6 @@ module BetterTogether
         @holder = find_platform_person(@person_id) if @person_id.present?
         @lookup_failed = @person_id.present? && @holder.nil?
         @accounts = listed_accounts
-      end
-
-      # Options for the person select: [{ value:, text: }], at most 20, matching a name or the start of a handle.
-      def people
-        authorize BetterTogether::Billing::CreditAccount, :index?
-        render json: matching_people(params[:search].to_s.strip).limit(PEOPLE_LIMIT).map { |person|
-          { value: person.id, text: person.select_option_title }
-        }
       end
 
       def show
