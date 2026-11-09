@@ -958,6 +958,7 @@ fr:
           pour cet achat.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        view_agreement: Lire l’entente
       credit:
         any_purpose: Tout ce que la plateforme vend
         balance_line: 'Solde : %{amount} (%{currency})'
@@ -1023,7 +1024,6 @@ fr:
         status_revoked: Remboursé
         title: Mon accès
         until: Valable jusqu’au %{date}.
-        view_agreement: Lire l’entente
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1342,7 +1342,6 @@ fr:
         paid: Le paiement a été effectué.
         refused: Ce paiement n'a pas pu être ajouté. Vérifiez le montant et le mode
           de paiement, puis réessayez.
-        view_agreement: Lire l’entente
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         add_payment_amount: Montant (laissez vide pour payer le solde)

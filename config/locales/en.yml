@@ -958,6 +958,7 @@ en:
         unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        view_agreement: View the agreement
       credit:
         any_purpose: Anything the platform sells
         balance_line: 'Balance: %{amount} (%{currency})'
@@ -1023,7 +1024,6 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
-        view_agreement: View the agreement
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1324,7 +1324,6 @@ en:
         paid: The payment was made.
         refused: That payment could not be added. Check the amount and the way of
           paying, and try again.
-        view_agreement: View the agreement
       orders:
         accepted_by: Accepted by %{name} on %{date}
         add_payment_amount: Amount (leave empty to pay the rest)
