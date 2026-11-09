@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-# A steward finds a person's credit by exact handle, sees the ledger, and gives credit.
+# A steward picks a person (see PeopleController for the search), sees the ledger, and gives credit.
 RSpec.describe BetterTogether::Billing::CreditAccountsController do
   include_context 'with offline payment fixtures'
   include_context 'with billing switched on'
@@ -78,47 +78,6 @@ RSpec.describe BetterTogether::Billing::CreditAccountsController do
 
       expect(response.body).to include('billing-credit-lookup-failed')
       expect(response.body).not_to include('billing-credit-grant-form')
-    end
-
-    describe 'GET people (the select search)' do
-      let(:member) do
-        create(:better_together_person_platform_membership, joinable: host_platform, member: other_buyer)
-        other_buyer
-      end
-
-      it 'finds platform members by the start of a handle' do
-        get better_together.billing_people_credit_accounts_path(locale:, search: member.identifier[0, 5]), as: :json
-
-        expect(response.parsed_body).to include(a_hash_including('value' => member.id, 'text' => member.select_option_title))
-      end
-
-      it 'finds platform members by part of a name' do
-        get better_together.billing_people_credit_accounts_path(locale:, search: member.name[1, 4]), as: :json
-
-        expect(response.parsed_body.pluck('value')).to include(member.id)
-      end
-
-      it 'returns nothing for a term shorter than two characters, so it cannot list everyone' do
-        get better_together.billing_people_credit_accounts_path(locale:, search: 'a'), as: :json
-
-        expect(response.parsed_body).to eq([])
-      end
-
-      it 'leaves out people who are not members of this platform' do
-        stranger = create(:better_together_person)
-
-        get better_together.billing_people_credit_accounts_path(locale:, search: stranger.identifier), as: :json
-
-        expect(response.parsed_body.pluck('value')).not_to include(stranger.id)
-      end
-
-      it 'turns a signed-in non-steward away' do
-        sign_in buyer_user
-
-        get better_together.billing_people_credit_accounts_path(locale:, search: 'ab'), as: :json
-
-        expect(response).not_to have_http_status(:ok)
-      end
     end
 
     it 'shows an account\'s lots and entries, with who gave it' do

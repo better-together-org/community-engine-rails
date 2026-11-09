@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-09T19:36:17Z`.
+Generated from live Rails reflections at `2026-11-09T22:45:27Z`.
 
 ## Identity, access, and memberships
 
@@ -650,7 +650,7 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 | Billing::AgreementRequirementsController | `BetterTogether::ApplicationController` | `Billing::AgreementRequirement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::AllowancesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CheckoutsController | `BetterTogether::ApplicationController` | `Billing::Checkout` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::CreditAccountsController | `BetterTogether::ApplicationController` | `Billing::CreditAccount` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::CreditAccountsController | `BetterTogether::ApplicationController` | `Billing::CreditAccount` | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditGrantsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditsController | `BetterTogether::ApplicationController` | `Billing::Credit` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::EntitlementsController | `BetterTogether::ApplicationController` | `Billing::Entitlement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
@@ -667,7 +667,7 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 | Billing::SalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::SubscribersController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::SubscriptionsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::WalkUpSalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::WalkUpSalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -850,6 +850,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Api::V1::WebhookEndpointsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | ApplicationController | `ActionController::Base` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::OrderPaymentsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::PeopleController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | BotDefense::ChallengesController | `BetterTogether::ApplicationController` | `BotDefense::Challenge` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | CommentsController | `BetterTogether::ApplicationController` | `Comment` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
 | Content::PageBlocksController | `BetterTogether::ApplicationController` | `Content::PageBlock` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |

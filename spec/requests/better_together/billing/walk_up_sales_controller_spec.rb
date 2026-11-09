@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
                                                      amount_cents: 4500, currency: 'USD')
   end
   let(:params) do
-    { plan_id: cash_plan.id, payment_method: 'cash', buyer_identifier: buyer.identifier, agreements_accepted: '1' }
+    { plan_id: cash_plan.id, payment_method: 'cash', buyer_id: buyer.id, agreements_accepted: '1' }
   end
 
   before do
@@ -48,6 +48,19 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
 
       expect(response.body).to include('billing-walk-up-form', 'billing-walk-up-plan', 'billing-walk-up-method', 'billing-walk-up-buyer',
                                        'billing-walk-up-agreements', 'billing-walk-up-received', 'billing-walk-up-submit')
+    end
+
+    it 'offers the person select for the buyer, searching the same members as the store credit screen' do
+      get new_path
+
+      expect(response.body).to include('better-together--slim-select', '/billing/people')
+    end
+
+    it 'keeps the chosen buyer on the form when the sale is refused' do
+      post path, params: params.merge(agreements_accepted: '0')
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Nokogiri::HTML(response.body).at_css('#billing-walk-up-buyer option[selected]')['value']).to eq(buyer.id)
     end
 
     it 'says what is missing when there is nothing to sell or no method on' do
@@ -89,8 +102,8 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
     it 'refuses a buyer who is not a member of this platform, and one who does not exist' do
       stranger = create(:better_together_person)
 
-      post path, params: params.merge(buyer_identifier: stranger.identifier)
-      post path, params: params.merge(buyer_identifier: 'nobody-by-this-name')
+      post path, params: params.merge(buyer_id: stranger.id)
+      post path, params: params.merge(buyer_id: SecureRandom.uuid)
 
       expect(BetterTogether::Billing::Order.count).to eq(0)
       expect(response).to have_http_status(:unprocessable_content)

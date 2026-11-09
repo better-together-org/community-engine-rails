@@ -19,7 +19,7 @@ classDiagram
     class BetterTogether__Billing__CreditAccountsController["Billing::CreditAccountsController"] {
       <<Controller>>
       models: Billing::CreditAccount
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +2
     }
     class BetterTogether__Billing__CreditGrantsController["Billing::CreditGrantsController"] {
       <<Controller>>
@@ -95,7 +95,7 @@ classDiagram
     }
     class BetterTogether__Billing__WalkUpSalesController["Billing::WalkUpSalesController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +2
     }
   }
 

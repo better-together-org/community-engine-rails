@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T19:36:17Z",
+  "generated_at": "2026-11-09T22:45:27Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -27762,6 +27762,7 @@
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::PersonLookup",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -28018,6 +28019,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::PersonLookup",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -28092,6 +28094,16 @@
             "Billing::EntitlementGrant",
             "Billing::CreditLot",
             "Billing::CreditEntry"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PersonLookup",
+          "label": "Billing::PersonLookup",
+          "capability": "Personlookup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::CreditAccountsController"
           ]
         },
         {
@@ -35609,6 +35621,21 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::PeopleController",
+          "label": "Billing::PeopleController",
+          "source_path": "app/controllers/better_together/billing/people_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::PersonLookup",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::BotDefense::ChallengesController",
           "label": "BotDefense::ChallengesController",
           "source_path": "app/controllers/better_together/bot_defense/challenges_controller.rb",
@@ -36591,6 +36618,7 @@
           "capability": "Ownerscoped",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Billing::PeopleController",
             "Billing::OrderPaymentsController"
           ]
         },
@@ -36601,6 +36629,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::TaxLine"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PersonLookup",
+          "label": "Billing::PersonLookup",
+          "capability": "Personlookup",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::PeopleController"
           ]
         },
         {
@@ -36819,6 +36856,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
@@ -36887,6 +36925,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
@@ -36955,6 +36994,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
@@ -37034,6 +37074,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
