@@ -24,6 +24,7 @@ RSpec.describe 'Documentation screenshots for store credit', # rubocop:disable R
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
+    create(:better_together_person_platform_membership, joinable: host_platform, member: holder)
     host_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
                                                      settings: { 'instructions' => 'At the hall' })
     steward = create(:better_together_person)
@@ -47,7 +48,7 @@ RSpec.describe 'Documentation screenshots for store credit', # rubocop:disable R
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_credit_accounts_lookup'),
       callouts: [{ id: 'lookup', selector: '#billing-credit-lookup-form', title: 'Find a person',
-                   bullets: ['Type the whole handle. There is no search, so people cannot be browsed.'] },
+                   bullets: ['Search by name or handle and pick the person. Only members of this platform are offered.'] },
                  { id: 'grant', selector: '#billing-credit-grant-form', title: 'Give credit',
                    bullets: ['Credit can expire after a number of days. You cannot give it to yourself.'] }],
       narrative: {
@@ -59,7 +60,7 @@ RSpec.describe 'Documentation screenshots for store credit', # rubocop:disable R
       }
     ) do
       capybara_login_as_platform_manager
-      visit "/#{I18n.default_locale}/billing/credit_accounts?handle=#{holder.identifier}"
+      visit "/#{I18n.default_locale}/billing/credit_accounts?person_id=#{holder.id}"
       expect(page).to have_css('#billing-credit-grant-form')
       page.execute_script("document.querySelector('#billing-credit-grant-form').scrollIntoView({block: 'center'})")
     end

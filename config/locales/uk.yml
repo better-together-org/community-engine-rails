@@ -849,6 +849,7 @@ uk:
         not_accepted: Обов'язково
         submit: Прийняти угоди і продовжити
         title: Переглянути необхідні угоди
+        view_agreement: Переглянути угоду
     application:
       name: Better Together
     authorable_contributor_visibility:
@@ -939,9 +940,10 @@ uk:
         kind_grant: Кредит додано
         kind_spend: Витрачено на замовлення
         kind_spend_reversal: Повернено після відшкодування
-        lookup_failed: Немає нікого з таким ідентифікатором.
-        lookup_hint: Повний ідентифікатор, точно. Пошуку немає.
-        lookup_label: Ідентифікатор особи
+        lookup_failed: На цій платформі немає особи з таким id.
+        lookup_hint: Введіть щонайменше дві літери імені або ідентифікатора.
+        lookup_label: Особа
+        lookup_placeholder: Шукати за іменем або ідентифікатором
         lookup_submit: Знайти
         lots_caption: Кредит, який ви маєте, спочатку той, що спливає раніше
         never_expires: Не спливає
@@ -951,9 +953,8 @@ uk:
         origin_promotion: Акція
         origin_refund: Повернення
         origin_steward_grant: Надано адміністратором
-        steward_intro: 'Знайдіть особу за точним ідентифікатором, щоб побачити її
-          кредит і надати більше. Наданий кредит — гроші платформи: собі його надати
-          не можна.'
+        steward_intro: 'Знайдіть особу, щоб побачити її кредит і надати більше. Наданий
+          кредит — гроші платформи: собі його надати не можна.'
         steward_title: Рахунки кредиту магазину
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
@@ -2942,6 +2943,7 @@ uk:
         save_offer: Save Offer
         source_request_heading: Responding to Request
         target_platform: Цільова платформа
+        view_agreement: Переглянути угоду
         view_offer: View Offer
         your_response_heading: Ваша відповідь
       requests:

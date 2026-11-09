@@ -12,7 +12,7 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
   def grants_path = better_together.billing_credit_grants_path(locale:)
 
   def params_for(holder = buyer, **overrides)
-    { person_id: holder.id, handle: holder.identifier, token: 'form-1', amount: '25.00', currency: 'USD' }.merge(overrides)
+    { person_id: holder.id, token: 'form-1', amount: '25.00', currency: 'USD' }.merge(overrides)
   end
 
   def account_for(holder = buyer) = host_platform.billing_credit_accounts.find_by(holder:, currency: 'USD')
@@ -82,7 +82,7 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
     it 'never lets a steward give themselves credit' do
       post grants_path, params: params_for(steward)
 
-      expect(response).to redirect_to(better_together.billing_credit_accounts_path(locale:, handle: steward.identifier))
+      expect(response).to redirect_to(better_together.billing_credit_accounts_path(locale:, person_id: steward.id))
       expect(account_for(steward)).to be_nil
     end
 

@@ -76,10 +76,10 @@ Credit forced the question "is this a method outside a vendor?" to be split, bec
 | Who | Where | What |
 |---|---|---|
 | The holder | `/:locale/billing/credit` | Per currency: what can be spent now, each amount left with when it expires and what it may pay for, and the newest 50 entries. Only their own accounts on this platform are ever loaded. Linked from the orders list |
-| A steward | `/:locale/billing/credit_accounts` | Find a person by their **exact handle** (there is no search and no list of everyone, and lookups are throttled per address), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
+| A steward | `/:locale/billing/credit_accounts` | Pick a person from a **search** over this platform's members (name or the start of a handle, at least two characters, 20 results at most, never a full list; searches are throttled per address), see accounts that hold a balance, and **give credit** (amount, currency, optional days to expiry, optional note). Linked from the payment methods list |
 | A steward | `/:locale/billing/credit_accounts/:id` | Every lot and entry, with who gave it and why |
 
-Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. Failures answer uniformly (an unknown handle and a handle with no match look the same), so the lookup is no oracle for who exists.
+Giving credit is `Credit::Grant` with the steward as actor. The form carries a token that becomes the idempotency key, so a double click gives it once, and the service refuses a steward giving themselves credit. The search is limited to members of the platform and needs steward permission, and an id that is not a member looks the same as one that does not exist.
 
 The holder is told with the `credit_granted` notice (audience `holder`, not critical): how much, until when if it expires, and a link to their credit page. It is sent for credit a steward gives; credit the system gives (a refund, a promotion) is silent here. See [notifications.md](notifications.md).
 
