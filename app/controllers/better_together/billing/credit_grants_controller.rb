@@ -21,7 +21,7 @@ module BetterTogether
       private
 
       def back(kind, key)
-        redirect_to billing_credit_accounts_path(locale: I18n.locale, handle: params[:handle]),
+        redirect_to billing_credit_accounts_path(locale: I18n.locale, person_id: params[:person_id]),
                     kind => t("better_together.billing.credit.#{key}")
       end
 

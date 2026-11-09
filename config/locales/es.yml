@@ -954,9 +954,10 @@ es:
         kind_grant: Crédito añadido
         kind_spend: Gastado en un pedido
         kind_spend_reversal: Devuelto tras un reembolso
-        lookup_failed: No hay nadie con ese identificador.
-        lookup_hint: El identificador completo, exacto. No hay búsqueda.
-        lookup_label: Identificador de la persona
+        lookup_failed: No hay nadie en esta plataforma con ese id.
+        lookup_hint: Escribe al menos dos letras de un nombre o identificador.
+        lookup_label: Persona
+        lookup_placeholder: Buscar por nombre o identificador
         lookup_submit: Buscar
         lots_caption: Crédito que tienes, el que vence antes primero
         never_expires: No vence
@@ -966,9 +967,8 @@ es:
         origin_promotion: Promoción
         origin_refund: Reembolso
         origin_steward_grant: Otorgado por un administrador
-        steward_intro: 'Encuentra a una persona por su identificador exacto para ver
-          su crédito y darle más. El crédito que otorgas es dinero de la plataforma:
-          no puedes dártelo a ti mismo.'
+        steward_intro: 'Busca a una persona para ver su crédito y darle más. El crédito
+          que otorgas es dinero de la plataforma: no puedes dártelo a ti mismo.'
         steward_title: Cuentas de crédito de la tienda
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}

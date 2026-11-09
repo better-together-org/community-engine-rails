@@ -31,7 +31,7 @@ end
 # (`resources :communities, only: [] { concerns :billing_plans }`) can reuse it later.
 # Not nested under the host dashboard and carrying no route-level permission check:
 # access is sign-in plus Pundit on the billing owner (see Billing::OwnerScoped).
-concern :billing_plans do
+concern :billing_plans do # rubocop:disable Metrics/BlockLength
   namespace :billing do
     resources :plans, except: :destroy do
       member do
@@ -53,6 +53,8 @@ concern :billing_plans do
     resource :checkout, only: %i[new create]
     # A person's own store credit, and what a steward can see and give.
     resource :credit, only: :show, controller: 'credits'
+    # The person select on the steward screen searches here (before :id so it is not read as one).
+    get 'credit_accounts/people', to: 'credit_accounts#people', as: :people_credit_accounts
     resources :credit_accounts, only: %i[index show]
     resources :credit_grants, only: :create
     resources :agreement_requirements, only: %i[index create destroy]
