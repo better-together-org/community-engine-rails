@@ -1,0 +1,30 @@
+%% Billing — entitlements. What a plan includes, what a person or community has because of paying for it, and
+%% what was actually applied (so only what an entitlement made is ever taken away).
+classDiagram
+  class Plan
+  class PlanGrant {
+    +kind membership_role|feature_access|quota_allowance
+    +parameters  validated per kind
+  }
+  class Entitlement {
+    +beneficiary Person|Community|Platform
+    +status active|grace|lapsed|revoked
+    +ends_at / grace_ends_at
+    source: a Pay subscription OR a paid order
+  }
+  class EntitlementGrant {
+    +grant_key  unique per entitlement
+    +kind / parameters  copied from the plan
+    +owned  made by us, or only found
+    +applied  membership or feature grant
+    +quota_type / amount
+  }
+  class PaySubscription["Pay::Subscription"]
+  class Order
+  class QuotaAllowances["Quotas::Allowances provider"]
+  Plan "1" --> "*" PlanGrant
+  Plan "1" --> "*" Entitlement
+  Entitlement "1" --> "*" EntitlementGrant
+  Entitlement "0..1" --> "0..1" PaySubscription
+  Entitlement "0..1" --> "0..1" Order
+  EntitlementGrant ..> QuotaAllowances : live quota grants add up to the limit

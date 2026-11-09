@@ -263,6 +263,8 @@ flowchart TB
     billing_polymorphic_anchor:::hidden
     BetterTogether__Billing__AgreementRequirement_polymorphic_summary["Billing::AgreementRequirement\ntarget: target"]
     BetterTogether__Billing__CreditEntry_polymorphic_summary["Billing::CreditEntry\ntarget: source"]
+    BetterTogether__Billing__Entitlement_polymorphic_summary["Billing::Entitlement\ntarget: beneficiary"]
+    BetterTogether__Billing__EntitlementGrant_polymorphic_summary["Billing::EntitlementGrant\ntarget: applied"]
     BetterTogether__Billing__Event_polymorphic_summary["Billing::Event\ntarget: billable_owner, target: beneficiary, target: subject"]
     BetterTogether__Billing__LineItem_polymorphic_summary["Billing::LineItem\ntarget: purchasable"]
     BetterTogether__Billing__Order_polymorphic_summary["Billing::Order\ntarget: seller, target: on_behalf_of, target: subject"]
@@ -272,7 +274,9 @@ flowchart TB
     BetterTogether__Billing__SubscriptionTerm_polymorphic_summary["Billing::SubscriptionTerm\ntarget: beneficiary"]
     billing_polymorphic_anchor ~~~ BetterTogether__Billing__AgreementRequirement_polymorphic_summary
     BetterTogether__Billing__AgreementRequirement_polymorphic_summary ~~~ BetterTogether__Billing__CreditEntry_polymorphic_summary
-    BetterTogether__Billing__CreditEntry_polymorphic_summary ~~~ BetterTogether__Billing__Event_polymorphic_summary
+    BetterTogether__Billing__CreditEntry_polymorphic_summary ~~~ BetterTogether__Billing__Entitlement_polymorphic_summary
+    BetterTogether__Billing__Entitlement_polymorphic_summary ~~~ BetterTogether__Billing__EntitlementGrant_polymorphic_summary
+    BetterTogether__Billing__EntitlementGrant_polymorphic_summary ~~~ BetterTogether__Billing__Event_polymorphic_summary
     BetterTogether__Billing__Event_polymorphic_summary ~~~ BetterTogether__Billing__LineItem_polymorphic_summary
     BetterTogether__Billing__LineItem_polymorphic_summary ~~~ BetterTogether__Billing__Order_polymorphic_summary
     BetterTogether__Billing__Order_polymorphic_summary ~~~ BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary

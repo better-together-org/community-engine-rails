@@ -50,7 +50,9 @@ module BetterTogether
           'renewal_overdue' => { audiences: %i[buyer seller], critical: true },
           'grace_ending' => { audiences: %i[buyer], critical: true },
           'agreement_reacceptance_needed' => { audiences: %i[buyer] },
-          'renewal_credit_insufficient' => { audiences: %i[buyer] }
+          'renewal_credit_insufficient' => { audiences: %i[buyer] },
+          'entitlement_granted' => { audiences: %i[buyer] },
+          'entitlement_lapsed' => { audiences: %i[buyer] }
         }.freeze
 
         def self.kind?(kind) = KINDS.key?(kind.to_s)

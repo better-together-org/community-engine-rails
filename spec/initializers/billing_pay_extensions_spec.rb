@@ -43,6 +43,18 @@ RSpec.describe 'config/initializers/billing_pay_extensions.rb' do # rubocop:disa
     expect(File.read(path)).not_to match(/class_eval|def |prepend/)
   end
 
+  it 'keeps what a subscription gives in step with the subscription, whoever changes it' do
+    expect(Pay::Subscription.ancestors).to include(BetterTogether::Billing::PayExtensions::EntitlementSync)
+  end
+
+  it 'registers paid plans as a source of quota allowances, again on every reload' do
+    BetterTogether::Quotas::Allowances.reset!
+
+    Rails.application.reloader.prepare!
+
+    expect(BetterTogether::Quotas::Allowances.providers.keys).to include('billing_entitlements')
+  end
+
   it 'gives Pay an abstract base of our own, so a host needs no top-level ApplicationRecord' do
     expect(Pay.model_parent_class).to eq('BetterTogether::Billing::PayRecord')
     expect(Pay::ApplicationRecord.superclass).to eq(BetterTogether::Billing::PayRecord)

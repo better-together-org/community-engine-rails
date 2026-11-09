@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T23:22:18Z",
+  "generated_at": "2026-11-08T23:23:51Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7551,6 +7551,12 @@
           "source_subsystem": "billing"
         },
         {
+          "from": "BetterTogether::Billing::PlanGrant",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
           "from": "BetterTogether::Billing::Payment",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -7582,6 +7588,18 @@
         },
         {
           "from": "BetterTogether::Billing::LineItem",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::EntitlementGrant",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::Entitlement",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "billing"
@@ -25557,7 +25575,10 @@
         "BetterTogether::Billing::Promotion",
         "BetterTogether::Billing::PromotionRedemption",
         "BetterTogether::Billing::SubscriptionTerm",
-        "BetterTogether::Billing::SubscriptionPeriod"
+        "BetterTogether::Billing::SubscriptionPeriod",
+        "BetterTogether::Billing::PlanGrant",
+        "BetterTogether::Billing::Entitlement",
+        "BetterTogether::Billing::EntitlementGrant"
       ],
       "controllers": [
         "BetterTogether::Billing::PlansController",
@@ -25577,7 +25598,10 @@
         "BetterTogether::Billing::PromotionsController",
         "BetterTogether::Billing::PromotionRedemptionsController",
         "BetterTogether::Billing::SubscriptionsController",
-        "BetterTogether::Billing::SubscribersController"
+        "BetterTogether::Billing::SubscribersController",
+        "BetterTogether::Billing::PlanGrantsController",
+        "BetterTogether::Billing::EntitlementsController",
+        "BetterTogether::Billing::AllowancesController"
       ],
       "models_inventory": [
         {
@@ -25951,6 +25975,205 @@
               "target": "BetterTogether::Person",
               "optional": true,
               "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::Entitlement",
+          "label": "Billing::Entitlement",
+          "source_path": "app/models/better_together/billing/entitlement.rb",
+          "table_name": "better_together_billing_entitlements",
+          "columns": [
+            [
+              "beneficiary_id",
+              "uuid FK"
+            ],
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "pay_subscription_id",
+              "uuid FK"
+            ],
+            [
+              "plan_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "beneficiary_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "ends_at",
+              "datetime"
+            ],
+            [
+              "grace_ends_at",
+              "datetime"
+            ],
+            [
+              "starts_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: plan (message=:required)",
+            "PresenceValidator: beneficiary (message=:required)",
+            "InclusionValidator: status (in=[\"active\", \"grace\", \"lapsed\", \"revoked\"])",
+            "PresenceValidator: starts_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            },
+            {
+              "name": "pay_subscription",
+              "foreign_key": "pay_subscription_id",
+              "target": "Pay::Subscription",
+              "optional": true
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "beneficiary",
+              "foreign_key": "beneficiary_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Billing::Subjectable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::EntitlementGrant",
+          "label": "Billing::EntitlementGrant",
+          "source_path": "app/models/better_together/billing/entitlement_grant.rb",
+          "table_name": "better_together_billing_entitlement_grants",
+          "columns": [
+            [
+              "applied_id",
+              "uuid FK"
+            ],
+            [
+              "entitlement_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "applied_type",
+              "string"
+            ],
+            [
+              "grant_key",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "quota_type",
+              "string"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "owned",
+              "boolean"
+            ],
+            [
+              "amount",
+              "integer"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: entitlement (message=:required)",
+            "PresenceValidator: grant_key",
+            "UniquenessValidator: grant_key (scope=:entitlement_id)",
+            "InclusionValidator: kind (in=dynamic)",
+            "InclusionValidator: status (in=[\"applied\", \"released\"])",
+            "InclusionValidator: applied_type (allow_nil=true, in=[\"BetterTogether::PersonPlatformMembership\", \"BetterTogether::PersonCommunityMembership\", \"BetterTogether::FeatureAccessGrant\"])",
+            "NumericalityValidator: amount (only_integer=true, greater_than_or_equal_to=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "entitlement",
+              "foreign_key": "entitlement_id",
+              "target": "BetterTogether::Billing::Entitlement",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "belongs_to",
+              "name": "applied",
+              "foreign_key": "applied_id",
+              "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
             }
           ]
         },
@@ -26747,6 +26970,70 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::PlanGrant",
+          "label": "Billing::PlanGrant",
+          "source_path": "app/models/better_together/billing/plan_grant.rb",
+          "table_name": "better_together_billing_plan_grants",
+          "columns": [
+            [
+              "plan_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "position",
+              "integer"
+            ],
+            [
+              "parameters",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: plan (message=:required)",
+            "InclusionValidator: kind (in=dynamic)",
+            "NumericalityValidator: position (only_integer=true, greater_than_or_equal_to=0)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::ProcessorSetting",
           "label": "Billing::ProcessorSetting",
           "source_path": "app/models/better_together/billing/processor_setting.rb",
@@ -27326,6 +27613,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::AllowancesController",
+          "label": "Billing::AllowancesController",
+          "source_path": "app/controllers/better_together/billing/allowances_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::CheckoutsController",
           "label": "Billing::CheckoutsController",
           "source_path": "app/controllers/better_together/billing/checkouts_controller.rb",
@@ -27388,6 +27689,22 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::EntitlementsController",
+          "label": "Billing::EntitlementsController",
+          "source_path": "app/controllers/better_together/billing/entitlements_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Entitlement"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OfflinePaymentsController",
           "label": "Billing::OfflinePaymentsController",
           "source_path": "app/controllers/better_together/billing/offline_payments_controller.rb",
@@ -27424,6 +27741,22 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [
             "BetterTogether::Billing::Order"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PlanGrantsController",
+          "label": "Billing::PlanGrantsController",
+          "source_path": "app/controllers/better_together/billing/plan_grants_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::PlanGrant"
           ],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
@@ -27619,13 +27952,16 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
+            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
             "Billing::CreditsController",
             "Billing::CreditGrantsController",
             "Billing::CreditAccountsController",
             "Billing::CheckoutsController",
+            "Billing::AllowancesController",
             "Billing::AgreementRequirementsController"
           ]
         },
@@ -27638,10 +27974,12 @@
             "Billing::SubscriptionPeriod",
             "Billing::Refund",
             "Billing::PromotionRedemption",
+            "Billing::PlanGrant",
             "Billing::Payment",
             "Billing::OrderAgreementAcceptance",
             "Billing::OfflinePayment",
             "Billing::LineItem",
+            "Billing::EntitlementGrant",
             "Billing::CreditLot",
             "Billing::CreditEntry"
           ]
@@ -27657,12 +27995,15 @@
             "Billing::Refund",
             "Billing::PromotionRedemption",
             "Billing::Promotion",
+            "Billing::PlanGrant",
             "Billing::Payment",
             "Billing::OrderAgreementAcceptance",
             "Billing::Order",
             "Billing::OfflinePayment",
             "Billing::NotificationReceipt",
             "Billing::LineItem",
+            "Billing::EntitlementGrant",
+            "Billing::Entitlement",
             "Billing::CreditLot",
             "Billing::CreditEntry",
             "Billing::Plan",
@@ -27711,6 +28052,7 @@
             "Billing::SubscriptionPeriod",
             "Billing::Order",
             "Billing::OfflinePayment",
+            "Billing::Entitlement",
             "Billing::ProcessorSetting"
           ]
         },
@@ -27730,13 +28072,16 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
+            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
             "Billing::CreditsController",
             "Billing::CreditGrantsController",
             "Billing::CreditAccountsController",
             "Billing::CheckoutsController",
+            "Billing::AllowancesController",
             "Billing::AgreementRequirementsController"
           ]
         },
@@ -27756,13 +28101,16 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
+            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
             "Billing::CreditsController",
             "Billing::CreditGrantsController",
             "Billing::CreditAccountsController",
             "Billing::CheckoutsController",
+            "Billing::AllowancesController",
             "Billing::AgreementRequirementsController"
           ]
         },
@@ -27782,13 +28130,16 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
+            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
             "Billing::CreditsController",
             "Billing::CreditGrantsController",
             "Billing::CreditAccountsController",
             "Billing::CheckoutsController",
+            "Billing::AllowancesController",
             "Billing::AgreementRequirementsController"
           ]
         },
@@ -27808,13 +28159,16 @@
             "Billing::ProcessorSettingsController",
             "Billing::ProcessorOptionsController",
             "Billing::PlansController",
+            "Billing::PlanGrantsController",
             "Billing::OrdersController",
             "Billing::OrderClaimsController",
             "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
             "Billing::CreditsController",
             "Billing::CreditGrantsController",
             "Billing::CreditAccountsController",
             "Billing::CheckoutsController",
+            "Billing::AllowancesController",
             "Billing::AgreementRequirementsController"
           ]
         }
@@ -27864,6 +28218,18 @@
         },
         {
           "from": "BetterTogether::Billing::CreditLot",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::Entitlement",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::EntitlementGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -27942,6 +28308,12 @@
         },
         {
           "from": "BetterTogether::Billing::Plan",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanGrant",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"

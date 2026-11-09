@@ -6,6 +6,8 @@
   <div class="d-flex justify-content-between align-items-start">
     <h1 class="mb-2"><%= t('better_together.billing.processor_settings.index_title') %></h1>
     <div class="d-flex flex-wrap gap-2">
+      <%= link_to t('better_together.billing.allowances.title'), billing_allowances_path(locale: I18n.locale),
+                  class: 'btn btn-outline-secondary', id: 'billing-allowances-link' %>
       <%= link_to t('better_together.billing.subscribers.index_title'), billing_subscribers_path(locale: I18n.locale),
                   class: 'btn btn-outline-secondary', id: 'billing-subscribers-link' %>
       <%= link_to t('better_together.billing.credit.steward_title'), billing_credit_accounts_path(locale: I18n.locale),

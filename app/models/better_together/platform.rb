@@ -142,6 +142,7 @@ module BetterTogether
     # read (see docs/billing/platform_isolation.md). Deleting a platform that has
     # billing history is refused rather than silently dropping payment records.
     has_many :billing_credit_accounts, class_name: 'BetterTogether::Billing::CreditAccount', dependent: :restrict_with_error
+    has_many :billing_entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
     has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
     has_many :billing_agreement_requirements, class_name: 'BetterTogether::Billing::AgreementRequirement',
                                               dependent: :restrict_with_error

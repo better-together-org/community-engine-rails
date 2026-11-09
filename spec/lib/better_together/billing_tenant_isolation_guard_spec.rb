@@ -17,7 +17,8 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
   let(:bare_read) do
     /\b(?:Billing::)?
       (?:Plan|Event|ProcessorSetting|Order|LineItem|OrderAgreementAcceptance|AgreementRequirement|NotificationReceipt|
-         OfflinePayment|Payment|Refund|CreditAccount|CreditLot|CreditEntry|Promotion|PromotionRedemption|SubscriptionTerm|SubscriptionPeriod)\.
+         OfflinePayment|Payment|Refund|CreditAccount|CreditLot|CreditEntry|Promotion|PromotionRedemption|SubscriptionTerm|
+         SubscriptionPeriod|PlanGrant|Entitlement|EntitlementGrant)\.
       (?!find\(|find_by\(id:|permitted_attributes|assignable_owner_types|arel_table\b|new\b|name\b|model_name\b)\w+/x
   end
   let(:pay_read) { /\bPay::(?:Customer|Subscription|Charge)\.(?!find\(|find_by\(id:)\w+/ }
@@ -25,7 +26,7 @@ RSpec.describe 'Billing tenant isolation guard' do # rubocop:disable RSpec/Descr
   let(:sweep_jobs) do
     %w[dead_letter_stale_billing_events_job redact_expired_event_payloads_job prune_stale_pay_webhooks_job expire_orders_job
        expire_offline_payments_job remind_offline_confirmations_job expire_credit_lots_job generate_renewals_job
-       advance_subscriptions_job remind_renewals_job]
+       advance_subscriptions_job remind_renewals_job sync_entitlement_job sync_plan_entitlements_job]
   end
 
   def guarded_files

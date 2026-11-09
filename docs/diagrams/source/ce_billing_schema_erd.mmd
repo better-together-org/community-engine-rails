@@ -12,6 +12,12 @@ erDiagram
   EXT_PLATFORM ||--o{ BILLING_CREDIT_LOTS : "platform / platform_id"
   BILLING_CREDIT_ACCOUNTS ||--o{ BILLING_CREDIT_LOTS : "account / credit_account_id"
   EXT_PERSON o|--o{ BILLING_CREDIT_LOTS : "granted_by / granted_by_id"
+  EXT_PLATFORM ||--o{ BILLING_ENTITLEMENTS : "platform / platform_id"
+  BILLING_PLANS ||--o{ BILLING_ENTITLEMENTS : "plan / plan_id"
+  EXT_PAY_SUBSCRIPTION o|--o{ BILLING_ENTITLEMENTS : "pay_subscription / pay_subscription_id"
+  BILLING_ORDERS o|--o{ BILLING_ENTITLEMENTS : "order / order_id"
+  EXT_PLATFORM ||--o{ BILLING_ENTITLEMENT_GRANTS : "platform / platform_id"
+  BILLING_ENTITLEMENTS ||--o{ BILLING_ENTITLEMENT_GRANTS : "entitlement / entitlement_id"
   EXT_PLATFORM ||--o{ BILLING_EVENTS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_LINE_ITEMS : "platform / platform_id"
   BILLING_ORDERS ||--o{ BILLING_LINE_ITEMS : "order / order_id"
@@ -32,6 +38,8 @@ erDiagram
   BILLING_ORDERS ||--o{ BILLING_PAYMENTS : "order / order_id"
   EXT_PAY_CHARGE o|--o{ BILLING_PAYMENTS : "pay_charge / pay_charge_id"
   EXT_PLATFORM ||--o{ BILLING_PLANS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_PLAN_GRANTS : "platform / platform_id"
+  BILLING_PLANS ||--o{ BILLING_PLAN_GRANTS : "plan / plan_id"
   EXT_PLATFORM ||--o{ BILLING_PROCESSOR_SETTINGS : "platform / platform_id"
   EXT_PERSON o|--o{ BILLING_PROCESSOR_SETTINGS : "acknowledged_by / acknowledged_by_id"
   EXT_PLATFORM ||--o{ BILLING_PROMOTIONS : "platform / platform_id"
@@ -92,6 +100,32 @@ erDiagram
     amount_cents integer
     remaining_cents integer
     expires_at datetime
+  }
+
+  BILLING_ENTITLEMENTS {
+    beneficiary_id uuid
+    order_id uuid
+    pay_subscription_id uuid
+    plan_id uuid
+    platform_id uuid
+    beneficiary_type string
+    status string
+    ends_at datetime
+    grace_ends_at datetime
+    starts_at datetime
+  }
+
+  BILLING_ENTITLEMENT_GRANTS {
+    applied_id uuid
+    entitlement_id uuid
+    platform_id uuid
+    applied_type string
+    grant_key string
+    kind string
+    quota_type string
+    status string
+    owned boolean
+    amount integer
   }
 
   BILLING_EVENTS {
@@ -190,6 +224,14 @@ erDiagram
     currency string
     identifier string
     name string
+  }
+
+  BILLING_PLAN_GRANTS {
+    plan_id uuid
+    platform_id uuid
+    kind string
+    position integer
+    parameters jsonb
   }
 
   BILLING_PROCESSOR_SETTINGS {

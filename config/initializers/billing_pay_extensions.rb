@@ -15,6 +15,9 @@ Rails.application.config.to_prepare do
     model.include(BetterTogether::Billing::PayExtensions::LocalProcessor)
   end
 
+  # What a subscription gives follows the subscription, however it changes.
+  Pay::Subscription.include(BetterTogether::Billing::PayExtensions::EntitlementSync)
+
   Pay::Webhook.include(BetterTogether::Billing::PayExtensions::EncryptedWebhookEvent)
   Pay::ApplicationJob.include(BetterTogether::Billing::PayExtensions::BillingQueueRouting)
 end

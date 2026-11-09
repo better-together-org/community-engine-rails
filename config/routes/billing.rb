@@ -100,6 +100,17 @@ concern :billing_subscriptions do
   end
 end
 
+# What a paid plan gives: a steward's list of what a plan includes and the platform's allowances, and a person's own access.
+concern :billing_entitlements do
+  namespace :billing do
+    resources :entitlements, only: :index
+    resources :allowances, only: %i[index update]
+    resources :plans, only: [] do
+      resources :plan_grants, only: %i[create destroy]
+    end
+  end
+end
+
 # What a seller has to do about payments made outside the platform (cash, cheque, e-transfer).
 concern :billing_offline_payments do
   namespace :billing do
@@ -118,6 +129,6 @@ end
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions
+    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions, :billing_entitlements
   end
 end

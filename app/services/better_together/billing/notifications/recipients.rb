@@ -32,12 +32,15 @@ module BetterTogether
 
         def people
           case audience
-          when :buyer then [order&.buyer || term&.payer]
+          when :buyer then [buyer]
           when :holder then [credit_holder]
           when :seller, :operator then managers
           else []
           end
         end
+
+        # The person who paid: the order's buyer, else the payer of the subscription or entitlement it is about.
+        def buyer = order&.buyer || term&.payer || entitlement_payer
 
         # The person whose store credit a lot or account is.
         def credit_holder
@@ -46,6 +49,9 @@ module BetterTogether
           when CreditAccount then subject.holder
           end
         end
+
+        # The payer of an entitlement, who is told when it starts and when it ends.
+        def entitlement_payer = (subject.payer if subject.is_a?(Entitlement))
 
         # The subscription a renewal period or its terms belong to.
         def term
