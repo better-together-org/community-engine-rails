@@ -48,6 +48,29 @@ The default for `prices_include_tax` comes from the country (`Tax::Defaults`): i
 
 `Orders::Place` works out the tax once, from the same amounts it builds the order from, and `Orders::ApplyTax` copies it onto the unsaved order, its lines and a tax line per tax. `Order#total_up` then sets `total_cents = subtotal_cents + tax_cents - included_tax_cents`. `PaymentParts` checks the parts against that same total. After placing, the tax is not worked out again, so a rate change never changes an order that exists.
 
+## Canadian seed data (`Tax::Seeds::Canada`)
+
+`BetterTogether::Billing::Tax::Seeds::Canada.call(platform:)` adds a zone per province and territory, the rates in force there, and two categories (`standard`, and `basic_groceries` which is not taxable). It only adds what is missing and never changes an existing rate. It is not run automatically.
+
+| Place | Tax |
+|---|---|
+| AB, NT, NU, YT | GST 5% |
+| BC | GST 5% and PST 7% |
+| MB | GST 5% and RST 7% |
+| SK | GST 5% and PST 6% |
+| QC | GST 5% and QST 9.975% |
+| ON | HST 13% |
+| NS | HST 14% (15% before April 1, 2025) |
+| NB, NL, PE | HST 15% |
+
+Every figure carries its official source link and the date the page shows in the comments of `app/services/better_together/billing/tax/seeds/canada.rb`. That file also holds the small supplier limits (GST/HST $30,000, or $50,000 for a public service body; B.C. PST small seller $10,000; Saskatchewan small trader $10,000; Manitoba $30,000; Quebec $30,000) for the monitor planned in T5.
+
+Not confirmed from an official page this tool could read: Revenu Quebec refused automated reads, so the Quebec registration limit and grocery rule need a person to check them. The Saskatchewan grocery bulletin (PST-2) could not be opened either.
+
+### Who collects when a seller sells through the platform
+
+British Columbia (Bulletin PST 142), Saskatchewan (Bulletin PST-5) and Manitoba (The Retail Sales Tax Act, s. 21.2(2)) each say a seller who sells only through a marketplace need not collect the provincial tax when the marketplace operator collects the buyer's payment and the tax. Community Engine follows that: a seller may be `not_collecting` while the platform is the registrant only when the seller's payments do not go through the platform's own payment processors. That check is built with the seller settings in T2.
+
 ## Not built yet
 
 Registration and settings screens, the seller's agreement to collect tax, the buyer's address at checkout, processor adapter input and output, subscription renewal tax, refunds that split net and tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
