@@ -3556,6 +3556,10 @@ es:
           all_locales: Todos los Idiomas
           all_types: Todos los Tipos de Contenido
           apply: Aplicar Filtros
+          bases:
+            invoice: El día en que se realizó
+            paid: El día en que se pagó
+          basis: Contar una venta por
           communities: Comunidades
           content_type: Tipo de Contenido
           currency: Moneda
@@ -3632,7 +3636,19 @@ es:
           url: URL
         billing:
           amount: Importe
+          authorities:
+            gst_hst: GST/HST (CRA)
+            other: Otro
+            pst: Impuesto provincial (PST)
+            qst: Impuesto de Quebec (QST)
+            rst: Impuesto minorista (RST)
+            vat: IVA
+          authority_title: Impuesto adeudado por administración
           collected: Cobrado
+          collected_by:
+            facilitator: Cobrado por la plataforma para el vendedor
+            platform: Cobrado por la plataforma
+            seller: Cobrado por el vendedor
           empty: No se pagó ninguna venta en los últimos 30 días.
           measures:
             exempt: Ingresos exentos
@@ -3644,10 +3660,16 @@ es:
             sales: Ventas
             tax_collected: Impuesto cobrado
             taxable: Ingresos sujetos a impuesto
+            zero_rated: Ingresos de tasa cero
+          no_region: Sin región
+          owed: Adeudado (neto de reembolsos)
           owner_all: Todos los vendedores y la plataforma
           owner_platform: Solo la plataforma
           payment_method: Forma de pago
           refunded: Reembolsado
+          region: Región
+          registration_number: Número de registro
+          registrations: Registros
           summary_note: Las ventas cuentan el día en que se pagaron, en la zona horaria
             de la plataforma. Cada moneda se muestra por separado.
           summary_title: Los últimos 30 días
@@ -3662,6 +3684,7 @@ es:
           billing_tax: Impuesto cobrado (neto de reembolsos)
           billing_tax_by_rate: Impuesto cobrado por tasa (neto de reembolsos)
           billing_taxable: Ingresos sujetos a impuesto
+          billing_zero_rated: Ingresos de tasa cero
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth

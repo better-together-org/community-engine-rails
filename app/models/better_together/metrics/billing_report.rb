@@ -17,12 +17,13 @@ module BetterTogether
 
       # Dates are whole days in the platform's time zone; an owner is "all", "platform" or "Type:id".
       def self.create_and_generate!( # rubocop:disable Metrics/ParameterLists
-        creator:, platform:, from_date: nil, to_date: nil, owner: 'all', interval: 'month', file_format: 'csv'
+        creator:, platform:, from_date: nil, to_date: nil, owner: 'all', interval: 'month', basis: 'paid', file_format: 'csv'
       )
         today = Time.current.in_time_zone(ActiveSupport::TimeZone[platform.time_zone || 'UTC']).to_date
         report = create!(
           filters: { from_date: from_date.presence || (today - 30).to_s, to_date: to_date.presence || today.to_s,
-                     owner: owner.presence || 'all', interval: interval.presence || 'month' },
+                     owner: owner.presence || 'all', interval: interval.presence || 'month',
+                     basis: basis.presence || 'paid' },
           file_format:, creator:, platform:
         )
         report.generate!
@@ -52,8 +53,9 @@ module BetterTogether
       private
 
       def build_report_data
-        Billing::TaxReport.new(platform:, from: starts_at, to: ends_at, owner: Billing::TaxReport::Owner.parse(filter('owner')),
-                               interval: filter('interval')).call.to_h.deep_stringify_keys.merge('generated_at' => Time.current.iso8601)
+        result = Billing::TaxReport.new(platform:, from: starts_at, to: ends_at, owner: Billing::TaxReport::Owner.parse(filter('owner')),
+                                        interval: filter('interval'), basis: filter('basis') || 'paid').call
+        result.to_h.deep_stringify_keys.merge('generated_at' => Time.current.iso8601)
       end
     end
   end

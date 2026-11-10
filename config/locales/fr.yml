@@ -3610,6 +3610,10 @@ fr:
           all_locales: Toutes les Langues
           all_types: Tous les Types de Contenu
           apply: Appliquer les Filtres
+          bases:
+            invoice: Le jour de la commande
+            paid: Le jour du paiement
+          basis: Compter une vente selon
           communities: Communautés
           content_type: Type de Contenu
           currency: Devise
@@ -3687,7 +3691,19 @@ fr:
           url: URL
         billing:
           amount: Montant
+          authorities:
+            gst_hst: TPS/TVH (ARC)
+            other: Autre
+            pst: Taxe de vente provinciale (TVP)
+            qst: Taxe de vente du Québec (TVQ)
+            rst: Taxe de vente au détail (TVD)
+            vat: TVA
+          authority_title: Taxe due par administration
           collected: Perçue
+          collected_by:
+            facilitator: Perçue par la plateforme pour le vendeur
+            platform: Perçue par la plateforme
+            seller: Perçue par le vendeur
           empty: Aucune vente n’a été payée au cours des 30 derniers jours.
           measures:
             exempt: Revenus exonérés
@@ -3699,10 +3715,16 @@ fr:
             sales: Ventes
             tax_collected: Taxe perçue
             taxable: Revenus taxables
+            zero_rated: Revenus détaxés
+          no_region: Aucune région
+          owed: Dû (net des remboursements)
           owner_all: Tous les vendeurs et la plateforme
           owner_platform: La plateforme seulement
           payment_method: Mode de paiement
           refunded: Remboursée
+          region: Région
+          registration_number: Numéro d'inscription
+          registrations: Inscriptions
           summary_note: Les ventes comptent le jour où elles ont été payées, dans
             le fuseau horaire de la plateforme. Chaque devise est présentée séparément.
           summary_title: Les 30 derniers jours
@@ -3717,6 +3739,7 @@ fr:
           billing_tax: Taxe perçue (nette des remboursements)
           billing_tax_by_rate: Taxe perçue par taux (nette des remboursements)
           billing_taxable: Revenus taxables
+          billing_zero_rated: Revenus détaxés
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth

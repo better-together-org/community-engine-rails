@@ -7,7 +7,8 @@ module BetterTogether
       # `{ labels:, values: }` for a plain one. One currency at a time, in that currency's units (never cents).
       class ChartData
         COLORS = {
-          taxable: [54, 162, 235], non_taxable: [255, 206, 86], exempt: [153, 102, 255], tax: [75, 192, 192], refunded: [255, 99, 132]
+          taxable: [54, 162, 235], zero_rated: [75, 192, 120], non_taxable: [255, 206, 86], exempt: [153, 102, 255],
+          tax: [75, 192, 192], refunded: [255, 99, 132]
         }.freeze
 
         def initialize(result, currency)
@@ -33,7 +34,8 @@ module BetterTogether
         attr_reader :result, :summary
 
         def datasets
-          [dataset(:taxable, &:taxable_cents), dataset(:non_taxable, &:non_taxable_cents), dataset(:exempt, &:exempt_cents),
+          [dataset(:taxable, &:taxable_cents), dataset(:zero_rated, &:zero_rated_cents),
+           dataset(:non_taxable, &:non_taxable_cents), dataset(:exempt, &:exempt_cents),
            dataset(:tax) { |period| period.tax_cents - period.refunded_tax_cents },
            dataset(:refunded) { |period| -(period.refunded_cents - period.refunded_tax_cents) }]
         end

@@ -3517,6 +3517,10 @@ en:
           all_locales: All Locales
           all_types: All Content Types
           apply: Apply Filters
+          bases:
+            invoice: The day it was placed
+            paid: The day it was paid
+          basis: Count a sale by
           communities: Communities
           content_type: Content Type
           currency: Currency
@@ -3592,7 +3596,19 @@ en:
           url: URL
         billing:
           amount: Amount
+          authorities:
+            gst_hst: GST/HST (CRA)
+            other: Other
+            pst: Provincial sales tax (PST)
+            qst: Quebec sales tax (QST)
+            rst: Retail sales tax (RST)
+            vat: VAT
+          authority_title: Tax owed by administrator
           collected: Collected
+          collected_by:
+            facilitator: Collected by the platform for the seller
+            platform: Collected by the platform
+            seller: Collected by the seller
           empty: No sales were paid in the last 30 days.
           measures:
             exempt: Exempt revenue
@@ -3604,10 +3620,16 @@ en:
             sales: Sales
             tax_collected: Tax collected
             taxable: Taxable revenue
+            zero_rated: Zero-rated revenue
+          no_region: No region
+          owed: Owed (net of refunds)
           owner_all: All sellers and the platform
           owner_platform: The platform only
           payment_method: Way of paying
           refunded: Refunded
+          region: Region
+          registration_number: Registration number
+          registrations: Registrations
           summary_note: Sales count on the day they were paid, in the platform time
             zone. Each currency is shown on its own.
           summary_title: The last 30 days
@@ -3622,6 +3644,7 @@ en:
           billing_tax: Tax collected (net of refunds)
           billing_tax_by_rate: Tax collected by rate (net of refunds)
           billing_taxable: Taxable revenue
+          billing_zero_rated: Zero-rated revenue
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth

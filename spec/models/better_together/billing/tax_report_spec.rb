@@ -93,6 +93,46 @@ RSpec.describe BetterTogether::Billing::TaxReport do
     end
   end
 
+  describe 'what a return asks for' do
+    it 'keeps zero-rated supplies apart from other tax-free revenue' do
+      order = paid_order(paid_at: zone.local(2026, 3, 10, 12))
+      zero = create(:better_together_billing_tax_category, platform: host_platform, identifier: 'basic_groceries', taxable: false)
+      line_for(order, cents: 3_000, category: zero)
+      line_for(order, cents: 2_000, category: create(:better_together_billing_tax_category, platform: host_platform, taxable: false))
+
+      expect(cad).to have_attributes(zero_rated_cents: 3_000, non_taxable_cents: 2_000, revenue_cents: 5_000)
+    end
+
+    it 'totals the tax owed to each administrator, net of refunds' do
+      order = paid_order(paid_at: zone.local(2026, 5, 1, 9))
+      line = line_for(order, cents: 10_000, taxes: [['GST', 0.05, 500]])
+      create(:better_together_billing_tax_line, order:, line_item: line, label: 'PST', authority: 'pst', rate: 0.07, amount_cents: 700,
+                                                platform: host_platform)
+
+      expect(cad.authority_rows.map { |row| [row.authority, row.net_cents] }).to eq([['gst_hst', 500], ['pst', 700]])
+    end
+
+    it 'counts a sale on the day it was placed when asked to' do
+      order = paid_order(paid_at: zone.local(2026, 2, 10, 12))
+      order.update_columns(placed_at: zone.local(2025, 12, 30, 12)) # rubocop:disable Rails/SkipsModelValidations
+      line_for(order, cents: 1_000)
+
+      expect(report(basis: 'paid').summaries).not_to be_empty
+      expect(report(basis: 'invoice').summaries).to be_empty
+      expect(report(basis: 'nonsense').basis).to eq('paid')
+    end
+
+    it 'says who collected each tax and shows registration numbers masked' do
+      registration = create(:better_together_billing_tax_registration, platform: host_platform)
+      order = paid_order(paid_at: zone.local(2026, 5, 1, 9), tax_registration: registration)
+      line_for(order, cents: 10_000, taxes: [['GST', 0.05, 500]])
+
+      expect(cad.tax_rows.map(&:collected_by)).to eq(['platform'])
+      expect(cad.registrations.map(&:masked_number)).to eq(['***********0001'])
+      expect(report.to_h.to_s).not_to include('123456789')
+    end
+  end
+
   describe 'refunds' do
     let(:order) { paid_order(paid_at: zone.local(2026, 6, 1, 9)) }
     let!(:payment) do

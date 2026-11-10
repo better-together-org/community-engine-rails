@@ -22,7 +22,7 @@ RSpec.describe BetterTogether::Billing::TaxReport::ChartData do
     chart = described_class.new(result, 'CAD').revenue
 
     expect(chart[:labels]).to include('2026-02')
-    expect(chart[:datasets].size).to eq(5)
+    expect(chart[:datasets].size).to eq(6)
     expect(chart[:datasets].first[:data].sum).to eq(100.0)
   end
 

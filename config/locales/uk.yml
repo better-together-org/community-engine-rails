@@ -3550,6 +3550,10 @@ uk:
           all_locales: Усі мови
           all_types: Усі типи контенту
           apply: Застосувати фільтри
+          bases:
+            invoice: День оформлення
+            paid: День оплати
+          basis: Рахувати продаж за
           communities: Спільноти
           content_type: Тип контенту
           currency: Валюта
@@ -3626,7 +3630,19 @@ uk:
           url: URL
         billing:
           amount: Сума
+          authorities:
+            gst_hst: GST/HST (CRA)
+            other: Інше
+            pst: Провінційний податок (PST)
+            qst: Податок Квебеку (QST)
+            rst: Податок на роздрібні продажі (RST)
+            vat: ПДВ
+          authority_title: Податок до сплати за адміністрацією
           collected: Зібрано
+          collected_by:
+            facilitator: Стягнуто платформою для продавця
+            platform: Стягнуто платформою
+            seller: Стягнуто продавцем
           empty: За останні 30 днів не було оплачено жодного продажу.
           measures:
             exempt: Дохід, звільнений від податку
@@ -3638,10 +3654,16 @@ uk:
             sales: Продажі
             tax_collected: Зібраний податок
             taxable: Дохід, що оподатковується
+            zero_rated: Дохід із нульовою ставкою
+          no_region: Без регіону
+          owed: До сплати (за вирахуванням повернень)
           owner_all: Усі продавці та платформа
           owner_platform: Лише платформа
           payment_method: Спосіб оплати
           refunded: Повернено
+          region: Регіон
+          registration_number: Реєстраційний номер
+          registrations: Реєстрації
           summary_note: Продажі враховуються в день оплати за часовим поясом платформи.
             Кожна валюта показана окремо.
           summary_title: Останні 30 днів
@@ -3656,6 +3678,7 @@ uk:
           billing_tax: Зібраний податок (за вирахуванням повернень)
           billing_tax_by_rate: Зібраний податок за ставкою (за вирахуванням повернень)
           billing_taxable: Дохід, що оподатковується
+          billing_zero_rated: Дохід із нульовою ставкою
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth

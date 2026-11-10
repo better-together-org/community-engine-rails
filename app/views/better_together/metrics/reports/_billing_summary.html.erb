@@ -16,6 +16,7 @@
                  ['sales', summary.sales_count.to_s],
                  ['gross', billing_amount(summary.gross_cents, code)],
                  ['taxable', billing_amount(summary.taxable_cents, code)],
+                 ['zero_rated', billing_amount(summary.zero_rated_cents, code)],
                  ['non_taxable', billing_amount(summary.non_taxable_cents, code)],
                  ['exempt', billing_amount(summary.exempt_cents, code)],
                  ['refunded', billing_amount(summary.refunded_cents, code)],
@@ -44,9 +45,71 @@
             <tbody>
               <% summary.tax_rows.each_with_index do |row, index| %>
                 <tr id="billing-summary-<%= code.downcase %>-tax-<%= index %>">
-                  <th scope="row"><%= row.label %> <%= row.percent %></th>
+                  <th scope="row"><%= row.label %> <%= row.percent %> <span class="badge text-bg-light"><%= t("better_together.metrics.reports.billing.collected_by.#{row.collected_by}") %></span></th>
                   <td class="text-end"><%= billing_amount(row.collected_cents, code) %></td>
                   <td class="text-end"><%= billing_amount(row.refunded_cents, code) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+      <% if summary.authority_rows.any? %>
+        <div class="table-responsive border-top">
+          <table id="billing-summary-<%= code.downcase %>-authorities" class="table table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"><%= t('better_together.metrics.reports.billing.authority_title') %></th>
+                <th scope="col" class="text-end"><%= t('better_together.metrics.reports.billing.owed') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% summary.authority_rows.each do |row| %>
+                <tr id="billing-summary-<%= code.downcase %>-authority-<%= row.authority.dasherize %>">
+                  <th scope="row"><%= t("better_together.metrics.reports.billing.authorities.#{row.authority}") %></th>
+                  <td class="text-end"><%= billing_amount(row.net_cents, code) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+      <% if summary.regions.any? %>
+        <div class="table-responsive border-top">
+          <table id="billing-summary-<%= code.downcase %>-regions" class="table table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"><%= t('better_together.metrics.reports.billing.region') %></th>
+                <th scope="col" class="text-end"><%= t('better_together.metrics.reports.billing.measures.sales') %></th>
+                <th scope="col" class="text-end"><%= t('better_together.metrics.reports.billing.measures.tax_collected') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% summary.regions.each do |row| %>
+                <tr id="billing-summary-<%= code.downcase %>-region-<%= row.region_code.to_s.parameterize.presence || 'none' %>">
+                  <th scope="row"><%= row.region_code.presence || t('better_together.metrics.reports.billing.no_region') %></th>
+                  <td class="text-end"><%= row.sales_count %></td>
+                  <td class="text-end"><%= billing_amount(row.tax_cents, code) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+      <% if summary.registrations.any? %>
+        <div class="table-responsive border-top">
+          <table id="billing-summary-<%= code.downcase %>-registrations" class="table table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"><%= t('better_together.metrics.reports.billing.registrations') %></th>
+                <th scope="col"><%= t('better_together.metrics.reports.billing.registration_number') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% summary.registrations.each_with_index do |row, index| %>
+                <tr id="billing-summary-<%= code.downcase %>-registration-<%= index %>">
+                  <th scope="row"><%= [row.country_iso, row.region_code].compact_blank.join('-') %> <span class="badge text-bg-light"><%= t("better_together.metrics.reports.billing.collected_by.#{row.collected_by}") %></span></th>
+                  <td><%= row.masked_number %></td>
                 </tr>
               <% end %>
             </tbody>

@@ -15,6 +15,10 @@
       <%= select_tag 'metrics_billing_report[filters][interval]', options_for_select(BetterTogether::Billing::TaxReport::INTERVALS.map { |i| [t("better_together.metrics.filters.additional.intervals.#{i}"), i] }), id: 'billing-report-interval', class: 'form-select' %>
     </div>
     <div class="form-group mt-3">
+      <%= f.label :basis, t('better_together.metrics.filters.additional.basis'), for: 'billing-report-basis' %>
+      <%= select_tag 'metrics_billing_report[filters][basis]', options_for_select(BetterTogether::Billing::TaxReport::INTERVALS.map { |i| [t("better_together.metrics.filters.additional.basiss.#{i}"), i] }), id: 'billing-report-basis', class: 'form-select' %>
+    </div>
+    <div class="form-group mt-3">
       <%= f.label :owner, t('better_together.metrics.filters.additional.owner'), for: 'billing-report-owner' %>
       <%= select_tag 'metrics_billing_report[filters][owner]', options_for_select(billing_filter_options(metrics_platform)[:owners]), id: 'billing-report-owner', class: 'form-select' %>
     </div>

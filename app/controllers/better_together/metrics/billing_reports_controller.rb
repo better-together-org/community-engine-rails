@@ -62,9 +62,10 @@ module BetterTogether
       end
 
       def report_params
-        permitted = params.fetch(:metrics_billing_report, {}).permit(:file_format, filters: %i[from_date to_date owner interval])
+        permitted = params.fetch(:metrics_billing_report, {}).permit(:file_format, filters: %i[from_date to_date owner interval basis])
         filters = permitted.fetch(:filters, {})
         { from_date: filters[:from_date], to_date: filters[:to_date], owner: filters[:owner].to_s, interval: filters[:interval].to_s,
+          basis: filters[:basis].to_s,
           file_format: permitted[:file_format].presence || 'csv' }
       end
     end

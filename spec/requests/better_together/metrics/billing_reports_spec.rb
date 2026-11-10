@@ -124,7 +124,7 @@ RSpec.describe 'BetterTogether::Metrics::BillingReports' do # rubocop:disable RS
 
       body = response.parsed_body
       expect(response).to be_successful
-      expect(body['datasets'].size).to eq(5)
+      expect(body['datasets'].size).to eq(6)
       expect(body['datasets'].first['data'].sum).to eq(100.0)
     end
 

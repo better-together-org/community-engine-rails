@@ -17,7 +17,8 @@ module BetterTogether
 
         def generate
           CSV.generate do |csv|
-            csv << ['Report', 'Billing', 'From', @data['from'], 'To', @data['to'], 'By', @data['interval'], 'Time zone', @data['time_zone']]
+            csv << ['Report', 'Billing', 'From', @data['from'], 'To', @data['to'], 'By', @data['interval'], 'Basis', @data['basis'],
+                    'Time zone', @data['time_zone']]
             @data['summaries'].each { |summary| write_currency(csv, summary) }
           end
         end
@@ -29,7 +30,9 @@ module BetterTogether
           csv << []
           csv << ['Currency', code]
           write_summary(csv, summary, code)
+          write_return(csv, summary, code)
           write_tax(csv, summary, code)
+          write_regions(csv, summary, code)
           write_payments(csv, summary, code)
           write_periods(csv, summary, code)
         end
@@ -38,19 +41,52 @@ module BetterTogether
           csv << %w[Summary Amount]
           csv << ['Sales', summary['sales_count']]
           csv << ['Gross sales (with tax)', money(summary['gross_cents'], code)]
-          %w[taxable non_taxable exempt].each { |kind| csv << ["Revenue: #{kind.tr('_', ' ')}", money(summary["#{kind}_cents"], code)] }
+          %w[taxable zero_rated non_taxable exempt].each do |kind|
+            csv << ["Revenue: #{kind.tr('_', ' ')}", money(summary["#{kind}_cents"], code)]
+          end
           csv << ['Refunds', summary['refund_count']]
           csv << ['Refunded (with tax)', money(summary['refunded_cents'], code)]
           csv << ['Refunded revenue', money(summary['refunded_revenue_cents'], code)]
           csv << ['Refunded tax', money(summary['refunded_tax_cents'], code)]
         end
 
+        # The lines a GST/HST return asks for, then what each other tax is owed to its own administrator.
+        def write_return(csv, summary, code)
+          csv << []
+          csv << %w[Return Amount]
+          csv << ['Total revenue (without tax)', money(revenue(summary), code)]
+          csv << ['Zero-rated supplies', money(summary['zero_rated_cents'], code)]
+          (summary['authorities'] || []).each do |row|
+            csv << ["Tax owed: #{row['authority']}", money(row['collected_cents'] - row['refunded_cents'], code)]
+          end
+        end
+
+        def write_regions(csv, summary, code)
+          csv << []
+          csv << %w[Region Sales Gross Tax]
+          (summary['regions'] || []).each do |row|
+            csv << [safe(row['region_code']), row['sales_count'], money(row['gross_cents'], code), money(row['tax_cents'], code)]
+          end
+          write_registrations(csv, summary)
+        end
+
+        def write_registrations(csv, summary)
+          csv << []
+          csv << ['Registration', 'Region', 'Status', 'Collected by', 'Number']
+          (summary['registrations'] || []).each do |row|
+            csv << [row['country_iso'], safe(row['region_code']), row['status'], row['collected_by'], safe(row['masked_number'])]
+          end
+        end
+
+        def revenue(summary) = %w[taxable zero_rated non_taxable exempt].sum { |kind| summary["#{kind}_cents"] }
+
         def write_tax(csv, summary, code) # rubocop:disable Metrics/AbcSize
           csv << []
-          csv << ['Tax', 'Rate', 'Inside the price', 'Collected', 'Refunded', 'Net']
+          csv << ['Tax', 'Rate', 'Administrator', 'Collected by', 'Inside the price', 'Collected', 'Refunded', 'Net']
           summary['tax_rows'].each do |row|
-            csv << [safe(row['label']), percent(row['rate']), row['included'] ? 'yes' : 'no', money(row['collected_cents'], code),
-                    money(row['refunded_cents'], code), money(row['collected_cents'] - row['refunded_cents'], code)]
+            csv << [safe(row['label']), percent(row['rate']), row['authority'], row['collected_by'], row['included'] ? 'yes' : 'no',
+                    money(row['collected_cents'], code), money(row['refunded_cents'], code),
+                    money(row['collected_cents'] - row['refunded_cents'], code)]
           end
         end
 
@@ -62,9 +98,10 @@ module BetterTogether
 
         def write_periods(csv, summary, code)
           csv << []
-          csv << ['Period starting', 'Sales', 'Gross', 'Taxable', 'Non-taxable', 'Exempt', 'Tax collected', 'Refunded', 'Refunded tax']
+          csv << ['Period starting', 'Sales', 'Gross', 'Taxable', 'Zero-rated', 'Non-taxable', 'Exempt', 'Tax collected', 'Refunded',
+                  'Refunded tax']
           summary['periods'].each do |row|
-            csv << [row['starts_on'], row['sales_count'], *%w[gross taxable non_taxable exempt tax refunded refunded_tax].map do |key|
+            csv << [row['starts_on'], row['sales_count'], *%w[gross taxable zero_rated non_taxable exempt tax refunded refunded_tax].map do |key|
               money(row["#{key}_cents"], code)
             end]
           end
