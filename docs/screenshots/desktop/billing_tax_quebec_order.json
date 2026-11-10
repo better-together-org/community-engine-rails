@@ -1,8 +1,8 @@
 {
   "name": "billing_tax_quebec_order",
   "device": "desktop",
-  "url": "/en/billing/orders/75962edc-8d25-49e7-9433-7059279cf737",
-  "title": "Order BT-XTUEL4YB | Test Host Community",
+  "url": "/en/billing/orders/af133b82-5128-4528-9535-6237b782a60b",
+  "title": "Order BT-TXF9BCIP | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_tax",
@@ -13,34 +13,34 @@
       "selector": "#billing-summary-order",
       "title": "Order summary",
       "bullets": [
-        "A marker on each line, a right-aligned row per tax, the total and the registration numbers."
+        "A marker on each line, a row per tax, the total and the registration numbers."
       ],
       "target": {
         "x": 65.5,
-        "y": 559.0,
+        "y": 545.0,
         "width": 1294.0,
-        "height": 338.1875,
+        "height": 366.1875,
         "right": 1359.5,
-        "bottom": 897.1875,
+        "bottom": 911.1875,
         "center_x": 712.5,
         "center_y": 728.09375
       },
       "avoid": {
         "x": 0.0,
-        "y": 99.0,
+        "y": 85.0,
         "width": 1425.0,
-        "height": 1358.0,
+        "height": 1372.0,
         "right": 1425.0,
         "bottom": 1457.0,
         "center_x": 712.5,
-        "center_y": 778.0
+        "center_y": 771.0
       },
       "placement": {
         "side": "floating",
         "x": 24.0,
         "y": 44,
         "width": 380,
-        "height": 184
+        "height": 158
       }
     }
   ]

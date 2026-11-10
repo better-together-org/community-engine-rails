@@ -30,6 +30,21 @@ RSpec.describe 'Billing order summary across surfaces' do # rubocop:disable RSpe
     expect([page, text_of(mail.html_part.body.decoded), mail.text_part.body.decoded.squish]).to all(include(*figures, *numbers))
   end
 
+  it 'reads Item, Tax, Quantity, Amount, with the amount last and in the column of the subtotal, taxes and total', :aggregate_failures do
+    sign_in buyer_user
+    get "/#{locale}/billing/orders/#{order.id}"
+    table = Nokogiri::HTML(response.body).at_css('#billing-order-line-items')
+    notifier = BetterTogether::Billing::Notifier.new(record: order, params: { kind: 'order_paid', audience: :buyer })
+    email = Nokogiri::HTML(BetterTogether::BillingMailer.with(recipient: buyer, notifier:).notification.html_part.body.decoded)
+
+    [table, email.at_css('#billing-email-line-items')].each do |t|
+      expect(t.css('thead th').map { |th| th.text.squish }).to eq(%w[Item Tax Quantity Amount])
+    end
+    expect(table.css('tfoot tr').map { |tr| tr.element_children.last.name }.uniq).to eq(['td'])
+    expect(table.css('tfoot tr').map { |tr| tr.element_children.size }.uniq).to eq([2])
+    expect(table.at_css('tfoot tr th')['colspan']).to eq('3')
+  end
+
   it 'has tax rows that sum to the tax and a total that is the subtotal plus the added tax', :aggregate_failures do
     expect(summary.tax_rows.sum(&:amount_cents)).to eq(order.tax_cents)
     expect(summary.subtotal_cents + summary.added_tax_cents).to eq(order.total_cents)

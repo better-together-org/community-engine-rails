@@ -5,46 +5,46 @@
   <thead>
     <tr style="text-align: left; background-color: #f8f9fa;">
       <th style="<%= cell %>"><%= t('better_together.billing.orders.field_item') %></th>
+      <% if summary.taxed? %><th style="<%= cell %>"><%= t('better_together.billing.orders.field_tax') %></th><% end %>
       <th style="<%= cell %>"><%= t('better_together.billing.orders.field_quantity') %></th>
       <th style="<%= cell %> text-align: right;"><%= t('better_together.billing.orders.field_amount') %></th>
-      <% if summary.taxed? %><th style="<%= cell %>"><%= t('better_together.billing.orders.field_tax') %></th><% end %>
     </tr>
   </thead>
   <tbody>
     <% summary.lines.each_with_index do |line, index| %>
       <tr id="billing-email-line-<%= index %>">
         <td style="<%= cell %>"><%= line.description %></td>
-        <td style="<%= cell %>"><%= line.quantity %></td>
-        <td style="<%= cell %> text-align: right;"><%= billing_amount(line.amount_cents, summary.currency) %></td>
         <% if summary.taxed? %>
           <td style="<%= cell %>"><%= t(line.taxed ? 'better_together.billing.order_summary.taxed' : 'better_together.billing.order_summary.not_taxed') %></td>
         <% end %>
+        <td style="<%= cell %>"><%= line.quantity %></td>
+        <td style="<%= cell %> text-align: right;"><%= billing_amount(line.amount_cents, summary.currency) %></td>
       </tr>
     <% end %>
   </tbody>
-</table>
-<table role="presentation" id="billing-summary-email-rows" align="right" style="border-collapse: collapse; font-size: 14px; margin-top: 8px;">
-  <% if summary.taxed? %>
-    <tr id="billing-summary-email-subtotal">
-      <td style="padding: 3px 8px; text-align: right;"><%= t('better_together.billing.orders.field_subtotal') %></td>
-      <td style="padding: 3px 8px; text-align: right;"><%= billing_amount(summary.subtotal_cents, summary.currency) %></td>
-    </tr>
-    <% summary.tax_rows.each_with_index do |row, index| %>
-      <tr id="billing-summary-email-tax-<%= index %>">
-        <td style="padding: 3px 8px; text-align: right;">
-          <%= t('better_together.billing.order_summary.tax_on', label: row.label, rate: row.percent, base: billing_amount(row.base_cents, summary.currency)) %>
-          <% if row.included %><span style="color: #6c757d;"><%= t('better_together.billing.order_summary.included') %></span><% end %>
-        </td>
-        <td style="padding: 3px 8px; text-align: right;"><%= billing_amount(row.amount_cents, summary.currency) %></td>
+  <tfoot id="billing-summary-email-rows">
+    <% span = summary.taxed? ? 3 : 2 %>
+    <% if summary.taxed? %>
+      <tr id="billing-summary-email-subtotal">
+        <td colspan="<%= span %>" style="padding: 3px 8px; text-align: right;"><%= t('better_together.billing.orders.field_subtotal') %></td>
+        <td style="padding: 3px 8px; text-align: right;"><%= billing_amount(summary.subtotal_cents, summary.currency) %></td>
       </tr>
+      <% summary.tax_rows.each_with_index do |row, index| %>
+        <tr id="billing-summary-email-tax-<%= index %>">
+          <td colspan="<%= span %>" style="padding: 3px 8px; text-align: right;">
+            <%= t('better_together.billing.order_summary.tax_on', label: row.label, rate: row.percent, base: billing_amount(row.base_cents, summary.currency)) %>
+            <% if row.included %><span style="color: #6c757d;"><%= t('better_together.billing.order_summary.included') %></span><% end %>
+          </td>
+          <td style="padding: 3px 8px; text-align: right;"><%= billing_amount(row.amount_cents, summary.currency) %></td>
+        </tr>
+      <% end %>
     <% end %>
-  <% end %>
-  <tr id="billing-summary-email-total" style="font-weight: bold;">
-    <td style="padding: 3px 8px; text-align: right;"><%= t('better_together.billing.orders.field_total') %></td>
-    <td style="padding: 3px 8px; text-align: right;"><%= billing_amount(summary.total_cents, summary.currency) %></td>
-  </tr>
+    <tr id="billing-summary-email-total" style="font-weight: bold;">
+      <td colspan="<%= span %>" style="padding: 3px 8px; text-align: right;"><%= t('better_together.billing.orders.field_total') %></td>
+      <td style="padding: 3px 8px; text-align: right;"><%= billing_amount(summary.total_cents, summary.currency) %></td>
+    </tr>
+  </tfoot>
 </table>
-<div style="clear: both;"></div>
 <% if summary.registrations.any? %>
   <p id="billing-summary-email-registrations" style="text-align: right; color: #6c757d; font-size: 13px; margin: 8px 0 0;">
     <%= t('better_together.billing.order_summary.registrations') %><br>

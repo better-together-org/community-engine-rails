@@ -19,29 +19,29 @@
         "x": 453.0,
         "y": 254.0,
         "width": 534.0,
-        "height": 239.0,
+        "height": 231.0,
         "right": 987.0,
-        "bottom": 493.0,
+        "bottom": 485.0,
         "center_x": 720.0,
-        "center_y": 373.5
+        "center_y": 369.5
       },
       "avoid": {
         "x": 8.0,
         "y": 8.0,
         "width": 1424.0,
-        "height": 759.0,
+        "height": 715.0,
         "right": 1432.0,
-        "bottom": 767.0,
+        "bottom": 723.0,
         "center_x": 720.0,
-        "center_y": 387.5
+        "center_y": 365.5
       },
       "placement": {
         "side": "below",
         "x": 530.0,
-        "y": 787.0,
+        "y": 743.0,
         "width": 380,
         "height": 158,
-        "score": 690.0
+        "score": 734.0
       }
     }
   ]

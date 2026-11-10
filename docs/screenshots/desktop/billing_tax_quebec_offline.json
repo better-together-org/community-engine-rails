@@ -1,8 +1,8 @@
 {
   "name": "billing_tax_quebec_offline",
   "device": "desktop",
-  "url": "/en/billing/orders/75962edc-8d25-49e7-9433-7059279cf737",
-  "title": "Order BT-XTUEL4YB | Test Host Community",
+  "url": "/en/billing/orders/af133b82-5128-4528-9535-6237b782a60b",
+  "title": "Order BT-TXF9BCIP | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_tax",
@@ -10,7 +10,7 @@
   "flow": "billing_tax_quebec_offline",
   "callouts": [
     {
-      "selector": "#billing-summary-offline-c98a65b9-fa1b-47f4-8abe-b4d4badb80b9",
+      "selector": "#billing-summary-offline-0a01a80c-038a-4d37-af7b-ac14bb9a766e",
       "title": "Same summary beside the payment instructions",
       "bullets": [
         "The figures match the order page."

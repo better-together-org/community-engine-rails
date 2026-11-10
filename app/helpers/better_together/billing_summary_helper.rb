@@ -8,23 +8,30 @@ module BetterTogether
 
     def billing_summary_text(summary)
       money = ->(cents) { billing_amount(cents, summary.currency) }
-      item_lines = summary_item_lines(summary, money)
+      items = summary_items(summary, money)
       rows = summary_rows(summary, money)
-      [*item_lines, '', *right_aligned(rows, summary_width(item_lines, rows)), *summary_registrations(summary)].join("\n")
+      [*aligned(items, rows), *summary_registrations(summary)].join("\n")
     end
 
     private
 
-    def summary_width(item_lines, rows)
-      [item_lines.map(&:length).max.to_i, rows.map { |label, amount| label.length + GAP.length + amount.length }.max.to_i].max
+    # Every amount, the items' and the rows', ends in one column: the items' text on the left, the rows' labels
+    # against the right, so the figures line up the way they do on the page.
+    def aligned(items, rows)
+      amount_width = column_width(items + rows, :last)
+      text_width = [column_width(items, :first), column_width(rows, :first)].max
+      [*items.map { |text, amount| "#{text.ljust(text_width)}#{GAP}#{amount.rjust(amount_width)}" }, '',
+       *rows.map { |label, amount| "#{label.rjust(text_width)}#{GAP}#{amount.rjust(amount_width)}" }]
     end
 
-    def summary_item_lines(summary, money)
-      summary.lines.map do |line|
-        text = "#{line.description} x#{line.quantity}#{GAP}#{money.call(line.amount_cents)}"
-        next text unless summary.taxed?
+    def column_width(pairs, which) = pairs.map { |pair| pair.public_send(which).length }.max.to_i
 
-        "#{text}#{GAP}#{t(line.taxed ? 'better_together.billing.order_summary.taxed' : 'better_together.billing.order_summary.not_taxed')}"
+    # [text, amount]: the item, the tax marker when the order has tax, the quantity; then its amount.
+    def summary_items(summary, money)
+      summary.lines.map do |line|
+        marker = t(line.taxed ? 'better_together.billing.order_summary.taxed' : 'better_together.billing.order_summary.not_taxed')
+        text = [line.description, (marker if summary.taxed?), "x#{line.quantity}"].compact.join(GAP)
+        [text, money.call(line.amount_cents)]
       end
     end
 
@@ -40,11 +47,6 @@ module BetterTogether
     def tax_row_label(row, money)
       label = t('better_together.billing.order_summary.tax_on', label: row.label, rate: row.percent, base: money.call(row.base_cents))
       row.included ? "#{label} #{t('better_together.billing.order_summary.included')}" : label
-    end
-
-    def right_aligned(rows, width)
-      amount_width = rows.map { |_label, amount| amount.length }.max.to_i
-      rows.map { |label, amount| "#{label.rjust(width - amount_width - GAP.length)}#{GAP}#{amount.rjust(amount_width)}" }
     end
 
     def summary_registrations(summary)

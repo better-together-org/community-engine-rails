@@ -1,8 +1,8 @@
 {
   "name": "billing_tax_bc_offline",
   "device": "mobile",
-  "url": "/en/billing/orders/83b5912c-e554-4d73-8391-4907bd461b91",
-  "title": "Order BT-PVYBIZAB | Test Host Community",
+  "url": "/en/billing/orders/c0234168-0716-47e8-a198-e7316ceef5cd",
+  "title": "Order BT-UCPI1Z1W | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_tax",
@@ -10,7 +10,7 @@
   "flow": "billing_tax_bc_offline",
   "callouts": [
     {
-      "selector": "#billing-summary-offline-45f6ce65-d727-4c28-80ff-9632bdd0bf52",
+      "selector": "#billing-summary-offline-4273ae35-108f-4c7e-8077-ff827eca7478",
       "title": "Same summary beside the payment instructions",
       "bullets": [
         "The figures match the order page."
