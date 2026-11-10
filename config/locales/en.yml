@@ -1152,6 +1152,11 @@ en:
         payment_action_required:
           body: Your bank needs you to confirm this payment before it can go through.
           title: Action needed to pay for order %{number}
+        payment_amount_mismatch:
+          body: A payment for order %{number} was charged at a different amount than
+            the order total of %{amount}. Check the payment, the tax and the processor
+            before relying on it.
+          title: A payment amount differs from its order
         payment_claimed:
           body: The buyer says they sent %{amount} by %{method}. Check that you received
             it, then mark it received.
@@ -1734,6 +1739,8 @@ en:
         refund_record: Record refund
         refund_recorded: Refund recorded. The buyer has been told.
         refund_refused: That refund could not be recorded. Check the amount.
+        refund_tax_hint: This order includes %{tax} of tax in %{total}. Each refund
+          carries its share of that tax, split from the net amount.
         return_credit_btn: Return the credit payments
         return_heading: Return payments
         return_hint: This order is part paid and stays open for the buyer to pay the

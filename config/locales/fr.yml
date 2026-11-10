@@ -1158,6 +1158,11 @@ fr:
           body: Votre banque doit vous demander de confirmer ce paiement avant qu’il
             puisse aboutir.
           title: Action requise pour payer la commande %{number}
+        payment_amount_mismatch:
+          body: Un paiement de la commande %{number} a été prélevé pour un montant
+            différent du total de la commande, %{amount}. Vérifiez le paiement, la
+            taxe et le processeur avant de vous y fier.
+          title: Le montant d'un paiement diffère de celui de sa commande
         payment_claimed:
           body: L’acheteur dit avoir envoyé %{amount} par %{method}. Vérifiez que
             vous l’avez reçu, puis marquez-le comme reçu.
@@ -1772,6 +1777,8 @@ fr:
         refund_record: Enregistrer le remboursement
         refund_recorded: Remboursement enregistré. L’acheteur a été informé.
         refund_refused: Ce remboursement n’a pas pu être enregistré. Vérifiez le montant.
+        refund_tax_hint: Cette commande comprend %{tax} de taxe sur %{total}. Chaque
+          remboursement comporte sa part de cette taxe, distincte du montant net.
         return_credit_btn: Rendre les paiements en crédit
         return_heading: Rendre les paiements
         return_hint: Cette commande est partiellement payée et reste ouverte pour

@@ -12,8 +12,10 @@ module BetterTogether
       # checkout, a session that outlived the hold. Without a reference only an in-flight payment can
       # succeed, so nothing marks money received on a guess.
       #
-      # `amount_cents` is what was actually charged (tax can make it more than we asked for), and
-      # `pay_charge` links the Pay charge that recorded it.
+      # `amount_cents` is what was actually charged, and `pay_charge` links the Pay charge that recorded it.
+      # Core works out the tax and asks the processor for that amount, so a charge that differs from what
+      # we asked for is recorded as charged and flagged to the operators for review (`payment_amount_mismatch`),
+      # never taken as right without a word.
       #
       # If the order was cancelled meanwhile nobody is owed the money. The payment is recorded (it did
       # arrive), the order is left cancelled, a refund is recorded as pending for the processor to make,
@@ -31,6 +33,7 @@ module BetterTogether
         def call
           payment.with_lock { settle_payment }
           orphan! if payment.orphaned?
+          flag_mismatch
           Orders::Settle.call(payment.order)
           part_received if payment.succeeded?
           payment
@@ -44,8 +47,16 @@ module BetterTogether
         def settle_payment
           return unless succeedable?
 
+          @asked_cents = payment.amount_cents
           payment.update!(success_attributes)
           LocalSettlement.record!(payment)
+        end
+
+        # The charge is not what core asked for. Once per payment.
+        def flag_mismatch
+          return unless @asked_cents && payment.succeeded? && payment.amount_cents != @asked_cents
+
+          Notifications.deliver('payment_amount_mismatch', subject: payment, dedupe_key: "amount-mismatch:#{payment.id}")
         end
 
         def succeedable?

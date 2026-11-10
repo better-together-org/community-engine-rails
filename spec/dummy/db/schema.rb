@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -737,6 +737,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
     t.string "reason"
     t.string "idempotency_key", null: false
     t.string "processor_reference"
+    t.integer "tax_cents", default: 0, null: false
     t.index ["payment_id"], name: "idx_bt_billing_refunds_payment"
     t.index ["platform_id", "idempotency_key"], name: "idx_bt_billing_refunds_idempotency", unique: true
     t.index ["platform_id", "payment_id", "processor_reference"], name: "idx_bt_billing_refunds_reference", unique: true, where: "(processor_reference IS NOT NULL)"

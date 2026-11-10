@@ -19,12 +19,14 @@ module BetterTogether
       # reading global environment variables, so one platform never acts through
       # another platform's account.
       CAPABILITY_METHODS = {
-        # A buyer pays an order through the processor. create_checkout_session returns a CheckoutSession;
+        # A buyer pays an order through the processor. create_checkout_session returns a CheckoutSession and is given the tax
+        # core worked out (`tax_cents` added, `included_tax_cents` inside the prices, `prices_include_tax`): charge it, never recompute;
         # release_payment expires the session or cancels the intent when core lets the order go;
         # reconcile_payment pulls the processor's state for a payment (never trust a payload alone);
         # payment_action_url is where a buyer completes a payment that needs them (a bank confirmation),
         # and receipt_url is the processor's hosted receipt: both return an https URL or nil.
-        checkout: { create_checkout_session: %i[context order payment success_url cancel_url idempotency_key metadata],
+        checkout: { create_checkout_session: %i[context order payment success_url cancel_url idempotency_key metadata
+                                                tax_cents included_tax_cents prices_include_tax],
                     sync_checkout_session: %i[context checkout_session_id],
                     release_payment: %i[context payment idempotency_key],
                     reconcile_payment: %i[context payment],

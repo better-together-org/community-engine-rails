@@ -98,9 +98,17 @@ British Columbia (Bulletin PST 142), Saskatchewan (Bulletin PST-5) and Manitoba 
 
 The CRA (Excise Tax Act, sections 211.21 and 211.25, in effect July 1, 2021) makes a registered distribution platform operator collect GST/HST on goods delivered in Canada that are sold through its platform by vendors who are not registered for the GST/HST, a Canadian small supplier included. An operator is a platform that controls the essential elements of the sale or collects and passes on the payment; a payment processor alone, or a listing alone, is not an operator. For digital products and services the rule reaches only non-resident suppliers. Revenu Quebec has a matching QST rule for goods delivered in Quebec, and for services and digital property supplied by sellers outside Quebec. Today's plans and line items are services and digital items by sellers on the platform, so these goods rules are not triggered. They will matter when shippable goods are added: a seller with `small_supplier_exempt` status selling goods through the platform will need the platform's registration applied instead of no tax. Sources and page dates are in the packet comments.
 
+## Processors and renewals
+
+A processor checkout session is given the order's tax (`tax_cents`, `included_tax_cents`, `prices_include_tax`) and may report the `tax_cents` it will charge; a reported tax that differs from the order's raises the same notice when the session is created. An adapter whose `create_checkout_session` does not name those keywords (or accept `**`) is not handed them, so older adapters keep working and charge their own amount, which `Payments::Succeed` then flags. `Payments::Succeed` records the amount actually charged and, if it differs from the amount core asked for, tells the operators once (`payment_amount_mismatch`). A subscription renewal is an ordinary order placed through the same calculator, taxed for the place the subscriber was last taxed for (the latest invoice's, else the order that started the subscription) with the rates and registration in force at the time of the invoice.
+
+## Refunds
+
+A refund keeps `tax_cents`: its share of the order's tax, pro-rated at the time it is recorded (`Refunds::ProRatedTax`), never worked out again from today's rates. The share is the refund's part of the order total, rounded half up; the refund that completes what the order took in takes the tax that is left, so refunded tax equals the order's tax to the cent. `Refund#net_cents` is the amount without the tax. The refund forms on a sale tell the seller how much tax the order carries.
+
 ## Not built yet
 
-The seller's agreement to collect tax, processor adapter input and output, subscription renewal tax, refunds that split net and tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
+The seller's agreement to collect tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
 
 ## Sellers: a later phase
 

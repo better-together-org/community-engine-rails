@@ -39,6 +39,9 @@ classDiagram
     +billing_address  snapshot of the address at placement
     +billing_address_id  source address, emptied if it is deleted
   }
+  class Refund {
+    +tax_cents  the refund's share of the order's tax
+  }
   class DefaultAddress {
     +kind  billing or shipping
     one per person, platform and kind
@@ -64,6 +67,7 @@ classDiagram
   Order "1" --> "*" LineItem
   LineItem "1" --> "*" TaxLine
   Order "1" --> "*" TaxLine
+  Order "1" --> "*" Refund : through its payments
   TaxRate "0..1" --> "*" TaxLine
   Person "1" --> "*" DefaultAddress
   Platform "1" --> "*" DefaultAddress

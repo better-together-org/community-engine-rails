@@ -100,6 +100,18 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
                  "billing-sale-refund-btn-#{offline.id}")
     end
 
+    it 'exposes the tax note on the refund form when the order carries tax' do
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+      zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+      create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+      taxed = place_offline('cash', tax_address: { country_iso: 'CA', region_code: 'NL' })
+      transition.receive(offline_for(taxed), by: steward)
+
+      get "/#{locale}/billing/sales/#{taxed.id}"
+
+      expect_ids(ActionView::RecordIdentifier.dom_id(offline_for(taxed).payment, :refund_tax))
+    end
+
     it 'exposes the links to the queue and to a sale in person on the sales list' do
       get "/#{locale}/billing/sales"
 

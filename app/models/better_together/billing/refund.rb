@@ -22,12 +22,16 @@ module BetterTogether
       validates :status, inclusion: { in: STATUSES }
       validates :reason, inclusion: { in: REASONS }, allow_blank: true
       validates :amount_cents, numericality: { only_integer: true, greater_than: 0 }
+      validates :tax_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :idempotency_key, presence: true, uniqueness: { scope: :platform_id }
       validates :processor_reference, uniqueness: { scope: %i[platform_id payment_id] }, allow_nil: true
       validate :within_what_is_left, on: :create
 
       def counted? = COUNTED.include?(status)
+
+      # What was given back before tax.
+      def net_cents = amount_cents.to_i - tax_cents.to_i
 
       private
 

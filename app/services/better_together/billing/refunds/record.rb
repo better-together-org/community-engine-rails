@@ -11,6 +11,10 @@ module BetterTogether
       # Repeating the same request (same idempotency key) returns the refund it already made. So does a
       # refund with the same processor reference: core asking the processor for a refund and the
       # processor then reporting that refund are one refund, not two.
+      #
+      # The tax inside a refund is pro-rated from the order's tax (never worked out again from today's rates):
+      # the refund's share of the order total. The refund that brings the order to fully refunded takes whatever
+      # tax is left, so the shares add up to the order's tax to the cent.
       class Record
         class Refused < StandardError; end
 
@@ -57,7 +61,7 @@ module BetterTogether
 
         def refund_attributes
           { platform_id: payment.platform_id, amount_cents:, currency: payment.currency, idempotency_key:, status: resolved_status, reason:,
-            recorded_by:, processor_reference: }
+            recorded_by:, processor_reference:, tax_cents: ProRatedTax.new(payment:, amount_cents:).cents }
         end
 
         # Credit goes back at once; money the seller hands back is recorded; a processor says what it did.

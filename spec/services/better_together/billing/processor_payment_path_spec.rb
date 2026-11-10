@@ -137,6 +137,21 @@ RSpec.describe 'Paying an order through a processor' do # rubocop:disable RSpec/
     end
   end
 
+  describe 'a charge that is not the amount core asked for' do
+    it 'records what was charged and tells the operators once', :aggregate_failures do
+      deliver_now { 2.times { succeed(reference: 'ch_odd', amount_cents: payment.amount_cents + 100) } }
+
+      expect(payment.reload).to have_attributes(status: 'succeeded', amount_cents: 4600)
+      expect(kinds_for(steward).grep(/mismatch/)).to eq(['payment_amount_mismatch'])
+    end
+
+    it 'says nothing when the charge is what was asked for' do
+      deliver_now { succeed(reference: 'ch_ok', amount_cents: payment.amount_cents) }
+
+      expect(kinds_for(steward).grep(/mismatch/)).to be_empty
+    end
+  end
+
   describe 'money arriving for an order that was cancelled' do
     before do
       BetterTogether::Billing::Orders::Cancel.call(order)

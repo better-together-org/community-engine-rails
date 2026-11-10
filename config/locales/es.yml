@@ -1145,6 +1145,11 @@ es:
         payment_action_required:
           body: Su banco necesita que confirme este pago antes de que pueda completarse.
           title: Se necesita una acción para pagar el pedido %{number}
+        payment_amount_mismatch:
+          body: Un pago del pedido %{number} se cobró por un importe distinto al total
+            del pedido, %{amount}. Revise el pago, el impuesto y el procesador antes
+            de darlo por bueno.
+          title: Un importe de pago difiere del de su pedido
         payment_claimed:
           body: El comprador dice haber enviado %{amount} por %{method}. Compruebe
             que lo recibió y márquelo como recibido.
@@ -1735,6 +1740,8 @@ es:
         refund_record: Registrar reembolso
         refund_recorded: Reembolso registrado. Se informó al comprador.
         refund_refused: No se pudo registrar ese reembolso. Revise el importe.
+        refund_tax_hint: Este pedido incluye %{tax} de impuesto en %{total}. Cada
+          reembolso lleva su parte de ese impuesto, separada del importe neto.
         return_credit_btn: Devolver los pagos con crédito
         return_heading: Devolver pagos
         return_hint: Este pedido está pagado en parte y sigue abierto para que el
