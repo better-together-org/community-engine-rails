@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T19:57:41Z",
+  "generated_at": "2026-11-10T20:10:19Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -32498,6 +32498,21 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformIdentityProvidersController",
+          "label": "PlatformIdentityProvidersController",
+          "source_path": "app/controllers/better_together/platform_identity_providers_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::PlatformIdentityProvider"
+          ],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::QuotaGrantsController",
           "label": "QuotaGrantsController",
           "source_path": "app/controllers/better_together/quota_grants_controller.rb",
@@ -33087,6 +33102,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
@@ -33154,6 +33170,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
@@ -33221,6 +33238,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",
@@ -33299,6 +33317,7 @@
             "RobotsController",
             "ReportFollowupsController",
             "QuotaGrantsController",
+            "PlatformIdentityProvidersController",
             "PlatformDomainsController",
             "NewPlatformSetupController",
             "MessageRequestsController",

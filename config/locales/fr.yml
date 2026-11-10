@@ -3381,6 +3381,52 @@ fr:
         subtitle: Ajouter un domaine pour %{platform_name}
         title: Nouveau domaine
       updated: Le domaine a été mis à jour avec succès.
+    platform_identity_providers:
+      create:
+        created: Le fournisseur de connexion a été ajouté.
+      destroy:
+        destroyed: Le fournisseur de connexion a été supprimé.
+      edit:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Modifier %{provider}
+      form:
+        cancel: Annuler
+        client_id_label: ID client
+        client_secret_hint: Stocké chiffré et jamais réaffiché.
+        client_secret_keep: Laisser vide pour conserver le secret actuel
+        client_secret_label: Secret client
+        create_btn: Ajouter le fournisseur
+        enabled_label: Activé
+        scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
+        scopes_label: Portées
+        strategy_label: Fournisseur
+        update_btn: Mettre à jour le fournisseur
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce fournisseur de connexion ?
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        env_note: Les fournisseurs sans ligne ici utilisent les variables d'environnement
+          du serveur (par exemple GITHUB_CLIENT_ID).
+        header_actions: Actions
+        header_client_id: ID client
+        header_provider: Fournisseur
+        header_secret: Secret client
+        header_status: Statut
+        new_btn: Ajouter un fournisseur
+        none: Aucun fournisseur de connexion n'est configuré pour cette plateforme.
+        secret_missing: Manquant
+        secret_set: Défini
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        table_aria: Fournisseurs de connexion
+        title: Fournisseurs de connexion
+      new:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Ajouter un fournisseur de connexion
+      update:
+        updated: Le fournisseur de connexion a été mis à jour.
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -5667,6 +5713,7 @@ fr:
           dépendre uniquement d'une URL directe.
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
+        identity_providers: Fournisseurs de connexion
         platform_domains: Domaines
         quota_grants: Dérogations de quota
         robot_management: Gérer les robots LLM

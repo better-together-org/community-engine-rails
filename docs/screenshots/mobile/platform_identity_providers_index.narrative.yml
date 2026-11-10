@@ -1,0 +1,20 @@
+---
+title: 'Sign-in providers: index'
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I open Sign-in providers from the platform page
+  to see which OAuth providers this platform offers.
+callouts:
+- :id: new_button
+  :title: Add provider
+  :description: Opens the new provider form.
+- :id: env_note
+  :title: Environment fallback
+  :description: A provider with no row here still works if its environment variables
+    are set.
+accessibility_notes: The table has an aria-label and a visually hidden Actions header;
+  delete uses a confirm dialog.
+slug: platform_identity_providers_index
+device: mobile

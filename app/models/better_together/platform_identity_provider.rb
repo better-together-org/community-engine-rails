@@ -14,9 +14,23 @@ module BetterTogether
     validates :provider_platform_id, uniqueness: { scope: :platform_id }
     validate :provider_platform_is_external
 
+    before_validation :assign_provider_platform, if: -> { provider_platform.nil? }
+
     scope :enabled, -> { where(enabled: true) }
 
+    def catalog_entry
+      BetterTogether::IdentityProviders.find(strategy)
+    end
+
     private
+
+    # The external Platform that represents this provider (seeded by ExternalPlatformBuilder).
+    def assign_provider_platform
+      identifier = catalog_entry&.platform_identifier
+      return if identifier.blank?
+
+      self.provider_platform = Platform.find_by(identifier:, external: true)
+    end
 
     def provider_platform_is_external
       return if provider_platform.nil? || provider_platform.external?

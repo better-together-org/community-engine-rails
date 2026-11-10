@@ -1,0 +1,48 @@
+<%= form_with(model: [@platform, identity_provider], url: (identity_provider.persisted? ? platform_platform_identity_provider_path(@platform, identity_provider) : platform_platform_identity_providers_path(@platform)),
+              class: 'form', id: dom_id(identity_provider, 'form')) do |form| %>
+
+  <div id="form_errors">
+    <%= render 'layouts/better_together/errors', object: identity_provider %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :strategy, t('.strategy_label'), for: 'platform_identity_provider_strategy', class: 'form-label' %>
+    <%= form.select :strategy,
+                    BetterTogether::IdentityProviders.registry.values.map { |p| [p.kind, p.key] },
+                    {}, id: 'platform_identity_provider_strategy', class: 'form-select',
+                        disabled: identity_provider.persisted? %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :client_id, t('.client_id_label'), for: 'platform_identity_provider_client_id', class: 'form-label' %>
+    <%= form.text_field :client_id, id: 'platform_identity_provider_client_id', class: 'form-control',
+                                    required: true, autocomplete: 'off' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :client_secret, t('.client_secret_label'), for: 'platform_identity_provider_client_secret', class: 'form-label' %>
+    <%= form.password_field :client_secret, id: 'platform_identity_provider_client_secret', class: 'form-control',
+                                            value: nil, autocomplete: 'new-password',
+                                            required: !identity_provider.persisted?,
+                                            placeholder: (identity_provider.persisted? ? t('.client_secret_keep') : nil) %>
+    <div class="form-text"><%= t('.client_secret_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :scopes, t('.scopes_label'), for: 'platform_identity_provider_scopes', class: 'form-label' %>
+    <%= form.text_field :scopes, id: 'platform_identity_provider_scopes', class: 'form-control' %>
+    <div class="form-text"><%= t('.scopes_hint') %></div>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= form.check_box :enabled, id: 'platform_identity_provider_enabled', class: 'form-check-input' %>
+    <%= form.label :enabled, t('.enabled_label'), for: 'platform_identity_provider_enabled', class: 'form-check-label' %>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <%= form.submit identity_provider.persisted? ? t('.update_btn') : t('.create_btn'),
+                    id: 'platform-identity-provider-submit-btn', class: 'btn btn-primary' %>
+    <%= link_to t('.cancel'), platform_platform_identity_providers_path(@platform),
+                id: 'platform-identity-provider-cancel-btn', class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

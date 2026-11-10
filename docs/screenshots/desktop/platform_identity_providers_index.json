@@ -1,0 +1,83 @@
+{
+  "name": "platform_identity_providers_index",
+  "device": "desktop",
+  "url": "/en/host/platforms/test-host-community/identity_providers",
+  "title": "Sign-in providers | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_identity_providers",
+  "flow": "platform_identity_providers_index",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_identity_providers_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#new-platform-identity-provider-btn",
+      "title": "Add provider",
+      "bullets": [
+        "Opens the form to configure a sign-in provider for this platform."
+      ],
+      "target": {
+        "x": 1220.1875,
+        "y": 141.0,
+        "width": 147.8125,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 179.0,
+        "center_x": 1294.09375,
+        "center_y": 160.0
+      },
+      "avoid": {
+        "x": 1220.1875,
+        "y": 141.0,
+        "width": 147.8125,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 179.0,
+        "center_x": 1294.09375,
+        "center_y": 160.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 1036,
+        "y": 199.0,
+        "width": 380,
+        "height": 158,
+        "score": 1278.0
+      }
+    },
+    {
+      "selector": "#platform-identity-providers-env-note",
+      "title": "Environment fallback",
+      "bullets": [
+        "Providers without a row use the server environment variables."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 216.0,
+        "width": 1296.0,
+        "height": 55.0,
+        "right": 1368.0,
+        "bottom": 271.0,
+        "center_x": 720.0,
+        "center_y": 243.5
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 216.0,
+        "width": 1296.0,
+        "height": 55.0,
+        "right": 1368.0,
+        "bottom": 271.0,
+        "center_x": 720.0,
+        "center_y": 243.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 291.0,
+        "width": 380,
+        "height": 158,
+        "score": 1186.0
+      }
+    }
+  ]
+}

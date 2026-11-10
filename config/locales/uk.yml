@@ -3368,6 +3368,52 @@ uk:
         subtitle: Додати домен для %{platform_name}
         title: Новий домен
       updated: Домен успішно оновлено.
+    platform_identity_providers:
+      create:
+        created: Постачальника входу додано.
+      destroy:
+        destroyed: Постачальника входу видалено.
+      edit:
+        subtitle: Постачальники входу OAuth для %{platform_name}
+        title: Редагувати %{provider}
+      form:
+        cancel: Скасувати
+        client_id_label: ID клієнта
+        client_secret_hint: Зберігається в зашифрованому вигляді й більше не показується.
+        client_secret_keep: Залиште порожнім, щоб зберегти поточний секрет
+        client_secret_label: Секрет клієнта
+        create_btn: Додати постачальника
+        enabled_label: Увімкнено
+        scopes_hint: Залиште порожнім, щоб використати типові значення постачальника.
+        scopes_label: Області доступу
+        strategy_label: Постачальник
+        update_btn: Оновити постачальника
+      index:
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цього постачальника входу?
+        disabled_label: Вимкнено
+        edit_btn: Редагувати
+        enabled_label: Увімкнено
+        env_note: Постачальники без запису тут використовують змінні середовища сервера
+          (наприклад, GITHUB_CLIENT_ID).
+        header_actions: Дії
+        header_client_id: ID клієнта
+        header_provider: Постачальник
+        header_secret: Секрет клієнта
+        header_status: Стан
+        new_btn: Додати постачальника
+        none: Для цієї платформи не налаштовано постачальників входу.
+        secret_missing: Відсутній
+        secret_set: Задано
+        subtitle: Постачальники входу OAuth для %{platform_name}
+        table_aria: Постачальники входу
+        title: Постачальники входу
+      new:
+        subtitle: Постачальники входу OAuth для %{platform_name}
+        title: Додати постачальника входу
+      update:
+        updated: Постачальника входу оновлено.
     platform_invitation:
       acceptance_html: Реєструючи обліковий запис користувача нижче, ви приймаєте
         це запрошення приєднатися до <strong>%{platform}</strong>.
@@ -5660,6 +5706,7 @@ uk:
           знати точну URL-адресу.
         feature_access_grants: Керувати доступами до функцій
         host_dashboard: Панель хоста
+        identity_providers: Постачальники входу
         platform_domains: Домени
         quota_grants: Гранти квоти
         robot_management: Керувати LLM-роботами

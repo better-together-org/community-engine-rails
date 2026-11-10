@@ -1,0 +1,74 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h1><%= t('.title') %></h1>
+      <p class="text-muted mb-0"><%= t('.subtitle', platform_name: @platform.name) %></p>
+    </div>
+    <% if policy(@platform.platform_identity_providers.build).create? %>
+      <%= link_to new_platform_platform_identity_provider_path(@platform), id: 'new-platform-identity-provider-btn', class: 'btn btn-primary' do %>
+        <i class="fas fa-plus" aria-hidden="true"></i> <%= t('.new_btn') %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="alert alert-secondary small" id="platform-identity-providers-env-note">
+    <%= t('.env_note') %>
+  </div>
+
+  <% if @identity_providers.any? %>
+    <div class="table-responsive">
+      <table id="platform-identity-providers-table" class="table table-hover" aria-label="<%= t('.table_aria') %>">
+        <thead class="table-light">
+          <tr>
+            <th scope="col"><%= t('.header_provider') %></th>
+            <th scope="col"><%= t('.header_client_id') %></th>
+            <th scope="col"><%= t('.header_secret') %></th>
+            <th scope="col"><%= t('.header_status') %></th>
+            <th scope="col"><span class="visually-hidden"><%= t('.header_actions') %></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @identity_providers.each do |provider| %>
+            <tr id="<%= dom_id(provider) %>">
+              <td><%= provider.catalog_entry&.kind || provider.strategy %></td>
+              <td><code><%= provider.client_id %></code></td>
+              <td>
+                <% if provider.client_secret.present? %>
+                  <span class="platform-identity-provider-secret-badge badge bg-secondary"><%= t('.secret_set') %></span>
+                <% else %>
+                  <span class="platform-identity-provider-secret-badge badge bg-warning text-dark"><%= t('.secret_missing') %></span>
+                <% end %>
+              </td>
+              <td>
+                <% if provider.enabled? %>
+                  <span class="platform-identity-provider-status-badge text-success"><i class="fas fa-check-circle" aria-hidden="true"></i> <%= t('.enabled_label') %></span>
+                <% else %>
+                  <span class="platform-identity-provider-status-badge text-muted"><%= t('.disabled_label') %></span>
+                <% end %>
+              </td>
+              <td class="text-end">
+                <div id="<%= dom_id(provider, :actions) %>" class="btn-group btn-group-sm" role="group">
+                  <%= link_to t('.edit_btn'), edit_platform_platform_identity_provider_path(@platform, provider),
+                              class: 'btn btn-outline-secondary btn-sm' %>
+                  <%= button_to t('.delete_btn'), platform_platform_identity_provider_path(@platform, provider),
+                                method: :delete, class: 'btn btn-outline-danger btn-sm',
+                                data: { turbo_confirm: t('.delete_confirm') } %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info" id="platform-identity-providers-empty"><%= t('.none') %></div>
+  <% end %>
+
+  <div class="mt-3">
+    <%= link_to t('.back_to_platform'), platform_path(@platform), class: 'btn btn-outline-secondary' %>
+  </div>
+</div>

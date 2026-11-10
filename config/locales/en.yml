@@ -3312,6 +3312,52 @@ en:
         subtitle: Add a domain for %{platform_name}
         title: New Domain
       updated: Domain was successfully updated.
+    platform_identity_providers:
+      create:
+        created: Sign-in provider was added.
+      destroy:
+        destroyed: Sign-in provider was removed.
+      edit:
+        subtitle: OAuth sign-in providers for %{platform_name}
+        title: Edit %{provider}
+      form:
+        cancel: Cancel
+        client_id_label: Client ID
+        client_secret_hint: Stored encrypted and never shown again.
+        client_secret_keep: Leave blank to keep the current secret
+        client_secret_label: Client secret
+        create_btn: Add provider
+        enabled_label: Enabled
+        scopes_hint: Leave blank to use the provider default.
+        scopes_label: Scopes
+        strategy_label: Provider
+        update_btn: Update provider
+      index:
+        back_to_platform: Back to Platform
+        delete_btn: Delete
+        delete_confirm: Remove this sign-in provider?
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        env_note: Providers without a row here fall back to this server's environment
+          variables (for example GITHUB_CLIENT_ID).
+        header_actions: Actions
+        header_client_id: Client ID
+        header_provider: Provider
+        header_secret: Client secret
+        header_status: Status
+        new_btn: Add provider
+        none: No sign-in providers are configured for this platform.
+        secret_missing: Missing
+        secret_set: Set
+        subtitle: OAuth sign-in providers for %{platform_name}
+        table_aria: Sign-in providers
+        title: Sign-in providers
+      new:
+        subtitle: OAuth sign-in providers for %{platform_name}
+        title: Add sign-in provider
+      update:
+        updated: Sign-in provider was updated.
     platform_invitation:
       acceptance_html: By registering for a user account below, you are accepting
         this invitation to join <strong>%{platform}</strong>.
@@ -5534,6 +5580,7 @@ en:
           on route knowledge alone.
         feature_access_grants: Feature access grants
         host_dashboard: Host Dashboard
+        identity_providers: Sign-in providers
         platform_domains: Domains
         quota_grants: Quota grants
         robot_management: Manage LLM robots
