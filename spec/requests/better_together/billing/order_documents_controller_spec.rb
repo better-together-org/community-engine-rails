@@ -45,6 +45,18 @@ RSpec.describe BetterTogether::Billing::OrderDocumentsController do
       expect(flash[:alert]).to eq(I18n.t('better_together.billing.order_documents.already_in_language'))
     end
 
+    it 'keeps the language the documents were made in when the buyer changes their own language', :aggregate_failures do
+      order.buyer.update!(locale: 'fr')
+      expect(order.reload.locale_for_documents).to eq(:fr)
+      expect(order.documents_locale).to eq('en')
+
+      get better_together.billing_sale_path(order, locale: :fr)
+      expect(response.body).to include(ActionView::RecordIdentifier.dom_id(order, :regenerate_documents))
+
+      expect { post sale_documents_path, params: { document_locale: 'fr' } }.to change { order.documents.current.pluck(:locale).uniq }
+        .from(['en']).to(['fr'])
+    end
+
     it 'shows the language form on the sale when read in another language' do
       get better_together.billing_sale_path(order, locale: :fr)
 

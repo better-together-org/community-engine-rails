@@ -126,6 +126,12 @@ module BetterTogether
 
       def hold_expired? = open? && expires_at.present? && expires_at < Time.current
 
+      # The language the stored invoice and receipt were written in, which stays the same when the buyer's own language
+      # changes later. Until any has been made it is the language they would be made in.
+      def documents_locale
+        documents.current.where.not(locale: nil).order(:generated_at).pick(:locale) || locale_for_documents.to_s
+      end
+
       # The language this order's invoice and receipt are made in: the one a steward chose for it, else the buyer's, else
       # the one it was placed in, else the platform's. A steward who placed it for someone who does not read that language
       # chooses another (see Orders::GenerateDocument and the order's documents).

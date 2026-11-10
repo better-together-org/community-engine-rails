@@ -35,7 +35,7 @@ module BetterTogether
           pdf = document.to_pdf
           upload = create_upload(pdf)
           supersede_current
-          order.documents.create!(upload:, platform: order.platform, kind: document.kind.to_s, fingerprint:,
+          order.documents.create!(upload:, platform: order.platform, kind: document.kind.to_s, fingerprint:, locale: @locale.to_s,
                                   time_zone: document.time_zone, generated_at: document.generated_at).tap { |made| made.fresh_pdf = pdf }
         end
 

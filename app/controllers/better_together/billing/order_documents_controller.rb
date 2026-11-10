@@ -41,7 +41,7 @@ module BetterTogether
         I18n.available_locales.find { |locale| locale.to_s == params[:document_locale].to_s }
       end
 
-      def already_in?(locale) = @order.locale_for_documents.to_s == locale.to_s
+      def already_in?(locale) = @order.documents_locale == locale.to_s
 
       def regenerate(locale)
         @order.update!(document_locale: locale.to_s)

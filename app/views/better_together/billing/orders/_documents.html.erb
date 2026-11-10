@@ -13,7 +13,7 @@
     <% end %>
   </div>
   <%# Make them again in the language the page is read in, only when the documents are in another one. %>
-  <% if I18n.locale.to_s != order.locale_for_documents.to_s %>
+  <% if I18n.locale.to_s != order.documents_locale %>
   <% regenerate_path = controller_name == 'sales' ? billing_sale_documents_path(order, locale: I18n.locale) : billing_order_documents_path(order, locale: I18n.locale) %>
   <%= form_with url: regenerate_path, method: :post, id: dom_id(order, :regenerate_documents),
                 class: 'billing-order-documents-language d-flex flex-wrap align-items-center gap-2 px-3 pb-3' do |form| %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -539,6 +539,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_090000) do
     t.string "time_zone", null: false
     t.datetime "generated_at", null: false
     t.datetime "superseded_at"
+    t.string "locale"
     t.index ["order_id", "kind"], name: "idx_bt_billing_order_docs_current", unique: true, where: "(superseded_at IS NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_order_docs_platform"
     t.index ["upload_id"], name: "idx_bt_billing_order_docs_upload", unique: true
