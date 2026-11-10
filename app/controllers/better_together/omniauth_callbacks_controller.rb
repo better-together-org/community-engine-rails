@@ -26,8 +26,9 @@ module BetterTogether
     #   handle_auth "Facebook"
     # end
 
-    def github
-      handle_auth 'Github'
+    # One callback action per catalog provider (Devise routes /users/auth/<key>/callback to it).
+    BetterTogether::IdentityProviders.each do |provider|
+      define_method(provider.key) { handle_auth provider.kind }
     end
 
     private

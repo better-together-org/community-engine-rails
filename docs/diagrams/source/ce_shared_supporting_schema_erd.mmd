@@ -55,6 +55,8 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "provider_platform / provider_platform_id"
   EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
@@ -319,6 +321,18 @@ erDiagram
     number string
     privacy string
     primary_flag boolean
+  }
+
+  PLATFORM_IDENTITY_PROVIDERS {
+    client_id string
+    platform_id uuid
+    provider_platform_id uuid
+    scopes string
+    strategy string
+    client_secret text
+    enabled boolean
+    position integer
+    options jsonb
   }
 
   QUOTAS {

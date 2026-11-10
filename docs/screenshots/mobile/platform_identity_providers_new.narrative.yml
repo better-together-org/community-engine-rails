@@ -1,0 +1,22 @@
+---
+title: 'Sign-in providers: new'
+audience:
+- platform_manager
+- platform_steward
+- developer
+journey_step: As a platform manager, I enter the OAuth client id and secret from the
+  provider console.
+callouts:
+- :id: strategy
+  :title: Provider
+  :description: The provider catalog entry this row configures.
+- :id: client_secret
+  :title: Client secret
+  :description: Stored encrypted, never shown again.
+- :id: submit
+  :title: Add provider
+  :description: Submits the form.
+accessibility_notes: Every field has a label with a matching for/id; the secret field
+  uses autocomplete new-password.
+slug: platform_identity_providers_new
+device: mobile

@@ -1,0 +1,118 @@
+{
+  "name": "platform_identity_providers_new",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/identity_providers/new",
+  "title": "Add sign-in provider | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_identity_providers",
+  "flow": "platform_identity_providers_new",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_identity_providers_admin_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform_identity_provider_strategy",
+      "title": "Provider",
+      "bullets": [
+        "Choose from the providers the engine supports."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 197.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 235.390625,
+        "center_x": 250.0,
+        "center_y": 216.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 197.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 235.390625,
+        "center_x": 250.0,
+        "center_y": 216.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 255.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 1021.609375
+      }
+    },
+    {
+      "selector": "#platform_identity_provider_client_secret",
+      "title": "Client secret",
+      "bullets": [
+        "Write-only. Leave blank on edit to keep the current secret."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 369.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 407.390625,
+        "center_x": 250.0,
+        "center_y": 388.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 369.390625,
+        "width": 476.0,
+        "height": 38.0,
+        "right": 488.0,
+        "bottom": 407.390625,
+        "center_x": 250.0,
+        "center_y": 388.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 427.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 849.609375
+      }
+    },
+    {
+      "selector": "#platform-identity-provider-submit-btn",
+      "title": "Add provider",
+      "bullets": [
+        "Saves the configuration for this platform."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 599.390625,
+        "width": 128.734375,
+        "height": 38.0,
+        "right": 140.734375,
+        "bottom": 637.390625,
+        "center_x": 76.3671875,
+        "center_y": 618.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 599.390625,
+        "width": 128.734375,
+        "height": 38.0,
+        "right": 140.734375,
+        "bottom": 637.390625,
+        "center_x": 76.3671875,
+        "center_y": 618.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 24,
+        "y": 657.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 619.609375
+      }
+    }
+  ]
+}

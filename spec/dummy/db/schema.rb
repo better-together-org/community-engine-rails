@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_150100) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1911,6 +1911,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_150100) do
     t.index ["platform_id"], name: "index_better_together_platform_domains_on_platform_id"
   end
 
+  create_table "better_together_platform_identity_providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id"
+    t.uuid "provider_platform_id"
+    t.string "strategy", null: false
+    t.boolean "enabled", default: true, null: false
+    t.string "client_id"
+    t.text "client_secret"
+    t.string "scopes"
+    t.jsonb "options", default: {}, null: false
+    t.integer "position", default: 0, null: false
+    t.index ["platform_id", "provider_platform_id"], name: "idx_bt_platform_idps_unique", unique: true
+    t.index ["platform_id"], name: "idx_bt_platform_idps_on_platform_id"
+    t.index ["provider_platform_id"], name: "idx_bt_platform_idps_on_provider_platform_id"
+  end
+
   create_table "better_together_platform_invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2954,6 +2972,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_150100) do
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "source_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "target_platform_id"
   add_foreign_key "better_together_platform_domains", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_identity_providers", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_identity_providers", "better_together_platforms", column: "provider_platform_id"
   add_foreign_key "better_together_platform_invitations", "better_together_people", column: "invitee_id"
   add_foreign_key "better_together_platform_invitations", "better_together_people", column: "inviter_id"
   add_foreign_key "better_together_platform_invitations", "better_together_platforms", column: "invitable_id"

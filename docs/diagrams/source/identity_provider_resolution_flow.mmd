@@ -1,0 +1,12 @@
+flowchart TD
+  Catalog["BetterTogether.register_identity_provider<br/>(strategy catalog, names known at boot)"] --> Devise["Devise config.omniauth per catalog key"]
+  Request["Sign-in request /users/auth/:strategy"] --> Setup["OmniauthSetup (OmniAuth setup: hook)"]
+  Setup --> Domain["PlatformDomain.resolve(request host)"]
+  Domain --> Own{"Row for this platform?"}
+  Own -- yes --> Use["Use PlatformIdentityProvider credentials"]
+  Own -- no --> HostRow{"Row for host platform?"}
+  HostRow -- yes --> Use
+  HostRow -- no --> Env["Fall back to ENV (e.g. GITHUB_CLIENT_ID)"]
+  Use --> Strategy["OmniAuth strategy options set per request"]
+  Env --> Strategy
+  Row["PlatformIdentityProvider<br/>platform_id, provider_platform_id (external Platform), strategy, client_id, client_secret (encrypted)"] -.-> Own

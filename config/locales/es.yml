@@ -3360,6 +3360,52 @@ es:
         subtitle: Agregar un dominio para %{platform_name}
         title: Nuevo dominio
       updated: El dominio se actualizó correctamente.
+    platform_identity_providers:
+      create:
+        created: Se agregó el proveedor de inicio de sesión.
+      destroy:
+        destroyed: Se eliminó el proveedor de inicio de sesión.
+      edit:
+        subtitle: Proveedores OAuth de inicio de sesión para %{platform_name}
+        title: Editar %{provider}
+      form:
+        cancel: Cancelar
+        client_id_label: ID de cliente
+        client_secret_hint: Se guarda cifrado y no se vuelve a mostrar.
+        client_secret_keep: Déjelo en blanco para conservar el secreto actual
+        client_secret_label: Secreto de cliente
+        create_btn: Agregar proveedor
+        enabled_label: Habilitado
+        scopes_hint: Déjelo en blanco para usar el valor predeterminado del proveedor.
+        scopes_label: Ámbitos
+        strategy_label: Proveedor
+        update_btn: Actualizar proveedor
+      index:
+        back_to_platform: Volver a la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este proveedor de inicio de sesión?"
+        disabled_label: Deshabilitado
+        edit_btn: Editar
+        enabled_label: Habilitado
+        env_note: Los proveedores sin una fila aquí usan las variables de entorno
+          del servidor (por ejemplo GITHUB_CLIENT_ID).
+        header_actions: Acciones
+        header_client_id: ID de cliente
+        header_provider: Proveedor
+        header_secret: Secreto de cliente
+        header_status: Estado
+        new_btn: Agregar proveedor
+        none: No hay proveedores de inicio de sesión configurados para esta plataforma.
+        secret_missing: Falta
+        secret_set: Definido
+        subtitle: Proveedores OAuth de inicio de sesión para %{platform_name}
+        table_aria: Proveedores de inicio de sesión
+        title: Proveedores de inicio de sesión
+      new:
+        subtitle: Proveedores OAuth de inicio de sesión para %{platform_name}
+        title: Agregar proveedor de inicio de sesión
+      update:
+        updated: Se actualizó el proveedor de inicio de sesión.
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.
@@ -5074,6 +5120,7 @@ es:
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
+      invalid_characters: no debe contener espacios ni caracteres de control
       invalid_url: no es una URL válida
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
@@ -5628,6 +5675,7 @@ es:
           sin depender solo del conocimiento de la URL.
         feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
+        identity_providers: Proveedores de inicio de sesión
         platform_domains: Dominios
         quota_grants: Concesiones de cuota
         robot_management: Gestionar robots LLM

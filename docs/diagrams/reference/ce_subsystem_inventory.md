@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-09T23:41:19Z`.
+Generated from live Rails reflections at `2026-11-10T20:10:19Z`.
 
 ## Identity, access, and memberships
 
@@ -682,6 +682,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PlatformConnectionStatusNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | PlatformConnectionSubmittedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | PlatformConnectionSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
+| PlatformIdentityProvider | `better_together_platform_identity_providers` | `client_id` (string FK)<br>`platform_id` (uuid FK)<br>`provider_platform_id` (uuid FK)<br>`scopes` (string)<br>`strategy` (string)<br>`client_secret` (text) | PresenceValidator: strategy<br>InclusionValidator: strategy (in=dynamic)<br>UniquenessValidator: provider_platform_id (scope=:platform_id) | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`provider_platform` -> `Platform` (platform_network) |
 | Quota | `better_together_quotas` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`enforcement_mode` (string)<br>`owner_type` (string)<br>`period` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>UniquenessValidator: owner_id (scope=[:owner_type, :quota_type]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaBalance | `better_together_quota_balances` | `platform_id` (uuid FK)<br>`quota_id` (uuid FK)<br>`period_key` (string)<br>`consumed` (integer)<br>`reserved` (integer)<br>`recalculated_at` (datetime) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: period_key<br>UniquenessValidator: quota_id (scope=:period_key)<br>NumericalityValidator: consumed, reserved (only_integer=true) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
 | QuotaGrant | `better_together_quota_grants` | `granted_by_id` (uuid FK)<br>`owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`granted_by_type` (string)<br>`owner_type` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>InclusionValidator: granted_by_type (allow_nil=true, in=["BetterTogether::Person", "BetterTogether::Robot"]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
@@ -805,6 +806,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | NewPlatformSetupStepsController | `BetterTogether::WizardStepsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
 | OmniauthCallbacksController | `Devise::OmniauthCallbacksController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | PlatformDomainsController | `BetterTogether::ApplicationController` | `PlatformDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| PlatformIdentityProvidersController | `BetterTogether::ApplicationController` | `PlatformIdentityProvider` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | QuotaGrantsController | `BetterTogether::ApplicationController` | `QuotaGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | ReportFollowupsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | ResourceController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
@@ -885,6 +887,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `PlatformConnectionStatusNotifier::Notification`: `recipient` (belongs_to)
 - `PlatformConnectionSubmittedNotifier`: `record` (belongs_to)
 - `PlatformConnectionSubmittedNotifier::Notification`: `recipient` (belongs_to)
+- `PlatformIdentityProvider`: `seeds` (has_many)
 - `Quota`: `owner` (belongs_to), `seeds` (has_many)
 - `QuotaBalance`: `seeds` (has_many)
 - `QuotaGrant`: `owner` (belongs_to), `granted_by` (belongs_to), `seeds` (has_many)

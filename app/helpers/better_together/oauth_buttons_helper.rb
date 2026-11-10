@@ -3,14 +3,13 @@
 module BetterTogether
   # Helper methods for rendering OAuth provider sign-in buttons with proper branding
   module OauthButtonsHelper
-    OAUTH_PROVIDER_ENV_VARS = {
-      github: %w[GITHUB_CLIENT_ID GITHUB_CLIENT_SECRET]
-    }.freeze
-
     # Returns the appropriate Bootstrap button class for an OAuth provider
     # @param provider [Symbol, String] The OAuth provider name
     # @return [String] Bootstrap button classes
     def oauth_provider_button_class(provider) # rubocop:disable Metrics/MethodLength
+      registered = BetterTogether::IdentityProviders.find(provider)&.button_class
+      return registered if registered
+
       case provider.to_s.downcase
       when 'github', 'twitter', 'x'
         'btn btn-dark'
@@ -28,7 +27,10 @@ module BetterTogether
     # Returns the Font Awesome icon class for an OAuth provider
     # @param provider [Symbol, String] The OAuth provider name
     # @return [String] Font Awesome icon classes
-    def oauth_provider_icon_class(provider) # rubocop:disable Metrics/MethodLength
+    def oauth_provider_icon_class(provider) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+      registered = BetterTogether::IdentityProviders.find(provider)&.icon_class
+      return registered if registered
+
       case provider.to_s.downcase
       when 'github'
         'fa-brands fa-github'
@@ -54,8 +56,9 @@ module BetterTogether
     private
 
     def oauth_provider_credentials_present?(provider)
-      required_env_vars = OAUTH_PROVIDER_ENV_VARS.fetch(provider.to_sym, [])
-      required_env_vars.all? { |env_var| ENV.fetch(env_var, nil).present? }
+      return false unless BetterTogether::IdentityProviders.find(provider)
+
+      BetterTogether::IdentityProviderCredentials.configured?(provider, platform: Current.platform)
     end
   end
 end

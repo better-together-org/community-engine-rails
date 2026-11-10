@@ -38,7 +38,7 @@ module BetterTogether
     after_destroy :clear_notification_caches
 
     validates :provider, presence: true, inclusion: {
-      in: PROVIDERS.keys.map(&:to_s)
+      in: (PROVIDERS.keys + BetterTogether::IdentityProviders.keys).map(&:to_s).uniq
     }
     validates :uid, presence: true, uniqueness: {
       scope: :provider
@@ -186,6 +186,9 @@ module BetterTogether
     # rubocop:enable Metrics/MethodLength
 
     private_class_method def self.platform_url_for_provider(identifier)
+      registered = BetterTogether::IdentityProviders.registry.values.find { |p| p.platform_identifier == identifier }
+      return registered.platform_url if registered
+
       {
         'github' => 'https://github.com',
         'google' => 'https://accounts.google.com',

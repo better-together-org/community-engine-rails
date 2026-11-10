@@ -527,6 +527,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
               resources :platform_domains, except: %i[show]
+              resources :platform_identity_providers, except: %i[show], path: 'identity_providers'
             end
 
             resources :users
