@@ -53,6 +53,7 @@ PATH
       octokit
       omniauth (>= 2.2.0)
       omniauth-github (~> 2.0.0)
+      omniauth-google-oauth2 (~> 1.2)
       omniauth-rails_csrf_protection
       pg_search
       premailer-rails
@@ -587,6 +588,11 @@ GEM
       rack (>= 2.2.8)
       rack-protection (>= 2.2.0)
     omniauth-github (2.0.1)
+      omniauth (~> 2.0)
+      omniauth-oauth2 (~> 1.8)
+    omniauth-google-oauth2 (1.2.3)
+      jwt (>= 2.9.2, < 4)
+      oauth2 (~> 2.0)
       omniauth (~> 2.0)
       omniauth-oauth2 (~> 1.8)
     omniauth-oauth2 (1.10.0)

@@ -3132,6 +3132,8 @@ en:
           disconnect it first if you want to connect a different account.
         email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs
           to a different user. Please sign out and sign in with the correct account.'
+        email_missing: Email not provided by %{provider}. Please make an email address
+          available to this application in your %{provider} account settings.
         failure: Failed to connect %{provider} account. Please try again.
         success: Successfully connected %{provider} account.
         unverified_email_collision: An account with this email already exists, and

@@ -316,7 +316,8 @@ module BetterTogether
         email_from_auth = auth.dig('info', 'email') || auth.dig(:info, :email)
         if email_from_auth.blank?
           raise ArgumentError,
-                'Email not provided by OAuth provider. Please make your email public in your GitHub settings.'
+                I18n.t('better_together.person_platform_integrations.create.email_missing',
+                       provider: auth.provider.to_s.titleize)
         end
 
         self.email = email_from_auth
