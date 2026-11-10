@@ -59,8 +59,8 @@ RSpec.describe 'Documentation screenshots for the order invoice and receipt down
 
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_order_documents_language', device: :both, metadata: metadata.merge(flow: 'billing_order_documents_language'),
-                                          callouts: [{ id: 'billing_order_documents_language', selector: target, title: 'Documents in another language',
-                                                       avoid_container_selector: 'main',
+                                          callouts: [{ id: 'billing_order_documents_language', selector: target,
+                                                       title: 'Documents in another language', avoid_container_selector: 'main',
                                                        bullets: ['Make the invoice and receipt again in the buyer\'s language.'] }]
     ) do
       capybara_login_as_platform_manager
