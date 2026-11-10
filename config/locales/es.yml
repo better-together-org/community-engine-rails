@@ -1718,6 +1718,7 @@ es:
           Revise su texto y póngalo en activo.
         done: 'Hecho:'
         not_ready: No está listo
+        plant_agreements: Plantar los acuerdos de compra en borrador
         ready: Listo
         title: "¿Listo para vender?"
         todo: 'Pendiente:'

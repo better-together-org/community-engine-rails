@@ -1719,6 +1719,7 @@ en:
           text and set it to active.
         done: 'Done:'
         not_ready: Not ready
+        plant_agreements: Plant the draft purchase agreements
         ready: Ready
         title: Ready to sell?
         todo: 'Still to do:'

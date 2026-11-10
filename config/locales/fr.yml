@@ -1754,6 +1754,7 @@ fr:
           son texte et passez-la à active.
         done: 'Fait :'
         not_ready: Pas prêt
+        plant_agreements: Planter les accords d'achat en brouillon
         ready: Prêt
         title: Prêt à vendre ?
         todo: 'Reste à faire :'
