@@ -112,7 +112,7 @@ One value object, `Orders::Summary` (built `for_order` or, at checkout, `for_pre
 
 | Place | What the reader sees |
 |-------|----------------------|
-| Order and sale details | The line table, with a Taxed or Not taxed marker on each line when the order carries tax (an untaxed order keeps three columns). Under it, right-aligned: subtotal, one row per tax (name, rate, the amount it applies to, the tax, "included" when inside the price), the total, then the registration numbers by tax. |
+| Order and sale details | The line table, with a Tax column that says Taxed on a taxed line and is empty on one without tax, when the order carries tax (an untaxed order keeps three columns). Under it, right-aligned: subtotal, one row per tax (name, rate, the amount it applies to, the tax, "included" when inside the price), the total, then the registration numbers by tax. |
 | Checkout | The compact summary (rows and registration numbers) for the chosen billing address, from the same calculator as placing the order (`Checkout::TaxPreview`). Without an address, a note that tax is worked out once one is chosen. |
 | Offline payment instructions | The compact summary for a taxed order, above how to pay. |
 | Notice emails (HTML and text) | The full summary, registration numbers included, and never payment instructions or payee details. |

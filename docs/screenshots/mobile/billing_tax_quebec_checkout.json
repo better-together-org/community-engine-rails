@@ -1,7 +1,7 @@
 {
   "name": "billing_tax_quebec_checkout",
   "device": "mobile",
-  "url": "/en/billing/checkout/new?plan_id=4326d977-be81-45f5-915d-7c0fcd8cea31",
+  "url": "/en/billing/checkout/new?plan_id=9602b814-f7ef-4897-bdc3-d4da14a97272",
   "title": "Get Annual plan | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -29,19 +29,19 @@
         "x": 0.0,
         "y": 66.0,
         "width": 500.0,
-        "height": 893.0,
+        "height": 801.0,
         "right": 500.0,
-        "bottom": 959.0,
+        "bottom": 867.0,
         "center_x": 250.0,
-        "center_y": 512.5
+        "center_y": 466.5
       },
       "placement": {
         "side": "below",
         "x": 115.0,
-        "y": 979.0,
+        "y": 887.0,
         "width": 270.0,
         "height": 158,
-        "score": 298.0
+        "score": 390.0
       }
     }
   ]

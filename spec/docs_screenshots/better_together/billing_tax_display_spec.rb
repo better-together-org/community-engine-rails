@@ -60,6 +60,31 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
                 line_items: [{ purchasable: membership }, { purchasable: book }])
   end
 
+  # Nothing runs off the screen: the page does not scroll sideways and no part of the summary reaches past the edge.
+  def expect_fits_viewport(selector) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    result = page.evaluate_script(<<~JS)
+      (function () {
+        var edge = document.documentElement.clientWidth + 0.5;
+        var wide = Array.prototype.filter.call(document.querySelectorAll(#{selector.to_json} + ', ' + #{selector.to_json} + ' *'), function (el) {
+          return el.getBoundingClientRect().right > edge;
+        }).map(function (el) { return el.tagName + (el.id ? '#' + el.id : '') + ' ' + Math.round(el.getBoundingClientRect().right); });
+        var page = Array.prototype.filter.call(document.querySelectorAll('body *'), function (el) {
+          return el.getBoundingClientRect().right > edge;
+        }).slice(0, 6).map(function (el) { return el.tagName + '#' + el.id + '.' + String(el.className).slice(0, 40) + ' ' + Math.round(el.getBoundingClientRect().right); });
+        return { page: page, scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth, width: window.innerWidth, wide: wide };
+      })()
+    JS
+    expect(result['scroll']).to be <= result['client'],
+                                "page scrolls sideways at #{result['width']}px (#{result['scroll']} > #{result['client']}): " \
+                                "#{result['page'].join(' | ')}"
+    expect(result['wide']).to be_empty, "past the right edge at #{result['width']}px: #{result['wide'].first(5).join(', ')}"
+  end
+
+  def at_width(width)
+    page.driver.browser.execute_cdp('Emulation.setDeviceMetricsOverride', width:, height: 1400, deviceScaleFactor: 1, mobile: true)
+    expect(page.evaluate_script('window.innerWidth')).to eq(width)
+  end
+
   def capture(name, target, title, bullet, path)
     BetterTogether::CapybaraScreenshotEngine.capture(
       name, device: :both, metadata: metadata.merge(flow: name),
@@ -69,6 +94,7 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
       visit path
       scroll_to(find(target), align: :center)
       expect(page).to have_css(target)
+      expect_fits_viewport(target)
     end
   end
 
@@ -95,6 +121,7 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
       visit "/#{I18n.default_locale}/billing/orders"
       page.execute_script('document.open(); document.write(arguments[0]); document.close();', html)
       expect(page).to have_css('#billing-summary-email')
+      expect_fits_viewport('#billing-summary-email')
     end
   end
 
@@ -107,6 +134,41 @@ RSpec.describe 'Documentation screenshots for the order summary with tax', # rub
     create_billing_address_for(manager, region:, settlement_name: region)
     capture("billing_tax_#{prefix}_checkout", '#billing-summary-checkout', 'Tax before paying',
             'The same rows, for the chosen billing address.', "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{membership.id}")
+  end
+
+  # Phone widths, with long names and long numbers: it wraps, nothing is clipped, the page does not scroll sideways.
+  def expect_surfaces_fit(order, widths) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    BetterTogether::CapybaraScreenshotEngine.send(:register_drivers)
+    Capybara.using_driver(:selenium_chrome_headless_docs_mobile) do
+      Capybara.reset_sessions!
+      capybara_login_as_platform_manager
+      order_selectors = ['#billing-summary-order', "#billing-summary-offline-#{order.offline_payments.first.id}"]
+      surfaces = { "/#{I18n.default_locale}/billing/orders/#{order.id}" => order_selectors,
+                   "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{membership.id}" => ['#billing-summary-checkout'] }
+      widths.each do |width|
+        surfaces.each do |path, selectors|
+          visit path
+          at_width(width)
+          selectors.each { |selector| expect_fits_viewport(selector.start_with?('#') ? selector : "##{selector}") }
+        end
+        page.execute_script('document.open(); document.write(arguments[0]); document.close();', notice_html(order))
+        at_width(width)
+        expect_fits_viewport('#billing-summary-email')
+        expect(page.evaluate_script('document.querySelector("#billing-summary-email-registrations").getBoundingClientRect().right'))
+          .to be <= width
+      end
+    end
+  end
+
+  it 'fits a phone at 320 and 390 wide, with long names, for Quebec and British Columbia' do
+    long = create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'CAD', amount_cents: 99_900,
+                                                            name: 'Community-membership-with-extended-support-and-training-2027-2028-edition',
+                                                            accepted_payment_methods: %w[cash])
+    registrations_for('QC', 'QST', 0.09975, '1234567890TQ0001')
+    order = place_order(buyer: manager, payment_method: 'cash', tax_address: { country_iso: 'CA', region_code: 'QC' },
+                        line_items: [{ purchasable: long }, { purchasable: book }])
+    create_billing_address_for(manager, region: 'QC', settlement_name: 'QC')
+    expect_surfaces_fit(order, [320, 390])
   end
 
   it 'captures a Quebec order: GST and QST, a taxed and a zero-rated line' do

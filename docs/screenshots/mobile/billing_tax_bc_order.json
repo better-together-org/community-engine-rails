@@ -1,8 +1,8 @@
 {
   "name": "billing_tax_bc_order",
   "device": "mobile",
-  "url": "/en/billing/orders/c0234168-0716-47e8-a198-e7316ceef5cd",
-  "title": "Order BT-UCPI1Z1W | Test Host Community",
+  "url": "/en/billing/orders/a185f5b7-6a6f-4611-82e2-d77130a2ff97",
+  "title": "Order BT-NZFE1PPB | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_tax",
@@ -19,11 +19,11 @@
         "x": 13.0,
         "y": 445.390625,
         "width": 459.0,
-        "height": 366.1875,
+        "height": 366.0,
         "right": 472.0,
-        "bottom": 811.578125,
+        "bottom": 811.390625,
         "center_x": 242.5,
-        "center_y": 628.484375
+        "center_y": 628.390625
       },
       "avoid": {
         "x": 0.0,

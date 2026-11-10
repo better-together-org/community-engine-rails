@@ -1375,7 +1375,6 @@ fr:
           de paiement, puis réessayez.
       order_summary:
         included: incluse dans le prix
-        not_taxed: Non taxé
         registration: "%{labels}: %{number}"
         registrations: Numéros d'inscription
         tax_on: "%{label} (%{rate}) sur %{base}"

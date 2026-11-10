@@ -26,10 +26,12 @@ module BetterTogether
 
     def column_width(pairs, which) = pairs.map { |pair| pair.public_send(which).length }.max.to_i
 
-    # [text, amount]: the item, the tax marker when the order has tax, the quantity; then its amount.
+    # [text, amount]: the item, the tax marker when the order has tax (blank for a line without tax, so the
+    # columns still line up), the quantity; then its amount.
     def summary_items(summary, money)
+      taxed = t('better_together.billing.order_summary.taxed')
       summary.lines.map do |line|
-        marker = t(line.taxed ? 'better_together.billing.order_summary.taxed' : 'better_together.billing.order_summary.not_taxed')
+        marker = line.taxed ? taxed : ' ' * taxed.length
         text = [line.description, (marker if summary.taxed?), "x#{line.quantity}"].compact.join(GAP)
         [text, money.call(line.amount_cents)]
       end

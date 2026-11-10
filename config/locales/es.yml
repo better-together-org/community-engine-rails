@@ -1346,7 +1346,6 @@ es:
           e inténtelo de nuevo.
       order_summary:
         included: incluido en el precio
-        not_taxed: Sin impuesto
         registration: "%{labels}: %{number}"
         registrations: Números de registro
         tax_on: "%{label} (%{rate}) sobre %{base}"

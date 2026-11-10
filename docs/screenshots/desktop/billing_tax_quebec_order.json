@@ -1,8 +1,8 @@
 {
   "name": "billing_tax_quebec_order",
   "device": "desktop",
-  "url": "/en/billing/orders/af133b82-5128-4528-9535-6237b782a60b",
-  "title": "Order BT-TXF9BCIP | Test Host Community",
+  "url": "/en/billing/orders/4f9f5e33-6c15-4c23-9dfc-288837d2a754",
+  "title": "Order BT-S2VXQMRF | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_tax",
@@ -19,11 +19,11 @@
         "x": 65.5,
         "y": 545.0,
         "width": 1294.0,
-        "height": 366.1875,
+        "height": 366.0,
         "right": 1359.5,
-        "bottom": 911.1875,
+        "bottom": 911.0,
         "center_x": 712.5,
-        "center_y": 728.09375
+        "center_y": 728.0
       },
       "avoid": {
         "x": 0.0,

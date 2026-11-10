@@ -7,50 +7,50 @@
   <% rows = capture do %>
     <% if summary.taxed? %>
       <tr id="billing-summary-<%= scope %>-subtotal">
-        <th scope="row" colspan="<%= span %>" class="fw-normal text-end"><%= t('better_together.billing.orders.field_subtotal') %></th>
-        <td class="text-end"><%= billing_amount(summary.subtotal_cents, summary.currency) %></td>
+        <th scope="row" colspan="<%= span %>" class="fw-normal text-end text-break"><%= t('better_together.billing.orders.field_subtotal') %></th>
+        <td class="text-end text-nowrap"><%= billing_amount(summary.subtotal_cents, summary.currency) %></td>
       </tr>
       <% summary.tax_rows.each_with_index do |row, index| %>
         <tr id="billing-summary-<%= scope %>-tax-<%= index %>" class="billing-tax-row">
-          <th scope="row" colspan="<%= span %>" class="fw-normal text-end">
+          <th scope="row" colspan="<%= span %>" class="fw-normal text-end text-break">
             <%= t('better_together.billing.order_summary.tax_on', label: row.label, rate: row.percent, base: billing_amount(row.base_cents, summary.currency)) %>
             <% if row.included %><span class="d-block text-body-secondary small"><%= t('better_together.billing.order_summary.included') %></span><% end %>
           </th>
-          <td class="text-end"><%= billing_amount(row.amount_cents, summary.currency) %></td>
+          <td class="text-end text-nowrap"><%= billing_amount(row.amount_cents, summary.currency) %></td>
         </tr>
       <% end %>
     <% end %>
     <tr id="billing-summary-<%= scope %>-total" class="fw-bold">
-      <th scope="row" colspan="<%= span %>" class="text-end"><%= t('better_together.billing.orders.field_total') %></th>
-      <td class="text-end"><%= billing_amount(summary.total_cents, summary.currency) %></td>
+      <th scope="row" colspan="<%= span %>" class="text-end text-break"><%= t('better_together.billing.orders.field_total') %></th>
+      <td class="text-end text-nowrap"><%= billing_amount(summary.total_cents, summary.currency) %></td>
     </tr>
 
   <% end %>
 <div id="billing-summary-<%= scope %>" class="billing-order-summary">
   <% unless compact %>
-    <div class="table-responsive">
-      <table id="<%= prefix %>-line-items" class="table mb-0">
+    <%# No horizontal scroll: words in the labels and descriptions break, amounts never do, so it wraps at any width. %>
+    <div class="mw-100">
+      <table id="<%= prefix %>-line-items" class="table mb-0 text-break">
         <thead class="table-light">
           <tr>
             <th scope="col"><%= t('better_together.billing.orders.field_item') %></th>
             <% if summary.taxed? %><th scope="col"><%= t('better_together.billing.orders.field_tax') %></th><% end %>
             <th scope="col"><%= t('better_together.billing.orders.field_quantity') %></th>
-            <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_amount') %></th>
+            <th scope="col" class="text-end text-nowrap"><%= t('better_together.billing.orders.field_amount') %></th>
           </tr>
         </thead>
         <tbody>
           <% summary.lines.each_with_index do |line, index| %>
             <tr id="<%= prefix %>-line-<%= index %>">
-              <td><%= line.description %></td>
+              <td class="text-break"><%= line.description %></td>
               <% if summary.taxed? %>
                 <td id="<%= prefix %>-line-<%= index %>-tax">
-                  <span class="badge <%= line.taxed ? 'text-bg-secondary' : 'text-bg-light border' %>">
-                    <%= t(line.taxed ? 'better_together.billing.order_summary.taxed' : 'better_together.billing.order_summary.not_taxed') %>
-                  </span>
+                  <%# Only a taxed line says so; the cell of a line without tax stays empty. %>
+                  <% if line.taxed %><span class="badge text-wrap text-bg-secondary"><%= t('better_together.billing.order_summary.taxed') %></span><% end %>
                 </td>
               <% end %>
               <td><%= line.quantity %></td>
-              <td class="text-end"><%= billing_amount(line.amount_cents, summary.currency) %></td>
+              <td class="text-end text-nowrap"><%= billing_amount(line.amount_cents, summary.currency) %></td>
             </tr>
           <% end %>
         </tbody>
@@ -60,12 +60,12 @@
       </table>
     </div>
   <% else %>
-    <table id="billing-summary-<%= scope %>-rows" class="table table-borderless table-sm w-auto ms-auto mb-0 billing-summary-rows">
+    <table id="billing-summary-<%= scope %>-rows" class="table table-borderless table-sm w-auto mw-100 ms-auto mb-0 billing-summary-rows">
       <tbody><%= rows %></tbody>
     </table>
   <% end %>
   <% if summary.registrations.any? %>
-    <div id="billing-summary-<%= scope %>-registrations" class="text-end small text-body-secondary mt-2 <%= 'me-3 pb-2' unless compact %>">
+    <div id="billing-summary-<%= scope %>-registrations" class="text-end small text-body-secondary text-break mt-2 <%= 'px-2 pb-2' unless compact %>">
       <span class="d-block"><%= t('better_together.billing.order_summary.registrations') %></span>
       <% summary.registrations.each_with_index do |registration, index| %>
         <span id="billing-summary-<%= scope %>-registration-<%= index %>" class="d-block">

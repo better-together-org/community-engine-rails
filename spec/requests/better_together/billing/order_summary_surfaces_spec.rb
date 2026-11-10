@@ -45,6 +45,25 @@ RSpec.describe 'Billing order summary across surfaces' do # rubocop:disable RSpe
     expect(table.at_css('tfoot tr th')['colspan']).to eq('3')
   end
 
+  it 'says Taxed only on a taxed line: the Tax cell of a line without tax is empty, on every surface', :aggregate_failures do
+    zero = create(:better_together_billing_tax_category, platform: host_platform, identifier: 'zero_rated', name: 'Zero rated', taxable: false)
+    book = create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: plan.currency,
+                                                            amount_cents: 1500, name: 'Printed guide', tax_category: zero)
+    enable_offline('cash')
+    mixed = place_order(payment_method: 'cash', tax_address: quebec_address, line_items: [{ purchasable: plan }, { purchasable: book }])
+    sign_in buyer_user
+    get "/#{locale}/billing/orders/#{mixed.id}"
+    notifier = BetterTogether::Billing::Notifier.new(record: mixed, params: { kind: 'order_paid', audience: :buyer })
+    mail = BetterTogether::BillingMailer.with(recipient: buyer, notifier:).notification
+    page = Nokogiri::HTML(response.body)
+    email = Nokogiri::HTML(mail.html_part.body.decoded)
+
+    expect(page.css('#billing-order-line-0-tax, #billing-order-line-1-tax').map { |td| td.text.squish }).to eq(['Taxed', ''])
+    expect(%w[#billing-email-line-0 #billing-email-line-1].map { |row| email.css("#{row} td")[1].text.squish }).to eq(['Taxed', ''])
+    expect(text_of(response.body) + mail.html_part.body.decoded + mail.text_part.body.decoded).not_to match(/Not taxed/i)
+    expect(mail.text_part.body.decoded.lines.grep(/Printed guide/).first).not_to include('Taxed')
+  end
+
   it 'has tax rows that sum to the tax and a total that is the subtotal plus the added tax', :aggregate_failures do
     expect(summary.tax_rows.sum(&:amount_cents)).to eq(order.tax_cents)
     expect(summary.subtotal_cents + summary.added_tax_cents).to eq(order.total_cents)

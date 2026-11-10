@@ -16,32 +16,32 @@
         "The email carries the full summary, never payment details."
       ],
       "target": {
-        "x": 41.0,
-        "y": 254.0,
-        "width": 459.0,
+        "x": 25.0,
+        "y": 264.0,
+        "width": 450.0,
         "height": 231.0,
-        "right": 500.0,
-        "bottom": 485.0,
-        "center_x": 270.5,
-        "center_y": 369.5
+        "right": 475.0,
+        "bottom": 495.0,
+        "center_x": 250.0,
+        "center_y": 379.5
       },
       "avoid": {
         "x": 8.0,
         "y": 8.0,
         "width": 484.0,
-        "height": 751.0,
+        "height": 753.0,
         "right": 492.0,
-        "bottom": 759.0,
+        "bottom": 761.0,
         "center_x": 250.0,
-        "center_y": 383.5
+        "center_y": 384.5
       },
       "placement": {
         "side": "below",
         "x": 115.0,
-        "y": 779.0,
+        "y": 781.0,
         "width": 270.0,
         "height": 184,
-        "score": 498.0
+        "score": 496.0
       }
     }
   ]

@@ -1329,7 +1329,6 @@ uk:
           ще раз.
       order_summary:
         included: включено у ціну
-        not_taxed: Не оподатковується
         registration: "%{labels}: %{number}"
         registrations: Реєстраційні номери
         tax_on: "%{label} (%{rate}) від %{base}"

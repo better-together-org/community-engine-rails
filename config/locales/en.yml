@@ -1355,7 +1355,6 @@ en:
           paying, and try again.
       order_summary:
         included: included in the price
-        not_taxed: Not taxed
         registration: "%{labels}: %{number}"
         registrations: Registration numbers
         tax_on: "%{label} (%{rate}) on %{base}"
