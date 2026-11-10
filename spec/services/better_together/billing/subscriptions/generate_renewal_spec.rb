@@ -26,7 +26,8 @@ RSpec.describe BetterTogether::Billing::Subscriptions::GenerateRenewal do
     create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
     zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
     create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
-    BetterTogether::Billing::Order.where(buyer:).update_all(tax_country_iso: 'CA', tax_region_code: 'NL') # rubocop:disable Rails/SkipsModelValidations
+    term
+    BetterTogether::Billing::Order.update_all(tax_country_iso: 'CA', tax_region_code: 'NL') # rubocop:disable Rails/SkipsModelValidations
 
     order = generate_renewal(term, at: inside_lead).order
 
