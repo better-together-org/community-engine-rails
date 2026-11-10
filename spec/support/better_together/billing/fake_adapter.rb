@@ -98,7 +98,7 @@ module BetterTogether
       def create_checkout_session(context:, **args)
         @calls << [:create_checkout_session, context, args]
         CheckoutSession.new(url: "https://fake.test/checkout/#{args[:idempotency_key]}", reference: "cs_#{args[:idempotency_key]}",
-                            expires_at: 24.hours.from_now)
+                            expires_at: 24.hours.from_now, tax_cents: args[:tax_cents])
       end
 
       def sync_checkout_session(context:, **args)

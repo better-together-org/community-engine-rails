@@ -21,6 +21,14 @@ RSpec.describe 'Starting and returning from a processor checkout' do # rubocop:d
                                    metadata: { bt_order_id: order.id, bt_payment_id: payment.id, bt_platform_id: host_platform.id })
     end
 
+    it 'gives the processor the tax core worked out', :aggregate_failures do
+      order.update_columns(tax_cents: 300, included_tax_cents: 100, prices_include_tax: false)
+      start
+
+      call = adapter.calls.find { |entry| entry.first == :create_checkout_session }
+      expect(call.last).to include(tax_cents: 200, included_tax_cents: 100, prices_include_tax: false)
+    end
+
     it 'keeps the session on the payment, so the buyer\'s return can be checked against it' do
       start
 

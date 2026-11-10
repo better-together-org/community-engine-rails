@@ -57,9 +57,15 @@ module BetterTogether
 
         def start_session
           session = adapter.create_checkout_session(context:, order:, payment:, success_url:, cancel_url:,
-                                                    idempotency_key: "checkout:#{payment.id}", metadata:)
+                                                    idempotency_key: "checkout:#{payment.id}", metadata:, **tax_input)
           payment.update!(processor_session_reference: session.reference)
           https(session.url)
+        end
+
+        # The tax core worked out for the order, so the processor shows and charges that amount instead of its own.
+        def tax_input
+          { tax_cents: order.added_tax_cents, included_tax_cents: order.included_tax_cents.to_i,
+            prices_include_tax: order.prices_include_tax }
         end
 
         # What the processor carries back to us on the session, its payment intent and its subscription.
