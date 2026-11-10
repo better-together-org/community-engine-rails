@@ -56,16 +56,36 @@ module BetterTogether
         end
 
         def start_session
-          session = adapter.create_checkout_session(context:, order:, payment:, success_url:, cancel_url:,
-                                                    idempotency_key: "checkout:#{payment.id}", metadata:, **tax_input)
+          session = adapter.create_checkout_session(**session_arguments)
           payment.update!(processor_session_reference: session.reference)
+          flag_session_tax(session)
           https(session.url)
         end
 
+        def session_arguments
+          { context:, order:, payment:, success_url:, cancel_url:, idempotency_key: "checkout:#{payment.id}", metadata:, **tax_input }
+        end
+
         # The tax core worked out for the order, so the processor shows and charges that amount instead of its own.
+        # An adapter written before the tax inputs existed does not name them, so it is not handed keywords it would reject;
+        # it charges its own amount and Payments::Succeed flags any difference.
         def tax_input
+          return {} unless adapter_takes_tax?
+
           { tax_cents: order.added_tax_cents, included_tax_cents: order.included_tax_cents.to_i,
             prices_include_tax: order.prices_include_tax }
+        end
+
+        def adapter_takes_tax?
+          params = adapter.method(:create_checkout_session).parameters
+          params.any? { |kind, name| kind == :keyrest || (%i[key keyreq].include?(kind) && name == :tax_cents) }
+        end
+
+        # A processor that says how much tax it will charge, and says something other than what core worked out.
+        def flag_session_tax(session)
+          return if session.tax_cents.nil? || session.tax_cents == order.added_tax_cents
+
+          Notifications.deliver('payment_amount_mismatch', subject: payment, dedupe_key: "session-tax-mismatch:#{payment.id}")
         end
 
         # What the processor carries back to us on the session, its payment intent and its subscription.

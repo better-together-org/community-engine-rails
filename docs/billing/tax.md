@@ -100,7 +100,7 @@ The CRA (Excise Tax Act, sections 211.21 and 211.25, in effect July 1, 2021) mak
 
 ## Processors and renewals
 
-A processor checkout session is given the order's tax (`tax_cents`, `included_tax_cents`, `prices_include_tax`) and may report the `tax_cents` it will charge. `Payments::Succeed` records the amount actually charged and, if it differs from the amount core asked for, tells the operators once (`payment_amount_mismatch`). A subscription renewal is an ordinary order placed through the same calculator, taxed for the place the subscriber was last taxed for (the latest invoice's, else the order that started the subscription) with the rates and registration in force at the time of the invoice.
+A processor checkout session is given the order's tax (`tax_cents`, `included_tax_cents`, `prices_include_tax`) and may report the `tax_cents` it will charge; a reported tax that differs from the order's raises the same notice when the session is created. An adapter whose `create_checkout_session` does not name those keywords (or accept `**`) is not handed them, so older adapters keep working and charge their own amount, which `Payments::Succeed` then flags. `Payments::Succeed` records the amount actually charged and, if it differs from the amount core asked for, tells the operators once (`payment_amount_mismatch`). A subscription renewal is an ordinary order placed through the same calculator, taxed for the place the subscriber was last taxed for (the latest invoice's, else the order that started the subscription) with the rates and registration in force at the time of the invoice.
 
 ## Refunds
 

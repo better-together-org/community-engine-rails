@@ -79,6 +79,17 @@ RSpec.describe BetterTogether::Billing::Refunds::Record do
       expect(refunds.last.tax_cents).to eq(675 - refunds.first(2).sum(&:tax_cents))
     end
 
+    it 'is only a share when a part-paid order is refunded what it received', :aggregate_failures do
+      part = BetterTogether::Billing::Payments::Succeed.call(
+        BetterTogether::Billing::Payments::Create.call(order:, processor: 'fake', amount_cents: 1000, idempotency_key: 'part')
+      )
+
+      refund = described_class.call(payment: part, amount_cents: 1000, idempotency_key: 'all-of-it')
+
+      expect(order.reload.paid_cents).to be < order.total_cents
+      expect(refund.tax_cents).to eq(130) # 675 * 1000 / 5175, not all 675
+    end
+
     it 'is nothing for an order with no tax' do
       plain = place_order(tax_address: { country_iso: 'GB' })
       created = BetterTogether::Billing::Payments::Create.call(order: plain, processor: 'fake', amount_cents: plain.total_cents,
