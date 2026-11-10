@@ -32,7 +32,8 @@ RSpec.describe 'Billing tax reports DOM', type: :request do # rubocop:disable RS
     page = Nokogiri::HTML(response.body)
 
     %w[billing-summary-cad billing-summary-cad-table billing-summary-cad-tax billing-summary-cad-tax-0
-       billing-summary-cad-payments billing-summary-cad-payment-cash].each do |id|
+       billing-summary-cad-payments billing-summary-cad-payment-cash billing-summary-cad-zero-rated
+       billing-summary-cad-authorities billing-summary-cad-authority-gst-hst].each do |id|
       expect(page.at_css("##{id}")).to be_present, "missing ##{id}"
     end
   end
@@ -57,10 +58,10 @@ RSpec.describe 'Billing tax reports DOM', type: :request do # rubocop:disable RS
     get better_together.new_metrics_billing_report_path(locale:)
     page = Nokogiri::HTML(response.body)
 
-    %w[form from to interval owner format submit].each do |part|
+    %w[form from to interval basis owner format submit].each do |part|
       expect(page.at_css("#billing-report-#{part}")).to be_present, "missing #billing-report-#{part}"
     end
-    %w[from to interval owner format].each do |part|
+    %w[from to interval basis owner format].each do |part|
       expect(page.at_css("label[for='billing-report-#{part}']")).to be_present, "label not tied to #billing-report-#{part}"
     end
   end

@@ -9,8 +9,9 @@ Someone who can see the metrics dashboard and who also manages the platform (`ma
 ## What the figures mean
 
 - **Sales** are orders that are `paid`, `partially_refunded` or `refunded` (`Billing::TaxReport::SALE_STATUSES`), counted on the day they were paid in the platform time zone.
-- **Revenue** is the price without any tax inside it, in three parts: taxable (the line has tax lines), non-taxable (its category is not taxable) and exempt (nothing was charged on it).
-- **Tax collected** is by tax label and rate, and whether it was inside the price.
+- **Revenue** is the price without any tax inside it, in four parts: taxable (the line has tax lines), zero-rated (categories `zero_rated` and `basic_groceries`), non-taxable (any other category that is not taxable) and exempt (nothing was charged on it).
+- **Tax collected** is by tax label and rate, whether it was inside the price, the administrator it is owed to (GST/HST, PST, QST, RST, VAT) and who collected it: the seller, the platform, or the platform for the seller (a facilitator sale, not on the seller's own return). A per-administrator total, a per-region summary and the registrations the orders were taxed under are shown too; registration numbers are masked to the last four characters because saved reports are stored.
+- **Basis**: a saved report counts a sale on the day it was paid (default) or the day it was placed (invoice date, as CRA expects for most filers). Paid statuses are still required.
 - **Refunds** count when they are `succeeded` or `recorded`. Each carries its share of tax, split from its net amount (the same split the refund screen shows), and is netted off in the period the refund was made.
 - **Payment methods** are the payments that succeeded, by processor.
 - **Each currency is shown on its own.** Amounts are never added across currencies.
