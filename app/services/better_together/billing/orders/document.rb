@@ -15,6 +15,7 @@ module BetterTogether
       class Document # rubocop:disable Metrics/ClassLength
         PAID_STATUSES = %w[paid partially_refunded refunded].freeze
         KINDS = %i[invoice receipt].freeze
+        AMOUNT_WIDTH = 80
 
         attr_reader :order, :kind, :summary
 
@@ -42,8 +43,8 @@ module BetterTogether
 
         private
 
-        # Receipts draws one table of items; the totals under it are a second, narrower table at the right, so a
-        # long tax label has room and the amounts line up.
+        # Receipts draws one table of items; the totals under it are a second table with the same amount column, so every
+        # amount lines up at the right edge.
         def build # rubocop:disable Metrics/AbcSize
           pdf = (kind == :receipt ? ::Receipts::Receipt : ::Receipts::Invoice).new
           pdf.title = doc_text("title_#{kind}")
@@ -58,7 +59,7 @@ module BetterTogether
 
         def render_totals(pdf)
           pdf.move_down(8)
-          pdf.table(sections[:totals], width: pdf.bounds.width * 0.7, position: :right,
+          pdf.table(sections[:totals], width: pdf.bounds.width, column_widths: [nil, AMOUNT_WIDTH],
                                        cell_style: { borders: [], padding: [3, 6], align: :right, inline_format: true })
         end
 
@@ -95,14 +96,14 @@ module BetterTogether
         def heading
           cells = [t_order(:field_item)]
           cells << doc_text(:tax_heading) if summary.taxed?
-          [*cells, t_order(:field_quantity), t_order(:field_amount)].map { |text| "<b>#{text}</b>" }
+          [*cells, t_order(:field_quantity)].map { |text| "<b>#{text}</b>" } << { content: "<b>#{t_order(:field_amount)}</b>", align: :right }
         end
 
         def item_rows
           summary.lines.map do |line|
             cells = [line.description]
             cells << t_summary(line.taxed ? :taxed : :not_taxed) if summary.taxed?
-            [*cells, line.quantity.to_s, money(line.amount_cents)]
+            [*cells, line.quantity.to_s, { content: money(line.amount_cents), align: :right }]
           end
         end
 
@@ -128,7 +129,7 @@ module BetterTogether
           row.included ? "#{label} #{t_summary(:included)}" : label
         end
 
-        def column_widths = summary.taxed? ? [nil, 70, 50, 80] : [nil, 50, 90]
+        def column_widths = summary.taxed? ? [nil, 95, 55, AMOUNT_WIDTH] : [nil, 55, AMOUNT_WIDTH]
 
         def footer # rubocop:disable Metrics/AbcSize
           lines = []

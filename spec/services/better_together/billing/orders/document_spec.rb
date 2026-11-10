@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::Billing::Orders::Document do
     order.reload
   end
 
-  def cells(rows) = rows.flatten.map { |cell| cell.to_s.gsub(%r{</?b>}, '') }
+  def cells(rows) = rows.flatten.map { |cell| (cell.is_a?(Hash) ? cell[:content] : cell).to_s.gsub(%r{</?b>}, '') }
 
   describe 'an unpaid order' do
     it 'is an invoice, a real PDF, named by the order number only', :aggregate_failures do
