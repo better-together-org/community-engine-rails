@@ -29,20 +29,21 @@ module BetterTogether
 
         attr_reader :order, :document
 
-        def store
-          upload = create_upload
+        def store # rubocop:disable Metrics/AbcSize
+          pdf = document.to_pdf
+          upload = create_upload(pdf)
           supersede_current
           order.documents.create!(upload:, platform: order.platform, kind: document.kind.to_s, fingerprint:,
-                                  time_zone: document.time_zone, generated_at: document.generated_at)
+                                  time_zone: document.time_zone, generated_at: document.generated_at).tap { |made| made.fresh_pdf = pdf }
         end
 
         def supersede_current
           order.documents.current.of_kind(document.kind).update_all(superseded_at: Time.current) # rubocop:disable Rails/SkipsModelValidations
         end
 
-        def create_upload
+        def create_upload(pdf)
           upload = Upload.new(platform: order.platform, creator: order.buyer, privacy: 'private', name: document.filename)
-          upload.file.attach(io: StringIO.new(document.to_pdf), filename: document.filename, content_type: 'application/pdf')
+          upload.file.attach(io: StringIO.new(pdf), filename: document.filename, content_type: 'application/pdf')
           upload.save!
           upload
         end

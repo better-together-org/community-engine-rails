@@ -27,6 +27,12 @@ module BetterTogether
 
       delegate :filename, :byte_size, to: :upload
 
+      # The PDF as it was just rendered. Storage writes the file when the surrounding transaction commits, so a caller
+      # inside that transaction (a notice being delivered) reads it from here, and everyone else from the upload.
+      attr_writer :fresh_pdf
+
+      def pdf = @fresh_pdf || upload.download
+
       def current? = superseded_at.nil?
 
       private
