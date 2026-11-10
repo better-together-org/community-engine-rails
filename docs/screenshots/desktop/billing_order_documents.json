@@ -1,8 +1,8 @@
 {
   "name": "billing_order_documents",
   "device": "desktop",
-  "url": "/en/billing/orders/452bb188-680d-43bc-b26e-89b41c84bfd1",
-  "title": "Order BT-Z92WTAD5 | Test Host Community",
+  "url": "/en/billing/orders/170e82d9-bf93-49c3-830b-006e0d05bf33",
+  "title": "Order BT-HG1VDAKH | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_documents",
@@ -10,7 +10,7 @@
   "flow": "billing_order_documents",
   "callouts": [
     {
-      "selector": "#documents_billing_order_452bb188-680d-43bc-b26e-89b41c84bfd1",
+      "selector": "#documents_billing_order_170e82d9-bf93-49c3-830b-006e0d05bf33",
       "title": "Invoice and receipt",
       "bullets": [
         "Each stored PDF downloads from its own button."

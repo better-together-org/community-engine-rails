@@ -1350,6 +1350,7 @@ es:
         too_many_claims: Ya se lo ha dicho al vendedor varias veces. Confirmará cuando
           reciba su pago.
       order_documents:
+        already_in_language: Ese pedido ya está en ese idioma.
         regenerated: La factura y el recibo se generaron de nuevo en %{language}.
         unknown_locale: Ese idioma no está disponible.
       order_payments:

@@ -1333,6 +1333,7 @@ uk:
         too_many_claims: Ви вже кілька разів повідомили продавця. Він підтвердить,
           щойно отримає оплату.
       order_documents:
+        already_in_language: Це замовлення вже цією мовою.
         regenerated: 'Рахунок і квитанцію створено знову мовою: %{language}.'
         unknown_locale: Ця мова недоступна.
       order_payments:

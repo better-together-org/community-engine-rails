@@ -24,10 +24,18 @@ RSpec.describe 'Billing order documents DOM contract', :as_platform_manager, typ
   it 'offers the language to make the documents again in', :aggregate_failures do
     BetterTogether::Billing::Orders::GenerateDocument.call(order)
 
-    get "/#{I18n.default_locale}/billing/orders/#{order.id}"
+    get "/fr/billing/orders/#{order.id}"
 
     expect(response.body).to include(%(id="#{dom_id.dom_id(order, :regenerate_documents)}"), %(id="#{dom_id.dom_id(order, :document_locale)}"),
                                      %(id="#{dom_id.dom_id(order, :regenerate_documents_submit)}"))
+  end
+
+  it 'hides the language form when the page is in the language the documents were made in' do
+    BetterTogether::Billing::Orders::GenerateDocument.call(order)
+
+    get "/#{I18n.default_locale}/billing/orders/#{order.id}"
+
+    expect(response.body).not_to include(dom_id.dom_id(order, :regenerate_documents))
   end
 
   it 'shows no container while there is nothing to download' do

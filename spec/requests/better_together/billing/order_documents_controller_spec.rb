@@ -40,8 +40,13 @@ RSpec.describe BetterTogether::Billing::OrderDocumentsController do
       expect(order.reload.document_locale).to be_nil
     end
 
-    it 'shows the language form on the sale' do
-      get better_together.billing_sale_path(order, locale:)
+    it 'refuses to make them again in the language they are already in', :aggregate_failures do
+      expect { post sale_documents_path, params: { document_locale: 'en' } }.not_to(change { order.documents.count })
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.order_documents.already_in_language'))
+    end
+
+    it 'shows the language form on the sale when read in another language' do
+      get better_together.billing_sale_path(order, locale: :fr)
 
       expect(response.body).to include(ActionView::RecordIdentifier.dom_id(order, :regenerate_documents),
                                        ActionView::RecordIdentifier.dom_id(order, :document_locale))

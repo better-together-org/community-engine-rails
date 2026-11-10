@@ -64,7 +64,7 @@ RSpec.describe 'Documentation screenshots for the order invoice and receipt down
                                                        bullets: ['Make the invoice and receipt again in the buyer\'s language.'] }]
     ) do
       capybara_login_as_platform_manager
-      visit "/#{I18n.default_locale}/billing/sales/#{order.id}"
+      visit "/fr/billing/sales/#{order.id}"
       scroll_to(find(target), align: :center)
       expect(page).to have_css("#{target} select")
     end

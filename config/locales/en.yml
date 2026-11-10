@@ -1359,6 +1359,7 @@ en:
         too_many_claims: You have already told the seller several times. They will
           confirm when they have your payment.
       order_documents:
+        already_in_language: That order is already in that language.
         regenerated: Invoice and receipt made again in %{language}.
         unknown_locale: That language is not available.
       order_payments:

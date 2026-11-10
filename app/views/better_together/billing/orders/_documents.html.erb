@@ -12,14 +12,16 @@
       <% end %>
     <% end %>
   </div>
-  <%# Make them again in another language, for a buyer who does not read the one they were made in. %>
+  <%# Make them again in the language the page is read in, only when the documents are in another one. %>
+  <% if I18n.locale.to_s != order.locale_for_documents.to_s %>
   <% regenerate_path = controller_name == 'sales' ? billing_sale_documents_path(order, locale: I18n.locale) : billing_order_documents_path(order, locale: I18n.locale) %>
   <%= form_with url: regenerate_path, method: :post, id: dom_id(order, :regenerate_documents),
                 class: 'billing-order-documents-language d-flex flex-wrap align-items-center gap-2 px-3 pb-3' do |form| %>
     <%= form.label :document_locale, t('better_together.billing.orders.document_language'), class: 'form-label mb-0 small' %>
     <%= form.select :document_locale, I18n.available_locales.map { |code| [t("locales.#{code}"), code] },
-                    { selected: order.locale_for_documents }, id: dom_id(order, :document_locale), class: 'form-select form-select-sm w-auto' %>
+                    { selected: I18n.locale }, id: dom_id(order, :document_locale), class: 'form-select form-select-sm w-auto' %>
     <%= form.submit t('better_together.billing.orders.regenerate_documents'), id: dom_id(order, :regenerate_documents_submit),
                     class: 'btn btn-outline-secondary btn-sm', data: { turbo: false } %>
+  <% end %>
   <% end %>
 <% end %>

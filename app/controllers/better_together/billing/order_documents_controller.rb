@@ -19,6 +19,8 @@ module BetterTogether
         locale = chosen_locale
         return redirect_back_to_order(alert: t('better_together.billing.order_documents.unknown_locale')) unless locale
 
+        return redirect_back_to_order(alert: t('better_together.billing.order_documents.already_in_language')) if already_in?(locale)
+
         regenerate(locale)
         redirect_back_to_order(notice: t('better_together.billing.order_documents.regenerated', language: language_name(locale)))
       end
@@ -38,6 +40,8 @@ module BetterTogether
       def chosen_locale
         I18n.available_locales.find { |locale| locale.to_s == params[:document_locale].to_s }
       end
+
+      def already_in?(locale) = @order.locale_for_documents.to_s == locale.to_s
 
       def regenerate(locale)
         @order.update!(document_locale: locale.to_s)

@@ -1,8 +1,8 @@
 {
   "name": "billing_order_documents_language",
   "device": "mobile",
-  "url": "/en/billing/sales/a23a8387-168f-4a80-87a0-16a99baba0d1",
-  "title": "Order BT-EWG6HTSP | Test Host Community",
+  "url": "/fr/billing/sales/4ab14988-4d91-4460-bff1-71529ee3af64",
+  "title": "Commande BT-8KMRMTWA | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_documents",
@@ -10,7 +10,7 @@
   "flow": "billing_order_documents_language",
   "callouts": [
     {
-      "selector": "#regenerate_documents_billing_order_a23a8387-168f-4a80-87a0-16a99baba0d1",
+      "selector": "#regenerate_documents_billing_order_4ab14988-4d91-4460-bff1-71529ee3af64",
       "title": "Documents in another language",
       "bullets": [
         "Make the invoice and receipt again in the buyer's language."

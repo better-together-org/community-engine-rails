@@ -1378,6 +1378,7 @@ fr:
         too_many_claims: Vous l’avez déjà dit plusieurs fois au vendeur. Il confirmera
           quand il aura reçu votre paiement.
       order_documents:
+        already_in_language: Cette commande est déjà dans cette langue.
         regenerated: La facture et le reçu ont été refaits en %{language}.
         unknown_locale: Cette langue n'est pas disponible.
       order_payments:
