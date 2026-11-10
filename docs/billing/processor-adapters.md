@@ -18,7 +18,7 @@ Billing identity has no built-in defaults. Until the three required variables ar
 |---|---|---|
 | `PAY_BUSINESS_NAME` | yes | Legal or trading name shown by the processor |
 | `PAY_BUSINESS_ADDRESS` | yes | Business address |
-| `PAY_SUPPORT_EMAIL` | yes | Support contact |
+| `PAY_SUPPORT_EMAIL` | yes, unless `DEFAULT_FROM_EMAIL` is set | Support contact; defaults to the app's default from address (`DEFAULT_FROM_EMAIL`) |
 | `BT_BILLING_ENABLED` | yes | Master switch (`true` to enable) |
 | `BT_BILLING_DEFAULT_CURRENCY` | no | Preselects the currency when creating a plan |
 | `BT_BILLING_DEFAULT_COUNTRY` | by feature | Used when an owner has no country (merchant onboarding) |

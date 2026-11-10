@@ -83,7 +83,7 @@ Each person gets a `Billing::NotificationReceipt` (platform-bound, unique on per
 
 ## Pay's own emails
 
-Pay's webhook handlers would email receipts, refunds, renewal notices, failed-payment and action-required notices, and trial notices through `Pay::UserMailer`, unbranded and untranslated, to whatever email Pay has on file. `config/initializers/pay.rb` sets `Pay.send_emails = false`, and specs guard that and that no billing code calls `Pay.mailer`. The seven messages Pay would have sent exist here as `payment_succeeded`, `refund_issued`, `subscription_renewing`, `payment_failed`, `payment_action_required`, `trial_ending` and `trial_ended`. Pay's receipt attached the processor's PDF; here a receipt links to the order, and an adapter can add a processor receipt link later.
+Pay's webhook handlers would email receipts, refunds, renewal notices, failed-payment and action-required notices, and trial notices through `Pay::UserMailer`, unbranded and untranslated, to whatever email Pay has on file. `config/initializers/pay.rb` sets `Pay.send_emails = false`, and specs guard that and that no billing code calls `Pay.mailer`. The seven messages Pay would have sent exist here as `payment_succeeded`, `refund_issued`, `subscription_renewing`, `payment_failed`, `payment_action_required`, `trial_ending` and `trial_ended`. Pay's receipt attached the processor's PDF; here the buyer's order emails carry CE's own PDF invoice or receipt, built from the same order summary (see [pdf_documents.md](pdf_documents.md)).
 
 ## What a notification contains
 

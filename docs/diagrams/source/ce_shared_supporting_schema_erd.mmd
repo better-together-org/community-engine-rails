@@ -11,6 +11,9 @@ erDiagram
   EXT_ADDRESS ||--o{ BILLING_DEFAULT_ADDRESSES : "address / address_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXT_PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ BILLING_ORDER_DOCUMENTS : "platform / platform_id"
+  EXT_BILLING_ORDER ||--o{ BILLING_ORDER_DOCUMENTS : "order / order_id"
+  EXT_UPLOAD ||--o{ BILLING_ORDER_DOCUMENTS : "upload / upload_id"
   EXT_PLATFORM ||--o{ BILLING_TAX_CATEGORIES : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_TAX_LINES : "platform / platform_id"
   EXT_BILLING_ORDER ||--o{ BILLING_TAX_LINES : "order / order_id"
@@ -140,6 +143,17 @@ erDiagram
     type string
     read_at datetime
     seen_at datetime
+  }
+
+  BILLING_ORDER_DOCUMENTS {
+    order_id uuid
+    platform_id uuid
+    upload_id uuid
+    fingerprint string
+    kind string
+    time_zone string
+    generated_at datetime
+    superseded_at datetime
   }
 
   BILLING_TAX_CATEGORIES {
@@ -553,11 +567,15 @@ erDiagram
     string export_ref
   }
 
-  EXT_BILLING_LINE_ITEM {
+  EXT_BILLING_ORDER {
     string export_ref
   }
 
-  EXT_BILLING_ORDER {
+  EXT_UPLOAD {
+    string export_ref
+  }
+
+  EXT_BILLING_LINE_ITEM {
     string export_ref
   }
 

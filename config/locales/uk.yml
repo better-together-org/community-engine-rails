@@ -1012,6 +1012,14 @@ uk:
         steward_title: Рахунки кредиту магазину
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
+      document:
+        generated: Створено
+        net_paid: Сплачено після повернень
+        questions: Питання щодо цього замовлення? Напишіть на %{email}.
+        refunded: Повернено
+        tax_heading: Податок
+        title_invoice: Рахунок
+        title_receipt: Квитанція
       entitlements:
         allowances: Квоти
         for: 'Для: %{name}'
@@ -1345,6 +1353,9 @@ uk:
           або частину зараз, а решту іншим.
         add_payment_method: Сплатити через
         agreements_heading: Прийняті угоди
+        document_details: PDF, %{size}, створено %{date}
+        download_invoice: Завантажити рахунок
+        download_receipt: Завантажити квитанцію
         field_amount: Сума
         field_balance: Залишилося сплатити
         field_buyer: Покупець

@@ -1,0 +1,15 @@
+<%# The invoice and the receipt of the order, when they have been made; each is the stored PDF, fetched through the upload's own download. %>
+<% documents = [order.invoice_document, order.receipt_document].compact.select { |document| policy(document.upload).download? } %>
+<% if documents.any? %>
+  <div id="<%= dom_id(order, :documents) %>" class="billing-order-documents d-flex flex-wrap gap-2 px-3 py-3 border-top">
+    <% documents.each do |document| %>
+      <%= link_to better_together.download_file_path(document.upload, locale: I18n.locale),
+                  id: dom_id(document, :download), class: "btn btn-outline-primary btn-sm billing-order-document-download billing-order-#{document.kind}-download",
+                  download: document.filename.to_s do %>
+        <i class="fas fa-file-pdf me-1" aria-hidden="true"></i>
+        <%= t("better_together.billing.orders.download_#{document.kind}") %>
+        <span class="visually-hidden"><%= t('better_together.billing.orders.document_details', size: number_to_human_size(document.byte_size), date: l(document.generated_at, format: :long)) %></span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

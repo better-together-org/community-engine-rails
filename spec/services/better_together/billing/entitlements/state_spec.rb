@@ -13,9 +13,18 @@ RSpec.describe BetterTogether::Billing::Entitlements::State do
 
   def result(**attrs) = described_class.call(subscription(**attrs), term, now:)
 
-  it 'gives something for every status Pay has, and refuses one it does not know' do
-    Pay::Subscription::STATUSES.each { |status| expect { result(status:) }.not_to raise_error }
-    expect { result(status: 'martian') }.to raise_error(ArgumentError)
+  it 'gives something for every status Pay has' do
+    described_class::STATUSES.each { |status| expect { result(status:) }.not_to raise_error }
+  end
+
+  it 'treats a status it does not know as lapsed, and reports it' do
+    allow(BetterTogether).to receive(:report_error)
+
+    expect(result(status: 'expired')).to have_attributes(status: 'lapsed', ends_at: period_end)
+    expect(BetterTogether).to have_received(:report_error)
+      .with(an_instance_of(described_class::UnknownStatus).and(having_attributes(message: /"expired"/)),
+            context: hash_including(status: 'expired')).once
+    expect(result(status: 'expired')).not_to be_live
   end
 
   it 'is active until the period ends for an active or trialing subscription' do

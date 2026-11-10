@@ -435,6 +435,11 @@ classDiagram
       table: better_together_billing_default_addresses
       concerns: Billing::PlatformBound
     }
+    class BetterTogether__Billing__OrderDocument["Billing::OrderDocument"] {
+      <<Model>>
+      table: better_together_billing_order_documents
+      concerns: Billing::ParentBound, Billing::PlatformBound
+    }
     class BetterTogether__Billing__TaxCategory["Billing::TaxCategory"] {
       <<Model>>
       table: better_together_billing_tax_categories
@@ -800,6 +805,9 @@ classDiagram
   BetterTogether__Billing__DefaultAddress --> BetterTogether__Platform : platform
   BetterTogether__Billing__DefaultAddress --> BetterTogether__Person : person
   BetterTogether__Billing__DefaultAddress --> BetterTogether__Address : address
+  BetterTogether__Billing__OrderDocument --> BetterTogether__Platform : platform
+  BetterTogether__Billing__OrderDocument --> BetterTogether__Billing__Order : order
+  BetterTogether__Billing__OrderDocument --> BetterTogether__Upload : upload
   BetterTogether__Billing__TaxCategory --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Billing__Order : order

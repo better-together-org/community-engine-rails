@@ -46,6 +46,58 @@ RSpec.describe BetterTogether::BillingMailer do
     expect(steward_mail.html_part.body.decoded + steward_mail.text_part.body.decoded).not_to include('4711', 'Harbour')
   end
 
+  describe 'the PDF invoice and receipt' do
+    let(:mail_for) do
+      lambda do |kind, audience: :buyer, recipient: buyer, record: order|
+        notifier = BetterTogether::Billing::Notifier.new(record:, params: { kind:, audience: })
+        described_class.with(recipient:, notifier:).notification
+      end
+    end
+    let(:pay!) do
+      lambda do
+        create(:better_together_billing_payment, order:, amount_cents: order.total_cents, status: 'succeeded', currency: 'USD',
+                                                 paid_at: Time.current)
+        BetterTogether::Billing::Orders::Settle.call(order)
+        order.reload
+      end
+    end
+
+    it 'attaches the invoice to the email about a placed order', :aggregate_failures do
+      attached = mail_for.call('order_placed').attachments
+
+      expect(attached.map(&:filename)).to eq(["invoice-#{order.number}.pdf"])
+      expect(attached.first.mime_type).to eq('application/pdf')
+      expect(attached.first.body.decoded).to start_with('%PDF')
+    end
+
+    it 'attaches the receipt, and the invoice, to the email about a paid order' do
+      pay!.call
+
+      expect(mail_for.call('order_paid').attachments.map(&:filename)).to contain_exactly("receipt-#{order.number}.pdf",
+                                                                                         "invoice-#{order.number}.pdf")
+    end
+
+    it 'attaches the receipt to the email about a refund' do
+      payment = pay!.call.payments.first
+      refund = BetterTogether::Billing::Refunds::Record.call(payment:, amount_cents: 500, idempotency_key: 'mail-1', status: 'succeeded')
+
+      expect(mail_for.call('refund_issued', record: refund).attachments.map(&:filename)).to eq(["receipt-#{order.number}.pdf"])
+    end
+
+    it 'attaches nothing to a notice that is not about an order\'s money, or that is not for the buyer', :aggregate_failures do
+      expect(mail_for.call('order_placed', audience: :seller, recipient: steward).attachments).to be_empty
+      expect(mail_for.call('payment_failed').attachments).to be_empty
+    end
+
+    it 'keeps the email parts, and the order number is all the file names say', :aggregate_failures do
+      mail = mail_for.call('order_placed')
+
+      expect(mail.html_part.body.decoded).to include(order.number)
+      expect(mail.text_part.body.decoded).to include(order.number)
+      expect(mail.attachments.map(&:filename).join).not_to include(buyer.email, buyer.name)
+    end
+  end
+
   describe 'the order summary' do
     include_context 'with quebec tax'
 

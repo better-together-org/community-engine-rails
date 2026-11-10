@@ -19,7 +19,7 @@ RSpec.describe 'The local Pay processor' do # rubocop:disable RSpec/DescribeClas
 
     it 'is not Pay\'s fake processor, so Pay does not refuse it or treat it as a stub' do
       expect(customer.fake_processor?).to be(false)
-      expect(Pay::Customer.not_fake_processor).to include(customer)
+      expect(Pay::Customer.where.not(processor: 'fake_processor')).to include(customer)
       expect { person.add_payment_processor(:local, platform:) }.not_to raise_error
     end
 

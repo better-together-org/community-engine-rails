@@ -43,6 +43,17 @@ RSpec.describe BetterTogether::Billing::SalesController do
   context 'when signed in as a steward' do
     before { sign_in steward }
 
+    it 'shows the stored invoice on the sale and lets the steward download it', :aggregate_failures do
+      document = BetterTogether::Billing::Orders::GenerateDocument.call(order)
+
+      get sale_path(order)
+
+      expect(response.body).to include('billing-order-invoice-download')
+      get better_together.download_file_path(document.upload, locale:)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to start_with('%PDF')
+    end
+
     it 'lists what the platform sells, with the buyer' do
       get sales_path
 

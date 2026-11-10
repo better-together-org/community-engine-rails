@@ -7,7 +7,8 @@ module BetterTogether
     # (see Notifications::Catalog) and the `audience` it is for, in the reader's own language.
     #
     # It carries names, amounts, dates and a link to the order. A message about an order also carries the
-    # full order summary (see `order_summary`), the same one the order pages show. It never carries payment
+    # full order summary (see `order_summary`), the same one the order pages show, and a buyer's notice carries
+    # the invoice or receipt as a PDF (see `documents`). It never carries payment
     # instructions, a payee's email, phone or address, what a buyer typed as a reference, a
     # processor's own text or an event payload: those could be used to redirect a payment, and an
     # email can be forwarded.
@@ -15,11 +16,18 @@ module BetterTogether
     # The notification's `record` is a billing record, so it is stamped with that record's own
     # platform, not whichever one the request or job happens to be running as. Deliveries run on
     # the `billing` queue so a payment message never waits behind other jobs.
-    class Notifier < ::ApplicationNotifier
+    class Notifier < ::ApplicationNotifier # rubocop:disable Metrics/ClassLength
       deliver_by :action_cable, channel: 'BetterTogether::NotificationsChannel', message: :build_message, queue: :billing
       deliver_by :email, mailer: 'BetterTogether::BillingMailer', method: :notification, params: :email_params, queue: :billing do |config|
         config.if = -> { send_email? }
       end
+
+      # The documents that go with a notice to the buyer, as PDFs: the invoice when the order is placed, the receipt
+      # (and the invoice) when it is paid, the receipt when money is returned.
+      DOCUMENTS = {
+        'order_placed' => %i[invoice], 'order_paid' => %i[receipt invoice],
+        'refund_issued' => %i[receipt], 'refund_recorded' => %i[receipt]
+      }.freeze
 
       required_param :kind, :audience
 
@@ -41,6 +49,15 @@ module BetterTogether
       def order_summary
         order = Notifications::Links.order_of(record)
         Orders::Summary.for_order(order) if order
+      end
+
+      # The stored PDFs that go with this notice (made now if the order's state has none yet, in the reader's language); none
+      # for anyone but the buyer.
+      def documents
+        order = Notifications::Links.order_of(record)
+        return [] unless order && audience == :buyer
+
+        DOCUMENTS.fetch(kind, []).map { |document_kind| Orders::GenerateDocument.call(order, kind: document_kind) }
       end
 
       def build_message(notification)
