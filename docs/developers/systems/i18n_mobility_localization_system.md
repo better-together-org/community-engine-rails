@@ -72,6 +72,13 @@ end
 - **Content Blocks**: Various attributes based on block type
 - **Uploads**: `name` (string), `description` (rich text)
 
+The complete, generated list is the localized attribute diagram. Regenerate it with `bin/export_localized_attributes` after any change to a `translates` call; `--check` fails when it is stale or when a `translates` names no `type:` or `backend:`.
+
+**Diagram Files:**
+- 📊 [Mermaid source](../../diagrams/source/ce_localized_attributes.mmd)
+- 🖼️ [PNG export](../../diagrams/exports/png/ce_localized_attributes.png)
+- 🎯 [SVG export](../../diagrams/exports/svg/ce_localized_attributes.svg)
+
 ### 4. Translation UI System
 
 #### Tabbed Interface Components

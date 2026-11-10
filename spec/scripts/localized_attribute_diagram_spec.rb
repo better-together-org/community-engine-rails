@@ -1,0 +1,82 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+require Rails.root.join('../../scripts/localized_attribute_diagram').to_s
+
+RSpec.describe LocalizedAttributeDiagram, :skip_host_setup do
+  let(:source) do
+    <<~RUBY
+      module LocalizedSpec
+        class Thing < BetterTogether::ApplicationRecord
+          translates :title, type: :string
+          translates :body, :notes, type: :text
+          translates :loose
+        end
+      end
+    RUBY
+  end
+  let(:model) do
+    Class.new(BetterTogether::ApplicationRecord) do
+      self.table_name = 'better_together_billing_tax_categories'
+      include BetterTogether::Translatable
+
+      translates :title, type: :string
+      translates :body, :notes, type: :text
+      translates :loose
+    end
+  end
+  let(:declarations) { described_class::Scanner.scan_source(source, file: 'app/models/localized_spec/thing.rb') }
+  let(:diagram) { described_class.new(models: [model], declarations: declarations, title: 'Spec') }
+
+  before { stub_const('LocalizedSpec::Thing', model) }
+
+  describe 'Scanner' do
+    it 'finds each call with its attributes, nesting and whether it names a type', :aggregate_failures do
+      expect(declarations.map(&:attributes)).to eq([%w[title], %w[body notes], %w[loose]])
+      expect(declarations.map(&:explicit_type)).to eq([true, true, false])
+      expect(declarations.map(&:nesting).uniq).to eq(['LocalizedSpec::Thing'])
+    end
+
+    it 'treats a backend as an explicit choice' do
+      decl = LocalizedAttributeDiagram::Scanner.scan_source("class A\n  translates :x, backend: :action_text\nend\n").first
+
+      expect(decl.explicit_type).to be(true)
+    end
+
+    it 'flags a call it cannot read' do
+      decl = LocalizedAttributeDiagram::Scanner.scan_source("class A\n  translates(*NAMES)\nend\n").first
+
+      expect(decl.dynamic).to be(true)
+    end
+  end
+
+  it 'draws each attribute with its storage type, sorted', :aggregate_failures do
+    mermaid = diagram.to_mermaid
+
+    expect(mermaid).to include('classDiagram', 'namespace LocalizedSpec', '+body : text', '+title : string')
+    expect(mermaid.index('+body')).to be < mermaid.index('+title')
+  end
+
+  it 'flags a translates call with no type', :aggregate_failures do
+    expect(diagram.untyped_declarations.map(&:attributes)).to eq([%w[loose]])
+    expect(diagram.to_mermaid).to include('+loose : string UNTYPED')
+  end
+
+  it 'is deterministic' do
+    expect(diagram.to_mermaid).to eq(described_class.new(models: [model], declarations: declarations, title: 'Spec').to_mermaid)
+  end
+
+  describe '#current?' do
+    let(:path) { Rails.root.join('../../tmp/localized_attribute_diagram_spec.mmd') }
+
+    after { FileUtils.rm_f(path) }
+
+    it 'passes for a fresh file and fails for a stale or missing one', :aggregate_failures do
+      expect(diagram.current?(path)).to be(false)
+      File.write(path, diagram.to_mermaid)
+      expect(diagram.current?(path)).to be(true)
+      File.write(path, "#{diagram.to_mermaid}%% edited\n")
+      expect(diagram.current?(path)).to be(false)
+    end
+  end
+end
