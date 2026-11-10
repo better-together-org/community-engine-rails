@@ -5,7 +5,7 @@ module BetterTogether
     # The query layer behind the billing metrics reports: sales, revenue, tax collected and refunds for a platform over
     # a span of time, one summary per currency (money in two currencies is never added together) and one row per
     # month, quarter or year inside the span. Nothing is stored: every figure is read from orders, line items, tax lines,
-    # payments and refunds when asked.
+    # payments and refunds when asked, with Arel and association joins (no SQL strings).
     #
     # * A sale counts on the day its order was paid (`paid_at`), in the platform's time zone. Orders that were never
     #   paid, or were cancelled or expired, are not sales.
@@ -18,14 +18,13 @@ module BetterTogether
     # * Tax is grouped by label, rate and whether it was inside the price, so HST is one row.
     #
     #   TaxReport.new(platform:, from:, to:, owner: TaxReport::Owner.all, interval: 'month').call
-    # rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength, Lint/UselessConstantScoping
+    # rubocop:disable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
     class TaxReport
       SALE_STATUSES = %w[paid partially_refunded refunded].freeze
       REFUND_STATUSES = %w[succeeded recorded].freeze
       PAYMENT_STATUSES = %w[succeeded partially_refunded refunded].freeze
       INTERVALS = %w[month quarter year].freeze
       KINDS = %w[taxable non_taxable exempt].freeze
-      LABEL_SQL = "COALESCE(cur.value, en.value, '')"
 
       TaxRow = Data.define(:label, :rate, :included, :collected_cents, :refunded_cents) do
         def net_cents = collected_cents - refunded_cents
@@ -35,6 +34,8 @@ module BetterTogether
       end
 
       PaymentRow = Data.define(:processor, :payment_count, :amount_cents)
+
+      RefundRow = Data.define(:id, :amount_cents, :tax_cents, :created_at, :order_id, :currency)
 
       PeriodRow = Data.define(:starts_on, :sales_count, :gross_cents, :taxable_cents, :non_taxable_cents, :exempt_cents,
                               :tax_cents, :refunded_cents, :refunded_tax_cents) do
@@ -99,85 +100,105 @@ module BetterTogether
                     tax_rows: tax_rows_for(code), payments: payments.fetch(code, []), periods: periods_for(code))
       end
 
-      # --- shared SQL ---------------------------------------------------------------------------------------
+      # --- query building ---------------------------------------------------------------------------------------
 
-      def owner_sql = owner.sql
+      def order_table = Order.arel_table
 
-      def binds(extra = {})
-        _sql, owner_binds = owner_sql
-        { platform_id: platform.id, from:, to:, sales: SALE_STATUSES, locale: I18n.locale.to_s, tz: platform.time_zone,
-          interval: }.merge(owner_binds).merge(extra)
+      def line_item_table = LineItem.arel_table
+
+      def tax_line_table = TaxLine.arel_table
+
+      def category_table = TaxCategory.arel_table
+
+      def payment_table = Payment.arel_table
+
+      def refund_table = Refund.arel_table
+
+      def func(name, *args) = Arel::Nodes::NamedFunction.new(name, args)
+
+      # The orders table narrowed to this platform, to paid orders, to the span and to the owner.
+      def sale_condition
+        @sale_condition ||= [order_table[:platform_id].eq(platform.id), order_table[:status].in(SALE_STATUSES),
+                             order_table[:paid_at].between(from..to), owner.condition(order_table)].compact.reduce(:and)
       end
 
-      def select_rows(sql, extra = {})
-        query = ActiveRecord::Base.sanitize_sql_array([sql.gsub('%OWNER%', owner_sql.first), binds(extra)])
-        ActiveRecord::Base.connection.select_all(query).to_a
-      end
+      # Orders keep to their own platform's rows: a child row must carry its parent's platform.
+      def same_platform(child, parent) = child[:platform_id].eq(parent[:platform_id])
 
       # A line is "taxed" when it has a tax line; its base is its price without the tax inside it.
-      LINE_BASE = '(li.quantity * li.unit_amount_cents - li.included_tax_cents)'
-      TAXED = 'EXISTS (SELECT 1 FROM better_together_billing_tax_lines tl WHERE tl.line_item_id = li.id)'
-      KIND_SQL = <<~SQL.squish
-        SUM(CASE WHEN #{TAXED} THEN #{LINE_BASE} ELSE 0 END) AS taxable,
-        SUM(CASE WHEN NOT #{TAXED} AND tc.taxable = FALSE THEN #{LINE_BASE} ELSE 0 END) AS non_taxable,
-        SUM(CASE WHEN NOT #{TAXED} AND COALESCE(tc.taxable, TRUE) THEN #{LINE_BASE} ELSE 0 END) AS exempt
-      SQL
-      SALE_WHERE = <<~SQL.squish
-        o.platform_id = :platform_id AND o.status IN (:sales) AND o.paid_at >= :from AND o.paid_at <= :to %OWNER%
-      SQL
+      def line_base = (line_item_table[:quantity] * line_item_table[:unit_amount_cents]) - line_item_table[:included_tax_cents]
+
+      def taxed = TaxLine.where(tax_line_table[:line_item_id].eq(line_item_table[:id])).select(tax_line_table[:id]).arel.exists
+
+      def sum_when(condition) = func('SUM', Arel::Nodes::Case.new.when(condition).then(line_base).else(0))
+
+      # Taxable, non-taxable and exempt revenue, in the order of KINDS.
+      def kind_sums
+        untaxed = taxed.not
+        taxable_category = func('COALESCE', category_table[:taxable], Arel::Nodes.build_quoted(true)).eq(true)
+        [sum_when(taxed), sum_when(untaxed.and(category_table[:taxable].eq(false))), sum_when(untaxed.and(taxable_category))]
+      end
+
+      def sale_line_items
+        LineItem.joins(:order).left_joins(:tax_category).where(same_platform(line_item_table, order_table)).where(sale_condition)
+      end
+
+      # [*keys, taxable, non_taxable, exempt] per group.
+      def kind_rows(*keys) = sale_line_items.group(*keys).pluck(*keys, *kind_sums)
+
+      # [*keys, sales_count, gross, tax] per group.
+      def order_rows(*keys)
+        Order.where(sale_condition).group(*keys).pluck(*keys, Arel.star.count, order_table[:total_cents].sum, order_table[:tax_cents].sum)
+      end
 
       # --- sales and revenue ----------------------------------------------------------------------------------
 
       def sales
         @sales ||= begin
-          kinds = select_rows(<<~SQL.squish)
-            SELECT o.currency, #{KIND_SQL}
-            FROM better_together_billing_line_items li
-            JOIN better_together_billing_orders o ON o.id = li.order_id AND o.platform_id = li.platform_id
-            LEFT JOIN better_together_billing_tax_categories tc ON tc.id = li.tax_category_id
-            WHERE #{SALE_WHERE}
-            GROUP BY o.currency
-          SQL
-          totals = select_rows(<<~SQL.squish)
-            SELECT o.currency, COUNT(*) AS sales_count, SUM(o.total_cents) AS gross
-            FROM better_together_billing_orders o WHERE #{SALE_WHERE} GROUP BY o.currency
-          SQL
-          merge_sales(kinds, totals)
+          result = order_rows(order_table[:currency]).to_h { |code, count, gross, _tax| [code, { count: count.to_i, gross: gross.to_i }] }
+          kind_rows(order_table[:currency]).each do |code, taxable, non_taxable, exempt|
+            result[code]&.merge!(taxable: taxable.to_i, non_taxable: non_taxable.to_i, exempt: exempt.to_i)
+          end
+          result
         end
-      end
-
-      def merge_sales(kinds, totals)
-        result = totals.to_h { |row| [row['currency'], { count: row['sales_count'].to_i, gross: row['gross'].to_i }] }
-        kinds.each do |row|
-          result[row['currency']]&.merge!(taxable: row['taxable'].to_i, non_taxable: row['non_taxable'].to_i, exempt: row['exempt'].to_i)
-        end
-        result
       end
 
       # --- tax ------------------------------------------------------------------------------------------------
 
-      LABEL_JOINS = <<~SQL.squish
-        LEFT JOIN mobility_string_translations cur ON cur.translatable_type = 'BetterTogether::Billing::TaxLine'
-          AND cur.translatable_id = tl.id AND cur.key = 'label' AND cur.locale = :locale
-        LEFT JOIN mobility_string_translations en ON en.translatable_type = 'BetterTogether::Billing::TaxLine'
-          AND en.translatable_id = tl.id AND en.key = 'label' AND en.locale = 'en'
-      SQL
+      def translation_table(name) = Arel::Table.new(:mobility_string_translations).alias(name)
+
+      def label_current = @label_current ||= translation_table('cur')
+
+      def label_english = @label_english ||= translation_table('en')
+
+      def label_join(table, locale)
+        tax_line_table.join(table, Arel::Nodes::OuterJoin).on(
+          table[:translatable_type].eq(TaxLine.name).and(table[:translatable_id].eq(tax_line_table[:id]))
+                                   .and(table[:key].eq('label')).and(table[:locale].eq(locale))
+        )
+      end
+
+      # The tax line's label in the reader's language, else English, else blank.
+      def label_expression
+        @label_expression ||= func('COALESCE', label_current[:value], label_english[:value], Arel::Nodes.build_quoted(''))
+      end
+
+      def tax_lines_with_labels
+        TaxLine.joins(*[label_join(label_current, I18n.locale.to_s), label_join(label_english, 'en')].flat_map(&:join_sources))
+      end
 
       def tax_collected
-        @tax_collected ||= select_rows(<<~SQL.squish).group_by { |row| row['currency'] }
-          SELECT o.currency, tl.rate, tl.included, #{LABEL_SQL} AS label, SUM(tl.amount_cents) AS amount
-          FROM better_together_billing_tax_lines tl
-          JOIN better_together_billing_orders o ON o.id = tl.order_id AND o.platform_id = tl.platform_id
-          #{LABEL_JOINS}
-          WHERE #{SALE_WHERE}
-          GROUP BY o.currency, tl.rate, tl.included, #{LABEL_SQL}
-          ORDER BY label, tl.rate
-        SQL
+        @tax_collected ||= begin
+          keys = [order_table[:currency], tax_line_table[:rate], tax_line_table[:included], label_expression]
+          tax_lines_with_labels.joins(:order).where(same_platform(tax_line_table, order_table)).where(sale_condition)
+                               .group(*keys).order(label_expression.asc, tax_line_table[:rate].asc)
+                               .pluck(*keys, tax_line_table[:amount_cents].sum).group_by(&:first)
+        end
       end
 
       def tax_rows_for(code)
-        rows = tax_collected.fetch(code, []).to_h do |row|
-          [[row['label'], BigDecimal(row['rate'].to_s), row['included']], { collected: row['amount'].to_i, refunded: 0 }]
+        rows = tax_collected.fetch(code, []).to_h do |_code, rate, included, label, amount|
+          [[label, BigDecimal(rate.to_s), included], { collected: amount.to_i, refunded: 0 }]
         end
         refund_tax_by_key.fetch(code, {}).each do |key, cents|
           (rows[key] ||= { collected: 0, refunded: 0 })[:refunded] += cents
@@ -189,15 +210,18 @@ module BetterTogether
 
       # --- refunds --------------------------------------------------------------------------------------------
 
+      def refund_condition
+        [order_table[:platform_id].eq(platform.id), refund_table[:status].in(REFUND_STATUSES),
+         refund_table[:created_at].between(from..to), owner.condition(order_table)].compact.reduce(:and)
+      end
+
       def refund_rows
-        @refund_rows ||= select_rows(<<~SQL.squish, refund_statuses: REFUND_STATUSES)
-          SELECT r.id, r.amount_cents, r.tax_cents, r.created_at, o.id AS order_id, o.currency
-          FROM better_together_billing_refunds r
-          JOIN better_together_billing_payments p ON p.id = r.payment_id AND p.platform_id = r.platform_id
-          JOIN better_together_billing_orders o ON o.id = p.order_id AND o.platform_id = p.platform_id
-          WHERE o.platform_id = :platform_id AND r.status IN (:refund_statuses) AND r.created_at >= :from AND r.created_at <= :to %OWNER%
-          ORDER BY r.created_at, r.id
-        SQL
+        @refund_rows ||= Refund.joins(payment: :order)
+                               .where(same_platform(refund_table, payment_table)).where(same_platform(payment_table, order_table))
+                               .where(refund_condition).order(refund_table[:created_at].asc, refund_table[:id].asc)
+                               .pluck(refund_table[:id], refund_table[:amount_cents], refund_table[:tax_cents],
+                                      refund_table[:created_at], order_table[:id], order_table[:currency])
+                               .map { |row| RefundRow.new(*row) }
       end
 
       def refunds
@@ -216,17 +240,17 @@ module BetterTogether
       # One entry per refund: its tax spread over the order's taxes and its revenue over the order's three kinds.
       def refund_allocations
         @refund_allocations ||= begin
-          order_ids = refund_rows.pluck('order_id').uniq
+          order_ids = refund_rows.map(&:order_id).uniq
           taxes = order_taxes(order_ids)
           kinds = order_kinds(order_ids)
-          refund_rows.map { |row| allocation_for(row, taxes[row['order_id']] || {}, kinds[row['order_id']] || {}) }
+          refund_rows.map { |row| allocation_for(row, taxes[row.order_id] || {}, kinds[row.order_id] || {}) }
         end
       end
 
       def allocation_for(row, order_tax, order_kind)
-        tax = row['tax_cents'].to_i
-        net = row['amount_cents'].to_i - tax
-        { currency: row['currency'], amount: row['amount_cents'].to_i, tax:, created_at: row['created_at'],
+        tax = row.tax_cents.to_i
+        net = row.amount_cents.to_i - tax
+        { currency: row.currency, amount: row.amount_cents.to_i, tax:, created_at: row.created_at,
           tax_by_key: allocate(tax, order_tax), revenue: allocate(net, order_kind.presence || { 'exempt' => 1 }),
           net: }
       end
@@ -234,28 +258,21 @@ module BetterTogether
       def order_taxes(order_ids)
         return {} if order_ids.empty?
 
-        rows = select_rows(<<~SQL.squish, order_ids:)
-          SELECT tl.order_id, tl.rate, tl.included, #{LABEL_SQL} AS label, SUM(tl.amount_cents) AS amount
-          FROM better_together_billing_tax_lines tl #{LABEL_JOINS}
-          WHERE tl.platform_id = :platform_id AND tl.order_id IN (:order_ids)
-          GROUP BY tl.order_id, tl.rate, tl.included, #{LABEL_SQL}
-        SQL
-        rows.group_by { |row| row['order_id'] }.transform_values do |list|
-          list.to_h { |row| [[row['label'], BigDecimal(row['rate'].to_s), row['included']], row['amount'].to_i] }
+        keys = [tax_line_table[:order_id], tax_line_table[:rate], tax_line_table[:included], label_expression]
+        rows = tax_lines_with_labels.where(tax_line_table[:platform_id].eq(platform.id).and(tax_line_table[:order_id].in(order_ids)))
+                                    .group(*keys).pluck(*keys, tax_line_table[:amount_cents].sum)
+        rows.group_by(&:first).transform_values do |list|
+          list.to_h { |_id, rate, included, label, amount| [[label, BigDecimal(rate.to_s), included], amount.to_i] }
         end
       end
 
       def order_kinds(order_ids)
         return {} if order_ids.empty?
 
-        rows = select_rows(<<~SQL.squish, order_ids:)
-          SELECT li.order_id, #{KIND_SQL}
-          FROM better_together_billing_line_items li
-          LEFT JOIN better_together_billing_tax_categories tc ON tc.id = li.tax_category_id
-          WHERE li.platform_id = :platform_id AND li.order_id IN (:order_ids)
-          GROUP BY li.order_id
-        SQL
-        rows.to_h { |row| [row['order_id'], KINDS.index_with { |kind| row[kind].to_i }] }
+        rows = LineItem.left_joins(:tax_category)
+                       .where(line_item_table[:platform_id].eq(platform.id).and(line_item_table[:order_id].in(order_ids)))
+                       .group(line_item_table[:order_id]).pluck(line_item_table[:order_id], *kind_sums)
+        rows.to_h { |order_id, *sums| [order_id, KINDS.zip(sums.map(&:to_i)).to_h] }
       end
 
       # Splits `total` over the keys in proportion to their weights, whole cents, the largest remainders taking the
@@ -274,27 +291,28 @@ module BetterTogether
       # --- payment methods ------------------------------------------------------------------------------------
 
       def payments
-        @payments ||= payment_rows.group_by { |row| row['currency'] }.transform_values do |rows|
-          rows.map do |row|
-            PaymentRow.new(processor: row['processor'], payment_count: row['payment_count'].to_i, amount_cents: row['amount'].to_i)
+        @payments ||= payment_rows.group_by(&:first).transform_values do |rows|
+          rows.map do |_code, processor, count, amount|
+            PaymentRow.new(processor:, payment_count: count.to_i, amount_cents: amount.to_i)
           end
         end
       end
 
       def payment_rows
-        select_rows(<<~SQL.squish, payment_statuses: PAYMENT_STATUSES)
-          SELECT o.currency, p.processor, COUNT(*) AS payment_count, SUM(p.amount_cents) AS amount
-          FROM better_together_billing_payments p
-          JOIN better_together_billing_orders o ON o.id = p.order_id AND o.platform_id = p.platform_id
-          WHERE #{SALE_WHERE} AND p.status IN (:payment_statuses)
-          GROUP BY o.currency, p.processor ORDER BY p.processor
-        SQL
+        Payment.joins(:order).where(same_platform(payment_table, order_table))
+               .where(sale_condition.and(payment_table[:status].in(PAYMENT_STATUSES)))
+               .group(order_table[:currency], payment_table[:processor]).order(payment_table[:processor].asc)
+               .pluck(order_table[:currency], payment_table[:processor], Arel.star.count, payment_table[:amount_cents].sum)
       end
 
       # --- one row per month, quarter or year ---------------------------------------------------------------------
 
-      # Timestamps are stored in UTC without a zone: say so, then move them to the platform's zone.
-      def bucket(column) = "date_trunc(:interval, (#{column} AT TIME ZONE 'UTC') AT TIME ZONE :tz)::date"
+      # Timestamps are stored in UTC without a zone: say so, then move them to the platform's zone and cut to the interval.
+      def bucket(column)
+        utc = Arel::Nodes::InfixOperation.new('AT TIME ZONE', column, Arel::Nodes.build_quoted('UTC'))
+        local = Arel::Nodes::InfixOperation.new('AT TIME ZONE', Arel::Nodes::Grouping.new(utc), Arel::Nodes.build_quoted(platform.time_zone))
+        func('CAST', func('date_trunc', Arel::Nodes.build_quoted(interval), Arel::Nodes::Grouping.new(local)).as('date'))
+      end
 
       def periods_for(code)
         buckets = period_sales.fetch(code, {}).merge(period_refunds.fetch(code, {})) { |_k, a, b| a.merge(b) }
@@ -308,34 +326,19 @@ module BetterTogether
 
       def period_sales
         @period_sales ||= begin
-          kinds = select_rows(<<~SQL.squish)
-            SELECT o.currency, #{bucket('o.paid_at')} AS day, #{KIND_SQL}
-            FROM better_together_billing_line_items li
-            JOIN better_together_billing_orders o ON o.id = li.order_id AND o.platform_id = li.platform_id
-            LEFT JOIN better_together_billing_tax_categories tc ON tc.id = li.tax_category_id
-            WHERE #{SALE_WHERE} GROUP BY o.currency, day
-          SQL
-          totals = select_rows(<<~SQL.squish)
-            SELECT o.currency, #{bucket('o.paid_at')} AS day, COUNT(*) AS sales_count, SUM(o.total_cents) AS gross, SUM(o.tax_cents) AS tax
-            FROM better_together_billing_orders o WHERE #{SALE_WHERE} GROUP BY o.currency, day
-          SQL
-          index_periods(kinds, totals)
+          keys = [order_table[:currency], bucket(order_table[:paid_at])]
+          result = Hash.new { |h, k| h[k] = {} }
+          order_rows(*keys).each do |code, day, count, gross, tax|
+            result[code][day.to_date] = { sales_count: count.to_i, gross: gross.to_i, tax: tax.to_i }
+          end
+          kind_rows(*keys).each do |code, day, taxable, non_taxable, exempt|
+            result[code][day.to_date]&.merge!(taxable: taxable.to_i, non_taxable: non_taxable.to_i, exempt: exempt.to_i)
+          end
+          result
         end
       end
 
-      def index_periods(kinds, totals)
-        result = Hash.new { |h, k| h[k] = {} }
-        totals.each do |row|
-          result[row['currency']][row['day'].to_date] = { sales_count: row['sales_count'].to_i, gross: row['gross'].to_i, tax: row['tax'].to_i }
-        end
-        kinds.each do |row|
-          result[row['currency']][row['day'].to_date]&.merge!(taxable: row['taxable'].to_i, non_taxable: row['non_taxable'].to_i,
-                                                              exempt: row['exempt'].to_i)
-        end
-        result
-      end
-
-      # Refunds fall in the period they were recorded in; the zone's day boundaries are used by the same expression.
+      # Refunds fall in the period they were recorded in, cut by the same zone and interval.
       def period_refunds
         @period_refunds ||= begin
           result = Hash.new { |h, k| h[k] = {} }
@@ -350,7 +353,7 @@ module BetterTogether
       end
 
       def bucket_day(time)
-        local = Time.zone.parse(time.to_s).in_time_zone(platform.time_zone)
+        local = time.in_time_zone(platform.time_zone)
         case interval
         when 'year' then local.beginning_of_year.to_date
         when 'quarter' then local.beginning_of_quarter.to_date
@@ -358,6 +361,6 @@ module BetterTogether
         end
       end
     end
-    # rubocop:enable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength, Lint/UselessConstantScoping
+    # rubocop:enable Metrics/ClassLength, Metrics/AbcSize, Metrics/MethodLength
   end
 end

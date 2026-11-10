@@ -42,12 +42,12 @@ module BetterTogether
 
         def platform? = kind == 'platform'
 
-        # SQL narrowing orders (alias `o`) to this owner.
-        def sql
-          return ['', {}] if all?
-          return ['AND o.seller_id IS NULL', {}] if platform?
+        # The condition narrowing the orders table to this owner (nil when it covers everyone).
+        def condition(orders)
+          return if all?
+          return orders[:seller_id].eq(nil) if platform?
 
-          ['AND o.seller_type = :seller_type AND o.seller_id = :seller_id', { seller_type:, seller_id: }]
+          orders[:seller_type].eq(seller_type).and(orders[:seller_id].eq(seller_id))
         end
       end
     end
