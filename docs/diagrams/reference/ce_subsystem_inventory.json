@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T14:38:04Z",
+  "generated_at": "2026-11-10T16:32:09Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -8001,6 +8001,12 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Billing::DefaultAddress",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -14070,6 +14076,12 @@
           "to": "BetterTogether::Content::Link",
           "label": "link (link_id)",
           "source_subsystem": "metrics_search_ai"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Upload",
+          "label": "upload (upload_id)",
+          "source_subsystem": "shared_supporting"
         }
       ]
     },
@@ -28636,6 +28648,12 @@
           "to": "BetterTogether::Billing::LineItem",
           "label": "line_item (line_item_id)",
           "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Billing::Order",
+          "label": "order (order_id)",
+          "source_subsystem": "shared_supporting"
         }
       ]
     },
@@ -29062,6 +29080,103 @@
           "shared_table_reference": "CommentAddedNotifier::Notification",
           "shared_table_reference_name": "BetterTogether::CommentAddedNotifier::Notification",
           "shared_table_group_size": 22
+        },
+        {
+          "name": "BetterTogether::Billing::OrderDocument",
+          "label": "Billing::OrderDocument",
+          "source_path": "app/models/better_together/billing/order_document.rb",
+          "table_name": "better_together_billing_order_documents",
+          "columns": [
+            [
+              "order_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "upload_id",
+              "uuid FK"
+            ],
+            [
+              "fingerprint",
+              "string"
+            ],
+            [
+              "kind",
+              "string"
+            ],
+            [
+              "time_zone",
+              "string"
+            ],
+            [
+              "generated_at",
+              "datetime"
+            ],
+            [
+              "superseded_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "PresenceValidator: order (message=:required)",
+            "PresenceValidator: upload (message=:required)",
+            "InclusionValidator: kind (in=[\"invoice\", \"receipt\"])",
+            "PresenceValidator: fingerprint, time_zone, generated_at"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false
+            },
+            {
+              "name": "upload",
+              "foreign_key": "upload_id",
+              "target": "BetterTogether::Upload",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "order",
+              "foreign_key": "order_id",
+              "target": "BetterTogether::Billing::Order",
+              "optional": false,
+              "target_subsystem": "billing"
+            },
+            {
+              "name": "upload",
+              "foreign_key": "upload_id",
+              "target": "BetterTogether::Upload",
+              "optional": false,
+              "target_subsystem": "content_publishing"
+            }
+          ]
         },
         {
           "name": "BetterTogether::Billing::TaxCategory",
@@ -36855,7 +36970,8 @@
           "capability": "Parentbound",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
-            "Billing::TaxLine"
+            "Billing::TaxLine",
+            "Billing::OrderDocument"
           ]
         },
         {
@@ -36878,6 +36994,7 @@
             "Billing::TaxRate",
             "Billing::TaxLine",
             "Billing::TaxCategory",
+            "Billing::OrderDocument",
             "Billing::DefaultAddress"
           ]
         },
@@ -37615,6 +37732,24 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Billing::Order",
+          "label": "order (order_id)",
+          "target_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Upload",
+          "label": "upload (upload_id)",
+          "target_subsystem": "content_publishing"
         },
         {
           "from": "BetterTogether::Billing::TaxCategory",
