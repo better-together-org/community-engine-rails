@@ -17,12 +17,14 @@ RSpec.describe BetterTogether::Billing::Entitlements::State do
     described_class::STATUSES.each { |status| expect { result(status:) }.not_to raise_error }
   end
 
-  it 'treats a status it does not know as lapsed, and says so in the log' do
-    allow(Rails.logger).to receive(:warn)
+  it 'treats a status it does not know as lapsed, and reports it' do
+    allow(BetterTogether).to receive(:report_error)
 
     expect(result(status: 'expired')).to have_attributes(status: 'lapsed', ends_at: period_end)
+    expect(BetterTogether).to have_received(:report_error)
+      .with(an_instance_of(described_class::UnknownStatus).and(having_attributes(message: /"expired"/)),
+            context: hash_including(status: 'expired')).once
     expect(result(status: 'expired')).not_to be_live
-    expect(Rails.logger).to have_received(:warn).with(/unknown subscription status "expired"/).twice
   end
 
   it 'is active until the period ends for an active or trialing subscription' do
