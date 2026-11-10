@@ -68,6 +68,7 @@ module BetterTogether
           if result.retry?
             event.update!(processing_status: 'pending', error_message: result.retry_reason.to_s, claimed_at: nil)
           else
+            # codeql[rb/clear-text-storage-sensitive-data] - beneficiary is an association to a person record, not bank account data
             event.update!(final_attributes(event, result))
           end
         end

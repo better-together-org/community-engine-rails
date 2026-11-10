@@ -169,6 +169,7 @@ module BetterTogether
 
       def find_or_build_quota(type_class, owner)
         platform_id = platform_id_for(owner)
+        # codeql[rb/clear-text-storage-sensitive-data] - owner is a record reference (platform, person, community), not account data
         Quota.find_or_create_by!(owner:, quota_type: type_class.key) do |q|
           q.limit = effective_limit(type_class, owner)
           q.period = type_class.period
