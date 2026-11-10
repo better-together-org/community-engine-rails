@@ -1793,6 +1793,43 @@ en:
         state_past_due: Past due
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
+      tax_registrations:
+        always: Always
+        created: Tax registration added.
+        edit_title: Edit tax registration
+        empty: No tax registrations yet. Without one, no tax is added to orders.
+        field_country: Country (ISO code)
+        field_country_hint: Two letters, for example CA.
+        field_from: In force from
+        field_in_force: In force
+        field_number: Registration number
+        field_number_hint: Kept encrypted and never shown again.
+        field_place: Place
+        field_prices: Prices
+        field_prices_hint: Leave on the country's usual way unless prices here are
+          set the other way.
+        field_region: Province or state
+        field_region_hint: Optional, for example NL.
+        field_status: Status
+        field_status_hint: Only "Registered" collects tax. The others record why none
+          is collected.
+        field_to: In force until
+        index_intro: Where this platform is registered to collect tax, and on what
+          terms. Orders are taxed by the registration for the buyer's place; with
+          none that collects, no tax is added.
+        index_title: Tax registrations
+        new_title: Add a tax registration
+        number_kept: Leave blank to keep the saved number
+        prices:
+          added: Tax is added to prices
+          default: The country's usual way
+          included: Prices include tax
+        statuses:
+          exempt: Exempt, collects none
+          not_collecting: Not collecting
+          registered: Registered, collects tax
+          small_supplier_exempt: Small supplier, collects none
+        updated: Tax registration saved.
       walk_up:
         agreements_label: The buyer has read and accepted the purchase agreements
           with me, in person

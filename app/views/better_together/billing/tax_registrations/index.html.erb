@@ -1,0 +1,54 @@
+<% content_for :page_title do %>
+  <%= t('better_together.billing.tax_registrations.index_title') %>
+<% end %>
+
+<div id="billing-tax-registrations-page" class="container my-4">
+  <div class="d-flex justify-content-between align-items-start">
+    <h1 class="mb-2"><%= t('better_together.billing.tax_registrations.index_title') %></h1>
+    <%= link_to t('better_together.billing.tax_registrations.new_title'),
+                new_billing_tax_registration_path(locale: I18n.locale),
+                class: 'btn btn-primary', id: 'billing-tax-registration-new-link' %>
+  </div>
+  <p class="text-body-secondary mb-4"><%= t('better_together.billing.tax_registrations.index_intro') %></p>
+
+  <% if @registrations.empty? %>
+    <div id="billing-tax-registrations-empty" class="alert alert-light border" role="note">
+      <%= t('better_together.billing.tax_registrations.empty') %>
+    </div>
+  <% else %>
+    <div class="card">
+      <div class="table-responsive">
+        <table id="billing-tax-registrations-table" class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col"><%= t('better_together.billing.tax_registrations.field_place') %></th>
+              <th scope="col"><%= t('better_together.billing.tax_registrations.field_status') %></th>
+              <th scope="col"><%= t('better_together.billing.tax_registrations.field_prices') %></th>
+              <th scope="col"><%= t('better_together.billing.tax_registrations.field_in_force') %></th>
+              <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @registrations.each do |registration| %>
+              <tr id="<%= dom_id(registration) %>">
+                <th scope="row"><%= [registration.country_iso, registration.region_code].compact.join('-') %></th>
+                <td><%= t("better_together.billing.tax_registrations.statuses.#{registration.status}") %></td>
+                <td><%= t("better_together.billing.tax_registrations.prices.#{registration.prices_include_tax? ? 'included' : 'added'}") %></td>
+                <td>
+                  <%= registration.effective_from ? l(registration.effective_from.to_date, format: :long) : t('better_together.billing.tax_registrations.always') %>
+                  <% if registration.effective_to %>
+                    &ndash; <%= l(registration.effective_to.to_date, format: :long) %>
+                  <% end %>
+                </td>
+                <td class="text-end">
+                  <%= link_to t('globals.edit'), edit_billing_tax_registration_path(registration, locale: I18n.locale),
+                              class: 'btn btn-outline-primary btn-sm', id: "#{dom_id(registration)}-edit-link" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

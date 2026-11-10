@@ -1832,6 +1832,44 @@ fr:
         state_past_due: En retard
         state_unpaid: Expiré
         terms_accepted: Merci. Votre facture de renouvellement est prête.
+      tax_registrations:
+        always: Toujours
+        created: Inscription fiscale ajoutée.
+        edit_title: Modifier l'inscription fiscale
+        empty: Aucune inscription fiscale pour l'instant. Sans inscription, aucune
+          taxe n'est ajoutée aux commandes.
+        field_country: Pays (code ISO)
+        field_country_hint: Deux lettres, par exemple CA.
+        field_from: En vigueur à partir du
+        field_in_force: En vigueur
+        field_number: Numéro d'inscription
+        field_number_hint: Conservé chiffré et jamais réaffiché.
+        field_place: Lieu
+        field_prices: Prix
+        field_prices_hint: Laissez l'usage du pays sauf si les prix ici sont fixés
+          autrement.
+        field_region: Province ou État
+        field_region_hint: Facultatif, par exemple NL.
+        field_status: Statut
+        field_status_hint: Seul « Inscrit » perçoit la taxe. Les autres indiquent
+          pourquoi elle n'est pas perçue.
+        field_to: En vigueur jusqu'au
+        index_intro: Où cette plateforme est inscrite pour percevoir les taxes, et
+          à quelles conditions. Les commandes sont taxées selon l'inscription du lieu
+          de l'acheteur ; si aucune ne perçoit, aucune taxe n'est ajoutée.
+        index_title: Inscriptions fiscales
+        new_title: Ajouter une inscription fiscale
+        number_kept: Laissez vide pour conserver le numéro enregistré
+        prices:
+          added: La taxe s'ajoute aux prix
+          default: L'usage du pays
+          included: Les prix incluent la taxe
+        statuses:
+          exempt: Exempté, ne perçoit pas
+          not_collecting: Ne perçoit pas
+          registered: Inscrit, perçoit la taxe
+          small_supplier_exempt: Petit fournisseur, ne perçoit pas
+        updated: Inscription fiscale enregistrée.
       walk_up:
         agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
           en personne

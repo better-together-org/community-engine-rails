@@ -1,0 +1,71 @@
+<% persisted = registration.persisted? %>
+<%= form_with(
+      model: registration,
+      url: persisted ? billing_tax_registration_path(registration) : billing_tax_registrations_path,
+      scope: :billing_tax_registration,
+      id: 'billing-tax-registration-form'
+    ) do |form| %>
+  <% if registration.errors.any? %>
+    <div class="alert alert-danger" role="alert" id="billing-tax-registration-errors">
+      <ul class="mb-0">
+        <% registration.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <%= form.label :country_iso, t('better_together.billing.tax_registrations.field_country'), class: 'form-label' %>
+      <%= form.text_field :country_iso, class: 'form-control text-uppercase', required: true, maxlength: 2,
+                                        placeholder: 'CA', id: 'billing-tax-registration-country' %>
+      <div class="form-text"><%= t('better_together.billing.tax_registrations.field_country_hint') %></div>
+    </div>
+    <div class="col-md-3">
+      <%= form.label :region_code, t('better_together.billing.tax_registrations.field_region'), class: 'form-label' %>
+      <%= form.text_field :region_code, class: 'form-control text-uppercase', maxlength: 3, placeholder: 'NL',
+                                        id: 'billing-tax-registration-region' %>
+      <div class="form-text"><%= t('better_together.billing.tax_registrations.field_region_hint') %></div>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :status, t('better_together.billing.tax_registrations.field_status'), class: 'form-label' %>
+      <%= form.select :status,
+                      BetterTogether::Billing::TaxRegistration::STATUSES.map { |s| [t("better_together.billing.tax_registrations.statuses.#{s}"), s] },
+                      {}, class: 'form-select', id: 'billing-tax-registration-status' %>
+      <div class="form-text"><%= t('better_together.billing.tax_registrations.field_status_hint') %></div>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :prices_include_tax, t('better_together.billing.tax_registrations.field_prices'), class: 'form-label' %>
+      <%= form.select :prices_include_tax,
+                      [[t('better_together.billing.tax_registrations.prices.default'), ''],
+                       [t('better_together.billing.tax_registrations.prices.included'), 'true'],
+                       [t('better_together.billing.tax_registrations.prices.added'), 'false']],
+                      { selected: registration.prices_include_tax.nil? ? '' : registration.prices_include_tax.to_s },
+                      class: 'form-select', id: 'billing-tax-registration-prices' %>
+      <div class="form-text"><%= t('better_together.billing.tax_registrations.field_prices_hint') %></div>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :registration_number, t('better_together.billing.tax_registrations.field_number'), class: 'form-label' %>
+      <%= form.text_field :registration_number, value: nil, class: 'form-control', autocomplete: 'off',
+                                                placeholder: persisted ? t('better_together.billing.tax_registrations.number_kept') : nil,
+                                                id: 'billing-tax-registration-number' %>
+      <div class="form-text"><%= t('better_together.billing.tax_registrations.field_number_hint') %></div>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :effective_from, t('better_together.billing.tax_registrations.field_from'), class: 'form-label' %>
+      <%= form.date_field :effective_from, value: registration.effective_from&.to_date, class: 'form-control',
+                                           id: 'billing-tax-registration-from' %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :effective_to, t('better_together.billing.tax_registrations.field_to'), class: 'form-label' %>
+      <%= form.date_field :effective_to, value: registration.effective_to&.to_date, class: 'form-control',
+                                         id: 'billing-tax-registration-to' %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= form.submit t('globals.save'), class: 'btn btn-primary', id: 'billing-tax-registration-submit' %>
+    <%= link_to t('globals.cancel'), billing_tax_registrations_path(locale: I18n.locale), class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>

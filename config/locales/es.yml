@@ -1794,6 +1794,44 @@ es:
         state_past_due: Vencida
         state_unpaid: Caducada
         terms_accepted: Gracias. Tu factura de renovación está lista.
+      tax_registrations:
+        always: Siempre
+        created: Registro de impuestos añadido.
+        edit_title: Editar registro de impuestos
+        empty: Aún no hay registros de impuestos. Sin uno, no se añade impuesto a
+          los pedidos.
+        field_country: País (código ISO)
+        field_country_hint: Dos letras, por ejemplo CA.
+        field_from: Vigente desde
+        field_in_force: Vigente
+        field_number: Número de registro
+        field_number_hint: Se guarda cifrado y no se vuelve a mostrar.
+        field_place: Lugar
+        field_prices: Precios
+        field_prices_hint: Déjelo en la costumbre del país salvo que aquí los precios
+          se fijen de otro modo.
+        field_region: Provincia o estado
+        field_region_hint: Opcional, por ejemplo NL.
+        field_status: Estado
+        field_status_hint: Solo "Registrado" cobra impuestos. Los demás indican por
+          qué no se cobra.
+        field_to: Vigente hasta
+        index_intro: Dónde está registrada esta plataforma para cobrar impuestos y
+          en qué condiciones. Los pedidos se gravan según el registro del lugar del
+          comprador; si ninguno cobra, no se añade impuesto.
+        index_title: Registros de impuestos
+        new_title: Añadir un registro de impuestos
+        number_kept: Déjelo en blanco para conservar el número guardado
+        prices:
+          added: El impuesto se suma a los precios
+          default: La costumbre del país
+          included: Los precios incluyen el impuesto
+        statuses:
+          exempt: Exento, no cobra
+          not_collecting: Sin cobrar
+          registered: Registrado, cobra impuestos
+          small_supplier_exempt: Pequeño proveedor, no cobra
+        updated: Registro de impuestos guardado.
       walk_up:
         agreements_label: El comprador ha leído y aceptado los acuerdos de compra
           conmigo, en persona
