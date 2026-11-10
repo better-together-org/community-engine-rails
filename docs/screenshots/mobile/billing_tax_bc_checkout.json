@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_bc_checkout",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=0c0aaeb9-30f2-4620-a314-aa8fe6e64739",
+  "title": "Get Annual plan | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_bc_checkout",
+  "callouts": [
+    {
+      "selector": "#billing-summary-checkout",
+      "title": "Tax before paying",
+      "bullets": [
+        "The same rows, for the chosen billing address."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 231.390625,
+        "width": 442.0,
+        "height": 199.0,
+        "right": 471.0,
+        "bottom": 430.390625,
+        "center_x": 250.0,
+        "center_y": 330.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 66.0,
+        "width": 500.0,
+        "height": 801.0,
+        "right": 500.0,
+        "bottom": 867.0,
+        "center_x": 250.0,
+        "center_y": 466.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 887.0,
+        "width": 270.0,
+        "height": 158,
+        "score": 390.0
+      }
+    }
+  ]
+}

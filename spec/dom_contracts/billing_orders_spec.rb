@@ -45,8 +45,30 @@ RSpec.describe 'Billing orders DOM contract', :as_platform_manager, type: :reque
     expect(response).to have_http_status(:ok)
     expect_ids(dom_id.dom_id(order, :show_page), dom_id.dom_id(order, :details), dom_id.dom_id(order, :status_badge),
                dom_id.dom_id(order, :placed_at), dom_id.dom_id(order, :purpose), dom_id.dom_id(order, :total), dom_id.dom_id(order, :paid),
-               dom_id.dom_id(order, :expires_at), 'billing-order-line-items', dom_id.dom_id(order.line_items.first),
+               dom_id.dom_id(order, :expires_at), 'billing-order-line-items', 'billing-order-line-0',
                'billing-order-payments', dom_id.dom_id(order.payments.first))
+  end
+
+  context 'when the order carries tax' do
+    let!(:order) do
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+      zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+      create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+      place_order(tax_address: { country_iso: 'CA', region_code: 'NL' })
+    end
+
+    it 'exposes the shared summary: subtotal, a row per tax, total and the taxed marker on the order' do
+      get "/#{locale}/billing/orders/#{order.id}"
+
+      expect_ids('billing-summary-order', 'billing-summary-order-subtotal', 'billing-summary-order-tax-0',
+                 'billing-summary-order-total', 'billing-order-line-0-tax')
+    end
+
+    it 'exposes the tax of each sale on the sales list' do
+      get "/#{locale}/billing/sales"
+
+      expect(response.body).to include('billing-sale-tax')
+    end
   end
 
   it 'exposes the steward\'s list of sales' do

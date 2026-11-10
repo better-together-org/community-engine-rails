@@ -45,4 +45,27 @@ RSpec.describe BetterTogether::BillingMailer do
 
     expect(steward_mail.html_part.body.decoded + steward_mail.text_part.body.decoded).not_to include('4711', 'Harbour')
   end
+
+  describe 'the order summary' do
+    include_context 'with quebec tax'
+
+    let(:order) { place_order(tax_address: quebec_address) }
+
+    it 'is the full summary in both parts: a row per tax, the total and the registration numbers', :aggregate_failures do
+      expect_mail_html_contents(mail, 'GST', 'QST', '9.975%', '$51.74', '123456789RT0001', '1234567890TQ0001')
+      expect(mail.html_part.body.decoded).to include('billing-summary-email-total', 'billing-summary-email-tax-1')
+      expect(mail.text_part.body.decoded).to include('GST', 'QST', '9.975%', '$51.74', '123456789RT0001', '1234567890TQ0001')
+    end
+
+    it 'shows a total and no tax rows for an order without tax', :aggregate_failures do
+      untaxed_notifier = BetterTogether::Billing::Notifier.new(record: place_order(tax_address: { country_iso: 'DE' }),
+                                                               params: {
+                                                                 kind: 'order_paid', audience: :buyer
+                                                               })
+      untaxed = described_class.with(recipient: buyer, notifier: untaxed_notifier).notification
+
+      expect(untaxed.html_part.body.decoded).to include('billing-summary-email-total')
+      expect(untaxed.html_part.body.decoded).not_to include('billing-summary-email-tax-0', 'billing-summary-email-registrations')
+    end
+  end
 end

@@ -974,6 +974,10 @@ fr:
         review_intro: Lisez ces documents avant de passer votre commande. Vous devez
           les accepter pour continuer.
         review_title: Lire et accepter
+        tax_note: La taxe, le cas échéant, est calculée selon votre adresse de facturation
+          et affichée avant la confirmation.
+        tax_note_new_address: La taxe est calculée selon l'adresse que vous saisissez
+          et affichée sur votre commande avant le paiement.
         title: Obtenir %{plan}
         unavailable_currency_not_supported: Non disponible dans cette devise.
         unavailable_insufficient_credit: Vous n'avez pas assez de crédit en magasin
@@ -1053,6 +1057,7 @@ fr:
             body: Les conditions de votre abonnement %{plan} ont changé. Acceptez-les
               pour recevoir votre prochaine facture de renouvellement.
             title: Veuillez examiner nos conditions mises à jour
+        amount_with_tax: "%{amount} (dont %{tax} de taxe)"
         cheque_bounced:
           buyer:
             body: Le chèque de %{amount} n’a pas été encaissé; le paiement a donc
@@ -1370,6 +1375,12 @@ fr:
         paid: Le paiement a été effectué.
         refused: Ce paiement n'a pas pu être ajouté. Vérifiez le montant et le mode
           de paiement, puis réessayez.
+      order_summary:
+        included: incluse dans le prix
+        registration: "%{labels}: %{number}"
+        registrations: Numéros d'inscription
+        tax_on: "%{label} (%{rate}) sur %{base}"
+        taxed: Taxé
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         add_payment_amount: Montant (laissez vide pour payer le solde)
@@ -1392,6 +1403,8 @@ fr:
         field_purpose: Pour
         field_quantity: Quantité
         field_status: État
+        field_subtotal: Sous-total
+        field_tax: Taxe
         field_total: Total
         index_title: Mes commandes
         lines_heading: Ce qui a été commandé

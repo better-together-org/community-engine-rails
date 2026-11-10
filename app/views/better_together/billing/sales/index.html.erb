@@ -22,6 +22,7 @@
               <th scope="col"><%= t('better_together.billing.orders.field_buyer') %></th>
               <th scope="col"><%= t('better_together.billing.orders.field_placed') %></th>
               <th scope="col"><%= t('better_together.billing.orders.field_status') %></th>
+              <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_tax') %></th>
               <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_total') %></th>
               <th scope="col"><span class="visually-hidden"><%= t('better_together.billing.plans.actions_heading') %></span></th>
             </tr>
@@ -33,6 +34,7 @@
                 <td><%= order.buyer.name %></td>
                 <td><%= order.placed_at ? l(order.placed_at.to_date, format: :long) : '—' %></td>
                 <td><%= billing_order_status_badge(order) %></td>
+                <td class="text-end billing-sale-tax"><%= order.tax_cents.positive? ? billing_amount(order.tax_cents, order.currency) : '—' %></td>
                 <td class="text-end"><%= billing_amount(order.total_cents, order.currency) %></td>
                 <td class="text-end">
                   <%= link_to t('globals.view'), billing_sale_path(order, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>

@@ -14,6 +14,9 @@
 
       <% if offline.waiting? || offline.expired? %>
         <% if offline.waiting? %>
+          <% if order.tax_cents.positive? %>
+            <div class="mb-3"><%= render 'better_together/billing/order_summary', summary: billing_order_summary(order), scope: "offline#{suffix}", compact: true %></div>
+          <% end %>
           <h2 class="h6"><%= t('better_together.billing.offline_payments.instructions_heading') %></h2>
           <dl id="billing-offline-instructions<%= suffix %>" class="row">
             <% billing_offline_instruction_rows(offline).each do |label, value| %>

@@ -952,6 +952,10 @@ uk:
         review_intro: Прочитайте це перед оформленням замовлення. Щоб продовжити,
           їх потрібно прийняти.
         review_title: Перегляньте та прийміть
+        tax_note: Податок, якщо він застосовується, розраховується за вашою платіжною
+          адресою й показується перед підтвердженням.
+        tax_note_new_address: Податок розраховується за введеною адресою і відображається
+          у вашому замовленні до оплати.
         title: Отримати %{plan}
         unavailable_currency_not_supported: Недоступно в цій валюті.
         unavailable_insufficient_credit: У вас недостатньо кредиту магазину для цієї
@@ -1030,6 +1034,7 @@ uk:
             body: Умови вашої підписки %{plan} змінилися. Прийміть їх, щоб отримати
               наступний рахунок на продовження.
             title: Перегляньте оновлені умови
+        amount_with_tax: "%{amount} (включає податок %{tax})"
         cheque_bounced:
           buyer:
             body: Чек на %{amount} не зараховано, тому оплату скасовано. Зв’яжіться
@@ -1324,6 +1329,12 @@ uk:
         paid: Платіж здійснено.
         refused: Не вдалося додати цей платіж. Перевірте суму та спосіб оплати й спробуйте
           ще раз.
+      order_summary:
+        included: включено у ціну
+        registration: "%{labels}: %{number}"
+        registrations: Реєстраційні номери
+        tax_on: "%{label} (%{rate}) від %{base}"
+        taxed: Оподатковується
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         add_payment_amount: Сума (залиште порожнім, щоб сплатити решту)
@@ -1346,6 +1357,8 @@ uk:
         field_purpose: Для
         field_quantity: Кількість
         field_status: Стан
+        field_subtotal: Проміжна сума
+        field_tax: Податок
         field_total: Разом
         index_title: Мої замовлення
         lines_heading: Що замовлено

@@ -966,6 +966,10 @@ es:
           pagos a cualquier factura.
         review_intro: Lea esto antes de hacer su pedido. Debe aceptarlo para continuar.
         review_title: Revisar y aceptar
+        tax_note: El impuesto, si corresponde, se calcula según su dirección de facturación
+          y se muestra antes de confirmar.
+        tax_note_new_address: El impuesto se calcula con la dirección que ingreses
+          y se muestra en tu pedido antes de pagar.
         title: Obtener %{plan}
         unavailable_currency_not_supported: No disponible en esta moneda.
         unavailable_insufficient_credit: No tienes suficiente crédito de la tienda
@@ -1043,6 +1047,7 @@ es:
             body: Cambiaron los términos de tu suscripción de %{plan}. Acéptalos para
               recibir tu próxima factura de renovación.
             title: Revisa nuestros términos actualizados
+        amount_with_tax: "%{amount} (incluye %{tax} de impuesto)"
         cheque_bounced:
           buyer:
             body: El cheque de %{amount} no se cobró, así que el pago se revirtió.
@@ -1341,6 +1346,12 @@ es:
         paid: Se realizó el pago.
         refused: No se pudo añadir ese pago. Revise el importe y la forma de pago,
           e inténtelo de nuevo.
+      order_summary:
+        included: incluido en el precio
+        registration: "%{labels}: %{number}"
+        registrations: Números de registro
+        tax_on: "%{label} (%{rate}) sobre %{base}"
+        taxed: Con impuesto
       orders:
         accepted_by: Aceptado por %{name} el %{date}
         add_payment_amount: Importe (déjelo vacío para pagar el resto)
@@ -1363,6 +1374,8 @@ es:
         field_purpose: Para
         field_quantity: Cantidad
         field_status: Estado
+        field_subtotal: Subtotal
+        field_tax: Impuesto
         field_total: Total
         index_title: Mis pedidos
         lines_heading: Lo que se pidió

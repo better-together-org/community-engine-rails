@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_bc_email",
+  "device": "mobile",
+  "url": "/en/billing/orders",
+  "title": "",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_bc_email",
+  "callouts": [
+    {
+      "selector": "#billing-summary-email",
+      "title": "Notice email",
+      "bullets": [
+        "The email carries the full summary, never payment details."
+      ],
+      "target": {
+        "x": 25.0,
+        "y": 264.0,
+        "width": 450.0,
+        "height": 231.0,
+        "right": 475.0,
+        "bottom": 495.0,
+        "center_x": 250.0,
+        "center_y": 379.5
+      },
+      "avoid": {
+        "x": 8.0,
+        "y": 8.0,
+        "width": 484.0,
+        "height": 753.0,
+        "right": 492.0,
+        "bottom": 761.0,
+        "center_x": 250.0,
+        "center_y": 384.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 781.0,
+        "width": 270.0,
+        "height": 184,
+        "score": 496.0
+      }
+    }
+  ]
+}

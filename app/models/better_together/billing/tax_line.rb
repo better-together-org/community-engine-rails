@@ -8,8 +8,12 @@ module BetterTogether
     class TaxLine < ApplicationRecord
       include PlatformBound
       include ParentBound
+      include EncryptedAttributes
 
       self.table_name = 'better_together_billing_tax_lines'
+
+      # The number of whoever collected this tax, as it was when the order was placed.
+      encrypts_billing_attribute :registration_number
 
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :tax_lines, optional: false
       belongs_to :line_item, class_name: 'BetterTogether::Billing::LineItem', inverse_of: :tax_lines, optional: false

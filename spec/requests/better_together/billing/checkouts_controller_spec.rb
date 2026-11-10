@@ -56,6 +56,10 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
     before { sign_in member }
 
     describe 'GET new' do
+      let(:zone_for) do
+        ->(region) { create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: region) }
+      end
+
       it 'lists the ways to pay and says why one is not available' do
         enable_cash
 
@@ -66,6 +70,58 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
                                          'billing-checkout-method-cash',
                                          'billing-checkout-continue-btn')
         expect(response.body).not_to include('billing-agreement-review')
+      end
+
+      it 'shows the tax and total for the chosen billing address', :aggregate_failures do
+        enable_cash
+        buyer_address
+        create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+        zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+        create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+
+        get new_checkout_path
+
+        expect(response.body).to include('billing-summary-checkout', 'billing-summary-checkout-tax-0', 'billing-summary-checkout-total',
+                                         '$28.75')
+        expect(response.body).not_to include('billing-checkout-tax-note')
+      end
+
+      it 'follows the address picked: another saved address gets its own tax', :aggregate_failures do
+        enable_cash
+        buyer_address
+        create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+        create(:better_together_billing_tax_rate, platform: host_platform, label: 'HST', rate: 0.15,
+                                                  tax_zone: zone_for.call('NL'))
+        create(:better_together_billing_tax_rate, platform: host_platform, label: 'PST', rate: 0.10,
+                                                  tax_zone: zone_for.call('BC'))
+        other = create_billing_address_for(buyer, region: 'BC', settlement_name: 'Vancouver')
+
+        get new_checkout_path(billing_address_id: other.id)
+
+        expect(response.body).to include('$27.50')
+        expect(response.body).not_to include('$28.75')
+      end
+
+      it 'promises no tax for a new address, and says it is worked out from the address entered', :aggregate_failures do
+        enable_cash
+        buyer_address
+        create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+        create(:better_together_billing_tax_rate, platform: host_platform, label: 'HST', rate: 0.15,
+                                                  tax_zone: zone_for.call('NL'))
+
+        get new_checkout_path(billing_address_id: 'new')
+
+        expect(response.body).to include('billing-checkout-tax-note', 'billing-checkout-tax-frame')
+        expect(response.body).not_to include('billing-summary-checkout-total')
+        expect_html_content('the address you enter')
+      end
+
+      it 'says tax is worked out once there is an address' do
+        enable_cash
+
+        get new_checkout_path
+
+        expect(response.body).to include('billing-checkout-tax-note')
       end
 
       it 'says why a method that is not switched on is not available' do

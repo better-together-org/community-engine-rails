@@ -1,0 +1,47 @@
+{
+  "name": "billing_tax_quebec_order",
+  "device": "mobile",
+  "url": "/en/billing/orders/4f9f5e33-6c15-4c23-9dfc-288837d2a754",
+  "title": "Order BT-S2VXQMRF | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_quebec_order",
+  "callouts": [
+    {
+      "selector": "#billing-summary-order",
+      "title": "Order summary",
+      "bullets": [
+        "A marker on each line, a row per tax, the total and the registration numbers."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 445.390625,
+        "width": 459.0,
+        "height": 366.0,
+        "right": 472.0,
+        "bottom": 811.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 210
+      }
+    }
+  ]
+}

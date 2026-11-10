@@ -974,6 +974,10 @@ en:
         review_intro: Read these before you place your order. You have to accept them
           to continue.
         review_title: Review and accept
+        tax_note: Tax, if any, is worked out from your billing address and shown before
+          you confirm.
+        tax_note_new_address: Tax is worked out from the address you enter, and shown
+          on your order before you pay.
         title: Get %{plan}
         unavailable_currency_not_supported: Not available in this currency.
         unavailable_insufficient_credit: You do not have enough store credit for this.
@@ -1051,6 +1055,7 @@ en:
             body: The terms for your %{plan} subscription changed. Accept them to
               receive your next renewal invoice.
             title: Please review our updated terms
+        amount_with_tax: "%{amount} (includes %{tax} tax)"
         cheque_bounced:
           buyer:
             body: The cheque for %{amount} did not clear, so the payment was reversed.
@@ -1350,6 +1355,12 @@ en:
         paid: The payment was made.
         refused: That payment could not be added. Check the amount and the way of
           paying, and try again.
+      order_summary:
+        included: included in the price
+        registration: "%{labels}: %{number}"
+        registrations: Registration numbers
+        tax_on: "%{label} (%{rate}) on %{base}"
+        taxed: Taxed
       orders:
         accepted_by: Accepted by %{name} on %{date}
         add_payment_amount: Amount (leave empty to pay the rest)
@@ -1372,6 +1383,8 @@ en:
         field_purpose: For
         field_quantity: Quantity
         field_status: Status
+        field_subtotal: Subtotal
+        field_tax: Tax
         field_total: Total
         index_title: My orders
         lines_heading: What was ordered

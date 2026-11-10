@@ -10,6 +10,7 @@ module BetterTogether
     # still drafts the page says it cannot be completed yet and offers no way to accept.
     class CheckoutsController < ApplicationController
       include OwnerScoped
+      include CheckoutTaxPreview
 
       before_action :set_plan
       before_action :set_choices
@@ -20,15 +21,15 @@ module BetterTogether
         load_choice
         @gate = build_gate if @method
         load_addresses
+        load_tax_preview
       end
 
       def create
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
         return render_again(:method_not_available) unless @method
-        return render_again(:parts_too_large) if parts_cents >= @plan.amount_cents && @parts.any?
-
         return render_again(@address_error) unless choose_address
+        return render_again(:parts_too_large) if parts_too_large?
 
         @gate = build_gate
         return render_again(:not_ready) unless @gate.ready?
@@ -47,7 +48,7 @@ module BetterTogether
 
       def load_addresses
         options = Checkout::BillingAddressOptions.new(platform: billing_owner, person: current_user.person,
-                                                      selected_id: params[:billing_address_id])
+                                                      selected_id: @address&.id || params[:billing_address_id])
         @addresses = options.addresses
         @selected_address_id = options.selected_id
         @new_address = @refused_address || options.blank_address
@@ -135,6 +136,7 @@ module BetterTogether
       def render_again(reason)
         @error = reason
         load_addresses
+        load_tax_preview
         render :new, status: :unprocessable_content
       end
     end

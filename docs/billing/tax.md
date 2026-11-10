@@ -1,6 +1,6 @@
 # Billing Tax
 
-Community Engine works out tax itself for every order, whatever the way of paying (a processor, cash, a cheque, an e-transfer, store credit), so the amount an order asks for is the same on every route. This page covers what is built so far: the data and the calculator. Screens for registering, tax lines on receipts and reports come in later changes.
+Community Engine works out tax itself for every order, whatever the way of paying (a processor, cash, a cheque, an e-transfer, store credit), so the amount an order asks for is the same on every route. This page covers what is built so far: the data and the calculator. Screens for registering come in a later change, and so do reports.
 
 An order with no tax registration behind it has no tax lines and the totals it always had.
 
@@ -106,9 +106,30 @@ A processor checkout session is given the order's tax (`tax_cents`, `included_ta
 
 A refund keeps `tax_cents`: its share of the order's tax, pro-rated at the time it is recorded (`Refunds::ProRatedTax`), never worked out again from today's rates. The share is the refund's part of the order total, rounded half up; the refund that completes what the order took in takes the tax that is left, so refunded tax equals the order's tax to the cent. `Refund#net_cents` is the amount without the tax. The refund forms on a sale tell the seller how much tax the order carries.
 
+## Where tax shows
+
+One value object, `Orders::Summary` (built `for_order` or, at checkout, `for_preview`), feeds every surface, so the figures, the rows and their order cannot differ. The web partial `billing/_order_summary` and the email partials draw it.
+
+| Place | What the reader sees |
+|-------|----------------------|
+| Order and sale details | The line table, with a Tax column that says Taxed on a taxed line and is empty on one without tax, when the order carries tax (an untaxed order keeps three columns). Under it, right-aligned: subtotal, one row per tax (name, rate, the amount it applies to, the tax, "included" when inside the price), the total, then the registration numbers by tax. |
+| Checkout | The compact summary (rows and registration numbers) for the chosen billing address, from the same calculator as placing the order (`Checkout::TaxPreview`). Without an address, a note that tax is worked out once one is chosen. |
+| Offline payment instructions | The compact summary for a taxed order, above how to pay. |
+| Notice emails (HTML and text) | The full summary, registration numbers included, and never payment instructions or payee details. |
+| In-app notification | The short line: the total with the tax in it ("$51.75 (including $6.75 tax)"). |
+| Sales list | A Tax column per sale, the same total; a dash when there is none. |
+
+HST is one row, never split. Rows are grouped by label, rate and whether the tax is inside the price, so a tax charged on several lines reads as one row; its base is the sum of the taxed lines (with any tax inside the price taken out). Tax rates apply to each line separately, never compounded.
+
+### Registration numbers
+
+Each `billing_tax_lines` row keeps the number of the registration that collected it (`registration_number`, encrypted, nullable, a snapshot: no backfill, later changes to a registration do not touch placed orders). The calculator takes, for each rate, the registrant's registration for the rate's own place, a region-specific one before a country-wide one, so a Quebec order shows the federal number under GST and Quebec's under QST. A rate with no number to show leaves that tax out of the list. Only presence is validated; the number's format is not checked. The notes follow the CRA and Revenu Quebec invoice rules (supplier number and each tax shown for supplies of $100 or more) and Manitoba Bulletin 004 (price and tax stated separately).
+
+Screenshots: `docs/screenshots/{desktop,mobile}/billing_tax_{quebec,bc}_{order,checkout,offline,email}.png`.
+
 ## Not built yet
 
-The seller's agreement to collect tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
+The seller's agreement to collect tax, and monthly, quarterly and yearly reports. Processor receipts are the processor's own pages, so tax shows there only if the processor puts it there; our notices carry the tax amount. See the plan for the stages.
 
 ## Sellers: a later phase
 

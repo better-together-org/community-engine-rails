@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_11_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_12_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -815,6 +815,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_090000) do
     t.decimal "rate", precision: 8, scale: 5, null: false
     t.integer "amount_cents", null: false
     t.boolean "included", default: false, null: false
+    t.text "registration_number"
     t.index ["line_item_id"], name: "idx_bt_billing_tax_lines_line_item"
     t.index ["order_id"], name: "idx_bt_billing_tax_lines_order"
     t.index ["platform_id"], name: "idx_bt_billing_tax_lines_platform"

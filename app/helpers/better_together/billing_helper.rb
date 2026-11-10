@@ -13,6 +13,9 @@ module BetterTogether
       )
     end
 
+    # What an order says about money (lines, one row per tax, total, registration numbers), for any surface.
+    def billing_order_summary(order) = BetterTogether::Billing::Orders::Summary.for_order(order)
+
     def billing_interval_label(interval)
       t("better_together.billing.plans.interval_#{interval}", default: interval.to_s.humanize)
     end
