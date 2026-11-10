@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_10_130000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_10_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1787,8 +1787,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_130000) do
     t.uuid "person_id"
     t.uuid "platform_id"
     t.uuid "user_id"
+    t.uuid "local_platform_id"
+    t.index ["local_platform_id"], name: "idx_on_local_platform_id_3d4656d5f0"
     t.index ["person_id"], name: "bt_person_platform_conections_by_person"
     t.index ["platform_id"], name: "bt_person_platform_conections_by_platform"
+    t.index ["provider", "uid", "local_platform_id"], name: "idx_bt_ppi_provider_uid_local_platform", unique: true
     t.index ["user_id"], name: "bt_person_platform_conections_by_user"
   end
 
@@ -2965,6 +2968,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_130000) do
   add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantor_id", on_delete: :cascade
   add_foreign_key "better_together_person_messaging_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "local_platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"

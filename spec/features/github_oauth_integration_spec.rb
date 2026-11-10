@@ -134,6 +134,24 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
       end
     end
 
+    context 'when the same GitHub account is already linked on another platform' do
+      let!(:existing_user) { create(:user, :confirmed, email: oauth_email) }
+
+      before do
+        create(:person_platform_integration, user: existing_user, provider: 'github', uid: oauth_uid,
+                                             local_platform: create(:better_together_platform))
+      end
+
+      it 'does not sign in as the other platform identity', :aggregate_failures do
+        visit '/users/auth/github/callback'
+
+        local = BetterTogether::PersonPlatformIntegration.where(provider: 'github', uid: oauth_uid,
+                                                                local_platform: platform)
+        expect(local.count).to eq(1)
+        expect(local.first.id).not_to eq(existing_user.person_platform_integrations.first.id)
+      end
+    end
+
     context 'when user is already signed in' do
       let!(:content_publishing_agreement) do
         BetterTogether::Agreement.find_or_create_by!(identifier: BetterTogether::PublicVisibilityGate::AGREEMENT_IDENTIFIER)

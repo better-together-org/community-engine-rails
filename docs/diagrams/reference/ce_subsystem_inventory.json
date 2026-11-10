@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T23:15:24Z",
+  "generated_at": "2026-11-10T23:31:37Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -1805,6 +1805,10 @@
           "table_name": "better_together_person_platform_integrations",
           "columns": [
             [
+              "local_platform_id",
+              "uuid FK"
+            ],
+            [
               "person_id",
               "uuid FK"
             ],
@@ -1839,17 +1843,13 @@
             [
               "profile_url",
               "string"
-            ],
-            [
-              "provider",
-              "string"
             ]
           ],
           "validations": [
             "PresenceValidator: provider",
             "InclusionValidator: provider (in=[\"facebook\", \"github\", \"google_oauth2\", \"linkedin\"])",
             "PresenceValidator: uid",
-            "UniquenessValidator: uid (scope=:provider)",
+            "UniquenessValidator: uid (scope=[:provider, :local_platform_id])",
             "PresenceValidator: user",
             "PresenceValidator: access_token (on=:create)"
           ],
@@ -1865,6 +1865,12 @@
               "foreign_key": "platform_id",
               "target": "BetterTogether::Platform",
               "optional": false
+            },
+            {
+              "name": "local_platform",
+              "foreign_key": "local_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
             },
             {
               "name": "user",
@@ -1899,6 +1905,13 @@
               "foreign_key": "platform_id",
               "target": "BetterTogether::Platform",
               "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "local_platform",
+              "foreign_key": "local_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
               "target_subsystem": "platform_network"
             }
           ]
@@ -3330,6 +3343,12 @@
           "from": "BetterTogether::PersonLinkedSeed",
           "to": "BetterTogether::Platform",
           "label": "source_platform (source_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformIntegration",
+          "to": "BetterTogether::Platform",
+          "label": "local_platform (local_platform_id)",
           "target_subsystem": "platform_network"
         },
         {
@@ -6756,6 +6775,12 @@
           "from": "BetterTogether::PersonLinkedSeed",
           "to": "BetterTogether::Platform",
           "label": "source_platform (source_platform_id)",
+          "source_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::PersonPlatformIntegration",
+          "to": "BetterTogether::Platform",
+          "label": "local_platform (local_platform_id)",
           "source_subsystem": "identity_access"
         },
         {
