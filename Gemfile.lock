@@ -54,7 +54,7 @@ PATH
       omniauth
       omniauth-github (~> 2.0.0)
       omniauth-rails_csrf_protection
-      pay (~> 11.6)
+      pay (~> 12.4)
       pg_search
       premailer-rails
       public_activity
@@ -64,6 +64,7 @@ PATH
       rack-cors (>= 1.1.1, < 3.1.0)
       rack-mini-profiler
       rails (>= 7.2, < 8.2)
+      receipts (~> 3.0)
       redcarpet (~> 3.6)
       reform-rails (>= 0.2, < 0.4)
       rgeo-geojson
@@ -474,7 +475,7 @@ GEM
       activesupport (>= 6.0.0)
       railties (>= 6.0.0)
     io-console (0.9.5)
-    irb (1.18.0)
+    irb (1.19.0)
       pp (>= 0.6.0)
       prism (>= 1.3.0)
       rdoc (>= 4.0.0)
@@ -531,9 +532,9 @@ GEM
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2026.0414)
     mini_mime (1.1.5)
-    minitest (6.0.6)
+    minitest (6.1.0)
       drb (~> 2.0)
-      prism (~> 1.5)
+      prism (>= 1.5, < 3)
     mize (0.6.1)
     mobility (1.3.2)
       i18n (>= 0.6.10, < 2)
@@ -602,7 +603,7 @@ GEM
     parser (3.3.11.1)
       ast (~> 2.4.1)
       racc
-    pay (11.8.0)
+    pay (12.4.0)
       rails (>= 7.0.0)
     pg (1.6.3-aarch64-linux)
     pg (1.6.3-arm64-darwin)
@@ -716,6 +717,7 @@ GEM
       tsort
     readline (0.0.4)
       reline
+    receipts (3.0.0)
     redcarpet (3.6.1)
     redis (6.0.0)
       redis-client (= 0.30.1)

@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Billing::Entitlements::State do
   def result(**attrs) = described_class.call(subscription(**attrs), term, now:)
 
   it 'gives something for every status Pay has, and refuses one it does not know' do
-    Pay::Subscription::STATUSES.each { |status| expect { result(status:) }.not_to raise_error }
+    described_class::STATUSES.each { |status| expect { result(status:) }.not_to raise_error }
     expect { result(status: 'martian') }.to raise_error(ArgumentError)
   end
 

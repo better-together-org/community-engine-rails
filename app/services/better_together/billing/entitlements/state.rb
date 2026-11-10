@@ -5,7 +5,7 @@ module BetterTogether
     module Entitlements
       # What a Pay subscription gives right now. A **pure function over Pay's own vocabulary** (the subscription's
       # status, period and end), the same for a subscription Community Engine renews and one a processor renews,
-      # so there is one derivation for every way of paying. It is exhaustive over `Pay::Subscription::STATUSES`.
+      # so there is one derivation for every way of paying. It is exhaustive over `STATUSES`, the statuses Pay uses.
       #
       #   status                        result
       #   trialing, active              active until the period (or trial, or the date it ends) is over;
@@ -24,6 +24,7 @@ module BetterTogether
         end
 
         LAPSED_STATUSES = %w[unpaid canceled incomplete_expired paused].freeze
+        STATUSES = (%w[incomplete trialing active past_due] + LAPSED_STATUSES).freeze
 
         module_function
 
