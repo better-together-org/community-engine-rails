@@ -2,7 +2,7 @@
   "name": "message_requests_index",
   "device": "mobile",
   "url": "/en/message_requests",
-  "title": "Message Requests | Community Engine Host",
+  "title": "Message Requests | Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "message_requests",

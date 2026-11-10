@@ -769,6 +769,11 @@ fr:
       address: Adresse
       city_name: Ville
       country_name: Pays
+      geography:
+        country: Pays
+        settlement: Ville ou localité
+        state: État ou province
+        use_typed_text: Utiliser « %{q} » tel que saisi
       label: Libellé
       labels:
         billing: Facturation
@@ -6145,6 +6150,8 @@ fr:
         other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
       wrong_sign: a le mauvais signe pour ce type d’écriture
     models:
+      address_geography_conflict: 'Le texte saisi ne correspond pas au lieu sélectionné
+        : il devrait être « %{selected} ».'
       address_missing_type: L'adresse doit être physique, postale ou les deux.
       better_together/navigation_item:
         attributes:

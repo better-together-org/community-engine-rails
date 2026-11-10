@@ -753,6 +753,11 @@ uk:
       address: Адреса
       city_name: Місто
       country_name: Країна
+      geography:
+        country: Країна
+        settlement: Місто або населений пункт
+        state: Штат або провінція
+        use_typed_text: Використати «%{q}» як введено
       label: Мітка
       labels:
         billing: Рахунок
@@ -6066,6 +6071,8 @@ uk:
         other: неправильна довжина (має бути %{count} символів)
       wrong_sign: має неправильний знак для цього запису
     models:
+      address_geography_conflict: 'Введений текст суперечить вибраному місцю: має
+        бути «%{selected}».'
       address_missing_type: Адреса має бути фізичною, поштовою або обома.
       better_together/navigation_item:
         attributes:

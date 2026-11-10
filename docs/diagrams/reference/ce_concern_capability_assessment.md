@@ -60,6 +60,7 @@ This assessment is generated from the current live class set and the concern cap
 | `Federatable` | Federatable | `Page`, `Post` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `FramedIndex` | Framedindex | `PostsController` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `FriendlySlug` | Adds translated/human-friendly slugs for routes and lookup. | `ResourcePermission`, `User`, `Role`, `Person`, `OauthUser` | Slug uniqueness and routing ambiguity become cross-domain concerns when federation is involved. |
+| `Geography::AddressLinks` | Addresslinks | `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Geospatial::One` | One | `Geography::Settlement`, `Geography::Region`, `Geography::State`, `Geography::Country`, `Geography::Continent`, `Address` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::AddressData` | Addressdata | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `Geography::Locatable::LocatedIn` | Locatedin | `Community` | Review the concern source for configuration-specific coupling or visibility implications. |

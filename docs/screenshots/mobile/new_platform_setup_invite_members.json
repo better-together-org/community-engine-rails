@@ -1,7 +1,7 @@
 {
   "name": "new_platform_setup_invite_members",
   "device": "mobile",
-  "url": "/en/w/new_platform_setup/new-platform-3eec94fa95e3/invite_members",
+  "url": "/en/w/new_platform_setup/new-platform-e65cd8926201/invite_members",
   "title": "Invite Members (Optional) | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -41,7 +41,7 @@
         "y": 658.55,
         "width": 270.0,
         "height": 210,
-        "score": 622.453125
+        "score": 618.453125
       }
     },
     {
