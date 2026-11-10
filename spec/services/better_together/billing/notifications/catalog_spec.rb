@@ -14,7 +14,7 @@ RSpec.describe BetterTogether::Billing::Notifications::Catalog do
 
     expect(critical).to contain_exactly('payment_failed', 'payment_action_required', 'dispute_opened', 'settings_changed',
                                         'event_dead_lettered', 'plan_sync_failed', 'cheque_bounced', 'hold_expiring',
-                                        'refund_failed', 'payment_orphaned', 'renewal_overdue', 'grace_ending')
+                                        'refund_failed', 'payment_orphaned', 'payment_amount_mismatch', 'renewal_overdue', 'grace_ending')
     expect(described_class.critical?('order_paid')).to be(false)
   end
 

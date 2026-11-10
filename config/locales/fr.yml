@@ -1158,6 +1158,11 @@ fr:
           body: Votre banque doit vous demander de confirmer ce paiement avant qu’il
             puisse aboutir.
           title: Action requise pour payer la commande %{number}
+        payment_amount_mismatch:
+          body: Un paiement de la commande %{number} a été prélevé pour un montant
+            différent du total de la commande, %{amount}. Vérifiez le paiement, la
+            taxe et le processeur avant de vous y fier.
+          title: Le montant d'un paiement diffère de celui de sa commande
         payment_claimed:
           body: L’acheteur dit avoir envoyé %{amount} par %{method}. Vérifiez que
             vous l’avez reçu, puis marquez-le comme reçu.
