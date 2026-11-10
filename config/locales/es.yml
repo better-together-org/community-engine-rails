@@ -966,6 +966,8 @@ es:
           pagos a cualquier factura.
         review_intro: Lea esto antes de hacer su pedido. Debe aceptarlo para continuar.
         review_title: Revisar y aceptar
+        tax_note: El impuesto, si corresponde, se calcula según su dirección de facturación
+          y se muestra antes de confirmar.
         title: Obtener %{plan}
         unavailable_currency_not_supported: No disponible en esta moneda.
         unavailable_insufficient_credit: No tienes suficiente crédito de la tienda
@@ -1043,6 +1045,7 @@ es:
             body: Cambiaron los términos de tu suscripción de %{plan}. Acéptalos para
               recibir tu próxima factura de renovación.
             title: Revisa nuestros términos actualizados
+        amount_with_tax: "%{amount} (incluye %{tax} de impuesto)"
         cheque_bounced:
           buyer:
             body: El cheque de %{amount} no se cobró, así que el pago se revirtió.
@@ -1244,6 +1247,7 @@ es:
           body: Su período de prueba está por terminar.
           title: Su prueba termina pronto
       offline_payments:
+        amount_includes_tax: Este total incluye %{tax} de impuesto (%{total} en total).
         amount_to_pay: Pague %{amount}.
         bounce_confirm: "¿Marcar este cheque como rechazado? Se revertirá lo que concedió."
         buyer_says_sent: El comprador dice que lo envió
@@ -1363,6 +1367,8 @@ es:
         field_purpose: Para
         field_quantity: Cantidad
         field_status: Estado
+        field_subtotal: Subtotal
+        field_tax: Impuesto
         field_total: Total
         index_title: Mis pedidos
         lines_heading: Lo que se pidió
@@ -1817,6 +1823,9 @@ es:
         state_past_due: Vencida
         state_unpaid: Caducada
         terms_accepted: Gracias. Tu factura de renovación está lista.
+      tax_breakdown:
+        included: incluido en el precio
+        row: "%{label} (%{rate})"
       tax_registrations:
         created: Registro de impuestos añadido.
         edit_title: Editar registro de impuestos

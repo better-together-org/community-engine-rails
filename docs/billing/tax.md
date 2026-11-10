@@ -1,6 +1,6 @@
 # Billing Tax
 
-Community Engine works out tax itself for every order, whatever the way of paying (a processor, cash, a cheque, an e-transfer, store credit), so the amount an order asks for is the same on every route. This page covers what is built so far: the data and the calculator. Screens for registering, tax lines on receipts and reports come in later changes.
+Community Engine works out tax itself for every order, whatever the way of paying (a processor, cash, a cheque, an e-transfer, store credit), so the amount an order asks for is the same on every route. This page covers what is built so far: the data and the calculator. Screens for registering come in a later change, and so do reports.
 
 An order with no tax registration behind it has no tax lines and the totals it always had.
 
@@ -106,9 +106,21 @@ A processor checkout session is given the order's tax (`tax_cents`, `included_ta
 
 A refund keeps `tax_cents`: its share of the order's tax, pro-rated at the time it is recorded (`Refunds::ProRatedTax`), never worked out again from today's rates. The share is the refund's part of the order total, rounded half up; the refund that completes what the order took in takes the tax that is left, so refunded tax equals the order's tax to the cent. `Refund#net_cents` is the amount without the tax. The refund forms on a sale tell the seller how much tax the order carries.
 
+## Where tax shows
+
+| Place | What the reader sees |
+|-------|----------------------|
+| Checkout summary | Tax for the chosen billing address, one row per tax with its rate, and the total it makes. Without an address, a note that tax is worked out once one is chosen. The same calculator runs as when the order is placed (`Checkout::TaxPreview`), so the figures match. |
+| Order and sale details | Subtotal, each tax (rate, and "included" when inside the price), then total. Shown only when the order carries tax. |
+| Sales list | A Tax column per sale; a dash when there is none. |
+| Offline payment instructions | The amount to pay, with a note that it includes the tax. |
+| Notices | The order total with the tax in it ("$51.75 (including $6.75 tax)"). |
+
+Rows are grouped by label, rate and whether the tax is inside the price (`Tax::Breakdown`), so a tax charged on several lines reads as one row.
+
 ## Not built yet
 
-The seller's agreement to collect tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
+The seller's agreement to collect tax, and monthly, quarterly and yearly reports. Processor receipts are the processor's own pages, so tax shows there only if the processor puts it there; our notices carry the tax amount. See the plan for the stages.
 
 ## Sellers: a later phase
 

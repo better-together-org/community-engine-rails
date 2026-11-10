@@ -12,6 +12,16 @@
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_purpose') %></dt>
       <dd id="<%= dom_id(order, :purpose) %>" class="col-sm-8"><%= t("better_together.billing.orders.purpose_#{order.purpose}") %></dd>
 
+      <% if order.tax_cents.positive? %>
+        <dt class="col-sm-4"><%= t('better_together.billing.orders.field_subtotal') %></dt>
+        <dd id="<%= dom_id(order, :subtotal) %>" class="col-sm-8"><%= billing_amount(order.subtotal_cents, order.currency) %></dd>
+
+        <dt class="col-sm-4"><%= t('better_together.billing.orders.field_tax') %></dt>
+        <dd id="<%= dom_id(order, :tax) %>" class="col-sm-8">
+          <%= render 'better_together/billing/tax_breakdown', groups: billing_order_tax_breakdown(order), currency: order.currency, scope: 'order' %>
+        </dd>
+      <% end %>
+
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_total') %></dt>
       <dd id="<%= dom_id(order, :total) %>" class="col-sm-8"><%= billing_amount(order.total_cents, order.currency) %></dd>
 

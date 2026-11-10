@@ -974,6 +974,8 @@ fr:
         review_intro: Lisez ces documents avant de passer votre commande. Vous devez
           les accepter pour continuer.
         review_title: Lire et accepter
+        tax_note: La taxe, le cas échéant, est calculée selon votre adresse de facturation
+          et affichée avant la confirmation.
         title: Obtenir %{plan}
         unavailable_currency_not_supported: Non disponible dans cette devise.
         unavailable_insufficient_credit: Vous n'avez pas assez de crédit en magasin
@@ -1053,6 +1055,7 @@ fr:
             body: Les conditions de votre abonnement %{plan} ont changé. Acceptez-les
               pour recevoir votre prochaine facture de renouvellement.
             title: Veuillez examiner nos conditions mises à jour
+        amount_with_tax: "%{amount} (dont %{tax} de taxe)"
         cheque_bounced:
           buyer:
             body: Le chèque de %{amount} n’a pas été encaissé; le paiement a donc
@@ -1264,6 +1267,7 @@ fr:
           body: Votre période d’essai est sur le point de se terminer.
           title: Votre période d’essai se termine bientôt
       offline_payments:
+        amount_includes_tax: Ce total comprend %{tax} de taxe (%{total} au total).
         amount_to_pay: Payez %{amount}.
         bounce_confirm: Marquer ce chèque comme refusé? Tout ce qu’il a accordé sera
           annulé.
@@ -1392,6 +1396,8 @@ fr:
         field_purpose: Pour
         field_quantity: Quantité
         field_status: État
+        field_subtotal: Sous-total
+        field_tax: Taxe
         field_total: Total
         index_title: Mes commandes
         lines_heading: Ce qui a été commandé
@@ -1856,6 +1862,9 @@ fr:
         state_past_due: En retard
         state_unpaid: Expiré
         terms_accepted: Merci. Votre facture de renouvellement est prête.
+      tax_breakdown:
+        included: incluse dans le prix
+        row: "%{label} (%{rate})"
       tax_registrations:
         created: Inscription fiscale ajoutée.
         edit_title: Modifier l'inscription fiscale

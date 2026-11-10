@@ -952,6 +952,8 @@ uk:
         review_intro: Прочитайте це перед оформленням замовлення. Щоб продовжити,
           їх потрібно прийняти.
         review_title: Перегляньте та прийміть
+        tax_note: Податок, якщо він застосовується, розраховується за вашою платіжною
+          адресою й показується перед підтвердженням.
         title: Отримати %{plan}
         unavailable_currency_not_supported: Недоступно в цій валюті.
         unavailable_insufficient_credit: У вас недостатньо кредиту магазину для цієї
@@ -1030,6 +1032,7 @@ uk:
             body: Умови вашої підписки %{plan} змінилися. Прийміть їх, щоб отримати
               наступний рахунок на продовження.
             title: Перегляньте оновлені умови
+        amount_with_tax: "%{amount} (включає податок %{tax})"
         cheque_bounced:
           buyer:
             body: Чек на %{amount} не зараховано, тому оплату скасовано. Зв’яжіться
@@ -1230,6 +1233,7 @@ uk:
           body: Ваш пробний період добігає кінця.
           title: Пробний період скоро закінчиться
       offline_payments:
+        amount_includes_tax: Ця сума містить податок %{tax} (разом %{total}).
         amount_to_pay: Сплатіть %{amount}.
         bounce_confirm: Позначити цей чек поверненим? Усе, що він надав, буде скасовано.
         buyer_says_sent: Покупець каже, що надіслав
@@ -1346,6 +1350,8 @@ uk:
         field_purpose: Для
         field_quantity: Кількість
         field_status: Стан
+        field_subtotal: Проміжна сума
+        field_tax: Податок
         field_total: Разом
         index_title: Мої замовлення
         lines_heading: Що замовлено
@@ -1788,6 +1794,9 @@ uk:
         state_past_due: Прострочена
         state_unpaid: Спливла
         terms_accepted: Дякуємо. Ваш рахунок на продовження готовий.
+      tax_breakdown:
+        included: включено у ціну
+        row: "%{label} (%{rate})"
       tax_registrations:
         created: Податкову реєстрацію додано.
         edit_title: Редагувати податкову реєстрацію

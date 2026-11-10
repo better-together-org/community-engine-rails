@@ -14,6 +14,17 @@
       <span><strong><%= @plan.name %></strong><span class="d-block text-body-secondary"><%= billing_interval_label(@plan.billing_interval) %></span></span>
       <span class="fs-5"><%= billing_amount(@plan.amount_cents, @plan.currency) %></span>
     </div>
+    <% if @tax_preview&.known? && @tax_preview.taxed? %>
+      <div id="billing-checkout-tax" class="card-footer">
+        <%= render 'better_together/billing/tax_breakdown', groups: @tax_preview.groups, currency: @plan.currency, scope: 'checkout' %>
+        <div id="billing-checkout-total" class="d-flex justify-content-between fw-bold">
+          <span><%= t('better_together.billing.orders.field_total') %></span>
+          <span><%= billing_amount(@tax_preview.total_cents, @plan.currency) %></span>
+        </div>
+      </div>
+    <% else %>
+      <div id="billing-checkout-tax-note" class="card-footer small text-body-secondary"><%= t('better_together.billing.checkout.tax_note') %></div>
+    <% end %>
   </div>
 
   <%# Step 1: how to pay. A method that is not available is listed with the reason. %>

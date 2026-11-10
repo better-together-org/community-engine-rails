@@ -124,7 +124,15 @@ module BetterTogether
       def amount_text(order)
         return money(record.amount_cents, record.account.currency) if record.is_a?(CreditLot)
 
-        order ? money(order.total_cents, order.currency) : term_amount_text
+        order ? order_amount_text(order) : term_amount_text
+      end
+
+      # The total, and how much of it is tax when the order carries any.
+      def order_amount_text(order)
+        total = money(order.total_cents, order.currency)
+        return total unless order.tax_cents.positive?
+
+        I18n.t('better_together.billing.notifications.amount_with_tax', amount: total, tax: money(order.tax_cents, order.currency), locale:)
       end
 
       # What a subscription costs each period, for a notice that has no invoice yet.

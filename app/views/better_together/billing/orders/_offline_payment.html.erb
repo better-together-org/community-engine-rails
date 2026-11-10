@@ -27,6 +27,11 @@
               <span class="fw-normal text-body-secondary"><%= t('better_together.billing.offline_payments.hold_until', date: l(order.expires_at, format: :long)) %></span>
             <% end %>
           </p>
+          <% if order.tax_cents.positive? %>
+            <p id="billing-offline-tax<%= suffix %>" class="small text-body-secondary">
+              <%= t('better_together.billing.offline_payments.amount_includes_tax', tax: billing_amount(order.tax_cents, order.currency), total: billing_amount(order.total_cents, order.currency)) %>
+            </p>
+          <% end %>
         <% end %>
 
         <div id="billing-offline-disclosure<%= suffix %>" class="alert alert-warning" role="note">

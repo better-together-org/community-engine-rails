@@ -974,6 +974,8 @@ en:
         review_intro: Read these before you place your order. You have to accept them
           to continue.
         review_title: Review and accept
+        tax_note: Tax, if any, is worked out from your billing address and shown before
+          you confirm.
         title: Get %{plan}
         unavailable_currency_not_supported: Not available in this currency.
         unavailable_insufficient_credit: You do not have enough store credit for this.
@@ -1051,6 +1053,7 @@ en:
             body: The terms for your %{plan} subscription changed. Accept them to
               receive your next renewal invoice.
             title: Please review our updated terms
+        amount_with_tax: "%{amount} (includes %{tax} tax)"
         cheque_bounced:
           buyer:
             body: The cheque for %{amount} did not clear, so the payment was reversed.
@@ -1253,6 +1256,7 @@ en:
           body: Your trial is about to end.
           title: Your trial ends soon
       offline_payments:
+        amount_includes_tax: This total includes %{tax} of tax (%{total} in all).
         amount_to_pay: Pay %{amount}.
         bounce_confirm: Mark this cheque as bounced? Anything it granted will be reversed.
         buyer_says_sent: Buyer says sent
@@ -1372,6 +1376,8 @@ en:
         field_purpose: For
         field_quantity: Quantity
         field_status: Status
+        field_subtotal: Subtotal
+        field_tax: Tax
         field_total: Total
         index_title: My orders
         lines_heading: What was ordered
@@ -1816,6 +1822,9 @@ en:
         state_past_due: Past due
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
+      tax_breakdown:
+        included: included in the price
+        row: "%{label} (%{rate})"
       tax_registrations:
         created: Tax registration added.
         edit_title: Edit tax registration

@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_checkout_summary",
+  "device": "desktop",
+  "url": "/en/billing/checkout/new?plan_id=7d31640c-dba3-41cd-acf5-8f69a66c36aa",
+  "title": "Get Plan 941ea6 | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_checkout_summary",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-tax",
+      "title": "Tax before paying",
+      "bullets": [
+        "The tax for the chosen billing address and the total it makes."
+      ],
+      "target": {
+        "x": 73.0,
+        "y": 273.0,
+        "width": 1294.0,
+        "height": 65.0,
+        "right": 1367.0,
+        "bottom": 338.0,
+        "center_x": 720.0,
+        "center_y": 305.5
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 104.0,
+        "width": 1440.0,
+        "height": 1141.0,
+        "right": 1440.0,
+        "bottom": 1245.0,
+        "center_x": 720.0,
+        "center_y": 674.5
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 1265.0,
+        "width": 380,
+        "height": 158,
+        "score": 212.0
+      }
+    }
+  ]
+}

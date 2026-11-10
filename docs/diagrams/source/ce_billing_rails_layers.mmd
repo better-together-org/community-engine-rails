@@ -14,7 +14,7 @@ classDiagram
     }
     class BetterTogether__Billing__CheckoutsController["Billing::CheckoutsController"] {
       <<Controller>>
-      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: Billing::CheckoutTaxPreview, Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession +2
     }
     class BetterTogether__Billing__CreditAccountsController["Billing::CreditAccountsController"] {
       <<Controller>>

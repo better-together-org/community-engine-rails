@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-10T02:45:56Z`.
+Generated from live Rails reflections at `2026-11-10T03:17:15Z`.
 
 ## Identity, access, and memberships
 
@@ -649,7 +649,7 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 | --- | --- | --- | --- |
 | Billing::AgreementRequirementsController | `BetterTogether::ApplicationController` | `Billing::AgreementRequirement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::AllowancesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::CheckoutsController | `BetterTogether::ApplicationController` | `Billing::Checkout` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::CheckoutsController | `BetterTogether::ApplicationController` | `Billing::Checkout` | `Billing::CheckoutTaxPreview`<br>`Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditAccountsController | `BetterTogether::ApplicationController` | `Billing::CreditAccount` | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditGrantsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditsController | `BetterTogether::ApplicationController` | `Billing::Credit` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |

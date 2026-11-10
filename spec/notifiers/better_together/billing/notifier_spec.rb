@@ -31,6 +31,17 @@ RSpec.describe BetterTogether::Billing::Notifier do
       expect(event.body).to include('$45.00')
     end
 
+    it 'says how much of the total is tax, for an order that carries tax' do
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+      zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+      create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+      taxed = place_order(tax_address: { country_iso: 'CA', region_code: 'NL' })
+
+      body = notify('order_paid', subject: taxed).event.body
+
+      expect(body).to include('$51.75').and include('$6.75')
+    end
+
     it 'says it differently to the seller' do
       notification = notify('order_placed', steward, audience: :seller)
 

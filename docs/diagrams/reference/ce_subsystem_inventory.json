@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T02:45:56Z",
+  "generated_at": "2026-11-10T03:17:15Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -27827,6 +27827,7 @@
             "BetterTogether::Billing::Checkout"
           ],
           "concerns": [
+            "BetterTogether::Billing::CheckoutTaxPreview",
             "BetterTogether::Billing::OwnerScoped",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
@@ -28117,6 +28118,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::Plan"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::CheckoutTaxPreview",
+          "label": "Billing::CheckoutTaxPreview",
+          "capability": "Checkouttaxpreview",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::CheckoutsController"
           ]
         },
         {

@@ -68,6 +68,27 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
         expect(response.body).not_to include('billing-agreement-review')
       end
 
+      it 'shows the tax and total for the chosen billing address', :aggregate_failures do
+        enable_cash
+        buyer_address
+        create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+        zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+        create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+
+        get new_checkout_path
+
+        expect(response.body).to include('billing-checkout-tax', 'billing-checkout-tax-0', 'billing-checkout-total', '$28.75')
+        expect(response.body).not_to include('billing-checkout-tax-note')
+      end
+
+      it 'says tax is worked out once there is an address' do
+        enable_cash
+
+        get new_checkout_path
+
+        expect(response.body).to include('billing-checkout-tax-note')
+      end
+
       it 'says why a method that is not switched on is not available' do
         get new_checkout_path
 
