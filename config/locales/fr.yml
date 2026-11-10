@@ -1035,6 +1035,13 @@ fr:
         steward_title: Comptes de crédit en magasin
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
+      document:
+        net_paid: Payé après remboursements
+        questions: Des questions sur cette commande ? Écrivez à %{email}.
+        refunded: Remboursé
+        tax_heading: Taxe
+        title_invoice: Facture
+        title_receipt: Reçu
       entitlements:
         allowances: Quotas
         for: 'Pour : %{name}'

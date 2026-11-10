@@ -1033,6 +1033,13 @@ en:
         steward_title: Store credit accounts
         title: Store credit
         usable: You can spend %{amount}
+      document:
+        net_paid: Paid after refunds
+        questions: Questions about this order? Write to %{email}.
+        refunded: Refunded
+        tax_heading: Tax
+        title_invoice: Invoice
+        title_receipt: Receipt
       entitlements:
         allowances: Allowances
         for: 'For: %{name}'

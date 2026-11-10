@@ -1026,6 +1026,13 @@ es:
         steward_title: Cuentas de crédito de la tienda
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}
+      document:
+        net_paid: Pagado tras reembolsos
+        questions: "¿Preguntas sobre este pedido? Escriba a %{email}."
+        refunded: Reembolsado
+        tax_heading: Impuesto
+        title_invoice: Factura
+        title_receipt: Recibo
       entitlements:
         allowances: Cuotas
         for: 'Para: %{name}'
