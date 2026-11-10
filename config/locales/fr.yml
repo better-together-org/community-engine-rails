@@ -1833,8 +1833,6 @@ fr:
         state_unpaid: Expiré
         terms_accepted: Merci. Votre facture de renouvellement est prête.
       walk_up:
-        address_city_name: Ville
-        address_country_name: Pays
         address_hint: Conservée avec cette commande, et enregistrée pour l'acheteur
           s'il n'a pas encore d'adresse. Indiquez la rue, la ville et le pays, ou
           laissez tout vide.
@@ -1842,7 +1840,6 @@ fr:
         address_line1: Adresse
         address_line2: Appartement, bureau ou unité
         address_postal_code: Code postal
-        address_state_province_name: Province ou État
         agreements_label: L’acheteur a lu et accepté les ententes d’achat avec moi,
           en personne
         buyer_email_hint: Les avis de paiement de cette vente sont envoyés ici.

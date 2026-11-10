@@ -106,7 +106,7 @@ A seller who takes cash across a counter does not want the buyer to have to do a
 - The order is placed for the buyer (`seller_assisted: true`); if the money has changed hands it is confirmed at once. The buyer is told afterwards.
 - **A buyer who is not on the platform yet** is added from a name and an email address. The email is always required, for new and existing buyers alike (`Orders::Place` stores it on the order as `buyer_email`, encrypted). A new person is created with that email as their primary one, made a platform member, and sent a community invitation once the sale is saved, so signing up reuses the same person (`OfflinePayments::NewBuyer`). If the email already belongs to a person, that person is used and no invitation is sent.
 - **Payment notices for this order go to `buyer_email`**, not to the person's own address, for both new and existing buyers (`Billing::Notifier#address_for`). Notices never carry the seller's payee details.
-- **Billing address** is optional. If started it needs a street, city and country. It is kept on the order (`billing_address`, encrypted) and saved on the buyer's contact details when they have none.
+- **Billing address** is optional. If started it needs a street, city and country. Country, state and city are the same cascading geography selects as the address form (`addresses/_geography_fields`): a chosen record fills in its parents, a state must belong to the chosen country, and "use typed text" keeps free text. A linked country and state also set where the sale is taxed. It is kept on the order (`billing_address`, encrypted) and saved on the buyer's contact details when they have none.
 
 ## Expiry and reminders
 

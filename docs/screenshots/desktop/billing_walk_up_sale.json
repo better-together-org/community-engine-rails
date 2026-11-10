@@ -17,30 +17,31 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 139.0,
+        "y": 213.0,
         "width": 1296.0,
-        "height": 1179.1875,
+        "height": 1031.1875,
         "right": 1360.5,
-        "bottom": 1318.1875,
+        "bottom": 1244.1875,
         "center_x": 712.5,
         "center_y": 728.59375
       },
       "avoid": {
         "x": 0.0,
-        "y": 0,
+        "y": 45.0,
         "width": 1425.0,
-        "height": 1371.1875,
+        "height": 1223.1875,
         "right": 1425.0,
-        "bottom": 1371.1875,
+        "bottom": 1268.1875,
         "center_x": 712.5,
-        "center_y": 685.59375
+        "center_y": 656.59375
       },
       "placement": {
-        "side": "floating",
-        "x": 24.0,
-        "y": 44,
+        "side": "below",
+        "x": 522.5,
+        "y": 1288.19,
         "width": 380,
-        "height": 132
+        "height": 132,
+        "score": 188.8125
       }
     },
     {
@@ -51,28 +52,28 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 454.0,
+        "y": 528.0,
         "width": 1296.0,
         "height": 38.0,
         "right": 1360.5,
-        "bottom": 492.0,
+        "bottom": 566.0,
         "center_x": 712.5,
-        "center_y": 473.0
+        "center_y": 547.0
       },
       "avoid": {
         "x": 0.0,
-        "y": 0,
+        "y": 45.0,
         "width": 1425.0,
-        "height": 1371.1875,
+        "height": 1223.1875,
         "right": 1425.0,
-        "bottom": 1371.1875,
+        "bottom": 1268.1875,
         "center_x": 712.5,
-        "center_y": 685.59375
+        "center_y": 656.59375
       },
       "placement": {
         "side": "floating",
         "x": 24.0,
-        "y": 196,
+        "y": 1243,
         "width": 380,
         "height": 190
       }
@@ -81,34 +82,34 @@
       "selector": "#billing-walk-up-address",
       "title": "Billing address",
       "bullets": [
-        "Optional. Kept with the order, and saved to the buyer if they have none."
+        "Optional. Place works as in the address form. Kept with the order; saved to the buyer if they have none."
       ],
       "target": {
         "x": 64.5,
-        "y": 652.0,
+        "y": 726.0,
         "width": 1296.0,
-        "height": 532.1875,
+        "height": 384.1875,
         "right": 1360.5,
-        "bottom": 1184.1875,
+        "bottom": 1110.1875,
         "center_x": 712.5,
         "center_y": 918.09375
       },
       "avoid": {
         "x": 0.0,
-        "y": 0,
+        "y": 45.0,
         "width": 1425.0,
-        "height": 1371.1875,
+        "height": 1223.1875,
         "right": 1425.0,
-        "bottom": 1371.1875,
+        "bottom": 1268.1875,
         "center_x": 712.5,
-        "center_y": 685.59375
+        "center_y": 656.59375
       },
       "placement": {
         "side": "floating",
         "x": 24.0,
-        "y": 406,
+        "y": 1249,
         "width": 380,
-        "height": 158
+        "height": 184
       }
     },
     {
@@ -119,28 +120,28 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 1212.1875,
+        "y": 1138.1875,
         "width": 16.0,
         "height": 16.0,
         "right": 80.5,
-        "bottom": 1228.1875,
+        "bottom": 1154.1875,
         "center_x": 72.5,
-        "center_y": 1220.1875
+        "center_y": 1146.1875
       },
       "avoid": {
         "x": 0.0,
-        "y": 0,
+        "y": 45.0,
         "width": 1425.0,
-        "height": 1371.1875,
+        "height": 1223.1875,
         "right": 1425.0,
-        "bottom": 1371.1875,
+        "bottom": 1268.1875,
         "center_x": 712.5,
-        "center_y": 685.59375
+        "center_y": 656.59375
       },
       "placement": {
         "side": "floating",
         "x": 24.0,
-        "y": 584,
+        "y": 1275,
         "width": 380,
         "height": 158
       }

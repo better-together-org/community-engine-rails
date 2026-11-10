@@ -175,6 +175,30 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
         .with(hash_including(tax_address: { country_iso: 'WU', region_code: 'NL' }))
     end
 
+    it 'links a chosen country and state like the address form, copies their names, and taxes at them' do
+      country = create(:geography_country, name: 'Linkland', iso_code: 'LK')
+      state = create(:geography_state, country:, iso_code: 'LK-NL', name: 'Linkstate')
+      allow(BetterTogether::Billing::Orders::Place).to receive(:call).and_call_original
+
+      post path, params: params.merge(billing_address: { line1: '1 Water St', city_name: 'Town', country_id: country.id, state_id: state.id })
+
+      order = BetterTogether::Billing::Order.order(:created_at).last
+      expect(order.billing_address).to include('country_name' => 'Linkland', 'state_province_name' => 'Linkstate', 'country_id' => country.id)
+      expect(buyer.reload.addresses.first).to have_attributes(country_id: country.id, state_id: state.id)
+      expect(BetterTogether::Billing::Orders::Place).to have_received(:call)
+        .with(hash_including(tax_address: { country_iso: 'LK', region_code: 'NL' }))
+    end
+
+    it 'refuses a state that is not in the chosen country' do
+      country = create(:geography_country, name: 'Onel', iso_code: 'ON')
+      other = create(:geography_state, country: create(:geography_country, name: 'Twol', iso_code: 'TW'), iso_code: 'TW-XX')
+
+      expect do
+        post path, params: params.merge(billing_address: { line1: '1 Water St', city_name: 'Town', country_id: country.id, state_id: other.id })
+      end.not_to change(BetterTogether::Billing::Order, :count)
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
     it 'leaves a buyer\'s existing address alone' do
       detail = buyer.contact_detail || buyer.create_contact_detail!
       detail.addresses.create!(line1: 'Old Rd', city_name: 'Paradise', country_name: 'Canada', postal: true, physical: false, label: 'home')

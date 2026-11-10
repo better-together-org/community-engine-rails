@@ -8,6 +8,7 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
   include_context 'with offline payment fixtures'
   include_context 'with billing switched on'
 
+  let!(:country) { create(:geography_country, name: 'Walkland') }
   let!(:member) { create(:better_together_person, name: 'Marguerite Okonkwo') }
 
   before do
@@ -23,11 +24,25 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
   it 'finds a member by part of their name and selects them as the buyer' do
     expect(page).to have_css('#billing-walk-up-buyer', visible: :all, wait: 10)
     expect(page).to have_css('#billing-walk-up-form .ss-main', wait: 5)
-    all('#billing-walk-up-form .ss-main').last.click
+    buyer_id = find('#billing-walk-up-buyer', visible: :all)['data-id']
+    find(".ss-main[data-id='#{buyer_id}']").click
     find('.ss-content .ss-search input').set('okonk')
     find('.ss-content .ss-option', text: 'Marguerite Okonkwo', wait: 10).click
 
     expect(page).to have_field('billing-walk-up-buyer', with: member.id, type: :select, visible: :all)
+  end
+
+  def choose_country(name)
+    ss_id = find('select#billing_address_country_select', visible: :all)['data-id']
+    find(".ss-main[data-id='#{ss_id}']", match: :first).click
+    find("div.ss-content[data-id='#{ss_id}'] .ss-option", text: name, match: :first, wait: 10).click
+  end
+
+  def type_city(text)
+    ss_id = find('select#billing_address_settlement_select', visible: :all)['data-id']
+    find(".ss-main[data-id='#{ss_id}']", match: :first).click
+    within("div.ss-content[data-id='#{ss_id}']", visible: :all) { find('.ss-search input').set(text) }
+    find("div.ss-content[data-id='#{ss_id}'] .ss-option.ss-create-option--simple", wait: 10).click
   end
 
   it 'records a sale for someone who is not on the platform yet, from their name and email' do
@@ -35,8 +50,8 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
     fill_in 'billing-walk-up-buyer-name', with: 'Odalys Fortier'
     fill_in 'billing-walk-up-buyer-email', with: 'odalys@example.test'
     fill_in 'billing-walk-up-address-line1', with: '1 Water St'
-    fill_in 'billing-walk-up-address-city-name', with: 'St. John\'s'
-    fill_in 'billing-walk-up-address-country-name', with: 'Canada'
+    choose_country('Walkland')
+    type_city('Tiny Cove')
     check 'billing-walk-up-agreements'
     click_button 'billing-walk-up-submit'
 
@@ -44,6 +59,7 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
     order = BetterTogether::Billing::Order.order(:created_at).last
     expect(order.buyer.name).to eq('Odalys Fortier')
     expect(order.buyer_email).to eq('odalys@example.test')
+    expect(order.billing_address).to include('country_name' => 'Walkland', 'country_id' => country.id)
   end
 
   it 'passes the accessibility scan' do

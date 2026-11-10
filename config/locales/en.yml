@@ -1794,15 +1794,12 @@ en:
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
       walk_up:
-        address_city_name: City
-        address_country_name: Country
         address_hint: Kept with this order, and saved to the buyer if they have no
           address yet. Give the street, city and country, or leave all empty.
         address_legend: Billing address (optional)
         address_line1: Street address
         address_line2: Apartment, suite or unit
         address_postal_code: Postal code
-        address_state_province_name: Province or state
         agreements_label: The buyer has read and accepted the purchase agreements
           with me, in person
         buyer_email_hint: Payment notices for this sale are sent here.

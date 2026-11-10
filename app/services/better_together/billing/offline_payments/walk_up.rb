@@ -20,7 +20,8 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        ADDRESS_FIELDS = %w[line1 line2 city_name state_province_name postal_code country_name].freeze
+        ADDRESS_FIELDS = %w[line1 line2 city_name state_province_name postal_code country_name country_id state_id settlement_id].freeze
+        ADDRESS_NAMES = %w[line1 line2 city_name state_province_name postal_code country_name].freeze
         ADDRESS_REQUIRED = %w[line1 city_name country_name].freeze
 
         def initialize(platform:, seller:, plan:, payment_method:, agreements_accepted:, buyer_email:, buyer: nil, buyer_name: nil, # rubocop:disable Metrics/ParameterLists
@@ -30,7 +31,8 @@ module BetterTogether
           @buyer = buyer
           @buyer_name = buyer_name
           @buyer_email = buyer_email.to_s.strip.downcase
-          @billing_address = clean_address(billing_address)
+          @address = build_address(billing_address)
+          @billing_address = snapshot(@address)
           @invitation = nil
           @plan = plan
           @payment_method = payment_method.to_s
@@ -43,6 +45,7 @@ module BetterTogether
           raise Refused, 'that way of paying is not available' unless method_available?
 
           check_buyer_details!
+          check_address!
           order = Order.transaction { sell }
           send_invitation
           order
@@ -74,6 +77,14 @@ module BetterTogether
           billing_address.blank? || ADDRESS_REQUIRED.none? { |key| billing_address[key].blank? }
         end
 
+        # The address goes through the same model as the address form, so a chosen country, state or settlement is
+        # checked against the others and its name is copied into the text columns.
+        def check_address!
+          return if @address.nil? || @address.valid?
+
+          raise Refused, "the billing address is not consistent: #{@address.errors.full_messages.to_sentence}"
+        end
+
         def new_buyer
           result = NewBuyer.call(platform:, inviter: seller, name: buyer_name, email: buyer_email)
           @invitation = result.invitation
@@ -90,15 +101,27 @@ module BetterTogether
 
         # The address given at the sale is theirs to keep: saved on the person when they have none yet.
         def keep_address_on_person
-          return if billing_address.blank? || buyer.addresses.exists?
+          return if @address.nil? || buyer.addresses.exists?
 
           detail = buyer.contact_detail || buyer.create_contact_detail!
-          detail.addresses.create!(billing_address.merge('label' => 'billing', 'postal' => true, 'physical' => false, 'primary_flag' => true))
+          @address.contact_detail = detail
+          @address.save!
         end
 
-        def clean_address(address)
+        def build_address(address)
           values = (address || {}).to_h.stringify_keys.slice(*ADDRESS_FIELDS).transform_values { |value| value.to_s.strip }
-          values.values.all?(&:blank?) ? {} : values
+          return if values.values.all?(&:blank?)
+
+          Address.new(values.merge('label' => 'billing', 'postal' => true, 'physical' => false, 'primary_flag' => true))
+        end
+
+        # What the order keeps: the text as the address form would save it, plus which records were chosen. Built before
+        # validation, so the chosen records' names are filled in here the way the model would.
+        def snapshot(record)
+          return {} unless record
+
+          record.valid?
+          record.attributes.slice(*ADDRESS_NAMES, 'country_id', 'state_id', 'settlement_id').compact_blank
         end
 
         def purpose = @purpose ||= Checkout::Methods.new(platform:, plan:).purpose
@@ -119,28 +142,8 @@ module BetterTogether
                              details: { buyer_email:, billing_address: }, tax_address:)
         end
 
-        # Where the buyer is, for tax: an ISO code (or a country's name) and the state or province's code, as far as they match
-        # known geography. Nothing found means tax is worked out for the seller's own place, as for any order without one.
-        def tax_address
-          country = country_from(billing_address.to_h['country_name'])
-          return {} unless country
-
-          state = state_from(country, billing_address.to_h['state_province_name'])
-          { country_iso: country.iso_code, region_code: state && state.iso_code.split('-', 2).last }.compact
-        end
-
-        def country_from(entry)
-          return if entry.blank?
-
-          Geography::Country.find_by(iso_code: entry.strip.upcase) || Geography::Country.i18n.find_by(name: entry.strip)
-        end
-
-        def state_from(country, entry)
-          return if entry.blank?
-
-          code = "#{country.iso_code}-#{entry.strip.upcase}"
-          Geography::State.find_by(iso_code: code) || country.states.i18n.find_by(name: entry.strip)
-        end
+        # Where the buyer is, for tax; see TaxAddress.
+        def tax_address = TaxAddress.call(@address, billing_address)
       end
     end
   end

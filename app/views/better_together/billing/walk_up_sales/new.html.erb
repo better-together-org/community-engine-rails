@@ -65,11 +65,19 @@
       <fieldset id="billing-walk-up-address" class="mb-4">
         <legend class="h6"><%= t('better_together.billing.walk_up.address_legend') %></legend>
         <p id="billing-walk-up-address-hint" class="form-text mt-0"><%= t('better_together.billing.walk_up.address_hint') %></p>
-        <% %w[line1 line2 city_name state_province_name postal_code country_name].each do |field| %>
+        <% entered = @entered&.dig('billing_address') || {} %>
+        <% draft = BetterTogether::Address.new(entered.slice(*BetterTogether::Billing::OfflinePayments::WalkUp::ADDRESS_FIELDS)) %>
+        <%= fields_for :billing_address, draft do |address_form| %>
+          <% %w[line1 line2].each do |field| %>
+            <div class="mb-2">
+              <%= label_tag "billing-walk-up-address-#{field}", t("better_together.billing.walk_up.address_#{field}"), class: 'form-label' %>
+              <%= address_form.text_field field, id: "billing-walk-up-address-#{field}", class: 'form-control', autocomplete: 'off' %>
+            </div>
+          <% end %>
+          <%= render 'better_together/addresses/geography_fields', form: address_form %>
           <div class="mb-2">
-            <%= label_tag "billing-walk-up-address-#{field.dasherize}", t("better_together.billing.walk_up.address_#{field}"), class: 'form-label' %>
-            <%= text_field_tag "billing_address[#{field}]", @entered&.dig('billing_address', field), id: "billing-walk-up-address-#{field.dasherize}",
-                               class: 'form-control', autocomplete: 'off' %>
+            <%= label_tag 'billing-walk-up-address-postal-code', t('better_together.billing.walk_up.address_postal_code'), class: 'form-label' %>
+            <%= address_form.text_field :postal_code, id: 'billing-walk-up-address-postal-code', class: 'form-control', autocomplete: 'off' %>
           </div>
         <% end %>
       </fieldset>
