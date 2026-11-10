@@ -59,3 +59,5 @@ classDiagram
 ## Tests
 
 `spec/models/better_together/billing/tax_report_spec.rb`, `tax_report/csv_spec.rb`, `tax_report/chart_data_spec.rb`, `spec/models/better_together/metrics/billing_report_spec.rb`, `spec/policies/better_together/metrics/billing_report_policy_spec.rb`, `spec/requests/better_together/metrics/billing_reports_spec.rb`, `spec/jobs/better_together/metrics/generate_billing_report_job_spec.rb` and the DOM contract `spec/dom_contracts/billing_tax_reports_spec.rb`.
+
+For what a Canadian return asks for, the provincial rules and what is still unbuilt, see [tax_compliance_notes.md](tax_compliance_notes.md).
