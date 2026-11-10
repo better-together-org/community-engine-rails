@@ -774,6 +774,11 @@ en:
       address: Address
       city_name: City
       country_name: Country
+      geography:
+        country: Country
+        settlement: City or settlement
+        state: State or province
+        use_typed_text: Use "%{q}" as typed
       label: Label
       labels:
         billing: Billing
@@ -5960,6 +5965,8 @@ en:
         other: is the wrong length (should be %{count} characters)
       wrong_sign: has the wrong sign for what this entry is
     models:
+      address_geography_conflict: 'Typed text conflicts with the selected place: it
+        should be "%{selected}".'
       address_missing_type: Address must be either physical, postal, or both.
       better_together/navigation_item:
         attributes:

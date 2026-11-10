@@ -194,6 +194,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'locations/available', to: 'locations#available', as: :available_locations
+        get 'locations/geography', to: 'locations#geography', as: :geography_locations
 
         resources :events, except: %i[index show] do
           collection do

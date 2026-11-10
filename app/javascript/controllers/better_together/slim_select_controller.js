@@ -63,7 +63,7 @@ export default class extends Controller {
     // every reinit.
     if (optionsData && optionsData.createOptions) {
       this.resetSelection = this.resetSelection.bind(this);
-      this.element.addEventListener('better_together--location-selector:reset-picker', this.resetSelection);
+      this.element.addEventListener('better_together--slim-select:reset-picker', this.resetSelection);
     }
 
     // Marks connect()'s own init as done so optionsValueChanged (below) can tell
@@ -72,7 +72,7 @@ export default class extends Controller {
   }
 
   // Clears the current selection in response to
-  // better_together--location-selector:reset-picker. Only wired for
+  // better_together--slim-select:reset-picker. Only wired for
   // createOptions selects (see connect()).
   resetSelection() {
     try {
@@ -411,9 +411,19 @@ export default class extends Controller {
       const field = document.querySelector(selector);
       if (field && field.value) url.searchParams.set(name, field.value);
     });
+    this.applyDependsOn(url, ajax);
     url.searchParams.append('_', Date.now().toString());
 
     return url;
+  }
+
+  // ajax.dependsOn maps a query parameter to the id of another field whose current
+  // value narrows this select (e.g. states by country). Blank values are omitted.
+  applyDependsOn(url, ajax) {
+    Object.entries((ajax && ajax.dependsOn) || {}).forEach(([param, elementId]) => {
+      const source = document.getElementById(elementId);
+      if (source && source.value) url.searchParams.set(param, source.value);
+    });
   }
 
   // Turns a response into rows for SlimSelect. When the select configures
@@ -541,7 +551,7 @@ export default class extends Controller {
     if (this.slimSelect) {
       this.slimSelect.destroy();
     }
-    this.element.removeEventListener('better_together--location-selector:reset-picker', this.resetSelection);
+    this.element.removeEventListener('better_together--slim-select:reset-picker', this.resetSelection);
   }
 
   // Helper method to check if element is inside a Bootstrap modal

@@ -11,6 +11,10 @@ module BetterTogether
     self.table_name = 'better_together_storage_configurations'
 
     SERVICE_TYPES = %w[local amazon s3_compatible].freeze
+    S3_COMPATIBLE_CHECKSUM_OPTIONS = {
+      request_checksum_calculation: 'when_required',
+      response_checksum_validation: 'when_required'
+    }.freeze
 
     # Encrypt S3 credentials at rest
     encrypts :access_key_id
@@ -87,6 +91,9 @@ module BetterTogether
       if endpoint.present?
         config[:endpoint] = endpoint
         config[:force_path_style] = true
+        # Newer aws-sdk-s3 defaults to CRC checksums that S3-compatible stores
+        # such as Garage do not return in a form the SDK accepts.
+        config.merge!(S3_COMPATIBLE_CHECKSUM_OPTIONS)
       end
       config
     end

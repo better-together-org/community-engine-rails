@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-09T22:45:27Z`.
+Generated from live Rails reflections at `2026-11-10T00:13:21Z`.
 
 ## Identity, access, and memberships
 
@@ -275,7 +275,7 @@ Addresses, places, and geospatial/location support classes that other subsystems
 
 | Model | Table | Key attributes | Validations | Concerns | Cross-subsystem references |
 | --- | --- | --- | --- | --- | --- |
-| Address | `better_together_addresses` | `contact_detail_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`city_name` (string)<br>`country_name` (string)<br>`label` (string)<br>`line1` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>InclusionValidator: primary_flag (in=[true, false])<br>PresenceValidator: privacy<br>InclusionValidator: privacy (in=["public", "community", "private"])<br>PresenceValidator: label<br>InclusionValidator: physical, postal (in=[true, false]) | `BetterTogetherId`<br>`Geography::Geospatial::One`<br>`Geography::Locatable::Many`<br>`Geography::Placeable`<br>`Labelable`<br>`PlatformScoped` | `platform` -> `Platform` (platform_network)<br>`contact_detail` -> `ContactDetail` (shared_supporting) |
+| Address | `better_together_addresses` | `contact_detail_id` (uuid FK)<br>`country_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`settlement_id` (uuid FK)<br>`state_id` (uuid FK)<br>`city_name` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>InclusionValidator: primary_flag (in=[true, false])<br>PresenceValidator: privacy<br>InclusionValidator: privacy (in=["public", "community", "private"])<br>PresenceValidator: label<br>InclusionValidator: physical, postal (in=[true, false]) | `BetterTogetherId`<br>`Geography::AddressLinks`<br>`Geography::Geospatial::One`<br>`Geography::Locatable::Many`<br>`Geography::Placeable`<br>`Labelable` | `platform` -> `Platform` (platform_network)<br>`contact_detail` -> `ContactDetail` (shared_supporting) |
 | Geography::CommunityCollectionMap | `better_together_geography_maps` | Shares `better_together_geography_maps` columns with `Geography::Map` | Shares validation surface with `Geography::Map` | `BetterTogetherId`<br>`Creatable`<br>`FriendlySlug`<br>`Identifier`<br>`PlatformScoped`<br>`Privacy` | `platform` -> `Platform` (platform_network)<br>`creator` -> `Person` (identity_access) |
 | Geography::CommunityMap | `better_together_geography_maps` | Shares `better_together_geography_maps` columns with `Geography::Map` | Shares validation surface with `Geography::Map` | `BetterTogetherId`<br>`Creatable`<br>`FriendlySlug`<br>`Identifier`<br>`PlatformScoped`<br>`Privacy` | `platform` -> `Platform` (platform_network)<br>`creator` -> `Person` (identity_access) |
 | Geography::Continent | `better_together_geography_continents` | `community_id` (uuid FK)<br>`identifier` (string)<br>`privacy` (string)<br>`protected` (boolean) | ExclusionValidator: friendly_id (in=dynamic)<br>PresenceValidator: slug<br>UniquenessValidator: slug (if=dynamic, scope=:platform_id)<br>UniquenessValidator: slug (unless=dynamic)<br>UniquenessValidator: slug<br>PresenceValidator: identifier (unless=:skip_validate_identifier?) | `BetterTogetherId`<br>`FriendlySlug`<br>`Geography::Geospatial::One`<br>`Identifier`<br>`PrimaryCommunity`<br>`Privacy` | `community` -> `Community` (platform_network) |

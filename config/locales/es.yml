@@ -769,6 +769,11 @@ es:
       address: Dirección
       city_name: Ciudad
       country_name: País
+      geography:
+        country: País
+        settlement: Ciudad o localidad
+        state: Estado o provincia
+        use_typed_text: Usar "%{q}" tal como se escribió
       label: Etiqueta
       labels:
         billing: Facturación
@@ -6052,6 +6057,8 @@ es:
         other: no tiene la longitud correcta (%{count} caracteres exactos)
       wrong_sign: tiene el signo equivocado para este tipo de asiento
     models:
+      address_geography_conflict: 'El texto escrito no coincide con el lugar seleccionado:
+        debería ser "%{selected}".'
       address_missing_type: La dirección debe ser física, postal o ambas.
       better_together/navigation_item:
         attributes:

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_09_150100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -104,10 +104,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.uuid "contact_detail_id"
     t.boolean "primary_flag", default: false, null: false
     t.uuid "platform_id"
+    t.uuid "country_id"
+    t.uuid "state_id"
+    t.uuid "settlement_id"
     t.index ["contact_detail_id", "primary_flag"], name: "index_bt_addresses_on_contact_detail_id_and_primary", unique: true, where: "(primary_flag IS TRUE)"
     t.index ["contact_detail_id"], name: "index_better_together_addresses_on_contact_detail_id"
+    t.index ["country_id"], name: "index_bt_addresses_on_country_id"
     t.index ["platform_id"], name: "index_better_together_addresses_on_platform_id"
     t.index ["privacy"], name: "by_better_together_addresses_privacy"
+    t.index ["settlement_id"], name: "index_bt_addresses_on_settlement_id"
+    t.index ["state_id"], name: "index_bt_addresses_on_state_id"
   end
 
   create_table "better_together_agent_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -122,11 +128,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.string "scopes", default: [], null: false, array: true
     t.datetime "expires_at"
     t.datetime "revoked_at"
+    t.index "robot_id, platform_id, COALESCE(community_id, '00000000-0000-0000-0000-000000000000'::uuid)", name: "idx_bt_agent_grants_one_open", unique: true, where: "(revoked_at IS NULL)"
     t.index ["community_id"], name: "idx_bt_agent_grants_community"
     t.index ["granted_by_id"], name: "idx_bt_agent_grants_granted_by"
     t.index ["operator_id"], name: "idx_bt_agent_grants_operator"
     t.index ["platform_id"], name: "idx_bt_agent_grants_platform"
-    t.index "robot_id, platform_id, COALESCE(community_id, '00000000-0000-0000-0000-000000000000'::uuid)", name: "idx_bt_agent_grants_one_open", unique: true, where: "(revoked_at IS NULL)"
     t.index ["robot_id"], name: "idx_bt_agent_grants_robot"
   end
 
@@ -1156,7 +1162,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
     t.text "last_error_summary"
     t.jsonb "metadata", default: {}, null: false
     t.uuid "platform_id"
-    t.index ["attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_attachment", unique: true
+    t.index ["attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_attachment"
     t.index ["blob_id", "attachable_type", "attachable_id", "attachment_name"], name: "index_bt_content_security_items_on_blob_attachment", unique: true
     t.index ["lifecycle_state"], name: "idx_on_lifecycle_state_3c2bac98be"
     t.index ["platform_id"], name: "index_better_together_content_security_items_on_platform_id"
@@ -3440,6 +3446,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_09_100000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "better_together_activities", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_addresses", "better_together_contact_details", column: "contact_detail_id"
+  add_foreign_key "better_together_addresses", "better_together_geography_countries", column: "country_id", on_delete: :nullify
+  add_foreign_key "better_together_addresses", "better_together_geography_settlements", column: "settlement_id", on_delete: :nullify
+  add_foreign_key "better_together_addresses", "better_together_geography_states", column: "state_id", on_delete: :nullify
   add_foreign_key "better_together_addresses", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_agent_grants", "better_together_communities", column: "community_id", on_delete: :cascade
   add_foreign_key "better_together_agent_grants", "better_together_people", column: "granted_by_id", on_delete: :nullify

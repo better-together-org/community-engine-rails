@@ -2,7 +2,7 @@
   "name": "report_history",
   "device": "mobile",
   "url": "/en/reports",
-  "title": "My safety reports | Test Host Community",
+  "title": "My safety reports | Community Engine Host",
   "locale": "en",
   "role": "user",
   "feature_set": "safety",

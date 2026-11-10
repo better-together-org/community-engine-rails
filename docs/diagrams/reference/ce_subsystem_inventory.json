@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T22:45:27Z",
+  "generated_at": "2026-11-10T00:13:21Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -14089,7 +14089,19 @@
               "uuid FK"
             ],
             [
+              "country_id",
+              "uuid FK"
+            ],
+            [
               "platform_id",
+              "uuid FK"
+            ],
+            [
+              "settlement_id",
+              "uuid FK"
+            ],
+            [
+              "state_id",
               "uuid FK"
             ],
             [
@@ -14111,18 +14123,6 @@
             [
               "line2",
               "string"
-            ],
-            [
-              "postal_code",
-              "string"
-            ],
-            [
-              "privacy",
-              "string"
-            ],
-            [
-              "state_province_name",
-              "string"
             ]
           ],
           "validations": [
@@ -14138,6 +14138,24 @@
               "name": "platform",
               "foreign_key": "platform_id",
               "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "country",
+              "foreign_key": "country_id",
+              "target": "BetterTogether::Geography::Country",
+              "optional": true
+            },
+            {
+              "name": "state",
+              "foreign_key": "state_id",
+              "target": "BetterTogether::Geography::State",
+              "optional": true
+            },
+            {
+              "name": "settlement",
+              "foreign_key": "settlement_id",
+              "target": "BetterTogether::Geography::Settlement",
               "optional": true
             },
             {
@@ -14170,6 +14188,7 @@
           "translated_attributes": [],
           "concerns": [
             "BetterTogether::BetterTogetherId",
+            "BetterTogether::Geography::AddressLinks",
             "BetterTogether::Geography::Geospatial::One",
             "BetterTogether::Geography::Locatable::Many",
             "BetterTogether::Geography::Placeable",
@@ -16381,6 +16400,15 @@
             "Geography::CommunityMap",
             "Geography::EventCollectionMap",
             "Geography::CommunityCollectionMap"
+          ]
+        },
+        {
+          "name": "BetterTogether::Geography::AddressLinks",
+          "label": "Geography::AddressLinks",
+          "capability": "Addresslinks",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Address"
           ]
         },
         {

@@ -1,7 +1,7 @@
 {
   "name": "event_show_map",
   "device": "desktop",
-  "url": "/en/events/3dbd8106-293c-4bcb-8a80-6f1090101974",
+  "url": "/en/events/316f0d6b-2976-4417-81f9-5d2b901575d4",
   "title": "Harbour Arts Night | Events | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -17,31 +17,31 @@
       ],
       "target": {
         "x": 64.5,
-        "y": 657.0,
+        "y": 660.0,
         "width": 856.0,
-        "height": 582.578125,
+        "height": 590.578125,
         "right": 920.5,
-        "bottom": 1239.578125,
+        "bottom": 1250.578125,
         "center_x": 492.5,
-        "center_y": 948.2890625
+        "center_y": 955.2890625
       },
       "avoid": {
         "x": 64.5,
-        "y": 657.0,
+        "y": 660.0,
         "width": 856.0,
-        "height": 582.578125,
+        "height": 590.578125,
         "right": 920.5,
-        "bottom": 1239.578125,
+        "bottom": 1250.578125,
         "center_x": 492.5,
-        "center_y": 948.2890625
+        "center_y": 955.2890625
       },
       "placement": {
         "side": "above",
         "x": 302.5,
-        "y": 479.0,
+        "y": 482.0,
         "width": 380,
         "height": 158,
-        "score": 657.0
+        "score": 660.0
       }
     },
     {
@@ -52,31 +52,31 @@
       ],
       "target": {
         "x": 932.5,
-        "y": 657.0,
+        "y": 660.0,
         "width": 440.0,
         "height": 508.0,
         "right": 1372.5,
-        "bottom": 1165.0,
+        "bottom": 1168.0,
         "center_x": 1152.5,
-        "center_y": 911.0
+        "center_y": 914.0
       },
       "avoid": {
         "x": 932.5,
-        "y": 657.0,
+        "y": 660.0,
         "width": 440.0,
         "height": 508.0,
         "right": 1372.5,
-        "bottom": 1165.0,
+        "bottom": 1168.0,
         "center_x": 1152.5,
-        "center_y": 911.0
+        "center_y": 914.0
       },
       "placement": {
         "side": "above",
         "x": 962.5,
-        "y": 479.0,
+        "y": 482.0,
         "width": 380,
         "height": 158,
-        "score": 657.0
+        "score": 660.0
       }
     }
   ]

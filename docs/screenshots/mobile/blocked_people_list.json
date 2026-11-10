@@ -2,7 +2,7 @@
   "name": "blocked_people_list",
   "device": "mobile",
   "url": "/en/blocks",
-  "title": "Blocked People | Test Host Community",
+  "title": "Blocked People | Community Engine Host",
   "locale": "en",
   "role": "user",
   "feature_set": "safety",
