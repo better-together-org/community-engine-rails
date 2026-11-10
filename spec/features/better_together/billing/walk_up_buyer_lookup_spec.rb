@@ -30,6 +30,22 @@ RSpec.describe 'Billing walk-up sale buyer lookup', :accessibility, :js, :skip_h
     expect(page).to have_field('billing-walk-up-buyer', with: member.id, type: :select, visible: :all)
   end
 
+  it 'records a sale for someone who is not on the platform yet, from their name and email' do
+    purchase_agreements_for(host_platform)
+    fill_in 'billing-walk-up-buyer-name', with: 'Odalys Fortier'
+    fill_in 'billing-walk-up-buyer-email', with: 'odalys@example.test'
+    fill_in 'billing-walk-up-address-line1', with: '1 Water St'
+    fill_in 'billing-walk-up-address-city-name', with: 'St. John\'s'
+    fill_in 'billing-walk-up-address-country-name', with: 'Canada'
+    check 'billing-walk-up-agreements'
+    click_button 'billing-walk-up-submit'
+
+    expect(page).to have_no_css('#billing-walk-up-form', wait: 10)
+    order = BetterTogether::Billing::Order.order(:created_at).last
+    expect(order.buyer.name).to eq('Odalys Fortier')
+    expect(order.buyer_email).to eq('odalys@example.test')
+  end
+
   it 'passes the accessibility scan' do
     expect(page).to have_css('#billing-walk-up-form .ss-main', wait: 10)
 

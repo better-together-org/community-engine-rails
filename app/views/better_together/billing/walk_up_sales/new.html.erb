@@ -37,7 +37,6 @@
                        id: 'billing-walk-up-buyer',
                        class: 'form-select',
                        include_blank: true,
-                       required: true,
                        'aria-describedby': 'billing-walk-up-buyer-hint',
                        data: {
                          controller: 'better-together--slim-select',
@@ -51,6 +50,29 @@
                        } %>
         <div id="billing-walk-up-buyer-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_hint') %></div>
       </div>
+      <div class="mb-3">
+        <%= label_tag 'billing-walk-up-buyer-name', t('better_together.billing.walk_up.buyer_name_label'), class: 'form-label' %>
+        <%= text_field_tag :buyer_name, @entered&.dig('buyer_name'), id: 'billing-walk-up-buyer-name', class: 'form-control', autocomplete: 'off',
+                           'aria-describedby': 'billing-walk-up-buyer-name-hint' %>
+        <div id="billing-walk-up-buyer-name-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_name_hint') %></div>
+      </div>
+      <div class="mb-4">
+        <%= label_tag 'billing-walk-up-buyer-email', t('better_together.billing.walk_up.buyer_email_label'), class: 'form-label' %>
+        <%= email_field_tag :buyer_email, @entered&.dig('buyer_email'), id: 'billing-walk-up-buyer-email', class: 'form-control', required: true,
+                            autocomplete: 'off', 'aria-describedby': 'billing-walk-up-buyer-email-hint' %>
+        <div id="billing-walk-up-buyer-email-hint" class="form-text"><%= t('better_together.billing.walk_up.buyer_email_hint') %></div>
+      </div>
+      <fieldset id="billing-walk-up-address" class="mb-4">
+        <legend class="h6"><%= t('better_together.billing.walk_up.address_legend') %></legend>
+        <p id="billing-walk-up-address-hint" class="form-text mt-0"><%= t('better_together.billing.walk_up.address_hint') %></p>
+        <% %w[line1 line2 city_name state_province_name postal_code country_name].each do |field| %>
+          <div class="mb-2">
+            <%= label_tag "billing-walk-up-address-#{field.dasherize}", t("better_together.billing.walk_up.address_#{field}"), class: 'form-label' %>
+            <%= text_field_tag "billing_address[#{field}]", @entered&.dig('billing_address', field), id: "billing-walk-up-address-#{field.dasherize}",
+                               class: 'form-control', autocomplete: 'off' %>
+          </div>
+        <% end %>
+      </fieldset>
       <div class="form-check mb-2">
         <%= check_box_tag :agreements_accepted, '1', false, id: 'billing-walk-up-agreements', class: 'form-check-input', required: true %>
         <%= label_tag 'billing-walk-up-agreements', t('better_together.billing.walk_up.agreements_label'), class: 'form-check-label' %>

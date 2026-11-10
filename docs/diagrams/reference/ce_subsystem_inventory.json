@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T00:13:21Z",
+  "generated_at": "2026-11-10T00:56:12Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -26693,11 +26693,11 @@
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: buyer (message=:required)",
             "InclusionValidator: purpose (in=[\"subscription\", \"one_time\", \"ticket\", \"exchange\"])",
+            "FormatValidator: buyer_email (allow_blank=true, with=/\\A[a-zA-Z0-9.!\\#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\\z/)",
             "InclusionValidator: status (in=[\"draft\", \"awaiting_payment\", \"partially_paid\", \"paid\", \"cancelled\", \"expired\", \"partially_refunded\", \"refunded\"])",
             "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
             "PresenceValidator: number",
-            "UniquenessValidator: number (scope=:platform_id)",
-            "NumericalityValidator: subtotal_cents, total_cents, tax_cents, included_tax_cents (only_integer=true, greater_than_or_equal_to=0)"
+            "UniquenessValidator: number (scope=:platform_id)"
           ],
           "belongs_to": [
             {
@@ -26753,6 +26753,7 @@
           ],
           "translated_attributes": [],
           "concerns": [
+            "BetterTogether::Billing::EncryptedAttributes",
             "BetterTogether::Billing::PlatformBound",
             "BetterTogether::Billing::SellerScoped",
             "BetterTogether::Billing::Subjectable"
@@ -28071,6 +28072,7 @@
           "capability": "Encryptedattributes",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Billing::Order",
             "Billing::OfflinePayment",
             "Billing::ProcessorSetting",
             "Billing::Event"

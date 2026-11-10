@@ -117,7 +117,8 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
       get "/#{locale}/billing/walk_up_sale/new"
 
       expect_ids('billing-walk-up-page', 'billing-walk-up-form', 'billing-walk-up-plan', 'billing-walk-up-method', 'billing-walk-up-buyer',
-                 'billing-walk-up-agreements', 'billing-walk-up-received', 'billing-walk-up-submit')
+                 'billing-walk-up-buyer-name', 'billing-walk-up-buyer-email', 'billing-walk-up-address', 'billing-walk-up-address-line1',
+                 'billing-walk-up-address-country-name', 'billing-walk-up-agreements', 'billing-walk-up-received', 'billing-walk-up-submit')
     end
 
     it 'exposes the message when there is nothing to sell' do

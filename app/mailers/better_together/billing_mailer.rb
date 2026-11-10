@@ -15,7 +15,7 @@ module BetterTogether
 
       I18n.with_locale(locale || I18n.locale) do
         write_message
-        mail(to: @recipient.email, subject: @title)
+        mail(to: params[:address].presence || @recipient.email, subject: @title)
       end
     end
 

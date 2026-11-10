@@ -159,7 +159,7 @@ classDiagram
     class BetterTogether__Billing__Order["Billing::Order"] {
       <<Model>>
       table: better_together_billing_orders
-      concerns: Billing::PlatformBound, Billing::SellerScoped, Billing::Subjectable
+      concerns: Billing::EncryptedAttributes, Billing::PlatformBound, Billing::SellerScoped, Billing::Subjectable
       weak refs: target: seller, target: on_behalf_of, target: subject
     }
     class BetterTogether__Billing__OrderAgreementAcceptance["Billing::OrderAgreementAcceptance"] {

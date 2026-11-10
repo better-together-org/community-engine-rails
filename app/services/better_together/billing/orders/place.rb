@@ -39,13 +39,13 @@ module BetterTogether
         # `tax_address` is where the buyer is: `country_iso:` and `region_code:`, or a `settlement:`, which brings its state and
         # country and finds municipal tax too. Without it tax is worked out for the registrant's own place.
         # Tax is added only when the seller (or else the platform) is registered to collect it (see Tax::Calculator).
-        #
+        # `details` are extra order attributes to keep (`buyer_email:`, `billing_address:`; see OfflinePayments::WalkUp).
         # `line_items` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
         # subscriber was sold at, when it differs from the plan's today). A renewal (`renewal: true`) may be for a
         # purchasable that is no longer for sale, and holds the order until `expires_at` instead of for a number of hours.
-        def initialize(platform:, buyer:, purpose:, line_items:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
+        def initialize(platform:, buyer:, purpose:, line_items:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize
                        on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false, expires_at: nil, renewal: false,
-                       payments: nil, renewal_payment_method: nil, tax_address: nil)
+                       payments: nil, renewal_payment_method: nil, tax_address: nil, details: {})
           @platform = platform
           @buyer = buyer
           @signer = signer || buyer
@@ -62,6 +62,7 @@ module BetterTogether
           @requested_parts = payments
           @renewal_payment_method = renewal_payment_method.presence
           @tax_address = tax_address.to_h.symbolize_keys
+          @details = details.compact_blank
         end
 
         def call
@@ -164,7 +165,7 @@ module BetterTogether
 
         def order_attributes
           { buyer:, purpose:, seller:, on_behalf_of:, subject:, status: 'draft', renewal_payment_method: @renewal_payment_method,
-            currency: purchasables.first.purchasable_currency }
+            **@details, currency: purchasables.first.purchasable_currency }
         end
 
         def line_item_attributes(line_item, index)
