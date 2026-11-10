@@ -3177,6 +3177,9 @@ es:
         failure: No se pudo conectar la cuenta de %{provider}. Por favor intente de
           nuevo.
         success: Cuenta de %{provider} conectada exitosamente.
+        unverified_email_collision: Ya existe una cuenta con este correo y %{provider}
+          no ha verificado la dirección. Inicia sesión con tu método habitual y conecta
+          %{provider} desde Configuración.
       destroy:
         cannot_delete_last_oauth: No puede desconectar su cuenta de %{provider} porque
           se registró usando OAuth y no tiene una contraseña establecida. Por favor

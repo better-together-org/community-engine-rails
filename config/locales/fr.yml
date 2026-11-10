@@ -3196,6 +3196,9 @@ fr:
           vous connecter avec le bon compte.'
         failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
         success: Compte %{provider} connecté avec succès.
+        unverified_email_collision: Un compte existe déjà avec cet e-mail et %{provider}
+          n'a pas vérifié l'adresse. Connectez-vous avec votre méthode habituelle,
+          puis associez %{provider} depuis les Paramètres.
       destroy:
         cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
           car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini

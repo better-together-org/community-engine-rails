@@ -18,4 +18,24 @@ RSpec.describe BetterTogether::IdentityProviders do
 
     expect(provider.verified_email?(nil)).to be(false)
   end
+
+  describe 'github verified-email rule' do
+    let(:github) { described_class.fetch(:github) }
+
+    let(:auth_for) do
+      ->(emails) { OmniAuth::AuthHash.new(info: { email: 'a@example.test' }, extra: { all_emails: emails }) }
+    end
+
+    it 'accepts a verified matching entry' do
+      expect(github.verified_email?(auth_for.call([{ 'email' => 'A@example.test', 'verified' => true }]))).to be(true)
+    end
+
+    it 'rejects an unverified entry' do
+      expect(github.verified_email?(auth_for.call([{ 'email' => 'a@example.test', 'verified' => false }]))).to be(false)
+    end
+
+    it 'rejects a public profile email with no email list' do
+      expect(github.verified_email?(auth_for.call([]))).to be(false)
+    end
+  end
 end

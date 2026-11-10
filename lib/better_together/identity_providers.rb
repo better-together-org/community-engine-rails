@@ -69,5 +69,11 @@ BetterTogether.register_identity_provider(
   icon_class: 'fa-brands fa-github',
   button_class: 'btn btn-dark',
   # GitHub emails come from the user:email API; omniauth-github returns the primary verified one.
-  verified_email: ->(auth) { auth&.info&.email.present? }
+  verified_email: lambda { |auth|
+    email = auth&.info&.email.to_s.downcase
+    entries = Array(auth&.extra&.all_emails)
+    email.present? && entries.any? do |e|
+      e['email'].to_s.downcase == email && e['verified'] == true
+    end
+  }
 )
