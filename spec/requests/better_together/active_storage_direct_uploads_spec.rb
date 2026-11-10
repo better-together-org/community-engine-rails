@@ -33,6 +33,13 @@ RSpec.describe 'ActiveStorage direct uploads', :no_auth do
     BetterTogether::Quota.find_by!(owner: host, quota_type: 'media_storage').update!(limit: bytes)
   end
 
+  # The host already holds seeded files (e.g. the purchase agreement seed), so room is counted past them.
+  def limit_to_room_for(bytes)
+    quota = BetterTogether::Quota.find_by!(owner: host, quota_type: 'media_storage')
+    consumed = BetterTogether::QuotaBalance.where(quota:).sum(:consumed)
+    quota.update!(limit: consumed + bytes)
+  end
+
   def reservation_for_last_blob
     BetterTogether::QuotaReservation.find_by(subject: ActiveStorage::Blob.order(:created_at).last)
   end
@@ -96,7 +103,7 @@ RSpec.describe 'ActiveStorage direct uploads', :no_auth do
     end
 
     it 'does not let a second upload through when the first has taken the room' do
-      limit_to(10_000)
+      limit_to_room_for(10_000)
 
       post direct_uploads_path, params: blob_params, headers:, as: :json
       expect(response).to have_http_status(:ok)
