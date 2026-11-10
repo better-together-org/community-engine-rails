@@ -5,7 +5,7 @@ module BetterTogether
     module Entitlements
       # What a Pay subscription gives right now. A **pure function over Pay's own vocabulary** (the subscription's
       # status, period and end), the same for a subscription Community Engine renews and one a processor renews,
-      # so there is one derivation for every way of paying. It is exhaustive over `STATUSES`, the statuses Pay uses.
+      # so there is one derivation for every way of paying. It names `STATUSES`, the statuses Pay uses, and treats any other as lapsed.
       #
       #   status                        result
       #   trialing, active              active until the period (or trial, or the date it ends) is over;
@@ -15,6 +15,7 @@ module BetterTogether
       #   unpaid, canceled,
       #   incomplete_expired, paused    lapsed (the processor is the authority for a processor's subscription)
       #   incomplete                    pending: nothing is given yet
+      #   any other status              lapsed, with a logged warning (a processor can report one Pay does not list)
       #
       # Pay's own `on_grace_period?` is a cancelled subscription still paid through its period; the unpaid window
       # here is the dunning window (`past_due`). They are different things.
@@ -35,7 +36,14 @@ module BetterTogether
           return past_due(subscription, term, now) if status == 'past_due'
           return running(subscription, now) if %w[trialing active].include?(status)
 
-          raise ArgumentError, "unknown subscription status #{status.inspect}"
+          unknown(subscription)
+        end
+
+        # A processor can report a status Pay does not list (Braintree `expired`, Lemon Squeezy `expired`).
+        # Access is never kept on one: it is lapsed, and the status is logged so it can be named above.
+        def unknown(subscription)
+          Rails.logger.warn("[Billing] unknown subscription status #{subscription.status.inspect}, treating it as lapsed")
+          lapsed(subscription)
         end
 
         def running(subscription, now)
