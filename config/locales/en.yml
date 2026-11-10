@@ -934,9 +934,25 @@ en:
         within: Within the limit
       checkout:
         accept: I have read and accept %{title}
+        address:
+          choose: Billing address
+          hint: Tax is worked out from where you are billed, so choose your country
+            and state or province from the lists.
+          line1: Street address
+          make_default: Use this as my default billing address
+          new_heading: New billing address
+          new_option: A new address
+          postal_code: Postal code
+          title: Billing address
         already_accepted: You have already accepted the current version.
         continue: Continue
         error_accept_all: Accept every agreement to continue.
+        error_address_incomplete: The billing address needs a country and a state
+          or province chosen from the lists.
+        error_address_invalid: The new billing address could not be saved. Check it
+          and try again.
+        error_address_missing: Choose a billing address.
+        error_address_not_found: That address is not one of yours. Choose another.
         error_method_not_available: Choose one of the ways to pay that are available.
         error_not_ready: 'This purchase cannot be completed yet: the terms for it
           have not been set up. Please contact the people who run this platform.'

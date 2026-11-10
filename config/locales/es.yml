@@ -927,9 +927,25 @@ es:
         within: Dentro del límite
       checkout:
         accept: He leído y acepto %{title}
+        address:
+          choose: Dirección de facturación
+          hint: El impuesto se calcula según dónde se le factura, así que elija su
+            país y estado o provincia de las listas.
+          line1: Dirección
+          make_default: Usar esta como mi dirección de facturación predeterminada
+          new_heading: Nueva dirección de facturación
+          new_option: Una dirección nueva
+          postal_code: Código postal
+          title: Dirección de facturación
         already_accepted: Ya aceptó la versión actual.
         continue: Continuar
         error_accept_all: Acepte todos los acuerdos para continuar.
+        error_address_incomplete: La dirección de facturación necesita un país y un
+          estado o provincia elegidos de las listas.
+        error_address_invalid: No se pudo guardar la nueva dirección de facturación.
+          Revísela e inténtelo de nuevo.
+        error_address_missing: Elija una dirección de facturación.
+        error_address_not_found: Esa dirección no es suya. Elija otra.
         error_method_not_available: Elija una de las formas de pago disponibles.
         error_not_ready: 'Esta compra no se puede completar todavía: no se han configurado
           sus condiciones. Póngase en contacto con quienes gestionan esta plataforma.'

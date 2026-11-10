@@ -36,6 +36,7 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
+        # `billing_address:` is the buyer's Address; the order keeps a snapshot of it and, without a `tax_address`, is taxed for its place.
         # `tax_address` is where the buyer is: `country_iso:` and `region_code:`, or a `settlement:`, which brings its state and
         # country and finds municipal tax too. Without it tax is worked out for the registrant's own place.
         # Tax is added only when the seller (or else the platform) is registered to collect it (see Tax::Calculator).
@@ -43,9 +44,9 @@ module BetterTogether
         # `line_items` are hashes with `purchasable:`, an optional `quantity:` and an optional `unit_amount_cents:` (the price a
         # subscriber was sold at, when it differs from the plan's today). A renewal (`renewal: true`) may be for a
         # purchasable that is no longer for sale, and holds the order until `expires_at` instead of for a number of hours.
-        def initialize(platform:, buyer:, purpose:, line_items:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength
+        def initialize(platform:, buyer:, purpose:, line_items:, payment_method: nil, signer: nil, seller: nil, # rubocop:disable Metrics/ParameterLists, Metrics/MethodLength, Metrics/AbcSize
                        on_behalf_of: nil, subject: nil, hold_hours: nil, seller_assisted: false, expires_at: nil, renewal: false,
-                       payments: nil, renewal_payment_method: nil, tax_address: nil)
+                       payments: nil, renewal_payment_method: nil, tax_address: nil, billing_address: nil)
           @platform = platform
           @buyer = buyer
           @signer = signer || buyer
@@ -61,6 +62,7 @@ module BetterTogether
           @renewal = renewal
           @requested_parts = payments
           @renewal_payment_method = renewal_payment_method.presence
+          @billing_address = billing_address
           @tax_address = tax_address.to_h.symbolize_keys
         end
 
@@ -147,10 +149,12 @@ module BetterTogether
 
         # The tax on this purchase, worked out once from the same amounts the order is built from.
         def tax
-          @tax ||= Tax::Calculator.for_lines(line_items, platform:, seller:, country_iso: @tax_address[:country_iso],
-                                                         region_code: @tax_address[:region_code],
-                                                         settlement: @tax_address[:settlement])
+          @tax ||= Tax::Calculator.for_lines(line_items, platform:, seller:, country_iso: place_of_tax[:country_iso],
+                                                         region_code: place_of_tax[:region_code], settlement: place_of_tax[:settlement])
         end
+
+        # Where the buyer is: a `tax_address` given outright, else the billing address's place.
+        def place_of_tax = @place_of_tax ||= @tax_address.presence || address_snapshot.tax_address
 
         def order_currency = purchasables.first&.purchasable_currency
 
@@ -162,8 +166,11 @@ module BetterTogether
           ApplyTax.call(order, tax)
         end
 
+        def address_snapshot = @address_snapshot ||= BillingAddressSnapshot.new(@billing_address)
+
         def order_attributes
           { buyer:, purpose:, seller:, on_behalf_of:, subject:, status: 'draft', renewal_payment_method: @renewal_payment_method,
+            billing_address: address_snapshot.to_h, billing_address_id: @billing_address&.id,
             currency: purchasables.first.purchasable_currency }
         end
 

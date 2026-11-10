@@ -932,9 +932,26 @@ fr:
         within: Dans la limite
       checkout:
         accept: J’ai lu et j’accepte %{title}
+        address:
+          choose: Adresse de facturation
+          hint: La taxe est calculée selon le lieu de facturation ; choisissez donc
+            votre pays et votre province ou État dans les listes.
+          line1: Adresse
+          make_default: Utiliser celle-ci comme adresse de facturation par défaut
+          new_heading: Nouvelle adresse de facturation
+          new_option: Une nouvelle adresse
+          postal_code: Code postal
+          title: Adresse de facturation
         already_accepted: Vous avez déjà accepté la version actuelle.
         continue: Continuer
         error_accept_all: Acceptez chaque entente pour continuer.
+        error_address_incomplete: L’adresse de facturation doit avoir un pays et une
+          province ou un État choisis dans les listes.
+        error_address_invalid: La nouvelle adresse de facturation n’a pas pu être
+          enregistrée. Vérifiez-la et réessayez.
+        error_address_missing: Choisissez une adresse de facturation.
+        error_address_not_found: Cette adresse n’est pas la vôtre. Choisissez-en une
+          autre.
         error_method_not_available: Choisissez un des modes de paiement disponibles.
         error_not_ready: 'Cet achat ne peut pas être effectué pour le moment : les
           conditions n’ont pas été configurées. Veuillez contacter les personnes qui

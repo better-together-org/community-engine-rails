@@ -17,19 +17,18 @@ module BetterTogether
 
       def new
         authorize BetterTogether::Billing::Order, :checkout?
-        @method = chosen_method
-        @parts = chosen_parts
-        @renew_with = chosen_renewal_method
+        load_choice
         @gate = build_gate if @method
+        load_addresses
       end
 
       def create
         authorize BetterTogether::Billing::Order, :checkout?
-        @method = chosen_method
-        @parts = chosen_parts
-        @renew_with = chosen_renewal_method
+        load_choice
         return render_again(:method_not_available) unless @method
         return render_again(:parts_too_large) if parts_cents >= @plan.amount_cents && @parts.any?
+
+        return render_again(@address_error) unless choose_address
 
         @gate = build_gate
         return render_again(:not_ready) unless @gate.ready?
@@ -39,6 +38,20 @@ module BetterTogether
       end
 
       private
+
+      def load_choice
+        @method = chosen_method
+        @parts = chosen_parts
+        @renew_with = chosen_renewal_method
+      end
+
+      def load_addresses
+        options = Checkout::BillingAddressOptions.new(platform: billing_owner, person: current_user.person,
+                                                      selected_id: params[:billing_address_id])
+        @addresses = options.addresses
+        @selected_address_id = options.selected_id
+        @new_address = @refused_address || options.blank_address
+      end
 
       def platform_plans = billing_owner.billing_plans.sold_by_platform
 
@@ -95,11 +108,21 @@ module BetterTogether
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
         order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose, line_items: [{ purchasable: @plan }],
-                                   renewal_payment_method: @renew_with, **how_to_pay)
+                                   renewal_payment_method: @renew_with, billing_address: @address, **how_to_pay)
         redirect_to billing_order_path(order, locale: I18n.locale), notice: t('better_together.billing.checkout.placed')
       rescue Orders::Place::Refused, Checkout::AgreementGate::NotReady => e
         Rails.logger.warn("[billing] checkout refused: #{e.class}")
         render_again(:refused)
+      end
+
+      # The buyer's billing address: one of theirs, or a new one typed in. Every order needs one with a chosen country and state.
+      def choose_address
+        result = Checkout::BillingAddressChoice.call(platform: billing_owner, person: current_user.person,
+                                                     address_id: params[:billing_address_id], new_address: params[:billing_address],
+                                                     make_default: params[:make_default_billing] == '1')
+        @refused_address = result.address unless result.ok?
+        @address_error = :"address_#{result.error}" unless result.ok?
+        @address = result.address if result.ok?
       end
 
       # Parts asked for, with the chosen way taking the rest; or just the chosen way, which pays the whole of it.
@@ -111,6 +134,7 @@ module BetterTogether
 
       def render_again(reason)
         @error = reason
+        load_addresses
         render :new, status: :unprocessable_content
       end
     end

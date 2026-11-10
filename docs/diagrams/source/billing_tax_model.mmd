@@ -35,6 +35,12 @@ classDiagram
     +tax_country_iso / tax_region_code
     +tax_settlement  when taxed for a city or town
     +prices_include_tax
+    +billing_address  snapshot of the address at placement
+    +billing_address_id  source address, emptied if it is deleted
+  }
+  class DefaultAddress {
+    +kind  billing or shipping
+    one per person, platform and kind
   }
   class LineItem {
     +tax_cents
@@ -56,3 +62,7 @@ classDiagram
   LineItem "1" --> "*" TaxLine
   Order "1" --> "*" TaxLine
   TaxRate "0..1" --> "*" TaxLine
+  Person "1" --> "*" DefaultAddress
+  Platform "1" --> "*" DefaultAddress
+  Address "1" --> "*" DefaultAddress : cascade on delete
+  Address "0..1" --> "*" Order : billing address source

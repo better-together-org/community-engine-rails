@@ -6,6 +6,9 @@ erDiagram
   EXT_PERSON ||--o{ AGENT_GRANTS : "operator / operator_id"
   EXT_COMMUNITY o|--o{ AGENT_GRANTS : "community / community_id"
   EXT_PERSON o|--o{ AGENT_GRANTS : "granted_by / granted_by_id"
+  EXT_PLATFORM ||--o{ BILLING_DEFAULT_ADDRESSES : "platform / platform_id"
+  EXT_PERSON ||--o{ BILLING_DEFAULT_ADDRESSES : "person / person_id"
+  EXT_ADDRESS ||--o{ BILLING_DEFAULT_ADDRESSES : "address / address_id"
   EXT_NOTICED_EVENT ||--o{ NOTICED_NOTIFICATIONS : "event / event_id"
   EXT_PLATFORM o|--o{ NOTICED_NOTIFICATIONS : "platform / platform_id"
   EXT_PLATFORM ||--o{ BILLING_TAX_CATEGORIES : "platform / platform_id"
@@ -110,6 +113,13 @@ erDiagram
     scopes string
     expires_at datetime
     revoked_at datetime
+  }
+
+  BILLING_DEFAULT_ADDRESSES {
+    address_id uuid
+    person_id uuid
+    platform_id uuid
+    kind string
   }
 
   NOTICED_EVENTS {
@@ -536,6 +546,10 @@ erDiagram
     string export_ref
   }
 
+  EXT_ADDRESS {
+    string export_ref
+  }
+
   EXT_BILLING_LINE_ITEM {
     string export_ref
   }
@@ -565,10 +579,6 @@ erDiagram
   }
 
   EXT_PLATFORM_CONNECTION {
-    string export_ref
-  }
-
-  EXT_ADDRESS {
     string export_ref
   }
 

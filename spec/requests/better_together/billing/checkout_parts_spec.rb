@@ -4,6 +4,8 @@ require 'rails_helper'
 
 # Paying for a plan in parts at checkout: some by store credit, some in cash, and a subscription renewed by a chosen way.
 RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/DescribeClass
+  include BetterTogether::BillingAddressHelpers
+
   include_context 'with orders fixtures'
   include_context 'with builtin billing processors'
   include_context 'with billing switched on'
@@ -12,6 +14,7 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
   let(:password) { 'SecureTest123!@#' }
   let(:member) { find_or_create_test_user("checkout-parts-#{SecureRandom.hex(4)}@example.test", password) }
   let(:buyer) { member.person }
+  let(:buyer_address) { create_billing_address_for(buyer) }
   let(:steward) { create(:better_together_person) }
   let(:plan) do
     create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash store_credit],
@@ -35,6 +38,7 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
 
   def post_checkout(chosen: plan, method: 'cash', parts: {}, purpose: 'one_time', **extra)
     post checkout_path, params: { plan_id: chosen.id, payment_method: method, part_amounts: parts, **extra,
+                                  **billing_address_params(buyer_address),
                                   **ticks(chosen, [method, *parts.keys], purpose) }
   end
 

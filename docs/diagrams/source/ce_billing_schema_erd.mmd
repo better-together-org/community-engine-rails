@@ -33,6 +33,7 @@ erDiagram
   EXT_PAY_SUBSCRIPTION o|--o{ BILLING_ORDERS : "pay_subscription / pay_subscription_id"
   EXT_BILLING_TAX_REGISTRATION o|--o{ BILLING_ORDERS : "tax_registration / tax_registration_id"
   EXT_GEOGRAPHY_SETTLEMENT o|--o{ BILLING_ORDERS : "tax_settlement / tax_settlement_id"
+  EXT_ADDRESS o|--o{ BILLING_ORDERS : "billing_address_source / billing_address_id"
   EXT_PLATFORM ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "platform / platform_id"
   BILLING_ORDERS ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "order / order_id"
   EXT_AGREEMENT ||--o{ BILLING_ORDER_AGREEMENT_ACCEPTANCES : "agreement / agreement_id"
@@ -180,6 +181,7 @@ erDiagram
   }
 
   BILLING_ORDERS {
+    billing_address_id uuid
     buyer_id uuid
     on_behalf_of_id uuid
     pay_subscription_id uuid
@@ -189,7 +191,6 @@ erDiagram
     tax_registration_id uuid
     tax_settlement_id uuid
     currency string
-    number string
   }
 
   BILLING_ORDER_AGREEMENT_ACCEPTANCES {
@@ -322,6 +323,10 @@ erDiagram
   }
 
   EXT_BILLING_TAX_CATEGORY {
+    string export_ref
+  }
+
+  EXT_ADDRESS {
     string export_ref
   }
 

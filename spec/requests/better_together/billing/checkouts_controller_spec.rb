@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe BetterTogether::Billing::CheckoutsController do
+  include BetterTogether::BillingAddressHelpers
+
   include_context 'with orders fixtures'
   include_context 'with builtin billing processors'
   include_context 'with billing switched on'
@@ -11,6 +13,7 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
   let(:password) { 'SecureTest123!@#' }
   let(:member) { find_or_create_test_user("checkout-member-#{SecureRandom.hex(4)}@example.test", password) }
   let(:buyer) { member.person }
+  let(:buyer_address) { create_billing_address_for(buyer) }
   # Paid for once, by cash only: no online processor.
   let(:cash_plan) do
     create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: %w[cash], billing_interval: 'one_time',
@@ -28,13 +31,19 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
 
   def activate_agreements = agreements.each_value { |agreement| agreement.update!(lifecycle_state: 'active') }
 
+  # Like post_checkout, with the address parameters replaced.
+  def post_checkout_with(**address_params, &)
+    ticks = BetterTogether::Agreement.all.to_h { |a| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(a), '1'] }
+    post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash', **address_params }.merge(ticks)
+  end
+
   def post_checkout(method: 'cash', accepted: nil, plan: cash_plan)
     ids = accepted || BetterTogether::Billing::Checkout::AgreementGate.new(platform: host_platform, purpose: 'one_time', signer: buyer,
                                                                            purchasables: [plan],
                                                                            payment_method: method).missing.map(&:id)
     # The boxes are the shared agreement mechanism's: one `<identifier>_agreement=1` parameter per ticked agreement.
     ticks = BetterTogether::Agreement.where(id: ids).to_h { |agreement| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(agreement), '1'] }
-    post checkout_path, params: { plan_id: plan.id, payment_method: method }.merge(ticks)
+    post checkout_path, params: { plan_id: plan.id, payment_method: method, **billing_address_params(buyer_address) }.merge(ticks)
   end
 
   it 'sends a visitor to sign in' do
@@ -128,6 +137,65 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
         expect(order.agreement_acceptances.map(&:agreement_identifier)).to contain_exactly('one_time_purchase_agreement',
                                                                                            'offline_payment_terms')
         expect(order.agreement_acceptances.map(&:acceptance_method).uniq).to eq(['checkout'])
+      end
+
+      it 'keeps a snapshot of the billing address on the order, and where it came from', :aggregate_failures do
+        post_checkout
+
+        order = BetterTogether::Billing::Order.order(:created_at).last
+        expect(order.billing_address).to include('line1' => '1 Main St', 'country_iso' => 'CA', 'region_code' => 'NL')
+        expect(order.billing_address_id).to eq(buyer_address.id)
+      end
+
+      it 'works out tax for the place of the billing address', :aggregate_failures do
+        buyer_address
+        create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+        zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+        create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+
+        post_checkout
+
+        expect(BetterTogether::Billing::Order.order(:created_at).last).to have_attributes(tax_cents: 375, total_cents: 2875,
+                                                                                          tax_country_iso: 'CA', tax_region_code: 'NL')
+      end
+
+      it 'keeps the snapshot when the address is edited or deleted afterwards', :aggregate_failures do
+        post_checkout
+        order = BetterTogether::Billing::Order.order(:created_at).last
+        buyer_address.update!(line1: '99 Changed Rd')
+        buyer_address.destroy!
+
+        expect(order.reload.billing_address['line1']).to eq('1 Main St')
+        expect(order.billing_address_id).to be_nil
+      end
+
+      it 'refuses, placing nothing, without a billing address', :aggregate_failures do
+        ticks = BetterTogether::Agreement.all.to_h { |a| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(a), '1'] }
+
+        expect { post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash' }.merge(ticks) }
+          .not_to change(BetterTogether::Billing::Order, :count)
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(response.body).to include('billing-checkout-error')
+      end
+
+      it 'refuses another person\'s address' do
+        stranger_address = create_billing_address_for(create(:better_together_person))
+
+        expect { post_checkout_with(billing_address_id: stranger_address.id) }.not_to change(BetterTogether::Billing::Order, :count)
+      end
+
+      it 'saves a new address typed in at checkout and makes it the default', :aggregate_failures do
+        country = buyer_address.country
+        state = buyer_address.state
+        new_address = { line1: '7 Pine', postal_code: 'A1B 2C3', country_id: country.id, state_id: state.id }
+
+        expect { post_checkout_with(billing_address_id: 'new', billing_address: new_address, make_default_billing: '1') }
+          .to change(BetterTogether::Billing::Order, :count).by(1)
+
+        default = buyer.billing_default_addresses.billing.first
+        expect(default.address.line1).to eq('7 Pine')
+        expect(BetterTogether::Billing::Order.order(:created_at).last.billing_address_id).to eq(default.address_id)
       end
 
       it 'refuses, placing nothing, when an agreement is not ticked' do
