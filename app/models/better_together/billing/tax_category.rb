@@ -6,8 +6,11 @@ module BetterTogether
     # whatever the rates are (fresh produce, say). A plan or line item with no category is taxed as standard.
     class TaxCategory < ApplicationRecord
       include PlatformBound
+      include Translatable
 
       self.table_name = 'better_together_billing_tax_categories'
+
+      translates :name, type: :string
 
       has_many :tax_rates, class_name: 'BetterTogether::Billing::TaxRate', dependent: :restrict_with_error
 

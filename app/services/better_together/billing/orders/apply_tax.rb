@@ -34,11 +34,14 @@ module BetterTogether
         def apply_to(line_item, lines)
           line_item.assign_attributes(tax_category: line_item.purchasable.purchasable_tax_category, tax_cents: lines.sum(&:amount_cents),
                                       included_tax_cents: lines.select(&:included).sum(&:amount_cents))
-          lines.each { |line| line_item.tax_lines.build(**tax_line_attributes(line)) }
+          lines.each do |line|
+            built = line_item.tax_lines.build(**tax_line_attributes(line))
+            built.snapshot_translations(:label) { |locale| line.tax_rate.label(locale:, fallback: false) }
+          end
         end
 
         def tax_line_attributes(line)
-          { platform_id: order.platform_id, order:, tax_rate: line.tax_rate, label: line.label, rate: line.rate,
+          { platform_id: order.platform_id, order:, tax_rate: line.tax_rate, rate: line.rate,
             amount_cents: line.amount_cents, included: line.included, registration_number: line.registration_number }
         end
       end

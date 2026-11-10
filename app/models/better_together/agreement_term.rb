@@ -9,7 +9,7 @@ module BetterTogether
 
     belongs_to :agreement, class_name: 'BetterTogether::Agreement'
 
-    translates :summary
+    translates :summary, type: :text
     translates :content, backend: :action_text
   end
 end

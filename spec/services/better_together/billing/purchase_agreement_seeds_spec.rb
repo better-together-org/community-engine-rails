@@ -16,7 +16,7 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
     agreements.each_value do |agreement|
       expect(agreement).to have_attributes(lifecycle_state: 'draft', agreement_kind: 'transactional_agreement', protected: true,
                                            requires_reacceptance: true, required_for: 'none', platform_id: host_platform.id)
-      expect(agreement.change_summary).to eq(described_class::PLACEHOLDER)
+      expect(agreement.change_summary).to eq(described_class::PLACEHOLDER[:en])
       expect(agreement.agreement_terms.first.content.to_plain_text).to include('placeholder')
     end
   end

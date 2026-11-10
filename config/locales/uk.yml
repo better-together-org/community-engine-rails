@@ -1332,6 +1332,9 @@ uk:
         status_rejected: Не прийнято
         too_many_claims: Ви вже кілька разів повідомили продавця. Він підтвердить,
           щойно отримає оплату.
+      order_documents:
+        regenerated: 'Рахунок і квитанцію створено знову мовою: %{language}.'
+        unknown_locale: Ця мова недоступна.
       order_payments:
         added: Платіж додано. Виконайте інструкції нижче, щоб завершити його.
         paid: Платіж здійснено.
@@ -1354,6 +1357,7 @@ uk:
         add_payment_method: Сплатити через
         agreements_heading: Прийняті угоди
         document_details: PDF, %{size}, створено %{date}
+        document_language: Мова документів
         download_invoice: Завантажити рахунок
         download_receipt: Завантажити квитанцію
         field_amount: Сума
@@ -1396,6 +1400,7 @@ uk:
         purpose_one_time: Разова покупка
         purpose_subscription: Підписка або членство
         purpose_ticket: Квитки на події
+        regenerate_documents: Створити знову
         return_paid: Дякуємо. Вашу оплату отримано.
         return_pending: Дякуємо. Ми підтверджуємо вашу оплату й повідомимо, коли все
           буде готово.

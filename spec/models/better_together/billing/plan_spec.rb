@@ -323,7 +323,8 @@ RSpec.describe BetterTogether::Billing::Plan do
       linked_keys = plan.permitted_update_attributes.grep_v(Hash)
       unlinked_keys = create(:better_together_billing_plan, :unlinked).permitted_update_attributes.grep_v(Hash)
 
-      expect(linked_keys).to contain_exactly(:name, :description, :active, :grace_days, :renewal_lead_days)
+      expect(linked_keys).to contain_exactly(*described_class.with_locales(described_class::TRANSLATED_FIELDS), :active, :grace_days,
+                                             :renewal_lead_days)
       expect(unlinked_keys).to include(:amount_cents, :currency, :billing_interval)
     end
   end
@@ -335,6 +336,10 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect { plan.update!(name: 'Renamed') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob).with(plan.id)
       expect { plan.update!(description: 'More words') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
       expect { plan.update!(active: false) }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
+    end
+
+    it 'also pushes when only a translation changes' do
+      expect { plan.update!(name_fr: 'Renommé') }.to have_enqueued_job(BetterTogether::Billing::SyncPlanJob)
     end
 
     it 'does not push when only local metadata changes' do
@@ -427,29 +432,34 @@ RSpec.describe BetterTogether::Billing::Plan do
     end
 
     it 'never resolves a configured name to a constant' do
-      expect_any_instance_of(String).not_to receive(:safe_constantize) # rubocop:disable RSpec/AnyInstance
-      expect_any_instance_of(String).not_to receive(:constantize) # rubocop:disable RSpec/AnyInstance
+      %i[safe_constantize constantize].each do |resolver|
+        allow_any_instance_of(String).to receive(resolver).and_wrap_original do |original, *args| # rubocop:disable RSpec/AnyInstance
+          raise "resolved #{original.receiver}" if original.receiver == 'Kernel'
 
-      new_plan(metadata: { 'eligible_billable_owner_types' => ['Kernel'] }).valid?
+          original.call(*args)
+        end
+      end
+
+      expect { new_plan(metadata: { 'eligible_billable_owner_types' => ['Kernel'] }).valid? }.not_to raise_error
     end
   end
 
   describe 'participant-facing metadata' do
     let(:plan) { build(:better_together_billing_plan) }
 
-    it 'prefers metadata for summary, benefits and labels' do
+    it 'reads the summary, benefits and labels from the plan' do
       expect(plan.participant_summary).to eq('Supports hosted participation and stewardship for this Better Together space.')
-      expect(plan.participant_benefits).to eq(['Hosted access', 'Ongoing stewardship support'])
+      expect(plan.participant_benefit_list).to eq(['Hosted access', 'Ongoing stewardship support'])
       expect(plan.hosted_access_level).to eq('Standard')
     end
 
-    it 'falls back to the description, then to translated text, when metadata is missing' do
-      plan.metadata = {}
+    it 'falls back to the description, then to default text, when the summary is missing' do
+      plan.participant_summary = nil
       plan.description = 'Supports a community-hosted space.'
-      expect(plan.participant_summary).to eq('Supports a community-hosted space.')
+      expect(plan.display_participant_summary).to eq('Supports a community-hosted space.')
 
       plan.description = nil
-      expect(plan.participant_summary).to eq(I18n.t('better_together.billing.plan_defaults.recurring_participant_summary'))
+      expect(plan.display_participant_summary).to eq(I18n.t('better_together.billing.plan_defaults.recurring_participant_summary'))
     end
 
     it 'defaults to the standard pricing tier and recognises solidarity tiers' do

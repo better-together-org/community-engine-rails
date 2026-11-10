@@ -37,8 +37,12 @@ module BetterTogether
         render :new, status: :unprocessable_content
       end
 
+      def chosen_plan
+        @plans.find { |plan| plan.id == params[:plan_id] } || raise(ActiveRecord::RecordNotFound)
+      end
+
       def set_choices
-        @plans = billing_owner.billing_plans.sold_by_platform.active.order(:name)
+        @plans = billing_owner.billing_plans.sold_by_platform.active.sort_by { |plan| plan.name.to_s.downcase }
         @methods = offline_methods
       end
 
@@ -47,7 +51,7 @@ module BetterTogether
       end
 
       def sale_attributes
-        { platform: billing_owner, seller: current_user.person, plan: @plans.find(params[:plan_id]), buyer: buyer,
+        { platform: billing_owner, seller: current_user.person, plan: chosen_plan, buyer: buyer,
           payment_method: params[:payment_method].to_s, agreements_accepted: params[:agreements_accepted] == '1',
           payment_received: params[:payment_received] == '1' }.merge(buyer_details)
       end

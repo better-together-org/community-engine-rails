@@ -91,7 +91,7 @@ RSpec.describe BetterTogether::Billing::SyncPlanJob do
   end
 
   it 'is retried by ActiveJob when the adapter fails' do
-    plan.update_columns(name: 'boom plan') # rubocop:disable Rails/SkipsModelValidations
+    plan.update!(name: 'boom plan')
 
     expect { described_class.perform_now(plan.id) }.to have_enqueued_job(described_class)
   end

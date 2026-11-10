@@ -31,7 +31,7 @@ end
 # (`resources :communities, only: [] { concerns :billing_plans }`) can reuse it later.
 # Not nested under the host dashboard and carrying no route-level permission check:
 # access is sign-in plus Pundit on the billing owner (see Billing::OwnerScoped).
-concern :billing_plans do
+concern :billing_plans do # rubocop:disable Metrics/BlockLength
   namespace :billing do
     resources :plans, except: :destroy do
       member do
@@ -51,6 +51,8 @@ concern :billing_plans do
       resource :claim, only: :create, controller: 'order_claims'
       # The buyer adds a payment (the rest, or a part, by any way of paying) to an order that is not fully paid.
       resources :payments, only: :create, controller: 'order_payments'
+      # Make the invoice and receipt again in another language.
+      resource :documents, only: :create, controller: 'order_documents'
     end
     resource :checkout, only: %i[new create]
     resources :agreement_requirements, only: %i[index create destroy]
@@ -60,6 +62,7 @@ concern :billing_plans do
       post :cancel, on: :member
       # The seller records that they gave money back for a payment made outside the platform.
       resource :refund, only: :create, controller: 'sale_refunds'
+      resource :documents, only: :create, controller: 'order_documents'
     end
   end
 end

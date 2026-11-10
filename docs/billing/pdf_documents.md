@@ -66,3 +66,7 @@ are untouched:
 List them with `pdfdetach -list invoice.pdf`. Not verified: the file is not certified PDF/A-3, the XML has not been
 validated against the Factur-X schema or an e-invoicing network, and Canadian orders carry their taxes as ordinary
 tax breakdowns, so they are not EU invoices.
+
+## Language
+
+An order's line items, tax lines and agreement acceptances keep their text in every supported language, copied when the order is placed. A document is written in the first of these that is a supported language: the language chosen for the order's documents, the buyer's language, the language the order was placed in, the platform's language. A steward (or the buyer) who needs another language chooses it on the order page; the documents are made again in it, the earlier ones are kept as superseded, and later documents (after a payment or a refund) stay in the chosen language.

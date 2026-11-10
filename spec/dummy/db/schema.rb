@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_14_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -441,7 +441,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.uuid "order_id", null: false
     t.string "purchasable_type", null: false
     t.uuid "purchasable_id", null: false
-    t.string "description", null: false
     t.integer "quantity", default: 1, null: false
     t.integer "unit_amount_cents", null: false
     t.string "currency", null: false
@@ -519,7 +518,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.string "on_behalf_of_type"
     t.uuid "on_behalf_of_id"
     t.string "agreement_identifier", null: false
-    t.string "agreement_title", null: false
     t.string "agreement_content_digest", null: false
     t.string "acceptance_method", null: false
     t.datetime "accepted_at", null: false
@@ -580,6 +578,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.text "buyer_email"
     t.text "billing_address"
     t.uuid "billing_address_id"
+    t.string "placed_locale"
+    t.string "document_locale"
     t.index ["billing_address_id"], name: "idx_bt_billing_orders_billing_address"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
     t.index ["id", "platform_id"], name: "idx_bt_billing_orders_id_platform", unique: true
@@ -643,8 +643,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.string "seller_type"
     t.uuid "seller_id"
     t.string "identifier", null: false
-    t.string "name", null: false
-    t.text "description"
     t.string "billing_interval", default: "month", null: false
     t.integer "interval_count", default: 1, null: false
     t.integer "grace_days", default: 7, null: false
@@ -719,7 +717,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
     t.uuid "created_by_id"
-    t.string "name", null: false
     t.string "code_digest", null: false
     t.bigint "amount_cents", null: false
     t.string "currency", null: false
@@ -813,7 +810,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
     t.string "identifier", null: false
-    t.string "name", null: false
     t.boolean "taxable", default: true, null: false
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_categories_id_platform", unique: true
     t.index ["platform_id", "identifier"], name: "idx_bt_billing_tax_categories_identifier", unique: true
@@ -828,7 +824,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.uuid "order_id", null: false
     t.uuid "line_item_id", null: false
     t.uuid "tax_rate_id"
-    t.string "label", null: false
     t.decimal "rate", precision: 8, scale: 5, null: false
     t.integer "amount_cents", null: false
     t.boolean "included", default: false, null: false
@@ -845,7 +840,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.uuid "platform_id", null: false
     t.uuid "tax_zone_id", null: false
     t.uuid "tax_category_id"
-    t.string "label", null: false
     t.decimal "rate", precision: 8, scale: 5, null: false
     t.datetime "starts_at"
     t.datetime "ends_at"
@@ -883,7 +877,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "platform_id", null: false
-    t.string "name", null: false
     t.uuid "country_id", null: false
     t.uuid "state_id"
     t.uuid "settlement_id"

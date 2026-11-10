@@ -11,8 +11,13 @@ module BetterTogether
     class OrderAgreementAcceptance < ApplicationRecord
       include PlatformBound
       include ParentBound
+      include Translatable
+      include LocalizedSnapshot
 
       self.table_name = 'better_together_billing_order_agreement_acceptances'
+
+      # The agreement's title in every language, as it read when it was accepted.
+      translates :agreement_title, type: :string
 
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :agreement_acceptances, optional: false
       belongs_to :agreement, class_name: 'BetterTogether::Agreement', optional: false
@@ -29,15 +34,19 @@ module BetterTogether
         acceptance = agreement.current_acceptance_for(signer)
         raise ArgumentError, 'the signer has not accepted that agreement' unless acceptance
 
-        order.agreement_acceptances.create!(
+        order.agreement_acceptances.build(
           platform_id: order.platform_id, agreement:, signer:, on_behalf_of:, agreement_identifier: agreement.identifier,
-          agreement_title: agreement.title.to_s, agreement_content_digest: acceptance.agreement_content_digest,
+          agreement_content_digest: acceptance.agreement_content_digest,
           acceptance_method: acceptance.acceptance_method, accepted_at: acceptance.accepted_at
-        )
+        ).tap do |record|
+          record.snapshot_translations(:agreement_title) { |locale| agreement.title(locale:, fallback: false) }
+          record.save!
+        end
       end
 
-      # Evidence is never rewritten.
-      def readonly? = persisted? || super
+      # Evidence is never rewritten. The save that creates it also stores the title translations, so it
+      # stays writable until that save is over (a record loaded afterwards is read only).
+      def readonly? = (persisted? && !previously_new_record?) || super
 
       private
 

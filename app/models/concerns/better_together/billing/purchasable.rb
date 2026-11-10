@@ -23,6 +23,10 @@ module BetterTogether
       end
 
       def purchasable_description = raise(NotImplementedError, "#{self.class}#purchasable_description")
+      # The same, in one language and with no fallback (nothing when it has no text in that language), so a line item can keep
+      # the description of every language it has. Defaults to the current-language description for a plain-string purchasable.
+      def purchasable_description_in(locale) = locale.to_sym == I18n.locale ? purchasable_description : nil
+
       def purchasable_amount_cents = raise(NotImplementedError, "#{self.class}#purchasable_amount_cents")
       def purchasable_currency = raise(NotImplementedError, "#{self.class}#purchasable_currency")
 

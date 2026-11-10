@@ -1349,6 +1349,9 @@ es:
         status_rejected: No aceptado
         too_many_claims: Ya se lo ha dicho al vendedor varias veces. Confirmará cuando
           reciba su pago.
+      order_documents:
+        regenerated: La factura y el recibo se generaron de nuevo en %{language}.
+        unknown_locale: Ese idioma no está disponible.
       order_payments:
         added: Se añadió el pago. Siga las instrucciones de abajo para completarlo.
         paid: Se realizó el pago.
@@ -1371,6 +1374,7 @@ es:
         add_payment_method: Pagar con
         agreements_heading: Acuerdos aceptados
         document_details: PDF, %{size}, generado el %{date}
+        document_language: Idioma de los documentos
         download_invoice: Descargar factura
         download_receipt: Descargar recibo
         field_amount: Importe
@@ -1413,6 +1417,7 @@ es:
         purpose_one_time: Compra única
         purpose_subscription: Suscripción o membresía
         purpose_ticket: Entradas a eventos
+        regenerate_documents: Generar de nuevo
         return_paid: Gracias. Recibimos su pago.
         return_pending: Gracias. Estamos confirmando su pago y se lo diremos cuando
           esté listo.

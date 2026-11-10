@@ -1358,6 +1358,9 @@ en:
         status_rejected: Not accepted
         too_many_claims: You have already told the seller several times. They will
           confirm when they have your payment.
+      order_documents:
+        regenerated: Invoice and receipt made again in %{language}.
+        unknown_locale: That language is not available.
       order_payments:
         added: The payment was added. Follow the instructions below to complete it.
         paid: The payment was made.
@@ -1380,6 +1383,7 @@ en:
         add_payment_method: Pay by
         agreements_heading: Agreements accepted
         document_details: PDF, %{size}, generated %{date}
+        document_language: Document language
         download_invoice: Download invoice
         download_receipt: Download receipt
         field_amount: Amount
@@ -1424,6 +1428,7 @@ en:
         purpose_one_time: One-time purchase
         purpose_subscription: Subscription or membership
         purpose_ticket: Event tickets
+        regenerate_documents: Make again
         return_paid: Thank you. Your payment was received.
         return_pending: Thank you. We are confirming your payment and will tell you
           when it is done.

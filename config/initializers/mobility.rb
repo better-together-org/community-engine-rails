@@ -11,7 +11,10 @@ Mobility.configure do |config|
     # To default to a different backend globally, replace +:key_value+ by another
     # backend name.
     #
-    backend :key_value, type: :text
+    # The default is :string (short values). Long copy must say `type: :text`
+    # explicitly: an untyped `translates` used to land in the text table, and a
+    # silent text default truncated or mis-stored short values more than once.
+    backend :key_value, type: :string
 
     # ActiveRecord
     #

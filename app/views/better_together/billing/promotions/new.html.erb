@@ -15,6 +15,12 @@
         <%= label_tag 'billing-promotion-name', t('better_together.billing.promotions.field_name'), class: 'form-label' %>
         <%= text_field_tag :name, params[:name], id: 'billing-promotion-name', class: 'form-control', maxlength: 120, required: true %>
         <div class="form-text"><%= t('better_together.billing.promotions.name_hint') %></div>
+        <div id="billing-promotion-name-translations" class="mt-2">
+          <% (I18n.available_locales - [I18n.locale]).each do |other| %>
+            <%= label_tag "billing-promotion-name-#{other}", "#{t('better_together.billing.promotions.field_name')} (#{t("locales.#{other}")})", class: 'form-label small mb-0' %>
+            <%= text_field_tag "name_#{other}", params["name_#{other}"], id: "billing-promotion-name-#{other}", class: 'form-control form-control-sm mb-1', maxlength: 120, lang: other %>
+          <% end %>
+        </div>
       </div>
       <div class="col-md-3">
         <%= label_tag 'billing-promotion-amount', t('better_together.billing.promotions.field_amount'), class: 'form-label' %>

@@ -14,7 +14,7 @@ module BetterTogether
 
         def initialize(order, kind: nil, locale: nil)
           @order = order
-          @locale = locale || I18n.locale
+          @locale = (locale || order.locale_for_documents).to_sym
           @document = Document.new(order, kind:, locale: @locale)
         end
 

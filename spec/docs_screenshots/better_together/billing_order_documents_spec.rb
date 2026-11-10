@@ -51,5 +51,23 @@ RSpec.describe 'Documentation screenshots for the order invoice and receipt down
       expect(page).to have_css("#{target} .billing-order-receipt-download")
     end
   end
+
+  it 'captures the language the documents are made again in' do
+    order = place_order(buyer: manager)
+    BetterTogether::Billing::Orders::GenerateDocument.call(order)
+    target = "##{ActionView::RecordIdentifier.dom_id(order, :regenerate_documents)}"
+
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_order_documents_language', device: :both, metadata: metadata.merge(flow: 'billing_order_documents_language'),
+                                          callouts: [{ id: 'billing_order_documents_language', selector: target, title: 'Documents in another language',
+                                                       avoid_container_selector: 'main',
+                                                       bullets: ['Make the invoice and receipt again in the buyer\'s language.'] }]
+    ) do
+      capybara_login_as_platform_manager
+      visit "/#{I18n.default_locale}/billing/sales/#{order.id}"
+      scroll_to(find(target), align: :center)
+      expect(page).to have_css("#{target} select")
+    end
+  end
 end
 # rubocop:enable RSpec/NoExpectationExample

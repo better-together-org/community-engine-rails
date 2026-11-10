@@ -102,13 +102,13 @@
         <div class="card-body">
           <dl id="<%= dom_id(@plan, :metadata_details) %>" class="row mb-0">
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_summary') %></dt>
-            <dd id="<%= dom_id(@plan, :participant_summary) %>" class="col-sm-7"><%= @plan.participant_summary.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :participant_summary) %>" class="col-sm-7"><%= @plan.display_participant_summary.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_participant_benefits') %></dt>
             <dd id="<%= dom_id(@plan, :participant_benefits) %>" class="col-sm-7">
-              <% if @plan.participant_benefits.any? %>
+              <% if @plan.participant_benefit_list.any? %>
                 <ul class="mb-0 ps-3">
-                  <% @plan.participant_benefits.each do |benefit| %>
+                  <% @plan.participant_benefit_list.each do |benefit| %>
                     <li><%= benefit %></li>
                   <% end %>
                 </ul>
@@ -118,7 +118,7 @@
             </dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_beneficiary_label') %></dt>
-            <dd id="<%= dom_id(@plan, :beneficiary_label) %>" class="col-sm-7"><%= @plan.beneficiary_label.presence || '—' %></dd>
+            <dd id="<%= dom_id(@plan, :beneficiary_label) %>" class="col-sm-7"><%= @plan.display_beneficiary_label.presence || '—' %></dd>
 
             <dt class="col-sm-5"><%= t('better_together.billing.plans.field_hosted_access_level') %></dt>
             <dd id="<%= dom_id(@plan, :hosted_access_level) %>" class="col-sm-7"><%= @plan.hosted_access_level.presence || '—' %></dd>

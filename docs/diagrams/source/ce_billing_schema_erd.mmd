@@ -152,11 +152,11 @@ erDiagram
     purchasable_id uuid
     tax_category_id uuid
     currency string
-    description string
     purchasable_type string
     included_tax_cents integer
     position integer
     quantity integer
+    tax_cents integer
   }
 
   BILLING_NOTIFICATION_RECEIPTS {
@@ -202,8 +202,8 @@ erDiagram
     acceptance_method string
     agreement_content_digest string
     agreement_identifier string
-    agreement_title string
     on_behalf_of_type string
+    accepted_at datetime
   }
 
   BILLING_PAYMENTS {
@@ -258,12 +258,12 @@ erDiagram
     platform_id uuid
     code_digest string
     currency string
-    name string
     purposes string
     active boolean
     new_members_only boolean
     amount_cents integer
     credit_expires_after_days integer
+    max_redemptions integer
   }
 
   BILLING_PROMOTION_REDEMPTIONS {
