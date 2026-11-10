@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T23:41:19Z",
+  "generated_at": "2026-11-10T19:57:41Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7494,6 +7494,18 @@
           "from": "BetterTogether::CommunityInvitationNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformIdentityProvider",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformIdentityProvider",
+          "to": "BetterTogether::Platform",
+          "label": "provider_platform (provider_platform_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -29998,6 +30010,99 @@
           "shared_table_group_size": 21
         },
         {
+          "name": "BetterTogether::PlatformIdentityProvider",
+          "label": "PlatformIdentityProvider",
+          "source_path": "app/models/better_together/platform_identity_provider.rb",
+          "table_name": "better_together_platform_identity_providers",
+          "columns": [
+            [
+              "client_id",
+              "string FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "provider_platform_id",
+              "uuid FK"
+            ],
+            [
+              "scopes",
+              "string"
+            ],
+            [
+              "strategy",
+              "string"
+            ],
+            [
+              "client_secret",
+              "text"
+            ],
+            [
+              "enabled",
+              "boolean"
+            ],
+            [
+              "position",
+              "integer"
+            ],
+            [
+              "options",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: strategy",
+            "InclusionValidator: strategy (in=dynamic)",
+            "UniquenessValidator: provider_platform_id (scope=:platform_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "provider_platform",
+              "foreign_key": "provider_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "provider_platform",
+              "foreign_key": "provider_platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Quota",
           "label": "Quota",
           "source_path": "app/models/better_together/quota.rb",
@@ -32750,6 +32855,7 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "PlatformIdentityProvider",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -33381,6 +33487,7 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "PlatformIdentityProvider",
             "FederationContentGrant",
             "EventSeriesSession",
             "EventOccurrence",
@@ -33799,6 +33906,18 @@
           "from": "BetterTogether::PlatformConnectionSubmittedNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformIdentityProvider",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformIdentityProvider",
+          "to": "BetterTogether::Platform",
+          "label": "provider_platform (provider_platform_id)",
           "target_subsystem": "platform_network"
         },
         {

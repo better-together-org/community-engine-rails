@@ -558,6 +558,12 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformIdentityProvider["PlatformIdentityProvider"] {
+      <<Model>>
+      table: better_together_platform_identity_providers
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
       table: better_together_quotas
@@ -798,6 +804,8 @@ classDiagram
   BetterTogether__PersonMessagingGrant --> BetterTogether__Person : grantee
   BetterTogether__PhoneNumber --> BetterTogether__Platform : platform
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : platform
+  BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota
