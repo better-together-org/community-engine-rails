@@ -28,6 +28,13 @@ module BetterTogether
         expect(described_class.missing_keys(env)).to contain_exactly('PAY_BUSINESS_NAME', 'PAY_SUPPORT_EMAIL')
       end
 
+      it 'counts the default from address as the support email when none is set', :aggregate_failures do
+        without_support = full_env.except('PAY_SUPPORT_EMAIL')
+
+        expect(described_class.missing_keys(without_support)).to eq(['PAY_SUPPORT_EMAIL'])
+        expect(described_class.ready?(without_support.merge('DEFAULT_FROM_EMAIL' => 'Hello <hello@example.org>'))).to be true
+      end
+
       it 'has no built-in currency or country' do
         expect(described_class.default_currency({})).to be_nil
         expect(described_class.default_country({})).to be_nil

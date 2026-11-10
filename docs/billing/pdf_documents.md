@@ -22,7 +22,7 @@ BetterTogether::Billing::Orders::Document.new(order, kind: :invoice)  # the invo
   forwarded copy cannot be used to redirect a payment. The file name carries only the order number
   (`invoice-<number>.pdf`, `receipt-<number>.pdf`).
 - **Business details.** The company block reads `Pay.business_name`, `Pay.business_address` and `Pay.support_email`
-  (from `PAY_BUSINESS_NAME`, `PAY_BUSINESS_ADDRESS`, `PAY_SUPPORT_EMAIL`), falling back to the platform name.
+  (from `PAY_BUSINESS_NAME`, `PAY_BUSINESS_ADDRESS`, `PAY_SUPPORT_EMAIL`), falling back to the platform name. `PAY_SUPPORT_EMAIL` falls back to `DEFAULT_FROM_EMAIL`, the app's from address.
 
 ## Pay 12
 

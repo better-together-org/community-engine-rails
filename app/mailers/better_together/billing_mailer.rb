@@ -39,7 +39,8 @@ module BetterTogether
       @summary = @notifier.order_summary
       @url = absolute(@notifier.url)
       @business = Pay.business_name.presence
-      @support_email = Pay.support_email.presence
+      # Pay hands the address back as a Mail::Address, which is never blank, so ask for the address itself.
+      @support_email = Pay.support_email.try(:address).presence
     end
 
     # The invoice or receipt as a PDF, built from the same summary as the email and in the same language.

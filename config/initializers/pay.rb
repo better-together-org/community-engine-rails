@@ -12,7 +12,9 @@ Pay.setup do |config|
   # Host identity has no built-in default; see BetterTogether::Billing::Configuration.
   config.business_name = ENV['PAY_BUSINESS_NAME'].presence
   config.business_address = ENV['PAY_BUSINESS_ADDRESS'].presence
-  config.support_email = ENV['PAY_SUPPORT_EMAIL'].presence
+  # Its own address when the host sets one, otherwise the address the app sends its email from (the same
+  # DEFAULT_FROM_EMAIL that configures the mailers).
+  config.support_email = ENV['PAY_SUPPORT_EMAIL'].presence || ENV['DEFAULT_FROM_EMAIL'].presence
 end
 
 Rails.application.config.after_initialize do

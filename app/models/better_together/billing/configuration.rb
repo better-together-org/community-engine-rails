@@ -22,8 +22,9 @@ module BetterTogether
           ActiveModel::Type::Boolean.new.cast(value('BT_BILLING_ENABLED', env)) == true
         end
 
+        # PAY_SUPPORT_EMAIL falls back to DEFAULT_FROM_EMAIL (see config/initializers/pay.rb), so either one is enough.
         def missing_keys(env = ENV)
-          REQUIRED_KEYS.reject { |key| value(key, env) }
+          REQUIRED_KEYS.reject { |key| value(key, env) || (key == 'PAY_SUPPORT_EMAIL' && value('DEFAULT_FROM_EMAIL', env)) }
         end
 
         def ready?(env = ENV)
