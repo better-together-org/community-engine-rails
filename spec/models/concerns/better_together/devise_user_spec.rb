@@ -684,7 +684,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
       expect do
         user.attributes_from_auth(auth_without_email)
-      end.to raise_error(ArgumentError, /Email not provided by Github/)
+      end.to raise_error(ArgumentError, /Email not provided by the OAuth provider/)
     end
   end
 

@@ -317,7 +317,7 @@ module BetterTogether
         if email_from_auth.blank?
           raise ArgumentError,
                 I18n.t('better_together.person_platform_integrations.create.email_missing',
-                       provider: auth.provider.to_s.titleize)
+                       provider: auth.provider.to_s.titleize.presence || 'the OAuth provider')
         end
 
         self.email = email_from_auth
