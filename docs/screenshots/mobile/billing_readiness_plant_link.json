@@ -1,0 +1,47 @@
+{
+  "name": "billing_readiness_plant_link",
+  "device": "mobile",
+  "url": "/en/billing/agreement_requirements",
+  "title": "Purchase terms | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_readiness",
+  "flow": "billing_readiness_plant_link",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_readiness_plant_link_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-readiness-plant-agreements-subscription",
+      "title": "Plant the agreements",
+      "bullets": [
+        "Opens the seed catalog at the billing agreements section."
+      ],
+      "target": {
+        "x": 43.421875,
+        "y": 486.390625,
+        "width": 412.578125,
+        "height": 21.0,
+        "right": 456.0,
+        "bottom": 507.390625,
+        "center_x": 249.7109375,
+        "center_y": 496.890625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 106.0,
+        "width": 485.0,
+        "height": 1151.0,
+        "right": 485.0,
+        "bottom": 1257.0,
+        "center_x": 242.5,
+        "center_y": 681.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 216
+      }
+    }
+  ]
+}

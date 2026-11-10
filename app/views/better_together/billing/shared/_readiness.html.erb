@@ -20,6 +20,11 @@
               <%= check.detail.map { |code| t("better_together.billing.readiness.detail_#{code}") }.to_sentence %>
             </span>
           <% end %>
+          <%# A platform with no agreement for this purchase can plant the draft ones from the seed catalog. %>
+          <% if !check.ok && check.detail.to_a.include?(:no_agreement) && BetterTogether::SeedCatalogPolicy.new(current_user, nil).show? %>
+            <%= link_to t('better_together.billing.readiness.plant_agreements'), seed_catalog_seeds_path(locale: I18n.locale, anchor: 'seed-catalog-billing_agreements'),
+                        id: ['billing-readiness-plant-agreements', check.purpose].compact.join('-'), class: 'd-block small' %>
+          <% end %>
         </span>
       </li>
     <% end %>
