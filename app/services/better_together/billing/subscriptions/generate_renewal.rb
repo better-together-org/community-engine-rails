@@ -76,7 +76,26 @@ module BetterTogether
 
         def invoice_attributes
           { platform:, buyer: term.payer, signer: term.payer, purpose: 'subscription', subject: term, on_behalf_of: term.beneficiary,
-            renewal: true, payment_method: method_to_open, line_items: [invoice_line_item] }
+            renewal: true, payment_method: method_to_open, line_items: [invoice_line_item], tax_address: }
+        end
+
+        # A renewal is taxed through the same calculator as any order, for the place the subscriber was last taxed for:
+        # the latest invoice's, else the order that started the subscription. Rates and registrations are read now.
+        def tax_address
+          source = last_invoice || starting_order
+          return {} unless source
+
+          settlement = source.tax_settlement
+          return { settlement: } if settlement
+
+          { country_iso: source.tax_country_iso.presence, region_code: source.tax_region_code.presence }.compact
+        end
+
+        def last_invoice = term.periods.where.not(order_id: nil).last&.order
+
+        def starting_order
+          id = subscription.metadata.to_h['bt_order_id'] if subscription.respond_to?(:metadata)
+          platform.billing_orders.find_by(id:) if id
         end
 
         # Store credit is paid straight after the order is placed, so no payment is opened for it here.

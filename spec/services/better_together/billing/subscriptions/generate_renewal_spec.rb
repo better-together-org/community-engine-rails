@@ -22,6 +22,18 @@ RSpec.describe BetterTogether::Billing::Subscriptions::GenerateRenewal do
     expect(period.order.offline_payments.sole).to have_attributes(processor: 'cash', status: 'awaiting')
   end
 
+  it 'taxes the invoice for the place the subscriber was taxed for, with the rates in force now', :aggregate_failures do
+    create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+    zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
+    create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
+    BetterTogether::Billing::Order.where(buyer:).update_all(tax_country_iso: 'CA', tax_region_code: 'NL') # rubocop:disable Rails/SkipsModelValidations
+
+    order = generate_renewal(term, at: inside_lead).order
+
+    expect(order).to have_attributes(subtotal_cents: 3000, tax_cents: 450, total_cents: 3450, tax_country_iso: 'CA', tax_region_code: 'NL')
+    expect(order.tax_lines.map(&:label)).to eq(['HST'])
+  end
+
   it 'holds the invoice until the period ends plus the plan\'s grace, so a late payment still lands' do
     period = generate_renewal(term, at: inside_lead)
 
