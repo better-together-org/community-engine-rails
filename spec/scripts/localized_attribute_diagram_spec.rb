@@ -62,6 +62,14 @@ RSpec.describe LocalizedAttributeDiagram, :skip_host_setup do
     expect(diagram.to_mermaid).to include('+loose : string UNTYPED')
   end
 
+  it 'reports a splatted translates call as undrawable even when it names a type', :aggregate_failures do
+    decls = described_class::Scanner.scan_source("class A\n  translates(*NAMES, type: :string)\nend\n")
+    unresolved = described_class.new(models: [], declarations: decls, title: 'Spec').unresolved
+
+    expect(unresolved.select(&:dynamic).size).to eq(1)
+    expect(diagram.unresolved.select(&:dynamic)).to be_empty
+  end
+
   it 'groups models outside any namespace as App and names the generator', :aggregate_failures do
     top = Class.new(BetterTogether::ApplicationRecord) do
       self.table_name = 'better_together_billing_tax_categories'

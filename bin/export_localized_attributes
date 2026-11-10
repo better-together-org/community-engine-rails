@@ -3,7 +3,7 @@
 # and renders its exports. Run it after adding, removing or retyping any `translates` attribute.
 #
 #   bin/export_localized_attributes            # regenerate, then render
-#   bin/export_localized_attributes --check    # write nothing; fail if stale or any translates is untyped
+#   bin/export_localized_attributes --check    # write nothing; fail if stale, or any translates is untyped or dynamic
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
