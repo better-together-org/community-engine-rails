@@ -33,6 +33,11 @@ RSpec.describe BetterTogether::Billing::TaxReport::ChartData do
     expect(chart[:values]).to eq([15.0])
   end
 
+  it 'is empty for a currency with no activity rather than showing another currency', :aggregate_failures do
+    expect(described_class.new(result, 'USD').revenue).to eq(labels: [], datasets: [])
+    expect(described_class.new(result, 'USD').tax_by_rate).to eq(labels: [], values: [])
+  end
+
   it 'is empty when there are no sales' do
     empty = BetterTogether::Billing::TaxReport.new(platform: host_platform, from: Time.utc(2020, 1, 1), to: Time.utc(2020, 1, 31)).call
 

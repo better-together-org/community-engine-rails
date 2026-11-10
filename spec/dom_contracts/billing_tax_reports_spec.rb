@@ -60,5 +60,8 @@ RSpec.describe 'Billing tax reports DOM', type: :request do # rubocop:disable RS
     %w[form from to interval owner format submit].each do |part|
       expect(page.at_css("#billing-report-#{part}")).to be_present, "missing #billing-report-#{part}"
     end
+    %w[from to interval owner format].each do |part|
+      expect(page.at_css("label[for='billing-report-#{part}']")).to be_present, "label not tied to #billing-report-#{part}"
+    end
   end
 end

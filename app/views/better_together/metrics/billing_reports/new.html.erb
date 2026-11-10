@@ -3,23 +3,23 @@
 
   <%= form_with model: @billing_report, url: metrics_billing_reports_path, local: true, id: 'billing-report-form', class: 'form' do |f| %>
     <div class="form-group">
-      <%= f.label :from_date, t('views.labels.from_date') %>
+      <%= f.label :from_date, t('views.labels.from_date'), for: 'billing-report-from' %>
       <%= f.date_field :from_date, name: 'metrics_billing_report[filters][from_date]', id: 'billing-report-from', class: 'form-control', required: true %>
     </div>
     <div class="form-group">
-      <%= f.label :to_date, t('views.labels.to_date') %>
+      <%= f.label :to_date, t('views.labels.to_date'), for: 'billing-report-to' %>
       <%= f.date_field :to_date, name: 'metrics_billing_report[filters][to_date]', id: 'billing-report-to', class: 'form-control', required: true %>
     </div>
     <div class="form-group mt-3">
-      <%= f.label :interval, t('better_together.metrics.filters.additional.interval') %>
+      <%= f.label :interval, t('better_together.metrics.filters.additional.interval'), for: 'billing-report-interval' %>
       <%= select_tag 'metrics_billing_report[filters][interval]', options_for_select(BetterTogether::Billing::TaxReport::INTERVALS.map { |i| [t("better_together.metrics.filters.additional.intervals.#{i}"), i] }), id: 'billing-report-interval', class: 'form-select' %>
     </div>
     <div class="form-group mt-3">
-      <%= f.label :owner, t('better_together.metrics.filters.additional.owner') %>
+      <%= f.label :owner, t('better_together.metrics.filters.additional.owner'), for: 'billing-report-owner' %>
       <%= select_tag 'metrics_billing_report[filters][owner]', options_for_select(billing_filter_options(metrics_platform)[:owners]), id: 'billing-report-owner', class: 'form-select' %>
     </div>
     <div class="form-group mt-3">
-      <%= f.label :file_format, t('views.labels.file_format') %>
+      <%= f.label :file_format, t('views.labels.file_format'), for: 'billing-report-format' %>
       <%= f.select :file_format, options_for_select([['CSV', 'csv']], 'csv'), {}, name: 'metrics_billing_report[file_format]', id: 'billing-report-format', class: 'form-select' %>
     </div>
     <div class="form-group mt-3">

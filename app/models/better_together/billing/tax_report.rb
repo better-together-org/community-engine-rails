@@ -60,7 +60,12 @@ module BetterTogether
       Result = Data.define(:from, :to, :interval, :time_zone, :summaries) do
         def currencies = summaries.map(&:currency)
 
-        def for_currency(code) = summaries.find { |summary| summary.currency == code.to_s.upcase } || summaries.first
+        # A blank code means the first summary; an explicit code with no activity gets nil, never another currency.
+        def for_currency(code)
+          return summaries.first if code.blank?
+
+          summaries.find { |summary| summary.currency == code.to_s.upcase }
+        end
 
         def to_h
           { from: from.iso8601, to: to.iso8601, interval:, time_zone:, summaries: summaries.map(&:to_h) }
