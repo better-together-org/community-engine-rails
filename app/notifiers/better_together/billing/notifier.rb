@@ -41,7 +41,15 @@ module BetterTogether
       end
 
       def email_params(notification)
-        { recipient: notification.recipient, notifier: self }
+        { recipient: notification.recipient, notifier: self, address: address_for(notification.recipient) }
+      end
+
+      # Where an email to this person goes. The buyer of an order is written to at the address given when it was
+      # placed (a walk-up sale records one, new or existing buyer alike); otherwise at the address on their account.
+      def address_for(recipient)
+        order = Notifications::Links.order_of(record)
+        given = order.buyer_email if audience == :buyer && order && order.buyer_id == recipient.id
+        given.presence || (recipient.email if recipient.respond_to?(:email))
       end
 
       notification_methods do
@@ -49,7 +57,7 @@ module BetterTogether
 
         # A critical notice is emailed even to someone who turned emails off; the rest follow the choice.
         def send_email?
-          recipient.respond_to?(:email) && recipient.email.present? && (event.critical? || recipient_has_email?)
+          event.address_for(recipient).present? && (event.critical? || recipient_has_email?)
         end
       end
 

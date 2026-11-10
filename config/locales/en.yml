@@ -1847,11 +1847,25 @@ en:
           small_supplier_exempt: Small supplier, collects none
         updated: Tax registration saved.
       walk_up:
+        address_city_name: City
+        address_country_name: Country
+        address_hint: Kept with this order, and saved to the buyer if they have no
+          address yet. Give the street, city and country, or leave all empty.
+        address_legend: Billing address (optional)
+        address_line1: Street address
+        address_line2: Apartment, suite or unit
+        address_postal_code: Postal code
+        address_state_province_name: Province or state
         agreements_label: The buyer has read and accepted the purchase agreements
           with me, in person
-        buyer_hint: The buyer must already be a member of this platform. Type at least
-          two letters of a name or handle.
+        buyer_email_hint: Payment notices for this sale are sent here.
+        buyer_email_label: Buyer email
+        buyer_hint: Pick someone already on this platform, or leave this empty and
+          give a name below to add them. Type at least two letters of a name or handle.
         buyer_label: Buyer
+        buyer_name_hint: Needed only when no one is picked above. They are added as
+          a member and invited to join the community.
+        buyer_name_label: Name (if the buyer is not on the platform yet)
         buyer_placeholder: Search by name or handle
         error_refused: That sale could not be recorded. Check the buyer, the way of
           paying and the agreements.

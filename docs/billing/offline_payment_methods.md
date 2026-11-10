@@ -100,10 +100,13 @@ The platform cannot move cash or a cheque. **Record a refund** records that the 
 
 ## A sale in person
 
-A seller who takes cash across a counter does not want the buyer to have to do anything. **Sale in person** (`/billing/walk_up_sale/new`) lets a steward choose the plan, the way of paying and the buyer (picked from the same person search as the store credit screen, over this platform's members only; the buyer must already be a member of the platform), tick that the buyer read and accepted the purchase agreements with them, and optionally tick that the money has already changed hands.
+A seller who takes cash across a counter does not want the buyer to have to do anything. **Sale in person** (`/billing/walk_up_sale/new`) lets a steward choose the plan, the way of paying and the buyer (picked from the same person search as the store credit screen, over this platform's members only, or left empty to add someone new), tick that the buyer read and accepted the purchase agreements with them, and optionally tick that the money has already changed hands.
 
 - The agreements are **still required**. They are recorded as accepted in person (`acceptance_method: seller_assisted`, with the steward who recorded it), so they are never mistaken for the buyer's own acceptance. Without the tick, nothing is recorded at all.
 - The order is placed for the buyer (`seller_assisted: true`); if the money has changed hands it is confirmed at once. The buyer is told afterwards.
+- **A buyer who is not on the platform yet** is added from a name and an email address. The email is always required, for new and existing buyers alike (`Orders::Place` stores it on the order as `buyer_email`, encrypted). A new person is created with that email as their primary one, made a platform member, and sent a community invitation once the sale is saved, so signing up reuses the same person (`OfflinePayments::NewBuyer`). If the email already belongs to a person, that person is used and no invitation is sent.
+- **Payment notices for this order go to `buyer_email`**, not to the person's own address, for both new and existing buyers (`Billing::Notifier#address_for`). Notices never carry the seller's payee details.
+- **Billing address** is optional. If started it needs a street, city and country. It is kept on the order (`billing_address`, encrypted) and saved on the buyer's contact details when they have none.
 
 ## Expiry and reminders
 

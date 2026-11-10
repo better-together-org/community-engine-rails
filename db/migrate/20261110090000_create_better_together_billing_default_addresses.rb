@@ -5,9 +5,9 @@
 #
 # * default_addresses is its own table (not Address#primary_flag), so "primary" stays general while a person
 #   can have a default for billing and another for shipping.
-# * An order keeps a SNAPSHOT of the billing address (billing_address, jsonb) as it read when the order was
-#   placed, so editing or deleting the address later never changes the order. billing_address_id only says where it
-#   came from and is cleared if the address is deleted.
+# * An order keeps a SNAPSHOT of the billing address (billing_address, an encrypted column added with the walk-up
+#   buyer details) as it read when the order was placed, so editing or deleting the address later never changes the
+#   order. billing_address_id only says where it came from and is cleared if the address is deleted.
 class CreateBetterTogetherBillingDefaultAddresses < ActiveRecord::Migration[7.2]
   ORDERS = :better_together_billing_orders
   TABLE = :better_together_billing_default_addresses
@@ -22,7 +22,6 @@ class CreateBetterTogetherBillingDefaultAddresses < ActiveRecord::Migration[7.2]
     remove_foreign_key ORDERS, column: :billing_address_id if foreign_key_exists?(ORDERS, column: :billing_address_id)
     remove_index ORDERS, name: ORDER_ADDRESS_INDEX if index_name_exists?(ORDERS, ORDER_ADDRESS_INDEX)
     remove_column ORDERS, :billing_address_id if column_exists?(ORDERS, :billing_address_id)
-    remove_column ORDERS, :billing_address if column_exists?(ORDERS, :billing_address)
     drop_table TABLE, force: :cascade if table_exists?(TABLE)
   end
 
@@ -47,7 +46,6 @@ class CreateBetterTogetherBillingDefaultAddresses < ActiveRecord::Migration[7.2]
   end
 
   def add_order_columns
-    add_column ORDERS, :billing_address, :jsonb, null: false, default: {} unless column_exists?(ORDERS, :billing_address)
     add_column ORDERS, :billing_address_id, :uuid unless column_exists?(ORDERS, :billing_address_id)
     add_index ORDERS, :billing_address_id, name: ORDER_ADDRESS_INDEX unless index_name_exists?(ORDERS, ORDER_ADDRESS_INDEX)
     return if foreign_key_exists?(ORDERS, :better_together_addresses, column: :billing_address_id)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -560,7 +560,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_090000) do
     t.uuid "tax_settlement_id"
     t.boolean "prices_include_tax"
     t.uuid "tax_registration_id"
-    t.jsonb "billing_address", default: {}, null: false
+    t.text "buyer_email"
+    t.text "billing_address"
     t.uuid "billing_address_id"
     t.index ["billing_address_id"], name: "idx_bt_billing_orders_billing_address"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
@@ -3494,9 +3495,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_090000) do
   add_foreign_key "better_together_billing_credit_lots", "better_together_billing_credit_accounts", column: ["credit_account_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_credit_lots_account_platform"
   add_foreign_key "better_together_billing_credit_lots", "better_together_people", column: "granted_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_credit_lots", "better_together_platforms", column: "platform_id"
-  add_foreign_key "better_together_billing_default_addresses", "better_together_addresses", column: "address_id", on_delete: :cascade
-  add_foreign_key "better_together_billing_default_addresses", "better_together_people", column: "person_id", on_delete: :cascade
-  add_foreign_key "better_together_billing_default_addresses", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_entitlement_grants", "better_together_billing_entitlements", column: ["entitlement_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_ent_grants_entitlement_platform"
   add_foreign_key "better_together_billing_entitlement_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_entitlements", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_entitlements_order_platform"
