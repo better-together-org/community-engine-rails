@@ -1036,6 +1036,7 @@ fr:
         title: Crédit en magasin
         usable: Vous pouvez dépenser %{amount}
       document:
+        generated: Généré le
         net_paid: Payé après remboursements
         questions: Des questions sur cette commande ? Écrivez à %{email}.
         refunded: Remboursé
@@ -1398,6 +1399,9 @@ fr:
           une partie maintenant et le reste autrement.
         add_payment_method: Payer par
         agreements_heading: Ententes acceptées
+        document_details: PDF, %{size}, généré le %{date}
+        download_invoice: Télécharger la facture
+        download_receipt: Télécharger le reçu
         field_amount: Montant
         field_balance: Reste à payer
         field_buyer: Acheteur

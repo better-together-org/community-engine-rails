@@ -35,6 +35,7 @@
   <div class="card-header"><strong><%= t('better_together.billing.orders.lines_heading') %></strong></div>
   <div class="card-body p-0">
     <%= render 'better_together/billing/order_summary', summary: billing_order_summary(order), scope: 'order' %>
+    <%= render 'better_together/billing/orders/documents', order: order %>
   </div>
 </div>
 

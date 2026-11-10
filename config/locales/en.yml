@@ -1034,6 +1034,7 @@ en:
         title: Store credit
         usable: You can spend %{amount}
       document:
+        generated: Generated
         net_paid: Paid after refunds
         questions: Questions about this order? Write to %{email}.
         refunded: Refunded
@@ -1378,6 +1379,9 @@ en:
           of it now and the rest another way."
         add_payment_method: Pay by
         agreements_heading: Agreements accepted
+        document_details: PDF, %{size}, generated %{date}
+        download_invoice: Download invoice
+        download_receipt: Download receipt
         field_amount: Amount
         field_balance: Left to pay
         field_buyer: Buyer

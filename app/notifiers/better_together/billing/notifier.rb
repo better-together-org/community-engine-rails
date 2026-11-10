@@ -51,12 +51,13 @@ module BetterTogether
         Orders::Summary.for_order(order) if order
       end
 
-      # The PDFs that go with this notice, built in the reader's language; none for anyone but the buyer.
+      # The stored PDFs that go with this notice (made now if the order's state has none yet, in the reader's language); none
+      # for anyone but the buyer.
       def documents
         order = Notifications::Links.order_of(record)
         return [] unless order && audience == :buyer
 
-        DOCUMENTS.fetch(kind, []).map { |document_kind| Orders::Document.new(order, kind: document_kind) }
+        DOCUMENTS.fetch(kind, []).map { |document_kind| Orders::GenerateDocument.call(order, kind: document_kind) }
       end
 
       def build_message(notification)

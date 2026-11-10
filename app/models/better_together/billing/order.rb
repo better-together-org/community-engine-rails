@@ -60,6 +60,7 @@ module BetterTogether
                                           inverse_of: false
       has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
                                        dependent: :restrict_with_error
+      has_many :documents, class_name: 'BetterTogether::Billing::OrderDocument', inverse_of: :order, dependent: :destroy
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
       has_many :offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :order,
                                   dependent: :restrict_with_error
@@ -91,6 +92,11 @@ module BetterTogether
       scope :expired_holds, -> { where(status: OPEN_STATUSES).where(arel_table[:expires_at].lt(Time.current)) }
       scope :bought_by, ->(person) { where(buyer_id: person.id) }
       scope :newest_first, -> { order(created_at: :desc) }
+
+      # The invoice or receipt PDF that is current, if one has been made.
+      def invoice_document = documents.current.of_kind(:invoice).first
+
+      def receipt_document = documents.current.of_kind(:receipt).first
 
       def open? = OPEN_STATUSES.include?(status)
 

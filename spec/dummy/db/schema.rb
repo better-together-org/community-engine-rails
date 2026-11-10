@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_12_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -527,6 +527,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_090000) do
     t.index ["order_id", "agreement_id"], name: "idx_bt_billing_order_acc_unique", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_order_acc_platform"
     t.index ["signer_id"], name: "idx_bt_billing_order_acc_signer"
+  end
+
+  create_table "better_together_billing_order_documents", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "order_id", null: false
+    t.uuid "upload_id", null: false
+    t.string "kind", null: false
+    t.string "fingerprint", null: false
+    t.string "time_zone", null: false
+    t.datetime "generated_at", null: false
+    t.datetime "superseded_at"
+    t.index ["order_id", "kind"], name: "idx_bt_billing_order_docs_current", unique: true, where: "(superseded_at IS NULL)"
+    t.index ["platform_id"], name: "idx_bt_billing_order_docs_platform"
+    t.index ["upload_id"], name: "idx_bt_billing_order_docs_upload", unique: true
   end
 
   create_table "better_together_billing_orders", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3521,6 +3538,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_12_090000) do
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_acc_order_platform"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_order_documents", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_docs_order_platform"
+  add_foreign_key "better_together_billing_order_documents", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_order_documents", "better_together_uploads", column: "upload_id"
   add_foreign_key "better_together_billing_orders", "better_together_addresses", column: "billing_address_id", on_delete: :nullify
   add_foreign_key "better_together_billing_orders", "better_together_billing_tax_registrations", column: ["tax_registration_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_tax_registration_platform"
   add_foreign_key "better_together_billing_orders", "better_together_geography_settlements", column: "tax_settlement_id"

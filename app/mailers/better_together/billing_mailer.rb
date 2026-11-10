@@ -46,7 +46,7 @@ module BetterTogether
     # The invoice or receipt as a PDF, built from the same summary as the email and in the same language.
     def attach_documents
       @notifier.documents.each do |document|
-        attachments[document.filename] = { mime_type: 'application/pdf', content: document.to_pdf }
+        attachments[document.filename.to_s] = { mime_type: 'application/pdf', content: document.upload.download }
       end
     end
 

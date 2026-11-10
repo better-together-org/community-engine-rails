@@ -1027,6 +1027,7 @@ es:
         title: Crédito de la tienda
         usable: Puedes gastar %{amount}
       document:
+        generated: Generado
         net_paid: Pagado tras reembolsos
         questions: "¿Preguntas sobre este pedido? Escriba a %{email}."
         refunded: Reembolsado
@@ -1369,6 +1370,9 @@ es:
           una parte ahora y el resto de otra.
         add_payment_method: Pagar con
         agreements_heading: Acuerdos aceptados
+        document_details: PDF, %{size}, generado el %{date}
+        download_invoice: Descargar factura
+        download_receipt: Descargar recibo
         field_amount: Importe
         field_balance: Falta por pagar
         field_buyer: Comprador

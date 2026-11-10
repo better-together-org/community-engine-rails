@@ -31,3 +31,38 @@ CE needs Pay 12.4 or later and receipts 3. Host apps that use Stripe through Pay
 `Pay::Subscription::STATUSES`; `Entitlements::State::STATUSES` is CE's own list. A status outside it (a processor can
 report one Pay does not list, such as Braintree `expired`) is treated as lapsed and reported through
 `BetterTogether.report_error`.
+
+## Stored documents
+
+A document is made once for each state the order is in and then kept. `Orders::GenerateDocument` renders the PDF,
+saves it as a private `Upload` created by the buyer, and joins it to the order with a `Billing::OrderDocument`
+(`kind`, `fingerprint`, `time_zone`, `generated_at`, `superseded_at`). Asking again while the figures are the same
+returns the stored one; a payment or a refund changes the fingerprint, so a new one is made and the old one is marked
+superseded but kept. Only the current invoice and receipt are shown on the order.
+
+![Order documents model](../diagrams/exports/png/billing_order_documents_model.png)
+
+Source: [`billing_order_documents_model.mmd`](../diagrams/source/billing_order_documents_model.mmd).
+
+- **Where they are made:** when a notice that carries one is sent (order placed, paid, refund), so the email attaches
+  the stored file and nothing is regenerated.
+- **Who can fetch them:** through the Upload's own download (`/f/:id/download`). The buyer is the creator; the stewards
+  of a sale the platform makes are allowed by `UploadPolicy#stewards_order_document?`. Nobody else gets the file.
+- **Download buttons:** the order and sale pages show a button for each document that exists
+  (`#order_<id>_documents`, `.billing-order-invoice-download`, `.billing-order-receipt-download`).
+- **Generated date and time:** both documents say when they were generated, with the time zone: the buyer's own
+  setting, else the platform's, else UTC.
+
+## Structured data
+
+Each PDF carries the order as data, added as an incremental update (`Orders::PdfAttachments`) so the printed pages
+are untouched:
+
+- `factur-x.xml`: a Factur-X / ZUGFeRD Cross Industry Invoice in the BASIC WL profile (`urn:factur-x.eu:1p0:basicwl`),
+  with one tax breakdown per tax, the registration numbers, and the totals including what is paid and what is due.
+- `order.jsonld`: schema.org `Invoice` with its `Order`, each line (and whether it is taxed) and each tax.
+- XMP metadata naming the Factur-X profile, and the Info dictionary (title, author, dates).
+
+List them with `pdfdetach -list invoice.pdf`. Not verified: the file is not certified PDF/A-3, the XML has not been
+validated against the Factur-X schema or an e-invoicing network, and Canadian orders carry their taxes as ordinary
+tax breakdowns, so they are not EU invoices.

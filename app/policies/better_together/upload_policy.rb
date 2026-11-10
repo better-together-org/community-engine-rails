@@ -20,8 +20,16 @@ module BetterTogether
     end
 
     def download?
-      (record.privacy_public? || record.creator == agent) &&
+      (record.privacy_public? || record.creator == agent || stewards_order_document?) &&
         record.attached?
+    end
+
+    # The invoice or receipt of a sale the platform's stewards manage can be downloaded by them too.
+    def stewards_order_document?
+      return false unless user.present?
+
+      order = BetterTogether::Billing::OrderDocument.find_by(upload_id: record.id)&.order
+      order.present? && BetterTogether::Billing::OrderPolicy.new(user, order).sale?
     end
 
     # Filtering and sorting for files according to permissions and context

@@ -34,6 +34,38 @@ RSpec.describe BetterTogether::Billing::OrdersController do
   context 'when signed in as the buyer' do
     before { sign_in member }
 
+    describe 'the stored invoice and receipt' do
+      let(:dom_id) { ActionView::RecordIdentifier }
+
+      it 'shows no download button while no document has been made', :aggregate_failures do
+        get order_path(order)
+
+        expect(response.body).not_to include('billing-order-document-download')
+      end
+
+      it 'shows a download for the invoice, and the buyer can fetch the stored PDF', :aggregate_failures do
+        document = BetterTogether::Billing::Orders::GenerateDocument.call(order)
+
+        get order_path(order)
+
+        expect(response.body).to include(dom_id.dom_id(order, :documents), dom_id.dom_id(document, :download), 'billing-order-invoice-download')
+        expect(response.body).not_to include('billing-order-receipt-download')
+
+        get better_together.download_file_path(document.upload, locale:)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to start_with('%PDF')
+      end
+
+      it 'does not give the file to anyone else', :aggregate_failures do
+        document = BetterTogether::Billing::Orders::GenerateDocument.call(order)
+        sign_in stranger
+
+        get better_together.download_file_path(document.upload, locale:)
+
+        expect(response).not_to have_http_status(:ok)
+      end
+    end
+
     it 'lists their orders' do
       get orders_path
 

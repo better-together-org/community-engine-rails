@@ -17,10 +17,11 @@ module BetterTogether
         KINDS = %i[invoice receipt].freeze
         AMOUNT_WIDTH = 80
 
-        attr_reader :order, :kind, :summary
+        attr_reader :order, :kind, :summary, :generated_at
 
-        def initialize(order, kind: nil, locale: nil)
+        def initialize(order, kind: nil, locale: nil, generated_at: Time.current)
           @order = order
+          @generated_at = generated_at
           @kind = (kind || (PAID_STATUSES.include?(order.status) ? :receipt : :invoice)).to_sym
           raise ArgumentError, "unknown document kind #{@kind.inspect}" unless KINDS.include?(@kind)
 
@@ -37,11 +38,37 @@ module BetterTogether
           end
         end
 
-        def to_pdf
-          I18n.with_locale(@locale) { build.render }
+        # The buyer's own time zone when they have set one, else the platform's (the seller's), else UTC.
+        def time_zone
+          @time_zone ||= [order.buyer.try(:preferences)&.dig('time_zone'), order.platform&.time_zone, 'UTC']
+                         .find { |name| name.present? && ActiveSupport::TimeZone[name] }
         end
 
+        # The PDF with the order as Factur-X XML and schema.org JSON-LD attached (see Orders::PdfAttachments).
+        def to_pdf
+          base = I18n.with_locale(@locale) { build.render }
+          PdfAttachments.new(base, attachments: attachments, title: doc_title, author: business_name, created_at: generated_at).to_pdf
+        end
+
+        def xml = InvoiceXml.new(order, summary:, seller_name: business_name, time_zone:).to_xml
+
+        def json = InvoiceJson.new(order, summary:, seller_name: business_name, time_zone:, kind:).to_json
+
         private
+
+        def attachments
+          [PdfAttachments::Attachment.new(name: 'factur-x.xml', content: xml, mime: 'text/xml', relationship: 'Data',
+                                          description: 'Factur-X (BASIC WL) invoice data'),
+           PdfAttachments::Attachment.new(name: 'order.jsonld', content: json, mime: 'application/ld+json',
+                                          relationship: 'Supplement', description: 'schema.org order data')]
+        end
+
+        def doc_title = "#{doc_text("title_#{kind}")} #{order.number}"
+
+        def generated_text
+          zone = ActiveSupport::TimeZone[time_zone]
+          I18n.l(generated_at.in_time_zone(zone), format: :long) + " (#{zone.tzinfo.strftime('%Z')})"
+        end
 
         # Receipts draws one table of items; the totals under it are a second table with the same amount column, so every
         # amount lines up at the right edge.
@@ -74,7 +101,8 @@ module BetterTogether
 
         def details
           [[t_order(:field_number), order.number], [t_order(:field_status), t_order("status_#{order.status}")],
-           [t_order(:field_placed), date(order.placed_at)], *paid_details].reject { |_label, value| value.blank? }
+           [t_order(:field_placed), date(order.placed_at)], *paid_details,
+           [doc_text(:generated), generated_text]].reject { |_label, value| value.blank? }
         end
 
         def paid_details

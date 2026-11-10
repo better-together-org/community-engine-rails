@@ -1,0 +1,48 @@
+{
+  "name": "billing_order_documents",
+  "device": "mobile",
+  "url": "/en/billing/orders/5dfaed2e-e3ed-47b4-a527-e95c122540c0",
+  "title": "Order BT-R1S9CPVK | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_documents",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_order_documents_spec.rb",
+  "flow": "billing_order_documents",
+  "callouts": [
+    {
+      "selector": "#documents_billing_order_5dfaed2e-e3ed-47b4-a527-e95c122540c0",
+      "title": "Invoice and receipt",
+      "bullets": [
+        "Each stored PDF downloads from its own button."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 596.390625,
+        "width": 459.0,
+        "height": 64.0,
+        "right": 472.0,
+        "bottom": 660.390625,
+        "center_x": 242.5,
+        "center_y": 628.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 10.0,
+        "width": 485.0,
+        "height": 957.390625,
+        "right": 485.0,
+        "bottom": 967.390625,
+        "center_x": 242.5,
+        "center_y": 488.6953125
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 987.39,
+        "width": 270.0,
+        "height": 190,
+        "score": 289.609375
+      }
+    }
+  ]
+}

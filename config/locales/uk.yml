@@ -1013,6 +1013,7 @@ uk:
         title: Кредит магазину
         usable: Ви можете витратити %{amount}
       document:
+        generated: Створено
         net_paid: Сплачено після повернень
         questions: Питання щодо цього замовлення? Напишіть на %{email}.
         refunded: Повернено
@@ -1352,6 +1353,9 @@ uk:
           або частину зараз, а решту іншим.
         add_payment_method: Сплатити через
         agreements_heading: Прийняті угоди
+        document_details: PDF, %{size}, створено %{date}
+        download_invoice: Завантажити рахунок
+        download_receipt: Завантажити квитанцію
         field_amount: Сума
         field_balance: Залишилося сплатити
         field_buyer: Покупець

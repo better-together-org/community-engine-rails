@@ -1,0 +1,14 @@
+erDiagram
+  ORDER ||--o{ ORDER_DOCUMENT : "has invoices and receipts"
+  UPLOAD ||--|| ORDER_DOCUMENT : "stores the PDF"
+  PERSON ||--o{ UPLOAD : "buyer is creator"
+  ORDER_DOCUMENT {
+    uuid platform_id
+    uuid order_id
+    uuid upload_id
+    string kind "invoice or receipt"
+    string fingerprint "what the PDF says"
+    string time_zone "buyer, else platform"
+    datetime generated_at
+    datetime superseded_at "set when a newer one replaces it"
+  }

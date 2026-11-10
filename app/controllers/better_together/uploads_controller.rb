@@ -39,6 +39,16 @@ module BetterTogether
 
     private
 
+    # The scope lists a person's own files. An invoice or receipt is also fetched by the stewards of the sale, so for
+    # the download alone an order document's upload is looked up too; the policy still decides who may have it.
+    def handle_resource_not_found
+      upload = Upload.where(id: Billing::OrderDocument.select(:upload_id)).find_by(id: id_param) if action_name == 'download'
+      return super unless upload
+
+      @resource = upload
+      instance_variable_set("@#{resource_name}", upload)
+    end
+
     def resource_class
       Upload
     end
