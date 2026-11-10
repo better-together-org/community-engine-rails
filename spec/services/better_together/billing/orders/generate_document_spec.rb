@@ -34,6 +34,15 @@ RSpec.describe BetterTogether::Billing::Orders::GenerateDocument do
     expect(order.documents.count).to eq(1)
   end
 
+  it 'returns the document a concurrent call stored first instead of failing on the unique index', :aggregate_failures do
+    service = described_class.new(order)
+    stored = described_class.call(order)
+    allow(service).to receive(:existing_document).and_return(nil, stored)
+    allow(order.documents).to receive(:create!).and_raise(ActiveRecord::RecordNotUnique)
+
+    expect(service.call).to eq(stored)
+  end
+
   it 'makes a receipt when the order is paid and keeps the invoice as it was', :aggregate_failures do
     invoice = described_class.call(order)
     pay!
@@ -91,7 +100,18 @@ RSpec.describe BetterTogether::Billing::Orders::GenerateDocument do
       json = JSON.parse(BetterTogether::Billing::Orders::Document.new(order).json)
 
       expect(json['@type']).to eq('Invoice')
-      expect(json.dig('referencesOrder', 'orderedItem', 0, 'additionalProperty', 'value')).to be(true)
+      expect(json.dig('referencesOrder', 'orderedItem', 0, 'orderedItem', 'additionalProperty', 'value')).to be(true)
+    end
+
+    it 'puts a line amount on the ordered Product offer, never as a price on the OrderItem', :aggregate_failures do
+      json = JSON.parse(BetterTogether::Billing::Orders::Document.new(order).json)
+      item = json.dig('referencesOrder', 'orderedItem', 0)
+      spec = item.dig('orderedItem', 'offers', 'priceSpecification')
+
+      expect(item).not_to have_key('price')
+      expect(spec).to include('@type' => 'PriceSpecification', 'priceCurrency' => order.currency)
+      expect(spec['price']).to match(/\A\d+\.\d{2}\z/)
+      expect(spec.dig('eligibleQuantity', 'value')).to eq(item['orderQuantity'])
     end
   end
 end

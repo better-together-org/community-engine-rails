@@ -50,11 +50,20 @@ module BetterTogether
           }.compact
         end
 
+        # Schema.org has no price on an OrderItem, so the line's total sits on the Offer of the ordered Product,
+        # as a PriceSpecification for the quantity ordered (it is the extended amount, not a unit price).
         def item(line, index)
           { '@type' => 'OrderItem', 'orderItemNumber' => (index + 1).to_s, 'orderQuantity' => line.quantity,
-            'orderedItem' => { '@type' => 'Product', 'name' => line.description },
-            'price' => decimal(line.amount_cents), 'priceCurrency' => @summary.currency,
-            'additionalProperty' => { '@type' => 'PropertyValue', 'name' => 'taxed', 'value' => line.taxed } }
+            'orderedItem' => product(line) }
+        end
+
+        def product(line) # rubocop:disable Metrics/MethodLength
+          { '@type' => 'Product', 'name' => line.description,
+            'additionalProperty' => { '@type' => 'PropertyValue', 'name' => 'taxed', 'value' => line.taxed },
+            'offers' => { '@type' => 'Offer', 'priceCurrency' => @summary.currency,
+                          'priceSpecification' => { '@type' => 'PriceSpecification', 'price' => decimal(line.amount_cents),
+                                                    'priceCurrency' => @summary.currency,
+                                                    'eligibleQuantity' => { '@type' => 'QuantitativeValue', 'value' => line.quantity } } } }
         end
 
         def tax_nodes

@@ -19,15 +19,17 @@ module BetterTogether
         end
 
         def call
-          existing = order.documents.current.of_kind(document.kind).find_by(fingerprint:)
-          return existing if existing
-
-          OrderDocument.transaction { store }
+          existing_document || OrderDocument.transaction { store }
+        rescue ActiveRecord::RecordNotUnique
+          # A concurrent delivery stored the current document first (unique current-document index): use theirs.
+          existing_document || raise
         end
 
         private
 
         attr_reader :order, :document
+
+        def existing_document = order.documents.current.of_kind(document.kind).find_by(fingerprint:)
 
         def store # rubocop:disable Metrics/AbcSize
           pdf = document.to_pdf
