@@ -6834,6 +6834,13 @@ fr:
     button: Rechercher
     placeholder: Rechercher...
   seed_catalog:
+    billing_agreements:
+      categories:
+        billing_purchase_agreements: Accords d'achat
+      description: Accords d'achat en brouillon avec un texte provisoire. Rien ne
+        peut être vendu tant qu'une personne responsable n'a pas rédigé les conditions
+        et activé les accords.
+      label: Accords de facturation
     billing_tax:
       categories:
         billing_tax_canada: Taxes de vente canadiennes

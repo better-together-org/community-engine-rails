@@ -6755,6 +6755,12 @@ es:
     button: Buscar
     placeholder: Buscar...
   seed_catalog:
+    billing_agreements:
+      categories:
+        billing_purchase_agreements: Acuerdos de compra
+      description: Acuerdos de compra en borrador con texto provisional. Nada puede
+        venderse hasta que una persona administradora redacte los términos y los active.
+      label: Acuerdos de facturación
     billing_tax:
       categories:
         billing_tax_canada: Impuestos canadienses sobre las ventas

@@ -82,4 +82,25 @@ RSpec.describe 'Seed catalog DOM contract', :as_platform_manager, :reduced_geogr
     expect(response.body).to include('billing_tax_canada-status-badge badge bg-success')
     expect(BetterTogether::Billing::TaxZone.count).to eq(13)
   end
+
+  it 'exposes the billing agreements catalog, with nothing holding it back, and shows it planted after planting' do # rubocop:disable RSpec/MultipleExpectations
+    host = BetterTogether::Platform.find_by!(host: true)
+    host.billing_agreement_requirements.destroy_all
+    BetterTogether::Agreement.where(platform: host,
+                                    identifier: %w[subscription_agreement one_time_purchase_agreement offline_payment_terms]).destroy_all
+
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+
+    expect(response.body).to include('id="seed-catalog-billing_agreements"', 'id="seed-catalog-billing_agreements-table"',
+                                     'id="seed-catalog-billing_agreements-billing_purchase_agreements-row"',
+                                     'billing_purchase_agreements-status-badge', 'id="plant-all-billing_agreements-btn"')
+    expect(response.body).not_to include('id="plant-billing_purchase_agreements-missing-prerequisites"')
+    expect(response.body).not_to match(/id="plant-billing_purchase_agreements-btn"[^>]*disabled/)
+
+    post "/#{I18n.default_locale}/host/seeds/catalog/billing_agreements/plant/billing_purchase_agreements"
+    get "/#{I18n.default_locale}/host/seeds/catalog"
+
+    expect(response.body).to include('billing_purchase_agreements-status-badge badge bg-success')
+    expect(BetterTogether::Agreement.where(identifier: 'subscription_agreement')).to exist
+  end
 end

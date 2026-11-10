@@ -6,7 +6,7 @@ The agreement text itself is not decided here. The platform ships **draft placeh
 
 ## The agreements that ship
 
-`AgreementBuilder.build_purchase_agreements` (through `Billing::PurchaseAgreementSeeds`) seeds three agreements for each platform. They are normal `BetterTogether::Agreement` records of kind `transactional_agreement`, protected, with `requires_reacceptance` on, so changing a platform's terms asks buyers to accept the new version.
+`AgreementBuilder.build_purchase_agreements` (through `Billing::PurchaseAgreementSeeds`) seeds three agreements for each platform. Their wording and the purchases each one covers are data, a seed packet (the same `BetterTogether::Seed` envelope the tax packets use) at `config/seeds/better_together/billing_agreements/billing_purchase_agreements.yml`, recorded as a Seed row when planted. The seed catalog page (`/host/seeds/catalog`) lists it under "Billing Agreements", with nothing to plant first, and plants it on the host platform. They are normal `BetterTogether::Agreement` records of kind `transactional_agreement`, protected, with `requires_reacceptance` on, so changing a platform's terms asks buyers to accept the new version.
 
 | Agreement | Covers | Added when |
 |---|---|---|

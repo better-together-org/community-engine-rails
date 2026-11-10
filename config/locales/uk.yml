@@ -6770,6 +6770,12 @@ uk:
     button: Пошук
     placeholder: Пошук...
   seed_catalog:
+    billing_agreements:
+      categories:
+        billing_purchase_agreements: Угоди про покупку
+      description: Чернетки угод про покупку з тимчасовим текстом. Нічого не можна
+        продавати, доки адміністратор не напише умови й не активує угоди.
+      label: Угоди з виставлення рахунків
     billing_tax:
       categories:
         billing_tax_canada: Канадські податки з продажів

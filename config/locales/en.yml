@@ -6652,6 +6652,12 @@ en:
     button: Search
     placeholder: Search...
   seed_catalog:
+    billing_agreements:
+      categories:
+        billing_purchase_agreements: Purchase agreements
+      description: Draft purchase agreements with placeholder text. Nothing can be
+        sold until a steward writes the terms and activates them.
+      label: Billing Agreements
     billing_tax:
       categories:
         billing_tax_canada: Canadian sales tax

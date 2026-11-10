@@ -1,0 +1,15 @@
+---
+title: 'Billing agreements: ready to plant'
+audience:
+- platform_manager
+- developer
+journey_step: I can plant the draft purchase agreements.
+callouts:
+- :id: plant_button
+  :title: Plant the purchase agreements
+  :description: Adds the subscription, one-time purchase and offline payment agreements
+    as drafts with placeholder text.
+accessibility_notes: The plant button carries an aria-label naming the packet; status
+  is shown in text as well as colour.
+slug: seed_catalog_billing_agreements_ready
+device: desktop
