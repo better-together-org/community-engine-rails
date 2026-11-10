@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T00:56:12Z",
+  "generated_at": "2026-11-10T02:04:57Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -4035,6 +4035,12 @@
           "to": "BetterTogether::Person",
           "label": "granted_by_person (granted_by_person_id)",
           "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Person",
+          "label": "person (person_id)",
+          "source_subsystem": "shared_supporting"
         }
       ]
     },
@@ -7990,6 +7996,12 @@
         },
         {
           "from": "BetterTogether::Billing::TaxCategory",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::DefaultAddress",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -16825,6 +16837,12 @@
           "source_subsystem": "billing"
         },
         {
+          "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Address",
+          "label": "billing_address_source (billing_address_id)",
+          "source_subsystem": "billing"
+        },
+        {
           "from": "BetterTogether::Weather::Location",
           "to": "BetterTogether::Geography::Settlement",
           "label": "settlement (settlement_id)",
@@ -16852,6 +16870,24 @@
           "from": "BetterTogether::Billing::TaxZone",
           "to": "BetterTogether::Geography::Settlement",
           "label": "settlement (settlement_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxRegistration",
+          "to": "BetterTogether::Geography::Country",
+          "label": "country (country_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxRegistration",
+          "to": "BetterTogether::Geography::State",
+          "label": "state (state_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
           "source_subsystem": "shared_supporting"
         }
       ]
@@ -26649,6 +26685,10 @@
           "table_name": "better_together_billing_orders",
           "columns": [
             [
+              "billing_address_id",
+              "uuid FK"
+            ],
+            [
               "buyer_id",
               "uuid FK"
             ],
@@ -26682,10 +26722,6 @@
             ],
             [
               "currency",
-              "string"
-            ],
-            [
-              "number",
               "string"
             ]
           ],
@@ -26728,6 +26764,12 @@
               "name": "tax_settlement",
               "foreign_key": "tax_settlement_id",
               "target": "BetterTogether::Geography::Settlement",
+              "optional": true
+            },
+            {
+              "name": "billing_address_source",
+              "foreign_key": "billing_address_id",
+              "target": "BetterTogether::Address",
               "optional": true
             }
           ],
@@ -26785,6 +26827,13 @@
               "name": "tax_settlement",
               "foreign_key": "tax_settlement_id",
               "target": "BetterTogether::Geography::Settlement",
+              "optional": true,
+              "target_subsystem": "geography_and_places"
+            },
+            {
+              "name": "billing_address_source",
+              "foreign_key": "billing_address_id",
+              "target": "BetterTogether::Address",
               "optional": true,
               "target_subsystem": "geography_and_places"
             }
@@ -28430,6 +28479,12 @@
         },
         {
           "from": "BetterTogether::Billing::Order",
+          "to": "BetterTogether::Address",
+          "label": "billing_address_source (billing_address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Billing::Order",
           "to": "BetterTogether::Billing::TaxRegistration",
           "label": "tax_registration (tax_registration_id)",
           "target_subsystem": "shared_supporting"
@@ -28796,6 +28851,84 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::DefaultAddress",
+          "label": "Billing::DefaultAddress",
+          "source_path": "app/models/better_together/billing/default_address.rb",
+          "table_name": "better_together_billing_default_addresses",
+          "columns": [
+            [
+              "address_id",
+              "uuid FK"
+            ],
+            [
+              "person_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "kind",
+              "string"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "InclusionValidator: kind (in=[\"billing\", \"shipping\"])",
+            "UniquenessValidator: kind (scope=[:platform_id, :person_id])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "person",
+              "foreign_key": "person_id",
+              "target": "BetterTogether::Person",
+              "optional": false
+            },
+            {
+              "name": "address",
+              "foreign_key": "address_id",
+              "target": "BetterTogether::Address",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "person",
+              "foreign_key": "person_id",
+              "target": "BetterTogether::Person",
+              "optional": false,
+              "target_subsystem": "identity_access"
+            },
+            {
+              "name": "address",
+              "foreign_key": "address_id",
+              "target": "BetterTogether::Address",
+              "optional": false,
+              "target_subsystem": "geography_and_places"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::Notifier",
           "label": "Billing::Notifier",
           "source_path": "app/notifiers/better_together/billing/notifier.rb",
@@ -29158,11 +29291,19 @@
           "table_name": "better_together_billing_tax_registrations",
           "columns": [
             [
+              "country_id",
+              "uuid FK"
+            ],
+            [
               "platform_id",
               "uuid FK"
             ],
             [
               "seller_id",
+              "uuid FK"
+            ],
+            [
+              "state_id",
               "uuid FK"
             ],
             [
@@ -29188,20 +29329,13 @@
             [
               "prices_include_tax",
               "boolean"
-            ],
-            [
-              "effective_from",
-              "datetime"
-            ],
-            [
-              "effective_to",
-              "datetime"
             ]
           ],
           "validations": [
             "PresenceValidator: platform (message=:required)",
             "InclusionValidator: status (in=[\"registered\", \"small_supplier_exempt\", \"exempt\", \"not_collecting\"])",
-            "FormatValidator: country_iso (with=/\\A[A-Z]{2}\\z/)"
+            "FormatValidator: country_iso (with=/\\A[A-Z]{2}\\z/)",
+            "PresenceValidator: effective_from"
           ],
           "belongs_to": [
             {
@@ -29209,6 +29343,18 @@
               "foreign_key": "platform_id",
               "target": "BetterTogether::Platform",
               "optional": false
+            },
+            {
+              "name": "country",
+              "foreign_key": "country_id",
+              "target": "BetterTogether::Geography::Country",
+              "optional": true
+            },
+            {
+              "name": "state",
+              "foreign_key": "state_id",
+              "target": "BetterTogether::Geography::State",
+              "optional": true
             }
           ],
           "polymorphic": [
@@ -29233,6 +29379,20 @@
               "target": "BetterTogether::Platform",
               "optional": false,
               "target_subsystem": "platform_network"
+            },
+            {
+              "name": "country",
+              "foreign_key": "country_id",
+              "target": "BetterTogether::Geography::Country",
+              "optional": true,
+              "target_subsystem": "geography_and_places"
+            },
+            {
+              "name": "state",
+              "foreign_key": "state_id",
+              "target": "BetterTogether::Geography::State",
+              "optional": true,
+              "target_subsystem": "geography_and_places"
             }
           ]
         },
@@ -35666,6 +35826,22 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::TaxRegistrationsController",
+          "label": "Billing::TaxRegistrationsController",
+          "source_path": "app/controllers/better_together/billing/tax_registrations_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::TaxRegistration"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::BotDefense::ChallengesController",
           "label": "BotDefense::ChallengesController",
           "source_path": "app/controllers/better_together/bot_defense/challenges_controller.rb",
@@ -36648,6 +36824,7 @@
           "capability": "Ownerscoped",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
+            "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController"
           ]
@@ -36680,7 +36857,8 @@
             "Billing::TaxRegistration",
             "Billing::TaxRate",
             "Billing::TaxLine",
-            "Billing::TaxCategory"
+            "Billing::TaxCategory",
+            "Billing::DefaultAddress"
           ]
         },
         {
@@ -36886,6 +37064,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
@@ -36955,6 +37134,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
@@ -37024,6 +37204,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
@@ -37104,6 +37285,7 @@
             "Federation::ApiController",
             "Content::PageBlocksController",
             "BotDefense::ChallengesController",
+            "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "ShortLinkRedirectsController",
@@ -37391,6 +37573,24 @@
           "target_subsystem": "platform_network"
         },
         {
+          "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Address",
+          "label": "address (address_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Person",
+          "label": "person (person_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
           "from": "BetterTogether::Billing::Notifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
@@ -37425,6 +37625,18 @@
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxRegistration",
+          "to": "BetterTogether::Geography::Country",
+          "label": "country (country_id)",
+          "target_subsystem": "geography_and_places"
+        },
+        {
+          "from": "BetterTogether::Billing::TaxRegistration",
+          "to": "BetterTogether::Geography::State",
+          "label": "state (state_id)",
+          "target_subsystem": "geography_and_places"
         },
         {
           "from": "BetterTogether::Billing::TaxRegistration",

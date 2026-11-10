@@ -86,6 +86,7 @@
           <%= hidden_field_tag "part_amounts[#{part[:payment_method]}]", BetterTogether::Billing::Currency.to_major(part[:amount_cents], @plan.currency), id: "billing-checkout-part-hidden-#{part[:payment_method]}" %>
         <% end %>
         <%= hidden_field_tag :renew_with, @renew_with, id: 'billing-checkout-renew-with-hidden' if @renew_with %>
+        <%= render 'billing_address', addresses: @addresses, selected_id: @selected_address_id, new_address: @new_address %>
         <section id="billing-agreement-review" class="card mb-4" aria-labelledby="billing-agreement-review-title">
           <div class="card-header"><strong id="billing-agreement-review-title"><%= t('better_together.billing.checkout.review_title') %></strong></div>
           <div class="card-body">

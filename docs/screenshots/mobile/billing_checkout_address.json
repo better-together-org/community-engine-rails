@@ -1,0 +1,48 @@
+{
+  "name": "billing_checkout_address",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=c36ce9ac-a552-4bff-9a48-a92698ef6e57&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "flow": "billing_checkout_address",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_addresses_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-address",
+      "title": "Billing address",
+      "bullets": [
+        "Pick one of your addresses, or add a new one. Tax is worked out for its place."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 413.390625,
+        "width": 461.0,
+        "height": 711.1875,
+        "right": 473.0,
+        "bottom": 1124.578125,
+        "center_x": 242.5,
+        "center_y": 768.984375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 413.390625,
+        "width": 461.0,
+        "height": 711.1875,
+        "right": 473.0,
+        "bottom": 1124.578125,
+        "center_x": 242.5,
+        "center_y": 768.984375
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 183.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 413.390625
+      }
+    }
+  ]
+}

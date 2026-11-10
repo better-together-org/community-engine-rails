@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -330,6 +330,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.check_constraint "amount_cents > 0 AND remaining_cents >= 0 AND remaining_cents <= amount_cents", name: "chk_bt_billing_credit_lots_bounds"
   end
 
+  create_table "better_together_billing_default_addresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "person_id", null: false
+    t.uuid "address_id", null: false
+    t.string "kind", null: false
+    t.index ["address_id"], name: "idx_bt_billing_default_addresses_address"
+    t.index ["platform_id", "person_id", "kind"], name: "idx_bt_billing_default_addresses_person_kind", unique: true
+    t.index ["platform_id"], name: "idx_bt_billing_default_addresses_platform"
+  end
+
   create_table "better_together_billing_entitlement_grants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -549,6 +562,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.uuid "tax_registration_id"
     t.text "buyer_email"
     t.text "billing_address"
+    t.uuid "billing_address_id"
+    t.index ["billing_address_id"], name: "idx_bt_billing_orders_billing_address"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
     t.index ["id", "platform_id"], name: "idx_bt_billing_orders_id_platform", unique: true
     t.index ["on_behalf_of_type", "on_behalf_of_id"], name: "idx_bt_billing_orders_on_behalf_of"
@@ -709,6 +724,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.check_constraint "redemptions_count >= 0", name: "chk_bt_billing_promotions_count"
   end
 
+  create_table "better_together_billing_refunds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "payment_id", null: false
+    t.uuid "recorded_by_id"
+    t.integer "amount_cents", null: false
+    t.string "currency", null: false
+    t.string "status", default: "pending", null: false
+    t.string "reason"
+    t.string "idempotency_key", null: false
+    t.string "processor_reference"
+    t.index ["payment_id"], name: "idx_bt_billing_refunds_payment"
+    t.index ["platform_id", "idempotency_key"], name: "idx_bt_billing_refunds_idempotency", unique: true
+    t.index ["platform_id", "payment_id", "processor_reference"], name: "idx_bt_billing_refunds_reference", unique: true, where: "(processor_reference IS NOT NULL)"
+    t.index ["platform_id"], name: "idx_bt_billing_refunds_platform"
+    t.index ["recorded_by_id"], name: "idx_bt_billing_refunds_recorded_by"
+  end
+
   create_table "better_together_billing_subscription_periods", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -752,26 +787,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.index ["plan_id"], name: "idx_bt_billing_sub_terms_plan"
     t.index ["platform_id"], name: "idx_bt_billing_sub_terms_platform"
     t.check_constraint "unit_amount_cents >= 0 AND anchor_sequence >= 0", name: "chk_bt_billing_sub_terms_amounts"
-  end
-
-  create_table "better_together_billing_refunds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "lock_version", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.uuid "platform_id", null: false
-    t.uuid "payment_id", null: false
-    t.uuid "recorded_by_id"
-    t.integer "amount_cents", null: false
-    t.string "currency", null: false
-    t.string "status", default: "pending", null: false
-    t.string "reason"
-    t.string "idempotency_key", null: false
-    t.string "processor_reference"
-    t.index ["payment_id"], name: "idx_bt_billing_refunds_payment"
-    t.index ["platform_id", "idempotency_key"], name: "idx_bt_billing_refunds_idempotency", unique: true
-    t.index ["platform_id", "payment_id", "processor_reference"], name: "idx_bt_billing_refunds_reference", unique: true, where: "(processor_reference IS NOT NULL)"
-    t.index ["platform_id"], name: "idx_bt_billing_refunds_platform"
-    t.index ["recorded_by_id"], name: "idx_bt_billing_refunds_recorded_by"
   end
 
   create_table "better_together_billing_tax_categories", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -833,11 +848,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.string "status", default: "registered", null: false
     t.boolean "prices_include_tax"
     t.text "registration_number"
-    t.datetime "effective_from"
+    t.datetime "effective_from", null: false
     t.datetime "effective_to"
+    t.uuid "country_id"
+    t.uuid "state_id"
+    t.index ["country_id"], name: "idx_bt_billing_tax_registrations_country_id"
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_registrations_id_platform", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_tax_registrations_platform"
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_tax_registrations_seller"
+    t.index ["state_id"], name: "idx_bt_billing_tax_registrations_state_id"
   end
 
   create_table "better_together_billing_tax_zones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3500,6 +3519,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_order_acc_order_platform"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_people", column: "signer_id"
   add_foreign_key "better_together_billing_order_agreement_acceptances", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_orders", "better_together_addresses", column: "billing_address_id", on_delete: :nullify
   add_foreign_key "better_together_billing_orders", "better_together_billing_tax_registrations", column: ["tax_registration_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_orders_tax_registration_platform"
   add_foreign_key "better_together_billing_orders", "better_together_geography_settlements", column: "tax_settlement_id"
   add_foreign_key "better_together_billing_orders", "better_together_people", column: "buyer_id"
@@ -3537,6 +3557,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
   add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_category_platform"
   add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_zones", column: ["tax_zone_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_zone_platform"
   add_foreign_key "better_together_billing_tax_rates", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_registrations", "better_together_geography_countries", column: "country_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_tax_registrations", "better_together_geography_states", column: "state_id", on_delete: :nullify
   add_foreign_key "better_together_billing_tax_registrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_tax_zones", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_billing_tax_zones", "better_together_geography_settlements", column: "settlement_id"

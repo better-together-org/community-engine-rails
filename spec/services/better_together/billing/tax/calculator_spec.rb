@@ -104,6 +104,39 @@ RSpec.describe BetterTogether::Billing::Tax::Calculator do
     expect(calculate(items: [item(1000)]).tax_cents).to eq(50)
   end
 
+  describe 'with registrations for more than one place' do
+    let!(:us_zone) { create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'US') }
+
+    before { create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: us_zone, label: 'Sales tax', rate: 0.07) }
+
+    it 'uses the registration for the buyer\'s country, whatever was made last', :aggregate_failures do
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'US', status: 'not_collecting',
+                                                        prices_include_tax: true)
+
+      expect(calculate(items: [item(1000)], country_iso: 'CA')).to have_attributes(tax_cents: 50, prices_include_tax: false)
+      expect(calculate(items: [item(1000)], country_iso: 'US').taxed?).to be(false)
+    end
+
+    it 'prefers a registration for the buyer\'s own region over a country-wide one', :aggregate_failures do
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA', region_code: 'NL', status: 'exempt')
+
+      expect(calculate(items: [item(1000)], country_iso: 'CA', region_code: 'NL').taxed?).to be(false)
+      expect(calculate(items: [item(1000)], country_iso: 'CA', region_code: 'ON').tax_cents).to eq(50)
+    end
+
+    it 'does not tax a buyer somewhere no registration covers' do
+      registration.update!(region_code: 'NL')
+
+      expect(calculate(items: [item(1000)], country_iso: 'CA', region_code: 'ON').taxed?).to be(false)
+    end
+  end
+
+  it 'keeps a registration in force until the end of its last day' do
+    registration.update!(effective_to: Time.current.end_of_day)
+
+    expect(calculate(items: [item(1000)]).taxed?).to be(true)
+  end
+
   it 'leaves a registration out of force alone' do
     registration.update!(effective_to: 1.day.ago)
 

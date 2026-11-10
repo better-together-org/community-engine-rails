@@ -182,6 +182,11 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, Billing::PersonLookup, InvitationSessionManagement, InvitationTokenSession +2
     }
+    class BetterTogether__Billing__TaxRegistrationsController["Billing::TaxRegistrationsController"] {
+      <<Controller>>
+      models: Billing::TaxRegistration
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__BotDefense__ChallengesController["BotDefense::ChallengesController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
@@ -424,6 +429,11 @@ classDiagram
       table: better_together_agent_grants
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
+    }
+    class BetterTogether__Billing__DefaultAddress["Billing::DefaultAddress"] {
+      <<Model>>
+      table: better_together_billing_default_addresses
+      concerns: Billing::PlatformBound
     }
     class BetterTogether__Billing__TaxCategory["Billing::TaxCategory"] {
       <<Model>>
@@ -727,6 +737,8 @@ classDiagram
   BetterTogether__Api__V1__WebhookEndpointsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Billing__OrderPaymentsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__PeopleController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__TaxRegistrationsController ..> BetterTogether__Billing__TaxRegistration : manages
+  BetterTogether__Billing__TaxRegistrationsController --|> BetterTogether__ApplicationController
   BetterTogether__BotDefense__ChallengesController --|> BetterTogether__ApplicationController
   BetterTogether__CommentsController --|> BetterTogether__ApplicationController
   BetterTogether__Content__PageBlocksController --|> BetterTogether__ApplicationController
@@ -785,6 +797,9 @@ classDiagram
   BetterTogether__AgentGrant --> BetterTogether__Person : operator
   BetterTogether__AgentGrant --> BetterTogether__Community : community
   BetterTogether__AgentGrant --> BetterTogether__Person : granted_by
+  BetterTogether__Billing__DefaultAddress --> BetterTogether__Platform : platform
+  BetterTogether__Billing__DefaultAddress --> BetterTogether__Person : person
+  BetterTogether__Billing__DefaultAddress --> BetterTogether__Address : address
   BetterTogether__Billing__TaxCategory --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxLine --> BetterTogether__Billing__Order : order
@@ -794,6 +809,8 @@ classDiagram
   BetterTogether__Billing__TaxRate --> BetterTogether__Billing__TaxZone : tax_zone
   BetterTogether__Billing__TaxRate --> BetterTogether__Billing__TaxCategory : tax_category
   BetterTogether__Billing__TaxRegistration --> BetterTogether__Platform : platform
+  BetterTogether__Billing__TaxRegistration --> BetterTogether__Geography__Country : country
+  BetterTogether__Billing__TaxRegistration --> BetterTogether__Geography__State : state
   BetterTogether__Billing__TaxZone --> BetterTogether__Platform : platform
   BetterTogether__Billing__TaxZone --> BetterTogether__Geography__Country : country
   BetterTogether__Billing__TaxZone --> BetterTogether__Geography__State : state

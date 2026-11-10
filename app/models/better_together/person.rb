@@ -41,6 +41,7 @@ module BetterTogether
     member joinable_type: 'platform', member_type: 'person', dependent: :destroy
     member joinable_type: 'community', member_type: 'person', dependent: :destroy
 
+    has_many :billing_default_addresses, class_name: 'BetterTogether::Billing::DefaultAddress', dependent: :destroy
     has_many :conversation_participants, dependent: :destroy
     has_many :conversations, through: :conversation_participants
     has_many :created_conversations,

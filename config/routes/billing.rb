@@ -123,6 +123,13 @@ concern :billing_entitlements do
 end
 
 # What a seller has to do about payments made outside the platform (cash, cheque, e-transfer).
+# Tax: where the platform is registered to collect it and on what terms.
+concern :billing_tax do
+  namespace :billing do
+    resources :tax_registrations, only: %i[index new create edit update]
+  end
+end
+
 concern :billing_offline_payments do
   namespace :billing do
     resources :offline_payments, only: :index do
@@ -140,6 +147,7 @@ end
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions, :billing_entitlements, :billing_lookups
+    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
+             :billing_entitlements, :billing_tax, :billing_lookups
   end
 end

@@ -934,9 +934,25 @@ en:
         within: Within the limit
       checkout:
         accept: I have read and accept %{title}
+        address:
+          choose: Billing address
+          hint: Tax is worked out from where you are billed, so choose your country
+            and state or province from the lists.
+          line1: Street address
+          make_default: Use this as my default billing address
+          new_heading: New billing address
+          new_option: A new address
+          postal_code: Postal code
+          title: Billing address
         already_accepted: You have already accepted the current version.
         continue: Continue
         error_accept_all: Accept every agreement to continue.
+        error_address_incomplete: The billing address needs a country and a state
+          or province chosen from the lists.
+        error_address_invalid: The new billing address could not be saved. Check it
+          and try again.
+        error_address_missing: Choose a billing address.
+        error_address_not_found: That address is not one of yours. Choose another.
         error_method_not_available: Choose one of the ways to pay that are available.
         error_not_ready: 'This purchase cannot be completed yet: the terms for it
           have not been set up. Please contact the people who run this platform.'
@@ -1793,6 +1809,43 @@ en:
         state_past_due: Past due
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
+      tax_registrations:
+        created: Tax registration added.
+        edit_title: Edit tax registration
+        empty: No tax registrations yet. Without one, no tax is added to orders.
+        field_from: In force from
+        field_in_force: In force
+        field_number: Registration number
+        field_number_hint: Kept encrypted and never shown again.
+        field_place: Place
+        field_place_hint: Choose the country, and the province or state if you are
+          registered for one place only. These are the same places your tax zones
+          use.
+        field_prices: Prices
+        field_prices_hint: Leave on the country's usual way unless prices here are
+          set the other way.
+        field_status: Status
+        field_status_hint: Only "Registered" collects tax. The others record why none
+          is collected.
+        field_to: In force until
+        field_to_hint: Leave empty if the registration is ongoing, with no end date.
+        index_intro: Where this platform is registered to collect tax, and on what
+          terms. Orders are taxed by the registration for the buyer's place; with
+          none that collects, no tax is added.
+        index_title: Tax registrations
+        new_title: Add a tax registration
+        number_kept: Leave blank to keep the saved number
+        ongoing: Ongoing
+        prices:
+          added: Tax is added to prices
+          default: The country's usual way
+          included: Prices include tax
+        statuses:
+          exempt: Exempt, collects none
+          not_collecting: Not collecting
+          registered: Registered, collects tax
+          small_supplier_exempt: Small supplier, collects none
+        updated: Tax registration saved.
       walk_up:
         address_city_name: City
         address_country_name: Country

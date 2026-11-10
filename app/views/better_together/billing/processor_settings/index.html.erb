@@ -12,6 +12,8 @@
                   class: 'btn btn-outline-secondary', id: 'billing-subscribers-link' %>
       <%= link_to t('better_together.billing.credit.steward_title'), billing_credit_accounts_path(locale: I18n.locale),
                   class: 'btn btn-outline-secondary', id: 'billing-credit-accounts-link' %>
+      <%= link_to t('better_together.billing.tax_registrations.index_title'), billing_tax_registrations_path(locale: I18n.locale),
+                  class: 'btn btn-outline-secondary', id: 'billing-tax-registrations-link' %>
       <%= link_to t('better_together.billing.requirements.index_title'), billing_agreement_requirements_path(locale: I18n.locale),
                   class: 'btn btn-outline-secondary', id: 'billing-purchase-terms-link' %>
     </div>

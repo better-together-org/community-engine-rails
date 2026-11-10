@@ -54,6 +54,10 @@ module BetterTogether
       belongs_to :tax_registration, class_name: 'BetterTogether::Billing::TaxRegistration', optional: true
       # The settlement the tax was worked out for, when the buyer's place was a city or town.
       belongs_to :tax_settlement, class_name: 'BetterTogether::Geography::Settlement', optional: true
+      # Where the billing address snapshot came from. The snapshot (`billing_address`) is what the order keeps; this is cleared if the
+      # address is deleted.
+      belongs_to :billing_address_source, class_name: 'BetterTogether::Address', foreign_key: :billing_address_id, optional: true,
+                                          inverse_of: false
       has_many :agreement_acceptances, class_name: 'BetterTogether::Billing::OrderAgreementAcceptance', inverse_of: :order,
                                        dependent: :restrict_with_error
       has_many :payments, class_name: 'BetterTogether::Billing::Payment', inverse_of: :order, dependent: :restrict_with_error
