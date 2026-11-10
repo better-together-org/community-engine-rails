@@ -3538,6 +3538,13 @@ es:
         placeholder: Escribe tu mensaje...
         send: Enviar
     metrics:
+      billing_reports:
+        empty_description: Cree un informe para descargar las ventas, los ingresos,
+          los impuestos y los reembolsos de un mes, trimestre o año como archivo CSV.
+        empty_title: Aún no hay informes de facturación
+        filters_text: "%{from} a %{to}, por %{interval}"
+        new_title: Nuevo informe de facturación
+        title: Informes de facturación
       errors:
         date_range_too_large: El rango de fechas no puede exceder 1 año
         invalid_date_range: La fecha de inicio debe ser anterior a la fecha de fin
@@ -3551,9 +3558,17 @@ es:
           apply: Aplicar Filtros
           communities: Comunidades
           content_type: Tipo de Contenido
+          currency: Moneda
           day_of_week: Día de la Semana
+          first_currency: La primera moneda con ventas
           hour_of_day: Hora del Día
+          interval: Por
+          intervals:
+            month: Mes
+            quarter: Trimestre
+            year: Año
           locale: Idioma
+          owner: Ventas de quién
           pages: Páginas
           people: Personas
           reset: Restablecer Filtros
@@ -3595,6 +3610,7 @@ es:
           export: Exportar
         axis_labels:
           accounts: Accounts
+          amount: Importe
           confirmations: Rate (%)
           date: Fecha
           downloads: Descargas
@@ -3605,16 +3621,47 @@ es:
           links: Enlaces
           page: Página
           page_views: Vistas de página
+          period: Periodo
           platform: Plataforma
           search_queries: Búsquedas
           shares: Compartidos
           source: Origen
+          tax: Impuesto
           term: Término
           total_users: Total Users
           url: URL
+        billing:
+          amount: Importe
+          collected: Cobrado
+          empty: No se pagó ninguna venta en los últimos 30 días.
+          measures:
+            exempt: Ingresos exentos
+            gross: Total pagado por ventas, con impuesto
+            net_revenue: Ingresos tras reembolsos, sin impuesto
+            net_tax: Impuesto cobrado tras reembolsos
+            non_taxable: Ingresos no sujetos a impuesto
+            refunded: Reembolsado, con impuesto
+            sales: Ventas
+            tax_collected: Impuesto cobrado
+            taxable: Ingresos sujetos a impuesto
+          owner_all: Todos los vendedores y la plataforma
+          owner_platform: Solo la plataforma
+          payment_method: Forma de pago
+          refunded: Reembolsado
+          summary_note: Las ventas cuentan el día en que se pagaron, en la zona horaria
+            de la plataforma. Cada moneda se muestra por separado.
+          summary_title: Los últimos 30 días
+          tax: Impuesto
         charts:
           accounts_confirmed: Accounts Confirmed
           accounts_created: Accounts Created
+          billing_exempt: Ingresos exentos
+          billing_non_taxable: Ingresos no sujetos a impuesto
+          billing_refunded: Ingresos reembolsados
+          billing_revenue: Ingresos, impuestos y reembolsos por periodo
+          billing_tax: Impuesto cobrado (neto de reembolsos)
+          billing_tax_by_rate: Impuesto cobrado por tasa (neto de reembolsos)
+          billing_taxable: Ingresos sujetos a impuesto
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth
@@ -3694,6 +3741,7 @@ es:
           total_drift: Desviación total
           unmanaged_models: Modelos buscables no gestionados
         tabs:
+          billing: Facturación
           charts: Gráficos
           charts_and_reports: Gráficos y reportes
           downloads: Descargas

@@ -302,6 +302,10 @@ classDiagram
       models: MessageRequest
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__Metrics__BillingReportsController["Metrics::BillingReportsController"] {
+      <<Controller>>
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+    }
     class BetterTogether__Metrics__LinkCheckerReportsController["Metrics::LinkCheckerReportsController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
@@ -786,6 +790,7 @@ classDiagram
   BetterTogether__LocationsController --|> BetterTogether__ApplicationController
   BetterTogether__MessageRequestsController ..> BetterTogether__MessageRequest : manages
   BetterTogether__MessageRequestsController --|> BetterTogether__ApplicationController
+  BetterTogether__Metrics__BillingReportsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkCheckerReportsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkClickReportsController --|> BetterTogether__ApplicationController
   BetterTogether__Metrics__LinkClicksController --|> BetterTogether__ApplicationController

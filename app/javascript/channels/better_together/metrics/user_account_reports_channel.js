@@ -20,16 +20,17 @@ consumer.subscriptions.create("BetterTogether::Metrics::UserAccountReportsChanne
     debug.log("Received report update:", data);
     
     if (data.report_id && data.file_ready) {
-      this.updateReportRow(data.report_id, data.download_url);
+      this.updateReportRow(data.report_id, data.download_url, data.row_id);
     }
   },
 
-  updateReportRow(reportId, downloadUrl) {
+  updateReportRow(reportId, downloadUrl, rowId) {
     debug.log(`Updating report row for ID: ${reportId}`);
     
     // Try to find the row with a small delay to allow Turbo to finish rendering
     const findAndUpdate = () => {
-      const row = document.getElementById(`user_account_report_${reportId}`);
+      // Other report types name their own row; the user account report row is the default.
+      const row = document.getElementById(rowId || `user_account_report_${reportId}`);
       if (!row) {
         debug.error(`Could not find row with ID: user_account_report_${reportId}`);
         debug.log('Available report rows:', document.querySelectorAll('[id^="user_account_report_"]'));

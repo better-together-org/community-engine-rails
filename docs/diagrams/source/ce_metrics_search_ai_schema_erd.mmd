@@ -2,6 +2,8 @@
 erDiagram
   EXT_PLATFORM o|--o{ AI_LOG_TRANSLATIONS : "platform / platform_id"
   EXT_PERSON o|--o{ AI_LOG_TRANSLATIONS : "initiator / initiator_id"
+  EXT_PLATFORM o|--o{ BILLING_REPORTS : "platform / platform_id"
+  EXT_PERSON o|--o{ BILLING_REPORTS : "creator / creator_id"
   EXT_PLATFORM ||--o{ DOWNLOADS : "platform / platform_id"
   EXT_PLATFORM o|--o{ LINK_CHECKER_REPORTS : "platform / platform_id"
   EXT_PERSON o|--o{ LINK_CHECKER_REPORTS : "creator / creator_id"
@@ -32,6 +34,14 @@ erDiagram
     response text
     completion_tokens integer
     prompt_tokens integer
+  }
+
+  BILLING_REPORTS {
+    creator_id uuid
+    platform_id uuid
+    file_format string
+    filters jsonb
+    report_data jsonb
   }
 
   DOWNLOADS {

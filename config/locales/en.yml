@@ -3499,6 +3499,13 @@ en:
         placeholder: Type your message...
         send: Send
     metrics:
+      billing_reports:
+        empty_description: Make a report to download sales, revenue, tax and refunds
+          for a month, quarter or year as a CSV file.
+        empty_title: No billing reports yet
+        filters_text: "%{from} to %{to}, by %{interval}"
+        new_title: New billing report
+        title: Billing reports
       errors:
         date_range_too_large: Date range cannot exceed 1 year
         invalid_date_range: Start date must be before end date
@@ -3512,9 +3519,17 @@ en:
           apply: Apply Filters
           communities: Communities
           content_type: Content Type
+          currency: Currency
           day_of_week: Day of Week
+          first_currency: The first currency with sales
           hour_of_day: Hour of Day
+          interval: By
+          intervals:
+            month: Month
+            quarter: Quarter
+            year: Year
           locale: Language
+          owner: Whose sales
           pages: Pages
           people: People
           reset: Reset Filters
@@ -3555,6 +3570,7 @@ en:
           export: Export
         axis_labels:
           accounts: Accounts
+          amount: Amount
           confirmations: Rate (%)
           date: Date
           downloads: Downloads
@@ -3565,16 +3581,47 @@ en:
           links: Links
           page: Page
           page_views: Page Views
+          period: Period
           platform: Platform
           search_queries: Searches
           shares: Shares
           source: Source
+          tax: Tax
           term: Term
           total_users: Total Users
           url: URL
+        billing:
+          amount: Amount
+          collected: Collected
+          empty: No sales were paid in the last 30 days.
+          measures:
+            exempt: Exempt revenue
+            gross: Total paid for sales, with tax
+            net_revenue: Revenue after refunds, without tax
+            net_tax: Tax collected after refunds
+            non_taxable: Non-taxable revenue
+            refunded: Refunded, with tax
+            sales: Sales
+            tax_collected: Tax collected
+            taxable: Taxable revenue
+          owner_all: All sellers and the platform
+          owner_platform: The platform only
+          payment_method: Way of paying
+          refunded: Refunded
+          summary_note: Sales count on the day they were paid, in the platform time
+            zone. Each currency is shown on its own.
+          summary_title: The last 30 days
+          tax: Tax
         charts:
           accounts_confirmed: Accounts Confirmed
           accounts_created: Accounts Created
+          billing_exempt: Exempt revenue
+          billing_non_taxable: Non-taxable revenue
+          billing_refunded: Refunded revenue
+          billing_revenue: Revenue, tax and refunds by period
+          billing_tax: Tax collected (net of refunds)
+          billing_tax_by_rate: Tax collected by rate (net of refunds)
+          billing_taxable: Taxable revenue
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth
@@ -3654,6 +3701,7 @@ en:
           total_drift: Total Drift
           unmanaged_models: Unmanaged searchable models
         tabs:
+          billing: Billing
           charts: Charts
           charts_and_reports: Charts & Reports
           downloads: Downloads

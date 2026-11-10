@@ -2,6 +2,8 @@
 
 An **order** is what a person is buying, from the platform or one of its sellers, and where it stands. It is processor-neutral: it has **line items** (what is bought), **payments** (how it is being paid, possibly in parts by different methods) and, if money goes back, **refunds**. The same records serve a vendor processor, cash, a cheque, an e-transfer and later store credit, event tickets and paid exchanges, so none of those needs its own bookkeeping.
 
+Sales, revenue, tax collected, refunds and payment methods are reported on the metrics dashboard: see [Billing Tax Reports](tax_reports.md).
+
 ## Records
 
 | Record | What it is | Notes |

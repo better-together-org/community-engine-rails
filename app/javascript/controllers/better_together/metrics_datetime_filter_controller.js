@@ -117,12 +117,12 @@ export default class extends Controller {
     this.setLoadingState(true)
 
     try {
-      const params = new URLSearchParams({
-        start_date: new Date(startDate).toISOString(),
-        end_date: new Date(endDate).toISOString()
-      })
+      // A data url may already carry filters of its own (a billing chart's currency and owner); keep them.
+      const url = new URL(this.dataUrlValue, window.location.origin)
+      url.searchParams.set('start_date', new Date(startDate).toISOString())
+      url.searchParams.set('end_date', new Date(endDate).toISOString())
 
-      const response = await fetch(`${this.dataUrlValue}?${params}`, {
+      const response = await fetch(url.toString(), {
         headers: {
           'Accept': 'application/json',
           'X-CSRF-Token': this.getCSRFToken()

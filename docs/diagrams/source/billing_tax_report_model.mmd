@@ -1,0 +1,37 @@
+%% Billing tax reports. A saved report is a metrics report (like the user account report): the filters it was asked with,
+%% the figures as they were, and a CSV file. The figures are read from orders, tax lines, payments and refunds by TaxReport.
+classDiagram
+  class PlatformRecord
+  class BillingReport {
+    +platform  the platform it was made on
+    +creator  the person who made it
+    +filters  from_date, to_date, owner, interval
+    +file_format  csv
+    +report_data  the figures, one block per currency
+    +report_file  the CSV, attached by the job
+  }
+  class TaxReport {
+    +call  reads one span, one owner, one interval
+    +Owner  all, platform, or one seller
+  }
+  class ChartData {
+    +revenue  stacked by period
+    +tax_by_rate  net of refunds
+  }
+  class Csv
+  class GenerateBillingReportJob
+  class Order
+  class TaxLine
+  class Payment
+  class Refund
+  PlatformRecord <|-- BillingReport
+  Person "1" --> "*" BillingReport : creator
+  Platform "1" --> "*" BillingReport
+  BillingReport ..> TaxReport : stores its figures
+  GenerateBillingReportJob ..> Csv : builds the file
+  GenerateBillingReportJob --> BillingReport : attaches it
+  ChartData ..> TaxReport : charts its figures
+  TaxReport ..> Order : sales and revenue
+  TaxReport ..> TaxLine : tax by rate
+  TaxReport ..> Payment : payment methods
+  TaxReport ..> Refund : netted off

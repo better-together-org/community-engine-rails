@@ -38,4 +38,15 @@ FactoryBot.define do
     registration_number { '123456789RT0001' }
     effective_from { 1.year.ago }
   end
+
+  factory 'better_together/billing/tax_line', class: 'BetterTogether::Billing::TaxLine',
+                                              aliases: %i[better_together_billing_tax_line] do
+    order { association :better_together_billing_order }
+    platform_id { order.platform_id }
+    line_item { association :better_together_billing_line_item, order: }
+    label { 'GST' }
+    rate { 0.05 }
+    amount_cents { 225 }
+    included { false }
+  end
 end

@@ -3591,6 +3591,14 @@ fr:
         placeholder: Tapez votre message...
         send: Envoyer
     metrics:
+      billing_reports:
+        empty_description: Créez un rapport pour télécharger les ventes, les revenus,
+          les taxes et les remboursements d’un mois, d’un trimestre ou d’une année
+          en fichier CSV.
+        empty_title: Aucun rapport de facturation pour l’instant
+        filters_text: "%{from} au %{to}, par %{interval}"
+        new_title: Nouveau rapport de facturation
+        title: Rapports de facturation
       errors:
         date_range_too_large: La plage de dates ne peut pas dépasser 1 an
         invalid_date_range: La date de début doit être antérieure à la date de fin
@@ -3604,9 +3612,17 @@ fr:
           apply: Appliquer les Filtres
           communities: Communautés
           content_type: Type de Contenu
+          currency: Devise
           day_of_week: Jour de la Semaine
+          first_currency: La première devise avec des ventes
           hour_of_day: Heure du Jour
+          interval: Par
+          intervals:
+            month: Mois
+            quarter: Trimestre
+            year: Année
           locale: Langue
+          owner: Ventes de qui
           pages: Pages
           people: Personnes
           reset: Réinitialiser les Filtres
@@ -3649,6 +3665,7 @@ fr:
           export: Exporter
         axis_labels:
           accounts: Accounts
+          amount: Montant
           confirmations: Rate (%)
           date: Date
           downloads: Téléchargements
@@ -3659,16 +3676,47 @@ fr:
           links: Liens
           page: Page
           page_views: Vues de page
+          period: Période
           platform: Plateforme
           search_queries: Recherches
           shares: Partages
           source: Source
+          tax: Taxe
           term: Terme
           total_users: Total Users
           url: URL
+        billing:
+          amount: Montant
+          collected: Perçue
+          empty: Aucune vente n’a été payée au cours des 30 derniers jours.
+          measures:
+            exempt: Revenus exonérés
+            gross: Total payé pour les ventes, taxes comprises
+            net_revenue: Revenus après remboursements, hors taxes
+            net_tax: Taxe perçue après remboursements
+            non_taxable: Revenus non taxables
+            refunded: Remboursé, taxes comprises
+            sales: Ventes
+            tax_collected: Taxe perçue
+            taxable: Revenus taxables
+          owner_all: Tous les vendeurs et la plateforme
+          owner_platform: La plateforme seulement
+          payment_method: Mode de paiement
+          refunded: Remboursée
+          summary_note: Les ventes comptent le jour où elles ont été payées, dans
+            le fuseau horaire de la plateforme. Chaque devise est présentée séparément.
+          summary_title: Les 30 derniers jours
+          tax: Taxe
         charts:
           accounts_confirmed: Accounts Confirmed
           accounts_created: Accounts Created
+          billing_exempt: Revenus exonérés
+          billing_non_taxable: Revenus non taxables
+          billing_refunded: Revenus remboursés
+          billing_revenue: Revenus, taxes et remboursements par période
+          billing_tax: Taxe perçue (nette des remboursements)
+          billing_tax_by_rate: Taxe perçue par taux (nette des remboursements)
+          billing_taxable: Revenus taxables
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth
@@ -3748,6 +3796,7 @@ fr:
           total_drift: Écart total
           unmanaged_models: Modèles recherchables non gérés
         tabs:
+          billing: Facturation
           charts: Graphiques
           charts_and_reports: Graphiques et rapports
           downloads: Téléchargements

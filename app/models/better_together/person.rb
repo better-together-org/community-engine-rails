@@ -80,6 +80,8 @@ module BetterTogether
                                     inverse_of: :creator
     has_many :page_view_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::PageViewReport', dependent: :destroy,
                                  inverse_of: :creator
+    has_many :billing_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::BillingReport', dependent: :destroy,
+                               inverse_of: :creator
     has_many :link_click_reports, foreign_key: :creator_id, class_name: 'BetterTogether::Metrics::LinkClickReport', dependent: :destroy,
                                   inverse_of: :creator
 

@@ -1,0 +1,48 @@
+{
+  "name": "billing_tax_reports_charts",
+  "device": "desktop",
+  "url": "/en/host/metrics/reports",
+  "title": "Metrics Reports | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax_reports",
+  "flow": "billing_tax_reports_charts",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_reports_spec.rb",
+  "callouts": [
+    {
+      "selector": "#chart-billing-revenue canvas",
+      "title": "Revenue, tax and refunds",
+      "bullets": [
+        "Revenue by period, split into taxable, non-taxable and exempt.",
+        "Tax is net of refunds."
+      ],
+      "target": {
+        "x": 438.5,
+        "y": 508.390625,
+        "width": 879.0,
+        "height": 439.5,
+        "right": 1317.5,
+        "bottom": 947.890625,
+        "center_x": 878.0,
+        "center_y": 728.140625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 216
+      }
+    }
+  ]
+}
