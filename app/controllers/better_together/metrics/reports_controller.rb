@@ -46,6 +46,7 @@ module BetterTogether
       }.freeze
 
       before_action :authorize_metrics_access
+      before_action :authorize_billing_metrics, only: %i[billing_revenue_data billing_tax_by_rate_data]
       before_action :set_min_dates, only: :index
       before_action :set_initial_metrics_data, only: :index
 
@@ -121,6 +122,16 @@ module BetterTogether
         render json: user_cumulative_growth_payload(filtered_metrics_scope(BetterTogether::User, :created_at))
       end
 
+      # JSON endpoint for billing revenue by kind, with the tax and refunds, per month, quarter or year (stacked bar chart)
+      def billing_revenue_data
+        render json: billing_chart_data.revenue
+      end
+
+      # JSON endpoint for tax collected, net of refunds, by tax and rate
+      def billing_tax_by_rate_data
+        render json: billing_chart_data.tax_by_rate
+      end
+
       # JSON endpoint for downloads grouped by file name
       def downloads_by_file_data
         render json: labeled_values_payload(filtered_metrics_scope(BetterTogether::Metrics::Download, :downloaded_at), :file_name, limit: nil)
@@ -175,9 +186,22 @@ module BetterTogether
         authorize :report, :index?, policy_class: BetterTogether::Metrics::ReportPolicy
       end
 
+      # Money is only for those who manage the platform's billing as well as view metrics.
+      def authorize_billing_metrics
+        authorize %i[metrics billing_report], :index?, policy_class: BetterTogether::Metrics::BillingReportPolicy
+      end
+
+      def billing_chart_data
+        result = BetterTogether::Billing::TaxReport.new(
+          platform: metrics_platform, from: @start_date, to: @end_date,
+          owner: BetterTogether::Billing::TaxReport::Owner.parse(params[:owner]), interval: params[:interval]
+        ).call
+        BetterTogether::Billing::TaxReport::ChartData.new(result, params[:currency])
+      end
+
       # Set minimum dates for each metric type
       # rubocop:disable Metrics/AbcSize
-      def set_min_dates # rubocop:disable Metrics/CyclomaticComplexity
+      def set_min_dates # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         @min_dates = {
           page_views: (metrics_scope(BetterTogether::Metrics::PageView).minimum(:viewed_at) || 1.year.ago) - 1.day,
           link_clicks: (metrics_scope(BetterTogether::Metrics::LinkClick).minimum(:clicked_at) || 1.year.ago) - 1.day,
@@ -185,7 +209,8 @@ module BetterTogether
           shares: (metrics_scope(BetterTogether::Metrics::Share).minimum(:shared_at) || 1.year.ago) - 1.day,
           link_checker: (platform_link_checker_scope.minimum(:created_at) || 1.year.ago) - 1.day,
           search_queries: (metrics_scope(BetterTogether::Metrics::SearchQuery).minimum(:searched_at) || 1.year.ago) - 1.day,
-          user_accounts: (metrics_scope(BetterTogether::User).minimum(:created_at) || 1.year.ago) - 1.day
+          user_accounts: (metrics_scope(BetterTogether::User).minimum(:created_at) || 1.year.ago) - 1.day,
+          billing: (BetterTogether::Billing::Order.for_platform(metrics_platform).minimum(:paid_at) || 1.year.ago) - 1.day
         }
       end
       # rubocop:enable Metrics/AbcSize

@@ -80,6 +80,9 @@
 # The Revenu Quebec screening questionnaires for platform operators were not completed.
 #   https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/special-cases-gsthst-and-qst/suppliers-outside-quebec/collecting-the-qst/
 #
+# Each rate names the tax it is filed under (authority: gst_hst, pst, qst or rst), so a report can keep the federal tax apart
+# from the provincial ones. The zero_rated and exempt categories are the two untaxed kinds a GST/HST return reports apart.
+#
 # The basic groceries category is therefore untaxed everywhere: every page above says so for its tax.
 
 better_together:
@@ -108,64 +111,66 @@ better_together:
     country_iso_code: "CA"
     categories:
       - { identifier: "standard", name: { en: "Standard", es: "Estándar", fr: "Standard", uk: "Стандартна" }, taxable: true }
+      - { identifier: "zero_rated", name: { en: "Zero-rated", es: "Tasa cero", fr: "Détaxé", uk: "З нульовою ставкою" }, taxable: false }
+      - { identifier: "exempt", name: { en: "Exempt", es: "Exento", fr: "Exonéré", uk: "Звільнена" }, taxable: false }
       - { identifier: "basic_groceries", name: { en: "Basic groceries", es: "Alimentos básicos", fr: "Produits d'épicerie de base", uk: "Основні продукти харчування" }, taxable: false }
     zones:
       - state_iso_code: "CA-AB"
         name: { en: "Alberta", es: "Alberta", fr: "Alberta", uk: "Альберта" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
       - state_iso_code: "CA-BC"
         name: { en: "British Columbia", es: "Columbia Británica", fr: "Colombie-Britannique", uk: "Британська Колумбія" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
-          - { label: { en: "PST", es: "PST", fr: "TVP", uk: "PST" }, rate: "0.07" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
+          - { label: { en: "PST", es: "PST", fr: "TVP", uk: "PST" }, rate: "0.07", authority: "pst" }
       - state_iso_code: "CA-MB"
         name: { en: "Manitoba", es: "Manitoba", fr: "Manitoba", uk: "Манітоба" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
-          - { label: { en: "RST", es: "RST", fr: "TVD", uk: "RST" }, rate: "0.07" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
+          - { label: { en: "RST", es: "RST", fr: "TVD", uk: "RST" }, rate: "0.07", authority: "rst" }
       - state_iso_code: "CA-NB"
         name: { en: "New Brunswick", es: "Nuevo Brunswick", fr: "Nouveau-Brunswick", uk: "Нью-Брансвік" }
         rates:
-          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.15" }
+          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.15", authority: "gst_hst" }
       - state_iso_code: "CA-NL"
         name: { en: "Newfoundland and Labrador", es: "Terranova y Labrador", fr: "Terre-Neuve-et-Labrador", uk: "Ньюфаундленд і Лабрадор" }
         rates:
-          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.15" }
+          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.15", authority: "gst_hst" }
       - state_iso_code: "CA-NS"
         name: { en: "Nova Scotia", es: "Nueva Escocia", fr: "Nouvelle-Écosse", uk: "Нова Шотландія" }
         rates:
-          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.14" }
+          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.14", authority: "gst_hst" }
       - state_iso_code: "CA-NT"
         name: { en: "Northwest Territories", es: "Territorios del Noroeste", fr: "Territoires du Nord-Ouest", uk: "Північно-західні території" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
       - state_iso_code: "CA-NU"
         name: { en: "Nunavut", es: "Nunavut", fr: "Nunavut", uk: "Нунавут" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
       - state_iso_code: "CA-ON"
         name: { en: "Ontario", es: "Ontario", fr: "Ontario", uk: "Онтаріо" }
         rates:
-          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.13" }
+          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.13", authority: "gst_hst" }
       - state_iso_code: "CA-PE"
         name: { en: "Prince Edward Island", es: "Isla del Príncipe Eduardo", fr: "Île-du-Prince-Édouard", uk: "Острів Принца Едуарда" }
         rates:
-          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.15" }
+          - { label: { en: "HST", es: "HST", fr: "TVH", uk: "HST" }, rate: "0.15", authority: "gst_hst" }
       - state_iso_code: "CA-QC"
         name: { en: "Quebec", es: "Quebec", fr: "Québec", uk: "Квебек" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
-          - { label: { en: "QST", es: "QST", fr: "TVQ", uk: "QST" }, rate: "0.09975" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
+          - { label: { en: "QST", es: "QST", fr: "TVQ", uk: "QST" }, rate: "0.09975", authority: "qst" }
       - state_iso_code: "CA-SK"
         name: { en: "Saskatchewan", es: "Saskatchewan", fr: "Saskatchewan", uk: "Саскачеван" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
-          - { label: { en: "PST", es: "PST", fr: "TVP", uk: "PST" }, rate: "0.06" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
+          - { label: { en: "PST", es: "PST", fr: "TVP", uk: "PST" }, rate: "0.06", authority: "pst" }
       - state_iso_code: "CA-YT"
         name: { en: "Yukon", es: "Yukón", fr: "Yukon", uk: "Юкон" }
         rates:
-          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05" }
+          - { label: { en: "GST", es: "GST", fr: "TPS", uk: "GST" }, rate: "0.05", authority: "gst_hst" }
 
     # Small supplier and marketplace limits, in whole dollars (the figures the governments print), for the
     # small supplier monitor (T5).

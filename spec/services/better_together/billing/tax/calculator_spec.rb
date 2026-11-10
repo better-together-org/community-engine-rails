@@ -17,7 +17,8 @@ RSpec.describe BetterTogether::Billing::Tax::Calculator do
     result = calculate(items: [item(4500)])
 
     expect(result).to have_attributes(taxed?: true, tax_cents: 225, included_cents: 0, additional_cents: 225, prices_include_tax: false)
-    expect(result.lines.first).to have_attributes(label: 'GST', rate: 0.05, amount_cents: 225, included: false, tax_rate: gst)
+    expect(result.lines.first).to have_attributes(label: 'GST', rate: 0.05, amount_cents: 225, included: false, tax_rate: gst,
+                                                  authority: 'gst_hst')
   end
 
   it 'takes tax out of the price when prices include tax, leaving the total alone' do

@@ -1,6 +1,6 @@
 # Billing Tax
 
-Community Engine works out tax itself for every order, whatever the way of paying (a processor, cash, a cheque, an e-transfer, store credit), so the amount an order asks for is the same on every route. This page covers what is built so far: the data and the calculator. Screens for registering come in a later change, and so do reports.
+Community Engine works out tax itself for every order, whatever the way of paying (a processor, cash, a cheque, an e-transfer, store credit), so the amount an order asks for is the same on every route. This page covers the data and the calculator. Registration screens are described below, and the reports are on [Billing Tax Reports](tax_reports.md).
 
 An order with no tax registration behind it has no tax lines and the totals it always had.
 
@@ -129,7 +129,7 @@ Screenshots: `docs/screenshots/{desktop,mobile}/billing_tax_{quebec,bc}_{order,c
 
 ## Not built yet
 
-The seller's agreement to collect tax, and monthly, quarterly and yearly reports. Processor receipts are the processor's own pages, so tax shows there only if the processor puts it there; our notices carry the tax amount. See the plan for the stages.
+The seller's agreement to collect tax. (Monthly, quarterly and yearly reports are built: see [Billing Tax Reports](tax_reports.md).) Processor receipts are the processor's own pages, so tax shows there only if the processor puts it there; our notices carry the tax amount. See the plan for the stages.
 
 ## Sellers: a later phase
 

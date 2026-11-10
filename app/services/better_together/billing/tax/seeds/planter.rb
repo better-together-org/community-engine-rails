@@ -84,15 +84,23 @@ module BetterTogether
 
           def plant_rate(zone, entry)
             labels = translations_of(entry.fetch(:label))
+            authority = entry.fetch(:authority, 'other')
             existing = I18n.with_locale(:en) do
               Billing::TaxRate.i18n.find_by(platform:, tax_zone: zone, label: labels.fetch(:en), discarded_at: nil)
             end
-            existing || Billing::TaxRate.create!(platform:, tax_zone: zone, rate: BigDecimal(entry.fetch(:rate))) do |tax_rate|
+            return name_authority(existing, authority) if existing
+
+            Billing::TaxRate.create!(platform:, tax_zone: zone, rate: BigDecimal(entry.fetch(:rate)), authority:) do |tax_rate|
               assign_translations(tax_rate, :label, labels)
             end
           end
 
-          # A plain string is the English value.
+          # A rate planted before authorities existed has none; naming it is not a change of rate.
+          def name_authority(rate, authority)
+            rate.update!(authority:) if rate.authority == 'other' && authority != 'other'
+            rate
+          end
+
           def translations_of(value) = value.is_a?(Hash) ? value : { en: value.to_s }
 
           # A packet value is a hash by locale; locales this app does not support are skipped.

@@ -3532,6 +3532,13 @@ uk:
         placeholder: Type your message...
         send: Send
     metrics:
+      billing_reports:
+        empty_description: Створіть звіт, щоб завантажити продажі, дохід, податки
+          та повернення за місяць, квартал або рік у файлі CSV.
+        empty_title: Звітів про виставлення рахунків ще немає
+        filters_text: 'з %{from} по %{to}, за: %{interval}'
+        new_title: Новий звіт про виставлення рахунків
+        title: Звіти про виставлення рахунків
       errors:
         date_range_too_large: Діапазон дат не може перевищувати 1 рік
         invalid_date_range: Дата початку має бути раніше дати закінчення
@@ -3543,11 +3550,23 @@ uk:
           all_locales: Усі мови
           all_types: Усі типи контенту
           apply: Застосувати фільтри
+          bases:
+            invoice: День оформлення
+            paid: День оплати
+          basis: Рахувати продаж за
           communities: Спільноти
           content_type: Тип контенту
+          currency: Валюта
           day_of_week: День тижня
+          first_currency: Перша валюта з продажами
           hour_of_day: Година дня
+          interval: За
+          intervals:
+            month: Місяць
+            quarter: Квартал
+            year: Рік
           locale: Мова
+          owner: Чиї продажі
           pages: Сторінки
           people: Люди
           reset: Скинути фільтри
@@ -3589,6 +3608,7 @@ uk:
           export: Експортувати
         axis_labels:
           accounts: Accounts
+          amount: Сума
           confirmations: Rate (%)
           date: Дата
           downloads: Завантаження
@@ -3599,16 +3619,66 @@ uk:
           links: Посилання
           page: Сторінка
           page_views: Перегляди сторінок
+          period: Період
           platform: Платформа
           search_queries: Пошуки
           shares: Поширення
           source: Джерело
+          tax: Податок
           term: Термін
           total_users: Total Users
           url: URL
+        billing:
+          amount: Сума
+          authorities:
+            gst_hst: GST/HST (CRA)
+            other: Інше
+            pst: Провінційний податок (PST)
+            qst: Податок Квебеку (QST)
+            rst: Податок на роздрібні продажі (RST)
+            vat: ПДВ
+          authority_title: Податок до сплати за адміністрацією
+          collected: Зібрано
+          collected_by:
+            facilitator: Стягнуто платформою для продавця
+            platform: Стягнуто платформою
+            seller: Стягнуто продавцем
+          empty: За останні 30 днів не було оплачено жодного продажу.
+          measures:
+            exempt: Дохід, звільнений від податку
+            gross: Усього сплачено за продажі, з податком
+            net_revenue: Дохід після повернень, без податку
+            net_tax: Зібраний податок після повернень
+            non_taxable: Дохід, що не оподатковується
+            refunded: Повернено, з податком
+            sales: Продажі
+            tax_collected: Зібраний податок
+            taxable: Дохід, що оподатковується
+            zero_rated: Дохід із нульовою ставкою
+          no_region: Без регіону
+          owed: До сплати (за вирахуванням повернень)
+          owner_all: Усі продавці та платформа
+          owner_platform: Лише платформа
+          payment_method: Спосіб оплати
+          refunded: Повернено
+          region: Регіон
+          registration_number: Реєстраційний номер
+          registrations: Реєстрації
+          summary_note: Продажі враховуються в день оплати за часовим поясом платформи.
+            Кожна валюта показана окремо.
+          summary_title: Останні 30 днів
+          tax: Податок
         charts:
           accounts_confirmed: Accounts Confirmed
           accounts_created: Accounts Created
+          billing_exempt: Дохід, звільнений від податку
+          billing_non_taxable: Дохід, що не оподатковується
+          billing_refunded: Повернений дохід
+          billing_revenue: Дохід, податок і повернення за періодами
+          billing_tax: Зібраний податок (за вирахуванням повернень)
+          billing_tax_by_rate: Зібраний податок за ставкою (за вирахуванням повернень)
+          billing_taxable: Дохід, що оподатковується
+          billing_zero_rated: Дохід із нульовою ставкою
           confirmation_rate_label: Confirmation Rate (%)
           confirmation_rate_title: Email Confirmation Rate Trend
           cumulative_growth: Cumulative User Growth
@@ -3688,6 +3758,7 @@ uk:
           total_drift: Загальна розбіжність
           unmanaged_models: Некеровані пошукові моделі
         tabs:
+          billing: Виставлення рахунків
           charts: Графіки
           charts_and_reports: Графіки й звіти
           downloads: Завантаження

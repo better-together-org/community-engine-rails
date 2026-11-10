@@ -224,6 +224,7 @@ flowchart TB
     direction TB
     metrics_search_ai_polymorphic_anchor:::hidden
     BetterTogether__Ai__Log__Translation_polymorphic_summary["Ai::Log::Translation\nowner: seeds"]
+    BetterTogether__Metrics__BillingReport_polymorphic_summary["Metrics::BillingReport\nowner: seeds, owner: report_file_attachment"]
     BetterTogether__Metrics__Download_polymorphic_summary["Metrics::Download\ntarget: downloadable, owner: seeds"]
     BetterTogether__Metrics__LinkCheckerReport_polymorphic_summary["Metrics::LinkCheckerReport\nowner: seeds, owner: report_file_attachment"]
     BetterTogether__Metrics__LinkClick_polymorphic_summary["Metrics::LinkClick\nowner: seeds"]
@@ -236,7 +237,8 @@ flowchart TB
     BetterTogether__Metrics__ShortLinkVisit_polymorphic_summary["Metrics::ShortLinkVisit\nowner: seeds"]
     BetterTogether__Metrics__UserAccountReport_polymorphic_summary["Metrics::UserAccountReport\nowner: seeds, owner: report_file_attachment"]
     metrics_search_ai_polymorphic_anchor ~~~ BetterTogether__Ai__Log__Translation_polymorphic_summary
-    BetterTogether__Ai__Log__Translation_polymorphic_summary ~~~ BetterTogether__Metrics__Download_polymorphic_summary
+    BetterTogether__Ai__Log__Translation_polymorphic_summary ~~~ BetterTogether__Metrics__BillingReport_polymorphic_summary
+    BetterTogether__Metrics__BillingReport_polymorphic_summary ~~~ BetterTogether__Metrics__Download_polymorphic_summary
     BetterTogether__Metrics__Download_polymorphic_summary ~~~ BetterTogether__Metrics__LinkCheckerReport_polymorphic_summary
     BetterTogether__Metrics__LinkCheckerReport_polymorphic_summary ~~~ BetterTogether__Metrics__LinkClick_polymorphic_summary
     BetterTogether__Metrics__LinkClick_polymorphic_summary ~~~ BetterTogether__Metrics__LinkClickReport_polymorphic_summary

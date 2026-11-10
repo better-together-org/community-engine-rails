@@ -46,7 +46,7 @@ RSpec.describe BetterTogether::Billing::Orders::Place, '.call with tax' do
     order = place_order
     BetterTogether::Billing::TaxRate.update_all(rate: 0.1) # rubocop:disable Rails/SkipsModelValidations
 
-    expect(order.reload.tax_lines.first).to have_attributes(rate: 0.05, amount_cents: 225)
+    expect(order.reload.tax_lines.first).to have_attributes(rate: 0.05, amount_cents: 225, authority: 'gst_hst')
   end
 
   it 'checks payment parts against the total with tax' do

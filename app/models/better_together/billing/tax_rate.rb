@@ -11,6 +11,9 @@ module BetterTogether
 
       self.table_name = 'better_together_billing_tax_rates'
 
+      # Who the tax is filed with: GST/HST with the CRA, QST with Revenu Quebec, PST and RST with the province.
+      AUTHORITIES = %w[gst_hst pst qst rst vat other].freeze
+
       # GST, HST, TVQ: what the tax is called on an invoice, in each language.
       translates :label, type: :string
 
@@ -18,6 +21,7 @@ module BetterTogether
       belongs_to :tax_category, class_name: 'BetterTogether::Billing::TaxCategory', optional: true
 
       validates :label, presence: true
+      validates :authority, inclusion: { in: AUTHORITIES }
       validates :rate, numericality: { greater_than_or_equal_to: 0, less_than: 1 }
       validate :zone_and_category_on_this_platform
       validate :ends_after_it_starts

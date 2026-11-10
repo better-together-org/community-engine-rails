@@ -56,6 +56,20 @@ RSpec.describe 'Billing tax models' do # rubocop:disable RSpec/DescribeClass
   end
 
   describe BetterTogether::Billing::TaxRate do
+    it 'is filed under one of the known taxes, GST/HST by default in the factory and other when none is named' do
+      expect(create(:better_together_billing_tax_rate, platform: host_platform).authority).to eq('gst_hst')
+      expect(build(:better_together_billing_tax_rate, platform: host_platform, authority: 'sales')).not_to be_valid
+      expect(described_class.new.authority).to eq('other')
+    end
+
+    it 'is copied onto the tax line, so a later change to the rate never rewrites a past sale' do
+      rate = create(:better_together_billing_tax_rate, platform: host_platform, authority: 'pst')
+      line = build(:better_together_billing_tax_line, authority: rate.authority)
+
+      expect(line.authority).to eq('pst')
+      expect(build(:better_together_billing_tax_line, authority: 'nonsense')).not_to be_valid
+    end
+
     it 'is a fraction below one and ends after it starts' do
       expect(build(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, rate: 5)).not_to be_valid
       expect(build(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, starts_at: 1.day.from_now, ends_at: Time.current))

@@ -6,6 +6,10 @@ module BetterTogether
     module PlatformContext
       extend ActiveSupport::Concern
 
+      included do
+        helper_method :metrics_platform
+      end
+
       private
 
       def metrics_platform

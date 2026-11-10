@@ -28,6 +28,12 @@ classDiagram
       concerns: BetterTogetherId, PlatformScoped, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__Metrics__BillingReport["Metrics::BillingReport"] {
+      <<Model>>
+      table: better_together_metrics_billing_reports
+      concerns: BetterTogetherId, PlatformScoped, Seedable
+      weak refs: owner: seeds, owner: report_file_attachment
+    }
     class BetterTogether__Metrics__Download["Metrics::Download"] {
       <<Model>>
       table: better_together_metrics_downloads
@@ -108,6 +114,8 @@ classDiagram
   BetterTogether__ViewPreferencesController --|> BetterTogether__ApplicationController
   BetterTogether__Ai__Log__Translation --> BetterTogether__Platform : platform
   BetterTogether__Ai__Log__Translation --> BetterTogether__Person : initiator
+  BetterTogether__Metrics__BillingReport --> BetterTogether__Platform : platform
+  BetterTogether__Metrics__BillingReport --> BetterTogether__Person : creator
   BetterTogether__Metrics__Download --> BetterTogether__Platform : platform
   BetterTogether__Metrics__LinkCheckerReport --> BetterTogether__Platform : platform
   BetterTogether__Metrics__LinkCheckerReport --> BetterTogether__Person : creator

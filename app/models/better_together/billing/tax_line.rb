@@ -24,6 +24,7 @@ module BetterTogether
       belongs_to :line_item, class_name: 'BetterTogether::Billing::LineItem', inverse_of: :tax_lines, optional: false
       belongs_to :tax_rate, class_name: 'BetterTogether::Billing::TaxRate', optional: true
 
+      validates :authority, inclusion: { in: TaxRate::AUTHORITIES }
       validates :label, presence: true
       validates :rate, numericality: { greater_than_or_equal_to: 0 }
       validates :amount_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_100000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_16_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -829,6 +829,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_100000) do
     t.integer "amount_cents", null: false
     t.boolean "included", default: false, null: false
     t.text "registration_number"
+    t.string "authority", default: "other", null: false
     t.index ["line_item_id"], name: "idx_bt_billing_tax_lines_line_item"
     t.index ["order_id"], name: "idx_bt_billing_tax_lines_order"
     t.index ["platform_id"], name: "idx_bt_billing_tax_lines_platform"
@@ -845,6 +846,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_100000) do
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.datetime "discarded_at"
+    t.string "authority", default: "other", null: false
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_rates_id_platform", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_tax_rates_platform"
     t.index ["tax_zone_id"], name: "idx_bt_billing_tax_rates_zone"
@@ -1907,6 +1909,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_100000) do
     t.index ["conversation_id"], name: "index_better_together_messages_on_conversation_id"
     t.index ["platform_id"], name: "index_better_together_messages_on_platform_id"
     t.index ["sender_id"], name: "index_better_together_messages_on_sender_id"
+  end
+
+  create_table "better_together_metrics_billing_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "creator_id"
+    t.jsonb "filters", default: {}, null: false
+    t.string "file_format", default: "csv", null: false
+    t.jsonb "report_data", default: {}, null: false
+    t.index ["creator_id"], name: "idx_bt_metrics_billing_reports_creator"
+    t.index ["platform_id"], name: "idx_bt_metrics_billing_reports_platform"
   end
 
   create_table "better_together_metrics_downloads", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3699,6 +3714,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_100000) do
   add_foreign_key "better_together_messages", "better_together_conversations", column: "conversation_id"
   add_foreign_key "better_together_messages", "better_together_people", column: "sender_id"
   add_foreign_key "better_together_messages", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_metrics_billing_reports", "better_together_people", column: "creator_id"
+  add_foreign_key "better_together_metrics_billing_reports", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_metrics_downloads", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_metrics_link_checker_reports", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_metrics_link_checker_reports", "better_together_platforms", column: "platform_id"

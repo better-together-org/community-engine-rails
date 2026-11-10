@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T17:58:55Z",
+  "generated_at": "2026-11-10T19:28:50Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -3881,6 +3881,12 @@
           "source_subsystem": "metrics_search_ai"
         },
         {
+          "from": "BetterTogether::Metrics::BillingReport",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "source_subsystem": "metrics_search_ai"
+        },
+        {
           "from": "BetterTogether::WebhookEndpoint",
           "to": "BetterTogether::Person",
           "label": "person (person_id)",
@@ -7510,6 +7516,12 @@
         },
         {
           "from": "BetterTogether::Metrics::LinkCheckerReport",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "metrics_search_ai"
+        },
+        {
+          "from": "BetterTogether::Metrics::BillingReport",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "metrics_search_ai"
@@ -24042,6 +24054,91 @@
           ]
         },
         {
+          "name": "BetterTogether::Metrics::BillingReport",
+          "label": "Metrics::BillingReport",
+          "source_path": "app/models/better_together/metrics/billing_report.rb",
+          "table_name": "better_together_metrics_billing_reports",
+          "columns": [
+            [
+              "creator_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "file_format",
+              "string"
+            ],
+            [
+              "filters",
+              "jsonb"
+            ],
+            [
+              "report_data",
+              "jsonb"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (unless=:platform_presence_optional?)",
+            "PresenceValidator: filters",
+            "PresenceValidator: file_format",
+            "InclusionValidator: file_format (in=[\"csv\"])"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "report_file_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::PlatformScoped",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": true,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "creator",
+              "foreign_key": "creator_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Metrics::Download",
           "label": "Metrics::Download",
           "source_path": "app/models/better_together/metrics/download.rb",
@@ -25056,7 +25153,8 @@
             "Metrics::PageViewReport",
             "Metrics::LinkClickReport",
             "Metrics::LinkClick",
-            "Metrics::LinkCheckerReport"
+            "Metrics::LinkCheckerReport",
+            "Metrics::BillingReport"
           ]
         },
         {
@@ -25160,7 +25258,8 @@
             "Metrics::PageViewReport",
             "Metrics::LinkClickReport",
             "Metrics::LinkClick",
-            "Metrics::LinkCheckerReport"
+            "Metrics::LinkCheckerReport",
+            "Metrics::BillingReport"
           ]
         },
         {
@@ -25189,7 +25288,8 @@
             "Metrics::PageViewReport",
             "Metrics::LinkClickReport",
             "Metrics::LinkClick",
-            "Metrics::LinkCheckerReport"
+            "Metrics::LinkCheckerReport",
+            "Metrics::BillingReport"
           ]
         }
       ],
@@ -25202,6 +25302,18 @@
         },
         {
           "from": "BetterTogether::Ai::Log::Translation",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Metrics::BillingReport",
+          "to": "BetterTogether::Person",
+          "label": "creator (creator_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Metrics::BillingReport",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
@@ -29177,6 +29289,10 @@
             ],
             [
               "kind",
+              "string"
+            ],
+            [
+              "locale",
               "string"
             ],
             [
@@ -36470,6 +36586,22 @@
           ]
         },
         {
+          "name": "BetterTogether::Metrics::BillingReportsController",
+          "label": "Metrics::BillingReportsController",
+          "source_path": "app/controllers/better_together/metrics/billing_reports_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Metrics::BillingReport"
+          ],
+          "concerns": [
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::Metrics::PlatformContext"
+          ]
+        },
+        {
           "name": "BetterTogether::Metrics::LinkCheckerReportsController",
           "label": "Metrics::LinkCheckerReportsController",
           "source_path": "app/controllers/better_together/metrics/link_checker_reports_controller.rb",
@@ -37317,6 +37449,7 @@
             "Metrics::LinkClicksController",
             "Metrics::LinkClickReportsController",
             "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
             "Joatu::HubController",
             "Geography::StatesController",
             "Geography::RegionSettlementsController",
@@ -37388,6 +37521,7 @@
             "Metrics::LinkClicksController",
             "Metrics::LinkClickReportsController",
             "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
             "Joatu::HubController",
             "Geography::StatesController",
             "Geography::RegionSettlementsController",
@@ -37459,6 +37593,7 @@
             "Metrics::LinkClicksController",
             "Metrics::LinkClickReportsController",
             "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
             "Joatu::HubController",
             "Geography::StatesController",
             "Geography::RegionSettlementsController",
@@ -37541,6 +37676,7 @@
             "Metrics::LinkClicksController",
             "Metrics::LinkClickReportsController",
             "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
             "Joatu::HubController",
             "Geography::StatesController",
             "Geography::RegionSettlementsController",
@@ -37617,6 +37753,7 @@
             "Metrics::LinkClicksController",
             "Metrics::LinkClickReportsController",
             "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
             "Api::V1::MetricsSummaryController"
           ]
         },

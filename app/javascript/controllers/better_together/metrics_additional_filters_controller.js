@@ -2,7 +2,7 @@
 import AppController from "controllers/better_together/app_controller"
 
 export default class extends AppController {
-  static targets = ["locale", "pageableType", "hourOfDay", "dayOfWeek", "applyButton"]
+  static targets = ["locale", "pageableType", "hourOfDay", "dayOfWeek", "currency", "owner", "interval", "applyButton"]
   static values = {
     chartType: String,
     dataUrl: String
@@ -100,6 +100,11 @@ export default class extends AppController {
       params.append('day_of_week', this.dayOfWeekTarget.value)
     }
     
+    // Billing charts: the currency, whose sales and the size of the periods.
+    if (this.hasCurrencyTarget && this.currencyTarget.value !== '') params.append('currency', this.currencyTarget.value)
+    if (this.hasOwnerTarget && this.ownerTarget.value !== '') params.append('owner', this.ownerTarget.value)
+    if (this.hasIntervalTarget && this.intervalTarget.value !== '') params.append('interval', this.intervalTarget.value)
+
     return params
   }
 
@@ -111,6 +116,9 @@ export default class extends AppController {
     if (this.hasPageableTypeTarget) this.pageableTypeTarget.value = ''
     if (this.hasHourOfDayTarget) this.hourOfDayTarget.value = ''
     if (this.hasDayOfWeekTarget) this.dayOfWeekTarget.value = ''
+    if (this.hasCurrencyTarget) this.currencyTarget.value = ''
+    if (this.hasOwnerTarget) this.ownerTarget.value = ''
+    if (this.hasIntervalTarget) this.intervalTarget.value = ''
     
     this.fetchData()
   }
@@ -129,7 +137,10 @@ export default class extends AppController {
     return (this.hasLocaleTarget && this.localeTarget.value !== '') ||
       (this.hasPageableTypeTarget && this.pageableTypeTarget.value !== '') ||
       (this.hasHourOfDayTarget && this.hourOfDayTarget.value !== '') ||
-      (this.hasDayOfWeekTarget && this.dayOfWeekTarget.value !== '')
+      (this.hasDayOfWeekTarget && this.dayOfWeekTarget.value !== '') ||
+      (this.hasCurrencyTarget && this.currencyTarget.value !== '') ||
+      (this.hasOwnerTarget && this.ownerTarget.value !== '') ||
+      (this.hasIntervalTarget && this.intervalTarget.value !== '')
   }
 
   // Set loading state on button

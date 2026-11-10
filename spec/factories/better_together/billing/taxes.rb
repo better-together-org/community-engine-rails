@@ -27,6 +27,7 @@ FactoryBot.define do
     platform { BetterTogether::Platform.find_by(host: true) || association(:better_together_platform, :host) }
     tax_zone { association :better_together_billing_tax_zone, platform: }
     label { 'GST' }
+    authority { 'gst_hst' }
     rate { 0.05 }
   end
 
@@ -37,5 +38,17 @@ FactoryBot.define do
     status { 'registered' }
     registration_number { '123456789RT0001' }
     effective_from { 1.year.ago }
+  end
+
+  factory 'better_together/billing/tax_line', class: 'BetterTogether::Billing::TaxLine',
+                                              aliases: %i[better_together_billing_tax_line] do
+    order { association :better_together_billing_order }
+    platform_id { order.platform_id }
+    line_item { association :better_together_billing_line_item, order: }
+    label { 'GST' }
+    authority { 'gst_hst' }
+    rate { 0.05 }
+    amount_cents { 225 }
+    included { false }
   end
 end
