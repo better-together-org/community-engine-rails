@@ -6,7 +6,8 @@ module BetterTogether
     # changed payment method, a pipeline that needs a person. What it says comes from the `kind`
     # (see Notifications::Catalog) and the `audience` it is for, in the reader's own language.
     #
-    # It carries names, amounts, dates and a link to the order. It never carries payment
+    # It carries names, amounts, dates and a link to the order. A message about an order also carries the
+    # full order summary (see `order_summary`), the same one the order pages show. It never carries payment
     # instructions, a payee's email, phone or address, what a buyer typed as a reference, a
     # processor's own text or an event payload: those could be used to redirect a payment, and an
     # email can be forwarded.
@@ -35,6 +36,12 @@ module BetterTogether
       def body = message_for(:body)
 
       def url = Notifications::Links.path(self, record)
+
+      # What the order says about money, for the email; nil when the notice is not about an order.
+      def order_summary
+        order = Notifications::Links.order_of(record)
+        Orders::Summary.for_order(order) if order
+      end
 
       def build_message(notification)
         I18n.with_locale(locale_for_notification(notification)) { { title:, body:, url: } }

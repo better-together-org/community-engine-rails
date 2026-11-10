@@ -40,7 +40,7 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
 
       get "/#{locale}/billing/orders/#{taxed.id}"
 
-      expect_ids("billing-offline-tax-#{offline_for(taxed).id}")
+      expect_ids("billing-summary-offline-#{offline_for(taxed).id}")
     end
 
     it 'exposes the buyer\'s own note once they have claimed' do

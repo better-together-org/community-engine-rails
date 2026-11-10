@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T03:17:15Z",
+  "generated_at": "2026-11-10T14:16:50Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -29144,6 +29144,10 @@
               "string"
             ],
             [
+              "registration_number",
+              "text"
+            ],
+            [
               "included",
               "boolean"
             ],
@@ -29193,6 +29197,7 @@
           "polymorphic": [],
           "translated_attributes": [],
           "concerns": [
+            "BetterTogether::Billing::EncryptedAttributes",
             "BetterTogether::Billing::ParentBound",
             "BetterTogether::Billing::PlatformBound"
           ],
@@ -36829,7 +36834,8 @@
           "capability": "Encryptedattributes",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
-            "Billing::TaxRegistration"
+            "Billing::TaxRegistration",
+            "Billing::TaxLine"
           ]
         },
         {

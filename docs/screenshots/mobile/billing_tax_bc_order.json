@@ -1,0 +1,47 @@
+{
+  "name": "billing_tax_bc_order",
+  "device": "mobile",
+  "url": "/en/billing/orders/83b5912c-e554-4d73-8391-4907bd461b91",
+  "title": "Order BT-PVYBIZAB | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_bc_order",
+  "callouts": [
+    {
+      "selector": "#billing-summary-order",
+      "title": "Order summary",
+      "bullets": [
+        "A marker on each line, a right-aligned row per tax, the total and the registration numbers."
+      ],
+      "target": {
+        "x": 13.0,
+        "y": 459.390625,
+        "width": 459.0,
+        "height": 338.1875,
+        "right": 472.0,
+        "bottom": 797.578125,
+        "center_x": 242.5,
+        "center_y": 628.484375
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 236
+      }
+    }
+  ]
+}

@@ -1,8 +1,0 @@
-<%# The taxes on a purchase, one row each. `groups` are Tax::Breakdown rows; `scope` makes the ids unique on the page. %>
-<% groups.each_with_index do |group, index| %>
-  <div id="billing-<%= scope %>-tax-<%= index %>" class="d-flex justify-content-between billing-tax-row">
-    <span><%= t('better_together.billing.tax_breakdown.row', label: group.label, rate: group.percent) %>
-      <% if group.included %><span class="text-body-secondary small"><%= t('better_together.billing.tax_breakdown.included') %></span><% end %></span>
-    <span><%= billing_amount(group.amount_cents, currency) %></span>
-  </div>
-<% end %>

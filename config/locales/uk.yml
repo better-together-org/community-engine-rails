@@ -1233,7 +1233,6 @@ uk:
           body: Ваш пробний період добігає кінця.
           title: Пробний період скоро закінчиться
       offline_payments:
-        amount_includes_tax: Ця сума містить податок %{tax} (разом %{total}).
         amount_to_pay: Сплатіть %{amount}.
         bounce_confirm: Позначити цей чек поверненим? Усе, що він надав, буде скасовано.
         buyer_says_sent: Покупець каже, що надіслав
@@ -1328,6 +1327,13 @@ uk:
         paid: Платіж здійснено.
         refused: Не вдалося додати цей платіж. Перевірте суму та спосіб оплати й спробуйте
           ще раз.
+      order_summary:
+        included: включено у ціну
+        not_taxed: Не оподатковується
+        registration: "%{labels}: %{number}"
+        registrations: Реєстраційні номери
+        tax_on: "%{label} (%{rate}) від %{base}"
+        taxed: Оподатковується
       orders:
         accepted_by: Прийняв(ла) %{name}, %{date}
         add_payment_amount: Сума (залиште порожнім, щоб сплатити решту)
@@ -1794,9 +1800,6 @@ uk:
         state_past_due: Прострочена
         state_unpaid: Спливла
         terms_accepted: Дякуємо. Ваш рахунок на продовження готовий.
-      tax_breakdown:
-        included: включено у ціну
-        row: "%{label} (%{rate})"
       tax_registrations:
         created: Податкову реєстрацію додано.
         edit_title: Редагувати податкову реєстрацію

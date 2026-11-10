@@ -1,29 +1,29 @@
 {
-  "name": "billing_tax_checkout_summary",
+  "name": "billing_tax_quebec_checkout",
   "device": "mobile",
-  "url": "/en/billing/checkout/new?plan_id=7d31640c-dba3-41cd-acf5-8f69a66c36aa",
-  "title": "Get Plan 941ea6 | Test Host Community",
+  "url": "/en/billing/checkout/new?plan_id=9b947d8e-bdd8-43cd-9082-74f4edd95081",
+  "title": "Get Annual plan | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_tax",
   "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
-  "flow": "billing_tax_checkout_summary",
+  "flow": "billing_tax_quebec_checkout",
   "callouts": [
     {
-      "selector": "#billing-checkout-tax",
+      "selector": "#billing-summary-checkout",
       "title": "Tax before paying",
       "bullets": [
-        "The tax for the chosen billing address and the total it makes."
+        "The same rows, for the chosen billing address."
       ],
       "target": {
-        "x": 13.0,
-        "y": 222.390625,
-        "width": 474.0,
-        "height": 65.0,
-        "right": 487.0,
-        "bottom": 287.390625,
+        "x": 29.0,
+        "y": 231.390625,
+        "width": 442.0,
+        "height": 199.0,
+        "right": 471.0,
+        "bottom": 430.390625,
         "center_x": 250.0,
-        "center_y": 254.890625
+        "center_y": 330.890625
       },
       "avoid": {
         "x": 0.0,
@@ -40,7 +40,7 @@
         "x": 115.0,
         "y": 887.0,
         "width": 270.0,
-        "height": 184,
+        "height": 158,
         "score": 390.0
       }
     }

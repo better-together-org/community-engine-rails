@@ -77,7 +77,8 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
 
         get new_checkout_path
 
-        expect(response.body).to include('billing-checkout-tax', 'billing-checkout-tax-0', 'billing-checkout-total', '$28.75')
+        expect(response.body).to include('billing-summary-checkout', 'billing-summary-checkout-tax-0', 'billing-summary-checkout-total',
+                                         '$28.75')
         expect(response.body).not_to include('billing-checkout-tax-note')
       end
 

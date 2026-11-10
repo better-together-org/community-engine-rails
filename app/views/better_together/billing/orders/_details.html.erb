@@ -12,16 +12,6 @@
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_purpose') %></dt>
       <dd id="<%= dom_id(order, :purpose) %>" class="col-sm-8"><%= t("better_together.billing.orders.purpose_#{order.purpose}") %></dd>
 
-      <% if order.tax_cents.positive? %>
-        <dt class="col-sm-4"><%= t('better_together.billing.orders.field_subtotal') %></dt>
-        <dd id="<%= dom_id(order, :subtotal) %>" class="col-sm-8"><%= billing_amount(order.subtotal_cents, order.currency) %></dd>
-
-        <dt class="col-sm-4"><%= t('better_together.billing.orders.field_tax') %></dt>
-        <dd id="<%= dom_id(order, :tax) %>" class="col-sm-8">
-          <%= render 'better_together/billing/tax_breakdown', groups: billing_order_tax_breakdown(order), currency: order.currency, scope: 'order' %>
-        </dd>
-      <% end %>
-
       <dt class="col-sm-4"><%= t('better_together.billing.orders.field_total') %></dt>
       <dd id="<%= dom_id(order, :total) %>" class="col-sm-8"><%= billing_amount(order.total_cents, order.currency) %></dd>
 
@@ -43,25 +33,8 @@
 
 <div class="card mb-4">
   <div class="card-header"><strong><%= t('better_together.billing.orders.lines_heading') %></strong></div>
-  <div class="table-responsive">
-    <table id="billing-order-line-items" class="table mb-0">
-      <thead class="table-light">
-        <tr>
-          <th scope="col"><%= t('better_together.billing.orders.field_item') %></th>
-          <th scope="col"><%= t('better_together.billing.orders.field_quantity') %></th>
-          <th scope="col" class="text-end"><%= t('better_together.billing.orders.field_amount') %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% order.line_items.each do |line_item| %>
-          <tr id="<%= dom_id(line_item) %>">
-            <td><%= line_item.description %></td>
-            <td><%= line_item.quantity %></td>
-            <td class="text-end"><%= billing_amount(line_item.total_cents, line_item.currency) %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  <div class="card-body p-0">
+    <%= render 'better_together/billing/order_summary', summary: billing_order_summary(order), scope: 'order' %>
   </div>
 </div>
 

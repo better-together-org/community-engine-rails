@@ -21,12 +21,12 @@ RSpec.describe BetterTogether::Billing::Checkout::TaxPreview do
   def preview(addr = address) = described_class.new(platform: host_platform, plan:, address: addr)
 
   it 'promises nothing without an address' do
-    expect(preview(nil)).to have_attributes(known?: false, taxed?: false, tax_cents: 0, total_cents: 2500, groups: [])
+    expect(preview(nil)).to have_attributes(known?: false, taxed?: false, tax_cents: 0, total_cents: 2500, tax_lines: [])
   end
 
   it 'shows the tax a new order would carry, and the total with it' do
     expect(preview).to have_attributes(known?: true, taxed?: true, tax_cents: 375, added_cents: 375, total_cents: 2875)
-    expect(preview.groups.map { |g| [g.label, g.amount_cents] }).to eq([['HST', 375]])
+    expect(preview.summary.tax_rows.map { |r| [r.label, r.amount_cents] }).to eq([['HST', 375]])
   end
 
   it 'leaves the total alone when prices include tax' do

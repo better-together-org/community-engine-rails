@@ -1267,7 +1267,6 @@ fr:
           body: Votre période d’essai est sur le point de se terminer.
           title: Votre période d’essai se termine bientôt
       offline_payments:
-        amount_includes_tax: Ce total comprend %{tax} de taxe (%{total} au total).
         amount_to_pay: Payez %{amount}.
         bounce_confirm: Marquer ce chèque comme refusé? Tout ce qu’il a accordé sera
           annulé.
@@ -1374,6 +1373,13 @@ fr:
         paid: Le paiement a été effectué.
         refused: Ce paiement n'a pas pu être ajouté. Vérifiez le montant et le mode
           de paiement, puis réessayez.
+      order_summary:
+        included: incluse dans le prix
+        not_taxed: Non taxé
+        registration: "%{labels}: %{number}"
+        registrations: Numéros d'inscription
+        tax_on: "%{label} (%{rate}) sur %{base}"
+        taxed: Taxé
       orders:
         accepted_by: Acceptée par %{name} le %{date}
         add_payment_amount: Montant (laissez vide pour payer le solde)
@@ -1862,9 +1868,6 @@ fr:
         state_past_due: En retard
         state_unpaid: Expiré
         terms_accepted: Merci. Votre facture de renouvellement est prête.
-      tax_breakdown:
-        included: incluse dans le prix
-        row: "%{label} (%{rate})"
       tax_registrations:
         created: Inscription fiscale ajoutée.
         edit_title: Modifier l'inscription fiscale

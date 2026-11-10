@@ -23,9 +23,11 @@ module BetterTogether
       #
       # Prices that include tax have it taken out of the price (the total does not change); otherwise it is
       # added. Each amount is rounded half up to the minor unit.
+      # Each tax carries the registration number of the registration covering its zone (the settlement's, else the
+      # state's, else the country's), from the same registrant, so a QST and a GST each show their own number.
       class Calculator
         Item = Data.define(:amount_cents, :tax_category)
-        Line = Data.define(:item_index, :tax_rate, :label, :rate, :amount_cents, :included)
+        Line = Data.define(:item_index, :tax_rate, :label, :rate, :amount_cents, :included, :registration_number)
         Result = Data.define(:registration, :country_iso, :region_code, :settlement, :prices_include_tax, :lines) do
           def taxed? = lines.any?
           def tax_cents = lines.sum(&:amount_cents)
@@ -130,8 +132,30 @@ module BetterTogether
 
         def line_for(item, index, rate, divisor)
           Line.new(item_index: index, tax_rate: rate, label: rate.label, rate: rate.rate, included: included?,
-                   amount_cents: tax_amount(item.amount_cents, rate.rate, divisor))
+                   amount_cents: tax_amount(item.amount_cents, rate.rate, divisor), registration_number: number_for(rate))
         end
+
+        # The registrant's collecting registrations, narrowest place first; the registrant is the one chosen above.
+        def registrations_of_registrant
+          @registrations_of_registrant ||= begin
+            scope = platform.billing_tax_registrations.in_force_at(at)
+            scope = registration.seller_id ? scope.sold_by(seller) : scope.sold_by_platform
+            scope.order(:created_at).to_a.select(&:collects?)
+          end
+        end
+
+        def number_for(rate)
+          covering = covering_registrations(rate.tax_zone)
+          [zone_region(rate.tax_zone), nil].uniq.each do |code|
+            found = covering.reverse.find { |c| c.region_code.presence == code }
+            return found.registration_number.presence if found
+          end
+          nil
+        end
+
+        def covering_registrations(zone) = registrations_of_registrant.select { |c| c.country_iso == zone.country.iso_code }
+
+        def zone_region(zone) = zone.state && zone.state.iso_code.split('-', 2).last
 
         def included? = registration.prices_include_tax?
 

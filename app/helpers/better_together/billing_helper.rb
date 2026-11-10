@@ -13,8 +13,8 @@ module BetterTogether
       )
     end
 
-    # An order's taxes, one row each, as they were charged.
-    def billing_order_tax_breakdown(order) = BetterTogether::Billing::Tax::Breakdown.from(order.tax_lines.to_a)
+    # What an order says about money (lines, one row per tax, total, registration numbers), for any surface.
+    def billing_order_summary(order) = BetterTogether::Billing::Orders::Summary.for_order(order)
 
     def billing_interval_label(interval)
       t("better_together.billing.plans.interval_#{interval}", default: interval.to_s.humanize)

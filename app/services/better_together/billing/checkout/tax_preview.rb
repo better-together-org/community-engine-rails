@@ -7,6 +7,8 @@ module BetterTogether
       # calculator Orders::Place runs, for the same place (the chosen billing address), so what is shown is what the order
       # carries. It writes nothing. Without an address there is no place yet: `known?` is false and no amount is promised.
       class TaxPreview
+        attr_reader :plan
+
         def initialize(platform:, plan:, address:)
           @platform = platform
           @plan = plan
@@ -23,8 +25,10 @@ module BetterTogether
 
         def total_cents = @plan.amount_cents + added_cents
 
-        # One row per tax (label, rate, whether inside the price), amounts added up.
-        def groups = result ? Tax::Breakdown.from(result.lines) : []
+        # Every tax on the plan, as the calculator worked it out.
+        def tax_lines = result ? result.lines : []
+
+        def summary = Orders::Summary.for_preview(self)
 
         private
 

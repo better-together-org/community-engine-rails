@@ -6,7 +6,7 @@ require 'rails_helper'
 # Not run in normal CI (needs RUN_DOCS_SCREENSHOTS=1 and a browser):
 #   bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec spec/docs_screenshots/better_together/billing_tax_display_spec.rb'
 # The identifiers it targets are locked by spec/dom_contracts/billing_orders_spec.rb and the checkout request spec.
-RSpec.describe 'Documentation screenshots for tax on checkout, sales and orders', # rubocop:disable RSpec/SpecFilePathSuffix
+RSpec.describe 'Documentation screenshots for the order summary with tax', # rubocop:disable RSpec/SpecFilePathSuffix
                :docs_screenshot,
                :js,
                :skip_host_setup,
@@ -18,23 +18,47 @@ RSpec.describe 'Documentation screenshots for tax on checkout, sales and orders'
   include_context 'with offline payment fixtures'
   include_context 'with billing switched on'
 
-  let(:order) { place_offline('cash', tax_address: { country_iso: 'CA', region_code: 'NL' }) }
-  let(:dom_id) { ActionView::RecordIdentifier }
   let(:metadata) do
     { locale: I18n.default_locale, role: 'platform_manager', feature_set: 'billing_tax', source_spec: self.class.metadata[:file_path] }
   end
+  let(:zero_rated) do
+    create(:better_together_billing_tax_category, platform: host_platform, identifier: 'zero_rated', name: 'Zero rated', taxable: false)
+  end
+  let(:book) do
+    create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'CAD', amount_cents: 1500,
+                                                     name: 'Printed guide', tax_category: zero_rated)
+  end
+  let(:membership) do
+    create(:better_together_billing_plan, :unlinked, processor: nil, billing_interval: 'one_time', currency: 'CAD', amount_cents: 12_000,
+                                                     name: 'Annual plan', accepted_payment_methods: %w[cash])
+  end
+  let(:manager) { BetterTogether::User.find_by!(email: 'manager@example.test').person }
 
   before do
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
-    create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
-    zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'NL')
-    create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: zone, label: 'HST', rate: 0.15)
-    order
+    enable_offline('cash')
   end
 
   after { Current.platform = nil }
+
+  # GST under the federal number, plus the province's own tax under its number.
+  def registrations_for(region, label, rate, number)
+    create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA', registration_number: '123456789RT0001')
+    create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA', region_code: region,
+                                                      registration_number: number)
+    create(:better_together_billing_tax_rate, platform: host_platform, label: 'GST', rate: 0.05,
+                                              tax_zone: create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA'))
+    create(:better_together_billing_tax_rate, platform: host_platform, label:, rate:,
+                                              tax_zone: create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA',
+                                                                                                  region_code: region))
+  end
+
+  def place_for(region)
+    place_order(buyer: manager, payment_method: 'cash', tax_address: { country_iso: 'CA', region_code: region },
+                line_items: [{ purchasable: membership }, { purchasable: book }])
+  end
 
   def capture(name, target, title, bullet, path)
     BetterTogether::CapybaraScreenshotEngine.capture(
@@ -42,32 +66,59 @@ RSpec.describe 'Documentation screenshots for tax on checkout, sales and orders'
             callouts: [{ id: name, selector: target, title:, avoid_container_selector: 'main', bullets: [bullet] }]
     ) do
       capybara_login_as_platform_manager
-      yield if block_given?
       visit path
       scroll_to(find(target), align: :center)
       expect(page).to have_css(target)
     end
   end
 
-  it 'captures the tax breakdown on a sale' do
-    capture('billing_tax_order_breakdown', "##{dom_id.dom_id(order, :tax)}", 'Tax on an order',
-            'Subtotal, each tax with its rate, then the total.', "/#{I18n.default_locale}/billing/sales/#{order.id}")
+  def capture_surfaces(prefix, region)
+    order = place_for(region)
+    offline = order.offline_payments.first
+    capture("billing_tax_#{prefix}_order", '#billing-summary-order', 'Order summary',
+            'A marker on each line, a row per tax, the total and the registration numbers.',
+            "/#{I18n.default_locale}/billing/orders/#{order.id}")
+    capture("billing_tax_#{prefix}_offline", "#billing-summary-offline-#{offline.id}", 'Same summary beside the payment instructions',
+            'The figures match the order page.', "/#{I18n.default_locale}/billing/orders/#{order.id}")
+    capture_email("billing_tax_#{prefix}_email", order)
   end
 
-  it 'captures the tax column on the sales list' do
-    capture('billing_tax_sales_column', "##{dom_id.dom_id(order)} .billing-sale-tax", 'Tax per sale',
-            'Sales that carry no tax show a dash.', "/#{I18n.default_locale}/billing/sales")
+  # The notice email, drawn into a page of the app so the same screenshot tooling can frame it.
+  def capture_email(name, order)
+    html = notice_html(order)
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      name, device: :both, metadata: metadata.merge(flow: name),
+            callouts: [{ id: name, selector: '#billing-summary-email', title: 'Notice email', avoid_container_selector: 'body',
+                         bullets: ['The email carries the full summary, never payment details.'] }]
+    ) do
+      capybara_login_as_platform_manager
+      visit "/#{I18n.default_locale}/billing/orders"
+      page.execute_script('document.open(); document.write(arguments[0]); document.close();', html)
+      expect(page).to have_css('#billing-summary-email')
+    end
   end
 
-  it 'captures the tax and total on the checkout summary' do
-    enable_offline('cash')
-    plan
-    person = BetterTogether::User.find_by!(email: 'manager@example.test').person
-    create_billing_address_for(person)
+  def notice_html(order)
+    notifier = BetterTogether::Billing::Notifier.new(record: order, params: { kind: 'order_paid', audience: :buyer })
+    BetterTogether::BillingMailer.with(recipient: manager, notifier:).notification.html_part.body.decoded
+  end
 
-    capture('billing_tax_checkout_summary', '#billing-checkout-tax', 'Tax before paying',
-            'The tax for the chosen billing address and the total it makes.',
-            "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{plan.id}")
+  def capture_checkout(prefix, region)
+    create_billing_address_for(manager, region:, settlement_name: region)
+    capture("billing_tax_#{prefix}_checkout", '#billing-summary-checkout', 'Tax before paying',
+            'The same rows, for the chosen billing address.', "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{membership.id}")
+  end
+
+  it 'captures a Quebec order: GST and QST, a taxed and a zero-rated line' do
+    registrations_for('QC', 'QST', 0.09975, '1234567890TQ0001')
+    capture_surfaces('quebec', 'QC')
+    capture_checkout('quebec', 'QC')
+  end
+
+  it 'captures a British Columbia order: GST and PST' do
+    registrations_for('BC', 'PST', 0.07, 'PST-1234-5678')
+    capture_surfaces('bc', 'BC')
+    capture_checkout('bc', 'BC')
   end
 end
 # rubocop:enable RSpec/NoExpectationExample

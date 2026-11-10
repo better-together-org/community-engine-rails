@@ -443,7 +443,7 @@ classDiagram
     class BetterTogether__Billing__TaxLine["Billing::TaxLine"] {
       <<Model>>
       table: better_together_billing_tax_lines
-      concerns: Billing::ParentBound, Billing::PlatformBound
+      concerns: Billing::EncryptedAttributes, Billing::ParentBound, Billing::PlatformBound
     }
     class BetterTogether__Billing__TaxRate["Billing::TaxRate"] {
       <<Model>>

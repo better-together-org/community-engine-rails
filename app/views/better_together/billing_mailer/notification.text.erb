@@ -4,7 +4,9 @@
 
 <%= @body %>
 
-<%= t('better_together.billing_mailer.notification.view') %>: <%= @url %>
+<% if @summary %><%= render 'order_summary', summary: @summary %>
+
+<% end %><%= t('better_together.billing_mailer.notification.view') %>: <%= @url %>
 
 <%= t('better_together.billing_mailer.notification.safety') %>
 <% if @support_email %><%= t('better_together.billing_mailer.notification.support', email: @support_email) %>

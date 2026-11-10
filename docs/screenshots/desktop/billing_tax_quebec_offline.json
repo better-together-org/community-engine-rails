@@ -1,0 +1,47 @@
+{
+  "name": "billing_tax_quebec_offline",
+  "device": "desktop",
+  "url": "/en/billing/orders/75962edc-8d25-49e7-9433-7059279cf737",
+  "title": "Order BT-XTUEL4YB | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_quebec_offline",
+  "callouts": [
+    {
+      "selector": "#billing-summary-offline-c98a65b9-fa1b-47f4-8abe-b4d4badb80b9",
+      "title": "Same summary beside the payment instructions",
+      "bullets": [
+        "The figures match the order page."
+      ],
+      "target": {
+        "x": 81.5,
+        "y": 629.1875,
+        "width": 1262.0,
+        "height": 199.0,
+        "right": 1343.5,
+        "bottom": 828.1875,
+        "center_x": 712.5,
+        "center_y": 728.6875
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 1425.0,
+        "height": 1457,
+        "right": 1425.0,
+        "bottom": 1457,
+        "center_x": 712.5,
+        "center_y": 728.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 380,
+        "height": 196
+      }
+    }
+  ]
+}

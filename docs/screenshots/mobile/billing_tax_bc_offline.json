@@ -1,0 +1,47 @@
+{
+  "name": "billing_tax_bc_offline",
+  "device": "mobile",
+  "url": "/en/billing/orders/83b5912c-e554-4d73-8391-4907bd461b91",
+  "title": "Order BT-PVYBIZAB | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_tax",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_tax_display_spec.rb",
+  "flow": "billing_tax_bc_offline",
+  "callouts": [
+    {
+      "selector": "#billing-summary-offline-45f6ce65-d727-4c28-80ff-9632bdd0bf52",
+      "title": "Same summary beside the payment instructions",
+      "bullets": [
+        "The figures match the order page."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 528.578125,
+        "width": 427.0,
+        "height": 199.0,
+        "right": 456.0,
+        "bottom": 727.578125,
+        "center_x": 242.5,
+        "center_y": 628.078125
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 0,
+        "width": 485.0,
+        "height": 1257,
+        "right": 485.0,
+        "bottom": 1257,
+        "center_x": 242.5,
+        "center_y": 628.5
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24.0,
+        "y": 44,
+        "width": 270.0,
+        "height": 196
+      }
+    }
+  ]
+}

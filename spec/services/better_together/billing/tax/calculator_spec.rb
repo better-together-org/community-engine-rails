@@ -173,4 +173,23 @@ RSpec.describe BetterTogether::Billing::Tax::Calculator do
       expect(result).to have_attributes(tax_cents: 700, additional_cents: 0)
     end
   end
+
+  describe 'the registration number kept on each tax line' do
+    let(:numbers) { ->(**place) { calculate(items: [item(10_000)], **place).lines.to_h { |l| [l.label, l.registration_number] } } }
+
+    it 'is the one covering the rate\'s zone, region-specific before country-wide', :aggregate_failures do
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA', region_code: 'QC',
+                                                        registration_number: 'TQ-1')
+      qst_zone = create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: 'QC')
+      create(:better_together_billing_tax_rate, platform: host_platform, tax_zone: qst_zone, label: 'QST', rate: 0.09975)
+
+      expect(numbers.call(country_iso: 'CA', region_code: 'QC')).to eq('GST' => '123456789RT0001', 'QST' => 'TQ-1')
+    end
+
+    it 'is blank, not another tax\'s number, when the registration has none to show', :aggregate_failures do
+      registration.update_columns(registration_number: nil)
+
+      expect(numbers.call(country_iso: 'CA')).to eq('GST' => nil)
+    end
+  end
 end

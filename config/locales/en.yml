@@ -1256,7 +1256,6 @@ en:
           body: Your trial is about to end.
           title: Your trial ends soon
       offline_payments:
-        amount_includes_tax: This total includes %{tax} of tax (%{total} in all).
         amount_to_pay: Pay %{amount}.
         bounce_confirm: Mark this cheque as bounced? Anything it granted will be reversed.
         buyer_says_sent: Buyer says sent
@@ -1354,6 +1353,13 @@ en:
         paid: The payment was made.
         refused: That payment could not be added. Check the amount and the way of
           paying, and try again.
+      order_summary:
+        included: included in the price
+        not_taxed: Not taxed
+        registration: "%{labels}: %{number}"
+        registrations: Registration numbers
+        tax_on: "%{label} (%{rate}) on %{base}"
+        taxed: Taxed
       orders:
         accepted_by: Accepted by %{name} on %{date}
         add_payment_amount: Amount (leave empty to pay the rest)
@@ -1822,9 +1828,6 @@ en:
         state_past_due: Past due
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
-      tax_breakdown:
-        included: included in the price
-        row: "%{label} (%{rate})"
       tax_registrations:
         created: Tax registration added.
         edit_title: Edit tax registration
