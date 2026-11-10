@@ -3,7 +3,8 @@
 classDiagram
   class TaxRegistration {
     +seller  none means the platform
-    +country_iso / region_code
+    +country / state  geography rows, as tax zones use
+    +country_iso / region_code  kept in step with them
     +status registered, small_supplier_exempt, exempt, not_collecting
     +prices_include_tax  empty means the country default
     +registration_number  encrypted
@@ -49,6 +50,8 @@ classDiagram
   Platform "1" --> "*" TaxRegistration
   Platform "1" --> "*" TaxCategory
   Platform "1" --> "*" TaxZone
+  GeographyCountry "1" --> "*" TaxRegistration
+  GeographyState "0..1" --> "*" TaxRegistration
   GeographyCountry "1" --> "*" TaxZone
   GeographyState "0..1" --> "*" TaxZone
   GeographySettlement "0..1" --> "*" TaxZone : municipal

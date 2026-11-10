@@ -36,5 +36,6 @@ FactoryBot.define do
     country_iso { 'CA' }
     status { 'registered' }
     registration_number { '123456789RT0001' }
+    effective_from { 1.year.ago }
   end
 end

@@ -35,10 +35,8 @@
                 <td><%= t("better_together.billing.tax_registrations.statuses.#{registration.status}") %></td>
                 <td><%= t("better_together.billing.tax_registrations.prices.#{registration.prices_include_tax? ? 'included' : 'added'}") %></td>
                 <td>
-                  <%= registration.effective_from ? l(registration.effective_from.to_date, format: :long) : t('better_together.billing.tax_registrations.always') %>
-                  <% if registration.effective_to %>
-                    &ndash; <%= l(registration.effective_to.to_date, format: :long) %>
-                  <% end %>
+                  <%= l(registration.effective_from.to_date, format: :long) %> &ndash;
+                  <%= registration.effective_to ? l(registration.effective_to.to_date, format: :long) : t('better_together.billing.tax_registrations.ongoing') %>
                 </td>
                 <td class="text-end">
                   <%= link_to t('globals.edit'), edit_billing_tax_registration_path(registration, locale: I18n.locale),

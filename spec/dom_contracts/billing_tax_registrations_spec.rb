@@ -36,9 +36,19 @@ RSpec.describe 'Billing tax registration DOM', type: :request do # rubocop:disab
     get better_together.new_billing_tax_registration_path(locale:)
     page = Nokogiri::HTML(response.body)
 
-    %w[form country region status prices number from to submit].each do |part|
+    %w[form place status prices number from to submit].each do |part|
       expect(page.at_css("#billing-tax-registration-#{part}")).to be_present, "missing #billing-tax-registration-#{part}"
     end
+  end
+
+  it 'picks the place with the geography selects for country and state only', :aggregate_failures do
+    get better_together.new_billing_tax_registration_path(locale:)
+    page = Nokogiri::HTML(response.body)
+
+    expect(page.at_css('#billing_tax_registration_country_select')).to be_present
+    expect(page.at_css('#billing_tax_registration_state_select')).to be_present
+    expect(page.at_css('#billing_tax_registration_settlement_select')).to be_nil
+    expect(page.at_css('#billing_tax_registration_country_select_id')['name']).to eq('billing_tax_registration[country_id]')
   end
 
   it 'is linked from the payment methods page' do

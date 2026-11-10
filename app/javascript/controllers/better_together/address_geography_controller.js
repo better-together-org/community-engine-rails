@@ -23,30 +23,37 @@ export default class extends Controller {
     const select = this[`${level}SelectTarget`];
     const value = select.value;
     const idField = this[`${level}IdTarget`];
-    const nameField = this[`${level}NameTarget`];
+    const nameField = this.nameField(level);
     const previousId = idField.value;
 
     if (!value) {
       idField.value = '';
       // Keep any text the user typed earlier only when it came from a typed entry.
-      if (previousId) nameField.value = '';
+      if (previousId && nameField) nameField.value = '';
     } else if (UUID.test(value)) {
       idField.value = value;
       const option = select.selectedOptions[0];
-      if (option) nameField.value = option.textContent.trim();
+      if (option && nameField) nameField.value = option.textContent.trim();
     } else {
       idField.value = '';
-      nameField.value = value;
+      if (nameField) nameField.value = value;
     }
 
     if (idField.value !== previousId) this.resetBelow(level);
   }
 
+  // The hidden string-column field, absent on forms that only take records.
+  nameField(level) {
+    return this[`has${level[0].toUpperCase()}${level.slice(1)}NameTarget`] ? this[`${level}NameTarget`] : null;
+  }
+
   resetBelow(level) {
     LEVELS.slice(LEVELS.indexOf(level) + 1).forEach((lower) => {
+      if (!this[`has${lower[0].toUpperCase()}${lower.slice(1)}SelectTarget`]) return;
       const select = this[`${lower}SelectTarget`];
       this[`${lower}IdTarget`].value = '';
-      this[`${lower}NameTarget`].value = '';
+      const nameField = this.nameField(lower);
+      if (nameField) nameField.value = '';
       select.dispatchEvent(new CustomEvent('better_together--slim-select:reset-picker', { bubbles: false }));
     });
   }

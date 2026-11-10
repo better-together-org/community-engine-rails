@@ -13,34 +13,34 @@
       "selector": "#billing-tax-registration-form",
       "title": "Registration details",
       "bullets": [
-        "Place, status, tax-inclusive pricing and dates."
+        "Country and state from the same lists the tax zones use, status, tax-inclusive pricing and dates."
       ],
       "target": {
         "x": 12.0,
         "y": 205.390625,
         "width": 461.0,
-        "height": 831.0,
+        "height": 803.0,
         "right": 473.0,
-        "bottom": 1036.390625,
+        "bottom": 1008.390625,
         "center_x": 242.5,
-        "center_y": 620.890625
+        "center_y": 606.890625
       },
       "avoid": {
         "x": 12.0,
         "y": 205.390625,
         "width": 461.0,
-        "height": 831.0,
+        "height": 803.0,
         "right": 473.0,
-        "bottom": 1036.390625,
+        "bottom": 1008.390625,
         "center_x": 242.5,
-        "center_y": 620.890625
+        "center_y": 606.890625
       },
       "placement": {
         "side": "floating",
         "x": 24.0,
         "y": 44,
         "width": 270.0,
-        "height": 190
+        "height": 268
       }
     }
   ]

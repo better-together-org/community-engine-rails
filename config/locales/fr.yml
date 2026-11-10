@@ -1850,33 +1850,33 @@ fr:
         state_unpaid: Expiré
         terms_accepted: Merci. Votre facture de renouvellement est prête.
       tax_registrations:
-        always: Toujours
         created: Inscription fiscale ajoutée.
         edit_title: Modifier l'inscription fiscale
         empty: Aucune inscription fiscale pour l'instant. Sans inscription, aucune
           taxe n'est ajoutée aux commandes.
-        field_country: Pays (code ISO)
-        field_country_hint: Deux lettres, par exemple CA.
         field_from: En vigueur à partir du
         field_in_force: En vigueur
         field_number: Numéro d'inscription
         field_number_hint: Conservé chiffré et jamais réaffiché.
         field_place: Lieu
+        field_place_hint: Choisissez le pays et, si vous êtes inscrit pour un seul
+          endroit, la province ou l'État. Ce sont les mêmes lieux que ceux de vos
+          zones fiscales.
         field_prices: Prix
         field_prices_hint: Laissez l'usage du pays sauf si les prix ici sont fixés
           autrement.
-        field_region: Province ou État
-        field_region_hint: Facultatif, par exemple NL.
         field_status: Statut
         field_status_hint: Seul « Inscrit » perçoit la taxe. Les autres indiquent
           pourquoi elle n'est pas perçue.
         field_to: En vigueur jusqu'au
+        field_to_hint: Laissez vide si l'inscription est en cours, sans date de fin.
         index_intro: Où cette plateforme est inscrite pour percevoir les taxes, et
           à quelles conditions. Les commandes sont taxées selon l'inscription du lieu
           de l'acheteur ; si aucune ne perçoit, aucune taxe n'est ajoutée.
         index_title: Inscriptions fiscales
         new_title: Ajouter une inscription fiscale
         number_kept: Laissez vide pour conserver le numéro enregistré
+        ongoing: En cours
         prices:
           added: La taxe s'ajoute aux prix
           default: L'usage du pays

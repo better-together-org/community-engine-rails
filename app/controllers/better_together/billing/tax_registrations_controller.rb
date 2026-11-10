@@ -61,11 +61,21 @@ module BetterTogether
 
       def registration_params
         permitted = params.require(:billing_tax_registration)
-                          .permit(:country_iso, :region_code, :status, :prices_include_tax, :registration_number,
+                          .permit(:country_id, :state_id, :status, :prices_include_tax, :registration_number,
                                   :effective_from, :effective_to)
         # "" on the inclusive toggle means the country's usual way; a blank number keeps the stored one.
         permitted[:prices_include_tax] = nil if permitted[:prices_include_tax].blank?
         permitted.delete(:registration_number) if permitted[:registration_number].blank? && @registration&.persisted?
+        whole_days(permitted)
+      end
+
+      # Dates are whole days: a registration is in force from the start of its first day to the end of its last,
+      # and an empty end means it is ongoing.
+      def whole_days(permitted)
+        started = permitted[:effective_from].presence && Time.zone.parse(permitted[:effective_from].to_s)
+        ended = permitted[:effective_to].presence && Time.zone.parse(permitted[:effective_to].to_s)
+        permitted[:effective_from] = started&.beginning_of_day
+        permitted[:effective_to] = ended&.end_of_day
         permitted
       end
     end

@@ -1810,32 +1810,32 @@ en:
         state_unpaid: Lapsed
         terms_accepted: Thank you. Your renewal invoice is ready.
       tax_registrations:
-        always: Always
         created: Tax registration added.
         edit_title: Edit tax registration
         empty: No tax registrations yet. Without one, no tax is added to orders.
-        field_country: Country (ISO code)
-        field_country_hint: Two letters, for example CA.
         field_from: In force from
         field_in_force: In force
         field_number: Registration number
         field_number_hint: Kept encrypted and never shown again.
         field_place: Place
+        field_place_hint: Choose the country, and the province or state if you are
+          registered for one place only. These are the same places your tax zones
+          use.
         field_prices: Prices
         field_prices_hint: Leave on the country's usual way unless prices here are
           set the other way.
-        field_region: Province or state
-        field_region_hint: Optional, for example NL.
         field_status: Status
         field_status_hint: Only "Registered" collects tax. The others record why none
           is collected.
         field_to: In force until
+        field_to_hint: Leave empty if the registration is ongoing, with no end date.
         index_intro: Where this platform is registered to collect tax, and on what
           terms. Orders are taxed by the registration for the buyer's place; with
           none that collects, no tax is added.
         index_title: Tax registrations
         new_title: Add a tax registration
         number_kept: Leave blank to keep the saved number
+        ongoing: Ongoing
         prices:
           added: Tax is added to prices
           default: The country's usual way

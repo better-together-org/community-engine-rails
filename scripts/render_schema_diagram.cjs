@@ -24,8 +24,8 @@ const MAX_PNG_SIDE = 10000; // Chrome drops most of the drawing on larger canvas
 function dotFor(dbml) {
   const cli = path.join(path.resolve(toolsDir), 'node_modules', '.bin', 'dbml-renderer');
   const dot = execFileSync(cli, ['-i', dbml, '-f', 'dot'], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
-  // `start` fixes neato's random seed (6: seeds 1 to 5 overflow its rtree on the billing and tax tables) so the layout is identical on every run.
-  return dot.replace('rankdir=LR;', 'overlap=prism; overlap_scaling=3; splines=true; sep="+30"; K=3; start=6;');
+  // `start` fixes neato's random seed (7: seeds 1 to 6 overflow its rtree on the billing and tax tables) so the layout is identical on every run.
+  return dot.replace('rankdir=LR;', 'overlap=prism; overlap_scaling=3; splines=true; sep="+30"; K=3; start=7;');
 }
 
 function svgFor(dot) {

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -848,11 +848,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
     t.string "status", default: "registered", null: false
     t.boolean "prices_include_tax"
     t.text "registration_number"
-    t.datetime "effective_from"
+    t.datetime "effective_from", null: false
     t.datetime "effective_to"
+    t.uuid "country_id"
+    t.uuid "state_id"
+    t.index ["country_id"], name: "idx_bt_billing_tax_registrations_country_id"
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_registrations_id_platform", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_tax_registrations_platform"
     t.index ["seller_type", "seller_id"], name: "idx_bt_billing_tax_registrations_seller"
+    t.index ["state_id"], name: "idx_bt_billing_tax_registrations_state_id"
   end
 
   create_table "better_together_billing_tax_zones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3553,6 +3557,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_100000) do
   add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_categories", column: ["tax_category_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_category_platform"
   add_foreign_key "better_together_billing_tax_rates", "better_together_billing_tax_zones", column: ["tax_zone_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_tax_rates_zone_platform"
   add_foreign_key "better_together_billing_tax_rates", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_tax_registrations", "better_together_geography_countries", column: "country_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_tax_registrations", "better_together_geography_states", column: "state_id", on_delete: :nullify
   add_foreign_key "better_together_billing_tax_registrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_tax_zones", "better_together_geography_countries", column: "country_id"
   add_foreign_key "better_together_billing_tax_zones", "better_together_geography_settlements", column: "settlement_id"

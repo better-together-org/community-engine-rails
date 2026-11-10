@@ -1,7 +1,7 @@
 {
   "name": "billing_checkout_address",
   "device": "mobile",
-  "url": "/en/billing/checkout/new?plan_id=c38a6ca9-db8a-4b12-8dfc-0b70676e235f&payment_method=cash",
+  "url": "/en/billing/checkout/new?plan_id=c36ce9ac-a552-4bff-9a48-a92698ef6e57&payment_method=cash",
   "title": "Get Garden plot | Test Host Community",
   "locale": "en",
   "role": "platform_manager",

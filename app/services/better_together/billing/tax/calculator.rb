@@ -14,7 +14,9 @@ module BetterTogether
       #
       # Whose tax: the seller's own registration if the seller has one, otherwise the platform's. If that
       # registration does not collect (small supplier, exempt, switched off), or there is none, there is no tax.
-      # Where: the buyer's place if given, else the registrant's own place.
+      # Where: the buyer's place if given, else the registrant's own place. A registration only applies to the
+      # place it is for: with several (one per country or region), the one for the buyer's country is used, a
+      # region's own before a country-wide one, and a buyer somewhere none covers is not taxed.
       # How much: each rate that is in force for the place and fits the item's category, on the item's amount.
       # An item in a category that is not taxable is not taxed. Store credit and other payments never change the
       # amount tax is worked out on.
@@ -76,13 +78,35 @@ module BetterTogether
           return @registration if defined?(@registration)
 
           scope = platform.billing_tax_registrations.in_force_at(at)
-          @registration = (seller && scope.sold_by(seller).order(:created_at).last) || scope.sold_by_platform.order(:created_at).last
+          @registration = (seller && registration_for(scope.sold_by(seller))) || registration_for(scope.sold_by_platform)
         end
+
+        # The registration that covers the buyer's place: its country, and its region when it names one. Without a
+        # buyer's place any registration will do, and the place is then its own.
+        def registration_for(scope)
+          candidates = scope.order(:created_at).to_a
+          return candidates.last unless buyer_place?
+
+          covering = candidates.select { |candidate| covers_buyer?(candidate) }
+          covering.reverse.find { |candidate| candidate.region_code.present? } || covering.last
+        end
+
+        def covers_buyer?(candidate)
+          candidate.country_iso == buyer_country_iso && (candidate.region_code.blank? || candidate.region_code == buyer_region_code)
+        end
+
+        def buyer_place? = @settlement.present? || @country_iso.present?
+
+        def buyer_country_iso = @buyer_country_iso ||= buyer_place.country_iso || @country_iso
+
+        def buyer_region_code = @buyer_region_code ||= buyer_place.region_code || @region_code
+
+        def buyer_place = @buyer_place ||= Place.resolve(country_iso: @country_iso, region_code: @region_code, settlement: @settlement)
 
         # The buyer's place if one was given, else the registrant's own.
         def place
-          @place ||= if @settlement || @country_iso
-                       Place.resolve(country_iso: @country_iso, region_code: @region_code, settlement: @settlement)
+          @place ||= if buyer_place?
+                       buyer_place
                      else
                        Place.resolve(country_iso: registration&.country_iso, region_code: registration&.region_code)
                      end

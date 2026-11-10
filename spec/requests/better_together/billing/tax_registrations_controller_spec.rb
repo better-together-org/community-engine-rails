@@ -12,11 +12,14 @@ RSpec.describe BetterTogether::Billing::TaxRegistrationsController do
   let(:steward) { find_or_create_test_user("tax-steward-#{SecureRandom.hex(4)}@example.test", password, :platform_manager) }
   let(:member) { find_or_create_test_user("tax-member-#{SecureRandom.hex(4)}@example.test", password) }
   let(:host_platform) { BetterTogether::Platform.find_by(host: true) }
+  let(:canada) { BetterTogether::Geography::Country.find_by(iso_code: 'CA') || create(:geography_country, iso_code: 'CA', name: 'Canada') }
+  let(:newfoundland) { create(:geography_state, country: canada, iso_code: 'CA-NL', name: 'Newfoundland and Labrador') }
 
   def index_path = better_together.billing_tax_registrations_path(locale:)
 
   def valid_params(**overrides)
-    { billing_tax_registration: { country_iso: 'ca', region_code: 'nl', status: 'registered', prices_include_tax: '',
+    { billing_tax_registration: { country_id: canada.id, state_id: newfoundland.id, status: 'registered', prices_include_tax: '',
+                                  effective_from: 1.month.ago.to_date.to_s,
                                   registration_number: '123456789 RT0001' }.merge(overrides) }
   end
 
@@ -50,19 +53,25 @@ RSpec.describe BetterTogether::Billing::TaxRegistrationsController do
       expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(theirs))
     end
 
-    it 'adds a registration, upcasing codes and never storing the number in clear', :aggregate_failures do
+    it 'adds a registration for the chosen country and state, and never stores the number in clear', :aggregate_failures do
       expect { post index_path, params: valid_params }.to change(BetterTogether::Billing::TaxRegistration, :count).by(1)
 
       registration = BetterTogether::Billing::TaxRegistration.order(:created_at).last
       expect([registration.country_iso, registration.region_code, registration.platform_id, registration.seller_id])
         .to eq(['CA', 'NL', host_platform.id, nil])
+      expect([registration.country, registration.state]).to eq([canada, newfoundland])
       expect(registration.prices_include_tax).to be_nil
       expect(registration.registration_number).to eq('123456789 RT0001')
       expect(registration.read_attribute_before_type_cast(:registration_number)).not_to include('123456789')
     end
 
-    it 'refuses a bad country code with a message' do
-      post index_path, params: valid_params(country_iso: 'Canada')
+    it 'refuses a state that is not in the country, and a missing country, with a message', :aggregate_failures do
+      other_state = create(:geography_state, country: create(:geography_country, iso_code: 'US', name: 'United States'), iso_code: 'US-NY')
+
+      post index_path, params: valid_params(state_id: other_state.id)
+      expect(response).to have_http_status(:unprocessable_content)
+
+      post index_path, params: valid_params(country_id: '', state_id: '')
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include('billing-tax-registration-errors')
@@ -75,10 +84,28 @@ RSpec.describe BetterTogether::Billing::TaxRegistrationsController do
       expect(response.body).not_to include('SECRET-111')
 
       patch better_together.billing_tax_registration_path(registration, locale:),
-            params: valid_params(country_iso: 'CA', registration_number: '', prices_include_tax: 'true')
+            params: valid_params(registration_number: '', prices_include_tax: 'true')
 
       expect(registration.reload.registration_number).to eq('SECRET-111')
       expect(registration.prices_include_tax).to be(true)
+    end
+
+    it 'needs a start date, and an empty end date means ongoing', :aggregate_failures do
+      post index_path, params: valid_params(effective_from: '')
+      expect(response).to have_http_status(:unprocessable_content)
+
+      post index_path, params: valid_params(effective_to: '')
+      expect(BetterTogether::Billing::TaxRegistration.order(:created_at).last).to have_attributes(effective_to: nil)
+    end
+
+    it 'keeps the registration in force through the whole of the chosen last day', :aggregate_failures do
+      last_day = 3.days.from_now.to_date
+      post index_path, params: valid_params(effective_to: last_day.to_s)
+
+      registration = BetterTogether::Billing::TaxRegistration.order(:created_at).last
+      in_force = BetterTogether::Billing::TaxRegistration
+      expect(in_force.in_force_at(Time.utc(last_day.year, last_day.month, last_day.day, 12))).to include(registration)
+      expect(in_force.in_force_at(Time.utc(last_day.year, last_day.month, last_day.day, 12) + 1.day)).not_to include(registration)
     end
 
     it 'cannot edit another platform\'s registration' do

@@ -51,6 +51,10 @@ The default for `prices_include_tax` comes from the country (`Tax::Defaults`): i
 
 `Orders::Place` works out the tax once, from the same amounts it builds the order from, and `Orders::ApplyTax` copies it onto the unsaved order, its lines and a tax line per tax. `Order#total_up` then sets `total_cents = subtotal_cents + tax_cents - included_tax_cents`. `PaymentParts` checks the parts against that same total. After placing, the tax is not worked out again, so a rate change never changes an order that exists.
 
+## Which registration applies
+
+A platform (or seller) may hold registrations for several places. A registration is for a country, and optionally one state or province of it, chosen with the same geography selects the address form uses; the codes tax is looked up by (`country_iso`, `region_code`) follow the chosen records, and the records are the same ones the tax zones use. For a sale the calculator picks the seller's registration, else the platform's, that covers the buyer's place: the buyer's country, a registration for the buyer's own region before a country-wide one, and the latest if several remain. A buyer somewhere no registration covers is not taxed. Without a buyer's place the latest registration is used, as before. "In force until" is a whole day: a registration stays in force to the end of the date chosen.
+
 ## The buyer's billing address
 
 Checkout asks for a billing address before anything is placed (`Checkout::BillingAddressChoice`). The buyer picks one of their own addresses (those with a country and a state chosen from the geography lists, so tax can be matched by ISO code), or types a new one, which is saved to their contact details as a private postal address. "Use this as my default billing address" records a `Billing::DefaultAddress` (one per person, platform and kind, `billing` or `shipping`, with the address deleted along with it). Another person's address is refused.

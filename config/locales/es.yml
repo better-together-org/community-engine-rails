@@ -1811,33 +1811,32 @@ es:
         state_unpaid: Caducada
         terms_accepted: Gracias. Tu factura de renovación está lista.
       tax_registrations:
-        always: Siempre
         created: Registro de impuestos añadido.
         edit_title: Editar registro de impuestos
         empty: Aún no hay registros de impuestos. Sin uno, no se añade impuesto a
           los pedidos.
-        field_country: País (código ISO)
-        field_country_hint: Dos letras, por ejemplo CA.
         field_from: Vigente desde
         field_in_force: Vigente
         field_number: Número de registro
         field_number_hint: Se guarda cifrado y no se vuelve a mostrar.
         field_place: Lugar
+        field_place_hint: Elija el país y, si está registrado solo para un lugar,
+          la provincia o el estado. Son los mismos lugares que usan sus zonas de impuestos.
         field_prices: Precios
         field_prices_hint: Déjelo en la costumbre del país salvo que aquí los precios
           se fijen de otro modo.
-        field_region: Provincia o estado
-        field_region_hint: Opcional, por ejemplo NL.
         field_status: Estado
         field_status_hint: Solo "Registrado" cobra impuestos. Los demás indican por
           qué no se cobra.
         field_to: Vigente hasta
+        field_to_hint: Déjelo vacío si el registro está vigente, sin fecha de fin.
         index_intro: Dónde está registrada esta plataforma para cobrar impuestos y
           en qué condiciones. Los pedidos se gravan según el registro del lugar del
           comprador; si ninguno cobra, no se añade impuesto.
         index_title: Registros de impuestos
         new_title: Añadir un registro de impuestos
         number_kept: Déjelo en blanco para conservar el número guardado
+        ongoing: Vigente
         prices:
           added: El impuesto se suma a los precios
           default: La costumbre del país

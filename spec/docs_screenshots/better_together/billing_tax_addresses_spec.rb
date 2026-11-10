@@ -83,7 +83,7 @@ RSpec.describe 'Documentation screenshots for tax registrations and the billing 
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_tax_registration_form'),
       callouts: [{ id: 'form', selector: '#billing-tax-registration-form', title: 'Registration details',
-                   bullets: ['Place, status, tax-inclusive pricing and dates.'] }]
+                   bullets: ['Country and state from the same lists the tax zones use, status, tax-inclusive pricing and dates.'] }]
     ) do
       visit_billing('tax_registrations/new')
       expect(page).to have_css('#billing-tax-registration-form')
