@@ -2,6 +2,7 @@
 
 require 'rails_helper'
 
+# rubocop:disable RSpec/NoExpectationExample
 # Not run in normal CI (needs RUN_DOCS_SCREENSHOTS=1 and a browser):
 #   bin/dc-run bash -c 'RUN_DOCS_SCREENSHOTS=1 bundle exec prspec spec/docs_screenshots/better_together/billing_tax_display_spec.rb'
 # The identifiers it targets are locked by spec/dom_contracts/billing_orders_spec.rb and the checkout request spec.
@@ -69,3 +70,4 @@ RSpec.describe 'Documentation screenshots for tax on checkout, sales and orders'
             "/#{I18n.default_locale}/billing/checkout/new?plan_id=#{plan.id}")
   end
 end
+# rubocop:enable RSpec/NoExpectationExample
