@@ -5036,6 +5036,7 @@ en:
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid
+      invalid_characters: must not contain spaces or control characters
       invalid_url: is not a valid URL
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}

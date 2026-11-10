@@ -5120,6 +5120,7 @@ es:
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
+      invalid_characters: no debe contener espacios ni caracteres de control
       invalid_url: no es una URL válida
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}

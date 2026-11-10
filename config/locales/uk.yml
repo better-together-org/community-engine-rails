@@ -5128,6 +5128,7 @@ uk:
       in: має бути в %{count}
       inclusion: не включено до списку
       invalid: неправильний
+      invalid_characters: не повинно містити пробілів або керівних символів
       invalid_url: не є дійсною URL-адресою
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}

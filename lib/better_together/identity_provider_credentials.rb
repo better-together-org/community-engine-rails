@@ -4,7 +4,24 @@ module BetterTogether
   # Resolves the OAuth client credentials for a catalog provider on a platform:
   # the platform's own row, then the host platform's row, then ENV.
   class IdentityProviderCredentials
-    Result = Struct.new(:client_id, :client_secret, :scope, :options, keyword_init: true)
+    REDACTED = '[FILTERED]'
+
+    # Carries the client secret to OmniAuth; never prints it via inspect, to_s, to_h or JSON.
+    Result = Struct.new(:client_id, :client_secret, :scope, :options, keyword_init: true) do
+      def inspect
+        secret = client_secret.present? ? IdentityProviderCredentials::REDACTED : 'nil'
+        "#<#{self.class.name} client_id=#{client_id.inspect} client_secret=#{secret} scope=#{scope.inspect}>"
+      end
+      alias_method :to_s, :inspect
+
+      def to_h(*)
+        super.merge(client_secret: client_secret.present? ? IdentityProviderCredentials::REDACTED : nil)
+      end
+
+      def as_json(*)
+        to_h.as_json
+      end
+    end
 
     def self.resolve(key, platform: nil)
       new(key, platform).resolve

@@ -6,6 +6,14 @@ module BetterTogether
   class PlatformIdentityProvider < ApplicationRecord
     encrypts :client_secret
 
+    # Keep the secret out of #inspect, error reports and serialization (encrypts already filters inspect).
+    self.filter_attributes += %i[client_secret]
+
+    normalizes :client_id, :client_secret, with: ->(value) { value.to_s.strip.presence }
+
+    validates :client_id, :client_secret,
+              format: { without: /[[:cntrl:]\s]/, message: :invalid_characters }, allow_nil: true
+
     belongs_to :platform, class_name: '::BetterTogether::Platform'
     belongs_to :provider_platform, class_name: '::BetterTogether::Platform'
 
@@ -17,6 +25,10 @@ module BetterTogether
     before_validation :assign_provider_platform, if: -> { provider_platform.nil? }
 
     scope :enabled, -> { where(enabled: true) }
+
+    def serializable_hash(options = nil)
+      super(options.to_h.merge(except: Array(options.to_h[:except]) + %w[client_secret]))
+    end
 
     def catalog_entry
       BetterTogether::IdentityProviders.find(strategy)
