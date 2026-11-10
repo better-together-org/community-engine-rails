@@ -163,7 +163,10 @@ module BetterTogether
 
         def build_order
           order = platform.billing_orders.build(order_attributes)
-          line_items.each_with_index { |line_item, index| order.line_items.build(line_item_attributes(line_item, index)) }
+          line_items.each_with_index do |line_item, index|
+            built = order.line_items.build(line_item_attributes(line_item, index))
+            built.snapshot_translations(:description) { |locale| built.purchasable.purchasable_description_in(locale) }
+          end
           ApplyTax.call(order, tax)
         end
 
@@ -184,7 +187,7 @@ module BetterTogether
         def line_item_attributes(line_item, index)
           purchasable = line_item.fetch(:purchasable)
           { platform_id: platform.id, position: index, purchasable:, quantity: line_item.fetch(:quantity, 1),
-            description: purchasable.purchasable_description, currency: purchasable.purchasable_currency,
+            currency: purchasable.purchasable_currency,
             unit_amount_cents: line_item.fetch(:unit_amount_cents, purchasable.purchasable_amount_cents) }
         end
 

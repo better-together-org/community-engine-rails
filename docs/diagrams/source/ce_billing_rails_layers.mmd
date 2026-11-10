@@ -143,8 +143,9 @@ classDiagram
     class BetterTogether__Billing__LineItem["Billing::LineItem"] {
       <<Model>>
       table: better_together_billing_line_items
-      concerns: Billing::ParentBound, Billing::PlatformBound
-      weak refs: target: purchasable
+      translates: description
+      concerns: Billing::LocalizedSnapshot, Billing::ParentBound, Billing::PlatformBound, Translatable
+      weak refs: target: purchasable, owner: string_translations
     }
     class BetterTogether__Billing__NotificationReceipt["Billing::NotificationReceipt"] {
       <<Model>>
@@ -165,8 +166,9 @@ classDiagram
     class BetterTogether__Billing__OrderAgreementAcceptance["Billing::OrderAgreementAcceptance"] {
       <<Model>>
       table: better_together_billing_order_agreement_acceptances
-      concerns: Billing::ParentBound, Billing::PlatformBound
-      weak refs: target: on_behalf_of
+      translates: agreement_title
+      concerns: Billing::LocalizedSnapshot, Billing::ParentBound, Billing::PlatformBound, Translatable
+      weak refs: target: on_behalf_of, owner: string_translations
     }
     class BetterTogether__Billing__Payment["Billing::Payment"] {
       <<Model>>
@@ -176,8 +178,9 @@ classDiagram
     class BetterTogether__Billing__Plan["Billing::Plan"] {
       <<Model>>
       table: better_together_billing_plans
-      concerns: Billing::AgreementTarget, Billing::PlatformBound, Billing::Purchasable, Billing::SellerScoped
-      weak refs: target: seller
+      translates: beneficiary_label, description, name, participant_benefits +2
+      concerns: Billing::AgreementTarget, Billing::PlatformBound, Billing::Purchasable, Billing::SellerScoped +1
+      weak refs: target: seller, owner: string_translations, owner: text_translations
     }
     class BetterTogether__Billing__PlanGrant["Billing::PlanGrant"] {
       <<Model>>
@@ -193,7 +196,9 @@ classDiagram
     class BetterTogether__Billing__Promotion["Billing::Promotion"] {
       <<Model>>
       table: better_together_billing_promotions
-      concerns: Billing::PlatformBound
+      translates: name
+      concerns: Billing::PlatformBound, Translatable
+      weak refs: owner: string_translations
     }
     class BetterTogether__Billing__PromotionRedemption["Billing::PromotionRedemption"] {
       <<Model>>

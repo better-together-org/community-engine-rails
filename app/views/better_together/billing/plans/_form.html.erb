@@ -48,23 +48,23 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="mb-3">
-        <%= form.label :name, t('better_together.billing.plans.field_name'), class: 'form-label' %>
+      <div id="billing-plan-name-fields" class="mb-3">
         <% if billing_plan.locked_field?(:name) %>
+          <%= form.label :name, t('better_together.billing.plans.field_name'), class: 'form-label' %>
           <%= render 'locked_value', plan: billing_plan, field: :name, label: '', value: billing_plan.name %>
         <% else %>
-          <%= form.text_field :name, class: 'form-control', required: true %>
+          <%= render 'better_together/shared/translated_string_field', model: billing_plan, form:, attribute: :name %>
         <% end %>
       </div>
     </div>
   </div>
 
-  <div class="mb-3">
-    <%= form.label :description, t('better_together.billing.plans.field_description'), class: 'form-label' %>
+  <div id="billing-plan-description-fields" class="mb-3">
     <% if billing_plan.locked_field?(:description) %>
+      <%= form.label :description, t('better_together.billing.plans.field_description'), class: 'form-label' %>
       <%= render 'locked_value', plan: billing_plan, field: :description, label: '', value: billing_plan.description %>
     <% else %>
-      <%= form.text_area :description, class: 'form-control', rows: 2 %>
+      <%= render 'better_together/shared/translated_text_field', model: billing_plan, form:, attribute: :description %>
     <% end %>
   </div>
 

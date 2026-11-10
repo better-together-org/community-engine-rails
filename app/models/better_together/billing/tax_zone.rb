@@ -7,8 +7,11 @@ module BetterTogether
     # the country's. Tax zones are data: a platform adds the ones it needs and none is built in.
     class TaxZone < ApplicationRecord
       include PlatformBound
+      include Translatable
 
       self.table_name = 'better_together_billing_tax_zones'
+
+      translates :name, type: :string
 
       belongs_to :country, class_name: 'BetterTogether::Geography::Country'
       belongs_to :state, class_name: 'BetterTogether::Geography::State', optional: true

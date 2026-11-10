@@ -170,7 +170,7 @@ RSpec.describe BetterTogether::Billing::PlansController do
     end
 
     it 'does not list another platform\'s plans' do
-      foreign_plan.update_columns(name: 'Other tenant secret') # rubocop:disable Rails/SkipsModelValidations
+      foreign_plan.update!(name: 'Other tenant secret')
 
       get plans_path
 
@@ -220,10 +220,11 @@ RSpec.describe BetterTogether::Billing::PlansController do
 
     let(:benefits) { ['Benefit one', 'Benefit two'] }
     let(:valid_params) do
-      { billing_plan: { identifier: "test-plan-#{SecureRandom.hex(4)}", name: 'Test Plan', description: 'A test plan',
+      { billing_plan: { identifier: "test-plan-#{SecureRandom.hex(4)}", name: 'Test Plan', name_fr: 'Plan d\'essai', description: 'A test plan',
+                        participant_summary: 'Test summary', participant_benefits: benefits.join("\n"),
+                        participant_benefits_fr: "Avantage un\nAvantage deux", beneficiary_label: 'Hosted access',
                         billing_interval: 'month', amount_cents: 4500, currency: 'USD', processor: 'fake', active: true,
-                        metadata: { participant_summary: 'Test summary', participant_benefits: [benefits.join("\n")],
-                                    beneficiary_label: 'Hosted access', hosted_access_level: 'Standard',
+                        metadata: { hosted_access_level: 'Standard',
                                     support_tier: 'Community', community_capacity_tier: '',
                                     eligible_billable_owner_types: ['', 'BetterTogether::Community'] } } }
     end
@@ -239,11 +240,14 @@ RSpec.describe BetterTogether::Billing::PlansController do
                                       processor_price_id: nil)
     end
 
-    it 'stores one benefit per line and drops blank owner types' do
+    it 'stores one benefit per line in each language and drops blank owner types' do
       post plans_path, params: valid_params
 
-      metadata = BetterTogether::Billing::Plan.order(:created_at).last.metadata
-      expect(metadata['participant_benefits']).to eq(benefits)
+      plan = BetterTogether::Billing::Plan.order(:created_at).last
+      metadata = plan.metadata
+      expect(plan.participant_benefit_list).to eq(benefits)
+      expect(I18n.with_locale(:fr) { plan.participant_benefit_list }).to eq(['Avantage un', 'Avantage deux'])
+      expect(plan.name(locale: :fr)).to eq("Plan d'essai")
       expect(metadata['eligible_billable_owner_types']).to eq(['BetterTogether::Community'])
     end
 

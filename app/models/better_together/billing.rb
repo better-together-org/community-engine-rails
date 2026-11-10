@@ -7,6 +7,10 @@ module BetterTogether
     ADAPTER_GROUP = :billing_processor
 
     class << self
+      # The language a platform's own copy is in when nothing narrower applies. Platforms have no language of
+      # their own yet, so it is the app default; the platform is passed so one can be read here later.
+      def platform_locale(_platform = nil) = I18n.default_locale
+
       def register_processor(name, factory = nil, &block)
         BetterTogether.register_adapter(ADAPTER_GROUP, name, factory || block)
       end

@@ -17,7 +17,7 @@ module BetterTogether
         KINDS = %i[invoice receipt].freeze
         AMOUNT_WIDTH = 80
 
-        attr_reader :order, :kind, :summary, :generated_at
+        attr_reader :order, :kind, :summary, :generated_at, :locale
 
         def initialize(order, kind: nil, locale: nil, generated_at: Time.current)
           @order = order
@@ -25,8 +25,9 @@ module BetterTogether
           @kind = (kind || (PAID_STATUSES.include?(order.status) ? :receipt : :invoice)).to_sym
           raise ArgumentError, "unknown document kind #{@kind.inspect}" unless KINDS.include?(@kind)
 
-          @locale = locale || I18n.locale
-          @summary = Summary.for_order(order)
+          @locale = (locale || order.locale_for_documents).to_sym
+          # Built in the document's language: the line and tax texts are read in it.
+          @summary = I18n.with_locale(@locale) { Summary.for_order(order) }
         end
 
         def filename = "#{kind}-#{order.number}.pdf"

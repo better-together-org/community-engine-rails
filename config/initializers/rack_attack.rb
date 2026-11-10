@@ -134,6 +134,11 @@ module Rack
       req.ip if req.post? && req.path.match?(%r{/billing/orders/[^/]+/pay\z})
     end
 
+    # Making an order's invoice and receipt again renders and stores new PDFs each time, so cap it per IP.
+    throttle('billing/order_documents/ip', limit: 10, period: 1.minute) do |req|
+      req.ip if req.post? && req.path.match?(%r{/billing/(orders|sales)/[^/]+/documents/?\z})
+    end
+
     # A steward searching for a person on a billing screen (store credit, sale in person), and giving credit. Cap searches so they
     # cannot be used to browse people in bulk, and grants because each one tells the holder.
     throttle('billing/people_lookup/ip', limit: 60, period: 1.minute) do |req|

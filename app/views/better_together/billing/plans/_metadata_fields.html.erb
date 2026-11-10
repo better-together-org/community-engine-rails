@@ -4,38 +4,19 @@
       <span class="text-muted small ms-2"><%= t('better_together.billing.plans.metadata_section_hint') %></span>
     </div>
     <div class="card-body">
-      <div class="mb-3">
-        <%= form.label 'metadata[participant_summary]',
-                       t('better_together.billing.plans.field_participant_summary'),
-                       class: 'form-label' %>
-        <%= form.text_area 'metadata[participant_summary]',
-                           value: billing_plan.metadata.to_h['participant_summary'],
-                           class: 'form-control',
-                           rows: 2 %>
+      <div id="billing-plan-participant-summary-fields" class="mb-3">
+        <%= render 'better_together/shared/translated_text_field', model: billing_plan, form:, attribute: :participant_summary %>
       </div>
 
-      <div class="mb-3">
-        <%= form.label 'metadata[participant_benefits]',
-                       t('better_together.billing.plans.field_participant_benefits'),
-                       class: 'form-label' %>
-        <%= form.text_area 'metadata[participant_benefits][]',
-                           value: Array(billing_plan.metadata.to_h['participant_benefits']).join("\n"),
-                           class: 'form-control',
-                           rows: 3,
-                           placeholder: t('better_together.billing.plans.benefits_placeholder') %>
+      <div id="billing-plan-participant-benefits-fields" class="mb-3">
+        <%= render 'better_together/shared/translated_text_field', model: billing_plan, form:, attribute: :participant_benefits %>
         <div class="form-text"><%= t('better_together.billing.plans.field_participant_benefits_hint') %></div>
       </div>
 
       <div id="billing-plan-metadata-fields" class="row g-3">
         <div class="col-md-6">
-          <div class="mb-3">
-            <%= form.label 'metadata[beneficiary_label]',
-                           t('better_together.billing.plans.field_beneficiary_label'),
-                           class: 'form-label' %>
-            <%= form.text_field 'metadata[beneficiary_label]',
-                                value: billing_plan.metadata.to_h['beneficiary_label'],
-                                class: 'form-control',
-                                placeholder: t('better_together.billing.plans.beneficiary_placeholder') %>
+          <div id="billing-plan-beneficiary-label-fields" class="mb-3">
+            <%= render 'better_together/shared/translated_string_field', model: billing_plan, form:, attribute: :beneficiary_label %>
           </div>
         </div>
         <div class="col-md-6">
@@ -90,14 +71,8 @@
           </div>
         </div>
         <div class="col-md-6">
-          <div class="mb-3">
-            <%= form.label 'metadata[solidarity_description]',
-                           t('better_together.billing.plans.field_solidarity_description'),
-                           class: 'form-label' %>
-            <%= form.text_field 'metadata[solidarity_description]',
-                                value: billing_plan.metadata.to_h['solidarity_description'],
-                                class: 'form-control',
-                                placeholder: t('better_together.billing.plans.solidarity_placeholder') %>
+          <div id="billing-plan-solidarity-description-fields" class="mb-3">
+            <%= render 'better_together/shared/translated_string_field', model: billing_plan, form:, attribute: :solidarity_description %>
             <div class="form-text">
               <%= t('better_together.billing.plans.field_solidarity_description_hint') %>
             </div>

@@ -200,3 +200,9 @@ deliberately not unique.
   queue); `failed` with `not_configured` means the platform lost its processor context.
 - Not verified in the cloud session that built this: the SlimSelect behaviour in a browser
   (the feature spec and screenshots need a local Chrome) and real Stripe behaviour.
+
+## Translated catalog text
+
+The strings people read are Mobility translations, one value per supported language (en, es, fr, uk): the plan `name`, `beneficiary_label` and `solidarity_description` (string), and `description`, `participant_summary` and `participant_benefits` (text, one benefit per line). Tax categories, tax zones, tax rates (`label`) and promotions (`name`) work the same way. The plan form shows each as a field with a tab per language, and strong parameters accept `name_fr`, `description_uk` and so on. A change to any language pushes the plan to its processor again, which is told the platform's own language. Changing a price keeps every language of the copy.
+
+New translated attributes default to the string type (`config/initializers/mobility.rb`); say `type: :text` for long copy.

@@ -24,8 +24,16 @@ module BetterTogether
       include SellerScoped
       include Purchasable
       include AgreementTarget
+      include Translatable
 
       self.table_name = 'better_together_billing_plans'
+
+      # What people read about a plan, in each supported language. The metadata hash keeps only what is not language.
+      translates :name, :beneficiary_label, type: :string
+      translates :description, :participant_summary, type: :text
+      translates :solidarity_description, type: :string
+      # One benefit per line.
+      translates :participant_benefits, type: :text
 
       BILLING_INTERVALS = %w[month year one_time].freeze
       DEFAULT_ELIGIBLE_OWNER_TYPES = %w[BetterTogether::Community BetterTogether::Person].freeze
@@ -61,10 +69,10 @@ module BetterTogether
       MAX_GRACE_DAYS = 90
       MAX_LEAD_DAYS = 60
 
-      METADATA_KEYS = [:participant_summary, :beneficiary_label, :hosted_access_level,
-                       :support_tier, :community_capacity_tier,
-                       :pricing_tier, :solidarity_description,
-                       { participant_benefits: [], eligible_billable_owner_types: [] }].freeze
+      METADATA_KEYS = [:hosted_access_level, :support_tier, :community_capacity_tier, :pricing_tier,
+                       { eligible_billable_owner_types: [] }].freeze
+      # The translated text a steward writes, one value per supported language.
+      TRANSLATED_FIELDS = %i[name description participant_summary beneficiary_label solidarity_description participant_benefits].freeze
 
       # Set by code that applies a change that came from the processor, so saving it
       # does not push the same change straight back (loop guard, not persisted).
@@ -117,7 +125,16 @@ module BetterTogether
       # Permitted attributes for update, as a baseline. Which of them a given plan will
       # accept also depends on what is locked; see #permitted_update_attributes.
       def self.permitted_attributes(id: false, destroy: false, **) # rubocop:disable Lint/UnusedMethodArgument
-        [*DESCRIPTIVE_FIELDS, *RENEWAL_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+        [*with_locales(DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS), *RENEWAL_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+      end
+
+      # Each translated field as one attribute per supported language (name_en, name_fr, ...); the others as they are.
+      def self.with_locales(fields)
+        fields.uniq.flat_map do |field|
+          next field unless TRANSLATED_FIELDS.include?(field)
+
+          [field, *I18n.available_locales.map { |locale| :"#{field}_#{locale}" }]
+        end
       end
 
       # Permitted attributes for create: everything that describes or links the price.
@@ -128,8 +145,10 @@ module BetterTogether
       # What a steward may change on this plan now, with locked fields left out. The
       # controller permits exactly this, so a crafted request cannot change a locked field.
       def permitted_update_attributes
-        fields = DESCRIPTIVE_FIELDS + (linked? ? [] : PRE_LINK_FIELDS)
-        [*fields.reject { |field| locked_field?(field) }, *RENEWAL_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+        fields = DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS + (linked? ? [] : PRE_LINK_FIELDS)
+        [*self.class.with_locales(fields.reject do |field|
+          locked_field?(field)
+        end), *RENEWAL_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
       end
 
       def recurring?
@@ -146,6 +165,7 @@ module BetterTogether
 
       # Purchasable: a plan is what a line item is for.
       def purchasable_description = name
+      def purchasable_description_in(locale) = name(locale:, fallback: false)
       def purchasable_amount_cents = amount_cents
       def purchasable_currency = currency
       def purchasable_tax_category = tax_category
@@ -248,18 +268,17 @@ module BetterTogether
       # An installed method Community Engine settles itself (settlement manual or internal).
       def self.local_method?(name) = Billing.local_method?(name)
 
-      def participant_summary
-        metadata.to_h['participant_summary'].presence || description.presence || default_participant_summary
+      # What to show: the steward's text in the reader's language, else the plan's description, else a default.
+      def display_participant_summary
+        participant_summary.presence || description.presence || default_participant_summary
       end
 
-      def participant_benefits
-        Array(metadata.to_h['participant_benefits']).filter_map do |benefit|
-          benefit.to_s.strip.presence
-        end
+      def participant_benefit_list
+        participant_benefits.to_s.lines.filter_map { |benefit| benefit.strip.presence }
       end
 
-      def beneficiary_label
-        metadata.to_h['beneficiary_label'].presence || default_beneficiary_label
+      def display_beneficiary_label
+        beneficiary_label.presence || default_beneficiary_label
       end
 
       def hosted_access_level
@@ -276,10 +295,6 @@ module BetterTogether
 
       def pricing_tier
         metadata.to_h['pricing_tier'].presence || 'standard'
-      end
-
-      def solidarity_description
-        metadata.to_h['solidarity_description'].presence
       end
 
       def solidarity_tier?
@@ -388,10 +403,21 @@ module BetterTogether
         return if processor_price_id_was.blank?
 
         ([:processor] + PRICE_FIELDS + DESCRIPTIVE_FIELDS).each do |field|
-          next unless will_save_change_to_attribute?(field)
+          next unless changing?(field)
 
           errors.add(field, :immutable_after_processor_link) if locked_field?(field, linked: true)
         end
+      end
+
+      # Whether a field is about to change; for translated text, in any language.
+      def changing?(field)
+        changed.any? { |key| key == field.to_s || key.start_with?("#{field}_") }
+      end
+
+      def synced_change? = saved_changes.keys.any? { |key| synced_key?(key) }
+
+      def synced_key?(key)
+        SYNCED_ATTRIBUTES.any? { |attribute| key == attribute || key.start_with?("#{attribute}_") }
       end
 
       def eligible_owner_types_are_billable
@@ -431,7 +457,7 @@ module BetterTogether
       def enqueue_processor_sync
         return if skip_processor_sync || !sync_supported?
         return if previously_new_record? && sync_synced?
-        return unless previously_new_record? || saved_changes.keys.intersect?(SYNCED_ATTRIBUTES)
+        return unless previously_new_record? || synced_change?
 
         BetterTogether::Billing::SyncPlanJob.perform_later(id)
       end

@@ -16,7 +16,7 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
     agreements.each_value do |agreement|
       expect(agreement).to have_attributes(lifecycle_state: 'draft', agreement_kind: 'transactional_agreement', protected: true,
                                            requires_reacceptance: true, required_for: 'none', platform_id: host_platform.id)
-      expect(agreement.change_summary).to eq(described_class::PLACEHOLDER)
+      expect(agreement.change_summary).to eq(described_class.placeholder[:en])
       expect(agreement.agreement_terms.first.content.to_plain_text).to include('placeholder')
     end
   end
@@ -54,6 +54,31 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
     expect(theirs['subscription_agreement'].platform_id).to eq(other_platform.id)
     expect(other_platform.billing_agreement_requirements.count).to eq(7)
     expect(BetterTogether::Agreement.billing_record('subscription_agreement', platform: other_platform)).to eq(theirs['subscription_agreement'])
+  end
+
+  it 'reads its wording and ties from the seed packet and records the packet as a Seed', :aggregate_failures do
+    described_class.call(host_platform)
+
+    expect(BetterTogether::Seed.find_by(identifier: 'billing_purchase_agreements'))
+      .to have_attributes(type: 'BetterTogether::Seed', version: '1.0')
+    expect(described_class.data.fetch(:agreements).pluck(:identifier)).to contain_exactly('subscription_agreement',
+                                                                                          'one_time_purchase_agreement', 'offline_payment_terms')
+    expect(described_class.data.fetch(:requirements).size).to eq(7)
+    subscription = BetterTogether::Agreement.billing_record('subscription_agreement', platform: host_platform)
+    expect(subscription.title(locale: :fr)).to eq("Accord d'abonnement")
+  end
+
+  it 'reports whether a platform has them all, and is not fooled by a missing tie', :aggregate_failures do
+    host_platform.billing_agreement_requirements.destroy_all
+    BetterTogether::Agreement.where(platform: host_platform, identifier: described_class.data.fetch(:agreements).pluck(:identifier)).destroy_all
+    expect(described_class.planted?(host_platform)).to be(false)
+
+    described_class.call(host_platform)
+    expect(described_class.planted?(host_platform)).to be(true)
+    expect(described_class.planted?(other_platform)).to be(false)
+
+    host_platform.billing_agreement_requirements.first.destroy!
+    expect(described_class.planted?(host_platform)).to be(false)
   end
 
   it 'is called by the agreement builder for the host platform' do

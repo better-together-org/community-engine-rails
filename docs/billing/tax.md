@@ -134,3 +134,7 @@ The seller's agreement to collect tax, and monthly, quarterly and yearly reports
 ## Sellers: a later phase
 
 Registrations, categories and the calculator already support a seller (a community or a person) having a registration of their own: the columns, the `SellerScoped` rules and the calculator's seller-then-platform choice are in place, and tests cover them. What is not built yet is anything a seller uses themselves: a seller's tax settings screen, the seller's tax collection agreement, and the community or person authorization it needs. That work is deliberately left until the platform-level billing system has been merged, deployed and tested; nothing in the design blocks it, and it will add a community branch to `OwnerPolicy` rather than change the platform screens.
+
+## Names and labels in every language
+
+Category and zone names and rate labels are translated. The Canada packet carries a value per language for each (the French abbreviations are TPS, TVH, TVQ, TVP and TVD); the wording in es, fr and uk wants a translator's review. When an order is placed, each tax line copies its rate's label in every language, so an invoice reads in any language later and never changes when a label is edited.

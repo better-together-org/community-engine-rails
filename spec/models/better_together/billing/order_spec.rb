@@ -164,8 +164,8 @@ RSpec.describe BetterTogether::Billing::Order do
     expect do
       described_class.connection.execute(<<~SQL.squish)
         INSERT INTO better_together_billing_line_items
-          (platform_id, order_id, purchasable_type, purchasable_id, description, quantity, unit_amount_cents, currency, lock_version, created_at, updated_at)
-        VALUES ('#{other_platform.id}', '#{order.id}', 'BetterTogether::Billing::Plan', '#{SecureRandom.uuid}', 'X', 1, 1, 'USD', 0, now(), now())
+          (platform_id, order_id, purchasable_type, purchasable_id, quantity, unit_amount_cents, currency, lock_version, created_at, updated_at)
+        VALUES ('#{other_platform.id}', '#{order.id}', 'BetterTogether::Billing::Plan', '#{SecureRandom.uuid}', 1, 1, 'USD', 0, now(), now())
       SQL
     end.to raise_error(ActiveRecord::InvalidForeignKey)
   end

@@ -43,7 +43,8 @@ RSpec.describe 'Billing plans DOM contract', :as_platform_manager, type: :reques
 
     expect_ids('billing-plan-form', 'billing-plan-mode-tabs', 'billing-plan-mode-create', 'billing-plan-mode-link',
                'billing-plan-processor-fields', 'billing-plan-product-select', 'billing-plan-core-fields',
-               'billing-plan-interval-select', 'billing-plan-currency-select', 'billing-plan-metadata-card',
+               'billing-plan-name-fields', 'billing-plan-description-fields', 'billing-plan-interval-select',
+               'billing-plan-currency-select', 'billing-plan-metadata-card',
                'billing-plan-form-actions')
   end
 

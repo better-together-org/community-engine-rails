@@ -266,11 +266,12 @@ flowchart TB
     BetterTogether__Billing__Entitlement_polymorphic_summary["Billing::Entitlement\ntarget: beneficiary"]
     BetterTogether__Billing__EntitlementGrant_polymorphic_summary["Billing::EntitlementGrant\ntarget: applied"]
     BetterTogether__Billing__Event_polymorphic_summary["Billing::Event\ntarget: billable_owner, target: beneficiary, target: subject"]
-    BetterTogether__Billing__LineItem_polymorphic_summary["Billing::LineItem\ntarget: purchasable"]
+    BetterTogether__Billing__LineItem_polymorphic_summary["Billing::LineItem\ntarget: purchasable, owner: string_translations"]
     BetterTogether__Billing__Order_polymorphic_summary["Billing::Order\ntarget: seller, target: on_behalf_of, target: subject"]
-    BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary["Billing::OrderAgreementAcceptance\ntarget: on_behalf_of"]
-    BetterTogether__Billing__Plan_polymorphic_summary["Billing::Plan\ntarget: seller"]
+    BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary["Billing::OrderAgreementAcceptance\ntarget: on_behalf_of, owner: string_translations"]
+    BetterTogether__Billing__Plan_polymorphic_summary["Billing::Plan\ntarget: seller, owner: string_translations, owner: text_translations"]
     BetterTogether__Billing__ProcessorSetting_polymorphic_summary["Billing::ProcessorSetting\ntarget: seller"]
+    BetterTogether__Billing__Promotion_polymorphic_summary["Billing::Promotion\nowner: string_translations"]
     BetterTogether__Billing__SubscriptionTerm_polymorphic_summary["Billing::SubscriptionTerm\ntarget: beneficiary"]
     billing_polymorphic_anchor ~~~ BetterTogether__Billing__AgreementRequirement_polymorphic_summary
     BetterTogether__Billing__AgreementRequirement_polymorphic_summary ~~~ BetterTogether__Billing__CreditEntry_polymorphic_summary
@@ -282,7 +283,8 @@ flowchart TB
     BetterTogether__Billing__Order_polymorphic_summary ~~~ BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary
     BetterTogether__Billing__OrderAgreementAcceptance_polymorphic_summary ~~~ BetterTogether__Billing__Plan_polymorphic_summary
     BetterTogether__Billing__Plan_polymorphic_summary ~~~ BetterTogether__Billing__ProcessorSetting_polymorphic_summary
-    BetterTogether__Billing__ProcessorSetting_polymorphic_summary ~~~ BetterTogether__Billing__SubscriptionTerm_polymorphic_summary
+    BetterTogether__Billing__ProcessorSetting_polymorphic_summary ~~~ BetterTogether__Billing__Promotion_polymorphic_summary
+    BetterTogether__Billing__Promotion_polymorphic_summary ~~~ BetterTogether__Billing__SubscriptionTerm_polymorphic_summary
   end
 
   subgraph shared_supporting["Shared and supporting runtime surfaces"]
@@ -290,7 +292,11 @@ flowchart TB
     shared_supporting_polymorphic_anchor:::hidden
     BetterTogether__Activity_polymorphic_summary["Activity\ntarget: trackable, target: owner, target: recipient"]
     BetterTogether__AgentGrant_polymorphic_summary["AgentGrant\nowner: seeds"]
+    BetterTogether__Billing__TaxCategory_polymorphic_summary["Billing::TaxCategory\nowner: string_translations"]
+    BetterTogether__Billing__TaxLine_polymorphic_summary["Billing::TaxLine\nowner: string_translations"]
+    BetterTogether__Billing__TaxRate_polymorphic_summary["Billing::TaxRate\nowner: string_translations"]
     BetterTogether__Billing__TaxRegistration_polymorphic_summary["Billing::TaxRegistration\ntarget: seller"]
+    BetterTogether__Billing__TaxZone_polymorphic_summary["Billing::TaxZone\nowner: string_translations"]
     BetterTogether__CommentAddedNotifier_polymorphic_summary["CommentAddedNotifier\nfamily: 22 models\ntarget: record"]
     BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary["CommentAddedNotifier::Notification\nfamily: 22 models\ntarget: recipient"]
     BetterTogether__CommentConfig_polymorphic_summary["CommentConfig\ntarget: commentable, owner: seeds"]
@@ -329,8 +335,12 @@ flowchart TB
     BetterTogether__WebsiteLink_polymorphic_summary["WebsiteLink\nowner: seeds"]
     shared_supporting_polymorphic_anchor ~~~ BetterTogether__Activity_polymorphic_summary
     BetterTogether__Activity_polymorphic_summary ~~~ BetterTogether__AgentGrant_polymorphic_summary
-    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__Billing__TaxRegistration_polymorphic_summary
-    BetterTogether__Billing__TaxRegistration_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
+    BetterTogether__AgentGrant_polymorphic_summary ~~~ BetterTogether__Billing__TaxCategory_polymorphic_summary
+    BetterTogether__Billing__TaxCategory_polymorphic_summary ~~~ BetterTogether__Billing__TaxLine_polymorphic_summary
+    BetterTogether__Billing__TaxLine_polymorphic_summary ~~~ BetterTogether__Billing__TaxRate_polymorphic_summary
+    BetterTogether__Billing__TaxRate_polymorphic_summary ~~~ BetterTogether__Billing__TaxRegistration_polymorphic_summary
+    BetterTogether__Billing__TaxRegistration_polymorphic_summary ~~~ BetterTogether__Billing__TaxZone_polymorphic_summary
+    BetterTogether__Billing__TaxZone_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier_polymorphic_summary
     BetterTogether__CommentAddedNotifier_polymorphic_summary ~~~ BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary
     BetterTogether__CommentAddedNotifier__Notification_polymorphic_summary ~~~ BetterTogether__CommentConfig_polymorphic_summary
     BetterTogether__CommentConfig_polymorphic_summary ~~~ BetterTogether__ContactDetail_polymorphic_summary

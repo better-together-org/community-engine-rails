@@ -19,11 +19,11 @@ FactoryBot.define do
     processor_price_id { "price_#{SecureRandom.hex(8)}" }
     processor_product_id { "prod_#{SecureRandom.hex(6)}" }
     sync_status { 'synced' }
+    participant_summary { 'Supports hosted participation and stewardship for this Better Together space.' }
+    participant_benefits { "Hosted access\nOngoing stewardship support" }
+    beneficiary_label { 'Hosted access' }
     metadata do
       {
-        'participant_summary' => 'Supports hosted participation and stewardship for this Better Together space.',
-        'participant_benefits' => ['Hosted access', 'Ongoing stewardship support'],
-        'beneficiary_label' => 'Hosted access',
         'hosted_access_level' => 'Standard',
         'support_tier' => 'Community'
       }

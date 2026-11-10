@@ -7,8 +7,12 @@ module BetterTogether
     # the tax lines of past orders keep pointing at it.
     class TaxRate < ApplicationRecord
       include PlatformBound
+      include Translatable
 
       self.table_name = 'better_together_billing_tax_rates'
+
+      # GST, HST, TVQ: what the tax is called on an invoice, in each language.
+      translates :label, type: :string
 
       belongs_to :tax_zone, class_name: 'BetterTogether::Billing::TaxZone', optional: false
       belongs_to :tax_category, class_name: 'BetterTogether::Billing::TaxCategory', optional: true

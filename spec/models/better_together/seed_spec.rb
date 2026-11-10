@@ -43,7 +43,8 @@ RSpec.describe BetterTogether::Seed do
     end
 
     it 'filters by type' do
-      expect(described_class.by_type('BetterTogether::Seed').count).to eq(2)
+      # Essential test seeding also records packet Seeds, so count only the two made here.
+      expect(described_class.by_type('BetterTogether::Seed').by_identifier(%w[generic_seed home_page]).count).to eq(2)
     end
 
     it 'filters by identifier' do

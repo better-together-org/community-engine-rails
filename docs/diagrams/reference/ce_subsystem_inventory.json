@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T16:32:09Z",
+  "generated_at": "2026-11-10T17:58:55Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -26433,10 +26433,6 @@
               "string"
             ],
             [
-              "description",
-              "string"
-            ],
-            [
               "purchasable_type",
               "string"
             ],
@@ -26450,6 +26446,10 @@
             ],
             [
               "quantity",
+              "integer"
+            ],
+            [
+              "tax_cents",
               "integer"
             ]
           ],
@@ -26488,12 +26488,22 @@
               "name": "purchasable",
               "foreign_key": "purchasable_id",
               "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
-          "translated_attributes": [],
+          "translated_attributes": [
+            "description"
+          ],
           "concerns": [
+            "BetterTogether::Billing::LocalizedSnapshot",
             "BetterTogether::Billing::ParentBound",
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -26742,10 +26752,10 @@
             "PresenceValidator: buyer (message=:required)",
             "InclusionValidator: purpose (in=[\"subscription\", \"one_time\", \"ticket\", \"exchange\"])",
             "FormatValidator: buyer_email (allow_blank=true, with=/\\A[a-zA-Z0-9.!\\#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\\z/)",
+            "InclusionValidator: document_locale (allow_nil=true, in=dynamic)",
             "InclusionValidator: status (in=[\"draft\", \"awaiting_payment\", \"partially_paid\", \"paid\", \"cancelled\", \"expired\", \"partially_refunded\", \"refunded\"])",
             "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
-            "PresenceValidator: number",
-            "UniquenessValidator: number (scope=:platform_id)"
+            "PresenceValidator: number"
           ],
           "belongs_to": [
             {
@@ -26890,12 +26900,12 @@
               "string"
             ],
             [
-              "agreement_title",
+              "on_behalf_of_type",
               "string"
             ],
             [
-              "on_behalf_of_type",
-              "string"
+              "accepted_at",
+              "datetime"
             ]
           ],
           "validations": [
@@ -26939,12 +26949,22 @@
               "name": "on_behalf_of",
               "foreign_key": "on_behalf_of_id",
               "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
-          "translated_attributes": [],
+          "translated_attributes": [
+            "agreement_title"
+          ],
           "concerns": [
+            "BetterTogether::Billing::LocalizedSnapshot",
             "BetterTogether::Billing::ParentBound",
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -27142,14 +27162,34 @@
               "name": "seller",
               "foreign_key": "seller_id",
               "note": "Polymorphic target set at runtime; foreign-key integrity is not enforced by the database."
+            },
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_many",
+              "name": "text_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
-          "translated_attributes": [],
+          "translated_attributes": [
+            "beneficiary_label",
+            "description",
+            "name",
+            "participant_benefits",
+            "participant_summary",
+            "solidarity_description"
+          ],
           "concerns": [
             "BetterTogether::Billing::AgreementTarget",
             "BetterTogether::Billing::PlatformBound",
             "BetterTogether::Billing::Purchasable",
-            "BetterTogether::Billing::SellerScoped"
+            "BetterTogether::Billing::SellerScoped",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -27357,10 +27397,6 @@
               "string"
             ],
             [
-              "name",
-              "string"
-            ],
-            [
               "purposes",
               "string"
             ],
@@ -27378,6 +27414,10 @@
             ],
             [
               "credit_expires_after_days",
+              "integer"
+            ],
+            [
+              "max_redemptions",
               "integer"
             ]
           ],
@@ -27405,10 +27445,20 @@
               "optional": true
             }
           ],
-          "polymorphic": [],
-          "translated_attributes": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "name"
+          ],
           "concerns": [
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -28154,6 +28204,16 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::LocalizedSnapshot",
+          "label": "Billing::LocalizedSnapshot",
+          "capability": "Localizedsnapshot",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::OrderAgreementAcceptance",
+            "Billing::LineItem"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OwnerScoped",
           "label": "Billing::OwnerScoped",
           "capability": "Ownerscoped",
@@ -28397,6 +28457,18 @@
             "Billing::CheckoutsController",
             "Billing::AllowancesController",
             "Billing::AgreementRequirementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::Translatable",
+          "label": "Translatable",
+          "capability": "Translatable",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::Promotion",
+            "Billing::OrderAgreementAcceptance",
+            "Billing::LineItem",
+            "Billing::Plan"
           ]
         }
       ],
@@ -29193,10 +29265,6 @@
               "string"
             ],
             [
-              "name",
-              "string"
-            ],
-            [
               "taxable",
               "boolean"
             ]
@@ -29216,10 +29284,20 @@
               "optional": false
             }
           ],
-          "polymorphic": [],
-          "translated_attributes": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "name"
+          ],
           "concerns": [
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -29253,10 +29331,6 @@
             [
               "tax_rate_id",
               "uuid FK"
-            ],
-            [
-              "label",
-              "string"
             ],
             [
               "registration_number",
@@ -29309,12 +29383,23 @@
               "optional": true
             }
           ],
-          "polymorphic": [],
-          "translated_attributes": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "label"
+          ],
           "concerns": [
             "BetterTogether::Billing::EncryptedAttributes",
+            "BetterTogether::Billing::LocalizedSnapshot",
             "BetterTogether::Billing::ParentBound",
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -29360,10 +29445,6 @@
               "uuid FK"
             ],
             [
-              "label",
-              "string"
-            ],
-            [
               "ends_at",
               "datetime"
             ],
@@ -29402,10 +29483,20 @@
               "optional": true
             }
           ],
-          "polymorphic": [],
-          "translated_attributes": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "label"
+          ],
           "concerns": [
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -29551,10 +29642,6 @@
             [
               "state_id",
               "uuid FK"
-            ],
-            [
-              "name",
-              "string"
             ]
           ],
           "validations": [
@@ -29587,10 +29674,20 @@
               "optional": true
             }
           ],
-          "polymorphic": [],
-          "translated_attributes": [],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "string_translations",
+              "as": "translatable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [
+            "name"
+          ],
           "concerns": [
-            "BetterTogether::Billing::PlatformBound"
+            "BetterTogether::Billing::PlatformBound",
+            "BetterTogether::Translatable"
           ],
           "concern_notes": [],
           "cross_subsystem_targets": [
@@ -35931,6 +36028,22 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::OrderDocumentsController",
+          "label": "Billing::OrderDocumentsController",
+          "source_path": "app/controllers/better_together/billing/order_documents_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::OrderDocument"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OrderPaymentsController",
           "label": "Billing::OrderPaymentsController",
           "source_path": "app/controllers/better_together/billing/order_payments_controller.rb",
@@ -36954,6 +37067,15 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::LocalizedSnapshot",
+          "label": "Billing::LocalizedSnapshot",
+          "capability": "Localizedsnapshot",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::TaxLine"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OwnerScoped",
           "label": "Billing::OwnerScoped",
           "capability": "Ownerscoped",
@@ -36961,7 +37083,8 @@
           "included_by": [
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
-            "Billing::OrderPaymentsController"
+            "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController"
           ]
         },
         {
@@ -37204,6 +37327,7 @@
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37274,6 +37398,7 @@
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37344,6 +37469,7 @@
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37425,6 +37551,7 @@
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37659,7 +37786,11 @@
             "Infrastructure::Room",
             "Infrastructure::Floor",
             "Infrastructure::Building",
-            "ShortLink"
+            "ShortLink",
+            "Billing::TaxZone",
+            "Billing::TaxRate",
+            "Billing::TaxLine",
+            "Billing::TaxCategory"
           ]
         },
         {

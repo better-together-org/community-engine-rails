@@ -1,0 +1,15 @@
+---
+title: 'Billing agreements: planted'
+audience:
+- platform_manager
+- developer
+journey_step: After planting, the catalog shows the agreements as planted.
+callouts:
+- :id: planted_badge
+  :title: Planted
+  :description: Green once the three agreements and the purchases they cover are on
+    the platform.
+accessibility_notes: The plant button carries an aria-label naming the packet; status
+  is shown in text as well as colour.
+slug: seed_catalog_billing_agreements_planted
+device: desktop

@@ -34,7 +34,8 @@ module BetterTogether
         adapter = plan.processor_adapter
         raise NotConfiguredError, 'no billing configuration for this plan' unless context && adapter&.supports?(:plan_sync)
 
-        plan.apply_sync_result!(push(adapter, context, plan))
+        # The processor is told the platform's own language, whoever enqueued the job.
+        I18n.with_locale(Billing.platform_locale(plan.platform)) { plan.apply_sync_result!(push(adapter, context, plan)) }
       end
 
       private

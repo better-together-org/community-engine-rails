@@ -86,3 +86,7 @@ Another buyer's order, another platform's order, and an order a community or per
 ## Data
 
 See the order tables in [billing_schema_erd.mmd](../diagrams/source/billing_schema_erd.mmd). Guarantees held by the database: `platform_id NOT NULL` with a foreign key on all four tables; the composite keys above, backed by unique `(id, platform_id)` indexes; `(platform_id, number)` unique; `(platform_id, idempotency_key)` unique for payments and for refunds.
+
+## Order language
+
+`placed_locale` is the language the order was placed in and `document_locale` is the language chosen for its documents (empty until chosen). See [PDF documents](pdf_documents.md#language).

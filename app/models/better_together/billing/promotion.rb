@@ -10,8 +10,11 @@ module BetterTogether
     # database copy does not reveal codes and the digest cannot be guessed offline without the key.
     class Promotion < ApplicationRecord
       include PlatformBound
+      include Translatable
 
       self.table_name = 'better_together_billing_promotions'
+
+      translates :name, type: :string
 
       # Letters and digits that cannot be mistaken for each other (no 0/O, 1/I/L).
       ALPHABET = %w[A B C D E F G H J K M N P Q R S T U V W X Y Z 2 3 4 5 6 7 8 9].freeze

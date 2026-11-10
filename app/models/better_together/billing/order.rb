@@ -70,10 +70,12 @@ module BetterTogether
       encrypts_billing_attribute :billing_address, json: true
 
       before_validation :set_number, on: :create
+      before_validation :remember_placed_locale, on: :create
       before_validation :total_up
 
       validates :purpose, inclusion: { in: PURPOSES }
       validates :buyer_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+      validates :document_locale, inclusion: { in: ->(_order) { I18n.available_locales.map(&:to_s) } }, allow_nil: true
       validates :status, inclusion: { in: STATUSES }
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :number, presence: true, uniqueness: { scope: :platform_id }
@@ -124,9 +126,27 @@ module BetterTogether
 
       def hold_expired? = open? && expires_at.present? && expires_at < Time.current
 
+      # The language the stored invoice and receipt were written in, which stays the same when the buyer's own language
+      # changes later. Until any has been made it is the language they would be made in.
+      def documents_locale
+        documents.current.where.not(locale: nil).order(:generated_at).pick(:locale) || locale_for_documents.to_s
+      end
+
+      # The language this order's invoice and receipt are made in: the one a steward chose for it, else the buyer's, else
+      # the one it was placed in, else the platform's. A steward who placed it for someone who does not read that language
+      # chooses another (see Orders::GenerateDocument and the order's documents).
+      def locale_for_documents
+        known = I18n.available_locales.map(&:to_s)
+        [document_locale, buyer&.locale, placed_locale, Billing.platform_locale(platform)].map(&:to_s).find do |code|
+          known.include?(code)
+        end.to_sym
+      end
+
       private
 
       # A short reference people can quote, unique per platform. Retried if it collides.
+      def remember_placed_locale = self.placed_locale ||= I18n.locale.to_s
+
       def set_number
         return if number.present?
 

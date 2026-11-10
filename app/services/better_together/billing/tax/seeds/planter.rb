@@ -70,7 +70,7 @@ module BetterTogether
 
           def plant_category(entry)
             Billing::TaxCategory.find_or_create_by!(platform:, identifier: entry.fetch(:identifier)) do |category|
-              category.name = entry.fetch(:name)
+              assign_translations(category, :name, entry.fetch(:name))
               category.taxable = entry.fetch(:taxable)
             end
           end
@@ -78,13 +78,27 @@ module BetterTogether
           def plant_zone(entry)
             row = zone_for(entry) || raise(Missing, "#{entry[:settlement_identifier] || entry[:state_iso_code]} is not planted " \
                                                     '(plant the geography first)')
-            zone = Billing::TaxZone.find_or_create_by!(platform:, **place_of(row)) { |new_zone| new_zone.name = entry.fetch(:name) }
+            zone = Billing::TaxZone.find_or_create_by!(platform:, **place_of(row)) { |new_zone| assign_translations(new_zone, :name, entry.fetch(:name)) }
             entry.fetch(:rates).each { |rate| plant_rate(zone, rate) }
           end
 
           def plant_rate(zone, entry)
-            Billing::TaxRate.find_or_create_by!(platform:, tax_zone: zone, label: entry.fetch(:label), discarded_at: nil) do |tax_rate|
-              tax_rate.rate = BigDecimal(entry.fetch(:rate))
+            labels = translations_of(entry.fetch(:label))
+            existing = I18n.with_locale(:en) do
+              Billing::TaxRate.i18n.find_by(platform:, tax_zone: zone, label: labels.fetch(:en), discarded_at: nil)
+            end
+            existing || Billing::TaxRate.create!(platform:, tax_zone: zone, rate: BigDecimal(entry.fetch(:rate))) do |tax_rate|
+              assign_translations(tax_rate, :label, labels)
+            end
+          end
+
+          # A plain string is the English value.
+          def translations_of(value) = value.is_a?(Hash) ? value : { en: value.to_s }
+
+          # A packet value is a hash by locale; locales this app does not support are skipped.
+          def assign_translations(record, attribute, values)
+            translations_of(values).each do |locale, value|
+              record.public_send(:"#{attribute}=", value, locale: locale.to_sym) if I18n.available_locales.include?(locale.to_sym)
             end
           end
 

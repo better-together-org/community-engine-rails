@@ -7,8 +7,13 @@ module BetterTogether
     class LineItem < ApplicationRecord
       include PlatformBound
       include ParentBound
+      include Translatable
+      include LocalizedSnapshot
 
       self.table_name = 'better_together_billing_line_items'
+
+      # What was bought, in every language, as it was called when the order was made.
+      translates :description, type: :string
 
       belongs_to :order, class_name: 'BetterTogether::Billing::Order', inverse_of: :line_items, optional: false
       belongs_to :purchasable, polymorphic: true, optional: true

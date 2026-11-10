@@ -56,7 +56,7 @@ RSpec.describe BetterTogether::Billing::Tax::Seeds::Planter do
   it 'only adds what is missing and never changes a rate that exists' do
     plant_geography
     plant
-    rate = host_platform.billing_tax_zones.find_by(state: tax_geography_state('CA', 'SK')).tax_rates.find_by(label: 'PST')
+    rate = host_platform.billing_tax_zones.find_by(state: tax_geography_state('CA', 'SK')).tax_rates.i18n.find_by(label: 'PST')
     rate.update!(rate: 0.07)
 
     counts = -> { [host_platform.billing_tax_zones.count, BetterTogether::Billing::TaxRate.count, BetterTogether::Seed.count] }

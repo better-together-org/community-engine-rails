@@ -89,9 +89,19 @@ module BetterTogether
         source = platform_plans.find_by(id: params[:from])
         return {} unless source
 
-        { identifier: "#{source.identifier}-next", name: source.name, description: source.description,
+        { identifier: "#{source.identifier}-next", **copied_translations(source),
           processor: source.processor, processor_product_id: source.processor_product_id,
           billing_interval: source.billing_interval, currency: source.currency, metadata: source.metadata }
+      end
+
+      # Every translated field in every locale, so the next price keeps the whole catalogue copy.
+      def copied_translations(source)
+        Plan::TRANSLATED_FIELDS.each_with_object({}) do |field, copy|
+          I18n.available_locales.each do |locale|
+            value = source.public_send(field, locale:, fallback: false)
+            copy[:"#{field}_#{locale}"] = value if value.present?
+          end
+        end
       end
 
       def plan_params_for_create
@@ -109,14 +119,9 @@ module BetterTogether
         @plan.metadata = @plan.metadata.merge(normalized_metadata(metadata)) if metadata
       end
 
-      # The benefits box posts one string with a benefit per line; owner types arrive as
-      # a list with blanks from unchecked boxes.
+      # Owner types arrive as a list with blanks from unchecked boxes.
       def normalized_metadata(metadata)
         metadata = metadata.to_h
-        if metadata.key?('participant_benefits')
-          metadata['participant_benefits'] = Array(metadata['participant_benefits']).flat_map { |text| text.to_s.split(/\r?\n/) }
-                                                                                    .map(&:strip).compact_blank
-        end
         if metadata.key?('eligible_billable_owner_types')
           metadata['eligible_billable_owner_types'] = Array(metadata['eligible_billable_owner_types']).compact_blank
         end

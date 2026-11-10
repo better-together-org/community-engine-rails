@@ -49,7 +49,13 @@ module BetterTogether
 
       def promotion_attributes
         currency = params[:currency].to_s.upcase
-        { name: params[:name].to_s.strip, currency:, amount_cents: Currency.to_minor(params[:amount], currency).to_i, **limit_attributes }
+        { name: params[:name].to_s.strip, **name_translations, currency:, amount_cents: Currency.to_minor(params[:amount], currency).to_i,
+          **limit_attributes }
+      end
+
+      # name_fr, name_es and so on: the same promotion name in the other languages.
+      def name_translations
+        (I18n.available_locales - [I18n.locale]).to_h { |locale| [:"name_#{locale}", params["name_#{locale}"].to_s.strip.presence] }.compact
       end
 
       def limit_attributes
