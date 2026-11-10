@@ -159,6 +159,7 @@ erDiagram
   BILLING_TAX_CATEGORIES {
     platform_id uuid
     identifier string
+    name string
     taxable boolean
   }
 
@@ -167,6 +168,7 @@ erDiagram
     order_id uuid
     platform_id uuid
     tax_rate_id uuid
+    label string
     registration_number text
     included boolean
     amount_cents integer
@@ -177,6 +179,7 @@ erDiagram
     platform_id uuid
     tax_category_id uuid
     tax_zone_id uuid
+    label string
     ends_at datetime
     starts_at datetime
     rate decimal
@@ -200,6 +203,7 @@ erDiagram
     platform_id uuid
     settlement_id uuid
     state_id uuid
+    name string
   }
 
   COMMENT_CONFIGS {
