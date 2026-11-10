@@ -261,6 +261,9 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
                                },
                                credentials: {
                                  token: 'github_access_token_123'
+                               },
+                               extra: {
+                                 all_emails: [{ email: post_auth_oauth_email, primary: true, verified: true }]
                                }
                              })
     end

@@ -49,12 +49,27 @@ module BetterTogether
         return person_platform_integration.user if person_platform_integration.user.present?
 
         user = find_or_initialize_user(auth, current_user)
+        verified = provider_verified_email?(auth)
+
+        # Never attach a provider identity to an existing account on the strength of an unverified email
+        if user.present? && current_user.blank? && !verified
+          raise ArgumentError,
+                I18n.t('better_together.person_platform_integrations.create.unverified_email_collision',
+                       provider: auth.provider.to_s.titleize)
+        end
 
         if user.blank?
-          # No existing user - create new OAuth user
-          user = setup_new_oauth_user(new, auth)
+          # No existing user - create new OAuth user (confirmation required unless the provider verified the email)
+          user = setup_new_oauth_user(new, auth, verified:)
           assign_person_to_user(user, person_platform_integration, auth, invitations)
           return nil unless user.save
+
+          # Unverified signup: Devise sent its confirmation email; store no identity until the user confirms
+          return user unless verified
+        elsif current_user.blank?
+          # Verified provider email proves control of the address; an unconfirmed pre-existing account may have been
+          # pre-registered by someone else, so invalidate any password set before this point
+          rotate_password_for_unconfirmed(user)
         end
 
         # Link integration to existing or current user
@@ -104,15 +119,29 @@ module BetterTogether
       # @param user [User] the new user instance
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
       # @return [User] the configured user
-      def self.setup_new_oauth_user(user, auth)
+      def self.setup_new_oauth_user(user, auth, verified: false)
         # Create as OauthUser subclass so we can identify OAuth-only accounts
         user = ::BetterTogether::OauthUser.new if user.new_record?
-        user.skip_confirmation!
+        user.skip_confirmation! if verified
         user.password = ::Devise.friendly_token[0, 20]
         user.attributes_from_auth(auth)
         user
       end
       private_class_method :setup_new_oauth_user
+
+      # Whether the provider asserts the auth email is verified (unknown providers are treated as unverified)
+      def self.provider_verified_email?(auth)
+        provider = ::BetterTogether::IdentityProviders.find(auth.provider)
+        provider.present? && provider.verified_email?(auth)
+      end
+      private_class_method :provider_verified_email?
+
+      def self.rotate_password_for_unconfirmed(user)
+        return if user.confirmed?
+
+        user.update!(password: ::Devise.friendly_token[0, 20])
+      end
+      private_class_method :rotate_password_for_unconfirmed
 
       # Assigns person to user, either from invitation or new from OAuth
       # @param user [User] the user to assign person to

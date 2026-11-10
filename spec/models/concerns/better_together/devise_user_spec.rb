@@ -68,6 +68,7 @@ RSpec.describe BetterTogether::DeviseUser do
                                  expires_at: 1.hour.from_now.to_i
                                },
                                extra: {
+                                 all_emails: [{ email: 'test@example.com', primary: true, verified: true }],
                                  raw_info: {
                                    login: 'testuser',
                                    html_url: 'https://github.com/testuser'
@@ -935,6 +936,10 @@ RSpec.describe BetterTogether::DeviseUser do
                                               },
                                               credentials: {
                                                 token: 'github_token_oauth'
+                                              },
+                                              extra: {
+                                                all_emails: [{ email: 'user_b@example.com', primary: true,
+                                                               verified: true }]
                                               }
                                             })
 

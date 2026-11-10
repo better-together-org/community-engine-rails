@@ -3134,6 +3134,9 @@ en:
           to a different user. Please sign out and sign in with the correct account.'
         failure: Failed to connect %{provider} account. Please try again.
         success: Successfully connected %{provider} account.
+        unverified_email_collision: An account with this email already exists, and
+          %{provider} has not verified the address. Sign in with your existing method,
+          then connect %{provider} from Settings.
       destroy:
         cannot_delete_last_oauth: Cannot disconnect your %{provider} account because
           you signed up using OAuth and don't have a password set. Please set a password
