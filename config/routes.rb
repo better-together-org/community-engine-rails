@@ -426,16 +426,8 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
 
-              resources :billing_reports, only: %i[index new create destroy] do
-                member do
-                  get :download
-                end
-              end
-
               resources :reports, only: [:index] do
                 collection do
-                  get :billing_revenue_data
-                  get :billing_tax_by_rate_data
                   get :page_views_by_url_data
                   get :page_views_daily_data
                   get :link_clicks_by_url_data

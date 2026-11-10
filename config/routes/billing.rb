@@ -147,10 +147,34 @@ concern :billing_offline_payments do
   end
 end
 
+# Billing reports on the metrics dashboard: the saved reports and the two chart data endpoints. Same access as the
+# metrics routes in routes.rb; the controllers add the billing permission check.
+concern :billing_metrics do
+  authenticated :user, lambda { |u|
+    u.permitted_to?('view_metrics_dashboard') || u.permitted_to?('manage_platform')
+  } do
+    scope path: 'host' do
+      namespace :metrics do
+        resources :billing_reports, only: %i[index new create destroy] do
+          member do
+            get :download
+          end
+        end
+        resources :reports, only: [] do
+          collection do
+            get :billing_revenue_data
+            get :billing_tax_by_rate_data
+          end
+        end
+      end
+    end
+  end
+end
+
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
     concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
-             :billing_entitlements, :billing_tax, :billing_lookups
+             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics
   end
 end
