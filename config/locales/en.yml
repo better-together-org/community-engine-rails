@@ -976,6 +976,8 @@ en:
         review_title: Review and accept
         tax_note: Tax, if any, is worked out from your billing address and shown before
           you confirm.
+        tax_note_new_address: Tax is worked out from the address you enter, and shown
+          on your order before you pay.
         title: Get %{plan}
         unavailable_currency_not_supported: Not available in this currency.
         unavailable_insufficient_credit: You do not have enough store credit for this.

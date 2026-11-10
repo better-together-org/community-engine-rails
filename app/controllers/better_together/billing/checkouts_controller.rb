@@ -28,9 +28,8 @@ module BetterTogether
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
         return render_again(:method_not_available) unless @method
-        return render_again(:parts_too_large) if parts_too_large?
-
         return render_again(@address_error) unless choose_address
+        return render_again(:parts_too_large) if parts_too_large?
 
         @gate = build_gate
         return render_again(:not_ready) unless @gate.ready?
@@ -49,7 +48,7 @@ module BetterTogether
 
       def load_addresses
         options = Checkout::BillingAddressOptions.new(platform: billing_owner, person: current_user.person,
-                                                      selected_id: params[:billing_address_id])
+                                                      selected_id: @address&.id || params[:billing_address_id])
         @addresses = options.addresses
         @selected_address_id = options.selected_id
         @new_address = @refused_address || options.blank_address

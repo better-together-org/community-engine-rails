@@ -976,6 +976,8 @@ fr:
         review_title: Lire et accepter
         tax_note: La taxe, le cas échéant, est calculée selon votre adresse de facturation
           et affichée avant la confirmation.
+        tax_note_new_address: La taxe est calculée selon l'adresse que vous saisissez
+          et affichée sur votre commande avant le paiement.
         title: Obtenir %{plan}
         unavailable_currency_not_supported: Non disponible dans cette devise.
         unavailable_insufficient_credit: Vous n'avez pas assez de crédit en magasin

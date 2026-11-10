@@ -82,6 +82,10 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
   end
 
   describe 'POST create' do
+    let(:zone_for) do
+      ->(region) { create(:better_together_billing_tax_zone, platform: host_platform, country_iso: 'CA', region_code: region) }
+    end
+
     it 'places the order with credit for the amount given and cash for the rest' do
       give_credit(1500)
 
@@ -92,6 +96,25 @@ RSpec.describe 'Paying in parts at checkout' do # rubocop:disable RSpec/Describe
       expect(order).to be_partially_paid
       paid_by = order.payments.map { |payment| [payment.processor, payment.amount_cents] }
       expect(paid_by).to contain_exactly(['store_credit', 1000], ['cash', 3000])
+    end
+
+    it 'counts the tax on a newly entered address when judging whether the parts cover the whole', :aggregate_failures do
+      give_credit(4000)
+      create(:better_together_billing_tax_registration, platform: host_platform, country_iso: 'CA')
+      create(:better_together_billing_tax_rate, platform: host_platform, label: 'HST', rate: 0.15,
+                                                tax_zone: zone_for.call('NL'))
+      address = { line1: '7 Pine', postal_code: 'A1B 2C3', country_id: buyer_address.country_id,
+                  state_id: buyer_address.state_id }
+
+      post checkout_path, params: { plan_id: plan.id, payment_method: 'cash', part_amounts: { 'store_credit' => '40.00' },
+                                    billing_address_id: 'new', billing_address: address,
+                                    **ticks(plan, %w[cash store_credit], 'one_time') }
+
+      order = BetterTogether::Billing::Order.last
+      expect(order.total_cents).to eq(4600)
+      expect(order.payments.map do |payment|
+        [payment.processor, payment.amount_cents]
+      end).to contain_exactly(['store_credit', 4000], ['cash', 600])
     end
 
     it 'places a plain single-way order as before when no amounts are given' do

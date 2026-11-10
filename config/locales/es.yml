@@ -968,6 +968,8 @@ es:
         review_title: Revisar y aceptar
         tax_note: El impuesto, si corresponde, se calcula según su dirección de facturación
           y se muestra antes de confirmar.
+        tax_note_new_address: El impuesto se calcula con la dirección que ingreses
+          y se muestra en tu pedido antes de pagar.
         title: Obtener %{plan}
         unavailable_currency_not_supported: No disponible en esta moneda.
         unavailable_insufficient_credit: No tienes suficiente crédito de la tienda

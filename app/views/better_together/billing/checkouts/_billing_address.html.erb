@@ -1,8 +1,12 @@
-<%# locals: (addresses:, selected_id:, new_address:) %>
+<%# locals: (addresses:, selected_id:, new_address:, plan_id:) %>
 <%# Where the buyer is billed. Tax is worked out from it, so the country and state or province must be chosen from the lists. %>
 <% scope = 'better_together.billing.checkout.address' %>
 <% choosing_new = selected_id == 'new' || addresses.empty? %>
-<section id="billing-checkout-address" class="card mb-4" aria-labelledby="billing-checkout-address-title">
+<section id="billing-checkout-address" class="card mb-4" aria-labelledby="billing-checkout-address-title"
+         data-controller="better_together--billing-checkout-address"
+         data-better_together--billing-checkout-address-frame-id-value="billing-checkout-tax-frame"
+         data-better_together--billing-checkout-address-url-value="<%= new_billing_checkout_path(locale: I18n.locale) %>"
+         data-better_together--billing-checkout-address-plan-id-value="<%= plan_id %>">
   <div class="card-header"><strong id="billing-checkout-address-title"><%= t("#{scope}.title") %></strong></div>
   <div class="card-body">
     <p class="text-body-secondary" id="billing-checkout-address-hint"><%= t("#{scope}.hint") %></p>
@@ -13,7 +17,8 @@
                      options_for_select(addresses.map { |address| [address.select_option_title, address.id] } + [[t("#{scope}.new_option"), 'new']],
                                         choosing_new ? 'new' : selected_id),
                      id: 'billing-checkout-address-select', class: 'form-select',
-                     'data-controller': 'better_together--slim-select' %>
+                     'data-controller': 'better_together--slim-select',
+                     'data-action': 'change->better_together--billing-checkout-address#refresh' %>
     </div>
 
     <%# The new address, shown whatever the select says so the page works without scripts; the server only reads it when "new" is chosen. %>
