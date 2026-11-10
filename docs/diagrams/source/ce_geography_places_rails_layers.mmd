@@ -6,7 +6,7 @@ classDiagram
     class BetterTogether__Address["Address"] {
       <<Model>>
       table: better_together_addresses
-      concerns: BetterTogetherId, Geography::Geospatial::One, Geography::Locatable::Many, Geography::Placeable +6
+      concerns: BetterTogetherId, Geography::AddressLinks, Geography::Geospatial::One, Geography::Locatable::Many +7
       weak refs: owner: seeds, owner: geospatial_space, owner: locatable_locations
     }
     class BetterTogether__Geography__Continent["Geography::Continent"] {
@@ -93,6 +93,9 @@ classDiagram
   }
 
   BetterTogether__Address --> BetterTogether__Platform : platform
+  BetterTogether__Address --> BetterTogether__Geography__Country : country
+  BetterTogether__Address --> BetterTogether__Geography__State : state
+  BetterTogether__Address --> BetterTogether__Geography__Settlement : settlement
   BetterTogether__Address --> BetterTogether__ContactDetail : contact_detail
   BetterTogether__Geography__Continent --> BetterTogether__Community : community
   BetterTogether__Geography__Country --> BetterTogether__Community : community
