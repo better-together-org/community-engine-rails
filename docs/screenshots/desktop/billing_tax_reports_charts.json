@@ -13,7 +13,7 @@
       "selector": "#chart-billing-revenue canvas",
       "title": "Revenue, tax and refunds",
       "bullets": [
-        "Revenue by period, split into taxable, non-taxable and exempt.",
+        "Revenue by period: taxable, non-taxable, exempt.",
         "Tax is net of refunds."
       ],
       "target": {
@@ -41,7 +41,7 @@
         "x": 24.0,
         "y": 44,
         "width": 380,
-        "height": 216
+        "height": 190
       }
     }
   ]
