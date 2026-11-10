@@ -89,3 +89,7 @@ The CRA (Excise Tax Act, sections 211.21 and 211.25, in effect July 1, 2021) mak
 ## Not built yet
 
 Registration and settings screens, the seller's agreement to collect tax, the buyer's address at checkout, processor adapter input and output, subscription renewal tax, refunds that split net and tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
+
+## Sellers: a later phase
+
+Registrations, categories and the calculator already support a seller (a community or a person) having a registration of their own: the columns, the `SellerScoped` rules and the calculator's seller-then-platform choice are in place, and tests cover them. What is not built yet is anything a seller uses themselves: a seller's tax settings screen, the seller's tax collection agreement, and the community or person authorization it needs. That work is deliberately left until the platform-level billing system has been merged, deployed and tested; nothing in the design blocks it, and it will add a community branch to `OwnerPolicy` rather than change the platform screens.
