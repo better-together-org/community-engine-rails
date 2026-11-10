@@ -13,6 +13,10 @@ callouts:
 - :id: client_secret
   :title: Client secret
   :description: Stored encrypted, never shown again.
+- :id: domains
+  :title: Allowed domains
+  :description: The platform domains whose callback URL this provider configuration
+    may serve.
 - :id: submit
   :title: Add provider
   :description: Submits the form.

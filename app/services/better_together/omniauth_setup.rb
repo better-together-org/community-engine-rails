@@ -5,8 +5,8 @@ module BetterTogether
   # provider, resolved from the platform serving the request.
   class OmniauthSetup
     def self.call(key, env)
-      platform = PlatformDomain.resolve(Rack::Request.new(env).host)&.platform
-      apply(env['omniauth.strategy'].options, IdentityProviderCredentials.resolve(key, platform:))
+      creds = IdentityProviderCredentials.resolve(key, domain: OmniauthFullHost.domain_for(env))
+      apply(env['omniauth.strategy'].options, creds) if creds
     rescue ActiveRecord::ActiveRecordError => e
       Rails.logger.warn("[OAuth] credential resolution failed for #{key}: #{e.class}")
     end

@@ -11,6 +11,10 @@ RSpec.describe 'GitHub OAuth Integration', :no_auth, :omniauth, :skip_host_setup
   before do
     # Set up test platform for host application
     platform.update!(requires_invitation: false, privacy: 'public')
+
+    # Sign-in is refused on domains with no provider configuration
+    ensure_host_platform_domain(platform)
+    stub_provider_env('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET')
   end
 
   describe 'OAuth authentication flow' do

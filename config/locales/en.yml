@@ -3330,6 +3330,9 @@ en:
         client_secret_keep: Leave blank to keep the current secret
         client_secret_label: Client secret
         create_btn: Add provider
+        domains_hint: Sign-in with this provider works only on the checked domains.
+          Each domain's callback URL must also be registered with the provider.
+        domains_label: Allowed domains
         enabled_label: Enabled
         scopes_hint: Leave blank to use the provider default.
         scopes_label: Scopes

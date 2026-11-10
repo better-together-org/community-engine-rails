@@ -569,6 +569,12 @@ classDiagram
       concerns: BetterTogetherId, Seedable
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformIdentityProviderDomain["PlatformIdentityProviderDomain"] {
+      <<Model>>
+      table: better_together_platform_identity_provider_domains
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
       table: better_together_quotas
@@ -813,6 +819,8 @@ classDiagram
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : platform
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
+  BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider
+  BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformDomain : platform_domain
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota

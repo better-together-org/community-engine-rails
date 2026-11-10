@@ -18,6 +18,9 @@ module BetterTogether
     scope :as_share_domain,     -> { where(share_domain: true) }
     scope :share_domain_active, -> { as_share_domain.active }
 
+    has_many :platform_identity_provider_domains, class_name: '::BetterTogether::PlatformIdentityProviderDomain',
+                                                  dependent: :destroy
+
     before_validation :normalize_hostname!
     after_commit      :bust_resolve_cache
 

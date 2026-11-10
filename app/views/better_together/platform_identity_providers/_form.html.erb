@@ -34,6 +34,20 @@
     <div class="form-text"><%= t('.scopes_hint') %></div>
   </div>
 
+  <fieldset class="mb-3" id="platform-identity-provider-domains">
+    <legend class="form-label fs-6"><%= t('.domains_label') %></legend>
+    <div class="form-text mb-2"><%= t('.domains_hint') %></div>
+    <%= hidden_field_tag 'platform_identity_provider[platform_domain_ids][]', '', id: nil %>
+    <% available_domains.each do |domain| %>
+      <div class="form-check platform-identity-provider-domain">
+        <%= check_box_tag 'platform_identity_provider[platform_domain_ids][]', domain.id,
+                          identity_provider.platform_domain_ids.include?(domain.id),
+                          id: "platform_identity_provider_domain_#{domain.id}", class: 'form-check-input' %>
+        <%= label_tag "platform_identity_provider_domain_#{domain.id}", domain.hostname, class: 'form-check-label' %>
+      </div>
+    <% end %>
+  </fieldset>
+
   <div class="form-check mb-3">
     <%= form.check_box :enabled, id: 'platform_identity_provider_enabled', class: 'form-check-input' %>
     <%= form.label :enabled, t('.enabled_label'), for: 'platform_identity_provider_enabled', class: 'form-check-label' %>

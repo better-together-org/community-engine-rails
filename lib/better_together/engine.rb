@@ -155,6 +155,13 @@ module BetterTogether
       ]
     end
 
+    # Gate every OmniAuth request/callback by platform domain, after Warden and so ahead of the
+    # strategies Devise appends later (session, flash and Warden are then available to the failure handler).
+    initializer 'better_together.omniauth_platform_gate' do |app|
+      require root.join('app/middleware/better_together/omniauth_platform_gate').to_s
+      app.middleware.insert_after(Warden::Manager, BetterTogether::OmniauthPlatformGate)
+    end
+
     initializer 'better_together.action_mailer' do |app|
       if Rails.env.development?
         app.config.action_mailer.show_previews = true

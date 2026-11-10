@@ -23,36 +23,38 @@ module BetterTogether
       end
     end
 
-    def self.resolve(key, platform: nil)
-      new(key, platform).resolve
+    # Credentials for a provider on one platform domain, or nil when the provider is not
+    # configured for that domain. There is no fallback to another platform's configuration:
+    # the domain must be on the configuration's allow-list. Environment variables are the
+    # host platform's own configuration and apply to the host platform's domains only.
+    def self.resolve(key, domain:)
+      new(key, domain).resolve
     end
 
-    def self.configured?(key, platform: nil)
-      resolve(key, platform:).then { |r| r.client_id.present? && r.client_secret.present? }
+    def self.configured?(key, domain:)
+      resolve(key, domain:)&.then { |r| r.client_id.present? && r.client_secret.present? } || false
     end
 
-    def initialize(key, platform)
+    def initialize(key, domain)
       @provider = IdentityProviders.fetch(key)
-      @platform = platform
+      @domain = domain
     end
 
     def resolve
-      row = row_for(@platform) || row_for(host_platform)
-      return from_row(row) if row
+      return unless @domain
 
-      from_env
+      row = row_for_domain
+      return (row.enabled? ? from_row(row) : nil) if row
+
+      from_env if @domain.platform&.host?
     end
 
     private
 
-    def row_for(platform)
-      return unless platform
-
-      PlatformIdentityProvider.enabled.find_by(platform_id: platform.id, strategy: @provider.key.to_s)
-    end
-
-    def host_platform
-      Platform.find_by(host: true)
+    def row_for_domain
+      PlatformIdentityProvider.where(strategy: @provider.key.to_s)
+                              .joins(:provider_domains)
+                              .find_by(PlatformIdentityProviderDomain.table_name => { platform_domain_id: @domain.id })
     end
 
     def from_row(row)

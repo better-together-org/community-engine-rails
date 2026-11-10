@@ -43,6 +43,17 @@ RSpec.describe 'Platform identity providers admin', :as_platform_manager do # ru
       expect(response).to redirect_to(base)
     end
 
+    it 'stores only the allowed domains that belong to the platform', :aggregate_failures do
+      own = BetterTogether::PlatformDomain.create!(platform:, hostname: 'own.example.test', active: true)
+      foreign = BetterTogether::PlatformDomain.create!(platform: create(:better_together_platform),
+                                                       hostname: 'foreign.example.test', active: true)
+      params[:platform_identity_provider][:platform_domain_ids] = ['', own.id, foreign.id]
+      post base, params: params
+
+      row = BetterTogether::PlatformIdentityProvider.last
+      expect(row.platform_domains).to include(own)
+    end
+
     it 'rejects an unregistered strategy' do
       params[:platform_identity_provider][:strategy] = 'myspace'
 

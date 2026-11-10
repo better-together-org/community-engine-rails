@@ -3378,6 +3378,10 @@ es:
         client_secret_keep: Déjelo en blanco para conservar el secreto actual
         client_secret_label: Secreto de cliente
         create_btn: Agregar proveedor
+        domains_hint: El inicio de sesión con este proveedor solo funciona en los
+          dominios marcados. La URL de retorno de cada dominio también debe estar
+          registrada en el proveedor.
+        domains_label: Dominios permitidos
         enabled_label: Habilitado
         scopes_hint: Déjelo en blanco para usar el valor predeterminado del proveedor.
         scopes_label: Ámbitos

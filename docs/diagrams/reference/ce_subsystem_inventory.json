@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T20:10:19Z",
+  "generated_at": "2026-11-10T23:15:24Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -7494,6 +7494,12 @@
           "from": "BetterTogether::CommunityInvitationNotifier::Notification",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::PlatformIdentityProviderDomain",
+          "to": "BetterTogether::PlatformDomain",
+          "label": "platform_domain (platform_domain_id)",
           "source_subsystem": "shared_supporting"
         },
         {
@@ -30053,6 +30059,7 @@
             ]
           ],
           "validations": [
+            "FormatValidator: client_id, client_secret (allow_nil=true, without=/[[:cntrl:]\\s]/, message=:invalid_characters)",
             "PresenceValidator: strategy",
             "InclusionValidator: strategy (in=dynamic)",
             "UniquenessValidator: provider_platform_id (scope=:platform_id)"
@@ -30097,6 +30104,62 @@
               "name": "provider_platform",
               "foreign_key": "provider_platform_id",
               "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::PlatformIdentityProviderDomain",
+          "label": "PlatformIdentityProviderDomain",
+          "source_path": "app/models/better_together/platform_identity_provider_domain.rb",
+          "table_name": "better_together_platform_identity_provider_domains",
+          "columns": [
+            [
+              "platform_domain_id",
+              "uuid FK"
+            ],
+            [
+              "platform_identity_provider_id",
+              "uuid FK"
+            ]
+          ],
+          "validations": [
+            "UniquenessValidator: platform_domain_id (scope=:platform_identity_provider_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform_identity_provider",
+              "foreign_key": "platform_identity_provider_id",
+              "target": "BetterTogether::PlatformIdentityProvider",
+              "optional": false
+            },
+            {
+              "name": "platform_domain",
+              "foreign_key": "platform_domain_id",
+              "target": "BetterTogether::PlatformDomain",
+              "optional": false
+            }
+          ],
+          "polymorphic": [
+            {
+              "direction": "has_many",
+              "name": "seeds",
+              "as": "seedable",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            }
+          ],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::BetterTogetherId",
+            "BetterTogether::Seedable"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform_domain",
+              "foreign_key": "platform_domain_id",
+              "target": "BetterTogether::PlatformDomain",
               "optional": false,
               "target_subsystem": "platform_network"
             }
@@ -32870,6 +32933,7 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
             "EventSeriesSession",
@@ -33506,6 +33570,7 @@
             "Weather::Forecast",
             "Weather::CurrentCondition",
             "Infrastructure::BuildingConnection",
+            "PlatformIdentityProviderDomain",
             "PlatformIdentityProvider",
             "FederationContentGrant",
             "EventSeriesSession",
@@ -33937,6 +34002,12 @@
           "from": "BetterTogether::PlatformIdentityProvider",
           "to": "BetterTogether::Platform",
           "label": "provider_platform (provider_platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::PlatformIdentityProviderDomain",
+          "to": "BetterTogether::PlatformDomain",
+          "label": "platform_domain (platform_domain_id)",
           "target_subsystem": "platform_network"
         },
         {

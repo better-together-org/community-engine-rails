@@ -3399,6 +3399,10 @@ fr:
         client_secret_keep: Laisser vide pour conserver le secret actuel
         client_secret_label: Secret client
         create_btn: Ajouter le fournisseur
+        domains_hint: La connexion avec ce fournisseur ne fonctionne que sur les domaines
+          cochés. L'URL de rappel de chaque domaine doit aussi être enregistrée auprès
+          du fournisseur.
+        domains_label: Domaines autorisés
         enabled_label: Activé
         scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
         scopes_label: Portées

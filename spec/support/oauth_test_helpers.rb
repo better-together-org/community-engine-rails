@@ -2,6 +2,22 @@
 
 # Helpers for stubbing OAuth providers and callbacks in specs.
 module OAuthTestHelpers # :nodoc:
+  # The test host platform has no PlatformDomain row; sign-in is authorized per domain, so give it one.
+  def ensure_host_platform_domain(platform = BetterTogether::Platform.find_by(host: true))
+    BetterTogether::PlatformDomain.find_or_create_by!(hostname: 'www.example.com') do |domain|
+      domain.platform = platform
+      domain.active = true
+      domain.primary_flag = true
+    end
+  end
+
+  # ENV is the host platform's provider configuration (applies to the host platform's domains only).
+  def stub_provider_env(id_var, secret_var)
+    allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch).with(id_var, nil).and_return('test-client-id')
+    allow(ENV).to receive(:fetch).with(secret_var, nil).and_return('test-client-secret')
+  end
+
   # Generate a mock OAuth auth hash for testing
   # rubocop:todo Metrics/PerceivedComplexity
   # rubocop:todo Metrics/MethodLength
