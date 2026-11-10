@@ -7,6 +7,7 @@ The subsystem diagram package is generated from live Rails reflections so the ex
 ```bash
 bin/export_schema_diagrams            # DBML + full-schema ERD + subsystem ERDs
 bin/export_schema_diagrams --skip-subsystems   # no database needed
+bin/check_diagrams --fix                    # regenerate everything and stage it (the pre-commit hook runs this)
 ```
 
 Run it after any migration or change to `spec/dummy/db/schema.rb`. It:
