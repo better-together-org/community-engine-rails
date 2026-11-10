@@ -110,6 +110,10 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
       metadata: screenshot_metadata(flow: 'billing_walk_up_sale', role: 'platform_manager'),
       callouts: [{ id: 'form', selector: '#billing-walk-up-form', title: 'A sale in person', avoid_container_selector: 'main',
                    bullets: ['The buyer does nothing; they are told afterwards.'] },
+                 { id: 'new-buyer', selector: '#billing-walk-up-buyer-name', title: 'Not on the platform yet?', avoid_container_selector: 'main',
+                   bullets: ['Give a name and the email their notices go to; they are added and invited to join.'] },
+                 { id: 'address', selector: '#billing-walk-up-address', title: 'Billing address', avoid_container_selector: 'main',
+                   bullets: ['Optional. Kept with the order, and saved to the buyer if they have none.'] },
                  { id: 'agreements', selector: '#billing-walk-up-agreements', title: 'Agreements', avoid_container_selector: 'main',
                    bullets: ['Recorded as accepted in person, with you as the person who recorded it.'] }]
     ) do

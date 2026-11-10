@@ -1790,11 +1790,26 @@ es:
         state_unpaid: Caducada
         terms_accepted: Gracias. Tu factura de renovación está lista.
       walk_up:
+        address_city_name: Ciudad
+        address_country_name: País
+        address_hint: Se guarda con este pedido y en el comprador si aún no tiene
+          dirección. Indique calle, ciudad y país, o deje todo vacío.
+        address_legend: Dirección de facturación (opcional)
+        address_line1: Dirección
+        address_line2: Apartamento, oficina o unidad
+        address_postal_code: Código postal
+        address_state_province_name: Provincia o estado
         agreements_label: El comprador ha leído y aceptado los acuerdos de compra
           conmigo, en persona
-        buyer_hint: El comprador ya debe ser miembro de esta plataforma. Escriba al
-          menos dos letras de un nombre o identificador.
+        buyer_email_hint: Los avisos de pago de esta venta se envían aquí.
+        buyer_email_label: Correo del comprador
+        buyer_hint: Elija a alguien que ya esté en esta plataforma, o deje esto vacío
+          e indique un nombre abajo para añadirlo. Escriba al menos dos letras de
+          un nombre o identificador.
         buyer_label: Comprador
+        buyer_name_hint: Solo es necesario si no elige a nadie arriba. Se le añade
+          como miembro y se le invita a unirse a la comunidad.
+        buyer_name_label: Nombre (si el comprador aún no está en la plataforma)
         buyer_placeholder: Buscar por nombre o identificador
         error_refused: No se pudo registrar esa venta. Revise el comprador, la forma
           de pago y los acuerdos.

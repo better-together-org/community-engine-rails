@@ -65,6 +65,8 @@ flowchart TD
 - [PNG export](../diagrams/exports/png/billing_notification_flow.png) - high-resolution image
 - [SVG export](../diagrams/exports/svg/billing_notification_flow.svg) - vector graphics
 
+For an order that records a buyer email (a sale in person), the buyer's notices are sent to that address instead of the person's own (`Notifier#address_for`), so someone who is not on the platform yet still hears about their payments.
+
 ## When a notification is sent
 
 There is one way in, `Billing::Notifications.deliver(kind, subject:, dedupe_key:, actor:)`, and three places it is called from. None of them is a Pay model callback or Pay's webhook delegator.

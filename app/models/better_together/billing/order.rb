@@ -15,6 +15,7 @@ module BetterTogether
       include PlatformBound
       include SellerScoped
       include Subjectable
+      include EncryptedAttributes
 
       self.table_name = 'better_together_billing_orders'
 
@@ -59,10 +60,15 @@ module BetterTogether
       has_many :offline_payments, class_name: 'BetterTogether::Billing::OfflinePayment', inverse_of: :order,
                                   dependent: :restrict_with_error
 
+      # Where billing notices for this order go, and the billing address given at the sale. Personal data, so encrypted.
+      encrypts_billing_attribute :buyer_email
+      encrypts_billing_attribute :billing_address, json: true
+
       before_validation :set_number, on: :create
       before_validation :total_up
 
       validates :purpose, inclusion: { in: PURPOSES }
+      validates :buyer_email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
       validates :status, inclusion: { in: STATUSES }
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
       validates :number, presence: true, uniqueness: { scope: :platform_id }
