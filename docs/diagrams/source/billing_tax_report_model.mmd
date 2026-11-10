@@ -5,7 +5,7 @@ classDiagram
   class BillingReport {
     +platform  the platform it was made on
     +creator  the person who made it
-    +filters  from_date, to_date, owner, interval
+    +filters  from_date, to_date, owner, interval, basis (paid or invoice day)
     +file_format  csv
     +report_data  the figures, one block per currency
     +report_file  the CSV, attached by the job
@@ -13,6 +13,9 @@ classDiagram
   class TaxReport {
     +call  reads one span, one owner, one interval
     +Owner  all, platform, or one seller
+    +revenue  taxable, zero-rated, non-taxable, exempt
+    +authority_rows  tax owed per administrator
+    +regions and registrations  masked numbers
   }
   class ChartData {
     +revenue  stacked by period
@@ -21,7 +24,10 @@ classDiagram
   class Csv
   class GenerateBillingReportJob
   class Order
-  class TaxLine
+  class TaxLine {
+    +authority  gst_hst, pst, qst, rst, vat, other
+  }
+  class TaxRegistration
   class Payment
   class Refund
   PlatformRecord <|-- BillingReport
@@ -33,5 +39,6 @@ classDiagram
   ChartData ..> TaxReport : charts its figures
   TaxReport ..> Order : sales and revenue
   TaxReport ..> TaxLine : tax by rate
+  TaxReport ..> TaxRegistration : who collected, masked
   TaxReport ..> Payment : payment methods
   TaxReport ..> Refund : netted off

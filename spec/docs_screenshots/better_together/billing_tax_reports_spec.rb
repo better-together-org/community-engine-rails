@@ -74,6 +74,19 @@ RSpec.describe 'Documentation screenshots for the billing tax reports', # ruboco
     end
   end
 
+  it 'captures the tax owed per administrator' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_tax_reports_authorities', device: :both, metadata: metadata('billing_tax_reports_authorities'),
+                                         callouts: [{ id: 'authorities', selector: '#billing-summary-cad-authorities', title: 'Tax owed',
+                                                      avoid_container_selector: 'main',
+                                                      bullets: ['One line per tax administrator, net of refunds.'] }]
+    ) do
+      open_billing_tab
+      expect(page).to have_css('#billing-summary-cad-authorities')
+      scroll_to(find('#billing-summary-cad-authorities'), align: :center)
+    end
+  end
+
   it 'captures the saved reports list' do
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_tax_reports_saved', device: :both, metadata: metadata('billing_tax_reports_saved'),
