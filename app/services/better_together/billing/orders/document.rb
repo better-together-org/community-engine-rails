@@ -102,7 +102,7 @@ module BetterTogether
         def item_rows
           summary.lines.map do |line|
             cells = [line.description]
-            cells << t_summary(line.taxed ? :taxed : :not_taxed) if summary.taxed?
+            cells << (line.taxed ? t_summary(:taxed) : '') if summary.taxed?
             [*cells, line.quantity.to_s, { content: money(line.amount_cents), align: :right }]
           end
         end

@@ -37,6 +37,15 @@ RSpec.describe BetterTogether::Billing::Orders::Document do
       expect(summary.total_cents).to eq(5174)
     end
 
+    it 'leaves the tax cell empty for a line that is not taxed', :aggregate_failures do
+      document = described_class.new(order)
+      line = BetterTogether::Billing::Orders::Summary::Line
+      allow(document.summary).to receive(:lines).and_return([line.new(description: 'Plan', quantity: 1, amount_cents: 4500, taxed: true),
+                                                             line.new(description: 'Produce', quantity: 2, amount_cents: 800, taxed: false)])
+
+      expect(document.sections[:items].drop(1).map { |row| row[1] }).to eq(['Taxed', ''])
+    end
+
     it 'ends with the registration numbers of whoever collected each tax' do
       expect(described_class.new(order).sections[:footer]).to include('GST: 123456789RT0001', 'QST: 1234567890TQ0001')
     end
