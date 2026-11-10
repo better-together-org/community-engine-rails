@@ -102,9 +102,13 @@ The CRA (Excise Tax Act, sections 211.21 and 211.25, in effect July 1, 2021) mak
 
 A processor checkout session is given the order's tax (`tax_cents`, `included_tax_cents`, `prices_include_tax`) and may report the `tax_cents` it will charge. `Payments::Succeed` records the amount actually charged and, if it differs from the amount core asked for, tells the operators once (`payment_amount_mismatch`). A subscription renewal is an ordinary order placed through the same calculator, taxed for the place the subscriber was last taxed for (the latest invoice's, else the order that started the subscription) with the rates and registration in force at the time of the invoice.
 
+## Refunds
+
+A refund keeps `tax_cents`: its share of the order's tax, pro-rated at the time it is recorded (`Refunds::ProRatedTax`), never worked out again from today's rates. The share is the refund's part of the order total, rounded half up; the refund that completes what the order took in takes the tax that is left, so refunded tax equals the order's tax to the cent. `Refund#net_cents` is the amount without the tax. The refund forms on a sale tell the seller how much tax the order carries.
+
 ## Not built yet
 
-The seller's agreement to collect tax, refunds that split net and tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
+The seller's agreement to collect tax, tax lines in receipts, and monthly, quarterly and yearly reports. See the plan for the stages.
 
 ## Sellers: a later phase
 

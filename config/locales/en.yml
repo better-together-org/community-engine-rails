@@ -1739,6 +1739,8 @@ en:
         refund_record: Record refund
         refund_recorded: Refund recorded. The buyer has been told.
         refund_refused: That refund could not be recorded. Check the amount.
+        refund_tax_hint: This order includes %{tax} of tax in %{total}. Each refund
+          carries its share of that tax, split from the net amount.
         return_credit_btn: Return the credit payments
         return_heading: Return payments
         return_hint: This order is part paid and stays open for the buyer to pay the

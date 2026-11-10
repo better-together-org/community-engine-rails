@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T02:04:57Z",
+  "generated_at": "2026-11-10T02:36:36Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -27536,6 +27536,10 @@
             [
               "amount_cents",
               "integer"
+            ],
+            [
+              "tax_cents",
+              "integer"
             ]
           ],
           "validations": [
@@ -27544,9 +27548,9 @@
             "InclusionValidator: status (in=[\"pending\", \"succeeded\", \"failed\", \"recorded\"])",
             "InclusionValidator: reason (allow_blank=true, in=[\"requested_by_buyer\", \"duplicate\", \"cancelled_event\", \"cancelled_order\", \"bounced\", \"dispute_lost\", \"fraudulent\", \"error\", \"other\"])",
             "NumericalityValidator: amount_cents (only_integer=true, greater_than=0)",
+            "NumericalityValidator: tax_cents (only_integer=true, greater_than_or_equal_to=0)",
             "InclusionValidator: currency (in=[\"AUD\", \"BRL\", \"CAD\", \"CHF\", \"CNY\", \"DKK\", \"EUR\", \"GBP\", \"HKD\", \"INR\", \"JPY\", \"KRW\", \"MXN\", \"NOK\", \"NZD\", \"PLN\", \"SEK\", \"SGD\", \"USD\", \"ZAR\"])",
-            "PresenceValidator: idempotency_key",
-            "UniquenessValidator: idempotency_key (scope=:platform_id)"
+            "PresenceValidator: idempotency_key"
           ],
           "belongs_to": [
             {

@@ -1740,6 +1740,8 @@ es:
         refund_record: Registrar reembolso
         refund_recorded: Reembolso registrado. Se informó al comprador.
         refund_refused: No se pudo registrar ese reembolso. Revise el importe.
+        refund_tax_hint: Este pedido incluye %{tax} de impuesto en %{total}. Cada
+          reembolso lleva su parte de ese impuesto, separada del importe neto.
         return_credit_btn: Devolver los pagos con crédito
         return_heading: Devolver pagos
         return_hint: Este pedido está pagado en parte y sigue abierto para que el

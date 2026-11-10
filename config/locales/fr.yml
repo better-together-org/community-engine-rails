@@ -1777,6 +1777,8 @@ fr:
         refund_record: Enregistrer le remboursement
         refund_recorded: Remboursement enregistré. L’acheteur a été informé.
         refund_refused: Ce remboursement n’a pas pu être enregistré. Vérifiez le montant.
+        refund_tax_hint: Cette commande comprend %{tax} de taxe sur %{total}. Chaque
+          remboursement comporte sa part de cette taxe, distincte du montant net.
         return_credit_btn: Rendre les paiements en crédit
         return_heading: Rendre les paiements
         return_hint: Cette commande est partiellement payée et reste ouverte pour

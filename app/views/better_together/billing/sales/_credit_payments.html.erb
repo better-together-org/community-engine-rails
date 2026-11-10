@@ -4,6 +4,9 @@
     <div class="card-header"><strong><%= t('better_together.billing.sales.credit_refund_heading') %></strong></div>
     <div class="card-body">
       <p class="form-text"><%= t('better_together.billing.sales.credit_refund_hint') %></p>
+      <% if order.tax_cents.positive? %>
+        <p id="<%= dom_id(payment, :credit_refund_tax) %>" class="form-text billing-refund-tax-hint"><%= t('better_together.billing.sales.refund_tax_hint', tax: billing_amount(order.tax_cents, order.currency), total: billing_amount(order.total_cents, order.currency)) %></p>
+      <% end %>
       <%= form_with url: billing_sale_refund_path(order, locale: I18n.locale), method: :post, id: "billing-sale-credit-refund-form-#{payment.id}" do %>
         <%= hidden_field_tag :payment_id, payment.id %>
         <%= hidden_field_tag :token, SecureRandom.hex(8) %>
