@@ -186,6 +186,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Schema ERD](diagrams/source/billing_schema_erd.mmd)
 - [Billing Entitlement Lifecycle Flow](diagrams/source/billing_entitlement_lifecycle_flow.mmd)
 - [Billing Entitlement Model](diagrams/source/billing_entitlement_model.mmd)
+- [Community Engine Localized Attributes](diagrams/source/ce_localized_attributes.mmd) - Models and Mobility attributes with storage type
 - [Billing Subscription Lifecycle Flow](diagrams/source/billing_subscription_lifecycle_flow.mmd)
 - [Billing Subscription Model](diagrams/source/billing_subscription_model.mmd)
 - [Billing Store Credit Flow](diagrams/source/billing_store_credit_flow.mmd)

@@ -4,6 +4,8 @@
 #   2. docs/diagrams/exports/{svg,png}/ce_full_schema_erd.*  (DBML -> Graphviz -> SVG -> PNG)
 #   3. the subsystem ERDs under docs/diagrams/source and their exports (Rails reflections, needs the dev
 #      container database); skipped with --skip-subsystems.
+#   4. the localized (Mobility) attribute diagram, docs/diagrams/source/ce_localized_attributes.mmd
+#      (bin/export_localized_attributes); also skipped with --skip-subsystems.
 #
 # --since=REF scopes step 3 to only the subsystems whose own model/controller files
 # changed since that git ref, leaving every other subsystem's exports untouched on disk
@@ -41,4 +43,5 @@ node scripts/render_schema_diagram.cjs "$TOOLS_DIR" db/community-engine-db.dbml 
 
 if [ "$SKIP_SUBSYSTEMS" = "0" ]; then
   bin/export_subsystem_diagrams "${SUBSYSTEM_ARGS[@]}"
+  bin/export_localized_attributes
 fi

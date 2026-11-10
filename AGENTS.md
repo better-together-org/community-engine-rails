@@ -1044,3 +1044,7 @@ bin/dc down                                      # Stop services
 ## Agreements
 
 Any flow where a person reads and accepts an agreement must reuse the shared modal and recorder. Read `.claude/skills/agreement-mechanism/SKILL.md` first.
+
+## Localization
+
+All user-facing text is localized: static copy through I18n, stored content through Mobility translated attributes with an explicit `type: :string` or `type: :text`, never plain columns. Any change to a `translates` attribute must regenerate and commit the localized attribute diagram with `bin/export_localized_attributes` before the commit. Read `.claude/skills/localization-mandatory/SKILL.md` first.
