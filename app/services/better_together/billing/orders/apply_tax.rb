@@ -42,7 +42,8 @@ module BetterTogether
 
         def tax_line_attributes(line)
           { platform_id: order.platform_id, order:, tax_rate: line.tax_rate, rate: line.rate,
-            amount_cents: line.amount_cents, included: line.included, registration_number: line.registration_number }
+            amount_cents: line.amount_cents, included: line.included, registration_number: line.registration_number,
+            authority: line.authority }
         end
       end
     end

@@ -53,6 +53,26 @@ RSpec.describe BetterTogether::Billing::Tax::Seeds::Planter do
     expect(host_platform.billing_tax_categories.find_by(identifier: 'standard').taxable).to be(true)
   end
 
+  it 'files each rate under its tax and adds the zero-rated and exempt categories' do
+    plant_geography
+
+    plant
+
+    authorities = BetterTogether::Billing::TaxRate.where(platform: host_platform).to_h { |rate| [rate.label(locale: :en), rate.authority] }
+    expect(authorities).to eq('GST' => 'gst_hst', 'HST' => 'gst_hst', 'PST' => 'pst', 'QST' => 'qst', 'RST' => 'rst')
+    expect(host_platform.billing_tax_categories.where(identifier: %w[zero_rated exempt]).pluck(:taxable)).to eq([false, false])
+  end
+
+  it 'names the tax of a rate planted before authorities existed, without touching its rate' do
+    plant_geography
+    plant
+    rate = host_platform.billing_tax_zones.find_by(state: tax_geography_state('CA', 'SK')).tax_rates.i18n.find_by(label: 'PST')
+    rate.update_columns(authority: 'other') # rubocop:disable Rails/SkipsModelValidations
+
+    expect { plant }.to change { rate.reload.authority }.from('other').to('pst')
+    expect(rate.rate.to_f).to eq(0.06)
+  end
+
   it 'only adds what is missing and never changes a rate that exists' do
     plant_geography
     plant
