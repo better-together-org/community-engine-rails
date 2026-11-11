@@ -31,6 +31,33 @@ module BetterTogether
       new(key, domain).resolve
     end
 
+    # Providers configured through environment variables for the host platform: for each, the
+    # host domains the environment still serves (those no provider row claims). Never returns values.
+    EnvProvider = Struct.new(:provider, :domains, keyword_init: true)
+
+    def self.env_providers(platform)
+      return [] unless platform&.host?
+
+      domains = platform.platform_domains.active.to_a
+      IdentityProviders.registry.values.select { |provider| env_configured?(provider) }.map do |provider|
+        EnvProvider.new(provider:, domains: domains.reject { |d| claimed?(provider, d) })
+      end
+    end
+
+    def self.env_configured?(provider)
+      return false unless provider.env_id && provider.env_secret
+
+      ENV.fetch(provider.env_id, nil).present? && ENV.fetch(provider.env_secret, nil).present?
+    end
+    private_class_method :env_configured?
+
+    def self.claimed?(provider, domain)
+      PlatformIdentityProviderDomain.joins(:platform_identity_provider)
+                                    .exists?(platform_domain_id: domain.id,
+                                             PlatformIdentityProvider.table_name => { strategy: provider.key.to_s })
+    end
+    private_class_method :claimed?
+
     def self.configured?(key, domain:)
       resolve(key, domain:)&.then { |r| r.client_id.present? && r.client_secret.present? } || false
     end

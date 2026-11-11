@@ -55,8 +55,8 @@ RSpec.describe 'Documentation screenshots for Platform sign-in providers admin U
       callouts: [
         { id: 'new_button', selector: '#new-platform-identity-provider-btn', title: 'Add provider',
           bullets: ['Opens the form to configure a sign-in provider for this platform.'] },
-        { id: 'env_note', selector: '#platform-identity-providers-env-note', title: 'Environment fallback',
-          bullets: ['Providers without a row use the server environment variables.'] }
+        { id: 'env_list', selector: '#platform-identity-providers-env', title: 'Configured by environment',
+          bullets: ['Shows which providers the server environment already serves, and on which domains.'] }
       ],
       narrative: {
         title: 'Sign-in providers: index',
@@ -65,16 +65,20 @@ RSpec.describe 'Documentation screenshots for Platform sign-in providers admin U
                       'OAuth providers this platform offers.',
         callouts: [
           { id: 'new_button', title: 'Add provider', description: 'Opens the new provider form.' },
-          { id: 'env_note', title: 'Environment fallback',
-            description: 'A provider with no row here still works if its environment variables are set.' }
+          { id: 'env_list', title: 'Configured by environment',
+            description: 'Environment-configured providers and the domains they serve; secrets are never shown.' }
         ],
         accessibility_notes: 'The table has an aria-label and a visually hidden Actions header; delete uses a confirm dialog.'
       }
     ) do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('GOOGLE_CLIENT_ID', nil).and_return('env-google-id')
+      allow(ENV).to receive(:fetch).with('GOOGLE_CLIENT_SECRET', nil).and_return('env-google-secret')
       capybara_login_as_platform_manager
       visit better_together.platform_platform_identity_providers_path(host_platform, locale: I18n.default_locale)
       expect(page).to have_css('#platform-identity-providers-table')
       expect(page).to have_content('Iv1.example-client-id')
+      expect(page).to have_css('#platform-identity-provider-env-google_oauth2')
     end
   end
 

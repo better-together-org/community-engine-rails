@@ -3423,8 +3423,16 @@ fr:
         disabled_label: Désactivé
         edit_btn: Modifier
         enabled_label: Activé
+        env_description: Ces fournisseurs sont définis par des variables d'environnement
+          et s'appliquent aux domaines de cette plateforme indiqués ci-dessous. Les
+          secrets ne sont jamais affichés. Ajoute une ligne de fournisseur pour gérer
+          un domaine ici.
         env_note: Les fournisseurs sans ligne ici utilisent les variables d'environnement
           du serveur (par exemple GITHUB_CLIENT_ID).
+        env_serves: 'Dessert : %{domains}'
+        env_serves_none: Tous les domaines sont réclamés par une ligne de fournisseur,
+          l'environnement n'est donc pas utilisé.
+        env_title: Configurés par l'environnement du serveur
         header_actions: Actions
         header_client_id: ID client
         header_provider: Fournisseur

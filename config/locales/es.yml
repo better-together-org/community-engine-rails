@@ -3401,8 +3401,16 @@ es:
         disabled_label: Deshabilitado
         edit_btn: Editar
         enabled_label: Habilitado
+        env_description: Estos proveedores se definen con variables de entorno y se
+          aplican a los dominios de esta plataforma indicados abajo. Los secretos
+          nunca se muestran. Añade una fila de proveedor para gestionar un dominio
+          aquí.
         env_note: Los proveedores sin una fila aquí usan las variables de entorno
           del servidor (por ejemplo GITHUB_CLIENT_ID).
+        env_serves: 'Atiende: %{domains}'
+        env_serves_none: Todos los dominios están reclamados por una fila de proveedor,
+          por lo que no se usa el entorno.
+        env_title: Configurados mediante el entorno del servidor
         header_actions: Acciones
         header_client_id: ID de cliente
         header_provider: Proveedor

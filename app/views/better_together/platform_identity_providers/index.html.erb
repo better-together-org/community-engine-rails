@@ -19,6 +19,28 @@
     <%= t('.env_note') %>
   </div>
 
+  <% if @env_providers.any? %>
+    <section id="platform-identity-providers-env" class="mb-4" aria-labelledby="platform-identity-providers-env-title">
+      <h2 class="h5" id="platform-identity-providers-env-title"><%= t('.env_title') %></h2>
+      <p class="text-muted small"><%= t('.env_description') %></p>
+      <ul class="list-group">
+        <% @env_providers.each do |env_provider| %>
+          <li class="list-group-item platform-identity-provider-env-item" id="platform-identity-provider-env-<%= env_provider.provider.key %>">
+            <strong><%= env_provider.provider.kind %></strong>
+            <code class="ms-2"><%= env_provider.provider.env_vars.join(', ') %></code>
+            <div class="small text-muted">
+              <% if env_provider.domains.any? %>
+                <%= t('.env_serves', domains: env_provider.domains.map(&:hostname).join(', ')) %>
+              <% else %>
+                <%= t('.env_serves_none') %>
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
   <% if @identity_providers.any? %>
     <div class="table-responsive">
       <table id="platform-identity-providers-table" class="table table-hover" aria-label="<%= t('.table_aria') %>">

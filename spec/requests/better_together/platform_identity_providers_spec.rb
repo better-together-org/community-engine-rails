@@ -30,6 +30,23 @@ RSpec.describe 'Platform identity providers admin', :as_platform_manager do # ru
     end
   end
 
+  describe 'GET index with environment-configured providers' do
+    it 'shows them without exposing values', :aggregate_failures do
+      domain = BetterTogether::PlatformDomain.find_or_create_by!(hostname: 'www.example.com') do |d|
+        d.platform = platform
+        d.active = true
+        d.primary_flag = true
+      end
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return('env-client-id')
+      allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('env-client-secret')
+      get base
+
+      expect(page_html.css('#platform-identity-provider-env-github').text).to include(domain.hostname)
+      expect(response.body).not_to include('env-client-id', 'env-client-secret')
+    end
+  end
+
   describe 'POST create' do
     let(:params) do
       { platform_identity_provider: { strategy: 'github', client_id: 'abc', client_secret: 's3cret', enabled: '1' } }

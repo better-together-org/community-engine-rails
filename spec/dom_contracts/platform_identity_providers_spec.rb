@@ -23,6 +23,15 @@ RSpec.describe 'Platform identity providers DOM contract', :as_platform_manager,
     end
   end
 
+  it 'exposes the environment providers section when env providers exist', :aggregate_failures do
+    allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_ID', nil).and_return('x')
+    allow(ENV).to receive(:fetch).with('GITHUB_CLIENT_SECRET', nil).and_return('y')
+    get base
+
+    expect(page_html.css('#platform-identity-providers-env .platform-identity-provider-env-item')).not_to be_empty
+  end
+
   it 'exposes the form hooks', :aggregate_failures do
     get "#{base}/new"
 
