@@ -75,7 +75,7 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
                    bullets: ['Nothing is placed until every agreement is accepted.'] }]
     ) do
       visit_billing("checkout/new?plan_id=#{cash_plan.id}&payment_method=cash")
-      scroll_to(find('#billing-agreement-review'), align: :center)
+      scroll_to(find('#billing-checkout-place-btn'), align: :center)
       expect(page).to have_css('#billing-checkout-place-btn')
     end
   end
@@ -88,9 +88,7 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
       'billing_checkout_free_plan',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_checkout_free_plan'),
-      callouts: [{ id: 'summary', selector: '#billing-checkout-summary', title: 'What you are getting',
-                   bullets: ['A free plan has no price to pay.'] },
-                 { id: 'place', selector: '#billing-checkout-place-btn', title: 'Place order',
+      callouts: [{ id: 'place', selector: '#billing-checkout-place-btn', title: 'Place order',
                    bullets: ['No way of paying to choose; the agreements still have to be accepted.'] }],
       narrative: {
         title: 'Checkout: a free plan',
@@ -101,7 +99,7 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
       }
     ) do
       visit_billing("checkout/new?plan_id=#{free_plan.id}")
-      scroll_to(find('#billing-agreement-review'), align: :center)
+      scroll_to(find('#billing-checkout-place-btn'), align: :center)
       expect(page).to have_css('#billing-checkout-place-btn')
       expect(page).to have_no_css('#billing-checkout-methods')
     end

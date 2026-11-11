@@ -1,0 +1,48 @@
+{
+  "name": "billing_checkout_free_plan",
+  "device": "mobile",
+  "url": "/en/billing/checkout/new?plan_id=6c7392cb-a921-4702-a55f-715f0c40607c",
+  "title": "Get Community membership | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_checkout",
+  "flow": "billing_checkout_free_plan",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-checkout-place-btn",
+      "title": "Place order",
+      "bullets": [
+        "No way of paying to choose; the agreements still have to be accepted."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 804.765625,
+        "width": 116.296875,
+        "height": 38.0,
+        "right": 128.296875,
+        "bottom": 842.765625,
+        "center_x": 70.1484375,
+        "center_y": 823.765625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 804.765625,
+        "width": 116.296875,
+        "height": 38.0,
+        "right": 128.296875,
+        "bottom": 842.765625,
+        "center_x": 70.1484375,
+        "center_y": 823.765625
+      },
+      "placement": {
+        "side": "above",
+        "x": 24,
+        "y": 600.77,
+        "width": 270.0,
+        "height": 184,
+        "score": 804.765625
+      }
+    }
+  ]
+}
