@@ -19,7 +19,9 @@ Resolution order, first present value wins (`BetterTogether::Quotas::Defaults.fo
 1. The owning platform's override, edited on the platform edit screen (Host Dashboard,
    Platforms, Edit, "Quota defaults") and stored in `Platform#settings['quota_default_limits']`.
    For a platform owner this is the platform itself; for a person or community it is the
-   platform they live on. A blank field means "inherit".
+   platform they live on. Byte quotas (media storage) are chosen from a slim-select of binary
+   sizes (64 MiB up to 8 TiB, shown as e.g. "250 MiB"); "Use default" means "inherit". The
+   controller rejects any byte value that is not a listed step or the configured default.
 2. The host app's `config/quota_defaults.yml`.
 3. Any other engine's `config/quota_defaults.yml`, by engine name.
 4. The gem's `config/quota_defaults.yml`.

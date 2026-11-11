@@ -53,6 +53,29 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/platform_quota_defaults.png')
   end
 
+  it 'captures the storage size dropdown open with the binary size options' do
+    fieldset = "##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults_media_storage)}"
+    result = capture_docs_screenshot(
+      'platform_quota_defaults_options',
+      flow: 'platform_edit_quota_options',
+      role: 'platform_manager',
+      callouts: [
+        { selector: "#{fieldset} legend", title: 'Binary sizes',
+          bullets: ['Only listed sizes can be chosen.'] }
+      ]
+    ) do
+      capybara_login_as_platform_manager
+      visit edit_platform_path(host_platform, locale:)
+
+      expect(page).to have_css('.ss-main', wait: 10)
+      find("#{fieldset} .col-lg-4:first-child").scroll_to(:center)
+      find("#{fieldset} .col-lg-4:first-child .ss-main", match: :first).click
+      expect(page).to have_css('div.ss-content .ss-option', text: '1 GiB', wait: 10)
+    end
+
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_quota_defaults_options.png')
+  end
+
   private
 
   def capture_docs_screenshot(name, flow:, role:, callouts: [], &)
