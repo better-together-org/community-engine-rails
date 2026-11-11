@@ -22,6 +22,9 @@ Resolution order, first present value wins (`BetterTogether::Quotas::Defaults.fo
    platform they live on. Byte quotas (media storage) are chosen from a slim-select of binary
    sizes (64 MiB up to 8 TiB, shown as e.g. "250 MiB"); "Use default" means "inherit". The
    controller rejects any byte value that is not a listed step or the configured default.
+   The "AI LLM usage tokens per month" block (and its usage meters and grant options) only appears
+   when an AI provider is configured: RubyLLM has an OpenAI token, or an active robot is
+   available to the platform (`Quotas::Type.available_for?`).
 2. The host app's `config/quota_defaults.yml`.
 3. Any other engine's `config/quota_defaults.yml`, by engine name.
 4. The gem's `config/quota_defaults.yml`.

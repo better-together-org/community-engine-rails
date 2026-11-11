@@ -24,6 +24,14 @@ module BetterTogether
           registry.values
         end
 
+        def available(platform = Current.platform)
+          all.select { |type| type.available_for?(platform) }
+        end
+
+        def available_keys(platform = Current.platform)
+          available(platform).map(&:key)
+        end
+
         def keys
           registry.keys
         end
@@ -41,6 +49,12 @@ module BetterTogether
         # :bytes, :tokens, etc, descriptive only, not enforced against a unit table.
         def unit
           raise NotImplementedError, "#{self} must define .unit"
+        end
+
+        # Whether this quota type should be offered (forms, usage meters) for a platform.
+        # Types backed by an optional integration override this; the default is always.
+        def available_for?(_platform)
+          true
         end
 
         # cumulative | monthly | daily; must match Quota#period's enum values.

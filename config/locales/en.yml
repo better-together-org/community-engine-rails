@@ -3382,7 +3382,7 @@ en:
           person: Person
           platform: Platform
         quota_types:
-          ai_translation_tokens: AI translation tokens per month
+          ai_translation_tokens: AI LLM usage tokens per month
           media_storage: Storage
         quota_use_default: Use default (%{size})
       index:
@@ -3520,7 +3520,7 @@ en:
         not_local: must be local to this platform
       usage_meter:
         types:
-          ai_translation_tokens: AI Translation Tokens
+          ai_translation_tokens: AI LLM usage tokens
           media_storage: Storage
     rbac:
       nav:

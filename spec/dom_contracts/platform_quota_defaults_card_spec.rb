@@ -12,7 +12,7 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
 
     body = response.body
     expect(body).to include("id=\"#{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults)}\"")
-    BetterTogether::Quotas::Type.registry.each_key do |type|
+    BetterTogether::Quotas::Type.available_keys(host_platform).each do |type|
       expect(body).to include("id=\"#{ActionView::RecordIdentifier.dom_id(host_platform, "quota_defaults_#{type}")}\"")
       BetterTogether::Quotas::Defaults::OWNER_KINDS.each do |kind|
         expect(body).to include("name=\"platform[quota_default_limits][#{type}][#{kind}]\"")
@@ -29,6 +29,40 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
     expect(select['data-controller']).to eq('better_together--slim-select')
     expect(select.at_css('option[selected]').text).to eq('512 MiB')
     expect(select.css('option').map(&:text)).to include('Use default (250 MiB)', '250 MiB', '1 GiB', '1 TiB')
+  end
+
+  context 'with LLM usage tokens' do
+    let(:token_fieldset) do
+      "id=\"#{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults_ai_translation_tokens)}\""
+    end
+
+    before { BetterTogether::Robot.update_all(active: false) } # rubocop:disable Rails/SkipsModelValidations
+
+    it 'is hidden when no AI provider is configured' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+
+      get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
+
+      expect(response.body).not_to include(token_fieldset)
+    end
+
+    it 'is shown with generalized wording when an OpenAI token is configured' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-test')
+
+      get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
+
+      expect(response.body).to include(token_fieldset)
+      expect_html_content('AI LLM usage tokens per month')
+    end
+
+    it 'is shown when an active robot is available' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+      create(:better_together_robot, platform: nil, active: true)
+
+      get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
+
+      expect(response.body).to include(token_fieldset)
+    end
   end
 
   it 'is not rendered for an external platform' do

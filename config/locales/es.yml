@@ -3433,7 +3433,7 @@ es:
           person: Persona
           platform: Plataforma
         quota_types:
-          ai_translation_tokens: Tokens de traducción con IA por mes
+          ai_translation_tokens: Tokens de uso de LLM de IA por mes
           media_storage: Almacenamiento
         quota_use_default: Usar el valor predeterminado (%{size})
       index:
@@ -3571,7 +3571,7 @@ es:
         not_local: debe ser local a esta plataforma
       usage_meter:
         types:
-          ai_translation_tokens: Tokens de traducción con IA
+          ai_translation_tokens: Tokens de uso de LLM de IA
           media_storage: Almacenamiento
     rbac:
       nav:

@@ -24,6 +24,16 @@ module BetterTogether
             'monthly'
           end
 
+          # Offered only when an AI provider is configured: RubyLLM has an OpenAI token
+          # (OPENAI_API_KEY / OPENAI_ACCESS_TOKEN) or an active robot is available to
+          # the platform (platform-specific or global). The key and ledger stay as
+          # 'ai_translation_tokens'; the wording is generic LLM usage so other AI
+          # features can draw on the same quota later.
+          def available_for?(platform)
+            RubyLLM.config.openai_api_key.present? ||
+              BetterTogether::Robot.available_for_platform(platform).exists?
+          end
+
           def measure(subject)
             subject.tokens_used
           end

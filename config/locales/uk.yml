@@ -3437,7 +3437,7 @@ uk:
           person: Особа
           platform: Платформа
         quota_types:
-          ai_translation_tokens: Токени ШІ-перекладу на місяць
+          ai_translation_tokens: Токени використання LLM ШІ на місяць
           media_storage: Сховище
         quota_use_default: Використовувати значення за замовчуванням (%{size})
       index:
@@ -3576,7 +3576,7 @@ uk:
         not_local: має бути локальним для цієї платформи
       usage_meter:
         types:
-          ai_translation_tokens: Токени перекладу ШІ
+          ai_translation_tokens: Токени використання LLM ШІ
           media_storage: Зберігання
     rbac:
       nav:

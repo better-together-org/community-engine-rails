@@ -3457,7 +3457,7 @@ fr:
           person: Personne
           platform: Plateforme
         quota_types:
-          ai_translation_tokens: Jetons de traduction IA par mois
+          ai_translation_tokens: Jetons d'utilisation de LLM IA par mois
           media_storage: Stockage
         quota_use_default: Utiliser la valeur par défaut (%{size})
       index:
@@ -3597,7 +3597,7 @@ fr:
         not_local: doit être local à cette plateforme
       usage_meter:
         types:
-          ai_translation_tokens: Jetons de traduction IA
+          ai_translation_tokens: Jetons d'utilisation de LLM IA
           media_storage: Stockage
     rbac:
       nav:

@@ -42,7 +42,7 @@ module BetterTogether
     # platform form's quota defaults card. `value` is the platform's own override
     # (blank = inherit) and `inherited` the YAML default shown as the placeholder.
     def quota_default_catalog(platform)
-      BetterTogether::Quotas::Type.all.map do |type|
+      BetterTogether::Quotas::Type.available(platform).map do |type|
         {
           key: type.key, unit: type.unit,
           kinds: BetterTogether::Quotas::Defaults::OWNER_KINDS.map do |kind|
