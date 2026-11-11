@@ -81,7 +81,7 @@ classDiagram
       +period
       +reversible?() "default false, fail-closed"
       +measure(subject)
-      +default_limit
+      +default_limit(owner) "Quotas::Defaults.for(type, owner)"
       +counts_toward_quota?(subject)
       +self.register(key, klass)
       +self.find(key)
@@ -98,7 +98,25 @@ classDiagram
 
     class Quotas_OwnerResolver {
       <<service>>
-      +self.resolve(record)
+      +self.resolve(record) "nil when the owner is not local"
+    }
+
+    class Quotas_Defaults {
+      <<config>>
+      +self.for(type, owner) "platform override, then merged YAML"
+      +self.yaml_value(type, kind)
+      +self.sanitize_overrides(hash)
+      config/quota_defaults.yml "gem, engines, then host app"
+    }
+
+    class Quotas_Locality {
+      <<predicate>>
+      +self.local_owner?(owner) "local platform, or person/community on one"
+    }
+
+    class Quotas_ApplyPlatformDefaultsJob {
+      <<job>>
+      +perform(platform_id) "re-applies defaults to that platform's existing quotas"
     }
 
     class Quotas_AttachmentTracking {
@@ -155,6 +173,15 @@ classDiagram
 
     Quotas_ReservationSweeperJob --> QuotaReservation : status_held past expires_at -> expired
     Quotas_ReservationSweeperJob --> QuotaBalance : refresh_reserved!
+
+    Quotas_Type --> Quotas_Defaults : default_limit(owner)
+    Quotas_Defaults --> Platform : reads settings quota_default_limits
+    Platform --> Quotas_ApplyPlatformDefaultsJob : enqueued when quota_default_limits changes
+    Quotas_ApplyPlatformDefaultsJob --> Quota : updates limit for local owners on the platform
+    BetterTogether_Quotas --> Quotas_Locality : reserve!/settle! skip non-local owners
+    Quotas_OwnerResolver --> Quotas_Locality : external owner resolves to nil
+    Quota --> Quotas_Locality : owner_is_local validation
+    QuotaGrant --> Quotas_Locality : owner_is_local validation
 
     Quotas_Type <|-- MediaStorage
     Quotas_Type <|-- AiTranslationTokens

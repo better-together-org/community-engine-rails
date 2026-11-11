@@ -1,0 +1,48 @@
+{
+  "name": "platform_quota_defaults_options",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_quota_defaults",
+  "flow": "platform_edit_quota_options",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_quota_defaults_spec.rb",
+  "callouts": [
+    {
+      "selector": "#quota_defaults_media_storage_platform_e42547af-0480-4b27-b5cf-874dcbee39ca legend",
+      "title": "Storage sizes",
+      "bullets": [
+        "Only listed sizes can be chosen."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 534.25,
+        "width": 429.0,
+        "height": 19.1875,
+        "right": 457.0,
+        "bottom": 553.4375,
+        "center_x": 242.5,
+        "center_y": 543.84375
+      },
+      "avoid": {
+        "x": 28.0,
+        "y": 534.25,
+        "width": 429.0,
+        "height": 19.1875,
+        "right": 457.0,
+        "bottom": 553.4375,
+        "center_x": 242.5,
+        "center_y": 543.84375
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 573.44,
+        "width": 270.0,
+        "height": 132,
+        "score": 703.5625
+      }
+    }
+  ]
+}

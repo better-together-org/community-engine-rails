@@ -3444,6 +3444,19 @@ en:
         host_url_hint: The canonical public URL of this platform (e.g. https://example.com).
           Used to identify the platform in federation and generate OAuth endpoint
           URLs. Must be HTTPS for production.
+        quota_defaults_hint: Starting limit for each new person, community and this
+          platform. Leave a field blank to use the default set in the application
+          configuration. Changing a value also updates existing quotas on this platform;
+          per-owner quota grants are not affected.
+        quota_defaults_title: Quota defaults
+        quota_kinds:
+          community: Community
+          person: Person
+          platform: Platform
+        quota_types:
+          ai_translation_tokens: AI LLM usage tokens per month
+          media_storage: Storage
+        quota_use_default: Use default (%{size})
       index:
         provision_new_platform: Provision New Platform
       new:
@@ -3575,9 +3588,11 @@ en:
         usage: Usage
       updated: Quota grant updated.
     quotas:
+      errors:
+        not_local: must be local to this platform
       usage_meter:
         types:
-          ai_translation_tokens: AI Translation Tokens
+          ai_translation_tokens: AI LLM usage tokens
           media_storage: Storage
     rbac:
       nav:

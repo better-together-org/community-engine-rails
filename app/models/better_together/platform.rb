@@ -90,6 +90,7 @@ module BetterTogether
     validate :require_publishing_agreement_for_public_network_visibility
 
     after_initialize :set_default_requires_invitation, if: :new_record?
+    after_commit :apply_quota_default_limits, on: :update, if: :saved_change_to_quota_default_limits?
     after_update :sync_host_community_privacy, if: -> { host? && saved_change_to_privacy? }
     before_validation :apply_platform_registry_defaults
 
@@ -105,7 +106,8 @@ module BetterTogether
                        software_variant network_visibility connection_bootstrap_state
                        federation_protocol oauth_issuer_url search_query_analytics_enabled
                        search_query_analytics_mode contributors_display_visibility
-                       feature_gate_rollouts] }
+                       feature_gate_rollouts],
+          quota_default_limits: {} }
       ] + super
     end
 
@@ -228,6 +230,18 @@ module BetterTogether
       self.settings = settings.merge('feature_gate_rollouts' => sanitized)
     end
 
+    # Per-platform override of the initial quota limits, { 'media_storage' =>
+    # { 'person' => bytes, ... } }. Blank/absent means "inherit" (see Quotas::Defaults).
+    def quota_default_limits
+      raw = settings&.fetch('quota_default_limits', {})
+      raw.is_a?(Hash) ? raw.deep_stringify_keys : {}
+    end
+
+    def quota_default_limits=(value)
+      normalized = value.respond_to?(:to_unsafe_h) ? value.to_unsafe_h : value
+      self.settings = settings.merge('quota_default_limits' => BetterTogether::Quotas::Defaults.sanitize_overrides(normalized))
+    end
+
     def feature_rollout_for(feature_key)
       registry_entry = BetterTogether::FeatureRegistry.find(feature_key)
       return 'off' unless registry_entry
@@ -291,6 +305,17 @@ module BetterTogether
         actor: Current.agent,
         target_network_visibility: network_visibility
       )
+    end
+
+    def saved_change_to_quota_default_limits?
+      before, after = saved_change_to_settings
+      (before || {})['quota_default_limits'] != (after || {})['quota_default_limits']
+    end
+
+    def apply_quota_default_limits
+      return unless local_hosted?
+
+      BetterTogether::Quotas::ApplyPlatformDefaultsJob.perform_later(id)
     end
 
     def sanitize_feature_gate_rollouts(value)
