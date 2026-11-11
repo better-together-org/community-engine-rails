@@ -71,7 +71,7 @@ module BetterTogether
     def self.choices(key, domain:)
       return [] unless domain
 
-      new(key, domain, nil).rows.select(&:enabled?)
+      new(key, domain, nil).rows.select { |row| row.enabled? && row.client_id.present? && row.client_secret.present? }
     end
 
     def initialize(key, domain, provider_id = nil)

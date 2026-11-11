@@ -53,6 +53,12 @@ RSpec.describe BetterTogether::IdentityProviderCredentials, '.resolve' do
     expect(described_class.choices(:openid_connect, domain:)).to eq([one])
   end
 
+  it 'omits issuers without usable credentials from the sign-in buttons' do
+    two.update_columns(client_id: nil)
+
+    expect(described_class.choices(:openid_connect, domain:)).to eq([one])
+  end
+
   it 'does not pass the display options on to the strategy' do
     one.update!(label: 'Co-op', trust_verified_email: 'true')
 
