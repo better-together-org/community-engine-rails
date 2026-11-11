@@ -31,15 +31,17 @@ RSpec.describe 'better_together/person_platform_integrations/_integrations_list'
       allow(view).to receive(:request).and_return(double(env: Rack::MockRequest.env_for("https://#{domain.hostname}/")))
     end
 
-    def oidc(issuer, **attrs)
-      create(:better_together_platform_identity_provider, platform:, strategy: 'openid_connect',
-                                                          provider_platform: nil, issuer:, **attrs)
-        .tap { |row| row.update!(platform_domains: [domain]) }
+    let(:oidc) do
+      lambda do |issuer, **attrs|
+        create(:better_together_platform_identity_provider, platform:, strategy: 'openid_connect',
+                                                            provider_platform: nil, issuer:, **attrs)
+          .tap { |row| row.update!(platform_domains: [domain]) }
+      end
     end
 
     it 'offers a connect button for each configured issuer', :aggregate_failures do
-      one = oidc('https://idp.one.example.org', label: 'Co-op login')
-      two = oidc('https://idp.two.example.org')
+      one = oidc.call('https://idp.one.example.org', label: 'Co-op login')
+      two = oidc.call('https://idp.two.example.org')
 
       render partial: 'better_together/person_platform_integrations/integrations_list',
              locals: { person_platform_integrations: [] }
@@ -48,8 +50,8 @@ RSpec.describe 'better_together/person_platform_integrations/_integrations_list'
     end
 
     it 'does not offer an issuer that is already connected', :aggregate_failures do
-      one = oidc('https://idp.one.example.org')
-      two = oidc('https://idp.two.example.org')
+      one = oidc.call('https://idp.one.example.org')
+      two = oidc.call('https://idp.two.example.org')
       connected = create(:person_platform_integration, provider: 'openid_connect', platform: one.provider_platform)
 
       render partial: 'better_together/person_platform_integrations/integrations_list',
