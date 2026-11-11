@@ -16,7 +16,7 @@
     <div class="alert alert-danger" role="alert" id="billing-walk-up-error"><%= t("better_together.billing.walk_up.error_#{@error}") %></div>
   <% end %>
 
-  <% if @plans.empty? || @methods.empty? %>
+  <% if @plans.empty? || (@methods.empty? && @plans.none?(&:free?)) %>
     <p id="billing-walk-up-unavailable" class="text-body-secondary"><%= t('better_together.billing.walk_up.unavailable') %></p>
   <% else %>
     <%= form_with url: billing_walk_up_sale_path(locale: I18n.locale), method: :post, id: 'billing-walk-up-form' do %>
@@ -28,6 +28,7 @@
       <div class="mb-3">
         <%= label_tag 'billing-walk-up-method', t('better_together.billing.walk_up.method_label'), class: 'form-label' %>
         <%= select_tag :payment_method, options_for_select(@methods.map { |name| [billing_payment_method_label(name), name] }, params[:payment_method]),
+                       include_blank: @plans.any?(&:free?),
                        id: 'billing-walk-up-method', class: 'form-select' %>
       </div>
       <div class="mb-3">

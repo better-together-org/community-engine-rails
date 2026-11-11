@@ -205,6 +205,21 @@ RSpec.describe BetterTogether::Billing::WalkUpSalesController do
       expect { post path, params: params.merge(payment_method: 'cheque') }.not_to change(BetterTogether::Billing::Order, :count)
     end
 
+    it 'sells a free plan with no way of paying, paid at once, even when no method is switched on' do
+      free = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: [], billing_interval: 'one_time',
+                                                              amount_cents: 0, currency: 'USD')
+      host_platform.billing_processor_settings.update_all(enabled: false) # rubocop:disable Rails/SkipsModelValidations
+
+      get new_path
+      expect(response.body).to include('billing-walk-up-form')
+
+      expect { post path, params: params.merge(plan_id: free.id, payment_method: '') }.to change(BetterTogether::Billing::Order, :count).by(1)
+
+      order = BetterTogether::Billing::Order.order(:created_at).last
+      expect(order).to be_paid
+      expect(order.payments).to be_empty
+    end
+
     it 'does not sell another platform\'s plan' do
       foreign = create(:better_together_billing_plan, platform: create(:better_together_platform))
 

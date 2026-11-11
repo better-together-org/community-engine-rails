@@ -16,6 +16,9 @@ module BetterTogether
       #
       # Safe to repeat: an order that already has its subscription returns it.
       class Start
+        # What a subscription that costs nothing is renewed by: no way of paying, since there is nothing to pay.
+        FREE_METHOD = 'free'
+
         def self.call(...) = new(...).call
 
         # Whether this order is the start of a subscription Community Engine will renew.
@@ -31,7 +34,10 @@ module BetterTogether
         end
 
         # Every part that paid it was settled by Community Engine; a part through a processor leaves the subscription to the processor.
+        # An order that costs nothing has no payment to be settled by anyone else, so Community Engine keeps the subscription.
         def self.paid_locally?(order)
+          return order.paid? if order.total_cents.zero?
+
           paid = order.payments.select(&:succeeded?)
           paid.any? && paid.all? { |payment| Billing.local_method?(payment.processor) }
         end
@@ -71,7 +77,7 @@ module BetterTogether
 
         # What each renewal is paid by: what the buyer chose, else the way that paid the most (credit last).
         def renewal_method
-          order.renewal_payment_method.presence || largest_share
+          order.renewal_payment_method.presence || (FREE_METHOD if paid_by_method.empty?) || largest_share
         end
 
         def largest_share

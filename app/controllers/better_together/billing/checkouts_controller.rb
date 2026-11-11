@@ -8,7 +8,7 @@ module BetterTogether
     # The agreements come first and are enforced here and again when the order is placed, so
     # nothing the screen does can skip them. If the platform's purchase agreements are missing or
     # still drafts the page says it cannot be completed yet and offers no way to accept.
-    class CheckoutsController < ApplicationController
+    class CheckoutsController < ApplicationController # rubocop:disable Metrics/ClassLength
       include OwnerScoped
       include CheckoutTaxPreview
 
@@ -19,16 +19,15 @@ module BetterTogether
       def new
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        @gate = build_gate if @method
-        load_addresses
-        load_tax_preview
+        @gate = build_gate if @method || @plan.free?
+        load_billing_details
       end
 
       def create
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        return render_again(:method_not_available) unless @method
-        return render_again(@address_error) unless choose_address
+        return render_again(:method_not_available) unless @method || @plan.free?
+        return render_again(@address_error) unless address_ok?
         return render_again(:parts_too_large) if parts_too_large?
 
         @gate = build_gate
@@ -44,6 +43,14 @@ module BetterTogether
         @method = chosen_method
         @parts = chosen_parts
         @renew_with = chosen_renewal_method
+      end
+
+      # A free plan has no tax to work out, so it asks for no billing address either.
+      def load_billing_details
+        return if @plan.free?
+
+        load_addresses
+        load_tax_preview
       end
 
       def load_addresses
@@ -67,12 +74,14 @@ module BetterTogether
 
       # Only a method this plan offers and the platform has switched on.
       def chosen_method
+        return if @plan.free?
+
         @choices.find { |choice| choice.available? && choice.name == params[:payment_method].to_s }&.name
       end
 
       def build_gate
         Checkout::AgreementGate.new(platform: billing_owner, purpose: @purpose, signer: current_user.person, purchasables: [@plan],
-                                    payment_method: [@method, *@parts.map { |part| part[:payment_method] }])
+                                    payment_method: [@method, *@parts.map { |part| part[:payment_method] }].compact)
       end
 
       # The parts the buyer asked to pay now, by ways other than the one that takes the rest: an amount beside each. Only the
@@ -116,7 +125,10 @@ module BetterTogether
         render_again(:refused)
       end
 
-      # The buyer's billing address: one of theirs, or a new one typed in. Every order needs one with a chosen country and state.
+      def address_ok? = @plan.free? || choose_address
+
+      # The buyer's billing address: one of theirs, or a new one typed in. Every order that costs something needs one with a chosen
+      # country and state; a free one needs none.
       def choose_address
         result = Checkout::BillingAddressChoice.call(platform: billing_owner, person: current_user.person,
                                                      address_id: params[:billing_address_id], new_address: params[:billing_address],
@@ -128,6 +140,7 @@ module BetterTogether
 
       # Parts asked for, with the chosen way taking the rest; or just the chosen way, which pays the whole of it.
       def how_to_pay
+        return {} if @plan.free?
         return { payment_method: @method } if @parts.empty?
 
         { payments: [*@parts, { payment_method: @method }] }
@@ -135,8 +148,7 @@ module BetterTogether
 
       def render_again(reason)
         @error = reason
-        load_addresses
-        load_tax_preview
+        load_billing_details
         render :new, status: :unprocessable_content
       end
     end

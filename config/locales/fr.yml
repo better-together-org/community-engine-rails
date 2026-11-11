@@ -960,6 +960,8 @@ fr:
           une part au mode choisi ci-dessus, ou choisissez-le pour la totalité.
         error_refused: Votre commande n’a pas pu être passée. Rien n’a été débité.
           Veuillez réessayer.
+        free: Gratuit
+        get_free: Obtenir gratuitement
         how_to_pay: Comment souhaitez-vous payer ?
         no_methods: Il n’y a aucun moyen de payer pour le moment.
         parts_heading: Payer une partie autrement

@@ -44,6 +44,17 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
                ActionView::RecordIdentifier.dom_id(one_time_agreement, :review))
   end
 
+  it 'exposes the agreements and place-order button for a free plan, with no method choice' do
+    free_plan = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: [], billing_interval: 'one_time',
+                                                                 currency: 'USD', amount_cents: 0)
+
+    get "/#{locale}/billing/checkout/new", params: { plan_id: free_plan.id }
+
+    expect_ids('billing-checkout-page', 'billing-checkout-summary', 'billing-checkout-form', 'billing-agreement-review',
+               'billing-checkout-place-btn')
+    expect(response.body).not_to include('id="billing-checkout-methods"')
+  end
+
   it 'exposes the reason a method is unavailable' do
     host_platform.billing_processor_settings.find_by(processor: 'cash').update!(purposes: %w[ticket])
 

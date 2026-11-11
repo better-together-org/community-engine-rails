@@ -14,9 +14,11 @@
   <div id="billing-checkout-summary" class="card mb-4">
     <div class="card-body d-flex justify-content-between">
       <span><strong><%= @plan.name %></strong><span class="d-block text-body-secondary"><%= billing_interval_label(@plan.billing_interval) %></span></span>
-      <span class="fs-5"><%= billing_amount(@plan.amount_cents, @plan.currency) %></span>
+      <span class="fs-5"><%= @plan.free? ? t('better_together.billing.checkout.free') : billing_amount(@plan.amount_cents, @plan.currency) %></span>
     </div>
-    <% if @tax_preview&.known? && @tax_preview.taxed? %>
+    <% if @plan.free? %>
+      <%# Nothing to tax, so no tax note. %>
+    <% elsif @tax_preview&.known? && @tax_preview.taxed? %>
       <div class="card-footer">
         <%= render 'better_together/billing/order_summary', summary: @tax_preview.summary, scope: 'checkout', compact: true %>
       </div>
@@ -28,7 +30,8 @@
   </div>
   </turbo-frame>
 
-  <%# Step 1: how to pay. A method that is not available is listed with the reason. %>
+  <%# Step 1: how to pay. A method that is not available is listed with the reason. A free plan has nothing to pay. %>
+  <% unless @plan.free? %>
   <%= form_with(url: new_billing_checkout_path(locale: I18n.locale), method: :get, id: 'billing-checkout-method-form') do %>
     <%= hidden_field_tag :plan_id, @plan.id %>
     <fieldset id="billing-checkout-methods" class="mb-4">
@@ -87,18 +90,21 @@
       <% end %>
     </fieldset>
   <% end %>
+  <% end %>
 
   <%# Step 2: the agreements that apply to this plan and method, accepted before anything is placed. %>
-  <% if @method && @gate %>
+  <% if (@method || @plan.free?) && @gate %>
     <% if @gate.ready? %>
       <%= form_with(url: billing_checkout_path(locale: I18n.locale), method: :post, id: 'billing-checkout-form') do %>
         <%= hidden_field_tag :plan_id, @plan.id %>
-        <%= hidden_field_tag :payment_method, @method %>
+        <%= hidden_field_tag :payment_method, @method unless @plan.free? %>
         <% @parts.each do |part| %>
           <%= hidden_field_tag "part_amounts[#{part[:payment_method]}]", BetterTogether::Billing::Currency.to_major(part[:amount_cents], @plan.currency), id: "billing-checkout-part-hidden-#{part[:payment_method]}" %>
         <% end %>
         <%= hidden_field_tag :renew_with, @renew_with, id: 'billing-checkout-renew-with-hidden' if @renew_with %>
-        <%= render 'billing_address', addresses: @addresses, selected_id: @selected_address_id, new_address: @new_address, plan_id: @plan.id %>
+        <% unless @plan.free? %>
+          <%= render 'billing_address', addresses: @addresses, selected_id: @selected_address_id, new_address: @new_address, plan_id: @plan.id %>
+        <% end %>
         <section id="billing-agreement-review" class="card mb-4" aria-labelledby="billing-agreement-review-title">
           <div class="card-header"><strong id="billing-agreement-review-title"><%= t('better_together.billing.checkout.review_title') %></strong></div>
           <div class="card-body">
@@ -127,7 +133,7 @@
             <% end %>
           </div>
         </section>
-        <%= submit_tag t('better_together.billing.checkout.place_order'), class: 'btn btn-primary', id: 'billing-checkout-place-btn', name: nil %>
+        <%= submit_tag t(@plan.free? ? 'better_together.billing.checkout.get_free' : 'better_together.billing.checkout.place_order'), class: 'btn btn-primary', id: 'billing-checkout-place-btn', name: nil %>
       <% end %>
     <% else %>
       <div class="alert alert-warning" role="alert" id="billing-checkout-not-ready"><%= t('better_together.billing.checkout.error_not_ready') %></div>

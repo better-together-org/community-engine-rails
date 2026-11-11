@@ -960,6 +960,8 @@ en:
           some for the way chosen above, or choose it for the whole amount.
         error_refused: Your order could not be placed. Nothing has been charged. Please
           try again.
+        free: Free
+        get_free: Get it free
         how_to_pay: How would you like to pay?
         no_methods: There is no way to pay for this right now.
         parts_heading: Pay part of it another way
