@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_15_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -537,9 +537,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.string "kind", null: false
     t.string "fingerprint", null: false
     t.string "time_zone", null: false
+    t.string "locale"
     t.datetime "generated_at", null: false
     t.datetime "superseded_at"
-    t.string "locale"
     t.index ["order_id", "kind"], name: "idx_bt_billing_order_docs_current", unique: true, where: "(superseded_at IS NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_order_docs_platform"
     t.index ["upload_id"], name: "idx_bt_billing_order_docs_upload", unique: true
@@ -569,6 +569,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.datetime "cancelled_at"
     t.uuid "pay_subscription_id"
     t.string "renewal_payment_method"
+    t.text "buyer_email"
+    t.text "billing_address"
+    t.string "placed_locale"
+    t.string "document_locale"
     t.integer "tax_cents", default: 0, null: false
     t.integer "included_tax_cents", default: 0, null: false
     t.string "tax_country_iso"
@@ -576,11 +580,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.uuid "tax_settlement_id"
     t.boolean "prices_include_tax"
     t.uuid "tax_registration_id"
-    t.text "buyer_email"
-    t.text "billing_address"
     t.uuid "billing_address_id"
-    t.string "placed_locale"
-    t.string "document_locale"
     t.index ["billing_address_id"], name: "idx_bt_billing_orders_billing_address"
     t.index ["buyer_id"], name: "idx_bt_billing_orders_buyer"
     t.index ["id", "platform_id"], name: "idx_bt_billing_orders_id_platform", unique: true
@@ -651,6 +651,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.integer "amount_cents", default: 0, null: false
     t.string "currency", null: false
     t.boolean "active", default: true, null: false
+    t.boolean "listed", default: false, null: false
+    t.boolean "restricted_to_members", default: false, null: false
+    t.boolean "restricted_to_subscribers", default: false, null: false
     t.string "processor"
     t.string "accepted_payment_methods", default: [], null: false, array: true
     t.string "processor_price_id"
@@ -663,9 +666,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.string "latest_processor_event_id"
     t.jsonb "metadata", default: {}, null: false
     t.uuid "tax_category_id"
-    t.boolean "listed", default: false, null: false
-    t.boolean "restricted_to_members", default: false, null: false
-    t.boolean "restricted_to_subscribers", default: false, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
     t.index ["id", "platform_id"], name: "idx_bt_billing_plans_id_platform", unique: true
     t.index ["listed"], name: "idx_bt_billing_plans_listed"
@@ -751,12 +751,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.uuid "payment_id", null: false
     t.uuid "recorded_by_id"
     t.integer "amount_cents", null: false
+    t.integer "tax_cents", default: 0, null: false
     t.string "currency", null: false
     t.string "status", default: "pending", null: false
     t.string "reason"
     t.string "idempotency_key", null: false
     t.string "processor_reference"
-    t.integer "tax_cents", default: 0, null: false
     t.index ["payment_id"], name: "idx_bt_billing_refunds_payment"
     t.index ["platform_id", "idempotency_key"], name: "idx_bt_billing_refunds_idempotency", unique: true
     t.index ["platform_id", "payment_id", "processor_reference"], name: "idx_bt_billing_refunds_reference", unique: true, where: "(processor_reference IS NOT NULL)"
@@ -829,11 +829,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.uuid "order_id", null: false
     t.uuid "line_item_id", null: false
     t.uuid "tax_rate_id"
+    t.string "authority", default: "other", null: false
+    t.text "registration_number"
     t.decimal "rate", precision: 8, scale: 5, null: false
     t.integer "amount_cents", null: false
     t.boolean "included", default: false, null: false
-    t.text "registration_number"
-    t.string "authority", default: "other", null: false
     t.index ["line_item_id"], name: "idx_bt_billing_tax_lines_line_item"
     t.index ["order_id"], name: "idx_bt_billing_tax_lines_order"
     t.index ["platform_id"], name: "idx_bt_billing_tax_lines_platform"
@@ -846,11 +846,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.uuid "platform_id", null: false
     t.uuid "tax_zone_id", null: false
     t.uuid "tax_category_id"
+    t.string "authority", default: "other", null: false
     t.decimal "rate", precision: 8, scale: 5, null: false
     t.datetime "starts_at"
     t.datetime "ends_at"
     t.datetime "discarded_at"
-    t.string "authority", default: "other", null: false
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_rates_id_platform", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_tax_rates_platform"
     t.index ["tax_zone_id"], name: "idx_bt_billing_tax_rates_zone"
@@ -869,9 +869,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
     t.boolean "prices_include_tax"
     t.text "registration_number"
     t.datetime "effective_from", null: false
-    t.datetime "effective_to"
     t.uuid "country_id"
     t.uuid "state_id"
+    t.datetime "effective_to"
     t.index ["country_id"], name: "idx_bt_billing_tax_registrations_country_id"
     t.index ["id", "platform_id"], name: "idx_bt_billing_tax_registrations_id_platform", unique: true
     t.index ["platform_id"], name: "idx_bt_billing_tax_registrations_platform"
