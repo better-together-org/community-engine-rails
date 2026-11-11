@@ -34,6 +34,13 @@
     <div class="form-text"><%= t('.scopes_hint') %></div>
   </div>
 
+  <div class="mb-3" id="platform-identity-provider-issuer-group">
+    <%= form.label :issuer, t('.issuer_label'), for: 'platform_identity_provider_issuer', class: 'form-label' %>
+    <%= form.url_field :issuer, id: 'platform_identity_provider_issuer', class: 'form-control',
+                                autocomplete: 'off', placeholder: 'https://idp.example.org' %>
+    <div class="form-text"><%= t('.issuer_hint') %></div>
+  </div>
+
   <fieldset class="mb-3" id="platform-identity-provider-domains">
     <legend class="form-label fs-6"><%= t('.domains_label') %></legend>
     <div class="form-text mb-2"><%= t('.domains_hint') %></div>

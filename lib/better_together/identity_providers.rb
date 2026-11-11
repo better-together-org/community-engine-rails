@@ -10,10 +10,16 @@ module BetterTogether
     Provider = Struct.new(
       :key, :kind, :platform_identifier, :platform_url, :env_id, :env_secret,
       :scope, :icon_class, :button_class, :verified_email,
+      :requires_issuer, :configure,
       keyword_init: true
     ) do
       def env_vars
         [env_id, env_secret].compact
+      end
+
+      # Applies catalog-specific OmniAuth options (e.g. OIDC client_options) after the generic ones.
+      def configure_options(options, creds, env)
+        configure&.call(options, creds, env)
       end
 
       def verified_email?(auth)
@@ -90,4 +96,38 @@ BetterTogether.register_identity_provider(
   button_class: 'btn btn-outline-danger',
   # Google asserts email_verified in the ID token claims; absent or false means unverified.
   verified_email: ->(auth) { auth&.info&.email.present? && [true, 'true'].include?(auth.info.email_verified) }
+)
+
+# Generic OpenID Connect relying party: the issuer is configured per platform (see
+# PlatformIdentityProvider#issuer), so one catalog entry serves any compliant provider.
+# Email counts as verified only when the provider asserts email_verified.
+BetterTogether.register_identity_provider(
+  :openid_connect,
+  kind: 'OpenID Connect',
+  platform_identifier: 'openid_connect',
+  platform_url: 'https://openid.net/connect/',
+  env_id: nil,
+  env_secret: nil,
+  scope: 'openid email profile',
+  icon_class: 'fa-solid fa-id-badge',
+  button_class: 'btn btn-outline-primary',
+  requires_issuer: true,
+  configure: lambda { |options, creds, env|
+    issuer = creds.options['issuer'] || creds.options[:issuer]
+    options[:issuer] = issuer
+    options[:discovery] = true
+    options[:response_type] = :code
+    options[:pkce] = true
+    options[:client_options] = {
+      identifier: creds.client_id,
+      secret: creds.client_secret,
+      redirect_uri: "#{BetterTogether::OmniauthFullHost.call(env)}/users/auth/openid_connect/callback"
+    }
+  },
+  verified_email: lambda { |auth|
+    info = auth&.info
+    claim = info&.email_verified
+    claim = auth.extra&.raw_info&.email_verified if claim.nil? && auth
+    info&.email.present? && [true, 'true'].include?(claim)
+  }
 )

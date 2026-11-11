@@ -80,6 +80,41 @@
       }
     },
     {
+      "selector": "#platform_identity_provider_issuer",
+      "title": "Issuer URL",
+      "bullets": [
+        "OpenID Connect only: the https URL of the identity provider."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 642.0,
+        "width": 1296.0,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 680.0,
+        "center_x": 720.0,
+        "center_y": 661.0
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 642.0,
+        "width": 1296.0,
+        "height": 38.0,
+        "right": 1368.0,
+        "bottom": 680.0,
+        "center_x": 720.0,
+        "center_y": 661.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 700.0,
+        "width": 380,
+        "height": 158,
+        "score": 777.0
+      }
+    },
+    {
       "selector": "#platform-identity-provider-domains",
       "title": "Allowed domains",
       "bullets": [
@@ -87,31 +122,31 @@
       ],
       "target": {
         "x": 72.0,
-        "y": 610.0,
+        "y": 742.0,
         "width": 1296.0,
         "height": 87.0,
         "right": 1368.0,
-        "bottom": 697.0,
+        "bottom": 829.0,
         "center_x": 720.0,
-        "center_y": 653.5
+        "center_y": 785.5
       },
       "avoid": {
         "x": 72.0,
-        "y": 610.0,
+        "y": 742.0,
         "width": 1296.0,
         "height": 87.0,
         "right": 1368.0,
-        "bottom": 697.0,
+        "bottom": 829.0,
         "center_x": 720.0,
-        "center_y": 653.5
+        "center_y": 785.5
       },
       "placement": {
-        "side": "below",
-        "x": 530.0,
-        "y": 717.0,
+        "side": "right",
+        "x": 1036,
+        "y": 24,
         "width": 380,
         "height": 158,
-        "score": 760.0
+        "score": 0
       }
     },
     {
@@ -122,31 +157,31 @@
       ],
       "target": {
         "x": 72.0,
-        "y": 753.0,
+        "y": 885.0,
         "width": 128.734375,
         "height": 38.0,
         "right": 200.734375,
-        "bottom": 791.0,
+        "bottom": 923.0,
         "center_x": 136.3671875,
-        "center_y": 772.0
+        "center_y": 904.0
       },
       "avoid": {
         "x": 72.0,
-        "y": 753.0,
+        "y": 885.0,
         "width": 128.734375,
         "height": 38.0,
         "right": 200.734375,
-        "bottom": 791.0,
+        "bottom": 923.0,
         "center_x": 136.3671875,
-        "center_y": 772.0
+        "center_y": 904.0
       },
       "placement": {
         "side": "below",
         "x": 24,
-        "y": 811.0,
+        "y": 943.0,
         "width": 380,
         "height": 132,
-        "score": 666.0
+        "score": 534.0
       }
     }
   ]

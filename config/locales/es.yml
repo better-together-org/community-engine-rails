@@ -3386,6 +3386,10 @@ es:
           registrada en el proveedor.
         domains_label: Dominios permitidos
         enabled_label: Habilitado
+        issuer_hint: 'Solo OpenID Connect. La URL https del proveedor de identidad
+          (se lee su documento de descubrimiento). Configura solo proveedores de confianza:
+          un correo que marquen como verificado puede vincularse a una cuenta existente.'
+        issuer_label: URL del emisor
         scopes_hint: Déjelo en blanco para usar el valor predeterminado del proveedor.
         scopes_label: Ámbitos
         strategy_label: Proveedor

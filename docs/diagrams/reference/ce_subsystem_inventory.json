@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T23:31:37Z",
+  "generated_at": "2026-11-11T01:10:01Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -1847,7 +1847,7 @@
           ],
           "validations": [
             "PresenceValidator: provider",
-            "InclusionValidator: provider (in=[\"facebook\", \"github\", \"google_oauth2\", \"linkedin\"])",
+            "InclusionValidator: provider (in=[\"facebook\", \"github\", \"google_oauth2\", \"linkedin\", \"openid_connect\"])",
             "PresenceValidator: uid",
             "UniquenessValidator: uid (scope=[:provider, :local_platform_id])",
             "PresenceValidator: user",
@@ -30087,7 +30087,8 @@
             "FormatValidator: client_id, client_secret (allow_nil=true, without=/[[:cntrl:]\\s]/, message=:invalid_characters)",
             "PresenceValidator: strategy",
             "InclusionValidator: strategy (in=dynamic)",
-            "UniquenessValidator: provider_platform_id (scope=:platform_id)"
+            "UniquenessValidator: provider_platform_id (scope=:platform_id)",
+            "PresenceValidator: issuer (if=dynamic)"
           ],
           "belongs_to": [
             {

@@ -6,7 +6,11 @@ module BetterTogether
   class OmniauthSetup
     def self.call(key, env)
       creds = IdentityProviderCredentials.resolve(key, domain: OmniauthFullHost.domain_for(env))
-      apply(env['omniauth.strategy'].options, creds) if creds
+      return unless creds
+
+      options = env['omniauth.strategy'].options
+      apply(options, creds)
+      IdentityProviders.fetch(key).configure_options(options, creds, env)
     rescue ActiveRecord::ActiveRecordError => e
       Rails.logger.warn("[OAuth] credential resolution failed for #{key}: #{e.class}")
     end
