@@ -3194,6 +3194,9 @@ fr:
         email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
           %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
           vous connecter avec le bon compte.'
+        email_missing: "%{provider} n'a pas fourni d'adresse e-mail. Rends une adresse
+          e-mail disponible pour cette application dans les paramètres de ton compte
+          %{provider}."
         failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
         success: Compte %{provider} connecté avec succès.
         unverified_email_collision: Un compte existe déjà avec cet e-mail et %{provider}

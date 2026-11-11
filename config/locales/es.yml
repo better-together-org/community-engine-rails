@@ -3174,6 +3174,9 @@ es:
         email_mismatch: 'No se puede conectar la cuenta de %{provider}: el correo
           electrónico %{email} pertenece a un usuario diferente. Por favor cierre
           sesión e inicie sesión con la cuenta correcta.'
+        email_missing: "%{provider} no proporcionó un correo electrónico. Haz que
+          una dirección de correo esté disponible para esta aplicación en la configuración
+          de tu cuenta de %{provider}."
         failure: No se pudo conectar la cuenta de %{provider}. Por favor intente de
           nuevo.
         success: Cuenta de %{provider} conectada exitosamente.

@@ -77,3 +77,17 @@ BetterTogether.register_identity_provider(
     end
   }
 )
+
+BetterTogether.register_identity_provider(
+  :google_oauth2,
+  kind: 'Google',
+  platform_identifier: 'google',
+  platform_url: 'https://accounts.google.com',
+  env_id: 'GOOGLE_CLIENT_ID',
+  env_secret: 'GOOGLE_CLIENT_SECRET',
+  scope: 'email,profile',
+  icon_class: 'fa-brands fa-google',
+  button_class: 'btn btn-outline-danger',
+  # Google asserts email_verified in the ID token claims; absent or false means unverified.
+  verified_email: ->(auth) { auth&.info&.email.present? && [true, 'true'].include?(auth.info.email_verified) }
+)

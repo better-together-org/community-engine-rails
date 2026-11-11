@@ -38,4 +38,30 @@ RSpec.describe BetterTogether::IdentityProviders do
       expect(github.verified_email?(auth_for.call([]))).to be(false)
     end
   end
+
+  describe 'google verified-email rule' do
+    let(:google) { described_class.fetch(:google_oauth2) }
+    let(:auth_for) do
+      ->(verified) { OmniAuth::AuthHash.new(info: { email: 'a@example.test', email_verified: verified }) }
+    end
+
+    it 'ships google with its env vars and scope' do
+      expect([google.env_vars, google.scope]).to eq([%w[GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET], 'email,profile'])
+    end
+
+    it 'accepts an asserted verified email' do
+      expect(google.verified_email?(auth_for.call(true))).to be(true)
+    end
+
+    it 'rejects a false or missing assertion', :aggregate_failures do
+      expect(google.verified_email?(auth_for.call(false))).to be(false)
+      expect(google.verified_email?(auth_for.call(nil))).to be(false)
+    end
+
+    it 'rejects an assertion with no email' do
+      auth = OmniAuth::AuthHash.new(info: { email_verified: true })
+
+      expect(google.verified_email?(auth)).to be(false)
+    end
+  end
 end
