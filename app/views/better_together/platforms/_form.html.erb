@@ -180,6 +180,49 @@
     </div>
   </div>
 
+  <% if platform.local_hosted? %>
+    <div class="card border-0 bg-body-tertiary mb-3" id="<%= dom_id(platform, :quota_defaults) %>">
+      <div class="card-body">
+        <h2 class="h5 mb-2"><%= t('better_together.platforms.form.quota_defaults_title', default: 'Quota defaults') %></h2>
+        <p class="text-muted mb-3">
+          <%= t('better_together.platforms.form.quota_defaults_hint',
+                default: 'Starting limit for each new person, community and this platform. Leave a field blank to use the default set in the application configuration. Changing a value also updates existing quotas on this platform; per-owner quota grants are not affected.') %>
+        </p>
+
+        <% quota_default_catalog(platform).each do |quota| %>
+          <fieldset class="mb-3 quota-default-type" id="<%= dom_id(platform, "quota_defaults_#{quota[:key]}") %>">
+            <legend class="h6">
+              <%= t("better_together.platforms.form.quota_types.#{quota[:key]}", default: quota[:key].humanize) %>
+              <% unless quota[:unit] == :bytes %><span class="text-muted small">(<%= quota[:unit] %>)</span><% end %>
+            </legend>
+            <div class="row g-3">
+              <% quota[:kinds].each do |entry| %>
+                <% field_id = "#{dom_id(platform)}_quota_default_#{quota[:key]}_#{entry[:kind]}" %>
+                <div class="col-lg-4">
+                  <label class="form-label" for="<%= field_id %>">
+                    <%= t("better_together.platforms.form.quota_kinds.#{entry[:kind]}", default: entry[:kind].humanize) %>
+                  </label>
+                  <% if quota[:unit] == :bytes %>
+                    <%= select_tag entry[:field],
+                                   options_for_select(quota_storage_options(entry), entry[:value].to_s),
+                                   id: field_id, class: 'form-select quota-default-input',
+                                   data: { controller: 'better_together--slim-select' } %>
+                  <% else %>
+                    <%= number_field_tag entry[:field], entry[:value], id: field_id, min: 0, step: 1,
+                                         placeholder: entry[:inherited], class: 'form-control quota-default-input' %>
+                    <% if entry[:value] || entry[:inherited] %>
+                      <div class="form-text"><%= number_with_delimiter(entry[:value] || entry[:inherited]) %></div>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </fieldset>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="accordion mb-3" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>">
     <div class="accordion-item">
       <h2 class="accordion-header" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header">

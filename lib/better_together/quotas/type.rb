@@ -24,6 +24,14 @@ module BetterTogether
           registry.values
         end
 
+        def available(platform = Current.platform)
+          all.select { |type| type.available_for?(platform) }
+        end
+
+        def available_keys(platform = Current.platform)
+          available(platform).map(&:key)
+        end
+
         def keys
           registry.keys
         end
@@ -41,6 +49,12 @@ module BetterTogether
         # :bytes, :tokens, etc, descriptive only, not enforced against a unit table.
         def unit
           raise NotImplementedError, "#{self} must define .unit"
+        end
+
+        # Whether this quota type should be offered (forms, usage meters) for a platform.
+        # Types backed by an optional integration override this; the default is always.
+        def available_for?(_platform)
+          true
         end
 
         # cumulative | monthly | daily; must match Quota#period's enum values.
@@ -62,11 +76,12 @@ module BetterTogether
           raise NotImplementedError, "#{self} must define .measure"
         end
 
-        # Default limit for a lazily-created Quota row, keyed by owner class. Product
-        # decision, not an engineering one: concrete types stub generous provisional
-        # numbers; see each type's own comment.
-        def default_limit(_owner)
-          raise NotImplementedError, "#{self} must define .default_limit"
+        # Default limit for a lazily-created Quota row: the owning platform's override,
+        # else config/quota_defaults.yml (see Quotas::Defaults). A type needs an entry
+        # for every owner kind it can meter.
+        def default_limit(owner)
+          Defaults.for(type: key, owner:) ||
+            raise(NotImplementedError, "no default quota limit for #{key} / #{Defaults.owner_kind(owner)}")
         end
 
         # Whether a given subject should be logged at all for this type. Defaults to

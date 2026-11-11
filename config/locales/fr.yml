@@ -3446,6 +3446,20 @@ fr:
         host_url_hint: L'URL publique canonique de cette plateforme (ex. https://example.com).
           Utilisée pour l'identifier dans la fédération et générer les URLs du point
           de terminaison OAuth. Doit être HTTPS en production.
+        quota_defaults_hint: Limite initiale pour chaque nouvelle personne, communauté
+          et pour cette plateforme. Laissez un champ vide pour utiliser la valeur
+          de la configuration de l'application. Modifier une valeur met aussi à jour
+          les quotas existants de cette plateforme ; les octrois de quota par propriétaire
+          ne sont pas touchés.
+        quota_defaults_title: Quotas par défaut
+        quota_kinds:
+          community: Communauté
+          person: Personne
+          platform: Plateforme
+        quota_types:
+          ai_translation_tokens: Jetons d'utilisation de LLM IA par mois
+          media_storage: Stockage
+        quota_use_default: Utiliser la valeur par défaut (%{size})
       index:
         provision_new_platform: Provisionner une nouvelle plateforme
       new:
@@ -3579,9 +3593,11 @@ fr:
         usage: Utilisation
       updated: Dérogation de quota mise à jour.
     quotas:
+      errors:
+        not_local: doit être local à cette plateforme
       usage_meter:
         types:
-          ai_translation_tokens: Jetons de traduction IA
+          ai_translation_tokens: Jetons d'utilisation de LLM IA
           media_storage: Stockage
     rbac:
       nav:
