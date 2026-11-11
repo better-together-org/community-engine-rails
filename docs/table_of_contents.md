@@ -84,6 +84,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Safety and Federation Review Workflow](developers/systems/safety_and_federation_review_workflow.md) - Reviewer surfaces, safety cases, actions and notes
 
 ##### **Billing** - [`billing/`](billing/)
+- [Billing Buyer Page](billing/buyer_billing_hub.md) - The signed-in buyer's own page: plans, orders, credit and access in one place, who can reach it and how it is scoped
 - [Billing Foundation and Processor Adapters](billing/processor-adapters.md) - Vendor-neutral billing core, host configuration and the adapter contract
 - [Billing Notifications](billing/notifications.md) - Who is told what about orders, payments and billing operations, never twice, never with payment details
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
