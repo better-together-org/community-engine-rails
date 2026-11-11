@@ -105,4 +105,19 @@ RSpec.describe BetterTogether::Billing::Orders::Document do
   it 'renders in Ukrainian, Cyrillic included' do
     expect(described_class.new(order, locale: :uk).to_pdf).to start_with('%PDF')
   end
+
+  describe 'dates near midnight UTC' do
+    it 'prints the date in the document time zone, like the XML', :aggregate_failures do
+      order.platform.update!(time_zone: 'America/St_Johns')
+      order.buyer.update!(preferences: order.buyer.preferences.except('time_zone'))
+      order.update_columns(placed_at: Time.utc(2026, 3, 15, 1, 0)) # rubocop:disable Rails/SkipsModelValidations
+      document = described_class.new(order)
+      text = cells(document.sections[:details])
+
+      expect(document.time_zone).to eq('America/St_Johns')
+      expect(text).to include(I18n.l(Date.new(2026, 3, 14), format: :long))
+      expect(text).not_to include(I18n.l(Date.new(2026, 3, 15), format: :long))
+      expect(document.xml).to include('20260314')
+    end
+  end
 end
