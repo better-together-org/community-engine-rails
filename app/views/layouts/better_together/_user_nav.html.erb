@@ -29,6 +29,15 @@
         <% end %>
       </li>
 
+      <% if BetterTogether::Billing.enabled?(host_platform) %>
+        <li>
+          <%= link_to billing_hub_path(locale: I18n.locale), class: 'dropdown-item', data: { identifier: 'billing' } do %>
+            <i class="fa-solid fa-receipt me-2" aria-hidden="true"></i>
+            <%= t('navbar.billing') %>
+          <% end %>
+        </li>
+      <% end %>
+
       <li>
         <%= link_to host_community.name, host_community, class: "host-community dropdown-item ", data: { identifier: 'host-community' } %>
       </li>

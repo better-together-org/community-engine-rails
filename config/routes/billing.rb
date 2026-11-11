@@ -114,6 +114,13 @@ concern :billing_subscriptions do
   end
 end
 
+# The buyer's own billing page: one place that gathers their plans, orders, credit and access, and links to each.
+concern :billing_hub do
+  namespace :billing do
+    get '/', to: 'hubs#show', as: :hub
+  end
+end
+
 # What a paid plan gives: a steward's list of what a plan includes and the platform's allowances, and a person's own access.
 concern :billing_entitlements do
   namespace :billing do
@@ -174,7 +181,7 @@ end
 # Same locale and base-path scopes as the localized block in routes.rb.
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
-    concerns :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
+    concerns :billing_hub, :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
              :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics
   end
 end

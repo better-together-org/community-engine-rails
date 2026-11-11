@@ -1061,6 +1061,22 @@ fr:
         status_revoked: Remboursé
         title: Mon accès
         until: Valable jusqu’au %{date}.
+      hub:
+        access_count: 'Actifs : %{count}'
+        access_heading: Ce à quoi vous avez accès
+        all_orders: Toutes les commandes
+        all_plans: Tous les forfaits
+        credit_heading: Crédit en magasin
+        credit_none: Vous n’avez aucun crédit en magasin.
+        intro: Vos forfaits, commandes et crédit sur %{platform}.
+        orders_heading: Commandes récentes
+        orders_none: Vous n’avez passé aucune commande.
+        plans_heading: Forfaits actifs
+        plans_none: Vous n’avez aucun forfait actif.
+        renews: Renouvellement le %{date}
+        title: Facturation et forfaits
+        view_access: Voir mes accès
+        view_credit: Voir le crédit
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -6661,6 +6677,7 @@ fr:
       invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
+    billing: Facturation
     conversations: Conversations
     host_mgmt_tooltip: Gestion de l'hôte
     locale_switcher_tooltip: Changer de langue

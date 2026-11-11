@@ -1,0 +1,14 @@
+---
+title: My billing
+audience:
+- end_user
+journey_step: As a member, I open Billing from my account menu and see my plans, orders,
+  credit and access in one place.
+callouts:
+- :id: plans
+  :title: Plans
+  :description: Active plans and when they renew.
+accessibility_notes: Each area is a labelled section with its own heading and a text
+  link.
+slug: billing_hub
+device: desktop
