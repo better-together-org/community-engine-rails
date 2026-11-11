@@ -1,7 +1,7 @@
 {
   "name": "billing_checkout_free_plan",
   "device": "mobile",
-  "url": "/en/billing/checkout/new?plan_id=6c7392cb-a921-4702-a55f-715f0c40607c",
+  "url": "/en/billing/checkout/new?plan_id=cdf71edd-0e08-48cb-bcc0-7ca01b776843",
   "title": "Get Community membership | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -11,37 +11,37 @@
   "callouts": [
     {
       "selector": "#billing-checkout-place-btn",
-      "title": "Place order",
+      "title": "Get it free",
       "bullets": [
-        "No way of paying to choose; the agreements still have to be accepted."
+        "Nothing to pay, tax or address."
       ],
       "target": {
         "x": 12.0,
-        "y": 804.765625,
-        "width": 116.296875,
+        "y": 608.578125,
+        "width": 106.953125,
         "height": 38.0,
-        "right": 128.296875,
-        "bottom": 842.765625,
-        "center_x": 70.1484375,
-        "center_y": 823.765625
+        "right": 118.953125,
+        "bottom": 646.578125,
+        "center_x": 65.4765625,
+        "center_y": 627.578125
       },
       "avoid": {
         "x": 12.0,
-        "y": 804.765625,
-        "width": 116.296875,
+        "y": 608.578125,
+        "width": 106.953125,
         "height": 38.0,
-        "right": 128.296875,
-        "bottom": 842.765625,
-        "center_x": 70.1484375,
-        "center_y": 823.765625
+        "right": 118.953125,
+        "bottom": 646.578125,
+        "center_x": 65.4765625,
+        "center_y": 627.578125
       },
       "placement": {
-        "side": "above",
+        "side": "below",
         "x": 24,
-        "y": 600.77,
+        "y": 666.58,
         "width": 270.0,
-        "height": 184,
-        "score": 804.765625
+        "height": 132,
+        "score": 610.421875
       }
     }
   ]

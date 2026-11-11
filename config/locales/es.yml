@@ -953,6 +953,8 @@ es:
           una parte a la forma elegida arriba, o elíjala para el total.
         error_refused: No se pudo hacer su pedido. No se ha cobrado nada. Inténtelo
           de nuevo.
+        free: Gratis
+        get_free: Obtener gratis
         how_to_pay: "¿Cómo desea pagar?"
         no_methods: Ahora mismo no hay forma de pagar esto.
         parts_heading: Pagar una parte de otra forma
