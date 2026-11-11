@@ -80,6 +80,33 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
     end
   end
 
+  it 'captures checking out a free plan, with no way of paying to choose' do
+    free_plan = create(:better_together_billing_plan, :unlinked, processor: nil, accepted_payment_methods: [], billing_interval: 'one_time',
+                                                                 name: 'Community membership', currency: 'USD', amount_cents: 0)
+
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_checkout_free_plan',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_checkout_free_plan'),
+      callouts: [{ id: 'summary', selector: '#billing-checkout-summary', title: 'What you are getting',
+                   bullets: ['A free plan has no price to pay.'] },
+                 { id: 'place', selector: '#billing-checkout-place-btn', title: 'Place order',
+                   bullets: ['No way of paying to choose; the agreements still have to be accepted.'] }],
+      narrative: {
+        title: 'Checkout: a free plan',
+        audience: %w[member],
+        journey_step: 'As a member, I accept the agreements and take a free plan.',
+        callouts: [{ id: 'place', title: 'Place the order', description: 'The plan starts at once; nothing is charged.' }],
+        accessibility_notes: 'The agreements are labelled checkboxes; there is no payment method step.'
+      }
+    ) do
+      visit_billing("checkout/new?plan_id=#{free_plan.id}")
+      scroll_to(find('#billing-agreement-review'), align: :center)
+      expect(page).to have_css('#billing-checkout-place-btn')
+      expect(page).to have_no_css('#billing-checkout-methods')
+    end
+  end
+
   it 'captures the steward\'s purchase terms and the readiness checklist' do
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_purchase_terms',

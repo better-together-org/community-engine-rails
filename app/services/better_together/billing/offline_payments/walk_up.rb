@@ -33,7 +33,7 @@ module BetterTogether
           @billing_address = clean_address(billing_address)
           @invitation = nil
           @plan = plan
-          @payment_method = payment_method.to_s
+          @payment_method = plan.free? ? '' : payment_method.to_s
           @agreements_accepted = agreements_accepted
           @payment_received = payment_received
         end
@@ -104,18 +104,22 @@ module BetterTogether
         def purpose = @purpose ||= Checkout::Methods.new(platform:, plan:).purpose
 
         # A sale in person is paid by something the seller can confirm; store credit is the buyer's to spend.
+        # A plan that costs nothing has no way of paying to choose.
         def method_available?
+          return true if plan.free?
+
           Billing.manual_method?(payment_method) &&
             Checkout::Methods.call(platform:, plan:).any? { |choice| choice.available? && choice.name == payment_method }
         end
 
         def record_in_person_acceptance
-          gate = Checkout::AgreementGate.new(platform:, purpose:, signer: buyer, purchasables: [plan], payment_method:)
+          gate = Checkout::AgreementGate.new(platform:, purpose:, signer: buyer, purchasables: [plan], payment_method: payment_method.presence)
           gate.accept!(method: 'seller_assisted', context: { recorded_by_person_id: seller.id })
         end
 
         def place
-          Orders::Place.call(platform:, buyer:, purpose:, payment_method:, line_items: [{ purchasable: plan }], seller_assisted: true,
+          Orders::Place.call(platform:, buyer:, purpose:, payment_method: payment_method.presence,
+                             line_items: [{ purchasable: plan }], seller_assisted: true,
                              details: { buyer_email:, billing_address: }, tax_address:)
         end
 
