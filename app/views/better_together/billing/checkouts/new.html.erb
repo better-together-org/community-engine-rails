@@ -28,7 +28,8 @@
   </div>
   </turbo-frame>
 
-  <%# Step 1: how to pay. A method that is not available is listed with the reason. %>
+  <%# Step 1: how to pay. A method that is not available is listed with the reason. A free plan has nothing to pay. %>
+  <% unless @plan.free? %>
   <%= form_with(url: new_billing_checkout_path(locale: I18n.locale), method: :get, id: 'billing-checkout-method-form') do %>
     <%= hidden_field_tag :plan_id, @plan.id %>
     <fieldset id="billing-checkout-methods" class="mb-4">
@@ -87,13 +88,14 @@
       <% end %>
     </fieldset>
   <% end %>
+  <% end %>
 
   <%# Step 2: the agreements that apply to this plan and method, accepted before anything is placed. %>
-  <% if @method && @gate %>
+  <% if (@method || @plan.free?) && @gate %>
     <% if @gate.ready? %>
       <%= form_with(url: billing_checkout_path(locale: I18n.locale), method: :post, id: 'billing-checkout-form') do %>
         <%= hidden_field_tag :plan_id, @plan.id %>
-        <%= hidden_field_tag :payment_method, @method %>
+        <%= hidden_field_tag :payment_method, @method unless @plan.free? %>
         <% @parts.each do |part| %>
           <%= hidden_field_tag "part_amounts[#{part[:payment_method]}]", BetterTogether::Billing::Currency.to_major(part[:amount_cents], @plan.currency), id: "billing-checkout-part-hidden-#{part[:payment_method]}" %>
         <% end %>

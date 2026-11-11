@@ -19,7 +19,7 @@ module BetterTogether
       def new
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        @gate = build_gate if @method
+        @gate = build_gate if @method || @plan.free?
         load_addresses
         load_tax_preview
       end
@@ -27,7 +27,7 @@ module BetterTogether
       def create
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        return render_again(:method_not_available) unless @method
+        return render_again(:method_not_available) unless @method || @plan.free?
         return render_again(@address_error) unless choose_address
         return render_again(:parts_too_large) if parts_too_large?
 
@@ -67,12 +67,14 @@ module BetterTogether
 
       # Only a method this plan offers and the platform has switched on.
       def chosen_method
+        return if @plan.free?
+
         @choices.find { |choice| choice.available? && choice.name == params[:payment_method].to_s }&.name
       end
 
       def build_gate
         Checkout::AgreementGate.new(platform: billing_owner, purpose: @purpose, signer: current_user.person, purchasables: [@plan],
-                                    payment_method: [@method, *@parts.map { |part| part[:payment_method] }])
+                                    payment_method: [@method, *@parts.map { |part| part[:payment_method] }].compact)
       end
 
       # The parts the buyer asked to pay now, by ways other than the one that takes the rest: an amount beside each. Only the
@@ -128,6 +130,7 @@ module BetterTogether
 
       # Parts asked for, with the chosen way taking the rest; or just the chosen way, which pays the whole of it.
       def how_to_pay
+        return {} if @plan.free?
         return { payment_method: @method } if @parts.empty?
 
         { payments: [*@parts, { payment_method: @method }] }

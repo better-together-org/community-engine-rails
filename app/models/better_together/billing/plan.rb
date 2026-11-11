@@ -155,6 +155,11 @@ module BetterTogether
         billing_interval.in?(%w[month year])
       end
 
+      # Costs nothing, so there is nothing to pay and no way of paying to choose.
+      def free?
+        amount_cents.to_i.zero?
+      end
+
       def launch_ready_for_hosted_billing?
         recurring?
       end
@@ -316,6 +321,8 @@ module BetterTogether
       # A plan nobody could pay for is a mistake: it needs an online processor or at least
       # one other way to pay.
       def payable_some_way
+        return if amount_cents.to_i.zero?
+
         errors.add(:base, :no_payment_method) if processor.blank? && accepted_payment_methods.empty?
       end
 
