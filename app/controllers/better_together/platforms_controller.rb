@@ -143,12 +143,22 @@ module BetterTogether
         BetterTogether::Content::Css.extra_permitted_attributes +
         BetterTogether::Content::Css.localized_attribute_list }]
 
-      params.require(:platform).permit(
+      permitted = params.require(:platform).permit(
         permitted_attributes,
         *settings_attributes,
         *locale_attributes,
         *css_block_attrs
       )
+      restrict_quota_default_limits(permitted)
+    end
+
+    # Byte quotas may only be set to a listed decimal storage step (or the configured default).
+    def restrict_quota_default_limits(permitted)
+      return permitted unless permitted.key?(:quota_default_limits)
+
+      permitted[:quota_default_limits] =
+        BetterTogether::Quotas::Defaults.restrict_to_storage_steps(permitted[:quota_default_limits].to_h)
+      permitted
     end
 
     # Adds a policy check for the platform
@@ -190,7 +200,8 @@ module BetterTogether
         federation_protocol
         oauth_issuer_url
       ] + [
-        { feature_gate_rollouts: {} }
+        { feature_gate_rollouts: {} },
+        { quota_default_limits: {} }
       ]
     end
 
