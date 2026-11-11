@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_17_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_17_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -664,6 +664,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_17_090000) do
     t.jsonb "metadata", default: {}, null: false
     t.uuid "tax_category_id"
     t.boolean "listed", default: false, null: false
+    t.boolean "restricted_to_members", default: false, null: false
+    t.boolean "restricted_to_subscribers", default: false, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
     t.index ["id", "platform_id"], name: "idx_bt_billing_plans_id_platform", unique: true
     t.index ["listed"], name: "idx_bt_billing_plans_listed"

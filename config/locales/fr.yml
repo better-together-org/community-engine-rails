@@ -1540,6 +1540,10 @@ fr:
         title: Ce que comprend ce forfait
       plans:
         actions_heading: Actions
+        audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
+          une ou les deux pour le limiter : toute personne de l’un des types cochés
+          peut le voir et l’acheter.'
+        audience_legend: Qui peut voir et acheter ce forfait
         beneficiary_placeholder: Accès hébergé
         benefits_placeholder: |-
           Accès communautaire hébergé
@@ -1598,6 +1602,12 @@ fr:
         field_renewal_lead_days: Facturer autant de jours à l’avance
         field_renewal_lead_days_hint: Combien de temps avant la fin d’une période
           sa facture de renouvellement est créée.
+        field_restricted_to_members: Réservé aux membres
+        field_restricted_to_members_hint: Seulement les personnes ayant un forfait
+          d’adhésion actif.
+        field_restricted_to_subscribers: Réservé aux abonnés
+        field_restricted_to_subscribers_hint: Seulement les personnes ayant un abonnement
+          actif.
         field_solidarity_description: Description de solidarite
         field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
           a qui ce niveau s''adresse.

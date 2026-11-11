@@ -1510,6 +1510,10 @@ es:
         title: Qué incluye este plan
       plans:
         actions_heading: Acciones
+        audience_hint: 'Deje ambas casillas sin marcar para todo el mundo. Marque
+          una o ambas para limitarlo: quien sea de alguno de los tipos marcados puede
+          verlo y comprarlo.'
+        audience_legend: Quién puede ver y comprar este plan
         beneficiary_placeholder: Acceso alojado
         benefits_placeholder: |-
           Acceso comunitario alojado
@@ -1567,6 +1571,10 @@ es:
         field_renewal_lead_days: Facturar con estos días de antelación
         field_renewal_lead_days_hint: Cuánto antes de que termine un periodo se hace
           su factura de renovación.
+        field_restricted_to_members: Solo para miembros
+        field_restricted_to_members_hint: Solo personas con un plan de membresía activo.
+        field_restricted_to_subscribers: Solo para suscriptores
+        field_restricted_to_subscribers_hint: Solo personas con una suscripción activa.
         field_solidarity_description: Descripcion de solidaridad
         field_solidarity_description_hint: Se muestra a los posibles suscriptores
           para explicar a quien va dirigido este nivel.

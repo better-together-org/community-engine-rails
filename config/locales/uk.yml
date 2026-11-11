@@ -1491,6 +1491,10 @@ uk:
         title: Що входить до цього плану
       plans:
         actions_heading: Дії
+        audience_hint: 'Залиште обидва поля без позначки для всіх. Позначте одне або
+          обидва, щоб обмежити: кожен, хто належить до позначених типів, може бачити
+          й купувати його.'
+        audience_legend: Хто може бачити й купувати цей план
         beneficiary_placeholder: Хостинговий доступ
         benefits_placeholder: |-
           Хостинговий доступ для спільноти
@@ -1545,6 +1549,10 @@ uk:
         field_renewal_lead_days: Виставляти рахунок за стільки днів
         field_renewal_lead_days_hint: За скільки до завершення періоду створюється
           рахунок на продовження.
+        field_restricted_to_members: Лише для учасників
+        field_restricted_to_members_hint: Лише для людей з активним планом членства.
+        field_restricted_to_subscribers: Лише для передплатників
+        field_restricted_to_subscribers_hint: Лише для людей з активною передплатою.
         field_solidarity_description: Opys solidarnosti
         field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
           shchob poyasnyty, dlya koho pryznachenyj tsej riven'.

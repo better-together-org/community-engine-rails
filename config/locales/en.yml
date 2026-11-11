@@ -1519,6 +1519,9 @@ en:
         title: What this plan includes
       plans:
         actions_heading: Actions
+        audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
+          it: a person who is any of the ticked kinds can see and buy it.'
+        audience_legend: Who may see and buy this plan
         beneficiary_placeholder: Hosted access
         benefits_placeholder: |-
           Hosted community access
@@ -1575,6 +1578,10 @@ en:
         field_renewal_lead_days: Invoice this many days ahead
         field_renewal_lead_days_hint: How long before a period ends its renewal invoice
           is made.
+        field_restricted_to_members: Members only
+        field_restricted_to_members_hint: Only people with an active membership plan.
+        field_restricted_to_subscribers: Subscribers only
+        field_restricted_to_subscribers_hint: Only people with an active subscription.
         field_solidarity_description: Solidarity description
         field_solidarity_description_hint: Shown to potential subscribers to explain
           who this tier is for.

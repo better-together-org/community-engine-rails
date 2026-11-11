@@ -67,7 +67,7 @@ module BetterTogether
       # Not held by any processor, so editable at any time; a change applies from the next renewal.
       RENEWAL_FIELDS = %i[grace_days renewal_lead_days].freeze
       # Not synced to the processor, so a steward can change it whether or not the plan is linked.
-      LISTING_FIELDS = %i[listed].freeze
+      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers].freeze
       MAX_GRACE_DAYS = 90
       MAX_LEAD_DAYS = 60
 
@@ -124,6 +124,16 @@ module BetterTogether
       scope :active, -> { where(active: true) }
       # What the public catalog shows: bought-able plans a steward chose to list.
       scope :listed, -> { active.where(listed: true) }
+      scope :unrestricted, -> { where(restricted_to_members: false, restricted_to_subscribers: false) }
+
+      # The plans a person may see and buy, given what they are to the platform (see Plans::Audience): the unrestricted ones, and
+      # each limited one they qualify for. Any one qualification is enough.
+      scope :open_to, lambda { |audience|
+        open = unrestricted
+        open = open.or(where(restricted_to_members: true)) if audience.member
+        open = open.or(where(restricted_to_subscribers: true)) if audience.subscriber
+        open
+      }
       scope :needs_processor_product_id, -> { where(processor_product_id: nil).where.not(processor_price_id: nil) }
 
       # Permitted attributes for update, as a baseline. Which of them a given plan will
@@ -154,6 +164,15 @@ module BetterTogether
         [*self.class.with_locales(fields.reject do |field|
           locked_field?(field)
         end), *RENEWAL_FIELDS, *LISTING_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
+      end
+
+      def restricted? = restricted_to_members || restricted_to_subscribers
+
+      # Whether someone with this audience (see Plans::Audience) qualifies for the plan: anyone does if it is not limited, else any one kind.
+      def open_to?(audience)
+        return true unless restricted?
+
+        (restricted_to_members && audience.member) || (restricted_to_subscribers && audience.subscriber) || false
       end
 
       def recurring?

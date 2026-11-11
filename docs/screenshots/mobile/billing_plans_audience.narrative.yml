@@ -1,0 +1,14 @@
+---
+title: Plans for members or subscribers only
+audience:
+- platform_organizer
+journey_step: As a platform organizer, I offer a reduced price or extra entitlements
+  to members or subscribers only.
+callouts:
+- :id: audience
+  :title: Audience
+  :description: A limited plan is hidden from everyone else, and cannot be bought
+    by link.
+accessibility_notes: Each choice is a labelled checkbox with its own hint.
+slug: billing_plans_audience
+device: mobile
