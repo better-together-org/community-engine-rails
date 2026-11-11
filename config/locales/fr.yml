@@ -3407,14 +3407,22 @@ fr:
           du fournisseur.
         domains_label: Domaines autorisés
         enabled_label: Activé
-        issuer_hint: 'OpenID Connect uniquement. L''URL https du fournisseur d''identité
-          (son document de découverte y est lu). Ne configure que des fournisseurs
-          de confiance : un e-mail qu''ils marquent comme vérifié peut être lié à
-          un compte existant.'
+        issuer_hint: OpenID Connect uniquement. L'URL https du fournisseur d'identité
+          (son document de découverte y est lu). Elle ne peut pas être modifiée après
+          l'ajout, et chaque émetteur ne peut être ajouté qu'une fois par plateforme.
         issuer_label: URL de l'émetteur
+        label_hint: OpenID Connect uniquement. Affiché sur le bouton de connexion.
+          Par défaut, l'hôte de l'émetteur.
+        label_label: Libellé du bouton
         scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
         scopes_label: Portées
         strategy_label: Fournisseur
+        trust_verified_email_hint: Désactivé par défaut. Si activé, un courriel que
+          cet émetteur marque comme vérifié peut connecter à un compte existant avec
+          cette adresse. À activer seulement pour les émetteurs qui vérifient les
+          adresses courriel.
+        trust_verified_email_label: Faire confiance aux courriels vérifiés de cet
+          émetteur
         update_btn: Mettre à jour le fournisseur
       index:
         back_to_platform: Retour à la plateforme
@@ -5179,6 +5187,8 @@ fr:
       expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      immutable: ne peut pas être modifié après la création ; supprimez ce fournisseur
+        et ajoutez-en un nouveau
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide

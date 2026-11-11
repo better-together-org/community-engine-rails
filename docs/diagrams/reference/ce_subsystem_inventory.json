@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T04:12:58Z",
+  "generated_at": "2026-11-11T02:14:24Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -1849,7 +1849,7 @@
             "PresenceValidator: provider",
             "InclusionValidator: provider (in=[\"facebook\", \"github\", \"google_oauth2\", \"linkedin\", \"openid_connect\"])",
             "PresenceValidator: uid",
-            "UniquenessValidator: uid (scope=[:provider, :local_platform_id])",
+            "UniquenessValidator: uid (scope=[:provider, :platform_id, :local_platform_id])",
             "PresenceValidator: user",
             "PresenceValidator: access_token (on=:create)"
           ],

@@ -27,9 +27,9 @@ RSpec.describe 'OpenID Connect sign-in', :no_auth, :omniauth, :skip_host_setup d
     OmniAuth.config.mock_auth[:openid_connect] = nil
   end
 
-  def configure_oidc(domains:, enabled: true)
+  def configure_oidc(domains:, enabled: true, trust: true, issuer: 'https://idp.example.org')
     create(:better_together_platform_identity_provider, platform:, strategy: 'openid_connect', enabled:,
-                                                        provider_platform: nil, issuer: 'https://idp.example.org')
+                                                        provider_platform: nil, issuer:, trust_verified_email: trust)
       .tap { |row| row.update!(platform_domains: domains) }
   end
 
@@ -47,6 +47,14 @@ RSpec.describe 'OpenID Connect sign-in', :no_auth, :omniauth, :skip_host_setup d
     user = BetterTogether.user_class.find_by(email: oauth_email)
     expect(user).to be_confirmed
     expect(user.person_platform_integrations.first.local_platform).to eq(platform)
+  end
+
+  it 'does not trust an issuer email that the configuration has not opted into', :aggregate_failures do
+    configure_oidc(domains: [domain], trust: false)
+    existing = create(:user, :confirmed, email: oauth_email)
+    visit '/users/auth/openid_connect/callback'
+
+    expect(existing.reload.person_platform_integrations).to be_empty
   end
 
   context 'when the provider does not assert a verified email' do

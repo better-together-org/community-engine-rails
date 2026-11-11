@@ -14,9 +14,11 @@ module BetterTogether
 
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil)
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil,
+                             identity_platform: nil, trust_verified_email: false)
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth,
+                                                                                     platform: identity_platform,
                                                                                      local_platform:)
 
         # Check if integration already belongs to a different user
@@ -37,7 +39,10 @@ module BetterTogether
 
         # Check if current user already has a DIFFERENT integration for this provider
         if current_user.present? && person_platform_integration.new_record?
-          existing_integration = current_user.person_platform_integrations.find_by(provider: auth.provider, local_platform:)
+          existing = current_user.person_platform_integrations.where(provider: auth.provider, local_platform:)
+          # Issuer-based providers: one connection per issuer, so another issuer is a different identity
+          existing = existing.where(platform: identity_platform) if identity_platform
+          existing_integration = existing.first
           if existing_integration.present?
             provider_name = auth.provider.to_s.titleize
             raise ArgumentError,
@@ -50,7 +55,7 @@ module BetterTogether
         return person_platform_integration.user if person_platform_integration.user.present?
 
         user = find_or_initialize_user(auth, current_user)
-        verified = provider_verified_email?(auth)
+        verified = provider_verified_email?(auth, trust_verified_email:)
 
         # Never attach a provider identity to an existing account on the strength of an unverified email
         if user.present? && current_user.blank? && !verified
@@ -77,7 +82,7 @@ module BetterTogether
         # This handles both: matched by email OR currently signed-in user
         link_integration_to_user(person_platform_integration, user)
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
 
       # Finds existing user or returns nil for new OAuth sign-in
       # @param auth [OmniAuth::AuthHash] the OAuth authentication hash
@@ -131,9 +136,13 @@ module BetterTogether
       private_class_method :setup_new_oauth_user
 
       # Whether the provider asserts the auth email is verified (unknown providers are treated as unverified)
-      def self.provider_verified_email?(auth)
+      # Issuer-based providers (OpenID Connect) are trusted only when that issuer's configuration opts in.
+      def self.provider_verified_email?(auth, trust_verified_email: false)
         provider = ::BetterTogether::IdentityProviders.find(auth.provider)
-        provider.present? && provider.verified_email?(auth)
+        return false if provider.blank?
+        return false if provider.requires_issuer && !trust_verified_email
+
+        provider.verified_email?(auth)
       end
       private_class_method :provider_verified_email?
 

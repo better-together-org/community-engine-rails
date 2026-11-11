@@ -39,7 +39,8 @@ RSpec.describe 'Platform identity providers DOM contract', :as_platform_manager,
        #platform_identity_provider_client_secret #platform_identity_provider_scopes
        #platform_identity_provider_enabled #platform-identity-provider-submit-btn
        #platform-identity-provider-cancel-btn #platform-identity-provider-domains
-       #platform_identity_provider_issuer].each do |selector|
+       #platform_identity_provider_issuer
+       #platform_identity_provider_label #platform_identity_provider_trust_verified_email].each do |selector|
       expect(page_html.css(selector)).not_to be_empty, "missing #{selector}"
     end
   end

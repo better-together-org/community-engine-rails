@@ -5,7 +5,8 @@ module BetterTogether
   # provider, resolved from the platform serving the request.
   class OmniauthSetup
     def self.call(key, env)
-      creds = IdentityProviderCredentials.resolve(key, domain: OmniauthFullHost.domain_for(env))
+      creds = IdentityProviderCredentials.resolve(key, domain: OmniauthFullHost.domain_for(env),
+                                                       provider_id: env[OmniauthPlatformGate::ENV_KEY])
       return unless creds
 
       options = env['omniauth.strategy'].options

@@ -17,8 +17,9 @@ RSpec.describe BetterTogether::PersonPlatformIntegration, '#local_platform' do
   end
 
   it 'rejects the same provider account twice on one platform' do
-    link(platform_a)
-    duplicate = build(:person_platform_integration, provider: 'github', uid: 'same-uid', local_platform: platform_a)
+    first = link(platform_a)
+    duplicate = build(:person_platform_integration, provider: 'github', uid: 'same-uid', local_platform: platform_a,
+                                                    platform: first.platform)
 
     expect(duplicate).not_to be_valid
   end

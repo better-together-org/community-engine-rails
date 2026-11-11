@@ -56,7 +56,12 @@
         <tbody>
           <% @identity_providers.each do |provider| %>
             <tr id="<%= dom_id(provider) %>">
-              <td><%= provider.catalog_entry&.kind || provider.strategy %></td>
+              <td>
+                <%= provider.catalog_entry&.kind || provider.strategy %>
+                <% if provider.issuer.present? %>
+                  <div class="platform-identity-provider-issuer small text-muted"><%= provider.display_name %> (<%= provider.issuer %>)</div>
+                <% end %>
+              </td>
               <td><code><%= provider.client_id %></code></td>
               <td>
                 <% if provider.client_secret.present? %>
