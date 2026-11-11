@@ -3174,9 +3174,15 @@ es:
         email_mismatch: 'No se puede conectar la cuenta de %{provider}: el correo
           electrónico %{email} pertenece a un usuario diferente. Por favor cierre
           sesión e inicie sesión con la cuenta correcta.'
+        email_missing: "%{provider} no proporcionó un correo electrónico. Haz que
+          una dirección de correo esté disponible para esta aplicación en la configuración
+          de tu cuenta de %{provider}."
         failure: No se pudo conectar la cuenta de %{provider}. Por favor intente de
           nuevo.
         success: Cuenta de %{provider} conectada exitosamente.
+        unverified_email_collision: Ya existe una cuenta con este correo y %{provider}
+          no ha verificado la dirección. Inicia sesión con tu método habitual y conecta
+          %{provider} desde Configuración.
       destroy:
         cannot_delete_last_oauth: No puede desconectar su cuenta de %{provider} porque
           se registró usando OAuth y no tiene una contraseña establecida. Por favor
@@ -3360,6 +3366,76 @@ es:
         subtitle: Agregar un dominio para %{platform_name}
         title: Nuevo dominio
       updated: El dominio se actualizó correctamente.
+    platform_identity_providers:
+      create:
+        created: Se agregó el proveedor de inicio de sesión.
+      destroy:
+        destroyed: Se eliminó el proveedor de inicio de sesión.
+      edit:
+        subtitle: Proveedores OAuth de inicio de sesión para %{platform_name}
+        title: Editar %{provider}
+      form:
+        cancel: Cancelar
+        client_id_label: ID de cliente
+        client_secret_hint: Se guarda cifrado y no se vuelve a mostrar.
+        client_secret_keep: Déjelo en blanco para conservar el secreto actual
+        client_secret_label: Secreto de cliente
+        create_btn: Agregar proveedor
+        domains_hint: El inicio de sesión con este proveedor solo funciona en los
+          dominios marcados. La URL de retorno de cada dominio también debe estar
+          registrada en el proveedor.
+        domains_label: Dominios permitidos
+        enabled_label: Habilitado
+        issuer_hint: Solo OpenID Connect. La URL https del proveedor de identidad
+          (se lee su documento de descubrimiento). No se puede cambiar tras añadir
+          el proveedor, y cada emisor se puede añadir una vez por plataforma.
+        issuer_label: URL del emisor
+        label_hint: Solo OpenID Connect. Se muestra en el botón de inicio de sesión.
+          Por defecto, el host del emisor.
+        label_label: Texto del botón
+        scopes_hint: Déjelo en blanco para usar el valor predeterminado del proveedor.
+        scopes_label: Ámbitos
+        strategy_label: Proveedor
+        trust_verified_email_hint: Desactivado por defecto. Si se activa, un correo
+          que este emisor marque como verificado puede iniciar sesión en una cuenta
+          existente con esa dirección. Actívelo solo para emisores que verifiquen
+          las direcciones de correo.
+        trust_verified_email_label: Confiar en los correos verificados de este emisor
+        update_btn: Actualizar proveedor
+      index:
+        back_to_platform: Volver a la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este proveedor de inicio de sesión?"
+        disabled_label: Deshabilitado
+        edit_btn: Editar
+        enabled_label: Habilitado
+        env_description: Estos proveedores se definen con variables de entorno y se
+          aplican a los dominios de esta plataforma indicados abajo. Los secretos
+          nunca se muestran. Añade una fila de proveedor para gestionar un dominio
+          aquí.
+        env_note: Los proveedores sin una fila aquí usan las variables de entorno
+          del servidor (por ejemplo GITHUB_CLIENT_ID).
+        env_serves: 'Atiende: %{domains}'
+        env_serves_none: Todos los dominios están reclamados por una fila de proveedor,
+          por lo que no se usa el entorno.
+        env_title: Configurados mediante el entorno del servidor
+        header_actions: Acciones
+        header_client_id: ID de cliente
+        header_provider: Proveedor
+        header_secret: Secreto de cliente
+        header_status: Estado
+        new_btn: Agregar proveedor
+        none: No hay proveedores de inicio de sesión configurados para esta plataforma.
+        secret_missing: Falta
+        secret_set: Definido
+        subtitle: Proveedores OAuth de inicio de sesión para %{platform_name}
+        table_aria: Proveedores de inicio de sesión
+        title: Proveedores de inicio de sesión
+      new:
+        subtitle: Proveedores OAuth de inicio de sesión para %{platform_name}
+        title: Agregar proveedor de inicio de sesión
+      update:
+        updated: Se actualizó el proveedor de inicio de sesión.
     platform_invitation:
       acceptance_html: Al registrarte para una cuenta de usuario a continuación, estás
         aceptando esta invitación para unirte a <strong>%{platform}</strong>.
@@ -5086,9 +5162,12 @@ es:
       expired: ha expirado, por favor solicita una nueva
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
+      immutable: no se puede cambiar una vez creado; elimine este proveedor y añada
+        uno nuevo
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido
+      invalid_characters: no debe contener espacios ni caracteres de control
       invalid_url: no es una URL válida
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
@@ -5643,6 +5722,7 @@ es:
           sin depender solo del conocimiento de la URL.
         feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
+        identity_providers: Proveedores de inicio de sesión
         platform_domains: Dominios
         quota_grants: Concesiones de cuota
         robot_management: Gestionar robots LLM
