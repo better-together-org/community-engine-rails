@@ -1,0 +1,48 @@
+{
+  "name": "quota_grants_llm_usage_tokens",
+  "device": "mobile",
+  "url": "/en/host/platforms/test-host-community/quota_grants",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "quota_llm_availability",
+  "flow": "quota_grants_overview",
+  "source_spec": "./spec/docs_screenshots/better_together/quota_llm_availability_spec.rb",
+  "callouts": [
+    {
+      "selector": "#quota_1b1e4bb9-0fc2-4af8-8382-dae1c7a11109",
+      "title": "LLM usage tokens",
+      "bullets": [
+        "Shown because an AI provider is set up."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 469.046875,
+        "width": 488.0,
+        "height": 116.0,
+        "right": 500.0,
+        "bottom": 585.046875,
+        "center_x": 256.0,
+        "center_y": 527.046875
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 469.046875,
+        "width": 488.0,
+        "height": 116.0,
+        "right": 500.0,
+        "bottom": 585.046875,
+        "center_x": 256.0,
+        "center_y": 527.046875
+      },
+      "placement": {
+        "side": "below",
+        "x": 121.0,
+        "y": 605.05,
+        "width": 270.0,
+        "height": 158,
+        "score": 671.953125
+      }
+    }
+  ]
+}

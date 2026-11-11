@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/platform_quota_defaults_spec.rb",
   "callouts": [
     {
-      "selector": "#quota_defaults_media_storage_platform_627c17a2-66ae-4c0a-a17e-90b884528caf",
+      "selector": "#quota_defaults_media_storage_platform_e42547af-0480-4b27-b5cf-874dcbee39ca",
       "title": "Starting quotas",
       "bullets": [
         "Pick a storage size, or use the default."
