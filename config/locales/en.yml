@@ -932,6 +932,22 @@ en:
         title: Allowances and usage
         usage: Paid allowances and anyone over their limit
         within: Within the limit
+      catalog:
+        back: All plans
+        buy: Buy
+        details: What you get
+        free: Free
+        get_free: Get it free
+        intro: Choose a plan from %{platform}.
+        none: No plans are on offer right now.
+        price:
+          every_n_months: "%{price} every %{count} months"
+          every_n_years: "%{price} every %{count} years"
+          month: "%{price} a month"
+          once: "%{price} once"
+          year: "%{price} a year"
+        subscribe: Subscribe
+        title: Plans
       checkout:
         accept: I have read and accept %{title}
         address:
@@ -1064,6 +1080,7 @@ en:
         access_heading: What you have access to
         all_orders: All orders
         all_plans: All plans
+        browse_plans: Browse plans
         credit_heading: Store credit
         credit_none: You have no store credit.
         intro: Your plans, orders and credit on %{platform}.
@@ -1502,6 +1519,9 @@ en:
         title: What this plan includes
       plans:
         actions_heading: Actions
+        audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
+          it: a person who is any of the ticked kinds can see and buy it.'
+        audience_legend: Who may see and buy this plan
         beneficiary_placeholder: Hosted access
         benefits_placeholder: |-
           Hosted community access
@@ -1532,6 +1552,9 @@ en:
         field_identifier_hint: Unique machine-readable key. Cannot be changed after
           creation.
         field_interval_count: Billing period length
+        field_listed: Show in the public catalog
+        field_listed_hint: Lists this plan for anyone to see, with a button to buy
+          it. Leave unticked to sell it only by link.
         field_name: Name
         field_participant_benefits: Benefits
         field_participant_benefits_hint: One benefit per line.
@@ -1555,6 +1578,10 @@ en:
         field_renewal_lead_days: Invoice this many days ahead
         field_renewal_lead_days_hint: How long before a period ends its renewal invoice
           is made.
+        field_restricted_to_members: Members only
+        field_restricted_to_members_hint: Only people with an active membership plan.
+        field_restricted_to_subscribers: Subscribers only
+        field_restricted_to_subscribers_hint: Only people with an active subscription.
         field_solidarity_description: Solidarity description
         field_solidarity_description_hint: Shown to potential subscribers to explain
           who this tier is for.

@@ -1,0 +1,48 @@
+{
+  "name": "billing_catalog_plan",
+  "device": "desktop",
+  "url": "/en/billing/catalog/7fcd95be-5d02-4506-934e-7171c0576ef7",
+  "title": "Supporting member | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "billing_catalog",
+  "flow": "billing_catalog_plan",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_catalog_spec.rb",
+  "callouts": [
+    {
+      "selector": "#buy_billing_plan_7fcd95be-5d02-4506-934e-7171c0576ef7",
+      "title": "Start checkout",
+      "bullets": [
+        "Sign-in is asked for at checkout, not before."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 439.59375,
+        "width": 104.609375,
+        "height": 38.0,
+        "right": 176.609375,
+        "bottom": 477.59375,
+        "center_x": 124.3046875,
+        "center_y": 458.59375
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 439.59375,
+        "width": 104.609375,
+        "height": 38.0,
+        "right": 176.609375,
+        "bottom": 477.59375,
+        "center_x": 124.3046875,
+        "center_y": 458.59375
+      },
+      "placement": {
+        "side": "right",
+        "x": 196.61,
+        "y": 392.59,
+        "width": 380,
+        "height": 132,
+        "score": 1263.390625
+      }
+    }
+  ]
+}

@@ -102,6 +102,28 @@ RSpec.describe 'Documentation screenshots for billing plans', # rubocop:disable 
     end
   end
 
+  it 'captures choosing who may see and buy a plan' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_plans_audience',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_plans_audience'),
+      callouts: [{ id: 'audience', selector: '#billing-plan-audience', title: 'Who may see and buy it',
+                   bullets: ['Limit a plan to members, subscribers, or either; leave both off for anyone.'] }],
+      narrative: {
+        title: 'Plans for members or subscribers only',
+        audience: %w[platform_organizer],
+        journey_step: 'As a platform organizer, I offer a reduced price or extra entitlements to members or subscribers only.',
+        callouts: [{ id: 'audience', title: 'Audience',
+                     description: 'A limited plan is hidden from everyone else, and cannot be bought by link.' }],
+        accessibility_notes: 'Each choice is a labelled checkbox with its own hint.'
+      }
+    ) do
+      visit_plans('/new')
+      expect(page).to have_css('#billing-plan-audience')
+      page.execute_script("document.querySelector('#billing-plan-audience').scrollIntoView({block: 'center'})")
+    end
+  end
+
   it 'captures linking an existing price' do
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_plans_new_link',

@@ -211,6 +211,26 @@
     </div>
   <% end %>
 
+  <div class="mb-4">
+    <div class="form-check">
+      <%= form.check_box :listed, class: 'form-check-input', id: 'billing_plan_listed', aria: { describedby: 'billing-plan-listed-hint' } %>
+      <%= form.label :listed, t('better_together.billing.plans.field_listed'), class: 'form-check-label' %>
+    </div>
+    <div class="form-text" id="billing-plan-listed-hint"><%= t('better_together.billing.plans.field_listed_hint') %></div>
+  </div>
+
+  <fieldset class="mb-4" id="billing-plan-audience">
+    <legend class="h6"><%= t('better_together.billing.plans.audience_legend') %></legend>
+    <% %i[restricted_to_members restricted_to_subscribers].each do |field| %>
+      <div class="form-check">
+        <%= form.check_box field, class: 'form-check-input', id: "billing_plan_#{field}", aria: { describedby: "billing-plan-#{field.to_s.dasherize}-hint" } %>
+        <%= form.label field, t("better_together.billing.plans.field_#{field}"), class: 'form-check-label' %>
+        <div class="form-text" id="billing-plan-<%= field.to_s.dasherize %>-hint"><%= t("better_together.billing.plans.field_#{field}_hint") %></div>
+      </div>
+    <% end %>
+    <div class="form-text mt-2" id="billing-plan-audience-hint"><%= t('better_together.billing.plans.audience_hint') %></div>
+  </fieldset>
+
   <%= render 'metadata_fields', form: form, billing_plan: billing_plan %>
 
   <div class="d-flex gap-2" id="billing-plan-form-actions">

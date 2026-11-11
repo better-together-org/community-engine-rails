@@ -324,6 +324,7 @@ RSpec.describe BetterTogether::Billing::Plan do
       unlinked_keys = create(:better_together_billing_plan, :unlinked).permitted_update_attributes.grep_v(Hash)
 
       expect(linked_keys).to contain_exactly(*described_class.with_locales(described_class::TRANSLATED_FIELDS), :active, :grace_days,
+                                             *described_class::LISTING_FIELDS,
                                              :renewal_lead_days)
       expect(unlinked_keys).to include(:amount_cents, :currency, :billing_interval)
     end

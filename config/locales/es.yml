@@ -925,6 +925,22 @@ es:
         title: Cuotas y uso
         usage: Cuotas de pago y quienes superan su límite
         within: Dentro del límite
+      catalog:
+        back: Todos los planes
+        buy: Comprar
+        details: Qué incluye
+        free: Gratis
+        get_free: Obtener gratis
+        intro: Elija un plan de %{platform}.
+        none: No hay planes disponibles por ahora.
+        price:
+          every_n_months: "%{price} cada %{count} meses"
+          every_n_years: "%{price} cada %{count} años"
+          month: "%{price} al mes"
+          once: "%{price}, una vez"
+          year: "%{price} al año"
+        subscribe: Suscribirse
+        title: Planes
       checkout:
         accept: He leído y acepto %{title}
         address:
@@ -1056,6 +1072,7 @@ es:
         access_heading: A qué tienes acceso
         all_orders: Todos los pedidos
         all_plans: Todos los planes
+        browse_plans: Ver planes
         credit_heading: Crédito de la tienda
         credit_none: No tienes crédito de la tienda.
         intro: Tus planes, pedidos y crédito en %{platform}.
@@ -1493,6 +1510,10 @@ es:
         title: Qué incluye este plan
       plans:
         actions_heading: Acciones
+        audience_hint: 'Deje ambas casillas sin marcar para todo el mundo. Marque
+          una o ambas para limitarlo: quien sea de alguno de los tipos marcados puede
+          verlo y comprarlo.'
+        audience_legend: Quién puede ver y comprar este plan
         beneficiary_placeholder: Acceso alojado
         benefits_placeholder: |-
           Acceso comunitario alojado
@@ -1525,6 +1546,9 @@ es:
         field_identifier_hint: Clave unica de maquina. No se puede cambiar despues
           de la creacion.
         field_interval_count: Duración del período de facturación
+        field_listed: Mostrar en el catálogo público
+        field_listed_hint: Muestra este plan a todo el mundo, con un botón para comprarlo.
+          Déjelo sin marcar para venderlo solo por enlace.
         field_name: Nombre
         field_participant_benefits: Beneficios
         field_participant_benefits_hint: Un beneficio por linea.
@@ -1547,6 +1571,10 @@ es:
         field_renewal_lead_days: Facturar con estos días de antelación
         field_renewal_lead_days_hint: Cuánto antes de que termine un periodo se hace
           su factura de renovación.
+        field_restricted_to_members: Solo para miembros
+        field_restricted_to_members_hint: Solo personas con un plan de membresía activo.
+        field_restricted_to_subscribers: Solo para suscriptores
+        field_restricted_to_subscribers_hint: Solo personas con una suscripción activa.
         field_solidarity_description: Descripcion de solidaridad
         field_solidarity_description_hint: Se muestra a los posibles suscriptores
           para explicar a quien va dirigido este nivel.

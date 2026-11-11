@@ -251,6 +251,24 @@ RSpec.describe BetterTogether::Billing::PlansController do
       expect(metadata['eligible_billable_owner_types']).to eq(['BetterTogether::Community'])
     end
 
+    it 'lists a plan in the public catalog only when asked, and is unlisted by default' do
+      post plans_path, params: valid_params
+      expect(BetterTogether::Billing::Plan.order(:created_at).last).not_to be_listed
+
+      post plans_path, params: valid_params.deep_merge(billing_plan: { identifier: "listed-#{SecureRandom.hex(4)}", listed: '1' })
+      expect(BetterTogether::Billing::Plan.order(:created_at).last).to be_listed
+    end
+
+    it 'limits a plan to members and subscribers only when asked' do
+      post plans_path, params: valid_params
+      expect(BetterTogether::Billing::Plan.order(:created_at).last).not_to be_restricted
+
+      post plans_path,
+           params: valid_params.deep_merge(billing_plan: { identifier: "limited-#{SecureRandom.hex(4)}", restricted_to_members: '1' })
+      expect(BetterTogether::Billing::Plan.order(:created_at).last).to have_attributes(restricted_to_members: true,
+                                                                                       restricted_to_subscribers: false)
+    end
+
     it 'links an existing price, copying its amount from the processor, not the form' do
       adapter.prices['price_yearly'] = BetterTogether::Billing::PriceInfo.new(
         price_id: 'price_yearly', product_id: 'prod_pro', amount_cents: 99_000, currency: 'USD', interval: 'year'

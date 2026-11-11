@@ -30,6 +30,7 @@
         <% else %>
           <div class="card-body"><p id="billing-hub-plans-empty" class="text-body-secondary mb-0"><%= t('better_together.billing.hub.plans_none') %></p></div>
         <% end %>
+        <div class="card-footer"><%= link_to t('better_together.billing.hub.browse_plans'), billing_catalog_path(locale: I18n.locale), id: 'billing-hub-browse-plans-link' %></div>
       </div>
     </section>
 

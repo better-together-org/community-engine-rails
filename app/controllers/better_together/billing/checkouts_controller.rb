@@ -65,6 +65,7 @@ module BetterTogether
 
       def set_plan
         @plan = platform_plans.active.find(params[:plan_id])
+        render_not_found unless policy(@plan).purchase?
       end
 
       def set_choices

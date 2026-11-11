@@ -910,6 +910,22 @@ uk:
         title: Квоти та використання
         usage: Платні квоти та ті, хто перевищив ліміт
         within: У межах ліміту
+      catalog:
+        back: Усі плани
+        buy: Купити
+        details: Що входить
+        free: Безкоштовно
+        get_free: Отримати безкоштовно
+        intro: Оберіть план від %{platform}.
+        none: Наразі немає доступних планів.
+        price:
+          every_n_months: "%{price} кожні %{count} міс."
+          every_n_years: "%{price} кожні %{count} р."
+          month: "%{price} на місяць"
+          once: "%{price}, одноразово"
+          year: "%{price} на рік"
+        subscribe: Підписатися
+        title: Плани
       checkout:
         accept: Я прочитав(ла) і приймаю «%{title}»
         address:
@@ -1043,6 +1059,7 @@ uk:
         access_heading: До чого ви маєте доступ
         all_orders: Усі замовлення
         all_plans: Усі плани
+        browse_plans: Переглянути плани
         credit_heading: Кредит магазину
         credit_none: У вас немає кредиту магазину.
         intro: Ваші плани, замовлення та кредит на %{platform}.
@@ -1474,6 +1491,10 @@ uk:
         title: Що входить до цього плану
       plans:
         actions_heading: Дії
+        audience_hint: 'Залиште обидва поля без позначки для всіх. Позначте одне або
+          обидва, щоб обмежити: кожен, хто належить до позначених типів, може бачити
+          й купувати його.'
+        audience_legend: Хто може бачити й купувати цей план
         beneficiary_placeholder: Хостинговий доступ
         benefits_placeholder: |-
           Хостинговий доступ для спільноти
@@ -1503,6 +1524,9 @@ uk:
         field_identifier: Identyfikator
         field_identifier_hint: Unikalnyj klyuch. Ne mozhna zminyty pislia stvorennya.
         field_interval_count: Тривалість періоду виставлення рахунків
+        field_listed: Показувати в публічному каталозі
+        field_listed_hint: Показує цей план усім із кнопкою для купівлі. Залиште без
+          позначки, щоб продавати лише за посиланням.
         field_name: Nazva
         field_participant_benefits: Perevagy
         field_participant_benefits_hint: Odna perevaga na ryadok.
@@ -1525,6 +1549,10 @@ uk:
         field_renewal_lead_days: Виставляти рахунок за стільки днів
         field_renewal_lead_days_hint: За скільки до завершення періоду створюється
           рахунок на продовження.
+        field_restricted_to_members: Лише для учасників
+        field_restricted_to_members_hint: Лише для людей з активним планом членства.
+        field_restricted_to_subscribers: Лише для передплатників
+        field_restricted_to_subscribers_hint: Лише для людей з активною передплатою.
         field_solidarity_description: Opys solidarnosti
         field_solidarity_description_hint: Vidobrazhayet'sya potencijnym peredplat'nykam,
           shchob poyasnyty, dlya koho pryznachenyj tsej riven'.

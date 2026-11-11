@@ -930,6 +930,22 @@ fr:
         title: Quotas et utilisation
         usage: Quotas payants et personnes au-delà de leur limite
         within: Dans la limite
+      catalog:
+        back: Tous les forfaits
+        buy: Acheter
+        details: Ce que vous obtenez
+        free: Gratuit
+        get_free: Obtenir gratuitement
+        intro: Choisissez un forfait de %{platform}.
+        none: Aucun forfait n’est offert pour le moment.
+        price:
+          every_n_months: "%{price} tous les %{count} mois"
+          every_n_years: "%{price} tous les %{count} ans"
+          month: "%{price} par mois"
+          once: "%{price}, une fois"
+          year: "%{price} par an"
+        subscribe: S’abonner
+        title: Forfaits
       checkout:
         accept: J’ai lu et j’accepte %{title}
         address:
@@ -1066,6 +1082,7 @@ fr:
         access_heading: Ce à quoi vous avez accès
         all_orders: Toutes les commandes
         all_plans: Tous les forfaits
+        browse_plans: Voir les forfaits
         credit_heading: Crédit en magasin
         credit_none: Vous n’avez aucun crédit en magasin.
         intro: Vos forfaits, commandes et crédit sur %{platform}.
@@ -1523,6 +1540,10 @@ fr:
         title: Ce que comprend ce forfait
       plans:
         actions_heading: Actions
+        audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
+          une ou les deux pour le limiter : toute personne de l’un des types cochés
+          peut le voir et l’acheter.'
+        audience_legend: Qui peut voir et acheter ce forfait
         beneficiary_placeholder: Accès hébergé
         benefits_placeholder: |-
           Accès communautaire hébergé
@@ -1555,6 +1576,9 @@ fr:
         field_identifier_hint: Cle unique lisible par machine. Ne peut pas etre modifiee
           apres la creation.
         field_interval_count: Durée de la période de facturation
+        field_listed: Afficher dans le catalogue public
+        field_listed_hint: Présente ce forfait à tout le monde, avec un bouton pour
+          l’acheter. Laissez décoché pour ne le vendre que par lien.
         field_name: Nom
         field_participant_benefits: Avantages
         field_participant_benefits_hint: Un avantage par ligne.
@@ -1578,6 +1602,12 @@ fr:
         field_renewal_lead_days: Facturer autant de jours à l’avance
         field_renewal_lead_days_hint: Combien de temps avant la fin d’une période
           sa facture de renouvellement est créée.
+        field_restricted_to_members: Réservé aux membres
+        field_restricted_to_members_hint: Seulement les personnes ayant un forfait
+          d’adhésion actif.
+        field_restricted_to_subscribers: Réservé aux abonnés
+        field_restricted_to_subscribers_hint: Seulement les personnes ayant un abonnement
+          actif.
         field_solidarity_description: Description de solidarite
         field_solidarity_description_hint: Affiche aux abonnes potentiels pour expliquer
           a qui ce niveau s''adresse.
