@@ -26,7 +26,7 @@ RSpec.describe ApplyConfiguredQuotaDefaultsToExistingQuotas do
     migrate_up
 
     expect([person, community, platform].map { |q| q.reload.limit })
-      .to eq([250 * (1024**2), 1024**3, 10 * (1024**3)])
+      .to eq([250_000_000, 1_000_000_000, 10_000_000_000])
   end
 
   it 'leaves quotas owned by external owners alone' do
@@ -52,6 +52,6 @@ RSpec.describe ApplyConfiguredQuotaDefaultsToExistingQuotas do
 
     2.times { migrate_up }
 
-    expect(person.reload.limit).to eq(250 * (1024**2))
+    expect(person.reload.limit).to eq(250_000_000)
   end
 end

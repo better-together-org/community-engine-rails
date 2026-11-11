@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/quota_llm_availability_spec.rb",
   "callouts": [
     {
-      "selector": "#quota_1b1e4bb9-0fc2-4af8-8382-dae1c7a11109",
+      "selector": "#quota_dfb9e8c0-b03f-4258-859c-4cbfdc030085",
       "title": "LLM usage tokens",
       "bullets": [
         "Shown because an AI provider is set up."

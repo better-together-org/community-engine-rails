@@ -20,15 +20,15 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
     end
   end
 
-  it 'offers byte quotas as a slim-select of binary sizes with the override selected' do # rubocop:disable RSpec/MultipleExpectations
-    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => '536870912' } })
+  it 'offers byte quotas as a slim-select of decimal sizes with the override selected' do # rubocop:disable RSpec/MultipleExpectations
+    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => '500000000' } })
 
     get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
 
     select = parsed_response.at_css('select[name="platform[quota_default_limits][media_storage][person]"]')
     expect(select['data-controller']).to eq('better_together--slim-select')
-    expect(select.at_css('option[selected]').text).to eq('512 MiB')
-    expect(select.css('option').map(&:text)).to include('Use default (250 MiB)', '250 MiB', '1 GiB', '1 TiB')
+    expect(select.at_css('option[selected]').text).to eq('500 MB')
+    expect(select.css('option').map(&:text)).to include('Use default (250 MB)', '250 MB', '1 GB', '1 TB')
   end
 
   context 'with LLM usage tokens' do

@@ -14,9 +14,9 @@
 # is tokens per month. Values are non-negative integers.
 quotas:
   media_storage:
-    person: 262144000       # 250 MiB
-    community: 1073741824   # 1 GiB
-    platform: 10737418240   # 10 GiB
+    person: 250000000         # 250 MB
+    community: 1000000000        # 1 GB
+    platform: 10000000000       # 10 GB
   ai_translation_tokens:
     person: 50000
     community: 50000

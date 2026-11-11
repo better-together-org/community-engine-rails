@@ -56,20 +56,20 @@ module BetterTogether
       end
     end
 
-    BINARY_SIZE_UNITS = %w[B KiB MiB GiB TiB].freeze
+    SIZE_UNITS = %w[B KB MB GB TB].freeze
 
-    # Human-readable binary size, e.g. 262144000 => "250 MiB", 1073741824 => "1 GiB".
+    # Human-readable decimal (SI) size, e.g. 250_000_000 => "250 MB", 1_000_000_000 => "1 GB".
     def quota_size_label(bytes)
       value = bytes.to_f
       unit = 0
-      while value >= 1024 && unit < BINARY_SIZE_UNITS.size - 1
-        value /= 1024
+      while value >= 1000 && unit < SIZE_UNITS.size - 1
+        value /= 1000
         unit += 1
       end
-      "#{value.round(2).to_s.sub(/\.0\z/, '')} #{BINARY_SIZE_UNITS[unit]}"
+      "#{value.round(2).to_s.sub(/\.0\z/, '')} #{SIZE_UNITS[unit]}"
     end
 
-    # Options for a byte-quota select: a blank "use default" entry, every binary step,
+    # Options for a byte-quota select: a blank "use default" entry, every decimal step,
     # plus the current value when it is not a listed step so it is never silently lost.
     def quota_storage_options(entry)
       steps = (BetterTogether::Quotas::Defaults::STORAGE_STEPS + [entry[:value], entry[:inherited]].compact).uniq.sort

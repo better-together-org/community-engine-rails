@@ -152,7 +152,7 @@ module BetterTogether
       restrict_quota_default_limits(permitted)
     end
 
-    # Byte quotas may only be set to a listed binary storage step (or the configured default).
+    # Byte quotas may only be set to a listed decimal storage step (or the configured default).
     def restrict_quota_default_limits(permitted)
       return permitted unless permitted.key?(:quota_default_limits)
 

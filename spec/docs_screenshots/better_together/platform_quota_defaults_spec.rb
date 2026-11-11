@@ -19,7 +19,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
     # The LLM usage tokens block only appears once an AI provider is configured.
     allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-docs-screenshot')
     Current.platform = host_platform
-    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => 536_870_912 } })
+    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => 500_000_000 } })
   end
 
   after do
@@ -48,21 +48,21 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
       select_name = 'platform[quota_default_limits][media_storage][person]'
       expect(page).to have_css("select[name='#{select_name}']", visible: :all, wait: 10)
       expect(page).to have_css('.ss-main', wait: 5)
-      expect(page).to have_css('.ss-main .ss-single', text: '512 MiB', wait: 5)
+      expect(page).to have_css('.ss-main .ss-single', text: '500 MB', wait: 5)
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_quota_defaults.png')
     expect(result[:mobile]).to end_with('docs/screenshots/mobile/platform_quota_defaults.png')
   end
 
-  it 'captures the storage size dropdown open with the binary size options' do
+  it 'captures the storage size dropdown open with the decimal size options' do
     fieldset = "##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults_media_storage)}"
     result = capture_docs_screenshot(
       'platform_quota_defaults_options',
       flow: 'platform_edit_quota_options',
       role: 'platform_manager',
       callouts: [
-        { selector: "#{fieldset} legend", title: 'Binary sizes',
+        { selector: "#{fieldset} legend", title: 'Storage sizes',
           bullets: ['Only listed sizes can be chosen.'] }
       ]
     ) do
@@ -72,7 +72,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
       expect(page).to have_css('.ss-main', wait: 10)
       find("#{fieldset} .col-lg-4:first-child").scroll_to(:center)
       find("#{fieldset} .col-lg-4:first-child .ss-main", match: :first).click
-      expect(page).to have_css('div.ss-content .ss-option', text: '1 GiB', wait: 10)
+      expect(page).to have_css('div.ss-content .ss-option', text: '1 GB', wait: 10)
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_quota_defaults_options.png')

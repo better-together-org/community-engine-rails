@@ -10,8 +10,8 @@
   "source_spec": "./spec/docs_screenshots/better_together/platform_quota_defaults_spec.rb",
   "callouts": [
     {
-      "selector": "#quota_defaults_media_storage_platform_91ef742c-8086-45dc-9890-c2fd18e24c8f legend",
-      "title": "Binary sizes",
+      "selector": "#quota_defaults_media_storage_platform_e42547af-0480-4b27-b5cf-874dcbee39ca legend",
+      "title": "Storage sizes",
       "bullets": [
         "Only listed sizes can be chosen."
       ],

@@ -9,12 +9,12 @@ module BetterTogether
     module Defaults
       OWNER_KINDS = %w[person community platform].freeze
       FILE_NAME = 'quota_defaults.yml'
-      MEBIBYTE = 1024**2
-      # Binary storage denominations offered by the platform form for byte-unit quotas.
+      MEGABYTE = 1_000_000
+      # Decimal (SI) storage denominations offered by the platform form for byte-unit quotas.
       STORAGE_STEPS = (
-        [64, 128, 256, 512].map { |mib| mib * MEBIBYTE } +
-        [1, 2, 4, 8, 16, 32, 64, 128, 256, 512].map { |gib| gib * 1024 * MEBIBYTE } +
-        [1, 2, 4, 8].map { |tib| tib * (1024**2) * MEBIBYTE }
+        [100, 250, 500].map { |mb| mb * MEGABYTE } +
+        [1, 2, 5, 10, 25, 50, 100, 250, 500].map { |gb| gb * 1000 * MEGABYTE } +
+        [1, 2, 5, 10].map { |tb| tb * (1000**2) * MEGABYTE }
       ).freeze
 
       class InvalidDefaultsError < StandardError; end

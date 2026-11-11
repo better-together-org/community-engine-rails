@@ -14,9 +14,9 @@ RSpec.describe BetterTogether::Quotas::Defaults do
 
   describe '.yaml_value' do
     it 'reads the gem defaults' do
-      expect(described_class.yaml_value('media_storage', 'person')).to eq(250 * (1024**2))
-      expect(described_class.yaml_value('media_storage', 'community')).to eq(1024**3)
-      expect(described_class.yaml_value('media_storage', 'platform')).to eq(10 * (1024**3))
+      expect(described_class.yaml_value('media_storage', 'person')).to eq(250_000_000)
+      expect(described_class.yaml_value('media_storage', 'community')).to eq(1_000_000_000)
+      expect(described_class.yaml_value('media_storage', 'platform')).to eq(10_000_000_000)
     end
 
     it 'is nil for an unknown type' do
@@ -32,7 +32,7 @@ RSpec.describe BetterTogether::Quotas::Defaults do
         allow(described_class).to receive(:files).and_return([BetterTogether::Engine.root.join('config/quota_defaults.yml'), host])
 
         expect(described_class.yaml_value('media_storage', 'person')).to eq(5)
-        expect(described_class.yaml_value('media_storage', 'community')).to eq(1024**3)
+        expect(described_class.yaml_value('media_storage', 'community')).to eq(1_000_000_000)
       end
     end
 
@@ -60,7 +60,7 @@ RSpec.describe BetterTogether::Quotas::Defaults do
   describe '.for' do
     it 'falls back to YAML when the platform has no override' do
       person = create(:better_together_person)
-      expect(described_class.for(type: 'media_storage', owner: person)).to eq(250 * (1024**2))
+      expect(described_class.for(type: 'media_storage', owner: person)).to eq(250_000_000)
     end
 
     it 'lets the owning platform override beat YAML, per kind' do
@@ -69,7 +69,7 @@ RSpec.describe BetterTogether::Quotas::Defaults do
 
       expect(described_class.for(type: 'media_storage', owner: person)).to eq(7)
       expect(described_class.for(type: 'media_storage', owner: create(:better_together_community, platform: person.platform)))
-        .to eq(1024**3)
+        .to eq(1_000_000_000)
     end
 
     it 'uses the platform itself as the settings source for a platform owner' do
@@ -83,10 +83,10 @@ RSpec.describe BetterTogether::Quotas::Defaults do
   describe '.restrict_to_storage_steps' do
     it 'keeps listed steps and the configured default, drops other byte values' do
       result = described_class.restrict_to_storage_steps(
-        'media_storage' => { 'person' => '262144000', 'community' => '1073741824', 'platform' => '5' }
+        'media_storage' => { 'person' => '250000000', 'community' => '1000000000', 'platform' => '5' }
       )
 
-      expect(result).to eq('media_storage' => { 'person' => 262_144_000, 'community' => 1_073_741_824 })
+      expect(result).to eq('media_storage' => { 'person' => 250_000_000, 'community' => 1_000_000_000 })
     end
 
     it 'lets non-byte quota types through unchanged' do

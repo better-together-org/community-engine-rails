@@ -8,19 +8,19 @@ RSpec.describe BetterTogether::Quotas::Types::MediaStorage do
   before { configure_host_platform }
 
   describe '.default_limit' do
-    it 'returns the conservative Person default (250 MiB)' do
+    it 'returns the conservative Person default (250 MB)' do
       person = create(:better_together_person)
-      expect(described_class.default_limit(person)).to eq(250 * (1024**2))
+      expect(described_class.default_limit(person)).to eq(250_000_000)
     end
 
-    it 'returns the conservative Community default (1 GiB)' do
+    it 'returns the conservative Community default (1 GB)' do
       community = create(:better_together_community)
-      expect(described_class.default_limit(community)).to eq(1024**3)
+      expect(described_class.default_limit(community)).to eq(1_000_000_000)
     end
 
-    it 'returns the Platform default (10 GiB)' do
+    it 'returns the Platform default (10 GB)' do
       platform = create(:better_together_platform)
-      expect(described_class.default_limit(platform)).to eq(10 * (1024**3))
+      expect(described_class.default_limit(platform)).to eq(10_000_000_000)
     end
 
     it 'prefers the owning platform override' do
@@ -40,7 +40,7 @@ RSpec.describe BetterTogether::Quotas::Types::MediaStorage do
       )
 
       quota = BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
-      expect(quota.limit).to eq(250 * (1024**2))
+      expect(quota.limit).to eq(250_000_000)
     end
   end
 end

@@ -32,7 +32,7 @@ RSpec.describe BetterTogether::Quotas::ApplyPlatformDefaultsJob do
 
     described_class.perform_now(platform.id)
 
-    expect(quota.reload.limit).to eq(1024**3)
+    expect(quota.reload.limit).to eq(1_000_000_000)
   end
 
   it 'does not touch quotas owned by other platforms' do

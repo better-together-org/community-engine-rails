@@ -10,7 +10,7 @@
   "source_spec": "./spec/docs_screenshots/better_together/quota_llm_availability_spec.rb",
   "callouts": [
     {
-      "selector": "#quota_defaults_platform_627c17a2-66ae-4c0a-a17e-90b884528caf",
+      "selector": "#quota_defaults_platform_91ef742c-8086-45dc-9890-c2fd18e24c8f",
       "title": "No AI provider",
       "bullets": [
         "LLM token quotas stay hidden."

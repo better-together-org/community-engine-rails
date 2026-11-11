@@ -47,7 +47,7 @@ RSpec.describe 'Documentation screenshots for LLM usage token availability',
   it 'captures the grants overview with the generalized LLM usage tokens label' do
     allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-docs-screenshot')
     person = create(:better_together_person, name: 'Sample Member')
-    storage = BetterTogether::Quota.create!(owner: person, quota_type: 'media_storage', limit: 262_144_000,
+    storage = BetterTogether::Quota.create!(owner: person, quota_type: 'media_storage', limit: 250_000_000,
                                             period: 'cumulative')
     tokens = BetterTogether::Quota.create!(owner: person, quota_type: 'ai_translation_tokens', limit: 50_000,
                                            period: 'monthly')

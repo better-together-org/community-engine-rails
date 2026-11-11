@@ -9,7 +9,7 @@ that live on one. Federated peers, OAuth providers and anyone mirrored from them
 
 | Quota type | Person | Community | Platform | Unit |
 |---|---|---|---|---|
-| `media_storage` | 250 MiB | 1 GiB | 10 GiB | bytes, cumulative |
+| `media_storage` | 250 MB | 1 GB | 10 GB | bytes, cumulative |
 | `ai_translation_tokens` | 50,000 | 50,000 | 50,000 | tokens per month |
 
 ## Where the numbers come from
@@ -19,8 +19,8 @@ Resolution order, first present value wins (`BetterTogether::Quotas::Defaults.fo
 1. The owning platform's override, edited on the platform edit screen (Host Dashboard,
    Platforms, Edit, "Quota defaults") and stored in `Platform#settings['quota_default_limits']`.
    For a platform owner this is the platform itself; for a person or community it is the
-   platform they live on. Byte quotas (media storage) are chosen from a slim-select of binary
-   sizes (64 MiB up to 8 TiB, shown as e.g. "250 MiB"); "Use default" means "inherit". The
+   platform they live on. Byte quotas (media storage) are chosen from a slim-select of decimal
+   sizes (100 MB up to 10 TB, shown as e.g. "250 MB"); "Use default" means "inherit". The
    controller rejects any byte value that is not a listed step or the configured default.
    The "AI LLM usage tokens per month" block (and its usage meters and grant options) only appears
    when an AI provider is configured: RubyLLM has an OpenAI token, or an active robot is
@@ -35,7 +35,7 @@ Files are deep-merged, so a host app lists only what it changes:
 # host app config/quota_defaults.yml
 quotas:
   media_storage:
-    person: 524288000   # 500 MiB
+    person: 500000000   # 500 MB
 ```
 
 Owner kinds are `person`, `community` and `platform`. Values must be non-negative integers;
