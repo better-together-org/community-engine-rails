@@ -3603,8 +3603,8 @@ es:
           all_types: Todos los Tipos de Contenido
           apply: Aplicar Filtros
           bases:
-            invoice: El día en que se realizó
-            paid: El día en que se pagó
+            invoice: Fecha de factura
+            paid: Fecha de pago
           basis: Contar una venta por
           communities: Comunidades
           content_type: Tipo de Contenido

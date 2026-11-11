@@ -3659,8 +3659,8 @@ fr:
           all_types: Tous les Types de Contenu
           apply: Appliquer les Filtres
           bases:
-            invoice: Le jour de la commande
-            paid: Le jour du paiement
+            invoice: Date de facture
+            paid: Date de paiement
           basis: Compter une vente selon
           communities: Communautés
           content_type: Type de Contenu

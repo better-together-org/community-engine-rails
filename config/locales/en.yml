@@ -3563,8 +3563,8 @@ en:
           all_types: All Content Types
           apply: Apply Filters
           bases:
-            invoice: The day it was placed
-            paid: The day it was paid
+            invoice: Invoice date
+            paid: Payment date
           basis: Count a sale by
           communities: Communities
           content_type: Content Type

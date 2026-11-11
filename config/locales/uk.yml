@@ -3597,8 +3597,8 @@ uk:
           all_types: Усі типи контенту
           apply: Застосувати фільтри
           bases:
-            invoice: День оформлення
-            paid: День оплати
+            invoice: Дата рахунку-фактури
+            paid: Дата оплати
           basis: Рахувати продаж за
           communities: Спільноти
           content_type: Тип контенту
