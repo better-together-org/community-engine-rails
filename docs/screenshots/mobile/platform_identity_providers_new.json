@@ -80,6 +80,41 @@
       }
     },
     {
+      "selector": "#platform-identity-provider-domains",
+      "title": "Allowed domains",
+      "bullets": [
+        "Sign-in works only on the domains ticked here; there is no fallback to other domains."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 559.390625,
+        "width": 476.0,
+        "height": 108.0,
+        "right": 488.0,
+        "bottom": 667.390625,
+        "center_x": 250.0,
+        "center_y": 613.390625
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 559.390625,
+        "width": 476.0,
+        "height": 108.0,
+        "right": 488.0,
+        "bottom": 667.390625,
+        "center_x": 250.0,
+        "center_y": 613.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 687.39,
+        "width": 270.0,
+        "height": 210,
+        "score": 589.609375
+      }
+    },
+    {
       "selector": "#platform-identity-provider-submit-btn",
       "title": "Add provider",
       "bullets": [
@@ -87,31 +122,31 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 599.390625,
+        "y": 723.390625,
         "width": 128.734375,
         "height": 38.0,
         "right": 140.734375,
-        "bottom": 637.390625,
+        "bottom": 761.390625,
         "center_x": 76.3671875,
-        "center_y": 618.390625
+        "center_y": 742.390625
       },
       "avoid": {
         "x": 12.0,
-        "y": 599.390625,
+        "y": 723.390625,
         "width": 128.734375,
         "height": 38.0,
         "right": 140.734375,
-        "bottom": 637.390625,
+        "bottom": 761.390625,
         "center_x": 76.3671875,
-        "center_y": 618.390625
+        "center_y": 742.390625
       },
       "placement": {
-        "side": "below",
-        "x": 24,
-        "y": 657.39,
+        "side": "right",
+        "x": 160.73,
+        "y": 24,
         "width": 270.0,
         "height": 158,
-        "score": 619.609375
+        "score": 0
       }
     }
   ]

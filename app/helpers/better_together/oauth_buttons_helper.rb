@@ -58,7 +58,9 @@ module BetterTogether
     def oauth_provider_credentials_present?(provider)
       return false unless BetterTogether::IdentityProviders.find(provider)
 
-      BetterTogether::IdentityProviderCredentials.configured?(provider, platform: Current.platform)
+      BetterTogether::IdentityProviderCredentials.configured?(
+        provider, domain: BetterTogether::OmniauthFullHost.domain_for(request.env)
+      )
     end
   end
 end

@@ -17,6 +17,11 @@ module BetterTogether
     belongs_to :platform, class_name: '::BetterTogether::Platform'
     belongs_to :provider_platform, class_name: '::BetterTogether::Platform'
 
+    # Domains (callback hosts) this configuration may serve; sign-in is refused anywhere else.
+    has_many :provider_domains, class_name: '::BetterTogether::PlatformIdentityProviderDomain',
+                                dependent: :destroy, inverse_of: :platform_identity_provider
+    has_many :platform_domains, through: :provider_domains, class_name: '::BetterTogether::PlatformDomain'
+
     validates :strategy, presence: true,
                          inclusion: { in: ->(_) { BetterTogether::IdentityProviders.keys.map(&:to_s) } }
     validates :provider_platform_id, uniqueness: { scope: :platform_id }

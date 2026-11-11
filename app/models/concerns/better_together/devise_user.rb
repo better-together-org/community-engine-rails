@@ -15,8 +15,9 @@ module BetterTogether
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
-      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {})
-        person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth)
+      def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil)
+        person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth,
+                                                                                     local_platform:)
 
         # Check if integration already belongs to a different user
         if person_platform_integration.user.present? && current_user.present? &&
@@ -36,7 +37,7 @@ module BetterTogether
 
         # Check if current user already has a DIFFERENT integration for this provider
         if current_user.present? && person_platform_integration.new_record?
-          existing_integration = current_user.person_platform_integrations.find_by(provider: auth.provider)
+          existing_integration = current_user.person_platform_integrations.find_by(provider: auth.provider, local_platform:)
           if existing_integration.present?
             provider_name = auth.provider.to_s.titleize
             raise ArgumentError,

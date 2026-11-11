@@ -24,10 +24,12 @@ module BetterTogether
     # tenant they're viewing from. PersonPlatformIntegrationPolicy's index/show
     # scope by `user_id == current user`, not by Current.platform. `platform`
     # instead identifies the external OAuth provider itself (a `Platform`
-    # record with `external: true`, e.g. "Github") or, for the omniauth
-    # callback lookup, is bypassed entirely via `find_by(provider:, uid:)`
-    # since a `uid`+`provider` pair identifies an external identity globally.
+    # record with `external: true`, e.g. "Github"). The omniauth callback
+    # looks identities up by `provider`, `uid` and `local_platform`.
     belongs_to :platform
+    # The local platform this identity was linked on. The same provider account (provider + uid)
+    # is a separate identity on each platform, so sign-in never matches across platforms.
+    belongs_to :local_platform, class_name: 'BetterTogether::Platform', optional: true
     belongs_to :user
 
     # Destroy notification events when integration is removed
@@ -41,7 +43,7 @@ module BetterTogether
       in: (PROVIDERS.keys + BetterTogether::IdentityProviders.keys).map(&:to_s).uniq
     }
     validates :uid, presence: true, uniqueness: {
-      scope: :provider
+      scope: %i[provider local_platform_id]
     }
     validates :user, presence: true
     validates :access_token, presence: { on: :create }
@@ -140,7 +142,7 @@ module BetterTogether
     end
     private_class_method :extract_profile_url
 
-    def self.update_or_initialize(person_platform_integration, auth, platform: nil)
+    def self.update_or_initialize(person_platform_integration, auth, platform: nil, local_platform: nil)
       attributes = attributes_from_omniauth(auth)
 
       # Find the external OAuth platform based on the provider
@@ -149,6 +151,7 @@ module BetterTogether
 
       # Allow manual platform override (for backward compatibility)
       attributes[:platform] = platform if platform.present?
+      attributes[:local_platform] = local_platform if local_platform.present? && person_platform_integration.blank?
 
       if person_platform_integration.present?
         person_platform_integration.update(attributes)

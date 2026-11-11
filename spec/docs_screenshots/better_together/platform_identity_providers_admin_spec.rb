@@ -88,6 +88,8 @@ RSpec.describe 'Documentation screenshots for Platform sign-in providers admin U
           bullets: ['Choose from the providers the engine supports.'] },
         { id: 'client_secret', selector: '#platform_identity_provider_client_secret', title: 'Client secret',
           bullets: ['Write-only. Leave blank on edit to keep the current secret.'] },
+        { id: 'domains', selector: '#platform-identity-provider-domains', title: 'Allowed domains',
+          bullets: ['Sign-in works only on the domains ticked here; there is no fallback to other domains.'] },
         { id: 'submit', selector: '#platform-identity-provider-submit-btn', title: 'Add provider',
           bullets: ['Saves the configuration for this platform.'] }
       ],
@@ -98,6 +100,8 @@ RSpec.describe 'Documentation screenshots for Platform sign-in providers admin U
         callouts: [
           { id: 'strategy', title: 'Provider', description: 'The provider catalog entry this row configures.' },
           { id: 'client_secret', title: 'Client secret', description: 'Stored encrypted, never shown again.' },
+          { id: 'domains', title: 'Allowed domains',
+            description: 'The platform domains whose callback URL this provider configuration may serve.' },
           { id: 'submit', title: 'Add provider', description: 'Submits the form.' }
         ],
         accessibility_notes: 'Every field has a label with a matching for/id; the secret field uses autocomplete new-password.'
@@ -106,6 +110,8 @@ RSpec.describe 'Documentation screenshots for Platform sign-in providers admin U
       capybara_login_as_platform_manager
       visit better_together.new_platform_platform_identity_provider_path(host_platform, locale: I18n.default_locale)
       expect(page).to have_css('#platform_identity_provider_strategy')
+      expect(page).to have_css('#platform-identity-provider-domains')
+      page.execute_script("document.getElementById('platform-identity-provider-domains').scrollIntoView({block: 'center'})")
     end
   end
 end

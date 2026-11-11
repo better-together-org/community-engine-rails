@@ -228,7 +228,13 @@ module BetterTogether
       return unless auth.present?
 
       @person_platform_integration = BetterTogether::PersonPlatformIntegration.find_by(provider: auth.provider,
-                                                                                       uid: auth.uid)
+                                                                                       uid: auth.uid,
+                                                                                       local_platform:)
+    end
+
+    # The platform this sign-in is for, from the requested domain (the same domain the provider gate checked).
+    def local_platform
+      @local_platform ||= BetterTogether::OmniauthFullHost.domain_for(request.env)&.platform
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -246,7 +252,8 @@ module BetterTogether
         person_platform_integration:,
         auth:,
         current_user:,
-        invitations:
+        invitations:,
+        local_platform:
       )
     rescue ArgumentError => e
       # Handle OAuth validation errors (missing email, account already linked, etc.)

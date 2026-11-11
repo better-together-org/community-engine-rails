@@ -88,7 +88,7 @@ RSpec.describe BetterTogether::DeviseUser do
 
       it 'updates the integration and returns existing user' do
         expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize) # rubocop:todo RSpec/StubbedMock
-          .with(existing_integration, github_auth_hash)
+          .with(existing_integration, github_auth_hash, local_platform: nil)
           .and_return(existing_integration)
 
         result = user_class.from_omniauth(
@@ -336,7 +336,7 @@ RSpec.describe BetterTogether::DeviseUser do
     context 'when PersonPlatformIntegration is nil' do
       it 'calls update_or_initialize with nil and auth' do
         expect(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize) # rubocop:todo RSpec/StubbedMock
-          .with(nil, github_auth_hash)
+          .with(nil, github_auth_hash, local_platform: nil)
           .and_return(build(:person_platform_integration))
 
         user_class.from_omniauth(
