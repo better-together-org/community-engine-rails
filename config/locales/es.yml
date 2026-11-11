@@ -925,6 +925,22 @@ es:
         title: Cuotas y uso
         usage: Cuotas de pago y quienes superan su límite
         within: Dentro del límite
+      catalog:
+        back: Todos los planes
+        buy: Comprar
+        details: Qué incluye
+        free: Gratis
+        get_free: Obtener gratis
+        intro: Elija un plan de %{platform}.
+        none: No hay planes disponibles por ahora.
+        price:
+          every_n_months: "%{price} cada %{count} meses"
+          every_n_years: "%{price} cada %{count} años"
+          month: "%{price} al mes"
+          once: "%{price}, una vez"
+          year: "%{price} al año"
+        subscribe: Suscribirse
+        title: Planes
       checkout:
         accept: He leído y acepto %{title}
         address:
@@ -1056,6 +1072,7 @@ es:
         access_heading: A qué tienes acceso
         all_orders: Todos los pedidos
         all_plans: Todos los planes
+        browse_plans: Ver planes
         credit_heading: Crédito de la tienda
         credit_none: No tienes crédito de la tienda.
         intro: Tus planes, pedidos y crédito en %{platform}.
@@ -1525,6 +1542,9 @@ es:
         field_identifier_hint: Clave unica de maquina. No se puede cambiar despues
           de la creacion.
         field_interval_count: Duración del período de facturación
+        field_listed: Mostrar en el catálogo público
+        field_listed_hint: Muestra este plan a todo el mundo, con un botón para comprarlo.
+          Déjelo sin marcar para venderlo solo por enlace.
         field_name: Nombre
         field_participant_benefits: Beneficios
         field_participant_benefits_hint: Un beneficio por linea.

@@ -1,0 +1,4 @@
+<%# The way into checkout. Sign-in is asked for there, not here. %>
+<% label = plan.free? ? 'get_free' : (plan.recurring? ? 'subscribe' : 'buy') %>
+<%= link_to t("better_together.billing.catalog.#{label}"), new_billing_checkout_path(plan_id: plan.id, locale: I18n.locale),
+            id: dom_id(plan, :buy), class: 'btn btn-primary' %>

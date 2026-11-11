@@ -930,6 +930,22 @@ fr:
         title: Quotas et utilisation
         usage: Quotas payants et personnes au-delà de leur limite
         within: Dans la limite
+      catalog:
+        back: Tous les forfaits
+        buy: Acheter
+        details: Ce que vous obtenez
+        free: Gratuit
+        get_free: Obtenir gratuitement
+        intro: Choisissez un forfait de %{platform}.
+        none: Aucun forfait n’est offert pour le moment.
+        price:
+          every_n_months: "%{price} tous les %{count} mois"
+          every_n_years: "%{price} tous les %{count} ans"
+          month: "%{price} par mois"
+          once: "%{price}, une fois"
+          year: "%{price} par an"
+        subscribe: S’abonner
+        title: Forfaits
       checkout:
         accept: J’ai lu et j’accepte %{title}
         address:
@@ -1066,6 +1082,7 @@ fr:
         access_heading: Ce à quoi vous avez accès
         all_orders: Toutes les commandes
         all_plans: Tous les forfaits
+        browse_plans: Voir les forfaits
         credit_heading: Crédit en magasin
         credit_none: Vous n’avez aucun crédit en magasin.
         intro: Vos forfaits, commandes et crédit sur %{platform}.
@@ -1555,6 +1572,9 @@ fr:
         field_identifier_hint: Cle unique lisible par machine. Ne peut pas etre modifiee
           apres la creation.
         field_interval_count: Durée de la période de facturation
+        field_listed: Afficher dans le catalogue public
+        field_listed_hint: Présente ce forfait à tout le monde, avec un bouton pour
+          l’acheter. Laissez décoché pour ne le vendre que par lien.
         field_name: Nom
         field_participant_benefits: Avantages
         field_participant_benefits_hint: Un avantage par ligne.

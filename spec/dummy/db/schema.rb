@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_16_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_17_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -385,7 +385,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_16_090000) do
     t.index ["order_id"], name: "idx_bt_billing_entitlements_order", unique: true, where: "(order_id IS NOT NULL)"
     t.index ["pay_subscription_id"], name: "idx_bt_billing_entitlements_subscription", unique: true, where: "(pay_subscription_id IS NOT NULL)"
     t.index ["plan_id"], name: "idx_bt_billing_entitlements_plan"
-    t.index ["platform_id", "beneficiary_type", "beneficiary_id", "plan_id"], name: "idx_bt_billing_entitlements_one_live", unique: true, where: "((status)::text = ANY ((ARRAY['active'::character varying, 'grace'::character varying])::text[]))"
+    t.index ["platform_id", "beneficiary_type", "beneficiary_id", "plan_id"], name: "idx_bt_billing_entitlements_one_live", unique: true, where: "((status)::text = ANY (ARRAY[('active'::character varying)::text, ('grace'::character varying)::text]))"
     t.index ["platform_id"], name: "idx_bt_billing_entitlements_platform"
     t.check_constraint "(pay_subscription_id IS NOT NULL) <> (order_id IS NOT NULL)", name: "chk_bt_billing_entitlements_one_source"
   end
@@ -663,8 +663,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_16_090000) do
     t.string "latest_processor_event_id"
     t.jsonb "metadata", default: {}, null: false
     t.uuid "tax_category_id"
+    t.boolean "listed", default: false, null: false
     t.index ["active"], name: "idx_bt_billing_plans_active"
     t.index ["id", "platform_id"], name: "idx_bt_billing_plans_id_platform", unique: true
+    t.index ["listed"], name: "idx_bt_billing_plans_listed"
     t.index ["platform_id", "identifier"], name: "idx_bt_billing_plans_platform_identifier", unique: true, where: "(seller_id IS NULL)"
     t.index ["platform_id", "seller_type", "seller_id", "identifier"], name: "idx_bt_billing_plans_seller_identifier", unique: true, where: "(seller_id IS NOT NULL)"
     t.index ["platform_id"], name: "idx_bt_billing_plans_platform"

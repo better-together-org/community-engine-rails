@@ -118,6 +118,9 @@ end
 concern :billing_hub do
   namespace :billing do
     get '/', to: 'hubs#show', as: :hub
+    # The public catalog sits under /billing/catalog so it cannot meet the /plans page route.
+    get 'catalog', to: 'catalog#index', as: :catalog
+    get 'catalog/:id', to: 'catalog#show', as: :catalog_plan
   end
 end
 

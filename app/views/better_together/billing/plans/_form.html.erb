@@ -211,6 +211,14 @@
     </div>
   <% end %>
 
+  <div class="mb-4">
+    <div class="form-check">
+      <%= form.check_box :listed, class: 'form-check-input', id: 'billing_plan_listed', aria: { describedby: 'billing-plan-listed-hint' } %>
+      <%= form.label :listed, t('better_together.billing.plans.field_listed'), class: 'form-check-label' %>
+    </div>
+    <div class="form-text" id="billing-plan-listed-hint"><%= t('better_together.billing.plans.field_listed_hint') %></div>
+  </div>
+
   <%= render 'metadata_fields', form: form, billing_plan: billing_plan %>
 
   <div class="d-flex gap-2" id="billing-plan-form-actions">

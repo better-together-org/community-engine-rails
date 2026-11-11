@@ -910,6 +910,22 @@ uk:
         title: Квоти та використання
         usage: Платні квоти та ті, хто перевищив ліміт
         within: У межах ліміту
+      catalog:
+        back: Усі плани
+        buy: Купити
+        details: Що входить
+        free: Безкоштовно
+        get_free: Отримати безкоштовно
+        intro: Оберіть план від %{platform}.
+        none: Наразі немає доступних планів.
+        price:
+          every_n_months: "%{price} кожні %{count} міс."
+          every_n_years: "%{price} кожні %{count} р."
+          month: "%{price} на місяць"
+          once: "%{price}, одноразово"
+          year: "%{price} на рік"
+        subscribe: Підписатися
+        title: Плани
       checkout:
         accept: Я прочитав(ла) і приймаю «%{title}»
         address:
@@ -1043,6 +1059,7 @@ uk:
         access_heading: До чого ви маєте доступ
         all_orders: Усі замовлення
         all_plans: Усі плани
+        browse_plans: Переглянути плани
         credit_heading: Кредит магазину
         credit_none: У вас немає кредиту магазину.
         intro: Ваші плани, замовлення та кредит на %{platform}.
@@ -1503,6 +1520,9 @@ uk:
         field_identifier: Identyfikator
         field_identifier_hint: Unikalnyj klyuch. Ne mozhna zminyty pislia stvorennya.
         field_interval_count: Тривалість періоду виставлення рахунків
+        field_listed: Показувати в публічному каталозі
+        field_listed_hint: Показує цей план усім із кнопкою для купівлі. Залиште без
+          позначки, щоб продавати лише за посиланням.
         field_name: Nazva
         field_participant_benefits: Perevagy
         field_participant_benefits_hint: Odna perevaga na ryadok.
