@@ -945,6 +945,10 @@ es:
         title: Planes
       checkout:
         accept: He leído y acepto %{title}
+        add_on_line: Complemento
+        add_ons_heading: Añadir a su pedido
+        add_ons_hint: Complementos opcionales para este pedido. Actualice el pedido
+          para añadirlos.
         address:
           choose: Dirección de facturación
           hint: El impuesto se calcula según dónde se le factura, así que elija su
@@ -986,6 +990,7 @@ es:
           pagos a cualquier factura.
         review_intro: Lea esto antes de hacer su pedido. Debe aceptarlo para continuar.
         review_title: Revisar y aceptar
+        subtotal: Subtotal
         tax_note: El impuesto, si corresponde, se calcula según su dirección de facturación
           y se muestra antes de confirmar.
         tax_note_new_address: El impuesto se calcula con la dirección que ingreses
@@ -996,6 +1001,7 @@ es:
           para esta compra.
         unavailable_not_enabled: No disponible aquí por ahora.
         unavailable_purpose_not_allowed: No se acepta para este tipo de compra.
+        update_order: Actualizar el pedido
         view_agreement: Ver el acuerdo
       credit:
         any_purpose: Todo lo que vende la plataforma
@@ -1531,6 +1537,9 @@ es:
           de pagos. Cada una debe activarse para el vendedor antes de que los compradores
           puedan usarla.
         field_active: Activo (visible para suscriptores)
+        field_add_on: Solo complemento
+        field_add_on_hint: Se vende solo como extra en el pedido de otro plan, nunca
+          por separado. Pago único, sin acceso incluido.
         field_amount_cents: Importe (unidad monetaria más pequeña)
         field_amount_cents_hint: p. ej., 4500 = 45,00 en la mayoría de las monedas;
           4500 = 4500 en monedas sin decimales como el JPY
@@ -6221,6 +6230,10 @@ es:
       accepted: debe ser aceptado
       account_mismatch: debe pertenecer a la misma cuenta
       acknowledgement_required: debe aceptarse antes de activar este método
+      add_on_cannot_have_grants: no se puede dar a un complemento
+      add_on_cannot_renew: un complemento se compra una vez, no se renueva
+      add_on_has_grants: un complemento no puede incluir nada propio; póngalo en un
+        plan
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       blank: no puede estar en blanco

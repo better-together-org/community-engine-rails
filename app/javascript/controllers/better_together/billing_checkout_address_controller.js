@@ -15,6 +15,12 @@ export default class extends Controller {
     const params = new URLSearchParams({ plan_id: this.planIdValue, billing_address_id: event.target.value });
     const method = document.querySelector('input[name="payment_method"]:checked');
     if (method) params.set('payment_method', method.value);
+    // The add-ons on this order (ticked boxes, or the hidden copies once the order is being reviewed), each once.
+    const addOns = new Set();
+    document.querySelectorAll('input[name="add_on_ids[]"]').forEach((input) => {
+      if (input.type !== 'checkbox' || input.checked) addOns.add(input.value);
+    });
+    addOns.forEach((id) => params.append('add_on_ids[]', id));
     frame.src = `${this.urlValue}?${params.toString()}`;
   }
 }

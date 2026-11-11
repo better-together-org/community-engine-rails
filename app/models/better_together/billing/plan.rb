@@ -67,7 +67,8 @@ module BetterTogether
       # Not held by any processor, so editable at any time; a change applies from the next renewal.
       RENEWAL_FIELDS = %i[grace_days renewal_lead_days].freeze
       # Not synced to the processor, so a steward can change it whether or not the plan is linked.
-      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers].freeze
+      # Local settings that may change after a price is linked: where the plan is shown, who may buy it, and whether it is an add-on.
+      LISTING_FIELDS = %i[listed restricted_to_members restricted_to_subscribers add_on].freeze
       MAX_GRACE_DAYS = 90
       MAX_LEAD_DAYS = 60
 
@@ -116,6 +117,7 @@ module BetterTogether
       validate :product_not_used_by_another_platform
       validate :eligible_owner_types_are_billable
       validate :pricing_tier_within_known_values
+      validate :add_on_is_a_plain_extra
 
       before_validation :prepare_new_plan, on: :create
       before_validation :load_linked_price, on: :create
@@ -124,6 +126,9 @@ module BetterTogether
       scope :active, -> { where(active: true) }
       # What the public catalog shows: bought-able plans a steward chose to list.
       scope :listed, -> { active.where(listed: true) }
+      # An add-on is only sold on another plan's order; the plans people buy by themselves are the primary ones.
+      scope :add_on, -> { where(add_on: true) }
+      scope :primary, -> { where(add_on: false) }
       scope :unrestricted, -> { where(restricted_to_members: false, restricted_to_subscribers: false) }
 
       # The plans a person may see and buy, given what they are to the platform (see Plans::Audience): the unrestricted ones, and
@@ -455,6 +460,14 @@ module BetterTogether
         configured = Array(metadata['eligible_billable_owner_types']).compact_blank
         unknown = configured - self.class.assignable_owner_types
         errors.add(:base, :unknown_owner_types, types: unknown.join(', ')) if unknown.any?
+      end
+
+      # An add-on is a plain one-off extra: it does not renew and includes nothing of its own (what a plan gives is a plan's).
+      def add_on_is_a_plain_extra
+        return unless add_on?
+
+        errors.add(:add_on, :add_on_cannot_renew) if recurring?
+        errors.add(:add_on, :add_on_has_grants) if persisted? && plan_grants.exists?
       end
 
       def pricing_tier_within_known_values

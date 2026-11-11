@@ -19,10 +19,10 @@ module BetterTogether
       def catalog? = billing_available?(Current.platform)
 
       # One listed plan in the catalog: it is listed and active, and the person qualifies for its audience.
-      def catalog_show? = catalog? && record.listed? && record.active? && purchase?
+      def catalog_show? = catalog? && record.listed? && record.active? && !record.add_on? && purchase?
 
       # A plan offered from a page (a plan block): active, and the person qualifies, listed in the catalog or not.
-      def offer? = catalog? && record.active? && purchase?
+      def offer? = catalog? && record.active? && !record.add_on? && purchase?
 
       # Buying a plan, listed or not: a plan limited to members or subscribers is for them alone, so a link to it gets no one else in.
       def purchase?
@@ -40,7 +40,7 @@ module BetterTogether
           return scope.none unless platform && BetterTogether::Billing.enabled?(platform)
 
           audience = BetterTogether::Billing::Plans::Audience.call(platform:, person: agent)
-          scope.for_platform(platform).sold_by_platform.listed.open_to(audience)
+          scope.for_platform(platform).sold_by_platform.primary.listed.open_to(audience)
         end
       end
 

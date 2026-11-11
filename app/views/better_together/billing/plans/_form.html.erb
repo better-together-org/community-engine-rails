@@ -219,6 +219,14 @@
     <div class="form-text" id="billing-plan-listed-hint"><%= t('better_together.billing.plans.field_listed_hint') %></div>
   </div>
 
+  <div class="mb-4" id="billing-plan-add-on-group">
+    <div class="form-check">
+      <%= form.check_box :add_on, class: 'form-check-input', id: 'billing_plan_add_on', aria: { describedby: 'billing-plan-add-on-hint' } %>
+      <%= form.label :add_on, t('better_together.billing.plans.field_add_on'), class: 'form-check-label' %>
+    </div>
+    <div class="form-text" id="billing-plan-add-on-hint"><%= t('better_together.billing.plans.field_add_on_hint') %></div>
+  </div>
+
   <fieldset class="mb-4" id="billing-plan-audience">
     <legend class="h6"><%= t('better_together.billing.plans.audience_legend') %></legend>
     <% %i[restricted_to_members restricted_to_subscribers].each do |field| %>

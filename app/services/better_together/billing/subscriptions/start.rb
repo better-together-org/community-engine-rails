@@ -28,9 +28,21 @@ module BetterTogether
             order.purpose == 'subscription' && paid_locally?(order)
         end
 
+        # The plan an order is for: its one line that is not an add-on. Add-ons (one-off extras) ride along on the order and
+        # neither start a subscription nor give an entitlement of their own. Nothing when the lines are not plans, or when there
+        # is not exactly one primary plan.
         def self.single_plan(order)
-          line_items = order.line_items.to_a
-          line_items.first.purchasable if line_items.one? && line_items.first.purchasable.is_a?(Plan)
+          purchasables = order.line_items.to_a.map(&:purchasable)
+          return unless purchasables.all?(Plan)
+
+          primary = purchasables.reject(&:add_on?)
+          primary.first if primary.one?
+        end
+
+        # The line for that plan, whose price is the subscription's.
+        def self.plan_line(order)
+          plan = single_plan(order)
+          order.line_items.to_a.find { |line| line.purchasable == plan } if plan
         end
 
         # Every part that paid it was settled by Community Engine; a part through a processor leaves the subscription to the processor.
@@ -103,7 +115,7 @@ module BetterTogether
         def build_term(subscription)
           order.platform.billing_subscription_terms.create!(
             pay_subscription: subscription, plan:, beneficiary: order.on_behalf_of, payment_method: renewal_method,
-            unit_amount_cents: order.line_items.first.unit_amount_cents, currency: order.currency, anchor_at: anchor
+            unit_amount_cents: self.class.plan_line(order).unit_amount_cents, currency: order.currency, anchor_at: anchor
           )
         end
       end

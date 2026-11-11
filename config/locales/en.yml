@@ -952,6 +952,9 @@ en:
         title: Plans
       checkout:
         accept: I have read and accept %{title}
+        add_on_line: Add-on
+        add_ons_heading: Add to your order
+        add_ons_hint: Optional extras for this order. Update the order to add them.
         address:
           choose: Billing address
           hint: Tax is worked out from where you are billed, so choose your country
@@ -994,6 +997,7 @@ en:
         review_intro: Read these before you place your order. You have to accept them
           to continue.
         review_title: Review and accept
+        subtotal: Subtotal
         tax_note: Tax, if any, is worked out from your billing address and shown before
           you confirm.
         tax_note_new_address: Tax is worked out from the address you enter, and shown
@@ -1003,6 +1007,7 @@ en:
         unavailable_insufficient_credit: You do not have enough store credit for this.
         unavailable_not_enabled: Not available here right now.
         unavailable_purpose_not_allowed: Not accepted for this kind of purchase.
+        update_order: Update order
         view_agreement: View the agreement
       credit:
         any_purpose: Anything the platform sells
@@ -1537,6 +1542,9 @@ en:
         field_accepted_payment_methods_hint: Ways to pay outside a payment processor.
           Each still has to be turned on for the seller before buyers can use it.
         field_active: Active (visible to subscribers)
+        field_add_on: Add-on only
+        field_add_on_hint: Sold only as an extra on another plan's order, never on
+          its own. One-time, no included access.
         field_amount_cents: Amount (smallest currency unit)
         field_amount_cents_hint: e.g. 4500 = 45.00 for most currencies; 4500 = 4500
           for zero-decimal currencies such as JPY
@@ -6128,6 +6136,10 @@ en:
       account_mismatch: must belong to the same account
       acknowledgement_required: must be accepted before this method can be turned
         on
+      add_on_cannot_have_grants: cannot be given to an add-on
+      add_on_cannot_renew: an add-on is bought once, not renewed
+      add_on_has_grants: an add-on cannot include anything of its own; put that on
+        a plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
       blank: can't be blank

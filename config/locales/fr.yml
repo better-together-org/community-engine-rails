@@ -950,6 +950,10 @@ fr:
         title: Forfaits
       checkout:
         accept: J’ai lu et j’accepte %{title}
+        add_on_line: Complément
+        add_ons_heading: Ajouter à votre commande
+        add_ons_hint: Compléments facultatifs pour cette commande. Mettez la commande
+          à jour pour les ajouter.
         address:
           choose: Adresse de facturation
           hint: La taxe est calculée selon le lieu de facturation ; choisissez donc
@@ -994,6 +998,7 @@ fr:
         review_intro: Lisez ces documents avant de passer votre commande. Vous devez
           les accepter pour continuer.
         review_title: Lire et accepter
+        subtotal: Sous-total
         tax_note: La taxe, le cas échéant, est calculée selon votre adresse de facturation
           et affichée avant la confirmation.
         tax_note_new_address: La taxe est calculée selon l'adresse que vous saisissez
@@ -1004,6 +1009,7 @@ fr:
           pour cet achat.
         unavailable_not_enabled: Non disponible ici pour le moment.
         unavailable_purpose_not_allowed: Non accepté pour ce type d’achat.
+        update_order: Mettre la commande à jour
         view_agreement: Lire l’entente
       credit:
         any_purpose: Tout ce que la plateforme vend
@@ -1561,6 +1567,9 @@ fr:
           de paiement. Chacun doit encore être activé pour le vendeur avant que les
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
+        field_add_on: Option seulement
+        field_add_on_hint: Vendue uniquement en supplément sur la commande d'un autre
+          forfait, jamais seule. Paiement unique, sans accès inclus.
         field_amount_cents: Montant (plus petite unité monétaire)
         field_amount_cents_hint: p. ex. 4500 = 45,00 pour la plupart des devises;
           4500 = 4500 pour les devises sans décimales comme le JPY
@@ -6301,6 +6310,10 @@ fr:
       accepted: doit être accepté(e)
       account_mismatch: doit appartenir au même compte
       acknowledgement_required: doit être accepté avant que ce mode puisse être activé
+      add_on_cannot_have_grants: ne peut pas être donné à un complément
+      add_on_cannot_renew: un complément s'achète une fois, il ne se renouvelle pas
+      add_on_has_grants: un complément ne peut rien inclure en propre; mettez-le sur
+        un forfait
       after_start: doit être après le début
       already_confirmed: a déjà été confirmé(e)
       blank: doit être rempli(e)

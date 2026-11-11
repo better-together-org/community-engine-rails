@@ -24,20 +24,29 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
-        def initialize(platform:, plan:, buyer: nil)
+        # `add_ons:` are extras on the same order: it can be paid only by a way every one of them accepts.
+        def initialize(platform:, plan:, buyer: nil, add_ons: [])
           @platform = platform
           @plan = plan
           @buyer = buyer
+          @add_ons = Array(add_ons)
         end
 
-        def call = plan.payment_methods.map { |name| choice(name) }
+        def call = accepted_names.map { |name| choice(name) }
 
         # What the purchase is for: a plan that renews is a subscription.
         def purpose = plan.recurring? ? 'subscription' : 'one_time'
 
         private
 
-        attr_reader :platform, :plan, :buyer
+        attr_reader :platform, :plan, :buyer, :add_ons
+
+        # With add-ons the order can be paid only by a way every plan on it accepts and Community Engine settles itself: an online
+        # processor prices an order from its own price ids, and an add-on has none.
+        def accepted_names
+          names = add_ons.reduce(plan.payment_methods) { |accepted, add_on| accepted & add_on.payment_methods }
+          add_ons.any? ? names.select { |name| Billing.local_method?(name) } : names
+        end
 
         def choice(name)
           reason = reason_unavailable(name)
