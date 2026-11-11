@@ -10,10 +10,10 @@ callouts:
 - :id: new_button
   :title: Add provider
   :description: Opens the new provider form.
-- :id: env_note
-  :title: Environment fallback
-  :description: A provider with no row here still works if its environment variables
-    are set.
+- :id: env_list
+  :title: Configured by environment
+  :description: Environment-configured providers and the domains they serve; secrets
+    are never shown.
 accessibility_notes: The table has an aria-label and a visually hidden Actions header;
   delete uses a confirm dialog.
 slug: platform_identity_providers_index

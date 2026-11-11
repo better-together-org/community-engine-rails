@@ -13,6 +13,7 @@ module BetterTogether
     def index
       authorize @platform.platform_identity_providers.build
       @identity_providers = @platform.platform_identity_providers.order(:position, :created_at)
+      @env_providers = IdentityProviderCredentials.env_providers(@platform)
     end
 
     def new

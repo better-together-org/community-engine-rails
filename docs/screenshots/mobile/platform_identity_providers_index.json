@@ -45,38 +45,38 @@
       }
     },
     {
-      "selector": "#platform-identity-providers-env-note",
-      "title": "Environment fallback",
+      "selector": "#platform-identity-providers-env",
+      "title": "Configured by environment",
       "bullets": [
-        "Providers without a row use the server environment variables."
+        "Shows which providers the server environment already serves, and on which domains."
       ],
       "target": {
         "x": 12.0,
-        "y": 189.390625,
+        "y": 281.390625,
         "width": 476.0,
-        "height": 76.0,
+        "height": 174.0,
         "right": 488.0,
-        "bottom": 265.390625,
+        "bottom": 455.390625,
         "center_x": 250.0,
-        "center_y": 227.390625
+        "center_y": 368.390625
       },
       "avoid": {
         "x": 12.0,
-        "y": 189.390625,
+        "y": 281.390625,
         "width": 476.0,
-        "height": 76.0,
+        "height": 174.0,
         "right": 488.0,
-        "bottom": 265.390625,
+        "bottom": 455.390625,
         "center_x": 250.0,
-        "center_y": 227.390625
+        "center_y": 368.390625
       },
       "placement": {
-        "side": "floating",
-        "x": 24,
-        "y": 456,
+        "side": "below",
+        "x": 115.0,
+        "y": 475.39,
         "width": 270.0,
-        "height": 216,
-        "score": 0
+        "height": 242,
+        "score": 801.609375
       }
     }
   ]

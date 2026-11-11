@@ -3351,8 +3351,15 @@ en:
         disabled_label: Disabled
         edit_btn: Edit
         enabled_label: Enabled
+        env_description: These providers are set by environment variables and apply
+          to this platform's domains listed below. Secrets are never shown. Add a
+          provider row to manage a domain here instead.
         env_note: Providers without a row here fall back to this server's environment
           variables (for example GITHUB_CLIENT_ID).
+        env_serves: 'Serves: %{domains}'
+        env_serves_none: Every domain is claimed by a provider row below, so the environment
+          is not used.
+        env_title: Configured through the server environment
         header_actions: Actions
         header_client_id: Client ID
         header_provider: Provider

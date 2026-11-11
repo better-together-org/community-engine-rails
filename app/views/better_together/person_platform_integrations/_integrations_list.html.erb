@@ -65,7 +65,7 @@
   </h4>
   
   <% connected_providers = person_platform_integrations.map(&:provider).map(&:to_sym) %>
-  <% available_providers = BetterTogether::User.omniauth_providers - connected_providers %>
+  <% available_providers = configured_omniauth_providers(BetterTogether::User) - connected_providers %>
   
   <% if available_providers.any? %>
     <div class="d-flex gap-2 flex-wrap justify-content-center">
