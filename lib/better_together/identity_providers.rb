@@ -98,6 +98,21 @@ BetterTogether.register_identity_provider(
   verified_email: ->(auth) { auth&.info&.email.present? && [true, 'true'].include?(auth.info.email_verified) }
 )
 
+# Facebook never asserts that an email address is verified, so no verified_email rule is given:
+# a Facebook sign-in is never linked to an existing account by email, and a new account must
+# confirm its address through the normal confirmation email.
+BetterTogether.register_identity_provider(
+  :facebook,
+  kind: 'Facebook',
+  platform_identifier: 'facebook',
+  platform_url: 'https://www.facebook.com',
+  env_id: 'FACEBOOK_CLIENT_ID',
+  env_secret: 'FACEBOOK_CLIENT_SECRET',
+  scope: 'email,public_profile',
+  icon_class: 'fa-brands fa-facebook',
+  button_class: 'btn btn-primary'
+)
+
 # Generic OpenID Connect relying party: the issuer is configured per platform (see
 # PlatformIdentityProvider#issuer), so one catalog entry serves any compliant provider.
 # Email counts as verified only when the provider asserts email_verified.
