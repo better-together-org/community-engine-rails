@@ -64,8 +64,11 @@
     <%= t('better_together.person_platform_integrations.index.connect_new') %>
   </h4>
   
-  <% connected_providers = person_platform_integrations.map(&:provider).map(&:to_sym) %>
-  <% available_providers = configured_omniauth_providers(BetterTogether::User) - connected_providers %>
+  <% available_providers = configured_sign_in_choices(BetterTogether::User).reject do |choice|
+       person_platform_integrations.any? do |i|
+         i.provider == choice.key.to_s && (choice.provider_platform_id.nil? || i.platform_id == choice.provider_platform_id)
+       end
+     end %>
   
   <% if available_providers.any? %>
     <div class="d-flex gap-2 flex-wrap justify-content-center">
