@@ -8,7 +8,7 @@
               <%= render "better_together/person_platform_integrations/provider_icon", provider: integration.provider %>
               <div class="ms-3">
                 <h5 class="mb-1">
-                  <%= integration.provider.titleize %>
+                  <%= integration_provider_label(integration) %>
                 </h5>
                 <% if integration.handle.present? %>
                   <p class="text-muted small mb-0">
@@ -39,7 +39,7 @@
             <%= button_to person_platform_integration_path(integration, locale: I18n.locale),
                           method: :delete,
                           data: { 
-                            turbo_confirm: t('better_together.person_platform_integrations.index.confirm_disconnect', provider: integration.provider.titleize),
+                            turbo_confirm: t('better_together.person_platform_integrations.index.confirm_disconnect', provider: integration_provider_label(integration)),
                             turbo_frame: "integrations-settings"
                           },
                           class: "btn btn-outline-danger btn-sm" do %>
@@ -64,19 +64,25 @@
     <%= t('better_together.person_platform_integrations.index.connect_new') %>
   </h4>
   
-  <% connected_providers = person_platform_integrations.map(&:provider).map(&:to_sym) %>
-  <% available_providers = configured_omniauth_providers(BetterTogether::User) - connected_providers %>
+  <% available_providers = configured_sign_in_choices(BetterTogether::User).reject do |choice|
+       person_platform_integrations.any? do |i|
+         i.provider == choice.key.to_s && (choice.provider_platform_id.nil? || i.platform_id == choice.provider_platform_id)
+       end
+     end %>
   
   <% if available_providers.any? %>
     <div class="d-flex gap-2 flex-wrap justify-content-center">
-      <% available_providers.each do |provider| %>
+      <% available_providers.each do |choice| %>
+        <% provider = choice.key %>
         <%= button_to omniauth_authorize_path(:user, provider),
                       method: :post,
+                      params: (choice.provider_id ? { provider_id: choice.provider_id } : {}),
+                      id: (choice.provider_id ? "connect-#{provider}-#{choice.provider_id}" : nil),
                       class: oauth_provider_button_class(provider),
                       data: { turbo: false },
                       form: { data: { turbo: false } } do %>
           <i class="<%= oauth_provider_icon_class(provider) %> me-2" aria-hidden="true"></i>
-          <%= t("better_together.person_platform_integrations.index.connect_provider", provider: OmniAuth::Utils.camelize(provider)) %>
+          <%= t("better_together.person_platform_integrations.index.connect_provider", provider: choice.label) %>
         <% end %>
       <% end %>
     </div>

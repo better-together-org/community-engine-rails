@@ -43,7 +43,7 @@ module BetterTogether
       in: (PROVIDERS.keys + BetterTogether::IdentityProviders.keys).map(&:to_s).uniq
     }
     validates :uid, presence: true, uniqueness: {
-      scope: %i[provider local_platform_id]
+      scope: %i[provider platform_id local_platform_id]
     }
     validates :user, presence: true
     validates :access_token, presence: { on: :create }

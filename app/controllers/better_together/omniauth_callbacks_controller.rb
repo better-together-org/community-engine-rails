@@ -19,6 +19,8 @@ module BetterTogether
     before_action :check_invitation_requirement, except: [:failure]
     before_action :track_existing_user_state, except: [:failure]
     before_action :set_user, except: [:failure]
+    # The issuer picked at the request phase is single-use
+    after_action -> { session.delete(BetterTogether::OmniauthPlatformGate::SESSION_KEY) }, except: [:failure]
 
     attr_reader :person_platform_integration, :user
 
@@ -227,9 +229,20 @@ module BetterTogether
     def set_person_platform_integration
       return unless auth.present?
 
-      @person_platform_integration = BetterTogether::PersonPlatformIntegration.find_by(provider: auth.provider,
-                                                                                       uid: auth.uid,
-                                                                                       local_platform:)
+      scope = BetterTogether::PersonPlatformIntegration.where(provider: auth.provider, uid: auth.uid, local_platform:)
+      # A uid (OIDC `sub`) is unique only within its issuer, so issuer-based identities are keyed to it too.
+      scope = scope.where(platform: identity_credentials.identity_platform) if identity_credentials&.identity_platform
+      @person_platform_integration = scope.first
+    end
+
+    # The configuration this sign-in used (the chosen issuer for OpenID Connect), resolved from the request.
+    def identity_credentials
+      return @identity_credentials if defined?(@identity_credentials)
+
+      @identity_credentials = BetterTogether::IdentityProviderCredentials.resolve(
+        auth.provider, domain: BetterTogether::OmniauthFullHost.domain_for(request.env),
+                       provider_id: request.env[BetterTogether::OmniauthPlatformGate::ENV_KEY]
+      )
     end
 
     # The platform this sign-in is for, from the requested domain (the same domain the provider gate checked).
@@ -253,7 +266,9 @@ module BetterTogether
         auth:,
         current_user:,
         invitations:,
-        local_platform:
+        local_platform:,
+        identity_platform: identity_credentials&.identity_platform,
+        trust_verified_email: identity_credentials&.trust_verified_email || false
       )
     rescue ArgumentError => e
       # Handle OAuth validation errors (missing email, account already linked, etc.)

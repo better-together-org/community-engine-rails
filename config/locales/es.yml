@@ -3386,13 +3386,21 @@ es:
           registrada en el proveedor.
         domains_label: Dominios permitidos
         enabled_label: Habilitado
-        issuer_hint: 'Solo OpenID Connect. La URL https del proveedor de identidad
-          (se lee su documento de descubrimiento). Configura solo proveedores de confianza:
-          un correo que marquen como verificado puede vincularse a una cuenta existente.'
+        issuer_hint: Solo OpenID Connect. La URL https del proveedor de identidad
+          (se lee su documento de descubrimiento). No se puede cambiar tras añadir
+          el proveedor, y cada emisor se puede añadir una vez por plataforma.
         issuer_label: URL del emisor
+        label_hint: Solo OpenID Connect. Se muestra en el botón de inicio de sesión.
+          Por defecto, el host del emisor.
+        label_label: Texto del botón
         scopes_hint: Déjelo en blanco para usar el valor predeterminado del proveedor.
         scopes_label: Ámbitos
         strategy_label: Proveedor
+        trust_verified_email_hint: Desactivado por defecto. Si se activa, un correo
+          que este emisor marque como verificado puede iniciar sesión en una cuenta
+          existente con esa dirección. Actívelo solo para emisores que verifiquen
+          las direcciones de correo.
+        trust_verified_email_label: Confiar en los correos verificados de este emisor
         update_btn: Actualizar proveedor
       index:
         back_to_platform: Volver a la plataforma
@@ -5139,6 +5147,8 @@ es:
       expired: ha expirado, por favor solicita una nueva
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
+      immutable: no se puede cambiar una vez creado; elimine este proveedor y añada
+        uno nuevo
       in: debe estar en %{count}
       inclusion: no está incluido en la lista
       invalid: no es válido

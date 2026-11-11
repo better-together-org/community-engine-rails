@@ -3336,13 +3336,20 @@ en:
           Each domain's callback URL must also be registered with the provider.
         domains_label: Allowed domains
         enabled_label: Enabled
-        issuer_hint: 'OpenID Connect only. The https URL of the identity provider
-          (its discovery document is read from it). Only configure providers you trust:
-          an email they mark as verified can link to an existing account.'
+        issuer_hint: OpenID Connect only. The https URL of the identity provider (its
+          discovery document is read from it). It cannot be changed after the provider
+          is added, and each issuer can be added once per platform.
         issuer_label: Issuer URL
+        label_hint: OpenID Connect only. Shown on the sign-in button. Defaults to
+          the issuer host.
+        label_label: Button label
         scopes_hint: Leave blank to use the provider default.
         scopes_label: Scopes
         strategy_label: Provider
+        trust_verified_email_hint: Off by default. When on, an email this issuer marks
+          as verified can sign people in to an existing account with that address.
+          Turn on only for issuers that verify email addresses.
+        trust_verified_email_label: Trust this issuer's verified emails
         update_btn: Update provider
       index:
         back_to_platform: Back to Platform
@@ -5052,6 +5059,8 @@ en:
       expired: has expired, please request a new one
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
+      immutable: cannot be changed once created; delete this provider and add a new
+        one
       in: must be in %{count}
       inclusion: is not included in the list
       invalid: is invalid

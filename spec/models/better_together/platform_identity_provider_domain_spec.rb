@@ -10,7 +10,8 @@ RSpec.describe BetterTogether::PlatformIdentityProviderDomain do
   end
   let(:first_config) { create(:better_together_platform_identity_provider, platform:, provider_platform: external) }
   let(:second_config) do
-    create(:better_together_platform_identity_provider, platform:, provider_platform: create(:better_together_platform, external: true))
+    create(:better_together_platform_identity_provider, platform: create(:better_together_platform),
+                                                        provider_platform: external)
   end
 
   it 'allows a domain on one configuration' do
@@ -23,7 +24,7 @@ RSpec.describe BetterTogether::PlatformIdentityProviderDomain do
     expect(described_class.new(platform_identity_provider: first_config, platform_domain: domain)).not_to be_valid
   end
 
-  it 'rejects a domain already claimed by another configuration of the same strategy', :aggregate_failures do
+  it 'rejects a domain already claimed by another configuration of the same provider', :aggregate_failures do
     described_class.create!(platform_identity_provider: first_config, platform_domain: domain)
     claim = described_class.new(platform_identity_provider: second_config, platform_domain: domain)
 

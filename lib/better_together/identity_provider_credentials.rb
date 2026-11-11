@@ -7,7 +7,8 @@ module BetterTogether
     REDACTED = '[FILTERED]'
 
     # Carries the client secret to OmniAuth; never prints it via inspect, to_s, to_h or JSON.
-    Result = Struct.new(:client_id, :client_secret, :scope, :options, keyword_init: true) do
+    Result = Struct.new(:client_id, :client_secret, :scope, :options, :provider_id, :identity_platform,
+                        :trust_verified_email, keyword_init: true) do
       def inspect
         secret = client_secret.present? ? IdentityProviderCredentials::REDACTED : 'nil'
         "#<#{self.class.name} client_id=#{client_id.inspect} client_secret=#{secret} scope=#{scope.inspect}>"
@@ -27,8 +28,12 @@ module BetterTogether
     # configured for that domain. There is no fallback to another platform's configuration:
     # the domain must be on the configuration's allow-list. Environment variables are the
     # host platform's own configuration and apply to the host platform's domains only.
-    def self.resolve(key, domain:)
-      new(key, domain).resolve
+    #
+    # Issuer-based providers (OpenID Connect) may have several configurations on one domain, one per
+    # issuer. `provider_id` names the configuration the user picked; without it a domain with more than
+    # one configuration resolves to nothing rather than guessing.
+    def self.resolve(key, domain:, provider_id: nil)
+      new(key, domain, provider_id).resolve
     end
 
     # Providers configured through environment variables for the host platform: for each, the
@@ -58,35 +63,61 @@ module BetterTogether
     end
     private_class_method :claimed?
 
-    def self.configured?(key, domain:)
-      resolve(key, domain:)&.then { |r| r.client_id.present? && r.client_secret.present? } || false
+    def self.configured?(key, domain:, provider_id: nil)
+      resolve(key, domain:, provider_id:)&.then { |r| r.client_id.present? && r.client_secret.present? } || false
     end
 
-    def initialize(key, domain)
+    # The enabled configurations serving a domain, for building one sign-in button each.
+    def self.choices(key, domain:)
+      return [] unless domain
+
+      new(key, domain, nil).rows.select(&:enabled?)
+    end
+
+    def initialize(key, domain, provider_id = nil)
       @provider = IdentityProviders.fetch(key)
       @domain = domain
+      @provider_id = provider_id.presence
     end
 
     def resolve
       return unless @domain
 
-      row = row_for_domain
-      return (row.enabled? ? from_row(row) : nil) if row
+      rows = self.rows
+      return from_env if env_applies?(rows)
 
-      from_env if @domain.platform&.host?
+      row = pick(rows)
+      row&.enabled? ? from_row(row) : nil
+    end
+
+    def rows
+      return [] unless @domain
+
+      PlatformIdentityProvider.where(strategy: @provider.key.to_s)
+                              .joins(:provider_domains)
+                              .where(PlatformIdentityProviderDomain.table_name => { platform_domain_id: @domain.id })
+                              .includes(:provider_platform).to_a
     end
 
     private
 
-    def row_for_domain
-      PlatformIdentityProvider.where(strategy: @provider.key.to_s)
-                              .joins(:provider_domains)
-                              .find_by(PlatformIdentityProviderDomain.table_name => { platform_domain_id: @domain.id })
+    # Environment variables are the host platform's own configuration, used only when no row serves the domain.
+    def env_applies?(rows)
+      rows.empty? && @provider_id.nil? && @domain.platform&.host?
+    end
+
+    def pick(rows)
+      return rows.find { |row| row.id == @provider_id } if @provider_id
+
+      rows.one? ? rows.first : nil
     end
 
     def from_row(row)
       Result.new(client_id: row.client_id, client_secret: row.client_secret,
-                 scope: row.scopes.presence || @provider.scope, options: row.options || {})
+                 scope: row.scopes.presence || @provider.scope,
+                 options: (row.options || {}).except('label', 'trust_verified_email'),
+                 provider_id: row.id, trust_verified_email: row.trust_verified_email?,
+                 identity_platform: (row.provider_platform if @provider.requires_issuer))
     end
 
     def from_env

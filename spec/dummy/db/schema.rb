@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_10_140000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_10_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1791,7 +1791,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_140000) do
     t.index ["local_platform_id"], name: "idx_on_local_platform_id_3d4656d5f0"
     t.index ["person_id"], name: "bt_person_platform_conections_by_person"
     t.index ["platform_id"], name: "bt_person_platform_conections_by_platform"
-    t.index ["provider", "uid", "local_platform_id"], name: "idx_bt_ppi_provider_uid_local_platform", unique: true
+    t.index ["provider", "platform_id", "uid", "local_platform_id"], name: "idx_bt_ppi_provider_platform_uid_local", unique: true
     t.index ["user_id"], name: "bt_person_platform_conections_by_user"
   end
 

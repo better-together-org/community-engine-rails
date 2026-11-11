@@ -2,7 +2,8 @@
 
 module BetterTogether
   # One platform domain (callback host) a sign-in provider configuration is allowed to serve.
-  # A domain may be allowed by only one configuration per strategy, so resolution is never ambiguous.
+  # A domain may be allowed by only one configuration per external provider (for issuer-based
+  # strategies, per issuer), so resolution is never ambiguous.
   class PlatformIdentityProviderDomain < ApplicationRecord
     belongs_to :platform_identity_provider, class_name: '::BetterTogether::PlatformIdentityProvider',
                                             inverse_of: :provider_domains
@@ -20,7 +21,7 @@ module BetterTogether
     end
 
     def claimed_elsewhere?
-      others = PlatformIdentityProvider.where(strategy: platform_identity_provider.strategy)
+      others = PlatformIdentityProvider.where(provider_platform_id: platform_identity_provider.provider_platform_id)
                                        .where.not(id: platform_identity_provider.id)
       self.class.where(platform_domain_id:, platform_identity_provider_id: others.select(:id)).exists?
     end

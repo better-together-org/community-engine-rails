@@ -81,10 +81,15 @@ module BetterTogether
     # A blank secret on edit keeps the stored one; the strategy cannot change once created.
     def identity_provider_params
       permitted = params.require(:platform_identity_provider)
-                        .permit(:strategy, :enabled, :client_id, :client_secret, :scopes, :issuer, platform_domain_ids: [])
+                        .permit(:strategy, :enabled, :client_id, :client_secret, :scopes, :issuer, :label, :trust_verified_email,
+                                platform_domain_ids: [])
       permitted.delete(:client_secret) if permitted[:client_secret].blank? && @identity_provider&.persisted?
-      permitted.delete(:strategy) if @identity_provider&.persisted?
-      restrict_domain_ids(permitted)
+      restrict_domain_ids(drop_immutable_params(permitted))
+    end
+
+    # Strategy and issuer identify the provider's identities, so they are fixed once created.
+    def drop_immutable_params(permitted)
+      @identity_provider&.persisted? ? permitted.except(:strategy, :issuer) : permitted
     end
 
     # Only domains the actor may allow can be submitted; never trust raw ids.
