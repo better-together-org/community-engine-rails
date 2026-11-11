@@ -286,6 +286,12 @@ RSpec.configure do |config|
       end
     end
 
+    # Agreement rows survive :deletion cleanup, so a :js/:feature spec that activated the seeded purchase
+    # agreements leaves them active for later examples. Seeds plant drafts: put them back before the
+    # transaction starts (a steward-activated agreement is never a committed fixture).
+    leaked = BetterTogether::Agreement.where(agreement_kind: 'transactional_agreement').where.not(lifecycle_state: 'draft')
+    leaked.update_all(lifecycle_state: 'draft') if leaked.exists? # rubocop:disable Rails/SkipsModelValidations
+
     DatabaseCleaner.start
 
     # Clear Rails cache to prevent permission/data pollution between parallel workers
