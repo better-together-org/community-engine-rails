@@ -63,3 +63,5 @@ flowchart LR
 - [SVG export](../diagrams/exports/svg/billing_tenancy_and_ownership_model.svg) - vector graphics
 
 Plan screens and rules: [plan_catalog.md](plan_catalog.md).
+
+For who needs what from billing, what exists today and what is still to build, see [user_stories_and_coverage.md](user_stories_and_coverage.md).
