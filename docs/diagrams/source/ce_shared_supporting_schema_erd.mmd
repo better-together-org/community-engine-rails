@@ -55,6 +55,10 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "platform / platform_id"
+  EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "provider_platform / provider_platform_id"
+  PLATFORM_IDENTITY_PROVIDERS ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_identity_provider / platform_identity_provider_id"
+  EXT_PLATFORM_DOMAIN ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_domain / platform_domain_id"
   EXT_PLATFORM o|--o{ QUOTAS : "platform / platform_id"
   EXT_PLATFORM o|--o{ QUOTA_BALANCES : "platform / platform_id"
   QUOTAS ||--o{ QUOTA_BALANCES : "quota / quota_id"
@@ -321,6 +325,23 @@ erDiagram
     primary_flag boolean
   }
 
+  PLATFORM_IDENTITY_PROVIDERS {
+    client_id string
+    platform_id uuid
+    provider_platform_id uuid
+    scopes string
+    strategy string
+    client_secret text
+    enabled boolean
+    position integer
+    options jsonb
+  }
+
+  PLATFORM_IDENTITY_PROVIDER_DOMAINS {
+    platform_domain_id uuid
+    platform_identity_provider_id uuid
+  }
+
   QUOTAS {
     owner_id uuid
     platform_id uuid
@@ -487,6 +508,10 @@ erDiagram
   }
 
   EXT_ADDRESS {
+    string export_ref
+  }
+
+  EXT_PLATFORM_DOMAIN {
     string export_ref
   }
 

@@ -3194,8 +3194,14 @@ fr:
         email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail
           %{email} appartient à un autre utilisateur. Veuillez vous déconnecter et
           vous connecter avec le bon compte.'
+        email_missing: "%{provider} n'a pas fourni d'adresse e-mail. Rends une adresse
+          e-mail disponible pour cette application dans les paramètres de ton compte
+          %{provider}."
         failure: Échec de la connexion du compte %{provider}. Veuillez réessayer.
         success: Compte %{provider} connecté avec succès.
+        unverified_email_collision: Un compte existe déjà avec cet e-mail et %{provider}
+          n'a pas vérifié l'adresse. Connectez-vous avec votre méthode habituelle,
+          puis associez %{provider} depuis les Paramètres.
       destroy:
         cannot_delete_last_oauth: Impossible de déconnecter votre compte %{provider}
           car vous vous êtes inscrit en utilisant OAuth et vous n'avez pas défini
@@ -3381,6 +3387,77 @@ fr:
         subtitle: Ajouter un domaine pour %{platform_name}
         title: Nouveau domaine
       updated: Le domaine a été mis à jour avec succès.
+    platform_identity_providers:
+      create:
+        created: Le fournisseur de connexion a été ajouté.
+      destroy:
+        destroyed: Le fournisseur de connexion a été supprimé.
+      edit:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Modifier %{provider}
+      form:
+        cancel: Annuler
+        client_id_label: ID client
+        client_secret_hint: Stocké chiffré et jamais réaffiché.
+        client_secret_keep: Laisser vide pour conserver le secret actuel
+        client_secret_label: Secret client
+        create_btn: Ajouter le fournisseur
+        domains_hint: La connexion avec ce fournisseur ne fonctionne que sur les domaines
+          cochés. L'URL de rappel de chaque domaine doit aussi être enregistrée auprès
+          du fournisseur.
+        domains_label: Domaines autorisés
+        enabled_label: Activé
+        issuer_hint: OpenID Connect uniquement. L'URL https du fournisseur d'identité
+          (son document de découverte y est lu). Elle ne peut pas être modifiée après
+          l'ajout, et chaque émetteur ne peut être ajouté qu'une fois par plateforme.
+        issuer_label: URL de l'émetteur
+        label_hint: OpenID Connect uniquement. Affiché sur le bouton de connexion.
+          Par défaut, l'hôte de l'émetteur.
+        label_label: Libellé du bouton
+        scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
+        scopes_label: Portées
+        strategy_label: Fournisseur
+        trust_verified_email_hint: Désactivé par défaut. Si activé, un courriel que
+          cet émetteur marque comme vérifié peut connecter à un compte existant avec
+          cette adresse. À activer seulement pour les émetteurs qui vérifient les
+          adresses courriel.
+        trust_verified_email_label: Faire confiance aux courriels vérifiés de cet
+          émetteur
+        update_btn: Mettre à jour le fournisseur
+      index:
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce fournisseur de connexion ?
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        env_description: Ces fournisseurs sont définis par des variables d'environnement
+          et s'appliquent aux domaines de cette plateforme indiqués ci-dessous. Les
+          secrets ne sont jamais affichés. Ajoute une ligne de fournisseur pour gérer
+          un domaine ici.
+        env_note: Les fournisseurs sans ligne ici utilisent les variables d'environnement
+          du serveur (par exemple GITHUB_CLIENT_ID).
+        env_serves: 'Dessert : %{domains}'
+        env_serves_none: Tous les domaines sont réclamés par une ligne de fournisseur,
+          l'environnement n'est donc pas utilisé.
+        env_title: Configurés par l'environnement du serveur
+        header_actions: Actions
+        header_client_id: ID client
+        header_provider: Fournisseur
+        header_secret: Secret client
+        header_status: Statut
+        new_btn: Ajouter un fournisseur
+        none: Aucun fournisseur de connexion n'est configuré pour cette plateforme.
+        secret_missing: Manquant
+        secret_set: Défini
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        table_aria: Fournisseurs de connexion
+        title: Fournisseurs de connexion
+      new:
+        subtitle: Fournisseurs OAuth de connexion pour %{platform_name}
+        title: Ajouter un fournisseur de connexion
+      update:
+        updated: Le fournisseur de connexion a été mis à jour.
     platform_invitation:
       acceptance_html: En vous inscrivant pour un compte utilisateur ci-dessous, vous
         acceptez cette invitation à rejoindre <strong>%{platform}</strong>.
@@ -5126,9 +5203,12 @@ fr:
       expired: est expiré, veuillez en demander un autre
       greater_than: doit être supérieur à %{count}
       greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      immutable: ne peut pas être modifié après la création ; supprimez ce fournisseur
+        et ajoutez-en un nouveau
       in: doit être dans l'intervalle %{count}
       inclusion: n'est pas inclus(e) dans la liste
       invalid: n'est pas valide
+      invalid_characters: ne doit pas contenir d'espaces ni de caractères de contrôle
       invalid_url: n'est pas une URL valide
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
@@ -5683,6 +5763,7 @@ fr:
           dépendre uniquement d'une URL directe.
         feature_access_grants: Gérer les accès aux fonctionnalités
         host_dashboard: Tableau de bord hôte
+        identity_providers: Fournisseurs de connexion
         platform_domains: Domaines
         quota_grants: Dérogations de quota
         robot_management: Gérer les robots LLM

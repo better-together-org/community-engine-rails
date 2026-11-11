@@ -19,6 +19,8 @@ module BetterTogether
     before_action :check_invitation_requirement, except: [:failure]
     before_action :track_existing_user_state, except: [:failure]
     before_action :set_user, except: [:failure]
+    # The issuer picked at the request phase is single-use
+    after_action -> { session.delete(BetterTogether::OmniauthPlatformGate::SESSION_KEY) }, except: [:failure]
 
     attr_reader :person_platform_integration, :user
 
@@ -26,8 +28,9 @@ module BetterTogether
     #   handle_auth "Facebook"
     # end
 
-    def github
-      handle_auth 'Github'
+    # One callback action per catalog provider (Devise routes /users/auth/<key>/callback to it).
+    BetterTogether::IdentityProviders.each do |provider|
+      define_method(provider.key) { handle_auth provider.kind }
     end
 
     private
@@ -67,6 +70,7 @@ module BetterTogether
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def redirect_after_oauth(user, kind)
       return unless user.present?
+      return redirect_unconfirmed_oauth_signup if !user.confirmed? && !@was_signed_in
 
       if ENV['DEBUG_OAUTH']
         Rails.logger.debug "[OAUTH DEBUG] User: #{user.email}"
@@ -100,6 +104,12 @@ module BetterTogether
       end
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+    # Provider did not verify the email: Devise already sent its confirmation email, so no session is started
+    def redirect_unconfirmed_oauth_signup
+      flash[:notice] = t('devise.registrations.signed_up_but_unconfirmed') if is_navigational_format?
+      redirect_to new_user_session_path(locale: I18n.locale), allow_other_host: false
+    end
 
     # Handle redirect when user has unaccepted agreements
     # @param user [User] the user with unaccepted agreements
@@ -143,7 +153,7 @@ module BetterTogether
         member: person
       ) do |membership|
         membership.role = community_role
-        membership.status = 'active' # OAuth users skip confirmation, so membership is active immediately
+        membership.status = 'active' # Mirrors registration: membership exists even before email confirmation
       end
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error "Failed to create community membership for OAuth user: #{e.message}"
@@ -219,8 +229,25 @@ module BetterTogether
     def set_person_platform_integration
       return unless auth.present?
 
-      @person_platform_integration = BetterTogether::PersonPlatformIntegration.find_by(provider: auth.provider,
-                                                                                       uid: auth.uid)
+      scope = BetterTogether::PersonPlatformIntegration.where(provider: auth.provider, uid: auth.uid, local_platform:)
+      # A uid (OIDC `sub`) is unique only within its issuer, so issuer-based identities are keyed to it too.
+      scope = scope.where(platform: identity_credentials.identity_platform) if identity_credentials&.identity_platform
+      @person_platform_integration = scope.first
+    end
+
+    # The configuration this sign-in used (the chosen issuer for OpenID Connect), resolved from the request.
+    def identity_credentials
+      return @identity_credentials if defined?(@identity_credentials)
+
+      @identity_credentials = BetterTogether::IdentityProviderCredentials.resolve(
+        auth.provider, domain: BetterTogether::OmniauthFullHost.domain_for(request.env),
+                       provider_id: request.env[BetterTogether::OmniauthPlatformGate::ENV_KEY]
+      )
+    end
+
+    # The platform this sign-in is for, from the requested domain (the same domain the provider gate checked).
+    def local_platform
+      @local_platform ||= BetterTogether::OmniauthFullHost.domain_for(request.env)&.platform
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -238,7 +265,10 @@ module BetterTogether
         person_platform_integration:,
         auth:,
         current_user:,
-        invitations:
+        invitations:,
+        local_platform:,
+        identity_platform: identity_credentials&.identity_platform,
+        trust_verified_email: identity_credentials&.trust_verified_email || false
       )
     rescue ArgumentError => e
       # Handle OAuth validation errors (missing email, account already linked, etc.)

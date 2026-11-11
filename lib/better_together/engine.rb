@@ -9,6 +9,8 @@ require 'active_storage_validations'
 require 'activerecord-import'
 require 'activerecord-postgis-adapter'
 require 'better_together/column_definitions'
+require 'better_together/identity_providers'
+require 'better_together/identity_provider_credentials'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
 require 'better_together/profiling'
@@ -39,6 +41,9 @@ require 'rack/attack'
 require 'redcarpet'
 require 'omniauth/rails_csrf_protection'
 require 'omniauth-github'
+require 'omniauth-facebook'
+require 'omniauth-google-oauth2'
+require 'omniauth_openid_connect'
 require 'reform/rails'
 require 'ruby_llm'
 require 'sidekiq-scheduler'
@@ -151,6 +156,13 @@ module BetterTogether
       app.config.filter_parameters += %i[
         oauth_client_secret oauth_client_secret_digest client_secret authorization
       ]
+    end
+
+    # Gate every OmniAuth request/callback by platform domain, after Warden and so ahead of the
+    # strategies Devise appends later (session, flash and Warden are then available to the failure handler).
+    initializer 'better_together.omniauth_platform_gate' do |app|
+      require root.join('app/middleware/better_together/omniauth_platform_gate').to_s
+      app.middleware.insert_after(Warden::Manager, BetterTogether::OmniauthPlatformGate)
     end
 
     initializer 'better_together.action_mailer' do |app|
