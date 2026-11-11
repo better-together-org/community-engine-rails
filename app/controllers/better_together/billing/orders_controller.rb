@@ -8,12 +8,14 @@ module BetterTogether
     class OrdersController < ApplicationController
       include OwnerScoped
 
+      PER_PAGE = 25
+
       before_action :set_order, only: %i[show pay checkout_return]
       after_action :verify_authorized
 
       def index
         authorize BetterTogether::Billing::Order
-        @orders = policy_scope(billing_owner.billing_orders).newest_first
+        @orders = policy_scope(billing_owner.billing_orders).newest_first.page(params[:page]).per(PER_PAGE)
       end
 
       def show

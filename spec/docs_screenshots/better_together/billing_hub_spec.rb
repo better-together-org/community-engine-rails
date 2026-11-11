@@ -53,4 +53,32 @@ RSpec.describe 'Documentation screenshots for the buyer billing page', # rubocop
       page.execute_script("document.querySelector('#billing-hub-plans').scrollIntoView({block: 'start'})")
     end
   end
+
+  it 'captures the order list, paged' do
+    stub_const('BetterTogether::Billing::OrdersController::PER_PAGE', 2)
+    plan = create(:better_together_billing_plan, :one_time, processor: nil, processor_price_id: nil, processor_product_id: nil,
+                                                            amount_cents: 0, accepted_payment_methods: [])
+    3.times { |i| travel_to((i + 1).hours.ago) { place_order(buyer: member_person, line_items: [{ purchasable: plan }]) } }
+
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_orders_paged',
+      device: :both,
+      metadata: { locale: I18n.default_locale, role: 'user', feature_set: 'billing_hub', flow: 'billing_orders_paged',
+                  source_spec: self.class.metadata[:file_path] },
+      callouts: [{ id: 'pages', selector: '#billing-orders-pagination', title: 'More orders',
+                   bullets: ['Orders are listed newest first, a page at a time.'] }],
+      narrative: {
+        title: 'My orders',
+        audience: %w[end_user],
+        journey_step: 'As a member, I page through all my orders.',
+        callouts: [{ id: 'pages', title: 'Pages', description: 'Older orders are on the next page.' }],
+        accessibility_notes: 'The page links are a labelled navigation.'
+      }
+    ) do
+      capybara_login_as_user
+      visit "/#{I18n.default_locale}/billing/orders"
+      expect(page).to have_css('#billing-orders-pagination')
+      page.execute_script("document.querySelector('#billing-orders-pagination').scrollIntoView({block: 'center'})")
+    end
+  end
 end
