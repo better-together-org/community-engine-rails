@@ -27,6 +27,11 @@ module BetterTogether
     validates :provider_platform_id, uniqueness: { scope: :platform_id }
     validate :provider_platform_is_external
 
+    # OpenID Connect issuer (stored in options); required by catalog entries with requires_issuer.
+    store_accessor :options, :issuer
+    validates :issuer, presence: true, if: -> { catalog_entry&.requires_issuer }
+    validate :issuer_is_safe_https_url, if: -> { issuer.present? }
+
     before_validation :assign_provider_platform, if: -> { provider_platform.nil? }
 
     scope :enabled, -> { where(enabled: true) }
@@ -46,7 +51,15 @@ module BetterTogether
       identifier = catalog_entry&.platform_identifier
       return if identifier.blank?
 
-      self.provider_platform = Platform.find_by(identifier:, external: true)
+      self.provider_platform = PersonPlatformIntegration.find_external_platform_for_provider(strategy) ||
+                               Platform.find_by(identifier:, external: true)
+    end
+
+    def issuer_is_safe_https_url
+      errors.add(:issuer, :invalid) unless URI.parse(issuer.to_s).is_a?(URI::HTTPS)
+      BetterTogether::SafeFederationUrlValidator.new(attributes: [:issuer]).validate_each(self, :issuer, issuer)
+    rescue URI::InvalidURIError
+      errors.add(:issuer, :invalid)
     end
 
     def provider_platform_is_external

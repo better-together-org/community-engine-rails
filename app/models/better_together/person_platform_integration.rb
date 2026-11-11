@@ -162,8 +162,8 @@ module BetterTogether
       person_platform_integration
     end
 
-    # rubocop:disable Metrics/MethodLength
-    private_class_method def self.find_external_platform_for_provider(provider)
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def self.find_external_platform_for_provider(provider)
       # Map OAuth provider names to platform identifiers
       provider_mapping = {
         'github' => 'github',
@@ -173,7 +173,8 @@ module BetterTogether
         'twitter' => 'twitter'
       }
 
-      platform_identifier = provider_mapping[provider.to_s]
+      platform_identifier = provider_mapping[provider.to_s] ||
+                            BetterTogether::IdentityProviders.find(provider)&.platform_identifier
       return nil unless platform_identifier
 
       # Find or create the external platform for this OAuth provider
@@ -186,7 +187,7 @@ module BetterTogether
         platform.host = false
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     private_class_method def self.platform_url_for_provider(identifier)
       registered = BetterTogether::IdentityProviders.registry.values.find { |p| p.platform_identifier == identifier }

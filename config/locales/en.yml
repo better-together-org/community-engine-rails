@@ -3336,6 +3336,10 @@ en:
           Each domain's callback URL must also be registered with the provider.
         domains_label: Allowed domains
         enabled_label: Enabled
+        issuer_hint: 'OpenID Connect only. The https URL of the identity provider
+          (its discovery document is read from it). Only configure providers you trust:
+          an email they mark as verified can link to an existing account.'
+        issuer_label: Issuer URL
         scopes_hint: Leave blank to use the provider default.
         scopes_label: Scopes
         strategy_label: Provider

@@ -17,7 +17,7 @@ RSpec.describe BetterTogether::OmniauthPlatformGate, :no_auth, :omniauth, :skip_
     stub_provider_env('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET')
     OmniAuth.config.test_mode = true
     OmniAuth.config.mock_auth[:github] = github_oauth_hash(email: unique_email, uid: unique_oauth_uid,
-                                                           nickname: unique_username)
+                                                           nickname: unique_username, name: "Gate Person #{SecureRandom.hex(4)}")
   end
 
   after do

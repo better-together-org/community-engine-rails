@@ -3407,6 +3407,11 @@ fr:
           du fournisseur.
         domains_label: Domaines autorisés
         enabled_label: Activé
+        issuer_hint: 'OpenID Connect uniquement. L''URL https du fournisseur d''identité
+          (son document de découverte y est lu). Ne configure que des fournisseurs
+          de confiance : un e-mail qu''ils marquent comme vérifié peut être lié à
+          un compte existant.'
+        issuer_label: URL de l'émetteur
         scopes_hint: Laisser vide pour utiliser la valeur par défaut du fournisseur.
         scopes_label: Portées
         strategy_label: Fournisseur
