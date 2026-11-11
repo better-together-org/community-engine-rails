@@ -60,7 +60,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'noticed'
   spec.add_dependency 'octokit'
   spec.add_dependency 'omniauth', '>= 2.2.0' # host header injection fix (GHSA-m27g-v28p-f9fx)
+  spec.add_dependency 'omniauth-facebook', '~> 11.0'
   spec.add_dependency 'omniauth-github', '~> 2.0.0'
+  spec.add_dependency 'omniauth-google-oauth2', '~> 1.2'
+  spec.add_dependency 'omniauth_openid_connect', '~> 0.8'
   spec.add_dependency 'omniauth-rails_csrf_protection'
   spec.add_dependency 'pg_search'
   spec.add_dependency 'premailer-rails'

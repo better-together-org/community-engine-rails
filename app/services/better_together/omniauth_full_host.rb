@@ -19,6 +19,20 @@ module BetterTogether
       known_domain_url || host_platform_url || configured_url
     end
 
+    # The PlatformDomain whose URL call returns: the requested host when it is a known active
+    # domain, otherwise the host platform's own domain. OAuth authorization is checked against this.
+    def self.domain_for(env)
+      PlatformDomain.resolve(Rack::Request.new(env).host) || host_platform_domain
+    rescue ActiveRecord::ActiveRecordError
+      nil
+    end
+
+    def self.host_platform_domain
+      platform = Platform.find_by(host: true)
+      platform&.share_platform_domain || platform&.primary_platform_domain
+    end
+    private_class_method :host_platform_domain
+
     private
 
     def known_domain_url

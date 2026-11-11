@@ -336,6 +336,11 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__PlatformIdentityProvidersController["PlatformIdentityProvidersController"] {
+      <<Controller>>
+      models: PlatformIdentityProvider
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
     class BetterTogether__QuotaGrantsController["QuotaGrantsController"] {
       <<Controller>>
       models: QuotaGrant
@@ -558,6 +563,18 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformIdentityProvider["PlatformIdentityProvider"] {
+      <<Model>>
+      table: better_together_platform_identity_providers
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
+    class BetterTogether__PlatformIdentityProviderDomain["PlatformIdentityProviderDomain"] {
+      <<Model>>
+      table: better_together_platform_identity_provider_domains
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__Quota["Quota"] {
       <<Model>>
       table: better_together_quotas
@@ -730,6 +747,8 @@ classDiagram
   BetterTogether__NewPlatformSetupController --|> BetterTogether__ApplicationController
   BetterTogether__NewPlatformSetupStepsController --|> BetterTogether__WizardStepsController
   BetterTogether__PlatformDomainsController --|> BetterTogether__ApplicationController
+  BetterTogether__PlatformIdentityProvidersController ..> BetterTogether__PlatformIdentityProvider : manages
+  BetterTogether__PlatformIdentityProvidersController --|> BetterTogether__ApplicationController
   BetterTogether__QuotaGrantsController ..> BetterTogether__QuotaGrant : manages
   BetterTogether__QuotaGrantsController --|> BetterTogether__ApplicationController
   BetterTogether__ReportFollowupsController --|> BetterTogether__ApplicationController
@@ -798,6 +817,10 @@ classDiagram
   BetterTogether__PersonMessagingGrant --> BetterTogether__Person : grantee
   BetterTogether__PhoneNumber --> BetterTogether__Platform : platform
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : platform
+  BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
+  BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider
+  BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformDomain : platform_domain
   BetterTogether__Quota --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Platform : platform
   BetterTogether__QuotaBalance --> BetterTogether__Quota : quota
