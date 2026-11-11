@@ -8,22 +8,26 @@ RSpec.describe BetterTogether::Quotas::Types::MediaStorage do
   before { configure_host_platform }
 
   describe '.default_limit' do
-    it 'returns the real-data-informed Person default' do
+    it 'returns the conservative Person default (250 MiB)' do
       person = create(:better_together_person)
-      expect(described_class.default_limit(person)).to eq(described_class::PERSON_DEFAULT_BYTES)
-      expect(described_class::PERSON_DEFAULT_BYTES).to eq(2 * (1024**3))
+      expect(described_class.default_limit(person)).to eq(250 * (1024**2))
     end
 
-    it 'returns the real-data-informed Community default' do
+    it 'returns the conservative Community default (1 GiB)' do
       community = create(:better_together_community)
-      expect(described_class.default_limit(community)).to eq(described_class::COMMUNITY_DEFAULT_BYTES)
-      expect(described_class::COMMUNITY_DEFAULT_BYTES).to eq(10 * (1024**3))
+      expect(described_class.default_limit(community)).to eq(1024**3)
     end
 
-    it 'returns the finite Platform ceiling for any other owner kind' do
+    it 'returns the Platform default (10 GiB)' do
       platform = create(:better_together_platform)
-      expect(described_class.default_limit(platform)).to eq(described_class::PLATFORM_DEFAULT_BYTES)
-      expect(described_class::PLATFORM_DEFAULT_BYTES).to eq(1024 * (1024**3))
+      expect(described_class.default_limit(platform)).to eq(10 * (1024**3))
+    end
+
+    it 'prefers the owning platform override' do
+      person = create(:better_together_person)
+      person.platform.update!(quota_default_limits: { 'media_storage' => { 'person' => '123' } })
+
+      expect(described_class.default_limit(person)).to eq(123)
     end
   end
 
@@ -36,7 +40,7 @@ RSpec.describe BetterTogether::Quotas::Types::MediaStorage do
       )
 
       quota = BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage')
-      expect(quota.limit).to eq(described_class::PERSON_DEFAULT_BYTES)
+      expect(quota.limit).to eq(250 * (1024**2))
     end
   end
 end

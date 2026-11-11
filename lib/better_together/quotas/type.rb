@@ -62,11 +62,12 @@ module BetterTogether
           raise NotImplementedError, "#{self} must define .measure"
         end
 
-        # Default limit for a lazily-created Quota row, keyed by owner class. Product
-        # decision, not an engineering one: concrete types stub generous provisional
-        # numbers; see each type's own comment.
-        def default_limit(_owner)
-          raise NotImplementedError, "#{self} must define .default_limit"
+        # Default limit for a lazily-created Quota row: the owning platform's override,
+        # else config/quota_defaults.yml (see Quotas::Defaults). A type needs an entry
+        # for every owner kind it can meter.
+        def default_limit(owner)
+          Defaults.for(type: key, owner:) ||
+            raise(NotImplementedError, "no default quota limit for #{key} / #{Defaults.owner_kind(owner)}")
         end
 
         # Whether a given subject should be logged at all for this type. Defaults to

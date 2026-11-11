@@ -1,0 +1,48 @@
+{
+  "name": "platform_quota_defaults",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_quota_defaults",
+  "flow": "platform_edit",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_quota_defaults_spec.rb",
+  "callouts": [
+    {
+      "selector": "#quota_defaults_media_storage_platform_627c17a2-66ae-4c0a-a17e-90b884528caf",
+      "title": "Starting quotas",
+      "bullets": [
+        "Blank inherits the default."
+      ],
+      "target": {
+        "x": 28.0,
+        "y": 448.25,
+        "width": 429.0,
+        "height": 360.1875,
+        "right": 457.0,
+        "bottom": 808.4375,
+        "center_x": 242.5,
+        "center_y": 628.34375
+      },
+      "avoid": {
+        "x": 28.0,
+        "y": 448.25,
+        "width": 429.0,
+        "height": 360.1875,
+        "right": 457.0,
+        "bottom": 808.4375,
+        "center_x": 242.5,
+        "center_y": 628.34375
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 828.44,
+        "width": 270.0,
+        "height": 132,
+        "score": 448.5625
+      }
+    }
+  ]
+}

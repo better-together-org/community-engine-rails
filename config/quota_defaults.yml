@@ -1,0 +1,23 @@
+# Initial default limits for lazily-created Quota rows, by quota type and owner kind.
+#
+# Resolution order (first present value wins), see BetterTogether::Quotas::Defaults:
+#   1. the owning platform's own override (platform edit screen, stored in
+#      Platform#settings['quota_default_limits'])
+#   2. host app:       Rails.root/config/quota_defaults.yml (same format as this file)
+#   3. other engines:  <engine root>/config/quota_defaults.yml
+#   4. this file
+# Files are deep-merged in the order 4, 3, 2, so a host app only lists what it
+# changes. Owner kinds are person, community and platform (anything else is
+# treated as platform). Only local owners ever get a quota.
+#
+# Units follow each type's `unit`: media_storage is bytes, ai_translation_tokens
+# is tokens per month. Values are non-negative integers.
+quotas:
+  media_storage:
+    person: 262144000       # 250 MiB
+    community: 1073741824   # 1 GiB
+    platform: 10737418240   # 10 GiB
+  ai_translation_tokens:
+    person: 50000
+    community: 50000
+    platform: 50000

@@ -3423,6 +3423,18 @@ es:
         host_url_hint: La URL pública canónica de esta plataforma (p. ej. https://example.com).
           Se usa para identificarla en la federación y generar las URLs del endpoint
           OAuth. Debe ser HTTPS en producción.
+        quota_defaults_hint: Límite inicial para cada persona y comunidad nuevas y
+          para esta plataforma. Deja un campo en blanco para usar el valor de la configuración
+          de la aplicación. Cambiar un valor también actualiza las cuotas existentes
+          de esta plataforma; las concesiones de cuota por propietario no se ven afectadas.
+        quota_defaults_title: Cuotas predeterminadas
+        quota_kinds:
+          community: Comunidad
+          person: Persona
+          platform: Plataforma
+        quota_types:
+          ai_translation_tokens: Tokens de traducción con IA por mes
+          media_storage: Almacenamiento
       index:
         provision_new_platform: Aprovisionar nueva plataforma
       new:
@@ -3554,6 +3566,8 @@ es:
         usage: Uso
       updated: Concesión de cuota actualizada.
     quotas:
+      errors:
+        not_local: debe ser local a esta plataforma
       usage_meter:
         types:
           ai_translation_tokens: Tokens de traducción con IA

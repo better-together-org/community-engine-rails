@@ -190,7 +190,8 @@ module BetterTogether
         federation_protocol
         oauth_issuer_url
       ] + [
-        { feature_gate_rollouts: {} }
+        { feature_gate_rollouts: {} },
+        { quota_default_limits: {} }
       ]
     end
 
