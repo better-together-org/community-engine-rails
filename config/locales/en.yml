@@ -654,6 +654,8 @@ en:
       better_together/content/navigation_area_block: Navigation Area
       better_together/content/page_block: Page Block
       better_together/content/people_block: People
+      better_together/content/plan_button_block: Plan Button
+      better_together/content/plan_catalog_block: Plan Catalog
       better_together/content/platform_block: Platform
       better_together/content/posts_block: Posts
       better_together/content/quote_block: Quote
@@ -2300,6 +2302,15 @@ en:
           select_prompt: "— Select a navigation area —"
         people_block:
           empty: No people to display.
+        plan_button_block:
+          displays:
+            button: Button only
+            card: Card with price
+          empty: Choose a plan for this block to offer.
+          plan_hint: Pick one of this platform's active plans.
+        plan_catalog_block:
+          empty: No plans are on offer right now.
+          item_limit_hint: How many plans to show, up to 24.
         posts_block:
           empty: No posts to display.
         resource_block:

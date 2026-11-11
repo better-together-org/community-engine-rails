@@ -642,6 +642,8 @@ es:
       better_together/content/navigation_area_block: Área de navegación
       better_together/content/page_block: Bloqueo de página
       better_together/content/people_block: Personas
+      better_together/content/plan_button_block: Botón de plan
+      better_together/content/plan_catalog_block: Catálogo de planes
       better_together/content/platform_block: Plataforma
       better_together/content/posts_block: Publicaciones
       better_together/content/quote_block: Cita
@@ -2308,6 +2310,15 @@ es:
           select_prompt: "— Seleccionar un área de navegación —"
         people_block:
           empty: No hay personas para mostrar.
+        plan_button_block:
+          displays:
+            button: Solo el botón
+            card: Tarjeta con precio
+          empty: Elija un plan para ofrecer en este bloque.
+          plan_hint: Elija uno de los planes activos de esta plataforma.
+        plan_catalog_block:
+          empty: No hay planes disponibles por ahora.
+          item_limit_hint: Cuántos planes mostrar, hasta 24.
         posts_block:
           empty: No hay publicaciones para mostrar.
         resource_block:

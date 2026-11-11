@@ -632,6 +632,8 @@ uk:
       better_together/content/navigation_area_block: Область навігації
       better_together/content/page_block: Блок сторінки
       better_together/content/people_block: Люди
+      better_together/content/plan_button_block: Кнопка плану
+      better_together/content/plan_catalog_block: Каталог планів
       better_together/content/platform_block: Платформа
       better_together/content/posts_block: Публікації
       better_together/content/quote_block: Цитата
@@ -2284,6 +2286,15 @@ uk:
           select_prompt: "— Виберіть область навігації —"
         people_block:
           empty: Немає людей для відображення.
+        plan_button_block:
+          displays:
+            button: Лише кнопка
+            card: Картка з ціною
+          empty: Виберіть план, який пропонуватиме цей блок.
+          plan_hint: Виберіть один з активних планів цієї платформи.
+        plan_catalog_block:
+          empty: Наразі немає доступних планів.
+          item_limit_hint: Скільки планів показувати, до 24.
         posts_block:
           empty: Немає публікацій для відображення.
         resource_block:

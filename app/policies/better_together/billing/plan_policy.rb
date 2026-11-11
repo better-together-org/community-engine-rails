@@ -21,6 +21,9 @@ module BetterTogether
       # One listed plan in the catalog: it is listed and active, and the person qualifies for its audience.
       def catalog_show? = catalog? && record.listed? && record.active? && purchase?
 
+      # A plan offered from a page (a plan block): active, and the person qualifies, listed in the catalog or not.
+      def offer? = catalog? && record.active? && purchase?
+
       # Buying a plan, listed or not: a plan limited to members or subscribers is for them alone, so a link to it gets no one else in.
       def purchase?
         return false unless record.platform_id == Current.platform&.id && record.seller_id.blank?

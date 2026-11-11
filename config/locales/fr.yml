@@ -644,6 +644,8 @@ fr:
       better_together/content/navigation_area_block: Zone de navigation
       better_together/content/page_block: Blocage de Pages
       better_together/content/people_block: Personnes
+      better_together/content/plan_button_block: Bouton de forfait
+      better_together/content/plan_catalog_block: Catalogue des forfaits
       better_together/content/platform_block: Plateforme
       better_together/content/posts_block: Publications
       better_together/content/quote_block: Citation
@@ -2355,6 +2357,15 @@ fr:
           select_prompt: "— Sélectionner une zone de navigation —"
         people_block:
           empty: Aucune personne à afficher.
+        plan_button_block:
+          displays:
+            button: Bouton seulement
+            card: Carte avec prix
+          empty: Choisissez un forfait à proposer dans ce bloc.
+          plan_hint: Choisissez l'un des forfaits actifs de cette plateforme.
+        plan_catalog_block:
+          empty: Aucun forfait n'est offert pour le moment.
+          item_limit_hint: Nombre de forfaits à afficher, jusqu'à 24.
         posts_block:
           empty: Aucune publication à afficher.
         resource_block:

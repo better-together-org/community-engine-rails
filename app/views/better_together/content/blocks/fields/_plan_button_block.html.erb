@@ -1,0 +1,29 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<%
+  plans = BetterTogether::Billing::Plan.active.where(platform_id: Current.platform&.id, seller_id: nil).order(:identifier)
+%>
+<div class="plan-button-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[plan_id]", BetterTogether::Content::Block.human_attribute_name('plan_id', default: 'Plan'), class: 'form-label' %>
+    <%= select_tag "#{scope}[plan_id]",
+                   options_for_select([['', '']] + plans.map { |plan| [plan.name, plan.id] }, block.plan_id),
+                   class: 'form-select', include_blank: false,
+                   'aria-describedby': "#{temp_id}-plan-hint",
+                   data: { controller: 'better_together--slim-select' } %>
+    <div id="<%= temp_id %>-plan-hint" class="form-text"><%= t('better_together.content.blocks.plan_button_block.plan_hint') %></div>
+  </div>
+
+  <div class="mb-3">
+    <%= label_tag "#{scope}[display_as]", BetterTogether::Content::Block.human_attribute_name('display_as', default: 'Show as'), class: 'form-label' %>
+    <%= select_tag "#{scope}[display_as]",
+                   options_for_select(
+                     BetterTogether::Content::PlanButtonBlock::DISPLAYS.map do |d|
+                       [t("better_together.content.blocks.plan_button_block.displays.#{d}", default: d.humanize), d]
+                     end,
+                     block.display_as
+                   ),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+  </div>
+</div>

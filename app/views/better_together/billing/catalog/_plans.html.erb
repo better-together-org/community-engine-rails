@@ -1,0 +1,9 @@
+<%# locals: (plans:, prefix: :catalog, id: 'billing-catalog-plans') -%>
+<%# A responsive grid of plan cards. %>
+<div id="<%= id %>" class="row g-4">
+  <% plans.each do |plan| %>
+    <div class="col-md-6 col-lg-4">
+      <%= render 'better_together/billing/catalog/plan_card', plan:, prefix: %>
+    </div>
+  <% end %>
+</div>

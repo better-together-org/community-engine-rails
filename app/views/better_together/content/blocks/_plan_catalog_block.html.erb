@@ -1,0 +1,21 @@
+<%# locals: (plan_catalog_block:) -%>
+<%# Not fragment cached: what it shows depends on who is looking (the plan's audience), so a shared cache would leak limited plans. %>
+<%
+  plans = BetterTogether::Billing::PlanPolicy::CatalogScope.new(current_user, BetterTogether::Billing::Plan).resolve
+          .order(:amount_cents, :identifier).limit(plan_catalog_block.item_limit)
+%>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: plan_catalog_block } do %>
+  <section class="plan-catalog-block py-3" aria-labelledby="<%= dom_id(plan_catalog_block, :heading) %>">
+    <% if plan_catalog_block.heading.present? %>
+      <h2 id="<%= dom_id(plan_catalog_block, :heading) %>" class="mb-4"><%= plan_catalog_block.heading %></h2>
+    <% end %>
+    <% if plans.any? %>
+      <%= render 'better_together/billing/catalog/plans', plans:, prefix: "block_#{plan_catalog_block.id}",
+                                                           id: dom_id(plan_catalog_block, :plans) %>
+    <% else %>
+      <p id="<%= dom_id(plan_catalog_block, :empty) %>" class="text-body-secondary">
+        <%= t('better_together.content.blocks.plan_catalog_block.empty') %>
+      </p>
+    <% end %>
+  </section>
+<% end %>

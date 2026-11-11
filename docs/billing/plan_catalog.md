@@ -213,3 +213,18 @@ New translated attributes default to the string type (`config/initializers/mobil
 - 🎯 [SVG export](../diagrams/exports/svg/ce_localized_attributes.svg)
 
 Adding, removing or retyping a translated attribute means running `bin/export_localized_attributes` and committing the result.
+
+## Plan blocks on pages
+
+Two content blocks put plans on any page, so an editor does not have to link to the catalog.
+
+| Block | What it shows | Settings |
+|---|---|---|
+| `PlanCatalogBlock` | The platform's public plans as cards, cheapest first. | Heading (translated), number of plans (1 to 24). |
+| `PlanButtonBlock` | One chosen plan, as a card or only its button. | The plan, and "card" or "button". |
+
+Both draw the same card as the catalog page: `billing/catalog/_plan_card` (one plan), `_plans` (the grid), `_price` and `_buy_button`. They take a `prefix` local so ids stay unique when a plan appears twice on a page.
+
+What a visitor sees is decided by the policy, the same as the catalog page. The catalog block lists `PlanPolicy::CatalogScope` (listed, active, platform-sold, and for the visitor's audience). The button block shows its plan only when `PlanPolicy#offer?` is true: billing is on, the plan is active and on this platform, and the visitor qualifies for its audience. An unlisted plan can be offered by a button; a members-only plan is never shown to a visitor who is not a member. Neither block uses a fragment cache, because the result depends on who is looking.
+
+Screenshots: `docs/screenshots/{desktop,mobile}/billing_plan_catalog_block.*` and `billing_plan_button_block.*`.

@@ -1,0 +1,48 @@
+{
+  "name": "billing_plan_catalog_block",
+  "device": "desktop",
+  "url": "/en/join-the-co-op",
+  "title": "Join the co-op | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "billing_plan_blocks",
+  "flow": "billing_plan_catalog_block",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_plan_blocks_spec.rb",
+  "callouts": [
+    {
+      "selector": "#plans_content_plan_catalog_block_c1077210-a143-4c95-8099-02927223a9df",
+      "title": "Plans on a page",
+      "bullets": [
+        "The same cards as the catalog, for the plans this visitor may buy."
+      ],
+      "target": {
+        "x": 72.0,
+        "y": 206.390625,
+        "width": 1296.0,
+        "height": 212.796875,
+        "right": 1368.0,
+        "bottom": 419.1875,
+        "center_x": 720.0,
+        "center_y": 312.7890625
+      },
+      "avoid": {
+        "x": 72.0,
+        "y": 206.390625,
+        "width": 1296.0,
+        "height": 212.796875,
+        "right": 1368.0,
+        "bottom": 419.1875,
+        "center_x": 720.0,
+        "center_y": 312.7890625
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 439.19,
+        "width": 380,
+        "height": 158,
+        "score": 1037.8125
+      }
+    }
+  ]
+}
