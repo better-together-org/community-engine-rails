@@ -1,0 +1,48 @@
+{
+  "name": "billing_orders_paged",
+  "device": "mobile",
+  "url": "/en/billing/orders",
+  "title": "My orders | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_hub",
+  "flow": "billing_orders_paged",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-orders-pagination",
+      "title": "More orders",
+      "bullets": [
+        "Orders are listed newest first, a page at a time."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 381.78125,
+        "width": 476.0,
+        "height": 81.0,
+        "right": 488.0,
+        "bottom": 462.78125,
+        "center_x": 250.0,
+        "center_y": 422.28125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 381.78125,
+        "width": 476.0,
+        "height": 81.0,
+        "right": 488.0,
+        "bottom": 462.78125,
+        "center_x": 250.0,
+        "center_y": 422.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 482.78,
+        "width": 270.0,
+        "height": 158,
+        "score": 794.21875
+      }
+    }
+  ]
+}

@@ -1038,6 +1038,22 @@ uk:
         status_revoked: Повернено
         title: Мій доступ
         until: Діє до %{date}.
+      hub:
+        access_count: 'Активних: %{count}'
+        access_heading: До чого ви маєте доступ
+        all_orders: Усі замовлення
+        all_plans: Усі плани
+        credit_heading: Кредит магазину
+        credit_none: У вас немає кредиту магазину.
+        intro: Ваші плани, замовлення та кредит на %{platform}.
+        orders_heading: Останні замовлення
+        orders_none: Ви ще не робили замовлень.
+        plans_heading: Активні плани
+        plans_none: У вас немає активних планів.
+        renews: Поновлюється %{date}
+        title: Платежі та плани
+        view_access: Переглянути мій доступ
+        view_credit: Переглянути кредит
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -6597,6 +6613,7 @@ uk:
       invalid_parameters: Недійсні параметри
   navbar:
     accept_invitation: Accept invitation
+    billing: Платежі
     conversations: Conversations
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language

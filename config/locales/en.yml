@@ -1059,6 +1059,22 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
+      hub:
+        access_count: 'Active: %{count}'
+        access_heading: What you have access to
+        all_orders: All orders
+        all_plans: All plans
+        credit_heading: Store credit
+        credit_none: You have no store credit.
+        intro: Your plans, orders and credit on %{platform}.
+        orders_heading: Recent orders
+        orders_none: You have not placed any orders.
+        plans_heading: Active plans
+        plans_none: You have no active plans.
+        renews: Renews %{date}
+        title: Billing and plans
+        view_access: View my access
+        view_credit: View credit
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -6481,6 +6497,7 @@ en:
       invalid_parameters: Invalid parameters
   navbar:
     accept_invitation: Accept invitation
+    billing: Billing
     conversations: Conversations
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language

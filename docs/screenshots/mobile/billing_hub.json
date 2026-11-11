@@ -1,0 +1,83 @@
+{
+  "name": "billing_hub",
+  "device": "mobile",
+  "url": "/en/billing",
+  "title": "Billing and plans | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_hub",
+  "flow": "billing_hub",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_hub_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-hub-plans",
+      "title": "Active plans",
+      "bullets": [
+        "Each plan with its renewal date and price; open one to cancel or resume it."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 181.390625,
+        "width": 500.0,
+        "height": 98.0,
+        "right": 500.0,
+        "bottom": 279.390625,
+        "center_x": 250.0,
+        "center_y": 230.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 181.390625,
+        "width": 500.0,
+        "height": 98.0,
+        "right": 500.0,
+        "bottom": 279.390625,
+        "center_x": 250.0,
+        "center_y": 230.390625
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 299.39,
+        "width": 270.0,
+        "height": 184,
+        "score": 977.609375
+      }
+    },
+    {
+      "selector": "#billing-hub-orders",
+      "title": "Recent orders",
+      "bullets": [
+        "The latest orders with their status; all orders and receipts are one link away."
+      ],
+      "target": {
+        "x": 0.0,
+        "y": 303.390625,
+        "width": 500.0,
+        "height": 98.0,
+        "right": 500.0,
+        "bottom": 401.390625,
+        "center_x": 250.0,
+        "center_y": 352.390625
+      },
+      "avoid": {
+        "x": 0.0,
+        "y": 303.390625,
+        "width": 500.0,
+        "height": 98.0,
+        "right": 500.0,
+        "bottom": 401.390625,
+        "center_x": 250.0,
+        "center_y": 352.390625
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 549,
+        "width": 270.0,
+        "height": 210,
+        "score": 0
+      }
+    }
+  ]
+}

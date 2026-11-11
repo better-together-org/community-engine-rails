@@ -22,6 +22,21 @@ RSpec.describe BetterTogether::Billing::OrdersController do
     expect(response).to have_http_status(:found)
   end
 
+  it 'pages the list, newest first' do
+    stub_const("#{described_class}::PER_PAGE", 2)
+    newer = Array.new(2) { |i| travel_to((i + 1).minutes.from_now) { place_order } }
+    sign_in member
+
+    get orders_path
+    first_page = ActionView::RecordIdentifier.dom_id(newer.last)
+    expect(response.body).to include('billing-orders-pagination', first_page)
+    expect(response.body).not_to include(ActionView::RecordIdentifier.dom_id(order))
+
+    get orders_path, params: { page: 2 }
+    expect(response.body).to include(ActionView::RecordIdentifier.dom_id(order))
+    expect(response.body).not_to include(first_page)
+  end
+
   it 'is a 404 while billing is off for the platform' do
     sign_in member
     allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)

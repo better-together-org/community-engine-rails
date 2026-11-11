@@ -1051,6 +1051,22 @@ es:
         status_revoked: Reembolsado
         title: Mi acceso
         until: Vigente hasta el %{date}.
+      hub:
+        access_count: 'Activos: %{count}'
+        access_heading: A qué tienes acceso
+        all_orders: Todos los pedidos
+        all_plans: Todos los planes
+        credit_heading: Crédito de la tienda
+        credit_none: No tienes crédito de la tienda.
+        intro: Tus planes, pedidos y crédito en %{platform}.
+        orders_heading: Pedidos recientes
+        orders_none: No has hecho ningún pedido.
+        plans_heading: Planes activos
+        plans_none: No tienes planes activos.
+        renews: Se renueva el %{date}
+        title: Facturación y planes
+        view_access: Ver mi acceso
+        view_credit: Ver crédito
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -6579,6 +6595,7 @@ es:
       invalid_parameters: Parámetros inválidos
   navbar:
     accept_invitation: Aceptar invitación
+    billing: Facturación
     conversations: Conversaciones
     host_mgmt_tooltip: Gestión del anfitrión
     locale_switcher_tooltip: Cambiar idioma

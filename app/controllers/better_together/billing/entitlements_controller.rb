@@ -18,19 +18,7 @@ module BetterTogether
       private
 
       # Those it is for, and those they pay for.
-      def mine
-        person = current_user.person
-        all = billing_owner.billing_entitlements
-        all.where(beneficiary: person).or(all.where(pay_subscription_id: paid_subscription_ids(person)))
-           .or(all.where(order_id: paid_order_ids(person)))
-      end
-
-      def paid_subscription_ids(person)
-        billing_owner.billing_subscription_terms.joins(pay_subscription: :customer)
-                     .where(pay_customers: { owner_type: BetterTogether::Person.name, owner_id: person.id }).select(:pay_subscription_id)
-      end
-
-      def paid_order_ids(person) = billing_owner.billing_orders.bought_by(person).select(:id)
+      def mine = Entitlements::ForPerson.call(platform: billing_owner, person: current_user.person)
 
       # [entitlement id, quota type] => the owner's usage, for each allowance a live entitlement carries.
       def meters_for(entitlements)
