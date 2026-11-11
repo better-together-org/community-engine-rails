@@ -56,6 +56,28 @@ module BetterTogether
       end
     end
 
+    BINARY_SIZE_UNITS = %w[B KiB MiB GiB TiB].freeze
+
+    # Human-readable binary size, e.g. 262144000 => "250 MiB", 1073741824 => "1 GiB".
+    def quota_size_label(bytes)
+      value = bytes.to_f
+      unit = 0
+      while value >= 1024 && unit < BINARY_SIZE_UNITS.size - 1
+        value /= 1024
+        unit += 1
+      end
+      "#{value.round(2).to_s.sub(/\.0\z/, '')} #{BINARY_SIZE_UNITS[unit]}"
+    end
+
+    # Options for a byte-quota select: a blank "use default" entry, every binary step,
+    # plus the current value when it is not a listed step so it is never silently lost.
+    def quota_storage_options(entry)
+      steps = (BetterTogether::Quotas::Defaults::STORAGE_STEPS + [entry[:value], entry[:inherited]].compact).uniq.sort
+      size = entry[:inherited] ? quota_size_label(entry[:inherited]) : '-'
+      default_label = t('better_together.platforms.form.quota_use_default', size:, default: "Use default (#{size})")
+      [[default_label, '']] + steps.map { |bytes| [quota_size_label(bytes), bytes] }
+    end
+
     def feature_gate_catalog
       BetterTogether::FeatureRegistry.all.values
     end

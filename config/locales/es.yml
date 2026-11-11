@@ -3435,6 +3435,7 @@ es:
         quota_types:
           ai_translation_tokens: Tokens de traducción con IA por mes
           media_storage: Almacenamiento
+        quota_use_default: Usar el valor predeterminado (%{size})
       index:
         provision_new_platform: Aprovisionar nueva plataforma
       new:

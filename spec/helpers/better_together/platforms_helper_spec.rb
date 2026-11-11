@@ -121,5 +121,12 @@ module BetterTogether # :nodoc:
         expect(helper.active_invitation_token).to eq('platform_token')
       end
     end
+
+    describe '#quota_size_label' do
+      it 'formats bytes as binary units' do
+        expect([262_144_000, 1_073_741_824, 10 * (1024**3), 1024**4, 1536 * (1024**2)].map { |b| helper.quota_size_label(b) })
+          .to eq(['250 MiB', '1 GiB', '10 GiB', '1 TiB', '1.5 GiB'])
+      end
+    end
   end
 end

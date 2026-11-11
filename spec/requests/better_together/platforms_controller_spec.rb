@@ -272,11 +272,22 @@ RSpec.describe 'BetterTogether::PlatformsController', :as_platform_manager do
       patch better_together.platform_path(locale:, id: host_platform.slug), params: {
         platform: {
           host_url: host_platform.host_url, time_zone: host_platform.time_zone,
-          quota_default_limits: { media_storage: { person: '1048576', community: '' } }
+          quota_default_limits: { media_storage: { person: '268435456', community: '' } }
         }
       }
 
-      expect(host_platform.reload.quota_default_limits).to eq('media_storage' => { 'person' => 1_048_576 })
+      expect(host_platform.reload.quota_default_limits).to eq('media_storage' => { 'person' => 268_435_456 })
+    end
+
+    it 'drops byte limits that are not a listed binary storage step' do
+      patch better_together.platform_path(locale:, id: host_platform.slug), params: {
+        platform: {
+          host_url: host_platform.host_url, time_zone: host_platform.time_zone,
+          quota_default_limits: { media_storage: { person: '123', community: '1073741824' } }
+        }
+      }
+
+      expect(host_platform.reload.quota_default_limits).to eq('media_storage' => { 'community' => 1_073_741_824 })
     end
 
     it 'renders the quota defaults card on the edit form' do

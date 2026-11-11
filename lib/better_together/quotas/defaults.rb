@@ -9,6 +9,13 @@ module BetterTogether
     module Defaults
       OWNER_KINDS = %w[person community platform].freeze
       FILE_NAME = 'quota_defaults.yml'
+      MEBIBYTE = 1024**2
+      # Binary storage denominations offered by the platform form for byte-unit quotas.
+      STORAGE_STEPS = (
+        [64, 128, 256, 512].map { |mib| mib * MEBIBYTE } +
+        [1, 2, 4, 8, 16, 32, 64, 128, 256, 512].map { |gib| gib * 1024 * MEBIBYTE } +
+        [1, 2, 4, 8].map { |tib| tib * (1024**2) * MEBIBYTE }
+      ).freeze
 
       class InvalidDefaultsError < StandardError; end
 
@@ -61,6 +68,16 @@ module BetterTogether
           end
         end
 
+        # Form input guard: for byte-unit types keeps only values that are a listed
+        # storage step or the configured YAML default for that owner kind; everything
+        # else is dropped (inherit). Other units pass through unchanged.
+        def restrict_to_storage_steps(overrides)
+          sanitize_overrides(overrides).each_with_object({}) do |(type, limits), result|
+            allowed = limits.select { |kind, limit| allowed_limit?(type, kind, limit) }
+            result[type] = allowed if allowed.any?
+          end
+        end
+
         # The merged type => kind => integer table (no platform overrides).
         def table
           @table ||= load_table.freeze
@@ -80,6 +97,12 @@ module BetterTogether
         end
 
         private
+
+        def allowed_limit?(type, kind, limit)
+          return true unless Type.find(type)&.unit == :bytes
+
+          STORAGE_STEPS.include?(limit) || yaml_value(type, kind) == limit
+        end
 
         def sanitize_kinds(by_kind)
           by_kind.each_pair.with_object({}) do |(kind, limit), result|

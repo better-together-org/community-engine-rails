@@ -79,4 +79,19 @@ RSpec.describe BetterTogether::Quotas::Defaults do
       expect(described_class.for(type: 'media_storage', owner: platform)).to eq(9)
     end
   end
+
+  describe '.restrict_to_storage_steps' do
+    it 'keeps listed steps and the configured default, drops other byte values' do
+      result = described_class.restrict_to_storage_steps(
+        'media_storage' => { 'person' => '262144000', 'community' => '1073741824', 'platform' => '5' }
+      )
+
+      expect(result).to eq('media_storage' => { 'person' => 262_144_000, 'community' => 1_073_741_824 })
+    end
+
+    it 'lets non-byte quota types through unchanged' do
+      expect(described_class.restrict_to_storage_steps('ai_translation_tokens' => { 'person' => '12345' }))
+        .to eq('ai_translation_tokens' => { 'person' => 12_345 })
+    end
+  end
 end

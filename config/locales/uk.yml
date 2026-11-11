@@ -3439,6 +3439,7 @@ uk:
         quota_types:
           ai_translation_tokens: Токени ШІ-перекладу на місяць
           media_storage: Сховище
+        quota_use_default: Використовувати значення за замовчуванням (%{size})
       index:
         provision_new_platform: Налаштувати нову платформу
       new:

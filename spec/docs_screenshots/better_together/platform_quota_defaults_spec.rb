@@ -17,7 +17,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
     skip 'Set RUN_DOCS_SCREENSHOTS=1 to generate documentation screenshots.' unless ENV['RUN_DOCS_SCREENSHOTS'] == '1'
 
     Current.platform = host_platform
-    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => 104_857_600 } })
+    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => 536_870_912 } })
   end
 
   after do
@@ -34,7 +34,7 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
         {
           selector: "##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults_media_storage)}",
           title: 'Starting quotas',
-          bullets: ['Blank inherits the default.']
+          bullets: ['Pick a storage size, or use the default.']
         }
       ]
     ) do
@@ -43,7 +43,10 @@ RSpec.describe 'Documentation screenshots for platform quota defaults',
 
       card = find("##{ActionView::RecordIdentifier.dom_id(host_platform, :quota_defaults)}")
       card.scroll_to(:center)
-      expect(page).to have_field('platform[quota_default_limits][media_storage][person]', with: '104857600')
+      select_name = 'platform[quota_default_limits][media_storage][person]'
+      expect(page).to have_css("select[name='#{select_name}']", visible: :all, wait: 10)
+      expect(page).to have_css('.ss-main', wait: 5)
+      expect(page).to have_css('.ss-main .ss-single', text: '512 MiB', wait: 5)
     end
 
     expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_quota_defaults.png')

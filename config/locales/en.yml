@@ -3384,6 +3384,7 @@ en:
         quota_types:
           ai_translation_tokens: AI translation tokens per month
           media_storage: Storage
+        quota_use_default: Use default (%{size})
       index:
         provision_new_platform: Provision New Platform
       new:

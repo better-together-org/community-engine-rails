@@ -20,12 +20,15 @@ RSpec.describe 'Platform quota defaults card DOM contract', :as_platform_manager
     end
   end
 
-  it 'shows the inherited default as the placeholder and the current override as the value' do
-    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => '123' } })
+  it 'offers byte quotas as a slim-select of binary sizes with the override selected' do # rubocop:disable RSpec/MultipleExpectations
+    host_platform.update!(quota_default_limits: { 'media_storage' => { 'person' => '536870912' } })
 
     get better_together.edit_platform_path(locale: I18n.default_locale, id: host_platform.slug)
 
-    expect(response.body).to match(/name="platform\[quota_default_limits\]\[media_storage\]\[person\]"[^>]*value="123"/)
+    select = parsed_response.at_css('select[name="platform[quota_default_limits][media_storage][person]"]')
+    expect(select['data-controller']).to eq('better_together--slim-select')
+    expect(select.at_css('option[selected]').text).to eq('512 MiB')
+    expect(select.css('option').map(&:text)).to include('Use default (250 MiB)', '250 MiB', '1 GiB', '1 TiB')
   end
 
   it 'is not rendered for an external platform' do

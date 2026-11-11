@@ -193,7 +193,7 @@
           <fieldset class="mb-3 quota-default-type" id="<%= dom_id(platform, "quota_defaults_#{quota[:key]}") %>">
             <legend class="h6">
               <%= t("better_together.platforms.form.quota_types.#{quota[:key]}", default: quota[:key].humanize) %>
-              <span class="text-muted small">(<%= quota[:unit] %>)</span>
+              <% unless quota[:unit] == :bytes %><span class="text-muted small">(<%= quota[:unit] %>)</span><% end %>
             </legend>
             <div class="row g-3">
               <% quota[:kinds].each do |entry| %>
@@ -202,10 +202,17 @@
                   <label class="form-label" for="<%= field_id %>">
                     <%= t("better_together.platforms.form.quota_kinds.#{entry[:kind]}", default: entry[:kind].humanize) %>
                   </label>
-                  <%= number_field_tag entry[:field], entry[:value], id: field_id, min: 0, step: 1,
-                                       placeholder: entry[:inherited], class: 'form-control quota-default-input' %>
-                  <% if quota[:unit] == :bytes && (entry[:value] || entry[:inherited]) %>
-                    <div class="form-text"><%= number_to_human_size(entry[:value] || entry[:inherited]) %></div>
+                  <% if quota[:unit] == :bytes %>
+                    <%= select_tag entry[:field],
+                                   options_for_select(quota_storage_options(entry), entry[:value].to_s),
+                                   id: field_id, class: 'form-select quota-default-input',
+                                   data: { controller: 'better_together--slim-select' } %>
+                  <% else %>
+                    <%= number_field_tag entry[:field], entry[:value], id: field_id, min: 0, step: 1,
+                                         placeholder: entry[:inherited], class: 'form-control quota-default-input' %>
+                    <% if entry[:value] || entry[:inherited] %>
+                      <div class="form-text"><%= number_with_delimiter(entry[:value] || entry[:inherited]) %></div>
+                    <% end %>
                   <% end %>
                 </div>
               <% end %>
