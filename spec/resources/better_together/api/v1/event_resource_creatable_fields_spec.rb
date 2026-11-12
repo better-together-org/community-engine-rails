@@ -31,20 +31,20 @@ RSpec.describe BetterTogether::Api::V1::EventResource, '.creatable_fields' do
     end
 
     it 'allows hosts the person can host for, as a list or JSON', :aggregate_failures do
-      allow(person).to receive_messages(valid_event_host_ids: [community.id, person.id], permitted_to?: false)
+      allow(person).to receive_messages(valid_event_host_ids: [community.id, person.id], platform_manager?: false)
 
       expect(name_hosts.call(specs)._model.hosts).to eq(specs)
       expect(name_hosts.call(specs.to_json)._model.hosts).to eq(specs)
     end
 
     it 'allows a platform manager to name any host' do
-      allow(person).to receive_messages(valid_event_host_ids: [], permitted_to?: true)
+      allow(person).to receive_messages(valid_event_host_ids: [], platform_manager?: true)
 
       expect(name_hosts.call(specs)._model.hosts).to eq(specs)
     end
 
     it 'refuses a host the person cannot host for' do
-      allow(person).to receive_messages(valid_event_host_ids: [], permitted_to?: false)
+      allow(person).to receive_messages(valid_event_host_ids: [], platform_manager?: false)
 
       expect { name_hosts.call(specs) }.to raise_error(JSONAPI::Exceptions::InvalidFieldValue)
     end
