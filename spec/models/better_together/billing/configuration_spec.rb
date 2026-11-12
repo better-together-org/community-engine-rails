@@ -139,14 +139,27 @@ module BetterTogether
           expect(described_class.processors_for(host_platform)).to eq([:cash])
         end
 
-        it 'has none for a non-host platform, even with the method turned on (no hosted agreement yet)' do
+        it 'has one for a hosted platform that holds the hosted agreements and turned it on, with no credentials' do
+          grant_hosted_billing(other_platform)
           enable_method(other_platform)
+
+          context = described_class.context_for(other_platform, :cash)
+
+          expect(context).to have_attributes(platform: other_platform, processor: :cash, source: :setting, credentials: nil)
+          expect(described_class.processors_for(other_platform)).to eq([:cash])
+        end
+
+        it 'has none for a hosted platform that has not accepted the agreements, even with the method turned on' do
+          # Written past validation: a row that predates the gate must still have no context.
+          other_platform.billing_processor_settings.new(processor: 'cash', enabled: true, acknowledge: true,
+                                                        settings: { 'instructions' => 'At the hall' }).save!(validate: false)
 
           expect(described_class.context_for(other_platform, :cash)).to be_nil
           expect(described_class.processors_for(other_platform)).to be_empty
         end
 
         it 'does not give the host platform a method another platform turned on' do
+          grant_hosted_billing(other_platform)
           enable_method(other_platform)
 
           expect(described_class.context_for(host_platform, :cash)).to be_nil
@@ -170,6 +183,7 @@ module BetterTogether
 
         it 'does not depend on the host environment, but a vendor processor still does' do
           Billing.register_processor(:fake, -> { FakeAdapter.new })
+          grant_hosted_billing(other_platform)
           enable_method(other_platform)
 
           expect(described_class.context_for(other_platform, :fake)).to be_nil

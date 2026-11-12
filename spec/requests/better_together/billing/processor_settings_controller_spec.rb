@@ -39,10 +39,10 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       expect(response.body).not_to include('billing-processor-settings-table')
     end
 
-    it 'is a 404 on a non-host platform even with billing on and a method enabled (CONF-01)' do
+    it 'is a 404 on a hosted platform that has not accepted the hosted agreements, even with a method enabled (CONF-01)' do
       sign_in steward
-      other_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
-                                                        settings: { 'instructions' => 'At the hall' })
+      other_platform.billing_processor_settings.new(processor: 'cash', enabled: true, acknowledge: true,
+                                                    settings: { 'instructions' => 'At the hall' }).save!(validate: false)
       allow(Current).to receive(:platform).and_return(other_platform)
 
       get settings_path
@@ -103,6 +103,7 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       end
 
       it 'does not show another platform\'s state' do
+        grant_hosted_billing(other_platform)
         other_platform.billing_processor_settings.create!(processor: 'cheque', enabled: true, acknowledge: true,
                                                           settings: { 'payee_name' => 'A', 'address' => 'B' })
 

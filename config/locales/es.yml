@@ -1137,6 +1137,60 @@ es:
           processed: Hecho
           replayed: Reintentado
         table_caption: Eventos de pago y su estado
+      hosted_billing:
+        accept_button: Aceptar para esta plataforma
+        accepted: Acuerdo aceptado para esta plataforma.
+        accepted_state: Aceptado para esta plataforma.
+        go_to_methods: Configurar sus métodos de pago
+        intro: "%{platform} está alojada. Acepte abajo los acuerdos de facturación
+          del anfitrión para desbloquear lo que cubre cada uno. Nada se activa hasta
+          que también configure un método de pago."
+        merchant_not_yet: La facturación como comerciante registrado aún no está disponible.
+          Puede aceptar este acuerdo por adelantado.
+        methods_locked: Acepte el acuerdo de facturación de plataforma alojada y el
+          de facturación local para cobrar en efectivo, cheque o transferencia.
+        modes:
+          billing:
+            title: Acuerdo de facturación de plataforma alojada
+            unlocks: Necesario antes de cualquier facturación en esta plataforma,
+              local o remota.
+          local:
+            title: Acuerdo de facturación local alojada
+            unlocks: Permite a esta plataforma cobrar en efectivo, cheque y transferencia.
+              El anfitrión no los rastrea, garantiza ni asume responsabilidad.
+          merchant:
+            title: Acuerdo de incorporación como comerciante
+            unlocks: Permite que el anfitrión cobre por esta plataforma como comerciante
+              registrado.
+        not_in_force: Aún no disponible. El anfitrión todavía prepara este acuerdo.
+        refused:
+          accept_box: Marque la casilla para aceptar el acuerdo.
+          needs_billing_first: Acepte primero el acuerdo de facturación de plataforma
+            alojada.
+          not_in_force: Ese acuerdo aún no está en vigor.
+        suspended: El anfitrión ha suspendido la facturación de esta plataforma. Sus
+          datos se conservan. Contacte al anfitrión para restablecerla.
+        title: Facturación alojada
+      hosted_platforms:
+        accepted: Aceptado
+        actions: Acciones
+        intro: Qué plataformas alojadas han aceptado qué acuerdos de facturación y
+          si su facturación está activa. Suspender pausa la facturación y conserva
+          los datos.
+        none: Aún no hay plataformas alojadas aquí.
+        not_accepted: No aceptado
+        platform: Plataforma
+        reason: Motivo de la suspensión
+        reason_required: Indique un motivo para suspender la facturación.
+        resume: Restablecer
+        resumed: Facturación restablecida para esa plataforma.
+        status: Facturación
+        status_off: Inactiva
+        status_on: Activa
+        status_suspended: Suspendida
+        suspend: Suspender
+        suspended: Facturación suspendida para esa plataforma.
+        title: Plataformas alojadas
       hub:
         access_count: 'Activos: %{count}'
         access_heading: A qué tienes acceso
@@ -6318,6 +6372,7 @@ es:
       after_start: debe ser posterior al inicio
       already_confirmed: ya ha sido confirmado, por favor intenta iniciar sesión
       blank: no puede estar en blanco
+      cannot_be_the_host: no puede ser la plataforma anfitriona
       confirmation: no coincide con %{attribute}
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
         solicita una nueva
@@ -6331,6 +6386,8 @@ es:
       greater_than: debe ser mayor que %{count}
       greater_than_or_equal_to: debe ser mayor que o igual a %{count}
       greater_than_refundable: es más de lo que aún se puede reembolsar
+      hosted_local_billing_not_agreed: requiere aceptar primero los acuerdos de facturación
+        local alojada
       immutable_after_processor_link: no se puede cambiar una vez que el plan está
         vinculado a un precio del procesador
       in: debe estar en %{count}

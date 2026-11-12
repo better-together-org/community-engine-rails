@@ -73,7 +73,8 @@ module BetterTogether
       # this does not need a method to be enabled already, so the settings page can be
       # reached to enable the first one.
       def configurable?(platform = Current.platform, env: ENV)
-        platform.present? && platform.host? && Configuration.requested?(env) && Configuration.ready?(env) && processor_names.any?
+        platform.present? && Configuration.requested?(env) && Configuration.ready?(env) && processor_names.any? &&
+          HostedBilling.permits?(platform, :billing)
       end
 
       # Billing is on for a platform only with the host's flag, a configured
@@ -93,6 +94,7 @@ module BetterTogether
         platform.present? &&
           Configuration.requested?(env) &&
           Configuration.ready?(env) &&
+          HostedBilling.permits?(platform, :billing) &&
           Configuration.processors_for(platform).any?
       end
     end
