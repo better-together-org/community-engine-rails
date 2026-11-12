@@ -29,7 +29,7 @@ module BetterTogether
           return scope.none unless user && platform && BetterTogether::Billing.enabled?(platform) && user.permitted_to?(:manage_platform,
                                                                                                                         platform)
 
-          scope.for_platform(platform).joins(:order).merge(BetterTogether::Billing::Order.sold_by_platform)
+          scope.for_platform(platform).where(order: platform.billing_orders.sold_by_platform)
         end
       end
 
