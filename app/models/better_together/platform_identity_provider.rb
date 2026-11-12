@@ -164,10 +164,17 @@ module BetterTogether
     end
 
     # Resolve DNS too: a name pointing at a private address is as unsafe as a private literal.
+    # Only when the issuer is new or changing, or the provider is being turned on: an existing
+    # provider whose DNS has since gone bad must still be editable and disableable.
     def issuer_must_resolve_publicly
-      return if errors.include?(:issuer) || BetterTogether::SafeOutboundHost.public_host?(URI.parse(issuer).host)
+      return if errors.include?(:issuer) || !issuer_dns_check_needed?
+      return if BetterTogether::SafeOutboundHost.public_host?(URI.parse(issuer).host)
 
       errors.add(:issuer, :private_ip, message: I18n.t('better_together.validators.safe_federation_url.private_ip'))
+    end
+
+    def issuer_dns_check_needed?
+      new_record? || will_save_change_to_options? || will_save_change_to_enabled?(to: true)
     end
 
     def provider_platform_is_external

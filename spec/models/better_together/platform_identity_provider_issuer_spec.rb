@@ -48,6 +48,27 @@ RSpec.describe BetterTogether::PlatformIdentityProvider, '#issuer' do
     expect(build_oidc('https://nowhere.example.org')).not_to be_valid
   end
 
+  describe 'when the issuer DNS later becomes unsafe' do
+    let!(:provider) { build_oidc('https://idp.example.org').tap { |row| row.assign_attributes(enabled: true) }.tap(&:save!) }
+
+    before { allow(Resolv).to receive(:getaddresses).with('idp.example.org').and_return(['10.1.2.3']) }
+
+    it 'can still be disabled' do
+      expect(provider.update(enabled: false)).to be(true)
+    end
+
+    it 'cannot be enabled again while the DNS is unsafe' do
+      provider.update!(enabled: false)
+
+      expect(provider.update(enabled: true)).to be(false)
+      expect(provider.errors).to include(:issuer)
+    end
+
+    it 'can still have unrelated fields changed without a new DNS check' do
+      expect(provider.update(client_id: 'other')).to be(true)
+    end
+  end
+
   it 'does not require an issuer for other strategies' do
     github = create(:better_together_platform, external: true)
 
