@@ -183,7 +183,8 @@ RSpec.describe 'Simple OAuth Flow' do # rubocop:todo RSpec/DescribeClass
       expect(attributes[:image_url]).to be_a(URI)
       expect(attributes[:profile_url]).to eq('https://github.com/oauthuser')
       expect(attributes[:expires_at]).to be_a(Time)
-      expect(attributes[:auth]).to eq(auth_hash.to_hash)
+      expect(attributes[:auth]).to eq(auth_hash.to_hash.except('credentials'))
+      expect(attributes[:auth]).not_to have_key('credentials')
     end
 
     it 'handles missing optional fields gracefully' do

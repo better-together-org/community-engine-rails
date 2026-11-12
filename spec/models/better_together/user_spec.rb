@@ -97,7 +97,23 @@ RSpec.describe BetterTogether::User do
   describe 'ActiveModel validations' do
     it { is_expected.to validate_presence_of(:email) }
     it { is_expected.to validate_presence_of(:password) }
-    it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
+
+    describe 'email uniqueness is per platform' do
+      let(:other_platform) { create(:better_together_platform) }
+
+      it 'rejects the same email, any case, on one platform' do
+        existing = create(:user, email: 'same@example.test')
+        duplicate = build(:user, email: 'SAME@example.test', platform: existing.platform)
+
+        expect(duplicate).not_to be_valid
+      end
+
+      it 'allows the same email on another platform' do
+        create(:user, email: 'same@example.test')
+
+        expect(build(:user, email: 'same@example.test', platform: other_platform)).to be_valid
+      end
+    end
   end
 
   describe 'Attributes' do

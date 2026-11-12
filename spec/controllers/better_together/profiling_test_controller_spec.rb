@@ -31,7 +31,7 @@ RSpec.describe BetterTogether::ProfilingTestController do
     allow(BetterTogether::Profiling).to receive(:enabled?).and_return(profiling_enabled)
   end
 
-  let(:current_user) { instance_double(BetterTogether::User, permitted_to?: permitted, person: nil) }
+  let(:current_user) { instance_double(BetterTogether::User, permitted_to?: permitted, host_platform_manager?: permitted, person: nil) }
   let(:permitted) { false }
   let(:profiling_enabled) { false }
 
@@ -46,7 +46,7 @@ RSpec.describe BetterTogether::ProfilingTestController do
     let(:profiling_enabled) { true }
 
     it 'authorizes rack mini profiler for platform managers' do
-      allow(current_user).to receive(:permitted_to?).with('manage_platform').and_return(true)
+      allow(current_user).to receive(:host_platform_manager?).and_return(true)
 
       get :index, params: { locale: 'en' }
 

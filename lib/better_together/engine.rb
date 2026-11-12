@@ -136,6 +136,19 @@ module BetterTogether
       end
     end
 
+    # Accounts are per platform. A session (or token) for a user of another platform is dropped,
+    # which also protects against a cookie domain misconfigured to span platform hosts.
+    initializer 'better_together.warden_platform_guard' do
+      Warden::Manager.after_set_user do |user, auth, opts|
+        platform = ::Current.platform
+        if platform && user.respond_to?(:platform_id) && user.platform_id.present? && user.platform_id != platform.id
+          scope = opts[:scope]
+          auth.logout(scope)
+          throw :warden, scope:, message: :invalid
+        end
+      end
+    end
+
     initializer 'better_together.platform_context_middleware' do |app|
       require root.join('app/middleware/better_together/platform_context_middleware').to_s
       app.middleware.use BetterTogether::PlatformContextMiddleware

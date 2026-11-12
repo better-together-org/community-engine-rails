@@ -12,7 +12,24 @@ module BetterTogether
 
       has_many :person_platform_integrations, dependent: :destroy
 
-      validates :email, presence: true, uniqueness: { case_sensitive: false }
+      validates :email, presence: true
+
+      # Every Devise lookup (sign in, confirmation, password reset, unlock, invitation) goes through
+      # find_first_by_auth_conditions; scoping it to the request's platform means credentials, tokens and
+      # emails from one platform never find an account on another.
+      def self.find_first_by_auth_conditions(tainted_conditions, opts = {})
+        platform = ::Current.platform
+        opts = opts.merge(platform_id: platform.id) if platform
+        super
+      end
+
+      def self.with_reset_password_token(token)
+        record = super
+        platform = ::Current.platform
+        return record if record.nil? || platform.nil? || record.platform_id == platform.id
+
+        nil
+      end
 
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
       def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil,
@@ -56,7 +73,7 @@ module BetterTogether
         # If integration already has a user, return that user (for OAuth sign-in)
         return person_platform_integration.user if person_platform_integration.user.present?
 
-        user = find_or_initialize_user(auth, current_user)
+        user = find_or_initialize_user(auth, current_user, membership_platform)
         verified = provider_verified_email?(auth, trust_verified_email:)
 
         # Never attach a provider identity to an existing account on the strength of an unverified email
@@ -77,6 +94,7 @@ module BetterTogether
         if user.blank?
           # No existing user - create new OAuth user (confirmation required unless the provider verified the email)
           user = setup_new_oauth_user(new, auth, verified:)
+          user.platform = membership_platform if membership_platform
           assign_person_to_user(user, person_platform_integration, auth, invitations)
           return nil unless user.save
 
@@ -99,14 +117,15 @@ module BetterTogether
       # @param current_user [User, nil] the currently signed-in user
       # @return [User, nil] existing user or nil
       # @raise [ArgumentError] if OAuth email belongs to different user than current_user
-      # rubocop:disable Metrics/MethodLength
-      def self.find_or_initialize_user(auth, current_user)
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def self.find_or_initialize_user(auth, current_user, membership_platform = nil)
         oauth_email = auth.dig('info', 'email') || auth.dig(:info, :email)
 
         # If user is signed in, verify OAuth email matches their account
         if current_user.present?
           # Use case-insensitive email lookup for security check
-          existing_user_with_email = where('LOWER(email) = LOWER(?)', oauth_email).first
+          existing_user_with_email = where('LOWER(email) = LOWER(?)', oauth_email)
+                                     .where(platform_id: current_user.platform_id).first
 
           # OAuth email belongs to a different user - security violation
           if existing_user_with_email.present? && existing_user_with_email.id != current_user.id
@@ -126,9 +145,11 @@ module BetterTogether
 
         # No current user - find by email for existing user OAuth sign-in
         # Use case-insensitive lookup to match OAuth emails
-        where('LOWER(email) = LOWER(?)', oauth_email).first
+        scope = where('LOWER(email) = LOWER(?)', oauth_email)
+        scope = scope.where(platform_id: membership_platform.id) if membership_platform
+        scope.first
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
       private_class_method :find_or_initialize_user
 
       # Sets up a new user from OAuth data
@@ -156,15 +177,9 @@ module BetterTogether
       end
       private_class_method :provider_verified_email?
 
+      # Accounts are per platform: a user belongs to the platform they were created on.
       def self.member_of_platform?(user, platform)
-        return false if platform.blank? || user.person.blank?
-
-        person_id = user.person.id
-        return true if platform.person_platform_memberships.exists?(member_id: person_id)
-
-        # Open sign-up joins the platform's community rather than the platform itself
-        platform.community.present? &&
-          platform.community.person_community_memberships.exists?(member_id: person_id)
+        platform.present? && user.platform_id == platform.id
       end
       private_class_method :member_of_platform?
 

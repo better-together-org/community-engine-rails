@@ -15,6 +15,7 @@ module BetterTogether
       def jwt_revoked?(payload, user)
         current = ::Current.platform&.id
         return true if current.blank? || payload['plt'].to_s != current.to_s
+        return true if user.respond_to?(:platform_id) && user.platform_id.to_s != current.to_s
 
         denylisted?(payload, user)
       end

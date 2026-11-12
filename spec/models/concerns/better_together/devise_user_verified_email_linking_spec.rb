@@ -43,11 +43,15 @@ RSpec.describe BetterTogether::DeviseUser, '.from_omniauth verified-email linkin
       expect(sign_in_with(auth)).to eq(existing)
     end
 
-    it 'refuses to link an account that is not a member of this platform' do
-      create(:user, email:)
+    it 'never links an account from another platform; it creates a separate account here', :aggregate_failures do
+      elsewhere = create(:user, email:)
       other = create(:better_together_platform, :public)
 
-      expect { sign_in_with(auth, platform: other) }.to raise_error(ArgumentError, /could not link/)
+      result = sign_in_with(auth, platform: other)
+
+      expect(result).not_to eq(elsewhere)
+      expect(result.platform).to eq(other)
+      expect(elsewhere.reload.person_platform_integrations).to be_empty
     end
 
     it 'confirms an existing unconfirmed account and rotates its password' do

@@ -11,7 +11,8 @@ RSpec.describe 'Invitation timer display' do
   end
 
   let(:invitation) do
-    create(:better_together_platform_invitation, status: 'pending', locale: I18n.default_locale.to_s)
+    create(:better_together_platform_invitation, status: 'pending', locale: I18n.default_locale.to_s,
+                                                 invitable: BetterTogether::Platform.find_by(host: true))
   end
 
   describe 'session expiry timestamp' do
@@ -36,6 +37,7 @@ RSpec.describe 'Invitation timer display' do
           :better_together_platform_invitation,
           status: 'pending',
           locale: I18n.default_locale.to_s,
+          invitable: BetterTogether::Platform.find_by(host: true),
           session_duration_mins: 60, # 60 minutes
           valid_until: 30.minutes.from_now # But expires in 30 minutes
         )
@@ -58,6 +60,7 @@ RSpec.describe 'Invitation timer display' do
           :better_together_platform_invitation,
           status: 'pending',
           locale: I18n.default_locale.to_s,
+          invitable: BetterTogether::Platform.find_by(host: true),
           session_duration_mins: 15, # 15 minutes
           valid_until: 2.hours.from_now # But invitation valid for 2 hours
         )

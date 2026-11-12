@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_12_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_12_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -2485,9 +2485,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_12_120000) do
     t.string "unlock_token"
     t.datetime "locked_at"
     t.string "type"
-    t.uuid "platform_id"
+    t.uuid "platform_id", null: false
+    t.index "platform_id, lower((email)::text)", name: "index_bt_users_on_platform_and_lower_email", unique: true
     t.index ["confirmation_token"], name: "index_better_together_users_on_confirmation_token", unique: true
-    t.index ["email"], name: "index_better_together_users_on_email", unique: true
     t.index ["platform_id"], name: "index_better_together_users_on_platform_id"
     t.index ["reset_password_token"], name: "index_better_together_users_on_reset_password_token", unique: true
     t.index ["type"], name: "index_better_together_users_on_type"
