@@ -755,6 +755,30 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.check_constraint "redemptions_count >= 0", name: "chk_bt_billing_promotions_count"
   end
 
+  create_table "better_together_billing_refund_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "order_id", null: false
+    t.uuid "requester_id", null: false
+    t.integer "amount_cents"
+    t.integer "approved_amount_cents"
+    t.string "currency", null: false
+    t.string "reason", null: false
+    t.string "status", default: "pending", null: false
+    t.text "details"
+    t.text "decision_note"
+    t.datetime "decided_at"
+    t.uuid "decided_by_id"
+    t.index ["decided_by_id"], name: "idx_bt_billing_refund_requests_decided_by"
+    t.index ["order_id"], name: "idx_bt_billing_refund_requests_one_pending", unique: true, where: "((status)::text = 'pending'::text)"
+    t.index ["order_id"], name: "idx_bt_billing_refund_requests_order"
+    t.index ["platform_id", "status"], name: "idx_bt_billing_refund_requests_status"
+    t.index ["platform_id"], name: "idx_bt_billing_refund_requests_platform"
+    t.index ["requester_id"], name: "idx_bt_billing_refund_requests_requester"
+  end
+
   create_table "better_together_billing_refunds", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -3594,6 +3618,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
   add_foreign_key "better_together_billing_promotion_redemptions", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_promotions", "better_together_people", column: "created_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_promotions", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_refund_requests", "better_together_billing_orders", column: "order_id"
+  add_foreign_key "better_together_billing_refund_requests", "better_together_people", column: "decided_by_id", on_delete: :nullify
+  add_foreign_key "better_together_billing_refund_requests", "better_together_people", column: "requester_id"
+  add_foreign_key "better_together_billing_refund_requests", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_billing_refunds", "better_together_billing_payments", column: ["payment_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_refunds_payment_platform"
   add_foreign_key "better_together_billing_refunds", "better_together_people", column: "recorded_by_id", on_delete: :nullify
   add_foreign_key "better_together_billing_refunds", "better_together_platforms", column: "platform_id"

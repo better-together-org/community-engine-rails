@@ -1,0 +1,48 @@
+{
+  "name": "billing_refund_request_new",
+  "device": "mobile",
+  "url": "/en/billing/orders/ef59cf6a-b718-4377-82d4-a4230c62ded8/refund_requests/new",
+  "title": "Ask for a refund on order BT-FB4HXSUR | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_refund_requests",
+  "flow": "billing_refund_request_new",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_refund_requests_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-refund-request-form",
+      "title": "Ask for a refund",
+      "bullets": [
+        "Choose a reason, say how much, and tell the seller what they should know."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 311.78125,
+        "width": 476.0,
+        "height": 467.0,
+        "right": 488.0,
+        "bottom": 778.78125,
+        "center_x": 250.0,
+        "center_y": 545.28125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 311.78125,
+        "width": 476.0,
+        "height": 467.0,
+        "right": 488.0,
+        "bottom": 778.78125,
+        "center_x": 250.0,
+        "center_y": 545.28125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 798.78,
+        "width": 270.0,
+        "height": 184,
+        "score": 478.21875
+      }
+    }
+  ]
+}

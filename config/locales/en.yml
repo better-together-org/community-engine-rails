@@ -1265,6 +1265,17 @@ en:
         refund_recorded:
           body: The seller recorded a refund for your order.
           title: Refund for order %{number}
+        refund_request_decided:
+          body: The seller answered your refund request. Open the order to read the
+            reply.
+          title: Your refund request for order %{number} was answered
+        refund_requested:
+          buyer:
+            body: Your refund request was sent to the seller.
+            title: Refund request for order %{number}
+          seller:
+            body: A buyer asked for a refund. Open the request to decide.
+            title: Refund requested for order %{number}
         renewal_credit_insufficient:
           buyer:
             body: Your %{plan} renewal for %{amount} is paid from store credit and
@@ -1785,6 +1796,59 @@ en:
         ready: Ready
         title: Ready to sell?
         todo: 'Still to do:'
+      refund_requests:
+        all: All
+        already_decided: This request has already been decided.
+        already_pending: There is already a refund request waiting on this order.
+        amount_hint: Leave empty to ask for everything that can be given back.
+        amount_invalid: That amount is more than can still be given back, or is not
+          positive.
+        amount_label: Amount to ask for
+        approve: Approve and give back
+        approved_amount: 'Approved: %{amount}'
+        approved_hint: Leave empty to give back what was asked for (or everything
+          possible).
+        approved_label: Amount to give back
+        ask_link: Ask for a refund
+        asked: Asked for
+        decided: Decision saved. The buyer has been told.
+        decline: Decline
+        decline_needs_note: Explain why the request is declined so the buyer can read
+          it.
+        details_label: Anything the seller should know
+        everything: Everything possible
+        heading: Refund requests
+        new_intro: Tell the seller why you want money back. They review it and answer
+          you here. Only payments the seller handles themselves, such as cash, cheque,
+          e-Transfer or store credit, can be asked for this way.
+        new_title: Ask for a refund on order %{number}
+        none: There are no refund requests.
+        order_link: Order
+        queue_intro: Buyers asking for money back on what this platform sells. Open
+          one to approve it, approve part of it or decline it.
+        queue_link: Refund requests
+        queue_title: Refund requests
+        reason_label: Reason
+        reasons:
+          cancelled_event: The event was cancelled
+          duplicate: I paid twice
+          error: There was a mistake
+          other: Something else
+          requested_by_buyer: I changed my mind
+        refundable: Up to %{amount} can still be given back.
+        reply_hint: The buyer reads this. Required when you decline.
+        reply_label: Reply to the buyer
+        sent: Your refund request was sent. You will be told what the seller decides.
+        show_title: Refund request for order %{number}
+        statuses:
+          approved: Approved
+          cancelled: Withdrawn
+          declined: Declined
+          partially_approved: Partly approved
+          pending: Waiting
+        submit: Send request
+        withdraw: Withdraw request
+        withdrawn: Your refund request was withdrawn.
       requirements:
         add: Add
         add_title: Add a requirement
@@ -6183,6 +6247,7 @@ en:
         a plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
+      already_pending: There is already a refund request waiting on this order.
       blank: can't be blank
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
@@ -6224,6 +6289,9 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
+      not_the_buyer: can only be made by the buyer of the order
+      nothing_to_give_back: There is nothing on this order that can be given back
+        here.
       odd: must be odd
       one_time_single: must be 1 for a one-time price
       other_than: must be other than %{count}

@@ -1,0 +1,48 @@
+{
+  "name": "billing_refund_request_decide",
+  "device": "mobile",
+  "url": "/en/billing/refund_requests/febfc070-f501-46cf-803e-fcc77fa97514",
+  "title": "Refund request for order BT-FM7MLHEY | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_refund_requests",
+  "flow": "billing_refund_request_decide",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_refund_requests_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-refund-decision-form",
+      "title": "Decide",
+      "bullets": [
+        "Approve all, give back part, or decline with a reply the buyer reads."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 615.78125,
+        "width": 461.0,
+        "height": 403.0,
+        "right": 473.0,
+        "bottom": 1018.78125,
+        "center_x": 242.5,
+        "center_y": 817.28125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 615.78125,
+        "width": 461.0,
+        "height": 403.0,
+        "right": 473.0,
+        "bottom": 1018.78125,
+        "center_x": 242.5,
+        "center_y": 817.28125
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 411.78,
+        "width": 270.0,
+        "height": 184,
+        "score": 615.78125
+      }
+    }
+  ]
+}

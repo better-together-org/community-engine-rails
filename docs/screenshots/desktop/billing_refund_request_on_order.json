@@ -1,0 +1,48 @@
+{
+  "name": "billing_refund_request_on_order",
+  "device": "desktop",
+  "url": "/en/billing/orders/14c0648f-e58d-4055-b608-a6f2803f972b",
+  "title": "Order BT-RDZZWHDL | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "billing_refund_requests",
+  "flow": "billing_refund_request_on_order",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_refund_requests_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-order-refund-requests",
+      "title": "Refund requests",
+      "bullets": [
+        "The request, where it stands, and the seller's reply once there is one."
+      ],
+      "target": {
+        "x": 64.5,
+        "y": 1126.0,
+        "width": 1296.0,
+        "height": 114.0,
+        "right": 1360.5,
+        "bottom": 1240.0,
+        "center_x": 712.5,
+        "center_y": 1183.0
+      },
+      "avoid": {
+        "x": 64.5,
+        "y": 1126.0,
+        "width": 1296.0,
+        "height": 114.0,
+        "right": 1360.5,
+        "bottom": 1240.0,
+        "center_x": 712.5,
+        "center_y": 1183.0
+      },
+      "placement": {
+        "side": "above",
+        "x": 522.5,
+        "y": 948.0,
+        "width": 380,
+        "height": 158,
+        "score": 1126.0
+      }
+    }
+  ]
+}
