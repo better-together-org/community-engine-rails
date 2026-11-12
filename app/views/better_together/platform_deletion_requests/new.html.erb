@@ -10,7 +10,7 @@
       <p class="mb-2"><%= t("#{t_scope}.pending", date: l(pending.requested_at, format: :long)) %></p>
       <%= button_to t("#{t_scope}.cancel"), platform_deletion_request_path(pending, locale: I18n.locale),
                     method: :delete, id: 'cancel-platform-deletion-request-btn',
-                    class: 'btn btn-sm btn-outline-secondary' %>
+                    class: 'btn btn-sm btn-outline-dark' %>
     </div>
   <% else %>
     <%= form_with model: @platform_deletion_request, url: platform_deletion_requests_path(locale: I18n.locale),

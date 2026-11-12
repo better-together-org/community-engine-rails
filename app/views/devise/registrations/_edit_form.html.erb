@@ -71,7 +71,7 @@
               <p class="mb-2"><%= t('better_together.platform_deletion_requests.last_steward_notice') %></p>
               <%= link_to t('better_together.platform_deletion_requests.go_to_form'),
                           new_platform_deletion_request_path(locale: I18n.locale),
-                          id: 'platform-deletion-request-link', class: 'btn btn-outline-danger btn-sm' %>
+                          id: 'platform-deletion-request-link', class: 'btn btn-danger btn-sm' %>
             </div>
           <% else %>
             <%= form_with url: person_deletion_requests_path(locale: I18n.locale), method: :post, local: true, id: "person-deletion-request-form" do |deletion_form| %>
