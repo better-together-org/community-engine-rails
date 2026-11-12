@@ -38,9 +38,21 @@ module BetterTogether
       }
     ].freeze
 
+    # The named area of the current platform, then the host platform's, then an unassigned legacy
+    # area. It never picks another tenant's area, which a bare identifier lookup could.
+    def navigation_area_for(identifier)
+      areas = ::BetterTogether::NavigationArea.visible.where(identifier:)
+      platform_ids = [Current.platform&.id, ::BetterTogether::Platform.find_by(host: true)&.id].compact.uniq
+      platform_ids.each do |platform_id|
+        area = areas.find_by(platform_id:)
+        return area if area
+      end
+      areas.find_by(platform_id: nil)
+    end
+
     def better_together_nav_area
   # rubocop:todo Layout/IndentationWidth
-  @better_together_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'better-together')
+  @better_together_nav_area ||= navigation_area_for('better-together')
       # rubocop:enable Layout/IndentationWidth
     end
 
@@ -104,7 +116,7 @@ module BetterTogether
     end
 
     def platform_host_nav_area
-      @platform_host_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-host')
+      @platform_host_nav_area ||= navigation_area_for('platform-host')
     end
 
     # Retrieves navigation items for the admin area in the platform header.
@@ -181,7 +193,7 @@ module BetterTogether
     end
 
     def platform_footer_nav_area
-      @platform_footer_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-footer')
+      @platform_footer_nav_area ||= navigation_area_for('platform-footer')
     end
 
     # Retrieves navigation items for the mailer footer.
@@ -210,7 +222,7 @@ module BetterTogether
     end
 
     def platform_header_nav_area
-      @platform_header_nav_area ||= ::BetterTogether::NavigationArea.visible.find_by(identifier: 'platform-header')
+      @platform_header_nav_area ||= navigation_area_for('platform-header')
     end
 
     # Retrieves navigation items for the platform header.
