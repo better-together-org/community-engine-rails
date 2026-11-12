@@ -147,7 +147,7 @@ RSpec.describe 'Agent credentials on the REST API', :no_auth do
     it 'rejects a credential used on a host that resolves to a different platform' do
       get '/api/v1/webhook_endpoints', headers: agent_headers
 
-      expect(response).to have_http_status(:forbidden)
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 

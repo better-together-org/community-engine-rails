@@ -74,9 +74,15 @@ module BetterTogether
                              end
 
         token = Doorkeeper::OAuth::Token.authenticate(doorkeeper_request, :from_bearer_authorization)
-        token if token&.accessible? && token.acceptable?('mcp_access')
+        token if usable_mcp_token?(token)
       end
       private_class_method :doorkeeper_token_from
+
+      # Accessible, carries mcp_access, and was issued for the platform serving this request.
+      def self.usable_mcp_token?(token)
+        token&.accessible? && token.acceptable?('mcp_access') && token.application&.usable_on?(Current.platform)
+      end
+      private_class_method :usable_mcp_token?
 
       def self.context_for_owner(token)
         return nil unless token
