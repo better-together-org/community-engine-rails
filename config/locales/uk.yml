@@ -818,6 +818,8 @@ uk:
         pending: очікує
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: Ви дочитали до кінця. Тепер можна позначити прапорець, щоб
+        прийняти.
       show:
         title: Угода
       status:

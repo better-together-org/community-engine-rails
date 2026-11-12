@@ -1,0 +1,14 @@
+---
+title: Box unlocked after reading
+audience:
+- buyer
+journey_step: As a buyer using only the keyboard, I close the reader and tick the
+  box it unlocked.
+callouts:
+- :id: unlocked_box
+  :title: Unlocked and next in line
+  :description: Focus returned to the link, so one Tab reaches the box.
+accessibility_notes: Reading to the end is announced through a polite status message;
+  focus is never moved without the buyer acting.
+slug: billing_agreement_reader_unlocked
+device: desktop

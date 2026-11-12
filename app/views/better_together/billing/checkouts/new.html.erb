@@ -111,13 +111,14 @@
             <p class="text-body-secondary"><%= t('better_together.billing.checkout.review_intro') %></p>
             <% @gate.agreements.each do |agreement| %>
               <div class="mb-3 border-bottom pb-3" id="<%= dom_id(agreement, :review) %>">
-                <h2 class="h6"><%= agreement.title %></h2>
+                <h2 class="h6" id="<%= dom_id(agreement, :title) %>"><%= agreement.title %></h2>
                 <% summary_id = dom_id(agreement, :summary) %>
                 <p class="small text-body-secondary mb-1" id="<%= summary_id %>"><%= agreement.description %></p>
                 <%# The shared agreement modal (layouts/better_together/_agreement_modal_shell). The box stays locked until the buyer has read to the end. %>
                 <%= link_to t('better_together.billing.checkout.view_agreement'), agreement_path(agreement, locale: I18n.locale),
                             class: 'agreement-modal-link', role: 'button', id: "billing-agreement-view-#{agreement.identifier}",
-                            data: { agreement_identifier: agreement.identifier } %>
+                            aria: { haspopup: 'dialog', describedby: "#{dom_id(agreement, :title)} #{summary_id}" },
+                            data: { agreement_identifier: agreement.identifier, agreement_title: agreement.title } %>
                 <% if @gate.missing.include?(agreement) %>
                   <div class="form-check mt-2">
                     <%# A box ticked before an error stays ticked and unlocked: the buyer already read that agreement. %>

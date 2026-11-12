@@ -834,6 +834,7 @@ es:
         pending: Pendiente
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: Has llegado al final. Ahora puedes marcar la casilla para aceptar.
       show:
         title: Acuerdo
       status:

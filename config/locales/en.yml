@@ -839,6 +839,7 @@ en:
         pending: pending
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: You have read to the end. You can now tick the box to accept.
       show:
         title: Agreement
       status:

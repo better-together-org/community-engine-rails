@@ -834,6 +834,8 @@ fr:
         pending: en attente
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: Vous êtes arrivé à la fin. Vous pouvez maintenant cocher la
+        case pour accepter.
       show:
         title: Accord
       status:
