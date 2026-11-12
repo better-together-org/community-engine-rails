@@ -31,13 +31,14 @@ Phase 1
 9. The new split accounts get a random password, a reset email, and a new person with a suffixed identifier. Authored content stays with the original account.
 
 10. No same-email note on the sign up page (P1-2). Platforms are separately branded with no visible link between them, so sign up and sign in are expected to be single platform. Dropped by decision.
+11. No platform identity cue in the header (P1-8). Platform branding already shows where a person is. Dropped by decision.
 
 ## Uncertainties and gaps
 
 - Data split touches real user rows. Run the dry run, review it, snapshot the database, rehearse on a copy of production data. It has not been run on real data. Authored content (posts, events, messages) is not re-pointed; decide per content type.
 - DNS rebinding between the issuer check and the connection remains a small window.
 - Not implemented from phase 0: refused redemption audit event, search and blob fallbacks, navigation lookup and short link policy scoping (phase 2).
-- Not implemented from phase 1: platform identity cue in the header (P1-8), host staff support access (P1-7), a leave platform screen (only the service exists). Each view change needs screenshots, DOM ids and a DOM contract spec.
+- Not implemented from phase 1: host staff support access (P1-7), a leave platform screen (only the service exists). Each view change needs screenshots, DOM ids and a DOM contract spec.
 - Screenshots for views are not produced because no view was changed in this branch. Schema diagrams were regenerated with `bin/export_schema_diagrams`.
 - `spec/requests/better_together/event_invitations_spec.rb:124` was already failing before this work.
 - The Postgres test container can segfault under load; wait for `pg_isready` and rerun.
