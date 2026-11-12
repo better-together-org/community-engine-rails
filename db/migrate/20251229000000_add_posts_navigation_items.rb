@@ -3,6 +3,8 @@
 # Adds posts navigation items to header and host dropdown
 class AddPostsNavigationItems < ActiveRecord::Migration[7.2]
   def up
+    return if fresh_install?
+
     puts 'Adding posts navigation items...'
 
     header_area = ensure_navigation_area(
@@ -71,6 +73,13 @@ class AddPostsNavigationItems < ActiveRecord::Migration[7.2]
   end
 
   private
+
+  # An empty database (migrated from zero) has no navigation to extend; NavigationBuilder
+  # seeds these items during setup, and the app models need later columns anyway.
+  def fresh_install?
+    !table_exists?(:better_together_navigation_areas) ||
+      select_value('SELECT 1 FROM better_together_navigation_areas LIMIT 1').nil?
+  end
 
   def ensure_navigation_area(identifier:, name:, slug:)
     BetterTogether::NavigationArea.find_or_initialize_by(identifier:).tap do |area|
