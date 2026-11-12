@@ -246,6 +246,10 @@ module BetterTogether
     end
 
     # The platform this sign-in is for, from the requested domain (the same domain the provider gate checked).
+    def membership_platform
+      local_platform || ::Current.platform
+    end
+
     def local_platform
       @local_platform ||= BetterTogether::OmniauthFullHost.domain_for(request.env)&.platform
     end
@@ -267,6 +271,7 @@ module BetterTogether
         current_user:,
         invitations:,
         local_platform:,
+        membership_platform:,
         identity_platform: identity_credentials&.identity_platform,
         trust_verified_email: identity_credentials&.trust_verified_email || false
       )

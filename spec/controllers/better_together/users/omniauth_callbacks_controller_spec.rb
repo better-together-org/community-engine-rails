@@ -185,6 +185,7 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
 
     context 'when PersonPlatformIntegration already exists' do
       let!(:existing_user) { create(:user, email: oauth_email) }
+
       let!(:existing_integration) do
         create(:person_platform_integration,
                user: existing_user,
@@ -223,6 +224,13 @@ RSpec.describe BetterTogether::Users::OmniauthCallbacksController, :no_auth, :om
 
     context 'when user exists with same email but no integration' do
       let!(:existing_user) { create(:user, email: oauth_email) }
+
+      # The middleware sets Current.platform in production; controller specs bypass it
+      before do
+        host = configure_host_platform
+        join_platform_community(existing_user, host)
+        Current.platform = host
+      end
 
       it 'does not create a new user' do
         expect do

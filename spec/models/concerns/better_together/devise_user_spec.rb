@@ -146,7 +146,8 @@ RSpec.describe BetterTogether::DeviseUser do
       end
 
       context 'and user exists with same email' do # rubocop:todo RSpec/NestedGroups
-        let!(:existing_user) { create(:user, email: 'test@example.com') }
+        let!(:existing_user) { join_platform_community(create(:user, email: 'test@example.com'), local_platform) }
+        let(:local_platform) { configure_host_platform }
 
         it 'assigns integration to existing user' do
           allow(BetterTogether::PersonPlatformIntegration).to receive(:update_or_initialize)
@@ -155,7 +156,8 @@ RSpec.describe BetterTogether::DeviseUser do
           result = user_class.from_omniauth(
             person_platform_integration: nil,
             auth: github_auth_hash,
-            current_user: nil
+            current_user: nil,
+            local_platform:
           )
 
           expect(result).to eq(existing_user)
@@ -924,7 +926,8 @@ RSpec.describe BetterTogether::DeviseUser do
     context 'when no current_user (OAuth sign-in)' do
       it 'allows OAuth sign-in for existing user by email match' do
         # Ensure user_b exists in database (might already exist from other tests)
-        user_b
+        local_platform = configure_host_platform
+        join_platform_community(user_b, local_platform)
 
         oauth_auth = OmniAuth::AuthHash.new({
                                               provider: 'github',
@@ -962,7 +965,8 @@ RSpec.describe BetterTogether::DeviseUser do
         result = user_class.from_omniauth(
           person_platform_integration: new_integration,
           auth: oauth_auth,
-          current_user: nil
+          current_user: nil,
+          local_platform:
         )
 
         expect(result).to eq(user_b)

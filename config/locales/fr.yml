@@ -3189,6 +3189,9 @@ fr:
         thanks: Merci
     person_platform_integrations:
       create:
+        account_not_on_platform: Nous n'avons pas pu associer ce compte %{provider}
+          à un compte existant sur cette plateforme. Connectez-vous avec votre méthode
+          habituelle ou demandez de l'aide à une personne organisatrice de la plateforme.
         already_connected: Vous avez déjà un compte %{provider} connecté. Veuillez
           d'abord le déconnecter si vous souhaitez connecter un compte différent.
         email_mismatch: 'Impossible de connecter le compte %{provider} : l''e-mail

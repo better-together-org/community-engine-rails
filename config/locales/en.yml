@@ -3128,6 +3128,9 @@ en:
         thanks: Thank you
     person_platform_integrations:
       create:
+        account_not_on_platform: We could not link this %{provider} account to an
+          existing account on this platform. Sign in with your existing method, or
+          ask a platform organizer for help.
         already_connected: You already have a %{provider} account connected. Please
           disconnect it first if you want to connect a different account.
         email_mismatch: 'Cannot connect %{provider} account: the email %{email} belongs

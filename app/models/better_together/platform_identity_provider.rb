@@ -141,8 +141,16 @@ module BetterTogether
     def issuer_is_safe_https_url
       errors.add(:issuer, :invalid) unless URI.parse(issuer.to_s).is_a?(URI::HTTPS)
       BetterTogether::SafeFederationUrlValidator.new(attributes: [:issuer]).validate_each(self, :issuer, issuer)
+      issuer_must_resolve_publicly
     rescue URI::InvalidURIError
       errors.add(:issuer, :invalid)
+    end
+
+    # Resolve DNS too: a name pointing at a private address is as unsafe as a private literal.
+    def issuer_must_resolve_publicly
+      return if errors.include?(:issuer) || BetterTogether::SafeOutboundHost.public_host?(URI.parse(issuer).host)
+
+      errors.add(:issuer, :private_ip, message: I18n.t('better_together.validators.safe_federation_url.private_ip'))
     end
 
     def provider_platform_is_external

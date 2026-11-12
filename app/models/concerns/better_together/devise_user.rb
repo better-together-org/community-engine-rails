@@ -16,7 +16,9 @@ module BetterTogether
 
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
       def self.from_omniauth(person_platform_integration:, auth:, current_user:, invitations: {}, local_platform: nil,
-                             identity_platform: nil, trust_verified_email: false)
+                             identity_platform: nil, trust_verified_email: false,
+                             membership_platform: nil)
+        membership_platform ||= local_platform
         person_platform_integration = PersonPlatformIntegration.update_or_initialize(person_platform_integration, auth,
                                                                                      platform: identity_platform,
                                                                                      local_platform:)
@@ -61,6 +63,14 @@ module BetterTogether
         if user.present? && current_user.blank? && !verified
           raise ArgumentError,
                 I18n.t('better_together.person_platform_integrations.create.unverified_email_collision',
+                       provider: auth.provider.to_s.titleize)
+        end
+
+        # An email match may only link accounts that belong to this platform; a user known only
+        # elsewhere (for example behind another tenant's issuer) is never reachable from here.
+        if user.present? && current_user.blank? && !member_of_platform?(user, membership_platform)
+          raise ArgumentError,
+                I18n.t('better_together.person_platform_integrations.create.account_not_on_platform',
                        provider: auth.provider.to_s.titleize)
         end
 
@@ -145,6 +155,18 @@ module BetterTogether
         provider.verified_email?(auth)
       end
       private_class_method :provider_verified_email?
+
+      def self.member_of_platform?(user, platform)
+        return false if platform.blank? || user.person.blank?
+
+        person_id = user.person.id
+        return true if platform.person_platform_memberships.exists?(member_id: person_id)
+
+        # Open sign-up joins the platform's community rather than the platform itself
+        platform.community.present? &&
+          platform.community.person_community_memberships.exists?(member_id: person_id)
+      end
+      private_class_method :member_of_platform?
 
       def self.rotate_password_for_unconfirmed(user)
         return if user.confirmed?

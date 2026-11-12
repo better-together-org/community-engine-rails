@@ -5,6 +5,13 @@ require 'rails_helper'
 RSpec.describe BetterTogether::PlatformIdentityProvider, '#issuer' do
   let(:platform) { create(:better_together_platform) }
 
+  before do
+    allow(Resolv).to receive(:getaddresses).and_call_original
+    allow(Resolv).to receive(:getaddresses).with('idp.example.org').and_return(['93.184.216.34'])
+    allow(Resolv).to receive(:getaddresses).with('internal.example.org').and_return(['10.1.2.3'])
+    allow(Resolv).to receive(:getaddresses).with('rebind.example.org').and_return(['93.184.216.34', '169.254.169.254'])
+  end
+
   def build_oidc(issuer)
     described_class.new(platform:, strategy: 'openid_connect', client_id: 'cid', client_secret: 'sec', issuer:)
   end
@@ -26,6 +33,19 @@ RSpec.describe BetterTogether::PlatformIdentityProvider, '#issuer' do
 
   it 'rejects an issuer on a private address' do
     expect(build_oidc('https://10.0.0.5')).not_to be_valid
+  end
+
+  it 'rejects an issuer hostname that resolves to a private address' do
+    expect(build_oidc('https://internal.example.org')).not_to be_valid
+  end
+
+  it 'rejects an issuer hostname with any link-local address' do
+    expect(build_oidc('https://rebind.example.org')).not_to be_valid
+  end
+
+  it 'rejects an issuer hostname that does not resolve' do
+    allow(Resolv).to receive(:getaddresses).with('nowhere.example.org').and_return([])
+    expect(build_oidc('https://nowhere.example.org')).not_to be_valid
   end
 
   it 'does not require an issuer for other strategies' do

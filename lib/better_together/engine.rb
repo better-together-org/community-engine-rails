@@ -14,6 +14,7 @@ require 'better_together/identity_provider_credentials'
 require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
 require 'better_together/profiling'
+require 'better_together/safe_outbound_host'
 require 'better_together/storage_resolver'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
@@ -124,6 +125,16 @@ module BetterTogether
     # Insert PlatformContextMiddleware early in the stack so Current.platform
     # is resolved for all requests — web, JSONAPI, and MCP — before any
     # controller action runs.
+    # Every OpenID Connect request (discovery, JWKS, token) checks that its host is public.
+    initializer 'better_together.openid_connect_ssrf_guard' do
+      if defined?(::OpenIDConnect) && ::OpenIDConnect.respond_to?(:http_config)
+        ::OpenIDConnect.http_config do |config|
+          config.request :url_encoded if config.respond_to?(:request)
+          config.use BetterTogether::SafeOutboundHost::Guard
+        end
+      end
+    end
+
     initializer 'better_together.platform_context_middleware' do |app|
       require root.join('app/middleware/better_together/platform_context_middleware').to_s
       app.middleware.use BetterTogether::PlatformContextMiddleware
