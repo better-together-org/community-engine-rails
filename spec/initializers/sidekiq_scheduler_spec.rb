@@ -171,6 +171,32 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
     end
   end
 
+  describe 'billing jobs when billing is switched off' do
+    let(:registered) do
+      captured = nil
+      allow(Sidekiq).to receive(:server?).and_return(true)
+      without_partial_double_verification do
+        allow(Sidekiq::Scheduler).to receive(:reload_schedule!)
+        allow(Sidekiq).to receive(:schedule=) { |value| captured = value }
+      end
+      load initializer_path
+      captured
+    end
+
+    it 'registers no billing job and keeps the other jobs' do
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+      expect(registered.keys.grep(/\Abetter_together:billing:/)).to be_empty
+      expect(registered.keys).to include('better_together:event_reminder_scan_hourly')
+    end
+
+    it 'registers the billing jobs when the host switched billing on' do
+      allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(true)
+
+      expect(registered.keys).to include('better_together:billing:expire_orders_hourly')
+    end
+  end
+
   describe 'host app override capability' do
     let(:host_schedule_path) { Rails.root.join('tmp', 'spec', "sidekiq_scheduler_#{SecureRandom.hex(6)}.yml") }
 

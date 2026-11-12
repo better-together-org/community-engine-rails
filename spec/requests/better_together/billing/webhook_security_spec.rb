@@ -13,6 +13,7 @@ RSpec.describe 'Billing webhook security' do # rubocop:disable RSpec/DescribeCla
   include ActiveJob::TestHelper
 
   include_context 'with orders fixtures'
+  include_context 'with billing switched on'
 
   let(:processors) { %w[stripe braintree paddle_billing paddle_classic lemon_squeezy] }
   let(:forged_headers) do

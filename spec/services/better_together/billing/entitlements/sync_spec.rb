@@ -6,6 +6,7 @@ require 'rails_helper'
 # the lapse, and returns when paid again.
 RSpec.describe BetterTogether::Billing::Entitlements::Sync do
   include_context 'with entitlement fixtures'
+  include_context 'with billing switched on'
 
   let(:period_end) { Time.utc(2027, 2, 28, 15) }
 
