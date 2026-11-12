@@ -685,7 +685,7 @@ module BetterTogether
                 identifier: 'billing-hosted-billing',
                 title_en: 'Hosted Billing',
                 slug_en: 'billing-hosted-billing',
-                position: 15,
+                position: 22,
                 item_type: 'link',
                 route_name: 'billing_hosted_billing_url',
                 privacy: 'private',
