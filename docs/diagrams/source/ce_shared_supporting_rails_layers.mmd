@@ -178,6 +178,14 @@ classDiagram
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
     }
+    class BetterTogether__Billing__HostedBillingsController["Billing::HostedBillingsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
+    class BetterTogether__Billing__HostedPlatformsController["Billing::HostedPlatformsController"] {
+      <<Controller>>
+      concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+    }
     class BetterTogether__Billing__HubsController["Billing::HubsController"] {
       <<Controller>>
       concerns: Billing::OwnerScoped, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
@@ -450,6 +458,11 @@ classDiagram
     class BetterTogether__Billing__DefaultAddress["Billing::DefaultAddress"] {
       <<Model>>
       table: better_together_billing_default_addresses
+      concerns: Billing::PlatformBound
+    }
+    class BetterTogether__Billing__HostedAccount["Billing::HostedAccount"] {
+      <<Model>>
+      table: better_together_billing_hosted_accounts
       concerns: Billing::PlatformBound
     }
     class BetterTogether__Billing__OrderDocument["Billing::OrderDocument"] {
@@ -766,6 +779,8 @@ classDiagram
   BetterTogether__Api__V1__UploadsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Api__V1__WebhookEndpointsController --|> BetterTogether__Api__ApplicationController
   BetterTogether__Billing__CatalogController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HostedBillingsController --|> BetterTogether__ApplicationController
+  BetterTogether__Billing__HostedPlatformsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__HubsController --|> BetterTogether__ApplicationController
   BetterTogether__Billing__OrderDocumentsController ..> BetterTogether__Billing__OrderDocument : manages
   BetterTogether__Billing__OrderDocumentsController --|> BetterTogether__ApplicationController
@@ -835,6 +850,8 @@ classDiagram
   BetterTogether__Billing__DefaultAddress --> BetterTogether__Platform : platform
   BetterTogether__Billing__DefaultAddress --> BetterTogether__Person : person
   BetterTogether__Billing__DefaultAddress --> BetterTogether__Address : address
+  BetterTogether__Billing__HostedAccount --> BetterTogether__Platform : platform
+  BetterTogether__Billing__HostedAccount --> BetterTogether__Person : suspended_by
   BetterTogether__Billing__OrderDocument --> BetterTogether__Platform : platform
   BetterTogether__Billing__OrderDocument --> BetterTogether__Billing__Order : order
   BetterTogether__Billing__OrderDocument --> BetterTogether__Upload : upload
