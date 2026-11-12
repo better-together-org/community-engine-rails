@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T17:52:36Z",
+  "generated_at": "2026-11-12T05:12:37Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -722,9 +722,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug",
             "PresenceValidator: email",
-            "UniquenessValidator: email (case_sensitive=false)",
             "PresenceValidator: email (if=:email_required?)",
-            "UniquenessValidator: email (allow_blank=true, case_sensitive=true, if=:devise_will_save_change_to_email?)"
+            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)",
+            "UniquenessValidator: email (case_sensitive=false, scope=:platform_id)"
           ],
           "belongs_to": [
             {
@@ -2416,9 +2416,9 @@
             "PresenceValidator: slug",
             "UniquenessValidator: slug",
             "PresenceValidator: email",
-            "UniquenessValidator: email (case_sensitive=false)",
             "PresenceValidator: email (if=:email_required?)",
-            "UniquenessValidator: email (allow_blank=true, case_sensitive=true, if=:devise_will_save_change_to_email?)"
+            "FormatValidator: email (with=/\\A[^@\\s]+@[^@\\s]+\\z/, allow_blank=true, if=:devise_will_save_change_to_email?)",
+            "UniquenessValidator: email (case_sensitive=false, scope=:platform_id)"
           ],
           "belongs_to": [
             {

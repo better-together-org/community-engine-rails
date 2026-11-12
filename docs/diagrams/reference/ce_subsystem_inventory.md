@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-11T17:52:36Z`.
+Generated from live Rails reflections at `2026-11-12T05:12:37Z`.
 
 ## Identity, access, and memberships
 
@@ -39,7 +39,7 @@ People, users, identifications, invitations, roles, memberships, and privacy/exp
 | ResourcePermission | `better_together_resource_permissions` | `platform_id` (uuid FK)<br>`action` (string)<br>`identifier` (string)<br>`resource_type` (string)<br>`target` (string)<br>`protected` (boolean) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>ExclusionValidator: friendly_id (in=dynamic)<br>PresenceValidator: slug<br>UniquenessValidator: slug (if=dynamic, scope=:platform_id)<br>UniquenessValidator: slug (unless=dynamic)<br>UniquenessValidator: slug | `BetterTogetherId`<br>`FriendlySlug`<br>`Identifier`<br>`PlatformScoped`<br>`Positioned`<br>`Protected` | `platform` -> `Platform` (platform_network) |
 | Role | `better_together_roles` | `platform_id` (uuid FK)<br>`identifier` (string)<br>`resource_type` (string)<br>`type` (string)<br>`protected` (boolean)<br>`position` (integer) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>ExclusionValidator: friendly_id (in=dynamic)<br>PresenceValidator: slug<br>UniquenessValidator: slug (if=dynamic, scope=:platform_id)<br>UniquenessValidator: slug (unless=dynamic)<br>UniquenessValidator: slug | `BetterTogetherId`<br>`FriendlySlug`<br>`Identifier`<br>`PlatformScoped`<br>`Positioned`<br>`Protected` | `platform` -> `Platform` (platform_network) |
 | RoleResourcePermission | `better_together_role_resource_permissions` | `platform_id` (uuid FK)<br>`resource_permission_id` (uuid FK)<br>`role_id` (uuid FK) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: role<br>PresenceValidator: resource_permission<br>UniquenessValidator: role_id (scope=:resource_permission_id) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
-| User | `better_together_users` | `platform_id` (uuid FK)<br>`confirmation_token` (string)<br>`current_sign_in_ip` (string)<br>`email` (string)<br>`encrypted_password` (string)<br>`last_sign_in_ip` (string)<br>STI variants: `OauthUser` | PresenceValidator: platform (unless=:platform_presence_optional?)<br>ExclusionValidator: friendly_id (in=dynamic)<br>PresenceValidator: slug<br>UniquenessValidator: slug<br>PresenceValidator: email<br>UniquenessValidator: email (case_sensitive=false) | `BetterTogetherId`<br>`DeviseUser`<br>`FriendlySlug`<br>`PlatformScoped`<br>`Seedable`<br>`Translatable` | `platform` -> `Platform` (platform_network) |
+| User | `better_together_users` | `platform_id` (uuid FK)<br>`confirmation_token` (string)<br>`current_sign_in_ip` (string)<br>`email` (string)<br>`encrypted_password` (string)<br>`last_sign_in_ip` (string)<br>STI variants: `OauthUser` | PresenceValidator: platform (unless=:platform_presence_optional?)<br>ExclusionValidator: friendly_id (in=dynamic)<br>PresenceValidator: slug<br>UniquenessValidator: slug<br>PresenceValidator: email<br>PresenceValidator: email (if=:email_required?) | `BetterTogetherId`<br>`DeviseUser`<br>`FriendlySlug`<br>`PlatformScoped`<br>`Seedable`<br>`Translatable` | `platform` -> `Platform` (platform_network) |
 
 ### Controllers
 

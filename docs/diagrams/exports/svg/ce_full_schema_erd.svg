@@ -8336,7 +8336,9 @@
 <polygon fill="#e7e2dd" stroke="transparent" points="25679.48,-28277.77 25679.48,-28337.77 26232.48,-28337.77 26232.48,-28277.77 25679.48,-28277.77"/>
 <polygon fill="none" stroke="#29235c" points="25679.48,-28277.77 25679.48,-28337.77 26232.48,-28337.77 26232.48,-28277.77 25679.48,-28277.77"/>
 <text text-anchor="start" x="25690.48" y="-28297.97" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">platform_id &#160;&#160;&#160;</text>
-<text text-anchor="start" x="26161.02" y="-28298.97" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="26121.92" y="-28298.97" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">uuid</text>
+<text text-anchor="start" x="26182.39" y="-28298.97" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
+<text text-anchor="start" x="26191.28" y="-28298.97" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="none" stroke="#29235c" stroke-width="2" points="25677.98,-28276.77 25677.98,-29718.77 26232.98,-29718.77 26232.98,-28276.77 25677.98,-28276.77"/>
 </g>
 <!-- better_together_oauth_access_grants&#45;&gt;better_together_users -->
@@ -9450,7 +9452,7 @@
 <polygon fill="#e7e2dd" stroke="transparent" points="26477.62,-37468.28 26477.62,-37528.28 27272.62,-37528.28 27272.62,-37468.28 26477.62,-37468.28"/>
 <polygon fill="none" stroke="#29235c" points="26477.62,-37468.28 26477.62,-37528.28 27272.62,-37528.28 27272.62,-37468.28 26477.62,-37468.28"/>
 <text text-anchor="start" x="26488.62" y="-37488.48" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c">uid &#160;&#160;&#160;</text>
-<text text-anchor="start" x="27058.97" y="-37489.48" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar(50)</text>
+<text text-anchor="start" x="27041.18" y="-37489.48" font-family="Helvetica,sans-Serif" font-style="italic" font-size="32.00" fill="#29235c">varchar(255)</text>
 <text text-anchor="start" x="27222.53" y="-37489.48" font-family="Helvetica,sans-Serif" font-size="32.00" fill="#29235c"> </text>
 <text text-anchor="start" x="27231.42" y="-37489.48" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="32.00" fill="#29235c">(!)</text>
 <polygon fill="#e7e2dd" stroke="transparent" points="26477.62,-37408.28 26477.62,-37468.28 27272.62,-37468.28 27272.62,-37408.28 26477.62,-37408.28"/>
