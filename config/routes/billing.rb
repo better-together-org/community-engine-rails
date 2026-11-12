@@ -101,6 +101,9 @@ concern :billing_subscriptions do
         patch :cancel
         patch :resume
         post :accept_agreements
+        # Choose another plan from the next period, or take the choice back.
+        post :change_plan
+        delete :change_plan, action: :withdraw_plan_change, as: :withdraw_plan_change
       end
     end
     resources :subscribers, only: %i[index show] do

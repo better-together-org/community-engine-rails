@@ -1942,6 +1942,27 @@ fr:
         period_waived: Couvert
         periods_caption: Chaque période de cet abonnement et sa facture
         periods_title: Périodes et factures
+        plan_change_intro: Choisissez un autre forfait. Il commence avec votre prochaine
+          période et votre prochaine facture sera pour le nouveau forfait. D'ici là,
+          rien ne change.
+        plan_change_label: Nouveau forfait
+        plan_change_none: Aucun autre forfait n'est disponible pour le moment.
+        plan_change_pending: Vous passerez à %{plan} au début de votre prochaine période
+          (après le %{date}).
+        plan_change_refused:
+          different_schedule: Ce forfait est facturé selon un autre calendrier ou
+            une autre devise, vous ne pouvez donc pas y passer d'ici.
+          not_available: Ce forfait n'est pas disponible.
+          not_running: Cet abonnement ne peut pas changer de forfait pour le moment.
+          over_limit: Vous utilisez plus que ce que permet ce forfait. Libérez d'abord
+            de l'espace, puis réessayez.
+          same_plan: Vous avez déjà ce forfait.
+        plan_change_saved: Enregistré. Votre forfait change au début de la prochaine
+          période.
+        plan_change_submit: Changer à partir de la prochaine période
+        plan_change_title: Changer de forfait
+        plan_change_withdraw: Garder mon forfait actuel
+        plan_change_withdrawn: Votre changement de forfait a été annulé.
         resume: Conserver mon abonnement
         resumed: Votre abonnement continuera.
         review_intro: Les conditions de cet abonnement ont changé. Acceptez-les et

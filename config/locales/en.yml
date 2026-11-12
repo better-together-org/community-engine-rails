@@ -1898,6 +1898,25 @@ en:
         period_waived: Covered
         periods_caption: Each period of this subscription and its invoice
         periods_title: Periods and invoices
+        plan_change_intro: Pick another plan. It starts with your next period, and
+          your next invoice is for the new plan. Until then nothing changes.
+        plan_change_label: New plan
+        plan_change_none: There is no other plan you can move to right now.
+        plan_change_pending: You will move to %{plan} when your next period starts
+          (after %{date}).
+        plan_change_refused:
+          different_schedule: That plan bills on a different schedule or currency,
+            so you cannot move to it from here.
+          not_available: That plan is not available.
+          not_running: This subscription cannot change plan right now.
+          over_limit: You are using more than that plan allows. Free some space first,
+            then try again.
+          same_plan: You are already on that plan.
+        plan_change_saved: Saved. Your plan changes when the next period starts.
+        plan_change_submit: Change from next period
+        plan_change_title: Change plan
+        plan_change_withdraw: Keep my current plan
+        plan_change_withdrawn: Your plan change was cancelled.
         resume: Keep my subscription
         resumed: Your subscription will continue.
         review_intro: The terms for this subscription changed. Accept them and we

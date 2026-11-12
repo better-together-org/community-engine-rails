@@ -19,6 +19,7 @@ module BetterTogether
       def show
         authorize @term
         @gate = agreement_gate if @term.periods.exists?(status: 'needs_agreement')
+        @plan_options = Subscriptions::ChangePlan.options(@term)
       end
 
       def cancel
@@ -35,6 +36,21 @@ module BetterTogether
         redirect_to billing_subscription_path(@term, locale: I18n.locale), alert: t('better_together.billing.subscriptions.cannot_resume')
       end
 
+      # Choose another plan from the next period.
+      def change_plan
+        authorize @term
+        Subscriptions::ChangePlan.request(term: @term, plan: billing_owner.billing_plans.sold_by_platform.find(params[:plan_id]))
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_saved')
+      rescue Subscriptions::ChangePlan::Refused => e
+        redirect_to show_path, alert: t("better_together.billing.subscriptions.plan_change_refused.#{e.code}")
+      end
+
+      def withdraw_plan_change
+        authorize @term, :change_plan?
+        Subscriptions::ChangePlan.withdraw(term: @term)
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_withdrawn')
+      end
+
       # The payer accepts the agreements that changed; the renewal invoice is made at once.
       def accept_agreements
         authorize @term
@@ -49,6 +65,8 @@ module BetterTogether
       end
 
       private
+
+      def show_path = billing_subscription_path(@term, locale: I18n.locale)
 
       def own_terms
         billing_owner.billing_subscription_terms.local

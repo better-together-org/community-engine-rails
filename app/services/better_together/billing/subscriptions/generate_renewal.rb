@@ -49,10 +49,13 @@ module BetterTogether
 
         def next_period
           sequence = (term.periods.last&.sequence || -1) + 1
-          return unless now >= term.period_start(sequence) - plan.renewal_lead_days.days
+          return unless due?(sequence)
 
+          ChangePlan.apply(term) if term.pending_plan_id
           term.periods.create!(period_attributes(sequence))
         end
+
+        def due?(sequence) = now >= term.period_start(sequence) - plan.renewal_lead_days.days
 
         def period_attributes(sequence)
           { platform_id: platform.id, sequence:, starts_at: term.period_start(sequence), ends_at: term.period_end(sequence) }

@@ -32,6 +32,35 @@
     <% end %>
   </div>
 
+  <% if @term.local? %>
+    <section id="subscription-plan-change" class="card mb-4" aria-labelledby="subscription-plan-change-title">
+      <div class="card-header"><strong id="subscription-plan-change-title"><%= t('better_together.billing.subscriptions.plan_change_title') %></strong></div>
+      <div class="card-body">
+        <% if @term.pending_plan %>
+          <p id="subscription-plan-change-pending">
+            <%= t('better_together.billing.subscriptions.plan_change_pending', plan: @term.pending_plan.name, date: l(subscription.current_period_end.to_date, format: :long)) %>
+          </p>
+          <%= button_to t('better_together.billing.subscriptions.plan_change_withdraw'), change_plan_billing_subscription_path(@term, locale: I18n.locale),
+                        method: :delete, id: 'subscription-plan-change-withdraw-btn', class: 'btn btn-outline-secondary' %>
+        <% elsif @plan_options.any? %>
+          <p class="text-body-secondary"><%= t('better_together.billing.subscriptions.plan_change_intro') %></p>
+          <%= form_with url: change_plan_billing_subscription_path(@term, locale: I18n.locale), method: :post, id: 'subscription-plan-change-form', class: 'row g-2' do %>
+            <div class="col-md-8">
+              <%= label_tag :plan_id, t('better_together.billing.subscriptions.plan_change_label'), class: 'form-label' %>
+              <%= select_tag :plan_id, options_for_select(@plan_options.map { |plan| ["#{plan.name} (#{billing_amount(plan.amount_cents, plan.currency)})", plan.id] }),
+                             id: 'subscription-plan-change-select', class: 'form-select' %>
+            </div>
+            <div class="col-md-4 align-self-end">
+              <%= submit_tag t('better_together.billing.subscriptions.plan_change_submit'), id: 'subscription-plan-change-btn', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        <% else %>
+          <p id="subscription-plan-change-none" class="text-body-secondary mb-0"><%= t('better_together.billing.subscriptions.plan_change_none') %></p>
+        <% end %>
+      </div>
+    </section>
+  <% end %>
+
   <% if @gate && @gate.missing.any? %>
     <section id="subscription-agreements" class="card mb-4" aria-labelledby="subscription-agreements-title">
       <div class="card-header"><strong id="subscription-agreements-title"><%= t('better_together.billing.subscriptions.review_title') %></strong></div>

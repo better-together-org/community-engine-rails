@@ -17,11 +17,13 @@ module BetterTogether
 
       belongs_to :pay_subscription, class_name: 'Pay::Subscription', optional: false
       belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', optional: false
+      # The plan the subscriber chose to move to when the next period starts (see Subscriptions::ChangePlan).
+      belongs_to :pending_plan, class_name: 'BetterTogether::Billing::Plan', optional: true
       belongs_to :beneficiary, polymorphic: true, optional: true
       has_many :periods, -> { order(:sequence) }, class_name: 'BetterTogether::Billing::SubscriptionPeriod', inverse_of: :term,
                                                   foreign_key: :subscription_term_id, dependent: :restrict_with_error
 
-      attr_readonly :pay_subscription_id, :plan_id, :payment_method
+      attr_readonly :pay_subscription_id, :payment_method
 
       validates :payment_method, presence: true
       validates :currency, inclusion: { in: Plan::SUPPORTED_CURRENCY_CODES }
@@ -29,6 +31,7 @@ module BetterTogether
       validates :anchor_sequence, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
       validates :pay_subscription_id, uniqueness: true
       validate :same_platform
+      validate :plan_only_changes_through_the_service, on: :update
       validate :beneficiary_allowed
 
       scope :local, -> { joins(:pay_subscription).where(pay_subscriptions: { type: 'Pay::Local::Subscription' }) }
@@ -56,6 +59,11 @@ module BetterTogether
       def grace_days = plan.grace_days
 
       private
+
+      # The plan a subscription follows changes only through Subscriptions::ChangePlan, never by a stray update.
+      def plan_only_changes_through_the_service
+        errors.add(:plan_id, :readonly) if plan_id_changed? && !Thread.current[:billing_plan_change]
+      end
 
       def same_platform
         errors.add(:platform, :platform_owner_mismatch) if plan && plan.platform_id != platform_id

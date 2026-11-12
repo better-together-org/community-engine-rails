@@ -1901,6 +1901,25 @@ es:
         period_waived: Cubierto
         periods_caption: Cada periodo de esta suscripción y su factura
         periods_title: Periodos y facturas
+        plan_change_intro: Elija otro plan. Empieza con su próximo periodo y su próxima
+          factura será del nuevo plan. Hasta entonces no cambia nada.
+        plan_change_label: Nuevo plan
+        plan_change_none: Ahora mismo no hay otro plan al que pueda pasar.
+        plan_change_pending: Pasará a %{plan} cuando empiece su próximo periodo (después
+          del %{date}).
+        plan_change_refused:
+          different_schedule: Ese plan se factura con otro calendario u otra moneda,
+            por lo que no puede pasar a él desde aquí.
+          not_available: Ese plan no está disponible.
+          not_running: Esta suscripción no puede cambiar de plan ahora.
+          over_limit: Está usando más de lo que permite ese plan. Libere espacio primero
+            y vuelva a intentarlo.
+          same_plan: Ya tiene ese plan.
+        plan_change_saved: Guardado. Su plan cambia cuando empiece el próximo periodo.
+        plan_change_submit: Cambiar desde el próximo periodo
+        plan_change_title: Cambiar de plan
+        plan_change_withdraw: Mantener mi plan actual
+        plan_change_withdrawn: Se canceló su cambio de plan.
         resume: Mantener mi suscripción
         resumed: Tu suscripción continuará.
         review_intro: Los términos de esta suscripción cambiaron. Acéptalos y haremos
