@@ -14,20 +14,18 @@ Phase 0
 
 Phase 1
 - `users.platform_id` NOT NULL with a foreign key; email unique per `(platform_id, lower(email))`; Devise lookups (sign in, confirmation, recovery, unlock, reset token) scoped to `Current.platform`; a Warden hook logs out a session that reaches another platform; OAuth linking searches only the current platform.
-- `UserPlatformSplitService` and `rake better_together:tenancy:split_users` (dry run unless `APPLY=1`).
+- Migrations backfill existing users, invitations and OAuth records with the host platform. No production account has access to several platforms, so there is nothing to split. Other platform rows are external (OAuth providers, federation).
 - The platform memberships controller accepts only members of that platform and platform roles.
 
 ## Decisions I made (please confirm or reverse)
 
 1. Fail closed for unknown hosts is on outside the test environment and off in tests (`BetterTogether.fail_closed_unknown_hosts`). A single non external platform install keeps the old fallback. The dummy app does not set `config.hosts`; host apps should.
-2. Legacy invitations with a NULL `platform_id` cannot be redeemed. They need a backfill or reissue.
-3. A legacy OAuth application with no platform is treated as belonging to the host.
+2. Invitations with a NULL `platform_id` are backfilled to the host platform by migration; any that remain NULL cannot be redeemed.
+3. OAuth applications, tokens and grants with no platform are backfilled to the host platform; the runtime fallback to the host is only defensive.
 4. A tenant application can still hold admin or MCP scopes if its owner manages that tenant platform; it only works on that platform.
 5. OAuth linking requires `user.platform_id` to equal the sign in platform.
-6. The membership guard also blocks people whose `people.platform_id` differs from the platform, which can affect pre-split data.
 7. JWTs issued before this release are refused (one hour lifetime).
-8. The migration backfills `users.platform_id` from the person's platform, else the host platform, and raises if any NULL remains.
-9. The new split accounts get a random password, a reset email, and a new person with a suffixed identifier. Authored content stays with the original account.
+8. The migration backfills `users.platform_id` with the host platform and raises if any NULL remains.
 
 10. No same-email note on the sign up page (P1-2). Platforms are separately branded with no visible link between them, so sign up and sign in are expected to be single platform. Dropped by decision.
 11. No platform identity cue in the header (P1-8). Platform branding already shows where a person is. Dropped by decision.
@@ -36,7 +34,6 @@ Phase 1
 
 ## Uncertainties and gaps
 
-- Data split touches real user rows. Run the dry run, review it, snapshot the database, rehearse on a copy of production data. It has not been run on real data. Authored content (posts, events, messages) is not re-pointed; decide per content type.
 - DNS rebinding between the issuer check and the connection remains a small window.
 - Not implemented from phase 0: refused redemption audit event, search and blob fallbacks, navigation lookup and short link policy scoping (phase 2).
 - Not implemented from phase 1: host staff support access (P1-7). Each view change needs screenshots, DOM ids and a DOM contract spec.

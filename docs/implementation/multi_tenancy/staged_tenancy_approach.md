@@ -24,7 +24,7 @@ is no schema switching, no database per tenant and no row level security yet.
 | Phase | Goal |
 |---|---|
 | 0 | Security stop-gap: invitations, admin checks, OAuth apps, unknown hosts, social sign-in, JWT audience |
-| 1 | Per platform accounts and the migration that splits multi-platform users |
+| 1 | Per platform accounts (existing accounts are backfilled to the host platform) |
 | 2 | Isolation backstops: policy sweep, NOT NULL `platform_id`, composite uniqueness, job and mailer context, row level security behind a flag |
 | 3 | Tenant infrastructure: shared integration store, storage, mail identity, domain verification, lifecycle |
 | 4 | UX and accessibility |
