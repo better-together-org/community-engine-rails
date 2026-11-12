@@ -411,14 +411,14 @@ module BetterTogether
 
       def find_typed_invitation_by_token(invitation_type, token)
         invitation_class = invitation_class_for_type(invitation_type)
-        invitation_class.pending.not_expired.find_by(token: token)
+        invitation_class.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       end
 
       def find_pending_invitation_by_token(token)
         [
-          BetterTogether::PlatformInvitation.pending.not_expired,
-          BetterTogether::CommunityInvitation.pending.not_expired,
-          BetterTogether::EventInvitation.pending.not_expired
+          BetterTogether::PlatformInvitation.redeemable_on(Current.platform).pending.not_expired,
+          BetterTogether::CommunityInvitation.redeemable_on(Current.platform).pending.not_expired,
+          BetterTogether::EventInvitation.redeemable_on(Current.platform).pending.not_expired
         ].lazy.map { |scope| scope.find_by(token: token) }.find(&:present?)
       end
 

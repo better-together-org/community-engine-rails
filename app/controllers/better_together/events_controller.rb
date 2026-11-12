@@ -339,7 +339,7 @@ module BetterTogether
     end
 
     def handle_valid_invitation_token(token)
-      invitation = ::BetterTogether::EventInvitation.pending.not_expired.find_by(token: token)
+      invitation = ::BetterTogether::EventInvitation.redeemable_on(Current.platform).pending.not_expired.find_by(token: token)
       return render_not_found_for_mismatched_invitation unless invitation&.invitable.present?
 
       event = load_event_safely

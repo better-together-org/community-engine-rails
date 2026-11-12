@@ -29,6 +29,8 @@ module BetterTogether
     enum :status, STATUS_VALUES, prefix: :status
 
     scope :pending, -> { where(status: 'pending') }
+    # A token is only redeemable on the platform that issued it.
+    scope :redeemable_on, ->(platform) { platform ? where(platform_id: platform.id) : none }
     scope :accepted, -> { where(status: 'accepted') }
     scope :not_expired, -> { where('valid_until IS NULL OR valid_until >= ?', Time.current) }
     scope :expired, -> { where('valid_until IS NOT NULL AND valid_until < ?', Time.current) }

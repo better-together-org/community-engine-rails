@@ -98,7 +98,7 @@ module BetterTogether
 
       return unless token.present?
 
-      @platform_invitation = ::BetterTogether::PlatformInvitation.pending.find_by(token: token)
+      @platform_invitation = ::BetterTogether::PlatformInvitation.redeemable_on(Current.platform).pending.find_by(token: token)
 
       if params[:invitation_code].present? && @platform_invitation
         # On first visit with the invitation code, update the session with the token and a new expiry.
