@@ -217,6 +217,24 @@ RSpec.describe 'BetterTogether::SearchController', :as_user do
       end
     end
 
+    context 'when the policy check errors for a record that cannot say it is public', :no_auth do
+      let(:opaque_record) { Struct.new(:id, :name).new(SecureRandom.uuid, 'Opaque record') }
+
+      before do
+        allow(backend).to receive(:search).and_return(
+          BetterTogether::Search::SearchResult.new(records: [opaque_record], suggestions: [], status: :ok,
+                                                   backend: :pg_search)
+        )
+      end
+
+      it 'hides the record instead of showing it' do
+        get better_together.search_path(locale:), params: { q: 'opaque' }
+
+        expect(response).to have_http_status(:ok)
+        expect(assigns(:results).to_a).to be_empty
+      end
+    end
+
     context 'when the backend returns a platform result', :no_auth do
       let!(:platform_result) do
         create(

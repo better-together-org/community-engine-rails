@@ -86,11 +86,11 @@ module BetterTogether
       scoped_records
     end
 
+    # Used only when the policy check itself errors. A record that cannot say it is public is hidden.
     def public_search_record?(record)
-      privacy_visible = !record.respond_to?(:privacy_public?) || record.privacy_public?
-      publish_visible = !record.respond_to?(:published?) || record.published?
+      return false unless record.respond_to?(:privacy_public?) && record.privacy_public?
 
-      privacy_visible && publish_visible
+      !record.respond_to?(:published?) || record.published?
     end
   end
 end
