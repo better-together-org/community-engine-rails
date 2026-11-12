@@ -27,13 +27,13 @@ module BetterTogether
       def owners = [billing_owner, billing_owner.community].compact
 
       def hosting_entitlements
-        return BetterTogether::Billing::Entitlement.none unless @host
+        return billing_owner.billing_entitlements.none unless @host
 
         @host.billing_entitlements.where(beneficiary: owners).includes(:plan, :beneficiary, grants: []).order(created_at: :desc)
       end
 
       def hosting_terms
-        return BetterTogether::Billing::SubscriptionTerm.none unless @host
+        return billing_owner.billing_subscription_terms.none unless @host
 
         @host.billing_subscription_terms.where(beneficiary: owners).includes(:plan, :pay_subscription)
       end
