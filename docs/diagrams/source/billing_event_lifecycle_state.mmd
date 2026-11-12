@@ -1,0 +1,21 @@
+%% Billing event lifecycle: the states a logged webhook event moves through, what moves it, and where an
+%% operator steps in. Processor-agnostic. Only failed and dead_lettered count as problems.
+stateDiagram-v2
+  [*] --> pending: webhook logged
+  pending --> pending: retry wait (30s to 30m)
+  pending --> pending: stuck sweep re-enqueues (10 min)
+  pending --> processed: adapter succeeded
+  pending --> ignored: adapter ignored it
+  pending --> alerted: adapter reported it for attention
+  pending --> failed: adapter raised an error
+  failed --> failed: retried by the job (up to 5 attempts)
+  failed --> processed: a retry succeeded
+  failed --> dead_lettered: hourly sweep, 5 attempts or 6 hours
+  pending --> dead_lettered: hourly sweep, 6 hours without progress
+  dead_lettered --> replayed: operator retry
+  failed --> replayed: operator retry
+  replayed --> processed: replay succeeded
+  replayed --> failed: replay failed again
+  processed --> [*]
+  ignored --> [*]
+  alerted --> [*]
