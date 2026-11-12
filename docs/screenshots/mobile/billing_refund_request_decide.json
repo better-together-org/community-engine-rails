@@ -1,8 +1,8 @@
 {
   "name": "billing_refund_request_decide",
   "device": "mobile",
-  "url": "/en/billing/refund_requests/febfc070-f501-46cf-803e-fcc77fa97514",
-  "title": "Refund request for order BT-FM7MLHEY | Test Host Community",
+  "url": "/en/billing/refund_requests/dfd054cd-e357-40c0-97d5-2a8540bfb8cd",
+  "title": "Refund request for order BT-JYXNICO4 | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_refund_requests",

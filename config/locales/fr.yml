@@ -1837,6 +1837,8 @@ fr:
         title: Prêt à vendre ?
         todo: 'Reste à faire :'
       refund_requests:
+        accept_policy: Lisez et acceptez la politique de remboursement avant d'envoyer
+          votre demande.
         all: Toutes
         already_decided: Cette demande a déjà fait l'objet d'une décision.
         already_pending: Une demande de remboursement est déjà en attente sur cette
@@ -1866,6 +1868,9 @@ fr:
         new_title: Demander un remboursement pour la commande %{number}
         none: Il n'y a aucune demande de remboursement.
         order_link: Commande
+        policy_accept: 'J''ai lu et j''accepte : %{title}'
+        policy_accepted: Vous avez déjà accepté la politique de remboursement actuelle.
+        policy_view: Lire la politique de remboursement
         queue_intro: Acheteurs qui demandent un remboursement sur ce que cette plateforme
           vend. Ouvrez une demande pour l'approuver, l'approuver en partie ou la refuser.
         queue_link: Demandes de remboursement

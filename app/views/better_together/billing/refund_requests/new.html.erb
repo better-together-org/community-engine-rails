@@ -34,6 +34,27 @@
       <%= text_area_tag :details, params[:details], id: 'billing-refund-request-details', class: 'form-control', rows: 4,
                                                     maxlength: BetterTogether::Billing::RefundRequest::DETAILS_LIMIT %>
     </div>
+    <% if @policy_gate&.required? %>
+      <% policy = @policy_gate.agreement %>
+      <div class="mb-3" id="billing-refund-policy">
+        <h2 class="h6"><%= policy.title %></h2>
+        <p class="small text-body-secondary mb-1" id="billing-refund-policy-summary"><%= policy.description %></p>
+        <%# The shared agreement modal (layouts/better_together/_agreement_modal_shell). The box stays locked until it has been read to the end. %>
+        <%= link_to t('better_together.billing.refund_requests.policy_view'), agreement_path(policy, locale: I18n.locale),
+                    class: 'agreement-modal-link', role: 'button', id: 'billing-refund-policy-view',
+                    data: { agreement_identifier: policy.identifier } %>
+        <% if @policy_gate.missing? %>
+          <div class="form-check mt-2">
+            <%= check_box_tag agreement_acceptance_param_name(policy), '1', false, class: 'form-check-input agreement-checkbox', required: true,
+                                data: { agreement_identifier: policy.identifier }, aria: { describedby: 'billing-refund-policy-summary', disabled: 'true' },
+                                id: 'billing-refund-policy-accept' %>
+            <%= label_tag 'billing-refund-policy-accept', t('better_together.billing.refund_requests.policy_accept', title: policy.title), class: 'form-check-label' %>
+          </div>
+        <% else %>
+          <p class="small text-success mb-0" id="billing-refund-policy-accepted"><%= t('better_together.billing.refund_requests.policy_accepted') %></p>
+        <% end %>
+      </div>
+    <% end %>
     <div>
       <%= submit_tag t('better_together.billing.refund_requests.submit'), id: 'billing-refund-request-submit', class: 'btn btn-primary' %>
     </div>

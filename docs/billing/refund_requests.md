@@ -16,6 +16,10 @@ A buyer can ask for money back on an order, and the people who manage the platfo
 
 Only money Community Engine settles itself: cash, cheque, e-Transfer and store credit. A refund made through a payment vendor is made at the vendor and reported by it, so it is not offered here. The form shows how much can still be given back. Leaving the amount empty asks for all of it.
 
+## The refund policy
+
+The platform can write a `refund_policy` agreement (seeded as a draft with placeholder text, like the purchase agreements). Once a steward activates it, the buyer's request form shows it through the shared agreement modal and the box must be ticked, once per version of the wording. The server refuses a request without it (`RefundRequests::PolicyGate`, checked in the controller and again in `RefundRequests::Create`). While the policy is a draft nothing is asked, so placeholder text is never put in front of a buyer.
+
 ## What approving does
 
 Approving records ordinary refunds (`Refunds::Record`) against the order's local payments, newest first, so tax is pro-rated, store credit goes back to the buyer's balance, and the order becomes partially refunded or refunded exactly as for a refund the steward records directly. Each refund carries a key made from the request and the payment, so a repeated click records nothing twice. A steward can give back less than was asked (the request becomes "partly approved") but never more than can be given back.

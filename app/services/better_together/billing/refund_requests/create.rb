@@ -17,6 +17,8 @@ module BetterTogether
         end
 
         def call
+          check_policy!
+
           request = build.tap(&:save!)
           Notifications.deliver('refund_requested', subject: request, actor: requester)
           request
@@ -27,6 +29,12 @@ module BetterTogether
         end
 
         private
+
+        def check_policy!
+          return unless PolicyGate.new(platform: order.platform, signer: requester).missing?
+
+          raise Refused, I18n.t('better_together.billing.refund_requests.accept_policy')
+        end
 
         attr_reader :order, :requester, :attributes
 

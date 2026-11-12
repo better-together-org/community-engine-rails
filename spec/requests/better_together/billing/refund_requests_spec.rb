@@ -27,6 +27,43 @@ RSpec.describe 'Billing refund requests', type: :request do # rubocop:disable RS
   context 'when signed in as the buyer' do
     before { sign_in buyer_user }
 
+    context 'with a refund policy in force' do
+      let(:policy) { BetterTogether::Agreement.find_by!(platform: host_platform, identifier: 'refund_policy') }
+
+      before do
+        purchase_agreements_for(host_platform)
+        policy.update!(lifecycle_state: 'active')
+      end
+
+      after { policy.update!(lifecycle_state: 'draft') }
+
+      it 'asks for the policy on the form' do
+        get new_path
+
+        expect(response.body).to include('billing-refund-policy-view', 'billing-refund-policy-accept')
+      end
+
+      it 'refuses a request until the policy is ticked' do
+        expect { ask }.not_to change(request_model, :count)
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it 'sends the request and records the acceptance when it is ticked' do
+        expect { ask(refund_policy_agreement: '1') }.to change(request_model, :count).by(1)
+        expect(policy.accepted_by?(buyer)).to be(true)
+      end
+
+      it 'does not ask again once accepted' do
+        ask(refund_policy_agreement: '1')
+        request_model.destroy_all
+
+        get new_path
+
+        expect(response.body).to include('billing-refund-policy-accepted')
+        expect { ask }.to change(request_model, :count).by(1)
+      end
+    end
+
     it 'shows the form with what can still be given back' do
       get new_path
 

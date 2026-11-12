@@ -12,16 +12,17 @@ module BetterTogether
 
       def new
         authorize build_request
+        policy_gate
       end
 
       def create
         authorize build_request
-        RefundRequests::Create.call(order: @order, requester: current_user.person, reason: params[:reason], amount_cents:,
-                                    details: params[:details])
+        return render_again(t('better_together.billing.refund_requests.accept_policy')) unless policy_accepted?
+
+        send_request
         redirect_to billing_order_path(@order, locale: I18n.locale), notice: t('better_together.billing.refund_requests.sent')
       rescue RefundRequests::Create::Refused => e
-        @error = e.message
-        render :new, status: :unprocessable_content
+        render_again(e.message)
       end
 
       def cancel
@@ -32,6 +33,25 @@ module BetterTogether
       end
 
       private
+
+      def send_request
+        policy_gate.accept!(context: { request: })
+        RefundRequests::Create.call(order: @order, requester: current_user.person, reason: params[:reason], amount_cents:,
+                                    details: params[:details])
+      end
+
+      def policy_gate = @policy_gate ||= RefundRequests::PolicyGate.new(platform: @order.platform, signer: current_user.person)
+
+      # The policy is accepted when none is in force, the buyer already accepted it, or the box was ticked.
+      def policy_accepted?
+        !policy_gate.missing? || params[helpers.agreement_acceptance_param_name(policy_gate.agreement)] == '1'
+      end
+
+      def render_again(message)
+        @error = message
+        policy_gate
+        render :new, status: :unprocessable_content
+      end
 
       def build_request
         @refund_request = @order.refund_requests.new(currency: @order.currency, requester: current_user.person)

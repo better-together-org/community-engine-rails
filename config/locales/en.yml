@@ -1797,6 +1797,7 @@ en:
         title: Ready to sell?
         todo: 'Still to do:'
       refund_requests:
+        accept_policy: Read and accept the refund policy before sending your request.
         all: All
         already_decided: This request has already been decided.
         already_pending: There is already a refund request waiting on this order.
@@ -1824,6 +1825,9 @@ en:
         new_title: Ask for a refund on order %{number}
         none: There are no refund requests.
         order_link: Order
+        policy_accept: I have read and accept the %{title}
+        policy_accepted: You have already accepted the current refund policy.
+        policy_view: Read the refund policy
         queue_intro: Buyers asking for money back on what this platform sells. Open
           one to approve it, approve part of it or decline it.
         queue_link: Refund requests

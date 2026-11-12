@@ -1,8 +1,8 @@
 {
   "name": "billing_refund_request_new",
   "device": "desktop",
-  "url": "/en/billing/orders/ef59cf6a-b718-4377-82d4-a4230c62ded8/refund_requests/new",
-  "title": "Ask for a refund on order BT-FB4HXSUR | Test Host Community",
+  "url": "/en/billing/orders/e5215d10-f938-47dd-af68-a21c9e070fa1/refund_requests/new",
+  "title": "Ask for a refund on order BT-LQEOPJDS | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_refund_requests",
@@ -19,29 +19,64 @@
         "x": 72.0,
         "y": 279.0,
         "width": 1296.0,
-        "height": 467.0,
+        "height": 608.1875,
         "right": 1368.0,
-        "bottom": 746.0,
+        "bottom": 887.1875,
         "center_x": 720.0,
-        "center_y": 512.5
+        "center_y": 583.09375
       },
       "avoid": {
         "x": 72.0,
         "y": 279.0,
         "width": 1296.0,
-        "height": 467.0,
+        "height": 608.1875,
         "right": 1368.0,
-        "bottom": 746.0,
+        "bottom": 887.1875,
         "center_x": 720.0,
-        "center_y": 512.5
+        "center_y": 583.09375
       },
       "placement": {
         "side": "below",
         "x": 530.0,
-        "y": 766.0,
+        "y": 907.19,
         "width": 380,
         "height": 158,
-        "score": 711.0
+        "score": 569.8125
+      }
+    },
+    {
+      "selector": "#billing-refund-policy",
+      "title": "Refund policy",
+      "bullets": [
+        "Read the policy in the window, then tick the box to send the request."
+      ],
+      "target": {
+        "x": 89.0,
+        "y": 691.0,
+        "width": 1262.0,
+        "height": 125.1875,
+        "right": 1351.0,
+        "bottom": 816.1875,
+        "center_x": 720.0,
+        "center_y": 753.59375
+      },
+      "avoid": {
+        "x": 89.0,
+        "y": 691.0,
+        "width": 1262.0,
+        "height": 125.1875,
+        "right": 1351.0,
+        "bottom": 816.1875,
+        "center_x": 720.0,
+        "center_y": 753.59375
+      },
+      "placement": {
+        "side": "right",
+        "x": 1036,
+        "y": 24,
+        "width": 380,
+        "height": 158,
+        "score": 0
       }
     }
   ]

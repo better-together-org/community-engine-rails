@@ -81,4 +81,16 @@ RSpec.describe 'Billing refund requests DOM contract', type: :request do # ruboc
 
     expect_ids('billing-sales-refund-requests-link')
   end
+
+  it 'shows the refund policy and its box when the platform has one in force' do
+    purchase_agreements_for(host_platform)
+    policy = BetterTogether::Agreement.find_by!(platform: host_platform, identifier: 'refund_policy')
+    policy.update!(lifecycle_state: 'active')
+    sign_in buyer_user
+
+    get "/#{locale}/billing/orders/#{order.id}/refund_requests/new"
+
+    expect_ids('billing-refund-policy', 'billing-refund-policy-view', 'billing-refund-policy-accept')
+    policy.update!(lifecycle_state: 'draft')
+  end
 end

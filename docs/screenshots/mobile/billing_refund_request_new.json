@@ -1,8 +1,8 @@
 {
   "name": "billing_refund_request_new",
   "device": "mobile",
-  "url": "/en/billing/orders/ef59cf6a-b718-4377-82d4-a4230c62ded8/refund_requests/new",
-  "title": "Ask for a refund on order BT-FB4HXSUR | Test Host Community",
+  "url": "/en/billing/orders/e5215d10-f938-47dd-af68-a21c9e070fa1/refund_requests/new",
+  "title": "Ask for a refund on order BT-LQEOPJDS | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
   "feature_set": "billing_refund_requests",
@@ -17,31 +17,66 @@
       ],
       "target": {
         "x": 12.0,
-        "y": 311.78125,
-        "width": 476.0,
-        "height": 467.0,
-        "right": 488.0,
-        "bottom": 778.78125,
-        "center_x": 250.0,
-        "center_y": 545.28125
+        "y": 348.78125,
+        "width": 461.0,
+        "height": 656.1875,
+        "right": 473.0,
+        "bottom": 1004.96875,
+        "center_x": 242.5,
+        "center_y": 676.875
       },
       "avoid": {
         "x": 12.0,
-        "y": 311.78125,
-        "width": 476.0,
-        "height": 467.0,
-        "right": 488.0,
-        "bottom": 778.78125,
-        "center_x": 250.0,
-        "center_y": 545.28125
+        "y": 348.78125,
+        "width": 461.0,
+        "height": 656.1875,
+        "right": 473.0,
+        "bottom": 1004.96875,
+        "center_x": 242.5,
+        "center_y": 676.875
       },
       "placement": {
-        "side": "below",
-        "x": 115.0,
-        "y": 798.78,
+        "side": "above",
+        "x": 107.5,
+        "y": 144.78,
         "width": 270.0,
         "height": 184,
-        "score": 478.21875
+        "score": 348.78125
+      }
+    },
+    {
+      "selector": "#billing-refund-policy",
+      "title": "Refund policy",
+      "bullets": [
+        "Read the policy in the window, then tick the box to send the request."
+      ],
+      "target": {
+        "x": 29.0,
+        "y": 760.78125,
+        "width": 427.0,
+        "height": 173.1875,
+        "right": 456.0,
+        "bottom": 933.96875,
+        "center_x": 242.5,
+        "center_y": 847.375
+      },
+      "avoid": {
+        "x": 29.0,
+        "y": 760.78125,
+        "width": 427.0,
+        "height": 173.1875,
+        "right": 456.0,
+        "bottom": 933.96875,
+        "center_x": 242.5,
+        "center_y": 847.375
+      },
+      "placement": {
+        "side": "floating",
+        "x": 24,
+        "y": 1036,
+        "width": 270.0,
+        "height": 184,
+        "score": 0
       }
     }
   ]

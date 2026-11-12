@@ -22,7 +22,10 @@ RSpec.shared_context 'with orders fixtures' do
 
   # The platform's seeded purchase agreements, activated.
   def purchase_agreements_for(platform)
-    BetterTogether::Billing::PurchaseAgreementSeeds.call(platform).each_value { |agreement| agreement.update!(lifecycle_state: 'active') }
+    # The refund policy stays a draft unless a spec activates it: once in force, a refund request needs it ticked.
+    agreements = BetterTogether::Billing::PurchaseAgreementSeeds.call(platform)
+    agreements.except('refund_policy').each_value { |agreement| agreement.update!(lifecycle_state: 'active') }
+    agreements.fetch('refund_policy').update!(lifecycle_state: 'draft') # the test database is not reset between examples
   end
 
   def accept_purchase_agreements(options)

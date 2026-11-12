@@ -44,18 +44,24 @@ RSpec.describe 'Documentation screenshots for billing refund requests', # ruboco
     visit "/#{I18n.default_locale}/billing/#{path}"
   end
 
-  it 'captures the buyer\'s request form' do
+  it 'captures the buyer\'s request form, with the refund policy to accept' do
     BetterTogether::Billing::RefundRequest.where(order:).destroy_all
+    policy = BetterTogether::Agreement.find_by!(platform: host_platform, identifier: 'refund_policy')
+    policy.update!(lifecycle_state: 'active')
     BetterTogether::CapybaraScreenshotEngine.capture(
       'billing_refund_request_new',
       device: :both,
       metadata: screenshot_metadata(flow: 'billing_refund_request_new'),
       callouts: [{ id: 'form', selector: '#billing-refund-request-form', title: 'Ask for a refund',
-                   bullets: ['Choose a reason, say how much, and tell the seller what they should know.'] }]
+                   bullets: ['Choose a reason, say how much, and tell the seller what they should know.'] },
+                 { id: 'policy', selector: '#billing-refund-policy', title: 'Refund policy',
+                   bullets: ['Read the policy in the window, then tick the box to send the request.'] }]
     ) do
       visit_page("orders/#{order.id}/refund_requests/new", as: :buyer)
-      expect(page).to have_css('#billing-refund-request-form')
+      expect(page).to have_css('#billing-refund-policy')
+      page.execute_script("document.getElementById('billing-refund-policy').scrollIntoView({block: 'center'})")
     end
+    policy.update!(lifecycle_state: 'draft')
   end
 
   it 'captures the request waiting on the buyer\'s order' do

@@ -1798,6 +1798,7 @@ es:
         title: "¿Listo para vender?"
         todo: 'Pendiente:'
       refund_requests:
+        accept_policy: Lea y acepte la política de reembolsos antes de enviar su solicitud.
         all: Todas
         already_decided: Esta solicitud ya fue resuelta.
         already_pending: Ya hay una solicitud de reembolso en espera para este pedido.
@@ -1824,6 +1825,9 @@ es:
         new_title: Pedir un reembolso del pedido %{number}
         none: No hay solicitudes de reembolso.
         order_link: Pedido
+        policy_accept: 'He leído y acepto: %{title}'
+        policy_accepted: Ya aceptó la política de reembolsos vigente.
+        policy_view: Leer la política de reembolsos
         queue_intro: Compradores que piden la devolución de lo que vende esta plataforma.
           Abra una para aprobarla, aprobarla en parte o rechazarla.
         queue_link: Solicitudes de reembolso
