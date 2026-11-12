@@ -33,7 +33,10 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
   end
 
   context 'when signed in as a steward' do
-    before { sign_in steward_user }
+    before do
+      sign_in steward_user
+      create(:better_together_person_platform_membership, joinable: host_platform, member: buyer)
+    end
 
     it 'gives credit, recorded with who gave it and why, and shows the account' do
       post grants_path, params: params_for(note: 'Volunteer thanks', expires_in_days: '30')
@@ -84,6 +87,40 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
 
       expect(response).to redirect_to(better_together.billing_credit_accounts_path(locale:, person_id: steward.id))
       expect(account_for(steward)).to be_nil
+    end
+
+    it 'refuses a person who is not a member of this platform, the same way as one that does not exist' do
+      stranger = create(:better_together_person)
+      clear_notices
+
+      deliver_now { post grants_path, params: params_for(stranger) }
+      stranger_redirect = response.location.sub(stranger.id, 'ID')
+      post grants_path, params: params_for(person_id: SecureRandom.uuid)
+
+      expect(response.location.sub(/person_id=[^&]+/, 'person_id=ID')).to eq(stranger_redirect.sub(/person_id=[^&]+/, 'person_id=ID'))
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.credit.grant_refused'))
+      expect(account_for(stranger)).to be_nil
+      expect(host_platform.billing_credit_accounts.where(holder: stranger)).to be_empty
+      expect(kinds_for(stranger)).not_to include('credit_granted')
+    end
+
+    it 'refuses a person whose membership has ended' do
+      BetterTogether::PersonPlatformMembership.find_by(joinable: host_platform, member: buyer).update!(status: :pending)
+
+      post grants_path, params: params_for
+
+      expect(account_for).to be_nil
+    end
+
+    it 'refuses a single grant above the maximum, with its own message, and accepts exactly the maximum' do
+      post grants_path, params: params_for(amount: '1000.01')
+
+      expect(flash[:alert]).to eq(I18n.t('better_together.billing.credit.grant_too_large', maximum: 'US$1,000.00'))
+      expect(account_for).to be_nil
+
+      post grants_path, params: params_for(amount: '1000.00', token: 'at-cap')
+
+      expect(account_for.balance_cents).to eq(100_000)
     end
 
     it 'refuses an amount that is not a plain positive number, a currency that is not supported, and a person that does not exist' do

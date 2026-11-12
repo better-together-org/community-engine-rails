@@ -1022,6 +1022,8 @@ en:
         grant_refused: That credit could not be given. Check the amount, and note
           that you cannot give credit to yourself.
         grant_submit: Give credit
+        grant_too_large: That credit is more than one grant may give. The most is
+          %{maximum}.
         granted: Credit given.
         history: History
         history_caption: What has happened to this credit, newest first
