@@ -58,6 +58,26 @@
       </div>
     </section>
 
+    <% if @add_ons.any? %>
+      <section id="billing-hub-add-ons" class="col-lg-6" aria-labelledby="billing-hub-add-ons-heading">
+        <div class="card h-100">
+          <div class="card-header">
+            <h2 id="billing-hub-add-ons-heading" class="h5 mb-0"><%= t('better_together.billing.hub.add_ons_heading') %></h2>
+          </div>
+          <ul class="list-group list-group-flush">
+            <% @add_ons.each do |add_on| %>
+              <li id="<%= dom_id(add_on, :hub_add_on) %>" class="list-group-item d-flex justify-content-between align-items-baseline">
+                <span><%= add_on.name %> <span class="small text-body-secondary"><%= billing_amount(add_on.amount_cents, add_on.currency) %></span></span>
+                <%= link_to t('better_together.billing.hub.add_on_buy'), new_billing_checkout_path(plan_id: add_on.id, locale: I18n.locale),
+                            id: dom_id(add_on, :hub_add_on_buy), class: 'btn btn-sm btn-outline-primary' %>
+              </li>
+            <% end %>
+          </ul>
+          <div class="card-footer small text-body-secondary" id="billing-hub-add-ons-hint"><%= t('better_together.billing.hub.add_ons_hint') %></div>
+        </div>
+      </section>
+    <% end %>
+
     <section id="billing-hub-credit" class="col-lg-6" aria-labelledby="billing-hub-credit-heading">
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between align-items-baseline">

@@ -64,10 +64,10 @@ module BetterTogether
 
       def platform_plans = billing_owner.billing_plans.sold_by_platform
 
-      # The plan being bought is a primary one: an add-on is only ever an extra on another plan's order.
+      # The plan being bought: a primary plan, or an add-on the buyer may buy on its own because they hold a plan it extends.
       def set_plan
-        @plan = platform_plans.active.primary.find(params[:plan_id])
-        render_not_found unless policy(@plan).purchase?
+        @plan = platform_plans.active.find(params[:plan_id])
+        render_not_found unless @plan.add_on? ? policy(@plan).buy_alone? : policy(@plan).purchase?
       end
 
       # The extras offered on this plan's order, and the ones the buyer ticked.
@@ -82,7 +82,9 @@ module BetterTogether
 
       # Only add-ons this buyer may buy, in the plan's currency.
       def offered_add_ons
-        platform_plans.active.add_on.where(currency: @plan.currency).order(:amount_cents, :identifier)
+        return [] if @plan.add_on?
+
+        platform_plans.active.add_ons_for(@plan).where(currency: @plan.currency).order(:amount_cents, :identifier)
                       .select { |add_on| policy(add_on).purchase? }
       end
 

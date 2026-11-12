@@ -31,6 +31,16 @@ module BetterTogether
         record.open_to?(audience_for(user))
       end
 
+      # An add-on bought on its own, later: the buyer qualifies for its audience and holds a plan it extends (any primary plan of the
+      # platform when it names none). Buying one with a plan at checkout is #purchase?.
+      def buy_alone?
+        return false unless record.add_on? && purchase?
+
+        held = BetterTogether::Billing::Plans::Holdings.call(platform: Current.platform, person: user&.person)
+        targets = record.target_links.pluck(:plan_id)
+        targets.empty? ? held.any? : held.intersect?(targets)
+      end
+
       class Scope < OwnerPolicy::Scope; end
 
       # The plans the catalog shows this person: the platform's listed plans, and of the limited ones only those they qualify for.

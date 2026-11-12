@@ -246,7 +246,20 @@ How the extras behave:
 - Add-ons are paid by local methods only (cash, cheque, e-Transfer): a processor prices from its own price ids, so an order with an extra offers only the methods the platform settles itself.
 - An order whose plan and add-ons are all free needs no payment method or billing address.
 
-Deferred: add-ons that carry their own entitlements or quotas (needs per-line entitlements), buying for a community (`on_behalf_of`), and guest checkout.
+### Which plans an add-on extends, and buying it later
+
+A steward ticks the plans an add-on extends on its form (`billing-plan-add-on-targets`); each tick is a `PlanAddOn` link. An add-on with no links extends every primary plan.
+
+- **At a plan's checkout** only the add-ons that extend that plan (or all plans) are offered (`Plan.add_ons_for`).
+- **On its own, later** (`PlanPolicy#buy_alone?`): checkout accepts an add-on as the plan when the buyer qualifies for its audience and *holds* a plan it extends. With no links, holding any primary plan of the platform is enough. A buyer who holds nothing gets 404.
+- **What "holds" means** (`Plans::Holdings`): a live entitlement, a live subscription the person pays for, or a one-time order that is paid or part refunded. Refunded or cancelled orders and lapsed subscriptions hold nothing. Add-ons themselves are never held.
+- **What the order does:** an add-on-only order is one-time, paid by a local method, and gives no entitlement and starts no subscription (`Subscriptions::Start.single_plan` is nil for it).
+- **Where buyers find it:** the billing hub lists "Extras for your plans" with an Add button into checkout.
+
+Not tied together: the add-on order does not record which plan order it extends, and refunding or lapsing the plan later does not touch the add-on order. Deferred: add-ons that carry their own entitlements or quotas (needs per-line entitlements), buying for a community (`on_behalf_of`), and guest checkout.
+
+![Extras on the billing page](../screenshots/desktop/billing_hub_add_ons.png)
+![Add-on target plans on the plan form](../screenshots/desktop/billing_add_on_targets_form.png)
 
 ![Checkout with an add-on](../screenshots/desktop/billing_checkout_add_ons.png)
 ![Checkout with an add-on, mobile](../screenshots/mobile/billing_checkout_add_ons.png)
