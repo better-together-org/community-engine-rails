@@ -41,6 +41,10 @@ module BetterTogether
 
     scope :enabled, -> { where(enabled: true) }
 
+    after_commit :audit_configuration_change
+
+    AUDITED_FIELDS = %w[enabled strategy client_id scopes options].freeze
+
     def serializable_hash(options = nil)
       super(options.to_h.merge(except: Array(options.to_h[:except]) + %w[client_secret]))
     end
@@ -65,6 +69,19 @@ module BetterTogether
     end
 
     private
+
+    # Record who-affecting changes without values: the secret never appears, only that it changed.
+    def audit_configuration_change
+      action = if destroyed? then 'identity_provider.destroyed'
+               elsif previously_new_record? then 'identity_provider.created'
+               else 'identity_provider.updated'
+               end
+      changed = (saved_changes.keys & (AUDITED_FIELDS + %w[client_secret])).sort
+      return if action.end_with?('updated') && changed.empty?
+
+      BetterTogether::TenancyAudit.record(action, identity_provider_id: id, owner_platform_id: platform_id,
+                                                  strategy:, changed:, trust_verified_email: trust_verified_email?)
+    end
 
     def issuer_provider?
       catalog_entry&.requires_issuer == true

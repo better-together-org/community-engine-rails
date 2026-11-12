@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_12_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1774,7 +1774,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_10_230000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "provider", limit: 50, default: "", null: false
-    t.string "uid", limit: 50, default: "", null: false
+    t.string "uid", limit: 255, default: "", null: false
     t.string "name"
     t.string "handle"
     t.string "profile_url"
