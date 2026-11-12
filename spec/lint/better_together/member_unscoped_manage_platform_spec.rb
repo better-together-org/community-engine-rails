@@ -9,9 +9,7 @@ RSpec.describe BetterTogether::Member do
     {
       # Safety exemption, not authorization: anyone managing any platform cannot be blocked.
       'app/models/better_together/person_block.rb' => 1,
-      'app/policies/better_together/person_block_policy.rb' => 1,
-      # Reviewed in P0-3 (Doorkeeper trust).
-      'app/models/better_together/oauth_application.rb' => 1
+      'app/policies/better_together/person_block_policy.rb' => 1
     }
   end
 
