@@ -1121,6 +1121,16 @@ es:
         suspend: Suspender
         suspended: Facturación suspendida para esa plataforma.
         title: Plataformas alojadas
+      hosting_plan:
+        billing_link: 'Vender en esta plataforma: configuración de la facturación'
+        intro: El plan de esta plataforma con %{host} y cuánto se usa.
+        manage: 'Quienes pagan este plan lo gestionan con %{host}: cambiar de plan,
+          ver facturas y pedir reembolsos.'
+        none: Esta plataforma aún no tiene un plan de pago con %{host}.
+        price: Precio
+        renews: Se renueva el
+        see_plans: Ver los planes
+        title: Plan y uso
       hub:
         access_count: 'Activos: %{count}'
         access_heading: A qué tienes acceso
@@ -6863,6 +6873,7 @@ es:
           sin depender solo del conocimiento de la URL.
         feature_access_grants: Gestionar accesos a funciones
         host_dashboard: Panel del anfitrión
+        hosting_plan: Plan y uso
         platform_domains: Dominios
         quota_grants: Concesiones de cuota
         robot_management: Gestionar robots LLM

@@ -125,10 +125,12 @@ concern :billing_hub do
 end
 
 # Hosted billing enablement: a hosted platform's steward accepts the host's billing agreements (/billing/hosted_billing);
-# the host's steward sees every hosted platform and can suspend one (/billing/hosted_platforms).
+# the host's steward sees every hosted platform and can suspend one (/billing/hosted_platforms). A hosted platform's steward also
+# sees the plan the platform is on with the host, and how much of it is used (/billing/hosting_plan).
 concern :billing_hosted do
   namespace :billing do
     resource :hosted_billing, only: %i[show create], controller: 'hosted_billings'
+    resource :hosting_plan, only: :show, controller: 'hosting_plans'
     resources :hosted_platforms, only: :index do
       member do
         patch :suspend
