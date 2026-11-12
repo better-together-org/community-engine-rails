@@ -67,11 +67,14 @@ module BetterTogether
 
         def credit? = adapter.present? && Billing.internal_method?(name)
 
+        # Every method needs a context for the platform first, so the host-only gate (CONF-01) also
+        # covers methods that settle on the platform (cash, cheque, store credit), not just vendors.
         def available?
+          return false if Configuration.context_for(platform, name, seller:).blank?
           return offline_setting&.allows?(purpose) if offline?
           return credit_setting&.allows?(purpose) if credit?
 
-          processor_adapter.present? && Configuration.context_for(platform, name).present?
+          processor_adapter.present?
         end
 
         def unsupported_currency?
