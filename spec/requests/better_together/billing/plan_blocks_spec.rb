@@ -18,6 +18,17 @@ RSpec.describe 'Plan blocks on a page', :no_auth do # rubocop:disable RSpec/Desc
   end
   let(:dom_id) { ->(*args) { ActionView::RecordIdentifier.dom_id(*args) } }
 
+  describe 'page caching' do
+    let(:block) { create(:content_plan_catalog_block) }
+
+    it 'skips the shared page fragment cache when the page holds a plan block' do
+      view = ActionView::Base.empty.extend(BetterTogether::PagesHelper)
+
+      expect(view.page_has_viewer_specific_blocks?([block])).to be true
+      expect(view.page_has_viewer_specific_blocks?([build(:content_alert_block)])).to be false
+    end
+  end
+
   describe 'the plan catalog block' do
     let(:block) { create(:content_plan_catalog_block, heading_en: 'Join us') }
 
