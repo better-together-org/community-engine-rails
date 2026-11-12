@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T19:28:50Z",
+  "generated_at": "2026-11-12T14:28:23Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -4043,6 +4043,12 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::Billing::HostedAccount",
+          "to": "BetterTogether::Person",
+          "label": "suspended_by (suspended_by_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Billing::DefaultAddress",
           "to": "BetterTogether::Person",
           "label": "person (person_id)",
@@ -8014,6 +8020,12 @@
         },
         {
           "from": "BetterTogether::Billing::OrderDocument",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::HostedAccount",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -29145,6 +29157,76 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::HostedAccount",
+          "label": "Billing::HostedAccount",
+          "source_path": "app/models/better_together/billing/hosted_account.rb",
+          "table_name": "better_together_billing_hosted_accounts",
+          "columns": [
+            [
+              "platform_id",
+              "uuid FK"
+            ],
+            [
+              "suspended_by_id",
+              "uuid FK"
+            ],
+            [
+              "status",
+              "string"
+            ],
+            [
+              "suspension_reason",
+              "text"
+            ],
+            [
+              "suspended_at",
+              "datetime"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "InclusionValidator: status (in=[\"active\", \"suspended\"])",
+            "UniquenessValidator: platform_id",
+            "PresenceValidator: suspension_reason (if=dynamic)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "suspended_by",
+              "foreign_key": "suspended_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "suspended_by",
+              "foreign_key": "suspended_by_id",
+              "target": "BetterTogether::Person",
+              "optional": true,
+              "target_subsystem": "identity_access"
+            }
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::Notifier",
           "label": "Billing::Notifier",
           "source_path": "app/notifiers/better_together/billing/notifier.rb",
@@ -29449,6 +29531,10 @@
               "uuid FK"
             ],
             [
+              "authority",
+              "string"
+            ],
+            [
               "registration_number",
               "text"
             ],
@@ -29469,6 +29555,7 @@
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: order (message=:required)",
             "PresenceValidator: line_item (message=:required)",
+            "InclusionValidator: authority (in=[\"gst_hst\", \"pst\", \"qst\", \"rst\", \"vat\", \"other\"])",
             "PresenceValidator: label",
             "NumericalityValidator: rate (greater_than_or_equal_to=0)",
             "NumericalityValidator: amount_cents (only_integer=true, greater_than_or_equal_to=0)"
@@ -29561,6 +29648,10 @@
               "uuid FK"
             ],
             [
+              "authority",
+              "string"
+            ],
+            [
               "ends_at",
               "datetime"
             ],
@@ -29577,6 +29668,7 @@
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: tax_zone (message=:required)",
             "PresenceValidator: label",
+            "InclusionValidator: authority (in=[\"gst_hst\", \"pst\", \"qst\", \"rst\", \"vat\", \"other\"])",
             "NumericalityValidator: rate (greater_than_or_equal_to=0, less_than=1)"
           ],
           "belongs_to": [
@@ -36144,6 +36236,64 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::CatalogController",
+          "label": "Billing::CatalogController",
+          "source_path": "app/controllers/better_together/billing/catalog_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::HostedBillingsController",
+          "label": "Billing::HostedBillingsController",
+          "source_path": "app/controllers/better_together/billing/hosted_billings_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::HostedBilling"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::HostedPlatformsController",
+          "label": "Billing::HostedPlatformsController",
+          "source_path": "app/controllers/better_together/billing/hosted_platforms_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::HubsController",
+          "label": "Billing::HubsController",
+          "source_path": "app/controllers/better_together/billing/hubs_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OrderDocumentsController",
           "label": "Billing::OrderDocumentsController",
           "source_path": "app/controllers/better_together/billing/order_documents_controller.rb",
@@ -37216,7 +37366,11 @@
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
-            "Billing::OrderDocumentsController"
+            "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::CatalogController"
           ]
         },
         {
@@ -37250,6 +37404,7 @@
             "Billing::TaxLine",
             "Billing::TaxCategory",
             "Billing::OrderDocument",
+            "Billing::HostedAccount",
             "Billing::DefaultAddress"
           ]
         },
@@ -37461,6 +37616,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37533,6 +37692,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37605,6 +37768,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37688,6 +37855,10 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37991,6 +38162,18 @@
         },
         {
           "from": "BetterTogether::Billing::DefaultAddress",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
+        },
+        {
+          "from": "BetterTogether::Billing::HostedAccount",
+          "to": "BetterTogether::Person",
+          "label": "suspended_by (suspended_by_id)",
+          "target_subsystem": "identity_access"
+        },
+        {
+          "from": "BetterTogether::Billing::HostedAccount",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "target_subsystem": "platform_network"
