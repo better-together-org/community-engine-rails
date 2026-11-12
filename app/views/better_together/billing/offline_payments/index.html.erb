@@ -30,7 +30,7 @@
             <% @offline_payments.each do |offline| %>
               <% order = offline.order %>
               <tr id="<%= dom_id(offline) %>" class="<%= 'table-warning billing-offline-claimed' if offline.claimed_by_buyer? && offline.waiting? %>">
-                <th scope="row"><code><%= order.number %></code></th>
+                <th scope="row"><code class="text-body"><%= order.number %></code></th>
                 <td><%= order.buyer.name %></td>
                 <td><%= billing_payment_method_label(offline.processor) %></td>
                 <td>
@@ -46,9 +46,10 @@
                   <% if offline.waiting? || offline.expired? %>
                     <%= button_to t(offline.cheque? ? 'better_together.billing.offline_payments.mark_cheque_received' : 'better_together.billing.offline_payments.mark_received'),
                                   receive_billing_offline_payment_path(offline, locale: I18n.locale), method: :patch,
-                                  id: "billing-offline-confirm-btn-#{order.id}", class: 'btn btn-success btn-sm', form: { class: 'd-inline' } %>
+                                  id: "billing-offline-confirm-btn-#{order.id}", class: 'btn btn-success btn-sm',
+                                  form: { class: 'd-inline', data: { turbo_confirm: billing_receive_confirm(offline) } } %>
                   <% end %>
-                  <%= link_to t('globals.view'), billing_sale_path(order, locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm' %>
+                  <%= link_to t('globals.view'), billing_sale_path(order, locale: I18n.locale), class: 'btn btn-outline-dark btn-sm' %>
                 </td>
               </tr>
             <% end %>

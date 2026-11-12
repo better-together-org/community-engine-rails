@@ -1008,6 +1008,8 @@ es:
         field_origin: De dónde viene
         field_remaining: Queda
         grant_amount: Importe
+        grant_confirm: "¿Otorgar %{amount} de crédito a %{person}?"
+        grant_confirm_blank: "¿Otorgar crédito a %{person}?"
         grant_currency: Moneda
         grant_expires: Vence después de (días)
         grant_expires_hint: Déjalo vacío para un crédito que no vence.
@@ -1368,6 +1370,8 @@ es:
           su pago de cualquier modo.
         claimed: Se informó al vendedor de que lo envió.
         claimed_note: Se lo dijo al vendedor el %{date}.
+        clear_confirm: "¿Marcar el cheque del pedido %{number} de %{buyer} como cobrado?
+          Su pago se contará como recibido."
         disclosure_cash_in_person: El efectivo se entrega en persona. Anote cuándo
           y a quién.
         disclosure_cheque_clearing: Un cheque puede tardar días en cobrarse y puede
@@ -1408,6 +1412,11 @@ es:
           cuando el dinero le llegue, el comprador diga o no que lo envió.
         queue_link: Pagos que le esperan
         queue_title: Pagos que le esperan
+        receive_cheque_confirm: "¿Marcar el cheque del pedido %{number} de %{buyer}
+          como recibido (%{amount})? Márquelo como cobrado cuando el banco lo haya
+          pagado."
+        receive_confirm: "¿Marcar el pedido %{number} de %{buyer} como recibido (%{amount})?
+          El pedido se liquidará y el comprador obtendrá acceso."
         receive_hint: Márquelo como recibido cuando el dinero le haya llegado. No
           necesita esperar a que el comprador diga que lo envió.
         received_on_label: Fecha de recepción (opcional)
@@ -1421,6 +1430,8 @@ es:
           self_confirmation: No puede confirmar un pago de su propia compra.
           too_many_claims: Se ha enviado demasiadas veces.
         reject: No recibido, rechazar
+        reject_confirm: "¿Rechazar el pago del pedido %{number} de %{buyer}? El pedido
+          se cancelará y se avisará al comprador."
         reject_reason_label: Si no lo recibió, diga por qué (el comprador lo verá)
         rejection_reason: 'El vendedor dijo: %{reason}'
         seller_heading: Pago con %{method}
@@ -1865,11 +1876,15 @@ es:
         cancel_refused: El pedido no se puede cancelar mientras quede dinero pagado.
           Devuelva primero cada pago.
         cancelled: Se canceló el pedido y se liberó lo que reservaba.
+        credit_refund_confirm: "¿Devolver %{amount} al crédito de %{buyer} por el
+          pedido %{number}? No se puede deshacer."
         credit_refund_heading: Devolver al crédito de la tienda
         credit_refund_hint: El comprador pagó con crédito de la tienda, así que el
           dinero vuelve a su saldo de crédito al instante. No se puede pagar en efectivo.
         credit_refund_submit: Devolver al crédito
         refund_amount_label: Importe devuelto (hasta %{max}; vacío para todo)
+        refund_confirm: "¿Registrar un reembolso de %{amount} del pedido %{number}
+          a %{buyer}? No se puede deshacer."
         refund_heading: Registrar un reembolso
         refund_hint: La plataforma no puede mover este dinero. Regístrelo aquí cuando
           lo haya devuelto.
