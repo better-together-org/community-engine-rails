@@ -419,7 +419,7 @@ module BetterTogether # :nodoc:
           host_nav = area.navigation_items.find_by(identifier: 'host-nav')
           children = host_nav.children.order(:position)
 
-          expect(children.count).to eq(15)
+          expect(children.count).to eq(16)
           expect(children.map(&:identifier)).to eq(%w[
                                                      host-dashboard
                                                      analytics
@@ -436,6 +436,7 @@ module BetterTogether # :nodoc:
                                                      billing-plans
                                                      billing-processor-settings
                                                      billing-sales
+                                                     billing-events
                                                    ])
         end
 

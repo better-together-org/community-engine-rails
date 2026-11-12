@@ -1077,6 +1077,71 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
+      events:
+        alerts:
+          alerted_body: 'Events the processor reported for attention: %{count}.'
+          dead_lettered_body: 'Dead-lettered events: %{count}. They need a person
+            to look and retry.'
+          dead_lettered_heading: Some events were given up on.
+          heading: Payment event alerts
+          none: Nothing needs attention.
+          oldest: 'Oldest unresolved event:'
+          repeated_body: 'Events that failed %{threshold} or more times: %{count}.'
+          repeated_heading: Some events keep failing.
+          unresolved_body: 'Failed or dead-lettered events older than %{hours} hours:
+            %{count}.'
+          unresolved_heading: Some problems are not resolved.
+        back: Back to payment events
+        field_attempts: Attempts
+        field_event: Event
+        field_event_id: Processor event id
+        field_last_attempt: Last attempt
+        field_last_replayed: Last retried
+        field_processor: Processor
+        field_reason: Why it stopped
+        field_received: Received
+        field_replays: Retries by an operator
+        field_status: State
+        filter_label: Filter payment events by state
+        index_intro: Messages from the payment processor that could not be handled.
+          Look at what went wrong, then retry them once it is fixed.
+        index_title: Payment events
+        never: Not yet
+        none: There are no events in this state.
+        reasons:
+          retries_exhausted: It failed too many times.
+          stale_unresolved_drift: It was left unfinished for too long.
+        refused:
+          not_replayable: Only failed or dead-lettered events can be retried.
+          other: The event could not be retried.
+          payload_unavailable: The message of this event was already removed, so it
+            cannot be run again.
+          platform_not_configured: This platform no longer has that payment method
+            set up.
+          unsupported_processor: The payment method of this event is no longer installed.
+        replay_button: Retry event
+        replay_confirm: Retry this payment event now?
+        replay_explainer: 'Retrying runs the event again from the start. It is safe
+          to retry: an event that already went through is not applied a second time.'
+        replay_heading: Retry this event
+        replay_not_needed: This event does not need a retry.
+        replay_unavailable: This event cannot be retried because its message was already
+          removed or its payment method is no longer set up.
+        replayed: The event was queued to run again.
+        show_intro: What happened to this event. The message itself is stored encrypted
+          and is not shown here.
+        show_title: Payment event
+        states:
+          alerted: Reported
+          all: All
+          dead_lettered: Dead-lettered
+          failed: Failed
+          ignored: Ignored
+          pending: Waiting
+          problems: Needs attention
+          processed: Done
+          replayed: Retried
+        table_caption: Payment events and their state
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to

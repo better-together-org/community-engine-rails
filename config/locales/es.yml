@@ -1069,6 +1069,71 @@ es:
         status_revoked: Reembolsado
         title: Mi acceso
         until: Vigente hasta el %{date}.
+      events:
+        alerts:
+          alerted_body: 'Eventos que el procesador señaló para revisión: %{count}.'
+          dead_lettered_body: 'Eventos abandonados: %{count}. Una persona debe revisarlos
+            y reintentarlos.'
+          dead_lettered_heading: Se abandonaron algunos eventos.
+          heading: Alertas de eventos de pago
+          none: Nada requiere atención.
+          oldest: 'Evento sin resolver más antiguo:'
+          repeated_body: 'Eventos que fallaron %{threshold} veces o más: %{count}.'
+          repeated_heading: Algunos eventos siguen fallando.
+          unresolved_body: 'Eventos fallidos o abandonados con más de %{hours} horas:
+            %{count}.'
+          unresolved_heading: Algunos problemas siguen sin resolver.
+        back: Volver a los eventos de pago
+        field_attempts: Intentos
+        field_event: Evento
+        field_event_id: Identificador de evento del procesador
+        field_last_attempt: Último intento
+        field_last_replayed: Último reintento
+        field_processor: Procesador
+        field_reason: Por qué se detuvo
+        field_received: Recibido
+        field_replays: Reintentos de un operador
+        field_status: Estado
+        filter_label: Filtrar los eventos de pago por estado
+        index_intro: Mensajes del procesador de pagos que no se pudieron tratar. Revise
+          qué pasó y reinténtelos cuando el problema esté resuelto.
+        index_title: Eventos de pago
+        never: Todavía no
+        none: No hay eventos en este estado.
+        reasons:
+          retries_exhausted: Falló demasiadas veces.
+          stale_unresolved_drift: Quedó sin terminar demasiado tiempo.
+        refused:
+          not_replayable: Solo se pueden reintentar los eventos fallidos o abandonados.
+          other: No se pudo reintentar el evento.
+          payload_unavailable: El mensaje de este evento ya se eliminó, así que no
+            se puede tratar de nuevo.
+          platform_not_configured: Esta plataforma ya no tiene configurado ese método
+            de pago.
+          unsupported_processor: El método de pago de este evento ya no está instalado.
+        replay_button: Reintentar evento
+        replay_confirm: "¿Reintentar ahora este evento de pago?"
+        replay_explainer: 'Reintentar vuelve a tratar el evento desde el principio.
+          Es seguro: un evento que ya se trató no se aplica por segunda vez.'
+        replay_heading: Reintentar este evento
+        replay_not_needed: Este evento no necesita un reintento.
+        replay_unavailable: Este evento no se puede reintentar porque su mensaje ya
+          se eliminó o su método de pago ya no está configurado.
+        replayed: El evento se puso en cola para tratarse de nuevo.
+        show_intro: Lo que le pasó a este evento. El mensaje en sí está cifrado y
+          no se muestra aquí.
+        show_title: Evento de pago
+        states:
+          alerted: Avisado
+          all: Todos
+          dead_lettered: Abandonado
+          failed: Fallido
+          ignored: Ignorado
+          pending: En espera
+          problems: Requiere atención
+          processed: Hecho
+          replayed: Reintentado
+        table_caption: Eventos de pago y su estado
       hub:
         access_count: 'Activos: %{count}'
         access_heading: A qué tienes acceso

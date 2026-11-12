@@ -95,6 +95,15 @@ concern :billing_credit do
   end
 end
 
+# Host platform operators: webhook events that failed or were dead-lettered, and retrying them.
+concern :billing_events do
+  namespace :billing do
+    resources :events, only: %i[index show] do
+      post :replay, on: :member
+    end
+  end
+end
+
 # Subscriptions Community Engine renews: a payer's own, and the platform's subscribers for stewards.
 concern :billing_subscriptions do
   namespace :billing do
@@ -187,6 +196,6 @@ end
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
     concerns :billing_hub, :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
-             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics
+             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics, :billing_events
   end
 end
