@@ -467,7 +467,17 @@ module BetterTogether
         return unless add_on?
 
         errors.add(:add_on, :add_on_cannot_renew) if recurring?
-        errors.add(:add_on, :add_on_has_grants) if persisted? && plan_grants.exists?
+        add_on_persisted_errors if persisted?
+      end
+
+      def add_on_persisted_errors
+        errors.add(:add_on, :add_on_has_grants) if plan_grants.exists?
+        errors.add(:add_on, :add_on_locked_by_orders) if add_on_changed? && referenced_by_order_lines?
+      end
+
+      # Whether any order line already points at this plan; a change of kind would rewrite what those buyers bought.
+      def referenced_by_order_lines?
+        BetterTogether::Billing::LineItem.exists?(purchasable: self)
       end
 
       def pricing_tier_within_known_values

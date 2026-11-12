@@ -27,9 +27,10 @@ module BetterTogether
       def create
         authorize BetterTogether::Billing::Order, :checkout?
         load_choice
-        return render_again(:method_not_available) unless @method || @free_order
-        return render_again(@address_error) unless address_ok?
-        return render_again(:parts_too_large) if parts_too_large?
+        return redirect_to billing_order_path(placed_order_id, locale: I18n.locale) if placed_order_id
+
+        reason = early_refusal
+        return render_again(reason) if reason
 
         @gate = build_gate
         return render_again(:not_ready) unless @gate.ready?
@@ -75,6 +76,8 @@ module BetterTogether
         @available_add_ons = offered_add_ons
         chosen = Array(params[:add_on_ids]).map(&:to_s)
         @add_ons = @available_add_ons.select { |add_on| chosen.include?(add_on.id) }
+        # Ticked earlier but no longer offered: the buyer is told rather than left with a quietly changed order.
+        @dropped_add_ons = chosen - @add_ons.map(&:id)
         @purchasables = [@plan, *@add_ons]
         @order_cents = @purchasables.sum(&:amount_cents)
         @free_order = @purchasables.all?(&:free?)
@@ -134,15 +137,47 @@ module BetterTogether
         @gate.missing.all? { |agreement| params[helpers.agreement_acceptance_param_name(agreement)] == '1' }
       end
 
+      # Why the order cannot go ahead before the agreements are looked at, if it cannot.
+      def early_refusal
+        return :method_not_available unless @method || @free_order
+        return :order_changed if order_changed?
+        return @address_error unless address_ok?
+
+        :parts_too_large if parts_too_large?
+      end
+
+      # The total the buyer saw when they ticked extras. If an add-on was withdrawn or repriced since, they confirm again.
+      def order_changed?
+        @dropped_add_ons.any? || (params[:expected_total_cents].present? && params[:expected_total_cents].to_i != @order_cents)
+      end
+
+      # A form token is good for one order: repeating the submit (double click, back and resend) lands on the order already placed.
+      def placed_order_id
+        token = params[:checkout_token].presence
+        token && session.dig(:billing_checkout_orders, token)
+      end
+
+      def remember_placed_order(order)
+        token = params[:checkout_token].presence or return
+        placed = (session[:billing_checkout_orders] ||= {})
+        placed[token] = order.id
+        placed.shift while placed.size > 20
+      end
+
       def place_order
         @gate.accept!(method: 'checkout', context: { request: })
         order = Orders::Place.call(platform: billing_owner, buyer: current_user.person, purpose: @purpose,
                                    line_items: @purchasables.map { |purchasable| { purchasable: } },
                                    renewal_payment_method: @renew_with, billing_address: @address, **how_to_pay)
-        redirect_to billing_order_path(order, locale: I18n.locale), notice: t('better_together.billing.checkout.placed')
+        redirect_after_place(order)
       rescue Orders::Place::Refused, Checkout::AgreementGate::NotReady => e
         Rails.logger.warn("[billing] checkout refused: #{e.class}")
         render_again(:refused)
+      end
+
+      def redirect_after_place(order)
+        remember_placed_order(order)
+        redirect_to billing_order_path(order, locale: I18n.locale), notice: t('better_together.billing.checkout.placed')
       end
 
       def address_ok? = @free_order || choose_address
