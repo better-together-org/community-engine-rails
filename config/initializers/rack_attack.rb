@@ -228,7 +228,11 @@ module Rack
       if req.path.include?('/users/sign-in') && req.post?
         # Normalize the email, using the same logic as your authentication process, to
         # protect against rate limit bypasses. Return the normalized email if present, nil otherwise.
-        req.params['email'].to_s.downcase.gsub(/\s+/, '').presence
+        # Devise posts user[email]; the bare email param is kept for API clients. The host is part
+        # of the key so one platform's attempts never lock the same address out on another.
+        raw = req.params['email'].presence || req.params.dig('user', 'email')
+        email = raw.to_s.downcase.gsub(/\s+/, '').presence
+        "#{req.host}:#{email}" if email
       end
     end
 
