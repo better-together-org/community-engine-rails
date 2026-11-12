@@ -10,6 +10,8 @@ module BetterTogether
       # Raised when a feature needs a host-supplied value that is not set.
       class MissingConfigurationError < StandardError; end
 
+      DEFAULT_WALK_UP_INVITATION_CAP = 20
+
       REQUIRED_KEYS = %w[PAY_BUSINESS_NAME PAY_BUSINESS_ADDRESS PAY_SUPPORT_EMAIL].freeze
 
       DEFAULT_MAX_CREDIT_GRANT = '1000'
@@ -43,6 +45,12 @@ module BetterTogether
         def max_credit_grant_minor(code, env = ENV)
           minor = Currency.to_minor(value('BT_BILLING_MAX_CREDIT_GRANT', env), code)
           minor&.positive? ? minor : Currency.to_minor(DEFAULT_MAX_CREDIT_GRANT, code)
+        end
+
+        # Most community invitations one steward can cause through walk-up sales in a day (BT_BILLING_WALK_UP_INVITATIONS_PER_DAY).
+        def walk_up_invitation_cap(env = ENV)
+          cap = value('BT_BILLING_WALK_UP_INVITATIONS_PER_DAY', env).to_i
+          cap.positive? ? cap : DEFAULT_WALK_UP_INVITATION_CAP
         end
 
         # Required by features that must send a country to the processor.
