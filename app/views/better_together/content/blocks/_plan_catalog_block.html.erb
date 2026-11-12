@@ -10,7 +10,9 @@
       <h2 id="<%= dom_id(plan_catalog_block, :heading) %>" class="mb-4"><%= plan_catalog_block.heading %></h2>
     <% end %>
     <% if plans.any? %>
+      <%# Cards sit under the block's h2 heading when there is one, so theirs drop to h3. %>
       <%= render 'better_together/billing/catalog/plans', plans:, prefix: "block_#{plan_catalog_block.id}",
+                                                           heading_tag: plan_catalog_block.heading.present? ? :h3 : :h2,
                                                            id: dom_id(plan_catalog_block, :plans) %>
     <% else %>
       <p id="<%= dom_id(plan_catalog_block, :empty) %>" class="text-body-secondary">

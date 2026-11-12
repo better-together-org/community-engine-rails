@@ -953,8 +953,14 @@ en:
       checkout:
         accept: I have read and accept %{title}
         add_on_line: Add-on
+        add_ons_dropped: An extra you chose is no longer offered, so it was removed
+          from your order. Check the total before you continue.
         add_ons_heading: Add to your order
         add_ons_hint: Optional extras for this order. Update the order to add them.
+        add_ons_status:
+          one: Order updated. One extra selected. Total %{total}.
+          other: Order updated. %{count} extras selected. Total %{total}.
+          zero: Order updated. No extras selected. Total %{total}.
         address:
           choose: Billing address
           hint: Tax is worked out from where you are billed, so choose your country
@@ -977,6 +983,9 @@ en:
         error_method_not_available: Choose one of the ways to pay that are available.
         error_not_ready: 'This purchase cannot be completed yet: the terms for it
           have not been set up. Please contact the people who run this platform.'
+        error_order_changed: The price or the extras on offer changed while you were
+          checking out. Nothing has been charged. Please review the total and place
+          the order again.
         error_parts_too_large: The amounts you entered cover the whole price. Leave
           some for the way chosen above, or choose it for the whole amount.
         error_refused: Your order could not be placed. Nothing has been charged. Please
@@ -6249,6 +6258,7 @@ en:
       add_on_cannot_renew: an add-on is bought once, not renewed
       add_on_has_grants: an add-on cannot include anything of its own; put that on
         a plan
+      add_on_locked_by_orders: cannot be changed once orders include this plan
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
       already_pending: There is already a refund request waiting on this order.
