@@ -1,0 +1,35 @@
+<% scope = 'better_together.billing.notification_preferences' %>
+<% content_for :page_title do %>
+  <%= t("#{scope}.title") %>
+<% end %>
+
+<div id="billing-notification-preferences-page" class="container my-4">
+  <%= link_to t('better_together.billing.hub.title'), billing_hub_path(locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm mb-3', id: 'billing-notification-preferences-back' %>
+  <h1 class="mb-2"><%= t("#{scope}.title") %></h1>
+  <p class="text-body-secondary mb-4"><%= t("#{scope}.intro") %></p>
+
+  <%= form_with url: billing_notification_preferences_path(locale: I18n.locale), method: :patch, id: 'billing-notification-preferences-form', class: 'card mb-4' do %>
+    <div class="card-body">
+      <div class="form-check form-switch mb-3">
+        <%= hidden_field_tag :notify_billing_by_email, '0', id: nil %>
+        <%= check_box_tag :notify_billing_by_email, '1', current_user.person.notification_preferences.fetch('notify_billing_by_email', true),
+                          id: 'billing-notify-email', class: 'form-check-input', role: 'switch' %>
+        <%= label_tag 'billing-notify-email', t("#{scope}.email_label"), class: 'form-check-label' %>
+        <div class="form-text"><%= t("#{scope}.email_hint") %></div>
+      </div>
+      <%= submit_tag t("#{scope}.save"), id: 'billing-notification-preferences-btn', class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+
+  <section id="billing-notification-always" class="card" aria-labelledby="billing-notification-always-title">
+    <div class="card-header"><h2 id="billing-notification-always-title" class="h5 mb-0"><%= t("#{scope}.always_title") %></h2></div>
+    <div class="card-body">
+      <p class="text-body-secondary"><%= t("#{scope}.always_hint") %></p>
+      <ul class="mb-0">
+        <% @critical_kinds.each do |kind| %>
+          <li id="billing-notification-always-<%= kind.dasherize %>"><%= t("#{scope}.kinds.#{kind}", default: kind.humanize) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+</div>

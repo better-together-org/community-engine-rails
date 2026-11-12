@@ -1,0 +1,48 @@
+{
+  "name": "billing_orders_filters",
+  "device": "desktop",
+  "url": "/en/billing/orders?status=paid",
+  "title": "My orders | Test Host Community",
+  "locale": "en",
+  "role": "buyer",
+  "feature_set": "billing_account_polish",
+  "flow": "billing_orders_filters",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_account_polish_spec.rb",
+  "callouts": [
+    {
+      "selector": "#billing-orders-filters",
+      "title": "Find an order",
+      "bullets": [
+        "Narrow the list by status or year."
+      ],
+      "target": {
+        "x": 68.0,
+        "y": 192.0,
+        "width": 1304.0,
+        "height": 78.0,
+        "right": 1372.0,
+        "bottom": 270.0,
+        "center_x": 720.0,
+        "center_y": 231.0
+      },
+      "avoid": {
+        "x": 68.0,
+        "y": 192.0,
+        "width": 1304.0,
+        "height": 78.0,
+        "right": 1372.0,
+        "bottom": 270.0,
+        "center_x": 720.0,
+        "center_y": 231.0
+      },
+      "placement": {
+        "side": "below",
+        "x": 530.0,
+        "y": 290.0,
+        "width": 380,
+        "height": 132,
+        "score": 1187.0
+      }
+    }
+  ]
+}

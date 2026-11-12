@@ -90,6 +90,7 @@ Welcome to the comprehensive documentation for the Better Together Community Eng
 - [Billing Purchase Agreements](billing/purchase_agreements.md) - Which agreements a buyer accepts before paying, how they are chosen, and where they apply in the flow
 - [Billing Plan Change](billing/plan_change.md) - A payer moves a subscription to another plan from the next period, with a downgrade guard on usage
 - [Billing Refund Requests](billing/refund_requests.md) - A buyer asks for money back, a steward approves, part-approves or declines with a reply, and approval reuses the ordinary refund record
+- [Billing Account Polish](billing/account_polish.md) - Order filters, changing a subscription's payment method, a billing address editor and billing email preferences
 - [Billing Orders and Payments](billing/orders_and_payments.md) - Orders, lines, payments and refunds, and how an order's status moves
 - [Quota Enforcement and Allowances](billing/quota_enforcement.md) - What the four enforcement modes do, where a refusal happens, whose quota is charged, and how paid allowances set limits
 - [Billing Entitlements and Quota Allowances](billing/entitlements_and_allowances.md) - What a plan gives (roles, feature access, quota allowances), one derivation from Pay's status, what is taken away at a lapse and what never is

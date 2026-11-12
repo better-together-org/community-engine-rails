@@ -907,6 +907,24 @@ es:
         view_page: Ver la página
         view_page_link: Haz clic aquí para ver la página
     billing:
+      addresses:
+        add: Añadir dirección
+        added: Dirección añadida.
+        default: Predeterminada
+        default_set: Dirección de facturación predeterminada actualizada.
+        intro: El impuesto de sus pedidos se calcula según su dirección de facturación.
+          Su dirección predeterminada se ofrece primero al pagar.
+        list_title: Sus direcciones
+        make_default: Hacer predeterminada
+        new_title: Añadir una dirección
+        none: Todavía no tiene dirección de facturación.
+        refused:
+          incomplete: Elija un país y un estado o provincia para calcular el impuesto.
+          invalid: No se pudo guardar esa dirección. Revise los campos e inténtelo
+            de nuevo.
+          missing: Escriba una dirección.
+          not_found: No se encontró esa dirección.
+        title: Direcciones de facturación
       allowances:
         enforcement: Aplicación
         field_owner: Titular
@@ -1092,9 +1110,31 @@ es:
         plans_heading: Planes activos
         plans_none: No tienes planes activos.
         renews: Se renueva el %{date}
+        settings_addresses: Direcciones de facturación
+        settings_heading: Ajustes de facturación
+        settings_notifications: Notificaciones de facturación
         title: Facturación y planes
         view_access: Ver mi acceso
         view_credit: Ver crédito
+      notification_preferences:
+        always_hint: Estos requieren su atención, por lo que siempre se muestran en
+          la aplicación y se envían por correo.
+        always_title: Siempre se envían
+        email_hint: Recibos, recordatorios de renovación, cambios de plan y decisiones
+          de reembolso. Desactivar esto no detiene los avisos urgentes de abajo.
+        email_label: Enviarme avisos de facturación por correo
+        intro: Elija qué avisos de facturación también se envían a su correo. Siempre
+          aparecen en la aplicación.
+        kinds:
+          cheque_bounced: Un cheque no se pudo cobrar
+          grace_ending: Termina el plazo extra para pagar
+          hold_expiring: Un pedido sin pagar está por vencer
+          payment_action_required: Un pago necesita su acción
+          payment_failed: Un pago falló
+          renewal_overdue: Una renovación está vencida
+        save: Guardar
+        saved: Configuración de notificaciones guardada.
+        title: Notificaciones de facturación
       notifications:
         agreement_reacceptance_needed:
           buyer:
@@ -1450,8 +1490,14 @@ es:
         field_subtotal: Subtotal
         field_tax: Impuesto
         field_total: Total
+        filter_any: Cualquiera
+        filter_apply: Mostrar
+        filter_clear: Borrar filtros
+        filter_status: Estado
+        filter_year: Año
         index_title: Mis pedidos
         lines_heading: Lo que se pidió
+        no_matching_orders: Ningún pedido coincide con estos filtros.
         no_orders: Todavía no tiene pedidos.
         no_payments: Todavía no se ha hecho ningún pago.
         no_sales: Todavía no hay pedidos.
@@ -1960,6 +2006,17 @@ es:
         field_through: Pagado hasta
         index_title: Suscripciones
         invoice: Factura %{number}
+        method_change_intro: Las renovaciones se pagan con %{method}. Elija otra forma
+          para las próximas renovaciones. Una factura ya emitida conserva su método.
+        method_change_label: Pagar las renovaciones con
+        method_change_none: No hay otra forma de pagar las renovaciones por ahora.
+        method_change_refused:
+          not_local: Esta suscripción la renueva su procesador de pagos.
+          not_offered: Esa forma de pago no está disponible para este plan.
+          unchanged: Las renovaciones ya se pagan con ese método.
+        method_change_submit: Cambiar método
+        method_change_title: Método de pago
+        method_changed: Las próximas renovaciones se pagarán con el nuevo método.
         none: No tienes suscripciones.
         period_blocked: En espera
         period_lapsed: Caducado

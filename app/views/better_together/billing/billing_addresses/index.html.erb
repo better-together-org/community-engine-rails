@@ -1,0 +1,58 @@
+<% scope = 'better_together.billing.addresses' %>
+<% content_for :page_title do %>
+  <%= t("#{scope}.title") %>
+<% end %>
+
+<div id="billing-addresses-page" class="container my-4">
+  <%= link_to t('better_together.billing.hub.title'), billing_hub_path(locale: I18n.locale), class: 'btn btn-outline-secondary btn-sm mb-3', id: 'billing-addresses-back' %>
+  <h1 class="mb-2"><%= t("#{scope}.title") %></h1>
+  <p class="text-body-secondary mb-4"><%= t("#{scope}.intro") %></p>
+
+  <section id="billing-addresses-list" class="card mb-4" aria-labelledby="billing-addresses-list-title">
+    <div class="card-header"><h2 id="billing-addresses-list-title" class="h5 mb-0"><%= t("#{scope}.list_title") %></h2></div>
+    <% if @addresses.any? %>
+      <ul class="list-group list-group-flush">
+        <% @addresses.each do |address| %>
+          <li id="<%= dom_id(address, :billing) %>" class="list-group-item d-flex justify-content-between align-items-center gap-2">
+            <span><%= address.select_option_title %></span>
+            <% if address.id == @default_id %>
+              <span class="badge bg-success billing-address-default-badge" id="<%= dom_id(address, :default_badge) %>"><%= t("#{scope}.default") %></span>
+            <% else %>
+              <%= button_to t("#{scope}.make_default"), default_billing_billing_address_path(address, locale: I18n.locale), method: :patch,
+                            id: dom_id(address, :make_default), class: 'btn btn-outline-secondary btn-sm' %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="card-body"><p id="billing-addresses-empty" class="text-body-secondary mb-0"><%= t("#{scope}.none") %></p></div>
+    <% end %>
+  </section>
+
+  <section id="billing-addresses-new" class="card" aria-labelledby="billing-addresses-new-title">
+    <div class="card-header"><h2 id="billing-addresses-new-title" class="h5 mb-0"><%= t("#{scope}.new_title") %></h2></div>
+    <div class="card-body">
+      <p class="text-body-secondary"><%= t('better_together.billing.checkout.address.hint') %></p>
+      <%= form_with url: billing_billing_addresses_path(locale: I18n.locale), method: :post, id: 'billing-addresses-form' do %>
+        <%= fields_for :billing_address, @new_address do |address_form| %>
+          <div class="row">
+            <div class="col-md-8 mb-3">
+              <%= address_form.label :line1, t('better_together.billing.checkout.address.line1'), class: 'form-label' %>
+              <%= address_form.text_field :line1, class: 'form-control', id: 'billing-addresses-line1', autocomplete: 'address-line1' %>
+            </div>
+            <div class="col-md-4 mb-3">
+              <%= address_form.label :postal_code, t('better_together.billing.checkout.address.postal_code'), class: 'form-label' %>
+              <%= address_form.text_field :postal_code, class: 'form-control', id: 'billing-addresses-postal-code', autocomplete: 'postal-code' %>
+            </div>
+          </div>
+          <%= render 'better_together/addresses/geography_fields', form: address_form %>
+        <% end %>
+        <div class="form-check mb-3">
+          <%= check_box_tag :make_default_billing, '1', @addresses.empty?, class: 'form-check-input', id: 'billing-addresses-make-default' %>
+          <%= label_tag 'billing-addresses-make-default', t('better_together.billing.checkout.address.make_default'), class: 'form-check-label' %>
+        </div>
+        <%= submit_tag t("#{scope}.add"), id: 'billing-addresses-add-btn', class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </section>
+</div>

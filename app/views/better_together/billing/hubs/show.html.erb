@@ -111,4 +111,12 @@
       </div>
     </section>
   </div>
+
+  <section id="billing-hub-settings" class="mt-4" aria-labelledby="billing-hub-settings-heading">
+    <h2 id="billing-hub-settings-heading" class="h5"><%= t('better_together.billing.hub.settings_heading') %></h2>
+    <div class="d-flex flex-wrap gap-2">
+      <%= link_to t('better_together.billing.hub.settings_addresses'), billing_billing_addresses_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-hub-addresses-link' %>
+      <%= link_to t('better_together.billing.hub.settings_notifications'), billing_notification_preferences_path(locale: I18n.locale), class: 'btn btn-outline-secondary', id: 'billing-hub-notifications-link' %>
+    </div>
+  </section>
 </div>
