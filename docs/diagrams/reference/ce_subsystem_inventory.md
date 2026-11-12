@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-12T13:37:23Z`.
+Generated from live Rails reflections at `2026-11-12T22:13:37Z`.
 
 ## Identity, access, and memberships
 
@@ -653,7 +653,7 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 | Billing::AllowancesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CheckoutsController | `BetterTogether::ApplicationController` | `Billing::Checkout` | `Billing::CheckoutTaxPreview`<br>`Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditAccountsController | `BetterTogether::ApplicationController` | `Billing::CreditAccount` | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::CreditGrantsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::CreditGrantsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditsController | `BetterTogether::ApplicationController` | `Billing::Credit` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::EntitlementsController | `BetterTogether::ApplicationController` | `Billing::Entitlement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::OfflinePaymentsController | `BetterTogether::ApplicationController` | `Billing::OfflinePayment` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
