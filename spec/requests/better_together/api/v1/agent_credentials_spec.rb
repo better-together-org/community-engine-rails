@@ -126,7 +126,16 @@ RSpec.describe 'Agent credentials on the REST API', :no_auth do
   describe 'platform binding' do
     let(:other_platform) { create(:better_together_platform) }
     let(:robot) { create(:robot, platform: other_platform) }
+    let(:operator_authority) do
+      # Delegating admin scopes needs authority on the grant's own platform.
+      BetterTogether::PersonPlatformMembership.create!(
+        member: operator, joinable: other_platform, status: 'active',
+        role: BetterTogether::Role.find_by!(identifier: 'platform_manager')
+      )
+      operator.expire_permission_cache!
+    end
     let!(:grant) do
+      operator_authority
       create(:better_together_agent_grant, robot: robot, operator: operator, platform: other_platform,
                                            scopes: grant_scopes)
     end

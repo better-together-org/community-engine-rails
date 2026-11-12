@@ -161,6 +161,10 @@ module BetterTogether
       # @param permission_identifier [String] Permission identifier (e.g., 'manage_platform')
       # @param record [ActiveRecord::Base, nil] Optional record to check permission against
       # @return [Boolean] True if permitted, false otherwise
+      def platform_manager?
+        agent.respond_to?(:platform_manager?) && agent.platform_manager?
+      end
+
       def permitted_to?(permission_identifier, record = nil)
         return false unless agent
 

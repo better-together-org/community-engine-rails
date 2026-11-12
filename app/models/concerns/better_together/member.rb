@@ -98,6 +98,18 @@ module BetterTogether
         end
       end
 
+      # Manages the platform being served by this request. Use this (or
+      # #host_platform_manager?) instead of a bare permitted_to?('manage_platform'),
+      # which unions the permission across every platform the person belongs to.
+      def platform_manager?(platform = Current.platform)
+        platform.present? && permitted_to?('manage_platform', platform)
+      end
+
+      # Manages the install's host platform (Sidekiq, seeds, OAuth admin, profiling).
+      def host_platform_manager?
+        platform_manager?(Current.host_platform)
+      end
+
       private
 
       # While an agent credential limited to one community is acting for this
@@ -164,7 +176,7 @@ module BetterTogether
       def cache_key_for(method, identifier = nil, record = nil)
         base_key = "better_together/member/#{self.class.name}/#{id}/#{cache_version}/#{method}"
         key = identifier ? "#{base_key}/#{identifier}" : base_key
-        record ? "#{key}/#{record.class.name}/#{record.identifier}" : key
+        record ? "#{key}/#{record.class.name}/#{record.try(:id) || record.try(:identifier)}" : key
       end
 
       public

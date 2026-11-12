@@ -67,7 +67,7 @@ module BetterTogether
     def authorize_mini_profiler_if_enabled
       return unless BetterTogether::Profiling.enabled?
       return unless defined?(Rack::MiniProfiler)
-      return unless current_user&.permitted_to?('manage_platform')
+      return unless current_user&.host_platform_manager?
 
       Rack::MiniProfiler.authorize_request
     end
@@ -435,7 +435,7 @@ module BetterTogether
 
     def after_sign_in_path_for(resource)
       stored_location_for(resource) ||
-        if resource.permitted_to?('manage_platform')
+        if resource.platform_manager?
           host_dashboard_path
         else
           BetterTogether.base_path_with_locale

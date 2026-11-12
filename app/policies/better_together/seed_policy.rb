@@ -3,15 +3,15 @@
 module BetterTogether
   class SeedPolicy < ApplicationPolicy # rubocop:todo Style/Documentation
     def index?
-      permitted_to?('manage_platform')
+      host_platform_manager?
     end
 
     def show?
-      permitted_to?('manage_platform')
+      host_platform_manager?
     end
 
     def create?
-      permitted_to?('manage_platform')
+      host_platform_manager?
     end
 
     def new?
@@ -19,7 +19,7 @@ module BetterTogether
     end
 
     def update?
-      permitted_to?('manage_platform')
+      host_platform_manager?
     end
 
     def edit?
@@ -31,12 +31,12 @@ module BetterTogether
     end
 
     def destroy?
-      permitted_to?('manage_platform')
+      host_platform_manager?
     end
 
     class Scope < ApplicationPolicy::Scope # rubocop:todo Style/Documentation
       def resolve
-        if permitted_to?('manage_platform')
+        if host_platform_manager?
           scope.latest_first
         else
           scope.none

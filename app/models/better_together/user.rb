@@ -33,7 +33,7 @@ module BetterTogether
 
     accepts_nested_attributes_for :person
 
-    delegate :permitted_to?, to: :person, allow_nil: true
+    delegate :permitted_to?, :platform_manager?, :host_platform_manager?, to: :person, allow_nil: true
 
     def build_person(attributes = {})
       identification = build_person_identification(
