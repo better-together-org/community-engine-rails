@@ -29,6 +29,15 @@ RSpec.describe 'Invitation tokens are bound to their platform', :no_auth, :skip_
     BetterTogether::PersonPlatformMembership.where(joinable: host_platform, role: steward_role)
   end
 
+  def captured_refusals
+    events = []
+    subscriber = ActiveSupport::Notifications.subscribe(BetterTogether::TenancyAudit::EVENT) { |*, payload| events << payload }
+    yield
+    events.select { |e| e[:action] == 'invitation.redemption_refused' }
+  ensure
+    ActiveSupport::Notifications.unsubscribe(subscriber)
+  end
+
   def sign_up_params(email)
     challenge = travel_to(3.seconds.ago) { BetterTogether::BotDefense::Challenge.issue(form_id: :registration) }
     { user: { email:, password: 'SecureTest123!@#', password_confirmation: 'SecureTest123!@#',
@@ -71,5 +80,30 @@ RSpec.describe 'Invitation tokens are bound to their platform', :no_auth, :skip_
 
     expect(bad).not_to be_valid
     expect(bad.errors[:platform_role]).to be_present
+  end
+
+  describe 'refused redemption audit' do
+    it 'records a cross platform web attempt without the token' do
+      host! 'host.example.test'
+      events = captured_refusals { get "/en/users/sign-up?invitation_code=#{invitation.token}" }
+
+      expect(events.size).to eq(1)
+      expect(events.first).to include(invitation_id: invitation.id, issuing_platform_id: tenant_platform.id, channel: 'web')
+      expect(events.first.to_json).not_to include(invitation.token)
+    end
+
+    it 'records nothing for an unknown token' do
+      host! 'host.example.test'
+      events = captured_refusals { get '/en/users/sign-up?invitation_code=no-such-token' }
+
+      expect(events).to be_empty
+    end
+
+    it 'records nothing when the issuing platform is the current one' do
+      host! 'tenant.example.test'
+      events = captured_refusals { get "/en/users/sign-up?invitation_code=#{invitation.token}" }
+
+      expect(events).to be_empty
+    end
   end
 end

@@ -111,6 +111,7 @@ module BetterTogether
         I18n.locale = @platform_invitation.locale if @platform_invitation.locale.present?
         session[:locale] = I18n.locale
       else
+        ::BetterTogether::Invitation.audit_refused_redemption(token, Current.platform, channel: :web)
         session.delete(:platform_invitation_token)
         session.delete(:platform_invitation_expires_at)
       end
