@@ -90,6 +90,7 @@ RSpec.describe BetterTogether::Billing::ProcessorSettingsController do
       end
 
       it 'does not show another platform\'s state' do
+        grant_hosted_billing(other_platform)
         other_platform.billing_processor_settings.create!(processor: 'cheque', enabled: true, acknowledge: true,
                                                           settings: { 'payee_name' => 'A', 'address' => 'B' })
 

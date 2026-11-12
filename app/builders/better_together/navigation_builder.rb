@@ -671,6 +671,28 @@ module BetterTogether
                 privacy: 'private',
                 visibility_strategy: 'permission',
                 permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-hosted-billing',
+                title_en: 'Hosted Billing',
+                slug_en: 'billing-hosted-billing',
+                position: 15,
+                item_type: 'link',
+                route_name: 'billing_hosted_billing_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
+              },
+              {
+                identifier: 'billing-hosted-platforms',
+                title_en: 'Hosted Platforms',
+                slug_en: 'billing-hosted-platforms',
+                position: 16,
+                item_type: 'link',
+                route_name: 'billing_hosted_platforms_url',
+                privacy: 'private',
+                visibility_strategy: 'permission',
+                permission_identifier: 'manage_platform'
               }
             ]
 

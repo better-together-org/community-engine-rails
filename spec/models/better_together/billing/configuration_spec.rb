@@ -125,6 +125,7 @@ module BetterTogether
         end
 
         it 'has one for any platform that turned it on, with no credentials' do
+          grant_hosted_billing(other_platform)
           enable_method(other_platform)
 
           context = described_class.context_for(other_platform, :cash)
@@ -134,6 +135,7 @@ module BetterTogether
         end
 
         it 'does not give the host platform a method another platform turned on' do
+          grant_hosted_billing(other_platform)
           enable_method(other_platform)
 
           expect(described_class.context_for(host_platform, :cash)).to be_nil
@@ -157,6 +159,7 @@ module BetterTogether
 
         it 'does not depend on the host environment, but a vendor processor still does' do
           Billing.register_processor(:fake, -> { FakeAdapter.new })
+          grant_hosted_billing(other_platform)
           enable_method(other_platform)
 
           expect(described_class.context_for(other_platform, :fake)).to be_nil

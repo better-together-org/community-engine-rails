@@ -145,6 +145,7 @@ module BetterTogether
     has_many :billing_credit_accounts, class_name: 'BetterTogether::Billing::CreditAccount', dependent: :restrict_with_error
     has_many :billing_entitlements, class_name: 'BetterTogether::Billing::Entitlement', dependent: :restrict_with_error
     has_many :billing_events, class_name: 'BetterTogether::Billing::Event', dependent: :restrict_with_error
+    has_one :billing_hosted_account, class_name: 'BetterTogether::Billing::HostedAccount', dependent: :restrict_with_error
     has_many :billing_agreement_requirements, class_name: 'BetterTogether::Billing::AgreementRequirement',
                                               dependent: :restrict_with_error
     has_many :billing_notification_receipts, class_name: 'BetterTogether::Billing::NotificationReceipt',

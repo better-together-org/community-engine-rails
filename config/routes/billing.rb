@@ -124,6 +124,20 @@ concern :billing_hub do
   end
 end
 
+# Hosted billing enablement: a hosted platform's steward accepts the host's billing agreements (/billing/hosted_billing);
+# the host's steward sees every hosted platform and can suspend one (/billing/hosted_platforms).
+concern :billing_hosted do
+  namespace :billing do
+    resource :hosted_billing, only: %i[show create], controller: 'hosted_billings'
+    resources :hosted_platforms, only: :index do
+      member do
+        patch :suspend
+        patch :resume
+      end
+    end
+  end
+end
+
 # What a paid plan gives: a steward's list of what a plan includes and the platform's allowances, and a person's own access.
 concern :billing_entitlements do
   namespace :billing do
@@ -185,6 +199,6 @@ end
 scope ':locale', locale: /#{I18n.available_locales.join('|')}/ do
   scope path: BetterTogether.route_scope_path do
     concerns :billing_hub, :billing_plans, :billing_offline_payments, :billing_credit, :billing_subscriptions,
-             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics
+             :billing_entitlements, :billing_tax, :billing_lookups, :billing_metrics, :billing_hosted
   end
 end

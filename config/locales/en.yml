@@ -1075,6 +1075,58 @@ en:
         status_revoked: Refunded
         title: My access
         until: Runs until %{date}.
+      hosted_billing:
+        accept_button: Accept for this platform
+        accepted: Agreement accepted for this platform.
+        accepted_state: Accepted for this platform.
+        go_to_methods: Set up your payment methods
+        intro: "%{platform} is hosted. Accept the host's billing agreements below
+          to unlock what each one covers. Nothing is switched on until you also set
+          up a payment method."
+        merchant_not_yet: Merchant of record billing is not available yet. You can
+          accept this agreement ahead of time.
+        methods_locked: Accept the hosted platform billing agreement and the hosted
+          local billing agreement to take cash, cheque or e-transfer payments.
+        modes:
+          billing:
+            title: Hosted platform billing agreement
+            unlocks: Needed before any billing on this platform, local or remote.
+          local:
+            title: Hosted local billing agreement
+            unlocks: Lets this platform take cash, cheque and e-transfer. The host
+              does not track, guarantee or hold liability for these.
+          merchant:
+            title: Merchant onboarding agreement
+            unlocks: Lets the host collect payments for this platform as merchant
+              of record.
+        not_in_force: Not available yet. The host is still preparing this agreement.
+        refused:
+          accept_box: Tick the box to accept the agreement.
+          needs_billing_first: Accept the hosted platform billing agreement first.
+          not_in_force: That agreement is not in force yet.
+        suspended: The host has suspended billing for this platform. Your data is
+          kept. Contact the host to have it restored.
+        title: Hosted billing
+      hosted_platforms:
+        accepted: Accepted
+        actions: Actions
+        intro: Which hosted platforms have accepted which billing agreements, and
+          whether their billing is on. Suspending pauses a platform's billing and
+          keeps its data.
+        none: No platforms are hosted here yet.
+        not_accepted: Not accepted
+        platform: Platform
+        reason: Reason for suspending
+        reason_required: Give a reason to suspend billing.
+        resume: Resume
+        resumed: Billing resumed for that platform.
+        status: Billing
+        status_off: 'Off'
+        status_on: 'On'
+        status_suspended: Suspended
+        suspend: Suspend
+        suspended: Billing suspended for that platform.
+        title: Hosted platforms
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to
@@ -6120,6 +6172,7 @@ en:
       after_start: must be after it starts
       already_confirmed: was already confirmed, please try signing in
       blank: can't be blank
+      cannot_be_the_host: cannot be the host platform
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
@@ -6133,6 +6186,8 @@ en:
       greater_than: must be greater than %{count}
       greater_than_or_equal_to: must be greater than or equal to %{count}
       greater_than_refundable: is more than can still be refunded
+      hosted_local_billing_not_agreed: needs the hosted local billing agreements accepted
+        first
       immutable_after_processor_link: cannot be changed once the plan is linked to
         a processor price
       in: must be in %{count}
