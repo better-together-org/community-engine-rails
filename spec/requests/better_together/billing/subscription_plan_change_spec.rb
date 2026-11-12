@@ -73,4 +73,57 @@ RSpec.describe 'Billing subscription plan change', type: :request do # rubocop:d
   it 'does not let a stray update change the plan' do
     expect(term.update(plan: bigger)).to be(false)
   end
+
+  context 'when it changes now' do
+    let(:halfway) { start_time + 15.days }
+    let!(:cheaper) do
+      create(:better_together_billing_plan, processor: nil, processor_price_id: nil, processor_product_id: nil, billing_interval: 'month',
+                                            amount_cents: 1000, currency: 'USD', accepted_payment_methods: %w[cash store_credit], listed: true)
+    end
+
+    it 'prorates a dearer plan by the days left' do
+      travel_to(halfway) do
+        expect(service.prorated_cents(term, bigger)).to be_within(100).of(1000)
+      end
+    end
+
+    it 'invoices the difference for a dearer plan and keeps the old plan until it is paid' do
+      outcome = travel_to(halfway) { service.now(term:, plan: bigger) }
+
+      expect(outcome).to have_attributes(mode: :invoiced, order: be_present)
+      expect(term.reload).to have_attributes(plan: sub_plan, pending_plan: bigger, pending_plan_order: outcome.order)
+    end
+
+    it 'moves to the dearer plan once that invoice is paid' do
+      outcome = travel_to(halfway) { service.now(term:, plan: bigger) }
+
+      travel_to(halfway) do
+        pay_manually(outcome.order)
+        follow_up
+      end
+
+      expect(term.reload).to have_attributes(plan: bigger, unit_amount_cents: 5000, pending_plan: nil, pending_plan_order: nil)
+    end
+
+    it 'moves to a cheaper plan at once and gives the difference back as store credit' do
+      travel_to(halfway) { service.now(term:, plan: cheaper) }
+
+      expect(term.reload.plan).to eq(cheaper)
+      expect(credit.usable_cents(platform: host_platform, holder: buyer, currency: 'USD')).to be_positive
+    end
+
+    it 'cancels the invoice when the change is withdrawn' do
+      outcome = travel_to(halfway) { service.now(term:, plan: bigger) }
+
+      service.withdraw(term: term.reload)
+
+      expect([term.reload.pending_plan, outcome.order.reload.status]).to eq([nil, 'cancelled'])
+    end
+
+    it 'changes at once through the page when asked to' do
+      travel_to(halfway) { post change_path, params: { plan_id: cheaper.id, when: 'now' } }
+
+      expect(term.reload.plan).to eq(cheaper)
+    end
+  end
 end

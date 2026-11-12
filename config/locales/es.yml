@@ -1901,12 +1901,23 @@ es:
         period_waived: Cubierto
         periods_caption: Cada periodo de esta suscripción y su factura
         periods_title: Periodos y facturas
-        plan_change_intro: Elija otro plan. Empieza con su próximo periodo y su próxima
-          factura será del nuevo plan. Hasta entonces no cambia nada.
+        plan_change_credit_note: Diferencia prorrateada por un cambio de plan
+        plan_change_credited: Ya está en el nuevo plan. Se añadieron %{amount} a su
+          crédito de tienda.
+        plan_change_done: Ya está en el nuevo plan.
+        plan_change_intro: Elija otro plan y cuándo cambia. Desde su próximo periodo,
+          nada cambia hasta entonces. Ahora, el resto del periodo se prorratea.
+        plan_change_invoiced: Se emitió una factura por %{amount}. Su plan cambia
+          cuando se pague.
         plan_change_label: Nuevo plan
         plan_change_none: Ahora mismo no hay otro plan al que pueda pasar.
+        plan_change_now_hint: Un plan más caro se factura por la diferencia y cambia
+          cuando se paga. Un plan más barato cambia de inmediato y la diferencia vuelve
+          como crédito de tienda.
         plan_change_pending: Pasará a %{plan} cuando empiece su próximo periodo (después
           del %{date}).
+        plan_change_pending_invoice: Su cambio a %{plan} se hará cuando se pague su
+          factura.
         plan_change_refused:
           different_schedule: Ese plan se factura con otro calendario u otra moneda,
             por lo que no puede pasar a él desde aquí.
@@ -1916,8 +1927,12 @@ es:
             y vuelva a intentarlo.
           same_plan: Ya tiene ese plan.
         plan_change_saved: Guardado. Su plan cambia cuando empiece el próximo periodo.
-        plan_change_submit: Cambiar desde el próximo periodo
+        plan_change_submit: Cambiar de plan
         plan_change_title: Cambiar de plan
+        plan_change_view_invoice: Ver la factura
+        plan_change_when_legend: "¿Cuándo debe cambiar?"
+        plan_change_when_next: Desde mi próximo periodo (sin cargo ahora)
+        plan_change_when_now: Ahora (prorrateado por el resto del periodo)
         plan_change_withdraw: Mantener mi plan actual
         plan_change_withdrawn: Se canceló su cambio de plan.
         resume: Mantener mi suscripción

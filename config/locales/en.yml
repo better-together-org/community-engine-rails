@@ -1898,12 +1898,23 @@ en:
         period_waived: Covered
         periods_caption: Each period of this subscription and its invoice
         periods_title: Periods and invoices
-        plan_change_intro: Pick another plan. It starts with your next period, and
-          your next invoice is for the new plan. Until then nothing changes.
+        plan_change_credit_note: Prorated difference for a plan change
+        plan_change_credited: You are on the new plan. %{amount} was added to your
+          store credit.
+        plan_change_done: You are on the new plan.
+        plan_change_intro: Pick another plan and when it changes. From your next period,
+          nothing changes until then. Now, the rest of this period is prorated.
+        plan_change_invoiced: Invoice made for %{amount}. Your plan changes when it
+          is paid.
         plan_change_label: New plan
         plan_change_none: There is no other plan you can move to right now.
+        plan_change_now_hint: A dearer plan is invoiced for the difference and changes
+          once that is paid. A cheaper plan changes at once and the difference comes
+          back as store credit.
         plan_change_pending: You will move to %{plan} when your next period starts
           (after %{date}).
+        plan_change_pending_invoice: Your move to %{plan} happens when its invoice
+          is paid.
         plan_change_refused:
           different_schedule: That plan bills on a different schedule or currency,
             so you cannot move to it from here.
@@ -1913,8 +1924,12 @@ en:
             then try again.
           same_plan: You are already on that plan.
         plan_change_saved: Saved. Your plan changes when the next period starts.
-        plan_change_submit: Change from next period
+        plan_change_submit: Change plan
         plan_change_title: Change plan
+        plan_change_view_invoice: View the invoice
+        plan_change_when_legend: When should it change?
+        plan_change_when_next: From my next period (no charge now)
+        plan_change_when_now: Now (prorated for the rest of this period)
         plan_change_withdraw: Keep my current plan
         plan_change_withdrawn: Your plan change was cancelled.
         resume: Keep my subscription

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_21_090000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -814,11 +814,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_090000) do
     t.datetime "grace_ends_at"
     t.uuid "pending_plan_id"
     t.datetime "pending_plan_requested_at"
+    t.uuid "pending_plan_order_id"
     t.index ["beneficiary_type", "beneficiary_id"], name: "idx_bt_billing_sub_terms_beneficiary"
     t.index ["grace_ends_at"], name: "idx_bt_billing_sub_terms_grace", where: "(grace_ends_at IS NOT NULL)"
     t.index ["id", "platform_id"], name: "idx_bt_billing_sub_terms_id_platform", unique: true
     t.index ["pay_subscription_id"], name: "idx_bt_billing_sub_terms_subscription", unique: true
     t.index ["pending_plan_id"], name: "idx_bt_billing_terms_pending_plan"
+    t.index ["pending_plan_order_id"], name: "idx_bt_billing_terms_pending_order"
     t.index ["plan_id"], name: "idx_bt_billing_sub_terms_plan"
     t.index ["platform_id"], name: "idx_bt_billing_sub_terms_platform"
     t.check_constraint "unit_amount_cents >= 0 AND anchor_sequence >= 0", name: "chk_bt_billing_sub_terms_amounts"
@@ -3598,6 +3600,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_090000) do
   add_foreign_key "better_together_billing_subscription_periods", "better_together_billing_orders", column: ["order_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_periods_order_platform"
   add_foreign_key "better_together_billing_subscription_periods", "better_together_billing_subscription_terms", column: ["subscription_term_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_periods_term_platform"
   add_foreign_key "better_together_billing_subscription_periods", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_billing_subscription_terms", "better_together_billing_orders", column: "pending_plan_order_id", on_delete: :nullify
   add_foreign_key "better_together_billing_subscription_terms", "better_together_billing_plans", column: "pending_plan_id", on_delete: :nullify
   add_foreign_key "better_together_billing_subscription_terms", "better_together_billing_plans", column: ["plan_id", "platform_id"], primary_key: ["id", "platform_id"], name: "fk_bt_billing_sub_terms_plan_platform"
   add_foreign_key "better_together_billing_subscription_terms", "better_together_platforms", column: "platform_id"

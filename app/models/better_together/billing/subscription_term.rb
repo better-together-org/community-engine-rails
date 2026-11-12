@@ -19,6 +19,7 @@ module BetterTogether
       belongs_to :plan, class_name: 'BetterTogether::Billing::Plan', optional: false
       # The plan the subscriber chose to move to when the next period starts (see Subscriptions::ChangePlan).
       belongs_to :pending_plan, class_name: 'BetterTogether::Billing::Plan', optional: true
+      belongs_to :pending_plan_order, class_name: 'BetterTogether::Billing::Order', optional: true
       belongs_to :beneficiary, polymorphic: true, optional: true
       has_many :periods, -> { order(:sequence) }, class_name: 'BetterTogether::Billing::SubscriptionPeriod', inverse_of: :term,
                                                   foreign_key: :subscription_term_id, dependent: :restrict_with_error

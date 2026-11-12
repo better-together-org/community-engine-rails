@@ -3,10 +3,13 @@
 module BetterTogether
   module Billing
     module Subscriptions
-      # A payer moves a subscription Community Engine renews to another of the platform's plans. No money moves at the moment
-      # of the request, so there is nothing to prorate: the change takes effect when the next period starts, the next invoice is
-      # made for the new plan at its price, and what the plan includes is brought in line then (see `apply`). Until then
-      # nothing changes, and the request can be withdrawn.
+      # A payer moves a subscription Community Engine renews to another of the platform's plans, and chooses when:
+      #
+      # * **From the next period** (`request`): no money moves now. The next invoice is made for the new plan at its price, and
+      #   what the plan includes is brought in line then (see `apply`). Until then nothing changes, and it can be withdrawn.
+      # * **Now** (`now`): the rest of the paid period is prorated by the days left. A cheaper plan changes at once and the
+      #   difference comes back as store credit. A dearer plan is invoiced for the difference and changes when that is paid
+      #   (see `paid`); until then the subscriber keeps the plan they have, and can withdraw.
       #
       # Only a move to a plan on the same schedule (interval and count) and currency is offered, so the period anchor stays valid.
       # A move to a plan with smaller allowances is refused while what the holder uses is above what the new plan would allow.
@@ -21,8 +24,40 @@ module BetterTogether
           end
         end
 
+        # What a move now does: `:credited` or `:invoiced` (with the invoice) or `:no_charge`; `amount_cents` is the prorated difference.
+        Outcome = Struct.new(:mode, :amount_cents, :order)
+
         def self.request(term:, plan:) = new(term:).request(plan)
-        def self.withdraw(term:) = term.update!(pending_plan: nil, pending_plan_requested_at: nil)
+        def self.now(term:, plan:) = new(term:).now(plan)
+
+        def self.withdraw(term:)
+          order = term.pending_plan_order
+          term.update!(pending_plan: nil, pending_plan_requested_at: nil, pending_plan_order: nil)
+          Orders::Cancel.call(order) if order&.can_become?('cancelled') && order.net_paid_cents.zero?
+          term
+        rescue Orders::Cancel::Refused
+          term
+        end
+
+        # The invoice for a move now was paid: the plan changes.
+        def self.paid(term:, order:)
+          return term unless term.pending_plan_order_id == order.id && term.pending_plan
+
+          term.with_lock { switch(term, term.pending_plan) }
+          Entitlements::Sync.subscription(term)
+          term
+        end
+
+        # The prorated difference for a move to this plan right now, in cents (negative when it is cheaper).
+        def self.prorated_cents(term, plan, now: Time.current)
+          subscription = term.pay_subscription
+          start = subscription.current_period_start
+          finish = subscription.current_period_end
+          return 0 unless start && finish && finish > start
+
+          left = ((finish - [now, start].max) / (finish - start)).clamp(0.0, 1.0)
+          ((plan.amount_cents - term.unit_amount_cents) * left).round
+        end
 
         # The plans this subscription could move to.
         def self.options(term)
@@ -43,7 +78,8 @@ module BetterTogether
         # An entitlement's plan is fixed once made; a plan change is the one time it moves, so it is moved here.
         def self.switch(term, plan)
           Thread.current[:billing_plan_change] = true
-          term.update!(plan:, unit_amount_cents: plan.amount_cents, currency: plan.currency, pending_plan: nil, pending_plan_requested_at: nil)
+          term.update!(plan:, unit_amount_cents: plan.amount_cents, currency: plan.currency, pending_plan: nil, pending_plan_requested_at: nil,
+                       pending_plan_order: nil)
           Entitlement.where(pay_subscription_id: term.pay_subscription_id).update_all(plan_id: plan.id) # rubocop:disable Rails/SkipsModelValidations
         ensure
           Thread.current[:billing_plan_change] = nil
@@ -61,47 +97,57 @@ module BetterTogether
           term
         end
 
-        # Why a move to this plan is not possible, or nil.
-        def refusal(plan)
-          return :not_running unless running?
-          return :same_plan if plan.id == term.plan_id
-          return :not_available unless offered?(plan)
-          return :different_schedule unless same_schedule?(plan)
+        # Moves to the plan straight away, prorated; see the class comment.
+        def now(plan)
+          code = refusal(plan)
+          raise Refused, code if code
 
-          :over_limit if over_limit?(plan)
+          cents = self.class.prorated_cents(term, plan)
+          return move_now(plan, cents, credit: nil) if cents <= 0
+
+          invoice(plan, cents)
         end
+
+        # Why a move to this plan is not possible, or nil.
+        def refusal(plan) = PlanChangeCheck.new(term).refusal(plan)
 
         private
 
         attr_reader :term
 
-        def running?
-          term.local? && term.pay_subscription.status == 'active' && term.pay_subscription.ends_at.blank?
+        # A cheaper (or equal) plan: it changes at once, and what was paid for the rest of the period and is no longer owed comes back.
+        def move_now(plan, cents, credit:)
+          term.with_lock { self.class.switch(term, plan) }
+          Entitlements::Sync.subscription(term)
+          grant_credit(-cents) if cents.negative?
+          Outcome.new(cents.negative? ? :credited : :no_charge, cents.abs, credit)
         end
 
-        def offered?(plan) = plan.platform_id == term.platform_id && plan.seller_id.blank? && plan.active? && !plan.free?
-
-        def same_schedule?(plan)
-          current = term.plan
-          plan.billing_interval == current.billing_interval && plan.interval_count == current.interval_count && plan.currency == term.currency
+        def grant_credit(cents)
+          Credit::Grant.call(platform: term.platform, holder: term.payer, amount_cents: cents, currency: term.currency, origin: 'adjustment',
+                             idempotency_key: "plan_change:#{term.id}:#{term.pay_subscription.current_period_end.to_i}:#{term.plan_id}",
+                             note: I18n.t('better_together.billing.subscriptions.plan_change_credit_note'))
         end
 
-        # What the holder uses is more than the limit would be on the new plan.
-        def over_limit?(plan)
-          owner = term.beneficiary_or_payer
-          now = allowances(term.plan)
-          later = allowances(plan)
-          now.keys.union(later.keys).any? { |type| exceeds?(Entitlements::Meter.for(owner:, type:), now[type].to_i, later[type].to_i) }
+        # A dearer plan: the difference is invoiced, and the plan changes when it is paid.
+        def invoice(plan, cents)
+          order = Orders::Place.call(**invoice_attributes(plan, cents))
+          term.update!(pending_plan: plan, pending_plan_requested_at: Time.current, pending_plan_order: order)
+          Outcome.new(:invoiced, cents, order)
         end
 
-        def exceeds?(reading, old_amount, new_amount)
-          !reading.unlimited? && reading.used > reading.limit - old_amount + new_amount
+        def invoice_attributes(plan, cents)
+          { **invoice_parties, purpose: 'subscription', renewal: true, payment_method: method_to_open,
+                               line_items: [{ purchasable: plan, quantity: 1, unit_amount_cents: cents }],
+                               tax_address: GenerateRenewal.new(term:).tax_address,
+                               expires_at: [term.pay_subscription.current_period_end, 3.days.from_now].max }
         end
 
-        def allowances(plan)
-          grants = plan.plan_grants.where(kind: 'quota_allowance')
-          grants.to_h { |grant| [grant.parameters['quota_type'].to_s, Integer(grant.parameters['amount'], exception: false).to_i] }
+        def invoice_parties
+          { platform: term.platform, buyer: term.payer, signer: term.payer, subject: term, on_behalf_of: term.beneficiary }
         end
+
+        def method_to_open = (term.payment_method unless Billing.internal_method?(term.payment_method))
       end
     end
   end

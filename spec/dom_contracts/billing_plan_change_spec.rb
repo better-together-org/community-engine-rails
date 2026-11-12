@@ -20,7 +20,8 @@ RSpec.describe 'Billing plan change DOM contract', type: :request do # rubocop:d
   it 'offers the choice of plan' do
     get "/#{locale}/billing/subscriptions/#{term.id}"
 
-    %w[subscription-plan-change subscription-plan-change-form subscription-plan-change-select subscription-plan-change-btn].each do |id|
+    %w[subscription-plan-change subscription-plan-change-form subscription-plan-change-select subscription-plan-change-when
+       subscription-plan-change-when-next subscription-plan-change-when-now subscription-plan-change-btn].each do |id|
       expect(response.body).to include(%(id="#{id}")), "expected id=#{id.inspect} in the page"
     end
   end

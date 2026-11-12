@@ -39,8 +39,8 @@ module BetterTogether
       # Choose another plan from the next period.
       def change_plan
         authorize @term
-        Subscriptions::ChangePlan.request(term: @term, plan: billing_owner.billing_plans.sold_by_platform.find(params[:plan_id]))
-        redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_saved')
+        plan = billing_owner.billing_plans.sold_by_platform.find(params[:plan_id])
+        params[:when] == 'now' ? change_now(plan) : change_next(plan)
       rescue Subscriptions::ChangePlan::Refused => e
         redirect_to show_path, alert: t("better_together.billing.subscriptions.plan_change_refused.#{e.code}")
       end
@@ -67,6 +67,20 @@ module BetterTogether
       private
 
       def show_path = billing_subscription_path(@term, locale: I18n.locale)
+
+      # Moves now: a cheaper plan at once (with credit back), a dearer one once the invoice for the difference is paid.
+      def change_next(plan)
+        Subscriptions::ChangePlan.request(term: @term, plan:)
+        redirect_to show_path, notice: t('better_together.billing.subscriptions.plan_change_saved')
+      end
+
+      def change_now(plan)
+        outcome = Subscriptions::ChangePlan.now(term: @term, plan:)
+        amount = helpers.billing_amount(outcome.amount_cents, @term.currency)
+        key = { invoiced: 'plan_change_invoiced', credited: 'plan_change_credited' }.fetch(outcome.mode, 'plan_change_done')
+        target = outcome.mode == :invoiced ? billing_order_path(outcome.order, locale: I18n.locale) : show_path
+        redirect_to target, notice: t("better_together.billing.subscriptions.#{key}", amount:)
+      end
 
       def own_terms
         billing_owner.billing_subscription_terms.local
