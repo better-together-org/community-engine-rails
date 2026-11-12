@@ -43,6 +43,8 @@ bin/rails "better_together:billing:list_events[dead_lettered]"  # or failed
 bin/rails "better_together:billing:show_event[EVENT_ID]"
 ```
 
+![Payment events list](../screenshots/desktop/billing_events_index.png)
+
 ## Retry
 
 Check first why it stopped. A retry runs the event again from the start with a fresh attempt count. If the cause is not fixed (processor still down, platform setting missing), it just fails again.
@@ -64,6 +66,8 @@ APPLY=1 OPERATOR=PERSON_ID ALL=1 bin/rails "better_together:billing:replay_event
 Output is one line per event: `would replay`, `replayed`, or `refused (reason)`. The operator is recorded on the event.
 
 A retry is refused when the event is not failed or dead-lettered (`not_replayable`), its payload was already redacted (`payload_unavailable`), its processor is no longer installed (`unsupported_processor`), or the platform no longer has the processor configured (`platform_not_configured`).
+
+![A dead-lettered event with the retry button](../screenshots/desktop/billing_events_show.png)
 
 ## Is it safe to retry twice?
 
