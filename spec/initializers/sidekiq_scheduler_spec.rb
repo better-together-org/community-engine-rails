@@ -30,7 +30,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
         'better_together:event_reminder_scan_hourly',
         'better_together:billing:redact_expired_event_payloads_daily',
         'better_together:billing:dead_letter_stale_events_hourly',
-        'better_together:billing:prune_stale_pay_webhooks_daily'
+        'better_together:billing:prune_stale_pay_webhooks_daily',
+        'better_together:billing:enqueue_stuck_events_10min'
       )
     end
 
@@ -42,6 +43,8 @@ RSpec.describe 'Sidekiq Scheduler Configuration' do
           ['20 4 * * *', 'BetterTogether::Billing::RedactExpiredEventPayloadsJob'],
         'better_together:billing:dead_letter_stale_events_hourly' =>
           ['15 * * * *', 'BetterTogether::Billing::DeadLetterStaleBillingEventsJob'],
+        'better_together:billing:enqueue_stuck_events_10min' =>
+          ['*/10 * * * *', 'BetterTogether::Billing::EnqueueStuckBillingEventsJob'],
         'better_together:billing:prune_stale_pay_webhooks_daily' =>
           ['40 4 * * *', 'BetterTogether::Billing::PruneStalePayWebhooksJob'],
         'better_together:billing:expire_offline_payments_hourly' =>

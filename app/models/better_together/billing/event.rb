@@ -23,6 +23,9 @@ module BetterTogether
       ERROR_MESSAGE_LIMIT = 500
       PROCESSING_STATUSES = %w[pending processed failed ignored alerted dead_lettered replayed].freeze
       PROBLEM_STATUSES = %w[failed dead_lettered].freeze
+      # A pending event that never got a job, or whose retry wait is long over, is stuck.
+      UNCLAIMED_PENDING_GRACE = 10.minutes
+      RETRY_PENDING_GRACE = 35.minutes
       # Outcomes the adapter reached; such an event is not processed again.
       TERMINAL_STATUSES = %w[processed ignored alerted].freeze
 
@@ -81,6 +84,13 @@ module BetterTogether
           stuck.where(exhausted.or(stale))
         end
 
+        # Pending events nobody is working on: no job was ever started for them, or the last
+        # retry wait ended long ago. Only the ones the dead-letter sweep would not take.
+        def stuck_pending
+          pending.where(never_started.or(waited_out)).where(claimed_at: [nil, ..PROCESSING_LEASE.ago])
+                 .where.not(id: eligible_for_dead_lettering.select(:id))
+        end
+
         def operator_alert_summary(scope = all)
           problems = scope.problematic
           unresolved = problems.unresolved_after_reconciliation_window
@@ -100,6 +110,14 @@ module BetterTogether
         end
 
         private
+
+        def never_started
+          arel_table[:attempt_count].eq(0).and(reference_time(:last_attempted_at, :created_at).lteq(UNCLAIMED_PENDING_GRACE.ago))
+        end
+
+        def waited_out
+          arel_table[:attempt_count].gt(0).and(reference_time(:last_attempted_at, :created_at).lteq(RETRY_PENDING_GRACE.ago))
+        end
 
         def reference_time(first, second)
           Arel::Nodes::NamedFunction.new('COALESCE', [arel_table[first], arel_table[second]])
