@@ -119,4 +119,19 @@ RSpec.describe 'Documentation screenshots for checkout and purchase terms', # ru
       expect(page).to have_css('#billing-readiness-checklist')
     end
   end
+
+  it 'captures the form for adding a purchase terms requirement' do
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_purchase_terms_form',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_purchase_terms_form'),
+      callouts: [{ id: 'form', selector: '#billing-agreement-requirement-form', title: 'Add a requirement',
+                   avoid_container_selector: '#billing-agreement-requirement-form',
+                   bullets: ['Each field is labelled, so a screen reader announces what it sets.'] }]
+    ) do
+      visit_billing('agreement_requirements')
+      expect(page).to have_css('#billing-requirement-agreement')
+      scroll_to(find('#billing-agreement-requirement-form'), align: :top)
+    end
+  end
 end
