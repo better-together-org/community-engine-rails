@@ -120,8 +120,11 @@
                             data: { agreement_identifier: agreement.identifier } %>
                 <% if @gate.missing.include?(agreement) %>
                   <div class="form-check mt-2">
-                    <%= check_box_tag agreement_acceptance_param_name(agreement), '1', false, class: 'form-check-input agreement-checkbox', required: true,
-                                         data: { agreement_identifier: agreement.identifier }, aria: { describedby: summary_id, disabled: 'true' },
+                    <%# A box ticked before an error stays ticked and unlocked: the buyer already read that agreement. %>
+                    <% ticked = Array(@ticked_agreements).include?(agreement.identifier) %>
+                    <%= check_box_tag agreement_acceptance_param_name(agreement), '1', ticked, class: 'form-check-input agreement-checkbox', required: true,
+                                         data: { agreement_identifier: agreement.identifier, better_together_agreement_enabled: (true if ticked) },
+                                         aria: { describedby: summary_id, disabled: ticked ? 'false' : 'true' },
                                          id: "billing-agreement-accept-#{agreement.identifier}" %>
                     <%= label_tag agreement_acceptance_param_name(agreement), t('better_together.billing.checkout.accept', title: agreement.title), class: 'form-check-label',
                                 for: "billing-agreement-accept-#{agreement.identifier}" %>

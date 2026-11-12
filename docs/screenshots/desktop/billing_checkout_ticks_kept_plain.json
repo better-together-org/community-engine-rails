@@ -1,0 +1,11 @@
+{
+  "name": "billing_checkout_ticks_kept_plain",
+  "device": "desktop",
+  "url": "/en/billing/checkout/new?plan_id=5f483d27-9697-42f5-b668-4c302c05be7b&payment_method=cash",
+  "title": "Get Garden plot | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "billing_checkout_agreements",
+  "flow": "billing_checkout_ticks_kept_plain",
+  "source_spec": "./spec/docs_screenshots/better_together/billing_checkout_agreements_spec.rb"
+}
