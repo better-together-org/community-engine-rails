@@ -4014,6 +4014,15 @@ uk:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        billing_agreement_requirements: Умови покупки
+        billing_allowances: Квоти та використання
+        billing_credit_accounts: Рахунки кредиту магазину
+        billing_plans: Плани оплати
+        billing_processor_settings: Способи оплати
+        billing_promotions: Промокоди
+        billing_sales: Продажі
+        billing_subscribers: Підписники
+        billing_tax_registrations: Податкові реєстрації
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities

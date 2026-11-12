@@ -84,6 +84,29 @@ RSpec.describe BetterTogether::NavigationItem, '#visible_to?' do
     end
   end
 
+  describe 'the other steward links' do
+    %w[subscribers tax_registrations agreement_requirements promotions credit_accounts allowances].each do |name|
+      context "with #{name}" do
+        let(:link) do
+          build(:better_together_navigation_item, route_name: "billing_#{name}_url", privacy: 'public', visible: true,
+                                                  item_type: 'link', linkable_type: nil, linkable_id: nil, url: nil)
+        end
+
+        it 'is a valid route name, visible only where billing is enabled' do
+          expect(described_class.route_name_urls).to include("billing_#{name}_url")
+          expect(link.visible_to?(nil, platform: host_platform)).to be(true)
+          expect(link.visible_to?(nil, platform: other_platform)).to be(false)
+        end
+
+        it 'is hidden while billing is switched off' do
+          allow(BetterTogether::Billing::Configuration).to receive(:requested?).and_return(false)
+
+          expect(link.visible_to?(nil, platform: host_platform)).to be(false)
+        end
+      end
+    end
+  end
+
   it 'leaves every other route unaffected' do
     other = build(:better_together_navigation_item, route_name: 'pages_url', privacy: 'public', visible: true, item_type: 'link',
                                                     linkable_type: nil, linkable_id: nil, url: nil)

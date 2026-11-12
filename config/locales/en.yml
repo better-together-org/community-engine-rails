@@ -3979,6 +3979,15 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        billing_agreement_requirements: Purchase terms
+        billing_allowances: Allowances and usage
+        billing_credit_accounts: Store credit accounts
+        billing_plans: Billing Plans
+        billing_processor_settings: Payment Methods
+        billing_promotions: Promotion codes
+        billing_sales: Sales
+        billing_subscribers: Subscribers
+        billing_tax_registrations: Tax registrations
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities

@@ -4022,6 +4022,15 @@ es:
       new:
         title: Nuevo elemento de navegación para %{name}
       route_names:
+        billing_agreement_requirements: Condiciones de compra
+        billing_allowances: Cuotas y uso
+        billing_credit_accounts: Cuentas de crédito de la tienda
+        billing_plans: Planes de facturación
+        billing_processor_settings: Métodos de pago
+        billing_promotions: Códigos promocionales
+        billing_sales: Ventas
+        billing_subscribers: Suscriptores
+        billing_tax_registrations: Registros de impuestos
         calendars: Calendarios
         calls_for_interest: Convocatorias de interés
         communities: Comunidades
