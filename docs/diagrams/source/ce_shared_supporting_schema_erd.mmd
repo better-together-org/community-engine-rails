@@ -55,6 +55,9 @@ erDiagram
   EXT_PERSON ||--o{ PERSON_MESSAGING_GRANTS : "grantee / grantee_id"
   EXT_PLATFORM o|--o{ PHONE_NUMBERS : "platform / platform_id"
   CONTACT_DETAILS ||--o{ PHONE_NUMBERS : "contact_detail / contact_detail_id"
+  EXT_PLATFORM ||--o{ PLATFORM_DELETION_REQUESTS : "platform / platform_id"
+  EXT_PERSON ||--o{ PLATFORM_DELETION_REQUESTS : "requested_by / requested_by_id"
+  EXT_PERSON o|--o{ PLATFORM_DELETION_REQUESTS : "reviewed_by / reviewed_by_id"
   EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "platform / platform_id"
   EXT_PLATFORM ||--o{ PLATFORM_IDENTITY_PROVIDERS : "provider_platform / provider_platform_id"
   PLATFORM_IDENTITY_PROVIDERS ||--o{ PLATFORM_IDENTITY_PROVIDER_DOMAINS : "platform_identity_provider / platform_identity_provider_id"
@@ -323,6 +326,17 @@ erDiagram
     number string
     privacy string
     primary_flag boolean
+  }
+
+  PLATFORM_DELETION_REQUESTS {
+    platform_id uuid
+    requested_by_id uuid
+    reviewed_by_id uuid
+    status string
+    requested_reason text
+    reviewer_notes text
+    requested_at datetime
+    resolved_at datetime
   }
 
   PLATFORM_IDENTITY_PROVIDERS {

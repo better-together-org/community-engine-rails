@@ -66,15 +66,25 @@
           <h3 id="account-deletion-title" class="h5 mb-1"><%= t('better_together.settings.index.my_data.deletion.title') %></h3>
           <p class="text-muted"><%= t('better_together.settings.index.my_data.deletion.description') %></p>
 
-          <%= form_with url: person_deletion_requests_path(locale: I18n.locale), method: :post, local: true do |deletion_form| %>
-            <div class="mb-3">
-              <%= deletion_form.label :requested_reason, t('better_together.settings.index.my_data.deletion.reason'), class: 'form-label' %>
-              <%= deletion_form.text_area :requested_reason,
-                                          name: 'person_deletion_request[requested_reason]',
-                                          rows: 3,
-                                          class: 'form-control' %>
+          <% if current_user.person.last_platform_steward? %>
+            <div class="alert alert-warning" id="last-steward-deletion-notice" role="note">
+              <p class="mb-2"><%= t('better_together.platform_deletion_requests.last_steward_notice') %></p>
+              <%= link_to t('better_together.platform_deletion_requests.go_to_form'),
+                          new_platform_deletion_request_path(locale: I18n.locale),
+                          id: 'platform-deletion-request-link', class: 'btn btn-outline-danger btn-sm' %>
             </div>
-            <%= deletion_form.submit t('better_together.settings.index.my_data.deletion.submit'), class: 'btn btn-outline-danger' %>
+          <% else %>
+            <%= form_with url: person_deletion_requests_path(locale: I18n.locale), method: :post, local: true, id: "person-deletion-request-form" do |deletion_form| %>
+              <div class="mb-3">
+                <%= deletion_form.label :requested_reason, t('better_together.settings.index.my_data.deletion.reason'), for: 'person_deletion_request_requested_reason', class: 'form-label' %>
+                <%= deletion_form.text_area :requested_reason,
+                                            name: 'person_deletion_request[requested_reason]',
+                                            id: 'person_deletion_request_requested_reason',
+                                            rows: 3,
+                                            class: 'form-control' %>
+              </div>
+              <%= deletion_form.submit t("better_together.settings.index.my_data.deletion.submit"), id: "submit-person-deletion-request-btn", class: "btn btn-outline-danger" %>
+            <% end %>
           <% end %>
 
           <% if @person_deletion_requests&.any? %>

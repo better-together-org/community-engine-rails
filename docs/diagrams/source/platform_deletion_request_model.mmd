@@ -1,0 +1,16 @@
+erDiagram
+    PLATFORM ||--o{ PLATFORM_DELETION_REQUEST : "is the subject of"
+    PERSON ||--o{ PLATFORM_DELETION_REQUEST : "requested_by (steward)"
+    PERSON ||--o{ PLATFORM_DELETION_REQUEST : "reviewed_by (host steward)"
+    PERSON ||--o{ PERSON_DELETION_REQUEST : "asks to delete their account"
+    PLATFORM_DELETION_REQUEST {
+        uuid id
+        uuid platform_id
+        uuid requested_by_id
+        uuid reviewed_by_id
+        string status "pending cancelled approved rejected"
+        datetime requested_at
+        datetime resolved_at
+        text requested_reason
+        text reviewer_notes
+    }

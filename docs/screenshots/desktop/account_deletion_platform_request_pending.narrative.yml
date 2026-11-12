@@ -1,0 +1,12 @@
+---
+title: Platform removal request pending
+audience:
+- platform_steward
+journey_step: As the only steward, I can ask host stewards to remove the platform.
+callouts:
+- :id: form
+  :title: Platform removal request
+  :description: Goes to host stewards.
+accessibility_notes: The reason field is labelled and has a hint linked by aria-describedby.
+slug: account_deletion_platform_request_pending
+device: desktop

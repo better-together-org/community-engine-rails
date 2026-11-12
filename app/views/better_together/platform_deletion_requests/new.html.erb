@@ -1,0 +1,37 @@
+<% t_scope = 'better_together.platform_deletion_requests' %>
+<div class="container py-4" id="platform-deletion-request-page">
+  <h1 class="h3" id="platform-deletion-request-title"><%= t("#{t_scope}.title") %></h1>
+  <p id="platform-deletion-request-intro"><%= t("#{t_scope}.intro", platform: @platform.name) %></p>
+  <p class="text-muted" id="platform-deletion-request-explanation"><%= t("#{t_scope}.explanation") %></p>
+
+  <% pending = @platform_deletion_requests.find(&:pending?) %>
+  <% if pending %>
+    <div class="alert alert-info" id="<%= dom_id(pending) %>" role="status">
+      <p class="mb-2"><%= t("#{t_scope}.pending", date: l(pending.requested_at, format: :long)) %></p>
+      <%= button_to t("#{t_scope}.cancel"), platform_deletion_request_path(pending, locale: I18n.locale),
+                    method: :delete, id: 'cancel-platform-deletion-request-btn',
+                    class: 'btn btn-sm btn-outline-secondary' %>
+    </div>
+  <% else %>
+    <%= form_with model: @platform_deletion_request, url: platform_deletion_requests_path(locale: I18n.locale),
+                  id: 'platform-deletion-request-form', local: true do |form| %>
+      <% if @platform_deletion_request.errors.any? %>
+        <div class="alert alert-danger" id="platform-deletion-request-errors" role="alert">
+          <%= @platform_deletion_request.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+      <div class="mb-3">
+        <%= form.label :requested_reason, t("#{t_scope}.reason"), for: 'platform_deletion_request_requested_reason',
+                                                               class: 'form-label' %>
+        <%= form.text_area :requested_reason, id: 'platform_deletion_request_requested_reason', rows: 4, class: 'form-control',
+                           'aria-describedby': 'platform-deletion-request-reason-hint' %>
+        <div class="form-text" id="platform-deletion-request-reason-hint"><%= t("#{t_scope}.reason_hint") %></div>
+      </div>
+      <%= form.submit t("#{t_scope}.submit"), id: 'submit-platform-deletion-request-btn', class: 'btn btn-danger' %>
+    <% end %>
+  <% end %>
+
+  <p class="mt-4">
+    <%= link_to t("#{t_scope}.back"), edit_user_registration_path(locale: I18n.locale), id: 'platform-deletion-request-back' %>
+  </p>
+</div>

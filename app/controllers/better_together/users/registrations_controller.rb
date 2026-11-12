@@ -140,6 +140,12 @@ module BetterTogether
       end
 
       def destroy
+        if current_user.person.last_platform_steward?
+          return redirect_to new_platform_deletion_request_path(locale: I18n.locale),
+                             notice: I18n.t('better_together.platform_deletion_requests.redirected'),
+                             status: :see_other
+        end
+
         active_request = find_or_create_deletion_request
 
         redirect_to edit_user_registration_path(locale: I18n.locale),

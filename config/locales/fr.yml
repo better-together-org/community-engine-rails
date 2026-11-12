@@ -587,6 +587,11 @@ fr:
                 confidentialité publique
             visibility_strategy:
               inclusion: doit être authentifié ou permission
+        better_together/person_deletion_request:
+          attributes:
+            base:
+              last_platform_steward: ne peut pas être supprimé tant que vous êtes
+                la seule personne stewarde de votre plateforme
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -3340,6 +3345,31 @@ fr:
           seront mises en pause.
         sync_cursor: Curseur de synchronisation
         sync_status: État de synchronisation
+    platform_deletion_requests:
+      back: Retour aux paramètres du compte
+      cancel: Annuler la demande
+      cancelled: Votre demande de suppression de la plateforme a été annulée.
+      created: Votre demande de suppression de la plateforme a été envoyée aux stewards
+        hôtes.
+      explanation: Supprimer votre compte laisserait cette plateforme sans steward,
+        ce qui n’est pas autorisé. Envoyez une demande aux stewards de la plateforme
+        hôte pour la faire supprimer, ou demandez d’abord à une autre personne de
+        devenir steward.
+      go_to_form: Demander la suppression de la plateforme
+      intro: Vous êtes la seule personne stewarde de %{platform}.
+      last_steward_notice: Vous êtes la seule personne stewarde de cette plateforme.
+        Pour partir, demandez aux stewards hôtes de supprimer la plateforme, ou nommez
+        d’abord quelqu’un d’autre steward.
+      pending: Votre demande a été envoyée le %{date} et attend l’examen des stewards
+        hôtes.
+      reason: Pourquoi souhaitez-vous supprimer la plateforme ?
+      reason_hint: Facultatif. Les stewards hôtes le liront lors de l’examen de la
+        demande.
+      redirected: Vous êtes la dernière personne stewarde de cette plateforme ; la
+        suppression du compte est donc traitée comme une demande de suppression de
+        la plateforme.
+      submit: Envoyer la demande de suppression
+      title: Demander la suppression de cette plateforme
     platform_domains:
       cancel: Annuler
       cannot_destroy_primary: Impossible de supprimer le domaine principal. Définissez

@@ -32,7 +32,7 @@ Phase 1
 10. No same-email note on the sign up page (P1-2). Platforms are separately branded with no visible link between them, so sign up and sign in are expected to be single platform. Dropped by decision.
 11. No platform identity cue in the header (P1-8). Platform branding already shows where a person is. Dropped by decision.
 
-12. No separate leave platform feature. An account belongs to one platform, so the existing deletion request flow is the way to leave. Gap found: the deletion executor has no guard against deleting the last platform steward. Not yet addressed.
+12. No separate leave platform feature. An account belongs to one platform, so the existing deletion request flow is the way to leave. The last steward of a platform cannot request or execute deletion of their account (request model, both controllers and `PersonDeletionExecutor` refuse). They are sent to a platform removal request form (`PlatformDeletionRequest`). No task model exists yet, so creating a request instruments `platform_deletion_requested.better_together`; host stewards are not notified until the task feature subscribes to it. `PersonHardDeletionExecutor` (operator rake) is intentionally unguarded. See `docs/end_users/account_deletion_requests.md`.
 
 ## Uncertainties and gaps
 
@@ -40,7 +40,7 @@ Phase 1
 - DNS rebinding between the issuer check and the connection remains a small window.
 - Not implemented from phase 0: refused redemption audit event, search and blob fallbacks, navigation lookup and short link policy scoping (phase 2).
 - Not implemented from phase 1: host staff support access (P1-7). Each view change needs screenshots, DOM ids and a DOM contract spec.
-- Screenshots for views are not produced because no view was changed in this branch. Schema diagrams were regenerated with `bin/export_schema_diagrams`.
+- Deletion views have screenshots, a DOM contract spec and diagrams; no axe scan was added for them. Schema diagrams were regenerated with `bin/export_schema_diagrams`.
 - `spec/requests/better_together/event_invitations_spec.rb:124` was already failing before this work.
 - The Postgres test container can segfault under load; wait for `pg_isready` and rerun.
 - A global `Resolv` stub in `spec/support/outbound_dns_stub.rb` keeps specs offline; it hides real DNS behaviour from specs outside the SSRF specs.

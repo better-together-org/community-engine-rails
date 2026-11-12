@@ -256,6 +256,23 @@ module BetterTogether
       name
     end
 
+    # People holding an active steward role on this platform.
+    def steward_person_ids
+      person_platform_memberships.joins(:role)
+                                 .where(status: 'active', better_together_roles: { identifier: 'platform_steward' })
+                                 .distinct.pluck(:member_id)
+    end
+
+    def steward?(person)
+      person.present? && steward_person_ids.include?(person.id)
+    end
+
+    # True when deleting this person would leave the platform without a steward.
+    def last_steward?(person)
+      ids = steward_person_ids
+      ids.size == 1 && ids.first == person&.id
+    end
+
     private
 
     # A platform's privacy is not capped by its own primary community: that community follows the

@@ -1,0 +1,12 @@
+---
+title: Last steward account deletion
+audience:
+- platform_steward
+journey_step: As the only steward, I am pointed to the platform removal request.
+callouts:
+- :id: notice
+  :title: Last steward
+  :description: Explains why and links on.
+accessibility_notes: The notice has role note and a descriptive link.
+slug: account_deletion_last_steward
+device: desktop

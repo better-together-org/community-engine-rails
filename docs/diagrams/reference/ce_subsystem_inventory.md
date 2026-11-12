@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-12T05:12:37Z`.
+Generated from live Rails reflections at `2026-11-12T12:47:31Z`.
 
 ## Identity, access, and memberships
 
@@ -682,6 +682,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | PlatformConnectionStatusNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
 | PlatformConnectionSubmittedNotifier | `noticed_events` | Shares `noticed_events` columns with `CommentAddedNotifier` | Shares validation surface with `CommentAddedNotifier` | — | — |
 | PlatformConnectionSubmittedNotifier::Notification | `noticed_notifications` | Shares `noticed_notifications` columns with `CommentAddedNotifier::Notification` | Shares validation surface with `CommentAddedNotifier::Notification` | — | `platform` -> `Platform` (platform_network) |
+| PlatformDeletionRequest | `better_together_platform_deletion_requests` | `platform_id` (uuid FK)<br>`requested_by_id` (uuid FK)<br>`reviewed_by_id` (uuid FK)<br>`status` (string)<br>`requested_reason` (text)<br>`reviewer_notes` (text) | InclusionValidator: status (in=["pending", "cancelled", "approved", "rejected"])<br>PresenceValidator: requested_at | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`requested_by` -> `Person` (identity_access)<br>`reviewed_by` -> `Person` (identity_access) |
 | PlatformIdentityProvider | `better_together_platform_identity_providers` | `client_id` (string FK)<br>`platform_id` (uuid FK)<br>`provider_platform_id` (uuid FK)<br>`scopes` (string)<br>`strategy` (string)<br>`client_secret` (text) | FormatValidator: client_id, client_secret (allow_nil=true, without=/[[:cntrl:]\s]/, message=:invalid_characters)<br>PresenceValidator: strategy<br>InclusionValidator: strategy (in=dynamic)<br>UniquenessValidator: provider_platform_id (scope=:platform_id)<br>PresenceValidator: issuer (if=dynamic) | `BetterTogetherId`<br>`Seedable` | `platform` -> `Platform` (platform_network)<br>`provider_platform` -> `Platform` (platform_network) |
 | PlatformIdentityProviderDomain | `better_together_platform_identity_provider_domains` | `platform_domain_id` (uuid FK)<br>`platform_identity_provider_id` (uuid FK) | UniquenessValidator: platform_domain_id (scope=:platform_identity_provider_id) | `BetterTogetherId`<br>`Seedable` | `platform_domain` -> `PlatformDomain` (platform_network) |
 | Quota | `better_together_quotas` | `owner_id` (uuid FK)<br>`platform_id` (uuid FK)<br>`enforcement_mode` (string)<br>`owner_type` (string)<br>`period` (string)<br>`quota_type` (string) | PresenceValidator: platform (unless=:platform_presence_optional?)<br>PresenceValidator: quota_type<br>InclusionValidator: quota_type (in=dynamic)<br>PresenceValidator: limit<br>NumericalityValidator: limit (greater_than_or_equal_to=0)<br>UniquenessValidator: owner_id (scope=[:owner_type, :quota_type]) | `BetterTogetherId`<br>`PlatformScoped`<br>`Seedable` | `platform` -> `Platform` (platform_network) |
@@ -806,6 +807,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | NewPlatformSetupController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | NewPlatformSetupStepsController | `BetterTogether::WizardStepsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
 | OmniauthCallbacksController | `Devise::OmniauthCallbacksController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| PlatformDeletionRequestsController | `BetterTogether::ApplicationController` | `PlatformDeletionRequest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | PlatformDomainsController | `BetterTogether::ApplicationController` | `PlatformDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | PlatformIdentityProvidersController | `BetterTogether::ApplicationController` | `PlatformIdentityProvider` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | QuotaGrantsController | `BetterTogether::ApplicationController` | `QuotaGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
@@ -888,6 +890,7 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 - `PlatformConnectionStatusNotifier::Notification`: `recipient` (belongs_to)
 - `PlatformConnectionSubmittedNotifier`: `record` (belongs_to)
 - `PlatformConnectionSubmittedNotifier::Notification`: `recipient` (belongs_to)
+- `PlatformDeletionRequest`: `seeds` (has_many)
 - `PlatformIdentityProvider`: `seeds` (has_many)
 - `PlatformIdentityProviderDomain`: `seeds` (has_many)
 - `Quota`: `owner` (belongs_to), `seeds` (has_many)

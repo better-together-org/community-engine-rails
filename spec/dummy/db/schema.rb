@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_12_130000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_12_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -1899,6 +1899,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_12_130000) do
     t.index ["target_platform_id"], name: "idx_on_target_platform_id_24cfb3a8bf"
   end
 
+  create_table "better_together_platform_deletion_requests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "platform_id", null: false
+    t.uuid "requested_by_id", null: false
+    t.uuid "reviewed_by_id"
+    t.string "status", default: "pending", null: false
+    t.datetime "requested_at", null: false
+    t.datetime "resolved_at"
+    t.text "requested_reason"
+    t.text "reviewer_notes"
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["platform_id"], name: "idx_bt_platform_deletion_requests_pending", unique: true, where: "((status)::text = 'pending'::text)"
+    t.index ["platform_id"], name: "idx_bt_platform_deletion_requests_platform"
+    t.index ["requested_by_id"], name: "idx_bt_platform_deletion_requests_requester"
+    t.index ["reviewed_by_id"], name: "idx_bt_platform_deletion_requests_reviewer"
+  end
+
   create_table "better_together_platform_domains", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2986,6 +3004,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_12_130000) do
   add_foreign_key "better_together_places", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "source_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "target_platform_id"
+  add_foreign_key "better_together_platform_deletion_requests", "better_together_people", column: "requested_by_id"
+  add_foreign_key "better_together_platform_deletion_requests", "better_together_people", column: "reviewed_by_id"
+  add_foreign_key "better_together_platform_deletion_requests", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_platform_domains", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_platform_identity_provider_domains", "better_together_platform_domains", column: "platform_domain_id"
   add_foreign_key "better_together_platform_identity_provider_domains", "better_together_platform_identity_providers", column: "platform_identity_provider_id"

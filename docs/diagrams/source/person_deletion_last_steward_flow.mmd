@@ -1,0 +1,16 @@
+flowchart TD
+    A[Member opens account settings] --> B{Last steward of their platform?}
+    B -- No --> C[Deletion request form]
+    C --> D[PersonDeletionRequest pending]
+    D -- cancel --> E[cancelled]
+    D --> F[Operator reviews and runs PersonDeletionExecutor]
+    F --> G{Still the last steward?}
+    G -- No --> H[Account removed, platform kept]
+    G -- Yes --> I[LastStewardError, nothing deleted]
+    B -- Yes --> J[Notice and link to platform removal form]
+    J --> K[PlatformDeletionRequest pending]
+    K -- cancel --> L[cancelled]
+    K --> M[platform_deletion_requested event]
+    M --> N[Task feature creates a task for host stewards]
+    N --> O[Host stewards review and decide]
+    A -. direct POST or DELETE .-> B

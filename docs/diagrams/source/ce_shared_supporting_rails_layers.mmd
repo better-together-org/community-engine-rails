@@ -332,6 +332,11 @@ classDiagram
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
     }
+    class BetterTogether__PlatformDeletionRequestsController["PlatformDeletionRequestsController"] {
+      <<Controller>>
+      models: PlatformDeletionRequest
+      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+    }
     class BetterTogether__PlatformDomainsController["PlatformDomainsController"] {
       <<Controller>>
       concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
@@ -563,6 +568,12 @@ classDiagram
       concerns: BetterTogetherId, Labelable, PlatformScoped, PrimaryFlag +3
       weak refs: owner: seeds
     }
+    class BetterTogether__PlatformDeletionRequest["PlatformDeletionRequest"] {
+      <<Model>>
+      table: better_together_platform_deletion_requests
+      concerns: BetterTogetherId, Seedable
+      weak refs: owner: seeds
+    }
     class BetterTogether__PlatformIdentityProvider["PlatformIdentityProvider"] {
       <<Model>>
       table: better_together_platform_identity_providers
@@ -746,6 +757,8 @@ classDiagram
   BetterTogether__Metrics__UserAccountReportsController --|> BetterTogether__ApplicationController
   BetterTogether__NewPlatformSetupController --|> BetterTogether__ApplicationController
   BetterTogether__NewPlatformSetupStepsController --|> BetterTogether__WizardStepsController
+  BetterTogether__PlatformDeletionRequestsController ..> BetterTogether__PlatformDeletionRequest : manages
+  BetterTogether__PlatformDeletionRequestsController --|> BetterTogether__ApplicationController
   BetterTogether__PlatformDomainsController --|> BetterTogether__ApplicationController
   BetterTogether__PlatformIdentityProvidersController ..> BetterTogether__PlatformIdentityProvider : manages
   BetterTogether__PlatformIdentityProvidersController --|> BetterTogether__ApplicationController
@@ -817,6 +830,9 @@ classDiagram
   BetterTogether__PersonMessagingGrant --> BetterTogether__Person : grantee
   BetterTogether__PhoneNumber --> BetterTogether__Platform : platform
   BetterTogether__PhoneNumber --> BetterTogether__ContactDetail : contact_detail
+  BetterTogether__PlatformDeletionRequest --> BetterTogether__Platform : platform
+  BetterTogether__PlatformDeletionRequest --> BetterTogether__Person : requested_by
+  BetterTogether__PlatformDeletionRequest --> BetterTogether__Person : reviewed_by
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : platform
   BetterTogether__PlatformIdentityProvider --> BetterTogether__Platform : provider_platform
   BetterTogether__PlatformIdentityProviderDomain --> BetterTogether__PlatformIdentityProvider : platform_identity_provider

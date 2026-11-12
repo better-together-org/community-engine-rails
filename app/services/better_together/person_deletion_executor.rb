@@ -4,6 +4,9 @@ module BetterTogether
   # Executes the mixed-policy GDPR deletion flow for reviewed account deletion requests.
   # rubocop:disable Metrics/ClassLength
   class PersonDeletionExecutor
+    # Raised when the person is the only steward of their platform.
+    class LastStewardError < StandardError; end
+
     class << self
       def call(person_deletion_request:, reviewed_by: nil, reviewer_notes: nil)
         new(
@@ -26,6 +29,8 @@ module BetterTogether
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def call
+      raise LastStewardError, 'last platform steward cannot be deleted' if person.last_platform_steward?
+
       inventory = BetterTogether::PersonDeletionInventory.call(person:)
       audit = build_audit(inventory)
 

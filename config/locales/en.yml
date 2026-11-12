@@ -595,6 +595,11 @@ en:
               cannot_be_used_with_public_privacy: cannot be used with public privacy
             visibility_strategy:
               inclusion: must be either authenticated or permission
+        better_together/person_deletion_request:
+          attributes:
+            base:
+              last_platform_steward: cannot be deleted while you are the only steward
+                of your platform
         better_together/person_linked_seed:
           attributes:
             recipient_person:
@@ -3273,6 +3278,25 @@ en:
         suspend_confirm: Suspend this connection? Federation and sync will pause.
         sync_cursor: Sync Cursor
         sync_status: Sync Status
+    platform_deletion_requests:
+      back: Back to account settings
+      cancel: Cancel request
+      cancelled: Your platform removal request was cancelled.
+      created: Your platform removal request has been sent to the host stewards.
+      explanation: Deleting your account would leave this platform without a steward,
+        so it is not allowed. Send a request to the host platform stewards to have
+        the platform removed, or ask another person to become a steward first.
+      go_to_form: Request platform removal
+      intro: You are the only steward of %{platform}.
+      last_steward_notice: You are the only steward of this platform. To leave, ask
+        the host stewards to remove the platform, or make someone else a steward first.
+      pending: Your request was sent on %{date} and is waiting for host steward review.
+      reason: Why do you want the platform removed?
+      reason_hint: Optional. Host stewards will read this when they review the request.
+      redirected: You are the last steward of this platform, so account deletion is
+        handled as a platform removal request.
+      submit: Send removal request
+      title: Request removal of this platform
     platform_domains:
       cancel: Cancel
       cannot_destroy_primary: Cannot delete the primary domain. Set another domain

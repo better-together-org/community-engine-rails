@@ -54,6 +54,16 @@ module BetterTogether
     has_many :blockers, through: :blocked_by_person_blocks, source: :blocker
 
     # Ids of people this person has blocked or who have blocked them.
+    # The platform this person's account belongs to (accounts are per platform).
+    def account_platform
+      BetterTogether::Platform.find_by(id: platform_id)
+    end
+
+    # True when removing this person would leave their platform without a steward.
+    def last_platform_steward?
+      account_platform&.last_steward?(self) || false
+    end
+
     def block_related_person_ids
       person_blocks.pluck(:blocked_id) | blocked_by_person_blocks.pluck(:blocker_id)
     end
@@ -149,6 +159,11 @@ module BetterTogether
 
     has_many :person_data_exports, class_name: 'BetterTogether::PersonDataExport', dependent: :destroy, inverse_of: :person
     has_many :person_deletion_requests, class_name: 'BetterTogether::PersonDeletionRequest', dependent: :destroy, inverse_of: :person
+    has_many :platform_deletion_requests, class_name: 'BetterTogether::PlatformDeletionRequest',
+                                          foreign_key: :requested_by_id, dependent: :destroy, inverse_of: :requested_by
+    has_many :reviewed_platform_deletion_requests, class_name: 'BetterTogether::PlatformDeletionRequest',
+                                                   foreign_key: :reviewed_by_id, dependent: :nullify,
+                                                   inverse_of: :reviewed_by
     has_many :person_purge_audits,
              class_name: 'BetterTogether::PersonPurgeAudit',
              dependent: :nullify,
