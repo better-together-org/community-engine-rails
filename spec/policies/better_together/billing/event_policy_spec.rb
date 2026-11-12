@@ -39,6 +39,7 @@ RSpec.describe BetterTogether::Billing::EventPolicy do
   end
 
   it 'refuses a manager of a platform that is not the host' do
+    steward
     Current.platform = other_platform
     foreign = create(:better_together_billing_event, platform: other_platform)
 
@@ -77,6 +78,7 @@ RSpec.describe BetterTogether::Billing::EventPolicy do
 
     it 'resolves nothing for a member, a visitor or a platform that is not the host' do
       dead
+      steward
       expect(described_class::Scope.new(member, BetterTogether::Billing::Event).resolve).to be_empty
       expect(described_class::Scope.new(nil, BetterTogether::Billing::Event).resolve).to be_empty
 

@@ -676,7 +676,7 @@ module BetterTogether
                 identifier: 'billing-events',
                 title_en: 'Payment events',
                 slug_en: 'billing-events',
-                position: 15,
+                position: 16,
                 item_type: 'link',
                 route_name: 'billing_events_url',
                 privacy: 'private',
