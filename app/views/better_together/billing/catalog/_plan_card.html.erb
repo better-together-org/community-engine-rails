@@ -1,10 +1,15 @@
-<%# locals: (plan:, prefix: :catalog) -%>
+<%# locals: (plan:, prefix: :catalog, heading_tag: :h2) -%>
 <%# One plan as a card: name, price in words, summary and the way into checkout. Used by the catalog page and by the plan blocks. %>
 <article id="<%= dom_id(plan, prefix) %>" class="card h-100 billing-catalog-plan">
   <div class="card-body d-flex flex-column">
-    <h2 class="h5 card-title">
-      <%= link_to plan.name, billing_catalog_plan_path(plan, locale: I18n.locale), id: dom_id(plan, "#{prefix}_link") %>
-    </h2>
+    <%= content_tag heading_tag, class: 'h5 card-title' do %>
+      <%# Unlisted plans are bought by link only; the detail page would not show them, so no link. %>
+      <% if policy(plan).catalog_show? %>
+        <%= link_to plan.name, billing_catalog_plan_path(plan, locale: I18n.locale), id: dom_id(plan, "#{prefix}_link") %>
+      <% else %>
+        <span id="<%= dom_id(plan, "#{prefix}_link") %>"><%= plan.name %></span>
+      <% end %>
+    <% end %>
     <p id="<%= dom_id(plan, "#{prefix}_price") %>" class="h4 mb-3"><%= render 'better_together/billing/catalog/price', plan: %></p>
     <% if plan.display_participant_summary.present? %>
       <p class="text-body-secondary"><%= plan.display_participant_summary %></p>

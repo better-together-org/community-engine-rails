@@ -72,6 +72,15 @@ module BetterTogether
       ]
     end
 
+    # Plan blocks depend on who is looking (offer rules, memberships), which the shared
+    # page fragment key does not capture, so pages holding them are rendered uncached.
+    def page_has_viewer_specific_blocks?(blocks)
+      blocks.any? do |block|
+        block.is_a?(BetterTogether::Content::PlanButtonBlock) ||
+          block.is_a?(BetterTogether::Content::PlanCatalogBlock)
+      end
+    end
+
     def page_visibility_cache_context
       return send(:nav_permission_cache_stamp) if respond_to?(:nav_permission_cache_stamp, true)
 
