@@ -34,7 +34,7 @@ RSpec.describe 'Paying an order through a processor' do # rubocop:disable RSpec/
     it 'refuses a processor the platform has not configured, and a currency it does not take' do
       expect { place_order(payment_method: 'ghost') }.not_to raise_error # not installed at all: nothing is opened
       allow(BetterTogether::Billing::Configuration).to receive(:context_for).and_call_original
-      allow(BetterTogether::Billing::Configuration).to receive(:context_for).with(host_platform, 'fake').and_return(nil)
+      allow(BetterTogether::Billing::Configuration).to receive(:context_for).with(host_platform, 'fake', seller: nil).and_return(nil)
       expect { place_order(payment_method: 'fake') }.to raise_error(BetterTogether::Billing::Orders::Place::Refused, /not available/)
     end
 
