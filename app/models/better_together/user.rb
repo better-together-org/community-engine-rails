@@ -13,6 +13,11 @@ module BetterTogether
            jwt_revocation_strategy: JwtDenylist,
            omniauth_providers: BetterTogether::IdentityProviders.keys
 
+    # Platform audience claim: the token is accepted only on the platform that issued it.
+    def jwt_payload
+      { 'plt' => ::Current.platform&.id }
+    end
+
     has_one :person_identification,
             lambda {
               where(
