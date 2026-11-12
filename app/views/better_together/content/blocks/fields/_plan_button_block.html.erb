@@ -1,7 +1,7 @@
 <%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
 <%- temp_id = temp_id_for(block, temp_id:) %>
 <%
-  plans = BetterTogether::Billing::Plan.active.where(platform_id: Current.platform&.id, seller_id: nil).order(:identifier)
+  plans = BetterTogether::Billing::Plan.active.where(platform_id: (block.platform_id || Current.platform&.id), seller_id: nil).order(:identifier)
 %>
 <div class="plan-button-block-fields">
   <div class="mb-3">

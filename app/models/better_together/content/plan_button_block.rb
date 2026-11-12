@@ -13,6 +13,7 @@ module BetterTogether
       end
 
       validates :display_as, inclusion: { in: DISPLAYS }
+      validate :plan_belongs_to_platform
 
       def self.extra_permitted_attributes
         super + %i[plan_id display_as]
@@ -21,7 +22,16 @@ module BetterTogether
       def plan
         return if plan_id.blank?
 
-        BetterTogether::Billing::Plan.find_by(id: plan_id)
+        BetterTogether::Billing::Plan.where(platform_id:).find_by(id: plan_id)
+      end
+
+      private
+
+      # A block may only point at a plan of its own platform, never one from another tenant.
+      def plan_belongs_to_platform
+        return if plan_id.blank? || plan.present?
+
+        errors.add(:plan_id, :invalid)
       end
     end
   end

@@ -40,6 +40,14 @@ RSpec.describe BetterTogether::Billing::Plan do
       expect(error_keys(grant)).to include(:add_on_cannot_have_grants)
     end
 
+    it 'cannot change kind once an order line references it' do
+      plan = plan_with.tap(&:save!)
+      allow(BetterTogether::Billing::LineItem).to receive(:exists?).with(purchasable: plan).and_return(true)
+
+      expect(plan.update(add_on: true)).to be(false)
+      expect(error_keys(plan)).to include(:add_on_locked_by_orders)
+    end
+
     it 'is left out of the primary scope' do
       add_on = plan_with(add_on: true).tap(&:save!)
 
