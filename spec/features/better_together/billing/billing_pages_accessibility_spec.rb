@@ -9,22 +9,6 @@ RSpec.describe 'Billing pages accessibility', :accessibility, :js, :skip_host_se
   include_context 'with entitlement fixtures'
   include_context 'with billing switched on'
 
-  # Known axe findings that are not about labels, skipped until the follow-up fixes them.
-  # Per page and per rule; shrink the list as pages are fixed. Shared by several pages:
-  # the SlimSelect widget (select search) trips three ARIA rules on every page that uses one.
-  let(:slim_select_rules) { %w[aria-input-field-name aria-required-children aria-toggle-field-name] }
-  let(:skipped_rules) do
-    {
-      '/billing' => %w[color-contrast],
-      '/billing/credit' => %w[scrollable-region-focusable],
-      '/billing/plans' => %w[color-contrast],
-      '/host/metrics/reports' => %w[color-contrast]
-    }.tap do |rules|
-      %w[/billing/checkout/new /billing/plans/new /billing/walk_up_sale/new /billing/credit_accounts
-         /billing/tax_registrations/new].each { |path| rules[path] = slim_select_rules }
-      rules["/billing/plans/#{sub_plan.id}/edit"] = slim_select_rules
-    end
-  end
   let(:wcag_tags) { %i[wcag2a wcag2aa wcag21a wcag21aa wcag22aa] }
 
   let(:buyer_user) { find_or_create_test_user('user@example.test', password) }
@@ -41,13 +25,11 @@ RSpec.describe 'Billing pages accessibility', :accessibility, :js, :skip_host_se
     host_platform.billing_processor_settings.find_or_create_by!(processor: 'cash')
   end
 
-  def skipped_for(path) = skipped_rules.fetch(path.split('?').first, [])
-
   # The site search toggle in the shared navbar has an icon and no name; outside billing, so left for its own fix.
   def scan(path)
     visit "/#{locale}#{path}"
     expect(page).to have_current_path("/#{locale}#{path}", wait: 10)
-    expect(page).to be_axe_clean.according_to(*wcag_tags).excluding('a[href$="#search"]').skipping(*skipped_for(path))
+    expect(page).to be_axe_clean.according_to(*wcag_tags).excluding('a[href$="#search"]')
   end
 
   it 'passes for the buyer', :aggregate_failures do # rubocop:disable RSpec/NoExpectationExample
