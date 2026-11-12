@@ -15,7 +15,6 @@ Phase 0
 Phase 1
 - `users.platform_id` NOT NULL with a foreign key; email unique per `(platform_id, lower(email))`; Devise lookups (sign in, confirmation, recovery, unlock, reset token) scoped to `Current.platform`; a Warden hook logs out a session that reaches another platform; OAuth linking searches only the current platform.
 - `UserPlatformSplitService` and `rake better_together:tenancy:split_users` (dry run unless `APPLY=1`).
-- `PlatformLeaveService` (the last steward cannot leave).
 - The platform memberships controller accepts only members of that platform and platform roles.
 
 ## Decisions I made (please confirm or reverse)
@@ -33,12 +32,14 @@ Phase 1
 10. No same-email note on the sign up page (P1-2). Platforms are separately branded with no visible link between them, so sign up and sign in are expected to be single platform. Dropped by decision.
 11. No platform identity cue in the header (P1-8). Platform branding already shows where a person is. Dropped by decision.
 
+12. No separate leave platform feature. An account belongs to one platform, so the existing deletion request flow is the way to leave. Gap found: the deletion executor has no guard against deleting the last platform steward. Not yet addressed.
+
 ## Uncertainties and gaps
 
 - Data split touches real user rows. Run the dry run, review it, snapshot the database, rehearse on a copy of production data. It has not been run on real data. Authored content (posts, events, messages) is not re-pointed; decide per content type.
 - DNS rebinding between the issuer check and the connection remains a small window.
 - Not implemented from phase 0: refused redemption audit event, search and blob fallbacks, navigation lookup and short link policy scoping (phase 2).
-- Not implemented from phase 1: host staff support access (P1-7), a leave platform screen (only the service exists). Each view change needs screenshots, DOM ids and a DOM contract spec.
+- Not implemented from phase 1: host staff support access (P1-7). Each view change needs screenshots, DOM ids and a DOM contract spec.
 - Screenshots for views are not produced because no view was changed in this branch. Schema diagrams were regenerated with `bin/export_schema_diagrams`.
 - `spec/requests/better_together/event_invitations_spec.rb:124` was already failing before this work.
 - The Postgres test container can segfault under load; wait for `pg_isready` and rerun.
