@@ -40,6 +40,52 @@ RSpec.describe 'Checkout add-ons' do # rubocop:disable RSpec/DescribeClass
     expect(response.body).to include('$32.00')
   end
 
+  it 'tells the buyer when a ticked add-on is no longer offered' do
+    gone = add_on
+    gone.update!(active: false)
+
+    get new_path(add_on_ids: [gone.id])
+
+    expect(response.body).to include('billing-checkout-add-ons-dropped')
+  end
+
+  it 'announces the updated total in a polite status region' do
+    add_on
+    get new_path(add_on_ids: [add_on.id])
+
+    expect(response.body).to match(/id="billing-checkout-add-ons-status"[^>]*aria-live="polite"/)
+    expect(response.body).to include('aria-describedby="billing-checkout-add-ons-status"')
+  end
+
+  describe 'placing the order' do
+    let(:ticks) do
+      BetterTogether::Billing::PurchaseAgreementSeeds.call(host_platform).each_value { |a| a.update!(lifecycle_state: 'active') }
+      BetterTogether::Agreement.all.to_h { |a| [BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(a), '1'] }
+    end
+    let(:params) do
+      address = create_billing_address_for(member.person)
+      { plan_id: plan.id, payment_method: 'cash', add_on_ids: [add_on.id], **billing_address_params(address) }.merge(ticks)
+    end
+
+    it 'refuses when the total changed since the buyer reviewed it' do
+      post better_together.billing_checkout_path(locale:), params: params.merge(expected_total_cents: 1)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('billing-checkout-error')
+      expect(BetterTogether::Billing::Order.count).to eq(0)
+    end
+
+    it 'places the order once when the same form token is submitted twice' do
+      with_token = params.merge(checkout_token: 'abc123', expected_total_cents: 3200)
+
+      post better_together.billing_checkout_path(locale:), params: with_token
+      post better_together.billing_checkout_path(locale:), params: with_token
+
+      expect(BetterTogether::Billing::Order.count).to eq(1)
+      expect(response).to redirect_to(better_together.billing_order_path(BetterTogether::Billing::Order.last, locale:))
+    end
+  end
+
   it 'does not let an add-on be bought on its own' do
     get new_path(plan_id: add_on.id)
 
