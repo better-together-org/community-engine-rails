@@ -1502,6 +1502,7 @@ es:
         field_placed: Realizado
         field_purpose: Para
         field_quantity: Cantidad
+        field_refund_date: Fecha
         field_status: Estado
         field_subtotal: Subtotal
         field_tax: Impuesto
@@ -1531,6 +1532,14 @@ es:
         purpose_one_time: Compra única
         purpose_subscription: Suscripción o membresía
         purpose_ticket: Entradas a eventos
+        refund_includes_tax: incluye %{tax} de impuesto
+        refund_status_failed: Fallido
+        refund_status_pending: Pendiente
+        refund_status_recorded: Registrado por el vendedor
+        refund_status_succeeded: Reembolsado
+        refunded_total: 'Reembolsado: %{amount}'
+        refunds_caption: Dinero devuelto por el pedido %{number}
+        refunds_heading: Reembolsos
         regenerate_documents: Generar de nuevo
         return_paid: Gracias. Recibimos su pago.
         return_pending: Gracias. Estamos confirmando su pago y se lo diremos cuando

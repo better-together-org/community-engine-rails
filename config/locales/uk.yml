@@ -1483,6 +1483,7 @@ uk:
         field_placed: Оформлено
         field_purpose: Для
         field_quantity: Кількість
+        field_refund_date: Дата
         field_status: Стан
         field_subtotal: Проміжна сума
         field_tax: Податок
@@ -1512,6 +1513,14 @@ uk:
         purpose_one_time: Разова покупка
         purpose_subscription: Підписка або членство
         purpose_ticket: Квитки на події
+        refund_includes_tax: включно з податком %{tax}
+        refund_status_failed: Не вдалося
+        refund_status_pending: Очікує
+        refund_status_recorded: Записано продавцем
+        refund_status_succeeded: Повернено
+        refunded_total: 'Повернено: %{amount}'
+        refunds_caption: Кошти, повернені за замовлення %{number}
+        refunds_heading: Повернення коштів
         regenerate_documents: Створити знову
         return_paid: Дякуємо. Вашу оплату отримано.
         return_pending: Дякуємо. Ми підтверджуємо вашу оплату й повідомимо, коли все

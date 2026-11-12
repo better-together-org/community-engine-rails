@@ -1530,6 +1530,7 @@ fr:
         field_placed: Passée le
         field_purpose: Pour
         field_quantity: Quantité
+        field_refund_date: Date
         field_status: État
         field_subtotal: Sous-total
         field_tax: Taxe
@@ -1561,6 +1562,14 @@ fr:
         purpose_one_time: Achat unique
         purpose_subscription: Abonnement ou adhésion
         purpose_ticket: Billets d'événement
+        refund_includes_tax: dont %{tax} de taxe
+        refund_status_failed: Échoué
+        refund_status_pending: En attente
+        refund_status_recorded: Enregistré par le vendeur
+        refund_status_succeeded: Remboursé
+        refunded_total: 'Remboursé : %{amount}'
+        refunds_caption: Argent remis pour la commande %{number}
+        refunds_heading: Remboursements
         regenerate_documents: Refaire
         return_paid: Merci. Votre paiement a été reçu.
         return_pending: Merci. Nous confirmons votre paiement et vous le dirons dès

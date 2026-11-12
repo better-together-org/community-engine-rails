@@ -1510,6 +1510,7 @@ en:
         field_placed: Placed
         field_purpose: For
         field_quantity: Quantity
+        field_refund_date: Date
         field_status: Status
         field_subtotal: Subtotal
         field_tax: Tax
@@ -1541,6 +1542,14 @@ en:
         purpose_one_time: One-time purchase
         purpose_subscription: Subscription or membership
         purpose_ticket: Event tickets
+        refund_includes_tax: includes %{tax} tax
+        refund_status_failed: Failed
+        refund_status_pending: Pending
+        refund_status_recorded: Recorded by the seller
+        refund_status_succeeded: Refunded
+        refunded_total: Refunded %{amount}
+        refunds_caption: Money given back for order %{number}
+        refunds_heading: Refunds
         regenerate_documents: Make again
         return_paid: Thank you. Your payment was received.
         return_pending: Thank you. We are confirming your payment and will tell you
