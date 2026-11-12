@@ -1607,9 +1607,9 @@ es:
           de pagos. Cada una debe activarse para el vendedor antes de que los compradores
           puedan usarla.
         field_active: Activo (visible para suscriptores)
-        field_amount_cents: Importe (unidad monetaria más pequeña)
-        field_amount_cents_hint: p. ej., 4500 = 45,00 en la mayoría de las monedas;
-          4500 = 4500 en monedas sin decimales como el JPY
+        field_amount: Importe
+        field_amount_hint: Escriba el precio como lo escribiría normalmente, por ejemplo
+          45,00. Las monedas sin centavos, como el JPY y el KRW, usan números enteros.
         field_beneficiary_label: Etiqueta de beneficiario
         field_billing_interval: Intervalo de facturacion
         field_community_capacity_tier: Nivel de capacidad
@@ -6327,6 +6327,7 @@ es:
         pago
       not_a_number: no es un número
       not_a_purchase_agreement: debe ser un acuerdo de compra
+      not_an_amount: debe ser una cifra simple como 45,00
       not_an_integer: debe ser un entero
       not_an_offline_method: "%{method} no es un método de pago instalado fuera de
         un procesador"
@@ -6346,9 +6347,11 @@ es:
       recipient_missing: necesita un correo electrónico o un número de teléfono
       required: debe existir
       taken: ya está en uso
+      too_large: es demasiado grande
       too_long:
         one: es demasiado largo (%{count} carácter máximo)
         other: es demasiado largo (%{count} caracteres máximo)
+      too_precise: puede tener como máximo %{places} decimales en esta moneda
       too_short:
         one: es demasiado corto (%{count} carácter mínimo)
         other: es demasiado corto (%{count} caracteres mínimo)

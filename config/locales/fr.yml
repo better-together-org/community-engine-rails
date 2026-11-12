@@ -1636,9 +1636,10 @@ fr:
           de paiement. Chacun doit encore être activé pour le vendeur avant que les
           acheteurs puissent l'utiliser.
         field_active: Actif (visible pour les abonnes)
-        field_amount_cents: Montant (plus petite unité monétaire)
-        field_amount_cents_hint: p. ex. 4500 = 45,00 pour la plupart des devises;
-          4500 = 4500 pour les devises sans décimales comme le JPY
+        field_amount: Montant
+        field_amount_hint: Saisissez le prix comme vous l’écririez, p. ex. 45,00.
+          Les devises sans centimes, comme le JPY et le KRW, prennent des nombres
+          entiers.
         field_beneficiary_label: Etiquette du beneficiaire
         field_billing_interval: Intervalle de facturation
         field_community_capacity_tier: Niveau de capacite
@@ -6409,6 +6410,7 @@ fr:
         de paiement
       not_a_number: n'est pas un nombre
       not_a_purchase_agreement: doit être une entente d’achat
+      not_an_amount: doit être un nombre simple comme 45,00
       not_an_integer: doit être un nombre entier
       not_an_offline_method: "%{method} n'est pas un mode de paiement installé en
         dehors d'un processeur"
@@ -6429,9 +6431,11 @@ fr:
       recipient_missing: nécessite une adresse courriel ou un numéro de téléphone
       required: doit exister
       taken: est déjà utilisé(e)
+      too_large: est trop grand
       too_long:
         one: est trop long (pas plus de %{count} caractère)
         other: est trop long (pas plus de %{count} caractères)
+      too_precise: peut avoir au plus %{places} décimales dans cette devise
       too_short:
         one: est trop court (au moins %{count} caractère)
         other: est trop court (au moins %{count} caractères)

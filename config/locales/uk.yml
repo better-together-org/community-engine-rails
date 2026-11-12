@@ -1584,9 +1584,9 @@ uk:
         field_accepted_payment_methods_hint: Способи оплати поза платіжним процесором.
           Кожен потрібно ще ввімкнути для продавця, перш ніж покупці зможуть ним скористатися.
         field_active: Aktyvnyj (vydymyj dlya peredplatnykiv)
-        field_amount_cents: Сума (найменша одиниця валюти)
-        field_amount_cents_hint: напр., 4500 = 45,00 для більшості валют; 4500 = 4500
-          для валют без десяткових знаків, як JPY
+        field_amount: Сума
+        field_amount_hint: Введіть ціну так, як ви її записали б, наприклад 45,00.
+          Валюти без копійок, як-от JPY і KRW, приймають цілі числа.
         field_beneficiary_label: Marka benefitsiariya
         field_billing_interval: Interval bilingu
         field_community_capacity_tier: Riven' potshnosty
@@ -6317,6 +6317,7 @@ uk:
         оплати
       not_a_number: не є числом
       not_a_purchase_agreement: має бути угодою про покупку
+      not_an_amount: має бути простим числом, наприклад 45,00
       not_an_integer: має бути цілим числом
       not_an_offline_method: "%{method} не є встановленим способом оплати поза процесором"
       not_configured: не налаштовано для цієї платформи
@@ -6337,11 +6338,13 @@ uk:
       recipient_missing: потрібна адреса електронної пошти або номер телефону
       required: має існувати
       taken: вже зайнято
+      too_large: завелика
       too_long:
         few: занадто довгий (максимум %{count} символи)
         many: занадто довгий (максимум %{count} символів)
         one: занадто довгий (максимум %{count} символ)
         other: занадто довгий (максимум %{count} символів)
+      too_precise: може мати не більше %{places} десяткових знаків у цій валюті
       too_short:
         few: занадто короткий (мінімум %{count} символи)
         many: занадто короткий (мінімум %{count} символів)

@@ -24,6 +24,7 @@ module BetterTogether
       include SellerScoped
       include Purchasable
       include AgreementTarget
+      include MajorAmount
       include Translatable
 
       self.table_name = 'better_together_billing_plans'
@@ -154,13 +155,13 @@ module BetterTogether
 
       # Permitted attributes for create: everything that describes or links the price.
       def self.permitted_attributes_for_create
-        permitted_attributes + %i[identifier processor processor_price_id processor_product_id link_existing] + PRE_LINK_FIELDS
+        permitted_attributes + %i[identifier processor processor_price_id processor_product_id link_existing amount] + PRE_LINK_FIELDS
       end
 
       # What a steward may change on this plan now, with locked fields left out. The
       # controller permits exactly this, so a crafted request cannot change a locked field.
       def permitted_update_attributes
-        fields = DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS + (linked? ? [] : PRE_LINK_FIELDS)
+        fields = DESCRIPTIVE_FIELDS + TRANSLATED_FIELDS + (linked? ? [] : PRE_LINK_FIELDS + %i[amount])
         [*self.class.with_locales(fields.reject do |field|
           locked_field?(field)
         end), *RENEWAL_FIELDS, *LISTING_FIELDS, { metadata: METADATA_KEYS }.merge(PAYMENT_METHOD_PARAMS)]
