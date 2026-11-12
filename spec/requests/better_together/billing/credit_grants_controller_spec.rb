@@ -105,7 +105,7 @@ RSpec.describe BetterTogether::Billing::CreditGrantsController do
     end
 
     it 'refuses a person whose membership has ended' do
-      BetterTogether::PersonPlatformMembership.find_by(joinable: host_platform, member: buyer).update!(status: :pending)
+      BetterTogether::PersonPlatformMembership.find_by(joinable: host_platform, member: buyer).update_columns(status: 'pending')
 
       post grants_path, params: params_for
 
