@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:42:02Z",
+  "generated_at": "2026-11-12T22:52:48Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -36170,6 +36170,22 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::EventsController",
+          "label": "Billing::EventsController",
+          "source_path": "app/controllers/better_together/billing/events_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [
+            "BetterTogether::Billing::Event"
+          ],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::HubsController",
           "label": "Billing::HubsController",
           "source_path": "app/controllers/better_together/billing/hubs_controller.rb",
@@ -37258,6 +37274,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::EventsController",
             "Billing::CatalogController"
           ]
         },
@@ -37504,6 +37521,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::EventsController",
             "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
@@ -37578,6 +37596,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::EventsController",
             "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
@@ -37652,6 +37671,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::EventsController",
             "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
@@ -37737,6 +37757,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::EventsController",
             "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
