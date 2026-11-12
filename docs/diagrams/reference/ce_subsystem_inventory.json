@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T23:28:38Z",
+  "generated_at": "2026-11-12T23:34:01Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -36280,6 +36280,20 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::HostingPlansController",
+          "label": "Billing::HostingPlansController",
+          "source_path": "app/controllers/better_together/billing/hosting_plans_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::HubsController",
           "label": "Billing::HubsController",
           "source_path": "app/controllers/better_together/billing/hubs_controller.rb",
@@ -37368,6 +37382,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::CatalogController"
@@ -37617,6 +37632,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::CatalogController",
@@ -37693,6 +37709,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::CatalogController",
@@ -37769,6 +37786,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::CatalogController",
@@ -37856,6 +37874,7 @@
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
             "Billing::HubsController",
+            "Billing::HostingPlansController",
             "Billing::HostedPlatformsController",
             "Billing::HostedBillingsController",
             "Billing::CatalogController",
