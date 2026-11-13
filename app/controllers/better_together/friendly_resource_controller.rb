@@ -63,6 +63,7 @@ module BetterTogether
       end
 
       return handle_resource_not_found if @resource.nil?
+      return if redirected_for_old_slug?
 
       instance_variable_set("@#{resource_name}", @resource)
       @resource
@@ -70,6 +71,25 @@ module BetterTogether
     # rubocop:enable Metrics/AbcSize
     # rubocop:enable Metrics/MethodLength
     # rubocop:enable Metrics/PerceivedComplexity
+
+    # A record requested by a slug it no longer has (FriendlyId history) gets a permanent
+    # redirect to its current address. The record came from the policy-scoped collection,
+    # so nothing hidden is revealed. Runs before the action, which the redirect halts.
+    def redirected_for_old_slug?
+      path = old_slug_redirect_path
+      return false unless path
+
+      redirect_to [path, request.query_string.presence].compact.join('?'), status: :moved_permanently
+      true
+    end
+
+    def old_slug_redirect_path
+      return unless request.get? && action_name == 'show'
+
+      current = Redirects::SlugHistory.current_slug_for(@resource, id_param)
+      path = current && request.path.sub(/#{Regexp.escape(id_param.to_s)}\z/, current)
+      path if path.present? && path != request.path
+    end
 
     # Overridable hook for when the requested resource is absent from the
     # policy-scoped resource_collection. Defaults to the standard 404.

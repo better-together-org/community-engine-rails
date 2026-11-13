@@ -401,6 +401,10 @@ es:
         type: Tipo
         valid_from: Válido desde
         valid_until: Válido hasta
+      better_together/redirect:
+        from_path: Ruta antigua
+        status: Respuesta
+        to_path: Ruta nueva
       better_together/resource_permission:
         action: Acción
         identifier: Identificador
@@ -604,6 +608,12 @@ es:
                 compartición
             primary:
               already_taken_for_platform: ya ha sido utilizado para esta plataforma
+        better_together/redirect:
+          attributes:
+            to_path:
+              invalid: debe ser una ruta que empiece con una barra o una dirección
+                http o https completa
+              redirect_loop: vuelve a sí misma a través de otras redirecciones
         better_together/short_link:
           attributes:
             target_url:
@@ -683,6 +693,7 @@ es:
       better_together/platform_domain: Dominio de plataforma
       better_together/platform_invitation: Invitación a plataforma
       better_together/post: Publicación
+      better_together/redirect: Redirección
       better_together/resource_permission: Permiso de recursos
       better_together/role: Papel
       better_together/role_resource_permission: Permiso de recursos de rol
@@ -3653,6 +3664,79 @@ es:
       nav:
         resource_permissions: Permisos de recursos
         roles: Roles
+    redirects:
+      created: La redirección se añadió correctamente.
+      destroyed: La redirección se eliminó.
+      edit:
+        subtitle: Redirección para %{platform_name}
+        title: Editar %{from_path}
+      form:
+        active_label: Activa
+        cancel: Cancelar
+        create_btn: Añadir redirección
+        from_path_hint: La dirección que usaban los visitantes, que empieza con una
+          barra. La coincidencia ignora mayúsculas, la barra final y la cadena de
+          consulta.
+        from_path_label: Ruta antigua
+        note_label: Nota
+        preserve_query_label: Conservar la cadena de consulta al redirigir
+        status_label: Respuesta
+        statuses:
+          s301: 301 Movida permanentemente
+          s302: 302 Encontrada (temporal)
+          s307: 307 Redirección temporal
+          s308: 308 Redirección permanente
+          s410: 410 Eliminada
+        to_path_hint: Una ruta de este sitio que empiece con una barra, o una dirección
+          http o https completa. Déjelo vacío solo para 410 Eliminada.
+        to_path_label: Ruta nueva o URL
+        update_btn: Actualizar redirección
+      index:
+        back_to_platform: Volver a la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar esta redirección?"
+        edit_btn: Editar
+        gone_label: Eliminada (sin dirección nueva)
+        header_actions: Acciones
+        header_from: Ruta antigua
+        header_hits: Visitas
+        header_status: Estado
+        header_to: Ruta nueva
+        import_btn: Importar
+        inactive_label: inactiva
+        new_btn: Añadir redirección
+        no_redirects: Todavía no hay redirecciones.
+        search_btn: Buscar
+        search_label: Buscar redirecciones
+        search_placeholder: Buscar por ruta antigua
+        subtitle: Direcciones antiguas que llevan a los visitantes a un nuevo lugar
+          en %{platform_name}
+        table_aria: Redirecciones
+        title: Redirecciones
+      new:
+        subtitle: Añadir una redirección para %{platform_name}
+        title: Nueva redirección
+      new_import:
+        back: Volver a las redirecciones
+        import_btn: Importar
+        import_confirm: "¿Importar estas redirecciones?"
+        preview_btn: Vista previa
+        report_applied: Importación terminada
+        report_created: Creadas
+        report_error_line: 'Línea %{row} (%{path}): %{message}'
+        report_preview: Vista previa (no se guardó nada)
+        report_skipped: Omitidas (ya existen)
+        report_unchanged: Sin cambios
+        report_updated: Actualizadas
+        rows_hint: 'Escriba la ruta antigua, la ruta nueva y un estado opcional (301,
+          302, 307, 308 o 410), separados por comas. Las líneas que empiezan con #
+          se ignoran. Haga primero una vista previa; no se guarda nada hasta que elija
+          Importar.'
+        rows_label: Redirecciones, una por línea
+        subtitle: Añadir muchas redirecciones a %{platform_name} a la vez
+        title: Importar redirecciones
+        upsert_label: Actualizar también las redirecciones que ya existen
+      updated: La redirección se actualizó correctamente.
     registrations:
       captcha_validation_failed: La verificación de seguridad falló. Por favor, inténtelo
         de nuevo.
@@ -5725,6 +5809,7 @@ es:
         identity_providers: Proveedores de inicio de sesión
         platform_domains: Dominios
         quota_grants: Concesiones de cuota
+        redirects: Redirecciones
         robot_management: Gestionar robots LLM
         storage_configurations: Gestionar almacenamiento
         title: Operaciones de la plataforma

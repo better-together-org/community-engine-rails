@@ -129,6 +129,12 @@ module BetterTogether
       app.middleware.use BetterTogether::PlatformContextMiddleware
     end
 
+    # Platform-scoped redirects answer before routing, so they win over the pages catch-all.
+    initializer 'better_together.redirect_middleware', after: 'better_together.platform_context_middleware' do |app|
+      require root.join('app/middleware/better_together/redirect_middleware').to_s
+      app.middleware.insert_after BetterTogether::PlatformContextMiddleware, BetterTogether::RedirectMiddleware
+    end
+
     # ActionDispatch::RemoteIp raises IpSpoofAttackError for malformed
     # X-Forwarded-For headers before Rack::Attack's scanner blocklists ever
     # run. Insert this guard immediately before RemoteIp so that traffic gets
