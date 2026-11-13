@@ -129,8 +129,8 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 
 | # | Deficiency | Resolution | Status |
 |---|---|---|---|
-| 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | C2, C3 |
-| 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | C2, D1 |
+| 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | registry **in C2**, applier C3 |
+| 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | registered **in C2** (Flickr added), redirects D1 |
 | 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | spec C1, code C4 |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
 | 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
@@ -145,6 +145,44 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 14 | Errors flatten to strings | `Report` with file, record, field pointer, message; all errors at once | **fixed in C1** |
 | 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | C3 |
 | 16 | `ALLOWED_SEED_DIRECTORIES` blocks host-app directories and uploads | Configurable packet-source allowlist beyond `config/seeds` | C4 |
+
+## Type registry (C2)
+
+`Seeds::Registry` replaces the per-class `plant` pointers. Each type is declared once with a small DSL and frozen:
+
+```ruby
+BetterTogether::Seeds::Registry.register(:upload) do
+  model 'BetterTogether::Upload'
+  attributes :privacy
+  translated :name, :description
+  attachment :file
+end
+```
+
+| DSL | Meaning |
+|---|---|
+| `model` | The ActiveRecord class |
+| `natural_key col` | Column that holds the packet `key`, looked up inside the target platform (default `identifier`) |
+| `natural_key col, within: :ref` | Key is unique only inside a parent record (social account within its contact detail) |
+| `natural_key by_refs: [:a, :b]` | A join row identified by the records it joins (`page_block`) |
+| `attributes`, `translated` | The only fields a packet may write |
+| `reference name, to:, optional:` | Reference slots; `to:` lists allowed target types |
+| `attachment`, `position`, `sti` | Files, ordering column, and the subclass column for STI types such as content blocks |
+| `before_resolve`, `transform`, `after_plant` | Hooks for host-app logic |
+
+`Registry.ordered` returns types in dependency order and raises `DependencyCycle`. `TypeDefinition#find(platform:, key:, parent_refs:)` resolves a key on the target platform only, never globally. Host apps register their own types (NLO districts, NLV venues) from an initializer.
+
+Registered: `page`, `content_block`, `page_block`, `navigation_area`, `navigation_item`, `upload`, `event`, `community`, `contact_detail`, `social_media_account`, `platform` (lookup target only). `SocialMediaAccount::PLATFORMS` gains Flickr.
+
+### Findings while registering (added to the numbered list)
+
+| # | Deficiency | Resolution |
+|---|---|---|
+| 17 | Natural keys are not always a column: social accounts and join rows have none | `within:` and `by_refs:` key kinds |
+| 18 | `Page` has no cover or share image attachment, so the page share image needs a model change | Open model work item, not worked around |
+| 19 | `Event.identifier` is globally unique (index on `identifier` alone), unlike pages and uploads | Platform-scoped uniqueness needed before two platforms plant one events packet; open model work item |
+
+The registry spec checks each declared attribute is writable on the model, each attachment exists, and each reference points at a registered type, so a drifting model fails CI.
 
 ## What is deliberately not here
 
