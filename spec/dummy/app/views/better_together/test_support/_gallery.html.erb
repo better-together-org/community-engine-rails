@@ -1,0 +1,5 @@
+<%# locals: (block:, content:) -%>
+<%# Test-only host partial: renders the gallery-spec images named by ?gallery_token through the shared helper. -%>
+<%= render_image_gallery(
+      BetterTogether::Content::Image.where('identifier LIKE ?', "gallery-spec-#{params[:gallery_token]}-%").order(:identifier),
+      'Harbour', layout: (params[:gallery_layout] || 'grid').to_sym) %>
