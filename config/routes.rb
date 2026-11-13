@@ -8,6 +8,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Short link public redirect — no locale prefix keeps URLs short
   get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
 
+  # Stable locale-free file paths: /f/:id views the file, /f/:id/download forces a download
+  get '/f/:id', to: 'uploads#inline', as: :short_file
+  get '/f/:id/download', to: 'uploads#download', as: :short_file_download
+
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
 
@@ -609,6 +613,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
+          get :inline
         end
       end
 

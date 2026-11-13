@@ -628,6 +628,7 @@ es:
       better_together/content/communities_block: Comunidades
       better_together/content/css: CSS personalizado
       better_together/content/events_block: Eventos
+      better_together/content/file_download_block: Descarga de archivo
       better_together/content/hero: Héroe
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
@@ -1179,6 +1180,13 @@ es:
               scope_hint: Aquí solo están disponibles tus cargas de imagen revisadas.
               title: Elegir de la biblioteca
               view_uploads: Ver cargas y estados de revisión
+        file_download_block:
+          description_help: Descripción breve (opcional)
+          empty: Este archivo no está disponible.
+          label_help: Texto del enlace (opcional, por defecto el nombre del archivo)
+          meta: "%{type}, %{size}"
+          open_inline: Abrir en el navegador en lugar de descargar
+          select_prompt: Seleccionar un archivo
         hero:
           editor:
             background: Fondo
@@ -5765,6 +5773,8 @@ es:
     continent: Continente
     country: País
     download_failed: Descarga fallida
+    download_held: Este archivo aún se está revisando por seguridad. Inténtalo de
+      nuevo pronto.
     invitation: Invitación
     invitation_email: Correo de invitación
     member: Miembro

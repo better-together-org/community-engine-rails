@@ -618,6 +618,7 @@ uk:
       better_together/content/communities_block: Спільноти
       better_together/content/css: Користувацький CSS
       better_together/content/events_block: Події
+      better_together/content/file_download_block: Завантаження файлу
       better_together/content/hero: Герой
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
@@ -1171,6 +1172,13 @@ uk:
               scope_hint: Тут доступні лише ваші перевірені завантаження зображень.
               title: Вибрати з бібліотеки
               view_uploads: Переглянути завантаження та статуси перевірки
+        file_download_block:
+          description_help: Короткий опис (необов'язково)
+          empty: Цей файл недоступний.
+          label_help: Текст посилання (необов'язково, за замовчуванням назва файлу)
+          meta: "%{type}, %{size}"
+          open_inline: Відкрити в браузері замість завантаження
+          select_prompt: Виберіть файл
         hero:
           editor:
             background: Тло
@@ -5794,6 +5802,7 @@ uk:
     continent: Континент
     country: Країна
     download_failed: Завантаження не вдалося
+    download_held: Цей файл ще перевіряється на безпеку. Спробуйте ще раз пізніше.
     invitation: Запрошення
     invitation_email: Електронна пошта запрошення
     member: Учасник

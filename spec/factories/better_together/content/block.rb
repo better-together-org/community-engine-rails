@@ -79,6 +79,12 @@ FactoryBot.define do
     attribution_organization_en { '' }
   end
 
+  factory :content_file_download_block, class: 'BetterTogether::Content::FileDownloadBlock' do
+    privacy { 'public' }
+    upload_id { SecureRandom.uuid }
+    label_en { 'Download the report' }
+  end
+
   factory :content_statistics_block, class: 'BetterTogether::Content::StatisticsBlock' do
     privacy { 'public' }
     heading_en { 'Our Impact' }
