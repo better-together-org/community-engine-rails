@@ -25,7 +25,10 @@ RSpec.describe 'Documentation screenshots for platform page content', # rubocop:
     Current.platform = host_platform
   end
 
-  after { Current.platform = nil }
+  after do
+    host_platform.update!(page_content: {})
+    Current.platform = nil
+  end
 
   def capture_page(name, title, bullet, selector, &)
     BetterTogether::CapybaraScreenshotEngine.capture(

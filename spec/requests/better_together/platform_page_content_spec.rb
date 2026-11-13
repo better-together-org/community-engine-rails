@@ -31,6 +31,7 @@ RSpec.describe 'Platform header, footer and 404 content', :as_platform_manager d
   end
 
   it 'keeps the standard 404 title when no headlines are set' do
+    host_platform.update!(page_content: {})
     get better_together.platform_path(locale: I18n.default_locale, id: 'no-such-platform-xyz')
 
     expect(parsed_response.at_css('#not-found-headline').text).to eq(I18n.t('errors.not_found.title'))
