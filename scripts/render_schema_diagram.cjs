@@ -24,13 +24,27 @@ const MAX_PNG_SIDE = 10000; // Chrome drops most of the drawing on larger canvas
 function dotFor(dbml) {
   const cli = path.join(path.resolve(toolsDir), 'node_modules', '.bin', 'dbml-renderer');
   const dot = execFileSync(cli, ['-i', dbml, '-f', 'dot'], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
-  // `start` fixes neato's random seed (7: seeds 1 to 6 and 8 overflow its rtree once the hosted accounts table is added) so the layout is identical on every run.
-  return dot.replace('rankdir=LR;', 'overlap=prism; overlap_scaling=3; splines=true; sep="+30"; K=3; start=7;');
+  return dot;
+}
+
+// `start` fixes neato's random seed so the layout is identical on every run. Some seeds overflow neato's rtree
+// ("area too large"), and which ones depends on the schema, so take the first seed from FIRST_SEED that renders.
+const FIRST_SEED = 8;
+const LAST_SEED = 60;
+function layoutFor(dot, seed) {
+  return dot.replace('rankdir=LR;', `overlap=prism; overlap_scaling=3; splines=true; sep="+30"; K=3; start=${seed};`);
 }
 
 function svgFor(dot) {
   const render = toolsRequire('@aduh95/viz.js/sync');
-  return render(dot, { format: 'svg', engine: 'neato' });
+  for (let seed = FIRST_SEED; seed <= LAST_SEED; seed += 1) {
+    try {
+      return render(layoutFor(dot, seed), { format: 'svg', engine: 'neato' });
+    } catch (error) {
+      console.error(`neato seed ${seed} failed (${String(error.message || error).split('\n')[0]}); trying the next`);
+    }
+  }
+  throw new Error(`No neato seed from ${FIRST_SEED} to ${LAST_SEED} produced a layout`);
 }
 
 function chromePath() {
