@@ -1086,6 +1086,9 @@ es:
       hub:
         access_count: 'Activos: %{count}'
         access_heading: A qué tienes acceso
+        add_on_buy: Añadir
+        add_ons_heading: Extras para sus planes
+        add_ons_hint: Extras de pago único para los planes que ya tiene.
         all_orders: Todos los pedidos
         all_plans: Todos los planes
         browse_plans: Ver planes
@@ -1526,6 +1529,10 @@ es:
         title: Qué incluye este plan
       plans:
         actions_heading: Acciones
+        add_on_targets_hint: Solo para un complemento. Marque los planes con los que
+          se ofrece y cuyos titulares pueden comprarlo por separado más adelante.
+          Sin marcar, se ofrece con todos los planes.
+        add_on_targets_legend: Planes que amplía este complemento
         audience_hint: 'Deje ambas casillas sin marcar para todo el mundo. Marque
           una o ambas para limitarlo: quien sea de alguno de los tipos marcados puede
           verlo y comprarlo.'
@@ -6271,6 +6278,8 @@ es:
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       lookup_failed: no se pudo verificar con el procesador de pagos
       model_invalid: 'La validación falló: %{errors}'
+      must_be_a_primary_plan: debe ser un plan que no sea un complemento
+      must_be_an_add_on: debe ser un complemento
       no_payment_method: necesita un procesador en línea o al menos otra forma de
         pago
       not_a_number: no es un número

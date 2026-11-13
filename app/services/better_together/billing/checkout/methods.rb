@@ -45,7 +45,7 @@ module BetterTogether
         # processor prices an order from its own price ids, and an add-on has none.
         def accepted_names
           names = add_ons.reduce(plan.payment_methods) { |accepted, add_on| accepted & add_on.payment_methods }
-          add_ons.any? ? names.select { |name| Billing.local_method?(name) } : names
+          add_ons.any? || plan.add_on? ? names.select { |name| Billing.local_method?(name) } : names
         end
 
         def choice(name)

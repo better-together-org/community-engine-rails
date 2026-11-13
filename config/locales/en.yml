@@ -1094,6 +1094,9 @@ en:
       hub:
         access_count: 'Active: %{count}'
         access_heading: What you have access to
+        add_on_buy: Add
+        add_ons_heading: Extras for your plans
+        add_ons_hint: One-time extras for plans you already have.
         all_orders: All orders
         all_plans: All plans
         browse_plans: Browse plans
@@ -1535,6 +1538,10 @@ en:
         title: What this plan includes
       plans:
         actions_heading: Actions
+        add_on_targets_hint: Used only for an add-on. Tick the plans it is offered
+          with, and whose holders may buy it on its own later. Leave all unticked
+          to offer it with every plan.
+        add_on_targets_legend: Plans this add-on extends
         audience_hint: 'Leave both unticked for anyone. Tick one or both to limit
           it: a person who is any of the ticked kinds can see and buy it.'
         audience_legend: Who may see and buy this plan
@@ -6177,6 +6184,8 @@ en:
       less_than_or_equal_to: must be less than or equal to %{count}
       lookup_failed: could not be verified with the payment processor
       model_invalid: 'Validation failed: %{errors}'
+      must_be_a_primary_plan: must be a plan that is not an add-on
+      must_be_an_add_on: must be an add-on
       no_payment_method: needs an online processor or at least one other way to pay
       not_a_number: is not a number
       not_a_purchase_agreement: must be a purchase agreement

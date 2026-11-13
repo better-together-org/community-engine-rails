@@ -1097,6 +1097,9 @@ fr:
       hub:
         access_count: 'Actifs : %{count}'
         access_heading: Ce à quoi vous avez accès
+        add_on_buy: Ajouter
+        add_ons_heading: Options pour vos forfaits
+        add_ons_hint: Options ponctuelles pour les forfaits que vous avez déjà.
         all_orders: Toutes les commandes
         all_plans: Tous les forfaits
         browse_plans: Voir les forfaits
@@ -1557,6 +1560,10 @@ fr:
         title: Ce que comprend ce forfait
       plans:
         actions_heading: Actions
+        add_on_targets_hint: Utilisé seulement pour une option. Cochez les forfaits
+          avec lesquels elle est proposée et dont les titulaires peuvent l'acheter
+          seule plus tard. Ne cochez rien pour la proposer avec tous les forfaits.
+        add_on_targets_legend: Forfaits que cette option prolonge
         audience_hint: 'Laissez les deux cases décochées pour tout le monde. Cochez-en
           une ou les deux pour le limiter : toute personne de l’un des types cochés
           peut le voir et l’acheter.'
@@ -6353,6 +6360,8 @@ fr:
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       lookup_failed: n’a pas pu être vérifié auprès du processeur de paiement
       model_invalid: 'Validation échouée : %{errors}'
+      must_be_a_primary_plan: doit être un forfait qui n'est pas une option
+      must_be_an_add_on: doit être une option
       no_payment_method: doit avoir un processeur en ligne ou au moins un autre mode
         de paiement
       not_a_number: n'est pas un nombre

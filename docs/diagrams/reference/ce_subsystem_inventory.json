@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T23:02:35Z",
+  "generated_at": "2026-11-12T23:07:47Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -8032,6 +8032,12 @@
         },
         {
           "from": "BetterTogether::Billing::TaxCategory",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
           "to": "BetterTogether::Platform",
           "label": "platform (platform_id)",
           "source_subsystem": "shared_supporting"
@@ -29172,6 +29178,18 @@
           "source_subsystem": "shared_supporting"
         },
         {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "plan (plan_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "add_on (add_on_id)",
+          "source_subsystem": "shared_supporting"
+        },
+        {
           "from": "BetterTogether::Billing::OrderDocument",
           "to": "BetterTogether::Billing::Order",
           "label": "order (order_id)",
@@ -29701,6 +29719,80 @@
               "target": "BetterTogether::Upload",
               "optional": false,
               "target_subsystem": "content_publishing"
+            }
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::PlanAddOn",
+          "label": "Billing::PlanAddOn",
+          "source_path": "app/models/better_together/billing/plan_add_on.rb",
+          "table_name": "better_together_billing_plan_add_ons",
+          "columns": [
+            [
+              "add_on_id",
+              "uuid FK"
+            ],
+            [
+              "plan_id",
+              "uuid FK"
+            ],
+            [
+              "platform_id",
+              "uuid FK"
+            ]
+          ],
+          "validations": [
+            "PresenceValidator: platform (message=:required)",
+            "UniquenessValidator: add_on_id (scope=:plan_id)"
+          ],
+          "belongs_to": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            },
+            {
+              "name": "add_on",
+              "foreign_key": "add_on_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false
+            }
+          ],
+          "polymorphic": [],
+          "translated_attributes": [],
+          "concerns": [
+            "BetterTogether::Billing::ParentBound",
+            "BetterTogether::Billing::PlatformBound"
+          ],
+          "concern_notes": [],
+          "cross_subsystem_targets": [
+            {
+              "name": "platform",
+              "foreign_key": "platform_id",
+              "target": "BetterTogether::Platform",
+              "optional": false,
+              "target_subsystem": "platform_network"
+            },
+            {
+              "name": "plan",
+              "foreign_key": "plan_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false,
+              "target_subsystem": "billing"
+            },
+            {
+              "name": "add_on",
+              "foreign_key": "add_on_id",
+              "target": "BetterTogether::Billing::Plan",
+              "optional": false,
+              "target_subsystem": "billing"
             }
           ]
         },
@@ -37604,6 +37696,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::TaxLine",
+            "Billing::PlanAddOn",
             "Billing::OrderDocument"
           ]
         },
@@ -37627,6 +37720,7 @@
             "Billing::TaxRate",
             "Billing::TaxLine",
             "Billing::TaxCategory",
+            "Billing::PlanAddOn",
             "Billing::OrderDocument",
             "Billing::DefaultAddress"
           ]
@@ -38404,6 +38498,24 @@
           "to": "BetterTogether::Upload",
           "label": "upload (upload_id)",
           "target_subsystem": "content_publishing"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "add_on (add_on_id)",
+          "target_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Billing::Plan",
+          "label": "plan (plan_id)",
+          "target_subsystem": "billing"
+        },
+        {
+          "from": "BetterTogether::Billing::PlanAddOn",
+          "to": "BetterTogether::Platform",
+          "label": "platform (platform_id)",
+          "target_subsystem": "platform_network"
         },
         {
           "from": "BetterTogether::Billing::TaxCategory",
