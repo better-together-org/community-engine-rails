@@ -12,8 +12,9 @@ module BetterTogether
         new(...).call
       end
 
-      def initialize(path:, platform:, apply: false, planted_by: nil, attach_files: nil)
+      def initialize(path:, platform:, apply: false, planted_by: nil, attach_files: nil, restrict_sources: false)
         @path = path
+        @restrict_sources = restrict_sources
         @platform = platform
         @apply = apply
         @planted_by = planted_by
@@ -23,14 +24,46 @@ module BetterTogether
       def call
         raise ArgumentError, 'a target platform is required' unless @platform
 
-        packet = Packet.load(@path)
-        plan = Planner.call(packet:, platform: @platform)
-        return plan.to_h(dry_run: true) unless @apply && plan.ok?
-
-        apply(packet, plan)
+        source = @restrict_sources ? PacketSources.resolve!(@path) : Pathname.new(@path.to_s).expand_path
+        with_root(source) { |root| run(root) }
       end
 
       private
+
+      # A .tar.gz is unpacked into a throwaway directory; a directory is used in place.
+      def with_root(source, &)
+        return yield source unless source.file? && source.to_s.match?(/\.(tar\.gz|tgz)\z/)
+
+        Dir.mktmpdir('seed-packet-') do |dir|
+          PacketArchive.extract(source, dir, max_bytes: BlobPolicy.max_archive_bytes)
+          yield Pathname.new(dir)
+        end
+      end
+
+      def run(root)
+        packet = Packet.load(root)
+        transport_errors, attacher = check_transport(root, packet)
+        plan = Planner.call(packet:, platform: @platform)
+        transport_errors.each { |message| plan.add_error(record: 'packet', message:) }
+        return plan.to_h(dry_run: !@apply) unless @apply && plan.ok?
+
+        @attach_files ||= attacher
+        apply(packet, plan)
+      end
+
+      # Verifies MANIFEST.json when present; record files need one (fail closed).
+      def check_transport(root, packet)
+        manifest_path = root.join('MANIFEST.json')
+        has_files = packet.entries.any? { |e| e.files.any? }
+        return [['records declare files but the packet has no MANIFEST.json'], nil] if has_files && !manifest_path.file?
+        return [[], nil] unless manifest_path.file?
+
+        manifest = Manifest.load(root)
+        report = manifest.verify(root)
+        return [report.errors.map { |e| [e.file, e.message].compact.join(': ') }, nil] unless report.valid?
+
+        [[], BlobAttacher.new(root:, manifest:)]
+      end
 
       def apply(packet, plan)
         planting = start_planting(packet)

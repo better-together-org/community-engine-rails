@@ -131,7 +131,7 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 |---|---|---|---|
 | 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | registry **in C2**, applier **in C3** |
 | 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | registered **in C2** (Flickr added), redirects D1 |
-| 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | spec C1, code C4 |
+| 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | **fixed in C4** |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
 | 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
 | 6 | `Seed` is global on (type, identifier); `clear` deletes every platform's data | Required platform target; platform-scoped `Seed` | spec C1; migration held (C7, PR #2165) |
@@ -144,7 +144,15 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 13 | No ordering model | `position` per record; apply order is topological by references, then `position` | **fixed in C3** |
 | 14 | Errors flatten to strings | `Report` with file, record, field pointer, message; all errors at once | **fixed in C1** |
 | 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | **fixed in C3** |
-| 16 | `ALLOWED_SEED_DIRECTORIES` blocks host-app directories and uploads | Configurable packet-source allowlist beyond `config/seeds` | C4 |
+| 16 | `ALLOWED_SEED_DIRECTORIES` blocks host-app directories and uploads | Configurable packet-source allowlist beyond `config/seeds` | **fixed in C4** |
+
+## Integration and conformance (C5)
+
+`Seeds::Plant` now joins the pieces. It accepts a directory or a `.tar.gz` (unpacked to a throwaway directory), verifies `MANIFEST.json` when present, attaches files with `BlobAttacher`, and fails closed when records declare files but no manifest exists. `restrict_sources: true` (used by the rake tasks) limits paths to `PacketSources`. Transport problems appear in the same report as plan errors and nothing is written.
+
+`spec/seeds/golden/conformance_spec.rb` plants packets through `Plant` and covers: empty platform, identical rerun, dry run, two platforms, steward-edited record, missing reference, locale policy, verified blob, tampered blob, missing manifest, tar.gz and the source allowlist.
+
+Held: C6 (billing and navigation as packets) and C7 (platform-scoped `Seed` and provenance columns, which touches PR #2165). Deficiencies 5, 6 and 10 stay partial and 9 (signatures) is specified only until then.
 
 ## Type registry (C2)
 
