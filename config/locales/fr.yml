@@ -5196,6 +5196,7 @@ fr:
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
+      denied_for_trusted_domain: ne peut pas être accordé par un domaine de courriel
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
@@ -5213,6 +5214,7 @@ fr:
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       model_invalid: 'Validation échouée : %{errors}'
+      not_a_community_role: doit être un rôle de communauté
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
       not_found: n’a pas été trouvé(e)
@@ -5224,7 +5226,11 @@ fr:
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
+      public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
+        confiance à toutes ses adresses
       required: doit exister
+      required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
+        de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
       too_long:
         one: est trop long (pas plus de %{count} caractère)

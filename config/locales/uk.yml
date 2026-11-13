@@ -5160,6 +5160,7 @@ uk:
       confirmation: не співпадає з %{attribute}
       confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
         запросіть новий
+      denied_for_trusted_domain: не може надаватися поштовим доменом
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -5177,6 +5178,7 @@ uk:
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       model_invalid: 'Перевірка не вдалася: %{errors}'
+      not_a_community_role: має бути роллю спільноти
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
       not_found: не знайдено
@@ -5189,7 +5191,11 @@ uk:
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
+      public_mail_domain: є публічним поштовим сервісом; підтвердьте, щоб довіряти
+        всім його адресам
       required: має існувати
+      required_for_elevated_role: потребує явного підтвердження, перш ніж поштовий
+        домен зможе надати роль вищу за базового учасника
       taken: вже зайнято
       too_long:
         few: занадто довгий (максимум %{count} символи)

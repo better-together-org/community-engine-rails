@@ -5155,6 +5155,7 @@ es:
       confirmation: no coincide con %{attribute}
       confirmation_period_expired: necesita confirmarse dentro de %{period}, por favor
         solicita una nueva
+      denied_for_trusted_domain: no puede otorgarse por un dominio de correo
       empty: no puede estar vacío
       equal_to: debe ser igual a %{count}
       even: debe ser par
@@ -5172,6 +5173,7 @@ es:
       less_than: debe ser menor que %{count}
       less_than_or_equal_to: debe ser menor que o igual a %{count}
       model_invalid: 'La validación falló: %{errors}'
+      not_a_community_role: debe ser un rol de comunidad
       not_a_number: no es un número
       not_an_integer: debe ser un entero
       not_found: no se ha encontrado
@@ -5182,7 +5184,11 @@ es:
       odd: debe ser impar
       other_than: debe ser distinto de %{count}
       present: debe estar en blanco
+      public_mail_domain: es un proveedor de correo público; confirma para confiar
+        en todas sus direcciones
       required: debe existir
+      required_for_elevated_role: requiere confirmación explícita antes de que un
+        dominio de correo pueda otorgar un rol superior al de miembro básico
       taken: ya está en uso
       too_long:
         one: es demasiado largo (%{count} carácter máximo)

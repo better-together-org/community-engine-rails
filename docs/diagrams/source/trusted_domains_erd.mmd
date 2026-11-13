@@ -1,0 +1,23 @@
+erDiagram
+  PLATFORM ||--o{ PLATFORM_TRUSTED_DOMAIN : "trusts (per platform)"
+  ROLE ||--o{ PLATFORM_TRUSTED_DOMAIN : "granted on sign-up (community role)"
+  PERSON ||--o{ PLATFORM_TRUSTED_DOMAIN : "created_by"
+  PLATFORM ||--o{ TRUSTED_DOMAIN_EVENT : "audit trail"
+  PLATFORM_TRUSTED_DOMAIN |o--o{ TRUSTED_DOMAIN_EVENT : "nullified on removal"
+  PERSON |o--o{ TRUSTED_DOMAIN_EVENT : "actor (steward)"
+  PERSON |o--o{ TRUSTED_DOMAIN_EVENT : "subject (new member)"
+  PLATFORM_TRUSTED_DOMAIN {
+    uuid platform_id
+    uuid role_id
+    string domain "normalized, punycode"
+    boolean enabled
+    boolean include_subdomains
+    boolean public_domain_confirmed
+    boolean role_ceiling_confirmed
+  }
+  TRUSTED_DOMAIN_EVENT {
+    string event_type "append-only"
+    string domain "snapshot"
+    string role_identifier "snapshot"
+    string via "google_oauth, password_registration, membership_request, steward"
+  }
