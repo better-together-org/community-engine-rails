@@ -1023,6 +1023,7 @@ fr:
         grant_refused: Ce crédit n'a pas pu être accordé. Vérifiez le montant ; vous
           ne pouvez pas vous accorder de crédit.
         grant_submit: Accorder le crédit
+        grant_too_large: Ce crédit dépasse le maximum d'un seul octroi, soit %{maximum}.
         granted: Crédit accordé.
         history: Historique
         history_caption: Ce qui est arrivé à ce crédit, du plus récent au plus ancien

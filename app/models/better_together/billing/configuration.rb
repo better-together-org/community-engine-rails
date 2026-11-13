@@ -12,6 +12,8 @@ module BetterTogether
 
       REQUIRED_KEYS = %w[PAY_BUSINESS_NAME PAY_BUSINESS_ADDRESS PAY_SUPPORT_EMAIL].freeze
 
+      DEFAULT_MAX_CREDIT_GRANT = '1000'
+
       class << self
         def value(key, env = ENV)
           env[key.to_s].to_s.strip.presence
@@ -34,6 +36,13 @@ module BetterTogether
         # Optional preselect for the plan form; nil means "make the admin choose".
         def default_currency(env = ENV)
           value('BT_BILLING_DEFAULT_CURRENCY', env)&.upcase
+        end
+
+        # The most one steward grant may give, in minor units of `code`. BT_BILLING_MAX_CREDIT_GRANT is
+        # in major units (default 1000); anything that is not a plain positive amount falls back to it.
+        def max_credit_grant_minor(code, env = ENV)
+          minor = Currency.to_minor(value('BT_BILLING_MAX_CREDIT_GRANT', env), code)
+          minor&.positive? ? minor : Currency.to_minor(DEFAULT_MAX_CREDIT_GRANT, code)
         end
 
         # Required by features that must send a country to the processor.

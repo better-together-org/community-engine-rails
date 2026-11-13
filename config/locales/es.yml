@@ -1015,6 +1015,8 @@ es:
         grant_refused: No se pudo otorgar ese crédito. Revisa el importe; no puedes
           otorgarte crédito a ti mismo.
         grant_submit: Otorgar crédito
+        grant_too_large: Ese crédito supera el máximo de una sola concesión, que es
+          %{maximum}.
         granted: Crédito otorgado.
         history: Historial
         history_caption: Lo que ha pasado con este crédito, lo más reciente primero

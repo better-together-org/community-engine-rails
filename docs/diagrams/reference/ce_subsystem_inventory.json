@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T13:37:23Z",
+  "generated_at": "2026-11-12T22:13:37Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -28034,6 +28034,7 @@
           "inferred_models": [],
           "concerns": [
             "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::Billing::PersonLookup",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
@@ -28380,6 +28381,7 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
+            "Billing::CreditGrantsController",
             "Billing::CreditAccountsController"
           ]
         },

@@ -47,6 +47,12 @@ module BetterTogether
         expect(described_class.default_country(env)).to eq('US')
       end
 
+      it 'caps one steward credit grant, 1000 in major units unless configured' do
+        expect(described_class.max_credit_grant_minor('USD', {})).to eq(100_000)
+        expect(described_class.max_credit_grant_minor('JPY', { 'BT_BILLING_MAX_CREDIT_GRANT' => '5000' })).to eq(5000)
+        expect(described_class.max_credit_grant_minor('USD', { 'BT_BILLING_MAX_CREDIT_GRANT' => 'lots' })).to eq(100_000)
+      end
+
       it 'raises when a feature requires a country that is not configured' do
         expect { described_class.require_default_country!({}) }
           .to raise_error(Configuration::MissingConfigurationError, /BT_BILLING_DEFAULT_COUNTRY/)
