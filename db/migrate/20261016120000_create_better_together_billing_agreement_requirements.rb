@@ -9,7 +9,7 @@
 #   the terms that come with cash, a cheque or an e-transfer). `mode` says whether it adds to the
 #   default terms or replaces them.
 # * An acceptance records, per order, which agreement the signer accepted, as it read then
-#   (identifier, title, content digest). The agreement can change or be re-accepted later;
+#   (identifier, content digest; the title is a Mobility translation). The agreement can change or be re-accepted later;
 #   this row is the evidence of what applied to this purchase. The order is tied by a composite
 #   foreign key so the evidence is always on the order's own platform.
 class CreateBetterTogetherBillingAgreementRequirements < ActiveRecord::Migration[7.2]
@@ -57,7 +57,6 @@ class CreateBetterTogetherBillingAgreementRequirements < ActiveRecord::Migration
       t.string :on_behalf_of_type
       t.uuid :on_behalf_of_id
       t.string :agreement_identifier, null: false
-      t.string :agreement_title, null: false
       t.string :agreement_content_digest, null: false
       t.string :acceptance_method, null: false
       t.datetime :accepted_at, null: false

@@ -10,6 +10,7 @@
 # * An order with no tax registration behind it has no tax lines and the totals it always had.
 # * Money is integer minor units plus the order's currency. Rates are fractions (0.05 is five percent).
 # * registration_number is `text` because the model encrypts it.
+# * Names and labels are Mobility translations, not columns.
 class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:disable Metrics/ClassLength
   def up
     create_tax_categories
@@ -36,7 +37,6 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
     create_bt_table :billing_tax_categories do |t|
       t.uuid :platform_id, null: false
       t.string :identifier, null: false
-      t.string :name, null: false
       # false: nothing in this category is taxed (fresh produce, say), whatever the rates are.
       t.boolean :taxable, null: false, default: true
     end
@@ -53,7 +53,6 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
 
     create_bt_table :billing_tax_zones do |t|
       t.uuid :platform_id, null: false
-      t.string :name, null: false
       # The place is a row of the geography tables, never a string: a country, one state or province of it, or one
       # settlement (a city or town) in it, which is how a municipal tax is held. Tax at each level adds to the
       # levels above it.
@@ -80,7 +79,8 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
       t.uuid :tax_zone_id, null: false
       # Empty: every taxable category.
       t.uuid :tax_category_id
-      t.string :label, null: false
+      # GST/HST, PST, QST, RST, VAT or other: federal and provincial tax are filed on different returns.
+      t.string :authority, null: false, default: 'other'
       t.decimal :rate, precision: 8, scale: 5, null: false
       t.datetime :starts_at
       t.datetime :ends_at
@@ -111,7 +111,11 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
       # Empty: the default for the country (see Billing::Tax::Defaults).
       t.boolean :prices_include_tax
       t.text :registration_number
-      t.datetime :effective_from
+      # Empty effective_to: an ongoing registration.
+      t.datetime :effective_from, null: false
+      # The geography records the registration is for; country_iso and region_code stay the lookup keys.
+      t.uuid :country_id
+      t.uuid :state_id
       t.datetime :effective_to
     end
 
@@ -120,6 +124,15 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
                                                                               name: 'idx_bt_billing_tax_registrations_id_platform'
     add_index :better_together_billing_tax_registrations, %i[seller_type seller_id], name: 'idx_bt_billing_tax_registrations_seller'
     add_foreign_key :better_together_billing_tax_registrations, :better_together_platforms, column: :platform_id
+    add_registration_geography_keys
+  end
+
+  def add_registration_geography_keys
+    table = :better_together_billing_tax_registrations
+    { country_id: :better_together_geography_countries, state_id: :better_together_geography_states }.each do |column, target|
+      add_index table, column, name: "idx_bt_billing_tax_registrations_#{column}"
+      add_foreign_key table, target, column:, on_delete: :nullify
+    end
   end
 
   def create_tax_lines # rubocop:disable Metrics/MethodLength
@@ -130,7 +143,10 @@ class CreateBetterTogetherBillingTax < ActiveRecord::Migration[7.2] # rubocop:di
       t.uuid :order_id, null: false
       t.uuid :line_item_id, null: false
       t.uuid :tax_rate_id
-      t.string :label, null: false
+      # Copies of the rate's authority and the collector's registration number (encrypted, so text), kept
+      # so a later change never rewrites a past sale.
+      t.string :authority, null: false, default: 'other'
+      t.text :registration_number
       t.decimal :rate, precision: 8, scale: 5, null: false
       t.integer :amount_cents, null: false
       t.boolean :included, null: false, default: false
