@@ -33,3 +33,18 @@ through Devise. Typing an address into a form never counts.
 
 `PlatformTrustedDomainPolicy` allows only managers of the target platform (`manage_platform` or
 `manage_platform_settings`).
+
+## Sign-in with an OAuth provider
+
+`OmniauthCallbacksController#check_invitation_requirement` normally refuses a new OAuth sign-up on an
+invitation-only platform. It now lets the sign-up through when `User.trusted_domain_for_oauth` finds a
+trusted domain for the **provider-verified** email (Google `email_verified`, GitHub verified list; issuer
+based providers only when that issuer opts in; Facebook never). Then `TrustedDomains::Grant` creates the
+active community membership with the domain's role and writes an `account_created` or
+`membership_granted` event (`via: oauth`).
+
+- An invitation in the session wins: no domain grant is recorded and the invitation role applies.
+- An unverified email never matches, so it cannot claim a trusted domain.
+- `Grant` only adds the domain's role. An existing active membership is left alone.
+- Google verifies the address, not that the domain is a managed Workspace tenant. Restricting by the
+  Workspace `hd` claim as a second factor is a separate follow-up.

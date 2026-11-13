@@ -146,6 +146,13 @@ module BetterTogether
       end
       private_class_method :provider_verified_email?
 
+      # The platform's trusted domain covering the provider-verified email in this OAuth result, or nil.
+      def self.trusted_domain_for_oauth(auth:, platform:, trust_verified_email: false)
+        email = auth.dig('info', 'email') || auth.dig(:info, :email)
+        verified = provider_verified_email?(auth, trust_verified_email:)
+        platform&.trusted_domain_for(email, verified:)
+      end
+
       def self.rotate_password_for_unconfirmed(user)
         return if user.confirmed?
 
