@@ -2088,6 +2088,13 @@ en:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Close
+      counter: "{current} of {total}"
+      dialog_label: 'Image gallery: %{name}'
+      next: Next image
+      open_image: 'Open image %{current} of %{total}: %{name}'
+      previous: Previous image
     infrastructure:
       locations: Locations
     invitations:

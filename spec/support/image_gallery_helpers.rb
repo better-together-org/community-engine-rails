@@ -20,8 +20,8 @@ module ImageGalleryHelpers
     page
   end
 
-  def gallery_params(layout = 'grid')
-    { gallery_token: @gallery_token, gallery_layout: layout }
+  def gallery_params(layout = 'grid', lightbox: false)
+    { gallery_token: @gallery_token, gallery_layout: layout, gallery_lightbox: (lightbox ? '1' : '0') }
   end
 
   def create_gallery_images(files)

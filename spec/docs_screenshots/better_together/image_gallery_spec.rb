@@ -29,8 +29,8 @@ RSpec.describe 'Documentation screenshots for the image gallery', # rubocop:disa
     { locale:, role: 'visitor', feature_set: 'image_gallery', flow:, source_spec: self.class.metadata[:file_path] }
   end
 
-  def visit_gallery
-    visit better_together.render_page_path(path: page_record.slug, locale:, **gallery_params)
+  def visit_gallery(lightbox: false)
+    visit better_together.render_page_path(path: page_record.slug, locale:, **gallery_params('grid', lightbox:))
     expect(page).to have_css('.image-gallery__image', minimum: 4)
     page.execute_script("document.querySelector('.image-gallery').scrollIntoView({block: 'center'})")
     wait_for_images
@@ -38,8 +38,11 @@ RSpec.describe 'Documentation screenshots for the image gallery', # rubocop:disa
 
   # Lazy images load only once in view and variants are built on first request; capture only loaded pictures.
   def wait_for_images
-    loaded = 'Array.from(document.querySelectorAll(".image-gallery__image")).every(i => i.complete && i.naturalWidth > 0)'
-    Timeout.timeout(60) { sleep 0.5 until page.evaluate_script(loaded) }
+    wait_for_script('Array.from(document.querySelectorAll(".image-gallery__image")).every(i => i.complete && i.naturalWidth > 0)')
+  end
+
+  def wait_for_script(script)
+    Timeout.timeout(60) { sleep 0.3 until page.evaluate_script(script) }
   end
 
   it 'captures the annotated gallery' do
@@ -61,5 +64,38 @@ RSpec.describe 'Documentation screenshots for the image gallery', # rubocop:disa
       'image_gallery_plain', device: :both, metadata: metadata('plain')
     ) { visit_gallery }
     expect(paths.values).to all(satisfy { |path| File.exist?(path) })
+  end
+
+  it 'captures the lightbox viewer' do
+    bullets = ['Opens from any thumbnail; arrow keys, swipe and buttons move between images.',
+               'Escape closes it and focus returns to the thumbnail.']
+    paths = BetterTogether::CapybaraScreenshotEngine.capture(
+      'image_gallery_lightbox', device: :both, metadata: metadata('lightbox'),
+                                callouts: [{ id: 'viewer', selector: '.image-gallery__modal-image',
+                                             title: 'Lightbox viewer', bullets: }],
+                                narrative: { title: 'Image gallery lightbox', audience: %w[visitor developer],
+                                             journey_step: 'As a visitor, I view a photo at full size.',
+                                             callouts: [{ id: 'viewer', title: 'Lightbox viewer',
+                                                          description: bullets.join(' ') }],
+                                             accessibility_notes: 'A labelled dialog with a polite live counter.' }
+    ) { open_lightbox }
+    expect(paths.values).to all(satisfy { |path| File.exist?(path) })
+  end
+
+  it 'captures the plain lightbox viewer' do
+    paths = BetterTogether::CapybaraScreenshotEngine.capture(
+      'image_gallery_lightbox_plain', device: :both, metadata: metadata('lightbox_plain')
+    ) { open_lightbox }
+    expect(paths.values).to all(satisfy { |path| File.exist?(path) })
+  end
+
+  def open_lightbox
+    visit_gallery(lightbox: true)
+    first('.image-gallery__open').click
+    expect(page).to have_css('.image-gallery__modal.show')
+    wait_for_script('document.querySelector(".image-gallery__modal-image").naturalWidth > 0')
+    # The fade-in and backdrop finish after the show class appears; capture only the settled state.
+    wait_for_script('getComputedStyle(document.querySelector(".image-gallery__modal")).opacity === "1"')
+    wait_for_script('getComputedStyle(document.querySelector(".modal-backdrop")).opacity === "0.5"')
   end
 end

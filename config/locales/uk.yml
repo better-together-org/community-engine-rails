@@ -2122,6 +2122,13 @@ uk:
         for_your_latest_request: For your latest request
         no_suggestions: No suggestions yet — create an offer or request to see matches.
         suggested_matches: Suggested Matches
+    image_gallery:
+      close: Закрити
+      counter: "{current} з {total}"
+      dialog_label: 'Галерея зображень: %{name}'
+      next: Наступне зображення
+      open_image: 'Відкрити зображення %{current} з %{total}: %{name}'
+      previous: Попереднє зображення
     infrastructure:
       locations: Locations
     invitations:
