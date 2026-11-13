@@ -48,8 +48,13 @@
   requires_invitation_field_id = "#{dom_id(platform)}_requires_invitation"
   allow_membership_requests_field_id = "#{dom_id(platform)}_allow_membership_requests"
 %>
+<%
+  tab_error_counts = platform_form_tab_error_counts(platform)
+  active_tab = platform_form_active_tab(tab_error_counts)
+  tab_ids = %w[details access appearance domains security features]
+%>
 
-<%= form_with(model: platform) do |form| %>
+<%= form_with(model: platform, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>
   <% if platform.errors.any? %>
     <div class="alert alert-danger" role="alert">
       <h2><%= pluralize(platform.errors.count, "error") %> prohibited this platform from being saved:</h2>
@@ -71,183 +76,134 @@
     </div>
   <% end %>
 
-  <div class="mb-3">
-    <%= form.label :identifier, class: "form-label", for: identifier_field_id %>
-    <%= form.text_field :identifier, id: identifier_field_id, class: "form-control", disabled: platform.protected %>
-  </div>
-
-  <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_string_field', locals: { model: platform, form: form, attribute: 'name' } %>
-  </div>
-
-  <div class="mb-3">
-    <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: platform, form: form, attribute: 'description' } %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :host_url, class: "form-label", for: host_url_field_id %>
-    <%= form.text_field :host_url, id: host_url_field_id, class: "form-control", disabled: platform.protected %>
-    <p class="form-text text-muted"><%= t('better_together.platforms.form.host_url_hint') %></p>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :time_zone, class: "form-label", for: time_zone_field_id %>
-    <%= iana_time_zone_select(form, :time_zone, @platform.time_zone, {}, { class: 'form-select', id: time_zone_field_id, required: true }) %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :privacy, class: "form-label", for: privacy_field_id %>
-    <%= privacy_field(form:, klass: resource_class, html_options: { id: privacy_field_id }) %>
-  </div>
-
-  <fieldset class="mb-3">
-    <legend class="form-label mb-2">
-      <%= t('better_together.access_modes.heading', default: 'How people join') %>
-    </legend>
-    <p class="form-text text-muted mt-0 mb-2">
-      <%= t('better_together.access_modes.form.platform_help',
-            default: 'Choose whether people can create an account directly or need an invitation first.') %>
-    </p>
-    <div class="form-check">
-      <%= form.check_box :requires_invitation,
-                         { class: "form-check-input", checked: platform.requires_invitation?, id: requires_invitation_field_id } %>
-      <%= form.label :requires_invitation,
-                     t('better_together.access_modes.form.platform_invitation_only',
-                       default: 'Require an invitation before someone can register'),
-                     class: "form-check-label",
-                     for: requires_invitation_field_id %>
-      <div class="form-text text-muted">
-        <%= t('better_together.access_modes.form.platform_invitation_help',
-              default: 'Invitations can prefill email addresses and assign platform or community roles after acceptance.') %>
-      </div>
-    </div>
-
-    <div class="form-check mt-3">
-      <%= form.check_box :allow_membership_requests,
-                         { class: "form-check-input",
-                           checked: platform.allow_membership_requests?,
-                           id: allow_membership_requests_field_id } %>
-      <%= form.label :allow_membership_requests,
-                     t('better_together.platforms.form.allow_membership_requests',
-                       default: 'Allow membership requests'),
-                     class: "form-check-label",
-                     for: allow_membership_requests_field_id %>
-      <div class="form-text text-muted">
-        <%= t('better_together.platforms.form.allow_membership_requests_hint',
-              default: 'When enabled, communities may accept membership requests only if that community also explicitly enables requests.') %>
-      </div>
-    </div>
-  </fieldset>
-
-  <div class="mb-3">
-    <%= contributor_display_visibility_field(
-          form:,
-          include_inherit: false,
-          label: t('better_together.authorable_contributor_visibility.labels.platform', default: 'Default contributor display'),
-          hint: t('better_together.authorable_contributor_visibility.hints.platform', default: 'Sets the default byline visibility for pages and posts unless a community or record overrides it.')
-        ) %>
-  </div>
-
-  <div class="card border-0 bg-body-tertiary mb-3">
-    <div class="card-body">
-      <h2 class="h5 mb-2"><%= t('better_together.platforms.form.feature_gates_title', default: 'Feature rollout gates') %></h2>
-      <p class="text-muted mb-3">
-        <%= t('better_together.platforms.form.feature_gates_hint',
-              default: 'Choose whether each feature is off, alpha, beta, or stable for this platform. Staff and testers can still be filtered by the RBAC feature-access permissions.') %>
-      </p>
-
-      <div class="row g-3">
-        <% feature_gate_catalog.each do |gate| %>
-          <% field_id = "#{dom_id(platform)}_feature_gate_#{gate[:key]}" %>
-          <div class="col-lg-6">
-            <div class="border rounded-3 p-3 h-100 bg-white">
-              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                <div>
-                  <label class="form-label fw-semibold mb-1" for="<%= field_id %>"><%= gate[:name] %></label>
-                  <div class="small text-muted"><%= gate[:description] %></div>
-                </div>
-                <span class="badge text-bg-light"><%= gate[:category].to_s.humanize %></span>
-              </div>
-
-              <%= select_tag "platform[feature_gate_rollouts][#{gate[:key]}]",
-                             options_for_select(feature_gate_rollout_options, platform.feature_rollout_for(gate[:key])),
-                             id: field_id,
-                             class: 'form-select' %>
-            </div>
-          </div>
+  <div class="row" id="platform-form">
+    <div class="col-md-3 mb-3">
+      <div class="nav flex-column nav-pills" id="platform-form-tabs" role="tablist" aria-orientation="vertical">
+        <% tab_ids.each do |tab| %>
+          <% selected = tab == active_tab %>
+          <button class="nav-link<%= ' active' if selected %>" id="platform-<%= tab %>-tab" data-bs-toggle="pill" data-bs-target="#platform-<%= tab %>" type="button" role="tab" aria-controls="platform-<%= tab %>" aria-selected="<%= selected %>" data-better_together--tabs-target="tab">
+            <%= t("better_together.platforms.tabs.#{tab}") %>
+            <% if tab_error_counts[tab].to_i.positive? %>
+              <span class="badge text-bg-danger ms-1" id="platform-<%= tab %>-tab-errors"><%= tab_error_counts[tab] %><span class="visually-hidden"> <%= t('better_together.platforms.tabs.errors') %></span></span>
+            <% end %>
+          </button>
         <% end %>
+        <%= render partial: 'better_together/platforms/extra_form_tabs', locals: { model: platform, form: } %>
       </div>
     </div>
-  </div>
 
-  <% if platform.local_hosted? %>
-    <div class="card border-0 bg-body-tertiary mb-3" id="<%= dom_id(platform, :quota_defaults) %>">
-      <div class="card-body">
-        <h2 class="h5 mb-2"><%= t('better_together.platforms.form.quota_defaults_title', default: 'Quota defaults') %></h2>
-        <p class="text-muted mb-3">
-          <%= t('better_together.platforms.form.quota_defaults_hint',
-                default: 'Starting limit for each new person, community and this platform. Leave a field blank to use the default set in the application configuration. Changing a value also updates existing quotas on this platform; per-owner quota grants are not affected.') %>
-        </p>
+    <div class="col-md-9 tab-content" id="platform-form-tabs-content">
+      <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'details' %>" id="platform-details" role="tabpanel" aria-labelledby="platform-details-tab">
+        <div class="mb-3">
+          <%= form.label :identifier, class: "form-label", for: identifier_field_id %>
+          <%= form.text_field :identifier, id: identifier_field_id, class: "form-control", disabled: platform.protected %>
+        </div>
 
-        <% quota_default_catalog(platform).each do |quota| %>
-          <fieldset class="mb-3 quota-default-type" id="<%= dom_id(platform, "quota_defaults_#{quota[:key]}") %>">
-            <legend class="h6">
-              <%= t("better_together.platforms.form.quota_types.#{quota[:key]}", default: quota[:key].humanize) %>
-              <% unless quota[:unit] == :bytes %><span class="text-muted small">(<%= quota[:unit] %>)</span><% end %>
-            </legend>
-            <div class="row g-3">
-              <% quota[:kinds].each do |entry| %>
-                <% field_id = "#{dom_id(platform)}_quota_default_#{quota[:key]}_#{entry[:kind]}" %>
-                <div class="col-lg-4">
-                  <label class="form-label" for="<%= field_id %>">
-                    <%= t("better_together.platforms.form.quota_kinds.#{entry[:kind]}", default: entry[:kind].humanize) %>
-                  </label>
-                  <% if quota[:unit] == :bytes %>
-                    <%= select_tag entry[:field],
-                                   options_for_select(quota_storage_options(entry), entry[:value].to_s),
-                                   id: field_id, class: 'form-select quota-default-input',
-                                   data: { controller: 'better_together--slim-select' } %>
-                  <% else %>
-                    <%= number_field_tag entry[:field], entry[:value], id: field_id, min: 0, step: 1,
-                                         placeholder: entry[:inherited], class: 'form-control quota-default-input' %>
-                    <% if entry[:value] || entry[:inherited] %>
-                      <div class="form-text"><%= number_with_delimiter(entry[:value] || entry[:inherited]) %></div>
-                    <% end %>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          </fieldset>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+        <div class="mb-3">
+          <%= render partial: 'better_together/shared/translated_string_field', locals: { model: platform, form: form, attribute: 'name' } %>
+        </div>
 
-  <div class="accordion mb-3" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" aria-expanded="false" aria-controls="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse">
-          Custom CSS
-        </button>
-      </h2>
-      <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles-collapse" class="accordion-collapse collapse mb-3" aria-labelledby="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-header" data-bs-parent="#<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>-styles">
-        <div class="accordion-body">
-          <%= render partial: 'better_together/content/blocks/fields/block',
-                    locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
+        <div class="mb-3">
+          <%= render partial: 'better_together/shared/translated_rich_text_field', locals: { model: platform, form: form, attribute: 'description' } %>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :host_url, class: "form-label", for: host_url_field_id %>
+          <%= form.text_field :host_url, id: host_url_field_id, class: "form-control", disabled: platform.protected %>
+          <p class="form-text text-muted"><%= t('better_together.platforms.form.host_url_hint') %></p>
+        </div>
+
+        <div class="mb-3">
+          <%= form.label :time_zone, class: "form-label", for: time_zone_field_id %>
+          <%= iana_time_zone_select(form, :time_zone, @platform.time_zone, {}, { class: 'form-select', id: time_zone_field_id, required: true }) %>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="accordion mb-3" id="<%= dom_id(platform, 'csp_settings') %>">
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="<%= dom_id(platform, 'csp_settings_header') %>">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<%= dom_id(platform, 'csp_settings_collapse') %>" aria-expanded="false" aria-controls="<%= dom_id(platform, 'csp_settings_collapse') %>">
-          Security / CSP embeds
-        </button>
-      </h2>
-      <div id="<%= dom_id(platform, 'csp_settings_collapse') %>" class="accordion-collapse collapse" aria-labelledby="<%= dom_id(platform, 'csp_settings_header') %>" data-bs-parent="#<%= dom_id(platform, 'csp_settings') %>">
-        <div class="accordion-body">
+      <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'access' %>" id="platform-access" role="tabpanel" aria-labelledby="platform-access-tab">
+        <div class="mb-3">
+          <%= form.label :privacy, class: "form-label", for: privacy_field_id %>
+          <%= privacy_field(form:, klass: resource_class, html_options: { id: privacy_field_id }) %>
+        </div>
+
+        <fieldset class="mb-3">
+          <legend class="form-label mb-2">
+            <%= t('better_together.access_modes.heading', default: 'How people join') %>
+          </legend>
+          <p class="form-text text-muted mt-0 mb-2">
+            <%= t('better_together.access_modes.form.platform_help',
+                  default: 'Choose whether people can create an account directly or need an invitation first.') %>
+          </p>
+          <div class="form-check">
+            <%= form.check_box :requires_invitation,
+                               { class: "form-check-input", checked: platform.requires_invitation?, id: requires_invitation_field_id } %>
+            <%= form.label :requires_invitation,
+                           t('better_together.access_modes.form.platform_invitation_only',
+                             default: 'Require an invitation before someone can register'),
+                           class: "form-check-label",
+                           for: requires_invitation_field_id %>
+            <div class="form-text text-muted">
+              <%= t('better_together.access_modes.form.platform_invitation_help',
+                    default: 'Invitations can prefill email addresses and assign platform or community roles after acceptance.') %>
+            </div>
+          </div>
+
+          <div class="form-check mt-3">
+            <%= form.check_box :allow_membership_requests,
+                               { class: "form-check-input",
+                                 checked: platform.allow_membership_requests?,
+                                 id: allow_membership_requests_field_id } %>
+            <%= form.label :allow_membership_requests,
+                           t('better_together.platforms.form.allow_membership_requests',
+                             default: 'Allow membership requests'),
+                           class: "form-check-label",
+                           for: allow_membership_requests_field_id %>
+            <div class="form-text text-muted">
+              <%= t('better_together.platforms.form.allow_membership_requests_hint',
+                    default: 'When enabled, communities may accept membership requests only if that community also explicitly enables requests.') %>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="mb-3">
+          <%= contributor_display_visibility_field(
+                form:,
+                include_inherit: false,
+                label: t('better_together.authorable_contributor_visibility.labels.platform', default: 'Default contributor display'),
+                hint: t('better_together.authorable_contributor_visibility.hints.platform', default: 'Sets the default byline visibility for pages and posts unless a community or record overrides it.')
+              ) %>
+        </div>
+      </div>
+
+      <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'appearance' %>" id="platform-appearance" role="tabpanel" aria-labelledby="platform-appearance-tab">
+        <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>" class="mb-3">
+          <h2 class="h5"><%= t('better_together.platforms.form.custom_css_title') %></h2>
+          <p class="form-text text-muted"><%= t('better_together.platforms.form.custom_css_hint') %></p>
+          <%= render partial: 'better_together/content/blocks/fields/block',
+                     locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
+        </div>
+      </div>
+
+      <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'domains' %>" id="platform-domains" role="tabpanel" aria-labelledby="platform-domains-tab">
+        <div id="<%= dom_id(platform, 'domains_and_sign_in') %>" class="mb-3">
+          <p class="form-text text-muted"><%= t('better_together.platforms.form.domains_hint') %></p>
+          <% if platform.persisted? %>
+            <ul class="list-unstyled">
+              <% if policy(platform.platform_domains.build).index? %>
+                <li><%= link_to t('platforms.show.operations.platform_domains', default: 'Domains'), platform_platform_domains_path(platform), id: "#{dom_id(platform)}_domains_link" %></li>
+              <% end %>
+              <% if policy(platform.platform_identity_providers.build).index? %>
+                <li><%= link_to t('platforms.show.operations.identity_providers', default: 'Sign-in providers'), platform_platform_identity_providers_path(platform), id: "#{dom_id(platform)}_identity_providers_link" %></li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="text-muted"><%= t('better_together.platforms.form.domains_after_save') %></p>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'security' %>" id="platform-security" role="tabpanel" aria-labelledby="platform-security-tab">
+        <div id="<%= dom_id(platform, 'csp_settings') %>">
+          <h2 class="h5 mb-3"><%= t('better_together.platforms.form.csp_title') %></h2>
           <div class="mb-3">
             <%= form.label :csp_frame_ancestors_text,
                            t('better_together.platforms.form.csp_frame_ancestors_text_label', default: 'Allowed inbound framing origins'),
@@ -379,8 +335,88 @@
           </div>
         </div>
       </div>
+
+      <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'features' %>" id="platform-features" role="tabpanel" aria-labelledby="platform-features-tab">
+        <div class="card border-0 bg-body-tertiary mb-3">
+          <div class="card-body">
+            <h2 class="h5 mb-2"><%= t('better_together.platforms.form.feature_gates_title', default: 'Feature rollout gates') %></h2>
+            <p class="text-muted mb-3">
+              <%= t('better_together.platforms.form.feature_gates_hint',
+                    default: 'Choose whether each feature is off, alpha, beta, or stable for this platform. Staff and testers can still be filtered by the RBAC feature-access permissions.') %>
+            </p>
+
+            <div class="row g-3">
+              <% feature_gate_catalog.each do |gate| %>
+                <% field_id = "#{dom_id(platform)}_feature_gate_#{gate[:key]}" %>
+                <div class="col-lg-6">
+                  <div class="border rounded-3 p-3 h-100 bg-white">
+                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                      <div>
+                        <label class="form-label fw-semibold mb-1" for="<%= field_id %>"><%= gate[:name] %></label>
+                        <div class="small text-muted"><%= gate[:description] %></div>
+                      </div>
+                      <span class="badge text-bg-light"><%= gate[:category].to_s.humanize %></span>
+                    </div>
+
+                    <%= select_tag "platform[feature_gate_rollouts][#{gate[:key]}]",
+                                   options_for_select(feature_gate_rollout_options, platform.feature_rollout_for(gate[:key])),
+                                   id: field_id,
+                                   class: 'form-select' %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <% if platform.local_hosted? %>
+          <div class="card border-0 bg-body-tertiary mb-3" id="<%= dom_id(platform, :quota_defaults) %>">
+            <div class="card-body">
+              <h2 class="h5 mb-2"><%= t('better_together.platforms.form.quota_defaults_title', default: 'Quota defaults') %></h2>
+              <p class="text-muted mb-3">
+                <%= t('better_together.platforms.form.quota_defaults_hint',
+                      default: 'Starting limit for each new person, community and this platform. Leave a field blank to use the default set in the application configuration. Changing a value also updates existing quotas on this platform; per-owner quota grants are not affected.') %>
+              </p>
+
+              <% quota_default_catalog(platform).each do |quota| %>
+                <fieldset class="mb-3 quota-default-type" id="<%= dom_id(platform, "quota_defaults_#{quota[:key]}") %>">
+                  <legend class="h6">
+                    <%= t("better_together.platforms.form.quota_types.#{quota[:key]}", default: quota[:key].humanize) %>
+                    <% unless quota[:unit] == :bytes %><span class="text-muted small">(<%= quota[:unit] %>)</span><% end %>
+                  </legend>
+                  <div class="row g-3">
+                    <% quota[:kinds].each do |entry| %>
+                      <% field_id = "#{dom_id(platform)}_quota_default_#{quota[:key]}_#{entry[:kind]}" %>
+                      <div class="col-lg-4">
+                        <label class="form-label" for="<%= field_id %>">
+                          <%= t("better_together.platforms.form.quota_kinds.#{entry[:kind]}", default: entry[:kind].humanize) %>
+                        </label>
+                        <% if quota[:unit] == :bytes %>
+                          <%= select_tag entry[:field],
+                                         options_for_select(quota_storage_options(entry), entry[:value].to_s),
+                                         id: field_id, class: 'form-select quota-default-input',
+                                         data: { controller: 'better_together--slim-select' } %>
+                        <% else %>
+                          <%= number_field_tag entry[:field], entry[:value], id: field_id, min: 0, step: 1,
+                                               placeholder: entry[:inherited], class: 'form-control quota-default-input' %>
+                          <% if entry[:value] || entry[:inherited] %>
+                            <div class="form-text"><%= number_with_delimiter(entry[:value] || entry[:inherited]) %></div>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                </fieldset>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <%= render partial: 'better_together/platforms/extra_form_content', locals: { model: platform, form: } %>
     </div>
   </div>
+
   <div class="mb-3">
     <%= form.submit "Save", class: "btn btn-primary" %>
   </div>

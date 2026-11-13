@@ -3493,6 +3493,14 @@ es:
           de CE puede cargar. Selecciona orígenes de confianza o escribe un nuevo
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
+        csp_title: Seguridad / incrustaciones CSP
+        custom_css_hint: Ajuste avanzado. Los estilos añadidos aquí se cargan después
+          del tema y tienen prioridad sobre él.
+        custom_css_title: CSS personalizado
+        domains_after_save: Guarde primero la plataforma y luego gestione aquí sus
+          dominios y proveedores de inicio de sesión.
+        domains_hint: Revise los dominios en los que responde esta plataforma y los
+          servicios de inicio de sesión.
         feature_gates_hint: Elige qué etapa de despliegue requiere cada funcionalidad
           en esta plataforma.
         feature_gates_title: Controles de despliegue de funcionalidades
@@ -3527,6 +3535,14 @@ es:
         title: Registrar plataforma externa
       show:
         new_invitation: Nueva invitación
+      tabs:
+        access: Acceso y privacidad
+        appearance: Apariencia
+        details: Detalles
+        domains: Dominios e inicio de sesión
+        errors: errores en esta pestaña
+        features: Funciones y cuotas
+        security: Seguridad
     posts:
       authors: Autores
       back_to_posts: Volver a publicaciones

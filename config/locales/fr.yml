@@ -3517,6 +3517,14 @@ fr:
           charger. Sélectionnez des origines de confiance ou saisissez un nouveau
           nom d'hôte/origine puis appuyez sur Entrée.
         csp_img_src_text_label: Origines externes d'images autorisées
+        csp_title: Sécurité / intégrations CSP
+        custom_css_hint: Réglage avancé. Les styles ajoutés ici se chargent après
+          le thème et ont priorité sur lui.
+        custom_css_title: CSS personnalisé
+        domains_after_save: Enregistrez d'abord la plateforme, puis gérez ici ses
+          domaines et ses fournisseurs de connexion.
+        domains_hint: Consultez les domaines sur lesquels cette plateforme répond
+          et les services de connexion utilisés.
         feature_gates_hint: Choisissez l'étape de déploiement requise pour chaque
           fonctionnalité sur cette plateforme.
         feature_gates_title: Contrôles de déploiement des fonctionnalités
@@ -3552,6 +3560,14 @@ fr:
         title: Enregistrer la plateforme externe
       show:
         new_invitation: Nouvelle invitation
+      tabs:
+        access: Accès et confidentialité
+        appearance: Apparence
+        details: Détails
+        domains: Domaines et connexion
+        errors: erreurs dans cet onglet
+        features: Fonctionnalités et quotas
+        security: Sécurité
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications
