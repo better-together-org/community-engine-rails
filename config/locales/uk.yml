@@ -623,6 +623,7 @@ uk:
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Зображення
+      better_together/content/image_gallery_block: Галерея зображень
       better_together/content/link: Посилання
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Діаграма Mermaid
@@ -1196,6 +1197,17 @@ uk:
           missing_url: URL iframe не налаштовано.
           url_help: Приймає повний HTTPS URL iframe, наприклад опитування Formbricks
             або інше довірене вбудовування зі спільнотного простору.
+        image_gallery_block:
+          empty: Немає зображень для показу.
+          heading_help: Заголовок над галереєю (необов’язково)
+          images: Зображення
+          images_help: Оберіть блоки зображень у тому порядку, в якому вони мають
+            відображатися.
+          layout: Макет
+          layouts:
+            grid: Сітка
+            masonry: Мозаїка
+          lightbox: Відкривати зображення у переглядачі за кліком
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
