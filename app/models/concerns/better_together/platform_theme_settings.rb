@@ -18,6 +18,7 @@ module BetterTogether
                                 size: { less_than: 20.megabytes }
       validates :favicon, content_type: FAVICON_TYPES, size: { less_than: 1.megabyte }
       validate :theme_values_are_valid
+      validate :page_content_values_are_valid
 
       before_save :purge_header_banner, if: -> { remove_header_banner == '1' }
       before_save :purge_favicon, if: -> { remove_favicon == '1' }
@@ -37,6 +38,19 @@ module BetterTogether
       theme_config.values
     end
 
+    def page_content_config
+      BetterTogether::PlatformContentConfig.new((settings || {})['page_content'])
+    end
+
+    # Accepts locale keyed hashes for header_html, footer_html and not_found_headlines.
+    def page_content=(raw)
+      self.settings = (settings || {}).merge('page_content' => BetterTogether::PlatformContentConfig.sanitize(raw))
+    end
+
+    def page_content
+      page_content_config.values
+    end
+
     def logo
       community&.logo
     end
@@ -54,6 +68,12 @@ module BetterTogether
     def theme_values_are_valid
       bad = BetterTogether::PlatformThemeConfig.errors_for(theme).map(&:first)
       bad.each { |key| errors.add(:theme, :invalid_value, key:) }
+    end
+
+    def page_content_values_are_valid
+      BetterTogether::PlatformContentConfig.errors_for(page_content).each do |key, locale|
+        errors.add(:page_content, :too_long_for, key:, language: locale)
+      end
     end
 
     def apply_logo_to_community

@@ -42,3 +42,17 @@ Saved values become CSS custom properties (`--bts-primary`, `--bts-font`, `--bts
 ![Low contrast warning](../screenshots/desktop/platform_theme_low_contrast.png)
 
 ![Theme settings flow](../diagrams/exports/png/platform_theme_settings_flow.png)
+
+## Header, footer and 404 content
+
+Below the theme fields, the Appearance tab has per-language text for three places:
+
+- Header content, shown above the site header.
+- Footer content, shown above the site footer.
+- 404 page headlines, one per line (up to 20, 140 characters each). When a page is not found, one headline is chosen at random.
+
+Header and footer text allows basic formatting and links; scripts are removed. A language with no text falls back to the default language, and empty fields leave the standard layout and the standard 404 title unchanged. Because these render in the application layout, they also work when a host app replaces the header or footer partial.
+
+![404 page with a custom headline](../screenshots/desktop/platform_page_content_404.png)
+
+![Page content flow](../diagrams/exports/png/platform_page_content_flow.png)

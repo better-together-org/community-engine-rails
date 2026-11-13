@@ -98,7 +98,7 @@ module BetterTogether
 
     # Class method for permitted attributes - used by controllers for strong parameters
     # @return [Array] List of permitted attributes and nested hashes
-    def self.permitted_attributes
+    def self.permitted_attributes # rubocop:disable Metrics/MethodLength
       [
         :name, :slug, :host_url, :time_zone, :external, :protected,
         :storage_configuration_id,
@@ -106,6 +106,7 @@ module BetterTogether
         :csp_script_src_text, :csp_connect_src_text,
         :logo, :remove_logo, :header_banner, :remove_header_banner, :favicon, :remove_favicon,
         { theme: BetterTogether::PlatformThemeConfig::KEYS,
+          page_content: BetterTogether::PlatformContentConfig::KEYS.index_with { I18n.available_locales.map(&:to_s) },
           settings: %i[requires_invitation allow_membership_requests
                        software_variant network_visibility connection_bootstrap_state
                        federation_protocol oauth_issuer_url search_query_analytics_enabled

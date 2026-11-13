@@ -1,0 +1,48 @@
+{
+  "name": "platform_page_content_fields",
+  "device": "mobile",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_page_content",
+  "flow": "platform_page_content_fields",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_page_content_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-page-content-not-found-headlines",
+      "title": "Header, footer and 404",
+      "bullets": [
+        "One headline per line; one is chosen at random."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 300.140625,
+        "width": 461.0,
+        "height": 577.1875,
+        "right": 473.0,
+        "bottom": 877.328125,
+        "center_x": 242.5,
+        "center_y": 588.734375
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 300.140625,
+        "width": 461.0,
+        "height": 577.1875,
+        "right": 473.0,
+        "bottom": 877.328125,
+        "center_x": 242.5,
+        "center_y": 588.734375
+      },
+      "placement": {
+        "side": "below",
+        "x": 107.5,
+        "y": 897.33,
+        "width": 270.0,
+        "height": 190,
+        "score": 379.671875
+      }
+    }
+  ]
+}

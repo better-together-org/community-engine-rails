@@ -138,7 +138,7 @@ module BetterTogether
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
         slug host_url time_zone privacy logo remove_logo header_banner remove_header_banner favicon remove_favicon
-      ] + [{ theme: BetterTogether::PlatformThemeConfig::KEYS }]
+      ] + [{ theme: BetterTogether::PlatformThemeConfig::KEYS, page_content: page_content_permit }]
       css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
         BetterTogether::Content::Css.extra_permitted_attributes +
         BetterTogether::Content::Css.localized_attribute_list }]
@@ -150,6 +150,10 @@ module BetterTogether
         *css_block_attrs
       )
       restrict_quota_default_limits(permitted)
+    end
+
+    def page_content_permit
+      BetterTogether::PlatformContentConfig::KEYS.index_with { I18n.available_locales.map(&:to_s) }
     end
 
     # Byte quotas may only be set to a listed decimal storage step (or the configured default).

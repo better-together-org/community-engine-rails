@@ -611,6 +611,8 @@ en:
               taken: has already been linked to another account
         better_together/platform:
           attributes:
+            page_content:
+              too_long_for: "%{key} (%{language}) is too long or has too many lines"
             theme:
               invalid_value: "%{key} has a value that is not allowed"
         better_together/platform_domain:
@@ -3489,6 +3491,21 @@ en:
           be selected when creating a Platform Connection.
         submit: Register External Platform
         title: Register External Platform
+      page_content:
+        footer_html: Footer content
+        footer_html_hint: Shown above the site footer. Basic formatting and links
+          only; scripts are removed.
+        header_html: Header content
+        header_html_hint: Shown above the site header. Basic formatting and links
+          only; scripts are removed.
+        hint: Optional text for this platform. Leave empty to use the standard layout.
+          Each language is separate; a missing language falls back to the default
+          language.
+        locale_label: 'Language: %{language}'
+        not_found_headlines: 404 page headlines
+        not_found_headlines_hint: One headline per line, up to 20. One is chosen at
+          random when a page is not found.
+        title: Header, footer and 404 page
       show:
         new_invitation: New invitation
       tabs:

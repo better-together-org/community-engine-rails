@@ -1,0 +1,6 @@
+flowchart LR
+  Form["Appearance tab<br/>page content fields"] -->|"platform[page_content]"| Sanitize["PlatformContentConfig<br/>locale keyed, size limits"]
+  Sanitize -->|"valid"| Settings[("platforms.settings<br/>page_content hash")]
+  Sanitize -->|"too long"| Errors["422 with errors"]
+  Settings --> Layout["Application layout<br/>header and footer blocks, sanitized"]
+  Settings --> NotFound["errors/404<br/>random headline for the locale"]

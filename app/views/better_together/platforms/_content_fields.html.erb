@@ -1,0 +1,23 @@
+<%# locals: (platform:) %>
+<% scope = 'better_together.platforms.page_content' %>
+<% config = platform.page_content_config %>
+<div id="platform-page-content-settings" class="mb-4">
+  <h2 class="h5"><%= t("#{scope}.title") %></h2>
+  <p class="form-text text-muted"><%= t("#{scope}.hint") %></p>
+
+  <% BetterTogether::PlatformContentConfig::KEYS.each do |key| %>
+    <fieldset id="platform-page-content-<%= key.dasherize %>" class="mb-3">
+      <legend class="h6"><%= t("#{scope}.#{key}") %></legend>
+      <div class="form-text mb-2"><%= t("#{scope}.#{key}_hint") %></div>
+      <% I18n.available_locales.each do |locale| %>
+        <% value = key == 'not_found_headlines' ? config.headlines(locale).join("\n") : (config.values.dig(key, locale.to_s) || '') %>
+        <% field_id = "platform_page_content_#{key}_#{locale}" %>
+        <div class="mb-2">
+          <%= label_tag field_id, t("#{scope}.locale_label", language: locale.to_s.upcase), class: 'form-label small' %>
+          <%= text_area_tag "platform[page_content][#{key}][#{locale}]", value, id: field_id, rows: key == 'not_found_headlines' ? 3 : 4,
+                            class: 'form-control', maxlength: (key == 'not_found_headlines' ? nil : BetterTogether::PlatformContentConfig::MAX_HTML_LENGTH) %>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+</div>

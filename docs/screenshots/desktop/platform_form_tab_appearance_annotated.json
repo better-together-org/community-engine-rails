@@ -13,7 +13,7 @@
       "selector": "#platform-appearance-tab",
       "title": "Appearance tab",
       "bullets": [
-        "Theme colours, font, images and custom CSS."
+        "Theme, images, header and footer content, custom CSS."
       ],
       "target": {
         "x": 64.5,

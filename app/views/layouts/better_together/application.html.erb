@@ -57,6 +57,7 @@
   </head>
   <%= metrics_body_tag(body_class: content_for?(:body_class) ? yield(:body_class) : '') do %>
     <div class="wrapper">
+      <%= platform_content_block(:header) %>
       <!-- Custom Header from Host App -->
       <%= content_for?(:custom_header) ? yield(:custom_header) : render('layouts/better_together/header') %>
 
@@ -71,6 +72,7 @@
 
       <%= render partial: 'layouts/better_together/extra_page_content_bottom' %>
 
+      <%= platform_content_block(:footer) %>
       <!-- Custom Footer from Host App -->
       <%= content_for?(:custom_footer) ? yield(:custom_footer) : render('layouts/better_together/footer') %>
 

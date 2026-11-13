@@ -187,6 +187,22 @@ module BetterTogether
       content_tag(:style, css.html_safe, type: 'text/css', id: 'platform-theme-style') if css.present? # rubocop:disable Rails/OutputSafety
     end
 
+    # Sanitized per-platform header or footer content for the current locale, or nil when unset.
+    def platform_content_block(key, platform = host_platform)
+      return unless platform.respond_to?(:page_content_config)
+
+      html = platform.page_content_config.html("#{key}_html")
+      return if html.blank?
+
+      tag.div(sanitize_block_html(html), id: "platform-#{key}-content", class: "platform-#{key}-content")
+    end
+
+    def platform_not_found_headline(platform = host_platform)
+      return unless platform.respond_to?(:page_content_config)
+
+      platform.page_content_config.random_headline
+    end
+
     def platform_favicon_tag(platform = host_platform)
       return unless platform.respond_to?(:favicon) && platform.favicon.attached?
 

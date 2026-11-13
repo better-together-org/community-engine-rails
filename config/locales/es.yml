@@ -598,6 +598,9 @@ es:
               taken: ya ha sido vinculado a otra cuenta
         better_together/platform:
           attributes:
+            page_content:
+              too_long_for: "%{key} (%{language}) es demasiado largo o tiene demasiadas
+                líneas"
             theme:
               invalid_value: "%{key} tiene un valor no permitido"
         better_together/platform_domain:
@@ -3544,6 +3547,21 @@ es:
           poder seleccionarla al crear una Conexión de Plataforma.
         submit: Registrar plataforma externa
         title: Registrar plataforma externa
+      page_content:
+        footer_html: Contenido del pie de página
+        footer_html_hint: Se muestra encima del pie de página del sitio. Solo formato
+          básico y enlaces; se eliminan los scripts.
+        header_html: Contenido del encabezado
+        header_html_hint: Se muestra encima del encabezado del sitio. Solo formato
+          básico y enlaces; se eliminan los scripts.
+        hint: Texto opcional para esta plataforma. Déjelo vacío para usar el diseño
+          estándar. Cada idioma es independiente; un idioma faltante recurre al idioma
+          predeterminado.
+        locale_label: 'Idioma: %{language}'
+        not_found_headlines: Titulares de la página 404
+        not_found_headlines_hint: Un titular por línea, hasta 20. Se elige uno al
+          azar cuando no se encuentra una página.
+        title: Encabezado, pie de página y página 404
       show:
         new_invitation: Nueva invitación
       tabs:

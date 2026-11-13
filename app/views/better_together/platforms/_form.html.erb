@@ -176,6 +176,7 @@
 
       <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'appearance' %>" id="platform-appearance" role="tabpanel" aria-labelledby="platform-appearance-tab">
         <%= render partial: 'better_together/platforms/theme_fields', locals: { platform:, form: } %>
+        <%= render partial: 'better_together/platforms/content_fields', locals: { platform: } %>
         <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>" class="mb-3">
           <h2 class="h5"><%= t('better_together.platforms.form.custom_css_title') %></h2>
           <p class="form-text text-muted"><%= t('better_together.platforms.form.custom_css_hint') %></p>

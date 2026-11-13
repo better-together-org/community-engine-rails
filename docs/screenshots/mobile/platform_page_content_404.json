@@ -1,0 +1,48 @@
+{
+  "name": "platform_page_content_404",
+  "device": "mobile",
+  "url": "/en/no-such-page-for-docs",
+  "title": "404 - Page Not Found | Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_page_content",
+  "flow": "platform_page_content_404",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_page_content_spec.rb",
+  "callouts": [
+    {
+      "selector": "#not-found-headline",
+      "title": "Custom 404",
+      "bullets": [
+        "The headline comes from the platform set."
+      ],
+      "target": {
+        "x": 12.0,
+        "y": 104.0,
+        "width": 476.0,
+        "height": 35.390625,
+        "right": 488.0,
+        "bottom": 139.390625,
+        "center_x": 250.0,
+        "center_y": 121.6953125
+      },
+      "avoid": {
+        "x": 12.0,
+        "y": 104.0,
+        "width": 476.0,
+        "height": 35.390625,
+        "right": 488.0,
+        "bottom": 139.390625,
+        "center_x": 250.0,
+        "center_y": 121.6953125
+      },
+      "placement": {
+        "side": "below",
+        "x": 115.0,
+        "y": 159.39,
+        "width": 270.0,
+        "height": 158,
+        "score": 1117.609375
+      }
+    }
+  ]
+}
