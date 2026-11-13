@@ -33,6 +33,7 @@ NORDVPN_LOGIN_URL=""
 NEW_HOSTNAME=""
 STORAGE_PATH=""
 RUN_STEP=""
+WITH_ELASTICSEARCH=false
 
 #############################################
 # Function: Display Detailed Usage/Help Text
@@ -61,9 +62,12 @@ Options:
   --hostname=NAME          Assign a custom hostname.
   --storage-path=PATH      Specify a folder for backups and Cosmos data.
   -v, --verbose            Enable verbose debug messages.
-  --step=NAME              Run only a specific step. Valid names:
+  --with-elasticsearch     Also install the Elasticsearch plugin. Off by default:
+                           search uses Postgres (SEARCH_BACKEND=pg_search).
+  --step=NAME              Run a specific step and the steps after it. Valid names:
                            welcome, specs, network, hardening, backup, tweaks,
-                           update, docker, cloudflared, nordvpn, hostname, storage.
+                           update, docker, dokku, cloudflared, nordvpn, hostname,
+                           storage, community_engine, elasticsearch (optional).
   --help                   Display this help message.
 
 EOF
@@ -129,6 +133,11 @@ parse_args() {
       --storage-path=*)
         STORAGE_PATH="${1#*=}"
         debug "Storage path set to $STORAGE_PATH"
+        shift
+        ;;
+      --with-elasticsearch)
+        WITH_ELASTICSEARCH=true
+        debug "Elasticsearch plugin step enabled."
         shift
         ;;
       -v|--verbose)
@@ -645,13 +654,12 @@ configure_dokku() {
   fi
 
   # Step 3: Install Essential Dokku Plugins
-  if prompt_substep "Sub-step: Install Dokku Plugins?\nThis will install commonly used plugins like Postgres, Redis, LetsEncrypt, and Elasticsearch."; then
+  if prompt_substep "Sub-step: Install Dokku Plugins?\nThis will install the Postgres, Redis and LetsEncrypt plugins. Elasticsearch is optional (--with-elasticsearch)."; then
     printf -- "🔧 Installing Dokku plugins...\n"
     
     dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
     dokku plugin:install https://github.com/dokku/dokku-redis.git redis
     dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
-    dokku plugin:install https://github.com/dokku/dokku-elasticsearch.git elasticsearch
 
     printf -- "✅ Dokku plugins installed successfully.\n"
   else
@@ -909,6 +917,49 @@ setup_community_engine_app() {
 }
 
 #############################################
+# Optional Step: Elasticsearch plugin
+#############################################
+install_elasticsearch() {
+  debug "Starting install_elasticsearch"
+  if ! command -v dokku &>/dev/null; then
+    printf -- "Dokku is not installed. Run the dokku step first.\n"
+    return 1
+  fi
+  if dokku plugin:installed elasticsearch &>/dev/null; then
+    printf -- "Elasticsearch plugin is already installed.\n"
+  else
+    dokku plugin:install https://github.com/dokku/dokku-elasticsearch.git elasticsearch
+  fi
+  printf -- "The plugin alone changes nothing for your app. To use it you also need\n"
+  printf -- "SEARCH_BACKEND=elasticsearch and the better_together-elasticsearch gem.\n"
+  printf -- "The default search backend is Postgres (pg_search).\n"
+  debug "Finished install_elasticsearch"
+}
+
+#############################################
+# Run one step by name
+#############################################
+run_step() {
+  case "$1" in
+    welcome) step_welcome ;;
+    specs) step_check_specs ;;
+    network) configure_network ;;
+    hardening) security_hardening ;;
+    backup) backup_config ;;
+    tweaks) hardware_tweaks ;;
+    update) update_system ;;
+    docker) install_docker ;;
+    dokku) install_dokku ;;
+    elasticsearch) install_elasticsearch ;;
+    cloudflared) install_cloudflared ;;
+    nordvpn) configure_nordvpn ;;
+    hostname) configure_hostname ;;
+    storage) configure_storage ;;
+    community_engine) setup_community_engine_app ;;
+  esac
+}
+
+#############################################
 # Main Orchestration Function
 #############################################
 main() {
@@ -917,7 +968,11 @@ main() {
   debug "Entering main function"
 
   # Define a combined ordered list of all steps.
-  ALL_STEPS=("welcome" "specs" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku" "cloudflared" "nordvpn" "hostname" "storage" "community_engine")
+  # Naming the optional step explicitly implies its flag.
+  if [ "$RUN_STEP" = "elasticsearch" ]; then WITH_ELASTICSEARCH=true; fi
+  ALL_STEPS=("welcome" "specs" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku")
+  if [ "$WITH_ELASTICSEARCH" = true ]; then ALL_STEPS+=("elasticsearch"); fi
+  ALL_STEPS+=("cloudflared" "nordvpn" "hostname" "storage" "community_engine")
   
   if [ -n "$RUN_STEP" ]; then
     debug "RUN_STEP is set to: %s" "$RUN_STEP"
@@ -945,22 +1000,7 @@ main() {
     # Loop over the steps from the chosen starting step.
     for i in $(seq $start_index $((${#ALL_STEPS[@]} - 1))); do
       debug "Executing step: %s (index %s)" "${ALL_STEPS[$i]}" "$i"
-      case "${ALL_STEPS[$i]}" in
-        welcome) step_welcome ;;
-        specs) step_check_specs ;;
-        network) configure_network ;;
-        hardening) security_hardening ;;
-        backup) backup_config ;;
-        tweaks) hardware_tweaks ;;
-        update) update_system ;;
-        docker) install_docker ;;
-        dokku) install_dokku ;;
-        cloudflared) install_cloudflared ;;
-        nordvpn) configure_nordvpn ;;
-        hostname) configure_hostname ;;
-        storage) configure_storage ;;
-        community_engine) setup_community_engine_app ;;
-      esac
+      run_step "${ALL_STEPS[$i]}"
 
       debug "Finished executing step: %s (index %s)" "${ALL_STEPS[$i]}" "$i"
 
@@ -987,22 +1027,7 @@ main() {
   # Run all steps sequentially if no specific step is given.
   for step in "${ALL_STEPS[@]}"; do
     debug "Executing step: %s" "$step"
-    case "$step" in
-      welcome) step_welcome ;;
-      specs) step_check_specs ;;
-      network) configure_network ;;
-      hardening) security_hardening ;;
-      backup) backup_config ;;
-      tweaks) hardware_tweaks ;;
-      update) update_system ;;
-      docker) install_docker ;;
-      dokku) install_dokku ;;
-      cloudflared) install_cloudflared ;;
-      nordvpn) configure_nordvpn ;;
-      hostname) configure_hostname ;;
-      storage) configure_storage ;;
-      community_engine) setup_community_engine_app ;;
-    esac
+    run_step "$step"
     prompt_continue "$step" "Press Enter to continue."
   done
 
