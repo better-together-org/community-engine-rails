@@ -26,6 +26,10 @@ RSpec.describe BetterTogether::HtmlCommentStripper do
     expect(respond(html)[2].join).to eq(html)
   end
 
+  it 'does not leave a comment spliced together from nested fragments' do
+    expect(respond('<p>a</p><!<!-- x -->-- y -->')[2].join).to eq('<p>a</p>')
+  end
+
   it 'leaves non-html and encoded responses alone' do
     expect(respond('<!-- a -->', type: 'application/json')[2]).to eq(['<!-- a -->'])
     expect(respond('<!-- a -->', extra: { 'content-encoding' => 'gzip' })[2]).to eq(['<!-- a -->'])

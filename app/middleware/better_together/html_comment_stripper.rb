@@ -24,11 +24,22 @@ module BetterTogether
 
     def strip(html)
       html.split(PROTECTED).each_slice(3).map do |segment, protected_block, _tag|
-        "#{segment.gsub(COMMENT, '')}#{protected_block}"
+        "#{strip_comments(segment)}#{protected_block}"
       end.join
     end
 
     private
+
+    # Repeat until stable so removing one comment cannot splice a new one
+    # together out of the surrounding text.
+    def strip_comments(text)
+      loop do
+        stripped = text.gsub(COMMENT, '')
+        return stripped if stripped == text
+
+        text = stripped
+      end
+    end
 
     def read_body(body)
       html = +''
