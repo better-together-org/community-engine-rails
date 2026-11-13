@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-10T19:28:50Z",
+  "generated_at": "2026-11-12T13:37:23Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -29449,6 +29449,10 @@
               "uuid FK"
             ],
             [
+              "authority",
+              "string"
+            ],
+            [
               "registration_number",
               "text"
             ],
@@ -29469,6 +29473,7 @@
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: order (message=:required)",
             "PresenceValidator: line_item (message=:required)",
+            "InclusionValidator: authority (in=[\"gst_hst\", \"pst\", \"qst\", \"rst\", \"vat\", \"other\"])",
             "PresenceValidator: label",
             "NumericalityValidator: rate (greater_than_or_equal_to=0)",
             "NumericalityValidator: amount_cents (only_integer=true, greater_than_or_equal_to=0)"
@@ -29561,6 +29566,10 @@
               "uuid FK"
             ],
             [
+              "authority",
+              "string"
+            ],
+            [
               "ends_at",
               "datetime"
             ],
@@ -29577,6 +29586,7 @@
             "PresenceValidator: platform (message=:required)",
             "PresenceValidator: tax_zone (message=:required)",
             "PresenceValidator: label",
+            "InclusionValidator: authority (in=[\"gst_hst\", \"pst\", \"qst\", \"rst\", \"vat\", \"other\"])",
             "NumericalityValidator: rate (greater_than_or_equal_to=0, less_than=1)"
           ],
           "belongs_to": [
@@ -36144,6 +36154,34 @@
           ]
         },
         {
+          "name": "BetterTogether::Billing::CatalogController",
+          "label": "Billing::CatalogController",
+          "source_path": "app/controllers/better_together/billing/catalog_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
+          "name": "BetterTogether::Billing::HubsController",
+          "label": "Billing::HubsController",
+          "source_path": "app/controllers/better_together/billing/hubs_controller.rb",
+          "superclass": "BetterTogether::ApplicationController",
+          "inferred_models": [],
+          "concerns": [
+            "BetterTogether::Billing::OwnerScoped",
+            "BetterTogether::InvitationSessionManagement",
+            "BetterTogether::InvitationTokenSession",
+            "BetterTogether::InvitationUserSetup",
+            "BetterTogether::MentionPrefetch"
+          ]
+        },
+        {
           "name": "BetterTogether::Billing::OrderDocumentsController",
           "label": "Billing::OrderDocumentsController",
           "source_path": "app/controllers/better_together/billing/order_documents_controller.rb",
@@ -37216,7 +37254,9 @@
             "Billing::TaxRegistrationsController",
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
-            "Billing::OrderDocumentsController"
+            "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::CatalogController"
           ]
         },
         {
@@ -37461,6 +37501,8 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37533,6 +37575,8 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37605,6 +37649,8 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",
@@ -37688,6 +37734,8 @@
             "Billing::PeopleController",
             "Billing::OrderPaymentsController",
             "Billing::OrderDocumentsController",
+            "Billing::HubsController",
+            "Billing::CatalogController",
             "ShortLinkRedirectsController",
             "SeedCatalogController",
             "RobotsTxtController",

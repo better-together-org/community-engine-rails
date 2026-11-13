@@ -21,6 +21,7 @@
 # * sync_status / sync_error / sync_attempted_at show a steward where a push stands. The
 #   error is a short code, never raw processor text.
 # * No currency default: the host or the steward chooses.
+# * name and description are Mobility translations (one value per language), not columns.
 class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
   TABLE = :better_together_billing_plans
 
@@ -33,8 +34,6 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
       t.string :seller_type
       t.uuid :seller_id
       t.string :identifier, null: false
-      t.string :name, null: false
-      t.text :description
       t.string :billing_interval, null: false, default: 'month'
       # Every N intervals (3 months, 2 years). A Stripe price's recurring.interval_count.
       t.integer :interval_count, null: false, default: 1
@@ -45,6 +44,11 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
       t.integer :amount_cents, null: false, default: 0
       t.string :currency, null: false
       t.boolean :active, null: false, default: true
+      # Whether the plan is in the public catalog (a plan is bought by its checkout; listing is a separate choice).
+      t.boolean :listed, null: false, default: false
+      # Who may see and buy it: both off means anyone, either on limits it to people who qualify as that.
+      t.boolean :restricted_to_members, null: false, default: false
+      t.boolean :restricted_to_subscribers, null: false, default: false
       t.string :processor
       t.string :accepted_payment_methods, array: true, null: false, default: []
       t.string :processor_price_id
@@ -76,6 +80,7 @@ class CreateBetterTogetherBillingPlans < ActiveRecord::Migration[7.2]
     # Lets other tables point at a plan together with its platform (composite foreign keys).
     add_index TABLE, %i[id platform_id], unique: true, name: 'idx_bt_billing_plans_id_platform'
     add_index TABLE, :active, name: 'idx_bt_billing_plans_active'
+    add_index TABLE, :listed, name: 'idx_bt_billing_plans_listed'
     add_index TABLE, :sync_status, name: 'idx_bt_billing_plans_sync_status'
     add_index TABLE, %i[processor processor_price_id], unique: true, name: 'idx_bt_billing_plans_processor_price'
     add_index TABLE, %i[processor processor_product_id], name: 'idx_bt_billing_plans_processor_product'

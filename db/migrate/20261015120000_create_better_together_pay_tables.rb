@@ -21,6 +21,9 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
   # The tables that carry tenant data and so must have a platform_id.
   PLATFORM_TABLES = %i[pay_customers pay_merchants pay_payment_methods pay_subscriptions pay_charges].freeze
 
+  # Children first, so foreign keys never block a drop.
+  DROP_ORDER = %i[pay_webhooks pay_charges pay_payment_methods pay_subscriptions pay_merchants pay_customers].freeze
+
   class ForeignPayTablesError < StandardError; end
 
   def up
@@ -34,11 +37,10 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
     add_platform_integrity_keys
   end
 
-  # Children first, so foreign keys never block a drop.
+  # Never drops data: a rollback stops if any Pay table holds rows, so payment history cannot be lost by accident.
   def down
-    %i[pay_webhooks pay_charges pay_payment_methods pay_subscriptions pay_merchants pay_customers].each do |table|
-      drop_table table, if_exists: true, force: :cascade
-    end
+    refuse_populated_pay_tables!
+    DROP_ORDER.each { |table| drop_table table, if_exists: true, force: :cascade }
   end
 
   private
@@ -50,9 +52,26 @@ class CreateBetterTogetherPayTables < ActiveRecord::Migration[7.2] # rubocop:dis
     foreign = PLATFORM_TABLES.select { |table| table_exists?(table) && !column_exists?(table, :platform_id) }
     return if foreign.empty?
 
-    raise ForeignPayTablesError, "#{foreign.join(', ')} already exist without platform_id (created by Pay's own migrations). " \
-                                 'Community Engine billing needs platform-bound Pay tables; migrate or drop them (no billing data ' \
-                                 'may exist yet) before running this migration.'
+    raise ForeignPayTablesError, foreign_pay_tables_message(foreign)
+  end
+
+  def foreign_pay_tables_message(foreign)
+    "#{foreign.join(', ')} already exist without platform_id: they were created by Pay's own migrations, not by " \
+      'Community Engine. Community Engine billing needs platform-bound Pay tables, so this migration will not touch them. ' \
+      'If this host does not use Pay, drop them (DROP TABLE pay_webhooks, pay_charges, pay_payment_methods, ' \
+      'pay_subscriptions, pay_merchants, pay_customers CASCADE) and run db:migrate again. If it does use Pay and they ' \
+      'hold data, stop: adopting them needs a data migration that adds platform_id and text columns first.'
+  end
+
+  def refuse_populated_pay_tables!
+    populated = DROP_ORDER.select do |table|
+      table_exists?(table) && connection.select_value("SELECT EXISTS (SELECT 1 FROM #{quote_table_name(table)})")
+    end
+    return if populated.empty?
+
+    raise ActiveRecord::IrreversibleMigration,
+          "#{populated.join(', ')} contain rows, so rolling back would delete payment data. Back the data up and " \
+          'empty or drop those tables yourself if you really mean to remove billing, then roll back again.'
   end
 
   def platform_reference(table)
