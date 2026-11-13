@@ -5572,15 +5572,20 @@ uk:
       invalid_parameters: Недійсні параметри
   navbar:
     accept_invitation: Accept invitation
+    account_navigation: Обліковий запис та інструменти
     conversations: Conversations
+    footer_legal_navigation: Інформація про сайт
+    footer_navigation: Посилання внизу сторінки
     host_mgmt_tooltip: Host Management
     locale_switcher_tooltip: Change Language
     log_out: Log Out
+    main_navigation: Головна
     my_profile: Мій профіль
     notifications_tooltip: Сповіщення
     search_tooltip: Пошук
     settings: Налаштування
     sign_in: Увійти
+    skip_to_content: Перейти до основного вмісту
     toggle_navigation: Переключити навігацію
     user_nav_tooltip: Меню облікового запису
   navigation:
@@ -5818,6 +5823,7 @@ uk:
     confirm_destroy: Підтвердіть видалення
   search:
     button: Пошук
+    label: Пошук на сайті
     placeholder: Пошук...
   seed_catalog:
     geography:

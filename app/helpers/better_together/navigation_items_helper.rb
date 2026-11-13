@@ -79,10 +79,18 @@ module BetterTogether
       navigation_item.children? ? 'button' : nil
     end
 
+    # Real aria-* attributes for a dropdown toggle (data: {'aria-expanded'}
+    # would render the inert data-aria-expanded). Bootstrap keeps them in sync.
+    def dropdown_aria_attributes(navigation_item)
+      return {} unless navigation_item.children?
+
+      { expanded: 'false', haspopup: 'true' }
+    end
+
     def dropdown_data_attributes(navigation_item)
       data = { 'identifier' => navigation_item.identifier }
       if navigation_item.children?
-        data = data.merge({ 'bs-toggle' => 'dropdown', 'aria-expanded' => 'false',
+        data = data.merge({ 'bs-toggle' => 'dropdown',
                             'bs-target' => "##{dom_id(navigation_item, navigation_item.slug)}" })
       end
 

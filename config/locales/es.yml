@@ -5540,15 +5540,20 @@ es:
       invalid_parameters: Parámetros inválidos
   navbar:
     accept_invitation: Aceptar invitación
+    account_navigation: Cuenta y herramientas
     conversations: Conversaciones
+    footer_legal_navigation: Información del sitio
+    footer_navigation: Enlaces del pie de página
     host_mgmt_tooltip: Gestión del anfitrión
     locale_switcher_tooltip: Cambiar idioma
     log_out: Cerrar sesión
+    main_navigation: Principal
     my_profile: Mi perfil
     notifications_tooltip: Notificaciones
     search_tooltip: Buscar
     settings: Configuración
     sign_in: Iniciar sesión
+    skip_to_content: Saltar al contenido principal
     toggle_navigation: Alternar navegación
     user_nav_tooltip: Menú de cuenta
   navigation:
@@ -5789,6 +5794,7 @@ es:
     confirm_destroy: Confirmar destrucción
   search:
     button: Buscar
+    label: Buscar en el sitio
     placeholder: Buscar...
   seed_catalog:
     geography:

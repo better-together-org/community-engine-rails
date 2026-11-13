@@ -5583,15 +5583,20 @@ fr:
       invalid_parameters: Paramètres invalides
   navbar:
     accept_invitation: Accepter l'invitation
+    account_navigation: Compte et outils
     conversations: Conversations
+    footer_legal_navigation: Informations sur le site
+    footer_navigation: Liens de pied de page
     host_mgmt_tooltip: Gestion de l'hôte
     locale_switcher_tooltip: Changer de langue
     log_out: Se déconnecter
+    main_navigation: Principale
     my_profile: Mon profil
     notifications_tooltip: Notifications
     search_tooltip: Rechercher
     settings: Paramètres
     sign_in: Se connecter
+    skip_to_content: Aller au contenu principal
     toggle_navigation: Basculer la navigation
     user_nav_tooltip: Menu du compte
   navigation:
@@ -5830,6 +5835,7 @@ fr:
     confirm_destroy: Confirmer la destruction
   search:
     button: Rechercher
+    label: Rechercher sur le site
     placeholder: Rechercher...
   seed_catalog:
     geography:
