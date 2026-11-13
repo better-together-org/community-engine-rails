@@ -587,6 +587,10 @@ uk:
               inclusion: "%{value} не є підтримуваним постачальником OAuth"
             uid:
               taken: вже пов'язано з іншим обліковим записом
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} має недопустиме значення"
         better_together/platform_domain:
           attributes:
             active:
@@ -3552,6 +3556,55 @@ uk:
         features: Функції та квоти
         integrations: Інтеграції
         security: Безпека
+      theme:
+        colors:
+          accent: Акцентний колір
+          accent_dark: Акцентний колір (темний, для тексту)
+          band: Тло смуг розділів
+          body_text: Основний текст
+          footer_bg: Тло підвалу
+          footer_link: Посилання підвалу
+          link: Колір посилань
+          navbar_bg: Тло навігації
+          navbar_link: Текст і посилання навігації
+          primary: Основний колір
+          primary_text: Текст на основних кнопках
+        contrast_fail: Нижче AA, важко читати
+        contrast_hint: Співвідношення оновлюються під час введення. Звичайний текст
+          потребує щонайменше 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} на %{background}"
+        contrast_pass: Відповідає AA
+        contrast_title: Перевірка контрасту
+        current_image: 'Поточний: %{name}'
+        default_option: Типово
+        favicon_hint: Невеликий квадратний PNG, SVG або ICO, що показується на вкладці
+          браузера.
+        favicon_label: Фавікон
+        font_label: Шрифт
+        fonts:
+          georgia: Georgia (із засічками)
+          monospace: Моноширинний
+          system: Системний без засічок
+          tahoma: Tahoma
+        header_banner_hint: Широке зображення для заголовка. Доступне темі як --bts-header-banner.
+        header_banner_label: Банер заголовка
+        hint: Задайте основні кольори, шрифт і стиль кутів. Залиште поле порожнім,
+          щоб зберегти типове значення. Власний CSS нижче все ще може перевизначити
+          ці налаштування.
+        images_title: Зображення
+        logo_hint: Показується на панелі навігації. Це логотип спільноти платформи.
+        logo_label: Логотип сайту
+        preset_foray: Завантажити палітру Foray
+        radii:
+          large: Великі
+          medium: Середні
+          none: Прямі
+          small: Малі
+        radius_label: Заокруглення кутів
+        remove: Прибрати
+        reset: Очистити всі поля теми
+        title: Тема
+        white: біла сторінка
     posts:
       authors: Автори
       back_to_posts: Назад до постів

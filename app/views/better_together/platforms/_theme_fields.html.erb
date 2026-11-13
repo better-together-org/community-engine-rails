@@ -1,0 +1,99 @@
+<%# locals: (platform:, form:) %>
+<%
+  config = platform.theme_config
+  cfg = BetterTogether::PlatformThemeConfig
+  scope = 'better_together.platforms.theme'
+%>
+<div id="platform-theme-settings" class="mb-4" data-controller="better_together--platform-theme"
+     data-better_together--platform-theme-threshold-value="<%= cfg::AA_NORMAL %>">
+  <h2 class="h5"><%= t("#{scope}.title") %></h2>
+  <p class="form-text text-muted"><%= t("#{scope}.hint") %></p>
+
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <% cfg::PRESETS.each do |name, preset| %>
+      <button type="button" id="platform-theme-preset-<%= name %>" class="btn btn-outline-secondary btn-sm"
+              data-action="better_together--platform-theme#applyPreset" data-preset="<%= preset.to_json %>">
+        <%= t("#{scope}.preset_#{name}") %>
+      </button>
+    <% end %>
+    <button type="button" id="platform-theme-reset" class="btn btn-outline-secondary btn-sm"
+            data-action="better_together--platform-theme#reset">
+      <%= t("#{scope}.reset") %>
+    </button>
+  </div>
+
+  <div class="row" id="platform-theme-colors">
+    <% cfg::COLOR_KEYS.each do |key| %>
+      <div class="col-sm-6 col-lg-4 mb-3">
+        <%= label_tag "platform_theme_#{key}", t("#{scope}.colors.#{key}"), class: 'form-label' %>
+        <div class="input-group">
+          <span class="input-group-text p-0 px-2" aria-hidden="true">
+            <span class="d-inline-block border rounded" style="width:1.25rem;height:1.25rem"
+                  data-better_together--platform-theme-target="swatch" data-key="<%= key %>"></span>
+          </span>
+          <%= text_field_tag "platform[theme][#{key}]", config[key], id: "platform_theme_#{key}", class: 'form-control font-monospace',
+                             placeholder: '#rrggbb', maxlength: 7, pattern: '#[0-9a-fA-F]{6}', autocomplete: 'off',
+                             'data-better_together--platform-theme-target' => 'input', data: { key: key,
+                                     action: 'input->better_together--platform-theme#refresh' } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6 mb-3">
+      <%= label_tag :platform_theme_font, t("#{scope}.font_label"), class: 'form-label' %>
+      <%= select_tag 'platform[theme][font]',
+                     options_for_select([[t("#{scope}.default_option"), '']] +
+                                        cfg::FONT_STACKS.keys.map { |k| [t("#{scope}.fonts.#{k}"), k] }, config['font']),
+                     id: 'platform_theme_font', class: 'form-select',
+                     'data-better_together--platform-theme-target' => 'input', data: { key: 'font' } %>
+    </div>
+    <div class="col-sm-6 mb-3">
+      <%= label_tag :platform_theme_radius, t("#{scope}.radius_label"), class: 'form-label' %>
+      <%= select_tag 'platform[theme][radius]',
+                     options_for_select([[t("#{scope}.default_option"), '']] +
+                                        cfg::RADII.keys.map { |k| [t("#{scope}.radii.#{k}"), k] }, config['radius']),
+                     id: 'platform_theme_radius', class: 'form-select',
+                     'data-better_together--platform-theme-target' => 'input', data: { key: 'radius' } %>
+    </div>
+  </div>
+
+  <section id="platform-theme-contrast" class="mb-4" aria-labelledby="platform-theme-contrast-heading">
+    <h3 id="platform-theme-contrast-heading" class="h6"><%= t("#{scope}.contrast_title") %></h3>
+    <p class="form-text text-muted"><%= t("#{scope}.contrast_hint") %></p>
+    <ul class="list-unstyled mb-0">
+      <% cfg::CONTRAST_PAIRS.each do |fg, bg| %>
+        <% bg_key = fg == 'link' ? 'white' : bg %>
+        <% ratio = cfg.contrast_ratio(config[fg], bg_key == 'white' ? cfg::WHITE : config[bg]) %>
+        <li id="platform-theme-contrast-<%= fg %>" data-better_together--platform-theme-target="pair"
+            data-foreground="<%= fg %>" data-background="<%= bg_key %>"
+            data-pass-text="<%= t("#{scope}.contrast_pass") %>" data-fail-text="<%= t("#{scope}.contrast_fail") %>"
+            class="<%= ratio ? (ratio >= cfg::AA_NORMAL ? 'text-success' : 'text-danger') : '' %>">
+          <%= t("#{scope}.contrast_pair", foreground: t("#{scope}.colors.#{fg}"),
+                                           background: bg_key == 'white' ? t("#{scope}.white") : t("#{scope}.colors.#{bg}")) %>:
+          <strong data-role="ratio"><%= ratio ? "#{format('%.2f', ratio)}:1" : '-' %></strong>
+          <span data-role="status" role="status"><%= ratio ? t("#{scope}.contrast_#{ratio >= cfg::AA_NORMAL ? 'pass' : 'fail'}") : '' %></span>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <h3 class="h6"><%= t("#{scope}.images_title") %></h3>
+  <% { logo: platform.logo, header_banner: platform.header_banner, favicon: platform.favicon }.each do |field, attachment| %>
+    <div id="platform-<%= field.to_s.dasherize %>-field" class="mb-3">
+      <%= form.label field, t("#{scope}.#{field}_label"), for: dom_id(platform, field), class: 'form-label' %>
+      <%= form.file_field field, accept: field == :favicon ? 'image/png,image/svg+xml,image/vnd.microsoft.icon,image/webp' : acceptable_image_file_types, id: dom_id(platform, field), class: 'form-control' %>
+      <div class="form-text"><%= t("#{scope}.#{field}_hint") %></div>
+      <% if attachment.attached? %>
+        <div class="d-flex align-items-center gap-3 mt-2">
+          <%= image_tag storage_proxy_url_for(attachment), alt: t("#{scope}.current_image", name: t("#{scope}.#{field}_label")), class: 'border rounded', style: 'max-height:4rem;max-width:12rem' %>
+          <div class="form-check">
+            <%= form.check_box "remove_#{field}", { class: 'form-check-input', id: "platform_remove_#{field}" }, '1', '0' %>
+            <%= form.label "remove_#{field}", t("#{scope}.remove"), class: 'form-check-label' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

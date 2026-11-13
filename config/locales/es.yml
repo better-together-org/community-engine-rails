@@ -596,6 +596,10 @@ es:
               inclusion: "%{value} no es un proveedor OAuth compatible"
             uid:
               taken: ya ha sido vinculado a otra cuenta
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} tiene un valor no permitido"
         better_together/platform_domain:
           attributes:
             active:
@@ -3551,6 +3555,57 @@ es:
         features: Funciones y cuotas
         integrations: Integraciones
         security: Seguridad
+      theme:
+        colors:
+          accent: Color de acento
+          accent_dark: Color de acento (oscuro, para texto)
+          band: Fondo de las franjas de sección
+          body_text: Texto del cuerpo
+          footer_bg: Fondo del pie de página
+          footer_link: Enlaces del pie de página
+          link: Color de los enlaces
+          navbar_bg: Fondo de la navegación
+          navbar_link: Texto y enlaces de la navegación
+          primary: Color principal
+          primary_text: Texto de los botones principales
+        contrast_fail: Por debajo de AA, difícil de leer
+        contrast_hint: Las proporciones se actualizan al escribir. El texto normal
+          necesita al menos 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} sobre %{background}"
+        contrast_pass: Cumple AA
+        contrast_title: Comprobaciones de contraste
+        current_image: "%{name} actual"
+        default_option: Predeterminado
+        favicon_hint: Un PNG, SVG o ICO pequeño y cuadrado que se muestra en la pestaña
+          del navegador.
+        favicon_label: Favicon
+        font_label: Fuente
+        fonts:
+          georgia: Georgia (serif)
+          monospace: Monoespaciada
+          system: Sans serif del sistema
+          tahoma: Tahoma
+        header_banner_hint: Una imagen ancha para el encabezado. Disponible para el
+          tema como --bts-header-banner.
+        header_banner_label: Banner de encabezado
+        hint: Defina los colores principales, la fuente y el estilo de las esquinas.
+          Deje un campo vacío para conservar el valor predeterminado. El CSS personalizado
+          de abajo aún puede reemplazar estos ajustes.
+        images_title: Imágenes
+        logo_hint: Se muestra en la barra de navegación. Es el logotipo de la comunidad
+          de la plataforma.
+        logo_label: Logotipo del sitio
+        preset_foray: Cargar la paleta Foray
+        radii:
+          large: Grande
+          medium: Mediano
+          none: Cuadrado
+          small: Pequeño
+        radius_label: Redondeo de esquinas
+        remove: Quitar
+        reset: Vaciar todos los campos del tema
+        title: Tema
+        white: página blanca
     posts:
       authors: Autores
       back_to_posts: Volver a publicaciones

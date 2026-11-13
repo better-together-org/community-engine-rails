@@ -598,6 +598,10 @@ fr:
               inclusion: "%{value} n'est pas un fournisseur OAuth pris en charge"
             uid:
               taken: a déjà été lié à un autre compte
+        better_together/platform:
+          attributes:
+            theme:
+              invalid_value: "%{key} a une valeur non autorisée"
         better_together/platform_domain:
           attributes:
             active:
@@ -3576,6 +3580,56 @@ fr:
         features: Fonctionnalités et quotas
         integrations: Intégrations
         security: Sécurité
+      theme:
+        colors:
+          accent: Couleur d'accent
+          accent_dark: Couleur d'accent (foncée, pour le texte)
+          band: Fond des bandeaux de section
+          body_text: Texte courant
+          footer_bg: Fond du pied de page
+          footer_link: Liens du pied de page
+          link: Couleur des liens
+          navbar_bg: Fond de la navigation
+          navbar_link: Texte et liens de la navigation
+          primary: Couleur principale
+          primary_text: Texte des boutons principaux
+        contrast_fail: Sous AA, difficile à lire
+        contrast_hint: Les rapports se mettent à jour pendant la saisie. Le texte
+          normal exige au moins 4,5:1 (WCAG AA).
+        contrast_pair: "%{foreground} sur %{background}"
+        contrast_pass: Conforme AA
+        contrast_title: Vérifications du contraste
+        current_image: "%{name} actuel"
+        default_option: Par défaut
+        favicon_hint: Un petit PNG, SVG ou ICO carré affiché dans l'onglet du navigateur.
+        favicon_label: Favicon
+        font_label: Police
+        fonts:
+          georgia: Georgia (avec empattement)
+          monospace: Chasse fixe
+          system: Sans empattement du système
+          tahoma: Tahoma
+        header_banner_hint: Une image large pour l'en-tête. Disponible pour le thème
+          sous --bts-header-banner.
+        header_banner_label: Bannière d'en-tête
+        hint: Définissez les couleurs principales, la police et le style des coins.
+          Laissez un champ vide pour garder la valeur par défaut. Le CSS personnalisé
+          ci-dessous peut toujours remplacer ces réglages.
+        images_title: Images
+        logo_hint: Affiché dans la barre de navigation. C'est le logo de la communauté
+          de la plateforme.
+        logo_label: Logo du site
+        preset_foray: Charger la palette Foray
+        radii:
+          large: Grand
+          medium: Moyen
+          none: Carré
+          small: Petit
+        radius_label: Arrondi des coins
+        remove: Supprimer
+        reset: Vider tous les champs du thème
+        title: Thème
+        white: page blanche
     posts:
       authors: Auteurs
       back_to_posts: Retour aux publications

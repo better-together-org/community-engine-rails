@@ -18,6 +18,9 @@
     <!-- Custom Stylesheets from Host App -->
     <%= render 'layouts/better_together/custom_stylesheets' %>
 
+    <%= platform_theme_style_tag %>
+    <%= platform_favicon_tag %>
+
     <%= cache ['host_css_block', host_platform.cache_key_with_version] do %>
       <%= render partial: 'better_together/content/blocks/css', locals: { css: host_platform.css_block } if host_platform.css_block %>
     <% end %>

@@ -178,6 +178,21 @@ module BetterTogether
     # Finds the platform marked as host or returns a new default host platform instance.
     # Memoized per-request to avoid repeated DB lookups (called by check_platform_setup,
     # check_platform_privacy, SEO helpers, and layout partials on every request).
+    # Theme custom properties for the current platform, rendered before the platform Css block.
+    def platform_theme_style_tag(platform = host_platform)
+      return unless platform.respond_to?(:theme_config)
+
+      banner = storage_proxy_url_for(platform.header_banner) if platform.header_banner.attached?
+      css = platform.theme_config.to_css(banner_url: banner)
+      content_tag(:style, css.html_safe, type: 'text/css', id: 'platform-theme-style') if css.present? # rubocop:disable Rails/OutputSafety
+    end
+
+    def platform_favicon_tag(platform = host_platform)
+      return unless platform.respond_to?(:favicon) && platform.favicon.attached?
+
+      tag.link(rel: 'icon', href: storage_proxy_url_for(platform.favicon), type: platform.favicon.content_type)
+    end
+
     def host_platform
       @host_platform ||= Current.platform || ::BetterTogether::Platform.find_by(host: true) ||
                          ::BetterTogether::Platform.new(

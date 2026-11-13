@@ -137,8 +137,8 @@ module BetterTogether
 
     def platform_params # rubocop:todo Metrics/MethodLength
       permitted_attributes = %i[
-        slug host_url time_zone privacy
-      ]
+        slug host_url time_zone privacy logo remove_logo header_banner remove_header_banner favicon remove_favicon
+      ] + [{ theme: BetterTogether::PlatformThemeConfig::KEYS }]
       css_block_attrs = [{ css_block_attributes: %i[id type identifier] +
         BetterTogether::Content::Css.extra_permitted_attributes +
         BetterTogether::Content::Css.localized_attribute_list }]

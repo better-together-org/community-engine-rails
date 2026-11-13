@@ -5,7 +5,7 @@ module BetterTogether
     PLATFORM_FORM_TAB_ATTRIBUTES = {
       'details' => %i[identifier name description slug host_url time_zone],
       'access' => %i[privacy requires_invitation allow_membership_requests contributors_display_visibility],
-      'appearance' => %i[css_block],
+      'appearance' => %i[css_block theme header_banner favicon logo],
       'security' => %i[csp_frame_ancestors_text csp_frame_src_text csp_img_src_text
                        csp_script_src_text csp_connect_src_text],
       'features' => %i[feature_gate_rollouts quota_default_limits],

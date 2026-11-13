@@ -1,0 +1,48 @@
+{
+  "name": "platform_theme_foray_palette",
+  "device": "desktop",
+  "url": "/en/platforms/test-host-community/edit",
+  "title": "Test Host Community",
+  "locale": "en",
+  "role": "platform_manager",
+  "feature_set": "platform_theme_settings",
+  "flow": "platform_theme_foray_palette",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_theme_settings_spec.rb",
+  "callouts": [
+    {
+      "selector": "#platform-theme-contrast",
+      "title": "Contrast checks",
+      "bullets": [
+        "Every pair passes AA."
+      ],
+      "target": {
+        "x": 394.5,
+        "y": 827.0,
+        "width": 966.0,
+        "height": 184.1875,
+        "right": 1360.5,
+        "bottom": 1011.1875,
+        "center_x": 877.5,
+        "center_y": 919.09375
+      },
+      "avoid": {
+        "x": 394.5,
+        "y": 827.0,
+        "width": 966.0,
+        "height": 184.1875,
+        "right": 1360.5,
+        "bottom": 1011.1875,
+        "center_x": 877.5,
+        "center_y": 919.09375
+      },
+      "placement": {
+        "side": "above",
+        "x": 687.5,
+        "y": 701.0,
+        "width": 380,
+        "height": 106,
+        "score": 827.0
+      }
+    }
+  ]
+}
