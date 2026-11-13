@@ -4818,6 +4818,9 @@ es:
               la privacidad y la zona horaria que elijas.
             steward: Se crea una cuenta de responsable con acceso total de gestión
               a la nueva plataforma.
+  breadcrumbs:
+    home: Inicio
+    label: Ruta de navegación
   community:
     create_failed: Creación fallida
     created: Creado

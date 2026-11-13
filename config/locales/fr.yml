@@ -4859,6 +4859,9 @@ fr:
               la description, la confidentialité et le fuseau horaire que vous choisissez.
             steward: Un compte de responsable est créé avec un accès de gestion complet
               à la nouvelle plateforme.
+  breadcrumbs:
+    home: Accueil
+    label: Fil d'Ariane
   community:
     create_failed: Échec de la création
     created: Créé
