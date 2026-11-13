@@ -98,4 +98,14 @@ RSpec.describe BetterTogether::PlatformTrustedDomain do
       expect(described_class.match(platform:, email: 'not an email', verified: true)).to be_nil
     end
   end
+
+  describe '.lookup' do
+    it 'finds the entry for an address without needing verification', :aggregate_failures do
+      create(:platform_trusted_domain, platform:, domain: 'org.example')
+
+      expect(described_class.lookup(platform:, email: 'ann@org.example')).to be_present
+      expect(described_class.lookup(platform:, email: 'ann@other.example')).to be_nil
+      expect(described_class.lookup(platform: nil, email: 'ann@org.example')).to be_nil
+    end
+  end
 end

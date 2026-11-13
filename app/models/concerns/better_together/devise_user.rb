@@ -12,6 +12,8 @@ module BetterTogether
 
       has_many :person_platform_integrations, dependent: :destroy
 
+      after_commit :grant_trusted_domain_memberships, if: :saved_change_to_confirmed_at?
+
       validates :email, presence: true, uniqueness: { case_sensitive: false }
 
       # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/ParameterLists
@@ -367,6 +369,19 @@ module BetterTogether
 
         send_devise_notification(:reset_password_instructions, token, opts)
         token
+      end
+
+      # Runs when the address has just been confirmed. It counts as verified: a pending membership in a community whose
+      # platform trusts the address domain becomes active with the domain's role.
+      def grant_trusted_domain_memberships
+        return if person.blank?
+
+        person.person_community_memberships.pending.includes(:joinable).find_each do |membership|
+          trusted = membership.joinable&.primary_platform&.trusted_domain_for(email, verified: true)
+          next if trusted.blank?
+
+          BetterTogether::TrustedDomains::Grant.call(trusted_domain: trusted, person:, via: 'password_registration')
+        end
       end
 
       # Check if user signed up via OAuth and has never set a password
