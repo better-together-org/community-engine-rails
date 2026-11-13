@@ -201,7 +201,8 @@ module BetterTogether
         oauth_issuer_url
       ] + [
         { feature_gate_rollouts: {} },
-        { quota_default_limits: {} }
+        { quota_default_limits: {} },
+        { integration_settings: {} }
       ]
     end
 

@@ -8,7 +8,8 @@ module BetterTogether
       'appearance' => %i[css_block],
       'security' => %i[csp_frame_ancestors_text csp_frame_src_text csp_img_src_text
                        csp_script_src_text csp_connect_src_text],
-      'features' => %i[feature_gate_rollouts quota_default_limits]
+      'features' => %i[feature_gate_rollouts quota_default_limits],
+      'integrations' => %i[integration_settings]
     }.freeze
 
     # Number of validation errors per platform form tab, so the tab holding them can be flagged.
@@ -16,6 +17,13 @@ module BetterTogether
       PLATFORM_FORM_TAB_ATTRIBUTES.transform_values do |attributes|
         platform.errors.count { |error| attributes.include?(error.attribute.to_s.split('.').first.to_sym) }
       end
+    end
+
+    # The Integrations tab only exists when an extension gem registered a platform setting.
+    def platform_form_tab_ids
+      tabs = %w[details access appearance domains security features]
+      tabs << 'integrations' if BetterTogether::PlatformSettingsRegistry.any?
+      tabs
     end
 
     # The first tab holding errors, otherwise the details tab.
