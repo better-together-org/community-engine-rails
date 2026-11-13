@@ -75,6 +75,7 @@ RSpec.describe BetterTogether::Billing::HostedBilling, 'gates' do # rubocop:disa
   describe 'recurring subscription jobs' do
     it 'skips a subscription whose platform the gate refuses, and runs it again when the gate allows' do
       term = start_subscription
+      allow(described_class).to receive(:permits?).and_call_original
       allow(described_class).to receive(:permits?).with(term.platform, :billing).and_return(false)
 
       travel_to(Time.utc(2027, 2, 20)) { BetterTogether::Billing::GenerateRenewalsJob.perform_now }
