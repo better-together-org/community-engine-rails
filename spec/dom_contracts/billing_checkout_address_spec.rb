@@ -53,4 +53,11 @@ RSpec.describe 'Billing checkout address DOM', type: :request do # rubocop:disab
 
     expect(page.at_css('#billing-checkout-address-select option[selected]')['value']).to eq(chosen.id)
   end
+
+  it 'connects every label to its field and names every control' do
+    create_billing_address_for(member.person)
+    get better_together.new_billing_checkout_path(locale:, plan_id: plan.id, payment_method: 'cash')
+
+    expect_labels_resolved(page, within: '#billing-checkout-address')
+  end
 end

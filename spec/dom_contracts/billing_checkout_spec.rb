@@ -101,4 +101,10 @@ RSpec.describe 'Billing checkout DOM contract', :as_platform_manager, type: :req
 
     expect_ids('billing-order-agreements', ActionView::RecordIdentifier.dom_id(order.agreement_acceptances.first))
   end
+
+  it 'connects every agreement requirement label to its field and names every control' do
+    get "/#{locale}/billing/agreement_requirements"
+
+    expect_labels_resolved(response.body, within: '#billing-agreement-requirement-form')
+  end
 end
