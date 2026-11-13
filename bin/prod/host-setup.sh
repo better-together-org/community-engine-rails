@@ -2,10 +2,12 @@
 set -e
 
 # Ensure the script is run as root.
-if [ "$EUID" -ne 0 ]; then
-  printf -- "This script must be run as root. Please run it with sudo or as the root user.\n"
-  exit 1
-fi
+require_root() {
+  if [ "$EUID" -ne 0 ]; then
+    printf -- "This script must be run as root. Please run it with sudo or as the root user.\n"
+    exit 1
+  fi
+}
 
 #############################################
 # Trap signals for clean exit
@@ -34,6 +36,11 @@ NEW_HOSTNAME=""
 STORAGE_PATH=""
 RUN_STEP=""
 WITH_ELASTICSEARCH=false
+VERSIONS_FILE=""
+OS_ID=""
+OS_VERSION=""
+OS_CODENAME=""
+DPKG_ARCH=""
 
 #############################################
 # Function: Display Detailed Usage/Help Text
@@ -62,10 +69,12 @@ Options:
   --hostname=NAME          Assign a custom hostname.
   --storage-path=PATH      Specify a folder for backups and Cosmos data.
   -v, --verbose            Enable verbose debug messages.
+  --versions-file=PATH     Version manifest (default: host-setup.versions next to
+                           this script). Every pinned version comes from it.
   --with-elasticsearch     Also install the Elasticsearch plugin. Off by default:
                            search uses Postgres (SEARCH_BACKEND=pg_search).
   --step=NAME              Run a specific step and the steps after it. Valid names:
-                           welcome, specs, network, hardening, backup, tweaks,
+                           welcome, specs, os_check, network, hardening, backup, tweaks,
                            update, docker, dokku, cloudflared, nordvpn, hostname,
                            storage, community_engine, elasticsearch (optional).
   --help                   Display this help message.
@@ -135,6 +144,10 @@ parse_args() {
         debug "Storage path set to $STORAGE_PATH"
         shift
         ;;
+      --versions-file=*)
+        VERSIONS_FILE="${1#*=}"
+        shift
+        ;;
       --with-elasticsearch)
         WITH_ELASTICSEARCH=true
         debug "Elasticsearch plugin step enabled."
@@ -159,6 +172,73 @@ parse_args() {
         ;;
     esac
   done
+}
+
+#############################################
+# Version manifest and OS detection
+#############################################
+MANIFEST_KEYS="DOKKU_TAG DOKKU_BOOTSTRAP_SHA256 DOKKU_POSTGRES_TAG DOKKU_REDIS_TAG
+DOKKU_LETSENCRYPT_TAG DOKKU_ELASTICSEARCH_TAG POSTGIS_IMAGE POSTGIS_IMAGE_VERSION
+REDIS_IMAGE REDIS_IMAGE_VERSION ELASTICSEARCH_IMAGE ELASTICSEARCH_IMAGE_VERSION
+DOCKER_ENGINE_VERSION CLOUDFLARED_VERSION BORG_VERSION"
+
+# Parses KEY=value lines; the file is never sourced, so it cannot run code.
+load_versions() {
+  local file="${VERSIONS_FILE:-$(dirname "${BASH_SOURCE[0]}")/host-setup.versions}"
+  local line key value
+  if [ ! -r "$file" ]; then
+    printf -- "Version manifest not found: %s\n" "$file" >&2
+    exit 1
+  fi
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue ;; esac
+    if [[ ! "$line" =~ ^([A-Z0-9_]+)=([A-Za-z0-9._:/@+~-]*)$ ]]; then
+      printf -- "Invalid line in %s: %s\n" "$file" "$line" >&2
+      exit 1
+    fi
+    key="${BASH_REMATCH[1]}"
+    value="${BASH_REMATCH[2]}"
+    case " ${MANIFEST_KEYS//$'\n'/ } " in
+      *" $key "*) printf -v "$key" '%s' "$value" ;;
+      *) printf -- "Unknown manifest key: %s\n" "$key" >&2; exit 1 ;;
+    esac
+  done < "$file"
+  for key in ${MANIFEST_KEYS//$'\n'/ }; do
+    if [ -z "${!key:-}" ]; then
+      printf -- "Manifest key %s is missing or empty in %s\n" "$key" "$file" >&2
+      exit 1
+    fi
+  done
+  debug "Loaded version manifest %s" "$file"
+}
+
+# Sets OS_ID, OS_VERSION, OS_CODENAME and DPKG_ARCH, or stops on an unsupported host.
+detect_os() {
+  if [ ! -r /etc/os-release ]; then
+    printf -- "Cannot read /etc/os-release; unsupported host.\n" >&2
+    exit 1
+  fi
+  OS_ID="$(. /etc/os-release && echo "${ID:-}")"
+  OS_VERSION="$(. /etc/os-release && echo "${VERSION_ID:-}")"
+  OS_CODENAME="$(. /etc/os-release && echo "${VERSION_CODENAME:-}")"
+  DPKG_ARCH="$(dpkg --print-architecture 2>/dev/null || echo unknown)"
+  case "$DPKG_ARCH" in
+    amd64|arm64) ;;
+    *) printf -- "Unsupported architecture: %s (need amd64 or arm64).\n" "$DPKG_ARCH" >&2; exit 1 ;;
+  esac
+  case "$OS_ID:$OS_VERSION" in
+    debian:12|debian:13|ubuntu:22.04|ubuntu:24.04|ubuntu:26.04) ;;
+    *) printf -- "Unsupported OS: %s %s (supported: Debian 12/13, Ubuntu 22.04/24.04/26.04).\n" "$OS_ID" "$OS_VERSION" >&2; exit 1 ;;
+  esac
+  debug "Detected OS %s %s (%s) on %s" "$OS_ID" "$OS_VERSION" "$OS_CODENAME" "$DPKG_ARCH"
+}
+
+step_os_check() {
+  detect_os
+  printf -- "OS check passed: %s %s (%s), %s.\n" "$OS_ID" "$OS_VERSION" "$OS_CODENAME" "$DPKG_ARCH"
+  if [ "$OS_ID:$OS_VERSION" = "ubuntu:26.04" ]; then
+    printf -- "Note: Ubuntu 26.04 is supported by Dokku; the Docker repository for it is unverified.\n"
+  fi
 }
 
 #############################################
@@ -210,7 +290,7 @@ step_welcome() {
   printf -- "################################################\n\n"
   printf -- "✨ Hello and welcome! ✨\n\n"
   printf -- "You're about to set up your system with Better Together's Community Engine.\n"
-  printf -- "This platform is more than technology—it's a movement dedicated to kindness,\n"
+  printf -- "This platform is more than technology, it's a movement dedicated to kindness,\n"
   printf -- "connection, and cooperation, helping communities become stronger together.\n\n"
   printf -- "With this simple setup wizard, you will:\n"
   printf -- "  1. Assign a fixed internet address to easily locate your device.\n"
@@ -221,7 +301,7 @@ step_welcome() {
   printf -- "  6. Strengthen security and keep your data safe.\n\n"
   printf -- "This script is optimized for systems similar to a Raspberry Pi 5 with at least 8GB RAM,\n"
   printf -- "but aims to support various hardware configurations.\n\n"
-  printf -- "Let's create a more connected, resilient, and empowered community—together.\n\n"
+  printf -- "Let's create a more connected, resilient, and empowered community, together.\n\n"
   prompt_continue "Welcome & Overview" "When you're ready, press (y) to begin your journey."
   debug "Finished step_welcome"
 }
@@ -435,58 +515,47 @@ update_system() {
 
 install_docker() {
   debug "Starting Docker installation..."
-  
-  # Check if Docker is present and working.
-  if command -v docker &>/dev/null; then
-    debug "Docker is already installed."
-    printf -- "Docker is already installed and appears to be ready to use.\n"
-    printf -- "Would you like to reinstall/update Docker, or skip Docker installation? (r to reinstall / s to skip): "
-    read -r docker_choice
-    case "$docker_choice" in
-      s|skip)
-        debug "User chose to skip Docker installation."
-        return 0
-        ;;
-      r|reinstall)
-        debug "User chose to reinstall/update Docker."
-        ;;
-      *)
-        debug "No valid input received; defaulting to skip Docker installation."
-        return 0
-        ;;
-    esac
-  fi
-  
-  # Proceed with installation if Docker is not present or user opts to reinstall.
-  if [[ -n "$DOCKER_VERSION" ]]; then
-    printf -- "Installing Docker version %s...\n" "$DOCKER_VERSION"
-    # Insert commands to install the specified Docker version.
-  else
-    printf -- "Installing latest Docker...\n"
-    # Insert commands to install the latest Docker.
-    
-    # Add Docker's official GPG key:
-    apt-get update
-    apt-get install ca-certificates curl -y
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
+  detect_os
 
-    # Add the repository to Apt sources:
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-      tee /etc/apt/sources.list.d/docker.list > /dev/null
-    apt-get update
-    
-    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-    
-    groupadd docker
-    usermod -aG docker $USER
-    newgrp docker
-    docker run hello-world
+  if command -v docker &>/dev/null; then
+    printf -- "Docker is already installed (%s). Leaving it unchanged.\n" "$(docker --version)"
+    printf -- "Engine upgrades are a guided operation; see the fleet-upgrade procedure.\n"
+    return 0
   fi
-  
+
+  local want="${DOCKER_VERSION:-$DOCKER_ENGINE_VERSION}"
+  local repo_os="$OS_ID"
+
+  apt-get update
+  apt-get install -y ca-certificates curl
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL "https://download.docker.com/linux/${repo_os}/gpg" -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
+
+  cat > /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/${repo_os}
+Suites: ${OS_CODENAME}
+Components: stable
+Architectures: ${DPKG_ARCH}
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+  apt-get update
+
+  local pkg_version
+  pkg_version="$(apt-cache madison docker-ce | awk -v v="$want" 'index($3, "5:" v "-") == 1 {print $3; exit}')"
+  if [ -z "$pkg_version" ]; then
+    printf -- "No docker-ce package matches version %s in the Docker repository.\n" "$want" >&2
+    exit 1
+  fi
+  printf -- "Installing Docker Engine %s...\n" "$pkg_version"
+  apt-get install -y "docker-ce=$pkg_version" "docker-ce-cli=$pkg_version" containerd.io docker-buildx-plugin docker-compose-plugin
+
+  if [ -n "${SUDO_USER:-}" ]; then
+    usermod -aG docker "$SUDO_USER"
+    printf -- "Added %s to the docker group; log out and back in to use it.\n" "$SUDO_USER"
+  fi
+  docker run --rm hello-world
   debug "Finished Docker installation."
 }
 
@@ -498,7 +567,7 @@ install_cloudflared() {
   curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
   
   echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" | tee /etc/apt/sources.list.d/cloudflared.list > /dev/null
-  apt-get update && apt-get install cloudflared -y
+  apt-get update && apt-get install -y "cloudflared=${CLOUDFLARED_VERSION}"
   
   debug "Finished Cloudflared installation."
 }
@@ -554,6 +623,31 @@ configure_storage() {
   debug "Finished storage configuration."
 }
 
+# Downloads the pinned bootstrap script, verifies its checksum, then runs it.
+install_dokku_bootstrap() {
+  local dir script
+  dir="$(mktemp -d)"
+  script="$dir/bootstrap.sh"
+  curl -fsSL "https://dokku.com/install/${DOKKU_TAG}/bootstrap.sh" -o "$script"
+  if ! echo "${DOKKU_BOOTSTRAP_SHA256}  $script" | sha256sum -c --quiet -; then
+    printf -- "Dokku bootstrap checksum mismatch; not running it.\n" >&2
+    rm -rf "$dir"
+    exit 1
+  fi
+  DOKKU_TAG="$DOKKU_TAG" bash "$script"
+  rm -rf "$dir"
+}
+
+# Installs a Dokku plugin at a pinned tag; leaves an installed plugin untouched.
+install_dokku_plugin() {
+  local name="$1" url="$2" tag="$3"
+  if dokku plugin:installed "$name" &>/dev/null; then
+    printf -- "Dokku plugin %s already installed (manifest pins %s).\n" "$name" "$tag"
+    return 0
+  fi
+  dokku plugin:install "$url" --committish "$tag" --name "$name"
+}
+
 #############################################
 # Step: Install Dokku
 #############################################
@@ -572,7 +666,7 @@ install_dokku() {
     if prompt_substep "Sub-step: Install Dokku (Platform as a Service)?\nDokku is a lightweight PaaS that runs on your server. Press Enter to proceed, or type 'skip' to skip installation."; then
   
       printf -- "📥 Installing Dokku...\n"
-      wget -qO- https://dokku.com/install/v0.34.3/bootstrap.sh | DOKKU_TAG=v0.34.3 bash
+      install_dokku_bootstrap
       
       printf -- "✅ Dokku installation complete.\n"
       
@@ -657,9 +751,9 @@ configure_dokku() {
   if prompt_substep "Sub-step: Install Dokku Plugins?\nThis will install the Postgres, Redis and LetsEncrypt plugins. Elasticsearch is optional (--with-elasticsearch)."; then
     printf -- "🔧 Installing Dokku plugins...\n"
     
-    dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
-    dokku plugin:install https://github.com/dokku/dokku-redis.git redis
-    dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+    install_dokku_plugin postgres https://github.com/dokku/dokku-postgres.git "$DOKKU_POSTGRES_TAG"
+    install_dokku_plugin redis https://github.com/dokku/dokku-redis.git "$DOKKU_REDIS_TAG"
+    install_dokku_plugin letsencrypt https://github.com/dokku/dokku-letsencrypt.git "$DOKKU_LETSENCRYPT_TAG"
 
     printf -- "✅ Dokku plugins installed successfully.\n"
   else
@@ -746,7 +840,7 @@ setup_postgis_database() {
     printf -- "✅ Dokku Postgres plugin is installed.\n"
   else
     printf -- "🔧 Installing Dokku Postgres plugin...\n"
-    dokku plugin:install https://github.com/dokku/dokku-postgres.git postgres
+    install_dokku_plugin postgres https://github.com/dokku/dokku-postgres.git "$DOKKU_POSTGRES_TAG"
   fi
 
   if dokku postgres:exists "$db_name"; then
@@ -755,14 +849,14 @@ setup_postgis_database() {
 
     if prompt_substep "Sub-step: Recreate the PostGIS database '$db_name'?\nThis will delete and recreate the database."; then
       dokku postgres:destroy "$db_name" --force
-      dokku postgres:create "$db_name" --image postgis/postgis --image-version latest
+      dokku postgres:create "$db_name" --image "$POSTGIS_IMAGE" --image-version "$POSTGIS_IMAGE_VERSION"
       dokku postgres:link "$db_name" "$app_name"
       printf -- "✅ PostGIS database '%s' recreated and linked.\n" "$db_name"
     else
       printf -- "⏩ Skipping database creation.\n"
     fi
   else
-    dokku postgres:create "$db_name" --image postgis/postgis --image-version latest
+    dokku postgres:create "$db_name" --image "$POSTGIS_IMAGE" --image-version "$POSTGIS_IMAGE_VERSION"
     dokku postgres:link "$db_name" "$app_name"
     printf -- "✅ PostGIS database '%s' created and linked.\n" "$db_name"
   fi
@@ -779,7 +873,7 @@ setup_redis() {
     printf -- "✅ Dokku Redis plugin is installed.\n"
   else
     printf -- "🔧 Installing Dokku Redis plugin...\n"
-    dokku plugin:install https://github.com/dokku/dokku-redis.git redis
+    install_dokku_plugin redis https://github.com/dokku/dokku-redis.git "$DOKKU_REDIS_TAG"
   fi
 
   if dokku redis:exists "$redis_name"; then
@@ -788,14 +882,14 @@ setup_redis() {
 
     if prompt_substep "Sub-step: Recreate the Redis instance '$redis_name'?\nThis will delete and recreate the Redis instance."; then
       dokku redis:destroy "$redis_name" --force
-      dokku redis:create "$redis_name"
+      dokku redis:create "$redis_name" --image "$REDIS_IMAGE" --image-version "$REDIS_IMAGE_VERSION"
       dokku redis:link "$redis_name" "$app_name"
       printf -- "✅ Redis instance '%s' recreated and linked.\n" "$redis_name"
     else
       printf -- "⏩ Skipping Redis creation.\n"
     fi
   else
-    dokku redis:create "$redis_name"
+    dokku redis:create "$redis_name" --image "$REDIS_IMAGE" --image-version "$REDIS_IMAGE_VERSION"
     dokku redis:link "$redis_name" "$app_name"
     printf -- "✅ Redis instance '%s' created and linked.\n" "$redis_name"
   fi
@@ -811,7 +905,7 @@ setup_letsencrypt() {
     printf -- "✅ Dokku Let's Encrypt plugin is installed.\n"
   else
     printf -- "🔧 Installing Dokku Let's Encrypt plugin...\n"
-    dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+    install_dokku_plugin letsencrypt https://github.com/dokku/dokku-letsencrypt.git "$DOKKU_LETSENCRYPT_TAG"
   fi
 
   printf -- "🔎 Checking existing Let's Encrypt email for '%s'...\n" "$app_name"
@@ -928,7 +1022,7 @@ install_elasticsearch() {
   if dokku plugin:installed elasticsearch &>/dev/null; then
     printf -- "Elasticsearch plugin is already installed.\n"
   else
-    dokku plugin:install https://github.com/dokku/dokku-elasticsearch.git elasticsearch
+    install_dokku_plugin elasticsearch https://github.com/dokku/dokku-elasticsearch.git "$DOKKU_ELASTICSEARCH_TAG"
   fi
   printf -- "The plugin alone changes nothing for your app. To use it you also need\n"
   printf -- "SEARCH_BACKEND=elasticsearch and the better_together-elasticsearch gem.\n"
@@ -943,6 +1037,7 @@ run_step() {
   case "$1" in
     welcome) step_welcome ;;
     specs) step_check_specs ;;
+    os_check) step_os_check ;;
     network) configure_network ;;
     hardening) security_hardening ;;
     backup) backup_config ;;
@@ -964,13 +1059,15 @@ run_step() {
 #############################################
 main() {
   parse_args "$@"
+  require_root
+  load_versions
   printf -- "Starting setup for %s...\n\n" "$(hostname)"
   debug "Entering main function"
 
   # Define a combined ordered list of all steps.
   # Naming the optional step explicitly implies its flag.
   if [ "$RUN_STEP" = "elasticsearch" ]; then WITH_ELASTICSEARCH=true; fi
-  ALL_STEPS=("welcome" "specs" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku")
+  ALL_STEPS=("welcome" "specs" "os_check" "network" "hardening" "backup" "tweaks" "update" "docker" "dokku")
   if [ "$WITH_ELASTICSEARCH" = true ]; then ALL_STEPS+=("elasticsearch"); fi
   ALL_STEPS+=("cloudflared" "nordvpn" "hostname" "storage" "community_engine")
   
@@ -1157,8 +1254,7 @@ backup_config() {
   if prompt_substep "Sub-step 1: Install BorgBackup\nThis will install BorgBackup using: sudo apt-get install borgbackup -y"; then
     printf -- "Installing BorgBackup...\n"
     apt-get install borgbackup -y
-    sleep 1
-    printf -- "BorgBackup installed.\n\n"
+    printf -- "BorgBackup installed: %s (manifest reference %s).\n\n" "$(borg --version 2>/dev/null || echo unknown)" "$BORG_VERSION"
   else
     printf -- "Skipping BorgBackup installation.\n\n"
   fi
@@ -1171,4 +1267,7 @@ backup_config() {
 #############################################
 # Run the Script
 #############################################
-main "$@"
+# Run only when executed, so tests can source the functions.
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi

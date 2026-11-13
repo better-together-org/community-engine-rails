@@ -109,8 +109,9 @@ Updating a pin is a deliberate pull request; the script never follows `latest`.
 
 ## Supported platforms
 
-Debian 12 and 13; Ubuntu 22.04 and 24.04 (26.04 is accepted with a warning until
-Dokku and Docker publish support for it); architectures amd64 and arm64. The
+Debian 12 and 13; Ubuntu 22.04, 24.04 and 26.04; architectures amd64 and arm64 (Dokku
+supports Ubuntu 22.04/24.04/26.04 and Debian 11+; Docker's Debian page lists 12 and 13,
+and the Docker repository for Ubuntu 26.04 is unverified). The
 `os_check` step reads `/etc/os-release`, chooses the matching Docker apt repository
 (`debian` or `ubuntu`), and refuses anything else.
 
