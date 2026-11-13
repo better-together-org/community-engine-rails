@@ -7,11 +7,8 @@ class RecalculateEventEndTimes < ActiveRecord::Migration[7.2]
 
     # Execute the rake task that calculates ends_at from starts_at + duration_minutes
     # This ensures events are properly categorized as ongoing vs past
-    begin
-      Rake::Task['better_together:events:recalculate_end_times'].invoke
-    rescue RuntimeError
-      Rake::Task['app:better_together:events:recalculate_end_times'].invoke
-    end
+    run_engine_rake_task('better_together:events:recalculate_end_times',
+                         skip_when_empty: %i[better_together_events])
   end
 
   def down
