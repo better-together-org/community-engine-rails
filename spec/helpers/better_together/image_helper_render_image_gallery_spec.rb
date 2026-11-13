@@ -77,7 +77,7 @@ RSpec.describe BetterTogether::ImageHelper, '#render_image_gallery' do
 
     expect(html).to have_css('section.image-gallery--masonry')
     expect(html).to have_css('ul[data-controller="better_together--masonry"]' \
-                             '[data-better-together--masonry-item-selector-value=".image-gallery__item"]')
+                             '[data-better_together--masonry-item-selector-value=".image-gallery__item"]')
   end
 
   it 'falls back to the grid for an unknown layout' do

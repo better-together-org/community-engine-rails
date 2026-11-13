@@ -171,7 +171,7 @@ module BetterTogether
       layout = GALLERY_LAYOUTS.include?(layout&.to_sym) ? layout.to_sym : :grid
       content_tag(:section, class: "image-gallery image-gallery--#{layout} mb-4",
                             aria: { label: label.presence || name.to_s.presence }) do
-        content_tag(:ul, class: 'image-gallery__list list-unstyled mb-0', data: gallery_data(layout)) do
+        content_tag(:ul, class: 'image-gallery__list list-unstyled mb-0', **gallery_data(layout)) do
           safe_join(images.map { |image| render_gallery_item(image, name, single: images.size == 1) })
         end
       end
@@ -204,7 +204,8 @@ module BetterTogether
     def gallery_data(layout)
       return {} unless layout == :masonry
 
-      { controller: 'better_together--masonry', 'better-together--masonry-item-selector-value': '.image-gallery__item' }
+      { 'data-controller': 'better_together--masonry',
+        'data-better_together--masonry-item-selector-value': '.image-gallery__item' }
     end
 
     def gallery_alt(image, name)
