@@ -36,7 +36,7 @@ into a seed with `export_as_seed`.
 | Database | Uniqueness is per platform: a person can be a customer of two platforms' processor accounts. |
 | Models | `PayExtensions::PlatformScoping` is included into each Pay model. Children copy their customer's platform and must match it; an owner that belongs to a platform (a community) must be billed on that platform. |
 | Models | The platform cannot be re-pointed. Pay's own `set_payment_processor` looks up an owner's existing customer without regard to platform and then updates it; without a read-only platform a second platform could take over the first platform's customer. |
-| Processor | Every adapter call carries a `ProcessorContext`. Only the host platform has one today (the deployment's own credentials). Any other platform has none, so billing is off for it and it cannot use the host's processor account. |
+| Processor | Every adapter call carries a `ProcessorContext`. Only the host platform has one today (the deployment's own credentials). Any other platform has none, so billing is off for it, with or without a local payment method enabled, until the hosted agreement system exists. It cannot use the host's processor account. |
 
 `pay_webhooks` has no platform column: Pay deletes a row once its event is processed, so
 rows are transient. A failed delivery stays, encrypted, until the billing maintenance job

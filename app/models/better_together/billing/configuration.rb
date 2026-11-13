@@ -52,12 +52,13 @@ module BetterTogether
         # host's processor account.
         #
         # A method outside a vendor (cash, cheque, e-transfer) has no credentials. It has a
-        # context for a platform (or one of its sellers) only while a steward has it enabled
+        # context for the host platform (or one of its sellers) only while a steward has it enabled
         # (see ProcessorSetting), so it is installed for everyone and on for no one by default.
         def context_for(platform, processor, seller: nil)
           return if platform.nil? || Billing.processor_names.map(&:to_s).exclude?(processor.to_s)
-          return setting_context(platform, processor, seller) if Billing.local_method?(processor)
+          # Only the host sells until the hosted billing agreements exist (CONF-01); fail closed.
           return unless platform.host?
+          return setting_context(platform, processor, seller) if Billing.local_method?(processor)
 
           ProcessorContext.new(platform:, processor:)
         end

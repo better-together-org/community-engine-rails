@@ -55,6 +55,15 @@ module BetterTogether
         expect(described_class.enabled?(other_platform, env:)).to be(false)
       end
 
+      it 'is never enabled or configurable for a non-host platform, even with a method on (CONF-01)' do
+        other_platform.billing_processor_settings.create!(processor: 'cash', enabled: true, acknowledge: true,
+                                                          settings: { 'instructions' => 'At the hall' })
+
+        expect(described_class.enabled?(other_platform, env:)).to be(false)
+        expect(described_class.configurable?(other_platform, env:)).to be(false)
+        expect(described_class.configurable?(host_platform, env:)).to be(true)
+      end
+
       it 'can be configured before any method is on, but only when the host asked for billing' do
         expect(described_class.configurable?(host_platform, env:)).to be(true)
         expect(described_class.configurable?(host_platform, env: env.merge('BT_BILLING_ENABLED' => 'false'))).to be(false)
