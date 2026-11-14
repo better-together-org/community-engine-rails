@@ -144,6 +144,33 @@ module BetterTogether # :nodoc:
         expect(sanitized).to include('aria-label="Menu"')
       end
 
+      it 'keeps an accessible data table with scope, colspan and caption' do
+        html = '<table class="table" id="species"><caption>Species</caption><thead><tr><th scope="col">Name</th>' \
+               '<th scope="col" colspan="2">Notes</th></tr></thead><tbody><tr><th scope="row">Morel</th>' \
+               '<td>Spring</td><td rowspan="2">Rare</td></tr></tbody></table>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<table class="table" id="species">', '<caption>Species</caption>',
+                                     'scope="col"', 'colspan="2"', 'rowspan="2"', 'scope="row"')
+      end
+
+      it 'keeps section, details and summary, id and role' do
+        html = '<section id="faq" role="region" aria-label="FAQ"><details open><summary>Q</summary><p>A</p></details></section>'
+        sanitized = helper.sanitize_block_html(html)
+
+        expect(sanitized).to include('<section id="faq" role="region" aria-label="FAQ">', '<details open>',
+                                     '<summary>Q</summary>')
+      end
+
+      it 'still strips scripts, handlers and javascript links from table markup' do
+        sanitized = helper.sanitize_block_html(
+          '<table onclick="x()"><tr><td><a href="javascript:alert(1)">x</a><script>alert(1)</script></td></tr></table>'
+        )
+
+        expect(sanitized).not_to include('onclick', 'javascript:', '<script')
+        expect(sanitized).to include('<table>')
+      end
+
       it 'removes iframe tags so embeds must use dedicated block types' do
         html = '<p>Before</p><iframe src="https://forms.btsdev.ca/s/example" title="Survey"></iframe><p>After</p>'
         sanitized = helper.sanitize_block_html(html)
