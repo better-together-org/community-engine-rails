@@ -24,6 +24,37 @@ RSpec.describe BetterTogether::Quotas::Type do
     end
   end
 
+  describe '.available' do
+    let(:platform) { BetterTogether::Platform.find_by(host: true) || create(:better_together_platform, :host) }
+
+    before { BetterTogether::Robot.update_all(active: false) } # rubocop:disable Rails/SkipsModelValidations
+
+    it 'always offers media_storage' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+
+      expect(described_class.available_keys(platform)).to include('media_storage')
+    end
+
+    it 'hides LLM usage tokens with no OpenAI token and no robot' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+
+      expect(described_class.available_keys(platform)).not_to include('ai_translation_tokens')
+    end
+
+    it 'offers LLM usage tokens with an OpenAI token' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return('sk-test')
+
+      expect(described_class.available_keys(platform)).to include('ai_translation_tokens')
+    end
+
+    it 'offers LLM usage tokens when an active robot is available' do
+      allow(RubyLLM.config).to receive(:openai_api_key).and_return(nil)
+      create(:better_together_robot, platform: nil, active: true)
+
+      expect(described_class.available_keys(platform)).to include('ai_translation_tokens')
+    end
+  end
+
   describe 'reversible? defaults' do
     it 'defaults to false on the base class' do
       expect(described_class.reversible?).to be false

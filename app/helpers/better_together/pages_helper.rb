@@ -66,9 +66,10 @@ module BetterTogether
         page.blocks.maximum(:updated_at),
         page.contributions.maximum(:updated_at),
         page.sidebar_nav&.cache_key_with_version,
+        (breadcrumb_trail_cache_key(page) if respond_to?(:breadcrumb_trail_cache_key, true)),
         page_visibility_cache_context,
         I18n.locale,
-        'v4'
+        'v5'
       ]
     end
 

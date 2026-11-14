@@ -3,29 +3,44 @@
 # Adds timezone column to events and backfills existing records
 class AddTimezoneToEvents < ActiveRecord::Migration[7.2]
   def up
-    unless column_exists?(:better_together_events, :timezone)
-      add_column :better_together_events, :timezone, :string, default: 'UTC', null: false
-    end
-    add_index :better_together_events, :timezone unless index_exists?(:better_together_events, :timezone)
+    # Add timezone column with sensible default
+    add_column :better_together_events, :timezone, :string, default: 'UTC', null: false
+    add_index :better_together_events, :timezone
 
+    # Backfill existing events with platform timezone
     backfill_event_timezones
   end
 
   def down
-    remove_index :better_together_events, :timezone if index_exists?(:better_together_events, :timezone)
-    remove_column :better_together_events, :timezone if column_exists?(:better_together_events, :timezone)
+    remove_column :better_together_events, :timezone
   end
 
   private
 
-  # Plain SQL: the Event model fails to load on a from-zero run (its enums need later columns).
   def backfill_event_timezones
-    return unless column_exists?(:better_together_platforms, :time_zone)
+    return unless table_has_rows?(:better_together_events)
 
-    zone = select_value('SELECT time_zone FROM better_together_platforms WHERE host = TRUE LIMIT 1')
-    return if zone.blank? || zone == 'UTC'
+    # Get platform timezone (safe for multi-tenancy)
+    platform = BetterTogether::Platform.find_by(host: true)
+    default_timezone = platform&.time_zone || 'UTC'
 
-    say "Backfilling events with timezone: #{zone}"
-    execute "UPDATE better_together_events SET timezone = #{quote(zone)}"
+    say "Backfilling #{BetterTogether::Event.count} events with timezone: #{default_timezone}"
+
+    # Update in batches to avoid memory issues
+    BetterTogether::Event.find_each(batch_size: 100) do |event|
+      event.update_column(:timezone, default_timezone)
+    rescue StandardError => e
+      # Log error but continue migration
+      say "Failed to set timezone for event #{event.id}: #{e.message}", true
+
+      # Fall back to UTC for this event
+      begin
+        event.update_column(:timezone, 'UTC')
+      rescue StandardError
+        nil
+      end
+    end
+
+    say "Backfill complete. Verify with: BetterTogether::Event.where(timezone: nil).count"
   end
 end

@@ -32,6 +32,7 @@ module BetterTogether
     validates :limit, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :owner_id, uniqueness: { scope: %i[owner_type quota_type] }
     validate :owner_is_quota_owner
+    validate :owner_is_local
 
     # The limit actually in effect: the highest active QuotaGrant for this owner+type,
     # or the stored `limit` when no grant applies. Nothing in this phase reads this to
@@ -64,6 +65,14 @@ module BetterTogether
       return if owner.is_a?(BetterTogether::Quotas::Owner)
 
       errors.add(:owner_type, :inclusion, value: owner_type)
+    end
+
+    # Only local owners get quotas (see Quotas::Locality).
+    def owner_is_local
+      return unless owner.is_a?(BetterTogether::Quotas::Owner)
+      return if BetterTogether::Quotas::Locality.local_owner?(owner)
+
+      errors.add(:owner, I18n.t('better_together.quotas.errors.not_local', default: 'must be local to this platform'))
     end
   end
 end

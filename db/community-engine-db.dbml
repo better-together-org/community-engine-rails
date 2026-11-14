@@ -2985,10 +2985,13 @@ Table "better_together_person_platform_integrations" {
   "person_id" uuid
   "platform_id" uuid
   "user_id" uuid
+  "local_platform_id" uuid
 
   indexes {
+    "local_platform_id" [name: "idx_on_local_platform_id_3d4656d5f0"]
     "person_id" [name: "bt_person_platform_conections_by_person"]
     "platform_id" [name: "bt_person_platform_conections_by_platform"]
+    ("provider", "platform_id", "uid", "local_platform_id") [unique, name: "idx_bt_ppi_provider_platform_uid_local"]
     "user_id" [name: "bt_person_platform_conections_by_user"]
   }
 }
@@ -3136,6 +3139,43 @@ Table "better_together_platform_domains" {
   }
 }
 
+Table "better_together_platform_identity_provider_domains" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_identity_provider_id" uuid
+  "platform_domain_id" uuid
+
+  indexes {
+    "platform_domain_id" [name: "idx_bt_idp_domains_on_domain_id"]
+    ("platform_identity_provider_id", "platform_domain_id") [unique, name: "idx_bt_idp_domains_unique"]
+    "platform_identity_provider_id" [name: "idx_bt_idp_domains_on_idp_id"]
+  }
+}
+
+Table "better_together_platform_identity_providers" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid
+  "provider_platform_id" uuid
+  "strategy" varchar [not null]
+  "enabled" boolean [not null, default: true]
+  "client_id" varchar
+  "client_secret" text
+  "scopes" varchar
+  "options" jsonb [not null, default: '{}']
+  "position" integer [not null, default: 0]
+
+  indexes {
+    ("platform_id", "provider_platform_id") [unique, name: "idx_bt_platform_idps_unique"]
+    "platform_id" [name: "idx_bt_platform_idps_on_platform_id"]
+    "provider_platform_id" [name: "idx_bt_platform_idps_on_provider_platform_id"]
+  }
+}
+
 Table "better_together_platform_invitations" {
   "id" uuid [pk]
   "lock_version" integer [not null, default: 0]
@@ -3172,6 +3212,29 @@ Table "better_together_platform_invitations" {
     "token" [unique, name: "platform_invitations_by_token"]
     "valid_from" [name: "platform_invitations_by_valid_from"]
     "valid_until" [name: "platform_invitations_by_valid_until"]
+  }
+}
+
+Table "better_together_platform_trusted_domains" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid [not null]
+  "role_id" uuid [not null]
+  "created_by_id" uuid
+  "domain" varchar [not null]
+  "enabled" boolean [not null, default: true]
+  "include_subdomains" boolean [not null, default: false]
+  "public_domain_confirmed" boolean [not null, default: false]
+  "role_ceiling_confirmed" boolean [not null, default: false]
+  "note" text
+
+  indexes {
+    "created_by_id" [name: "idx_bt_trusted_domains_on_created_by_id"]
+    ("platform_id", "domain") [unique, name: "idx_bt_trusted_domains_unique"]
+    "platform_id" [name: "idx_bt_trusted_domains_on_platform_id"]
+    "role_id" [name: "idx_bt_trusted_domains_on_role_id"]
   }
 }
 
@@ -3383,6 +3446,28 @@ Table "better_together_recurrences" {
     "frequency" [name: "index_better_together_recurrences_on_frequency"]
     ("schedulable_type", "schedulable_id") [name: "index_better_together_recurrences_on_schedulable"]
     ("schedulable_type", "schedulable_id") [name: "index_recurrences_on_schedulable"]
+  }
+}
+
+Table "better_together_redirects" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid [not null]
+  "from_path" varchar [not null]
+  "to_path" text
+  "status" integer [not null, default: 301]
+  "active" boolean [not null, default: true]
+  "preserve_query" boolean [not null, default: true]
+  "source" varchar [not null, default: 'manual']
+  "note" text
+  "hit_count" integer [not null, default: 0]
+  "last_hit_at" timestamp
+
+  indexes {
+    "platform_id, lower((from_path)::text)" [unique, name: "index_bt_redirects_on_platform_and_lower_from_path"]
+    "platform_id" [name: "index_bt_redirects_on_platform_id"]
   }
 }
 
@@ -3734,6 +3819,30 @@ Table "better_together_storage_configurations" {
   indexes {
     "platform_id" [name: "index_better_together_storage_configurations_on_platform_id"]
     "service_type" [name: "index_better_together_storage_configurations_on_service_type"]
+  }
+}
+
+Table "better_together_trusted_domain_events" {
+  "id" uuid [pk]
+  "lock_version" integer [not null, default: 0]
+  "created_at" timestamp [not null]
+  "updated_at" timestamp [not null]
+  "platform_id" uuid [not null]
+  "platform_trusted_domain_id" uuid
+  "actor_id" uuid
+  "subject_id" uuid
+  "event_type" varchar [not null]
+  "domain" varchar [not null]
+  "role_identifier" varchar
+  "via" varchar
+  "details" jsonb [not null, default: '{}']
+
+  indexes {
+    "actor_id" [name: "idx_bt_td_events_on_actor_id"]
+    ("platform_id", "event_type", "created_at") [name: "idx_bt_td_events_timeline"]
+    "platform_id" [name: "idx_bt_td_events_on_platform_id"]
+    "platform_trusted_domain_id" [name: "idx_bt_td_events_on_domain_id"]
+    "subject_id" [name: "idx_bt_td_events_on_subject_id"]
   }
 }
 
@@ -4794,6 +4903,8 @@ Ref: "better_together_person_messaging_grants"."grantor_id" > "better_together_p
 
 Ref: "better_together_person_messaging_grants"."platform_id" > "better_together_platforms"."id"
 
+Ref: "better_together_person_platform_integrations"."local_platform_id" > "better_together_platforms"."id"
+
 Ref: "better_together_person_platform_integrations"."person_id" > "better_together_people"."id"
 
 Ref: "better_together_person_platform_integrations"."platform_id" > "better_together_platforms"."id"
@@ -4832,6 +4943,14 @@ Ref: "better_together_platform_connections"."target_platform_id" > "better_toget
 
 Ref: "better_together_platform_domains"."platform_id" > "better_together_platforms"."id"
 
+Ref: "better_together_platform_identity_provider_domains"."platform_domain_id" > "better_together_platform_domains"."id"
+
+Ref: "better_together_platform_identity_provider_domains"."platform_identity_provider_id" > "better_together_platform_identity_providers"."id"
+
+Ref: "better_together_platform_identity_providers"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_platform_identity_providers"."provider_platform_id" > "better_together_platforms"."id"
+
 Ref: "better_together_platform_invitations"."community_role_id" > "better_together_roles"."id"
 
 Ref: "better_together_platform_invitations"."invitable_id" > "better_together_platforms"."id"
@@ -4841,6 +4960,12 @@ Ref: "better_together_platform_invitations"."invitee_id" > "better_together_peop
 Ref: "better_together_platform_invitations"."inviter_id" > "better_together_people"."id"
 
 Ref: "better_together_platform_invitations"."platform_role_id" > "better_together_roles"."id"
+
+Ref: "better_together_platform_trusted_domains"."created_by_id" > "better_together_people"."id"
+
+Ref: "better_together_platform_trusted_domains"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_platform_trusted_domains"."role_id" > "better_together_roles"."id"
 
 Ref: "better_together_platforms"."community_id" > "better_together_communities"."id"
 
@@ -4869,6 +4994,8 @@ Ref: "better_together_quota_usages"."platform_id" > "better_together_platforms".
 Ref: "better_together_quota_usages"."quota_id" > "better_together_quotas"."id"
 
 Ref: "better_together_quotas"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_redirects"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_reports"."platform_id" > "better_together_platforms"."id"
 
@@ -4923,6 +5050,14 @@ Ref: "better_together_social_media_accounts"."contact_detail_id" > "better_toget
 Ref: "better_together_social_media_accounts"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_storage_configurations"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_trusted_domain_events"."actor_id" > "better_together_people"."id"
+
+Ref: "better_together_trusted_domain_events"."platform_id" > "better_together_platforms"."id"
+
+Ref: "better_together_trusted_domain_events"."platform_trusted_domain_id" > "better_together_platform_trusted_domains"."id"
+
+Ref: "better_together_trusted_domain_events"."subject_id" > "better_together_people"."id"
 
 Ref: "better_together_uploads"."creator_id" > "better_together_people"."id"
 

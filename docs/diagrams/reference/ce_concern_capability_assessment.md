@@ -106,6 +106,7 @@ This assessment is generated from the current live class set and the concern cap
 | `PlatformConnectionFederationPolicy` | Platformconnectionfederationpolicy | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionOauthCredentials` | Platformconnectionoauthcredentials | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformConnectionSyncTracking` | Platformconnectionsynctracking | `PlatformConnection` | Review the concern source for configuration-specific coupling or visibility implications. |
+| `PlatformContentSlots` | Platformcontentslots | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformCspConfiguration` | Platformcspconfiguration | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformCssBlockManagement` | Platformcssblockmanagement | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |
 | `PlatformFederationStatus` | Platformfederationstatus | `Platform` | Review the concern source for configuration-specific coupling or visibility implications. |

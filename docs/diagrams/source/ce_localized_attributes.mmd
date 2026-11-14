@@ -66,6 +66,10 @@ classDiagram
     class BetterTogether_Content_EventsBlock["Content::EventsBlock"] {
       +view_more_url : string
     }
+    class BetterTogether_Content_FileDownloadBlock["Content::FileDownloadBlock"] {
+      +description : text
+      +label : string
+    }
     class BetterTogether_Content_Hero["Content::Hero"] {
       +content : rich_text
       +cta_text : string
@@ -85,6 +89,9 @@ classDiagram
       +attribution : string
       +attribution_url : string
       +caption : string
+    }
+    class BetterTogether_Content_ImageGalleryBlock["Content::ImageGalleryBlock"] {
+      +heading : string
     }
     class BetterTogether_Content_Markdown["Content::Markdown"] {
       +markdown_source : text

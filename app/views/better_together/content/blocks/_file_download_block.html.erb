@@ -1,0 +1,33 @@
+<%# locals: (file_download_block:) -%>
+<% upload = file_download_block.upload %>
+<%= render layout: 'better_together/content/blocks/block', locals: { block: file_download_block } do %>
+  <% if upload.nil? || !upload.attached? || !policy(upload).download? %>
+    <p class="file-download-block__empty text-muted">
+      <%= t('better_together.content.blocks.file_download_block.empty') %>
+    </p>
+  <% else %>
+    <% cache_if upload.privacy_public?, [file_download_block, upload, I18n.locale, upload.file_content_security_downloadable?] do %>
+      <% path = file_download_block.open_inline? ? better_together.short_file_path(upload) : better_together.short_file_download_path(upload) %>
+      <div class="file-download-block card">
+        <div class="card-body d-flex align-items-start gap-3">
+          <i class="fas fa-file-download fa-2x text-primary" aria-hidden="true"></i>
+          <div>
+            <h3 class="file-download-block__title h5 mb-1">
+              <%= link_to file_download_block.display_label, path, class: 'stretched-link',
+                          target: (file_download_block.open_inline? ? '_blank' : nil),
+                          rel: (file_download_block.open_inline? ? 'noopener' : nil) %>
+            </h3>
+            <p class="file-download-block__meta small text-muted mb-1">
+              <%= t('better_together.content.blocks.file_download_block.meta',
+                    type: upload.filename.extension.to_s.upcase.presence || upload.content_type,
+                    size: number_to_human_size(upload.byte_size)) %>
+            </p>
+            <% if file_download_block.description.present? %>
+              <p class="file-download-block__description mb-0"><%= file_download_block.description %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

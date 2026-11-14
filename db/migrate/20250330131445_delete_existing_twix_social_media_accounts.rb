@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
 # No support for Fascist platforms
+# Uses SQL, not the current model, so it also runs from an empty database where the
+# model's later columns (platform_id) do not exist yet.
 class DeleteExistingTwixSocialMediaAccounts < ActiveRecord::Migration[7.1]
-  # Migration-local model: the app model scopes by platform_id, which does not exist yet here.
-  class MigrationSocialMediaAccount < ActiveRecord::Base
-    self.table_name = 'better_together_social_media_accounts'
-  end
+  TABLE = :better_together_social_media_accounts
 
   def up
-    return unless table_exists?(:better_together_social_media_accounts)
-    return unless column_exists?(:better_together_social_media_accounts, :platform)
+    return unless table_exists?(TABLE) && column_exists?(TABLE, :platform)
 
-    MigrationSocialMediaAccount.where(platform: %w[X Twitter]).delete_all
+    execute("DELETE FROM #{TABLE} WHERE platform IN ('X', 'Twitter')")
   end
 
   def down; end

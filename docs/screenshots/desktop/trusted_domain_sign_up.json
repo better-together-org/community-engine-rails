@@ -1,0 +1,11 @@
+{
+  "name": "trusted_domain_sign_up",
+  "device": "desktop",
+  "url": "/en/users/sign-up?trusted_domain=1",
+  "title": "Sign Up | Test Host Community",
+  "locale": "en",
+  "role": "guest",
+  "feature_set": "trusted_domains",
+  "flow": "trusted_domain_sign_up",
+  "source_spec": "./spec/docs_screenshots/better_together/platform_trusted_domains_admin_spec.rb"
+}

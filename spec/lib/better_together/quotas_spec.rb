@@ -24,7 +24,8 @@ RSpec.describe BetterTogether::Quotas do
     it 'says a small amount is fine' do
       decision = described_class.check!(type: 'media_storage', owner:, amount: 1)
 
-      expect(decision).to have_attributes(allowed: true, exceeded: false, remaining: BetterTogether::Quotas::Types::MediaStorage::PERSON_DEFAULT_BYTES)
+      expect(decision).to have_attributes(allowed: true, exceeded: false,
+                                          remaining: BetterTogether::Quotas::Defaults.for(type: :media_storage, owner:))
     end
 
     it 'refuses what would pass the limit in hard mode, and says how much is left' do
@@ -32,7 +33,7 @@ RSpec.describe BetterTogether::Quotas do
       BetterTogether::Quota.find_by(owner:, quota_type: 'media_storage').update!(enforcement_mode: 'hard')
 
       expect { described_class.check!(type: 'media_storage', owner:, amount: 10**15) }
-        .to raise_error(described_class::QuotaExceeded) { |error| expect(error.remaining).to eq(BetterTogether::Quotas::Types::MediaStorage::PERSON_DEFAULT_BYTES - 1) }
+        .to raise_error(described_class::QuotaExceeded) { |error| expect(error.remaining).to eq(BetterTogether::Quotas::Defaults.for(type: :media_storage, owner:) - 1) }
       expect(described_class.check!(type: 'media_storage', owner:, amount: 100)).to be_allowed
     end
 

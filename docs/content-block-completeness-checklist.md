@@ -155,6 +155,8 @@ Stimulus interactions are ready.
 | `NavigationAreaBlock` | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ |
 | `PlanCatalogBlock` | ✅ | ✅ (no cache, audience-dependent) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `PlanButtonBlock` | ✅ | ✅ (no cache, audience-dependent) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `FileDownloadBlock` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `ImageGalleryBlock` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 **Legend:**
 - ✅ Present and correct

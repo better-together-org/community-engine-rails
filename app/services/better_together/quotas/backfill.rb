@@ -7,10 +7,10 @@ module BetterTogether
     # write goes through BetterTogether::Quotas.settle! with the *same* idempotency
     # key the live path uses for that attachment or translation, so whichever path
     # writes first is the one charge. `event: 'backfill'` only records provenance.
-    class Backfill
+    class Backfill # rubocop:todo Metrics/ClassLength
       Summary = Struct.new(
         :translation_usages, :attachment_usages, :reflection_attachment_count,
-        :raw_attachment_count, :attachment_count_mismatch,
+        :raw_attachment_count, :attachment_count_mismatch, :skipped_non_local,
         keyword_init: true
       )
 
@@ -19,6 +19,7 @@ module BetterTogether
       end
 
       def call
+        @skipped_non_local = 0
         translation_count = backfill_translations
         attachment_count, reflection_count, raw_count = backfill_attachments
         recalculate_touched_balances
@@ -28,7 +29,8 @@ module BetterTogether
           attachment_usages: attachment_count,
           reflection_attachment_count: reflection_count,
           raw_attachment_count: raw_count,
-          attachment_count_mismatch: reflection_count != raw_count
+          attachment_count_mismatch: reflection_count != raw_count,
+          skipped_non_local: @skipped_non_local
         )
       end
 
@@ -43,10 +45,21 @@ module BetterTogether
         count
       end
 
+      # Owners that are not local (see Quotas::Locality) are never charged; they are
+      # counted so the summary shows how much was skipped.
+      def local_owner_for(record)
+        owner = BetterTogether::Quotas::OwnerResolver.resolve(record)
+        @skipped_non_local += 1 if owner.nil?
+        owner
+      end
+
       def settle_translation(log)
+        owner = local_owner_for(log)
+        return unless owner
+
         BetterTogether::Quotas.settle!(
           type: 'ai_translation_tokens',
-          owner: BetterTogether::Quotas::OwnerResolver.resolve(log),
+          owner:,
           amount: log.tokens_used,
           idempotency_key: BetterTogether::TranslationBot.translation_charge_key(log.id),
           subject: log,
@@ -116,9 +129,12 @@ module BetterTogether
       end
 
       def settle_attachment(record, attachment)
+        owner = local_owner_for(record)
+        return unless owner
+
         BetterTogether::Quotas.settle!(
           type: 'media_storage',
-          owner: BetterTogether::Quotas::OwnerResolver.resolve(record),
+          owner:,
           amount: attachment.blob.byte_size,
           idempotency_key: BetterTogether::Quotas::AttachmentTracking.charge_key(attachment.id),
           subject: attachment,

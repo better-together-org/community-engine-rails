@@ -2497,8 +2497,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.uuid "person_id"
     t.uuid "platform_id"
     t.uuid "user_id"
+    t.uuid "local_platform_id"
+    t.index ["local_platform_id"], name: "idx_on_local_platform_id_3d4656d5f0"
     t.index ["person_id"], name: "bt_person_platform_conections_by_person"
     t.index ["platform_id"], name: "bt_person_platform_conections_by_platform"
+    t.index ["provider", "platform_id", "uid", "local_platform_id"], name: "idx_bt_ppi_provider_platform_uid_local", unique: true
     t.index ["user_id"], name: "bt_person_platform_conections_by_user"
   end
 
@@ -2621,6 +2624,35 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.index ["platform_id"], name: "index_better_together_platform_domains_on_platform_id"
   end
 
+  create_table "better_together_platform_identity_provider_domains", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_identity_provider_id"
+    t.uuid "platform_domain_id"
+    t.index ["platform_domain_id"], name: "idx_bt_idp_domains_on_domain_id"
+    t.index ["platform_identity_provider_id", "platform_domain_id"], name: "idx_bt_idp_domains_unique", unique: true
+    t.index ["platform_identity_provider_id"], name: "idx_bt_idp_domains_on_idp_id"
+  end
+
+  create_table "better_together_platform_identity_providers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id"
+    t.uuid "provider_platform_id"
+    t.string "strategy", null: false
+    t.boolean "enabled", default: true, null: false
+    t.string "client_id"
+    t.text "client_secret"
+    t.string "scopes"
+    t.jsonb "options", default: {}, null: false
+    t.integer "position", default: 0, null: false
+    t.index ["platform_id", "provider_platform_id"], name: "idx_bt_platform_idps_unique", unique: true
+    t.index ["platform_id"], name: "idx_bt_platform_idps_on_platform_id"
+    t.index ["provider_platform_id"], name: "idx_bt_platform_idps_on_provider_platform_id"
+  end
+
   create_table "better_together_platform_invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "lock_version", default: 0, null: false
     t.datetime "created_at", null: false
@@ -2654,6 +2686,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.index ["token"], name: "platform_invitations_by_token", unique: true
     t.index ["valid_from"], name: "platform_invitations_by_valid_from"
     t.index ["valid_until"], name: "platform_invitations_by_valid_until"
+  end
+
+  create_table "better_together_platform_trusted_domains", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "role_id", null: false
+    t.uuid "created_by_id"
+    t.string "domain", null: false
+    t.boolean "enabled", default: true, null: false
+    t.boolean "include_subdomains", default: false, null: false
+    t.boolean "public_domain_confirmed", default: false, null: false
+    t.boolean "role_ceiling_confirmed", default: false, null: false
+    t.text "note"
+    t.index ["created_by_id"], name: "idx_bt_trusted_domains_on_created_by_id"
+    t.index ["platform_id", "domain"], name: "idx_bt_trusted_domains_unique", unique: true
+    t.index ["platform_id"], name: "idx_bt_trusted_domains_on_platform_id"
+    t.index ["role_id"], name: "idx_bt_trusted_domains_on_role_id"
   end
 
   create_table "better_together_platforms", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -2833,6 +2884,24 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.index ["frequency"], name: "index_better_together_recurrences_on_frequency"
     t.index ["schedulable_type", "schedulable_id"], name: "index_better_together_recurrences_on_schedulable"
     t.index ["schedulable_type", "schedulable_id"], name: "index_recurrences_on_schedulable"
+  end
+
+  create_table "better_together_redirects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.string "from_path", null: false
+    t.text "to_path"
+    t.integer "status", default: 301, null: false
+    t.boolean "active", default: true, null: false
+    t.boolean "preserve_query", default: true, null: false
+    t.string "source", default: "manual", null: false
+    t.text "note"
+    t.integer "hit_count", default: 0, null: false
+    t.datetime "last_hit_at"
+    t.index "platform_id, lower((from_path)::text)", name: "index_bt_redirects_on_platform_and_lower_from_path", unique: true
+    t.index ["platform_id"], name: "index_bt_redirects_on_platform_id"
   end
 
   create_table "better_together_reports", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3124,6 +3193,26 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.string "secret_access_key"
     t.index ["platform_id"], name: "index_better_together_storage_configurations_on_platform_id"
     t.index ["service_type"], name: "index_better_together_storage_configurations_on_service_type"
+  end
+
+  create_table "better_together_trusted_domain_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "lock_version", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "platform_id", null: false
+    t.uuid "platform_trusted_domain_id"
+    t.uuid "actor_id"
+    t.uuid "subject_id"
+    t.string "event_type", null: false
+    t.string "domain", null: false
+    t.string "role_identifier"
+    t.string "via"
+    t.jsonb "details", default: {}, null: false
+    t.index ["actor_id"], name: "idx_bt_td_events_on_actor_id"
+    t.index ["platform_id", "event_type", "created_at"], name: "idx_bt_td_events_timeline"
+    t.index ["platform_id"], name: "idx_bt_td_events_on_platform_id"
+    t.index ["platform_trusted_domain_id"], name: "idx_bt_td_events_on_domain_id"
+    t.index ["subject_id"], name: "idx_bt_td_events_on_subject_id"
   end
 
   create_table "better_together_uploads", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -3852,6 +3941,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
   add_foreign_key "better_together_person_messaging_grants", "better_together_people", column: "grantor_id", on_delete: :cascade
   add_foreign_key "better_together_person_messaging_grants", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_people", column: "person_id"
+  add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "local_platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_person_platform_integrations", "better_together_users", column: "user_id"
   add_foreign_key "better_together_person_platform_memberships", "better_together_people", column: "member_id"
@@ -3870,11 +3960,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "source_platform_id"
   add_foreign_key "better_together_platform_connections", "better_together_platforms", column: "target_platform_id"
   add_foreign_key "better_together_platform_domains", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_identity_provider_domains", "better_together_platform_domains", column: "platform_domain_id"
+  add_foreign_key "better_together_platform_identity_provider_domains", "better_together_platform_identity_providers", column: "platform_identity_provider_id"
+  add_foreign_key "better_together_platform_identity_providers", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_identity_providers", "better_together_platforms", column: "provider_platform_id"
   add_foreign_key "better_together_platform_invitations", "better_together_people", column: "invitee_id"
   add_foreign_key "better_together_platform_invitations", "better_together_people", column: "inviter_id"
   add_foreign_key "better_together_platform_invitations", "better_together_platforms", column: "invitable_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "community_role_id"
   add_foreign_key "better_together_platform_invitations", "better_together_roles", column: "platform_role_id"
+  add_foreign_key "better_together_platform_trusted_domains", "better_together_people", column: "created_by_id"
+  add_foreign_key "better_together_platform_trusted_domains", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_platform_trusted_domains", "better_together_roles", column: "role_id"
   add_foreign_key "better_together_platforms", "better_together_communities", column: "community_id"
   add_foreign_key "better_together_platforms", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_platforms", "better_together_storage_configurations", column: "storage_configuration_id", deferrable: :deferred
@@ -3889,6 +3986,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
   add_foreign_key "better_together_quota_usages", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_quota_usages", "better_together_quotas", column: "quota_id"
   add_foreign_key "better_together_quotas", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_redirects", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_reports", "better_together_people", column: "reporter_id"
   add_foreign_key "better_together_reports", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_resource_permissions", "better_together_platforms", column: "platform_id"
@@ -3916,6 +4014,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
   add_foreign_key "better_together_social_media_accounts", "better_together_contact_details", column: "contact_detail_id"
   add_foreign_key "better_together_social_media_accounts", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_storage_configurations", "better_together_platforms", column: "platform_id"
+  add_foreign_key "better_together_trusted_domain_events", "better_together_people", column: "actor_id", on_delete: :nullify
+  add_foreign_key "better_together_trusted_domain_events", "better_together_people", column: "subject_id", on_delete: :nullify
+  add_foreign_key "better_together_trusted_domain_events", "better_together_platform_trusted_domains", column: "platform_trusted_domain_id", on_delete: :nullify
+  add_foreign_key "better_together_trusted_domain_events", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_uploads", "better_together_people", column: "creator_id"
   add_foreign_key "better_together_uploads", "better_together_platforms", column: "platform_id"
   add_foreign_key "better_together_users", "better_together_platforms", column: "platform_id"

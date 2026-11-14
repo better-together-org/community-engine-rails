@@ -33,6 +33,8 @@ module BetterTogether
     class << self # rubocop:disable Metrics/ClassLength
       # Convenience resolution entry point, equivalent to calling OwnerResolver
       # directly, resolving from `subject` when present, else from `actor`.
+      # Returns nil when the resolved owner is not local (see Locality): external
+      # owners are never charged.
       def attribute(subject: nil, actor: nil, **)
         OwnerResolver.resolve(subject || actor)
       end
@@ -61,6 +63,8 @@ module BetterTogether
       # and the hold happen under the quota's lock, so two reservations racing for the last bytes cannot
       # both succeed. `enforce: false` records the hold without ever refusing it.
       def reserve!(type:, owner:, amount:, idempotency_key:, subject: nil, actor: nil, ttl: 5.minutes, enforce: true) # rubocop:disable Metrics/ParameterLists
+        return nil unless Locality.local_owner?(owner)
+
         type_class = Type.find(type)
         quota = find_or_build_quota(type_class, owner)
         period_key = period_key_for(type_class, Time.current)
@@ -82,6 +86,8 @@ module BetterTogether
       # happened in rather than the current one. Settling never refuses: the work is done and the usage is
       # a fact (the refusing happens before, in reserve!/check!).
       def settle!(type:, owner:, amount:, idempotency_key:, subject: nil, actor: nil, event: 'settle', occurred_at: nil) # rubocop:disable Metrics/ParameterLists
+        return nil unless Locality.local_owner?(owner)
+
         type_class = Type.find(type)
         return if subject && !type_class.counts_toward_quota?(subject)
 
@@ -176,8 +182,10 @@ module BetterTogether
           q.platform_id = platform_id
           q.enforcement_mode = enforcement_mode_for(owner, type_class.key)
         end
-      rescue ActiveRecord::RecordNotUnique
-        Quota.find_by!(owner:, quota_type: type_class.key)
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+        # Two writers both missed the row and raced to create it; the loser's
+        # uniqueness validation or unique index fires, so read the winner's row.
+        Quota.find_by(owner:, quota_type: type_class.key) || raise
       end
 
       def enforcement_mode_for(owner, type_key)

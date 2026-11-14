@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= t('.title', provider: @identity_provider.catalog_entry&.kind || @identity_provider.strategy) %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title', provider: @identity_provider.catalog_entry&.kind || @identity_provider.strategy) %></h1>
+  <p class="text-muted"><%= t('.subtitle', platform_name: @platform.name) %></p>
+
+  <%= render 'form', identity_provider: @identity_provider %>
+</div>
