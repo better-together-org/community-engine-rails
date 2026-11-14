@@ -51,7 +51,7 @@
 <%
   tab_error_counts = platform_form_tab_error_counts(platform)
   active_tab = platform_form_active_tab(tab_error_counts)
-  tab_ids = platform_form_tab_ids
+  tab_ids = platform_form_tab_ids(platform)
 %>
 
 <%= form_with(model: platform, data: { controller: "better_together--form-validation better_together--tabs" }) do |form| %>

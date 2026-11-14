@@ -6,80 +6,80 @@ classDiagram
     class BetterTogether__CommunitiesController["CommunitiesController"] {
       <<Controller>>
       models: Community
-      concerns: ChecksRequiredAgreements, InvitationSessionManagement, InvitationTokenAuthorization, InvitationTokenSession +3
+      concerns: ChecksRequiredAgreements, ConsentCookieSync, InvitationSessionManagement, InvitationTokenAuthorization +5
     }
     class BetterTogether__CommunityWebhookEndpointsController["CommunityWebhookEndpointsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__HostDashboardController["HostDashboardController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__HubController["HubController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__MembershipRequestsController["MembershipRequestsController"] {
       <<Controller>>
-      concerns: BotProtectedSubmissions, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +1
+      concerns: BotProtectedSubmissions, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__NavigationAreasController["NavigationAreasController"] {
       <<Controller>>
       models: NavigationArea
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__NavigationItemsController["NavigationItemsController"] {
       <<Controller>>
       models: NavigationItem
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__PlatformConnectionsController["PlatformConnectionsController"] {
       <<Controller>>
       models: PlatformConnection
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__PlatformInvitationsController["PlatformInvitationsController"] {
       <<Controller>>
       models: PlatformInvitation
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__PlatformsController["PlatformsController"] {
       <<Controller>>
       models: Platform
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__SettingsController["SettingsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: AppearancePreferenceParams, ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession +3
     }
     class BetterTogether__SetupWizardController["SetupWizardController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__SetupWizardStepsController["SetupWizardStepsController"] {
       <<Controller>>
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__SitemapsController["SitemapsController"] {
       <<Controller>>
       models: Sitemap
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__StorageConfigurationsController["StorageConfigurationsController"] {
       <<Controller>>
       models: StorageConfiguration
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +2
     }
     class BetterTogether__WizardStepsController["WizardStepsController"] {
       <<Controller>>
       models: WizardStep
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
     class BetterTogether__WizardsController["WizardsController"] {
       <<Controller>>
       models: Wizard
-      concerns: InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup, MentionPrefetch +1
+      concerns: ConsentCookieSync, InvitationSessionManagement, InvitationTokenSession, InvitationUserSetup +3
     }
   }
 
@@ -121,8 +121,8 @@ classDiagram
       <<Model>>
       table: better_together_platforms
       translates: description, name, slug
-      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +19
-      weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +9
+      concerns: BetterTogetherId, Creatable, FriendlySlug, Identifier +21
+      weak refs: owner: seeds, owner: slugs, owner: views, owner: rich_text_translations +12
     }
     class BetterTogether__PlatformConnection["PlatformConnection"] {
       <<Model>>

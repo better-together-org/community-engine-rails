@@ -1143,6 +1143,38 @@ es:
       type:
         email: Email
         person: Member
+    consent:
+      accept_all: Aceptar todo
+      analytics: 'Analítica: nos ayuda a entender como se usa el sitio'
+      body: Este sitio desea usar código de analítica y marketing. Las funciones esenciales
+        siempre funcionan. Puede cambiar de opinión en cualquier momento.
+      choices_legend: Categorías opcionales
+      choose: Elegir
+      essential_note: Las funciones esenciales siempre están activas.
+      essential_only: Solo lo esencial
+      marketing: 'Marketing: medir y personalizar la comunicación'
+      policy_link: Lea la política de cookies.
+      preferences: Preferencias de cookies
+      save: Guardar mis opciones
+      saved: Sus opciones de privacidad se guardaron.
+      settings:
+        analytics_help: Ayudan a la plataforma a entender cómo se usa el sitio.
+        device_note: Tus elecciones siguen a tu cuenta y se aplican cada vez que inicias
+          sesión.
+        essential: Cookies esenciales (siempre activas)
+        essential_help: Necesarias para iniciar sesión, mantener el sitio seguro y
+          recordar estas elecciones.
+        marketing_help: Miden y personalizan la comunicación.
+        none: Esta plataforma no usa actualmente cookies opcionales, así que no hay
+          nada que elegir. Las cookies esenciales siempre están activas.
+        not_decided: Aún no has elegido. Mientras tanto solo se usan cookies esenciales.
+        not_stored: Guardado en este dispositivo, pero no pudimos guardarlo en tu
+          cuenta. Inténtalo de nuevo.
+        outdated: Esta plataforma cambió los consentimientos que solicita desde tu
+          última elección. Elige de nuevo.
+        saved_on: Tus elecciones se guardaron el %{date}.
+        withdraw_all: Retirar todo el consentimiento opcional
+      title: Sus opciones de privacidad
     contact_details:
       contact_information: Información de contacto
       title: Detalles de Contacto
@@ -1453,6 +1485,57 @@ es:
       sidebar:
         conversations: Conversaciones
         new: Nuevo
+    cookie_policy:
+      categories:
+        analytics:
+          description: Nos ayudan a entender cómo se usa la plataforma para mejorarla.
+          title: Cookies de análisis
+        marketing:
+          description: Miden y personalizan la comunicación.
+          title: Cookies de marketing
+      choices_optional: Las cookies opcionales están desactivadas hasta que las aceptes.
+        Puedes cambiar o retirar tu elección en cualquier momento con el botón de
+        preferencias de cookies o, al iniciar sesión, desde tu configuración.
+      columns:
+        duration: Duración
+        name: Nombre de la cookie
+        purpose: Finalidad
+        type: Tipo
+      core:
+        consent:
+          cookies:
+            consent: Guarda tus elecciones de consentimiento (análisis y marketing)
+              y la versión de la política que respondiste
+          description: Recuerdan tus elecciones para no preguntarte en cada visita.
+          title: Tus elecciones de cookies
+        durations:
+          consent_days: 180 días, renovados en cada visita
+          session: Sesión
+          session_inactivity: Sesión (6 horas de inactividad)
+          two_weeks: 2 semanas
+        session:
+          cookies:
+            csrf: Token de seguridad que protege contra ataques de falsificación de
+              solicitudes entre sitios (CSRF)
+            remember: Te mantiene conectado cuando eliges «Recordarme» al iniciar
+              sesión
+            session: Mantiene tu sesión y guarda datos temporales como tokens de invitación,
+              idioma y ajustes de depuración
+          description: Mantienen tu sesión iniciada y protegen la plataforma contra
+            solicitudes falsificadas.
+          title: Inicio de sesión y seguridad
+      last_updated: 'Última actualización:'
+      manage_choices: Gestiona tus elecciones de cookies en tu configuración
+      optional_intro: Las siguientes cookies opcionales solo se usan si las aceptas.
+        Puedes cambiar de opinión en cualquier momento con el botón de preferencias
+        de cookies o, al iniciar sesión, desde tu configuración.
+      party:
+        first: Propia
+        third: De terceros
+      privacy_link: Información de privacidad de %{provider}
+      third_party_listed: Esta plataforma usa los servicios de terceros indicados
+        abajo. Solo establecen cookies o almacenamiento del navegador como se describe.
+      version: versión de la política %{version}
     default_member_name: Miembro
     device_permissions:
       location:
@@ -3570,6 +3653,105 @@ es:
         accepted: Aceptado
         expired: Vencido
         pending: Pendiente
+    platform_snippets:
+      applies_to_options:
+        all: Todos
+        signed_out: Solo visitantes sin sesión
+      audit_actions:
+        created: Creado
+        destroyed: Eliminado
+        disabled: Desactivado
+        enabled: Activado
+        updated: Actualizado
+      consent_categories:
+        analytics: Analítica
+        marketing: Marketing
+        none: No necesario
+      destroyed: Fragmento eliminado.
+      edit:
+        subtitle: Para %{platform_name}.
+        title: Editar %{name}
+      errors:
+        invalid_meta_markup: debe contener metaetiquetas o enlaces preconnect
+        invalid_script_markup: debe ser JavaScript sin etiquetas script ni comentarios
+          HTML
+        invalid_src: debe ser una dirección https
+        invalid_style_markup: debe ser CSS sin etiquetas style ni comentarios HTML
+        meta_requires_head: las metaetiquetas solo pueden ir en el head
+        origin_not_allowed: el origen %{origin} no está permitido por los ajustes
+          de seguridad de scripts de esta plataforma
+      form:
+        allow_origin: Permitir el origen de este script en la política de seguridad
+          de contenido
+        allow_origin_hint: Añade el origen a los orígenes de script permitidos de
+          esta plataforma.
+        applies_to: Se muestra a
+        cancel: Cancelar
+        consent_category: Consentimiento del visitante
+        consent_hint: Los fragmentos de analítica y marketing se retienen hasta que
+          los visitantes den su consentimiento.
+        content: Código
+        content_hint: Los scripts en línea se ejecutan con el nonce de seguridad de
+          la página. No incluya etiquetas script ni style. Para el tipo meta, solo
+          metaetiquetas y enlaces preconnect.
+        enabled: Activado
+        enabled_hint: Déjelo desactivado hasta que haya probado el fragmento.
+        kind: Tipo
+        location: Ubicación
+        name: Nombre
+        notes: Notas
+        save: Guardar fragmento
+        src: Dirección del script
+        src_hint: Solo para scripts externos. La dirección debe usar https y su origen
+          debe estar permitido en los ajustes de seguridad de la plataforma.
+        warning: Este código se ejecuta en el navegador de cada visitante. Pruebe
+          con el modo seguro y mantenga el fragmento desactivado hasta que esté listo.
+      index:
+        audit_line: "%{action}: %{name}"
+        audit_title: Cambios recientes
+        back_to_platform: Volver a los ajustes de la plataforma
+        delete_btn: Eliminar
+        delete_confirm: "¿Eliminar este fragmento?"
+        disabled_label: Desactivado
+        edit_btn: Editar
+        enabled_label: Activado
+        header_actions: Acciones
+        header_consent: Consentimiento
+        header_kind: Tipo
+        header_location: Ubicación
+        header_name: Nombre
+        header_status: Estado
+        kill_switch_hint: Añada ?safe_mode=1 a la dirección de cualquier página para
+          ver el sitio sin fragmentos.
+        kill_switch_off: Todos los fragmentos están desactivados.
+        kill_switch_on: Los fragmentos están activos.
+        kill_switch_title: Todos los fragmentos
+        move_down: Bajar
+        move_up: Subir
+        new_btn: Nuevo fragmento
+        none_yet: Aún no hay fragmentos.
+        subtitle: Scripts, estilos y metaetiquetas añadidos a cada página de %{platform_name}.
+        table_aria: Fragmentos de código personalizado
+        title: Código personalizado
+        turn_off: Desactivar todos
+        turn_on: Activar todos
+        warning: Los fragmentos se ejecutan en el navegador de cada visitante y pueden
+          leer lo que ven y escriben en esta plataforma. Añada solo código de confianza.
+      kinds:
+        html_meta: Metaetiquetas
+        script_inline: Script en línea
+        script_src: Script externo
+        style_inline: Estilo en línea
+      locations:
+        body_end: Final del body
+        body_start: Inicio del body
+        head_end: Final del head
+        head_start: Inicio del head
+      new:
+        subtitle: Para %{platform_name}. Los fragmentos nuevos comienzan desactivados.
+        title: Nuevo fragmento
+      saved: Fragmento guardado.
+      switch_updated: Se actualizó el interruptor de fragmentos.
     platform_trusted_domains:
       created: Se agregó el dominio de confianza.
       destroyed: Se eliminó el dominio de confianza. Las cuentas y membresías existentes
@@ -3686,6 +3868,10 @@ es:
           hostname/origen y presiona Enter.
         csp_img_src_text_label: Orígenes externos de imágenes permitidos
         csp_title: Seguridad / incrustaciones CSP
+        custom_code_hint: Añada scripts, estilos y metaetiquetas a cada página. Requiere
+          el permiso de gestión de código de la plataforma.
+        custom_code_link: Gestionar código personalizado
+        custom_code_title: Código personalizado
         custom_css_hint: Ajuste avanzado. Los estilos añadidos aquí se cargan después
           del tema y tienen prioridad sobre él.
         custom_css_title: CSS personalizado
@@ -4396,6 +4582,10 @@ es:
           description: Gestione usuarios que ha bloqueado para que no interactúen
             con usted.
           title: Personas Bloqueadas
+        cookie_consent:
+          description: Elige qué cookies opcionales puede usar esta plataforma. Tu
+            elección se guarda en tu cuenta.
+          title: Consentimiento de cookies
         developer:
           apps:
             client_id_label: ID de Cliente
@@ -4517,6 +4707,7 @@ es:
         tabs:
           account: Cuenta
           blocked_people: Personas Bloqueadas
+          cookie_consent: Consentimiento de cookies
           developer: Desarrollador
           device_permissions: Permisos del Dispositivo
           integrations: Integraciones
