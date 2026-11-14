@@ -644,6 +644,7 @@ fr:
       better_together/content/html: HTML
       better_together/content/iframe_block: Iframe
       better_together/content/image: Image
+      better_together/content/image_gallery_block: Galerie d'images
       better_together/content/link: Lien
       better_together/content/markdown: Markdown
       better_together/content/mermaid_diagram: Diagramme Mermaid
@@ -1144,6 +1145,10 @@ fr:
     contacts:
       add: Ajouter un contact
     content:
+      block_picker:
+        create: Créer un nouveau bloc %{block}
+        create_for_page: Créer un nouveau bloc %{block} pour la page
+        icon: Icône %{block}
       blocks:
         accordion_block:
           answer: Answer
@@ -1222,6 +1227,16 @@ fr:
           missing_url: Aucune URL d'iframe configurée.
           url_help: Accepte une URL HTTPS complète d'iframe, comme un sondage Formbricks
             ou une autre intégration de confiance d'un espace communautaire.
+        image_gallery_block:
+          empty: Aucune image à afficher.
+          heading_help: Titre affiché au-dessus de la galerie (facultatif)
+          images: Images
+          images_help: Choisissez les blocs d'image dans l'ordre souhaité.
+          layout: Disposition
+          layouts:
+            grid: Grille
+            masonry: Mosaïque
+          lightbox: Ouvrir les images dans une visionneuse au clic
         json_array_rows:
           add_item: Add item
           drag_handle: Drag to reorder
