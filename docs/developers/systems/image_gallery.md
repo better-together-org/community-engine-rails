@@ -29,3 +29,13 @@ An unknown layout falls back to `:grid`. The two-argument call `render_image_gal
 `spec/features/better_together/image_gallery_accessibility_spec.rb` (axe) and
 `spec/docs_screenshots/better_together/image_gallery_spec.rb`. The specs render the helper through a
 test-only host partial, `spec/dummy/app/views/better_together/test_support/_gallery.html.erb`.
+
+## Lightbox
+
+Pass `lightbox: true` to turn each thumbnail into a labelled `button.image-gallery__open` that opens a
+Bootstrap 5 modal (`better_together--lightbox` Stimulus controller, no extra JavaScript dependency).
+The viewer shows a 1600 pixel rendition, the caption and a live "n of N" counter, and supports the
+close button, Escape, previous and next buttons, the left and right arrow keys, and swipe. Navigation wraps
+around, focus returns to the thumbnail on close, and the fade is dropped under `prefers-reduced-motion`.
+Labels live under `better_together.image_gallery.*` in en, fr, es and uk. The option defaults to off so
+existing callers (such as NL Venues) are unchanged.

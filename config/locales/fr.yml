@@ -2117,6 +2117,13 @@ fr:
         no_suggestions: Aucune suggestion pour le moment — créez une offre ou une
           demande pour voir des correspondances.
         suggested_matches: Correspondances suggérées
+    image_gallery:
+      close: Fermer
+      counter: "{current} sur {total}"
+      dialog_label: 'Galerie d''images : %{name}'
+      next: Image suivante
+      open_image: 'Ouvrir l''image %{current} sur %{total} : %{name}'
+      previous: Image précédente
     infrastructure:
       locations: Emplacements
     invitations:

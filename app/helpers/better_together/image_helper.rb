@@ -160,27 +160,41 @@ module BetterTogether
 
     GALLERY_LAYOUTS = %i[grid masonry].freeze
     GALLERY_VARIANT_WIDTHS = [480, 960].freeze
+    GALLERY_FULL_WIDTH = 1600
+    LIGHTBOX = 'better_together--lightbox'
     GALLERY_SIZES = '(min-width: 768px) 33vw, 100vw'
 
     # Renders a gallery of image blocks (anything responding to #media).
     # Per-image alt_text, caption and attribution are used when present; name is the fallback alt text.
     # layout: :grid (default, DOM order equals visual order) or :masonry (opt-in).
-    def render_image_gallery(images, name, layout: :grid, label: nil)
+    # lightbox: true turns each thumbnail into a button that opens the image in a modal viewer.
+    def render_image_gallery(images, name, layout: :grid, label: nil, lightbox: false)
       return if images.blank?
 
       layout = GALLERY_LAYOUTS.include?(layout&.to_sym) ? layout.to_sym : :grid
+      images = images.to_a
       content_tag(:section, class: "image-gallery image-gallery--#{layout} mb-4",
-                            aria: { label: label.presence || name.to_s.presence }) do
-        content_tag(:ul, class: 'image-gallery__list list-unstyled mb-0', **gallery_data(layout)) do
-          safe_join(images.map { |image| render_gallery_item(image, name, single: images.size == 1) })
-        end
+                            'aria-label': label.presence || name.to_s.presence, **gallery_lightbox_data(lightbox)) do
+        safe_join([gallery_list(images, name, layout, lightbox),
+                   (gallery_lightbox_modal(name, label) if lightbox)].compact)
       end
     end
 
-    def render_gallery_item(image, name, single: false)
+    def gallery_list(images, name, layout, lightbox)
+      content_tag(:ul, class: 'image-gallery__list list-unstyled mb-0', **gallery_data(layout)) do
+        safe_join(images.each_with_index.map do |image, index|
+          render_gallery_item(image, name, single: images.size == 1,
+                                           lightbox: lightbox ? { index:, total: images.size } : nil)
+        end)
+      end
+    end
+
+    def render_gallery_item(image, name, single: false, lightbox: nil)
       content_tag(:li, class: "image-gallery__item#{' image-gallery__item--single' if single}") do
         content_tag(:figure, class: 'image-gallery__figure m-0') do
-          safe_join([gallery_image_tag(image, name, single:), gallery_caption(image)].compact)
+          picture = gallery_image_tag(image, name, single:)
+          picture = gallery_lightbox_button(image, name, picture, **lightbox) if lightbox
+          safe_join([picture, gallery_caption(image)].compact)
         end
       end
     end
@@ -206,6 +220,78 @@ module BetterTogether
 
       { 'data-controller': 'better_together--masonry',
         'data-better_together--masonry-item-selector-value': '.image-gallery__item' }
+    end
+
+    # Stimulus names contain underscores, which the data: hash would turn into dashes, so write full attributes.
+    def lightbox_target(name)
+      { "data-#{LIGHTBOX}-target": name }
+    end
+
+    def gallery_lightbox_data(lightbox)
+      return {} unless lightbox
+
+      { 'data-controller': LIGHTBOX,
+        "data-#{LIGHTBOX}-counter-template-value": t('better_together.image_gallery.counter') }
+    end
+
+    def gallery_lightbox_button(image, name, picture, index:, total:)
+      alt = gallery_alt(image, name)
+      full = storage_proxy_url_for(gallery_variant(image.media, GALLERY_FULL_WIDTH))
+      content_tag(:button, picture, type: 'button', class: 'image-gallery__open btn p-0 border-0 d-block w-100',
+                                    'aria-label': t('better_together.image_gallery.open_image',
+                                                    current: index + 1, total:, name: alt),
+                                    'data-action': "click->#{LIGHTBOX}#open", 'data-full-src': full, 'data-alt': alt,
+                                    **lightbox_target('trigger'))
+    end
+
+    def gallery_lightbox_modal(name, label)
+      title_id = "image-gallery-title-#{SecureRandom.hex(4)}"
+      title = t('better_together.image_gallery.dialog_label', name: label.presence || name)
+      content_tag(:div, class: 'modal fade image-gallery__modal', tabindex: -1,
+                        'aria-labelledby': title_id, 'aria-hidden': true,
+                        'data-action': "keydown->#{LIGHTBOX}#keydown", **lightbox_target('modal')) do
+        content_tag(:div, class: 'modal-dialog modal-xl modal-dialog-centered') do
+          content_tag(:div, class: 'modal-content bg-dark text-white') do
+            safe_join([gallery_modal_header(title_id, title), gallery_modal_body, gallery_modal_footer])
+          end
+        end
+      end
+    end
+
+    def gallery_modal_header(title_id, title)
+      content_tag(:div, class: 'modal-header border-0') do
+        safe_join([
+                    content_tag(:h2, title, id: title_id, class: 'visually-hidden'),
+                    content_tag(:span, '', class: 'image-gallery__counter small', 'aria-live': 'polite',
+                                           **lightbox_target('counter')),
+                    content_tag(:button, '', type: 'button', class: 'btn-close btn-close-white',
+                                             'data-bs-dismiss': 'modal',
+                                             'aria-label': t('better_together.image_gallery.close'))
+                  ])
+      end
+    end
+
+    def gallery_modal_body
+      content_tag(:div, class: 'modal-body text-center') do
+        safe_join([
+                    tag.img(src: '', alt: '', class: 'image-gallery__modal-image img-fluid', **lightbox_target('image')),
+                    content_tag(:p, '', class: 'image-gallery__modal-caption small mt-2 mb-0',
+                                        **lightbox_target('caption'))
+                  ])
+      end
+    end
+
+    def gallery_modal_footer
+      content_tag(:div, class: 'modal-footer border-0 justify-content-between') do
+        safe_join([gallery_nav_button('previous', 'fa-chevron-left'), gallery_nav_button('next', 'fa-chevron-right')])
+      end
+    end
+
+    def gallery_nav_button(direction, icon)
+      content_tag(:button, tag.i(class: "fas #{icon}", 'aria-hidden': true), type: 'button',
+                                                                             class: "btn btn-outline-light image-gallery__#{direction}",
+                                                                             'aria-label': t("better_together.image_gallery.#{direction}"),
+                                                                             'data-action': "click->#{LIGHTBOX}##{direction}")
     end
 
     def gallery_alt(image, name)

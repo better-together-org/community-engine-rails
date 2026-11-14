@@ -84,6 +84,48 @@ RSpec.describe BetterTogether::ImageHelper, '#render_image_gallery' do
     expect(gallery([image], layout: :spiral)).to have_css('.image-gallery--grid')
   end
 
+  describe 'lightbox' do
+    it 'is off by default', :aggregate_failures do
+      html = gallery([image, plain])
+
+      expect(html).to have_no_css('button.image-gallery__open')
+      expect(html).to have_no_css('.modal')
+    end
+
+    it 'wraps each thumbnail in a labelled button', :aggregate_failures do
+      html = gallery([image, plain], lightbox: true)
+
+      expect(html).to have_css('section[data-controller="better_together--lightbox"]')
+      expect(html).to have_css('button.image-gallery__open[data-action="click->better_together--lightbox#open"]',
+                               count: 2)
+      expect(html).to have_css('button[aria-label="Open image 1 of 2: A harbour at dusk"]')
+      expect(html).to have_css('button[data-full-src][data-alt="Harbour"]')
+    end
+
+    it 'renders one dialog with counter, close and navigation controls', :aggregate_failures do
+      html = gallery([image, plain], lightbox: true)
+
+      expect(html).to have_css('.modal[aria-labelledby]', count: 1, visible: :all)
+      expect(html).to have_css('h2.visually-hidden', text: 'Image gallery: Harbour', visible: :all)
+      expect(html).to have_css('[aria-live="polite"]', visible: :all)
+      expect(html).to have_css('button.btn-close[aria-label="Close"]', visible: :all)
+      expect(html).to have_css('button.image-gallery__previous[aria-label="Previous image"]', visible: :all)
+      expect(html).to have_css('button.image-gallery__next[aria-label="Next image"]', visible: :all)
+    end
+
+    it 'passes the counter template to the controller' do
+      html = gallery([image], lightbox: true)
+
+      expect(html).to have_css('section[data-better_together--lightbox-counter-template-value="{current} of {total}"]')
+    end
+
+    it 'translates the labels' do
+      I18n.with_locale(:fr) do
+        expect(gallery([image], lightbox: true)).to have_css('button.btn-close[aria-label="Fermer"]', visible: :all)
+      end
+    end
+  end
+
   it 'escapes caption markup' do
     image.reload.update!(caption: '<script>alert(1)</script>')
 

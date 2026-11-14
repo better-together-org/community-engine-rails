@@ -2104,6 +2104,13 @@ es:
         no_suggestions: No hay sugerencias aún — crea una oferta o solicitud para
           ver coincidencias.
         suggested_matches: Sugerencias de coincidencias
+    image_gallery:
+      close: Cerrar
+      counter: "{current} de {total}"
+      dialog_label: 'Galería de imágenes: %{name}'
+      next: Imagen siguiente
+      open_image: 'Abrir imagen %{current} de %{total}: %{name}'
+      previous: Imagen anterior
     infrastructure:
       locations: Ubicaciones
     invitations:
