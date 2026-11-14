@@ -1447,6 +1447,11 @@ en:
           body: The seller did not accept your %{method} payment, so the order was
             cancelled. Contact the seller if you think this is a mistake.
           title: Your payment for order %{number} was not accepted
+        payment_self_confirmed:
+          body: A steward confirmed their own purchase. Order %{number} for %{amount}
+            was marked received by the buyer, because no other steward was available
+            to do it. Please review it.
+          title: A steward confirmed their own purchase (order %{number})
         payment_succeeded:
           body: Your payment of %{amount} was received.
           title: Receipt for order %{number}
@@ -1558,6 +1563,7 @@ en:
           it never sees.'
         field_buyer_reference: Buyer’s note
         field_claimed: Buyer says they sent it
+        field_confirmed_by: Confirmed by
         field_fee: Platform fee
         field_in_person: Sold in person
         heading: Pay by %{method}
@@ -1596,6 +1602,10 @@ en:
         reject_reason_label: If you did not receive it, say why (the buyer will see
           this)
         rejection_reason: 'The seller said: %{reason}'
+        self_confirmed_badge: Confirmed by the buyer (steward)
+        self_confirmed_note: This payment was confirmed by the steward who bought
+          it, because no other steward could. Review it if you were not expecting
+          this.
         seller_heading: "%{method} payment"
         seller_reference_label: Your reference (optional)
         status_awaiting: Waiting for payment

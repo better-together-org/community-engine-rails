@@ -14,6 +14,12 @@ RSpec.describe BetterTogether::Billing::OfflinePayments::Transition do
     clear_notices
   end
 
+  # Leaves `keep` as the only steward the platform has (the test platform may seed others).
+  def only_steward(keep, except: [])
+    others = BetterTogether::Billing::Notifications::Recipients.managers_of(host_platform).reject { |p| p.id == keep.id || except.include?(p) }
+    BetterTogether::PersonPlatformMembership.where(member: others, joinable: host_platform).destroy_all
+  end
+
   def events_for(record) = BetterTogether::Billing::Event.about(record).order(:created_at).pluck(:event_type)
 
   describe 'the seller confirming' do
@@ -107,12 +113,59 @@ RSpec.describe BetterTogether::Billing::OfflinePayments::Transition do
       expect { described_class.receive(own, by: other_buyer) }.to raise_error(described_class::SelfConfirmation)
     end
 
-    it 'is allowed for a steward, who is accountable for the platform and logged as the person who confirmed' do
-      own = offline_for(place_offline('cash', buyer: steward))
+    context 'when the buyer is a steward' do
+      let(:own) { offline_for(place_offline('cash', buyer: steward)) }
+
+      it 'is refused while another steward could confirm it' do
+        expect { described_class.receive(own, by: steward) }.to raise_error(described_class::SelfConfirmation, /another steward/)
+        expect(own.reload).to have_attributes(status: 'awaiting', self_confirmed: false, confirmed_by: nil)
+      end
+
+      it 'is allowed for the only steward, flagged, logged and told to nobody else' do
+        only_steward(steward)
+        clear_notices
+
+        deliver_now { described_class.receive(own, by: steward) }
+
+        expect(own.reload).to have_attributes(status: 'confirmed', confirmed_by: steward, self_confirmed: true)
+        expect(kinds_for(other_steward)).to be_empty
+        expect(BetterTogether::Billing::Event.about(own).last.payload).to include('self_confirmed' => true, 'actor_id' => steward.id)
+      end
+
+      it 'tells the stewards who are the buyer\'s counterpart once, and repeating changes nothing' do
+        only_steward(steward, except: [other_steward])
+        beneficiary_order = place_offline('cash', buyer: steward, on_behalf_of: other_steward)
+        pair = offline_for(beneficiary_order)
+        clear_notices
+
+        deliver_now { 2.times { described_class.receive(pair, by: steward) } }
+
+        expect(pair.reload.self_confirmed).to be(true)
+        expect(kinds_for(other_steward).count('payment_self_confirmed')).to eq(1)
+        expect(kinds_for(steward)).not_to include('payment_self_confirmed')
+        expect(events_for(pair)).to eq(['cash.payment_confirmed'])
+      end
+
+      it 'is not flagged when a different steward confirms it' do
+        described_class.receive(own, by: other_steward)
+
+        expect(own.reload).to have_attributes(status: 'confirmed', confirmed_by: other_steward, self_confirmed: false)
+      end
+    end
+
+    it 'is allowed for a steward the purchase is on behalf of, when no other steward exists, and flagged' do
+      only_steward(steward)
+      own = offline_for(place_offline('cash', buyer: other_buyer, on_behalf_of: steward))
 
       described_class.receive(own, by: steward)
 
-      expect(own.reload).to have_attributes(status: 'confirmed', confirmed_by: steward)
+      expect(own.reload.self_confirmed).to be(true)
+    end
+
+    it 'does not flag a payment a steward confirms for someone else' do
+      described_class.receive(offline, by: steward)
+
+      expect(offline.reload.self_confirmed).to be(false)
     end
 
     it 'does not stop someone else confirming a buyer\'s payment' do

@@ -9,14 +9,15 @@ module BetterTogether
       module Audit
         module_function
 
-        def record(offline, event_type:, outcome_kind:, actor: nil)
+        def record(offline, event_type:, outcome_kind:, actor: nil, self_confirmed: false)
           event_id = SecureRandom.uuid
           type = "#{offline.processor}.#{event_type}"
           offline.platform.billing_events.create!(
             processor: offline.processor, event_id:, event_type: type, processing_status: 'processed', processed_at: Time.current,
             outcome_kind: outcome_kind.to_s, subject: offline,
             payload: { 'id' => event_id, 'type' => type, 'outcome_kind' => outcome_kind.to_s, 'actor_id' => actor&.id,
-                       'order_id' => offline.order_id, 'status' => offline.status }
+                       'order_id' => offline.order_id, 'status' => offline.status,
+                       'self_confirmed' => self_confirmed }
           )
         end
       end

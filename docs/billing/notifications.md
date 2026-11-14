@@ -17,6 +17,7 @@ Billing tells people what is happening through the same Noticed notifications th
 | `payment_action_required` | buyer | yes | the processor needs the buyer to act (bank confirmation) |
 | `payment_claimed` | seller | | the buyer says they sent a payment made outside the platform (first time only) |
 | `payment_confirmed` | buyer | | the seller says the money arrived, whether or not the buyer ever said they sent it |
+| `payment_self_confirmed` | seller | yes | a steward confirmed their own purchase because no other steward could (once) |
 | `payment_rejected` | buyer | | the seller did not accept the payment |
 | `payment_place_gone` | buyer, seller | | a late payment was confirmed but what the order held is gone |
 | `cheque_received` | buyer | | the seller has the cheque |

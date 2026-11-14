@@ -4,7 +4,7 @@
 -->
 # Community Engine subsystem inventory
 
-Generated from live Rails reflections at `2026-11-14T16:43:13Z`.
+Generated from live Rails reflections at `2026-11-14T20:38:47Z`.
 
 ## Identity, access, and memberships
 
@@ -45,23 +45,23 @@ People, users, identifications, invitations, roles, memberships, and privacy/exp
 
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
-| InvitationsController | `BetterTogether::ApplicationController` | `Invitation` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
-| OauthApplicationsController | `BetterTogether::ResourceController` | `OauthApplication` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PeopleController | `BetterTogether::FriendlyResourceController` | `Person` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonAccessGrantsController | `BetterTogether::ApplicationController` | `PersonAccessGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonBlocksController | `BetterTogether::ApplicationController` | `PersonBlock` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
-| PersonChecklistItemsController | `BetterTogether::ApplicationController` | `PersonChecklistItem` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonCommunityMembershipsController | `BetterTogether::ApplicationController` | `PersonCommunityMembership` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonDataExportsController | `BetterTogether::ApplicationController` | `PersonDataExport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonDeletionRequestsController | `BetterTogether::ApplicationController` | `PersonDeletionRequest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonLinkedSeedsController | `BetterTogether::ApplicationController` | `PersonLinkedSeed` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonLinksController | `BetterTogether::ApplicationController` | `PersonLink` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonPlatformIntegrationsController | `BetterTogether::ApplicationController` | `PersonPlatformIntegration` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonPlatformMembershipsController | `BetterTogether::ApplicationController` | `PersonPlatformMembership` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PersonSeedsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ResourcePermissionsController | `BetterTogether::FriendlyResourceController` | `ResourcePermission` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| RolesController | `BetterTogether::FriendlyResourceController` | `Role` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| UsersController | `BetterTogether::FriendlyResourceController` | `User` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| InvitationsController | `BetterTogether::ApplicationController` | `Invitation` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling`<br>`ThirdPartyTracking` |
+| OauthApplicationsController | `BetterTogether::ResourceController` | `OauthApplication` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PeopleController | `BetterTogether::FriendlyResourceController` | `Person` | `AppearancePreferenceParams`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonAccessGrantsController | `BetterTogether::ApplicationController` | `PersonAccessGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonBlocksController | `BetterTogether::ApplicationController` | `PersonBlock` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling`<br>`ThirdPartyTracking` |
+| PersonChecklistItemsController | `BetterTogether::ApplicationController` | `PersonChecklistItem` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonCommunityMembershipsController | `BetterTogether::ApplicationController` | `PersonCommunityMembership` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonDataExportsController | `BetterTogether::ApplicationController` | `PersonDataExport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonDeletionRequestsController | `BetterTogether::ApplicationController` | `PersonDeletionRequest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonLinkedSeedsController | `BetterTogether::ApplicationController` | `PersonLinkedSeed` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonLinksController | `BetterTogether::ApplicationController` | `PersonLink` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonPlatformIntegrationsController | `BetterTogether::ApplicationController` | `PersonPlatformIntegration` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonPlatformMembershipsController | `BetterTogether::ApplicationController` | `PersonPlatformMembership` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PersonSeedsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ResourcePermissionsController | `BetterTogether::FriendlyResourceController` | `ResourcePermission` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| RolesController | `BetterTogether::FriendlyResourceController` | `Role` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| UsersController | `BetterTogether::FriendlyResourceController` | `User` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -125,22 +125,22 @@ Platforms, communities, domains, platform connections, storage, robots, routing,
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
 | CommunitiesController | `BetterTogether::FriendlyResourceController` | `Community` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenAuthorization`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| CommunityWebhookEndpointsController | `BetterTogether::WebhookEndpointsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| HostDashboardController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| HubController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| MembershipRequestsController | `BetterTogether::ApplicationController` | — | `BotProtectedSubmissions`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| NavigationAreasController | `BetterTogether::FriendlyResourceController` | `NavigationArea` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| NavigationItemsController | `BetterTogether::FriendlyResourceController` | `NavigationItem` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PlatformConnectionsController | `BetterTogether::ResourceController` | `PlatformConnection` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PlatformInvitationsController | `BetterTogether::ApplicationController` | `PlatformInvitation` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
-| PlatformsController | `BetterTogether::FriendlyResourceController` | `Platform` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| SettingsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| SetupWizardController | `BetterTogether::WizardsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
-| SetupWizardStepsController | `BetterTogether::WizardStepsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
-| SitemapsController | `BetterTogether::ApplicationController` | `Sitemap` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| StorageConfigurationsController | `BetterTogether::ApplicationController` | `StorageConfiguration` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| WizardStepsController | `BetterTogether::ApplicationController` | `WizardStep` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
-| WizardsController | `BetterTogether::ApplicationController` | `Wizard` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
+| CommunityWebhookEndpointsController | `BetterTogether::WebhookEndpointsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| HostDashboardController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| HubController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| MembershipRequestsController | `BetterTogether::ApplicationController` | — | `BotProtectedSubmissions`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| NavigationAreasController | `BetterTogether::FriendlyResourceController` | `NavigationArea` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| NavigationItemsController | `BetterTogether::FriendlyResourceController` | `NavigationItem` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PlatformConnectionsController | `BetterTogether::ResourceController` | `PlatformConnection` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PlatformInvitationsController | `BetterTogether::ApplicationController` | `PlatformInvitation` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling`<br>`ThirdPartyTracking` |
+| PlatformsController | `BetterTogether::FriendlyResourceController` | `Platform` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| SettingsController | `BetterTogether::ApplicationController` | — | `AppearancePreferenceParams`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| SetupWizardController | `BetterTogether::WizardsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking`<br>`WizardMethods` |
+| SetupWizardStepsController | `BetterTogether::WizardStepsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking`<br>`WizardMethods` |
+| SitemapsController | `BetterTogether::ApplicationController` | `Sitemap` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| StorageConfigurationsController | `BetterTogether::ApplicationController` | `StorageConfiguration` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| WizardStepsController | `BetterTogether::ApplicationController` | `WizardStep` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking`<br>`WizardMethods` |
+| WizardsController | `BetterTogether::ApplicationController` | `Wizard` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking`<br>`WizardMethods` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -149,7 +149,7 @@ Platforms, communities, domains, platform connections, storage, robots, routing,
 - `FederationAccessToken`: `seeds` (has_many)
 - `NavigationArea`: `navigable` (belongs_to), `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many)
 - `NavigationItem`: `linkable` (belongs_to), `seeds` (has_many), `slugs` (has_many), `string_translations` (has_many)
-- `Platform`: `seeds` (has_many), `slugs` (has_many), `views` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quotas` (has_many), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one)
+- `Platform`: `seeds` (has_many), `slugs` (has_many), `views` (has_many), `rich_text_translations` (has_many), `rich_text_description` (has_one), `rich_text_description_en` (has_one), `rich_text_description_fr` (has_one), `rich_text_description_es` (has_one), `rich_text_description_uk` (has_one), `quotas` (has_many), `string_translations` (has_many), `profile_image_attachment` (has_one), `cover_image_attachment` (has_one), `header_banner_attachment` (has_one), `favicon_attachment` (has_one), `dark_logo_attachment` (has_one)
 - `PlatformConnection`: `seeds` (has_many)
 - `PlatformDomain`: `seeds` (has_many)
 - `PlatformInvitation`: `seeds` (has_many), `rich_text_greeting` (has_one)
@@ -217,14 +217,14 @@ Pages, posts, uploads, categories, citations, claims, comments, and the content 
 
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
-| CallsForInterestController | `BetterTogether::FriendlyResourceController` | `CallForInterest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| CategoriesController | `BetterTogether::FriendlyResourceController` | `Category` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Content::BlocksController | `BetterTogether::ResourceController` | `Content::Block` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| CallsForInterestController | `BetterTogether::FriendlyResourceController` | `CallForInterest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| CategoriesController | `BetterTogether::FriendlyResourceController` | `Category` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Content::BlocksController | `BetterTogether::ResourceController` | `Content::Block` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | PagesController | `BetterTogether::FriendlyResourceController` | `Page` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PageBlockVisibility` |
 | PostsController | `BetterTogether::FriendlyResourceController` | `Post` | `ChecksRequiredAgreements`<br>`FramedIndex`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| StaticPagesController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| TranslationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| UploadsController | `BetterTogether::FriendlyResourceController` | `Upload` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
+| StaticPagesController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| TranslationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| UploadsController | `BetterTogether::FriendlyResourceController` | `Upload` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -354,7 +354,7 @@ Event scheduling, recurrence, calendars, attendance, organizer flows, and invita
 
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
-| CalendarsController | `BetterTogether::FriendlyResourceController` | `Calendar` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| CalendarsController | `BetterTogether::FriendlyResourceController` | `Calendar` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | EventsController | `BetterTogether::FriendlyResourceController` | `Event` | `ChecksRequiredAgreements`<br>`EventSeriesActions`<br>`FramedIndex`<br>`InvitationSessionManagement`<br>`InvitationTokenAuthorization`<br>`InvitationTokenSession` |
 
 ### Polymorphic / weak-reference surfaces
@@ -397,10 +397,10 @@ Conversation threads, messages, moderation/report intake, and safety case review
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
 | ConversationsController | `BetterTogether::ApplicationController` | `Conversation` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`PerUserThrottling` |
-| MessagesController | `BetterTogether::ApplicationController` | `Message` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
+| MessagesController | `BetterTogether::ApplicationController` | `Message` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling`<br>`ThirdPartyTracking` |
 | ReportsController | `BetterTogether::ApplicationController` | `Report` | `BotProtectedSubmissions`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
-| Safety::CasesController | `BetterTogether::ApplicationController` | `Safety::Case` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Safety::NotesController | `BetterTogether::ApplicationController` | `Safety::Note` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Safety::CasesController | `BetterTogether::ApplicationController` | `Safety::Case` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Safety::NotesController | `BetterTogether::ApplicationController` | `Safety::Note` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -455,14 +455,14 @@ Agreement-driven governance, Joatu exchange models, checklist participation, and
 
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
-| AgreementsController | `BetterTogether::FriendlyResourceController` | `Agreement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PageBlockVisibility` |
-| AgreementsStatusController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ChecklistItemsController | `BetterTogether::FriendlyResourceController` | `ChecklistItem` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ChecklistsController | `BetterTogether::FriendlyResourceController` | `Checklist` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Joatu::AgreementsController | `BetterTogether::Joatu::JoatuController` | `Joatu::Agreement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable` |
-| Joatu::OffersController | `BetterTogether::Joatu::JoatuController` | `Joatu::Offer` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable` |
-| Joatu::RequestsController | `BetterTogether::Joatu::JoatuController` | `Joatu::Request` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable` |
-| SeedsController | `BetterTogether::ApplicationController` | `Seed` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| AgreementsController | `BetterTogether::FriendlyResourceController` | `Agreement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PageBlockVisibility`<br>`ThirdPartyTracking` |
+| AgreementsStatusController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ChecklistItemsController | `BetterTogether::FriendlyResourceController` | `ChecklistItem` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ChecklistsController | `BetterTogether::FriendlyResourceController` | `Checklist` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Joatu::AgreementsController | `BetterTogether::Joatu::JoatuController` | `Joatu::Agreement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`ThirdPartyTracking` |
+| Joatu::OffersController | `BetterTogether::Joatu::JoatuController` | `Joatu::Offer` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`ThirdPartyTracking` |
+| Joatu::RequestsController | `BetterTogether::Joatu::JoatuController` | `Joatu::Request` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`ThirdPartyTracking` |
+| SeedsController | `BetterTogether::ApplicationController` | `Seed` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -546,10 +546,10 @@ Metrics records, search infrastructure, notification surfaces, and AI translatio
 
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
-| HelpPreferencesController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| NotificationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable` |
-| SearchController | `BetterTogether::ApplicationController` | `Search` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| ViewPreferencesController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| HelpPreferencesController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| NotificationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`ThirdPartyTracking` |
+| SearchController | `BetterTogether::ApplicationController` | `Search` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| ViewPreferencesController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -609,7 +609,7 @@ Webhook endpoints, deliveries, API/controller concern surfaces, and automation e
 | --- | --- | --- | --- |
 | Api::V1::PostsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::WebhooksController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
-| WebhookEndpointsController | `BetterTogether::ResourceController` | `WebhookEndpoint` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| WebhookEndpointsController | `BetterTogether::ResourceController` | `WebhookEndpoint` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 
@@ -657,26 +657,26 @@ Vendor-neutral billing: the platform-bound plan catalog (plans are pushed to, or
 
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
-| Billing::AgreementRequirementsController | `BetterTogether::ApplicationController` | `Billing::AgreementRequirement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::AllowancesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::AgreementRequirementsController | `BetterTogether::ApplicationController` | `Billing::AgreementRequirement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::AllowancesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Billing::CheckoutsController | `BetterTogether::ApplicationController` | `Billing::Checkout` | `Billing::CheckoutTaxPreview`<br>`Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditAccountsController | `BetterTogether::ApplicationController` | `Billing::CreditAccount` | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 | Billing::CreditGrantsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::CreditsController | `BetterTogether::ApplicationController` | `Billing::Credit` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::EntitlementsController | `BetterTogether::ApplicationController` | `Billing::Entitlement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::OfflinePaymentsController | `BetterTogether::ApplicationController` | `Billing::OfflinePayment` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::OrderClaimsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::OrdersController | `BetterTogether::ApplicationController` | `Billing::Order` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::PlanGrantsController | `BetterTogether::ApplicationController` | `Billing::PlanGrant` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::PlansController | `BetterTogether::ApplicationController` | `Billing::Plan` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::ProcessorOptionsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::ProcessorSettingsController | `BetterTogether::ApplicationController` | `Billing::ProcessorSetting` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::PromotionRedemptionsController | `BetterTogether::ApplicationController` | `Billing::PromotionRedemption` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::PromotionsController | `BetterTogether::ApplicationController` | `Billing::Promotion` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::SaleRefundsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::SalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::SubscribersController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::SubscriptionsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::CreditsController | `BetterTogether::ApplicationController` | `Billing::Credit` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::EntitlementsController | `BetterTogether::ApplicationController` | `Billing::Entitlement` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::OfflinePaymentsController | `BetterTogether::ApplicationController` | `Billing::OfflinePayment` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::OrderClaimsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::OrdersController | `BetterTogether::ApplicationController` | `Billing::Order` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::PlanGrantsController | `BetterTogether::ApplicationController` | `Billing::PlanGrant` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::PlansController | `BetterTogether::ApplicationController` | `Billing::Plan` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::ProcessorOptionsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::ProcessorSettingsController | `BetterTogether::ApplicationController` | `Billing::ProcessorSetting` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::PromotionRedemptionsController | `BetterTogether::ApplicationController` | `Billing::PromotionRedemption` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::PromotionsController | `BetterTogether::ApplicationController` | `Billing::Promotion` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::SaleRefundsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::SalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::SubscribersController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::SubscriptionsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Billing::WalkUpSalesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
 
 ### Polymorphic / weak-reference surfaces
@@ -830,12 +830,12 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Controller | Inherits from | Inferred models | Controller concerns |
 | --- | --- | --- | --- |
 | Api::ApplicationController | `JSONAPI::ResourceController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
-| Api::Auth::ConfirmationsController | `BetterTogether::Users::ConfirmationsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Api::Auth::PasswordsController | `BetterTogether::Users::PasswordsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Api::Auth::ConfirmationsController | `BetterTogether::Users::ConfirmationsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Api::Auth::PasswordsController | `BetterTogether::Users::PasswordsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Api::Auth::RegistrationsController | `BetterTogether::Users::RegistrationsController` | — | `Api::Auth::RegistrationHelpers`<br>`BotProtectedSubmissions`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup` |
-| Api::Auth::SessionsController | `BetterTogether::Users::SessionsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Api::Auth::SessionsController | `BetterTogether::Users::SessionsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Api::Doorkeeper::AuthorizationsController | `Doorkeeper::AuthorizationsController` | — | — |
-| Api::Oauth::ApplicationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Api::Oauth::ApplicationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Api::V1::AuthorshipsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::BlocksController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::CommunitiesController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
@@ -871,81 +871,81 @@ Live runtime classes that do not yet fit the primary subsystem taxonomy and shou
 | Api::V1::ShortLinksController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::UploadsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
 | Api::V1::WebhookEndpointsController | `BetterTogether::Api::ApplicationController` | — | `Api::LocaleScoping`<br>`Api::OauthAuthorization` |
-| ApplicationController | `ActionController::Base` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::BillingAddressesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::CatalogController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::EventsController | `BetterTogether::ApplicationController` | `Billing::Event` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::HostedBillingsController | `BetterTogether::ApplicationController` | `Billing::HostedBilling` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::HostedPlatformsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::HostingPlansController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::HubsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::NotificationPreferencesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::OrderDocumentsController | `BetterTogether::ApplicationController` | `Billing::OrderDocument` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::OrderPaymentsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| ApplicationController | `ActionController::Base` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::BillingAddressesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::CatalogController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::EventsController | `BetterTogether::ApplicationController` | `Billing::Event` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::HostedBillingsController | `BetterTogether::ApplicationController` | `Billing::HostedBilling` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::HostedPlatformsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::HostingPlansController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::HubsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::NotificationPreferencesController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::OrderDocumentsController | `BetterTogether::ApplicationController` | `Billing::OrderDocument` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::OrderPaymentsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Billing::PeopleController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`Billing::PersonLookup`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::RefundRequestsController | `BetterTogether::ApplicationController` | `Billing::RefundRequest` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::SaleRefundRequestsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Billing::TaxRegistrationsController | `BetterTogether::ApplicationController` | `Billing::TaxRegistration` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| BotDefense::ChallengesController | `BetterTogether::ApplicationController` | `BotDefense::Challenge` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Billing::RefundRequestsController | `BetterTogether::ApplicationController` | `Billing::RefundRequest` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::SaleRefundRequestsController | `BetterTogether::ApplicationController` | — | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Billing::TaxRegistrationsController | `BetterTogether::ApplicationController` | `Billing::TaxRegistration` | `Billing::OwnerScoped`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| BotDefense::ChallengesController | `BetterTogether::ApplicationController` | `BotDefense::Challenge` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | CommentsController | `BetterTogether::ApplicationController` | `Comment` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`PerUserThrottling` |
-| Content::PageBlocksController | `BetterTogether::ApplicationController` | `Content::PageBlock` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Content::PageBlocksController | `BetterTogether::ApplicationController` | `Content::PageBlock` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | ContentSecurity::ActiveStorage::Blobs::ProxyController | `ActiveStorage::Blobs::ProxyController` | — | `ActiveStorageSecurity`<br>`ActiveStorageVariantErrorHandling`<br>`ContentSecurity::ActiveStorageGate` |
 | ContentSecurity::ActiveStorage::Representations::ProxyController | `ActiveStorage::Representations::ProxyController` | — | `ActiveStorageSecurity`<br>`ActiveStorageVariantErrorHandling`<br>`ContentSecurity::ActiveStorageGate` |
-| EventOccurrencesController | `BetterTogether::ApplicationController` | `EventOccurrence` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| FeatureAccessGrantsController | `BetterTogether::ApplicationController` | `FeatureAccessGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Federation::ApiController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Federation::ContentFeedController | `BetterTogether::Federation::ApiController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Federation::LinkedSeedsController | `BetterTogether::Federation::ApiController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Federation::OauthTokensController | `BetterTogether::Federation::ApiController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| FederationHubController | `BetterTogether::ApplicationController` | `FederationHub` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| FriendlyResourceController | `BetterTogether::ResourceController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::ContinentsController | `BetterTogether::ApplicationController` | `Geography::Continent` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::CountriesController | `BetterTogether::FriendlyResourceController` | `Geography::Country` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::MapsController | `BetterTogether::FriendlyResourceController` | `Geography::Map` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::RegionSettlementsController | `BetterTogether::ApplicationController` | `Geography::RegionSettlement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::RegionsController | `BetterTogether::FriendlyResourceController` | `Geography::Region` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::SettlementsController | `BetterTogether::FriendlyResourceController` | `Geography::Settlement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Geography::StatesController | `BetterTogether::ApplicationController` | `Geography::State` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| EventOccurrencesController | `BetterTogether::ApplicationController` | `EventOccurrence` | `ChecksRequiredAgreements`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| FeatureAccessGrantsController | `BetterTogether::ApplicationController` | `FeatureAccessGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Federation::ApiController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Federation::ContentFeedController | `BetterTogether::Federation::ApiController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Federation::LinkedSeedsController | `BetterTogether::Federation::ApiController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Federation::OauthTokensController | `BetterTogether::Federation::ApiController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| FederationHubController | `BetterTogether::ApplicationController` | `FederationHub` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| FriendlyResourceController | `BetterTogether::ResourceController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::ContinentsController | `BetterTogether::ApplicationController` | `Geography::Continent` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::CountriesController | `BetterTogether::FriendlyResourceController` | `Geography::Country` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::MapsController | `BetterTogether::FriendlyResourceController` | `Geography::Map` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::RegionSettlementsController | `BetterTogether::ApplicationController` | `Geography::RegionSettlement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::RegionsController | `BetterTogether::FriendlyResourceController` | `Geography::Region` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::SettlementsController | `BetterTogether::FriendlyResourceController` | `Geography::Settlement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Geography::StatesController | `BetterTogether::ApplicationController` | `Geography::State` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | InboundEmailsController | `ActionMailbox::BaseController` | — | — |
-| Joatu::CategoriesController | `BetterTogether::CategoriesController` | `Joatu::Category` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Joatu::HubController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Joatu::JoatuController | `BetterTogether::FriendlyResourceController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable` |
-| Joatu::ResponseLinksController | `BetterTogether::Joatu::JoatuController` | `Joatu::ResponseLink` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable` |
-| LocationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| MessageRequestsController | `BetterTogether::ApplicationController` | `MessageRequest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Metrics::BillingReportsController | `BetterTogether::ApplicationController` | `Metrics::BillingReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::LinkCheckerReportsController | `BetterTogether::ApplicationController` | `Metrics::LinkCheckerReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::LinkClickReportsController | `BetterTogether::ApplicationController` | `Metrics::LinkClickReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::LinkClicksController | `BetterTogether::ApplicationController` | `Metrics::LinkClick` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::PageViewReportsController | `BetterTogether::ApplicationController` | `Metrics::PageViewReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::PageViewsController | `BetterTogether::ApplicationController` | `Metrics::PageView` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
+| Joatu::CategoriesController | `BetterTogether::CategoriesController` | `Joatu::Category` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Joatu::HubController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Joatu::JoatuController | `BetterTogether::FriendlyResourceController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`ThirdPartyTracking` |
+| Joatu::ResponseLinksController | `BetterTogether::Joatu::JoatuController` | `Joatu::ResponseLink` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`NotificationReadable`<br>`ThirdPartyTracking` |
+| LocationsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| MessageRequestsController | `BetterTogether::ApplicationController` | `MessageRequest` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Metrics::BillingReportsController | `BetterTogether::ApplicationController` | `Metrics::BillingReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::LinkCheckerReportsController | `BetterTogether::ApplicationController` | `Metrics::LinkCheckerReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::LinkClickReportsController | `BetterTogether::ApplicationController` | `Metrics::LinkClickReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::LinkClicksController | `BetterTogether::ApplicationController` | `Metrics::LinkClick` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::PageViewReportsController | `BetterTogether::ApplicationController` | `Metrics::PageViewReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::PageViewsController | `BetterTogether::ApplicationController` | `Metrics::PageView` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
 | Metrics::ReportsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::DatetimeFilterable`<br>`Metrics::PlatformContext` |
-| Metrics::SearchQueriesController | `BetterTogether::ApplicationController` | `Metrics::SearchQuery` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::SharesController | `BetterTogether::ApplicationController` | `Metrics::Share` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| Metrics::UserAccountReportsController | `BetterTogether::ApplicationController` | `Metrics::UserAccountReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext` |
-| NewPlatformSetupController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| NewPlatformSetupStepsController | `BetterTogether::WizardStepsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`WizardMethods` |
-| OmniauthCallbacksController | `Devise::OmniauthCallbacksController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PlatformDomainsController | `BetterTogether::ApplicationController` | `PlatformDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PlatformIdentityProvidersController | `BetterTogether::ApplicationController` | `PlatformIdentityProvider` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| PlatformTrustedDomainsController | `BetterTogether::ApplicationController` | `PlatformTrustedDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| QuotaGrantsController | `BetterTogether::ApplicationController` | `QuotaGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| RedirectsController | `BetterTogether::ApplicationController` | `Redirect` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ReportFollowupsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ResourceController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| RobotsController | `BetterTogether::ApplicationController` | `Robot` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| RobotsTxtController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Safety::ActionsController | `BetterTogether::ApplicationController` | `Safety::Action` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Safety::AgreementsController | `BetterTogether::ApplicationController` | `Safety::Agreement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| SeedCatalogController | `BetterTogether::ApplicationController` | `SeedCatalog` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ShortLinkRedirectsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| ShortLinksController | `BetterTogether::ResourceController` | `ShortLink` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Users::ConfirmationsController | `Devise::ConfirmationsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Users::OmniauthCallbacksController | `BetterTogether::OmniauthCallbacksController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Users::PasswordsController | `Devise::PasswordsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Metrics::SearchQueriesController | `BetterTogether::ApplicationController` | `Metrics::SearchQuery` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::SharesController | `BetterTogether::ApplicationController` | `Metrics::Share` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| Metrics::UserAccountReportsController | `BetterTogether::ApplicationController` | `Metrics::UserAccountReport` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`Metrics::PlatformContext`<br>`ThirdPartyTracking` |
+| NewPlatformSetupController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| NewPlatformSetupStepsController | `BetterTogether::WizardStepsController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking`<br>`WizardMethods` |
+| OmniauthCallbacksController | `Devise::OmniauthCallbacksController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PlatformDomainsController | `BetterTogether::ApplicationController` | `PlatformDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PlatformIdentityProvidersController | `BetterTogether::ApplicationController` | `PlatformIdentityProvider` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| PlatformTrustedDomainsController | `BetterTogether::ApplicationController` | `PlatformTrustedDomain` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| QuotaGrantsController | `BetterTogether::ApplicationController` | `QuotaGrant` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| RedirectsController | `BetterTogether::ApplicationController` | `Redirect` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ReportFollowupsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ResourceController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| RobotsController | `BetterTogether::ApplicationController` | `Robot` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| RobotsTxtController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Safety::ActionsController | `BetterTogether::ApplicationController` | `Safety::Action` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Safety::AgreementsController | `BetterTogether::ApplicationController` | `Safety::Agreement` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| SeedCatalogController | `BetterTogether::ApplicationController` | `SeedCatalog` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ShortLinkRedirectsController | `BetterTogether::ApplicationController` | — | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| ShortLinksController | `BetterTogether::ResourceController` | `ShortLink` | `InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Users::ConfirmationsController | `Devise::ConfirmationsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Users::OmniauthCallbacksController | `BetterTogether::OmniauthCallbacksController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Users::PasswordsController | `Devise::PasswordsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 | Users::RegistrationsController | `Devise::RegistrationsController` | — | `BotProtectedSubmissions`<br>`DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Users::SessionsController | `Devise::SessionsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
-| Users::UnlocksController | `Devise::UnlocksController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch` |
+| Users::SessionsController | `Devise::SessionsController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
+| Users::UnlocksController | `Devise::UnlocksController` | — | `DeviseLocales`<br>`InvitationSessionManagement`<br>`InvitationTokenSession`<br>`InvitationUserSetup`<br>`MentionPrefetch`<br>`ThirdPartyTracking` |
 
 ### Polymorphic / weak-reference surfaces
 

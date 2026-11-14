@@ -19,6 +19,13 @@
           <dt class="col-sm-4"><%= t('better_together.billing.offline_payments.field_in_person') %></dt>
           <dd class="col-sm-8"><%= t('better_together.billing.offline_payments.in_person_note') %></dd>
         <% end %>
+        <% if offline.self_confirmed? %>
+          <dt class="col-sm-4"><%= t('better_together.billing.offline_payments.field_confirmed_by') %></dt>
+          <dd id="<%= dom_id(offline, :self_confirmed) %>" class="col-sm-8">
+            <%= billing_offline_self_confirmed_badge(offline) %>
+            <span id="<%= dom_id(offline, :self_confirmed_note) %>" class="d-block form-text"><%= t('better_together.billing.offline_payments.self_confirmed_note') %></span>
+          </dd>
+        <% end %>
         <dt class="col-sm-4"><%= t('better_together.billing.offline_payments.field_fee') %></dt>
         <dd id="<%= dom_id(offline, :fee) %>" class="col-sm-8"><%= t('better_together.billing.offline_payments.fee_uncollected') %></dd>
       </dl>

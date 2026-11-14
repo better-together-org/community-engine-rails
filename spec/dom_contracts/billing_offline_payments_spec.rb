@@ -43,6 +43,14 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
       expect_ids("billing-summary-offline-#{offline_for(taxed).id}")
     end
 
+    it 'exposes the self-confirmed badge on the buyer\'s order' do
+      offline.update_columns(status: 'confirmed', self_confirmed: true, confirmed_by_id: steward.id) # rubocop:disable Rails/SkipsModelValidations
+
+      get "/#{locale}/billing/orders/#{order.id}"
+
+      expect_ids(ActionView::RecordIdentifier.dom_id(offline, :self_confirmed_badge))
+    end
+
     it 'exposes the buyer\'s own note once they have claimed' do
       transition.claim(offline, reference: 'sent')
 
@@ -89,6 +97,15 @@ RSpec.describe 'Billing offline payments DOM contract', type: :request do # rubo
                  ActionView::RecordIdentifier.dom_id(offline, :claimed_at), ActionView::RecordIdentifier.dom_id(offline, :fee),
                  "billing-offline-receive-form-#{offline.id}", "billing-offline-confirm-btn-#{offline.id}",
                  "billing-offline-reject-form-#{offline.id}", "billing-offline-reject-btn-#{offline.id}")
+    end
+
+    it 'exposes the self-confirmed badge and note when a steward confirmed their own purchase' do
+      offline.update_columns(status: 'confirmed', self_confirmed: true, confirmed_by_id: steward.id) # rubocop:disable Rails/SkipsModelValidations
+
+      get "/#{locale}/billing/sales/#{order.id}"
+
+      expect_ids(*%i[self_confirmed self_confirmed_badge self_confirmed_note].map { |name| ActionView::RecordIdentifier.dom_id(offline, name) })
+      expect(response.body).to include(I18n.t('better_together.billing.offline_payments.self_confirmed_badge'))
     end
 
     it 'exposes the cheque buttons once a cheque is received' do

@@ -33,6 +33,7 @@ module BetterTogether
           'payment_amount_mismatch' => { audiences: %i[operator], critical: true },
           'payment_claimed' => { audiences: %i[seller] },
           'payment_confirmed' => { audiences: %i[buyer] },
+          'payment_self_confirmed' => { audiences: %i[seller], critical: true },
           'payment_rejected' => { audiences: %i[buyer] },
           'payment_place_gone' => { audiences: %i[buyer seller] },
           'cheque_received' => { audiences: %i[buyer] },

@@ -7,7 +7,7 @@
   <div id="<%= dom_id(offline) %>" class="card mb-4 billing-offline-payment-card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <strong id="billing-offline-heading<%= suffix %>"><%= t('better_together.billing.offline_payments.heading', method: billing_payment_method_label(offline.processor)) %></strong>
-      <%= billing_offline_status_badge(offline) %>
+      <span><%= billing_offline_status_badge(offline) %> <%= billing_offline_self_confirmed_badge(offline) %></span>
     </div>
     <div class="card-body">
       <p id="billing-offline-status-message<%= suffix %>" class="mb-3"><%= t("better_together.billing.offline_payments.status_message_#{offline.status}") %></p>

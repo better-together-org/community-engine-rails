@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
+ActiveRecord::Schema[7.2].define(version: 2026_11_22_090000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -510,6 +510,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_11_21_100000) do
     t.datetime "expired_at"
     t.datetime "cancelled_at"
     t.datetime "last_reminded_at"
+    t.boolean "self_confirmed", default: false, null: false
     t.index ["confirmed_by_id"], name: "idx_bt_billing_offline_payments_confirmed_by"
     t.index ["id", "platform_id"], name: "idx_bt_billing_offline_payments_id_platform", unique: true
     t.index ["order_id"], name: "idx_bt_billing_offline_payments_order"

@@ -1440,6 +1440,11 @@ es:
           body: El vendedor no aceptó su pago por %{method}, por lo que el pedido
             se canceló. Contacte con el vendedor si cree que es un error.
           title: No se aceptó su pago del pedido %{number}
+        payment_self_confirmed:
+          body: Un administrador confirmó su propia compra. El pedido %{number} por
+            %{amount} fue marcado como recibido por el comprador, porque no había
+            otro administrador disponible. Por favor, revíselo.
+          title: Un administrador confirmó su propia compra (pedido %{number})
         payment_succeeded:
           body: Recibimos su pago de %{amount}.
           title: Recibo del pedido %{number}
@@ -1551,6 +1556,7 @@ es:
           un pago que nunca ve.'
         field_buyer_reference: Nota del comprador
         field_claimed: El comprador dice que lo envió
+        field_confirmed_by: Confirmado por
         field_fee: Comisión de la plataforma
         field_in_person: Vendido en persona
         heading: Pagar con %{method}
@@ -1590,6 +1596,10 @@ es:
           se cancelará y se avisará al comprador."
         reject_reason_label: Si no lo recibió, diga por qué (el comprador lo verá)
         rejection_reason: 'El vendedor dijo: %{reason}'
+        self_confirmed_badge: Confirmado por el comprador (administrador)
+        self_confirmed_note: Este pago fue confirmado por el administrador que lo
+          compró, porque ningún otro administrador podía hacerlo. Revíselo si no lo
+          esperaba.
         seller_heading: Pago con %{method}
         seller_reference_label: Su referencia (opcional)
         status_awaiting: Esperando el pago

@@ -14,7 +14,9 @@ module BetterTogether
       #    seller has confirmed, or the payment is closed, a claim is ignored without error.
       # 3. A LATE PAYMENT IS NOT LOST. An expired payment can still be confirmed; the place it held
       #    is taken again first, and if it is gone the seller is told and nothing is recorded as paid.
-      # 4. NOBODY CONFIRMS THEIR OWN PURCHASE unless they are a steward of the platform.
+      # 4. NOBODY CONFIRMS THEIR OWN PURCHASE. The one exception is a steward when no other steward
+      #    (apart from the buyer and the person it is for) could do it: that is allowed, flagged
+      #    `self_confirmed` and the platform's other stewards are told.
       #
       # Each move runs under the offline payment's lock, so a double click or two people acting
       # together moves it once, writes one event, and notifies once.
@@ -139,6 +141,11 @@ module BetterTogether
           offline.update!(receipt_attributes(reference, received_on))
           succeed_payment if offline.grants_on_receipt?
           announce(offline.cheque? ? 'cheque_received' : 'payment_confirmed')
+          tell_stewards_of_self_confirmation if offline.self_confirmed?
+        end
+
+        def tell_stewards_of_self_confirmation
+          Notifications.deliver('payment_self_confirmed', subject: offline, dedupe_key: "self-confirmed:#{offline.id}", actor:)
         end
 
         # The first time the buyer says it, the seller is told; later notes only update what they wrote.
@@ -156,7 +163,8 @@ module BetterTogether
 
         def receipt_attributes(reference, received_on)
           stamp = offline.cheque? ? :received_at : :confirmed_at
-          { status: offline.receipt_status, confirmed_by: actor, stamp => Time.current, seller_reference: reference, received_on: }
+          { status: offline.receipt_status, confirmed_by: actor, self_confirmed: @self_confirmed || false, stamp => Time.current,
+            seller_reference: reference, received_on: }
         end
 
         def ensure_allowed!(status)
@@ -164,11 +172,21 @@ module BetterTogether
           raise NotAllowed, 'only a cheque can clear or bounce' if %w[cleared bounced].include?(status) && !offline.cheque?
         end
 
+        # A steward may confirm their own purchase only when no other steward could; that is then flagged.
         def refuse_own_purchase!
           return unless actor && own_purchase?
-          return if actor.permitted_to?(:manage_platform, offline.platform)
+          raise SelfConfirmation, 'you cannot confirm a payment for your own purchase' unless steward?
+          raise SelfConfirmation, 'another steward of the platform must confirm this payment' if other_eligible_stewards.any?
 
-          raise SelfConfirmation, 'you cannot confirm a payment for your own purchase'
+          @self_confirmed = true
+        end
+
+        def steward? = actor.permitted_to?(:manage_platform, offline.platform)
+
+        # Stewards who are neither the buyer nor the person the order is for.
+        def other_eligible_stewards
+          parties = [order.buyer_id, (order.on_behalf_of.id if order.on_behalf_of.is_a?(BetterTogether::Person))]
+          Notifications::Recipients.managers_of(offline.platform).reject { |person| parties.include?(person.id) }
         end
 
         def own_purchase?
@@ -224,7 +242,7 @@ module BetterTogether
 
         # Logs the event and, when asked, tells the other side. The person acting is never told.
         def announce(kind, notify: true)
-          Audit.record(offline, event_type: kind, outcome_kind: kind, actor:)
+          Audit.record(offline, event_type: kind, outcome_kind: kind, actor:, self_confirmed: offline.self_confirmed?)
           Notifications.deliver(kind, subject: offline, actor:) if notify
         end
       end

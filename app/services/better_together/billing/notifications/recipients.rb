@@ -16,6 +16,14 @@ module BetterTogether
 
         def self.call(...) = new(...).call
 
+        # Everyone who holds the billing permission on this platform (active memberships only).
+        def self.managers_of(platform)
+          role_ids = BetterTogether::Role.joins(:resource_permissions).where(better_together_resource_permissions: { identifier: PERMISSION })
+                                         .select(:id)
+          memberships = BetterTogether::PersonPlatformMembership.active.includes(:member).where(joinable: platform, role_id: role_ids)
+          memberships.filter_map(&:member).uniq(&:id).grep_v(BetterTogether::Robot)
+        end
+
         def initialize(audience:, subject:, actor: nil)
           @audience = audience.to_sym
           @subject = subject
@@ -77,11 +85,7 @@ module BetterTogether
           platform = subject.try(:platform)
           return [] unless platform
 
-          BetterTogether::PersonPlatformMembership.active.includes(:member).where(joinable: platform, role_id: manager_role_ids).map(&:member)
-        end
-
-        def manager_role_ids
-          BetterTogether::Role.joins(:resource_permissions).where(better_together_resource_permissions: { identifier: PERMISSION }).select(:id)
+          self.class.managers_of(platform)
         end
       end
     end

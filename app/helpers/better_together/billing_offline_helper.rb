@@ -15,6 +15,14 @@ module BetterTogether
                   id: dom_id(offline, :status_badge))
     end
 
+    # Shown when a steward confirmed their own purchase (no other steward could); the words carry the meaning, not the colour.
+    def billing_offline_self_confirmed_badge(offline)
+      return unless offline.self_confirmed?
+
+      content_tag(:span, t('better_together.billing.offline_payments.self_confirmed_badge'),
+                  class: 'badge bg-warning text-dark billing-offline-self-confirmed-badge', id: dom_id(offline, :self_confirmed_badge))
+    end
+
     # What the buyer must understand before paying outside the platform: the keys for the notes that
     # apply to this method, in the order they are shown.
     def billing_offline_disclosure_keys(offline)

@@ -100,6 +100,25 @@ RSpec.describe 'Documentation screenshots for paying outside the platform', # ru
     end
   end
 
+  it 'captures a payment a steward confirmed for their own purchase' do
+    offline = offline_for(order)
+    offline.update_columns(status: 'confirmed', self_confirmed: true, confirmed_by_id: steward.id) # rubocop:disable Rails/SkipsModelValidations
+
+    BetterTogether::CapybaraScreenshotEngine.capture(
+      'billing_offline_self_confirmed',
+      device: :both,
+      metadata: screenshot_metadata(flow: 'billing_offline_self_confirmed', role: 'platform_manager'),
+      callouts: [{ id: 'self-confirmed', selector: "##{ActionView::RecordIdentifier.dom_id(offline, :self_confirmed)}",
+                   title: 'Confirmed by the buyer',
+                   avoid_container_selector: 'main',
+                   bullets: ['Shown when a steward confirmed their own purchase because no other steward could.'] }]
+    ) do
+      visit_as_manager("sales/#{order.id}")
+      scroll_to(find("##{ActionView::RecordIdentifier.dom_id(offline, :self_confirmed)}"), align: :center)
+      expect(page).to have_css("##{ActionView::RecordIdentifier.dom_id(offline, :self_confirmed_badge)}")
+    end
+  end
+
   it 'captures recording a sale in person' do
     plan
     purchase_agreements_for(host_platform)

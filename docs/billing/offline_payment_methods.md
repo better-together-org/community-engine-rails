@@ -80,7 +80,7 @@ Stewards reach the seller side from **Sales** (`billing-sales-offline-queue-link
 
 - **Idempotent**: confirming twice confirms once, logs once, tells once.
 - **Late payment**: from `expired` it takes the place the order held again (each line's `reserve!`), opens a fresh payment for the balance and confirms it. The expired payment stays as history (cancelled). If the place is gone, nothing is recorded, the seller is told what to do (give the money back) and the buyer is told too (`payment_place_gone`).
-- **Not your own purchase**: a person cannot confirm a payment for their own purchase (as the buyer, or the person it is for) unless they are a steward of the platform, who is accountable for it and recorded as the person who confirmed.
+- **Not your own purchase**: a person cannot confirm a payment for their own purchase (as the buyer, or the person it is for). The one exception is a steward of the platform when no other steward (apart from the buyer and the person it is for) holds the billing permission: then they may confirm it, the payment is flagged `self_confirmed`, the event records it, the order pages show "Confirmed by the buyer (steward)" and the platform's other stewards are told (`payment_self_confirmed`). When another steward exists, that steward must confirm.
 
 ### Rejecting
 

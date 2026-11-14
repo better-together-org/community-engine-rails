@@ -36,6 +36,7 @@
                 <td><%= billing_payment_method_label(offline.processor) %></td>
                 <td>
                   <%= billing_offline_status_badge(offline) %>
+                  <%= billing_offline_self_confirmed_badge(offline) %>
                   <% if offline.claimed_by_buyer? && offline.waiting? %>
                     <span class="badge bg-info text-dark billing-offline-claimed-badge" id="<%= dom_id(offline, :claimed_badge) %>">
                       <%= t('better_together.billing.offline_payments.buyer_says_sent') %>

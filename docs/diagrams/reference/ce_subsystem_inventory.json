@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14T16:43:13Z",
+  "generated_at": "2026-11-14T20:38:47Z",
   "subsystems": [
     {
       "key": "identity_access",
@@ -2514,7 +2514,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2529,7 +2530,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2541,10 +2543,12 @@
             "BetterTogether::Person"
           ],
           "concerns": [
+            "BetterTogether::AppearancePreferenceParams",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2559,7 +2563,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2575,7 +2580,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2590,7 +2596,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2605,7 +2612,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2620,7 +2628,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2635,7 +2644,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2650,7 +2660,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2665,7 +2676,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2680,7 +2692,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2695,7 +2708,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2708,7 +2722,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2723,7 +2738,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2738,7 +2754,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -2753,7 +2770,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -2765,6 +2783,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Person"
+          ]
+        },
+        {
+          "name": "BetterTogether::AppearancePreferenceParams",
+          "label": "AppearancePreferenceParams",
+          "capability": "Appearancepreferenceparams",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PeopleController"
           ]
         },
         {
@@ -3226,6 +3253,31 @@
             "OauthApplication",
             "Identification",
             "OauthUser"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "PersonSeedsController",
+            "PersonPlatformMembershipsController",
+            "PersonPlatformIntegrationsController",
+            "PersonLinksController",
+            "PersonLinkedSeedsController",
+            "PersonDeletionRequestsController",
+            "PersonDataExportsController",
+            "PersonCommunityMembershipsController",
+            "PersonChecklistItemsController",
+            "PersonBlocksController",
+            "PersonAccessGrantsController",
+            "InvitationsController",
+            "OauthApplicationsController",
+            "UsersController",
+            "RolesController",
+            "ResourcePermissionsController",
+            "PeopleController"
           ]
         },
         {
@@ -5007,6 +5059,24 @@
               "name": "cover_image_attachment",
               "as": "record",
               "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "header_banner_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "favicon_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
+            },
+            {
+              "direction": "has_one",
+              "name": "dark_logo_attachment",
+              "as": "record",
+              "note": "Acts as a polymorphic owner surface; dependent classes point back through an interface column pair."
             }
           ],
           "translated_attributes": [
@@ -5031,6 +5101,7 @@
             "BetterTogether::PlatformHost",
             "BetterTogether::PlatformMembershipDisplay",
             "BetterTogether::PlatformRegistryDefaults",
+            "BetterTogether::PlatformThemeSettings",
             "BetterTogether::PrimaryCommunity",
             "BetterTogether::Privacy",
             "BetterTogether::PrivacyCeilingValidatable",
@@ -5904,7 +5975,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -5917,7 +5989,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -5930,7 +6003,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -5943,7 +6017,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -5957,7 +6032,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -5972,7 +6048,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -5987,7 +6064,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6002,7 +6080,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6018,7 +6097,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6033,7 +6113,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6043,10 +6124,12 @@
           "superclass": "BetterTogether::ApplicationController",
           "inferred_models": [],
           "concerns": [
+            "BetterTogether::AppearancePreferenceParams",
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6060,6 +6143,7 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -6074,6 +6158,7 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -6089,7 +6174,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6104,7 +6190,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -6120,6 +6207,7 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -6136,6 +6224,7 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking",
             "BetterTogether::WizardMethods"
           ]
         }
@@ -6148,6 +6237,15 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Robot"
+          ]
+        },
+        {
+          "name": "BetterTogether::AppearancePreferenceParams",
+          "label": "AppearancePreferenceParams",
+          "capability": "Appearancepreferenceparams",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "SettingsController"
           ]
         },
         {
@@ -6639,6 +6737,15 @@
           ]
         },
         {
+          "name": "BetterTogether::PlatformThemeSettings",
+          "label": "PlatformThemeSettings",
+          "capability": "Platformthemesettings",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Platform"
+          ]
+        },
+        {
           "name": "BetterTogether::Positioned",
           "label": "Positioned",
           "capability": "Positioned",
@@ -6787,6 +6894,31 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Community"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "StorageConfigurationsController",
+            "SitemapsController",
+            "WizardsController",
+            "SettingsController",
+            "PlatformInvitationsController",
+            "WizardStepsController",
+            "MembershipRequestsController",
+            "HubController",
+            "HostDashboardController",
+            "SetupWizardController",
+            "SetupWizardStepsController",
+            "PlatformConnectionsController",
+            "CommunityWebhookEndpointsController",
+            "PlatformsController",
+            "NavigationItemsController",
+            "NavigationAreasController",
+            "CommunitiesController"
           ]
         },
         {
@@ -13492,7 +13624,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13507,7 +13640,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13522,7 +13656,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13539,7 +13674,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PageBlockVisibility"
+            "BetterTogether::PageBlockVisibility",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13558,7 +13694,8 @@
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
             "BetterTogether::PlaceScopedIndex",
-            "BetterTogether::PostsIndexPreload"
+            "BetterTogether::PostsIndexPreload",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13571,7 +13708,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13584,7 +13722,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -13600,7 +13739,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -14385,6 +14525,22 @@
           "included_by": [
             "Page",
             "Post"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "TranslationsController",
+            "StaticPagesController",
+            "Content::BlocksController",
+            "UploadsController",
+            "PostsController",
+            "PagesController",
+            "CategoriesController",
+            "CallsForInterestController"
           ]
         },
         {
@@ -18815,7 +18971,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -18836,7 +18993,8 @@
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable",
-            "BetterTogether::PlaceScopedIndex"
+            "BetterTogether::PlaceScopedIndex",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -19264,6 +19422,16 @@
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Event"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "EventsController",
+            "CalendarsController"
           ]
         },
         {
@@ -20211,7 +20379,8 @@
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
             "BetterTogether::NotificationReadable",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -20227,7 +20396,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -20244,7 +20414,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -20259,7 +20430,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -20274,7 +20446,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -20424,6 +20597,19 @@
             "ConversationParticipant",
             "Conversation",
             "Report"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Safety::NotesController",
+            "Safety::CasesController",
+            "ReportsController",
+            "MessagesController",
+            "ConversationsController"
           ]
         }
       ],
@@ -23956,7 +24142,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PageBlockVisibility"
+            "BetterTogether::PageBlockVisibility",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -23969,7 +24156,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -23984,7 +24172,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -23999,7 +24188,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -24015,7 +24205,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -24031,7 +24222,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -24047,7 +24239,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -24062,7 +24255,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -24462,6 +24656,22 @@
             "Joatu::MembershipRequest",
             "Joatu::ConnectionRequest",
             "Joatu::Category"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "SeedsController",
+            "AgreementsStatusController",
+            "ChecklistsController",
+            "ChecklistItemsController",
+            "AgreementsController",
+            "Joatu::RequestsController",
+            "Joatu::OffersController",
+            "Joatu::AgreementsController"
           ]
         },
         {
@@ -25916,7 +26126,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -25930,7 +26141,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -25946,7 +26158,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -25959,7 +26172,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -26118,6 +26332,18 @@
             "Metrics::LinkClick",
             "Metrics::LinkCheckerReport",
             "Metrics::BillingReport"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ViewPreferencesController",
+            "SearchController",
+            "NotificationsController",
+            "HelpPreferencesController"
           ]
         }
       ],
@@ -26503,7 +26729,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -26591,6 +26818,15 @@
           "included_by": [
             "WebhookDelivery",
             "WebhookEndpoint"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "WebhookEndpointsController"
           ]
         }
       ],
@@ -28816,7 +29052,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28830,7 +29067,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28847,7 +29085,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28864,7 +29103,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28879,7 +29119,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28895,7 +29136,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28911,7 +29153,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28927,7 +29170,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28941,7 +29185,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28957,7 +29202,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28973,7 +29219,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -28989,7 +29236,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29003,7 +29251,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29019,7 +29268,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29035,7 +29285,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29051,7 +29302,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29065,7 +29317,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29079,7 +29332,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29093,7 +29347,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29107,7 +29362,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -29122,7 +29378,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -29398,6 +29655,35 @@
           "name": "BetterTogether::MentionPrefetch",
           "label": "MentionPrefetch",
           "capability": "Mentionprefetch",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "Billing::WalkUpSalesController",
+            "Billing::SubscriptionsController",
+            "Billing::SubscribersController",
+            "Billing::SalesController",
+            "Billing::SaleRefundsController",
+            "Billing::PromotionsController",
+            "Billing::PromotionRedemptionsController",
+            "Billing::ProcessorSettingsController",
+            "Billing::ProcessorOptionsController",
+            "Billing::PlansController",
+            "Billing::PlanGrantsController",
+            "Billing::OrdersController",
+            "Billing::OrderClaimsController",
+            "Billing::OfflinePaymentsController",
+            "Billing::EntitlementsController",
+            "Billing::CreditsController",
+            "Billing::CreditGrantsController",
+            "Billing::CreditAccountsController",
+            "Billing::CheckoutsController",
+            "Billing::AllowancesController",
+            "Billing::AgreementRequirementsController"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
           "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
           "included_by": [
             "Billing::WalkUpSalesController",
@@ -37400,7 +37686,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37414,7 +37701,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37430,7 +37718,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37444,7 +37733,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37465,7 +37755,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37865,7 +38156,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37879,7 +38171,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37893,7 +38186,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37909,7 +38203,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37925,7 +38220,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37939,7 +38235,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37953,7 +38250,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37967,7 +38265,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37981,7 +38280,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -37997,7 +38297,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38011,7 +38312,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38026,7 +38328,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38042,7 +38345,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38056,7 +38360,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38072,7 +38377,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38087,7 +38393,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38104,7 +38411,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::PerUserThrottling"
+            "BetterTogether::PerUserThrottling",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38119,7 +38427,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38159,7 +38468,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38174,7 +38484,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38187,7 +38498,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38200,7 +38512,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38213,7 +38526,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38226,7 +38540,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38241,7 +38556,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38254,7 +38570,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38269,7 +38586,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38284,7 +38602,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38299,7 +38618,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38314,7 +38634,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38329,7 +38650,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38344,7 +38666,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38359,7 +38682,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38382,7 +38706,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38395,7 +38720,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38409,7 +38735,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38425,7 +38752,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::NotificationReadable"
+            "BetterTogether::NotificationReadable",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38438,7 +38766,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38453,7 +38782,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38469,7 +38799,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38485,7 +38816,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38501,7 +38833,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38517,7 +38850,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38533,7 +38867,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38549,7 +38884,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38564,7 +38900,8 @@
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
             "BetterTogether::Metrics::DatetimeFilterable",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38580,7 +38917,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38596,7 +38934,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38612,7 +38951,8 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
-            "BetterTogether::Metrics::PlatformContext"
+            "BetterTogether::Metrics::PlatformContext",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38625,7 +38965,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38639,6 +38980,7 @@
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
             "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking",
             "BetterTogether::WizardMethods"
           ]
         },
@@ -38652,7 +38994,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38667,7 +39010,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38682,7 +39026,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38697,7 +39042,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38712,7 +39058,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38727,7 +39074,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38740,7 +39088,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38753,7 +39102,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38768,7 +39118,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38781,7 +39132,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38796,7 +39148,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38811,7 +39164,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38826,7 +39180,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38839,7 +39194,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38854,7 +39210,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38868,7 +39225,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38882,7 +39240,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38896,7 +39255,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38911,7 +39271,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38925,7 +39286,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         },
         {
@@ -38939,7 +39301,8 @@
             "BetterTogether::InvitationSessionManagement",
             "BetterTogether::InvitationTokenSession",
             "BetterTogether::InvitationUserSetup",
-            "BetterTogether::MentionPrefetch"
+            "BetterTogether::MentionPrefetch",
+            "BetterTogether::ThirdPartyTracking"
           ]
         }
       ],
@@ -39915,6 +40278,91 @@
             "FeatureAccessGrant",
             "EmailAddress",
             "ContactDetail"
+          ]
+        },
+        {
+          "name": "BetterTogether::ThirdPartyTracking",
+          "label": "ThirdPartyTracking",
+          "capability": "Thirdpartytracking",
+          "risk": "Review the concern source for configuration-specific coupling or visibility implications.",
+          "included_by": [
+            "ApplicationController",
+            "Api::Oauth::ApplicationsController",
+            "Safety::AgreementsController",
+            "Safety::ActionsController",
+            "Metrics::UserAccountReportsController",
+            "Metrics::SharesController",
+            "Metrics::SearchQueriesController",
+            "Metrics::ReportsController",
+            "Metrics::PageViewsController",
+            "Metrics::PageViewReportsController",
+            "Metrics::LinkClicksController",
+            "Metrics::LinkClickReportsController",
+            "Metrics::LinkCheckerReportsController",
+            "Metrics::BillingReportsController",
+            "Joatu::HubController",
+            "Geography::StatesController",
+            "Geography::RegionSettlementsController",
+            "Geography::ContinentsController",
+            "Federation::ApiController",
+            "Content::PageBlocksController",
+            "BotDefense::ChallengesController",
+            "Billing::TaxRegistrationsController",
+            "Billing::SaleRefundRequestsController",
+            "Billing::RefundRequestsController",
+            "Billing::PeopleController",
+            "Billing::OrderPaymentsController",
+            "Billing::OrderDocumentsController",
+            "Billing::NotificationPreferencesController",
+            "Billing::HubsController",
+            "Billing::HostingPlansController",
+            "Billing::HostedPlatformsController",
+            "Billing::HostedBillingsController",
+            "Billing::EventsController",
+            "Billing::CatalogController",
+            "Billing::BillingAddressesController",
+            "ShortLinkRedirectsController",
+            "SeedCatalogController",
+            "RobotsTxtController",
+            "RobotsController",
+            "ReportFollowupsController",
+            "RedirectsController",
+            "QuotaGrantsController",
+            "PlatformTrustedDomainsController",
+            "PlatformIdentityProvidersController",
+            "PlatformDomainsController",
+            "NewPlatformSetupController",
+            "MessageRequestsController",
+            "LocationsController",
+            "FederationHubController",
+            "FeatureAccessGrantsController",
+            "EventOccurrencesController",
+            "CommentsController",
+            "ResourceController",
+            "Federation::OauthTokensController",
+            "Federation::LinkedSeedsController",
+            "Federation::ContentFeedController",
+            "Users::UnlocksController",
+            "Users::SessionsController",
+            "Api::Auth::SessionsController",
+            "Users::RegistrationsController",
+            "Api::Auth::RegistrationsController",
+            "Users::PasswordsController",
+            "Api::Auth::PasswordsController",
+            "Users::ConfirmationsController",
+            "Api::Auth::ConfirmationsController",
+            "OmniauthCallbacksController",
+            "Users::OmniauthCallbacksController",
+            "NewPlatformSetupStepsController",
+            "ShortLinksController",
+            "FriendlyResourceController",
+            "Joatu::JoatuController",
+            "Geography::SettlementsController",
+            "Geography::RegionsController",
+            "Geography::MapsController",
+            "Geography::CountriesController",
+            "Joatu::ResponseLinksController",
+            "Joatu::CategoriesController"
           ]
         },
         {

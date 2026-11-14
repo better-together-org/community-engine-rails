@@ -1462,6 +1462,11 @@ fr:
             a donc été annulée. Contactez le vendeur si vous pensez qu’il s’agit d’une
             erreur.
           title: Votre paiement pour la commande %{number} n’a pas été accepté
+        payment_self_confirmed:
+          body: Un intendant a confirmé son propre achat. La commande %{number} de
+            %{amount} a été marquée comme reçue par l'acheteur, car aucun autre intendant
+            n'était disponible. Veuillez la vérifier.
+          title: Un intendant a confirmé son propre achat (commande %{number})
         payment_succeeded:
           body: Votre paiement de %{amount} a été reçu.
           title: Reçu pour la commande %{number}
@@ -1579,6 +1584,7 @@ fr:
           sur un paiement qu’elle ne voit jamais.'
         field_buyer_reference: Note de l’acheteur
         field_claimed: L’acheteur dit l’avoir envoyé
+        field_confirmed_by: Confirmé par
         field_fee: Frais de la plateforme
         field_in_person: Vendu en personne
         heading: Payer par %{method}
@@ -1620,6 +1626,10 @@ fr:
         reject_reason_label: Si vous ne l’avez pas reçu, dites pourquoi (l’acheteur
           le verra)
         rejection_reason: 'Le vendeur a indiqué : %{reason}'
+        self_confirmed_badge: Confirmé par l'acheteur (intendant)
+        self_confirmed_note: Ce paiement a été confirmé par l'intendant qui l'a effectué,
+          car aucun autre intendant ne pouvait le faire. Vérifiez-le si vous ne vous
+          y attendiez pas.
         seller_heading: Paiement par %{method}
         seller_reference_label: Votre référence (facultatif)
         status_awaiting: En attente de paiement
