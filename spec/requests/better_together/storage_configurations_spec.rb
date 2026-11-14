@@ -333,7 +333,7 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       ).to be true
     end
 
-    it 'saves the configuration as the platform active storage without rebinding the shared service' do
+    it 'saves the configuration as the platform active storage without rebinding the process default' do
       expect_any_instance_of(BetterTogether::StorageConfigurationsController) # rubocop:disable RSpec/AnyInstance
         .not_to receive(:rebind_active_storage_service)
 
@@ -343,13 +343,50 @@ RSpec.describe 'BetterTogether::StorageConfigurationsController', :as_platform_m
       expect(tenant_platform.reload.storage_configuration_id).to eq(tenant_config.id)
     end
 
-    it 'shows the pending-multi-tenant-support notice instead of the restart notice' do
+    it 'shows the per-platform activation notice instead of the restart notice' do
       put activate_platform_storage_configuration_path(tenant_platform, tenant_config, locale:)
       follow_redirect!
 
       expect_html_content(
-        I18n.t('better_together.storage_configurations.activated_pending_multi_tenant_support', name: tenant_config.name)
+        I18n.t('better_together.storage_configurations.activated_for_platform', name: tenant_config.name)
       )
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # POST test_connection
+  # ---------------------------------------------------------------------------
+  describe 'POST test_connection' do
+    let!(:config) { create(:better_together_storage_configuration, :s3_compatible, platform:) }
+    let(:path) { better_together.test_connection_platform_storage_configuration_path(platform, config, locale:) }
+
+    let(:probe_result) { BetterTogether::Storage::ConnectionTest::Result.new(true, 'ok') }
+
+    before do
+      allow(BetterTogether::Storage::ConnectionTest).to receive(:new)
+        .and_return(instance_double(BetterTogether::Storage::ConnectionTest, call: probe_result))
+    end
+
+    it 'records a passing test and redirects with a notice', :aggregate_failures do
+      post path
+
+      expect(response).to have_http_status(:see_other)
+      expect(config.reload.health_status).to eq('ok')
+      follow_redirect!
+      expect_html_content(I18n.t('better_together.storage_configurations.connection_ok', name: config.name))
+    end
+
+    context 'when the probe fails' do
+      let(:probe_result) { BetterTogether::Storage::ConnectionTest::Result.new(false, 'access_denied') }
+
+      it 'records a failing test and shows the failure message', :aggregate_failures do
+        post path
+
+        expect(config.reload.health_status).to eq('failed')
+        follow_redirect!
+        expect_html_content(I18n.t('better_together.storage_configurations.connection_failed',
+                                   name: config.name, message: 'access_denied'))
+      end
     end
   end
 
