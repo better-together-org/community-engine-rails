@@ -3556,6 +3556,8 @@ es:
         integrations: Integraciones
         security: Seguridad
       theme:
+        apply: Aplicar tema
+        clear: Vaciar todos los campos del tema
         colors:
           accent: Color de acento
           accent_dark: Color de acento (oscuro, para texto)
@@ -3566,8 +3568,10 @@ es:
           link: Color de los enlaces
           navbar_bg: Fondo de la navegación
           navbar_link: Texto y enlaces de la navegación
+          page_bg: Fondo de la página
           primary: Color principal
           primary_text: Texto de los botones principales
+        contrast_aaa: Cumple AAA
         contrast_fail: Por debajo de AA, difícil de leer
         contrast_hint: Las proporciones se actualizan al escribir. El texto normal
           necesita al menos 4,5:1 (WCAG AA).
@@ -3595,7 +3599,45 @@ es:
         logo_hint: Se muestra en la barra de navegación. Es el logotipo de la comunidad
           de la plataforma.
         logo_label: Logotipo del sitio
-        preset_foray: Cargar la paleta Foray
+        picker_blank: Elija un tema para previsualizar
+        picker_label: Empezar con un tema
+        presets:
+          cool:
+            description: Verde azulado profundo sobre fondo suave y esquinas más redondeadas.
+            name: Frío
+          dark:
+            description: Texto claro sobre página oscura para poca luz.
+            name: Oscuro
+          high_contrast:
+            description: Negro, blanco y amarillo con el máximo contraste y esquinas
+              cuadradas.
+            name: Alto contraste
+          neutral:
+            description: Azul sereno sobre blanco. Una opción segura con buen contraste.
+            name: Neutro claro
+          warm:
+            description: Óxido y crema con una fuente con serifa.
+            name: Cálido
+        preview_alert: Un mensaje informativo se ve así.
+        preview_badge: Nuevo
+        preview_band: Una franja de sección para contenido destacado
+        preview_card_text: Las tarjetas usan el fondo de la página y el borde de acento.
+        preview_card_title: Una tarjeta
+        preview_footer_link: Enlace del pie de página
+        preview_heading: Un título en su tema
+        preview_hint: Una página de ejemplo que se actualiza al elegir un tema o editar
+          un color. No se guarda nada hasta que guarde la plataforma.
+        preview_input_label: Campo de formulario
+        preview_input_value: Texto de ejemplo
+        preview_label: Vista previa del tema
+        preview_link: enlace de ejemplo
+        preview_nav_one: Eventos
+        preview_nav_two: Acerca de
+        preview_primary: Acción principal
+        preview_secondary: Acción secundaria
+        preview_site_name: Su plataforma
+        preview_text: El texto del cuerpo está sobre el fondo de la página, con un
+        preview_title: Vista previa
         radii:
           large: Grande
           medium: Mediano
@@ -3603,7 +3645,13 @@ es:
           small: Pequeño
         radius_label: Redondeo de esquinas
         remove: Quitar
-        reset: Vaciar todos los campos del tema
+        reset: Volver a los valores guardados
+        status_applied: "%{name} aplicado a los campos. Guarde la plataforma para
+          conservarlo."
+        status_current: 'Tema actual: %{name}'
+        status_custom: 'Tema actual: colores personalizados'
+        status_none: Sin tema, se usan los valores predeterminados de la plataforma
+        status_previewing: Vista previa de %{name}. Aún no aplicado.
         title: Tema
         white: página blanca
     posts:

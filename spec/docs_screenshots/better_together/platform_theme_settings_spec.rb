@@ -45,25 +45,47 @@ RSpec.describe 'Documentation screenshots for platform theme settings', # ruboco
     expect(page).to have_css('#platform-appearance.show.active', wait: 10)
   end
 
-  it 'captures the Foray palette with passing contrast' do
-    result = capture_theme('platform_theme_foray_palette',
-                           ['Contrast checks', 'Every pair passes AA.'], '#platform-theme-contrast') do
+  def pick_theme(id)
+    names = { 'neutral' => 'Neutral light', 'warm' => 'Warm', 'cool' => 'Cool',
+              'high_contrast' => 'High contrast', 'dark' => 'Dark' }
+    find('#platform-theme-picker .ss-main').click
+    find('.ss-content.ss-open-below .ss-option', text: names.fetch(id), exact_text: true).click
+  end
+
+  it 'captures the theme dropdown open' do
+    result = capture_theme('platform_theme_dropdown', ['Theme picker', 'Choose one of five accessible themes.'],
+                           '#platform-theme-picker') do
       open_appearance_tab
-      find('#platform-theme-preset-foray').click
-      expect(page).to have_css('#platform-theme-contrast-primary_text.text-success', wait: 5)
-      find('#platform-theme-colors').scroll_to(:top)
+      find('#platform-theme-picker .ss-main').click
+      expect(page).to have_css('.ss-content.ss-open-below .ss-option', wait: 5)
+      find('#platform-theme-picker').scroll_to(:top)
     end
 
-    expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_theme_foray_palette.png')
+    expect(result[:desktop]).to end_with('docs/screenshots/desktop/platform_theme_dropdown.png')
+  end
+
+  %w[neutral warm cool high_contrast dark].each do |id|
+    it "captures the #{id} theme previewed" do
+      name = "platform_theme_preview_#{id}"
+      result = capture_theme(name, ['Live preview', 'Nothing is saved until you save the platform.'],
+                             '#platform-theme-preview') do
+        open_appearance_tab
+        pick_theme(id)
+        expect(page).to have_css('#platform-theme-status', text: /Previewing/, wait: 5)
+        find('#platform-theme-preview').scroll_to(:center)
+      end
+
+      expect(result[:desktop]).to end_with("docs/screenshots/desktop/#{name}.png")
+    end
   end
 
   it 'captures a low contrast warning' do
     result = capture_theme('platform_theme_low_contrast',
-                           ['AA warning', 'White on orange is 2.97:1.'], '#platform-theme-contrast-primary_text') do
+                           ['AA warning', 'White on orange is 2.97:1.'], '#platform-theme-contrast-primary_text-primary') do
       open_appearance_tab
       fill_in 'platform_theme_primary', with: '#ee722a'
       fill_in 'platform_theme_primary_text', with: '#ffffff'
-      expect(page).to have_css('#platform-theme-contrast-primary_text.text-danger', wait: 5)
+      expect(page).to have_css('#platform-theme-contrast-primary_text-primary.text-danger', wait: 5)
       find('#platform-theme-contrast').scroll_to(:center)
     end
 

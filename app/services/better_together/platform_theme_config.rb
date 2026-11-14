@@ -4,9 +4,10 @@ module BetterTogether
   # Per-platform theme settings stored in Platform#settings['theme'].
   # Sanitizes and validates values, computes WCAG contrast ratios and renders
   # the CSS custom properties that the platform Css block can still override.
-  class PlatformThemeConfig
-    COLOR_KEYS = %w[primary primary_text accent accent_dark band body_text link
+  class PlatformThemeConfig # rubocop:disable Metrics/ClassLength
+    COLOR_KEYS = %w[primary primary_text accent accent_dark page_bg band body_text link
                     navbar_bg navbar_link footer_bg footer_link].freeze
+    THEMES_PATH = BetterTogether::Engine.root.join('config/platform_themes.yml')
     FONT_STACKS = {
       'system' => 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
       'tahoma' => 'Tahoma, Verdana, Segoe, sans-serif',
@@ -14,23 +15,24 @@ module BetterTogether
       'monospace' => 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'
     }.freeze
     RADII = { 'none' => '0', 'small' => '0.25rem', 'medium' => '0.5rem', 'large' => '1rem' }.freeze
-    KEYS = (COLOR_KEYS + %w[font radius]).freeze
+    KEYS = (COLOR_KEYS + %w[font radius preset]).freeze
     HEX = /\A#\h{6}\z/
     AA_NORMAL = 4.5
-    # Foreground, background and the setting that names them, checked live in the form.
+    AAA_NORMAL = 7.0
+    AA_NON_TEXT = 3.0
+    # Foreground, background and the minimum ratio: 4.5 for text, 3 for the accent used as a focus ring.
     CONTRAST_PAIRS = [
-      %w[primary_text primary], %w[navbar_link navbar_bg], %w[footer_link footer_bg],
-      %w[body_text band], %w[link band]
+      ['primary_text', 'primary', AA_NORMAL], ['navbar_link', 'navbar_bg', AA_NORMAL],
+      ['footer_link', 'footer_bg', AA_NORMAL], ['body_text', 'page_bg', AA_NORMAL],
+      ['body_text', 'band', AA_NORMAL], ['link', 'page_bg', AA_NORMAL], ['link', 'band', AA_NORMAL],
+      ['accent_dark', 'page_bg', AA_NORMAL], ['accent', 'page_bg', AA_NON_TEXT]
     ].freeze
-    WHITE = '#ffffff'
-    PRESETS = {
-      'foray' => {
-        'primary' => '#243542', 'primary_text' => '#ffffff', 'accent' => '#ee722a', 'accent_dark' => '#b8480f',
-        'band' => '#f5f5f5', 'body_text' => '#243542', 'link' => '#b8480f',
-        'navbar_bg' => '#243542', 'navbar_link' => '#ffffff', 'footer_bg' => '#243542', 'footer_link' => '#ffffff',
-        'font' => 'tahoma'
-      }
-    }.freeze
+    DEFAULT_PAGE_BG = '#ffffff'
+
+    # Built-in themes keyed by id (see config/platform_themes.yml).
+    def self.themes
+      @themes ||= YAML.load_file(THEMES_PATH).freeze
+    end
 
     # Normalizes raw form or stored values to a hash with only known keys and non-blank values.
     def self.sanitize(raw)
@@ -45,6 +47,7 @@ module BetterTogether
 
     def self.invalid_value?(key, value)
       case key
+      when 'preset' then themes.keys.exclude?(value)
       when 'font' then FONT_STACKS.exclude?(value)
       when 'radius' then RADII.exclude?(value)
       else !HEX.match?(value)
@@ -71,10 +74,18 @@ module BetterTogether
     RULES = {
       'primary' => ':root { --bs-primary: var(--bts-primary); } ' \
                    '.btn-primary { --bs-btn-bg: var(--bts-primary); --bs-btn-border-color: var(--bts-primary); ' \
-                   '--bs-btn-color: var(--bts-primary-text, #fff); }',
+                   '--bs-btn-color: var(--bts-primary-text, #fff); } ' \
+                   '.badge.text-bg-primary, .badge.bg-primary { background-color: var(--bts-primary) !important; ' \
+                   'color: var(--bts-primary-text, #fff) !important; }',
+      'accent' => ':focus-visible { outline: 2px solid var(--bts-accent); outline-offset: 2px; } ' \
+                  '.alert-primary { --bs-alert-border-color: var(--bts-accent); }',
+      'accent_dark' => '.btn-secondary { --bs-btn-bg: var(--bts-accent-dark); --bs-btn-border-color: var(--bts-accent-dark); ' \
+                       '--bs-btn-color: var(--bts-page-bg, #fff); }',
+      'page_bg' => ':root { --bs-body-bg: var(--bts-page-bg); } body { background-color: var(--bts-page-bg); }',
       'link' => ':root { --bs-link-color: var(--bts-link); }',
-      'body_text' => 'body { color: var(--bts-body-text); }',
-      'band' => '.bg-light { background-color: var(--bts-band) !important; }',
+      'body_text' => ':root { --bs-body-color: var(--bts-body-text); } body { color: var(--bts-body-text); }',
+      'band' => '.bg-light { background-color: var(--bts-band) !important; } ' \
+                '.alert-primary { --bs-alert-bg: var(--bts-band); --bs-alert-color: var(--bts-body-text); }',
       'navbar_bg' => '.navbar { background-color: var(--bts-navbar-bg); }',
       'navbar_link' => '.navbar { --bs-navbar-color: var(--bts-navbar-link); --bs-navbar-brand-color: var(--bts-navbar-link); }',
       'footer_bg' => 'footer { background-color: var(--bts-footer-bg); }',
@@ -93,11 +104,11 @@ module BetterTogether
 
     def [](key) = values[key.to_s]
 
-    # Pairs below AA, as [foreground_key, background_key, ratio]; unset pairs are skipped.
+    # Pairs below their minimum, as [foreground_key, background_key, ratio]; unset pairs are skipped.
     def low_contrast_pairs
-      CONTRAST_PAIRS.filter_map do |fg, bg|
-        ratio = self.class.contrast_ratio(self[fg], self[bg] || (WHITE if fg == 'link'))
-        [fg, bg, ratio] if ratio && ratio < AA_NORMAL
+      CONTRAST_PAIRS.filter_map do |fg, bg, minimum|
+        ratio = self.class.contrast_ratio(self[fg], self[bg] || (DEFAULT_PAGE_BG if bg == 'page_bg'))
+        [fg, bg, ratio] if ratio && ratio < minimum
       end
     end
 

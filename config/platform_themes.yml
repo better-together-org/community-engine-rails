@@ -1,0 +1,78 @@
+# Built-in platform themes. Every foreground/background pair in
+# BetterTogether::PlatformThemeConfig::CONTRAST_PAIRS meets WCAG AA (spec enforced).
+# Names and descriptions live in locale files under better_together.platforms.theme.presets.
+neutral:
+  primary: '#1d4e89'
+  primary_text: '#ffffff'
+  accent: '#4a6fa5'
+  accent_dark: '#174273'
+  page_bg: '#ffffff'
+  band: '#f1f3f5'
+  body_text: '#212529'
+  link: '#0b5394'
+  navbar_bg: '#ffffff'
+  navbar_link: '#1d4e89'
+  footer_bg: '#212529'
+  footer_link: '#ffffff'
+  font: system
+  radius: medium
+warm:
+  primary: '#9c3d10'
+  primary_text: '#ffffff'
+  accent: '#c2571a'
+  accent_dark: '#8a3a0e'
+  page_bg: '#fffaf5'
+  band: '#f8ece0'
+  body_text: '#3b2a20'
+  link: '#8a3a0e'
+  navbar_bg: '#3b2a20'
+  navbar_link: '#fff4e8'
+  footer_bg: '#3b2a20'
+  footer_link: '#fff4e8'
+  font: georgia
+  radius: small
+cool:
+  primary: '#0f6b6b'
+  primary_text: '#ffffff'
+  accent: '#2a8f8f'
+  accent_dark: '#0c5656'
+  page_bg: '#f7fbfb'
+  band: '#e6f2f2'
+  body_text: '#1b2e2e'
+  link: '#0c5656'
+  navbar_bg: '#0c3f3f'
+  navbar_link: '#ffffff'
+  footer_bg: '#0c3f3f'
+  footer_link: '#ffffff'
+  font: system
+  radius: large
+high_contrast:
+  primary: '#000000'
+  primary_text: '#ffffff'
+  accent: '#0000cc'
+  accent_dark: '#00008b'
+  page_bg: '#ffffff'
+  band: '#ffffff'
+  body_text: '#000000'
+  link: '#0000cc'
+  navbar_bg: '#000000'
+  navbar_link: '#ffffff'
+  footer_bg: '#000000'
+  footer_link: '#ffff00'
+  font: system
+  radius: none
+dark:
+  primary: '#8ab4f8'
+  primary_text: '#0b1b33'
+  accent: '#8ab4f8'
+  accent_dark: '#a8c7fa'
+  page_bg: '#15181d'
+  band: '#1f242b'
+  body_text: '#e8eaed'
+  link: '#a8c7fa'
+  navbar_bg: '#0e1013'
+  navbar_link: '#e8eaed'
+  footer_bg: '#0e1013'
+  footer_link: '#e8eaed'
+  font: system
+  radius: medium

@@ -9,18 +9,46 @@
   <h2 class="h5"><%= t("#{scope}.title") %></h2>
   <p class="form-text text-muted"><%= t("#{scope}.hint") %></p>
 
-  <div class="d-flex flex-wrap gap-2 mb-3">
-    <% cfg::PRESETS.each do |name, preset| %>
-      <button type="button" id="platform-theme-preset-<%= name %>" class="btn btn-outline-secondary btn-sm"
-              data-action="better_together--platform-theme#applyPreset" data-preset="<%= preset.to_json %>">
-        <%= t("#{scope}.preset_#{name}") %>
-      </button>
-    <% end %>
-    <button type="button" id="platform-theme-reset" class="btn btn-outline-secondary btn-sm"
-            data-action="better_together--platform-theme#reset">
-      <%= t("#{scope}.reset") %>
-    </button>
+  <div id="platform-theme-picker" class="mb-3">
+    <%= label_tag :platform_theme_picker, t("#{scope}.picker_label"), class: 'form-label' %>
+    <div class="row g-2 align-items-start">
+      <div class="col-md-6">
+        <%= select_tag 'theme_picker',
+                       options_for_select(cfg.themes.map { |id, tokens| [t("#{scope}.presets.#{id}.name"), id, { 'data-tokens' => tokens.to_json, 'data-description' => t("#{scope}.presets.#{id}.description") }] },
+                                          config['preset']),
+                       id: 'platform_theme_picker', include_blank: t("#{scope}.picker_blank"), class: 'form-select',
+                       'data-better_together--platform-theme-target' => 'picker',
+                       data: { controller: 'better_together--slim-select', action: 'change->better_together--platform-theme#selectTheme' } %>
+        <%= hidden_field_tag 'platform[theme][preset]', config['preset'], id: 'platform_theme_preset',
+                             'data-better_together--platform-theme-target' => 'input', data: { key: 'preset' } %>
+      </div>
+      <div class="col-md-6 d-flex flex-wrap gap-2">
+        <button type="button" id="platform-theme-apply" class="btn btn-primary" style="min-height:44px;min-width:44px" disabled
+                data-action="better_together--platform-theme#applyTheme" data-better_together--platform-theme-target="apply">
+          <%= t("#{scope}.apply") %>
+        </button>
+        <button type="button" id="platform-theme-reset" class="btn btn-outline-secondary" style="min-height:44px;min-width:44px"
+                data-action="better_together--platform-theme#reset">
+          <%= t("#{scope}.reset") %>
+        </button>
+        <button type="button" id="platform-theme-clear" class="btn btn-outline-secondary" style="min-height:44px;min-width:44px"
+                data-action="better_together--platform-theme#clear">
+          <%= t("#{scope}.clear") %>
+        </button>
+      </div>
+    </div>
+    <p id="platform-theme-description" class="form-text mb-1" data-better_together--platform-theme-target="description"></p>
+    <p id="platform-theme-status" class="small fw-semibold mb-0" role="status" aria-live="polite"
+       data-better_together--platform-theme-target="status"
+       data-current-text="<%= t("#{scope}.status_current", name: '%{name}') %>"
+       data-previewing-text="<%= t("#{scope}.status_previewing", name: '%{name}') %>"
+       data-custom-text="<%= t("#{scope}.status_custom") %>"
+       data-none-text="<%= t("#{scope}.status_none") %>"
+       data-applied-text="<%= t("#{scope}.status_applied", name: '%{name}') %>"
+       data-current-name="<%= config['preset'].present? ? t("#{scope}.presets.#{config['preset']}.name") : '' %>"></p>
   </div>
+
+  <%= render partial: 'better_together/platforms/theme_preview', locals: { platform: platform } %>
 
   <div class="row" id="platform-theme-colors">
     <% cfg::COLOR_KEYS.each do |key| %>
@@ -34,7 +62,7 @@
           <%= text_field_tag "platform[theme][#{key}]", config[key], id: "platform_theme_#{key}", class: 'form-control font-monospace',
                              placeholder: '#rrggbb', maxlength: 7, pattern: '#[0-9a-fA-F]{6}', autocomplete: 'off',
                              'data-better_together--platform-theme-target' => 'input', data: { key: key,
-                                     action: 'input->better_together--platform-theme#refresh' } %>
+                                     action: 'input->better_together--platform-theme#edited' } %>
         </div>
       </div>
     <% end %>
@@ -47,7 +75,7 @@
                      options_for_select([[t("#{scope}.default_option"), '']] +
                                         cfg::FONT_STACKS.keys.map { |k| [t("#{scope}.fonts.#{k}"), k] }, config['font']),
                      id: 'platform_theme_font', class: 'form-select',
-                     'data-better_together--platform-theme-target' => 'input', data: { key: 'font' } %>
+                     'data-better_together--platform-theme-target' => 'input', data: { key: 'font', action: 'change->better_together--platform-theme#edited' } %>
     </div>
     <div class="col-sm-6 mb-3">
       <%= label_tag :platform_theme_radius, t("#{scope}.radius_label"), class: 'form-label' %>
@@ -55,7 +83,7 @@
                      options_for_select([[t("#{scope}.default_option"), '']] +
                                         cfg::RADII.keys.map { |k| [t("#{scope}.radii.#{k}"), k] }, config['radius']),
                      id: 'platform_theme_radius', class: 'form-select',
-                     'data-better_together--platform-theme-target' => 'input', data: { key: 'radius' } %>
+                     'data-better_together--platform-theme-target' => 'input', data: { key: 'radius', action: 'change->better_together--platform-theme#edited' } %>
     </div>
   </div>
 
@@ -63,17 +91,16 @@
     <h3 id="platform-theme-contrast-heading" class="h6"><%= t("#{scope}.contrast_title") %></h3>
     <p class="form-text text-muted"><%= t("#{scope}.contrast_hint") %></p>
     <ul class="list-unstyled mb-0">
-      <% cfg::CONTRAST_PAIRS.each do |fg, bg| %>
-        <% bg_key = fg == 'link' ? 'white' : bg %>
-        <% ratio = cfg.contrast_ratio(config[fg], bg_key == 'white' ? cfg::WHITE : config[bg]) %>
-        <li id="platform-theme-contrast-<%= fg %>" data-better_together--platform-theme-target="pair"
-            data-foreground="<%= fg %>" data-background="<%= bg_key %>"
-            data-pass-text="<%= t("#{scope}.contrast_pass") %>" data-fail-text="<%= t("#{scope}.contrast_fail") %>"
-            class="<%= ratio ? (ratio >= cfg::AA_NORMAL ? 'text-success' : 'text-danger') : '' %>">
-          <%= t("#{scope}.contrast_pair", foreground: t("#{scope}.colors.#{fg}"),
-                                           background: bg_key == 'white' ? t("#{scope}.white") : t("#{scope}.colors.#{bg}")) %>:
+      <% cfg::CONTRAST_PAIRS.each do |fg, bg, minimum| %>
+        <% ratio = cfg.contrast_ratio(config[fg], config[bg] || (bg == 'page_bg' ? cfg::DEFAULT_PAGE_BG : nil)) %>
+        <% level = ratio && (ratio >= cfg::AAA_NORMAL && minimum >= cfg::AA_NORMAL ? 'aaa' : (ratio >= minimum ? 'pass' : 'fail')) %>
+        <li id="platform-theme-contrast-<%= fg %>-<%= bg.dasherize %>" data-better_together--platform-theme-target="pair"
+            data-foreground="<%= fg %>" data-background="<%= bg %>" data-minimum="<%= minimum %>"
+            data-aaa-text="<%= t("#{scope}.contrast_aaa") %>" data-pass-text="<%= t("#{scope}.contrast_pass") %>" data-fail-text="<%= t("#{scope}.contrast_fail") %>"
+            class="<%= { 'aaa' => 'text-success', 'pass' => 'text-success', 'fail' => 'text-danger' }[level] %>">
+          <%= t("#{scope}.contrast_pair", foreground: t("#{scope}.colors.#{fg}"), background: t("#{scope}.colors.#{bg}")) %>:
           <strong data-role="ratio"><%= ratio ? "#{format('%.2f', ratio)}:1" : '-' %></strong>
-          <span data-role="status" role="status"><%= ratio ? t("#{scope}.contrast_#{ratio >= cfg::AA_NORMAL ? 'pass' : 'fail'}") : '' %></span>
+          <span data-role="status"><%= level ? t("#{scope}.contrast_#{level}") : '' %></span>
         </li>
       <% end %>
     </ul>

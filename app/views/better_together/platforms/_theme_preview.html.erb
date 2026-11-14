@@ -1,0 +1,60 @@
+<%# locals: (platform:) %>
+<% scope = 'better_together.platforms.theme' %>
+<%# Scoped styles: the preview reads the same --bts-* variables the live site uses, set on this element only. %>
+<style>
+  #platform-theme-preview .bts-preview { background: var(--bts-page-bg, #fff); color: var(--bts-body-text, #212529); font-family: var(--bts-font, inherit); border: 1px solid #ced4da; border-radius: var(--bts-radius, 0.375rem); overflow: hidden; }
+  #platform-theme-preview .bts-preview a { color: var(--bts-link, #0b5394); }
+  #platform-theme-preview .bts-nav { background: var(--bts-navbar-bg, #fff); color: var(--bts-navbar-link, #1d4e89); padding: 0.75rem 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+  #platform-theme-preview .bts-nav a, #platform-theme-preview .bts-nav strong { color: var(--bts-navbar-link, #1d4e89); }
+  #platform-theme-preview .bts-band { background: var(--bts-band, #f1f3f5); padding: 0.75rem 1rem; }
+  #platform-theme-preview .bts-btn { border: 1px solid transparent; border-radius: var(--bts-radius, 0.375rem); padding: 0.375rem 0.75rem; font: inherit; }
+  #platform-theme-preview .bts-btn-primary { background: var(--bts-primary, #1d4e89); border-color: var(--bts-primary, #1d4e89); color: var(--bts-primary-text, #fff); }
+  #platform-theme-preview .bts-btn-secondary { background: var(--bts-accent-dark, #174273); border-color: var(--bts-accent-dark, #174273); color: var(--bts-page-bg, #fff); }
+  #platform-theme-preview .bts-card { border: 1px solid var(--bts-accent, #4a6fa5); border-radius: var(--bts-radius, 0.375rem); padding: 0.75rem; background: var(--bts-page-bg, #fff); }
+  #platform-theme-preview .bts-input { display: block; width: 100%; border: 1px solid var(--bts-accent, #4a6fa5); border-radius: var(--bts-radius, 0.375rem); padding: 0.375rem 0.75rem; background: var(--bts-page-bg, #fff); color: var(--bts-body-text, #212529); font: inherit; }
+  #platform-theme-preview .bts-alert { background: var(--bts-band, #f1f3f5); color: var(--bts-body-text, #212529); border-left: 4px solid var(--bts-accent, #4a6fa5); border-radius: var(--bts-radius, 0.375rem); padding: 0.5rem 0.75rem; }
+  #platform-theme-preview .bts-badge { background: var(--bts-primary, #1d4e89); color: var(--bts-primary-text, #fff); border-radius: var(--bts-radius, 0.375rem); padding: 0.125rem 0.5rem; font-size: 0.8rem; }
+  #platform-theme-preview .bts-footer { background: var(--bts-footer-bg, #212529); color: var(--bts-footer-link, #fff); padding: 0.75rem 1rem; }
+  #platform-theme-preview .bts-footer a { color: var(--bts-footer-link, #fff); }
+  @media (prefers-reduced-motion: reduce) { #platform-theme-preview * { transition: none !important; animation: none !important; } }
+</style>
+
+<section id="platform-theme-preview" class="mb-4" aria-label="<%= t("#{scope}.preview_label") %>"
+         data-better_together--platform-theme-target="preview">
+  <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+    <h3 class="h6 mb-0" id="platform-theme-preview-heading"><%= t("#{scope}.preview_title") %></h3>
+    <span id="platform-theme-preview-state" class="badge text-bg-secondary" data-better_together--platform-theme-target="state"></span>
+  </div>
+  <p class="form-text"><%= t("#{scope}.preview_hint") %></p>
+  <div class="bts-preview" inert>
+    <div class="bts-nav" id="platform-theme-preview-navbar">
+      <strong><%= platform.name.presence || t("#{scope}.preview_site_name") %></strong>
+      <a href="#"><%= t("#{scope}.preview_nav_one") %></a>
+      <a href="#"><%= t("#{scope}.preview_nav_two") %></a>
+    </div>
+    <div class="p-3" id="platform-theme-preview-body">
+      <p class="h5 fw-bold"><%= t("#{scope}.preview_heading") %></p>
+      <p><%= t("#{scope}.preview_text") %> <a href="#"><%= t("#{scope}.preview_link") %></a>.</p>
+      <p class="d-flex flex-wrap gap-2 align-items-center">
+        <button type="button" class="bts-btn bts-btn-primary" tabindex="-1"><%= t("#{scope}.preview_primary") %></button>
+        <button type="button" class="bts-btn bts-btn-secondary" tabindex="-1"><%= t("#{scope}.preview_secondary") %></button>
+        <span class="bts-badge"><%= t("#{scope}.preview_badge") %></span>
+      </p>
+      <div class="bts-alert mb-3" id="platform-theme-preview-alert"><%= t("#{scope}.preview_alert") %></div>
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <div class="bts-card" id="platform-theme-preview-card">
+            <p class="h6 fw-bold"><%= t("#{scope}.preview_card_title") %></p>
+            <p class="mb-0"><%= t("#{scope}.preview_card_text") %></p>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <label for="platform-theme-preview-input" class="form-label"><%= t("#{scope}.preview_input_label") %></label>
+          <input id="platform-theme-preview-input" class="bts-input" type="text" tabindex="-1" value="<%= t("#{scope}.preview_input_value") %>" readonly>
+        </div>
+      </div>
+    </div>
+    <div class="bts-band" id="platform-theme-preview-band"><%= t("#{scope}.preview_band") %></div>
+    <div class="bts-footer" id="platform-theme-preview-footer"><a href="#"><%= t("#{scope}.preview_footer_link") %></a></div>
+  </div>
+</section>

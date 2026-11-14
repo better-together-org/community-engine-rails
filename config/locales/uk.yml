@@ -3557,6 +3557,8 @@ uk:
         integrations: Інтеграції
         security: Безпека
       theme:
+        apply: Застосувати тему
+        clear: Очистити всі поля теми
         colors:
           accent: Акцентний колір
           accent_dark: Акцентний колір (темний, для тексту)
@@ -3567,8 +3569,10 @@ uk:
           link: Колір посилань
           navbar_bg: Тло навігації
           navbar_link: Текст і посилання навігації
+          page_bg: Тло сторінки
           primary: Основний колір
           primary_text: Текст на основних кнопках
+        contrast_aaa: Відповідає AAA
         contrast_fail: Нижче AA, важко читати
         contrast_hint: Співвідношення оновлюються під час введення. Звичайний текст
           потребує щонайменше 4,5:1 (WCAG AA).
@@ -3594,7 +3598,45 @@ uk:
         images_title: Зображення
         logo_hint: Показується на панелі навігації. Це логотип спільноти платформи.
         logo_label: Логотип сайту
-        preset_foray: Завантажити палітру Foray
+        picker_blank: Оберіть тему для перегляду
+        picker_label: Почати з теми
+        presets:
+          cool:
+            description: Глибокий бірюзовий на м'якому тлі з більш округлими кутами.
+            name: Прохолодна
+          dark:
+            description: Світлий текст на темній сторінці для слабкого освітлення.
+            name: Темна
+          high_contrast:
+            description: Чорний, білий і жовтий із найсильнішим контрастом і прямими
+              кутами.
+            name: Високий контраст
+          neutral:
+            description: Спокійний синій на білому. Надійний варіант із сильним контрастом.
+            name: Нейтральна світла
+          warm:
+            description: Земляна іржа та крем із шрифтом із засічками.
+            name: Тепла
+        preview_alert: Інформаційне повідомлення виглядає так.
+        preview_badge: Нове
+        preview_band: Смуга розділу для виділеного вмісту
+        preview_card_text: Картки використовують тло сторінки та акцентну рамку.
+        preview_card_title: Картка
+        preview_footer_link: Посилання підвалу
+        preview_heading: Заголовок у вашій темі
+        preview_hint: Приклад сторінки, що оновлюється під час вибору теми чи зміни
+          кольору. Нічого не зберігається, доки ви не збережете платформу.
+        preview_input_label: Поле форми
+        preview_input_value: Приклад тексту
+        preview_label: Перегляд теми
+        preview_link: прикладом посилання
+        preview_nav_one: Події
+        preview_nav_two: Про нас
+        preview_primary: Основна дія
+        preview_secondary: Додаткова дія
+        preview_site_name: Ваша платформа
+        preview_text: Основний текст лежить на тлі сторінки, із
+        preview_title: Перегляд
         radii:
           large: Великі
           medium: Середні
@@ -3602,7 +3644,13 @@ uk:
           small: Малі
         radius_label: Заокруглення кутів
         remove: Прибрати
-        reset: Очистити всі поля теми
+        reset: Повернути збережені значення
+        status_applied: Тему %{name} застосовано до полів. Збережіть платформу, щоб
+          залишити її.
+        status_current: 'Поточна тема: %{name}'
+        status_custom: 'Поточна тема: власні кольори'
+        status_none: Тему не задано, використано типові значення платформи
+        status_previewing: Перегляд теми %{name}. Ще не застосовано.
         title: Тема
         white: біла сторінка
     posts:

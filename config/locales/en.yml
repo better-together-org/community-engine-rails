@@ -3501,6 +3501,8 @@ en:
         integrations: Integrations
         security: Security
       theme:
+        apply: Apply theme
+        clear: Clear all theme fields
         colors:
           accent: Accent colour
           accent_dark: Accent colour (dark, for text)
@@ -3511,8 +3513,10 @@ en:
           link: Link colour
           navbar_bg: Navigation background
           navbar_link: Navigation text and links
+          page_bg: Page background
           primary: Primary colour
           primary_text: Text on primary buttons
+        contrast_aaa: Passes AAA
         contrast_fail: Below AA, hard to read
         contrast_hint: Ratios update as you type. Normal text needs at least 4.5:1
           (WCAG AA).
@@ -3538,7 +3542,45 @@ en:
         logo_hint: Shown in the navigation bar. This is the logo of the platform's
           community.
         logo_label: Site logo
-        preset_foray: Load the Foray palette
+        picker_blank: Choose a theme to preview
+        picker_label: Start from a theme
+        presets:
+          cool:
+            description: Deep teal on a soft cool background with rounder corners.
+            name: Cool
+          dark:
+            description: Light text on a dark page for low-light viewing.
+            name: Dark
+          high_contrast:
+            description: Black, white and yellow with the strongest contrast and square
+              corners.
+            name: High contrast
+          neutral:
+            description: Calm blue on white. A safe default with strong contrast.
+            name: Neutral light
+          warm:
+            description: Earthy rust and cream with a serif font.
+            name: Warm
+        preview_alert: An informational message looks like this.
+        preview_badge: New
+        preview_band: A section band for highlighted content
+        preview_card_text: Cards use the page background and accent border.
+        preview_card_title: A card
+        preview_footer_link: Footer link
+        preview_heading: A heading in your theme
+        preview_hint: A sample page that updates as you pick a theme or edit a colour.
+          Nothing is saved until you save the platform.
+        preview_input_label: Form field
+        preview_input_value: Sample text
+        preview_label: Theme preview
+        preview_link: sample link
+        preview_nav_one: Events
+        preview_nav_two: About
+        preview_primary: Primary action
+        preview_secondary: Secondary action
+        preview_site_name: Your platform
+        preview_text: Body text sits on the page background, with a
+        preview_title: Preview
         radii:
           large: Large
           medium: Medium
@@ -3546,7 +3588,13 @@ en:
           small: Small
         radius_label: Corner radius
         remove: Remove
-        reset: Clear all theme fields
+        reset: Reset to saved values
+        status_applied: "%{name} applied to the fields. Save the platform to keep
+          it."
+        status_current: 'Current theme: %{name}'
+        status_custom: 'Current theme: custom colours'
+        status_none: No theme set, using the platform defaults
+        status_previewing: Previewing %{name}. Not applied yet.
         title: Theme
         white: white page
     posts:
