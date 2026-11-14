@@ -4860,6 +4860,9 @@ en:
               privacy, and time zone you choose.
             steward: A steward account is created with full management access to the
               new platform.
+  breadcrumbs:
+    home: Home
+    label: Breadcrumb
   community:
     create_failed: Create failed
     created: Created

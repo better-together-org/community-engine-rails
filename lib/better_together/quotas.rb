@@ -121,6 +121,10 @@ module BetterTogether
           q.limit = type_class.default_limit(owner)
           q.period = type_class.period
         end
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+        # Two writers both missed the row and raced to create it; the loser's
+        # uniqueness validation or unique index fires, so read the winner's row.
+        Quota.find_by(owner:, quota_type: type_class.key) || raise
       end
 
       def period_key_for(type_class, time)

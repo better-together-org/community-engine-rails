@@ -19,11 +19,8 @@ class MigrateTranslatedTitleAttributesToStrings < ActiveRecord::Migration[7.2]
     # - insert_all() for creating string translations
     # - delete_all() for removing text translations
     # - Bypasses ActiveRecord callbacks (Elasticsearch indexing)
-    begin
-      Rake::Task['translations:mobility:migrate_titles_to_string'].invoke
-    rescue RuntimeError
-      Rake::Task['app:translations:mobility:migrate_titles_to_string'].invoke
-    end
+    run_engine_rake_task('translations:mobility:migrate_titles_to_string',
+                         skip_when_empty: %i[mobility_text_translations])
   end
 
   def down
