@@ -76,3 +76,21 @@ community:
 - **Signed-in requester:** approved at once, but only if the account email is confirmed.
 - Reviewers are not notified for an auto-approved request. Every approval writes a
   `membership_request_approved` audit entry.
+
+## Steward UI
+
+Stewards manage domains at `/host/platforms/:platform_id/trusted_domains`
+(`PlatformTrustedDomainsController`), linked from the Access tab of the platform form. The form offers community
+roles only and requires the role and public-mail-domain confirmations. Create, update and remove each write a
+`domain_added`, `domain_updated` or `domain_removed` audit entry (`via: steward`); removing a domain leaves
+existing accounts and memberships untouched.
+
+On an invitation-only platform with at least one enabled domain, the sign-up page links to
+`/users/sign_up?trusted_domain=1`, which shows the registration form with a notice that membership follows email
+confirmation. Without the flag the invitation gate is unchanged, and the controller still decides per address.
+
+| View | Screenshot |
+| --- | --- |
+| Index | ![Trusted domains index](../../screenshots/desktop/platform_trusted_domains_index.png) |
+| New | ![New trusted domain](../../screenshots/desktop/platform_trusted_domains_new.png) |
+| Sign-up | ![Trusted domain sign-up](../../screenshots/desktop/trusted_domain_sign_up.png) |
