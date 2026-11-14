@@ -262,6 +262,44 @@ RSpec.describe BetterTogether::Billing::CheckoutsController do
         expect(buyer.agreement_participants.where(acceptance_method: 'checkout')).to be_empty
       end
 
+      describe 'a re-render after an error keeps what the buyer ticked', :aggregate_failures do
+        let(:page) { Nokogiri::HTML(response.body) }
+        let(:purchase_box) { '#billing-agreement-accept-one_time_purchase_agreement' }
+        let(:terms_box) { '#billing-agreement-accept-offline_payment_terms' }
+
+        let(:tick_param) { ->(identifier) { BetterTogether::ApplicationController.helpers.agreement_acceptance_param_name(identifier) } }
+
+        it 'keeps both boxes ticked, and unlocked, when the billing address is refused' do
+          post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1',
+                                        tick_param.call('offline_payment_terms') => '1' }
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(page.at_css('#billing-checkout-form')).to be_present
+          [purchase_box, terms_box].each do |box|
+            expect(page.at_css(box)['checked']).to be_present
+            expect(page.at_css(box)['data-better-together-agreement-enabled']).to eq('true')
+            expect(page.at_css(box)['aria-disabled']).to eq('false')
+          end
+        end
+
+        it 'ticks only the boxes the buyer ticked when another one was missed' do
+          post checkout_path, params: { plan_id: cash_plan.id, payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1',
+                                        **billing_address_params(buyer_address) }
+
+          expect(response).to have_http_status(:unprocessable_content)
+          expect(page.at_css(purchase_box)['checked']).to be_present
+          expect(page.at_css(terms_box)['checked']).to be_nil
+          expect(page.at_css(terms_box)['aria-disabled']).to eq('true')
+        end
+
+        it 'starts every box unticked and locked on a first visit, whatever the query says' do
+          get new_checkout_path(payment_method: 'cash', tick_param.call('one_time_purchase_agreement') => '1')
+
+          expect(page.at_css(purchase_box)['checked']).to be_nil
+          expect(page.at_css(purchase_box)['aria-disabled']).to eq('true')
+        end
+      end
+
       it 'refuses a ticked box for an agreement that does not apply' do
         stray = create(:better_together_agreement, agreement_kind: 'transactional_agreement', platform: host_platform, identifier: 'stray')
 

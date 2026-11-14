@@ -834,6 +834,8 @@ fr:
         pending: en attente
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: Vous êtes arrivé à la fin. Vous pouvez maintenant cocher la
+        case pour accepter.
       show:
         title: Accord
       status:
@@ -4082,6 +4084,15 @@ fr:
       new:
         title: Nouvel élément de navigation pour %{name}
       route_names:
+        billing_agreement_requirements: Conditions d’achat
+        billing_allowances: Quotas et utilisation
+        billing_credit_accounts: Comptes de crédit en magasin
+        billing_plans: Forfaits de facturation
+        billing_processor_settings: Modes de paiement
+        billing_promotions: Codes promotionnels
+        billing_sales: Ventes
+        billing_subscribers: Abonnés
+        billing_tax_registrations: Inscriptions fiscales
         calendars: Calendriers
         calls_for_interest: Appels à intérêt
         communities: Communautés

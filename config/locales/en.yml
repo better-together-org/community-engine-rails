@@ -839,6 +839,7 @@ en:
         pending: pending
       publishing_agreement_required: You need to accept the content publishing agreement
         before creating public or community content. Please review and accept it below.
+      review_complete: You have read to the end. You can now tick the box to accept.
       show:
         title: Agreement
       status:
@@ -3979,6 +3980,15 @@ en:
       new:
         title: New Navigation Item for %{name}
       route_names:
+        billing_agreement_requirements: Purchase terms
+        billing_allowances: Allowances and usage
+        billing_credit_accounts: Store credit accounts
+        billing_plans: Billing Plans
+        billing_processor_settings: Payment Methods
+        billing_promotions: Promotion codes
+        billing_sales: Sales
+        billing_subscribers: Subscribers
+        billing_tax_registrations: Tax registrations
         calendars: Calendars
         calls_for_interest: Calls for Interest
         communities: Communities
