@@ -286,6 +286,9 @@ RSpec.configure do |config|
       end
     end
 
+    # Put seeded purchase agreements a :js spec activated back to draft (see BillingAgreementLeakReset).
+    BillingAgreementLeakReset.call
+
     DatabaseCleaner.start
 
     # Clear Rails cache to prevent permission/data pollution between parallel workers

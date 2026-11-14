@@ -4283,6 +4283,12 @@ Ref: "better_together_billing_credit_lots"."granted_by_id" > "better_together_pe
 
 Ref: "better_together_billing_credit_lots"."platform_id" > "better_together_platforms"."id"
 
+Ref: "better_together_billing_default_addresses"."address_id" > "better_together_addresses"."id"
+
+Ref: "better_together_billing_default_addresses"."person_id" > "better_together_people"."id"
+
+Ref: "better_together_billing_default_addresses"."platform_id" > "better_together_platforms"."id"
+
 Ref: "better_together_billing_entitlement_grants"."platform_id" > "better_together_platforms"."id"
 
 Ref: "better_together_billing_entitlements"."platform_id" > "better_together_platforms"."id"
