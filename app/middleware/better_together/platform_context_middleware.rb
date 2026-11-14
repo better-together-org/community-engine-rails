@@ -24,7 +24,9 @@ module BetterTogether
     def call(env)
       hostname = ActionDispatch::Request.new(env).host
       domain   = BetterTogether::PlatformDomain.resolve(hostname)
-      platform = domain&.platform || cached_host_platform
+      platform = domain&.platform
+      platform ||= fallback_platform(env, hostname)
+      return not_found_response if platform == :refuse
 
       ::Current.platform_domain = domain
       ::Current.platform        = platform
@@ -35,7 +37,39 @@ module BetterTogether
       ActiveStorage::Current.reset if defined?(ActiveStorage::Current)
     end
 
+    HEALTH_PATHS = %w[/up /health /healthz /health_check].freeze
+
     private
+
+    # Unknown hostnames fall back to the host platform only when that is
+    # unambiguous: fail-closed is off, there is a single platform, the host
+    # matches the host platform's own URL, or the path is a health check.
+    # Returns :refuse when the request must be rejected.
+    def fallback_platform(env, hostname)
+      host_platform = cached_host_platform
+      return host_platform unless host_platform && BetterTogether.fail_closed_unknown_hosts
+      return host_platform if HEALTH_PATHS.include?(env['PATH_INFO'].to_s)
+      return host_platform if own_host?(host_platform, hostname)
+      return host_platform if single_platform?
+
+      :refuse
+    end
+
+    def own_host?(platform, hostname)
+      URI.parse(platform.host_url.to_s).host.to_s.casecmp?(hostname.to_s)
+    rescue URI::InvalidURIError
+      false
+    end
+
+    def single_platform?
+      Rails.cache.fetch('better_together/single_platform', expires_in: 1.minute) do
+        BetterTogether::Platform.where(external: false).limit(2).count < 2
+      end
+    end
+
+    def not_found_response
+      [404, { 'Content-Type' => 'text/plain' }, ['Not Found']]
+    end
 
     def cached_host_platform
       # Cache only the UUID to avoid serializing an AR object into the cache store.

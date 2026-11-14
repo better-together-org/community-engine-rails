@@ -59,7 +59,9 @@ module BetterTogether
     alias name title
     translates :content, backend: :action_text
 
-    slugged :title
+    # Identifier already enforces slug uniqueness per platform; a global check blocks two platforms
+    # from using the same identifier.
+    slugged :title, slug_uniqueness: false
 
     searchable pg_search: {
       against: [:identifier],

@@ -139,6 +139,24 @@ entries:
     action: retain
     reverse_association: reviewed_person_deletion_requests
 
+  - key: BetterTogether::PlatformDeletionRequest#requested_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformDeletionRequest
+    association: requested_by
+    foreign_key: requested_by_id
+    action: destroy
+    reverse_association: platform_deletion_requests
+
+  - key: BetterTogether::PlatformDeletionRequest#reviewed_by
+    kind: model_reference
+    owner: person
+    model: BetterTogether::PlatformDeletionRequest
+    association: reviewed_by
+    foreign_key: reviewed_by_id
+    action: retain
+    reverse_association: reviewed_platform_deletion_requests
+
   - key: BetterTogether::PersonPurgeAudit#person
     kind: model_reference
     owner: person

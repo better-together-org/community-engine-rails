@@ -20,6 +20,10 @@ module BetterTogether
     has_one_attached :yaml_file
 
     belongs_to :seedable, polymorphic: true, optional: true
+    # Nil for global seeds (federation, builders); set when a seed belongs to one platform.
+    belongs_to :platform, class_name: 'BetterTogether::Platform', optional: true
+
+    scope :for_platform, ->(platform) { where(platform_id: platform&.id) }
 
     has_many :seed_plantings, foreign_key: :seed_id, dependent: :destroy
 
@@ -190,11 +194,11 @@ module BetterTogether
     # -------------------------------------------------------------
     # import_or_update! = upsert by type+identifier
     # -------------------------------------------------------------
-    def self.import_or_update!(seed_data, root_key: DEFAULT_ROOT_KEY)
+    def self.import_or_update!(seed_data, root_key: DEFAULT_ROOT_KEY, platform: nil)
       data = seed_data.deep_symbolize_keys.fetch(root_key.to_sym)
       attempts = 0
       begin
-        record = find_or_build_from_data(data)
+        record = find_or_build_from_data(data, platform:)
         record.assign_attributes(seed_record_attributes(data))
         record.save!
         record
@@ -208,11 +212,12 @@ module BetterTogether
       end
     end
 
-    def self.find_or_build_from_data(data)
+    def self.find_or_build_from_data(data, platform: nil)
       metadata = data.fetch(:seed)
       find_or_initialize_by(
         type: metadata.fetch(:type, name),
-        identifier: metadata.fetch(:identifier)
+        identifier: metadata.fetch(:identifier),
+        platform_id: platform&.id
       )
     end
 

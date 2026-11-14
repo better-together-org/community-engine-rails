@@ -2,7 +2,7 @@
 
 module BetterTogether
   # Allows for platform managers to invite new people to register to the platform
-  class PlatformInvitation < ApplicationRecord
+  class PlatformInvitation < ApplicationRecord # rubocop:todo Metrics/ClassLength
     include BlockAwareInvitation
 
     has_secure_token
@@ -42,6 +42,7 @@ module BetterTogether
     validates :status, presence: true, inclusion: { in: STATUS_VALUES.values }
     validates :token, uniqueness: true
     validate :valid_status_transition, if: :status_changed?
+    validate :platform_role_is_a_platform_role
 
     before_validation :set_accepted_timestamp
 
@@ -49,6 +50,8 @@ module BetterTogether
     after_create_commit :queue_invitation_email, if: :should_send_email?
 
     scope :pending, -> { where(status: STATUS_VALUES[:pending]) }
+    # A token is only redeemable on the platform it invites to.
+    scope :redeemable_on, ->(platform) { platform ? where(invitable_id: platform.id) : none }
     scope :accepted, -> { where(status: STATUS_VALUES[:accepted]) }
     scope :expired, -> { where('valid_until IS NOT NULL AND valid_until < ?', Time.current) }
     scope :not_expired, -> { where('valid_until IS NULL OR valid_until >= ?', Time.current) }
@@ -129,6 +132,13 @@ module BetterTogether
       return unless status_was.present? && !valid_transitions[status_was].include?(status)
 
       errors.add(:status, "cannot transition from #{status_was} to #{status}")
+    end
+
+    # A platform invitation may only carry a role defined for platforms.
+    def platform_role_is_a_platform_role
+      return if platform_role.blank? || platform_role.resource_type == 'BetterTogether::Platform'
+
+      errors.add(:platform_role, :invalid)
     end
   end
 end

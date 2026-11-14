@@ -21,7 +21,7 @@ if (!pngPath) {
 const toolsRequire = createRequire(path.join(path.resolve(toolsDir), 'package.json'));
 const MAX_PNG_SIDE = 10000; // Chrome drops most of the drawing on larger canvases
 
-function dotFor(dbml) {
+function dotFor(dbml, seed) {
   const cli = path.join(path.resolve(toolsDir), 'node_modules', '.bin', 'dbml-renderer');
   const dot = execFileSync(cli, ['-i', dbml, '-f', 'dot'], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
   return dot;
@@ -84,7 +84,19 @@ async function rasterize(svg) {
 }
 
 (async () => {
-  const svg = svgFor(dotFor(dbmlPath));
+  // Some seeds make neato fail with "area too large for rtree" once the schema grows. Seed 1 stays the default so
+  // the committed diagram does not change; later seeds are tried in order, so the result is still deterministic.
+  let svg;
+  let lastError;
+  for (let seed = 1; seed <= 12 && !svg; seed += 1) {
+    try {
+      svg = svgFor(dotFor(dbmlPath, seed));
+      if (seed > 1) console.log(`neato layout needed start=${seed}`);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (!svg) throw lastError;
   fs.mkdirSync(path.dirname(svgPath), { recursive: true });
   fs.mkdirSync(path.dirname(pngPath), { recursive: true });
   fs.writeFileSync(svgPath, svg);

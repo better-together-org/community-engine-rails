@@ -141,7 +141,7 @@ module BetterTogether
         def may_host?(value)
           person = context[:current_user]&.person
           return false unless person
-          return true if person.permitted_to?('manage_platform')
+          return true if person.platform_manager?
 
           allowed = person.valid_event_host_ids.map(&:to_s)
           parsed_host_ids(value).all? { |id| allowed.include?(id) }

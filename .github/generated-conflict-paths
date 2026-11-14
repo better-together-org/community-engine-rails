@@ -1,0 +1,11 @@
+# Files that are generated from other files. A merge conflict confined to these can be fixed by
+# taking the base branch's version and regenerating (see bin/ci-resolve-generated-conflicts). One glob
+# per line; `*` also matches `/`.
+# Only what a script writes belongs here. Hand-written diagram sources (docs/diagrams/source/billing_*.mmd
+# and the like) are NOT listed: taking the base's version of those would drop the PR's own edits.
+# Code, migrations and spec/dummy/db/schema.rb are not listed either: taking a side there can drop a
+# migration or a column, so those conflicts always go to a person.
+db/community-engine-db.dbml
+docs/diagrams/exports/*
+docs/diagrams/reference/*
+docs/diagrams/source/ce_*.mmd

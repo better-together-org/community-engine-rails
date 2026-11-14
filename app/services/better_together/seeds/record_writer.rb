@@ -18,7 +18,9 @@ module BetterTogether
         end
         record = klass.new
         record.platform = platform if definition.platform_column && record.respond_to?(:platform=)
-        record.public_send("#{definition.natural_key_columns.first}=", entry.key) if definition.by_refs.empty?
+        if definition.by_refs.empty? && !definition.natural_key_via_attribute
+          record.public_send("#{definition.natural_key_columns.first}=", entry.key)
+        end
         record
       end
 
