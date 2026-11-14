@@ -54,7 +54,8 @@ RSpec.describe BetterTogether::Billing::PurchaseAgreementSeeds do
     second = described_class.call(host_platform)
 
     expect(second.transform_values(&:lifecycle_state)).to eq(
-      'subscription_agreement' => 'active', 'one_time_purchase_agreement' => 'draft', 'offline_payment_terms' => 'draft'
+      'subscription_agreement' => 'active', 'one_time_purchase_agreement' => 'draft', 'offline_payment_terms' => 'draft',
+      'refund_policy' => 'draft'
     )
   end
 
