@@ -1,0 +1,52 @@
+# Version manifest for bin/prod/host-setup.sh and the BTS provisioning scripts.
+#
+# Plain KEY=value lines only. No shell code; the readers parse this file, they do
+# not source it. Each pin has its source URL and the date it was checked.
+# Update a pin deliberately, in a pull request. Never use "latest".
+#
+# Checked 2026-11-13.
+
+# Source: https://github.com/dokku/dokku/releases/tag/v0.38.34 (published 2026-10-30)
+DOKKU_TAG=v0.38.34
+# SHA-256 of https://dokku.com/install/v0.38.34/bootstrap.sh, computed 2026-11-13.
+DOKKU_BOOTSTRAP_SHA256=9ed3f7dab19724b940fc0eae040430e9078032fb7c3826f2d2942be4a0e1c57b
+
+# Source: https://github.com/dokku/dokku-postgres/releases/tag/2.7.0 (published 2026-11-05)
+DOKKU_POSTGRES_TAG=2.7.0
+# Source: https://github.com/dokku/dokku-redis/releases/tag/2.7.0 (published 2026-11-05)
+DOKKU_REDIS_TAG=2.7.0
+# Source: https://github.com/dokku/dokku-letsencrypt/releases/tag/0.25.2 (published 2026-08-28)
+DOKKU_LETSENCRYPT_TAG=0.25.2
+# Source: https://github.com/dokku/dokku-elasticsearch/releases/tag/2.7.0 (published 2026-11-05)
+DOKKU_ELASTICSEARCH_TAG=2.7.0
+
+# PostGIS image. The gem CI and docker-compose.yml run PostgreSQL 17; the fleet uses
+# the imresamu/postgis image. Source: https://hub.docker.com/r/imresamu/postgis/tags
+# (17-3.6.1-bookworm, updated 2026-02-09; newest 17 tags are alpine variants).
+POSTGIS_IMAGE=imresamu/postgis
+POSTGIS_IMAGE_VERSION=17-3.6.1-bookworm
+
+# Redis image. Latest upstream is 8.10.3 (https://github.com/redis/redis/releases/tag/8.10.3,
+# 2026-10-26) but the gem CI only exercises Redis 7, so the 7.4 line is pinned.
+# Source: https://hub.docker.com/_/redis/tags (7.4.12-alpine, updated 2026-11-12).
+REDIS_IMAGE=redis
+REDIS_IMAGE_VERSION=7.4.12-alpine
+
+# Elasticsearch (optional step). better_together-elasticsearch depends on
+# elasticsearch-model ~> 8, so the 8.x line is pinned; 9.x is not used.
+# Source: https://hub.docker.com/_/elasticsearch/tags (8.19.25, updated 2026-11-12).
+ELASTICSEARCH_IMAGE=elasticsearch
+ELASTICSEARCH_IMAGE_VERSION=8.19.25
+
+# Docker Engine package version prefix, matched against apt-cache madison docker-ce.
+# Source: https://github.com/moby/moby/releases/tag/docker-v29.9.3 (published 2026-11-03)
+DOCKER_ENGINE_VERSION=29.9.3
+
+# Cloudflared (optional step). Source: https://github.com/cloudflare/cloudflared/releases/tag/2026.11.0
+# (published 2026-11-12). The apt package version is not verified to equal this tag.
+CLOUDFLARED_VERSION=2026.11.0
+
+# BorgBackup upstream reference. The script installs the distribution package and
+# reports a mismatch; it does not fail on one.
+# Source: https://github.com/borgbackup/borg/releases/tag/1.4.5 (published 2026-07-18)
+BORG_VERSION=1.4.5
