@@ -20,7 +20,6 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentEnrollment, type: :ser
     allow(item).to receive(:last_error_class=)
     allow(item).to receive(:last_error_summary=)
     allow(item).to receive(:save!)
-    allow(BetterTogether::ContentSecurity::ScanAttachmentJob).to receive(:perform_later)
   end
 
   describe '.sync_attachment!' do
@@ -64,8 +63,7 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentEnrollment, type: :ser
       end
 
       it 'enqueues a ScanAttachmentJob' do
-        sync
-        expect(BetterTogether::ContentSecurity::ScanAttachmentJob).to have_received(:perform_later).with(item.id)
+        expect { sync }.to have_enqueued_job(BetterTogether::ContentSecurity::ScanAttachmentJob).with(item.id)
       end
     end
 
@@ -75,8 +73,7 @@ RSpec.describe BetterTogether::ContentSecurity::AttachmentEnrollment, type: :ser
       end
 
       it 'does not enqueue a ScanAttachmentJob' do
-        sync
-        expect(BetterTogether::ContentSecurity::ScanAttachmentJob).not_to have_received(:perform_later)
+        expect { sync }.not_to have_enqueued_job(BetterTogether::ContentSecurity::ScanAttachmentJob)
       end
 
       it 'does not reset lifecycle state' do

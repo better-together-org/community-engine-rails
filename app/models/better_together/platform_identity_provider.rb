@@ -41,6 +41,10 @@ module BetterTogether
 
     scope :enabled, -> { where(enabled: true) }
 
+    after_commit :audit_configuration_change
+
+    AUDITED_FIELDS = %w[enabled strategy client_id scopes options].freeze
+
     def serializable_hash(options = nil)
       super(options.to_h.merge(except: Array(options.to_h[:except]) + %w[client_secret]))
     end
@@ -65,6 +69,19 @@ module BetterTogether
     end
 
     private
+
+    # Record who-affecting changes without values: the secret never appears, only that it changed.
+    def audit_configuration_change
+      action = if destroyed? then 'identity_provider.destroyed'
+               elsif previously_new_record? then 'identity_provider.created'
+               else 'identity_provider.updated'
+               end
+      changed = (saved_changes.keys & (AUDITED_FIELDS + %w[client_secret])).sort
+      return if action.end_with?('updated') && changed.empty?
+
+      BetterTogether::TenancyAudit.record(action, identity_provider_id: id, owner_platform_id: platform_id,
+                                                  strategy:, changed:, trust_verified_email: trust_verified_email?)
+    end
 
     def issuer_provider?
       catalog_entry&.requires_issuer == true
@@ -141,8 +158,23 @@ module BetterTogether
     def issuer_is_safe_https_url
       errors.add(:issuer, :invalid) unless URI.parse(issuer.to_s).is_a?(URI::HTTPS)
       BetterTogether::SafeFederationUrlValidator.new(attributes: [:issuer]).validate_each(self, :issuer, issuer)
+      issuer_must_resolve_publicly
     rescue URI::InvalidURIError
       errors.add(:issuer, :invalid)
+    end
+
+    # Resolve DNS too: a name pointing at a private address is as unsafe as a private literal.
+    # Only when the issuer is new or changing, or the provider is being turned on: an existing
+    # provider whose DNS has since gone bad must still be editable and disableable.
+    def issuer_must_resolve_publicly
+      return if errors.include?(:issuer) || !issuer_dns_check_needed?
+      return if BetterTogether::SafeOutboundHost.public_host?(URI.parse(issuer).host)
+
+      errors.add(:issuer, :private_ip, message: I18n.t('better_together.validators.safe_federation_url.private_ip'))
+    end
+
+    def issuer_dns_check_needed?
+      new_record? || will_save_change_to_options? || will_save_change_to_enabled?(to: true)
     end
 
     def provider_platform_is_external

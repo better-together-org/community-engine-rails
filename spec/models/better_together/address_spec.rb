@@ -235,15 +235,13 @@ RSpec.describe BetterTogether::Address do
 
   describe 'geocoding callbacks' do
     it 'enqueues geocoding when a new address can be geocoded' do
-      allow(BetterTogether::Geography::GeocodingJob).to receive(:perform_later)
-
-      create(:address,
-             line1: '62 Broadway',
-             city_name: 'Corner Brook',
-             state_province_name: 'NL',
-             country_name: 'Canada')
-
-      expect(BetterTogether::Geography::GeocodingJob).to have_received(:perform_later).with(instance_of(described_class))
+      expect do
+        create(:address,
+               line1: '62 Broadway',
+               city_name: 'Corner Brook',
+               state_province_name: 'NL',
+               country_name: 'Canada')
+      end.to have_enqueued_job(BetterTogether::Geography::GeocodingJob).with(instance_of(described_class))
     end
 
     it 'does not geocode when there is no address content' do

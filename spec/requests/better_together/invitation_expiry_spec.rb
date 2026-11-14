@@ -12,7 +12,11 @@ RSpec.describe 'Invitation expiry access control' do
     BetterTogether::Platform.find_by(host: true)&.update!(privacy: 'private')
   end
 
-  let(:invitation) { create(:better_together_platform_invitation, status: 'pending', locale: I18n.default_locale.to_s) }
+  # The token is only redeemable on the platform that issued it, so issue it on the host.
+  let(:invitation) do
+    create(:better_together_platform_invitation, status: 'pending', locale: I18n.default_locale.to_s,
+                                                 invitable: BetterTogether::Platform.find_by(host: true))
+  end
 
   # rubocop:todo RSpec/MultipleExpectations
   it 'allows access with a valid invitation token and denies after session expiry' do # rubocop:todo RSpec/MultipleExpectations

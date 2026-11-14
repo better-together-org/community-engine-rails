@@ -13,6 +13,20 @@ module BetterTogether
            jwt_revocation_strategy: JwtDenylist,
            omniauth_providers: BetterTogether::IdentityProviders.keys
 
+    # Accounts are per platform: the same address may exist once on each platform. Devise's :validatable
+    # adds a global uniqueness check, which DeviseUser replaces with a platform scoped one. It can only
+    # be removed here, after the `devise` call above has declared it.
+    _validators[:email].reject! { |v| v.is_a?(ActiveRecord::Validations::UniquenessValidator) }
+    _validate_callbacks
+      .select { |cb| cb.filter.is_a?(ActiveRecord::Validations::UniquenessValidator) && cb.filter.attributes == [:email] }
+      .each { |cb| _validate_callbacks.delete(cb) }
+    validates :email, uniqueness: { case_sensitive: false, scope: :platform_id }
+
+    # Platform audience claim: the token is accepted only on the platform that issued it.
+    def jwt_payload
+      { 'plt' => ::Current.platform&.id }
+    end
+
     has_one :person_identification,
             lambda {
               where(
@@ -33,7 +47,7 @@ module BetterTogether
 
     accepts_nested_attributes_for :person
 
-    delegate :permitted_to?, to: :person, allow_nil: true
+    delegate :permitted_to?, :platform_manager?, :host_platform_manager?, to: :person, allow_nil: true
 
     def build_person(attributes = {})
       identification = build_person_identification(
