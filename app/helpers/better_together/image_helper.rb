@@ -158,31 +158,110 @@ module BetterTogether
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
 
-    def render_image_gallery(images, name)
+    GALLERY_LAYOUTS = %i[grid masonry].freeze
+    GALLERY_VARIANT_WIDTHS = [480, 960].freeze
+    GALLERY_SIZES = '(min-width: 768px) 33vw, 100vw'
+
+    # Renders a gallery of image blocks (anything responding to #media).
+    # Per-image alt_text, caption and attribution are used when present; name is the fallback alt text.
+    # layout: :grid (default, DOM order equals visual order) or :masonry (opt-in).
+    def render_image_gallery(images, name, layout: :grid, label: nil)
       return if images.blank?
 
-      content_tag(:section, class: 'image-gallery mb-4', data: { controller: 'better_together--masonry' }) do
-        content_tag(:div, class: 'row g-3') do
-          images.size == 1 ? render_single_image(images.first, name) : render_image_grid(images, name)
+      layout = GALLERY_LAYOUTS.include?(layout&.to_sym) ? layout.to_sym : :grid
+      content_tag(:section, class: "image-gallery image-gallery--#{layout} mb-4",
+                            aria: { label: label.presence || name.to_s.presence }) do
+        content_tag(:ul, class: 'image-gallery__list list-unstyled mb-0', **gallery_data(layout)) do
+          safe_join(images.map { |image| render_gallery_item(image, name, single: images.size == 1) })
+        end
+      end
+    end
+
+    def render_gallery_item(image, name, single: false)
+      content_tag(:li, class: "image-gallery__item#{' image-gallery__item--single' if single}") do
+        content_tag(:figure, class: 'image-gallery__figure m-0') do
+          safe_join([gallery_image_tag(image, name, single:), gallery_caption(image)].compact)
         end
       end
     end
 
     def render_single_image(image, name)
       content_tag(:div, class: 'col col-12') do
-        image_tag(storage_proxy_url_for(image.media), alt: name, class: 'img-fluid rounded mb-3')
+        image_tag(storage_proxy_url_for(image.media), alt: gallery_alt(image, name), class: 'img-fluid rounded mb-3')
       end
     end
 
     def render_image_grid(images, name)
       safe_join(images.map do |image|
         content_tag(:div, class: 'col align-content-center col-md-4') do
-          image_tag(storage_proxy_url_for(image.media), alt: name, class: 'img-fluid rounded')
+          image_tag(storage_proxy_url_for(image.media), alt: gallery_alt(image, name), class: 'img-fluid rounded')
         end
       end)
     end
 
     private
+
+    def gallery_data(layout)
+      return {} unless layout == :masonry
+
+      { 'data-controller': 'better_together--masonry',
+        'data-better_together--masonry-item-selector-value': '.image-gallery__item' }
+    end
+
+    def gallery_alt(image, name)
+      image.try(:alt_text).presence || name.to_s
+    end
+
+    def gallery_image_tag(image, name, single:)
+      media = image.media
+      width, height = gallery_dimensions(media)
+      image_tag(storage_proxy_url_for(gallery_variant(media, GALLERY_VARIANT_WIDTHS.last)),
+                alt: gallery_alt(image, name), class: 'image-gallery__image img-fluid rounded',
+                loading: 'lazy', decoding: 'async', width:, height:,
+                srcset: gallery_srcset(media, width), sizes: (single ? '100vw' : GALLERY_SIZES))
+    end
+
+    def gallery_variant(media, width)
+      media.variable? ? media.variant(resize_to_limit: [width, width]) : media
+    end
+
+    # Variants are only offered for formats libvips can resize; others (SVG, GIF) load as-is.
+    def gallery_srcset(media, original_width)
+      return unless media.variable? && original_width
+
+      widths = GALLERY_VARIANT_WIDTHS.select { |w| w < original_width }
+      widths.map { |w| "#{storage_proxy_url_for(gallery_variant(media, w))} #{w}w" }.join(', ').presence
+    end
+
+    # Width and height of the largest rendition, so the browser can reserve space before loading.
+    def gallery_dimensions(media)
+      meta = media.blob.metadata
+      width = meta['width']
+      height = meta['height']
+      return [nil, nil] unless width && height && media.variable?
+
+      limit = GALLERY_VARIANT_WIDTHS.last
+      scale = [limit.to_f / [width, height].max, 1.0].min
+      [(width * scale).round, (height * scale).round]
+    end
+
+    def gallery_caption(image)
+      caption = image.try(:caption).presence
+      attribution = image.try(:attribution).presence
+      return if caption.blank? && attribution.blank?
+
+      content_tag(:figcaption, class: 'image-gallery__caption small text-muted mt-1') do
+        safe_join([caption, gallery_attribution(image, attribution)].compact, ' ')
+      end
+    end
+
+    def gallery_attribution(image, attribution)
+      return if attribution.blank?
+
+      url = image.try(:attribution_url).presence
+      text = url ? link_to(attribution, url, rel: 'noopener', target: '_blank') : attribution
+      content_tag(:span, text, class: 'image-gallery__attribution')
+    end
 
     def first_category_with_cover_image(entity)
       return unless entity.respond_to?(:categories)
