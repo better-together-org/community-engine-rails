@@ -2781,11 +2781,13 @@ es:
       new:
         title: Nuevo elemento de navegación para %{name}
       route_names:
+        agreements: Acuerdos
         calendars: Calendarios
         calls_for_interest: Convocatorias de interés
         communities: Comunidades
         content_blocks: Bloques de contenido
         events: Eventos
+        federation_hub: Centro de federación
         geography_continents: Continentes
         geography_countries: Países
         geography_maps: Mapas
@@ -2796,19 +2798,24 @@ es:
         host_dashboard_membership_review: Revisión de membresías
         host_dashboard_platform_connection_review: Revisión de federación
         host_dashboard_safety_review: Revisión de seguridad
+        hub: Centro
+        joatu_hub: Centro Joatu
         joatu_offers: Ofertas
         joatu_requests: Solicitudes
         metrics_reports: Informes de métricas
         navigation_areas: Áreas de navegación
+        oauth_applications: Aplicaciones OAuth
         pages: Páginas
         people: Personas
         platform_connections: Conexiones de plataforma
         platforms: Plataformas
+        posts: Publicaciones
         reports: Informes
         resource_permissions: Permisos de recursos
         roles: Roles
         safety_cases: Revisión de seguridad
         users: Usuarios
+        webhook_endpoints: Puntos de conexión de webhook
       visibility_strategies:
         authenticated: Usuarios autenticados
         permission: Usuarios con permiso

@@ -254,10 +254,17 @@ module BetterTogether
     def route_names_for_select(nav_item = nil)
       options_for_select(
         BetterTogether::NavigationItem.route_names.map do |name, route|
-          [I18n.t("better_together.navigation_items.route_names.#{name}"), route]
+          [navigation_route_name_label(name), route]
         end,
         nav_item&.route_name
       )
+    end
+
+    # Every key in NavigationItem.route_names needs a translation in each locale;
+    # spec/i18n/navigation_route_names_spec.rb enforces that for the gem's own list.
+    # The humanized default only keeps host-app additions readable until they translate them.
+    def navigation_route_name_label(name)
+      I18n.t("better_together.navigation_items.route_names.#{name}", default: name.to_s.humanize)
     end
 
     def navigation_item_turbo_frame_target(navigation_item)
