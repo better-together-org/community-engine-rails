@@ -164,6 +164,8 @@
           </div>
         </fieldset>
 
+        <%= render 'better_together/platforms/trusted_domains_section', platform: platform %>
+
         <div class="mb-3">
           <%= contributor_display_visibility_field(
                 form:,
@@ -175,12 +177,15 @@
       </div>
 
       <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'appearance' %>" id="platform-appearance" role="tabpanel" aria-labelledby="platform-appearance-tab">
+        <%= render partial: 'better_together/platforms/theme_fields', locals: { platform:, form: } %>
         <div id="<%= dom_id(platform, (platform.css_block&.id || 'new_css_block')) %>" class="mb-3">
           <h2 class="h5"><%= t('better_together.platforms.form.custom_css_title') %></h2>
           <p class="form-text text-muted"><%= t('better_together.platforms.form.custom_css_hint') %></p>
           <%= render partial: 'better_together/content/blocks/fields/block',
                      locals: { block: platform.css_block || BetterTogether::Content::Css.new, scope: 'platform[css_block_attributes]' } %>
         </div>
+
+        <%= render 'better_together/platforms/content_slots_fields', platform: platform %>
       </div>
 
       <div class="nav-tab-pane tab-pane fade<%= ' show active' if active_tab == 'domains' %>" id="platform-domains" role="tabpanel" aria-labelledby="platform-domains-tab">

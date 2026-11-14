@@ -12,7 +12,7 @@ module BetterTogether
     #
     # 2. Logged-in person (creator present, requesting another community):
     #    after_agreement_acceptance! → PersonCommunityMembership.find_or_create_by!
-    class MembershipRequest < Request
+    class MembershipRequest < Request # rubocop:todo Metrics/ClassLength
       CATEGORY_NAME = 'Membership Requests'
 
       # Minimal stand-in for an Offer used during approval when no real offer exists.
@@ -21,7 +21,7 @@ module BetterTogether
 
       before_validation :assign_membership_request_category
       before_validation :generate_name_from_requestor
-      after_create_commit :notify_reviewers_of_submission
+      after_create_commit :auto_approve_or_notify_reviewers
       after_update_commit :notify_requestor_of_decision
 
       validates :target_type, inclusion: { in: ['BetterTogether::Community'] }
@@ -117,7 +117,56 @@ module BetterTogether
       end
 
       def default_community_role
-        ::BetterTogether::Role.find_by(identifier: 'community_member')
+        @trusted_domain_entry&.role || ::BetterTogether::Role.find_by(identifier: 'community_member')
+      end
+
+      # A trusted-domain requester skips the pending state. Reviewers are only notified when it did not apply.
+      def auto_approve_or_notify_reviewers
+        notify_reviewers_of_submission unless auto_approve_for_trusted_domain
+      end
+
+      def auto_approve_for_trusted_domain
+        @trusted_domain_entry = trusted_domain_entry
+        return false if @trusted_domain_entry.blank?
+
+        approver = trusted_domain_approver
+        return false if approver.blank?
+
+        approve!(approver:)
+        record_trusted_domain_approval
+        true
+      rescue ActiveRecord::RecordInvalid => e
+        Rails.logger.error "Trusted domain auto-approval failed, left for review: #{e.message}"
+        @trusted_domain_entry = nil
+        false
+      end
+
+      # The invitation needs a sender: a manager of the platform. None found means leave it for review.
+      def trusted_domain_approver
+        ::BetterTogether::PersonPlatformMembership.active.joins(:role)
+                                                  .where(joinable: @trusted_domain_entry.platform,
+                                                         better_together_roles: { identifier: 'platform_manager' })
+                                                  .first&.member
+      end
+
+      # Public form (no account): the approval emails an invitation to the typed address, so only its owner can
+      # use it. Signed-in requester: only a confirmed account email counts as verified.
+      def trusted_domain_entry
+        platform = target.try(:primary_platform)
+        return nil if platform.blank?
+        return ::BetterTogether::PlatformTrustedDomain.lookup(platform:, email: requestor_email) if unauthenticated?
+
+        account = creator.user
+        account&.confirmed? ? platform.trusted_domain_for(account.email, verified: true) : nil
+      end
+
+      def record_trusted_domain_approval
+        ::BetterTogether::TrustedDomainEvent.create!(
+          platform: @trusted_domain_entry.platform, platform_trusted_domain: @trusted_domain_entry,
+          subject: creator, event_type: 'membership_request_approved', via: 'membership_request',
+          domain: @trusted_domain_entry.domain, role_identifier: @trusted_domain_entry.role.identifier,
+          details: { unauthenticated: unauthenticated?, membership_request_id: id }
+        )
       end
 
       def create_community_invitation!(offer)

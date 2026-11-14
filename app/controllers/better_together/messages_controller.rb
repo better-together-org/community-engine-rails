@@ -3,6 +3,7 @@
 module BetterTogether
   # handles managing messages
   class MessagesController < ApplicationController
+    skip_third_party_tracking
     include PerUserThrottling
 
     throttle_per_user :message_send, only: :create

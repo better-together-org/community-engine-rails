@@ -1,0 +1,12 @@
+# S3-compatible storage (Garage, MinIO, R2). Set ACTIVE_STORAGE_SERVICE=s3_compatible
+# plus the env vars below. S3_ENDPOINT is required and enables path-style access.
+s3_compatible:
+  service: S3
+  access_key_id: <%= ENV.fetch('AWS_ACCESS_KEY_ID', nil) %>
+  secret_access_key: <%= ENV.fetch('AWS_SECRET_ACCESS_KEY', nil) %>
+  region: <%= ENV.fetch('S3_REGION', ENV.fetch('AWS_REGION', 'us-east-1')) %>
+  bucket: <%= ENV.fetch('S3_BUCKET_NAME', nil) %>
+  endpoint: <%= ENV.fetch('S3_ENDPOINT', nil) %>
+  force_path_style: true
+  request_checksum_calculation: when_required
+  response_checksum_validation: when_required

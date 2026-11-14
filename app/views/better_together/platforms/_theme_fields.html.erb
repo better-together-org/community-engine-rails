@@ -1,0 +1,178 @@
+<%# locals: (platform:, form:) %>
+<%
+  config = platform.theme_config
+  cfg = BetterTogether::PlatformThemeConfig
+  scope = 'better_together.platforms.theme'
+%>
+<div id="platform-theme-settings" class="mb-4" data-controller="better_together--platform-theme"
+     data-better_together--platform-theme-threshold-value="<%= cfg::AA_NORMAL %>"
+     data-better_together--platform-theme-derive-url-value="<%= platform.persisted? ? theme_dark_platform_path(platform) : '' %>">
+  <h2 class="h5"><%= t("#{scope}.title") %></h2>
+  <p class="form-text text-muted"><%= t("#{scope}.hint") %></p>
+
+  <div id="platform-allow-user-themes" class="form-check mb-3">
+    <%= form.check_box :allow_user_themes, { class: 'form-check-input', checked: platform.allow_user_themes?, id: dom_id(platform, :allow_user_themes) } %>
+    <%= form.label :allow_user_themes, t("#{scope}.allow_user_themes"), class: 'form-check-label', for: dom_id(platform, :allow_user_themes) %>
+    <div class="form-text text-muted"><%= t("#{scope}.allow_user_themes_hint") %></div>
+  </div>
+
+  <div id="platform-theme-picker" class="mb-3">
+    <%= label_tag :platform_theme_picker, t("#{scope}.picker_label"), class: 'form-label' %>
+    <div class="row g-2 align-items-start">
+      <div class="col-md-6">
+        <%= select_tag 'theme_picker',
+                       options_for_select(cfg.themes.keys.map { |id| [cfg.theme_name(id), id, { 'data-tokens' => cfg.flat_theme(id).to_json, 'data-description' => cfg.theme_description(id) }] },
+                                          config['preset']),
+                       id: 'platform_theme_picker', include_blank: t("#{scope}.picker_blank"), class: 'form-select',
+                       'data-better_together--platform-theme-target' => 'picker',
+                       data: { controller: 'better_together--slim-select', action: 'change->better_together--platform-theme#selectTheme' } %>
+        <%= hidden_field_tag 'platform[theme][preset]', config['preset'], id: 'platform_theme_preset',
+                             'data-better_together--platform-theme-target' => 'input', data: { key: 'preset' } %>
+      </div>
+      <div class="col-md-6 d-flex flex-wrap gap-2">
+        <button type="button" id="platform-theme-apply" class="btn btn-primary" style="min-height:44px;min-width:44px" disabled
+                data-action="better_together--platform-theme#applyTheme" data-better_together--platform-theme-target="apply">
+          <%= t("#{scope}.apply") %>
+        </button>
+        <button type="button" id="platform-theme-reset" class="btn btn-outline-secondary" style="min-height:44px;min-width:44px"
+                data-action="better_together--platform-theme#reset">
+          <%= t("#{scope}.reset") %>
+        </button>
+        <button type="button" id="platform-theme-clear" class="btn btn-outline-secondary" style="min-height:44px;min-width:44px"
+                data-action="better_together--platform-theme#clear">
+          <%= t("#{scope}.clear") %>
+        </button>
+      </div>
+    </div>
+    <p id="platform-theme-description" class="form-text mb-1" data-better_together--platform-theme-target="description"></p>
+    <p id="platform-theme-status" class="small fw-semibold mb-0" role="status" aria-live="polite"
+       data-better_together--platform-theme-target="status"
+       data-current-text="<%= t("#{scope}.status_current", name: '%{name}') %>"
+       data-previewing-text="<%= t("#{scope}.status_previewing", name: '%{name}') %>"
+       data-custom-text="<%= t("#{scope}.status_custom") %>"
+       data-none-text="<%= t("#{scope}.status_none") %>"
+       data-applied-text="<%= t("#{scope}.status_applied", name: '%{name}') %>"
+       data-current-name="<%= config['preset'].present? ? cfg.theme_name(config['preset']) : '' %>"></p>
+  </div>
+
+  <%= render partial: 'better_together/platforms/theme_preview', locals: { platform: platform } %>
+
+  <div class="row" id="platform-theme-colors">
+    <% cfg::COLOR_KEYS.each do |key| %>
+      <div class="col-sm-6 col-lg-4 mb-3">
+        <%= label_tag "platform_theme_#{key}", t("#{scope}.colors.#{key}"), class: 'form-label' %>
+        <div class="input-group">
+          <span class="input-group-text p-0 px-2" aria-hidden="true">
+            <span class="d-inline-block border rounded" style="width:1.25rem;height:1.25rem"
+                  data-better_together--platform-theme-target="swatch" data-key="<%= key %>"></span>
+          </span>
+          <%= text_field_tag "platform[theme][#{key}]", config[key], id: "platform_theme_#{key}", class: 'form-control font-monospace',
+                             placeholder: '#rrggbb', maxlength: 7, pattern: '#[0-9a-fA-F]{6}', autocomplete: 'off',
+                             'data-better_together--platform-theme-target' => 'input', data: { key: key,
+                                     action: 'input->better_together--platform-theme#edited' } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6 mb-3">
+      <%= label_tag :platform_theme_font, t("#{scope}.font_label"), class: 'form-label' %>
+      <%= select_tag 'platform[theme][font]',
+                     options_for_select([[t("#{scope}.default_option"), '']] +
+                                        cfg::FONT_STACKS.keys.map { |k| [t("#{scope}.fonts.#{k}"), k] }, config['font']),
+                     id: 'platform_theme_font', class: 'form-select',
+                     'data-better_together--platform-theme-target' => 'input', data: { key: 'font', action: 'change->better_together--platform-theme#edited' } %>
+    </div>
+    <div class="col-sm-6 mb-3">
+      <%= label_tag :platform_theme_radius, t("#{scope}.radius_label"), class: 'form-label' %>
+      <%= select_tag 'platform[theme][radius]',
+                     options_for_select([[t("#{scope}.default_option"), '']] +
+                                        cfg::RADII.keys.map { |k| [t("#{scope}.radii.#{k}"), k] }, config['radius']),
+                     id: 'platform_theme_radius', class: 'form-select',
+                     'data-better_together--platform-theme-target' => 'input', data: { key: 'radius', action: 'change->better_together--platform-theme#edited' } %>
+    </div>
+  </div>
+
+  <section id="platform-theme-modes" class="mb-4" aria-labelledby="platform-theme-modes-heading">
+    <h3 id="platform-theme-modes-heading" class="h6"><%= t("#{scope}.modes_title") %></h3>
+    <p class="form-text text-muted"><%= t("#{scope}.modes_hint") %></p>
+    <div class="row">
+      <div class="col-sm-4 mb-3">
+        <%= label_tag :platform_theme_dark_mode, t("#{scope}.dark_mode_label"), class: 'form-label' %>
+        <%= select_tag 'platform[theme][dark_mode]',
+                       options_for_select(%w[enabled disabled].map { |v| [t("#{scope}.dark_mode_#{v}"), v] }, config['dark_mode'] || 'enabled'),
+                       id: 'platform_theme_dark_mode', class: 'form-select',
+                       'data-better_together--platform-theme-target' => 'input',
+                       data: { key: 'dark_mode', action: 'change->better_together--platform-theme#modeEdited' } %>
+      </div>
+      <div class="col-sm-4 mb-3">
+        <%= label_tag :platform_theme_default_mode, t("#{scope}.default_mode_label"), class: 'form-label' %>
+        <%= select_tag 'platform[theme][default_mode]',
+                       options_for_select(cfg::COLOR_MODES.map { |v| [t("better_together.color_mode.#{v}"), v] }, config['default_mode'] || 'auto'),
+                       id: 'platform_theme_default_mode', class: 'form-select',
+                       'data-better_together--platform-theme-target' => 'input',
+                       data: { key: 'default_mode', action: 'change->better_together--platform-theme#modeEdited' } %>
+      </div>
+      <div class="col-sm-4 mb-3">
+        <%= label_tag :platform_theme_dark_source, t("#{scope}.dark_source_label"), class: 'form-label' %>
+        <%= select_tag 'platform[theme][dark_source]',
+                       options_for_select(%w[derive custom].map { |v| [t("#{scope}.dark_source_#{v}"), v] }, config['dark_source'] || 'derive'),
+                       id: 'platform_theme_dark_source', class: 'form-select',
+                       'data-better_together--platform-theme-target' => 'input',
+                       data: { key: 'dark_source', action: 'change->better_together--platform-theme#edited' } %>
+      </div>
+    </div>
+    <div id="platform-theme-dark-colors" class="row" data-better_together--platform-theme-target="darkFields" <%= 'hidden' unless config.custom_dark? %>>
+      <% cfg::COLOR_KEYS.each do |key| %>
+        <div class="col-sm-6 col-lg-4 mb-3">
+          <%= label_tag "platform_theme_dark_#{key}", t("#{scope}.dark_color_label", color: t("#{scope}.colors.#{key}")), class: 'form-label' %>
+          <%= text_field_tag "platform[theme][dark_#{key}]", config["dark_#{key}"], id: "platform_theme_dark_#{key}", class: 'form-control font-monospace',
+                             placeholder: '#rrggbb', maxlength: 7, pattern: '#[0-9a-fA-F]{6}', autocomplete: 'off',
+                             'data-better_together--platform-theme-target' => 'input',
+                             data: { key: "dark_#{key}", action: 'input->better_together--platform-theme#edited' } %>
+        </div>
+      <% end %>
+    </div>
+    <p id="platform-theme-mode-summary" class="small mb-0" data-better_together--platform-theme-target="summary"
+       data-ok-text="<%= t("#{scope}.mode_summary_ok", mode: '%{mode}') %>" data-fail-text="<%= t("#{scope}.mode_summary_fail", mode: '%{mode}', count: '%{count}') %>"
+       data-light-name="<%= t('better_together.color_mode.light') %>" data-dark-name="<%= t('better_together.color_mode.dark') %>"></p>
+  </section>
+
+  <section id="platform-theme-contrast" class="mb-4" aria-labelledby="platform-theme-contrast-heading">
+    <h3 id="platform-theme-contrast-heading" class="h6"><%= t("#{scope}.contrast_title") %></h3>
+    <p class="form-text text-muted"><%= t("#{scope}.contrast_hint") %></p>
+    <ul class="list-unstyled mb-0">
+      <% cfg::CONTRAST_PAIRS.each do |fg, bg, minimum| %>
+        <% ratio = cfg.contrast_ratio(config[fg], config[bg] || (bg == 'page_bg' ? cfg::DEFAULT_PAGE_BG : nil)) %>
+        <% level = ratio && (ratio >= cfg::AAA_NORMAL && minimum >= cfg::AA_NORMAL ? 'aaa' : (ratio >= minimum ? 'pass' : 'fail')) %>
+        <li id="platform-theme-contrast-<%= fg %>-<%= bg.dasherize %>" data-better_together--platform-theme-target="pair"
+            data-foreground="<%= fg %>" data-background="<%= bg %>" data-minimum="<%= minimum %>"
+            data-aaa-text="<%= t("#{scope}.contrast_aaa") %>" data-pass-text="<%= t("#{scope}.contrast_pass") %>" data-fail-text="<%= t("#{scope}.contrast_fail") %>"
+            class="<%= { 'aaa' => 'text-success', 'pass' => 'text-success', 'fail' => 'text-danger' }[level] %>">
+          <%= t("#{scope}.contrast_pair", foreground: t("#{scope}.colors.#{fg}"), background: t("#{scope}.colors.#{bg}")) %>:
+          <strong data-role="ratio"><%= ratio ? "#{format('%.2f', ratio)}:1" : '-' %></strong>
+          <span data-role="status"><%= level ? t("#{scope}.contrast_#{level}") : '' %></span>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <h3 class="h6"><%= t("#{scope}.images_title") %></h3>
+  <% { logo: platform.logo, dark_logo: platform.dark_logo, header_banner: platform.header_banner, favicon: platform.favicon }.each do |field, attachment| %>
+    <div id="platform-<%= field.to_s.dasherize %>-field" class="mb-3">
+      <%= form.label field, t("#{scope}.#{field}_label"), for: dom_id(platform, field), class: 'form-label' %>
+      <%= form.file_field field, accept: field == :favicon ? 'image/png,image/svg+xml,image/vnd.microsoft.icon,image/webp' : acceptable_image_file_types, id: dom_id(platform, field), class: 'form-control' %>
+      <div class="form-text"><%= t("#{scope}.#{field}_hint") %></div>
+      <% if attachment.attached? %>
+        <div class="d-flex align-items-center gap-3 mt-2">
+          <%= image_tag storage_proxy_url_for(attachment), alt: t("#{scope}.current_image", name: t("#{scope}.#{field}_label")), class: 'border rounded', style: 'max-height:4rem;max-width:12rem' %>
+          <div class="form-check">
+            <%= form.check_box "remove_#{field}", { class: 'form-check-input', id: "platform_remove_#{field}" }, '1', '0' %>
+            <%= form.label "remove_#{field}", t("#{scope}.remove"), class: 'form-check-label' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
