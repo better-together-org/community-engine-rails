@@ -521,9 +521,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
-                member do
-                  put :resend
-                end
+                put :resend, on: :member
               end
               resources :storage_configurations, except: %i[show] do
                 member do
@@ -538,6 +536,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
               resources :platform_identity_providers, except: %i[show], path: 'identity_providers'
+              resources :platform_trusted_domains, except: %i[show], path: 'trusted_domains'
             end
 
             resources :users

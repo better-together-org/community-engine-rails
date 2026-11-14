@@ -2978,6 +2978,14 @@ uk:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} приєднався(-лась) як %{role} через %{domain}"
+          title: Довірений домен %{domain} надав членство
+        rate_limited:
+          body: Досягнуто погодинного ліміту для %{domain}. Нові люди залишаються
+            в очікуванні, доки ви їх не розглянете.
+          title: Довірений домен %{domain} досяг погодинного ліміту
     oauth:
       applications:
         create:
@@ -3526,6 +3534,76 @@ uk:
         accepted: Прийнято
         expired: Закінчився термін
         pending: Очікує
+    platform_trusted_domains:
+      created: Довірений домен додано.
+      destroyed: Довірений домен видалено. Наявні облікові записи та членства не змінюються.
+      edit:
+        title: Редагувати довірений домен
+      events:
+        account_created: Обліковий запис створено
+        domain_added: Домен додано
+        domain_removed: Домен видалено
+        domain_updated: Домен змінено
+        grant_rate_limited: Досягнуто погодинного ліміту, надання чекає на розгляд
+        membership_granted: Членство надано
+        membership_request_approved: Запит на членство схвалено
+      form:
+        cancel: Скасувати
+        domain_hint: Лише частина після знака @, наприклад example.org. Для публічних
+          поштових сервісів, як-от gmail.com, потрібне підтвердження нижче.
+        domain_label: Домен електронної пошти
+        enabled_label: Увімкнено
+        include_subdomains_label: Довіряти також піддоменам (наприклад mail.example.org)
+        note_label: Примітка для інших стюардів (необов'язково)
+        public_domain_label: Я розумію, що це публічний поштовий домен і будь-хто
+          може мати там адресу
+        role_ceiling_label: Я розумію, що люди з підтвердженою адресою в цьому домені
+          автоматично отримують цю роль
+        role_hint: Лише ролі спільноти. Ролі платформи та стюарда не можна надавати
+          за доменом.
+        role_label: Надана роль спільноти
+        submit: Зберегти довірений домен
+      index:
+        activity_event: Подія
+        activity_heading: Остання активність
+        activity_none: Активності ще немає.
+        activity_person: Особа
+        activity_via: Через
+        activity_when: Коли
+        back_to_platform: Назад до платформи
+        delete_btn: Видалити
+        delete_confirm: Видалити цей довірений домен? Наявні облікові записи та членства
+          залишаться без змін.
+        disabled_label: Вимкнено
+        edit_btn: Редагувати
+        enabled_label: Увімкнено
+        explanation: Люди, які входять через провайдера, що підтверджує пошту, або
+          підтверджують пошту після реєстрації, і чия адреса закінчується довіреним
+          доменом, отримують членство з обраною роллю без очікування розгляду. Кожне
+          надання записується в журнал.
+        header_accounts: Створено облікових записів
+        header_actions: Дії
+        header_domain: Домен
+        header_role: Роль
+        header_status: Статус
+        header_subdomains: Піддомени
+        new_btn: Додати довірений домен
+        no_domains: Довірених доменів ще немає.
+        subdomains_no: Лише точний збіг
+        subdomains_yes: Включено
+        subtitle: Довірені поштові домени %{platform_name}
+        table_aria: Довірені поштові домени
+        title: Довірені домени
+      new:
+        subtitle: Люди з підтвердженою адресою в цьому домені отримують обрану роль
+          на %{platform_name}.
+        title: Додати довірений домен
+      updated: Довірений домен оновлено.
+      vias:
+        membership_request: Запит на членство
+        oauth: Провайдер входу
+        password_registration: Реєстрація поштою
+        steward: Стюард
     platforms:
       form:
         allow_membership_requests: Дозволити запити на членство
@@ -3577,6 +3655,14 @@ uk:
           ai_translation_tokens: Токени використання LLM ШІ на місяць
           media_storage: Сховище
         quota_use_default: Використовувати значення за замовчуванням (%{size})
+        trusted_domains:
+          after_save: Спершу збережіть платформу, потім додайте тут довірені поштові
+            домени.
+          heading: Довірені поштові домени
+          hint: Підтверджені адреси цих доменів приєднуються із заданою роллю без
+            очікування розгляду.
+          manage: Керувати довіреними доменами
+          none: Довірених доменів немає.
       index:
         provision_new_platform: Налаштувати нову платформу
       new:
@@ -5234,6 +5320,11 @@ uk:
         submit: Надіслати
         terms_of_service:
           label: Я погоджуюся з Умовами використання
+        trusted_domains:
+          confirm_notice: Адреси в %{domains} приєднуються після підтвердження пошти.
+            Перевірте свою скриньку після реєстрації.
+          link: Зареєструватися з довіреною поштою
+          notice: Маєте адресу в %{domains}?
         view: Переглянути
       signed_up: Ласкаво просимо! Ви успішно зареєструвалися.
       signed_up_but_inactive: Ви успішно зареєструвалися. Проте ми не змогли авторизувати
@@ -5307,6 +5398,7 @@ uk:
       confirmation: не співпадає з %{attribute}
       confirmation_period_expired: потрібно підтвердити протягом %{period}, будь ласка
         запросіть новий
+      denied_for_trusted_domain: не може надаватися поштовим доменом
       empty: не може бути порожнім
       equal_to: має дорівнювати %{count}
       even: має бути парним
@@ -5324,6 +5416,7 @@ uk:
       less_than: має бути менше %{count}
       less_than_or_equal_to: має бути менше або дорівнювати %{count}
       model_invalid: 'Перевірка не вдалася: %{errors}'
+      not_a_community_role: має бути роллю спільноти
       not_a_number: не є числом
       not_an_integer: має бути цілим числом
       not_found: не знайдено
@@ -5336,7 +5429,11 @@ uk:
       odd: має бути непарним
       other_than: має бути іншим ніж %{count}
       present: має бути порожнім
+      public_mail_domain: є публічним поштовим сервісом; підтвердьте, щоб довіряти
+        всім його адресам
       required: має існувати
+      required_for_elevated_role: потребує явного підтвердження, перш ніж поштовий
+        домен зможе надати роль вищу за базового учасника
       taken: вже зайнято
       too_long:
         few: занадто довгий (максимум %{count} символи)

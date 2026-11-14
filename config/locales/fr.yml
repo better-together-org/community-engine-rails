@@ -2985,6 +2985,14 @@ fr:
           in the safety review queue
         title: New safety report requires review
       time_ago: il y a %{time}
+      trusted_domain_grant:
+        granted:
+          body: "%{person} a adhéré comme %{role} via %{domain}"
+          title: Le domaine de confiance %{domain} a accordé une adhésion
+        rate_limited:
+          body: La limite horaire de %{domain} a été atteinte. Les nouvelles personnes
+            restent en attente jusqu'à votre examen.
+          title: Le domaine de confiance %{domain} a atteint sa limite horaire
     oauth:
       applications:
         create:
@@ -3546,6 +3554,78 @@ fr:
         accepted: Accepté
         expired: Expiré
         pending: En attente
+    platform_trusted_domains:
+      created: Le domaine de confiance a été ajouté.
+      destroyed: Le domaine de confiance a été supprimé. Les comptes et adhésions
+        existants ne changent pas.
+      edit:
+        title: Modifier le domaine de confiance
+      events:
+        account_created: Compte créé
+        domain_added: Domaine ajouté
+        domain_removed: Domaine supprimé
+        domain_updated: Domaine modifié
+        grant_rate_limited: Limite horaire atteinte, attribution en attente d'examen
+        membership_granted: Adhésion accordée
+        membership_request_approved: Demande d'adhésion approuvée
+      form:
+        cancel: Annuler
+        domain_hint: Uniquement la partie après l'arobase, par exemple example.org.
+          Les fournisseurs publics comme gmail.com exigent la confirmation ci-dessous.
+        domain_label: Domaine de courriel
+        enabled_label: Activé
+        include_subdomains_label: Faire aussi confiance aux sous-domaines (par exemple
+          mail.example.org)
+        note_label: Note pour les autres stewards (facultatif)
+        public_domain_label: Je comprends qu'il s'agit d'un domaine de courriel public
+          et que n'importe qui peut y avoir une adresse
+        role_ceiling_label: Je comprends que les personnes ayant une adresse vérifiée
+          sur ce domaine reçoivent automatiquement ce rôle
+        role_hint: Rôles de communauté uniquement. Les rôles de plateforme et de steward
+          ne peuvent pas être accordés par domaine.
+        role_label: Rôle de communauté accordé
+        submit: Enregistrer le domaine de confiance
+      index:
+        activity_event: Événement
+        activity_heading: Activité récente
+        activity_none: Aucune activité pour le moment.
+        activity_person: Personne
+        activity_via: Par
+        activity_when: Quand
+        back_to_platform: Retour à la plateforme
+        delete_btn: Supprimer
+        delete_confirm: Supprimer ce domaine de confiance ? Les comptes et adhésions
+          existants restent inchangés.
+        disabled_label: Désactivé
+        edit_btn: Modifier
+        enabled_label: Activé
+        explanation: Les personnes qui se connectent avec un fournisseur vérifiant
+          leur courriel, ou qui confirment leur courriel après l'inscription, et dont
+          l'adresse se termine par un domaine de confiance obtiennent l'adhésion avec
+          le rôle choisi sans attendre d'examen. Chaque attribution est journalisée.
+        header_accounts: Comptes créés
+        header_actions: Actions
+        header_domain: Domaine
+        header_role: Rôle
+        header_status: Statut
+        header_subdomains: Sous-domaines
+        new_btn: Ajouter un domaine de confiance
+        no_domains: Aucun domaine de confiance pour le moment.
+        subdomains_no: Correspondance exacte seulement
+        subdomains_yes: Inclus
+        subtitle: Domaines de courriel de confiance de %{platform_name}
+        table_aria: Domaines de courriel de confiance
+        title: Domaines de confiance
+      new:
+        subtitle: Les personnes ayant une adresse vérifiée sur ce domaine reçoivent
+          le rôle choisi sur %{platform_name}.
+        title: Ajouter un domaine de confiance
+      updated: Le domaine de confiance a été mis à jour.
+      vias:
+        membership_request: Demande d'adhésion
+        oauth: Fournisseur de connexion
+        password_registration: Inscription par courriel
+        steward: Steward
     platforms:
       form:
         allow_membership_requests: Autoriser les demandes d'adhésion
@@ -3600,6 +3680,14 @@ fr:
           ai_translation_tokens: Jetons d'utilisation de LLM IA par mois
           media_storage: Stockage
         quota_use_default: Utiliser la valeur par défaut (%{size})
+        trusted_domains:
+          after_save: Enregistrez d'abord la plateforme, puis ajoutez ici les domaines
+            de courriel de confiance.
+          heading: Domaines de courriel de confiance
+          hint: Les adresses vérifiées de ces domaines adhèrent avec un rôle défini
+            sans attendre d'examen.
+          manage: Gérer les domaines de confiance
+          none: Aucun domaine de confiance.
       index:
         provision_new_platform: Provisionner une nouvelle plateforme
       new:
@@ -5270,6 +5358,11 @@ fr:
         submit: Soumettre
         terms_of_service:
           label: J'accepte les Conditions d'Utilisation
+        trusted_domains:
+          confirm_notice: Les adresses de %{domains} adhèrent après la confirmation
+            de votre courriel. Vérifiez votre boîte de réception une fois inscrit.
+          link: S'inscrire avec un courriel de confiance
+          notice: Avez-vous une adresse chez %{domains} ?
         view: Voir
       signed_up: Bienvenue ! Vous vous êtes bien enregistré(e).
       signed_up_but_inactive: Vous vous êtes bien enregistré(e). Cependant, nous n’avons
@@ -5344,6 +5437,7 @@ fr:
       confirmation: ne concorde pas avec %{attribute}
       confirmation_period_expired: doit être confirmé(e) en %{period}, veuillez en
         demander un(e) autre
+      denied_for_trusted_domain: ne peut pas être accordé par un domaine de courriel
       empty: doit être rempli(e)
       equal_to: doit être égal à %{count}
       even: doit être pair
@@ -5361,6 +5455,7 @@ fr:
       less_than: doit être inférieur à %{count}
       less_than_or_equal_to: doit être inférieur ou égal à %{count}
       model_invalid: 'Validation échouée : %{errors}'
+      not_a_community_role: doit être un rôle de communauté
       not_a_number: n'est pas un nombre
       not_an_integer: doit être un nombre entier
       not_found: n’a pas été trouvé(e)
@@ -5372,7 +5467,11 @@ fr:
       odd: doit être impair
       other_than: doit être différent de %{count}
       present: doit être vide
+      public_mail_domain: est un fournisseur de courriel public ; confirmez pour faire
+        confiance à toutes ses adresses
       required: doit exister
+      required_for_elevated_role: doit être confirmé explicitement avant qu'un domaine
+        de courriel puisse accorder un rôle supérieur à celui de membre de base
       taken: est déjà utilisé(e)
       too_long:
         one: est trop long (pas plus de %{count} caractère)

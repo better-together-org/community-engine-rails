@@ -2935,6 +2935,14 @@ en:
           in the safety review queue
         title: New safety report requires review
       time_ago: "%{time} ago"
+      trusted_domain_grant:
+        granted:
+          body: "%{person} joined as %{role} through %{domain}"
+          title: Trusted domain %{domain} granted membership
+        rate_limited:
+          body: The hourly limit for %{domain} was reached. New people stay pending
+            until you review them.
+          title: Trusted domain %{domain} reached its hourly limit
     oauth:
       applications:
         create:
@@ -3469,6 +3477,77 @@ en:
         accepted: Accepted
         expired: Expired
         pending: Pending
+    platform_trusted_domains:
+      created: Trusted domain was added.
+      destroyed: Trusted domain was removed. Existing accounts and memberships are
+        unchanged.
+      edit:
+        title: Edit trusted domain
+      events:
+        account_created: Account created
+        domain_added: Domain added
+        domain_removed: Domain removed
+        domain_updated: Domain changed
+        grant_rate_limited: Hourly limit reached, grant held for review
+        membership_granted: Membership granted
+        membership_request_approved: Membership request approved
+      form:
+        cancel: Cancel
+        domain_hint: Only the part after the @ sign, for example example.org. Public
+          mail providers such as gmail.com need the confirmation below.
+        domain_label: Email domain
+        enabled_label: Enabled
+        include_subdomains_label: Also trust subdomains (for example mail.example.org)
+        note_label: Note for other stewards (optional)
+        public_domain_label: I understand this is a public mail domain and anyone
+          can have an address there
+        role_ceiling_label: I understand that people with a verified address on this
+          domain receive this role automatically
+        role_hint: Community roles only. Platform and steward roles cannot be granted
+          by domain.
+        role_label: Community role granted
+        submit: Save trusted domain
+      index:
+        activity_event: Event
+        activity_heading: Recent activity
+        activity_none: No activity yet.
+        activity_person: Person
+        activity_via: Via
+        activity_when: When
+        back_to_platform: Back to platform
+        delete_btn: Remove
+        delete_confirm: Remove this trusted domain? Existing accounts and memberships
+          stay as they are.
+        disabled_label: Disabled
+        edit_btn: Edit
+        enabled_label: Enabled
+        explanation: People who sign in with a provider that verifies their email,
+          or who confirm their email after signing up, and whose address ends in a
+          trusted domain get membership with the chosen role without waiting for review.
+          Every grant is logged.
+        header_accounts: Accounts created
+        header_actions: Actions
+        header_domain: Domain
+        header_role: Role
+        header_status: Status
+        header_subdomains: Subdomains
+        new_btn: Add trusted domain
+        no_domains: No trusted domains yet.
+        subdomains_no: Exact match only
+        subdomains_yes: Included
+        subtitle: Email domains trusted by %{platform_name}
+        table_aria: Trusted email domains
+        title: Trusted domains
+      new:
+        subtitle: People with a verified address on this domain receive the chosen
+          role on %{platform_name}.
+        title: Add trusted domain
+      updated: Trusted domain was updated.
+      vias:
+        membership_request: Membership request
+        oauth: Sign-in provider
+        password_registration: Email sign-up
+        steward: Steward
     platforms:
       form:
         allow_membership_requests: Allow membership requests
@@ -3519,6 +3598,13 @@ en:
           ai_translation_tokens: AI LLM usage tokens per month
           media_storage: Storage
         quota_use_default: Use default (%{size})
+        trusted_domains:
+          after_save: Save the platform first, then add trusted email domains here.
+          heading: Trusted email domains
+          hint: Verified email addresses on these domains join with a set role without
+            waiting for review.
+          manage: Manage trusted domains
+          none: No trusted domains.
       index:
         provision_new_platform: Provision New Platform
       new:
@@ -5140,6 +5226,11 @@ en:
         submit: Submit
         terms_of_service:
           label: I agree to the Terms of Service
+        trusted_domains:
+          confirm_notice: Addresses at %{domains} join after you confirm your email.
+            Check your inbox once you have registered.
+          link: Sign up with a trusted email address
+          notice: Do you have an address at %{domains}?
         view: View
       signed_up: Welcome! You have signed up successfully.
       signed_up_but_inactive: You have signed up successfully. However, we could not
@@ -5211,6 +5302,7 @@ en:
       confirmation: doesn't match %{attribute}
       confirmation_period_expired: needs to be confirmed within %{period}, please
         request a new one
+      denied_for_trusted_domain: cannot be granted by an email domain
       empty: can't be empty
       equal_to: must be equal to %{count}
       even: must be even
@@ -5228,6 +5320,7 @@ en:
       less_than: must be less than %{count}
       less_than_or_equal_to: must be less than or equal to %{count}
       model_invalid: 'Validation failed: %{errors}'
+      not_a_community_role: must be a community role
       not_a_number: is not a number
       not_an_integer: must be an integer
       not_found: not found
@@ -5238,7 +5331,11 @@ en:
       odd: must be odd
       other_than: must be other than %{count}
       present: must be blank
+      public_mail_domain: is a public mail provider; confirm to trust every address
+        on it
       required: must exist
+      required_for_elevated_role: needs explicit confirmation before an email domain
+        can grant a role above basic member
       taken: has already been taken
       too_long:
         one: is too long (maximum is %{count} character)

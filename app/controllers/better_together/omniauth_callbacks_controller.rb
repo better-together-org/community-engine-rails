@@ -133,11 +133,44 @@ module BetterTogether
 
     # Complete onboarding for OAuth users (community membership + invitations)
     def complete_oauth_user_onboarding(user)
+      # A trusted domain (no invitation) grants its role and writes the audit entry before the default fallback
+      record_trusted_domain_grant(user)
+
       # Ensure user has community membership
       ensure_community_membership(user)
 
       # Process any pending invitations (may update role/membership)
       handle_all_invitations(user)
+    end
+
+    # The platform's trusted domain covering this provider-verified email, if any (never for unverified emails)
+    def oauth_trusted_domain
+      return @oauth_trusted_domain if defined?(@oauth_trusted_domain)
+
+      @oauth_trusted_domain = find_oauth_trusted_domain
+    end
+
+    def find_oauth_trusted_domain
+      return nil if auth.blank?
+
+      ::BetterTogether.user_class.trusted_domain_for_oauth(
+        auth:, platform: trusted_domain_platform,
+        trust_verified_email: identity_credentials&.trust_verified_email || false
+      )
+    end
+
+    def trusted_domain_platform
+      local_platform || helpers.host_platform
+    end
+
+    # Audit entry when the trusted domain, not an invitation, gave this person access
+    def record_trusted_domain_grant(user)
+      return if @was_signed_in || valid_invitation_in_session? || oauth_trusted_domain.blank?
+
+      BetterTogether::TrustedDomains::Grant.call(
+        trusted_domain: oauth_trusted_domain, person: user.person, via: 'oauth',
+        created_account: !@user_existed_before_oauth
+      )
     end
 
     # Ensure OAuth user has community membership
@@ -166,6 +199,7 @@ module BetterTogether
       return unless new_oauth_signup_attempt?
       return unless helpers.host_platform&.requires_invitation?
       return if valid_invitation_in_session?
+      return if oauth_trusted_domain.present?
 
       flash[:alert] = t('devise.omniauth_callbacks.invitation_required')
       redirect_to new_user_session_path(locale: I18n.locale),
