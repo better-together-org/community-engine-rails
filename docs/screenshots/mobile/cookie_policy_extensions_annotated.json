@@ -1,0 +1,48 @@
+{
+  "name": "cookie_policy_extensions_annotated",
+  "device": "mobile",
+  "url": "/en/cookie-policy",
+  "title": "Cookie Policy | Test Host Community",
+  "locale": "en",
+  "role": "visitor",
+  "feature_set": "consent",
+  "flow": "cookie_policy_extensions",
+  "source_spec": "./spec/docs_screenshots/better_together/user_cookie_consent_spec.rb",
+  "callouts": [
+    {
+      "selector": "#cookie-policy-category-analytics",
+      "title": "From the registry",
+      "bullets": [
+        "Added by the extension, no policy text edited."
+      ],
+      "target": {
+        "x": 24.0,
+        "y": 447.1875,
+        "width": 437.0,
+        "height": 409.828125,
+        "right": 461.0,
+        "bottom": 857.015625,
+        "center_x": 242.5,
+        "center_y": 652.1015625
+      },
+      "avoid": {
+        "x": 24.0,
+        "y": 447.1875,
+        "width": 437.0,
+        "height": 409.828125,
+        "right": 461.0,
+        "bottom": 857.015625,
+        "center_x": 242.5,
+        "center_y": 652.1015625
+      },
+      "placement": {
+        "side": "above",
+        "x": 107.5,
+        "y": 269.19,
+        "width": 270.0,
+        "height": 158,
+        "score": 447.1875
+      }
+    }
+  ]
+}

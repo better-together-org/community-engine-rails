@@ -8,6 +8,7 @@ module BetterTogether
     include Pundit::Authorization
     include InvitationSessionManagement
     include MentionPrefetch
+    include ConsentCookieSync
     include Rails.application.routes.mounted_helpers
 
     protect_from_forgery with: :exception
@@ -25,6 +26,7 @@ module BetterTogether
 
     before_action :set_platform_invitation
     before_action :check_platform_privacy
+    before_action :sync_consent_cookie
     # The callback which stores the current location must be added before you authenticate the user
     # as `authenticate_user!` (or whatever your resource is) will halt the filter chain and redirect
     # before the location can be stored.

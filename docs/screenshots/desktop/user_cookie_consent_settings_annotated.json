@@ -1,0 +1,49 @@
+{
+  "name": "user_cookie_consent_settings_annotated",
+  "device": "desktop",
+  "url": "/en/settings",
+  "title": "Settings | Test Host Community",
+  "locale": "en",
+  "role": "user",
+  "feature_set": "consent",
+  "flow": "user_cookie_consent",
+  "source_spec": "./spec/docs_screenshots/better_together/user_cookie_consent_spec.rb",
+  "callouts": [
+    {
+      "selector": "#cookie-consent-settings",
+      "title": "Your choices",
+      "bullets": [
+        "Saved to your account and applied on every visit.",
+        "Withdraw all turns every optional category off."
+      ],
+      "target": {
+        "x": 388.0,
+        "y": 286.390625,
+        "width": 1024.0,
+        "height": 350.5625,
+        "right": 1412.0,
+        "bottom": 636.953125,
+        "center_x": 900.0,
+        "center_y": 461.671875
+      },
+      "avoid": {
+        "x": 388.0,
+        "y": 286.390625,
+        "width": 1024.0,
+        "height": 350.5625,
+        "right": 1412.0,
+        "bottom": 636.953125,
+        "center_x": 900.0,
+        "center_y": 461.671875
+      },
+      "placement": {
+        "side": "below",
+        "x": 710.0,
+        "y": 656.95,
+        "width": 380,
+        "height": 184,
+        "score": 820.046875
+      }
+    }
+  ]
+}

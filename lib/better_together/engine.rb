@@ -70,7 +70,8 @@ module BetterTogether
 
     initializer 'better_together.zeitwerk_ignores', before: :set_autoload_paths do
       ignored_lib_paths = %w[generators rubocop tasks].map { |dir| root.join('lib', dir).to_s }
-      ignored_lib_files = [root.join('lib/mobility/backends/attachments/backend.rb').to_s]
+      ignored_lib_files = %w[lib/mobility/backends/attachments/backend.rb
+                             lib/better_together/cookie_policy/rspec.rb].map { |file| root.join(file).to_s }
 
       Rails.autoloaders.each do |autoloader|
         autoloader.ignore(*ignored_lib_paths, *ignored_lib_files)

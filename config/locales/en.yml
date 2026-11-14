@@ -1148,6 +1148,24 @@ en:
       preferences: Cookie preferences
       save: Save my choices
       saved: Your privacy choices were saved.
+      settings:
+        analytics_help: Help the platform understand how the site is used.
+        device_note: Your choices follow your account and are applied each time you
+          sign in.
+        essential: Essential cookies (always on)
+        essential_help: Needed to sign you in, keep the site secure and remember these
+          choices.
+        marketing_help: Measure and personalize outreach.
+        none: This platform does not currently use any optional cookies, so there
+          is nothing to choose. Essential cookies are always on.
+        not_decided: You have not made a choice yet. Until you do, only essential
+          cookies are used.
+        not_stored: Saved on this device, but we could not store it on your account.
+          Please try again.
+        outdated: This platform changed what it asks consent for since you last chose.
+          Please choose again.
+        saved_on: Your choices were saved on %{date}.
+        withdraw_all: Withdraw all optional consent
       title: Your privacy choices
     contact_details:
       contact_information: Contact information
@@ -1452,6 +1470,58 @@ en:
       sidebar:
         conversations: Conversations
         new: New
+    cookie_policy:
+      categories:
+        analytics:
+          description: These help us understand how the platform is used so we can
+            improve it.
+          title: Analytics cookies
+        marketing:
+          description: These measure and personalize outreach.
+          title: Marketing cookies
+      choices_optional: Optional cookies are off until you agree. You can change or
+        withdraw your choice at any time using the cookie preferences button or, when
+        signed in, your settings.
+      columns:
+        duration: Duration
+        name: Cookie name
+        purpose: Purpose
+        type: Type
+      core:
+        consent:
+          cookies:
+            consent: Stores your cookie consent choices (analytics and marketing)
+              and the version of the policy you answered
+          description: Remember the cookie choices you made so we do not ask again
+            on every visit.
+          title: Your cookie choices
+        durations:
+          consent_days: 180 days, renewed on each visit
+          session: Session
+          session_inactivity: Session (6 hours of inactivity)
+          two_weeks: 2 weeks
+        session:
+          cookies:
+            csrf: Security token that protects against Cross-Site Request Forgery
+              (CSRF) attacks
+            remember: Keeps you logged in when you select "Remember me" during sign-in
+            session: Maintains your login session and stores temporary data like invitation
+              tokens, locale preferences, and debug settings
+          description: Keep you signed in and protect the platform against forged
+            requests.
+          title: Sign-in and security
+      last_updated: 'Last updated:'
+      manage_choices: Manage your cookie choices in your settings
+      optional_intro: The following optional cookies are used only if you agree. You
+        can change your mind at any time from the cookie preferences button or, when
+        signed in, from your settings.
+      party:
+        first: First-party
+        third: Third-party
+      privacy_link: Privacy information from %{provider}
+      third_party_listed: This platform uses the third-party services listed below.
+        They set cookies or similar browser storage only as described.
+      version: policy version %{version}
     default_member_name: Member
     device_permissions:
       location:
@@ -4168,6 +4238,10 @@ en:
         blocked_people:
           description: Manage users you have blocked from interacting with you.
           title: Blocked People
+        cookie_consent:
+          description: Choose which optional cookies this platform may use. Your choice
+            is saved to your account.
+          title: Cookie consent
         developer:
           apps:
             client_id_label: Client ID
@@ -4288,6 +4362,7 @@ en:
         tabs:
           account: Account
           blocked_people: Blocked People
+          cookie_consent: Cookie consent
           developer: Developer
           device_permissions: Device Permissions
           integrations: Integrations

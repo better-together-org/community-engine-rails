@@ -110,7 +110,8 @@ RSpec.describe 'Platform snippets', :no_auth do # rubocop:disable RSpec/Describe
   describe 'consent gating' do
     let(:consent_headers) do
       lambda do |analytics:, marketing: false|
-        value = CGI.escape({ v: 1, analytics:, marketing: }.to_json)
+        version = BetterTogether::Consent.policy_version(platform)
+        value = CGI.escape(BetterTogether::Consent.serialize({ 'analytics' => analytics, 'marketing' => marketing }, version))
         { 'HTTP_COOKIE' => "#{BetterTogether::Consent::COOKIE}=#{value}" }
       end
     end
