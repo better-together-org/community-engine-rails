@@ -1,0 +1,36 @@
+# frozen_string_literal: true
+
+module BetterTogether
+  module Content
+    # <%= human %> block. Describe what it renders.
+    class <%= class_base %> < Block
+<% if translatable_fields.any? -%>
+      include Translatable
+
+<% translatable_fields.each do |name, type| -%>
+      translates :<%= name %>, type: :<%= type %>
+<% end -%>
+<% end -%>
+<% if stored_fields.any? -%>
+
+      store_attributes :content_data do
+<% stored_fields.each do |name, type| -%>
+        <%= name %> <%= type.capitalize %>
+<% end -%>
+      end
+<% end -%>
+<% if required_attribute -%>
+
+      validates :<%= required_attribute %>, presence: true
+<% end -%>
+
+      def self.content_addable?
+        true
+      end
+
+      def self.extra_permitted_attributes
+        super + %i[<%= permitted_list %>]
+      end
+    end
+  end
+end

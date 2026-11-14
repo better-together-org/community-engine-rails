@@ -1,0 +1,10 @@
+---
+title: Trusted domains - sign-up
+audience:
+- guest
+journey_step: As a visitor with a trusted address, I register and confirm my email
+  to join.
+callouts: []
+accessibility_notes: The notice is plain text in an alert region above the form.
+slug: trusted_domain_sign_up
+device: mobile

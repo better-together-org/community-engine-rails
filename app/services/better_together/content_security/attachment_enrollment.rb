@@ -4,7 +4,34 @@ module BetterTogether
   module ContentSecurity
     # Syncs an attachment into a content-security Item and enqueues scanning when the blob changes.
     class AttachmentEnrollment
+      # Surface for attachments on models that do not declare scans_attachment.
+      CATCH_ALL_SURFACE = 'attachments'
+
       class << self
+        # Enrolls any ActiveStorage::Attachment, including has_many_attached slots
+        # (one Item per blob). Declared scannable attachments use sync_attachment!.
+        def enroll_attachment!(attachment:)
+          return unless Configuration.enabled? && Configuration.enabled_for_surface?(CATCH_ALL_SURFACE)
+          return unless catch_all_attachment?(attachment)
+
+          record = attachment.record
+          item = Item.where(attachable: record, attachment_name: attachment.name.to_s,
+                            blob_id: attachment.blob_id).first_or_initialize
+          is_new = item.new_record?
+          assign_item_attributes!(item, record, attachment.name, attachment, CATCH_ALL_SURFACE)
+          reset_pending_scan_fields!(item) if is_new
+          schedule_scan_if_needed!(item, is_new)
+        end
+
+        # True for attachments the catch-all surface is responsible for: a real
+        # owner record (not a variant) that does not declare scans_attachment.
+        def catch_all_attachment?(attachment)
+          record = attachment.record
+          return false if record.nil? || record.is_a?(::ActiveStorage::VariantRecord)
+
+          record.class.try(:scannable_attachment_config_for, attachment.name).blank?
+        end
+
         def sync_attachment!(record:, attachment_name:, surface:)
           return unless Configuration.enabled?
           return unless Configuration.enabled_for_surface?(surface)

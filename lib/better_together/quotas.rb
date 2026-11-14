@@ -12,6 +12,8 @@ module BetterTogether
     class << self
       # Convenience resolution entry point, equivalent to calling OwnerResolver
       # directly, resolving from `subject` when present, else from `actor`.
+      # Returns nil when the resolved owner is not local (see Locality): external
+      # owners are never charged.
       def attribute(subject: nil, actor: nil, **)
         OwnerResolver.resolve(subject || actor)
       end
@@ -31,6 +33,8 @@ module BetterTogether
       # rubocop:todo Metrics/MethodLength
       # rubocop:todo Metrics/AbcSize
       def reserve!(type:, owner:, amount:, idempotency_key:, subject: nil, actor: nil, ttl: 5.minutes)
+        return nil unless Locality.local_owner?(owner)
+
         type_class = Type.find(type)
         quota = find_or_build_quota(type_class, owner)
         period_key = period_key_for(type_class, Time.current)
@@ -61,6 +65,8 @@ module BetterTogether
       # lands in the period it actually happened in rather than the current one.
       def settle!(type:, owner:, amount:, idempotency_key:, subject: nil, actor: nil, event: 'settle',
                   occurred_at: nil)
+        return nil unless Locality.local_owner?(owner)
+
         type_class = Type.find(type)
         return if subject && !type_class.counts_toward_quota?(subject)
 
@@ -115,6 +121,10 @@ module BetterTogether
           q.limit = type_class.default_limit(owner)
           q.period = type_class.period
         end
+      rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotUnique
+        # Two writers both missed the row and raced to create it; the loser's
+        # uniqueness validation or unique index fires, so read the winner's row.
+        Quota.find_by(owner:, quota_type: type_class.key) || raise
       end
 
       def period_key_for(type_class, time)

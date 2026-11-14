@@ -8,6 +8,10 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
   # Short link public redirect — no locale prefix keeps URLs short
   get '/s/:code', to: 'short_link_redirects#show', as: :short_link_redirect
 
+  # Stable locale-free file paths: /f/:id views the file, /f/:id/download forces a download
+  get '/f/:id', to: 'uploads#inline', as: :short_file
+  get '/f/:id/download', to: 'uploads#download', as: :short_file_download
+
   # Sitemap index (no locale)
   get '/sitemap.xml.gz', to: 'sitemaps#index', as: :sitemap_index
 
@@ -190,6 +194,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         get 'locations/available', to: 'locations#available', as: :available_locations
+        get 'locations/geography', to: 'locations#geography', as: :geography_locations
 
         resources :events, except: %i[index show] do
           collection do
@@ -354,6 +359,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
         end
 
         resources :platforms, only: %i[index show new create edit update] do
+          member { get :theme_dark }
           resources :platform_invitations, only: %i[index create destroy] do
             member do
               put :resend
@@ -516,9 +522,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
               resources :robots, only: %i[index new create edit update destroy]
               resources :person_platform_memberships
               resources :platform_invitations, only: %i[create destroy] do
-                member do
-                  put :resend
-                end
+                put :resend, on: :member
               end
               resources :storage_configurations, except: %i[show] do
                 member do
@@ -526,6 +530,14 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
                 end
               end
               resources :platform_domains, except: %i[show]
+              resources :redirects, except: %i[show] do
+                collection do
+                  get :import, action: :new_import
+                  post :import, action: :create_import
+                end
+              end
+              resources :platform_identity_providers, except: %i[show], path: 'identity_providers'
+              resources :platform_trusted_domains, except: %i[show], path: 'trusted_domains'
             end
 
             resources :users
@@ -607,6 +619,7 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
       resources :uploads, only: %i[index], path: :f, as: :file do
         member do
           get :download
+          get :inline
         end
       end
 
@@ -703,8 +716,9 @@ BetterTogether::Engine.routes.draw do # rubocop:todo Metrics/BlockLength
     end
 
     # Catch-all route
+    # A bare `Accept: */*` (curl, many crawlers) negotiates to Mime::ALL, not HTML.
     get '*path', to: 'pages#show', as: 'render_page', constraints: lambda { |req|
-      !req.xhr? && req.format.html?
+      !req.xhr? && (req.format.html? || req.format == Mime::ALL)
     }
 
     get 'bt' => 'static_pages#community_engine', as: :community_engine

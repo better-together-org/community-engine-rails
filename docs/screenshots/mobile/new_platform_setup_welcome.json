@@ -1,7 +1,7 @@
 {
   "name": "new_platform_setup_welcome",
   "device": "mobile",
-  "url": "/en/w/new_platform_setup/new-platform-ebb924b2b601/welcome",
+  "url": "/en/w/new_platform_setup/new-platform-fee8b41188ae/welcome",
   "title": "Let&#39;s Set Up a New Platform | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -41,7 +41,7 @@
         "y": 200.0,
         "width": 270.0,
         "height": 210,
-        "score": 1081.0
+        "score": 1077.0
       }
     },
     {
@@ -76,7 +76,7 @@
         "y": 634.55,
         "width": 270.0,
         "height": 184,
-        "score": 646.453125
+        "score": 642.453125
       }
     },
     {

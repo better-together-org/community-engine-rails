@@ -1,0 +1,17 @@
+---
+title: Trusted domains - new
+audience:
+- platform_manager
+- platform_steward
+journey_step: As a steward, I add a domain and choose the role its verified addresses
+  receive.
+callouts:
+- :id: role
+  :title: Community role
+  :description: Limited to community roles.
+- :id: ceiling
+  :title: Role confirmation
+  :description: An explicit acknowledgement of the automatic grant.
+accessibility_notes: Every field has a label and the hints are linked with aria-describedby.
+slug: platform_trusted_domains_new
+device: mobile

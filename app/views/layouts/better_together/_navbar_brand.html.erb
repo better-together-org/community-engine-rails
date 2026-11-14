@@ -1,9 +1,19 @@
 
-<%= cache ['header_branding', host_community.cache_key_with_version] do %>
+<%= cache ['header_branding', host_community.cache_key_with_version, host_platform.cache_key_with_version] do %>
   <!-- Branding Element -->
   <%= link_to base_path_with_locale, class: 'navbar-brand' do %>
     <% if host_community_logo_url %>
-      <%= image_tag host_community_logo_url, class: "#{dom_class(host_community, :host)}_logo", title: host_community.name, alt: host_community.name %>
+      <% dark_logo = host_platform.respond_to?(:dark_logo) && host_platform.dark_logo.attached? && color_mode_enabled? %>
+      <%= image_tag host_community_logo_url, class: "#{dom_class(host_community, :host)}_logo #{'bts-logo-light' if dark_logo}", title: host_community.name, loading: 'eager', alt: host_community.name %>
+      <% if dark_logo %>
+        <%# Optional dark variant: shown only in dark mode; the light logo is the fallback everywhere else. %>
+        <%= image_tag storage_proxy_url_for(host_platform.dark_logo), class: "#{dom_class(host_community, :host)}_logo bts-logo-dark", title: host_community.name, loading: 'eager', alt: host_community.name %>
+        <style>
+          .bts-logo-dark { display: none; }
+          [data-bs-theme="dark"] .bts-logo-dark { display: inline; }
+          [data-bs-theme="dark"] .bts-logo-light { display: none; }
+        </style>
+      <% end %>
     <% else %>
       <%= host_community.name %>
     <% end %>

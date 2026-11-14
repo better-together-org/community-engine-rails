@@ -1,7 +1,7 @@
 {
   "name": "events_form_status",
   "device": "desktop",
-  "url": "/en/events/4f8c6435-3810-40d4-8e22-395e15020c9a/edit",
+  "url": "/en/events/30afedcb-455f-44a7-8e08-553f9a83bf8d/edit",
   "title": "Edit Draft Winter Market Planning | Events | Test Host Community",
   "locale": "en",
   "role": "platform_manager",
@@ -18,32 +18,32 @@
         "SlimSelect-enhanced, same pattern as the categories field."
       ],
       "target": {
-        "x": 885.0,
-        "y": 528.0,
+        "x": 382.5,
+        "y": 719.0,
         "width": 495.0,
         "height": 159.0,
-        "right": 1380.0,
-        "bottom": 687.0,
-        "center_x": 1132.5,
-        "center_y": 607.5
+        "right": 877.5,
+        "bottom": 878.0,
+        "center_x": 630.0,
+        "center_y": 798.5
       },
       "avoid": {
-        "x": 885.0,
-        "y": 528.0,
+        "x": 382.5,
+        "y": 719.0,
         "width": 495.0,
         "height": 159.0,
-        "right": 1380.0,
-        "bottom": 687.0,
-        "center_x": 1132.5,
-        "center_y": 607.5
+        "right": 877.5,
+        "bottom": 878.0,
+        "center_x": 630.0,
+        "center_y": 798.5
       },
       "placement": {
-        "side": "left",
-        "x": 485.0,
-        "y": 424.5,
+        "side": "above",
+        "x": 440.0,
+        "y": 333.0,
         "width": 380,
         "height": 366,
-        "score": 885.0
+        "score": 719.0
       }
     }
   ]

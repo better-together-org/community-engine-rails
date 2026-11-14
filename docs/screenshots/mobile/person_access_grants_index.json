@@ -2,7 +2,7 @@
   "name": "person_access_grants_index",
   "device": "mobile",
   "url": "/en/access-grants",
-  "title": "Community Engine Host",
+  "title": "Test Host Community",
   "locale": "en",
   "role": "user",
   "feature_set": "person_access_grants",

@@ -2,6 +2,22 @@
 
 # Helpers for stubbing OAuth providers and callbacks in specs.
 module OAuthTestHelpers # :nodoc:
+  # The test host platform has no PlatformDomain row; sign-in is authorized per domain, so give it one.
+  def ensure_host_platform_domain(platform = BetterTogether::Platform.find_by(host: true))
+    BetterTogether::PlatformDomain.find_or_create_by!(hostname: 'www.example.com') do |domain|
+      domain.platform = platform
+      domain.active = true
+      domain.primary_flag = true
+    end
+  end
+
+  # ENV is the host platform's provider configuration (applies to the host platform's domains only).
+  def stub_provider_env(id_var, secret_var)
+    allow(ENV).to receive(:fetch).and_call_original
+    allow(ENV).to receive(:fetch).with(id_var, nil).and_return('test-client-id')
+    allow(ENV).to receive(:fetch).with(secret_var, nil).and_return('test-client-secret')
+  end
+
   # Generate a mock OAuth auth hash for testing
   # rubocop:todo Metrics/PerceivedComplexity
   # rubocop:todo Metrics/MethodLength
@@ -11,11 +27,14 @@ module OAuthTestHelpers # :nodoc:
     # rubocop:enable Lint/CopDirectiveSyntax
     provider_name = provider.to_s
 
+    email = options[:email] || Faker::Internet.email
+    verified_emails = options.fetch(:verified_email, true) ? [{ email:, primary: true, verified: true }] : []
+
     OmniAuth::AuthHash.new({
       provider: provider_name,
       uid: options[:uid] || Faker::Number.number(digits: 8).to_s,
       info: {
-        email: options[:email] || Faker::Internet.email,
+        email:,
         name: options[:name] || Faker::Name.name,
         nickname: options[:nickname] || Faker::Internet.username,
         image: options[:image] || "https://avatars.#{provider_name}.com/u/#{options[:uid] || '123456'}?v=4"
@@ -26,6 +45,7 @@ module OAuthTestHelpers # :nodoc:
         expires_at: options[:expires_at] || 1.hour.from_now.to_i
       },
       extra: {
+        all_emails: verified_emails,
         raw_info: {
           login: options[:nickname] || Faker::Internet.username,
           html_url: options[:profile_url] || "https://#{provider_name}.com/#{options[:nickname] || 'testuser'}"

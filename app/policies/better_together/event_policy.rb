@@ -89,7 +89,7 @@ module BetterTogether
                                      string_translations cover_image_attachment cover_image_blob
                                    ]
                                  }).order(
-                                   starts_at: :desc, created_at: :desc
+                                   starts_at: :asc, created_at: :desc
                                  ).where(permitted_query)
       end
 

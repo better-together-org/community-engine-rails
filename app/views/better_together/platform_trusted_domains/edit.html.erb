@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= t('.title') %>
+<% end %>
+
+<div class="container my-3">
+  <h1><%= t('.title') %></h1>
+  
+
+  <%= render 'form', trusted_domain: @trusted_domain %>
+</div>

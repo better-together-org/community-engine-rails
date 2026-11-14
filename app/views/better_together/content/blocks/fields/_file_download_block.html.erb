@@ -1,0 +1,35 @@
+<%# locals: (block:, scope: BetterTogether::Content::Block.block_name, temp_id: SecureRandom.uuid) -%>
+<%- temp_id = temp_id_for(block, temp_id:) %>
+<%- available_uploads = policy_scope(BetterTogether::Upload).includes(file_attachment: :blob) %>
+<div class="file-download-block-fields">
+  <div class="mb-3">
+    <%= label_tag "#{scope}[upload_id]", BetterTogether::Upload.model_name.human, class: 'form-label' %>
+    <%= select_tag "#{scope}[upload_id]",
+                   options_for_select(
+                     available_uploads.map { |u| [u.name.presence || u.filename.to_s, u.id] },
+                     block.upload_id
+                   ),
+                   include_blank: t('better_together.content.blocks.file_download_block.select_prompt'),
+                   class: 'form-select',
+                   data: { controller: 'better_together--slim-select' } %>
+    <% if block.errors[:upload_id].any? %>
+      <div class="invalid-feedback d-block"><%= block.errors[:upload_id].join(', ') %></div>
+    <% end %>
+  </div>
+
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_string_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'label',
+                       help_text: t('better_together.content.blocks.file_download_block.label_help') } %>
+
+  <%= render partial: 'better_together/content/blocks/fields/shared/translatable_text_field',
+             locals: { model: block, scope: scope, temp_id: temp_id, attribute: 'description', rows: 3,
+                       help_text: t('better_together.content.blocks.file_download_block.description_help') } %>
+
+  <div class="form-check mb-3">
+    <%= hidden_field_tag "#{scope}[open_inline]", 'false', id: nil %>
+    <%= check_box_tag "#{scope}[open_inline]", 'true', block.open_inline?, class: 'form-check-input',
+                      id: "#{scope}_open_inline_#{temp_id}" %>
+    <%= label_tag "#{scope}_open_inline_#{temp_id}", t('better_together.content.blocks.file_download_block.open_inline'),
+                  class: 'form-check-label' %>
+  </div>
+</div>
