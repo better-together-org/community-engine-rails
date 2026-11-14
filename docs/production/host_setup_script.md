@@ -43,8 +43,9 @@ management repository, never copied into the gem.
 
 ## Steps
 
-`--step=NAME` runs one step. Without `--step`, the default list runs in order.
-`--skip=NAME[,NAME]` omits steps from the list.
+`--step=NAME` runs only that step. `--from-step=NAME` runs that step and every step
+after it (the old `--step` resume behavior). Without either, the default list runs in
+order. `--skip=NAME[,NAME]` omits steps from the list.
 
 | Step | Default | What it does |
 |------|---------|--------------|
@@ -92,7 +93,13 @@ New flags:
 | `--log-file=PATH` | Log location, default `/var/log/ce-host-setup.log` (H5). |
 | `--force` | Needed, with a typed confirmation, to act on a host that has live apps (H5). |
 | `--recreate-service=NAME` | Recreate one named service after a snapshot (H5). Replaces the old "recreate" prompt. |
-| `--app=NAME` | App name for the `community_engine` step. |
+| `--app=NAME`, `--domain=HOST`, `--letsencrypt-email=ADDR` | Inputs for the `community_engine` step; with `--yes` a missing one skips that sub-step. |
+| `--dokku-domain=HOST`, `--dokku-ssh-key-file=FILE` | Global Dokku domain and the admin key to register. |
+| `--confirm-destroy=NAME` | The typed confirmation for `--recreate-service` when `--yes` is set. |
+| `--skip-firewall` | Leave the firewall alone (implied by `--with-fleet-baseline`). |
+| `--fail2ban-ignoreip=LIST` | Addresses fail2ban must never ban. |
+| `--s3-endpoint=`, `--s3-bucket=`, `--s3-region=` | Storage settings; keys are never handled by the script. |
+| `--versions-file=PATH` | Use another manifest. |
 
 ## Version manifest (H2)
 
