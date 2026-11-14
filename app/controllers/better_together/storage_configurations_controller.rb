@@ -133,16 +133,10 @@ module BetterTogether
       Rails.logger.warn("[StorageConfigurationsController] Could not touch tmp/restart.txt: #{e.message}")
     end
 
-    # Rebinds the Active Storage service in this process immediately after activation
-    # so new uploads use the updated config without waiting for a restart.
-    # Other processes pick it up on their next restart (triggered by touch_restart_txt).
+    # Rebinds the process default for the host platform so new uploads without a platform use it
+    # immediately. Other processes pick the change up through the registry's periodic refresh.
     def rebind_active_storage_service(platform)
-      resolver = StorageResolver.new(platform)
-      service_name = resolver.service_name
-      service = ActiveStorage::Service.build(service_name, configurator: nil,
-                                                           **resolver.to_active_storage_config)
-      ActiveStorage::Blob.service = service
-      ActiveStorage::Blob.services[service_name.to_s] = service
+      StorageResolver.new(platform).rebind_default!
     end
   end
 end

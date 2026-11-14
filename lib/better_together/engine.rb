@@ -15,6 +15,8 @@ require 'better_together/invitation_registry'
 require 'better_together/migration_helpers'
 require 'better_together/profiling'
 require 'better_together/storage_resolver'
+require 'better_together/storage/tenant_registry'
+require 'better_together/storage/tenant_service'
 require 'better_together/url_sanitizer'
 require 'better_together/rails_8_1_jsonapi_resources_compat'
 require 'bootstrap'
@@ -142,6 +144,12 @@ module BetterTogether
     # All BTS Docker images (dev/staging/production) install libvips, not ImageMagick —
     # ruby-vips is the corresponding image_processing backend gem. Without this, Rails
     # falls back to its mini_magick default and ActiveStorage variants raise a LoadError.
+    # Per-platform storage: swap in the registry that builds services from StorageConfiguration rows and
+    # stamp new blobs with the current platform's service. Runs after Rails registers its own blob hook.
+    initializer 'better_together.tenant_storage', after: 'active_storage.services' do
+      ActiveSupport.on_load(:active_storage_blob) { BetterTogether::Storage::TenantService.install! }
+    end
+
     initializer 'better_together.active_storage_variant_processor' do |app|
       app.config.active_storage.variant_processor = :vips
     end
