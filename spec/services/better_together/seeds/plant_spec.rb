@@ -218,7 +218,7 @@ RSpec.describe BetterTogether::Seeds::Plant do
     end
 
     it 'fails closed per record' do
-      expect(plant[:errors].first[:message]).to include('blob transport')
+      expect(plant[:errors].first[:message]).to include('no MANIFEST.json')
     end
   end
 

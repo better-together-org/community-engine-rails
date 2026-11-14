@@ -129,8 +129,8 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 
 | # | Deficiency | Resolution | Status |
 |---|---|---|---|
-| 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | C2, C3 |
-| 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | C2, D1 |
+| 1 | No materialization layer: `Seed.import` stores a row, nothing creates records | `PackImportService`, installer registry, applier | registry **in C2**, applier **in C3** |
+| 2 | Missing record types (pages with nesting, content blocks, navigation, uploads, events, social accounts, redirects) | Registry entries per type; Redirect model is Track D | registered **in C2** (Flickr added), redirects D1 |
 | 3 | No file transport; 10 MB cap applies to the YAML | `blobs/<sha256>`, manifest, streaming reads, per-blob size policy | **fixed in C4** |
 | 4 | No cross-record references | `refs` with `type:key` or `{type, key, scope}`, resolved before any write | spec and schema C1, resolver C3 |
 | 5 | Idempotency is per planter; Builder identifier has a random suffix; no provenance | Natural `key` per (platform, type); fingerprint, packet id, version, key stored on planted records | spec C1; columns held with C7 |
@@ -143,18 +143,16 @@ Found by assessing `github/main`, billing, multi-tenancy, NLO and NLV, then conf
 | 12 | Inconsistent locale handling | `default_locale`, `locales`, `unsupported_locale_policy`, per-record `translations` | **fixed in C1** (declaration and consistency check), policy applied in C3 |
 | 13 | No ordering model | `position` per record; apply order is topological by references, then `position` | **fixed in C3** |
 | 14 | Errors flatten to strings | `Report` with file, record, field pointer, message; all errors at once | **fixed in C1** |
-| 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | C3 |
+| 15 | Concurrency only on the `Seed` row | One transaction per packet, advisory lock per (platform, packet id) | **fixed in C3** |
 | 16 | `ALLOWED_SEED_DIRECTORIES` blocks host-app directories and uploads | Configurable packet-source allowlist beyond `config/seeds` | **fixed in C4** |
 
-## Blob transport (C4)
+## Integration and conformance (C5)
 
-- `Seeds::Manifest` loads and verifies `MANIFEST.json`: every listed file must exist with the listed size and a streamed sha256 match, a blob's file name must equal its sha256, nothing may be present that the manifest does not list, and size policy applies.
-- `Seeds::BlobPolicy`: per-blob cap (default 100 MB), packet cap (2 GB) and archive cap (2 GB), overridable with `BETTER_TOGETHER_SEED_BLOB_MAX_BYTES`, `BETTER_TOGETHER_SEED_PACKET_MAX_BYTES`, `BETTER_TOGETHER_SEED_ARCHIVE_MAX_BYTES`. The 10 MB YAML cap is unchanged. The foray packet's largest PDF (about 67 MB) fits; raise the cap deliberately for bigger files.
-- `Seeds::BlobAttacher` implements the `attach_files:` contract of `Seeds::Applier`: it re-hashes each blob just before reading it (a file changed after verification is rejected), checks the declared content type against the manifest, streams it into Active Storage, and skips a file whose identical bytes (size and MD5) are already attached. Records that include `ContentSecurity::ScannableAttachment` (`Upload`) are enrolled for scanning by their own after-commit hook, so every PDF is queued exactly as a normal upload would be.
-- `Seeds::PacketArchive.extract` unpacks `.tar.gz` into an empty directory, accepting only regular files that match the packet layout; links, absolute paths, traversal, unknown paths, more than 20,000 entries and archives over the size cap are rejected while streaming.
-- `Seeds::PacketSources` is the allowlist for where packets may be read from: `config/seeds` (app and engine), roots registered with `PacketSources.register_root`, and `BETTER_TOGETHER_SEED_PACKET_ROOTS`. Paths are resolved through symlinks before the check (deficiency 16).
+`Seeds::Plant` now joins the pieces. It accepts a directory or a `.tar.gz` (unpacked to a throwaway directory), verifies `MANIFEST.json` when present, attaches files with `BlobAttacher`, and fails closed when records declare files but no manifest exists. `restrict_sources: true` (used by the rake tasks) limits paths to `PacketSources`. Transport problems appear in the same report as plan errors and nothing is written.
 
-Limit: `BlobAttacher` re-checks and attaches one-file attachments; `has_many_attached` records attach every listed file without the already-attached shortcut.
+`spec/seeds/golden/conformance_spec.rb` plants packets through `Plant` and covers: empty platform, identical rerun, dry run, two platforms, steward-edited record, missing reference, locale policy, verified blob, tampered blob, missing manifest, tar.gz and the source allowlist.
+
+Held: C6 (billing and navigation as packets) and C7 (platform-scoped `Seed` and provenance columns, which touches PR #2165). Deficiencies 5, 6 and 10 stay partial and 9 (signatures) is specified only until then.
 
 ## Type registry (C2)
 
